@@ -1393,15 +1393,18 @@ When ~ is turned face up, prevent all combat damage non-Soldier creatures would 
 	return morph(player, card, event, MANACOST_W(1));
 }
 
-static int gilded_light_legacy(int player, int card, event_t event){
+static int gilded_light_legacy(int player, int card, event_t event)
+{
 
-	give_shroud_to_player(player, card, event);
+  if (in_play(player, card))
+    give_shroud_to_player(player, card, event);
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_gilded_light(int player, int card, event_t event){
@@ -1741,63 +1744,75 @@ static int effect_lethal_vapors(int player, int card, event_t event)
   return 0;
 }
 
-int card_lethal_vapors(int player, int card, event_t event ){
+int card_lethal_vapors(int player, int card, event_t event)
+{
 
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_CREATURE);
-		if( new_specific_cip(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			kill_card(trigger_cause_controller, trigger_cause, KILL_DESTROY);
-		}
-	}
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    if (new_specific_cip_global(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_CREATURE, NULL,
+                                player, card))
+    {
+      kill_card(trigger_cause_controller, trigger_cause, KILL_DESTROY);
+    }
+  }
 
-	if( event == EVENT_CAN_CAST )
-		return basic_spell(player, card, event);
+  if (event == EVENT_CAN_CAST)
+    return basic_spell(player, card, event);
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		int amount = count_subtype(player, TYPE_CREATURE, -1)-count_subtype(1-player, TYPE_CREATURE, -1);
-		ai_modifier += (amount * 12);
-	}
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    int amount =
+        count_subtype(player, TYPE_CREATURE, -1) - count_subtype(1 - player, TYPE_CREATURE, -1);
+    ai_modifier += (amount * 12);
+  }
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found[2] = {-1};
-		CYCLE_ALL_CARDS(p, c,	{
-									if( in_play(p, c) && is_what(p, c, TYPE_EFFECT) ){
-										card_instance_t *inst = get_card_instance(player, c);
-										if( inst->info_slot == (int)effect_lethal_vapors ){
-											if( inst->targets[0].player == player && inst->targets[0].card == card )
-											{
-												found[p] = c;
-											}
-										}
-									}
-								}
-		);
-		if( found[player] > -1 ){
-			kill_card(player, found[player], KILL_EXILE);
-		}
-		if( found[1-player] == -1){
-			int fake = add_card_to_hand(1-player, get_card_instance(player, card)->internal_card_id);
-			int legacy = create_legacy_effect(1-player, fake, &effect_lethal_vapors);
-			card_instance_t *inst = get_card_instance(1-player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found[2] = {-1, -1};
+    APNAP(p, {
+      for (int c = active_cards_count[p] - 1; c >= 0; --c)
+      {
+        if (in_play(p, c) && is_what(p, c, TYPE_EFFECT))
+        {
+          card_instance_t *inst = get_card_instance(p, c);
+          if (inst->info_slot == (int)effect_lethal_vapors && inst->targets[0].player == player &&
+              inst->targets[0].card == card)
+            found[p] = c;
+        }
+      }
+    });
+    if (found[player] > -1)
+      kill_card(player, found[player], KILL_EXILE);
+    int opponent = 1 - player;
+    if (found[opponent] == -1)
+    {
+      int fake = add_card_to_hand(opponent, get_card_instance(player, card)->internal_card_id);
+      int legacy = create_legacy_activate(opponent, fake, effect_lethal_vapors);
+      card_instance_t *inst = get_card_instance(opponent, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      obliterate_card(opponent, fake);
+    }
+  }
 
-	if( event == EVENT_ACTIVATE ){
-		int amount = count_subtype(1-player, TYPE_CREATURE, -1)-count_subtype(player, TYPE_CREATURE, -1);
-		ai_modifier += (amount * 12);
-	}
+  if (event == EVENT_ACTIVATE)
+  {
+    int amount =
+        count_subtype(1 - player, TYPE_CREATURE, -1) - count_subtype(player, TYPE_CREATURE, -1);
+    ai_modifier += (amount * 12);
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *instance = get_card_instance(player, card);
-		skip_next_turn(instance->parent_controller, instance->parent_card, player);
-		kill_card(player, instance->parent_card, KILL_DESTROY);
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    skip_next_turn(instance->parent_controller, instance->parent_card, player);
+    kill_card(player, instance->parent_card, KILL_DESTROY);
+  }
 
-	return generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  return generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 int card_long_term_plans(int player, int card, event_t event){
@@ -1878,26 +1893,27 @@ static int create_minds_desire_legacy(int player, int card){
 }
 
 
-int card_minds_desire(int player, int card, event_t event){
-	if( ! is_unlocked(player, card, event, 28) ){ return 0; }
+int card_minds_desire(int player, int card, event_t event)
+{
+  if (!is_unlocked(player, card, event, 28))
+  {
+    return 0;
+  }
+  if (event == EVENT_QUERY && attacking_card == 4)
+    return 1;
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		ai_modifier += (get_storm_count() * 12);
-		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
-			int count = get_storm_count();
-			while( count > 0 ){
-					create_minds_desire_legacy(player, card);
-					count--;
-			}
-		}
-	}
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    ai_modifier += (get_storm_count() * 12);
+  }
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		create_minds_desire_legacy(player, card);
-		kill_card(player, card, KILL_DESTROY);
-	}
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    create_minds_desire_legacy(player, card);
+    kill_card(player, card, KILL_DESTROY);
+  }
 
-	return basic_spell(player, card, event);
+  return basic_spell(player, card, event);
 }
 
 int card_mischievous_quanar(int player, int card, event_t event)
@@ -2616,122 +2632,143 @@ Pay 3 life: Put a +1/+1 counter on target creature. */
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST0, 3, &td, "TARGET_CREATURE");
 }
 
-static int vengeful_dead_effect(int player, int card, event_t event){
+static int vengeful_dead_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_VENGEFUL_DEAD ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_VENGEFUL_DEAD)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						//Will trigger also if this is not a creature when it goes into the graveyard;
-						count_for_gfp_ability(player, card, event, ANYBODY, TYPE_PERMANENT, NULL);
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						return 0;
-					}
-				}
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_PERMANENT);
-				this_test.subtype = SUBTYPE_ZOMBIE;
-				count_for_gfp_ability(player, card, event, ANYBODY, 0, &this_test);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            // Will trigger also if this is not a creature when it goes into the graveyard;
+            count_for_gfp_ability(player, card, event, ANYBODY, TYPE_PERMANENT, NULL);
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE1(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        test_definition_t this_test;
+        default_test_definition(&this_test, TYPE_PERMANENT);
+        this_test.subtype = SUBTYPE_ZOMBIE;
+        count_for_gfp_ability(player, card, event, ANYBODY, 0, &this_test);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			lose_life(1-player, amount);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    for (int amount = BYTE0(result); amount > 0; --amount)
+      lose_life(1 - player, 1);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
-int card_vengeful_dead(int player, int card, event_t event){
-/* CARD_ID_VENGEFUL_DEAD	6601
-Vengeful Dead	|3|B
-Creature - Zombie 3/2
-Whenever ~ or another Zombie dies, each opponent loses 1 life. */
+int card_vengeful_dead(int player, int card, event_t event)
+{
+  /* CARD_ID_VENGEFUL_DEAD	6601
+  Vengeful Dead	|3|B
+  Creature - Zombie 3/2
+  Whenever ~ or another Zombie dies, each opponent loses 1 life. */
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
-				card_instance_t *inst = get_card_instance(player, c);
-				if( inst->info_slot == (int)vengeful_dead_effect ){
-					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
-						(inst->targets[0].player == player && inst->targets[0].card == card) )
-					{
-						found = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( ! found ){
-			int legacy = create_targetted_legacy_effect(player, card, &vengeful_dead_effect, player, card);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(player, c);
+        if (inst->info_slot == (int)vengeful_dead_effect)
+        {
+          if ((inst->damage_target_player == player && inst->damage_target_card == card) ||
+              (inst->targets[0].player == player && inst->targets[0].card == card))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy =
+          create_targetted_legacy_effect(player, card, &vengeful_dead_effect, player, card);
+      card_instance_t *inst = get_card_instance(player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		if( affect_me(player, card) ){
-			count_for_gfp_ability(player, card, event, ANYBODY, TYPE_PERMANENT, NULL);
-		}
-		else{
-			test_definition_t this_test;
-			default_test_definition(&this_test, TYPE_PERMANENT);
-			this_test.subtype = SUBTYPE_ZOMBIE;
-			count_for_gfp_ability(player, card, event, ANYBODY, 0, &this_test);
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    if (affect_me(player, card))
+    {
+      count_for_gfp_ability(player, card, event, ANYBODY, TYPE_PERMANENT, NULL);
+    }
+    else
+    {
+      test_definition_t this_test;
+      default_test_definition(&this_test, TYPE_PERMANENT);
+      this_test.subtype = SUBTYPE_ZOMBIE;
+      count_for_gfp_ability(player, card, event, ANYBODY, 0, &this_test);
+    }
+  }
 
-	if( get_card_instance(player, card)->kill_code <= 0 ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			lose_life(1-player, amount);
-		}
-	}
+  if (get_card_instance(player, card)->kill_code <= 0)
+  {
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result)
+    {
+      int amount = BYTE0(result);
+      for (; amount > 0; --amount)
+        lose_life(1 - player, 1);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_wing_shards(int player, int card, event_t event){

@@ -1,0 +1,887 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "generic_suspend_legacy",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20e7f10",
+          "end": "0x20e86bd",
+          "bytes_sha256": "ad61d5d0fbdc8a8a2d6e29a569fecee023ea5da3fe9efbbda2d93d0677662aaf",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20e7f10.c",
+          "raw_export_sha256": "c69ea526554c63f2537bd8ec479bb90e12ac32158f3360fdbb3941247d7696b7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "309ff9ee3737ceb218e33b37b44d3e38be3955c34cc76a2071d6639cf4301137"
+    },
+    {
+      "name": "angels_grace_legacy",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20e86c0",
+          "end": "0x20e8736",
+          "bytes_sha256": "98fbc4898d4125ce082666c077537460d41c0b95d8c54d6582f4465fc4726261",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20e86c0.c",
+          "raw_export_sha256": "60c70ce2a438c44b61c8c17571d2dbc451a399416f4cb80c8cba83376950aa5e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "927f24e50665a17e15620d8ed040fa92a5d81fd0f1026f607448dfdfb7e3cb01"
+    },
+    {
+      "name": "firewake_sliver_shared_ability",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20e8820",
+          "end": "0x20e8a7d",
+          "bytes_sha256": "a3888b8956157f3f4ec7e5088740e44e906a68f055b4ef8d8391ffa7cc4f7d7b",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20e8820.c",
+          "raw_export_sha256": "492f7e45baba7fa5ba79c35aa71fc369c6e7f06494159cc9a2513726f7a49620"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "655574d84e83b974329db5abcd80f7efdac9d4894d084a2723543b7ae39f8d19"
+    },
+    {
+      "name": "psionic_sliver_shared_ability",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20e8a80",
+          "end": "0x20e8cf1",
+          "bytes_sha256": "46a245a442aff286c1dca7fb580d15af133993db8fe5c453b51bc84ac681da67",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20e8a80.c",
+          "raw_export_sha256": "481a04831a9d07696f24dfeb965747fc31217f4d84b76993cf4f301f7adfeeb4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "35ceaa4b040963161df1c201f0d958b582b170d18a6b9aacd70312ce6f73838d"
+    },
+    {
+      "name": "quilled_sliver_shared_ability",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20e8d00",
+          "end": "0x20e8f4f",
+          "bytes_sha256": "4827f5ff5706487c80dc1febcb122963ec0bbc497646c9c759ae0ea8afd75eb4",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20e8d00.c",
+          "raw_export_sha256": "77a71ed301c702f0b0e72f1054d3fba24901fc3fd0056c92b1a6b344c11ee8c8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ca71c13e5bf921eff9a8a04a3da56d82ab1fabee18689f96efbe0222b0ea7f4b"
+    },
+    {
+      "name": "screeching_sliver_shared_ability",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20e8f50",
+          "end": "0x20e9187",
+          "bytes_sha256": "c8f3dbdea81ba8af3ad75d4825f14ccbf029ad70a2d61de99cbc8ead3f23916b",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20e8f50.c",
+          "raw_export_sha256": "a2d627cd78a9c161cb369fc0b3e27475726425d94fed713d1e6b13603b4f444f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b49ea5f5a271e31afadd2f50c2bc303f41c6a7162b840f4eb2f8d3865d3838be"
+    },
+    {
+      "name": "telekinetik_sliver_shared_ability",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20e9190",
+          "end": "0x20e93c1",
+          "bytes_sha256": "9e65c8dce3e9f63385a242d9f6d24a9f7b7b869c2dc82882efff850ad7c7e89c",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20e9190.c",
+          "raw_export_sha256": "c185828044099d08468a7e0f69f8bbf627bdc9b01861df4af86d8184b281677d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5890c0e75d399f07ad2e20fda96a258149a2d3a1a74e381d1a7e3aa35e21cfd8"
+    },
+    {
+      "name": "mindlash_sliver_shared_ability",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20e95b0",
+          "end": "0x20e97b2",
+          "bytes_sha256": "8e1ae9a297a2f6aff7191eb1fac2b5dd7c99c9666695366db2e16f7759e17215",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20e95b0.c",
+          "raw_export_sha256": "b1bfd09fdf3d6f880e42b5e47b4d64bb258de8f2e01d052d74282ec2bbec0d07"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "89115b543f8cce88195e127d125623e582f0f7b7c4e174583e47ff1f53a6b09e"
+    },
+    {
+      "name": "lim_dul_the_necromancer_effect",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20e97c0",
+          "end": "0x20e9c35",
+          "bytes_sha256": "99c88285bd868d596551c1f7064755612a8b90629fba0e35d100b577acf28b0e",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20e97c0.c",
+          "raw_export_sha256": "d9654d2b44fc381b2bc9916ef6aba3cc1f6d217892a6ac44e9641890a1d192a3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "85b34cc16552953ba2eaf4a1d76c656c822cda60d170687957b0340bed4e9059"
+    },
+    {
+      "name": "vampiric_sliver_legacy",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20e9fc0",
+          "end": "0x20ea126",
+          "bytes_sha256": "cc61316bcd362c55367fdf0596d54f3a5e1fa75a0277286c20b3c87fb6655ed3",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20e9fc0.c",
+          "raw_export_sha256": "53437f36d314fd7f06c3e07739f5317ba8e73b35fc918f6dfdb0a71dcd20f4bb"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fb40f33fcd6211d4d1df895cd065d4c5559258aac72ce20f1f7eaae05254e20b"
+    },
+    {
+      "name": "saffi_legacy",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20ea130",
+          "end": "0x20ea297",
+          "bytes_sha256": "0eaf0fa3ab4d1d1a05b5d9a52bdcc25be6c60de60d704ef96f04ef8734a613bc",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20ea130.c",
+          "raw_export_sha256": "b2db92e9e32c8a5f4ec008ca8795020f90a27881e425d1a2250682940df7916a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ad79a4e54ccc373bd0a0f9742ee0af28e176a143e93460f6ed18470ce6f43f0a"
+    },
+    {
+      "name": "sedge_sliver_shared_ability",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20ea2a0",
+          "end": "0x20ea626",
+          "bytes_sha256": "03c113e616e16b158a951df8686228fbaa62230b2c7b2cc17525912690ca475c",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20ea2a0.c",
+          "raw_export_sha256": "0a63f11f6fb9a98e44c4aa75fd776c79de62bf78498965010df176893f3af488"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7e50b44ef56db46f0bd6fb51ab6272e32993a45e844f5216d180d83bca70dac2"
+    },
+    {
+      "name": "target_must_be_permanent_or_suspend_and_have_counters",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20ea690",
+          "end": "0x20ea6f7",
+          "bytes_sha256": "05c5f677b15e919e7034627a967829601a0dfe81124bb5eba4782df44253ba8e",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20ea690.c",
+          "raw_export_sha256": "a1455439e87eb63546f0032d294ef8efb65cbe869df45c6e37ae1600e1d0b2e0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f01c5ecd0732440208140975186a45641a60b64f1ceab0238f24d2b92c99090b"
+    },
+    {
+      "name": "sac_and_damage_blockers",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20ea830",
+          "end": "0x20ea898",
+          "bytes_sha256": "f59ce05528bf436d7ca6829e683c94783d875c5839e140850d4b637daa7f59eb",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20ea830.c",
+          "raw_export_sha256": "fd849ac41213796c0cb162f916ca37e000018c94e42b0bcb86595f41717b0ca8"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "016c4836f4b8168744489a738d7d2a0497434228dfc89c9cbc6d5160ab936ee2"
+    },
+    {
+      "name": "sarpadian_empires_legacy",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20ea8a0",
+          "end": "0x20ea984",
+          "bytes_sha256": "124b9d3bd122d5692e56cf867b187a598d65b09f7e25ccb875a3f7cdc8c3e325",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20ea8a0.c",
+          "raw_export_sha256": "a32ff2e094c0cf9823a20e77e23541432aa51da7d1bce6b9e627539af1d019b2"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "08905af9f6b880563442fd990ad3998d2623bb0a0df421091d8333d137a3c6cb"
+    },
+    {
+      "name": "is_suspend_legacy",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20eaa90",
+          "end": "0x20eaae2",
+          "bytes_sha256": "d16415d556fda87fe10db776629861e3a6eb226aca6d4dc30e96ce3a527b1223",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20eaa90.c",
+          "raw_export_sha256": "7c9ff2b6f3f77e1bb105e3e1185688603ee49b0977f5e3c3cb72eb9a2041bc6a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "81e140867b209f1d5b8bcaa912c9e6dc1e0ce555df49a3325ec4449eecefdeb6"
+    },
+    {
+      "name": "suspend_a_card",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20eaaf0",
+          "end": "0x20eac8e",
+          "bytes_sha256": "7c89ea3e7bdbc4f928c012266779aab73b3fa9e78d550771c3feb02a45683125",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20eaaf0.c",
+          "raw_export_sha256": "6df8f9f01cf052c81c1dafe8786e535895a6276842f39a52b05da5461c7942f5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ad81197e1256cd6f1bcff358f91314c824db0fe3ec0fe4685a304c00ab34c1eb"
+    },
+    {
+      "name": "suspend",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20eac90",
+          "end": "0x20eb0b3",
+          "bytes_sha256": "e0022019fb852e52afc5a8b8faa85ba1d75d54576b492116091420f5b5fe9ac7",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20eac90.c",
+          "raw_export_sha256": "3e43e2919fe8d37eed2572b163bee349f2fbd31ce63917ea9efe1c189fd559d9"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0e4ff0f8b8805835516f199eac8a198a0e2402e333bc70189a293ceb170de071"
+    },
+    {
+      "name": "suspend_only",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20eb0c0",
+          "end": "0x20eb253",
+          "bytes_sha256": "c585e6a49c789b25acc025293689f840aea670d3b9f1999047f55e9c7c076a53",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20eb0c0.c",
+          "raw_export_sha256": "d13a3f614bff6bc94e035c13d4336334f4d0237102cb552b6dca553a5d55e912"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2891c868940900c3bdb9c8f9787a56f4e3c1bef31afd52fb0242fbec506d92c5"
+    },
+    {
+      "name": "is_suspend_only_card",
+      "source": "cards/time_spiral.c",
+      "native_ranges": [
+        {
+          "address": "0x20eb260",
+          "end": "0x20eb35c",
+          "bytes_sha256": "56efb83926faedfedaa935606aca554007de594c03cf0043dd0409312163f7b4",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/20eb260.c",
+          "raw_export_sha256": "bce4fdb874bd79868ded15c3a006ce449b1424deb67309f75674e45121e0cb64"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "541bdc86c0088c016b58b263afe17e5b375aba091dee1708483e376bb9646b29"
+    },
+    {
+      "name": "cast_spell_with_convoke",
+      "source": "cards/m15.c",
+      "native_ranges": [
+        {
+          "address": "0x21aa560",
+          "end": "0x21aa627",
+          "bytes_sha256": "6785bc449aab34725cf4ff3d15c59f3a5ad463785131b50dcf511364161e2757",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/21aa560.c",
+          "raw_export_sha256": "5257aceaa7fbe9980ada449cb8cb4efbf7acdb4536e91c9ee42981ffee73a7fc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b107a0381a766d3f90ef388f1689397dd88f511acffbc4048444cd0e7f6ffd7c"
+    },
+    {
+      "name": "test_not_in_array3",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24ddce0",
+          "end": "0x24ddd04",
+          "bytes_sha256": "4338e96b6ec386b30bc812dc6857515ae879b3fec37498a8522ed661510199e8",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24ddce0.c",
+          "raw_export_sha256": "b49b464014f24aab41a2ec6b9b31776a830a3915b77a05acea509a0b7d4692d3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4f4eaf1173f0c3035384c0dcd0ed36b75547e0875ee72f49bfecc27604db0ff6"
+    },
+    {
+      "name": "eye_of_the_storm_trigger",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24de590",
+          "end": "0x24def03",
+          "bytes_sha256": "a3aea0d46c71e178c612cdc90010ed67547ad4b74acb6b811259562589f009b9",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24de590.c",
+          "raw_export_sha256": "0f20c06c6688de043385d86ec3f99fc3f0d5c09f4448e7173e9911ab4943c555"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0518772e3ba142c3443cbee0d6e68d6af9250a6023ab74d75c865813a95b9873"
+    },
+    {
+      "name": "effect_flame_fusillade",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24def40",
+          "end": "0x24df4f3",
+          "bytes_sha256": "b1700a6616207ab138e90ed62ef69623c2af587f19463e37df6beeb71c9fa0ae",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24def40.c",
+          "raw_export_sha256": "966f471db95b1a773b9e0ef40571f5118a78b0d81b3a24c6166c49b710d8cc06"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "29b93f6a827d992b1ccc56ac5fd26a7f00e55e103a0de63e7586329a1a08bfad"
+    },
+    {
+      "name": "golgari_germination_effect",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24df500",
+          "end": "0x24df7f2",
+          "bytes_sha256": "79c54ccb1d478b66c3434fb814a45b84d8dfff499c52c737d53a13d053c4d809",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24df500.c",
+          "raw_export_sha256": "24287acd8d4ba2b8abf44c35d510a7c0b26358db62463d2a143df926fe9c399a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8941ed244afa23d79f18305ff9092a0066ce838db51eb61e71d99e308157261a"
+    },
+    {
+      "name": "savra_trigger",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24df800",
+          "end": "0x24dfb58",
+          "bytes_sha256": "e7018165a570f014dcc8612d13a2d16bfda93fcfe5ab0f4fb6ecf6ef3b1b0101",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24df800.c",
+          "raw_export_sha256": "e56b59c72856c2959745229284f160532608c10df23de5476fe9fe89bb80a7f6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "78bd951f2c679ffd63f8affd96b06c4e7047c0c8266cf644d52c18b38785d8bb"
+    },
+    {
+      "name": "count_for_savra",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24dfb60",
+          "end": "0x24dfce4",
+          "bytes_sha256": "9ae6fb0d08ee5c8f621e7010fefe33d132e1b1f25338008681071d309c604ef4",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24dfb60.c",
+          "raw_export_sha256": "1678aec97a1a76a9acb153c7905068ce09023271b333cad491976412343d0ac8"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fede9b3f83a2e38612496847e90419187aca9eb276ed3b58784a3c0dd4699b09"
+    },
+    {
+      "name": "savra_queen_of_the_golgari_effect",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24dfcf0",
+          "end": "0x24e0079",
+          "bytes_sha256": "6fb62cd453164177f5e00d6b48c4729d376553d3ba7ddff1832d1a8e05264064",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24dfcf0.c",
+          "raw_export_sha256": "5c31470c16eec7cc06474e44b8ff76be544100ddfcee972cca9b12c28c614d7d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "71d714dd49422c8133c1cd870cce7827e20f97c3e922e07de4894d110c91598e"
+    },
+    {
+      "name": "dimir_doppelganger_impl",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e0240",
+          "end": "0x24e053d",
+          "bytes_sha256": "226103446023e18b3b6d5192339277c072b3273a3168acc51bb853f12a43a3d4",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24e0240.c",
+          "raw_export_sha256": "36d40ba9004042846301afd29aef81f3668a0d2367f64e3ba1a0e875faada6c4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3c88bd817155da972213663d3844b7a5391e7fe82ab73703712d8e6b4a959b9f"
+    },
+    {
+      "name": "effect_dimir_doppelganger",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e0540",
+          "end": "0x24e056e",
+          "bytes_sha256": "b34a0a64a04c9c2ca148c6ae42419955a56b472799929f160f3708bd3b89d7f3",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24e0540.c",
+          "raw_export_sha256": "cf72d1857510489cfee7661d179ac10bf57aeb3b01c0c923f4b881a5db19f7e0"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7df75db4b48b91634e9660ce7ae8731accbaae4455d00cdf8556b84b9e0895fa"
+    },
+    {
+      "name": "has_convoked_mana_extended_generic",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e0780",
+          "end": "0x24e0ac8",
+          "bytes_sha256": "0381e496d9a83a47e42b41854d86649b78feafc85acac7d0c40b02d75c3d8e99",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24e0780.c",
+          "raw_export_sha256": "a3fe9d18714292b22049045c726b7596b13b97f101e8542ac9ad3e1534b0b320"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "adbe61bc0d23e324ea04be4f9fcb59a3b39a2100d60ad21098e9cc540aac1265"
+    },
+    {
+      "name": "has_convoked_mana_extended",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e0ad0",
+          "end": "0x24e0b23",
+          "bytes_sha256": "797628cdffad6822f37fec96f55732531f2c99c9f8b9a849f78f3435fec81424",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24e0ad0.c",
+          "raw_export_sha256": "0c10e290f61fa42f92b322cd78cfb3dc4968dffca2d61366190d68a236a0a358"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "74e032a7382e4de2b67802b3388918f0606c3ca93a27f3de1b31a941ce19c57d"
+    },
+    {
+      "name": "has_convoked_mana",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e0b30",
+          "end": "0x24e0b87",
+          "bytes_sha256": "6baa6cf5a5207feade3fb5558722e30a03c2114e4dd252909e39a4c3180033d6",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24e0b30.c",
+          "raw_export_sha256": "31f51272227cc4ca5b21c3b24a80daedf9cdde562dab59a72a77ec3d3b70c91d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a6911d8f7a8aa35fc747067fb65682653b2933d7fb77cab0796dae22f60cb07b"
+    },
+    {
+      "name": "charge_convoked_mana_extended_generic",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e0d60",
+          "end": "0x24e18b5",
+          "bytes_sha256": "b2b1e619cf33601fc0eba62be4efa163f31520e5363ead8044b6f4a572e0ae48",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24e0d60.c",
+          "raw_export_sha256": "d00a321fd60c2d95db2acd4dcacd431350bb22afd066550cd9601df00767b0d4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e7a6a9aac620efb64205192f0eb41f916a16a86004c55e8b54f7861003636aac"
+    },
+    {
+      "name": "charge_convoked_mana_extended",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e18c0",
+          "end": "0x24e1913",
+          "bytes_sha256": "026c775974d07d8a0e15a4a9e831b137669f01be9e7555302506d75caab297a2",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24e18c0.c",
+          "raw_export_sha256": "bff2d3bb785ebfc1aed7ee1dc5ec71b3c7c970a5dc2bf4b5b399fb8ddc2f6fb0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2011b3de71acb6732b7701a5acef7e683944a762e407bc976c33e8431c49b7de"
+    },
+    {
+      "name": "charge_convoked_mana",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e1920",
+          "end": "0x24e1977",
+          "bytes_sha256": "fe70cf7d3c286e72bb51a8e50634b4ec61174b7d132bbf742db7a9d19724642c",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24e1920.c",
+          "raw_export_sha256": "ee06c848f39508100456db92db32caeee3e9f5c7626196847c9c8cd06eaa66d4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b047ab42554f9c7ce84d983b8eb5cbe4ec65ce00069ebaa178d7a33c8b7def3a"
+    },
+    {
+      "name": "charge_changed_mana",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e19e0",
+          "end": "0x24e2069",
+          "bytes_sha256": "20827faca0b406908515d134df80b1eef7785865f7fd5983496e734009adf78a",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24e19e0.c",
+          "raw_export_sha256": "290d6ec6661eec55ef22296b84ed303bbb59b92964fa6a89ee2365f1e19da7c5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8a3201343e70b53cabcbad78034146211fc778ec286e421410796cc94d25583c"
+    },
+    {
+      "name": "transmute",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e2070",
+          "end": "0x24e21e6",
+          "bytes_sha256": "fd4432e76e220ffbbba8e9f502a588ae920163649fa65e02e880065ae85239cb",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/24e2070.c",
+          "raw_export_sha256": "72357ca004db064d60156e4d424f88b3d00236f4ff8e49637c7bc4a34e8a1244"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ed4fe2e6312722108d09829f3bfd4a32b1fb25237db7bb0253b72ddd35d2cfe3"
+    },
+    {
+      "name": "slivercycling",
+      "source": "cards/future_sight.c",
+      "native_ranges": [
+        {
+          "address": "0x2572850",
+          "end": "0x257294c",
+          "bytes_sha256": "f397410aaf81c41cfc07456842506ee2a900a406f25528ca9b40f2d8afecc69c",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/2572850.c",
+          "raw_export_sha256": "dd87a072fd524b91eec3e4a05eac117bc3a79b2f7c40cc9200ad6e1143e19858"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1a0319ea6c1081e9e314ade4f3f07b9cb363f5b52b739a221d39ad5987ededc1"
+    },
+    {
+      "name": "basic_upkeep_arbitrary",
+      "source": "functions/upkeep.c",
+      "native_ranges": [
+        {
+          "address": "0x26769e0",
+          "end": "0x2676c22",
+          "bytes_sha256": "eebd2ec80dc4585ebc2c5fa5300290ff207f5df0c49facb3178af3035242db73",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/26769e0.c",
+          "raw_export_sha256": "d297beff3852d00fe2f3c21aa3a49279251bdf55e404541fa6dd634282fd8de4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "05c75cc95b029bf367e069cbce1091cf54728c0013cd2304e2588993abfe0600"
+    },
+    {
+      "name": "basic_upkeep",
+      "source": "functions/upkeep.c",
+      "native_ranges": [
+        {
+          "address": "0x2676c30",
+          "end": "0x2676c83",
+          "bytes_sha256": "fd7f2af454b5c18d759e92739924dc7e04f12f9ef8c62da589bc4297dd8bdc60",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/2676c30.c",
+          "raw_export_sha256": "02148a862057c89d9c36097a8c9ff056b415f07f1d89dc31265c6f9343fcde76"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b3d80f13ee2ddd44fa153076da67030e9703a7f5a967e6413d57d4177204fc02"
+    },
+    {
+      "name": "basic_upkeep_unpaid",
+      "source": "functions/upkeep.c",
+      "native_ranges": [
+        {
+          "address": "0x2676c90",
+          "end": "0x2676e3c",
+          "bytes_sha256": "7cef7e5817bae1197563997d35cbb6a2189554ece36a155622077f7bb3c194fb",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/2676c90.c",
+          "raw_export_sha256": "8f5710f509915b7f7dfffdd6847616f6e38b430aa4ba4bdc6cf427152cc81947"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4e93da72f9acad61094fbdc87596e58133f04b4a4bf5ed45609ce5b5d7cdd528"
+    },
+    {
+      "name": "cumulative_upkeep_arbitrary",
+      "source": "functions/upkeep.c",
+      "native_ranges": [
+        {
+          "address": "0x2676e40",
+          "end": "0x2677099",
+          "bytes_sha256": "bb11c2807fb9f474744d1a8edb2fa4e83b1c9b349a4505d732539aa632b004a4",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/2676e40.c",
+          "raw_export_sha256": "f23ed4f7caf38ee922cea27dc50488f08112ee3559d89c6dd17bc14b0f661c36"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7d2a3a2fe30e66e49b0c6e62d19bcc3fabd24bdb88d6bd4f81791f37e0fe54d7"
+    },
+    {
+      "name": "cumulative_upkeep",
+      "source": "functions/upkeep.c",
+      "native_ranges": [
+        {
+          "address": "0x26770a0",
+          "end": "0x26770f3",
+          "bytes_sha256": "abd7c38e6fc5d8895523fb91a33a38a9368839f6015ec546b12dc16f95023aae",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/26770a0.c",
+          "raw_export_sha256": "63abf1dd3dbe1e28923d4631a203d4a520b9816aabf9de07f33486afc51ecb4a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f5627d2ce95f6a1cd2b8666c102a267acce732832486a95e6c6047a4bf9dc9ba"
+    },
+    {
+      "name": "cumulative_upkeep_hybrid",
+      "source": "functions/upkeep.c",
+      "native_ranges": [
+        {
+          "address": "0x2677100",
+          "end": "0x26772ac",
+          "bytes_sha256": "96ea6ec452aef16418c843e23f773f9a3f127f57e3604ccea87a2e44f97ed623",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/2677100.c",
+          "raw_export_sha256": "9ea74c8660d6ffdcec6b2f444916eedcb1a3459b9a8ac75d2bbee913d07d00b6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4471ed3c91c46e6b951bd41ab4b9062bc4e24bdffb968f9389ab7cab1c49e9d5"
+    },
+    {
+      "name": "cumulative_upkeep_general",
+      "source": "functions/upkeep.c",
+      "native_ranges": [
+        {
+          "address": "0x26772b0",
+          "end": "0x2677452",
+          "bytes_sha256": "ea6bd2e45d79736403a8fdb0fc2556a80538b4a5402bdfbf07e0ec1bb2f0c583",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep/26772b0.c",
+          "raw_export_sha256": "e3b710bf5002ddbd795f959ca31306bed11261d256aafb07116206c1d825e9be"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d885cbd141d5088f0c0a243f47021a48cb1a159b1cf8d8ff44e981e085fb3584"
+    },
+    {
+      "name": "will_tap_permanent_for_convoke",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e0b90",
+          "end": "0x24e0d5d",
+          "bytes_sha256": "29efc11cb33e6b00506b4f72737fa01cb27e154c71dbd5044e9013779365114c",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep-support/24e0b90.c",
+          "raw_export_sha256": "dd5ee353cf7493eaa9997ca8323dddc40ba64bfe659efa63c791ec0e3da4d253"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9cb4c390fc2b798aa99e5c1735ad969ade1bb8a67f4d218c891025ce147343c9"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_savra_queen_of_the_golgari",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24ef4b0",
+          "end": "0x24ef6b2",
+          "bytes_sha256": "91a43e52d0e8d6451da5f82e57a87dccd6fd18d0ed2817df882dfbace04937f3",
+          "raw_export": ".recovery/decompiled-convoke-suspend-upkeep-support/24ef4b0.c",
+          "raw_export_sha256": "ae2e6c987a2dfa96a3132a7413135e53e649d91ba431a000f8c03f7f97e25462"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4056e6b75d3cc304feaa4a8e10907c9e6e926e5094ba2433a28eb85ff632ae3b"
+    },
+    {
+      "name": "card_dimir_doppelganger",
+      "source": "cards/ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24e5c20",
+          "end": "0x24e5c79",
+          "bytes_sha256": "cfabee070ad51fa449e9bacbcf7ca4d34705fe8abc21556da7e0131fdc48fe54",
+          "raw_export": ".recovery/decompiled-convoke-dimir/24e5c20.c",
+          "raw_export_sha256": "11dd17bb694b582064a21367cb96a53c64ee77aed254839365ff8adb0be24f0e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "cfea86cb2f15a70335a381b109f516a2d6e628b1f642f9bff7e14bc7b43b7ec4"
+    }
+  ],
+  "helper_definitions": 47,
+  "new_native_helper_ranges": 47,
+  "changed_helper_definitions": 18,
+  "changed_card_callers": 2,
+  "native_card_ids": [
+    {
+      "name": "CARD_ID_CRASHING_FOOTFALLS",
+      "value": 20085,
+      "die_offset": "0xcc99e4"
+    },
+    {
+      "name": "CARD_ID_MOX_TANTALITE",
+      "value": 20158,
+      "die_offset": "0xcca1ab"
+    },
+    {
+      "name": "CARD_ID_GAEAS_WILL",
+      "value": 23041,
+      "die_offset": "0xcde3cd"
+    },
+    {
+      "name": "CARD_ID_GLIMPSE_OF_TOMORROW",
+      "value": 23050,
+      "die_offset": "0xcde4bd"
+    },
+    {
+      "name": "CARD_ID_INEVITABLE_BETRAYAL",
+      "value": 23067,
+      "die_offset": "0xcde68b"
+    },
+    {
+      "name": "CARD_ID_PROFANE_TUTOR",
+      "value": 23115,
+      "die_offset": "0xcdeb87"
+    },
+    {
+      "name": "CARD_ID_RESURGENT_BELIEF",
+      "value": 23124,
+      "die_offset": "0xcdec81"
+    },
+    {
+      "name": "CARD_ID_SOL_TALISMAN",
+      "value": 23154,
+      "die_offset": "0xcdef6e"
+    }
+  ],
+  "native_contracts": {
+    "convoke": {
+      "provisional_query_excludes_mana_sources": true,
+      "ai_payment_does_not_exclude_mana_sources": true,
+      "successful_payment_emits_tap_events": true,
+      "loxodon_csv_id": 19518,
+      "loxodon_saved_cards": 18,
+      "tapped_initial_value": -1,
+      "allocation": "active_cards_count[player]",
+      "failed_attempt_tail_not_reset": true,
+      "maximum_attempts": 50
+    },
+    "upkeep_query_event": 22784,
+    "suspend_only_cards": 14,
+    "suspend_normal_clears_spell_flag": false,
+    "suspend_only_clears_spell_flag": true,
+    "savra": {
+      "callback_parameter_count": 3,
+      "legacy_first_slot": 1,
+      "live_first_slot": 0,
+      "color_mask": 3,
+      "repeat_count": "card_counts[player][5]+1",
+      "life_payment_rechecked_per_trigger": true,
+      "resolves_before_visibility_check": true,
+      "detaches_if_source_has_kill_code": true,
+      "unresolved_deaths_delay_removal": true
+    },
+    "lim_dul": {
+      "next_selection_cost": "chosen+1 generic and chosen+1 black",
+      "old_end_trigger_reset_removed": true,
+      "old_detach_marker_removed": true
+    },
+    "death_suppression": [
+      "vampiric_sliver_legacy",
+      "saffi_legacy",
+      "count_for_savra"
+    ],
+    "flame_fusillade": {
+      "subtype_filter": true,
+      "legacy_display_name": true,
+      "legacy_display_text": true
+    },
+    "native_quirks_preserved": [
+      "Eye of the Storm owner bit discarded in retained storage and one-based copy indexing",
+      "Convoke copies eighteen VLA entries for Venerated Loxodon without a new clamp",
+      "Savra pending-death scan compares against targets[0].card on the legacy",
+      "charge_changed_mana white loop exit is the last color, not early exit for other colors"
+    ]
+  },
+  "scope": "47 complete helper definitions/native ranges and two complete live card callers; 18 helper bodies and two callers changed. Eight native card-id constants restored. Built-in dialog backends and gameplay tests remain downstream."
+}

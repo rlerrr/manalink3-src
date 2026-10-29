@@ -275,15 +275,18 @@ static int monocolor_hybrid(int player, int card, event_t event){
 	return 0;
 }
 
-int hybrid(int player, int card, event_t event){
-	modify_cost_for_hybrid_spells(player, card, event, 0);
+int hybrid(int player, int card, event_t event)
+{
+  modify_cost_for_hybrid_spells(player, card, event, 0);
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( ! hybrid_casting(player, card, 0) ){
-			spell_fizzled = 1;
-		}
-	}
-	return 0;
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    if (!hybrid_casting(player, card, 0))
+    {
+      spell_fizzled = 1;
+    }
+  }
+  return event == EVENT_CAN_CAST;
 }
 
 
@@ -466,40 +469,53 @@ void aura_ability_for_color(int player, int card, event_t event, int c1, int p, 
 	}
 }
 
-int persist_granted(int player, int card, event_t event){
- 	card_instance_t *instance = get_card_instance(player, card);
-	if( instance->damage_target_player > -1 ){
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-		if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c) && in_play(p, c) && ! is_token(p, c) && count_counters(p, c, COUNTER_M1_M1) < 1 ){
-			card_instance_t *dead = get_card_instance(p, c);
-			if( dead->kill_code > 0 && dead->kill_code < KILL_EXILE ){
-				instance->targets[11].card = get_original_internal_card_id(p, c);
-				instance->targets[11].player = get_owner(p, c);
-				instance->damage_target_player = instance->damage_target_card = -1;
-			}
-		}
-	}
+int persist_granted(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->damage_target_player > -1)
+  {
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
+    if (event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c) && in_play(p, c) && !is_token(p, c) &&
+        count_counters(p, c, COUNTER_M1_M1) < 1 &&
+        !check_for_death_trigger_removal(affected_card_controller, affected_card))
+    {
+      card_instance_t *dead = get_card_instance(p, c);
+      if (dead->kill_code > 0 && dead->kill_code < KILL_EXILE)
+      {
+        instance->targets[11].card = get_original_internal_card_id(p, c);
+        instance->targets[11].player = get_owner(p, c);
+        instance->damage_target_player = instance->damage_target_card = -1;
+      }
+    }
+  }
 
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && player == reason_for_trigger_controller && affect_me(player, card)){
-		if( instance->targets[11].player != -1 ){
-			if(event == EVENT_TRIGGER){
-				//Make all trigges mandatoy for now
-				event_result |= RESOLVE_TRIGGER_MANDATORY;
-			}
-			else if(event == EVENT_RESOLVE_TRIGGER){
-					seek_grave_for_id_to_reanimate(instance->targets[11].player, -1, instance->targets[11].player, cards_data[instance->targets[11].card].id,
-													REANIMATE_MINUS1_MINUS1_COUNTER);
-					kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && player == reason_for_trigger_controller &&
+      affect_me(player, card))
+  {
+    if (instance->targets[11].player != -1)
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        // Make all trigges mandatoy for now
+        event_result |= RESOLVE_TRIGGER_MANDATORY;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        seek_grave_for_id_to_reanimate(
+            instance->targets[11].player, -1, instance->targets[11].player,
+            cards_data[instance->targets[11].card].id, REANIMATE_MINUS1_MINUS1_COUNTER);
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 // Cards
@@ -4749,115 +4765,89 @@ int can_cast_reaper_king(int player, int card, event_t event){
 	return 0;
 }
 
-int casting_reaper_king(int player, int card, event_t event){
-			int x;
-			int mana[6];
-			int mana2[100];
+int casting_reaper_king(int player, int card, event_t event)
+{
+  int manaCless[32] = {0}, manaBlack[32] = {0}, manaBlue[32] = {0};
+  int manaGreen[32] = {0}, manaRed[32] = {0}, manaWhite[32] = {0};
+  int cless = get_updated_casting_cost(player, card, -1, event, -1);
+  int pos = 0;
+  for (int black = 1; black >= 0; --black)
+    for (int blue = 1; blue >= 0; --blue)
+      for (int green = 1; green >= 0; --green)
+        for (int red = 1; red >= 0; --red)
+          for (int white = 1; white >= 0; --white)
+          {
+            int generic = cless - 2 * (black + blue + green + red + white);
+            if (generic >= 0 && has_mana_multi_a(player, generic, black, blue, green, red, white))
+            {
+              manaCless[pos] = generic;
+              manaBlack[pos] = black;
+              manaBlue[pos] = blue;
+              manaGreen[pos] = green;
+              manaRed[pos] = red;
+              manaWhite[pos] = white;
+              ++pos;
+            }
+          }
 
-			for( x = 0 ;x < 6;x++){
-				mana[x] = 0;
-			}
-			for( x = 0 ;x < 100;x++){
-				mana2[x] = 0;
-			}
+  size_t bufferLen = 200;
+  char castingCosts[3][bufferLen];
+  int maxPos[3];
+  int last_page = pos / 12;
+  for (int page = 0; page <= last_page; ++page)
+  {
+    int len = scnprintf(castingCosts[page], bufferLen, " Pay\n");
+    maxPos[page] = 1;
+    int end = MIN(12 * (page + 1), pos);
+    for (int i = 12 * page; i < end; ++i)
+    {
+      if (manaCless[i])
+        len += scnprintf(castingCosts[page] + len, bufferLen - len, "%d", manaCless[i]);
+      if (manaBlack[i])
+        len += scnprintf(castingCosts[page] + len, bufferLen - len, "B");
+      if (manaBlue[i])
+        len += scnprintf(castingCosts[page] + len, bufferLen - len, "U");
+      if (manaGreen[i])
+        len += scnprintf(castingCosts[page] + len, bufferLen - len, "G");
+      if (manaRed[i])
+        len += scnprintf(castingCosts[page] + len, bufferLen - len, "R");
+      if (manaWhite[i])
+        len += scnprintf(castingCosts[page] + len, bufferLen - len, "W");
+      len += scnprintf(castingCosts[page] + len, bufferLen - len, "\n");
+      ++maxPos[page];
+    }
+    scnprintf(castingCosts[page] + len, bufferLen - len,
+              page == last_page ? " Cancel\n" : " Next\n");
+  }
 
-			int cless = get_updated_casting_cost(player, card, -1, event, -1);
-			int hybrid_cless = 10;
-			cless-=hybrid_cless;
-			int m = 1;
-			if( has_mana(player, COLOR_ARTIFACT, 10+cless) ){
-				mana2[m] = get_mana_image(10+cless, 0, 0, 0, 0, 0);
-				m++;
-			}
-			int a,b,c,d,e;
-			for(a=1; a<6; a++){
-				mana[a] = 1;
-				if( has_mana_multi_a(player, (hybrid_cless-2)+cless, mana[1], mana[2], mana[3], mana[4], mana[5]) ){
-					mana2[m] = get_mana_image((hybrid_cless-2)+cless, mana[1], mana[2], mana[3], mana[4], mana[5]);
-					m++;
-					for(b=a+1; b<6; b++){
-						mana[b] = 1;
-						if( has_mana_multi_a(player, (hybrid_cless-4)+cless, mana[1], mana[2], mana[3], mana[4], mana[5]) ){
-							mana2[m] = get_mana_image((hybrid_cless-4)+cless, mana[1], mana[2], mana[3], mana[4], mana[5]);
-							m++;
-							for(c=b+1; c<6; c++){
-								mana[c] = 1;
-								if( has_mana_multi_a(player, (hybrid_cless-6)+cless, mana[1], mana[2], mana[3], mana[4], mana[5]) ){
-									mana2[m] = get_mana_image((hybrid_cless-6)+cless, mana[1], mana[2], mana[3], mana[4], mana[5]);
-									m++;
-									for(d=c+1; d<6; d++){
-										mana[d] = 1;
-										if( has_mana_multi_a(player, (hybrid_cless-8)+cless, mana[1], mana[2], mana[3], mana[4], mana[5]) ){
-											mana2[m] = get_mana_image((hybrid_cless-8)+cless, mana[1], mana[2], mana[3], mana[4], mana[5]);
-											m++;
-											for(e=d+1; e<6; e++){
-												mana[e] = 1;
-												if( has_mana_multi_a(player, (hybrid_cless-10)+cless, mana[1], mana[2], mana[3], mana[4], mana[5]) ){
-													mana2[m] = get_mana_image((hybrid_cless-10)+cless, mana[1], mana[2], mana[3], mana[4], mana[5]);
-													m++;
-												}
-												mana[e] = 0;
-											}
-										}
-										mana[d] = 0;
-									}
-								}
-								mana[c] = 0;
-							}
-						}
-						mana[b] = 0;
-					}
-				}
-				mana[a] = 0;
-			}
-			char buffer[500];
-			int pos = scnprintf(buffer, 500, " Cancel\n");
-			test_definition_t this_test;
-			for(a=1; a<m; a++){
-				for( x = 0 ;x < 6;x++){
-					mana[x] = 0;
-				}
-				int q;
-				for(q=0; q<16; q++){
-					if( mana2[a] & (1<<q) ){
-						mana[0]++;
-					}
-				}
-				for(q=16; q<21; q++){
-					if( mana2[a] & (1<<q) ){
-						mana[q-15]++;
-					}
-				}
-				mana_into_string(mana[0], mana[1], mana[2], mana[3], mana[4], mana[5], &this_test);
-				pos +=scnprintf(buffer+pos, 500-pos, " Pay %s\n", this_test.message);
-			}
-			int choice = 1;
-			if( m > 2 && player == HUMAN){
-				choice = do_dialog(player, player, card, -1, -1, buffer, 1);
-			}
-			if( choice == 0 ){
-				spell_fizzled = 1;
-				return 0;
-			}
-			for( x = 0 ;x < 6;x++){
-				mana[x] = 0;
-			}
-			int q;
-			for(q=0; q<16; q++){
-				if( mana2[choice] & (1<<q) ){
-					mana[0]++;
-				}
-			}
-			for(q=16; q<21; q++){
-				if( mana2[choice] & (1<<q) ){
-					mana[q-15]++;
-				}
-			}
-			charge_mana_multi_a(player, 0, mana[1], mana[2], mana[3], mana[4], mana[5], mana[0]+cless);
-			if( spell_fizzled != 1 ){
-				return 1;
-			}
-	return 0;
+  int selected = 0;
+  if (!IS_AI(player))
+  {
+    int page = 0;
+    for (;;)
+    {
+      int choice = do_dialog(player, player, card, -1, -1, castingCosts[page], 1);
+      if (choice == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (choice < maxPos[page])
+      {
+        selected = choice - 1 + page * 12;
+        break;
+      }
+      if (page == last_page)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      ++page;
+    }
+  }
+  charge_mana_multi_a(player, 0, manaBlack[selected], manaBlue[selected], manaGreen[selected],
+                      manaRed[selected], manaWhite[selected], manaCless[selected]);
+  return spell_fizzled != 1;
 }
 
 int card_reaper_king(int player, int card, event_t event){

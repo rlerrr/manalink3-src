@@ -15,70 +15,91 @@ static int do_flashback_with_life(int player, int card, event_t event, int color
 	return 0;
 }
 
-static int grave_recycler(int player, int card, event_t event, int crds){
+static int grave_recycler(int player, int card, event_t event, int crds)
+{
 
-	upkeep_trigger_ability(player, card, event, player);
+  upkeep_trigger_ability(player, card, event, player);
 
-	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		int sac = 1;
-		if( count_graveyard(player) >= crds){
-			test_definition_t this_test;
-			new_default_test_definition(&this_test, TYPE_ANY, "Select a card to put on bottom of your deck.");
-			int amount = 0;
-			while( amount < crds ){
-					int no_canc = 0;
-					if( amount > 0 ){
-						no_canc = 1;
-					}
-					if( new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_BOTTOM_OF_DECK, no_canc, AI_MAX_VALUE, &this_test) != -1 ){
-						amount++;
-					}
-					else{
-						break;
-					}
-			}
-			if( amount == crds ){
-				sac = 0;
-			}
-			if( sac ){
-				kill_card(player, card, KILL_SACRIFICE);
-			}
-		}
-	}
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    int sac = 1;
+    if (count_graveyard(player) >= crds)
+    {
+      test_definition_t this_test;
+      new_default_test_definition(&this_test, TYPE_ANY,
+                                  "Select a card to put on bottom of your deck.");
+      int amount = 0;
+      while (amount < crds)
+      {
+        int no_canc = 0;
+        if (amount > 0)
+        {
+          no_canc = 1;
+        }
+        if (new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_BOTTOM_OF_DECK, no_canc,
+                             AI_MAX_VALUE, &this_test) >= 0)
+        {
+          amount++;
+        }
+        else
+        {
+          break;
+        }
+      }
+      if (amount == crds)
+      {
+        sac = 0;
+      }
+    }
+    if (sac)
+    {
+      kill_card(player, card, KILL_SACRIFICE);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
-static int grave_eater(int player, int card, event_t event, int crds){
+static int grave_eater(int player, int card, event_t event, int crds)
+{
 
-	// Whenever ~ attacks or blocks, any player may exile [crds] cards from his or her graveyard. If a player does, ~ assigns no combat damage this turn.
-	if (declare_attackers_trigger(player, card, event, 0, player, card) ||
-		(blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG))
-	   ){
-		if( count_graveyard(1-player) >= crds ){
-			char buffer[100];
-			scnprintf(buffer, 100, " Remove %d cards from your grave\n Decline", crds);
-			int choice = do_dialog(1-player, player, card, -1, -1, buffer, 0);
-			if( choice == 0 ){
-				test_definition_t this_test;
-				new_default_test_definition(&this_test, TYPE_ANY, "Select a card to exile.");
-				int amount = 0;
-				while( 1 ){
-						if( new_global_tutor(1-player, 1-player, TUTOR_FROM_GRAVE, TUTOR_RFG, 0, AI_MIN_VALUE, &this_test) != -1 ){
-							amount++;
-							if( amount == crds ){
-								negate_combat_damage_this_turn(player, card, player, card, 0);
-								break;
-							}
-						}
-						else{
-							break;
-						}
-				}
-			}
-		}
-	}
-	return 0;
+  // Whenever ~ attacks or blocks, any player may exile [crds] cards from his or her graveyard. If a
+  // player does, ~ assigns no combat damage this turn.
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY ||
+      (blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG)))
+  {
+    if (count_graveyard(1 - player) >= crds)
+    {
+      char buffer[100];
+      scnprintf(buffer, 100, " Remove %d cards from your grave\n Decline", crds);
+      int choice = do_dialog(1 - player, player, card, -1, -1, buffer, 0);
+      if (choice == 0)
+      {
+        test_definition_t this_test;
+        new_default_test_definition(&this_test, TYPE_ANY, "Select a card to exile.");
+        int amount = 0;
+        while (1)
+        {
+          if (new_global_tutor(1 - player, 1 - player, TUTOR_FROM_GRAVE, TUTOR_RFG, 0, AI_MIN_VALUE,
+                               &this_test) >= 0)
+          {
+            amount++;
+            if (amount == crds)
+            {
+              negate_combat_damage_this_turn(player, card, player, card, 0);
+              break;
+            }
+          }
+          else
+          {
+            break;
+          }
+        }
+      }
+    }
+  }
+  return 0;
 }
 
 static int dream(int player, int card, event_t event, int at_random){
@@ -534,9 +555,11 @@ int card_chainers_edict(int player, int card, event_t event){
 
 }
 
-static void turn_into_black_nightmare(int source_p, int source_c, int zombo_p, int zombo_c){
-	change_color(source_p, source_c, zombo_p, zombo_c, COLOR_TEST_BLACK, CHANGE_COLOR_ADD|CHANGE_COLOR_NO_SOUND);
-	add_a_subtype(zombo_p, zombo_c, SUBTYPE_NIGHTMARE);
+static void turn_into_black_nightmare(int source_p, int source_c, int zombo_p, int zombo_c)
+{
+  change_color(source_p, source_c, zombo_p, zombo_c, COLOR_TEST_BLACK,
+               CHANGE_COLOR_SET | CHANGE_COLOR_NO_SOUND);
+  add_a_subtype_permanently(source_p, source_c, zombo_p, zombo_c, SUBTYPE_NIGHTMARE);
 }
 
 int card_chainer_dementia_master(int player, int card, event_t event){
@@ -897,24 +920,29 @@ When ~ leaves the battlefield, return the exiled card to the battlefield under i
 	return 0;
 }
 
-static int false_memories_legacy(int player, int card, event_t event){
+static int false_memories_legacy(int player, int card, event_t event)
+{
 
-	if( eot_trigger(player, card, event) ){
-		char buffer2[100];
-		scnprintf(buffer2, 100, "Select a card to exile.");
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_ANY, buffer2);
-		const int *grave = get_grave(player);
-		int amount = 0;
-		while( amount < 7 && grave[0] != -1 ){
-				if( new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_RFG, 1, AI_MIN_VALUE, &this_test) != -1 ){
-					amount++;
-				}
-		}
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (eot_trigger(player, card, event))
+  {
+    char buffer2[100];
+    scnprintf(buffer2, 100, "Select a card to exile.");
+    test_definition_t this_test;
+    new_default_test_definition(&this_test, TYPE_ANY, buffer2);
+    const int *grave = get_grave(player);
+    int amount = 0;
+    while (amount < 7 && grave[0] != -1)
+    {
+      if (new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_RFG, 1, AI_MIN_VALUE,
+                           &this_test) >= 0)
+      {
+        amount++;
+      }
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_false_memories(int player, int card, event_t event){
@@ -1515,63 +1543,72 @@ int card_laquatus_champion(int player, int card, event_t event)
   return result;
 }
 
-static int last_laugh_effect(int player, int card, event_t event){
+static int last_laugh_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_LAST_LAUGH ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_LAST_LAUGH)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						return 0;
-					}
-				}
-				count_for_gfp_ability(player, card, event, ANYBODY, TYPE_PERMANENT, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE1(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        count_for_gfp_ability(player, card, event, ANYBODY, TYPE_PERMANENT, NULL);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			new_damage_all(player, card, ANYBODY, amount, NDA_ALL_CREATURES | NDA_PLAYER_TOO, NULL);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    for (; amount > 0; --amount)
+      new_damage_all(player, card, ANYBODY, 1, NDA_ALL_CREATURES | NDA_PLAYER_TOO, NULL);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_last_laugh(int player, int card, event_t event){

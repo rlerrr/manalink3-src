@@ -1665,55 +1665,67 @@ int hoarding_dragon_legacy(int player, int card, event_t event){
 	return 0;
 }
 
-int card_hoarding_dragon(int player, int card, event_t event){
-/* CARD_ID_HOARDING_DRAGON	11130
-Hoarding Dragon	|3|R|R
-Creature - Dragon 4/4
-Flying
-When ~ enters the battlefield, you may search your library for an artifact card, exile it, then shuffle your library.
-When ~ dies, you may put the exiled card into its owner's hand. */
+int card_hoarding_dragon(int player, int card, event_t event)
+{
+  /* CARD_ID_HOARDING_DRAGON	11130
+  Hoarding Dragon	|3|R|R
+  Creature - Dragon 4/4
+  Flying
+  When ~ enters the battlefield, you may search your library for an artifact card, exile it, then
+  shuffle your library. When ~ dies, you may put the exiled card into its owner's hand. */
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+  etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-	if( event == EVENT_ETB_ABILITY ){
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_ARTIFACT, "Select an artifact card.");
-		int selected = new_select_a_card(player, player, TUTOR_FROM_DECK, TUTOR_RFG, 0, AI_MAX_VALUE, &this_test);
-		if( selected > -1 ){
-			int leg, idx;
-			exiledby_remember(player, card, player, deck_ptr[player][selected], &leg, &idx);
-			rfg_card_in_deck(player, selected);
-			get_card_instance(player, card)->info_slot++;
-		}
-	}
+  if (event == EVENT_ETB_ABILITY)
+  {
+    test_definition_t this_test;
+    new_default_test_definition(&this_test, TYPE_ARTIFACT, "Select an artifact card.");
+    int selected =
+        new_select_a_card(player, player, TUTOR_FROM_DECK, TUTOR_RFG, 0, AI_MAX_VALUE, &this_test);
+    if (selected > -1)
+    {
+      int leg, idx;
+      exiledby_remember(player, card, player, deck_ptr[player][selected], &leg, &idx);
+      rfg_card_in_deck(player, selected);
+      get_card_instance(player, card)->info_slot++;
+    }
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(player, card) ){
-		if( is_this_dying(player, card) && get_card_instance(player, card)->info_slot ){
-			int legacy = create_legacy_effect(player, card, &hoarding_dragon_legacy);
-			card_instance_t *instance = get_card_instance(player, legacy);
-			instance->targets[0].card = exiledby_detach(player, card);
-			instance->targets[11].player = 1;
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(player, card))
+  {
+    if (is_this_dying(player, card) && get_card_instance(player, card)->info_slot &&
+        !check_for_death_trigger_removal(player, card))
+    {
+      int legacy = create_legacy_effect(player, card, &hoarding_dragon_legacy);
+      card_instance_t *instance = get_card_instance(player, legacy);
+      instance->targets[0].card = exiledby_detach(player, card);
+      instance->targets[11].player = 1;
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
-static int effect_incite(int player, int card, event_t event){
+static int effect_incite(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( event == EVENT_SET_COLOR && affect_me(instance->damage_target_player, instance->damage_target_card) ){
-			event_result |= COLOR_TEST_RED;
-		}
-		attack_if_able(instance->damage_target_player, instance->damage_target_card, event);
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (event == EVENT_SET_COLOR &&
+        affect_me(instance->damage_target_player, instance->damage_target_card))
+    {
+      event_result = COLOR_TEST_RED;
+    }
+    attack_if_able(instance->damage_target_player, instance->damage_target_card, event);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_incite(int player, int card, event_t event){

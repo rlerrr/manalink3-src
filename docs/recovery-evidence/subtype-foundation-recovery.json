@@ -1,0 +1,1606 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "has_new_types",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x26722f0",
+          "end": "0x2672353",
+          "bytes_sha256": "520628adfab2a610024e1e9b15db97b0d79ac76393058b18468f2d247ca1f1a4",
+          "raw_export": ".recovery/decompiled-subtype-foundation/26722f0.c",
+          "raw_export_sha256": "c31c6b7fb05592cf2420e87cdec090cdd1ceefc105fbf66deb7a529aef3babfe"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "1d1252618eef9e297aeae74c1363beeb8945af9a0ecbfe7bab60b8a64f688abe"
+    },
+    {
+      "name": "get_most_common_subtype_in_zone",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2672450",
+          "end": "0x267253d",
+          "bytes_sha256": "b40518dfbaf7ebb21fbf8ceb81406bcc1f84ab92f906bef5e86b2026252d73d2",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2672450.c",
+          "raw_export_sha256": "77f72ffd131a939e135b0d6f5422d72e0dfc0eff764e27bf64d45668dfdc0002"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "5211287a20dba188b7a246480615fb125f2b12dfb63c96a1c997d201f9909270"
+    },
+    {
+      "name": "is_changeling",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2672540",
+          "end": "0x26725df",
+          "bytes_sha256": "0305c6a2a293d4b18a34948c50aeb3bd99e9c50fbe7f7e9ef0f23b6e475d69bb",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2672540.c",
+          "raw_export_sha256": "5c84b1ae209d81a103f4a38e2c815e89dd66c34a91b6cd7873309e30f1993896"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "c13f7ed4df0cfd63c05b9a7fd6246240ff7ad2302d0a4f5cb0feef4751e6ec1a"
+    },
+    {
+      "name": "add_or_remove_types_legacy_impl",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x26725e0",
+          "end": "0x26726e8",
+          "bytes_sha256": "167dcab9ac7960e049b4a59121d310673c060207fcdf755ec53a02965d2c68a2",
+          "raw_export": ".recovery/decompiled-subtype-foundation/26725e0.c",
+          "raw_export_sha256": "461859ef1bb6016bc4ff878dac68e0845252e0a6dfe349a4130a398b6b8e8558"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "5e2b5f704d4a6b421dc9d037bb31a08cdcd0511152a802e0b1ba2d2020910499"
+    },
+    {
+      "name": "from_hardcodedsubtype_to_subtype",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2672820",
+          "end": "0x2672836",
+          "bytes_sha256": "63ad9ced05fcd91f16c80528cdc9767d0ef1977a87c025ae8460c8b73a1fece3",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2672820.c",
+          "raw_export_sha256": "dc91e3c666b38eac63186a6a9d02c8b93e719d7dab002ebb271416dba027b157"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "1e04cf590c5e4fe82a1a6070f6b9a872095b942f8cac842383b409534e918ab9"
+    },
+    {
+      "name": "is_creature_type",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2672840",
+          "end": "0x2672856",
+          "bytes_sha256": "233f54cc30e39d35f94f51037630b6ae17e7273df3bd0c872b745eba5940ea3e",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2672840.c",
+          "raw_export_sha256": "d64d67c1fcebdfde51ee3e93cb7457bf4e3b9ca54249562622ca6091aea8b982"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "078016365305fd723578a961a6bbc8c5ef9f63d052d9e486f8f9e3bebfdb619b"
+    },
+    {
+      "name": "fx_change_types",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2672980",
+          "end": "0x2672d84",
+          "bytes_sha256": "f13693efbd2ac451e2bbabc3307085b23a6c37a02acde41e4886fbc698e2fbe8",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2672980.c",
+          "raw_export_sha256": "a9af08f51b274b94eb4db9dbdc06c7783f8ce6b456de89ef4e1edad518df2d0a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b148596d5213f0e22d7c03b854c4c7f61d443d31178b04d788ddf2e00b17b50f"
+    },
+    {
+      "name": "force_a_subtype_until_eot",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2672fd0",
+          "end": "0x2673033",
+          "bytes_sha256": "06f554cfca9010688a0f6d6148459671139595c137b0d5ca32fa0fb332206480",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2672fd0.c",
+          "raw_export_sha256": "36ba58a4120ad6f319bdb0fd265804787335f660ba04e433130a05b1f256dfda"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "b36c64abde013a2ca9c636e5204c5f6a82d2bab6897f84d7881127fe571f1ce6"
+    },
+    {
+      "name": "get_subtypes",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2673410",
+          "end": "0x2673574",
+          "bytes_sha256": "f03c1cc3c77dfef01924ee3187b7c6ee566336eb02304c35c57e426eba2e4016",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2673410.c",
+          "raw_export_sha256": "623b18f3be454e97090719835ada35d3dc644fbf6b455cebf59eb507ca7fd041"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "186ef19e20a2133e4b15353608fcf9b6137d36d2812ee7af448dce6832ef1f6e"
+    },
+    {
+      "name": "has_creature_type",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x26738e0",
+          "end": "0x2673945",
+          "bytes_sha256": "9dc7d919eb748dff90d11ee0f028d74ece75c7e96a9106476466c480fc484312",
+          "raw_export": ".recovery/decompiled-subtype-foundation/26738e0.c",
+          "raw_export_sha256": "ba53dd6708f5e815d66342edafd70e8ebd60565f9e7461f038542e633d284eff"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "034ff6697f911aa9e21dbdb2618c343738325f88c048fb1d7a23d7e0d9c28265"
+    },
+    {
+      "name": "is_tribal",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2673950",
+          "end": "0x2673964",
+          "bytes_sha256": "78ca23c631b61a15c6e809ecd1576f564bea77d1290a95ccda254adc589ec6bf",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2673950.c",
+          "raw_export_sha256": "3be56947338bad467e5c6ce421a65d5834e1c1f0d728ce0124712736c68dbd8d"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "77c9e08b0a563460272cfe232a9aacedc7d2ac25d9eecea65c08c028e4286fcf"
+    },
+    {
+      "name": "shares_creature_subtype",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2673970",
+          "end": "0x2673b88",
+          "bytes_sha256": "94ec61224a69333f144eed365f9bf32920e96ea859a7b3d0d8f421e40f1aeabb",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2673970.c",
+          "raw_export_sha256": "ba67ed00cbe65ee5dbed65db8829f08abe4526e0260ab94fb646e0e32feef00e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0335e11ce64cbb53f2406775a70fc0cd6547e0cbdeb51de4b9dde45fb082872f"
+    },
+    {
+      "name": "target_player_sacrifices_a_subtype",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2673da0",
+          "end": "0x2673e13",
+          "bytes_sha256": "529157a6552697cd5c587f59c55f0404bd40a6229ee67aaf553324fb838e7a9e",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2673da0.c",
+          "raw_export_sha256": "65a8ecfbfbc14228a8db0847a828b8ecbf5897a0339dffb7f4bead2a9bbb5d4b"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "0aa896481da31d9b08573fbef04337acf292d6280e8d33c39202b0022c8b3367"
+    },
+    {
+      "name": "count_untapped_nonsick_subtype",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2673e20",
+          "end": "0x2673f90",
+          "bytes_sha256": "fd1d157fdfaa1b5b3a8f56fa1a59416f2b6ef88aeb2bc95d94e1dabb495e9322",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2673e20.c",
+          "raw_export_sha256": "73d097d53e75052b385a2f93b821667cbb370721518ef7dbb47d017c0e461b39"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "0f258bc6e296bbb7f8aa4100cd267738a1da085fa1ac2a144bdfb34474182653"
+    },
+    {
+      "name": "check_for_untapped_nonsick_subtype",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2673f90",
+          "end": "0x26740d7",
+          "bytes_sha256": "a9180e6f9cebd6d42d23afc42fa14d41509887557f967877584205ddcab6bb07",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2673f90.c",
+          "raw_export_sha256": "e72a54d682a5cd3f5a19be622b12661d5c4be8c6d53f7b90eca9ea63ab4edff8"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "a8e2fd688e9e26a0c7bb178493200d613fe206630bdc4ff89ae5393acbce9552"
+    },
+    {
+      "name": "count_untapped_subtype",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x26740e0",
+          "end": "0x2674219",
+          "bytes_sha256": "4339411b7709e1026030fd9586dc73cb099dbc8618d30d911316c05e3a10e7a6",
+          "raw_export": ".recovery/decompiled-subtype-foundation/26740e0.c",
+          "raw_export_sha256": "6acd941fec576d5587c18034460f84fed16b86997039435c5295de9758cdbab2"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "c5fd9d1acc1c28cff6e0903db522799eea48b0da773243f050827e9a8d7cba17"
+    },
+    {
+      "name": "is_subtype_in_hand",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2674220",
+          "end": "0x267428c",
+          "bytes_sha256": "8a475389f0a32bd1253e0344b720effafa964cc0b2db5da64c8129e5d81a6f6b",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2674220.c",
+          "raw_export_sha256": "fd07966ca733584840ecac0d9d887f789b01e52b87c2eb280fe77332f2f48c0e"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "4320181a72cc0b3c01b644b3e5b5665cd2e790587ee16027265989c57b23c8fc"
+    },
+    {
+      "name": "is_subtype_dead",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2674290",
+          "end": "0x26743d3",
+          "bytes_sha256": "0b88e908f73cf50f62577bb3a2149d4d0f88abbe96b2b2bd48e4edef96ec402a",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2674290.c",
+          "raw_export_sha256": "d029e468185a3e1118aa4d5b2c06566f5cbfa5f08b5c74b72e29976f4e1093f7"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "322dcdff5df5094192f52e1eba05813f4054e3923ec558f2b278c4fbfae742f7"
+    },
+    {
+      "name": "subtype_deals_damage",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x26743e0",
+          "end": "0x26746ec",
+          "bytes_sha256": "08bec64b3a864a8ee4e6d672772b0a99d77c33fdf326ad748cbe6f51884f70da",
+          "raw_export": ".recovery/decompiled-subtype-foundation/26743e0.c",
+          "raw_export_sha256": "d0d15c7c351c0bf88cd86d30d87a308f24f16c577661862817a20f738b2a492a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5e8fbd34c7033252289a9271924787b062907b2e88a1bcc5c83fca810221711e"
+    },
+    {
+      "name": "init_subtype_text",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x26746f0",
+          "end": "0x267495b",
+          "bytes_sha256": "bea123becf3138bffdd374db92a986dc8adf101f66d14e257e42e43c06438d9d",
+          "raw_export": ".recovery/decompiled-subtype-foundation/26746f0.c",
+          "raw_export_sha256": "d3b796e5f0cf4d5a9d17e7af0f46bb44954080f8f4f4f215256cd8ace34a3be4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4b1f3b2ccefb7685ba8c6d3d821cada1e9ec75c9e1792f4a5ac1f91e03d9b9f7"
+    },
+    {
+      "name": "raw_get_subtype_text",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2674960",
+          "end": "0x2674ad7",
+          "bytes_sha256": "659cd7a8c894458e5410d19159ddffcd4aea523193d19717e5c7af403f18ca9d",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2674960.c",
+          "raw_export_sha256": "27981faa5e57a8b5ba22abdafd83f24453c752d7ec4d94ba29ba17d9a99b5009"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "cc73993319c25bc7be8723bea69585e5f08f2dcd8402b75222ed1c604bea142a"
+    },
+    {
+      "name": "select_a_subtype_impl",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2674ae0",
+          "end": "0x2675844",
+          "bytes_sha256": "3b7998844b3ca59675983a0164c204e03fa6bc1cd13f58a454c8d19a1ad3c194",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2674ae0.c",
+          "raw_export_sha256": "a071da69f8314af8dd6b38262800e3b74d5aaa7252b57751b11653e5c993d6d3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "f13946a1e66a2f5e505db95d44a007647d49f194f3493e4373395cede672b44d"
+    },
+    {
+      "name": "select_a_subtype",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2675850",
+          "end": "0x26758d0",
+          "bytes_sha256": "f88077d6e357131a8eab0fce08f0c0d967f30e363225e239c2d70f2c6071cc8e",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2675850.c",
+          "raw_export_sha256": "9995c01b0786126ffc219da4842a2f7ee11ff97f5e2958b9497bff6f10dae697"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "edfbda05d1831b8f515f3922c25fbf2c883956684a023aacd218024460681299"
+    },
+    {
+      "name": "select_a_subtype_full_choice",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x26758d0",
+          "end": "0x26758f3",
+          "bytes_sha256": "553d72392fe528df6bb8f87bd14237c6284111f6e19447ceb2a939a2bf42659e",
+          "raw_export": ".recovery/decompiled-subtype-foundation/26758d0.c",
+          "raw_export_sha256": "7a8b145cc3247ef1ce1f8540a6f4649575bbab0763ed695826951d06d0ee75a9"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "501151de4ed98a3e8b1e84a4162b3babcaeba222d6d08b3eaa1db9a9c36f84fb"
+    },
+    {
+      "name": "get_subtype_text",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2675900",
+          "end": "0x2675a1d",
+          "bytes_sha256": "92e8075832f65dff0e2c7029423e91eb7c862dca5f9d96e5936d597d96eb256b",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2675900.c",
+          "raw_export_sha256": "7453b9b758a9fbad2c104e14111dac83f0f57db1465dca6be50b7f87f70f9431"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "bd4019cd969446bd5b8644e20f8aa27c0821881f162fc6de3d5971d61d9b56c1"
+    },
+    {
+      "name": "animate_self",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2675a20",
+          "end": "0x2675a88",
+          "bytes_sha256": "d486e15fd2b463f9f42e9a35f2196f9fd99f94146745c910ebf4d2599555dba1",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2675a20.c",
+          "raw_export_sha256": "c35d5a672ed4885e1df8ff4d25842f19e52eb699f9a06679952eb055cb2751a4"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "184e5225e875cf19b84463922b4125f2b9255ff41e082373487cb647b07e9479"
+    },
+    {
+      "name": "animate_other",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2675b00",
+          "end": "0x2675b8d",
+          "bytes_sha256": "1752e77eab238c9b7d7f6400bb39f88cf5929d648eef2aed4af805e8c694a3d1",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2675b00.c",
+          "raw_export_sha256": "09e3d4b6c6dac88040d28fd1f77aabbc1633488c4af4dbe7b20b0b75a0536857"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "720b0a1a07b75f87df53247b3b81bed30bdbc768d373f096aba764b656e3be96"
+    },
+    {
+      "name": "has_subtype_if_animated_self",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2675c20",
+          "end": "0x2675c67",
+          "bytes_sha256": "a02a5573ed5073f26146e1f1ebf2397b30300b31d975a8731e49600fba26eec9",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2675c20.c",
+          "raw_export_sha256": "56cfe0ab2f30fce27da61fb6d9fd9ebcc1ea336849e4f75aa4ae141cf0665455"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "9a5de8a2939d18ba31decefd14dda5fcadf9e7c1b22380ec44c0727cc3281e70"
+    },
+    {
+      "name": "has_subtypes_if_animated_self",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2675c70",
+          "end": "0x2675cbb",
+          "bytes_sha256": "405d6e6b7b36f61ba7c652417ae6e44a8594a027d3af53f388501e80682aed7d",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2675c70.c",
+          "raw_export_sha256": "92273d46e03049229a416762b069654ff292d470f0fbf4b13183b8c79c152a31"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "662394f139773fb36d9ed18c5415a4cd5ac85b05dd9ba422de4935eb783f64fa"
+    },
+    {
+      "name": "count_all_other_creatures_that_shares_a_creature_type_with_me",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2675cc0",
+          "end": "0x2675d6a",
+          "bytes_sha256": "7f38a42c4ca62f263806ae341a437f4c67e3f6057e42c5c7d6570cf9b13259df",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2675cc0.c",
+          "raw_export_sha256": "cb218fce1c6febcfb084dc907d6f24094e3b74abdce1cf86d51311ca540f3e14"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "766b054419dcd56eddb06f8350733d88a538fc06d85d35f630d5f9d1ff32a504"
+    }
+  ],
+  "support_helpers": [
+    {
+      "name": "card_tajuru_paragon",
+      "source": "cards/zendikar_rising.c",
+      "native_ranges": [
+        {
+          "address": "0x230f070",
+          "end": "0x230f1c7",
+          "bytes_sha256": "b562b69decd06398fb569390240eca074aea6222d836919bdae8999cb349f26a",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/230f070.c",
+          "raw_export_sha256": "ce1e2e51ae25fcbc9c65da86083c4911973cc0237060d8380cefd3d9e4c5e2ac"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "0aa4bb041556ae7e6735145941009b9237483419d78d5a678904476f6b6288c5"
+    },
+    {
+      "name": "card_duplicant",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x253c530",
+          "end": "0x253c744",
+          "bytes_sha256": "974c714e0f1bc4ccd7d514c679e6d48b7ba53c33ef8035b70d4004015d650094",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/253c530.c",
+          "raw_export_sha256": "f50976887fa1349fb5ee698a0c576673033ba6d960c60343f64a556149759a9c"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "9597031c44f638437dc857c5b7fef3716b890b1e98bdfd1cf413297e0df58f3b"
+    },
+    {
+      "name": "shares_creature_subtype_by_iid",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2673b90",
+          "end": "0x2673d93",
+          "bytes_sha256": "61ee62f9c925d2c30293c56d4dccc3f742216c11dd0296397c300e37321b5fc1",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/2673b90.c",
+          "raw_export_sha256": "6fe56493399b8a03881e48668e363385328846f48dc794b690555b6e72d11a61"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "9cb5597395d0cc4ea77e8c8f179b1be123dbd0ccfc9940fdffe6a53f92747473"
+    },
+    {
+      "name": "has_subtype_by_id",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x26736e0",
+          "end": "0x26738aa",
+          "bytes_sha256": "9dc8b78cc1b5bfa0deccec8718887c38903419c4d896d5be0e3392602150c07b",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/26736e0.c",
+          "raw_export_sha256": "d6a8948385ecdfb6904644b1a41b288c571b9dc10d7ad1713fcee9fd5f7e56b0"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "f1cff235bb8e278f55e54bd8a9c0e397a87c32ee0013d32d233a846ee467c050"
+    },
+    {
+      "name": "get_subtypes_by_csvid",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2673320",
+          "end": "0x2673406",
+          "bytes_sha256": "fb25989415c22c4684c79d3cd6fa186ec2edb6de8853b7c568199997f74989e5",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/2673320.c",
+          "raw_export_sha256": "cd7254fba0bcd692ee3175db2b20918caef52d4fcdb8118688962073ea97f960"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "d814e21c03285963bcaf12ff879c2001cbef5d3c0cc156bf5e4fa060f6765e90"
+    },
+    {
+      "name": "has_subtype",
+      "source": "functions/has_creature_type.c",
+      "native_ranges": [
+        {
+          "address": "0x2673580",
+          "end": "0x26736db",
+          "bytes_sha256": "a4396d2adc4a99f84d442fa7d6e4139638b2011f0b8fb20ac8449ab47b4c4d55",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/2673580.c",
+          "raw_export_sha256": "85daa27f2bea73058c3e88bbeddee9f2b66f914fa8515a72bfadbeb383fe86b9"
+        },
+        {
+          "address": "0x26738b0",
+          "end": "0x26738dc",
+          "bytes_sha256": "ac3a6456b08b4e24670beebec32b0d3796ff511f16f46a5869570ab28f617201",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/26738b0.c",
+          "raw_export_sha256": "9ce42c1d5e86f0559fe4bc7c6a2c16029ee6dacf11fd0b58f9bbbd2eaf73eae8"
+        }
+      ],
+      "method": "retained_source_reviewed_after_native_enum_and_layout_restoration",
+      "source_changed": false,
+      "definition_sha256": "35204e69f56aac4a28dcbbedaf4882fb883a8b8595273d7c42805ea86a457add"
+    }
+  ],
+  "helper_definitions": 30,
+  "new_native_helper_ranges": 30,
+  "changed_helper_definitions": 5,
+  "native_types": {
+    "subtype_t": {
+      "die_offset": "0x634cf7a",
+      "byte_size": 4,
+      "values": {
+        "SUBTYPE_INVALID": 0,
+        "SUBTYPE_MIN_CREATURE_SUBTYPE": 1,
+        "SUBTYPE_ALLY": 1,
+        "SUBTYPE_ANGEL": 2,
+        "SUBTYPE_ANTEATER": 3,
+        "SUBTYPE_ANTELOPE": 4,
+        "SUBTYPE_APE": 5,
+        "SUBTYPE_ARCHER": 6,
+        "SUBTYPE_ARCHON": 7,
+        "SUBTYPE_ARTIFICER": 8,
+        "SUBTYPE_ASSASSIN": 9,
+        "SUBTYPE_ASSEMBLY_WORKER": 10,
+        "SUBTYPE_ATOG": 11,
+        "SUBTYPE_AUROCHS": 12,
+        "SUBTYPE_AVATAR": 13,
+        "SUBTYPE_BADGER": 14,
+        "SUBTYPE_BARBARIAN": 15,
+        "SUBTYPE_BASILISK": 16,
+        "SUBTYPE_BAT": 17,
+        "SUBTYPE_BEAR": 18,
+        "SUBTYPE_BEAST": 19,
+        "SUBTYPE_BEEBLE": 20,
+        "SUBTYPE_BERSERKER": 21,
+        "SUBTYPE_BIRD": 22,
+        "SUBTYPE_BLINKMOTH": 23,
+        "SUBTYPE_BOAR": 24,
+        "SUBTYPE_BRINGER": 25,
+        "SUBTYPE_BRUSHWAGG": 26,
+        "SUBTYPE_CAMARID": 27,
+        "SUBTYPE_CAMEL": 28,
+        "SUBTYPE_CARIBOU": 29,
+        "SUBTYPE_CARRIER": 30,
+        "SUBTYPE_CAT": 31,
+        "SUBTYPE_CENTAUR": 32,
+        "SUBTYPE_CEPHALID": 33,
+        "SUBTYPE_CHIMERA": 34,
+        "SUBTYPE_CITIZEN": 35,
+        "SUBTYPE_CLERIC": 36,
+        "SUBTYPE_COCKATRICE": 37,
+        "SUBTYPE_CONSTRUCT": 38,
+        "SUBTYPE_COWARD": 39,
+        "SUBTYPE_CRAB": 40,
+        "SUBTYPE_CROCODILE": 41,
+        "SUBTYPE_CYCLOPS": 42,
+        "SUBTYPE_DAUTHI": 43,
+        "SUBTYPE_DEMON": 44,
+        "SUBTYPE_DESERTER": 45,
+        "SUBTYPE_DEVIL": 46,
+        "SUBTYPE_DJINN": 47,
+        "SUBTYPE_DRAGON": 48,
+        "SUBTYPE_DRAKE": 49,
+        "SUBTYPE_DREADNOUGHT": 50,
+        "SUBTYPE_DRONE": 51,
+        "SUBTYPE_DRUID": 52,
+        "SUBTYPE_DRYAD": 53,
+        "SUBTYPE_DWARF": 54,
+        "SUBTYPE_EFREET": 55,
+        "SUBTYPE_ELDER": 56,
+        "SUBTYPE_ELDRAZI": 57,
+        "SUBTYPE_ELEMENTAL": 58,
+        "SUBTYPE_ELEPHANT": 59,
+        "SUBTYPE_ELF": 60,
+        "SUBTYPE_ELK": 61,
+        "SUBTYPE_EYE": 62,
+        "SUBTYPE_FAERIE": 63,
+        "SUBTYPE_FERRET": 64,
+        "SUBTYPE_FISH": 65,
+        "SUBTYPE_FLAGBEARER": 66,
+        "SUBTYPE_FOX": 67,
+        "SUBTYPE_FROG": 68,
+        "SUBTYPE_FUNGUS": 69,
+        "SUBTYPE_GARGOYLE": 70,
+        "SUBTYPE_GERM": 71,
+        "SUBTYPE_GIANT": 72,
+        "SUBTYPE_GNOME": 73,
+        "SUBTYPE_GOAT": 74,
+        "SUBTYPE_GOBLIN": 75,
+        "SUBTYPE_GOLEM": 76,
+        "SUBTYPE_GORGON": 77,
+        "SUBTYPE_GRAVEBORN": 78,
+        "SUBTYPE_GREMLIN": 79,
+        "SUBTYPE_GRIFFIN": 80,
+        "SUBTYPE_HAG": 81,
+        "SUBTYPE_HARPY": 82,
+        "SUBTYPE_HELLION": 83,
+        "SUBTYPE_HIPPO": 84,
+        "SUBTYPE_HIPPOGRIFF": 85,
+        "SUBTYPE_HOMARID": 86,
+        "SUBTYPE_HOMUNCULUS": 87,
+        "SUBTYPE_HORROR": 88,
+        "SUBTYPE_HORSE": 89,
+        "SUBTYPE_DOG": 90,
+        "SUBTYPE_HUMAN": 91,
+        "SUBTYPE_HYDRA": 92,
+        "SUBTYPE_HYENA": 93,
+        "SUBTYPE_ILLUSION": 94,
+        "SUBTYPE_IMP": 95,
+        "SUBTYPE_INCARNATION": 96,
+        "SUBTYPE_INSECT": 97,
+        "SUBTYPE_JELLYFISH": 98,
+        "SUBTYPE_JUGGERNAUT": 99,
+        "SUBTYPE_KAVU": 100,
+        "SUBTYPE_KIRIN": 101,
+        "SUBTYPE_KITHKIN": 102,
+        "SUBTYPE_KNIGHT": 103,
+        "SUBTYPE_KOBOLD": 104,
+        "SUBTYPE_KOR": 105,
+        "SUBTYPE_KRAKEN": 106,
+        "SUBTYPE_LAMMASU": 107,
+        "SUBTYPE_LEECH": 108,
+        "SUBTYPE_LEVIATHAN": 109,
+        "SUBTYPE_LHURGOYF": 110,
+        "SUBTYPE_LICID": 111,
+        "SUBTYPE_LIZARD": 112,
+        "SUBTYPE_MANTICORE": 113,
+        "SUBTYPE_MASTICORE": 114,
+        "SUBTYPE_MERCENARY": 115,
+        "SUBTYPE_MERFOLK": 116,
+        "SUBTYPE_METATHRAN": 117,
+        "SUBTYPE_MINION": 118,
+        "SUBTYPE_MINOTAUR": 119,
+        "SUBTYPE_MONGER": 120,
+        "SUBTYPE_MONGOOSE": 121,
+        "SUBTYPE_MONK": 122,
+        "SUBTYPE_MOONFOLK": 123,
+        "SUBTYPE_MUTANT": 124,
+        "SUBTYPE_MYR": 125,
+        "SUBTYPE_MYSTIC": 126,
+        "SUBTYPE_NAUTILUS": 127,
+        "SUBTYPE_NEPHILIM": 128,
+        "SUBTYPE_NIGHTMARE": 129,
+        "SUBTYPE_NIGHTSTALKER": 130,
+        "SUBTYPE_NINJA": 131,
+        "SUBTYPE_NOGGLE": 132,
+        "SUBTYPE_NOMAD": 133,
+        "SUBTYPE_OCTOPUS": 134,
+        "SUBTYPE_OGRE": 135,
+        "SUBTYPE_OOZE": 136,
+        "SUBTYPE_ORB": 137,
+        "SUBTYPE_ORC": 138,
+        "SUBTYPE_ORGG": 139,
+        "SUBTYPE_OUPHE": 140,
+        "SUBTYPE_OX": 141,
+        "SUBTYPE_OYSTER": 142,
+        "SUBTYPE_PEGASUS": 143,
+        "SUBTYPE_PENTAVITE": 144,
+        "SUBTYPE_PEST": 145,
+        "SUBTYPE_PHELDDAGRIF": 146,
+        "SUBTYPE_PHOENIX": 147,
+        "SUBTYPE_PINCHER": 148,
+        "SUBTYPE_PIRATE": 149,
+        "SUBTYPE_PLANT": 150,
+        "SUBTYPE_PRAETOR": 151,
+        "SUBTYPE_PRISM": 152,
+        "SUBTYPE_RABBIT": 153,
+        "SUBTYPE_RAT": 154,
+        "SUBTYPE_REBEL": 155,
+        "SUBTYPE_REFLECTION": 156,
+        "SUBTYPE_RHINO": 157,
+        "SUBTYPE_RIGGER": 158,
+        "SUBTYPE_ROGUE": 159,
+        "SUBTYPE_SALAMANDER": 160,
+        "SUBTYPE_SAMURAI": 161,
+        "SUBTYPE_SAND": 162,
+        "SUBTYPE_SAPROLING": 163,
+        "SUBTYPE_SATYR": 164,
+        "SUBTYPE_SCARECROW": 165,
+        "SUBTYPE_SCORPION": 166,
+        "SUBTYPE_SCOUT": 167,
+        "SUBTYPE_SERF": 168,
+        "SUBTYPE_SERPENT": 169,
+        "SUBTYPE_SHADE": 170,
+        "SUBTYPE_SHAMAN": 171,
+        "SUBTYPE_SHAPESHIFTER": 172,
+        "SUBTYPE_SHEEP": 173,
+        "SUBTYPE_SIREN": 174,
+        "SUBTYPE_SKELETON": 175,
+        "SUBTYPE_SLITH": 176,
+        "SUBTYPE_SLIVER": 177,
+        "SUBTYPE_SLUG": 178,
+        "SUBTYPE_SNAKE": 179,
+        "SUBTYPE_SOLDIER": 180,
+        "SUBTYPE_SOLTARI": 181,
+        "SUBTYPE_SPAWN": 182,
+        "SUBTYPE_SPECTER": 183,
+        "SUBTYPE_SPELLSHAPER": 184,
+        "SUBTYPE_SPHINX": 185,
+        "SUBTYPE_SPIDER": 186,
+        "SUBTYPE_SPIKE": 187,
+        "SUBTYPE_SPIRIT": 188,
+        "SUBTYPE_SPLINTER": 189,
+        "SUBTYPE_SPONGE": 190,
+        "SUBTYPE_SQUID": 191,
+        "SUBTYPE_SQUIRREL": 192,
+        "SUBTYPE_STARFISH": 193,
+        "SUBTYPE_SURRAKAR": 194,
+        "SUBTYPE_SURVIVOR": 195,
+        "SUBTYPE_TETRAVITE": 196,
+        "SUBTYPE_THALAKOS": 197,
+        "SUBTYPE_THOPTER": 198,
+        "SUBTYPE_THRULL": 199,
+        "SUBTYPE_TREEFOLK": 200,
+        "SUBTYPE_TRISKELAVITE": 201,
+        "SUBTYPE_TROLL": 202,
+        "SUBTYPE_TURTLE": 203,
+        "SUBTYPE_UNICORN": 204,
+        "SUBTYPE_VAMPIRE": 205,
+        "SUBTYPE_VEDALKEN": 206,
+        "SUBTYPE_VIASHINO": 207,
+        "SUBTYPE_VOLVER": 208,
+        "SUBTYPE_WALL": 209,
+        "SUBTYPE_WARRIOR": 210,
+        "SUBTYPE_WEIRD": 211,
+        "SUBTYPE_WEREWOLF": 212,
+        "SUBTYPE_WHALE": 213,
+        "SUBTYPE_WIZARD": 214,
+        "SUBTYPE_WOLF": 215,
+        "SUBTYPE_WOLVERINE": 216,
+        "SUBTYPE_WOMBAT": 217,
+        "SUBTYPE_WORM": 218,
+        "SUBTYPE_WRAITH": 219,
+        "SUBTYPE_WURM": 220,
+        "SUBTYPE_YETI": 221,
+        "SUBTYPE_ZOMBIE": 222,
+        "SUBTYPE_ZUBERA": 223,
+        "SUBTYPE_ADVISOR": 224,
+        "SUBTYPE_LAMIA": 225,
+        "SUBTYPE_NYMPH": 226,
+        "SUBTYPE_SABLE": 227,
+        "SUBTYPE_HEAD": 228,
+        "SUBTYPE_GOD": 229,
+        "SUBTYPE_REVELER": 230,
+        "SUBTYPE_NAGA": 231,
+        "SUBTYPE_PROCESSOR": 232,
+        "SUBTYPE_SCION": 233,
+        "SUBTYPE_MOLE": 234,
+        "SUBTYPE_PILOT": 235,
+        "SUBTYPE_AETHERBORN": 236,
+        "SUBTYPE_MONKEY": 237,
+        "SUBTYPE_SERVO": 238,
+        "SUBTYPE_JACKAL": 239,
+        "SUBTYPE_DINOSAUR": 240,
+        "SUBTYPE_TRILOBITE": 241,
+        "SUBTYPE_CHICKEN": 242,
+        "SUBTYPE_BRAINIAC": 243,
+        "SUBTYPE_CYBORG": 244,
+        "SUBTYPE_GAMER": 245,
+        "SUBTYPE_KILLBOT": 246,
+        "SUBTYPE_SPY": 247,
+        "SUBTYPE_VILLAIN": 248,
+        "SUBTYPE_AZRA": 249,
+        "SUBTYPE_PANGOLIN": 250,
+        "SUBTYPE_EGG": 251,
+        "SUBTYPE_AUTOBOT": 252,
+        "SUBTYPE_EXPANSION_SYMBOL": 253,
+        "SUBTYPE_ARMY": 254,
+        "SUBTYPE_NOBLE": 255,
+        "SUBTYPE_WARLOCK": 256,
+        "SUBTYPE_SCULPTURE": 257,
+        "SUBTYPE_MOUSE": 258,
+        "SUBTYPE_PEASANT": 259,
+        "SUBTYPE_DEMIGOD": 260,
+        "SUBTYPE_TENTACLE": 261,
+        "SUBTYPE_SHARK": 262,
+        "SUBTYPE_OTTER": 263,
+        "SUBTYPE_PHYREXIAN": 264,
+        "SUBTYPE_RANGER": 265,
+        "SUBTYPE_FRACTAL": 266,
+        "SUBTYPE_INKLING": 267,
+        "SUBTYPE_BARD": 268,
+        "SUBTYPE_BEHOLDER": 269,
+        "SUBTYPE_GNOLL": 270,
+        "SUBTYPE_HALFLING": 271,
+        "SUBTYPE_HAMSTER": 272,
+        "SUBTYPE_TIEFLING": 273,
+        "SUBTYPE_HALF": 274,
+        "SUBTYPE_RACCOON": 275,
+        "SUBTYPE_MAX_USED_CREATURE_SUBTYPE": 275,
+        "SUBTYPE_NONE": 4094,
+        "SUBTYPE_ALL_CREATURES": 4095,
+        "SUBTYPE_MAX_CREATURE_SUBTYPE": 4095,
+        "SUBTYPE_MIN_TYPE": 4096,
+        "SUBTYPE_ARTIFACT": 4096,
+        "SUBTYPE_CREATURE": 4097,
+        "SUBTYPE_ENCHANTMENT": 4098,
+        "SUBTYPE_INSTANT": 4099,
+        "SUBTYPE_LAND": 4100,
+        "SUBTYPE_PLANE": 4101,
+        "SUBTYPE_PLANESWALKER": 4102,
+        "SUBTYPE_SCHEME": 4103,
+        "SUBTYPE_SORCERY": 4104,
+        "SUBTYPE_TRIBAL": 4105,
+        "SUBTYPE_VANGUARD": 4106,
+        "SUBTYPE_HERO": 4107,
+        "SUBTYPE_CONSPIRACY": 4108,
+        "SUBTYPE_PHENOMENON": 4109,
+        "SUBTYPE_DUNGEON": 4110,
+        "SUBTYPE_MAX_USED_TYPE": 4110,
+        "SUBTYPE_PRIVATE": 8191,
+        "SUBTYPE_MAX_TYPE": 8191,
+        "SUBTYPE_MIN_SUPERTYPE": 8192,
+        "SUBTYPE_BASIC": 8192,
+        "SUBTYPE_LEGEND": 8193,
+        "SUBTYPE_ONGOING": 8194,
+        "SUBTYPE_SNOW": 8195,
+        "SUBTYPE_WORLD": 8196,
+        "SUBTYPE_NONBASIC": 8197,
+        "SUBTYPE_ELITE": 8198,
+        "SUBTYPE_HOST": 8199,
+        "SUBTYPE_MAX_USED_SUPERTYPE": 8199,
+        "SUBTYPE_HISTORIC": 12285,
+        "SUBTYPE_IMPOSSIBLE": 12286,
+        "SUBTYPE_MAX_SUPERTYPE": 12287,
+        "SUBTYPE_MIN_ARTIFACT_SUBTYPE": 12288,
+        "SUBTYPE_CONTRAPTION": 12288,
+        "SUBTYPE_EQUIPMENT": 12289,
+        "SUBTYPE_FORTIFICATION": 12290,
+        "SUBTYPE_HORDE_ARTIFACT": 12291,
+        "SUBTYPE_CLUE": 12292,
+        "SUBTYPE_VEHICLE": 12293,
+        "SUBTYPE_TREASURE": 12294,
+        "SUBTYPE_GOLD": 12295,
+        "SUBTYPE_FOOD": 12296,
+        "SUBTYPE_KEY": 12297,
+        "SUBTYPE_BLOOD": 12298,
+        "SUBTYPE_MAX_USED_ARTIFACT_SUBTYPE": 12298,
+        "SUBTYPE_MAX_ARTIFACT_SUBTYPE": 16383,
+        "SUBTYPE_MIN_ENCHANTMENT_SUBTYPE": 16384,
+        "SUBTYPE_AURA": 16384,
+        "SUBTYPE_AURA_ARTIFACT": 16385,
+        "SUBTYPE_AURA_CREATURE": 16386,
+        "SUBTYPE_AURA_ENCHANTMENT": 16387,
+        "SUBTYPE_AURA_LAND": 16388,
+        "SUBTYPE_AURA_PERMANENT": 16389,
+        "SUBTYPE_AURA_PLAYER": 16390,
+        "SUBTYPE_AURA_INSTANT": 16391,
+        "SUBTYPE_AURA_PLANESWALKER": 16392,
+        "SUBTYPE_MIN_REAL_ENCHANTMENT_SUBTYPE": 16400,
+        "SUBTYPE_CURSE": 16400,
+        "SUBTYPE_CARTOUCHE": 16401,
+        "SUBTYPE_SAGA": 16402,
+        "SUBTYPE_RUNE": 16403,
+        "SUBTYPE_SHARD": 16404,
+        "SUBTYPE_CLASS": 16405,
+        "SUBTYPE_SHRINE": 16416,
+        "SUBTYPE_MAX_USED_ENCHANTMENT_SUBTYPE": 16416,
+        "SUBTYPE_MAX_ENCHANTMENT_SUBTYPE": 20479,
+        "SUBTYPE_MIN_LAND_SUBTYPE": 20480,
+        "SUBTYPE_DESERT": 20480,
+        "SUBTYPE_FOREST": 20481,
+        "SUBTYPE_ISLAND": 20482,
+        "SUBTYPE_LAIR": 20483,
+        "SUBTYPE_LOCUS": 20484,
+        "SUBTYPE_MINE": 20485,
+        "SUBTYPE_MOUNTAIN": 20486,
+        "SUBTYPE_PLAINS": 20487,
+        "SUBTYPE_POWER_PLANT": 20488,
+        "SUBTYPE_SWAMP": 20489,
+        "SUBTYPE_TOWER": 20490,
+        "SUBTYPE_URZAS": 20491,
+        "SUBTYPE_GATE": 20492,
+        "SUBTYPE_CLOUD": 20493,
+        "SUBTYPE_MAX_USED_LAND_SUBTYPE": 20493,
+        "SUBTYPE_MAX_LAND_SUBTYPE": 24575,
+        "SUBTYPE_MIN_INSTANT_SORCERY_SUBTYPE": 24576,
+        "SUBTYPE_ARCANE": 24576,
+        "SUBTYPE_TRAP": 24577,
+        "SUBTYPE_ADVENTURE": 24578,
+        "SUBTYPE_LESSON": 24579,
+        "SUBTYPE_MAX_USED_INSTANT_SORCERY_SUBTYPE": 24579,
+        "SUBTYPE_MAX_INSTANT_SORCERY_SUBTYPE": 28671,
+        "SUBTYPE_MIN_PLANESWALKER_SUBTYPE": 28672,
+        "SUBTYPE_AJANI": 28672,
+        "SUBTYPE_BOLAS": 28673,
+        "SUBTYPE_CHANDRA": 28674,
+        "SUBTYPE_ELSPETH": 28675,
+        "SUBTYPE_GARRUK": 28676,
+        "SUBTYPE_GIDEON": 28677,
+        "SUBTYPE_JACE": 28678,
+        "SUBTYPE_KARN": 28679,
+        "SUBTYPE_KOTH": 28680,
+        "SUBTYPE_LILIANA": 28681,
+        "SUBTYPE_NISSA": 28682,
+        "SUBTYPE_SARKHAN": 28683,
+        "SUBTYPE_SORIN": 28684,
+        "SUBTYPE_TEZZERET": 28685,
+        "SUBTYPE_VENSER": 28686,
+        "SUBTYPE_TAMIYO": 28687,
+        "SUBTYPE_TIBALT": 28688,
+        "SUBTYPE_VRASKA": 28689,
+        "SUBTYPE_DOMRI": 28690,
+        "SUBTYPE_RAL": 28691,
+        "SUBTYPE_ASHIOK": 28692,
+        "SUBTYPE_XENAGOS": 28693,
+        "SUBTYPE_DACK": 28694,
+        "SUBTYPE_KIORA": 28695,
+        "SUBTYPE_DARETTI": 28696,
+        "SUBTYPE_FREYALISE": 28697,
+        "SUBTYPE_NAHIRI": 28698,
+        "SUBTYPE_NIXILIS": 28699,
+        "SUBTYPE_TEFERI": 28700,
+        "SUBTYPE_UGIN": 28701,
+        "SUBTYPE_NARSET": 28702,
+        "SUBTYPE_ARLINN": 28703,
+        "SUBTYPE_DOVIN": 28704,
+        "SUBTYPE_SAHEELI": 28705,
+        "SUBTYPE_KAYA": 28706,
+        "SUBTYPE_SAMUT": 28707,
+        "SUBTYPE_HUATLI": 28708,
+        "SUBTYPE_ANGRATH": 28709,
+        "SUBTYPE_JAYA": 28710,
+        "SUBTYPE_ROWAN": 28711,
+        "SUBTYPE_WILL": 28712,
+        "SUBTYPE_YANGGU": 28713,
+        "SUBTYPE_YANLING": 28714,
+        "SUBTYPE_VIVIEN": 28715,
+        "SUBTYPE_DUNGEON_MASTER": 28716,
+        "SUBTYPE_AMINATOU": 28717,
+        "SUBTYPE_ESTRID": 28718,
+        "SUBTYPE_WINDGRACE": 28719,
+        "SUBTYPE_DAVRIEL": 28720,
+        "SUBTYPE_INZERVA": 28721,
+        "SUBTYPE_KASMINA": 28722,
+        "SUBTYPE_TEYO": 28723,
+        "SUBTYPE_SERRA": 28724,
+        "SUBTYPE_WRENN": 28725,
+        "SUBTYPE_OKO": 28726,
+        "SUBTYPE_ABIAN": 28727,
+        "SUBTYPE_DUCK": 28728,
+        "SUBTYPE_CALIX": 28729,
+        "SUBTYPE_DAKKON": 28730,
+        "SUBTYPE_DIHADA": 28731,
+        "SUBTYPE_GRIST": 28732,
+        "SUBTYPE_BAHAMUT": 28733,
+        "SUBTYPE_ELLYWICK": 28734,
+        "SUBTYPE_LOLTH": 28735,
+        "SUBTYPE_B_O_B": 28736,
+        "SUBTYPE_LUKKA": 28737,
+        "SUBTYPE_BASRI": 28738,
+        "SUBTYPE_JESKA": 28739,
+        "SUBTYPE_SZAT": 28740,
+        "SUBTYPE_NIKO": 28741,
+        "SUBTYPE_TYVAR": 28742,
+        "SUBTYPE_MORDENKAINEN": 28743,
+        "SUBTYPE_ZARIEL": 28744,
+        "SUBTYPE_KAITO": 28745,
+        "SUBTYPE_MAX_USED_PLANESWALKER_SUBTYPE": 28745,
+        "SUBTYPE_MAX_PLANESWALKER_SUBTYPE": 29183,
+        "SUBTYPE_MIN_PLANE_SUBTYPE": 32768,
+        "SUBTYPE_ALARA": 32768,
+        "SUBTYPE_ARKHOS": 32769,
+        "SUBTYPE_BOLASS_MEDITATION_REALM": 32770,
+        "SUBTYPE_DOMINARIA": 32771,
+        "SUBTYPE_EQUILOR": 32772,
+        "SUBTYPE_IQUATANA": 32773,
+        "SUBTYPE_IR": 32774,
+        "SUBTYPE_KALDHEIM": 32775,
+        "SUBTYPE_KAMIGAWA": 32776,
+        "SUBTYPE_KARSUS": 32777,
+        "SUBTYPE_KINSHALA": 32778,
+        "SUBTYPE_LORWYN": 32779,
+        "SUBTYPE_LUVION": 32780,
+        "SUBTYPE_MERCADIA": 32781,
+        "SUBTYPE_MIRRODIN": 32782,
+        "SUBTYPE_MOAG": 32783,
+        "SUBTYPE_MURAGANDA": 32784,
+        "SUBTYPE_PHYREXIA": 32785,
+        "SUBTYPE_PYRULEA": 32786,
+        "SUBTYPE_RABIAH": 32787,
+        "SUBTYPE_RATH": 32788,
+        "SUBTYPE_RAVNICA": 32789,
+        "SUBTYPE_SEGOVIA": 32790,
+        "SUBTYPE_SERRAS_REALM": 32791,
+        "SUBTYPE_SHADOWMOOR": 32792,
+        "SUBTYPE_SHANDALAR": 32793,
+        "SUBTYPE_ULGROTHA": 32794,
+        "SUBTYPE_VALLA": 32795,
+        "SUBTYPE_WILDFIRE": 32796,
+        "SUBTYPE_ZENDIKAR": 32797,
+        "SUBTYPE_AZGOL": 32798,
+        "SUBTYPE_BELENON": 32799,
+        "SUBTYPE_ERGAMON": 32800,
+        "SUBTYPE_FABACIN": 32801,
+        "SUBTYPE_INNISTRAD": 32802,
+        "SUBTYPE_KEPHALAI": 32803,
+        "SUBTYPE_KOLBAHAN": 32804,
+        "SUBTYPE_KYNETH": 32805,
+        "SUBTYPE_MONGSENG": 32806,
+        "SUBTYPE_NEW_PHYREXIA": 32807,
+        "SUBTYPE_REGATHA": 32808,
+        "SUBTYPE_VRYN": 32809,
+        "SUBTYPE_XEREX": 32816,
+        "SUBTYPE_MAX_USED_PLANE_SUBTYPE": 32816,
+        "SUBTYPE_MAX_PLANE_SUBTYPE": 36863,
+        "SUBTYPE_MAX_SUBTYPE": 36863
+      }
+    },
+    "reported_subtypes_t": {
+      "die_offset": "0x63fcba1",
+      "byte_size": 104,
+      "array_die_offset": "0x63fcbc8",
+      "element_count": 26
+    }
+  },
+  "enum_added_names": {
+    "SUBTYPE_DOG": 90,
+    "SUBTYPE_EXPANSION_SYMBOL": 253,
+    "SUBTYPE_ARMY": 254,
+    "SUBTYPE_NOBLE": 255,
+    "SUBTYPE_WARLOCK": 256,
+    "SUBTYPE_SCULPTURE": 257,
+    "SUBTYPE_MOUSE": 258,
+    "SUBTYPE_PEASANT": 259,
+    "SUBTYPE_DEMIGOD": 260,
+    "SUBTYPE_TENTACLE": 261,
+    "SUBTYPE_SHARK": 262,
+    "SUBTYPE_OTTER": 263,
+    "SUBTYPE_PHYREXIAN": 264,
+    "SUBTYPE_RANGER": 265,
+    "SUBTYPE_FRACTAL": 266,
+    "SUBTYPE_INKLING": 267,
+    "SUBTYPE_BARD": 268,
+    "SUBTYPE_BEHOLDER": 269,
+    "SUBTYPE_GNOLL": 270,
+    "SUBTYPE_HALFLING": 271,
+    "SUBTYPE_HAMSTER": 272,
+    "SUBTYPE_TIEFLING": 273,
+    "SUBTYPE_HALF": 274,
+    "SUBTYPE_RACCOON": 275,
+    "SUBTYPE_DUNGEON": 4110,
+    "SUBTYPE_HISTORIC": 12285,
+    "SUBTYPE_GOLD": 12295,
+    "SUBTYPE_FOOD": 12296,
+    "SUBTYPE_KEY": 12297,
+    "SUBTYPE_BLOOD": 12298,
+    "SUBTYPE_RUNE": 16403,
+    "SUBTYPE_SHARD": 16404,
+    "SUBTYPE_CLASS": 16405,
+    "SUBTYPE_CLOUD": 20493,
+    "SUBTYPE_ADVENTURE": 24578,
+    "SUBTYPE_LESSON": 24579,
+    "SUBTYPE_DAVRIEL": 28720,
+    "SUBTYPE_INZERVA": 28721,
+    "SUBTYPE_KASMINA": 28722,
+    "SUBTYPE_TEYO": 28723,
+    "SUBTYPE_SERRA": 28724,
+    "SUBTYPE_WRENN": 28725,
+    "SUBTYPE_OKO": 28726,
+    "SUBTYPE_ABIAN": 28727,
+    "SUBTYPE_DUCK": 28728,
+    "SUBTYPE_CALIX": 28729,
+    "SUBTYPE_DAKKON": 28730,
+    "SUBTYPE_DIHADA": 28731,
+    "SUBTYPE_GRIST": 28732,
+    "SUBTYPE_BAHAMUT": 28733,
+    "SUBTYPE_ELLYWICK": 28734,
+    "SUBTYPE_LOLTH": 28735,
+    "SUBTYPE_B_O_B": 28736,
+    "SUBTYPE_LUKKA": 28737,
+    "SUBTYPE_BASRI": 28738,
+    "SUBTYPE_JESKA": 28739,
+    "SUBTYPE_SZAT": 28740,
+    "SUBTYPE_NIKO": 28741,
+    "SUBTYPE_TYVAR": 28742,
+    "SUBTYPE_MORDENKAINEN": 28743,
+    "SUBTYPE_ZARIEL": 28744,
+    "SUBTYPE_KAITO": 28745
+  },
+  "retired_enum_names": {
+    "SUBTYPE_HOUND": "SUBTYPE_DOG"
+  },
+  "local_enum_shadows_removed": [
+    {
+      "source": "cards/commander_2019.c",
+      "name": "SUBTYPE_SCULPTURE",
+      "value": 257
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "SUBTYPE_ARMY",
+      "value": 254
+    }
+  ],
+  "report_consumers": [
+    {
+      "source": "functions/has_creature_type.c",
+      "function": "get_subtypes",
+      "native_ranges": [
+        {
+          "address": "0x2673410",
+          "end": "0x2673574",
+          "bytes_sha256": "f03c1cc3c77dfef01924ee3187b7c6ee566336eb02304c35c57e426eba2e4016",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2673410.c",
+          "raw_export_sha256": "623b18f3be454e97090719835ada35d3dc644fbf6b455cebf59eb507ca7fd041"
+        }
+      ]
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "function": "shares_creature_subtype",
+      "native_ranges": [
+        {
+          "address": "0x2673970",
+          "end": "0x2673b88",
+          "bytes_sha256": "94ec61224a69333f144eed365f9bf32920e96ea859a7b3d0d8f421e40f1aeabb",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2673970.c",
+          "raw_export_sha256": "ba67ed00cbe65ee5dbed65db8829f08abe4526e0260ab94fb646e0e32feef00e"
+        }
+      ]
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "function": "select_a_subtype_impl",
+      "native_ranges": [
+        {
+          "address": "0x2674ae0",
+          "end": "0x2675844",
+          "bytes_sha256": "3b7998844b3ca59675983a0164c204e03fa6bc1cd13f58a454c8d19a1ad3c194",
+          "raw_export": ".recovery/decompiled-subtype-foundation/2674ae0.c",
+          "raw_export_sha256": "a071da69f8314af8dd6b38262800e3b74d5aaa7252b57751b11653e5c993d6d3"
+        }
+      ]
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "function": "card_tajuru_paragon",
+      "native_ranges": [
+        {
+          "address": "0x230f070",
+          "end": "0x230f1c7",
+          "bytes_sha256": "b562b69decd06398fb569390240eca074aea6222d836919bdae8999cb349f26a",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/230f070.c",
+          "raw_export_sha256": "ce1e2e51ae25fcbc9c65da86083c4911973cc0237060d8380cefd3d9e4c5e2ac"
+        }
+      ]
+    },
+    {
+      "source": "cards/mirrodin.c",
+      "function": "card_duplicant",
+      "native_ranges": [
+        {
+          "address": "0x253c530",
+          "end": "0x253c744",
+          "bytes_sha256": "974c714e0f1bc4ccd7d514c679e6d48b7ba53c33ef8035b70d4004015d650094",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/253c530.c",
+          "raw_export_sha256": "f50976887fa1349fb5ee698a0c576673033ba6d960c60343f64a556149759a9c"
+        }
+      ]
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "function": "shares_creature_subtype_by_iid",
+      "native_ranges": [
+        {
+          "address": "0x2673b90",
+          "end": "0x2673d93",
+          "bytes_sha256": "61ee62f9c925d2c30293c56d4dccc3f742216c11dd0296397c300e37321b5fc1",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/2673b90.c",
+          "raw_export_sha256": "6fe56493399b8a03881e48668e363385328846f48dc794b690555b6e72d11a61"
+        }
+      ]
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "function": "has_subtype_by_id",
+      "native_ranges": [
+        {
+          "address": "0x26736e0",
+          "end": "0x26738aa",
+          "bytes_sha256": "9dc8b78cc1b5bfa0deccec8718887c38903419c4d896d5be0e3392602150c07b",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/26736e0.c",
+          "raw_export_sha256": "d6a8948385ecdfb6904644b1a41b288c571b9dc10d7ad1713fcee9fd5f7e56b0"
+        }
+      ]
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "function": "get_subtypes_by_csvid",
+      "native_ranges": [
+        {
+          "address": "0x2673320",
+          "end": "0x2673406",
+          "bytes_sha256": "fb25989415c22c4684c79d3cd6fa186ec2edb6de8853b7c568199997f74989e5",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/2673320.c",
+          "raw_export_sha256": "cd7254fba0bcd692ee3175db2b20918caef52d4fcdb8118688962073ea97f960"
+        }
+      ]
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "function": "has_subtype",
+      "native_ranges": [
+        {
+          "address": "0x2673580",
+          "end": "0x26736db",
+          "bytes_sha256": "a4396d2adc4a99f84d442fa7d6e4139638b2011f0b8fb20ac8449ab47b4c4d55",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/2673580.c",
+          "raw_export_sha256": "85daa27f2bea73058c3e88bbeddee9f2b66f914fa8515a72bfadbeb383fe86b9"
+        },
+        {
+          "address": "0x26738b0",
+          "end": "0x26738dc",
+          "bytes_sha256": "ac3a6456b08b4e24670beebec32b0d3796ff511f16f46a5869570ab28f617201",
+          "raw_export": ".recovery/decompiled-subtype-foundation-support/26738b0.c",
+          "raw_export_sha256": "9ce42c1d5e86f0559fe4bc7c6a2c16029ee6dacf11fd0b58f9bbbd2eaf73eae8"
+        }
+      ]
+    }
+  ],
+  "native_tables": {
+    "hardcoded_table": {
+      "address": "0x275f300",
+      "element_count": 233,
+      "bytes_sha256": "2247336e7ff213fee9a366f94b8e76c5b66c53844f550476f0553cd088efef53",
+      "values": [
+        0,
+        96,
+        8,
+        224,
+        145,
+        2,
+        8195,
+        5,
+        130,
+        6,
+        53,
+        16385,
+        4,
+        9,
+        11,
+        13,
+        7,
+        150,
+        14,
+        12,
+        20484,
+        23,
+        16,
+        17,
+        18,
+        19,
+        25,
+        177,
+        21,
+        122,
+        24,
+        24577,
+        1,
+        141,
+        42,
+        28,
+        12289,
+        33,
+        34,
+        32,
+        36,
+        172,
+        38,
+        37,
+        16386,
+        16400,
+        44,
+        57,
+        46,
+        40,
+        47,
+        171,
+        48,
+        43,
+        49,
+        45,
+        52,
+        54,
+        62,
+        50,
+        51,
+        55,
+        22,
+        61,
+        56,
+        58,
+        59,
+        60,
+        16387,
+        8197,
+        66,
+        118,
+        67,
+        63,
+        87,
+        68,
+        74,
+        78,
+        82,
+        69,
+        83,
+        70,
+        84,
+        86,
+        72,
+        73,
+        75,
+        112,
+        93,
+        98,
+        180,
+        77,
+        81,
+        91,
+        88,
+        89,
+        100,
+        92,
+        95,
+        101,
+        105,
+        99,
+        106,
+        107,
+        102,
+        103,
+        76,
+        104,
+        16388,
+        108,
+        0,
+        20486,
+        111,
+        117,
+        109,
+        120,
+        121,
+        20480,
+        123,
+        124,
+        126,
+        22,
+        113,
+        127,
+        128,
+        116,
+        119,
+        131,
+        114,
+        134,
+        125,
+        137,
+        139,
+        142,
+        140,
+        129,
+        133,
+        20482,
+        135,
+        144,
+        136,
+        138,
+        20481,
+        143,
+        20489,
+        146,
+        147,
+        148,
+        20487,
+        152,
+        153,
+        156,
+        15,
+        157,
+        154,
+        31,
+        159,
+        158,
+        160,
+        167,
+        164,
+        165,
+        166,
+        169,
+        170,
+        16389,
+        65,
+        149,
+        161,
+        163,
+        168,
+        175,
+        178,
+        173,
+        176,
+        182,
+        183,
+        185,
+        186,
+        188,
+        181,
+        184,
+        80,
+        187,
+        203,
+        198,
+        200,
+        202,
+        8192,
+        212,
+        204,
+        205,
+        190,
+        191,
+        192,
+        193,
+        210,
+        209,
+        151,
+        197,
+        199,
+        214,
+        216,
+        215,
+        217,
+        8196,
+        219,
+        201,
+        220,
+        221,
+        222,
+        0,
+        41,
+        94,
+        97,
+        206,
+        208,
+        211,
+        179,
+        162,
+        196,
+        213,
+        218,
+        223,
+        10,
+        90,
+        110,
+        4105,
+        16416,
+        30,
+        115,
+        155,
+        207
+      ]
+    },
+    "token_more_table": {
+      "address": "0x275f2c0",
+      "element_count": 9,
+      "bytes_sha256": "089aa3233012aa245346703ecb31608380331a71e23a1fa14a395edfb39710fa",
+      "values": [
+        162,
+        163,
+        257,
+        168,
+        238,
+        189,
+        261,
+        196,
+        201
+      ]
+    }
+  },
+  "native_contracts": {
+    "creature_name_cache": {
+      "section": "CREATURE_TYPE",
+      "nocopy": true,
+      "asserted_minimum_lines": 275,
+      "copied_pointers": 276
+    },
+    "text_counts": {
+      "creature": 276,
+      "type": 15,
+      "supertype": 8,
+      "artifact": 11,
+      "enchantment": 33,
+      "land": 14,
+      "instant_sorcery": 4,
+      "planeswalker": 74,
+      "plane": 49
+    },
+    "text_sections": {
+      "planeswalker": "PLANESWALKER_TYPE",
+      "plane": "PLANE_TYPE"
+    },
+    "selector": {
+      "top_menu_options": 4,
+      "token_first_menu_options": 16,
+      "token_more_menu_options": 9,
+      "card_name_subtypes_examined": 26,
+      "live_creature_subtypes_examined": 14,
+      "restores_targets_on_success_only": true,
+      "builtin_dialog_implementation": "existing boundary retained"
+    },
+    "changing_types": {
+      "alters_subtype_from_target_slot": "targets[9].card",
+      "alter_before_selecting_iid": true
+    },
+    "shared_types": {
+      "native_report_entries": 26,
+      "source_manual_override_scan_removed": true
+    }
+  },
+  "scope": "30 directly reviewed subtype helper ranges, six accepted support definitions / seven support ranges, all nine report consumers, complete 495-member enum, native 104-byte report, text-cache ownership/section/count contracts, table bytes and two retired local enum shadows. Built-in dialog bodies and gameplay validation remain downstream."
+}

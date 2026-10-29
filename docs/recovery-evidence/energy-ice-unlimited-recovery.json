@@ -1,0 +1,982 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "test_not_in_array3",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239afb0",
+          "end": "0x239afd4",
+          "bytes_sha256": "4338e96b6ec386b30bc812dc6857515ae879b3fec37498a8522ed661510199e8",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239afb0.c",
+          "raw_export_sha256": "34a12d94426743bc8a506cd634f97e6be2941984ec5291186aacd79d693cbf2f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4f4eaf1173f0c3035384c0dcd0ed36b75547e0875ee72f49bfecc27604db0ff6"
+    },
+    {
+      "name": "this_creature_can_crew_a_vehicle",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239afe0",
+          "end": "0x239b00f",
+          "bytes_sha256": "7b1cfb43025340be2cf34227b9ac4b8c213e1d2bde857ecb7900b7097b624968",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239afe0.c",
+          "raw_export_sha256": "d32f71edc8bb01c7e91cebb12abac207c2b60746f7876a03ce3c0f3be29e2fbd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "956e191dc6014e039a736986d797e2a34fd224f93eb84cfeff4d6127d03db2cf"
+    },
+    {
+      "name": "etb_fabricate",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239b0b0",
+          "end": "0x239b200",
+          "bytes_sha256": "65bf70579e6b0ba86ad79a3f523f0f6cb81753a0f74067d41738295561ac3dc9",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239b0b0.c",
+          "raw_export_sha256": "30fbd608530ed3295ae175b073b4588047f3762aac5ff630f7137c19513f569c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c96e8d8b1f6456431fd9dcf0f1af77e2f4d6ef8d48f7ea01b383a212d59cd403"
+    },
+    {
+      "name": "is_creature_or_vehicle",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239b200",
+          "end": "0x239b259",
+          "bytes_sha256": "d79330e78398c8a68f015c6f8182f8dbdc1a45cab185e7e3dbb474c12e1d463b",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239b200.c",
+          "raw_export_sha256": "974d9472e6825f2583567c7f54b75ec80781cc0f53a5c94f52142888fa3e5438"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ab9eb16bd28b74343f8ce1c3fdb9192103864f9ed8d71af0a40d301c839f7cdd"
+    },
+    {
+      "name": "make_thopter",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239b2a0",
+          "end": "0x239b2ec",
+          "bytes_sha256": "9d984b412170615d420be8405b62f8e4f22345dafd0172b7d4f0a8732194625a",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239b2a0.c",
+          "raw_export_sha256": "aaf9634bbd5c31a9e2e647b35151104cc5672d0c621203c2a4031e3cab9628a4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "12bb7eb6c5a69483a83ddb7e2f29f4fb1811d58032290dd3798cfe252019e843"
+    },
+    {
+      "name": "ai_helper_function_for_harness_lightning",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239b380",
+          "end": "0x239b3d1",
+          "bytes_sha256": "3c53a5a439b14883f9700a9fe5de8324c35459803332c2859b92801a5c68de5f",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239b380.c",
+          "raw_export_sha256": "5a9f6bc3c8c8c1545144f966cc149d83a6025fd1181b951d4ad94cac6b5ec0cf"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9b9b80dc5f90798f762c39b27eead56521b029af3f853a09a6cc90e8c701353a"
+    },
+    {
+      "name": "demon_of_dark_schemes_legacy",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239b3e0",
+          "end": "0x239b6ab",
+          "bytes_sha256": "be06f0afaeef040119f46d89793d45fb33197226e18418b442277b9b065786b2",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239b3e0.c",
+          "raw_export_sha256": "84ca25aa045d0c7b53129938a5cec296d130fa92a9588ae9165eed28900769c2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "647a3f4a20a43c44763ee733fc592201e941ff80a72ff4691a38e95cb7bbbf7f"
+    },
+    {
+      "name": "aetherworks_marvel_legacy",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239b6b0",
+          "end": "0x239b990",
+          "bytes_sha256": "0bff64d80de48a2c9e83d5d41ca33390fc380fc5bee45ebd23d4f192c342dec7",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239b6b0.c",
+          "raw_export_sha256": "e9e1feeb8882b84a6aa071f30579d30b73629f5c5b3b63750d8c55a765938896"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "60228dbc393e4df069df89aeecf6dc724e73b62b629163703079a07cecf6b5c7"
+    },
+    {
+      "name": "marionette_master_legacy",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239b990",
+          "end": "0x239bca7",
+          "bytes_sha256": "6f419dd98a7ede0fbb799798d303d077899f7e6d68bce8c241399408b3cfe120",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239b990.c",
+          "raw_export_sha256": "b754cee7ea05ea71b5885d4d9eeb0f0ad7a37247dbd7284aefcb577eb84f7383"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c4a6641011b150c9c7c3b9dc7b550529450667d7cda7d670a455de26777f034a"
+    },
+    {
+      "name": "nonland_nontoken_permanent",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239bcb0",
+          "end": "0x239bd08",
+          "bytes_sha256": "4d4fd7d37e97f54b02267338b8ae539da833da22c61f76dd29c9552dd6010f09",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239bcb0.c",
+          "raw_export_sha256": "6df84d688ec8c40d6258026a71896f56149dbd990a40effa67e25439a70e8fa6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "189142c9b6158fd56b188faae8bdc7980826590c6c532ae597271acab39acf0c"
+    },
+    {
+      "name": "re_enable_abilities_at_eot",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239bd10",
+          "end": "0x239bd71",
+          "bytes_sha256": "24bd66bfe13efcf46d22be83846b39ffaf45b7584f22405a7e4a5020124ffd22",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239bd10.c",
+          "raw_export_sha256": "3d408c307e0909f808ad2f8f392aa9152565c4a3ee1edbe8c3a6529476660e3c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "421e043c5abd7d83e1ae71f05dbc0934c64d5a4d25384cfeabeba1ad81a30180"
+    },
+    {
+      "name": "attack_trigger_with_energy",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239bd80",
+          "end": "0x239bdc6",
+          "bytes_sha256": "2d9b14a0e1d9a9223e471c3a7af66b37e6c50ca161faf9fad14cac72912b25be",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239bd80.c",
+          "raw_export_sha256": "3f47f0dbe147077d8d1fbadb15857c7b933bcc059d41c4b51517241aaa9bd7c2"
+        },
+        {
+          "address": "0x239c350",
+          "end": "0x239c379",
+          "bytes_sha256": "4b7aa84805af17849f9a56b87ccd73d3234da3d98a321a417628c4e348f692e5",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239c350.c",
+          "raw_export_sha256": "f69ee999ef9c0c0e71e4b7cfe1f5d3fc82486c357f771bc171e5a8f32113807c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d201685c550c79741b2c7248ddcf2affda0eb126ef40fd415f63ff4467f12991"
+    },
+    {
+      "name": "boost_if_you_control_an_artifact",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239bdd0",
+          "end": "0x239bef4",
+          "bytes_sha256": "a72aca5fa06f194d2a9516ae329d5591ff43923e1f954bf56bf1d4fc83e11b37",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239bdd0.c",
+          "raw_export_sha256": "7eb3d3a6c63dc165bba0e5bca85333424054d646ffaade4d16de705b79c237a1"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d43297cfe2d3518282ec3917a8fb2f104450f06a35c5a53d2d6cbb4d6daf4fb8"
+    },
+    {
+      "name": "vehicle",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239bf30",
+          "end": "0x239c2f0",
+          "bytes_sha256": "7caf0649e0f61fd7cd2f1f50ed033e5795b6aa97e37ce23f453c412f143134a1",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/239bf30.c",
+          "raw_export_sha256": "19339599f621c9281f347dfc2065482e6b77a394d9b5a9af8476ed2f3299fbbe"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "96fb93f7c2014271b44075e880a4c3aa29eb8b0ebd819e39cb08564ff1a389c7"
+    },
+    {
+      "name": "target_is_damaging_balduvian_hydra",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23eb7b0",
+          "end": "0x23eb804",
+          "bytes_sha256": "8f989c4fdd2e15f0c7e0394c472166624fcc384be42f59375fbc71e346d499bb",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23eb7b0.c",
+          "raw_export_sha256": "ff85e8af02ae85db7e47e9467d62a41b2ffc94233a57ba4db300f0383729d89f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "66297511eefb09263b1451638600c061d965cb4cef1fd9afec0a5fc1e73cdc5c"
+    },
+    {
+      "name": "effect_snow_landwalk_until_eot_then_bounce",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23eba10",
+          "end": "0x23ebc26",
+          "bytes_sha256": "8012d29cd21045aa165be6a32b1bdabda78676037645dd38c4a7ee0e4fb090a4",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23eba10.c",
+          "raw_export_sha256": "c97a485255d87b1c1e305da6cd22420e657e96836516926de2425b6e39a07c1d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "46b232c30bf8d4b34cd9ec7968a5d50cbb03a25da525aff1b8164bcc11095c30"
+    },
+    {
+      "name": "ia_land_destructor",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23ec470",
+          "end": "0x23ec65e",
+          "bytes_sha256": "594f73aaf2fd5715439516b9ca3efbeec0dfed467bdd59704ad5c4cea51f514b",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23ec470.c",
+          "raw_export_sha256": "6e272ca0f671ebfafa7d667706010d8ddce6e8955e04de9b039c6f607cc57fdf"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "48152de28956f06944f70e7d70134c00e8dd91565f07745e363ed6b1e3c67932"
+    },
+    {
+      "name": "enduring_renewal_effect",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23eca70",
+          "end": "0x23ecdd2",
+          "bytes_sha256": "5dc8404a9d1a37219e7a7d517484d8dbc7bb59214a85a7dd463387cfcf313915",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23eca70.c",
+          "raw_export_sha256": "3b085f811c69e1ae0ca1ce8f8081d1fbc06f113506e0150e6917b9255fe79612"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "37bd2d50e7ef9c72f487ff04b6b34be78474ec44b1de0fd435d0fafffdf2301f"
+    },
+    {
+      "name": "can_pay_2_life_thunk",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23ecfc0",
+          "end": "0x23ecfd1",
+          "bytes_sha256": "908619f130c5d8d8825150285e6f3154a98d91bb7f719b0b35ecd3cd4e46c189",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23ecfc0.c",
+          "raw_export_sha256": "5a6d7439f29049b17473c2fd87c1411bdf32f950bdd7066b84338db1fe9abe34"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0f454fe3c486a2301c38a6a60922a2c02e5894745d32ac0512e6f642230f6452"
+    },
+    {
+      "name": "lose_2_life_thunk",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23ecfe0",
+          "end": "0x23ed001",
+          "bytes_sha256": "3b6bd1d5a461dc023b7e4115534db2107a0be5c8c9f1f1b3c250c08d99459631",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23ecfe0.c",
+          "raw_export_sha256": "5f77f7aea72a8c5a07513495b491b19d980c1b86368faf59b5b242cbbfdd9032"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8e1122c0029c0244942b6c7f61c1242d52711c3020756b3cdc01cdfdc45d7f00"
+    },
+    {
+      "name": "ia_blast",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23ed090",
+          "end": "0x23ed435",
+          "bytes_sha256": "72ccd00a882c4da0791875d926fe7ef9157ddc9118e63ee3fb10e22559669f7d",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23ed090.c",
+          "raw_export_sha256": "df97174731b211d17526f2d3a0c3cf1b0bbba60b9f700add5c749ab662b68355"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cd3cac977760e6ac44ab94a96ebd670e4030c9199a8a7997cd877c54c15f4a08"
+    },
+    {
+      "name": "krovikan_vampire_legacy",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23ed940",
+          "end": "0x23eda08",
+          "bytes_sha256": "2d63b3468b5cc299ed75d656ab9fef014e4e5f597e57c1e0f5e95811f69de287",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23ed940.c",
+          "raw_export_sha256": "ebc109b1272aa18839987c64c51a3440b40a6f436ed331473229af39d473912f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "14006d5514b104a9ba4ca9ea460b0ac46a7d08f256f7e2e108fcd15dda64b474"
+    },
+    {
+      "name": "effect_dotd",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23eda10",
+          "end": "0x23edb43",
+          "bytes_sha256": "58d3367aea9715e778da8c33ab0659441237bea98e4e1cfdeaeac1cd94fcf1b2",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23eda10.c",
+          "raw_export_sha256": "3c12e421a2aefc07484558f1f87e8f908bd63217de7ab0af21330856cced3e8c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c193698e40af6cf4dae3e7bf67f7097557e3f7d0b2cacdf5f250d89c02234e44"
+    },
+    {
+      "name": "talisman",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23edba0",
+          "end": "0x23eddb4",
+          "bytes_sha256": "66b55e6f4b2a0afc8b4722a07c0ad7a2c0d86eb73736889868a8b3634ded6869",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23edba0.c",
+          "raw_export_sha256": "9712a34eefe7fb4576ef088d1c3452f5191e79a0bc533f8706279636361f8bd4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e1b1a8cbaa289e8031eee16669a09da7fae5a5ea4a29972b657291ad0e1af042"
+    },
+    {
+      "name": "effect_royal_guard",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23edf80",
+          "end": "0x23ee0c1",
+          "bytes_sha256": "2dc682285ba2556fde946226431f4809d53ca039415f424998dba53e0d5b19d1",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23edf80.c",
+          "raw_export_sha256": "937bf77abce12d5ddc08e69020c603ed721f7f2a6874f775c7ed1f2e95921399"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ba60b0fadd6e9467e341933de98130c73ff633918c8bd5c94e7cc51c6aa2e787"
+    },
+    {
+      "name": "charge_snow_mana",
+      "source": "cards/ice_age.c",
+      "native_ranges": [
+        {
+          "address": "0x23ee600",
+          "end": "0x23ee998",
+          "bytes_sha256": "b3cb02cc1cff3777b4f3345eea8f7e56298344e31d36f6baff0db4edf6ff284a",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/23ee600.c",
+          "raw_export_sha256": "dc953cd48ade04249ca85517f109ed2cab0d195c3d185b535ee6378a8e4e2e1f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e62849dca65b8d9e3cba019174e7fba39215b5302c185f99dc8711ebd200ca9d"
+    },
+    {
+      "name": "is_damage_to_aff_player_aff_card",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bad20",
+          "end": "0x24bad6f",
+          "bytes_sha256": "bdf7eecf5c4a4194a3ccfc2917cea7316ca8282f420f7238d59ad09ea307940f",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bad20.c",
+          "raw_export_sha256": "055284e552ea82a083cab195b5df5ea1fcb37e778dc6c350e0c47e6075e894db"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1f09f5e38b2edd3ac0ce7a0f9cf9e39f12361a44b553f622ad71b69599de1847"
+    },
+    {
+      "name": "can_be_untapped",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bb3b0",
+          "end": "0x24bb3df",
+          "bytes_sha256": "e5c7d77f6837eae8f82c2cd018b8a74764502782cf73b017bdefaf7b5f449138",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bb3b0.c",
+          "raw_export_sha256": "757c92e5a1e719bed08f59536b4b1dff9c721cb160a1b9078da303592a751362"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8be4d7487162cab0719877560e2268842eeb304efc3fa246ee6805caeb22205e"
+    },
+    {
+      "name": "blast",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bb520",
+          "end": "0x24bba23",
+          "bytes_sha256": "185d81f946e0e081d366b2188de39dd58958bc5676ed0a781ab8fd44cc70cd3c",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bb520.c",
+          "raw_export_sha256": "c0ac54888431c9d0f6a4d416d8ade4a5060a369e1a0df603cf81d2e409f04b39"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cec94a43244e4abf4e5809cb52f5c0c5e5bc0bff5aa438b5481c524fa8505b94"
+    },
+    {
+      "name": "guardian_angel_legacy",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bba30",
+          "end": "0x24bbb73",
+          "bytes_sha256": "15e0632e85b0ee45673b7aa6c622c313179b6ce4a35a0685e3b563c9673b2840",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bba30.c",
+          "raw_export_sha256": "5e16c5764bee4030a6745121e16bc35ad019b12538d02c6554d60c2f36c96aba"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8d3d793c4ead96c69e887fcb1616c8b8d8f8d2ce3056d6f7ae8b895f2bc1b165"
+    },
+    {
+      "name": "dingus_egg_effect",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bbc40",
+          "end": "0x24bbf74",
+          "bytes_sha256": "0a08bcfb0285d037f90c600526d7809ed4f260c0ef04807c8ed7fce0ff94d9c4",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bbc40.c",
+          "raw_export_sha256": "f4503cd13998aa1ae380a08a09d1a449332eda795294b861fd68af3ce504b1cf"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "919dcb310cb6fe01a10d0b4ad584faad1ab0c8821ee3be0576774d80b74a0ac4"
+    },
+    {
+      "name": "drain_life_legacy",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bbf80",
+          "end": "0x24bc15b",
+          "bytes_sha256": "03f1985ad4d8a34fdf775292a9701663e63585be7e14781f519739d3365c0931",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bbf80.c",
+          "raw_export_sha256": "13d397e863f35907e2fe3d2f807536a360ae1fb6e6dd2561680d978e5e034d2c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e70518119579358d91ff62ebfde786efc531ada0adb3c40ecf0232de2ff930b5"
+    },
+    {
+      "name": "soul_net_effect",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bc530",
+          "end": "0x24bc882",
+          "bytes_sha256": "fae0c7cd13500bdbfd0903d53d7d5b5601c9ef0d621627cad7c0a87f8753c5ca",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bc530.c",
+          "raw_export_sha256": "8cd9d79a13ddba64ce0be36ffa3265cea6d34b56f7f8ff3e9423fb0803d75573"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "40793a6006528af817a7f223c26d79937b14ac49070c67233b6bd8e6ef4121a7"
+    },
+    {
+      "name": "zombie_master_shared_ability",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bc890",
+          "end": "0x24bcc99",
+          "bytes_sha256": "ef403cb12c8118cd221237637fefe9bbc0b8b95c2b5c8aede71f9994527b68ce",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bc890.c",
+          "raw_export_sha256": "1b4f0fc3b2763225608588e4c67d7adc4c386699395a2eeab273281609909179"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b074852ed14530c1dddaa520f10764125f2d3db5bfaed59f5a1fc3f99834c8e9"
+    },
+    {
+      "name": "protection_from_color",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bcca0",
+          "end": "0x24bcd6c",
+          "bytes_sha256": "3bdcf66e7028981ce0b152b429760aebd8c9f2c2029709978896ff8174b6ac09",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bcca0.c",
+          "raw_export_sha256": "77648b621ec4a40cd14c0d3757815f4d928ee4cbbdd23a50b8f72cf814e78627"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "023c7bbaf2f804da910cb4f4b520389d5a7f8ff8dbd61a2fbffb5c35ef89d4b2"
+    },
+    {
+      "name": "destroy_nonwall_at_end_of_combat",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bd0c0",
+          "end": "0x24bd11a",
+          "bytes_sha256": "8a7e616f8fa4a60db56854e5c5bc4ee14e0d502e426c29a96d734d1c2008d164",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bd0c0.c",
+          "raw_export_sha256": "6a0c2254da61c05d91b445333f2a5d1b4ac174522dc03e60d08690018fc77d9a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c1e4531241a311e9157e6b872dd555935bdf4fe3eaf03cb40474731e609001f4"
+    },
+    {
+      "name": "effect_illusionary_mask",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bd120",
+          "end": "0x24bd31c",
+          "bytes_sha256": "1fa85c19b5afc845adb07a9d560b5d3fbd8ea186952b3713800feaf64352b3c3",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bd120.c",
+          "raw_export_sha256": "08de9c81d2fd93acf9d57b1790a80b418e01fdbaa945e6569f765a76dde43b9e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "277167d98847f864c84f0db545bf0199b54bd71eef4d26cb87516b7f66a5512a"
+    },
+    {
+      "name": "monolith",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bd610",
+          "end": "0x24bd83a",
+          "bytes_sha256": "66f8870e7960ab8f1964c8394dd6357f25a27d6187229a50bb6147d02674776d",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bd610.c",
+          "raw_export_sha256": "ce6501afd2d7872646dbc64c4cfe0adc4dcc943772ae79ac9142070a02310c3d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "f0e57b6ca5c6f766c1dbea498ff1ef6a58f03795504055953ddf98c01c87b073"
+    },
+    {
+      "name": "untap_only_one_permanent_type",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24bdef0",
+          "end": "0x24be207",
+          "bytes_sha256": "b2e486af8440635dff4c7cc7f35494bfbeb5fbb5183624fdd9af408ca8ef2237",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24bdef0.c",
+          "raw_export_sha256": "ff00046108645b7eeba0fe8eee14b1731179c21c90b11d40a683857d02a4b0bd"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "be6ecb438103de01c8392ff99f24956d4d04b81c96fcd9b577571da6c4d5c343"
+    },
+    {
+      "name": "northern_southern_paladin",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24c9cd0",
+          "end": "0x24c9e6e",
+          "bytes_sha256": "89f34f49cbae4aa3b03d5662de21836eb285839360395427f76ee0eb4fb5266c",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited/24c9cd0.c",
+          "raw_export_sha256": "e48546b62f10877a6e62a0932a75e2aba8a4a7e9d9e1c3e6ec8158e084a4da79"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c828f0aaf33ef01aa2a3b8cfced41be068b8d40e2e77e58ace3de4b6e60ec337"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_aetherstream_leopard",
+      "source": "cards/aether_revolt.c",
+      "native_ranges": [
+        {
+          "address": "0x20bd130",
+          "end": "0x20bd1c6",
+          "bytes_sha256": "a00bd5e09e8932ee20bf4f37a64f07756e781e01a731e6d2d2c55f7a31713abd",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-support/20bd130.c",
+          "raw_export_sha256": "2bb10c37f85db10a701c71c07ff168afe574c6b587efaed12792fb77f5e31f3c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5314e34f0806c89ef5558919c9cd9a277b3651d1ca5d04902bebdf4870166c5b"
+    },
+    {
+      "name": "card_aether_chaser",
+      "source": "cards/aether_revolt.c",
+      "native_ranges": [
+        {
+          "address": "0x20bcb70",
+          "end": "0x20bcbf6",
+          "bytes_sha256": "2308ca605aafe122ac0cce091711c0c66303f012c09a535a21daa486379b4b7c",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-support/20bcb70.c",
+          "raw_export_sha256": "7501f3d2fb111b5b505a85b97988d2c83b3ffd80e624be86decdfa7e026bc568"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "718e0a2d1b7827132de76abd54d6df11df6fa7100b47e4c36124aa8f04489d46"
+    },
+    {
+      "name": "card_voltaic_brawler",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x23ac430",
+          "end": "0x23ac4d9",
+          "bytes_sha256": "90107d9ab130135ae5f6a0c0315caf3dc9d8e7e12f06b8f663bbb4a7c20114c8",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-support/23ac430.c",
+          "raw_export_sha256": "40e11357832ba630a1f67dfc981e287522c9a21fbbaa74509984d9802d14482b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "42b31481ec2067a7835c827a891864ee68955755f3919053f41aace29a3592d9"
+    },
+    {
+      "name": "card_riparian_tiger",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x23aa050",
+          "end": "0x23aa0e9",
+          "bytes_sha256": "6f3e5dd44ceb0eb90b40b57a18f34eafeb5e12da69a3a6c5614a6708d52aad2e",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-support/23aa050.c",
+          "raw_export_sha256": "af3ee62265932f6174ca6a69f3edca85754a02100650b4b22fdd3cae7a6e120a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3340aa43405521f75ccf84d3746a266d6448e57e48cfdd87a14420307e15d31f"
+    },
+    {
+      "name": "card_inventors_apprentice",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x23a5c90",
+          "end": "0x23a5cb7",
+          "bytes_sha256": "1623913d5d4bbabe8bf6fa1d3d73c657ca04f8645a1fdf54250f1d8e5c1c8517",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-support/23a5c90.c",
+          "raw_export_sha256": "dc15f7816a0dc9ac95758c8865b29fb1d4c64cee1ea0185c02be5154831a057b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1d3e55b580f048ce7471141528ef541da3f6e2cdd4d321534beb918e1ffcd2dd"
+    },
+    {
+      "name": "card_foundry_screecher",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x23a22b0",
+          "end": "0x23a22d7",
+          "bytes_sha256": "dbf3547e59c603fe5fc0dfeb0cfa4e6e2268c61cf826aaa98e86333a5f60b49f",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-support/23a22b0.c",
+          "raw_export_sha256": "949cb5315594623d18e38d985f874b9cc7e4f9411837ba8d8925e4cdd1201e69"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a8b9e4237d9a073ccb7b571f6c0b8f608a2fa2954e147bfd3f12339086ad9e1d"
+    },
+    {
+      "name": "card_dhund_operative",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x23a17d0",
+          "end": "0x23a17f7",
+          "bytes_sha256": "2cf57d58ba8f4b2182858d961a0ce1d762a9a5cbad9eefb1ecf78720b8a811f2",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-support/23a17d0.c",
+          "raw_export_sha256": "e70bfd3be34691472a60212a10171ddaab3de75ff312bd9e74a1929cbbfaf669"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e2be7312f98ab9c7e1179b19272b39410f8553cb39485a9639c698a184be4ee3"
+    },
+    {
+      "name": "card_thriving_ibex",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239dab0",
+          "end": "0x239db49",
+          "bytes_sha256": "5f887bd070fa80a23f8d6e92dc1e79979220fc69a1de829fe317619075eee792",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-support/239dab0.c",
+          "raw_export_sha256": "6fd2948764328499e3797f26c2fa9caad0761de3a84323617441b4419eb2c047"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6976492eed10f1ffe091a4e58253d002cefba7ba52cd7570e73120f16a2bd441"
+    },
+    {
+      "name": "card_eddytrail_hawk",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239cfc0",
+          "end": "0x239d0eb",
+          "bytes_sha256": "8c2d5d34bb78d754f7b6db2d8f9acc67b888952315ba6f940b3fa5006062a62f",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-support/239cfc0.c",
+          "raw_export_sha256": "b2308d788f8789f834f19eb2287fceebfd9cf7fa27a45d2fe87df57db7dde4ae"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "f9381402fe9463abcec8bcb563a6d1d4d22b792eb779fe77799722ac224e5d95"
+    },
+    {
+      "name": "card_consuls_shieldguard",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239ce90",
+          "end": "0x239cfbb",
+          "bytes_sha256": "7158d41b5e4559eea4002b62c24629bd5d9d6cb3a2eeba2c2ce211a6a285fd5b",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-support/239ce90.c",
+          "raw_export_sha256": "183cd4710962d970850f89901a9ba6880e9b27ea415863889254e25669413f56"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6d541d86ab092d312194a1bd020bbba73dccd8a5235dc9e8e91781d3a763f448"
+    },
+    {
+      "name": "card_aetherstorm_roc",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x239c5a0",
+          "end": "0x239c787",
+          "bytes_sha256": "4188f7bf8c3d6e821c02261de79f2097d92e0ac7340d60e609b78b949df460ab",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-support/239c5a0.c",
+          "raw_export_sha256": "26973a409676cc701e6784b21f2faaf32c6f60e196d3faab8d05ff3c0a032f34"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a45fe537608972fb266fea9f39766e78a58c19b48155177c430d0db52df1d61e"
+    },
+    {
+      "name": "card_guardian_angel",
+      "source": "cards/unlimited.c",
+      "native_ranges": [
+        {
+          "address": "0x24c4ef0",
+          "end": "0x24c50d4",
+          "bytes_sha256": "b1b5c0cf217bf01735661d279143d7ebd1cef9886263e5c96f18fd196202b742",
+          "raw_export": ".recovery/decompiled-energy-ice-unlimited-guardian/24c4ef0.c",
+          "raw_export_sha256": "b31827901f420665db1a9a9cdd204efaa95840c80d18142ef9604bdb69bca3e2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "bc61dbf104561020d0e2402de0b37db9823741930ef99fbefeb7f0b7e5bdc827"
+    }
+  ],
+  "inline_support_helpers": [
+    {
+      "name": "can_crew",
+      "source": "cards/kaladesh.c",
+      "definition_sha256": "919751eb59aaf5b81cf408130575d40c128225dbf466bf8771f1282494046383",
+      "native_owner": "vehicle",
+      "native_owner_address": "0x239bf30"
+    }
+  ],
+  "helper_definitions": 40,
+  "new_native_helper_ranges": 41,
+  "changed_helper_definitions": 19,
+  "changed_card_callers": 9,
+  "native_contracts": {
+    "attack": {
+      "return_type": "void",
+      "gate": "ENERGY_COUNTERS(player) >= amount",
+      "dispatch": "dat_ability",
+      "mode": "duh_mode ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL",
+      "flags": 0,
+      "callback": "EVENT_DAT_ABILITY",
+      "owner_ranges": [
+        "0x239bd80",
+        "0x239c350"
+      ]
+    },
+    "boost": {
+      "address": "0x239bdd0",
+      "fixed_parameters": {
+        "pow": 1,
+        "key": 0
+      },
+      "stack_parameters": {
+        "tou": [
+          145,
+          0
+        ],
+        "s_key": [
+          145,
+          4
+        ]
+      },
+      "complete_C_parameter_order": [
+        "player",
+        "card",
+        "event",
+        "pow",
+        "tou",
+        "key",
+        "s_key"
+      ],
+      "current_callers": [
+        "card_dhund_operative",
+        "card_foundry_screecher",
+        "card_inventors_apprentice"
+      ]
+    },
+    "energy_ai": {
+      "energy_field_offset": 2,
+      "threshold_addend": 3,
+      "rejection_string_retains_addend": 2
+    },
+    "fabricate": {
+      "dialog_tokens": [
+        "010c00",
+        "010300"
+      ]
+    },
+    "death_legacies": {
+      "detach_byte": 2,
+      "resolves_before_visibility": true,
+      "old_end_trigger_resets_removed": true,
+      "energy_dispatched_one_counter_per_call": true,
+      "energy_result_mask": 255
+    },
+    "enduring_renewal": {
+      "storage_start": 1,
+      "mode": 112,
+      "reanimation": "REANIMATEXTRA_RETURN_TO_HAND2"
+    },
+    "leave_play": {
+      "completion_event": "EVENT_LEAVES_PLAY_ABILITY",
+      "dance_of_the_dead_upkeep_query": true
+    },
+    "talisman": {
+      "dispatch": "sp_ability_trigger",
+      "mode": 2,
+      "callback": "EVENT_SPA",
+      "prompt_color_text": true
+    },
+    "guardian": {
+      "legacy_kind": "LEGACY_EFFECT_ACTIVATED_PROTECT",
+      "callback_field": "info_slot",
+      "protected_target_slot": 9,
+      "activation_keeps_legacy": true,
+      "effect_kind_global": {
+        "name": "LEGACY_EFFECT_ACTIVATED_PROTECT",
+        "address": "0x739d5c"
+      }
+    },
+    "dingus": {
+      "count_mode": 512,
+      "apnap_order": true,
+      "damage_per_death": 2,
+      "aggregate_damage": false
+    },
+    "soul_net": {
+      "detach_byte": 1,
+      "resolves_before_visibility": true,
+      "old_end_trigger_reset_removed": true
+    },
+    "drain_life": {
+      "remove_on_zero_damage_packet": true
+    },
+    "protection": {
+      "outer_abilities_gate_removed": true
+    },
+    "monolith": {
+      "mana_query_runs_outside_activation_events": true
+    },
+    "untap_limit": {
+      "other_same_id_permanents_marker": 2
+    },
+    "preserved_quirks": [
+      "Vehicle crew selection behavior, hardcoded thresholds and failure loop preserved",
+      "Demon detach returns before counting its own death",
+      "Soul Net retains byte1 detach marker while other reviewed legacies use byte2",
+      "AI Harnessed Lightning rejection text still says energy+2 although threshold is energy+3"
+    ]
+  },
+  "excluded_compiler_wrapper": {
+    "name": "snprintf",
+    "address": "0x23ee2b0",
+    "reason": "Specialized CRT formatting thunk; no explicit C definition in this unit. Retained in manual queue."
+  },
+  "scope": "40 complete helper definitions/41 native owner ranges, 12 complete live card callers and one inlined crew helper. Nineteen helper bodies and nine card callers changed. Built-in dialogs, the CRT formatting thunk and gameplay tests remain downstream."
+}

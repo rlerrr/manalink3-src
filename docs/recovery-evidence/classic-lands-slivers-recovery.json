@@ -1,0 +1,797 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "rtrue",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x209c780",
+          "end": "0x209c786",
+          "bytes_sha256": "2db31f4e09597946e56e859813bfdad7046d457c32332c3a882654d1e3ffdf67",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/209c780.c",
+          "raw_export_sha256": "421c5fc079691ddb7b42f35acb5be50c02f1b1756fb3ea1c387b44e6fc90df1e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f3fbe793af7331d802330c09b94b01a0cf09ccff98d1a39aa6d2ec258e16ca08"
+    },
+    {
+      "name": "al_lands",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x209c950",
+          "end": "0x209cb63",
+          "bytes_sha256": "009d6460c64f379ca1edc5c5b13ec526c727a762a1c7a104911bf88f3a1d41df",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/209c950.c",
+          "raw_export_sha256": "37c55c105f9d39d44932000370d20d1180a07aa1a4741aee7574efb3cbb25e23"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7b86c2de91c553a8f4aa0dd295ba43233ba933b6252a95704abb637bef2a4e70"
+    },
+    {
+      "name": "inheritance_effect",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x209ce50",
+          "end": "0x209d151",
+          "bytes_sha256": "92f76ef4de5ceb196833466be7973b7b8728fc62f3e64ed1bb32027c21a40390",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/209ce50.c",
+          "raw_export_sha256": "d6d47b389df505570c04a429b6633d72a86c86c823d89b37da1daabf06f8b944"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e40ccfd65aff18163afe6229edba46224a54d5f1d9a7ede0a1c052123c82bb31"
+    },
+    {
+      "name": "effect_scars_of_the_veteran",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x209d160",
+          "end": "0x209d2ce",
+          "bytes_sha256": "99a8e20858cb02e2d254d0a49ea101a7044a1dd4941cfbddfdb8eb0c59d2c08c",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/209d160.c",
+          "raw_export_sha256": "39fddc67a5052022a8b35afa538dfcae751a16a375a2888e7c6f0355e379c6fb"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "aeccc2e1385c7f6d3b606e03344f0a1c12d96be993251cce34b98f95927e9ea5"
+    },
+    {
+      "name": "spiny_starfish_legacy",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x209d7f0",
+          "end": "0x209d890",
+          "bytes_sha256": "bb52ede48ab9323b2e3a49737e560494e1426b7ca389d2eac84b0e511c40da6f",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/209d7f0.c",
+          "raw_export_sha256": "8c2fccdc0cef3be4ef6089566205734de799e5ec539d2be8f73a7bb2f5117069"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "16b1e19f0e148c66c4f855882dc1cd854e34e24dfc70a65e6ed28d1d15f80b84"
+    },
+    {
+      "name": "effect_gargoyle",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x209d920",
+          "end": "0x209d99b",
+          "bytes_sha256": "5cf3662f0ab3668a4f3ba257f3b40b1bcdb596464bbdb97be0c8ea9286fb608e",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/209d920.c",
+          "raw_export_sha256": "42fb99f75dd3f84a0b8d8e3010cf19befe2843e30d977fcdb7b1b776354fd4ff"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "245703c839904b5d6acd70c7023811af73d0eb4e87c50744aa4babb3ea103868"
+    },
+    {
+      "name": "casting_al_pitchspell",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x209dab0",
+          "end": "0x209de72",
+          "bytes_sha256": "5d759a1f0753ebda77b6895c2054264503ead1cce15a66dd23361375a7863445",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/209dab0.c",
+          "raw_export_sha256": "2488cecffe00d8f2bb019b8130b7b5c2838fbe4017b524fe9893ca7033320cb6"
+        },
+        {
+          "address": "0x209e0d0",
+          "end": "0x209e14e",
+          "bytes_sha256": "f9785698b1d562cf513670b29be156373ed3cc64bd3a02fea51e744c15cde380",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/209e0d0.c",
+          "raw_export_sha256": "a6c0575fc8f40d8781171e0ef9eb1155e8b20d702a7eeb2150b9f1a5d5134a8d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "35cf18594a18a0ff00674d23513223c5c390a39d1499bd98a5e291ace9563379"
+    },
+    {
+      "name": "ivory_gargoyle_impl",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x20a27c0",
+          "end": "0x20a2946",
+          "bytes_sha256": "add1614ec7df0130355fc991e2e5d8bf00b71ef0f704b72bdf820e19a6b030bb",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/20a27c0.c",
+          "raw_export_sha256": "a6a0a1881e6ffd3569ee032398c74d6e643fa25e0dfa783f5c1ae8af59f071e6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5209af2c286440aea19fe7bf42ac5f7e285f17f7f6dc3902af0e4451861232a2"
+    },
+    {
+      "name": "krovikan_horror",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x20a2f70",
+          "end": "0x20a3102",
+          "bytes_sha256": "b0a9dc08de68e91cda787956635d1b143d91846b602df142d8b3272e44018bd6",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/20a2f70.c",
+          "raw_export_sha256": "687c556cffdea9dfdce425dbbd6cbb69f2f9ccc99ffc2888778a0657a2a69bc2"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "55fb5fecbce9f43cc4e53702cbad70cedcaeef15da93ee1d42142deafd8451b2"
+    },
+    {
+      "name": "spiny_starfish_splitting_ability",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x20a7880",
+          "end": "0x20a79e1",
+          "bytes_sha256": "7602a0374b1aa7a13ca88189245092e739919ee9ba82ecb3a91ba0a941ee1dc4",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/20a7880.c",
+          "raw_export_sha256": "0ac3bda833f3a5c44e8d09d78860602759b68a459a0ed7fc423f896b39a9657f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "da7a161872ed9df8c68d0622cffe431c22be0bedcd63620e28eb84506656777c"
+    },
+    {
+      "name": "can_be_untapped",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x2147090",
+          "end": "0x21470bf",
+          "bytes_sha256": "f1db2b7d2b4ef815e10a3c9fd82c3f361c628e629f22653c2a18641fd6d97130",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/2147090.c",
+          "raw_export_sha256": "925034d1622a408937b9cb034228d572da679f3f92edb07c5918e924be3490fc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8be4d7487162cab0719877560e2268842eeb304efc3fa246ee6805caeb22205e"
+    },
+    {
+      "name": "sliver_shared_shade_ability",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x21470f0",
+          "end": "0x2147609",
+          "bytes_sha256": "5b0fd3653ef8b00d0c2b9a3d52bc842f775947ef3870c20ea291c143a3d4cf44",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21470f0.c",
+          "raw_export_sha256": "74a108777b0e4f3e65a88f099ec24a0136dac0080fc5ec69564872f3846fa3bd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "52c7c28376022bfb61157b753b9b62527b66a9f77d96ba11d3e6ca8767609fb0"
+    },
+    {
+      "name": "aluren_effect",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x2147660",
+          "end": "0x2147847",
+          "bytes_sha256": "bca4e8a1eec0dd729decdd975ed2e1ffa691ad8a3e6290bdc60249e144900f62",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/2147660.c",
+          "raw_export_sha256": "ab04913ac8faa4149a8b2603b362ef882ac303af4fb13bc3e30e8144a2fc0733"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2825876b8ac9b287fa87a193d1673341e1a7f863ed1077e4ae71568579702fc9"
+    },
+    {
+      "name": "clot_sliver_shared_ability",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x2147850",
+          "end": "0x2147bd6",
+          "bytes_sha256": "8c0b465ab62b483f8b1c6c4f5605a333800f16515035ac4431a99a3fa1bada66",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/2147850.c",
+          "raw_export_sha256": "54a559fc14bafe6da4a1b916ae0e29124afd8e6018f61a5cf3c833cb0575b0b9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e4ac61f43548362bdf8c458467c616c8ee6c77002f8dce1db8b3fa2fab4787ed"
+    },
+    {
+      "name": "mnemonic_sliver_shared_ability",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x2147ca0",
+          "end": "0x2147ff1",
+          "bytes_sha256": "4062b22ec90e76d4477d4570e3e1b1f1d6fc6fe66e192acebca375f3a223026e",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/2147ca0.c",
+          "raw_export_sha256": "a41d95ef054f350f2e7f76c0efff31536342bd3db86c2097077ae3bd4ed47816"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e82a77e94498164fc7dcd803d7d4e0dac978bc76879244e5b1fad0b90e82355d"
+    },
+    {
+      "name": "field_of_souls_effect",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x2148000",
+          "end": "0x2148312",
+          "bytes_sha256": "eed88d8e69d4357268079bc52ca3b61f5870575ac3989fcc10e492613a3bfb4e",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/2148000.c",
+          "raw_export_sha256": "6a99853471658d55f7725a9024c31e4de4d35eb547c38a06d49947313257f4d8"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "066ccda5cd42b73a8dd062e128fda4035bbcfd65c212854b4c3cba05bb46c33b"
+    },
+    {
+      "name": "is_blocking_kod",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x2148440",
+          "end": "0x214846c",
+          "bytes_sha256": "8b9a98604052ad6b43244ecaf85eef9097ad2e57c1aef72418ae109e54c66312",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/2148440.c",
+          "raw_export_sha256": "e70b7b5439cf39a3011d8fd9927f66e52107d8018bcefed7d35ddb9d95b960a7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f2ea4171ee2df1fa4af04ce696051124820063d71631d25926d6512ba2c992ca"
+    },
+    {
+      "name": "effect_unstable_shapeshifter",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x21488d0",
+          "end": "0x21489b3",
+          "bytes_sha256": "1420c58837af7e711d7c448651815c26b4fdcee8ae09eb48d20d62a2186af8a0",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21488d0.c",
+          "raw_export_sha256": "c1d115e0cf42d5c955f1c07b06d9fb2954ea9340287eb3c01c39fd6ceeadaba7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7794bf97a663189ac40b07362ce5c6210ff2e7c3fab22fdb4bbb177ed629ffaf"
+    },
+    {
+      "name": "cq_effect",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x2148a40",
+          "end": "0x2148b0e",
+          "bytes_sha256": "fba9a48650330fb542da7326e9208cf713a79e918042b2c09659616e62b26454",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/2148a40.c",
+          "raw_export_sha256": "b737f9fe8660a5e2a2681de303187af5e8a31643b64ae7b3c9f27a1d2a491c80"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "06bde2b614702d403e7ea81c34123bf5a0f2594905ee67278f21a4e1cb7aeaef"
+    },
+    {
+      "name": "tempest_painland",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x2148d50",
+          "end": "0x2148da2",
+          "bytes_sha256": "f7e85a278f1225655b5261cb426192c8b3cc79610d79eea4fc4ad74b4e0b3084",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/2148d50.c",
+          "raw_export_sha256": "f431a31c2b50b77efa7a304ea4b3802033b1b88a4c3ebba2534c24ef395f616d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2ad8b2dcecb3332b157f71185016b68393e7c6b3abec12b73bf8aabbfd86cd06"
+    },
+    {
+      "name": "sliver_with_shared_shade_ability",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x21496f0",
+          "end": "0x2149828",
+          "bytes_sha256": "c022e9f1e29f226e09b38f4063ddabfa17bfbc1292c4a4962f164bafd1b980aa",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21496f0.c",
+          "raw_export_sha256": "474e7f12501e5843d0e7d196a49c11824539d85fb1ab488963a8b6bc00e83f4c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2753f72289c5426b916c66d057d3a079898b182f5ff246063aec4a23d4b7a817"
+    },
+    {
+      "name": "mindwhip_sliver_shared_ability",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x2149a90",
+          "end": "0x2149cce",
+          "bytes_sha256": "370e0d0b62ad4855d4b9891dda8f7b5823f789a5cc39b1e2cd9c4ae9c1b03c3f",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/2149a90.c",
+          "raw_export_sha256": "206fb9053e4ef7367facb73e3d6a0e3aa9513c52dc2ec75cb27721b1a24a9cdc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e7a3b2c87b503a6905d3946a9fe2db366ade7b4a28bd7d7524109819f627d8c3"
+    },
+    {
+      "name": "is_damaging_me",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21e9870",
+          "end": "0x21e98b3",
+          "bytes_sha256": "9bd1dfc844fa8b7132b63297dda2c882ae8c1f11ecc5d6115e2a98c9ae2067cc",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21e9870.c",
+          "raw_export_sha256": "19bf0051edc49d8860026eab23ee64b56cd06a3a882cce910be25c2ec62524d7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "541810bd81b78f5d22aa69e82637d70c3a3ee73cdc7e1f9e25af2f835717837b"
+    },
+    {
+      "name": "leg_color_hoser",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21e9c30",
+          "end": "0x21ea1a3",
+          "bytes_sha256": "cb65dcd93b7a7d8689e7aa4290f4a74d84af619914f0d4fbae6359063a54b8e8",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21e9c30.c",
+          "raw_export_sha256": "a611e9f91d0c9c5b5d0fa42d5e41ed58e7838233cba4a7f278da0f6af17d1d2c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0eebae1718570f931597e467fba0e5b80c0a6a02d8a811b529cb745f0a4ae87c"
+    },
+    {
+      "name": "brine_hag_effect",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21ea810",
+          "end": "0x21eac09",
+          "bytes_sha256": "912bcd89b1ad5e797e34c6fc2810b9099b4197300e8de36f0d97a8d7a3687bae",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21ea810.c",
+          "raw_export_sha256": "53ea1ba76582fb3ef39c667d4d74ed521606b9ee40ba08efcb1aff73afe1f743"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9e74e9ac2db1b0de926adf50a714fd28267311de242a3ecacc86e92fbf6ed836"
+    },
+    {
+      "name": "song",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21eacc0",
+          "end": "0x21eaf49",
+          "bytes_sha256": "64c5a656aad130eaf551642a61aa7f9b0c539ebda5efeb051236e406d1f45ea0",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21eacc0.c",
+          "raw_export_sha256": "11be1e0770919d0a3a6c8a475f64fbc08e027ed9838e8cb0de4f224e0e078fe1"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e1acedd56553c5e5a83a6682caf0b0faf636bf8c5526ce963e145b8fffb729e5"
+    },
+    {
+      "name": "target_is_blocked_by_glyph_of_delusion_wall_card",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21eb080",
+          "end": "0x21eb0b4",
+          "bytes_sha256": "c531b3233340102e14a77b9bbd2a0aab7f4e0927efd776c2b78ef57760b43a4c",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21eb080.c",
+          "raw_export_sha256": "7d3af7aaf90026b112381d7f1c1eebf6030577dc95603634798d59bc428581a3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4769ade7309d8f99ca42799e1a2f2fee6d5acf18096511d586e1c6d1a445b08b"
+    },
+    {
+      "name": "get_permanent_with_highest_cmc",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21eb290",
+          "end": "0x21eb56d",
+          "bytes_sha256": "1dd282ed1506f38033482145e8db536c7dbb4f550113b1c7c2e9d124414aaefe",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21eb290.c",
+          "raw_export_sha256": "ff9e2996823a043463edd477787ef57fc1ffcd0c5935bb77e638d246f9f5e1fc"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a15e4da803583dcfdb37147e2451e4f34c1a7b1eb56b5f66c9cd63c2f845ccc2"
+    },
+    {
+      "name": "lands_edge_effect",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21eb740",
+          "end": "0x21ebc97",
+          "bytes_sha256": "802b8cf26ad28806d772c7420c443f2aae1fe45e0e46be241b84e36542ad5c6a",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21eb740.c",
+          "raw_export_sha256": "0858aefe7426bf4dc9937f34656b58068fe3f70a122782dcd078f687c883bba1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d76222437ee0a17ff08a142b7791e1def8bf21d600011bf9d4e47c6da8d8e218"
+    },
+    {
+      "name": "reincarnation_legacy",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21ebd70",
+          "end": "0x21ebf71",
+          "bytes_sha256": "afdda55ee83edc60a62fd2a1299918f1b895592c31bade911e87504d736ea2e8",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21ebd70.c",
+          "raw_export_sha256": "ce9e0a35c462db6c243320d472ed1f195f60810f0933ca101e15faccd537cd1c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2f39b8d62dd8703423f1632b78d034cc5f3e272366a41a6ec334520e4a287d84"
+    },
+    {
+      "name": "destroy_nonwall_at_end_of_combat",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21ecf80",
+          "end": "0x21ecfda",
+          "bytes_sha256": "20314e3407c1f076e2b81aceac123276d1fdbc073b7a235025145ce862b5d1fc",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21ecf80.c",
+          "raw_export_sha256": "4a910835e058490dbfc04fe2e4261b50a2939d6ed5958ff86c08bc644738e25e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c1e4531241a311e9157e6b872dd555935bdf4fe3eaf03cb40474731e609001f4"
+    },
+    {
+      "name": "mana_battery_generic",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21ecfe0",
+          "end": "0x21ed57a",
+          "bytes_sha256": "f0566ec7dcdc0ff2353ea3da0f62e213f598df5b9c35846f8a8fd6577d714ca7",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers/21ecfe0.c",
+          "raw_export_sha256": "9b814d9cfac82d281858151be114cfcf6b613c613fdfd0415a81a37fcac3e20a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2fb7aa9df91d986babfefd31ae5179fe9c52edb13c3031e7d3e7cabec4842be0"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_ivory_gargoyle",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x20a2950",
+          "end": "0x20a29a1",
+          "bytes_sha256": "eed43d4a04084c649dce991f72a61e66d3739a3ea5e336930410fe664d7a6abb",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers-support/20a2950.c",
+          "raw_export_sha256": "bda47f2dc407a7332c41a81ee11a0bcc3233b4db0bfd3b6fc6740315d600fd6a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8265789e1e626419041ec7a8b2c0ff33f4d94911ff36ffddc5e7b83a47db0236"
+    },
+    {
+      "name": "card_spiny_starfish",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x20a79f0",
+          "end": "0x20a7abe",
+          "bytes_sha256": "13358a91b7c953a6e4423549fe1a1207b1e3f7f19aba18ccc28412238b5d74d8",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers-support/20a79f0.c",
+          "raw_export_sha256": "93d8264923e66e4c89d443e68c468f6c7e20389452ab1be2e20a78b8bb4c7c05"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5eafadfe1b64342c4bbf4b335d5942950615d6bf405ed782f7ba6c259404f524"
+    },
+    {
+      "name": "card_molten_firebird",
+      "source": "cards/planar_chaos.c",
+      "native_ranges": [
+        {
+          "address": "0x23bae00",
+          "end": "0x23bae51",
+          "bytes_sha256": "7a1b2b981cc9ebc85806ff16ef43e567ed273860f6df4a61bad2aef4c613e78a",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers-support/23bae00.c",
+          "raw_export_sha256": "2313ce7b8dbd38302fd362a4fee766de8b5554b61dfe46c05456b16eb9dd5a9f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7f8818ce1723cd09ca1614ddd2df5cc1dbd0ec93244a07bfb77937432ad1d2df"
+    },
+    {
+      "name": "card_coffin_queen",
+      "source": "cards/tempest.c",
+      "native_ranges": [
+        {
+          "address": "0x214bcc0",
+          "end": "0x214bed7",
+          "bytes_sha256": "ebaaec917644d72e5eb4a17ee90a5c38245c6232e6e8f12ac814f992c31b6e7b",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers-support/214bcc0.c",
+          "raw_export_sha256": "d5684108e1beb704a89783abe4f3bc55858c41412e2c775cbf0198b1920a9bfe"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "697b2ce67992d82665eb78338ebf1d93177de28c20666861991619697c166d47"
+    },
+    {
+      "name": "card_dwarven_song",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21f1810",
+          "end": "0x21f1829",
+          "bytes_sha256": "34c1e485e86bff5554359032390e3210cfd4772c062b5cd96bb67c3bfd29a77f",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers-support/21f1810.c",
+          "raw_export_sha256": "a8143676e25c1b8e0a5f5e3661122b10cfac74583643febcc6322e07fd33cbc5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "59d10596d462f8b46b61909c379c1f740ae7d361aacf348d1dce6918d4569b53"
+    },
+    {
+      "name": "card_heavens_gate",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21f5bb0",
+          "end": "0x21f5bc9",
+          "bytes_sha256": "ccc2e08e6f244cf6ee5a8ae0f21ae68d4ed30b6559241834c542226e9a8707c4",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers-support/21f5bb0.c",
+          "raw_export_sha256": "30470d968dde1c03d00e85da2a350d69bf800e2907a532feeb5100615c6baaa1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "94203b63fe7f8d5e266b30c6b3ae10e2f5f49124d9523cb1a87b501c1324d8e8"
+    },
+    {
+      "name": "card_sea_kings_blessing",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x21ff570",
+          "end": "0x21ff589",
+          "bytes_sha256": "6b6134995f293ab3e6c7a4ab18494357d6ef56cd04b44490212f5b34894ef85e",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers-support/21ff570.c",
+          "raw_export_sha256": "d79973bd4efae28fd719ead8c046aea3fa998332088ecc202e37a5eeb1f3de92"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d0d55b2ff224ebc7c3865fb565bf063b30a17eece2277fa910f2f3370dd12e3b"
+    },
+    {
+      "name": "card_sylvan_paradise",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x22016a0",
+          "end": "0x22016b9",
+          "bytes_sha256": "0087a171f48dc8ed4900d10865bba8cc50edd7d5190ec4b0c74e9ab3ff9e1d5f",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers-support/22016a0.c",
+          "raw_export_sha256": "e5dd35011b64428a63660e4a681aabc190521817ff5954630f50ccb35bd310a7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "130ebe328793ce9d072f469e23290689a25e511bf74a9e5f25701e3befb4e530"
+    },
+    {
+      "name": "card_touch_of_darkness",
+      "source": "cards/legends.c",
+      "native_ranges": [
+        {
+          "address": "0x2202c70",
+          "end": "0x2202c89",
+          "bytes_sha256": "7e65a257f0b2c5cba6678b31a88dcb190734447feaac4a810426e468d787e17e",
+          "raw_export": ".recovery/decompiled-classic-lands-slivers-support/2202c70.c",
+          "raw_export_sha256": "0c2fa340a624018ddb6112db43e1944a3631b45c9c2af9723f7853eb7046ba90"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "58956bd524706d5fe8ce67c45e09867159da4754bd9b04323e03964e4ab2513e"
+    }
+  ],
+  "helper_definitions": 32,
+  "native_helper_ranges": 33,
+  "changed_helper_definitions": 14,
+  "changed_card_callers": 1,
+  "native_frame_arrays": {
+    "fixed_char_arrays": {
+      "buffer2": 100,
+      "prompt1": 300,
+      "prompt2": 600
+    },
+    "dynamic_int_upper_bounds": {
+      "horrors": [
+        112,
+        127
+      ]
+    },
+    "dynamic_meaning": "DW_OP_breg0(-1): count_graveyard(player)-1 upper bound, not a zero-sized array"
+  },
+  "native_contracts": {
+    "alliance_lands": {
+      "cast_humiliation_guard": "AL_TRIG",
+      "resolve_humiliation_guard": "AL_TRIG",
+      "resolve_sound_before_guard": true
+    },
+    "inheritance": {
+      "detach_byte": 2,
+      "marker_initialized_only_on_own_death": true,
+      "resolve_before_visibility": true,
+      "payment_failure_stops_loop": true,
+      "old_end_trigger_reset_removed": true
+    },
+    "gargoyle": {
+      "dispatch": "this_dies_trigger(...RESOLVE_TRIGGER_MANDATORY)",
+      "parent_coordinates": true,
+      "stored_id": "get_id(parent_controller,parent_card)",
+      "return_event": "eot_trigger",
+      "return_arguments": "owner,legacycard,owner,storedcsvid,REANIMATE_DEFAULT",
+      "old_gfp_marker_removed": true,
+      "skip_draw_player": "parent_controller"
+    },
+    "starfish": {
+      "token_color": "COLOR_TEST_BLUE",
+      "splitter_color_field_removed": true,
+      "apnap_descending_legacy_search": true
+    },
+    "slivers": {
+      "complete_helpers_retained": [
+        "sliver_shared_shade_ability",
+        "clot_sliver_shared_ability",
+        "mnemonic_sliver_shared_ability",
+        "sliver_with_shared_shade_ability",
+        "mindwhip_sliver_shared_ability"
+      ],
+      "grantor_slot": 1,
+      "pump_slots": [
+        2,
+        3
+      ],
+      "leave_play_completion": "EVENT_LEAVES_PLAY_ABILITY",
+      "activated_source_humiliation": "AL_NM_NL_ACT"
+    },
+    "aluren": {
+      "leave_play_completion": "EVENT_LEAVES_PLAY_ABILITY",
+      "early_return_after_removal": true
+    },
+    "field_of_souls": {
+      "detach_byte": 1,
+      "resolve_before_visibility": true,
+      "token_color": "COLOR_TEST_WHITE",
+      "old_end_trigger_reset_removed": true,
+      "original_manual_owner_filter_retained": true
+    },
+    "coffin_queen": {
+      "activation_flag": "GAA_UNTAPPED",
+      "legacy_other_leaves_play_always_dispatched": true,
+      "untapped_check_event": "EVENT_STATIC_EFFECTS",
+      "completion": "EVENT_LEAVES_PLAY_ABILITY",
+      "exile_target": "targets[0]"
+    },
+    "tempest_painland": {
+      "humiliation_guard": "AL_TRIG"
+    },
+    "brine_hag": {
+      "death_suppression_removes_legacy": true,
+      "power_toughness": "real_set_pt(...2,0,0)",
+      "permanent": true,
+      "created_effect_status": "STATUS_INVISIBLE_FX",
+      "resolver_still_visibility_gated": true
+    },
+    "song": {
+      "event_gate": "IS_GS_EVENT",
+      "can_cast": "generic_spell(...GS_CAN_TARGET,...NULL,1,NULL)",
+      "preferred_assignment_before_target_initialization": true,
+      "initial_allow_cancel": 0,
+      "after_pick_allow_cancel": 2,
+      "maximum_targets": 10
+    },
+    "highest_cmc": {
+      "prompt": "Select a %s you control with CMC %d"
+    },
+    "reincarnation": {
+      "death_trigger_suppression": true
+    },
+    "pitch_spell": {
+      "complete_source_retained": true,
+      "owner_ranges": [
+        "0x209dab0",
+        "0x209e0d0"
+      ],
+      "native_positive_life_payment": 1
+    },
+    "preserved_quirks": [
+      "Pitch eligibility keeps native OR can_pay_life precedence and pays exactly1life for positive life_to_pay",
+      "Brine Hag retains native count initialization, slot0 capture and cleanup behavior",
+      "Song preferred-controller assignment precedes default initialization",
+      "Coffin Queen legacy exiles its stored queen target, not the reanimated attachment",
+      "Land Edge retains player-only damage despite its planeswalker target definition",
+      "Color hoser retains native shift of get_sleighted_color_test result",
+      "Mana Battery retains native selection, cost and counter semantics"
+    ]
+  },
+  "excluded_compiler_wrapper": {
+    "name": "snprintf",
+    "address": "0x209de80",
+    "reason": "Specialized CRT thunk, no explicit C helper definition; left in manual queue."
+  },
+  "scope": "32 complete helper definitions/33 native ranges and9 complete paired card callers. Fourteen helper bodies and Coffin Queen changed. Specialized CRT formatting, built-in chooser backends and gameplay tests remain downstream."
+}

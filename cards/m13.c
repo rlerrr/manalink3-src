@@ -14,114 +14,145 @@ static int uthden_m13_creature(int player, int card, event_t event, int land_col
 	return generic_shade(player, card, event, 0, cless, black, blue, green, red, white, 0, 0, k_pump, sp_key_pump);
 }
 
-static int m13_ring(int player, int card, event_t event, int clr, int key, int s_key){
+static int m13_ring(int player, int card, event_t event, int clr, int key, int s_key)
+{
 
-	if( is_equipping(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
+  if (is_equipping(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-		if( get_color(p, c) & get_sleighted_color_test(player, card, clr) ){
-			upkeep_trigger_ability(player, card, event, player);
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
+    if (get_color(p, c) & get_sleighted_color_test(player, card, clr))
+    {
+      upkeep_trigger_ability(player, card, event, player);
 
-			if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-				add_counters(player, card, p, c, COUNTER_P1_P1, 1);
-			}
-		}
-		if( event == EVENT_ABILITIES && affect_me(p, c) ){
-			event_result |= s_key;
-			special_abilities(p, c, event, s_key, player, card);
-		}
-	}
+      if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+      {
+        add_counters(player, card, p, c, COUNTER_P1_P1, 1);
+      }
+    }
+    if (event == EVENT_ABILITIES && affect_me(p, c))
+    {
+      event_result |= key;
+      special_abilities(p, c, event, s_key, player, card);
+    }
+  }
 
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
+  if (!IS_GAA_EVENT(event))
+  {
+    return 0;
+  }
 
-	card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-	enum{
-		CHOICE_EQUIP = 1,
-		CHOICE_RING_EVOS,
-		CHOICE_RING_XATHRID
-	};
+  enum
+  {
+    CHOICE_EQUIP = 1,
+    CHOICE_RING_EVOS,
+    CHOICE_RING_XATHRID
+  };
 
-	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
-		if( ! is_equipping(player, card) ){
-			return basic_equipment(player, card, event, 1);
-		}
-		else{
-			if( generic_activated_ability(player, card, event, 0, MANACOST_X(2), 0, NULL, NULL) ){
-				if( get_id(player, card) == CARD_ID_RING_OF_EVOS_ISLE ){
-					return 1;
-				}
-				if( get_id(player, card) == CARD_ID_RING_OF_XATHRID ){
-					if( land_can_be_played & LCBP_REGENERATION ){
-						return can_be_regenerated(instance->damage_target_player, instance->damage_target_card);
-					}
-				}
-			}
-			return basic_equipment(player, card, event, 1);
-		}
-	}
+  if (event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card))
+  {
+    if (!is_equipping(player, card))
+    {
+      return basic_equipment(player, card, event, 1);
+    }
+    else
+    {
+      if (generic_activated_ability(player, card, event, 0, MANACOST_X(2), 0, NULL, NULL))
+      {
+        if (get_id(player, card) == CARD_ID_RING_OF_EVOS_ISLE)
+        {
+          return 1;
+        }
+        if (get_id(player, card) == CARD_ID_RING_OF_XATHRID)
+        {
+          if (land_can_be_played & LCBP_REGENERATION)
+          {
+            return can_be_regenerated(instance->damage_target_player, instance->damage_target_card);
+          }
+        }
+      }
+      return basic_equipment(player, card, event, 1);
+    }
+  }
 
-	if( event == EVENT_ACTIVATE ){
-		instance->info_slot = 0;
-		int abils[4] = {0, can_activate_basic_equipment(player, card, event, 1), 0, 0};
-		if( get_id(player, card) == CARD_ID_RING_OF_EVOS_ISLE && is_equipping(player, card) ){
-			if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_X(2), 0, NULL, NULL) ){
-				abils[CHOICE_RING_EVOS] = 1;
-			}
-		}
-		if( get_id(player, card) == CARD_ID_RING_OF_XATHRID && is_equipping(player, card) ){
-			if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_X(2), 0, NULL, NULL) ){
-				if( (land_can_be_played & LCBP_REGENERATION) &&
-					can_be_regenerated(instance->damage_target_player, instance->damage_target_card) )
-				{
-					abils[CHOICE_RING_XATHRID] = 1;
-				}
-			}
-		}
-		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_OMIT_ILLEGAL,
-							"Equip", 						abils[1], 5,
-							"Equipped crit gets Hexproof",	abils[2], 10,
-							"Regenerate equipped crits",	abils[3], 10);
-		if( ! choice ){
-			spell_fizzled = 1;
-			return 0;
-		}
-		if( choice == CHOICE_EQUIP ){
-			basic_equipment(player, card, event, 1);
-			if( spell_fizzled != 1 ){
-				int color = get_color(instance->targets[0].player, instance->targets[0].card);
-				ai_modifier += (color & clr) ? 48 : -48;
-			}
-		}
-		if( choice == CHOICE_RING_EVOS || choice == CHOICE_RING_XATHRID ){
-			return generic_activated_ability(player, card, event, 0, MANACOST_X(2), 0, NULL, NULL);
-		}
-	}
+  if (event == EVENT_ACTIVATE)
+  {
+    instance->info_slot = 0;
+    int abils[4] = {0, can_activate_basic_equipment(player, card, event, 1), 0, 0};
+    if (get_id(player, card) == CARD_ID_RING_OF_EVOS_ISLE && is_equipping(player, card))
+    {
+      if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_X(2), 0, NULL,
+                                    NULL))
+      {
+        abils[CHOICE_RING_EVOS] = 1;
+      }
+    }
+    if (get_id(player, card) == CARD_ID_RING_OF_XATHRID && is_equipping(player, card))
+    {
+      if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_X(2), 0, NULL,
+                                    NULL))
+      {
+        if ((land_can_be_played & LCBP_REGENERATION) &&
+            can_be_regenerated(instance->damage_target_player, instance->damage_target_card))
+        {
+          abils[CHOICE_RING_XATHRID] = 1;
+        }
+      }
+    }
+    int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_OMIT_ILLEGAL, "Equip", abils[1], 5,
+                        "Equipped crit gets Hexproof", abils[2], 10, "Regenerate equipped crits",
+                        abils[3], 10);
+    if (!choice)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == CHOICE_EQUIP)
+    {
+      basic_equipment(player, card, event, 1);
+      if (spell_fizzled != 1)
+      {
+        int color = get_color(instance->targets[0].player, instance->targets[0].card);
+        ai_modifier += (color & clr) ? 48 : -48;
+      }
+    }
+    if (choice == CHOICE_RING_EVOS || choice == CHOICE_RING_XATHRID)
+    {
+      return generic_activated_ability(player, card, event, 0, MANACOST_X(2), 0, NULL, NULL);
+    }
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *parent = get_card_instance(instance->parent_controller, instance->parent_card);
-		int choice = instance->info_slot;
-		if( choice == CHOICE_EQUIP ){
-			return basic_equipment(player, card, event, 1);
-		}
-		if( choice == CHOICE_RING_EVOS ){
-			if( get_id(instance->parent_controller, instance->parent_card) == CARD_ID_RING_OF_EVOS_ISLE ){
-				pump_ability_until_eot(instance->parent_controller, instance->parent_card,
-										parent->damage_target_player, parent->damage_target_card, 0, 0, 0, SP_KEYWORD_HEXPROOF);
-			}
-		}
-		if( choice == CHOICE_RING_XATHRID ){
-			if( can_be_regenerated(parent->damage_target_player, parent->damage_target_card) ){
-				regenerate_target(parent->damage_target_player, parent->damage_target_card);
-			}
-		}
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    card_instance_t *parent = get_card_instance(instance->parent_controller, instance->parent_card);
+    int choice = instance->info_slot;
+    if (choice == CHOICE_EQUIP)
+    {
+      return basic_equipment(player, card, event, 1);
+    }
+    if (choice == CHOICE_RING_EVOS)
+    {
+      if (get_id(instance->parent_controller, instance->parent_card) == CARD_ID_RING_OF_EVOS_ISLE)
+      {
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                               parent->damage_target_player, parent->damage_target_card, 0, 0, 0,
+                               SP_KEYWORD_HEXPROOF);
+      }
+    }
+    if (choice == CHOICE_RING_XATHRID)
+    {
+      if (can_be_regenerated(parent->damage_target_player, parent->damage_target_card))
+      {
+        regenerate_target(parent->damage_target_player, parent->damage_target_card);
+      }
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 //--------------- Cards
@@ -1318,10 +1349,11 @@ Shuffle your library and put that card on top of it. */
 static int odric_effect(int player, int card, event_t event)
 {
   if (event == EVENT_DECLARE_BLOCKERS || event == EVENT_CLEANUP)
-	{
-	  event_flags &= ~EF_ATTACKER_CHOOSES_BLOCKERS;	// Assumes all such effects last only for this combat
-	  kill_card(player, card, event);
-	}
+  {
+    event_flags &=
+        ~EF_ATTACKER_CHOOSES_BLOCKERS; // Assumes all such effects last only for this combat
+    kill_card(player, card, KILL_EXILE);
+  }
 
   return 0;
 }
@@ -1556,15 +1588,25 @@ Equip |1 (|1: Attach to target creature you control. Equip only as a sorcery.) *
 	return m13_ring(player, card, event, COLOR_TEST_RED, 0, SP_KEYWORD_HASTE);
 }
 
-int card_ring_of_xathrid(int player, int card, event_t event){
-/* CARD_ID_RING_OF_XATHRID	12610
-Ring of Xathrid	|2
-Artifact - Equipment
-|2: Regenerate equipped creature. (The next time that creature would be destroyed this turn, it isn't. Instead tap it, remove all damage from it, and remove it from combat.)
-At the beginning of your upkeep, put a +1/+1 counter on equipped creature if it's |Sblack.
-Equip |1 (|1: Attach to target creature you control. Equip only as a sorcery.) */
+int card_ring_of_xathrid(int player, int card, event_t event)
+{
+  /* CARD_ID_RING_OF_XATHRID	12610
+  Ring of Xathrid	|2
+  Artifact - Equipment
+  |2: Regenerate equipped creature. (The next time that creature would be destroyed this turn, it
+  isn't. Instead tap it, remove all damage from it, and remove it from combat.) At the beginning of
+  your upkeep, put a +1/+1 counter on equipped creature if it's |Sblack. Equip |1 (|1: Attach to
+  target creature you control. Equip only as a sorcery.) */
 
-	return m13_ring(player, card, event, COLOR_TEST_BLACK, 0, 0);
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CHECK_ABILITIES &&
+      affect_me(instance->damage_target_player, instance->damage_target_card) &&
+      is_equipping(player, card) && can_use_activated_abilities(player, card) &&
+      has_mana_for_activated_ability(player, card, MANACOST_X(2)) &&
+      can_be_regenerated(instance->damage_target_player, instance->damage_target_card))
+    check_abilities_keywords |= KEYWORD_REGENERATION;
+
+  return m13_ring(player, card, event, COLOR_TEST_BLACK, 0, 0);
 }
 
 int card_roaring_primadox(int player, int card, event_t event){

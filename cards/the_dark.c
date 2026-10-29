@@ -2742,17 +2742,15 @@ int card_rag_man(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_ONLY_TARGET_OPPONENT, MANACOST_B(3), 0, &td, "TARGET_PLAYER");
 }
 
-static const char* spell_is_targeting_me(int who_chooses, int player, int card)
+static const char *spell_is_targeting_me(int who_chooses, int player, int card)
 {
-	card_instance_t* eff = get_card_instance(player, card);
-	if( eff->number_of_targets == 0 || eff->number_of_targets > 1)
-		return "must have only 1 target";
-	if( !(eff->targets[0].player == who_chooses && eff->targets[0].card == -1) )
-		return "must target you.";
-	if( ! call_card_function(player, card, EVENT_CAN_CHANGE_TARGET) )
-		return "has only 1 legal target";
+  card_instance_t *eff = get_card_instance(player, card);
+  if (eff->number_of_targets == 0 || eff->number_of_targets > 1)
+    return "must have only 1 target";
+  if (!(eff->targets[0].player == who_chooses && eff->targets[0].card == -1))
+    return "must target you.";
 
-	return NULL;
+  return NULL;
 }
 
 int card_reflecting_mirror(int player, int card, event_t event){
@@ -2818,67 +2816,81 @@ int card_riptide2(int player, int card, event_t event){
 	return basic_spell(player, card, event);
 }
 
-static int effect_runesword(int player, int card, event_t event){
+static int effect_runesword(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-		if( other_leaves_play(player, card, p, c, event, 0, 0) ){
-			// Must check if the controller of Runeswoed didn't changed after the activation of its ability.
-			if( instance->targets[0].player == instance->targets[1].player ){
-				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_SACRIFICE);
-			}
-		}
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
+    other_leaves_play(player, card, p, c, event, 0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      // Must check if the controller of Runeswoed didn't changed after the activation of its
+      // ability.
+      if (instance->targets[0].player == instance->targets[1].player)
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_SACRIFICE);
+      }
+    }
 
-		if( event == EVENT_POWER && affect_me(p, c) ){
-			event_result += 2;
-		}
+    if (event == EVENT_POWER && affect_me(p, c))
+    {
+      event_result += 2;
+    }
 
-		if (event == EVENT_DEAL_DAMAGE){
-			card_instance_t* damage = get_card_instance(affected_card_controller, affected_card);
-			if (damage->internal_card_id == damage_card && damage->info_slot > 0
-				&& damage->damage_source_card == p
-				&& damage->damage_source_player == c
-				&& damage->damage_target_card != -1 )
-			{
-				if( instance->targets[2].player < 3 ){
-					instance->targets[2].player = 3;
-				}
-				int pos = instance->targets[2].player;
-				if( pos < 10 ){
-					instance->targets[pos].player = damage->damage_target_player;
-					instance->targets[pos].card = damage->damage_target_card;
-					instance->targets[2].player++;
-				}
-			}
-		}
+    if (event == EVENT_DEAL_DAMAGE)
+    {
+      card_instance_t *damage = get_card_instance(affected_card_controller, affected_card);
+      if (damage->internal_card_id == damage_card && damage->info_slot > 0 &&
+          damage->damage_source_card == p && damage->damage_source_player == c &&
+          damage->damage_target_card != -1)
+      {
+        if (instance->targets[2].player < 3)
+        {
+          instance->targets[2].player = 3;
+        }
+        int pos = instance->targets[2].player;
+        if (pos < 10)
+        {
+          instance->targets[pos].player = damage->damage_target_player;
+          instance->targets[pos].card = damage->damage_target_card;
+          instance->targets[2].player++;
+        }
+      }
+    }
 
-		if( trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) && reason_for_trigger_controller == player &&
-			instance->targets[2].player > 3 )
-		{
-			if (event == EVENT_TRIGGER){
-				event_result = RESOLVE_TRIGGER_MANDATORY;
-			}
-			else if (event == EVENT_RESOLVE_TRIGGER){
-				int i;
-				for (i=3; i<instance->targets[2].player; i++){
-					cannot_regenerate_until_eot(instance->targets[0].player, instance->targets[0].card,
-												instance->targets[i].player, instance->targets[i].card);
-					exile_if_would_be_put_into_graveyard(instance->targets[0].player, instance->targets[0].card,
-														 instance->targets[i].player, instance->targets[i].card, 1);
-				}
-				instance->targets[2].player = 3;
-			}
-		}
-	}
+    if (trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) &&
+        reason_for_trigger_controller == player && instance->targets[2].player > 3)
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = RESOLVE_TRIGGER_MANDATORY;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        int i;
+        for (i = 3; i < instance->targets[2].player; i++)
+        {
+          cannot_regenerate_until_eot(instance->targets[0].player, instance->targets[0].card,
+                                      instance->targets[i].player, instance->targets[i].card);
+          exile_if_would_be_put_into_graveyard(
+              instance->targets[0].player, instance->targets[0].card, instance->targets[i].player,
+              instance->targets[i].card, 1);
+        }
+        instance->targets[2].player = 3;
+      }
+    }
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_runesword(int player, int card, event_t event){
@@ -3812,27 +3824,32 @@ int card_wand_of_ith(int player, int card, event_t event)
 									&td, "TARGET_PLAYER");
 }
 
-int war_barge_legacy(int player, int card, event_t event){
+int war_barge_legacy(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
 
-		int wb_p = instance->targets[0].player;
-		int wb_c = instance->targets[0].card;
+    int wb_p = instance->targets[0].player;
+    int wb_c = instance->targets[0].card;
 
-		if( other_leaves_play(player, card, wb_p, wb_c, event, 0, 0) ){
-			kill_card(p, c, KILL_BURY);
-		}
-	}
+    other_leaves_play(player, card, wb_p, wb_c, event, 0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      kill_card(p, c, KILL_BURY);
+    }
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_war_barge(int player, int card, event_t event){
@@ -3884,38 +3901,44 @@ int card_water_wurm(int player, int card, event_t event){
 	return 0;
 }
 
-static int whippoorwill_legacy(int player, int card, event_t event){
+static int whippoorwill_legacy(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		int t_player = instance->damage_target_player;
-		int t_card = instance->damage_target_card;
-		if( event == EVENT_PREVENT_DAMAGE ){
-			card_instance_t *source = get_card_instance(affected_card_controller, affected_card);
-			if( damage_card == source->internal_card_id &&
-				source->damage_target_player == t_player && source->damage_target_card == t_card )
-			{
-				state_untargettable(affected_card_controller, affected_card, 1);
-			}
-		}
-		if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(t_player, t_card) ){
-			card_instance_t *this = get_card_instance( t_player, t_card );
-			if( this->kill_code > 0 && this->kill_code < KILL_EXILE ){
-				this->kill_code = KILL_EXILE;
-			}
-		}
-	}
+    int t_player = instance->damage_target_player;
+    int t_card = instance->damage_target_card;
+    if (event == EVENT_PREVENT_DAMAGE)
+    {
+      card_instance_t *source = get_card_instance(affected_card_controller, affected_card);
+      if (damage_card == source->internal_card_id && source->damage_target_player == t_player &&
+          source->damage_target_card == t_card)
+      {
+        state_untargettable(affected_card_controller, affected_card, 1);
+      }
+    }
+    if (event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(t_player, t_card))
+    {
+      card_instance_t *this = get_card_instance(t_player, t_card);
+      if (this->kill_code > 0 && this->kill_code < KILL_EXILE)
+      {
+        this->kill_code = KILL_EXILE;
+      }
+    }
+  }
 
-	if( event == EVENT_CLEANUP ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int t_player = instance->damage_target_player;
-		int t_card = instance->damage_target_card;
-		remove_status(t_player, t_card, STATUS_CANNOT_REGENERATE);
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP && get_card_instance(player, card)->damage_target_player >= 0)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int t_player = instance->damage_target_player;
+    int t_card = instance->damage_target_card;
+    remove_status(t_player, t_card, STATUS_CANNOT_REGENERATE);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_whippoorwill(int player, int card, event_t event){

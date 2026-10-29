@@ -1132,139 +1132,152 @@ int card_ob_nilixis_emblem(int player, int card, event_t event){
 	return 0;
 }
 
-static int overseer_of_the_damned_effect(int player, int card, event_t event){
+static int overseer_of_the_damned_effect(int player, int card, event_t event)
+{
 
-	//In case something is copying Pawn of Ulamog and then reverts to its original form.
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_OVERSEER_OF_THE_DAMNED ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  // In case something is copying Pawn of Ulamog and then reverts to its original form.
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_OVERSEER_OF_THE_DAMNED)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-					}
-					if( instance->targets[11].player < 0 ){
-						instance->targets[11].player = 0;
-					}
-					SET_BYTE1(instance->targets[11].player) = 1;
-				}
-				count_for_gfp_ability(player, card, event, 1-player, TYPE_CREATURE, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1 &&
+            affect_me(instance->damage_target_player, instance->damage_target_card))
+        {
+          instance->damage_target_player = instance->damage_target_card = -1;
+          remove_status(player, card, STATUS_INVISIBLE_FX);
+          if (instance->targets[11].player < 0)
+            instance->targets[11].player = 0;
+          SET_BYTE2(instance->targets[11].player) = 1;
+        }
+        count_for_gfp_ability_and_store_values(player, card, event, 1 - player, TYPE_CREATURE, NULL,
+                                               GFPC_EXTRA_SKIP_TOKENS, 0);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    token_generation_t token;
+    default_token_definition(player, card, CARD_ID_ZOMBIE, &token);
+    token.qty = BYTE0(result);
+    token.action = TOKEN_ACTION_TAPPED;
+    token.color_forced = COLOR_TEST_BLACK;
+    generate_token(&token);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-			token_generation_t token;
-			default_token_definition(player, card, CARD_ID_ZOMBIE, &token);
-			token.qty = amount;
-			token.action = TOKEN_ACTION_TAPPED;
-			token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
-			generate_token(&token);
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
-
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
-
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
-int card_overseer_of_the_damned(int player, int card, event_t event){
-/*
-Overseer of the Damned |5|B|B
-Creature - Demon
-Flying
-When Overseer of the Damned enters the battlefield, you may destroy target creature.
-Whenever a nontoken creature an opponent controls dies, put a 2/2 black Zombie creature token onto the battlefield tapped.
-5/5
-*/
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
-				card_instance_t *inst = get_card_instance(player, c);
-				if( inst->info_slot == (int)overseer_of_the_damned_effect ){
-					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
-						(inst->targets[0].player == player && inst->targets[0].card == card) )
-					{
-						found = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( ! found ){
-			int legacy = create_targetted_legacy_effect(player, card, &overseer_of_the_damned_effect, player, card);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-	}
+int card_overseer_of_the_damned(int player, int card, event_t event)
+{
+  /*
+  Overseer of the Damned |5|B|B
+  Creature - Demon
+  Flying
+  When Overseer of the Damned enters the battlefield, you may destroy target creature.
+  Whenever a nontoken creature an opponent controls dies, put a 2/2 black Zombie creature token onto
+  the battlefield tapped. 5/5
+  */
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(player, c);
+        if (inst->info_slot == (int)overseer_of_the_damned_effect)
+        {
+          if ((inst->damage_target_player == player && inst->damage_target_card == card) ||
+              (inst->targets[0].player == player && inst->targets[0].card == card))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy = create_targetted_legacy_effect(player, card, &overseer_of_the_damned_effect,
+                                                  player, card);
+      card_instance_t *inst = get_card_instance(player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+  }
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY ){
-		card_instance_t *instance = get_card_instance( player, card);
+  if (event == EVENT_ETB_ABILITY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		if( can_target(&td) && pick_target(&td, "TARGET_CREATURE") ){
-			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-		}
-		instance->number_of_targets = 0;
-	}
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    if (can_target(&td) && pick_target(&td, "TARGET_CREATURE"))
+    {
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+    }
+    instance->number_of_targets = 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		count_for_gfp_ability(player, card, event, 1-player, TYPE_CREATURE, NULL);
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    count_for_gfp_ability_and_store_values(player, card, event, 1 - player, TYPE_CREATURE, NULL,
+                                           GFPC_EXTRA_SKIP_TOKENS, 0);
+  }
 
-	if( get_card_instance(player, card)->kill_code <= 0 ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
+  if (get_card_instance(player, card)->kill_code <= 0)
+  {
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result)
+    {
+      int amount = BYTE0(result);
 
-			token_generation_t token;
-			default_token_definition(player, card, CARD_ID_ZOMBIE, &token);
-			token.qty = amount;
-			token.action = TOKEN_ACTION_TAPPED;
-			token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
-			generate_token(&token);
-		}
-	}
+      token_generation_t token;
+      default_token_definition(player, card, CARD_ID_ZOMBIE, &token);
+      token.qty = amount;
+      token.action = TOKEN_ACTION_TAPPED;
+      token.color_forced = COLOR_TEST_BLACK;
+      generate_token(&token);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_raving_dead(int player, int card, event_t event){
@@ -2338,74 +2351,91 @@ int card_wolfcallers_howl(int player, int card, event_t event){
 }
 
 // Lands (3)
-static int arcane_lighthouse_legacy(int player, int card, event_t event){
+static int arcane_lighthouse_legacy(int player, int card, event_t event)
+{
 
-	if( event == EVENT_ABILITIES && affected_card_controller == 1-player ){
-		player_bits[1-player] |= PB_CANT_HAVE_OR_GAIN_SHROUD;
-		player_bits[1-player] |= PB_CANT_HAVE_OR_GAIN_HEXPROOF;
+  if (event == EVENT_ABILITIES && affected_card_controller == 1 - player)
+  {
+    player_bits[1 - player] |= PB_CANT_HAVE_OR_GAIN_SHROUD;
+    player_bits[1 - player] |= PB_CANT_HAVE_OR_GAIN_HEXPROOF;
 
-		if (!is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
-			return 0;
-		}
+    if (!is_what(affected_card_controller, affected_card, TYPE_CREATURE))
+    {
+      return 0;
+    }
 
-		event_result &= ~KEYWORD_SHROUD;
+    event_result &= ~KEYWORD_SHROUD;
 
-		card_instance_t* aff = get_card_instance(affected_card_controller, affected_card);
-		if (aff->targets[16].card < 0){
-			aff->targets[16].card = 0;
-		}
-		aff->targets[16].card &= ~SP_KEYWORD_HEXPROOF;
-	}
+    card_instance_t *aff = get_card_instance(affected_card_controller, affected_card);
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+    aff->ext->sp_keywords &= ~SP_KEYWORD_HEXPROOF;
+  }
 
-	return 0;
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+
+  return 0;
 }
 
-int card_arcane_lighthouse(int player, int card, event_t event){
-	/*
-	  Arcane Lighthouse
-	  Land
-	  T: Add 1 to your mana pool.
-	  1, T: Until end of turn, creatures your opponents control lose hexproof and shroud and can't have hexproof or shroud.
-	*/
+int card_arcane_lighthouse(int player, int card, event_t event)
+{
+  /*
+    Arcane Lighthouse
+    Land
+    T: Add 1 to your mana pool.
+    1, T: Until end of turn, creatures your opponents control lose hexproof and shroud and can't
+    have hexproof or shroud.
+  */
 
-	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE ){
-		return mana_producer(player, card, event);
-	}
+  if (!IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE)
+  {
+    return mana_producer(player, card, event);
+  }
 
-	card_instance_t *instance = get_card_instance( player, card );
+  card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_ACTIVATE ){
-		int choice = instance->info_slot = 0;
-		if( !paying_mana() && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_X(2), 0, NULL, NULL) ){
-			choice = do_dialog(player, player, card, -1, -1, " Generate mana\n Hexproof & Shroud removal\n Cancel", 1);
-		}
+  if (event == EVENT_ACTIVATE)
+  {
+    int choice = instance->info_slot = 0;
+    if (!paying_mana() && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED,
+                                                    MANACOST_X(2), 0, NULL, NULL))
+    {
+      choice = do_dialog(player, player, card, -1, -1,
+                         " Generate mana\n Hexproof & Shroud removal\n Cancel", 1);
+    }
 
-		if( choice == 0){
-			return mana_producer(player, card, event);
-		}
+    if (choice == 0)
+    {
+      return mana_producer(player, card, event);
+    }
 
-		if( choice == 1 ){
-			add_state(player, card, STATE_TAPPED);
-			if( charge_mana_for_activated_ability(player, card, MANACOST_X(1)) ){
-				tap_card(player, card);
-				instance->info_slot = 1;
-			}
-			else{
-				remove_state(player, card, STATE_TAPPED);
-			}
-		}
-	}
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot > 0 ){
-			create_legacy_effect(instance->parent_controller, instance->parent_card, arcane_lighthouse_legacy);
-		}
-	}
+    if (choice == 1)
+    {
+      add_state(player, card, STATE_TAPPED);
+      if (charge_mana_for_activated_ability(player, card, MANACOST_X(1)))
+      {
+        tap_card(player, card);
+        instance->info_slot = 1;
+      }
+      else
+      {
+        remove_state(player, card, STATE_TAPPED);
+      }
+      tapped_for_mana_color = -1;
+    }
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (instance->info_slot > 0)
+    {
+      create_legacy_effect(instance->parent_controller, instance->parent_card,
+                           arcane_lighthouse_legacy);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_flamekin_village(int player, int card, event_t event){

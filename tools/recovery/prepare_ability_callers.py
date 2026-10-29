@@ -66,8 +66,9 @@ def typed_views(body,address):
         data=json.loads((ROOT/'.recovery/ability-small-native-data.json').read_text())
         entry=next(e for e in data['enum_members'] if e['name']=='DDBM_MAY_DAMAGE_PLANESWALKER')
         assert entry['value']==64
-        body=body.replace('{','{\n  enum { DDBM_MAY_DAMAGE_PLANESWALKER = 64 };',1)
-        changes.append(dict(native_enum=entry))
+        # The native spelling now lives in the shared ddbm_flags_t enum.
+        # Keep its witness without reintroducing a local shadow declaration.
+        changes.append(dict(native_enum=entry,shared_declaration='ddbm_flags_t'))
     # Optimized private entries have a different argument order from the public
     # C frontend. The native frontend exports show these exact forwarding rules;
     # the worker's unused incoming registers are not C arguments to preserve.

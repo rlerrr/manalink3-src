@@ -1,0 +1,1352 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "target_must_have_counters",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x25152c0",
+          "end": "0x25152ef",
+          "bytes_sha256": "31f29e8f1b5b2d17ca33146875705c963b66e5a9206df5d8eaf2c63980a4db95",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/25152c0.c",
+          "raw_export_sha256": "c8a7e99a1525609477732aa2992bb161cf10dbeb97ca844f166b88062a1297ca"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "393be60f977744ef07682a2b162e8c2f4c844f2cd34012578b73f94974e4f8c6"
+    },
+    {
+      "name": "enter_the_infinite_legacy",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x25152f0",
+          "end": "0x251534a",
+          "bytes_sha256": "7afbefd2d0c79528524a4841bcd4e99c3eaf8d2dba6c2ed40a6b8fd29601caed",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/25152f0.c",
+          "raw_export_sha256": "461c8168dd7be791778723bb7ccad7c0ab4d1327185df73c4e26262971aafeaf"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2ebf9797ee61c5493f8b5fe272b77472f9a31a80f235afb9c948a4deee432516"
+    },
+    {
+      "name": "ogre_slumlord_effect",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2515410",
+          "end": "0x25156e9",
+          "bytes_sha256": "949234835823357b59ca4673cd365ce38ffa19bc1789e152a102bf878b7e33d5",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/2515410.c",
+          "raw_export_sha256": "f7d134f136ff9eec20fce5d868adab9a8b78fd0077b4a0333110907463659ffd"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d35c6e607c420f8cae53ee74c05b9d7497136d7e88738d0ba81dfc3cfed15433"
+    },
+    {
+      "name": "effect_duskmantle_guildmage",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2515790",
+          "end": "0x25158e4",
+          "bytes_sha256": "aebc396f5cfff5b634a1c809c68e695edb1916243163760223ecffb224e15c6b",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/2515790.c",
+          "raw_export_sha256": "3bb192f7304bdbd7a4840d6a19fcedab2c16f0ecef90e42c96ffa423a3bdd264"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "342e33f4841a8dbadffc374bb9c6a968a848743264ed2339861c30d249ee42fe"
+    },
+    {
+      "name": "lazav_mastermind_impl",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x25158f0",
+          "end": "0x2515ce4",
+          "bytes_sha256": "87f0c1d4977a0c7232066c8d82f58fc4d830eab5ab15b54d2bf6139f6408b9cf",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/25158f0.c",
+          "raw_export_sha256": "c02f9e5c4a848f7c6ad3078fa38901cd870e62a568a71e3ba11e838793bcae44"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "93b58ed8b5c523601f240d470c0d344e40008cb9b47cb658aca0119cf3b98ae1"
+    },
+    {
+      "name": "cipher_legacy",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2515e70",
+          "end": "0x2515f27",
+          "bytes_sha256": "bca25514da745f7d566e05a12c09d0ab3ac2eeb09e821687e2dcf5ad5febb4ef",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/2515e70.c",
+          "raw_export_sha256": "b30f7bcb402994bd2a69bc7607b2023bbef3c0c92cd9143e0ebdbd64a499035a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "989441349d9accb58a3d279cbeb57ec7ba008afac4d77e112f6fed0a17a3c666"
+    },
+    {
+      "name": "coerced_confession_legacy",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2516090",
+          "end": "0x25161a1",
+          "bytes_sha256": "c7bd562cd4bbbb7864e7ebeea074163e321b7d5b7625bae02e8e5b7ca49cec04",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/2516090.c",
+          "raw_export_sha256": "2361709a8d4c1ee2a42bca0dc088e79342103c55e2fe55bcdf1100546693eb25"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a5717d768bcd9e25f4e2cb48e6a608e385411a8928cf5a321d3b09d7b6a4acee"
+    },
+    {
+      "name": "effect_lazav_dimir_mastermind",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2516210",
+          "end": "0x251626a",
+          "bytes_sha256": "4d3e8f72bd677f0843df484b24f81e3fb39968e82830733c2edb7132428a774d",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/2516210.c",
+          "raw_export_sha256": "fb5434ccbc5c596613d291bca9c87d8943db15ed4dc71da213c3b4b229c614bd"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "396ba7a16f467a847e8c53557d984857212811cd84f11ffd11f1553a4174a97b"
+    },
+    {
+      "name": "ozbedat_legacy",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2516270",
+          "end": "0x25163d4",
+          "bytes_sha256": "543d5f57de63e56ede49a8abeb7dd616f34598d6a72bc7b63c88a8e37c4f5f63",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/2516270.c",
+          "raw_export_sha256": "6678e464f5b420a732229da9ffcb02091347bd49539d0cf69771ecf43e98d03b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fc6bcd9e8a00252e60fa69eb80a32d3ca0a6814c28ddbe08cf6cda62504dfdbe"
+    },
+    {
+      "name": "effect_thespians_stage",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x25163e0",
+          "end": "0x25168b0",
+          "bytes_sha256": "4853810acc06be4767c2c97ae3bb53308db98a2a44c47f74460ffe4aad8cd3b4",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/25163e0.c",
+          "raw_export_sha256": "f97da181089e34ab80b266d56ea4ecbe62dafe9e5c722b5d826c5024c71c245f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "306c8204de4f00b534bcfddb40673ec4d3fa4bf40bdbc3a719243b00400c99b6"
+    },
+    {
+      "name": "extort",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2516a30",
+          "end": "0x2516b15",
+          "bytes_sha256": "0f87d9ba2c6e9df6927bb69d0afbefc1c4e515d1333efff5d4a796cae6926675",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/2516a30.c",
+          "raw_export_sha256": "860321269d404b41aec491a79da1a821c208b0d5006393c4cb23fb9f8b695c69"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e4d96af4943622cfabfa04cb8c3ff0bd6778ec6c309022a58497aa0c033dc6a2"
+    },
+    {
+      "name": "battalion",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2516b20",
+          "end": "0x2516b82",
+          "bytes_sha256": "2b0999932e38b43a3e9222beb2648f65c41541820fa295acd9de267537fc5551",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/2516b20.c",
+          "raw_export_sha256": "2c022f45f98c462b92547adca56e045a065ca51b86b4888b0e574cde57733b98"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "da25bdaf8a716cec5b246a7780416833bd8e8aba6ea4d7b58e152f8ec90c38b4"
+    },
+    {
+      "name": "cipher",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2516de0",
+          "end": "0x2516f14",
+          "bytes_sha256": "27b7b8893f75bc4568405f1104f42adc5f25f39e792d925c889e1c81a0019924",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/2516de0.c",
+          "raw_export_sha256": "a4fdc6b762a1ca2d589e3194dadd8ce040efc2e1385ccec9c960bf5cbf38c260"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "6fb92a6a89fb93ca0f0d0bc49e53c09e23fe94223f2e417f90dbe6186ede3e58"
+    },
+    {
+      "name": "effect_aquitects_will",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258c520",
+          "end": "0x258c6bd",
+          "bytes_sha256": "92bb0d8ceccd0c3400e25d23cd4042df980714bef0587b9fb5e7b3e37a160de6",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258c520.c",
+          "raw_export_sha256": "76a904009b8aa84cd8e4a411dfa20fc7129ef8969e39de67d0a6426a7ccfadfc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "afeabf5c3c213f281a5959e2cf12c42ac07348b12d8dd9b21b0962f517e05ba6"
+    },
+    {
+      "name": "boggart_shenanigans_effect",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258c6c0",
+          "end": "0x258ca23",
+          "bytes_sha256": "e862028de8b5e411f9f9e2ac5c0b58b2b255e0d4559db2e1106c20b2862769fb",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258c6c0.c",
+          "raw_export_sha256": "b0375c34da197c48ae34410262a40185ad611464cb52192a1d6c2afed6406264"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "96df6be53a208a188d846ccec926f61269518663e9a997da256633036abc1747"
+    },
+    {
+      "name": "prowess_of_the_fair_effect",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258ca30",
+          "end": "0x258cdd6",
+          "bytes_sha256": "0f6fd1c260ea5a05ec388a7716608f40f51a1f1ad58246909a5fdaa8da21cc07",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258ca30.c",
+          "raw_export_sha256": "19882935b6d975c65d3c22cbcfc49fadb8a14462b79bd6b88062b15452806cdc"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ed666914d08630f23f9b66becb1c830b1c52196acea74c52440393dd03b78e9a"
+    },
+    {
+      "name": "hideaway",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258d250",
+          "end": "0x258d8de",
+          "bytes_sha256": "e2cc7dcab4df4c1f4f5c6aa23d1e5aa516a845e95abfbf26381611b8404fbf74",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258d250.c",
+          "raw_export_sha256": "f3ebd836d0dfe6ab743dd6a76b07795cdb8ce3763cc6d55d01ee6be2418d5158"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d77fe99acbac0ac18dc0437112fd8ab3ce0c6ab757e3159b55db07966830aade"
+    },
+    {
+      "name": "kithkin_mourncaller_effect",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258d8e0",
+          "end": "0x258dbe2",
+          "bytes_sha256": "13393902c610a788e72ed333435f405e4fd6326af626a8a380c7cb750ddbcd1e",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258d8e0.c",
+          "raw_export_sha256": "ea1ea68b177823371b56060c6ba512fb3862595870d8d0abadefa587007f987e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "78b1c547fd2ddffab0c01c956a823322a9c2ac615d3a86898fe5726698b98e66"
+    },
+    {
+      "name": "oonas_prowler_effect",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258dc90",
+          "end": "0x258df86",
+          "bytes_sha256": "d2f528300d1df814ed1329b8f0870d8e048ab0d2247d0e49d91becc9a0c45785",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258dc90.c",
+          "raw_export_sha256": "adf1e147af32db4ed99dd5780eff3093cce395e4dd49c54d19367ce22646b8fe"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ca0563dfac4852965324d67e34023dff590197af9eb41011b8a9983f0821e1bf"
+    },
+    {
+      "name": "vivid_land",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258e050",
+          "end": "0x258e265",
+          "bytes_sha256": "19a002769a2129e7a3ccf0035a53ab51d35be6bd034514b454af5dadcf0445b9",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258e050.c",
+          "raw_export_sha256": "576b08a3ea2da89985375edbc0d2ae2e3fd14d7f53f3a61b9ec61fef8bed9cf8"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ece3aa9e4a26134ba0ea33cde20cda5cf7bc4cef328f0de3f4f143d9aed295a3"
+    },
+    {
+      "name": "clash",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258e710",
+          "end": "0x258e9af",
+          "bytes_sha256": "b566b9912a0f65f8bcfe7a20cc9a921a4e18f5f250f6a0ffb7cd2f1f4bd1cf76",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258e710.c",
+          "raw_export_sha256": "920680edc78a74cc8dd4fa723c6408b3713651fdd3fc147aa1a19b30af82235c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "05f96b9bffa8b216902630898ec9be05d22a6a47d126b3358b45c044b2204d2a"
+    },
+    {
+      "name": "evoke",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258e9b0",
+          "end": "0x258eba8",
+          "bytes_sha256": "10951186164420166926874df4e3ea7087a71f7a05f6f5bd01125e99002bebce",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258e9b0.c",
+          "raw_export_sha256": "78b402d0bdb9f2fc4a7090c1d6bca4588851feb01037bde7823fe4fcc2803d50"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "417e62b63d4c6e65c49ef0f7d3f2eb7229a37768d040e5e1d2b0d6b0805d9243"
+    },
+    {
+      "name": "evoked",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258ebb0",
+          "end": "0x258ec07",
+          "bytes_sha256": "2df9cd148b98addf2e704e76f73c5185888155374988119ebd9229af7f7735ea",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258ebb0.c",
+          "raw_export_sha256": "5792d51f0e2f87a3453a3e2078b0e0c5f214dee813120ca1beffd2797a1c304c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5a7bc9ea37125ebece533098e27fdcd62e9b31b0caa274b47dd1015f4b6a56ac"
+    },
+    {
+      "name": "lorwyn_need_subtype_land",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258ec10",
+          "end": "0x258ed3f",
+          "bytes_sha256": "f348cb74df308c400d5a5d64dfdc01d435819e5b9e1ee75d4febc6f46dcc2c72",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258ec10.c",
+          "raw_export_sha256": "a8c369a9b4ab787c1f4d081d5b128533de7f26bae9477ba91211fd1c9ef64080"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1cb15ac2001b15e321b243b9c5029807e65b27bfc10140179da6f6cb29fa356a"
+    },
+    {
+      "name": "champion",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258ed40",
+          "end": "0x258f488",
+          "bytes_sha256": "744ed30556ef4029f74e2c8937d5e8818ca6b2a7d34fd42a1546c7a9569c1cb4",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258ed40.c",
+          "raw_export_sha256": "2a560680f45616baa9055b888900cfba033b19e2463e48e8b79122716eaeb3d7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a1c828544ee3cc79375530f8c76013afa6eea0271177886f6c2753c3c6750f4a"
+    },
+    {
+      "name": "tapsubtype_ability",
+      "source": "cards/lorwyn.c",
+      "native_ranges": [
+        {
+          "address": "0x258f490",
+          "end": "0x258f6bb",
+          "bytes_sha256": "72321e59daa1415d572e78a4629c95e0feace5299b7c57835dc2607b43597acd",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/258f490.c",
+          "raw_export_sha256": "52f07d1336176302434fadba6f5e5ac6351a23715185f21d3e871ed83782be7d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "28b78c8ecb65d0212eb5981079ba3e08274c8fdc195c6e837ec63f3bf632d597"
+    },
+    {
+      "name": "test_not_in_array4",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2608d70",
+          "end": "0x2608d9c",
+          "bytes_sha256": "d5572438dfe8a827807792da38ca553b38f1f46d3005945590bf082d8f993404",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/2608d70.c",
+          "raw_export_sha256": "b1f86373ed64ebb67a16469ba09a4c2816feb71b77b680d027cd086c022948bb"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c6462ed8e09df7613a15e597227f470fb966f60a8be4a35d31df63c16b86f14a"
+    },
+    {
+      "name": "damage_to_legendary_creature",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2609f60",
+          "end": "0x2609fcf",
+          "bytes_sha256": "464cb0753f8f32e61ff78f1bfcc5940664098f37c2cd6fb819c0101fb7e6c949",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/2609f60.c",
+          "raw_export_sha256": "4b97b75b3cdf026c02cc9b7b74ce44926c6071ca0558e63e485d8cad994db2b1"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "eb102ead8d2d00d2f931a51423dcec65f777ac6291926b0ec8f2e34eb2862b61"
+    },
+    {
+      "name": "rfg_when_die_legacy",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x260a5c0",
+          "end": "0x260a6f4",
+          "bytes_sha256": "804c6fb6ce13b8d86c9711fed2ef5fc9816a866955cb5436434e87006d0b8c84",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/260a5c0.c",
+          "raw_export_sha256": "2cfa9956ed4527e4096bc9d2e9fd710cc7dc171bb9c90bc10338b99bbdb8f959"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a5f1cd54cd919e4b4815412218b12f8b465b37864f4642b9386fcd2d99011ee4"
+    },
+    {
+      "name": "soulshift",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x260b780",
+          "end": "0x260b84a",
+          "bytes_sha256": "2b4bd864cfcf9752bcb1f53fd70505fabbc66d4b258ae76921d6bceb5caa6bd1",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/260b780.c",
+          "raw_export_sha256": "86f5e4d044277c6fc405e248ec48b9ca3fb678ae0368b927b2b5841f45816e39"
+        },
+        {
+          "address": "0x260c2f0",
+          "end": "0x260c332",
+          "bytes_sha256": "ce7963cfead2b508b0334bf69ac13b856b0fe79917cca30d5a4a5525f11abc89",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/260c2f0.c",
+          "raw_export_sha256": "2c4ab4c8903c9b66f42094a3593e4aaa64258eaa263883a95f8ec774dba4dd8b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "657ed3543c3dbb532e2e1b3d4c60056dc4045b4ca8024d2441ed0d132d668076"
+    },
+    {
+      "name": "bushido",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x260b850",
+          "end": "0x260b9ea",
+          "bytes_sha256": "ba5633803aff5f2ac392ce5f5aaca5f7192d1493fe99af52425d8f53661e4581",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/260b850.c",
+          "raw_export_sha256": "7b3c7b516d732d6505bbd80163f9acfc6e06d91df33764f2363902ac6bf7e0bc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "503283fca9b2d180b26d4a0a18677cf56f19293031927997766cf54a246eb091"
+    },
+    {
+      "name": "training_counter",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x260b9f0",
+          "end": "0x260ba2b",
+          "bytes_sha256": "9891bb23c04447bec42afd1413b51ae869f431223d255e307e8b37e84dda1fce",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/260b9f0.c",
+          "raw_export_sha256": "9e04d6c0f315fb7e10426a80785638e51158c32e4b1c70689d68bc0515751c94"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "32f9bea7d55a5c6bcf0db3192bab70ff74c8e24391b378cb608a8f3df6b2e870"
+    },
+    {
+      "name": "splice_onto_arcane",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x260ba30",
+          "end": "0x260be22",
+          "bytes_sha256": "cd85e23df07c62edbb620c2809a43e181638c45b9e4c0be0858114be5278de80",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/260ba30.c",
+          "raw_export_sha256": "383301e16df56d4e6e921e3a46aa3b10be369b0e0a7f7546ec6a568645b881fb"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8e770500d4571a841e3fb0ea05b43c56c44d68d4f719cbb994f617d461727220"
+    },
+    {
+      "name": "check_for_spliced_spells",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x260be30",
+          "end": "0x260bf70",
+          "bytes_sha256": "12d6c934e8c0a2e9f709caf5ef8b38e55f08191b4adebba57ba332f7ec6b7ff0",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/260be30.c",
+          "raw_export_sha256": "78458b84ddc65ec733fd12b3ede8522e49321376c54c24a2aa9f68853f281a41"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "83777a572e52f695bc3ca042fd3a398375e32522985691ed7ab38fe2b59e1212"
+    },
+    {
+      "name": "arcane_with_splice",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x260bf70",
+          "end": "0x260c1f2",
+          "bytes_sha256": "60fd08cde2b9f1a9317204bbeaf85b04a819c179e2f4508e949fb5cdb765b82d",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/260bf70.c",
+          "raw_export_sha256": "1e0a9445b423dd0a3f57a23fd898ca7ed4088905191ea8f9c3a6aff76883ff5b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "537786fe470d132cc58fa0e1754b776e68aea670c2a20888287335d10dde0b7b"
+    },
+    {
+      "name": "arcane",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x260c200",
+          "end": "0x260c2e2",
+          "bytes_sha256": "7ce873bc52f59f5851005363064331a4f5099480625cc658f5df448530498e82",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/260c200.c",
+          "raw_export_sha256": "e0217820cbcc023e5abf3a90163c437a57a5cef7443c60b7bb6955e3847af287"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d7f6a3a2ab92e9b49eab21c56a892a24fef7610a04492a0468354c1d8521ff8d"
+    },
+    {
+      "name": "arcane_spirit_spell_trigger",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x260c340",
+          "end": "0x260c3e4",
+          "bytes_sha256": "01123313d08a5ba46f6088ff34ee90d4cce7c5f61e6a4507cc2c1021d1ace108",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/260c340.c",
+          "raw_export_sha256": "55b2aee6d3d51340b90e9fd8ae97edf54f399c7c7b41107cf06f9464536c2398"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1e212bff6f00a0f95f3b43d7ca97121bc440ffe03ed7437ec28f4709b78b506a"
+    },
+    {
+      "name": "gift_ungiven_impl",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x260f130",
+          "end": "0x260f4b5",
+          "bytes_sha256": "618636b2545e133affb7dd0533cf557f603730a1ddf7b69378bf17e9e64b7de3",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal/260f130.c",
+          "raw_export_sha256": "8458e10320e8f881b190c02c02f41d61755f1889badca82554924db781e64113"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a5675426f130e62a2a251ff9e602521fced84e87eb006dd1e242aa9f0b9f860a"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_tajic_blade_of_the_legion",
+      "source": "cards/dragons_maze.c",
+      "native_ranges": [
+        {
+          "address": "0x2298f80",
+          "end": "0x2299006",
+          "bytes_sha256": "59525de8428b9759acb70c58466bdd4d612854172d23bcf3a2fbe846623c525a",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/2298f80.c",
+          "raw_export_sha256": "d12b8945b65b05e5bc2c67d6eed59bc40cd97466dfda7619d3a058e7cc7c54e2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e1fe9b4190990aa948df0dc15c6a954774b2385d4847d6b2059766ee796dabc4"
+    },
+    {
+      "name": "card_boros_mastiff",
+      "source": "cards/dragons_maze.c",
+      "native_ranges": [
+        {
+          "address": "0x2291410",
+          "end": "0x2291486",
+          "bytes_sha256": "3f55def1d93830e0a56c709ad59010c287eeb0cc52f080dc25b81cef7dbbb3e8",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/2291410.c",
+          "raw_export_sha256": "73dd01773617ebe9c22b36a355999f711da84110183a42e3f6aca87ca4e45898"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6256a83d3d0a21a120b365d06489c513e432d76a2072a92be1525d6f3bc25fd9"
+    },
+    {
+      "name": "card_wojek_halberdier",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2527e30",
+          "end": "0x2527ea6",
+          "bytes_sha256": "f4e70c9e172ef6a858a54c559f4e1a41e86ba4ab485b6dd18effd9949a96cb8f",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/2527e30.c",
+          "raw_export_sha256": "bfb76954791c4639b8eee6492eed4ea1ccaee75f15ba88c9a01105f771546f31"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9b8ae17fec16dc9bd86f625ff9a359ca4224b4f4089c6731f66ed5e2112879dd"
+    },
+    {
+      "name": "card_ordruun_veteran",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2525110",
+          "end": "0x2525186",
+          "bytes_sha256": "03ce35d79ba652dd9e7aa41570e2aff5b263f3040cd016a11ec4a1a719bd3aa5",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/2525110.c",
+          "raw_export_sha256": "bf08f04719ad7b4d985eae60ffb10496fab545d77a133938ffb433945f6a584c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c0aa6280eea8278d264decc506f02ec4fcfba2274a78847c7864542a4bcbb13e"
+    },
+    {
+      "name": "card_firemane_avenger",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2523370",
+          "end": "0x252343a",
+          "bytes_sha256": "cc67f9288b172d0d2357c1c89b1232e76100593c8e2834545af042f384893c5a",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/2523370.c",
+          "raw_export_sha256": "9d772c4094cc268d59d343f61e82a3787ee1756a0b9269c40b634023b810c23e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1071aa136fd2ff8584ed9c076cf637d10a93e9bc2e9e1f7c00136f88bb8b6d00"
+    },
+    {
+      "name": "card_warmind_infantry",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x251e950",
+          "end": "0x251e9b6",
+          "bytes_sha256": "6e8c67d380a695666c44687532c2ffc35bf6211e16a27cfe86dbbb3f7b5b7624",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/251e950.c",
+          "raw_export_sha256": "3e35c4f36499baa055632f8638939d3bc28d4a96c3ece8d0c2c6514bffa8673b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6ec5c587161e970ecc0d7a8549c51bfa1cf6bba4797e6275554d42913ca79e2a"
+    },
+    {
+      "name": "card_legion_loyalist",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x251d9e0",
+          "end": "0x251da6f",
+          "bytes_sha256": "97bfcc3f2fa8eee470b299983b56abb4e6c928bdab386588c51ca3afaf9991cf",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/251d9e0.c",
+          "raw_export_sha256": "cc192f8bc525afd39ef599a68f8124d890b019f854290c9c392e6cd2977239a6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5f0e958d71b0aaf8486875c84ec73a9cdf9dbbb5d82c941867c6fd3531599403"
+    },
+    {
+      "name": "card_firefist_striker",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x251d1c0",
+          "end": "0x251d29b",
+          "bytes_sha256": "cda472a7b5490c38e0263f1f76a6db94e14ff2946b8c366c370c456a1e551459",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/251d1c0.c",
+          "raw_export_sha256": "d541219d74ee56a61bbd11f5fb2f553469439bf829c3d9ec9572ce41ddce052a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "318f050864037dfbfb8ff709899f7e936b6ce20a949718025d31c77c625bc9b6"
+    },
+    {
+      "name": "card_bomber_corps",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x251ced0",
+          "end": "0x251cf8a",
+          "bytes_sha256": "5f6a45e5495eb54b70fb83c6387845033485e419e468a2362d3e2e006cc6ab80",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/251ced0.c",
+          "raw_export_sha256": "0e513a057bbfe380ac085eaee2c28511c820a0917a773e0019982220886e74f4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "bca3166863d95ca3708ce73e8a4299429af159f898fa11080492a82bb74118e6"
+    },
+    {
+      "name": "card_nav_squad_commandos",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2518510",
+          "end": "0x2518582",
+          "bytes_sha256": "729538d72a05a18e65e4852f44ff8a2641b81ce89a0a0c2f62859fa9308f4e8e",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/2518510.c",
+          "raw_export_sha256": "9bc9bdbec747e1d0985804cd257993583b3a540cb86fba07c4eb503d99267069"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9f87888e4d8f71e3f7785c981dd72b47650e167b050930670f6673c6283a7c88"
+    },
+    {
+      "name": "card_frontline_medic",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2517820",
+          "end": "0x25179f9",
+          "bytes_sha256": "af2304ae402373d0aaa118cf1e9ea7434788ae291af1d25588c2724d105873c7",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/2517820.c",
+          "raw_export_sha256": "899fc82dbac16a00dd25348d56a567468bca144511c1abb56947afab98178724"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "35bacc5973f3ecedccdf8dfe57632747a3dc3ec4c562938788c5321204782337"
+    },
+    {
+      "name": "card_daring_skyjak",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x25174e0",
+          "end": "0x2517556",
+          "bytes_sha256": "388b7e425f94901d47fdcee03de50d652806740385e1eed169672a6e63c18a73",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/25174e0.c",
+          "raw_export_sha256": "83d05a45fd2738b311f3e1cb735e3e4d3af183697b41e029aabd59a91b5f5aeb"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "92b39ceddce4fb6f8a86f2eb3b26b96d83d543648205fe3c50aceb3f681257e7"
+    },
+    {
+      "name": "card_boros_elite",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2517310",
+          "end": "0x2517376",
+          "bytes_sha256": "7668cf7a0aa8eae41c33e00ef53207ccc2cc39460442546f4cf05071c6cc83ab",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-support/2517310.c",
+          "raw_export_sha256": "a1ee18c2c9ea9c5f47bd854e9f58787fabecb322801b0defcf0403065382b920"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e371b4407c783ac75d373cd7fa69f0af9cafa1100572f76052970f62c837d69a"
+    },
+    {
+      "name": "card_ozbedat_ghost_council",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2524f20",
+          "end": "0x252506b",
+          "bytes_sha256": "b6807bc130688d6c57b438aa86aed87f75008a5210408f013f8784d0affde2f1",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-obzedat/2524f20.c",
+          "raw_export_sha256": "6a531a327a0104db7afa2dc1f95f2728e194dbbdb3d94154aa972feaea6e0106"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fbd474c2597f763d59836e0627f0f3304222c4ccb9e8b76d29ce3b3caabdf3e0"
+    },
+    {
+      "name": "card_yuki_onna",
+      "source": "cards/saviors_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x20ba640",
+          "end": "0x20ba6be",
+          "bytes_sha256": "e54a76bb62a1249718ecdb4b19b8d6749a5d505dc2a4714bb6e36fe59852ddde",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/20ba640.c",
+          "raw_export_sha256": "28f253889d9da8f59939edce26603e97f963bd92b4ea6b191d9aa1981b675441"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6a8116317ac83af220e431ed66623b5a17518cac4d20c05b8db711183129572b"
+    },
+    {
+      "name": "card_skyfire_kirin",
+      "source": "cards/saviors_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x20b96f0",
+          "end": "0x20b984a",
+          "bytes_sha256": "10d991be974aca8c15f54ea66e2b02d8065099d8bfb036b055378e5fbc493a1a",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/20b96f0.c",
+          "raw_export_sha256": "ede64ff5a84f3b435e0a2c294125e052cf135135ad7149c24b52b5a9af64856a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3defbb08475aea0999e8087c28e9607c3d37418ab5facaae8256847e50c7e7e0"
+    },
+    {
+      "name": "card_nikko_onna",
+      "source": "cards/saviors_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x20b74f0",
+          "end": "0x20b7556",
+          "bytes_sha256": "f859c9b0869973cc7ed84a4cb646a177447cc42ea4c275dccbea2976c2dc1b07",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/20b74f0.c",
+          "raw_export_sha256": "c9a45c511821a790d12d7d9fdbf51fdbbc03397ad5f289045837a1ffd49a3358"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7b8310e34cf997042d37dcd07384b09a53ec7f17b9ebb91b5e9591f3028c1c1a"
+    },
+    {
+      "name": "card_kiri_onna",
+      "source": "cards/saviors_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x20b5bc0",
+          "end": "0x20b5c26",
+          "bytes_sha256": "85c3c421695b777e5a29ef3b782b3cf3a27edac833543e65d13c4acb240c5126",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/20b5bc0.c",
+          "raw_export_sha256": "610e01e52eb900c16118f3c2a2ae125c51072a1e9135dc4da284a28c973c8eb7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d64ac15be53c965a96afd1b0ae96f3fbcf692dc6054f738d42e937e6859c6dd9"
+    },
+    {
+      "name": "card_kemuri_onna",
+      "source": "cards/saviors_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x20b58e0",
+          "end": "0x20b5a5a",
+          "bytes_sha256": "9c0a82a55a39c22292e634c4c9328cad146ff6a0d480c6c21852c463dcaefb9c",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/20b58e0.c",
+          "raw_export_sha256": "5719bee29b6c5b9a41275807b02ddea291ab0b78a127283f9e50a6c8ecf10c2a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "85ee3aa827f09ada2132acec2f536ad8d673580e6763109894974687c62c0954"
+    },
+    {
+      "name": "card_infernal_kirin",
+      "source": "cards/saviors_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x20b4630",
+          "end": "0x20b477f",
+          "bytes_sha256": "ade9085a1ca81540e7c5605d30ecbc9170c88d5eb8a2cd3723eea27169e8ab3a",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/20b4630.c",
+          "raw_export_sha256": "d0ed90a8a5c3278317c058fa3acd1fa93ca623adde0ea7c06143c90de9d3d5f9"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "58dcb0a9ab6e570cc5eca4cc44cdeda2af113c8edd286b2a58b0adc3f9c3acb7"
+    },
+    {
+      "name": "card_haru_onna",
+      "source": "cards/saviors_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x20b3ca0",
+          "end": "0x20b3d96",
+          "bytes_sha256": "c6f30b747d342668653cc03aa8b0e9c6c3cddee6d85c04991f44aca199b8c76c",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/20b3ca0.c",
+          "raw_export_sha256": "9796b2dfa756cf2af9b96a713a33266feabc053fab685b1f69efe5a1dc56f04b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8b3d857ab8fe4477742332194fe6ebe0cfc94919f1c6fdd56183cbbd60f419f2"
+    },
+    {
+      "name": "card_elder_pine_of_jukai",
+      "source": "cards/saviors_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x20b28b0",
+          "end": "0x20b2a2d",
+          "bytes_sha256": "d8b4bc014b9a468f2eaa2d87d4fc57b56838765785e8e4ed9008228bb142cf29",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/20b28b0.c",
+          "raw_export_sha256": "7b144e98bd8a9871f9d8686942b522de671b344149280377cb8c82996ccd5517"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e0e6711fbd905d299d19069f9e114cfb1b65b7eb0e1a5410f0c2ac17c933f646"
+    },
+    {
+      "name": "card_cloudhoof_kirin",
+      "source": "cards/saviors_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x20b22e0",
+          "end": "0x20b23e0",
+          "bytes_sha256": "d3ff1d98d8eb0f49a6359c7d6b8d6501cae986db0723ecd719f629c8552d6d9e",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/20b22e0.c",
+          "raw_export_sha256": "bff3beb599b6c960bdbdd7f305e6e2da285725fd95ce0c7d88e88c1f99cf531c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "96762a0883fa4c0cf08cb5d5d9015fe8cf0f26fedcc103a2dd36db5d9d14cfea"
+    },
+    {
+      "name": "card_celestial_kirin",
+      "source": "cards/saviors_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x20b21c0",
+          "end": "0x20b2274",
+          "bytes_sha256": "1fb80fbec4d7ab733b5708743e2be15ff95596ef45fb1e7acb7dc959dab3ac98",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/20b21c0.c",
+          "raw_export_sha256": "168136b447fe3f3ad4226a19843bb8a3825adb64fd6750eaf2b631a1199e0d3e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "170d8cc51770854c2fa93d56525ebfd1278ab66455c72ef29ab2e2105d1bf889"
+    },
+    {
+      "name": "card_bounteous_kirin",
+      "source": "cards/saviors_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x20b2130",
+          "end": "0x20b21bc",
+          "bytes_sha256": "664da612e1789e2641d29cc74b344ebc2862fe0179899988f13e5f77f990e8eb",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/20b2130.c",
+          "raw_export_sha256": "4dff2c834e066101dd1e566c62c382111f25c5b3f67a48d5fbc7f5ed350ea109"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9b73b3aec9c1cf3a9863228cd6fd7bc2c58a9bf65fd5190bb2a84937e1cc17a2"
+    },
+    {
+      "name": "card_tallowisp",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256fb90",
+          "end": "0x256fc41",
+          "bytes_sha256": "4dfb48c8ec6080107be0a533227b651d38e50796856618920e71ebb5ed180a3d",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/256fb90.c",
+          "raw_export_sha256": "ba0e21d23eef6775fb0e0b2c04541fd815f3bcddd078f8fc73c686851e7360cc"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "374628ac7018dfa35d995ca97744c9070fa9788b9118450bbd860de04838c687"
+    },
+    {
+      "name": "card_oyobi_who_splits_the_heavens",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256dd60",
+          "end": "0x256ddf6",
+          "bytes_sha256": "ba3d621e54ec2434bb797b28a9d624cc66aaa49c9b49486225b1c959ef7793f0",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/256dd60.c",
+          "raw_export_sha256": "4883497f624c8d4a441c93ef62a0480a33cd0a6634d84f56b46f11bfdaa8347c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a36e113322cd001c0b1fac65687764589735b22c062398aa4e4f30b40e46eba7"
+    },
+    {
+      "name": "card_loam_dweller",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256c8c0",
+          "end": "0x256c96a",
+          "bytes_sha256": "f74c5355558627b2adfbb8f60eef7aca877b70cc5f7b52b356559a7eaf8148f0",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/256c8c0.c",
+          "raw_export_sha256": "a2ae6b9a2875d818e7d3b3cbf7882578ce68f0a0ff8895842c10f6e9563fd05c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6c6a93d31270153ee6912beb85b8a2d0f52be141b5d714251f53472a84a4d563"
+    },
+    {
+      "name": "card_kyoki_sanitys_eclipse",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256c430",
+          "end": "0x256c531",
+          "bytes_sha256": "3404847aa1079c294f9f1ab1f01ee2524ec17fe5b72bfa0ec9c02a7b66ecfb6d",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/256c430.c",
+          "raw_export_sha256": "0953213edf93e83b6532eac2113389d5ca2b7730cc4b891131a8605f6f6f7648"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "283ba6db6265fe5c989deb1480b2410262d7f7ed8fb71a7f15f2bc3d536c84ff"
+    },
+    {
+      "name": "card_baku_altar",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2569a60",
+          "end": "0x2569ba1",
+          "bytes_sha256": "28e95a4e1333dce914cfb34810bb7273c29e8d90ea9ed6fb7681a80d1821c529",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/2569a60.c",
+          "raw_export_sha256": "1b2be1269f6e0100f157d1aa8df0b10dca02db7be7a38059be67e3c422cefd0a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "bae336a4f69011089b49b7ac1cdd7dba7e5a0391c898ede3ed3b763d74574a30"
+    },
+    {
+      "name": "card_thief_of_hope",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x26180c0",
+          "end": "0x261818f",
+          "bytes_sha256": "d4adf98934ac24ed104fc1645a32f6e4726d374b9b615cfa0f33473e405edfe4",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/26180c0.c",
+          "raw_export_sha256": "d18fafac04d6de215ce37ba84b033d90cf2bfef3fbac3e52066ca04265663521"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2867f1b77df9500b634d4563a7a2c4569f981bd49ea6850b0c29e881ed1c498f"
+    },
+    {
+      "name": "card_kodama_of_the_south_tree",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x26123f0",
+          "end": "0x26124ad",
+          "bytes_sha256": "581dcb548215c5638727649620f68d38ad4be117d973a33a5e0bfb6c5ee32109",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/26123f0.c",
+          "raw_export_sha256": "2ccefa2dc60148f4fe31b441a9dc26ca097e8d0bd67cd5ebe6dce4f5d08d8e76"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b2d56f6d7bd43068a0c873eb14274d32308bd452dc7da5bd86666d0e06014131"
+    },
+    {
+      "name": "card_kami_of_waning_moon",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2611900",
+          "end": "0x26119eb",
+          "bytes_sha256": "3d3ca6ea2c2ae64ea33883470ea432acca383c1d8273c30adaa6c115dba91a6c",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/2611900.c",
+          "raw_export_sha256": "f25f4140d83bcffa3dac358def7e1060ee08703df4638b4722741e78c8461e28"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4fcdf270d7d4f6aa9c2fadc47220cb451b738469fece5a5d6962e5937ab10a19"
+    },
+    {
+      "name": "card_kami_of_the_hunt",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2611890",
+          "end": "0x26118fe",
+          "bytes_sha256": "ba7fa38a43fda4ed75df06a2e208316e7a0b026872f8e19585feb74fb00ad02c",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/2611890.c",
+          "raw_export_sha256": "35480851ed80ab2e9276e02e28a03beda9dc85e81bb41e8392ff8b23710b61be"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "efa923e82c5f29a355dc172eea1cea3ebeaec8f7aa73185cdc6543866962c69c"
+    },
+    {
+      "name": "card_kami_of_fires_roar",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x26117a0",
+          "end": "0x2611883",
+          "bytes_sha256": "00270ddc55b8abeb667ae7ee151f886b78cfeacb99ce4ce232d7505f919b6c4b",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/26117a0.c",
+          "raw_export_sha256": "cbfa91884949af3ef2234c180e82188f917b586d6fc8fb195027c8f444bec856"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fe485bd486dc2c160224df7d79b778198ee3aa2351b5a5b7936cc8603fc6957a"
+    },
+    {
+      "name": "card_jade_idol",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2610fe0",
+          "end": "0x261107c",
+          "bytes_sha256": "f19d5c2dcec420e320eb81847be4936a6751ab3176359dd72b70f5d8b3af0934",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/2610fe0.c",
+          "raw_export_sha256": "9145a5ab41615cffc659e6d3a36f2e9eedabe028a302898f6ebfe71ef2136f3d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "285fee4f2a71f5736308e4092af36d2a043e1fe2b9221342bb89006eb8928ebf"
+    },
+    {
+      "name": "card_hikari_twilight_guardian",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2610070",
+          "end": "0x26100ee",
+          "bytes_sha256": "5cfe35aa57decacf49ee0670f3df451cad97e72c8c09a4a625c9b9ab547d592b",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/2610070.c",
+          "raw_export_sha256": "360a4e857d22dec0619f2654fd852eb8adc772c0bba063365c0f0411ad42f664"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c12700ee6cd1791aee05eaaefbb53ea07a7792e70d66b8e422e4321ee212098e"
+    },
+    {
+      "name": "card_earthshaker",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x260e0c0",
+          "end": "0x260e160",
+          "bytes_sha256": "44b3c9b31f7c8a72d9d6f0a74d99a6648df14deeb0cf2fc22fa77de2899efcfa",
+          "raw_export": ".recovery/decompiled-guild-spirit-tribal-spirit/260e0c0.c",
+          "raw_export_sha256": "d582541235c62488dd3c78f4f23faca8526a24490f48ebb8659051319edcce17"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ceadeac39d4268f93793cb6d75b0c74b0998434436de6c6be5fac7a2d58fa209"
+    }
+  ],
+  "helper_definitions": 38,
+  "new_native_helper_ranges": 39,
+  "changed_helper_definitions": 21,
+  "changed_card_callers": 38,
+  "native_contracts": {
+    "battalion": {
+      "return_type": "void",
+      "store": "store_attackers",
+      "flags": "DAT_BATTALION",
+      "dispatch": "dat_ability",
+      "mode": "DAT_RESOLVE_TRIGGER_MANDATORY",
+      "argument": 1,
+      "completion": "EVENT_DAT_ABILITY",
+      "callers": 13
+    },
+    "spirit_arcane": {
+      "return_type": "void",
+      "dispatch": "sp_ability_trigger",
+      "type": "TYPE_NONE",
+      "test_type": "TYPE_NONEFFECT",
+      "subtypes": [
+        "SUBTYPE_ARCANE",
+        "SUBTYPE_SPIRIT"
+      ],
+      "completion": "EVENT_SPA",
+      "migrated_callers": 24
+    },
+    "soulshift": {
+      "ranges": [
+        "0x260b780",
+        "0x260c2f0"
+      ],
+      "worker_register_parameters": {
+        "player": "eax",
+        "cmc": "edx",
+        "num": "ecx"
+      },
+      "worker_eliminated_parameters": [
+        "event",
+        "card"
+      ],
+      "tutor_failure": "<0",
+      "public_return": 0
+    },
+    "vivid": {
+      "stack0": "test_color",
+      "eliminated_parameter": "color",
+      "mana_query_requires_tappable": true,
+      "entry_humiliation": "AL_TRIG"
+    },
+    "evoke": {
+      "eligibility": "BYTE0(eot_toughness)",
+      "evoked": "BYTE1(eot_toughness)==1",
+      "other_bytes_preserved": true,
+      "existing_getter_callers": 18
+    },
+    "death_legacies": {
+      "detach_byte": 2,
+      "resolves_before_visibility": true,
+      "old_end_trigger_resets_removed": true,
+      "ogre_boggart_skip_own_death": true,
+      "mourncaller_counts_owner_graveyard": true,
+      "prowess_counts_owner_graveyard": true
+    },
+    "cipher": {
+      "dispatch": "attached_creature_deals_damage",
+      "scalar_packet_count": true,
+      "copy_controller": "attachment controller",
+      "guard_events": [
+        "EVENT_DEAL_DAMAGE",
+        "EVENT_GRAVEYARD_FROM_PLAY",
+        "EVENT_CHANGE_TYPE",
+        "TRIGGER_DEAL_DAMAGE"
+      ]
+    },
+    "lazav": {
+      "legendary_subtype": "attached_is_additional_subtype",
+      "permanent_subtype_mutation_removed": true
+    },
+    "obzedat": {
+      "stored_original_iid": "targets[1].card",
+      "supports_meld": true,
+      "meld_ids": [
+        16046,
+        16116,
+        16123
+      ]
+    },
+    "extort": {
+      "dispatch": "sp_ability_trigger",
+      "completion": "EVENT_SPA",
+      "hybrid_arguments": [
+        1,
+        5,
+        1,
+        0
+      ]
+    },
+    "hideaway": {
+      "etb_humiliation": "AL_TRIG",
+      "activation_generic_cost": 0
+    },
+    "caller_changes": {
+      "yuki_onna": "TYPE_CREATURE trigger",
+      "nikko_onna": "RESOLVE_TRIGGER_AI",
+      "loam_dweller": "any land",
+      "jade_idol": "animation legacy targets[9].card subtype",
+      "oyobi": "fixed white token color",
+      "elder_pine": "show3 APNAP before count; reverse scan",
+      "celestial_kirin": "single ANYBODY manipulation",
+      "firemane_avenger": "damage_target0"
+    },
+    "preserved_quirks": [
+      "rfg_when_die_legacy retains native other_leaves_play argument order",
+      "rfg_when_die_legacy excludes KILL_DESTROY",
+      "Yuki-Onna retains native broader creature trigger",
+      "Elder Pine reveals3 even with fewer cards",
+      "Clash retains native empty-library cmc behavior",
+      "Splice retains151-entry option array,600-byte buffer,six-spell limit and original shift behavior"
+    ]
+  },
+  "scope": "38 complete helper definitions/39 native ranges and38 complete live card callers. Twenty-one helper bodies and38 card callers changed. Built-in dialog backends and gameplay tests remain downstream."
+}

@@ -8,16 +8,9 @@ void proliferate(int player, int card);
 
 // ---- General functions
 
-static int smiths(int player, int card, event_t event){
-
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_ARTIFACT);
-
-		return new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test);
-	}
-
-	return 0;
+static void smiths(int player, int card, event_t event)
+{
+  sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_ARTIFACT, NULL, player, card);
 }
 
 static int som_spellbombs(int player, int card, event_t event, int manacolor){
@@ -3149,26 +3142,33 @@ int card_echo_circlet(int player, int card, event_t event){
 	return basic_equipment(player, card, event, 1);
 }
 
-int card_embersmith(int player, int card, event_t event){
-	/* Embersmith	|1|R	0x2004229
-	 * Creature - Human Artificer 2/1
-	 * Whenever you cast an artifact spell, you may pay |1. If you do, ~ deals 1 damage to any target. */
-	if( smiths(player, card, event) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER );
-		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+int card_embersmith(int player, int card, event_t event)
+{
+  /* Embersmith	|1|R	0x2004229
+   * Creature - Human Artificer 2/1
+   * Whenever you cast an artifact spell, you may pay |1. If you do, ~ deals 1 damage to any target.
+   */
+  smiths(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
-		card_instance_t *instance = get_card_instance( player, card );
+    card_instance_t *instance = get_card_instance(player, card);
 
-		if( can_target(&td) && has_mana(player, COLOR_ANY, 1) && charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 1) ){
-			if( new_pick_target(&td, "TARGET_ANY", 0, 1) ){
-				damage_target0(player, card, 1);
-			}
-		}
-		instance->number_of_targets = 0;
-	}
+    if (can_target(&td) && has_mana(player, COLOR_ANY, 1) &&
+        charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 1))
+    {
+      if (new_pick_target(&td, "TARGET_ANY", 0, 1))
+      {
+        damage_target0(player, card, 1);
+      }
+    }
+    instance->number_of_targets = 0;
+  }
 
-	return 0;
+  return 0;
 }
 
 static void destroy_creature_and_gain_life(int player, int card, int t_player, int t_card)
@@ -3228,7 +3228,8 @@ int card_exsanguinate(int player, int card, event_t event){
 
 static void pump_ezuri_archer(int player, int card, int t_player, int t_card)
 {
-	pump_until_eot_merge_previous(player, card, player, card, 3, 0);
+  if (check_for_ability(t_player, t_card, KEYWORD_FLYING))
+    pump_until_eot_merge_previous(player, card, player, card, 3, 0);
 }
 
 int card_ezuris_archers(int player, int card, event_t event){
@@ -3395,95 +3396,110 @@ int card_fume_spitter(int player, int card, event_t event)
   return result;
 }
 
-static int furnace_celebration_effect(int player, int card, event_t event){
+static int furnace_celebration_effect(int player, int card, event_t event)
+{
 
-	//In case something is copying Pawn of Ulamog and then reverts to its original form.
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_FURNACE_CELEBRATION ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  // In case something is copying Pawn of Ulamog and then reverts to its original form.
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_FURNACE_CELEBRATION)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						return 0;
-					}
-				}
-				if( affected_card_controller == player &&
-					is_what(affected_card_controller, affected_card, TYPE_PERMANENT) &&
-					kill_code == KILL_SACRIFICE &&
-					!check_special_flags(affected_card_controller, affected_card, SF_KILL_STATE_BASED_ACTION) )
-				{
-					if( instance->targets[11].player < 0 ){
-						instance->targets[11].player = 0;
-					}
-					SET_BYTE0(instance->targets[11].player)++;
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE1(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        if (affected_card_controller == player &&
+            is_what(affected_card_controller, affected_card, TYPE_PERMANENT) &&
+            kill_code == KILL_SACRIFICE &&
+            !check_special_flags(affected_card_controller, affected_card,
+                                 SF_KILL_STATE_BASED_ACTION))
+        {
+          if (instance->targets[11].player < 0)
+          {
+            instance->targets[11].player = 0;
+          }
+          SET_BYTE0(instance->targets[11].player)++;
+        }
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
-		if( result ){
-			target_definition_t td;
-			default_target_definition(player, card, &td, TYPE_CREATURE );
-			td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
-			card_instance_t *instance= get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
 
-			int amount = BYTE0(result);
-			while( amount ){
-					if( has_mana(player, COLOR_ANY, 2) && can_target(&td) ){
-						if( charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 2) &&
-							new_pick_target(&td, "TARGET_CREATURE_OR_PLAYER", 0, 1) )
-						{
-							damage_target0(player, card, 2);
-							instance->number_of_targets = 0;
-							amount--;
-						}
-						else{
-							break;
-						}
-					}
-					else{
-						break;
-					}
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+    int amount = BYTE0(result);
+    while (amount)
+    {
+      if (has_mana(player, COLOR_ANY, 2) && can_target(&td))
+      {
+        if (charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY,
+                                        2) &&
+            new_pick_target(&td, "TARGET_CREATURE_OR_PLAYER", 0, 1))
+        {
+          damage_target0(player, card, 2);
+          instance->number_of_targets = 0;
+          amount--;
+        }
+        else
+        {
+          break;
+        }
+      }
+      else
+      {
+        break;
+      }
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_furnace_celebration(int player, int card, event_t event){
@@ -3673,11 +3689,12 @@ int card_glimmerpost(int player, int card, event_t event)
   return mana_producer(player, card, event);
 }
 
-static void animate_glint_hawk_idol(int player, int card){
-	add_a_subtype(player, card, SUBTYPE_BIRD);
-	int legacy = artifact_animation(player, card, player, card, 1, 2, 2, KEYWORD_FLYING, 0);
-	card_instance_t *leg = get_card_instance( player, legacy );
-	leg->targets[6].player = COLOR_TEST_WHITE;
+static void animate_glint_hawk_idol(int player, int card)
+{
+  int legacy = artifact_animation(player, card, player, card, 1, 2, 2, KEYWORD_FLYING, 0);
+  card_instance_t *leg = get_card_instance(player, legacy);
+  leg->targets[6].player = COLOR_TEST_WHITE;
+  leg->targets[9].card = SUBTYPE_BIRD;
 }
 
 int card_glint_hawk_idol(int player, int card, event_t event){
@@ -4312,8 +4329,8 @@ int card_infiltration_lens(int player, int card, event_t event)
   if (event == EVENT_DECLARE_BLOCKERS && is_equipping(player, card))
 	{
 	  card_instance_t* instance = get_card_instance(player, card);
-	  int p = instance->targets[8].player;
-	  int c = instance->targets[8].card;
+	  int p = instance->damage_target_player;
+	  int c = instance->damage_target_card;
 
 	  int num_blockers;
 	  if (current_turn == p && is_attacking(p, c))
@@ -4325,7 +4342,7 @@ int card_infiltration_lens(int player, int card, event_t event)
   if (event == EVENT_ATTACK_RATING)
 	{
 	  card_instance_t* instance = get_card_instance(player, card);
-	  if (affect_me(instance->targets[8].player, instance->targets[8].card) && is_equipping(player, card))
+	  if (affect_me(instance->damage_target_player, instance->damage_target_card) && is_equipping(player, card))
 		ai_defensive_modifier -= 36;
 	}
 
@@ -4502,18 +4519,23 @@ int card_liege_of_the_tangle(int player, int card, event_t event){
 	return 0;
 }
 
-int card_lifesmith(int player, int card, event_t event){
-	/* Lifesmith	|1|G
-	 * Creature - Human Artificer 2/1
-	 * Whenever you cast an artifact spell, you may pay |1. If you do, you gain 3 life. */
+int card_lifesmith(int player, int card, event_t event)
+{
+  /* Lifesmith	|1|G
+   * Creature - Human Artificer 2/1
+   * Whenever you cast an artifact spell, you may pay |1. If you do, you gain 3 life. */
 
-	if( smiths(player, card, event) ){
-		if( has_mana(player, COLOR_ANY, 1) && charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 1) ){
-			gain_life(player, 3);
-		}
-	}
+  smiths(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    if (has_mana(player, COLOR_ANY, 1) &&
+        charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 1))
+    {
+      gain_life(player, 3);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 
@@ -4805,18 +4827,24 @@ int card_myr_reservoir(int player, int card, event_t event){
 															0, &this_test, GS_GRAVE_RECYCLER);
 }
 
-int card_myrsmith(int player, int card, event_t event){
-	/* Myrsmith	|1|W
-	 * Creature - Human Artificer 2/1
-	 * Whenever you cast an artifact spell, you may pay |1. If you do, put a 1/1 colorless Myr artifact creature token onto the battlefield. */
+int card_myrsmith(int player, int card, event_t event)
+{
+  /* Myrsmith	|1|W
+   * Creature - Human Artificer 2/1
+   * Whenever you cast an artifact spell, you may pay |1. If you do, put a 1/1 colorless Myr
+   * artifact creature token onto the battlefield. */
 
-	if( smiths(player, card, event) ){
-		if( has_mana(player, COLOR_ANY, 1) && charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 1) ){
-			generate_token_by_id(player, card, CARD_ID_MYR);
-		}
-	}
+  smiths(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    if (has_mana(player, COLOR_ANY, 1) &&
+        charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 1))
+    {
+      generate_token_by_id(player, card, CARD_ID_MYR);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_necrogen_censer(int player, int card, event_t event){
@@ -5053,25 +5081,31 @@ int card_painful_quandary(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
-int card_painsmith(int player, int card, event_t event){
-	/* Painsmith	|1|B
-	 * Creature - Human Artificer 2/1
-	 * Whenever you cast an artifact spell, you may have target creature get +2/+0 and gain deathtouch until end of turn. */
+int card_painsmith(int player, int card, event_t event)
+{
+  /* Painsmith	|1|B
+   * Creature - Human Artificer 2/1
+   * Whenever you cast an artifact spell, you may have target creature get +2/+0 and gain deathtouch
+   * until end of turn. */
 
-	if( smiths(player, card, event) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE );
-		td.preferred_controller = player;
+  smiths(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.preferred_controller = player;
 
-		card_instance_t *instance = get_card_instance( player, card );
+    card_instance_t *instance = get_card_instance(player, card);
 
-		if( can_target(&td) && new_pick_target(&td, "TARGET_CREATURE", 0, 0) ){
-			pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 2, 0, 0, SP_KEYWORD_DEATHTOUCH);
-		}
-		instance->number_of_targets = 0;
-	}
+    if (can_target(&td) && new_pick_target(&td, "TARGET_CREATURE", 0, 0))
+    {
+      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                             2, 0, 0, SP_KEYWORD_DEATHTOUCH);
+    }
+    instance->number_of_targets = 0;
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_panic_spellbomb(int player, int card, event_t event){
@@ -5261,17 +5295,20 @@ int card_revoke_existence(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_ARTIFACT_ENCHANTMENT", 1, NULL);
 }
 
-int card_riddlesmith(int player, int card, event_t event){
-	/* Riddlesmith	|1|U
-	 * Creature - Human Artificer 2/1
-	 * Whenever you cast an artifact spell, you may draw a card. If you do, discard a card. */
+int card_riddlesmith(int player, int card, event_t event)
+{
+  /* Riddlesmith	|1|U
+   * Creature - Human Artificer 2/1
+   * Whenever you cast an artifact spell, you may draw a card. If you do, discard a card. */
 
-	if( smiths(player, card, event) ){
-		draw_cards(player, 1);
-		discard(player, 0, player);
-	}
+  smiths(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    draw_cards(player, 1);
+    discard(player, 0, player);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_rust_tick(int player, int card, event_t event){
@@ -6271,65 +6308,73 @@ int card_vensers_journal(int player, int card, event_t event){
 	return 0;
 }
 
-static int vigil_for_the_lost_effect(int player, int card, event_t event){
+static int vigil_for_the_lost_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_VIGIL_FOR_THE_LOST ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_VIGIL_FOR_THE_LOST)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE1(instance->targets[11].player) = 1;
+          }
+        }
+        count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			if( BYTE1(result) && has_mana(player, COLOR_ANY, 1) &&
-				charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, -1) )
-			{
-				gain_life(player, x_value);
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    if (BYTE0(result) && has_mana(player, COLOR_ANY, 1) &&
+        charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, -1))
+    {
+      gain_life(player, x_value);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_vigil_for_the_lost(int player, int card, event_t event){
@@ -6381,63 +6426,72 @@ int card_vigil_for_the_lost(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
-static int viridian_revel_effect(int player, int card, event_t event){
+static int viridian_revel_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_VIRIDIAN_REVEL ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_VIRIDIAN_REVEL)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				if( get_owner(affected_card_controller, affected_card) == 1-player ){
-					count_for_gfp_ability(player, card, event, ANYBODY, TYPE_ARTIFACT, NULL);
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE1(instance->targets[11].player) = 1;
+          }
+        }
+        if (get_owner(affected_card_controller, affected_card) == 1 - player)
+        {
+          count_for_gfp_ability(player, card, event, ANYBODY, TYPE_ARTIFACT, NULL);
+        }
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			draw_some_cards_if_you_want(player, card, player, BYTE0(result));
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    draw_up_to_n_cards(player, BYTE0(result));
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_viridian_revel(int player, int card, event_t event){

@@ -1074,6 +1074,7 @@ address,type,name,size,native_name,source,mapping
 0x2071fc0,function,card_staff_of_the_wild_magus,32,card_staff_of_the_wild_magus,cards/m14.c,same native name
 0x2071fe0,function,card_vial_of_poison,360,card_vial_of_poison,cards/m14.c,same native name
 0x2072150,function,card_encroaching_wastes,711,card_encroaching_wastes,cards/m14.c,same native name
+0x2072420,function,turn_card_in_grave_face_up_src,181,turn_card_in_grave_face_up_src,cards/innistrad.c,recovery ledger
 0x20724e0,function,iid_has_flashback,63,iid_has_flashback,cards/innistrad.c,same native name
 0x2072520,function,is_enchantment_or_spirit_permanent,89,is_enchantment_or_spirit_permanent,cards/innistrad.c,same native name
 0x2072580,function,create_spirit,66,create_spirit,cards/innistrad.c,same native name
@@ -2316,7 +2317,7 @@ address,type,name,size,native_name,source,mapping
 0x20e7750,function,card_foundry_of_the_consuls,589,card_foundry_of_the_consuls,cards/origins.c,same native name
 0x20e79a0,function,card_mage_ring_network,1220,card_mage_ring_network,cards/origins.c,same native name
 0x20e7e70,function,is_instant_or_has_flash,34,is_instant_or_has_flash,cards/time_spiral.c,same native name
-0x20e7ea0,function,target_must_be_permanent_or_suspend,106,target_must_be_permanent_or_suspend,cards/time_spiral.c,public COFF entry 0x256f070
+0x20e7ea0,function,target_must_be_permanent_or_suspend,106,target_must_be_permanent_or_suspend,cards/time_spiral.c,public COFF entry 0x2570b70
 0x20e7f10,function,generic_suspend_legacy,1965,generic_suspend_legacy,cards/time_spiral.c,same native name
 0x20e86c0,function,angels_grace_legacy,118,angels_grace_legacy,cards/time_spiral.c,same native name
 0x20e8740,function,can_make_saproling_from_fungus,108,can_make_saproling_from_fungus,cards/time_spiral.c,same native name
@@ -4851,7 +4852,7 @@ address,type,name,size,native_name,source,mapping
 0x21d4080,function,card_planewide_celebration,1748,card_planewide_celebration,cards/war_of_the_spark.c,recovery ledger
 0x21d4760,function,card_prismite,628,card_prismite,cards/war_of_the_spark.c,recovery ledger
 0x21d49e0,function,card_prison_realm,300,card_prison_realm,cards/war_of_the_spark.c,recovery ledger
-0x21d4b10,function,count_type_in_hand,93,count_type_in_hand,cards/war_of_the_spark.c,public COFF entry 0x25fea10
+0x21d4b10,function,count_type_in_hand,93,count_type_in_hand,cards/war_of_the_spark.c,public COFF entry 0x2600560
 0x21d4b70,function,card_ral_storm_conduit,549,card_ral_storm_conduit,cards/war_of_the_spark.c,recovery ledger
 0x21d4da0,function,card_return_to_nature,1509,card_return_to_nature,cards/war_of_the_spark.c,recovery ledger
 0x21d5390,function,card_roalesk_apex_hybrid,310,card_roalesk_apex_hybrid,cards/war_of_the_spark.c,recovery ledger
@@ -5448,6 +5449,7 @@ address,type,name,size,native_name,source,mapping
 0x220c900,function,card_vengeant_vampire,222,card_vengeant_vampire,cards/m19.c,recovery ledger
 0x220c9e0,function,card_rampaging_brontodon,179,card_rampaging_brontodon,cards/m19.c,recovery ledger
 0x220caa0,function,illusion_of_choice_legacy,46,illusion_of_choice_legacy,cards/conspiracy-take-the-crown.c,same native name
+0x220cad0,function,check_for_jared_carthalion_legacy,132,check_for_jared_carthalion_legacy,cards/conspiracy-take-the-crown.c,recovery ledger
 0x220cb60,function,can_activate_this,127,can_activate_this,cards/conspiracy-take-the-crown.c,same native name
 0x220cbe0,function,deadly_designs_legacy,310,deadly_designs_legacy,cards/conspiracy-take-the-crown.c,same native name
 0x220cd20,function,deadly_designs_effect,525,deadly_designs_effect,cards/conspiracy-take-the-crown.c,same native name
@@ -5729,7 +5731,6 @@ address,type,name,size,native_name,source,mapping
 0x222bc00,function,tide_shaper_effect,211,tide_shaper_effect,cards/modern_horizons_2.c,recovery ledger
 0x222bce0,function,one_or_more_p1_p1_counters_are_putted_on_me,155,one_or_more_p1_p1_counters_are_putted_on_me,cards/modern_horizons_2.c,recovery ledger
 0x222bdd0,function,ward_granted,965,ward_granted,cards/modern_horizons_2.c,recovery ledger
-0x222c1a0,function,ward,113,ward,cards/modern_horizons_2.c,same native name
 0x222c220,function,ward_mana,115,ward_mana,cards/modern_horizons_2.c,recovery ledger
 0x222c2a0,function,ward_life,120,ward_life,cards/modern_horizons_2.c,recovery ledger
 0x222c320,function,ward_discard,121,ward_discard,cards/modern_horizons_2.c,recovery ledger
@@ -7334,7 +7335,7 @@ address,type,name,size,native_name,source,mapping
 0x22c63c0,function,general_has_partner,73,general_has_partner,cards/vanguard.c,recovery ledger
 0x22c6410,function,get_partner_with_id,30,get_partner_with_id,cards/vanguard.c,recovery ledger
 0x22c6430,function,commander_enters_the_battlefield,178,commander_enters_the_battlefield,cards/vanguard.c,same native name
-0x22c64f0,function,locate_edh_card,80,locate_edh_card,cards/vanguard.c,public COFF entry 0x25dc270
+0x22c64f0,function,locate_edh_card,80,locate_edh_card,cards/vanguard.c,public COFF entry 0x25dddd0
 0x22c6540,function,is_commander_in_command_zone,69,is_commander_in_command_zone,cards/vanguard.c,recovery ledger
 0x22c6590,function,put_commander_from_command_zone_to_impl,937,put_commander_from_command_zone_to_impl,cards/vanguard.c,recovery ledger
 0x22c6940,function,get_commander_storm_count,77,get_commander_storm_count,cards/vanguard.c,recovery ledger
@@ -8962,7 +8963,7 @@ address,type,name,size,native_name,source,mapping
 0x23597f0,function,sacrifice_eot,237,sacrifice_eot,cards/theros_beyond_death.c,recovery ledger
 0x23598e0,function,akroan_war_legacy,94,akroan_war_legacy,cards/theros_beyond_death.c,recovery ledger
 0x2359940,function,escape_part,610,escape,cards/theros_beyond_death.c,recovery ledger
-0x2359bb0,function,breach_effect,1607,breach_effect,cards/theros_beyond_death.c,public COFF entry 0x2556ea0
+0x2359bb0,function,breach_effect,1607,breach_effect,cards/theros_beyond_death.c,public COFF entry 0x25589d0
 0x235a200,function,escape_with_counters_impl,210,escape_with_counters,cards/theros_beyond_death.c,recovery ledger
 0x235a2e0,function,escape,125,escape,cards/theros_beyond_death.c,recovery ledger
 0x235a360,function,card_agonizing_remorse,678,card_agonizing_remorse,cards/theros_beyond_death.c,recovery ledger
@@ -8970,7 +8971,7 @@ address,type,name,size,native_name,source,mapping
 0x235a7d0,function,card_anax_hardened_in_the_forge,794,card_anax_hardened_in_the_forge,cards/theros_beyond_death.c,recovery ledger
 0x235aaf0,function,card_ashiok_nightmare_muse,1215,card_ashiok_nightmare_muse,cards/theros_beyond_death.c,recovery ledger
 0x235afb0,function,card_athreos_shroud_veiled,1141,card_athreos_shroud_veiled,cards/theros_beyond_death.c,recovery ledger
-0x235b430,function,find_attached_legacy_effect_not_full,132,find_attached_legacy_effect_not_full,cards/theros_beyond_death.c,public COFF entry 0x255a650
+0x235b430,function,find_attached_legacy_effect_not_full,132,find_attached_legacy_effect_not_full,cards/theros_beyond_death.c,public COFF entry 0x255c180
 0x235b4c0,function,card_calix_destinys_hand,1612,card_calix_destinys_hand,cards/theros_beyond_death.c,recovery ledger
 0x235bb10,function,card_cling_to_dust,572,card_cling_to_dust,cards/theros_beyond_death.c,recovery ledger
 0x235bd50,function,card_daxos_blessed_by_the_sun,696,card_daxos_blessed_by_the_sun,cards/theros_beyond_death.c,recovery ledger
@@ -9559,6 +9560,7 @@ address,type,name,size,native_name,source,mapping
 0x239b260,function,ai_helper_function_for_confiscation_coup,55,ai_helper_function_for_confiscation_coup,cards/kaladesh.c,same native name
 0x239b2f0,function,have_no_counter,44,have_no_counter,cards/kaladesh.c,same native name
 0x239b320,function,ai_helper_function_for_die_young,81,ai_helper_function_for_die_young,cards/kaladesh.c,same native name
+0x239b380,function,ai_helper_function_for_harness_lightning,81,ai_helper_function_for_harness_lightning,cards/kaladesh.c,same native name
 0x239b3e0,function,demon_of_dark_schemes_legacy,715,demon_of_dark_schemes_legacy,cards/kaladesh.c,same native name
 0x239b6b0,function,aetherworks_marvel_legacy,736,aetherworks_marvel_legacy,cards/kaladesh.c,same native name
 0x239b990,function,marionette_master_legacy,791,marionette_master_legacy,cards/kaladesh.c,same native name
@@ -9630,6 +9632,7 @@ address,type,name,size,native_name,source,mapping
 0x23a2080,function,card_embraal_bruiser,165,card_embraal_bruiser,cards/kaladesh.c,same native name
 0x23a2130,function,card_essence_extraction,315,card_essence_extraction,cards/kaladesh.c,same native name
 0x23a2270,function,card_fortuitous_find,49,card_fortuitous_find,cards/kaladesh.c,same native name
+0x23a22b0,function,card_foundry_screecher,39,card_foundry_screecher,cards/kaladesh.c,same native name
 0x23a22e0,function,card_fretwork_colony,134,card_fretwork_colony,cards/kaladesh.c,same native name
 0x23a2370,function,card_gonti_lord_of_luxury,609,card_gonti_lord_of_luxury,cards/kaladesh.c,same native name
 0x23a25e0,function,card_harsh_scrutiny,538,card_harsh_scrutiny,cards/kaladesh.c,same native name
@@ -9803,6 +9806,7 @@ address,type,name,size,native_name,source,mapping
 0x23b4000,function,card_volrath_the_shapestealer,25,card_volrath_the_shapestealer,cards/commander_2019.c,recovery ledger
 0x23b4020,function,must_damage_one_of_my_creatures,67,must_damage_one_of_my_creatures,cards/planar_chaos.c,same native name
 0x23b4070,function,is_permanent_or_suspended_legacy,131,is_permanent_or_suspended_legacy,cards/planar_chaos.c,recovery ledger
+0x23b4100,function,player_or_planeswalker_or_sliver_creature,105,player_or_planeswalker_or_sliver_creature,cards/planar_chaos.c,recovery ledger
 0x23b4170,function,necrotic_sliver_shared_ability,577,necrotic_sliver_shared_ability,cards/planar_chaos.c,same native name
 0x23b43c0,function,has_the_same_pt_sum,64,has_the_same_pt_sum,cards/planar_chaos.c,same native name
 0x23b4500,function,cautery_sliver_shared_ability,1619,cautery_sliver_shared_ability,cards/planar_chaos.c,same native name
@@ -11022,7 +11026,7 @@ address,type,name,size,native_name,source,mapping
 0x24382d0,function,metalcraft,81,metalcraft,cards/scars_of_mirrodin.c,same native name
 0x2438330,function,minus_proliferate_auto_single_permanent_or_player,161,minus_proliferate_auto_single_permanent_or_player,cards/scars_of_mirrodin.c,recovery ledger
 0x24383e0,function,proliferate_auto_single_permanent_or_player,322,proliferate_auto_single_permanent_or_player,cards/scars_of_mirrodin.c,recovery ledger
-0x2438530,function,proliferate_manual_single_permanent_or_player,463,proliferate_manual_single_permanent_or_player,cards/scars_of_mirrodin.c,public COFF entry 0x24a16e0
+0x2438530,function,proliferate_manual_single_permanent_or_player,463,proliferate_manual_single_permanent_or_player,cards/scars_of_mirrodin.c,public COFF entry 0x24a3620
 0x2438700,function,proliferate,849,proliferate,cards/scars_of_mirrodin.c,recovery ledger
 0x2438a60,function,generic_artifact_with_proliferate,210,generic_artifact_with_proliferate,cards/scars_of_mirrodin.c,same native name
 0x2438b40,function,card_wurmcoil_engine,180,card_wurmcoil_engine,cards/scars_of_mirrodin.c,same native name
@@ -12922,7 +12926,7 @@ address,type,name,size,native_name,source,mapping
 0x24de220,function,brightflame_legacy,300,brightflame_legacy,cards/ravnica.c,same native name
 0x24de350,function,flash_conscript_damage_effect,362,flash_conscript_damage_effect,cards/ravnica.c,same native name
 0x24de4c0,function,covg_legacy,200,covg_legacy,cards/ravnica.c,same native name
-0x24def40,function,effect_flame_fusillade,1459,effect_flame_fusillade,cards/ravnica.c,public COFF entry 0x24470f0
+0x24def40,function,effect_flame_fusillade,1459,effect_flame_fusillade,cards/ravnica.c,same native name
 0x24df500,function,golgari_germination_effect,754,golgari_germination_effect,cards/ravnica.c,same native name
 0x24df800,function,savra_trigger,856,savra_trigger,cards/ravnica.c,same native name
 0x24dfb60,function,count_for_savra,388,count_for_savra,cards/ravnica.c,same native name
@@ -13251,6 +13255,7 @@ address,type,name,size,native_name,source,mapping
 0x24fe830,function,card_zombie_cutthroat,133,card_zombie_cutthroat,cards/scourge.c,same native name
 0x24fe8c0,function,effect_must_attack,134,effect_must_attack,cards/m10.c,same native name
 0x24fe950,function,target_is_skeleton_vampire_or_zombie,105,target_is_skeleton_vampire_or_zombie,cards/m10.c,same native name
+0x24fe9c0,function,sphinx_ambassador_ability,440,sphinx_ambassador_ability,cards/m10.c,same native name
 0x24feb80,function,card_acolythe_of_xathrid,326,card_acolythe_of_xathrid,cards/m10.c,same native name
 0x24fecd0,function,card_act_of_treason,500,card_act_of_treason,cards/m10.c,same native name
 0x24feed0,function,effect_must_attack_on_next_combat,151,effect_must_attack_on_next_combat,cards/m10.c,recovery ledger
@@ -16992,7 +16997,7 @@ address,type,name,size,native_name,source,mapping
 0x2650b80,function,side_effects_to_tutor_deck_from_permanents,191,side_effects_to_tutor_deck_from_permanents,functions/tutors.c,recovery ledger
 0x2650c40,function,show_deck,90,show_deck,functions/tutors.c,recovery ledger
 0x2650ca0,function,show_deck_force_expansion,77,show_deck_force_expansion,functions/tutors.c,recovery ledger
-0x2650cf0,function,get_average_value_from_zone,234,get_average_value_from_zone,functions/tutors.c,public COFF entry 0x26c0ab0
+0x2650cf0,function,get_average_value_from_zone,234,get_average_value_from_zone,functions/tutors.c,public COFF entry 0x26c6c80
 0x2650de0,function,select_card_from_zone,864,select_card_from_zone,functions/tutors.c,recovery ledger
 0x2651140,function,get_tutoring_denial,436,get_tutoring_denial,functions/tutors.c,recovery ledger
 0x2651300,function,new_select_a_card,701,new_select_a_card,functions/tutors.c,recovery ledger
@@ -17047,8 +17052,9 @@ address,type,name,size,native_name,source,mapping
 0x2656550,function,paint_quarter_of_four_counter_types,760,paint_quarter_of_four_counter_types,functions/windows.c,same native name
 0x2656850,function,get_icons,978,get_icons,functions/windows.c,same native name
 0x2656c30,function,draw_abilities,827,draw_abilities,functions/windows.c,same native name
+0x2656f70,function,draw_smallcard_normal,1511,draw_smallcard_normal,functions/windows.c,same native name
 0x2657560,function,initialize_ability_tooltip_names,290,initialize_ability_tooltip_names,functions/windows.c,same native name
-0x2657690,function,memcpy_displayed_inst_and_ext,273,memcpy_displayed_inst_and_ext,functions/windows.c,recovery ledger
+0x2657690,function,memcpy_displayed_inst_and_ext,273,memcpy_displayed_inst_and_ext,functions/windows.c,public COFF entry 0x26cee00
 0x26577b0,function,wndproc_ShowListCard_hook,845,wndproc_ShowListCard_hook,functions/windows.c,recovery ledger
 0x2657e30,function,wndproc_MainClass_hook,420,wndproc_MainClass_hook,functions/windows.c,same native name
 0x2657fe0,function,paint_player_counters,630,paint_player_counters,functions/windows.c,same native name
@@ -17065,10 +17071,13 @@ address,type,name,size,native_name,source,mapping
 0x2658eb0,function,copy_to_display_end,194,copy_to_display_end,functions/windows.c,recovery ledger
 0x2658f80,function,make_smallcard_visible,273,make_smallcard_visible,functions/windows.c,same native name
 0x26590a0,function,legacy_name_or_text,321,legacy_name_or_text,functions/windows.c,recovery ledger
+0x26591f0,function,draw_smallcard_special_effect_card,1307,draw_smallcard_special_effect_card,functions/windows.c,same native name
 0x2659710,function,legacy_name,41,legacy_name,functions/windows.c,same native name
 0x2659740,function,effect_card_text_replace_pipe_n,995,effect_card_text_replace_pipe_n,functions/windows.c,same native name
 0x2659b30,function,draw_smallcard_activation_card,757,draw_smallcard_activation_card,functions/windows.c,same native name
 0x2659e30,function,wndproc_CardClass_hook,6415,wndproc_CardClass_hook,functions/windows.c,same native name
+0x265b740,function,draw_smallcard_special_effect_card,52,draw_smallcard_special_effect_card,functions/windows.c,same native name
+0x265b780,function,draw_smallcard_normal,61,draw_smallcard_normal,functions/windows.c,same native name
 0x265b7c0,function,keywords_to_str,1239,keywords_to_str,functions/windows.c,recovery ledger
 0x265bca0,function,draw_fullcard_special_effect_card_impl,3075,draw_fullcard_special_effect_card,functions/windows.c,recovery ledger
 0x265c8b0,function,draw_fullcard_special_effect_card,52,draw_fullcard_special_effect_card,functions/windows.c,recovery ledger
@@ -17167,6 +17176,7 @@ address,type,name,size,native_name,source,mapping
 0x2664c10,function,gain_control_until_eoyt,68,gain_control_until_eoyt,functions/gain_control_and_legend_rule.c,recovery ledger
 0x2664c60,function,get_back_your_permanents,406,get_back_your_permanents,functions/gain_control_and_legend_rule.c,same native name
 0x2664e00,function,store_selected_subtype,42,store_selected_subtype,functions/token_generation.c,same native name
+0x2664e30,function,legacy_negate_static_abilities,118,legacy_negate_static_abilities,functions/token_generation.c,recovery ledger
 0x2664eb0,function,set_token,122,set_token,functions/token_generation.c,recovery ledger
 0x2664f30,function,resolve_token_iid,1093,resolve_iid,functions/token_generation.c,recovery ledger
 0x2665380,function,get_copyable_special_infos,238,get_copyable_special_infos,functions/token_generation.c,recovery ledger
@@ -17180,7 +17190,7 @@ address,type,name,size,native_name,source,mapping
 0x2665990,function,get_special_infos,57,get_special_infos,functions/token_generation.c,same native name
 0x26659d0,function,generate_token,2983,generate_token,functions/token_generation.c,recovery ledger
 0x2666580,function,generate_token_by_id_impl,179,generate_token_by_id_impl,functions/token_generation.c,recovery ledger
-0x2666680,function,copy_token,43,copy_token,functions/token_generation.c,public COFF entry 0x26bf640
+0x2666680,function,copy_token,43,copy_token,functions/token_generation.c,public COFF entry 0x26c5800
 0x26666b0,function,generate_token_by_id,103,generate_token_by_id,functions/token_generation.c,recovery ledger
 0x2666720,function,generate_tokens_by_id,111,generate_tokens_by_id,functions/token_generation.c,recovery ledger
 0x2666790,function,generate_reserved_token_by_id,88,generate_reserved_token_by_id,functions/token_generation.c,recovery ledger
@@ -17194,7 +17204,7 @@ address,type,name,size,native_name,source,mapping
 0x26675a0,function,manipulate_all,148,manipulate_all,functions/manipulate_and_damage_all.c,recovery ledger
 0x2667640,function,manipulate_type,84,manipulate_type,functions/manipulate_and_damage_all.c,same native name
 0x26676a0,function,manipulate_auras_enchanting_target,333,manipulate_auras_enchanting_target,functions/manipulate_and_damage_all.c,same native name
-0x26677f0,function,new_damage_all,634,new_damage_all,functions/manipulate_and_damage_all.c,public COFF entry 0x26a03a0
+0x26677f0,function,new_damage_all,634,new_damage_all,functions/manipulate_and_damage_all.c,public COFF entry 0x26a56a0
 0x2667a70,function,damage_all,155,damage_all,functions/manipulate_and_damage_all.c,same native name
 0x2667b10,function,has_no_mana_cost,278,has_no_mana_cost,functions/play_spell_for_free.c,recovery ledger
 0x2667c30,function,played_for_free,49,played_for_free,functions/play_spell_for_free.c,same native name
@@ -17254,7 +17264,7 @@ address,type,name,size,native_name,source,mapping
 0x266bc20,function,all_lands_are_basiclandtype,826,all_lands_are_basiclandtype,functions/produce_mana.c,recovery ledger
 0x266bf60,function,minimize_nondraining_mana,100,minimize_nondraining_mana,functions/produce_mana.c,recovery ledger
 0x266bfd0,function,mana_doesnt_drain_until_eot,101,mana_doesnt_drain_until_eot,functions/produce_mana.c,recovery ledger
-0x266c040,function,mana_doublers,210,mana_doublers,functions/produce_mana.c,public COFF entry 0x26a7190
+0x266c040,function,mana_doublers,210,mana_doublers,functions/produce_mana.c,public COFF entry 0x26ac870
 0x266c120,function,produce_mana_tapped_all_one_color_with_default_impl,983,produce_mana_tapped_all_one_color_with_default_impl,functions/produce_mana.c,recovery ledger
 0x266c500,function,produce_mana_tapped_all_one_color_with_default,63,produce_mana_tapped_all_one_color_with_default,functions/produce_mana.c,recovery ledger
 0x266c540,function,produce_mana_tapped_all_one_color_impl,63,produce_mana_tapped_all_one_color_impl,functions/produce_mana.c,recovery ledger
@@ -17365,6 +17375,7 @@ address,type,name,size,native_name,source,mapping
 0x26772b0,function,cumulative_upkeep_general,418,cumulative_upkeep_general,functions/upkeep.c,same native name
 0x2677470,function,default_tutor3,6,default_tutor3,functions/functions.c,same native name
 0x2677480,function,id_updater_for_reveal_top_card_legacy,102,id_updater_for_reveal_top_card_legacy,functions/functions.c,same native name
+0x26774f0,function,find_obliviation_legacy,196,find_obliviation_legacy,functions/functions.c,recovery ledger
 0x26775c0,function,effect_pump_until_eot,150,effect_pump_until_eot,functions/functions.c,recovery ledger
 0x2677660,function,effect_nobody_can_attack_until_eot,664,effect_nobody_can_attack_until_eot,functions/functions.c,same native name
 0x2677900,function,effect_creature1_cant_block_creature2_until_eot,134,effect_creature1_cant_block_creature2_until_eot,functions/functions.c,same native name
@@ -17723,11 +17734,11 @@ address,type,name,size,native_name,source,mapping
 0x268dc60,function,check_damage_test,73,check_damage_test,functions/functions.c,same native name
 0x268dcb0,function,check_damage,60,check_damage,functions/functions.c,same native name
 0x268dcf0,function,resolve_damage_trigger,395,resolve_damage_trigger,functions/functions.c,same native name
-0x268de80,function,damage_dealt_by_me_arbitrary,1172,damage_dealt_by_me_arbitrary,functions/functions.c,public COFF entry 0x2679210
+0x268de80,function,damage_dealt_by_me_arbitrary,1172,damage_dealt_by_me_arbitrary,functions/functions.c,same native name
 0x268e320,function,has_combat_damage_been_inflicted_to_opponent,49,has_combat_damage_been_inflicted_to_opponent,functions/functions.c,same native name
 0x268e360,function,has_combat_damage_been_inflicted_to_a_player,49,has_combat_damage_been_inflicted_to_a_player,functions/functions.c,same native name
-0x268e3a0,function,damage_dealt_by_me,48,damage_dealt_by_me,functions/functions.c,public COFF entry 0x2679270
-0x268e3d0,function,attached_creature_deals_damage,129,attached_creature_deals_damage,functions/functions.c,public COFF entry 0x26793a0
+0x268e3a0,function,damage_dealt_by_me,48,damage_dealt_by_me,functions/functions.c,same native name
+0x268e3d0,function,attached_creature_deals_damage,129,attached_creature_deals_damage,functions/functions.c,same native name
 0x268e460,function,equipped_creature_deals_damage,18,equipped_creature_deals_damage,functions/functions.c,same native name
 0x268e480,function,damage_dealt_to_me_arbitrary,794,damage_dealt_to_me_arbitrary,functions/functions.c,same native name
 0x268e7a0,function,has_dead_creature,96,has_dead_creature,functions/functions.c,recovery ledger
@@ -17985,7 +17996,7 @@ address,type,name,size,native_name,source,mapping
 0x26a4c00,function,generic_activated_ability_with_target_in_grave,1496,generic_activated_ability_with_target_in_grave,functions/functions.c,recovery ledger
 0x26a51e0,function,whenever_i_deal_damage_to_a_player,109,whenever_i_deal_damage_to_a_player,functions/functions.c,same native name
 0x26a5250,function,ai_name_a_random_csvid,284,ai_name_a_random_csvid,functions/functions.c,recovery ledger
-0x26a5370,function,etb_ability,515,etb_ability,functions/functions.c,public COFF entry 0x267e0f0
+0x26a5370,function,etb_ability,515,etb_ability,functions/functions.c,public COFF entry 0x2682f00
 0x26a5580,function,cip_damage_creature,387,cip_damage_creature,functions/functions.c,same native name
 0x26a5710,function,cip_lifegain,77,cip_lifegain,functions/functions.c,same native name
 0x26a5760,function,karoo,767,karoo,functions/functions.c,same native name
@@ -18106,7 +18117,7 @@ address,type,name,size,native_name,source,mapping
 0x26b39d0,function,retrieve_stored_iids,60,retrieve_stored_iids,functions/deck.c,recovery ledger
 0x26b3a10,function,clear_stored_iids,49,clear_stored_iids,functions/deck.c,recovery ledger
 0x26b3a50,function,obliterate_top_card_of_deck,27,obliterate_top_card_of_deck,functions/deck.c,same native name
-0x26b3a70,function,obliterate_top_n_cards_of_deck,98,obliterate_top_n_cards_of_deck,functions/deck.c,public COFF entry 0x2650730
+0x26b3a70,function,obliterate_top_n_cards_of_deck,98,obliterate_top_n_cards_of_deck,functions/deck.c,same native name
 0x26b3ae0,function,obliterate_top_card_of_grave,151,obliterate_top_card_of_grave,functions/deck.c,same native name
 0x26b3b80,function,remove_card_from_grave,184,remove_card_from_grave,functions/deck.c,same native name
 0x26b3c40,function,is_hydra_head,3,is_hydra_head,functions/deck.c,same native name
@@ -18321,12 +18332,13 @@ address,type,name,size,native_name,source,mapping
 0x26cea40,function,vscnprintf,52,vscnprintf,functions/helper_functions.c,same native name
 0x26cea80,function,scnprintf,52,scnprintf,functions/helper_functions.c,same native name
 0x26ceac0,function,count_counters_impl,292,count_counters_impl,functions/counters.c,same native name
-0x26cebf0,function,get_counter_name_by_type,102,get_counter_name_by_type,functions/counters.c,same native name
+0x26cec60,function,poison,166,poison,functions/counters.c,same native name
+0x26ced10,function,add_experience,199,add_experience,functions/counters.c,same native name
+0x26cede0,function,add_energy,257,add_energy,functions/counters.c,same native name
 0x26ceef0,function,clear_all_counters,90,remove_all_counters,functions/counters.c,recovery ledger
 0x26cef50,function,get_counter_type_by_id,7895,get_counter_type_by_id,functions/counters.c,same native name
 0x26d0e30,function,get_counter_type_by_instance,95,get_counter_type_by_instance,functions/counters.c,same native name
 0x26d0e90,function,add_or_remove_counters_impl,2106,add_or_remove_counters_impl,functions/counters.c,recovery ledger
-0x26d16d0,function,get_counter_name_by_type,26,get_counter_name_by_type,functions/counters.c,same native name
 0x26d16f0,function,get_special_counters_name,53,get_special_counters_name,functions/counters.c,same native name
 0x26d1730,function,count_counters,127,count_counters,functions/counters.c,same native name
 0x26d17b0,function,count_counters_no_parent,79,count_counters_no_parent,functions/counters.c,same native name
@@ -18334,8 +18346,11 @@ address,type,name,size,native_name,source,mapping
 0x26d18b0,function,has_any_counters,148,has_any_counters,functions/counters.c,same native name
 0x26d1950,function,raw_counter_value,8103,raw_counter_value,functions/counters.c,same native name
 0x26d3900,function,choose_existing_counter_type,2398,choose_existing_counter_type,functions/counters.c,same native name
+0x26d4260,function,poison,26,poison,functions/counters.c,same native name
 0x26d4280,function,raw_set_poison,18,raw_set_poison,functions/counters.c,same native name
+0x26d42a0,function,add_experience,26,add_experience,functions/counters.c,same native name
 0x26d42c0,function,raw_set_experience,18,raw_set_experience,functions/counters.c,same native name
+0x26d42e0,function,add_energy,26,add_energy,functions/counters.c,same native name
 0x26d4300,function,remove_energy,66,remove_energy,functions/counters.c,same native name
 0x26d4350,function,count_player_counters,115,count_player_counters,functions/counters.c,same native name
 0x26d43d0,function,add_player_counters,101,add_player_counters,functions/counters.c,same native name
@@ -18363,8 +18378,10 @@ address,type,name,size,native_name,source,mapping
 0x26d6260,function,exiledby_choose,1651,exiledby_choose,functions/exiledby.c,same native name
 0x26d68e0,function,exiledby_find_any,215,exiledby_find_any,functions/exiledby.c,same native name
 0x26d69c0,function,exiledby_find,252,exiledby_find,functions/exiledby.c,same native name
+0x26d6ac0,function,exiledby_remember,393,exiledby_remember,functions/exiledby.c,same native name
 0x26d6c50,function,exiledby_count,245,exiledby_count,functions/exiledby.c,same native name
 0x26d6d50,function,exiledby_count_cmcs,343,exiledby_count_cmcs,functions/exiledby.c,recovery ledger
+0x26d6eb0,function,exiledby_remember,60,exiledby_remember,functions/exiledby.c,same native name
 0x26d6ef0,function,exiledby_detach,218,exiledby_detach,functions/exiledby.c,same native name
 0x26d6fd0,function,exiledby_destroy_detached,106,exiledby_destroy_detached,functions/exiledby.c,same native name
 0x26d7040,function,exile_card_and_remember_it_on_exiledby,134,exile_card_and_remember_it_on_exiledby,functions/exiledby.c,same native name
@@ -18507,8 +18524,8 @@ address,type,name,size,native_name,source,mapping
 0x26e3c90,function,new_can_sacrifice,332,new_can_sacrifice,functions/sacrifices.c,recovery ledger
 0x26e3de0,function,can_sacrifice,91,can_sacrifice,functions/sacrifices.c,recovery ledger
 0x26e3e40,function,is_nice_creature_to_sacrifice,125,is_nice_creature_to_sacrifice,functions/sacrifices.c,recovery ledger
-0x26e3ec0,function,get_best_permanent_for_sacrifice,165,get_best_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26b7450
-0x26e3f70,function,new_get_special_permanent_for_sacrifice,403,new_get_special_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26b7480
+0x26e3ec0,function,get_best_permanent_for_sacrifice,165,get_best_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26bd590
+0x26e3f70,function,new_get_special_permanent_for_sacrifice,403,new_get_special_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26bd5c0
 0x26e4110,function,new_sacrifice_impl,2354,new_sacrifice_impl,functions/sacrifices.c,recovery ledger
 0x26e4a50,function,pick_creature_for_sacrifice,213,pick_creature_for_sacrifice,functions/sacrifices.c,recovery ledger
 0x26e4b30,function,pick_permanent_for_sacrifice,278,pick_permanent_for_sacrifice,functions/sacrifices.c,recovery ledger
@@ -18630,12 +18647,16 @@ address,type,name,size,native_name,source,mapping
 0x26ee720,function,altar_equipment,776,altar_equipment,functions/equipments.c,same native name
 0x26eea30,function,is_equipped,34,is_equipped,functions/equipments.c,same native name
 0x26eea60,function,less_const_char,29,less_const_char,functions/utility.cpp,same native name
+0x26eea80,function,iid,16,iid,functions/utility.cpp,same native name
 0x26eea90,function,SetVoidptr_insert,276,SetVoidptr_insert,functions/utility.cpp,same native name
 0x26eebb0,function,UnorderedMapIntInt_fetch,114,UnorderedMapIntInt_fetch,functions/utility.cpp,same native name
 0x26eec30,function,UnorderedMapIntInt_delete,199,UnorderedMapIntInt_delete,functions/utility.cpp,same native name
 0x26eed00,function,UnorderedMapIntInt_set,585,UnorderedMapIntInt_set,functions/utility.cpp,same native name
 0x26eef50,function,sort_ArrayConstCharPtr,204,sort_ArrayConstCharPtr,functions/utility.cpp,same native name
+0x26ef760,stub,choose_a_card_allow_cancel_with_defaults,49,choose_a_card_allow_cancel_with_defaults,functions/choose_a_card.cpp,recovery ledger
+0x26ef7a0,stub,choose_a_card_iid,62,choose_a_card_iid,functions/choose_a_card.cpp,recovery ledger
 0x26ef820,stub,choose_a_card_test_ct,52,choose_a_card_test_ct,functions/choose_a_card.cpp,recovery ledger
+0x26ef8a0,stub,choose_a_card_get_last_options,167,choose_a_card_get_last_options,functions/choose_a_card.cpp,recovery ledger
 0x27096c0,function,_M_rehash,530,_M_rehash,functions/utility.cpp,same native name
 0x270d580,function,"__adjust_heap<char const**, int, char const*, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",295,"__adjust_heap<char const**, int, char const*, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",functions/utility.cpp,same native name
 0x270d6b0,function,"__heap_select<char const**, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",222,"__heap_select<char const**, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",functions/utility.cpp,same native name

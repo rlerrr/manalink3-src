@@ -2,48 +2,51 @@
 
 static void al_lands(int player, int card, event_t event, int subtype, int untapped)
 {
-	if (event == EVENT_CAST_SPELL && affect_me(player, card) && IS_AI(player))
-	{
-		test_definition_t test;
-		new_default_test_definition(&test, TYPE_LAND, "");
-		if (untapped)
-		{
-			test.state = STATE_TAPPED;
-			test.state_flag = DOESNT_MATCH;
-			}
-		test.subtype = subtype;
-		test.not_me = 1;
+  if (event == EVENT_CAST_SPELL && affect_me(player, card) && IS_AI(player) &&
+      !is_humiliated(player, card, AL_TRIG))
+  {
+    test_definition_t test;
+    new_default_test_definition(&test, TYPE_LAND, "");
+    if (untapped)
+    {
+      test.state = STATE_TAPPED;
+      test.state_flag = DOESNT_MATCH;
+    }
+    test.subtype = subtype;
+    test.not_me = 1;
 
-		if( !check_battlefield_for_special_card(player, card, player, CBFSC_CHECK_ONLY, &test) ){
-			ai_modifier -= 512;
-		}
-		else{
-			mana_producer(player, card, event);
-		}
-	}
+    if (!check_battlefield_for_special_card(player, card, player, CBFSC_CHECK_ONLY, &test))
+    {
+      ai_modifier -= 512;
+    }
+    else
+    {
+      mana_producer(player, card, event);
+    }
+  }
 
-	if (event == EVENT_RESOLVE_SPELL)
-	{
-		play_land_sound_effect(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    play_land_sound_effect(player, card);
+    if (is_humiliated(player, card, AL_TRIG))
+      return;
 
-		test_definition_t test;
-		new_default_test_definition(&test, TYPE_LAND,
-									get_hacked_land_text(-1, -1,
-													   untapped ? "Select an untapped %s to sacrifice."
-													   : "Select %a to sacrifice.",
-													   subtype));
-		if (untapped)
-		{
-			test.state = STATE_TAPPED;
-			test.state_flag = DOESNT_MATCH;
-		}
-		test.subtype = subtype;
+    test_definition_t test;
+    new_default_test_definition(
+        &test, TYPE_LAND,
+        get_hacked_land_text(
+            -1, -1, untapped ? "Select an untapped %s to sacrifice." : "Select %a to sacrifice.",
+            subtype));
+    if (untapped)
+    {
+      test.state = STATE_TAPPED;
+      test.state_flag = DOESNT_MATCH;
+    }
+    test.subtype = subtype;
 
-		if (!new_sacrifice(player, card, player, SAC_NO_CANCEL, &test))
-			kill_card(player, card, KILL_STATE_BASED_ACTION);
-
-	}
-
+    if (!new_sacrifice(player, card, player, SAC_NO_CANCEL, &test))
+      kill_card(player, card, KILL_STATE_BASED_ACTION);
+  }
 }
 
 int card_multi_purpose_al_token(int player, int card, event_t event){
@@ -1366,68 +1369,75 @@ Instant
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
-static int inheritance_effect(int player, int card, event_t event){
+static int inheritance_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_INHERITANCE ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_INHERITANCE)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-					}
-					if( instance->targets[11].player < 0 ){
-						instance->targets[11].player = 0;
-					}
-					SET_BYTE1(instance->targets[11].player) = 1;
-				}
-				count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+              instance->targets[11].player = 0;
+            SET_BYTE2(instance->targets[11].player) = 1;
+          }
+        }
+        count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			while( amount && has_mana(player, COLOR_ANY, 3) ){
-					charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 3);
-					if( spell_fizzled != 1 ){
-						draw_cards(player, 1);
-					}
-					amount--;
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    while (amount && has_mana(player, COLOR_ANY, 3))
+    {
+      charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 3);
+      if (spell_fizzled == 1)
+        break;
+      draw_cards(player, 1);
+      amount--;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_inheritance(int player, int card, event_t event){
@@ -1496,39 +1506,42 @@ static int skip_draw_legacy(int player, int card, event_t event){
 	return 0;
 }
 
-static int effect_gargoyle(int player, int card, event_t event){
-
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		card_instance_t *instance= get_card_instance(player, card);
-		int owner = instance->targets[0].player;
-		int iid = instance->targets[0].card;
-		seek_grave_for_id_to_reanimate(owner, -1, owner, cards_data[iid].id, REANIMATE_DEFAULT);
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+static int effect_gargoyle(int player, int card, event_t event)
+{
+  if (eot_trigger(player, card, event))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int owner = instance->targets[0].player;
+    seek_grave_for_id_to_reanimate(owner, card, owner, instance->targets[0].card,
+                                   REANIMATE_DEFAULT);
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
-int ivory_gargoyle_impl(int player, int card, event_t event, int x, int b, int u, int g, int r, int w){
+int ivory_gargoyle_impl(int player, int card, event_t event, int x, int b, int u, int g, int r,
+                        int w)
+{
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(player, card) && ! is_token(player, card) ){
-		if( is_this_dying(player, card) ){
-			int legacy = create_legacy_effect(player, card, &effect_gargoyle);
-			get_card_instance(player, legacy)->targets[0].player = get_owner(player, card);
-			get_card_instance(player, legacy)->targets[0].card = get_original_internal_card_id(player, card);
-			get_card_instance(player, legacy)->targets[11].player = 1; // or resolve_gfp_ability won't trigger
+  if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    card_instance_t *inst = get_card_instance(player, card);
+    int p = inst->parent_controller;
+    int c = inst->parent_card;
+    int legacy = create_legacy_effect(player, card, effect_gargoyle);
+    get_card_instance(player, legacy)->targets[0].player = get_owner(p, c);
+    get_card_instance(player, legacy)->targets[0].card = get_id(p, c);
+    int legacy2 = create_legacy_effect(player, card, skip_draw_legacy);
+    get_card_instance(player, legacy2)->targets[0].player = p;
+  }
 
-			int legacy2 = create_legacy_effect(player, card, &skip_draw_legacy);
-			get_card_instance(player, legacy2)->targets[0].player = player;
-		}
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    kill_card(instance->parent_controller, instance->parent_card, KILL_EXILE);
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *instance= get_card_instance(player, card);
-		kill_card(instance->parent_controller, instance->parent_card, KILL_EXILE);
-	}
-
-	return generic_activated_ability(player, card, event, 0, x, b, u, g, r, w, 0, 0, 0);
+  return generic_activated_ability(player, card, event, 0, x, b, u, g, r, w, 0, 0, 0);
 }
 
 int card_ivory_gargoyle(int player, int card, event_t event)
@@ -3098,56 +3111,61 @@ Creature - Human Mercenary 1/1
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST_R(1), 0, &td, "TARGET_PLAYER");
 }
 
-static int spiny_starfish_legacy(int player, int card, event_t event){
-	if( eot_trigger(player, card, event) ){
-		card_instance_t *instance = get_card_instance(player, card);
+static int spiny_starfish_legacy(int player, int card, event_t event)
+{
+  if (eot_trigger(player, card, event))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		token_generation_t token;
-		default_token_definition(instance->targets[0].player, instance->targets[0].card, CARD_ID_STARFISH, &token);
-		token.pow = 0;
-		token.tou = 1;
-		token.qty = instance->targets[1].player;
-		token.color_forced = instance->targets[1].card;
-		generate_token(&token);
+    token_generation_t token;
+    default_token_definition(instance->targets[0].player, instance->targets[0].card,
+                             CARD_ID_STARFISH, &token);
+    token.pow = 0;
+    token.tou = 1;
+    token.qty = instance->targets[1].player;
+    token.color_forced = COLOR_TEST_BLUE;
+    generate_token(&token);
 
-		kill_card(player, card, KILL_EXILE);
-	}
-	return 0;
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
-void spiny_starfish_splitting_ability(int player, int card){
-	int found_p = -1;
-	int found_c = -1;
-	CYCLE_ALL_CARDS(p, c,{
-							if( in_play(p, c) && is_what(p, c, TYPE_EFFECT) ){
-								card_instance_t *inst = get_card_instance(p, c);
-								if( inst->info_slot == (int)spiny_starfish_legacy ){
-									if( inst->targets[0].player == player &&
-										inst->targets[0].card == card )
-									{
-										found_p = p;
-										found_c = c;
-										goto end;
-									}
-								}
-							}
-						};
-	);
-	end:
-	if( found_p == -1 ){
-		found_p = player;
-		found_c = create_legacy_effect(player, card, &spiny_starfish_legacy);
-		card_instance_t *tok = get_card_instance(found_p, found_c);
-		tok->targets[0].player = player;
-		tok->targets[0].card = card;
-		tok->number_of_targets = 1;
-	}
-	card_instance_t *tok = get_card_instance(found_p, found_c);
-	if( tok->targets[1].player < 0 ){
-		tok->targets[1].player = 0;
-	}
-	tok->targets[1].player++;
-	tok->targets[1].card = in_play(player, card) ? get_sleighted_color_test(player, card, COLOR_TEST_BLUE) : COLOR_TEST_BLUE;
+void spiny_starfish_splitting_ability(int player, int card)
+{
+  int found_p = -1;
+  int found_c = -1;
+  CYCLE_ALL_CARDS(p, c, {
+    if (in_play(p, c) && is_what(p, c, TYPE_EFFECT))
+    {
+      card_instance_t *inst = get_card_instance(p, c);
+      if (inst->info_slot == (int)spiny_starfish_legacy)
+      {
+        if (inst->targets[0].player == player && inst->targets[0].card == card)
+        {
+          found_p = p;
+          found_c = c;
+          goto end;
+        }
+      }
+    }
+  };);
+end:
+  if (found_p == -1)
+  {
+    found_p = player;
+    found_c = create_legacy_effect(player, card, &spiny_starfish_legacy);
+    card_instance_t *tok = get_card_instance(found_p, found_c);
+    tok->targets[0].player = player;
+    tok->targets[0].card = card;
+    tok->number_of_targets = 1;
+  }
+  card_instance_t *tok = get_card_instance(found_p, found_c);
+  if (tok->targets[1].player < 0)
+  {
+    tok->targets[1].player = 0;
+  }
+  tok->targets[1].player++;
 }
 
 int card_spiny_starfish(int player, int card, event_t event){

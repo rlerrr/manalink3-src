@@ -198,106 +198,80 @@ static int is_pt_effect(int player, int card){
 	return 0;
 }
 
-static int effect_on_all_pt_setting_effects_attached_to_me(int player, int card, int effect){
-// effect = 0 --> check only
-// effect = 1 -> enable the "set_pt_legacy" with the highest timestamp (AKA the most recent)
-// effect = -1 -> disable all "set_pt_legacy"
-	int result = 0;
-	int legacies[100][3];
-	int lc = 0;
-	card_instance_t* inst;
-	int p, c;
-	for (p = 0; p <= 1; ++p){
-		for (c = active_cards_count[p]; c > -1; c--){
-			if ( (inst = in_play(p, c)) && inst->damage_target_player == player && inst->damage_target_card == card ){
-				if( is_pt_effect(p, c) ){
-					if( effect == 1 && ! check_status(p, c, STATUS_CONTROLLED) ){
-						legacies[lc][0] = inst->timestamp;
-						legacies[lc][1] = p;
-						legacies[lc][2] = c;
-						lc++;
-						result = 1;
-					}
-					if( effect == -1 ){
-						remove_status(p, c, STATUS_CONTROLLED);
-						result = 1;
-					}
-				}
-			}
-		}
-	}
-	if( lc ){
-		int max_timestamp = 0;
-		int id_of_legacy_to_activate = 0;
-		int i;
-		for(i=0; i<lc; i++){
-			if( legacies[i][0] > max_timestamp ){
-				max_timestamp = legacies[i][0];
-			}
-			id_of_legacy_to_activate = i;
-		}
-		add_status(legacies[id_of_legacy_to_activate][1], legacies[id_of_legacy_to_activate][2], STATUS_CONTROLLED);
-	}
-	return result;
+
+
+
+int real_set_pt(int player, int card, int t_player, int t_card, int pow, int tou, int mode)
+{
+  if (mode & 8)
+    for (int p = 0; p < 2; ++p)
+      for (int c = active_cards_count[p]; c >= 0; --c)
+      {
+        card_instance_t *instance = in_play(p, c);
+        if (instance && instance->damage_target_player == t_player &&
+            instance->damage_target_card == t_card && instance->targets[2].player == player &&
+            instance->targets[2].card == card && is_pt_effect(p, c))
+          kill_card(p, c, KILL_EXILE);
+      }
+  int leg = create_targetted_legacy_effect(player, card, set_pt_legacy, t_player, t_card);
+  if (leg != -1)
+  {
+    card_instance_t *legacy = get_card_instance(player, leg);
+    legacy->targets[1].player = mode;
+    legacy->counter_power = (int16_t)pow;
+    legacy->counter_toughness = (int16_t)tou;
+    legacy->targets[2].player = player;
+    legacy->targets[2].card = card;
+  }
+  return leg;
 }
 
-void disable_other_pt_setting_effects_attached_to_me(int t_player, int t_card){
-	effect_on_all_pt_setting_effects_attached_to_me(t_player, t_card, -1);
-}
-
-void reactivate_the_most_recent_pt_setting_effects_attached_to_me(int t_player, int t_card){
-	effect_on_all_pt_setting_effects_attached_to_me(t_player, t_card, 1);
-}
-
-int real_set_pt(int player, int card, int t_player, int t_card, int pow, int tou, int mode){
-	disable_other_pt_setting_effects_attached_to_me(t_player, t_card);
-	int leg = create_targetted_legacy_effect(player, card, &set_pt_legacy, t_player, t_card);
-	if (leg != -1){
-		card_instance_t* legacy = get_card_instance(player, leg);
-		legacy->token_status |= STATUS_CONTROLLED;
-
-		legacy->counter_power = pow > -1 ? pow - get_base_power(t_player, t_card) : 0;
-		legacy->counter_toughness = tou > -1 ? tou - get_base_toughness(t_player, t_card) : 0;
-		legacy->targets[1].player = mode;
-	}
-	return leg;
-}
-
-int set_pt_and_abilities_until_eot(int player, int card, int t_player, int t_card, int pow, int tou, int key, int s_key, int mode ){
-	// pow = -1 : leave power unchanged
-	// tou = -1 : leave toughness unchanged
-	if( t_player != ANYBODY && t_card != -1 ){
-		real_set_pt(player, card, t_player, t_card, pow, tou, 1);
-		int legacy = -1;
-		if( key || s_key ){
-			legacy = pump_ability_until_eot(player, card, t_player, t_card, 0, 0, key, s_key);
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-		return legacy;
-	}
-	int i;
-	for(i=0; i<2; i++){
-		if( i == t_player || t_player == ANYBODY ){
-			int count = active_cards_count[i]-1;
-			while( count > -1 ){
-					if( in_play(i, count) && is_what(i, count, TYPE_CREATURE) ){
-						int good = 1;
-						if( ( mode & 1) && ! (is_attacking(i, count) && is_unblocked(i, count)) ){
-							good = 0;
-						}
-						if( good == 1 ){
-							real_set_pt(player, card, i, count, pow, tou, 1);
-							if( key || s_key ){
-								int legacy = pump_ability_until_eot(player, card, i, count, 0, 0, key, s_key);
-								add_status(player, legacy, STATUS_INVISIBLE_FX);
-							}
-						}
-					}
-					count--;
-			}
-		}
-	}
-	return -1;
+int set_pt_and_abilities_until_eot(int player, int card, int t_player, int t_card, int pow, int tou,
+                                   int key, int s_key, int mode)
+{
+  // pow = -1 : leave power unchanged
+  // tou = -1 : leave toughness unchanged
+  if (t_player != ANYBODY && t_card != -1)
+  {
+    real_set_pt(player, card, t_player, t_card, pow, tou, mode | 1);
+    int legacy = -1;
+    if (key || s_key)
+    {
+      legacy = pump_ability_until_eot(player, card, t_player, t_card, 0, 0, key, s_key);
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+    return legacy;
+  }
+  int i;
+  for (i = 0; i < 2; i++)
+  {
+    if (i == t_player || t_player == ANYBODY)
+    {
+      int count = active_cards_count[i] - 1;
+      while (count > -1)
+      {
+        if (in_play(i, count) && is_what(i, count, TYPE_CREATURE))
+        {
+          int good = 1;
+          if ((mode & 1) && !(is_attacking(i, count) && is_unblocked(i, count)))
+          {
+            good = 0;
+          }
+          if (good == 1)
+          {
+            real_set_pt(player, card, i, count, pow, tou, mode | 1);
+            if (key || s_key)
+            {
+              int legacy = pump_ability_until_eot(player, card, i, count, 0, 0, key, s_key);
+              add_status(player, legacy, STATUS_INVISIBLE_FX);
+            }
+          }
+        }
+        count--;
+      }
+    }
+  }
+  return -1;
 }
 
 
@@ -672,38 +646,38 @@ int must_be_blocked(int player, int card, event_t event)
 
 static int target_must_block_me_legacy(int player, int card, event_t event)
 {
-  if (trigger_condition == TRIGGER_MUST_BLOCK
-	  && (event == EVENT_TRIGGER || event == EVENT_RESOLVE_TRIGGER)
-	  && affect_me(player, card))
-	{
-	  card_instance_t* instance = get_card_instance(player, card), *luring, *lured;
+  if (trigger_condition == TRIGGER_MUST_BLOCK &&
+      (event == EVENT_TRIGGER || event == EVENT_RESOLVE_TRIGGER) && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card), *luring, *lured;
 
-	  int luring_player = instance->damage_source_player;
-	  int luring_card = instance->damage_source_card;
+    int luring_player = instance->damage_source_player;
+    int luring_card = instance->damage_source_card;
 
-	  int lured_player = instance->damage_target_player;
-	  int lured_card = instance->damage_target_card;
+    int lured_player = instance->damage_target_player;
+    int lured_card = instance->damage_target_card;
 
-	  if (luring_player == current_turn
-		  && reason_for_trigger_controller == ((event_flags & EF_ATTACKER_CHOOSES_BLOCKERS) ? current_turn : 1 - current_turn)
-		  && (luring = in_play(luring_player, luring_card))
-		  && (luring->state & STATE_ATTACKING)
+    if (luring_player == current_turn &&
+        reason_for_trigger_controller ==
+            ((event_flags & EF_ATTACKER_CHOOSES_BLOCKERS) ? current_turn : 1 - current_turn) &&
+        (luring = in_play(luring_player, luring_card)) && (luring->state & STATE_ATTACKING)
 
-		  && luring_player != lured_player
-		  && (lured = in_play(lured_player, lured_card))
-		  && lured->blocking == 255
-		  && is_legal_block(lured_player, lured_card, luring_player, luring_card))
-		{
-		  if (event == EVENT_TRIGGER)
-			event_result |= RESOLVE_TRIGGER_MANDATORY;
+        && luring_player != lured_player && (lured = in_play(lured_player, lured_card)) &&
+        lured->blocking == 255 &&
+        is_legal_block(lured_player, lured_card, luring_player, luring_card))
+    {
+      if (event == EVENT_TRIGGER)
+        event_result |= RESOLVE_TRIGGER_MANDATORY;
 
-		  if (event == EVENT_RESOLVE_TRIGGER)
-			block(lured_player, lured_card, luring_player, luring_card);
-		}
-	}
+      if (event == EVENT_RESOLVE_TRIGGER)
+        block(lured_player, lured_card, luring_player, luring_card);
+    }
+  }
 
-  if (event == EVENT_CLEANUP && (get_card_instance(player, card)->targets[2].player & 1))
-	kill_card(player, card, KILL_EXILE);
+  if ((event == EVENT_CLEANUP && (get_card_instance(player, card)->targets[2].player & 1)) ||
+      (event == EVENT_PHASE_CHANGED && current_phase == PHASE_AFTER_BLOCKING &&
+       (get_card_instance(player, card)->targets[2].player & 2)))
+    kill_card(player, card, KILL_EXILE);
 
   return 0;
 }
@@ -818,11 +792,11 @@ int freeze_when_damage(int player, int card, event_t event)
   return 0;
 }
 
-void give_haste(int player, int card)	// Avoid!
+void give_haste(int player, int card) // Avoid!
 {
-  card_instance_t* instance = in_play(player, card);
+  card_instance_t *instance = in_play(player, card);
   if (instance)
-	instance->state &= ~STATE_SUMMON_SICK;
+    instance->state &= ~0x30000U;
 }
 
 void haste(int player, int card, event_t event)
@@ -885,98 +859,106 @@ int check_for_ability(int player, int card, int keyword){
 
 
 
-void set_special_abilities(int player, int card, int type, int value){
-	if( card != -1 ){
-		card_instance_t *instance = get_card_instance( player, card );
-		if( instance->targets[16].card < 0 ){
-			instance->targets[16].card = 0;
-		}
-		instance->targets[16].card |= value;
-	}
-	else{
-		int i;
-		for(i=0; i<2; i++){
-			if( i == player || player == 2 ){
-				int count = active_cards_count[i]-1;
-				while( count > -1 ){
-						if( in_play(i, count) && is_what(i, count, type) ){
-							card_instance_t *instance = get_card_instance( i, count );
-							if( instance->targets[16].card < 0 ){
-								instance->targets[16].card = 0;
-							}
-							instance->targets[16].card |= value;
-						}
-						count--;
-				}
-			}
-		}
-	}
+void set_special_abilities(int player, int card, int type, int value)
+{
+  if (card != -1)
+  {
+    get_card_instance(player, card)->ext->sp_keywords |= value;
+    return;
+  }
+  for (int p = 0; p < 2; ++p)
+    if (p == player || player == ANYBODY)
+      for (int c = active_cards_count[p] - 1; c >= 0; --c)
+        if (in_play(p, c) && is_what(p, c, type))
+          get_card_instance(p, c)->ext->sp_keywords |= value;
 }
 
-int legacy_negate_ability_and_special_ability(int player, int card, event_t event){
+int legacy_negate_ability_and_special_ability(int player, int card, event_t event)
+{
 
-	if (event == EVENT_ABILITIES){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if (affect_me(instance->damage_target_player, instance->damage_target_card)){
-				if( instance->targets[1].player > -1 ){
-					event_result &= ~instance->targets[1].player;
-				}
-				if( instance->targets[1].card > -1 ){
-					remove_special_ability(player, card, instance->targets[1].card);
-				}
-			}
-		}
-	}
+  if (event == EVENT_ABILITIES)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (affect_me(instance->damage_target_player, instance->damage_target_card))
+      {
+        if (instance->targets[1].player > -1)
+        {
+          event_result &= ~instance->targets[1].player;
+        }
+        if (instance->targets[1].card > -1)
+        {
+          remove_special_ability(instance->damage_target_player, instance->damage_target_card,
+                                 instance->targets[1].card);
+        }
+      }
+    }
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
-int effect_on_all_negate_ability_and_special_ability_legacy_attached_to_me(int player, int card, int effect){
-// effect = 0 --> check only
-// effect = 1 -> enable the "control legacy" with the highest timestamp (AKA the most recent)
-// effect = -1 -> disable all "control legacies"
-	int result = 0;
-	int legacies[100][3];
-	int lc = 0;
-	card_instance_t* inst;
-	int p, c;
-	for (p = 0; p <= 1; ++p){
-		for (c = active_cards_count[p]; c > -1; c--){
-			if ( (inst = in_play(p, c)) && inst->damage_target_player == player && inst->damage_target_card == card ){
-				if( is_what(p, c, TYPE_EFFECT) && inst->info_slot == (int)legacy_negate_ability_and_special_ability ){
-					if( effect == 1 && ! check_status(p, c, STATUS_CONTROLLED) ){
-						legacies[lc][0] = inst->timestamp;
-						legacies[lc][1] = p;
-						legacies[lc][2] = c;
-						lc++;
-						result = 1;
-					}
-					if( effect == -1 ){
-						remove_status(p, c, STATUS_CONTROLLED);
-						result = 1;
-					}
-				}
-			}
-		}
-	}
-	if( lc ){
-		int max_timestamp = 0;
-		int id_of_legacy_to_activate = 0;
-		int i;
-		for(i=0; i<lc; i++){
-			if( legacies[i][0] > max_timestamp ){
-				max_timestamp = legacies[i][0];
-			}
-			id_of_legacy_to_activate = i;
-		}
-		add_status(legacies[id_of_legacy_to_activate][1], legacies[id_of_legacy_to_activate][2], STATUS_CONTROLLED);
-	}
-	return result;
+int effect_on_all_negate_ability_and_special_ability_legacy_attached_to_me(int player, int card,
+                                                                           int effect)
+{
+  // effect = 0 --> check only
+  // effect = 1 -> enable the "control legacy" with the highest timestamp (AKA the most recent)
+  // effect = -1 -> disable all "control legacies"
+  int result = 0;
+  int legacies[100][3];
+  int lc = 0;
+  card_instance_t *inst;
+  int p, c;
+  for (p = 0; p <= 1; ++p)
+  {
+    for (c = active_cards_count[p]; c > -1; c--)
+    {
+      if ((inst = in_play(p, c)) && inst->damage_target_player == player &&
+          inst->damage_target_card == card)
+      {
+        if (is_what(p, c, TYPE_EFFECT) &&
+            inst->info_slot == (int)legacy_negate_ability_and_special_ability)
+        {
+          if (effect == 1 && !check_status(p, c, STATUS_CONTROLLED))
+          {
+            legacies[lc][0] = inst->timestamp;
+            legacies[lc][1] = p;
+            legacies[lc][2] = c;
+            lc++;
+            result = 1;
+          }
+          if (effect == -1)
+          {
+            remove_status(p, c, STATUS_CONTROLLED);
+            result = 1;
+          }
+        }
+      }
+    }
+  }
+  if (lc)
+  {
+    int max_timestamp = 0;
+    int id_of_legacy_to_activate = 0;
+    int i;
+    for (i = 0; i < lc; i++)
+    {
+      if (legacies[i][0] > max_timestamp)
+      {
+        max_timestamp = legacies[i][0];
+      }
+      id_of_legacy_to_activate = i;
+    }
+    add_status(legacies[id_of_legacy_to_activate][1], legacies[id_of_legacy_to_activate][2],
+               STATUS_CONTROLLED | STATUS_INVISIBLE_FX);
+  }
+  return result;
 }
 
 static int create_negate_ability_and_special_ability_until_eot(int player, int card, int t_player, int t_card, keyword_t keyword,
@@ -1022,55 +1004,19 @@ int negate_ability_and_special_ability_until_eot(int player, int card, int t_pla
 	return negate_ability_and_special_ability_until_eot_impl(player, card, t_player, t_card, keyword, s_keyword);
 }
 
-/* A very slightly cleaned-up translation into C of the former generic_protection_from.asm, protection_from_black.asm,
- * and the analogues for the other four colors.  (It took a color_t rather than a color_test_t, only dealt with one
- * color at a time, and couldn't accept COLOR_ARTIFACT to represent KEYWORD_PROT_ARTIFACTS.)
- *
- * I don't advocate this approach; it should be done by the engine, not by individual cards; or at least it should be
- * done by auras and equipment.  In any case, doing this in the function of the object with protection is plainly
- * infeasible, despite it being MicroProse's original approach. */
+/* Native colored protection contributes protection bits during EVENT_ABILITIES. */
 
-/* Though, I translated this particular function from the exe, since it made assumptions that are no longer safe
- * (like, no card that could attach to another card without being an enchantment; that every card with
- * TYPE_ENCHANTMENT is an enchanment; that burying the attached cards was indistinguishable from just putting them in
- * the graveyard; that all attached cards should be buried instead of just being detached; and that no effect cards
- * can be colored.)  I've made it handle a color_test_t and artifacts too, as above.  Also note that the exe function
- * does the sleighting itself, and so generic_protection_from.asm's sleighting before calling it was incorrect.
- *
- * I haven't made the exe version point to this, or checked whether it's orphaned or not.  That still takes a color_t
- * and sleights, in any case. */
-static void make_colored_attachments_fall_off(int player, int card, color_test_t cols){
-	int p, c;
-	for (p = 0; p <= 1; ++p){
-		for (c = 0; c < active_cards_count[p]; ++c){
-			card_instance_t* inst = get_card_instance(p, c);
-			if (inst
-				&& inst->damage_target_card == c && inst->damage_target_player == p
-				&& (((cols & COLOR_TEST_ARTIFACT) && is_what(p, c, COLOR_ARTIFACT))
-					|| (cols & COLOR_TEST_ANY_COLORED & get_color(p, c)))
-				&& !is_what(p, c, TYPE_EFFECT))
-			{
-				if (has_subtype(p, c, SUBTYPE_AURA)){
-					kill_card(p, c, KILL_STATE_BASED_ACTION);	// wrong for bestow, but no worse than before
-				} else if (has_subtype(p, c, SUBTYPE_EQUIPMENT)){
-					unattach(p, c);
-				} else {
-					inst->damage_target_player = inst->damage_target_card = -1;
-				}
-			}
-		}
-	}
-}
+int generic_protection_from(int player, int card, event_t event, color_test_t cols)
+{
+  if (event == EVENT_ABILITIES && affect_me(player, card))
+  {
+    int old_event_result = event_result;
+    cols = get_sleighted_color_test(player, card, cols & COLOR_TEST_ANY_COLORED) |
+           (cols & COLOR_TEST_ARTIFACT);
+    event_result = old_event_result | (cols << 10); // COLOR_TEST_BLACK => KEYWORD_PROT_BLACK, etc.
+  }
 
-int generic_protection_from(int player, int card, event_t event, color_test_t cols){
-	if (event == EVENT_ABILITIES && affect_me(player, card)){
-		int old_event_result = event_result;
-		cols = get_sleighted_color_test(player, card, cols & COLOR_TEST_ANY_COLORED) | (cols & COLOR_TEST_ARTIFACT);
-		make_colored_attachments_fall_off(player, card, cols);
-		event_result = old_event_result | (cols << 10);	// COLOR_TEST_BLACK => KEYWORD_PROT_BLACK, etc.
-	}
-
-	return 0;
+  return 0;
 }
 
 int protection_from_black(int player, int card, event_t event){
@@ -7637,6 +7583,27 @@ void cannot_be_target_of_abilities(int player, int card, event_t event)
 #endif
 
 
+int fx_menace(int player, int card, event_t event)
+{
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+
+    special_abilities(instance->damage_target_player, instance->damage_target_card, event,
+                      SP_KEYWORD_MENACE, player, card);
+
+    if (event == EVENT_CLEANUP && is_what(player, card, TYPE_EFFECT))
+    {
+      card_instance_t *inst = get_card_instance(player, card);
+      remove_special_ability(inst->damage_target_player, inst->damage_target_card,
+                             SP_KEYWORD_MENACE);
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+
+  return 0;
+}
+
 void menace(int player, int card, event_t event)
 {
   card_instance_t *instance;
@@ -7710,6 +7677,29 @@ void skulk(int player, int card, event_t event)
   return;
 }
 
+
+void protection_from_subtype(int player, int card, event_t event, subtype_t subt)
+{
+  int p, c;
+  if (event == EVENT_ABILITIES)
+  {
+    if (affect_me(player, card))
+      set_misc_protection_impl(player, card);
+  }
+  else if (event == EVENT_PROT_MISC && affect_me(player, card))
+  {
+    if (((unsigned int)event_result >> 24 & 0xff) == 6)
+    {
+      event_result |= 1;
+      return;
+    }
+    // Native non-query events require a valid attacking-card source.
+    if (attacking_card >= 0)
+      get_protection_source_impl(1, &p, &c);
+    if (has_subtype(p, c, subt))
+      event_result |= 1;
+  }
+}
 
 void protection_from_multicolored(int player, int card, event_t event)
 {

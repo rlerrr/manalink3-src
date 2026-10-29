@@ -4,57 +4,7 @@
 void cascade(int player, int card, event_t event);
 
 // Functions
-void do_cascade(int player, int card, int override){
-	int my_cmc = get_cmc(player, card);
-	if( override > -1 ){
-		my_cmc = override;
-	}
-	int *deck = deck_ptr[player];
-	int i=0;
-	card_ptr_t* c_me = cards_ptr[ get_id(player, card) ];
-	char buffer[1000];
-	while(i<500 && deck[i] != -1 ){
-		int cmc = get_cmc_by_internal_id( deck[i] );
-		card_data_t* card_d = &cards_data[ deck[i]  ];
-		if( cmc < my_cmc && ! ( card_d->type & TYPE_LAND ) ){
-
-			scnprintf(buffer, 1000, "These cards were removed by %s", c_me->name );
-			show_deck( HUMAN, deck_ptr[player], i+1, buffer, 0, 0x7375B0 );
-
-			card_ptr_t* c = cards_ptr[ card_d->id ];
-
-			if( can_legally_play_iid(player, deck[i]) ){
-				scnprintf(buffer, 1000, " Play %s\n Do not play", c->name );
-				int choice = do_dialog(player, player, card, -1, -1, buffer, 0);
-				if( choice == 0 ){
-					rfg_card_in_deck(player, i);
-					play_card_in_exile_for_free(player, player, card_d->id);
-				}
-				else{
-					i++;
-				}
-			}
-			else{
-				i++;
-			}
-			break;
-		}
-		i++;
-	}
-	if( i == count_deck(player) && override == 0 ){
-		scnprintf(buffer, 1000, "These cards were removed by %s", c_me->name );
-		show_deck( HUMAN, deck_ptr[player], i, buffer, 0, 0x7375B0 );
-	}
-
-	// put back the other cards
-	int remaining = i;
-	while( remaining > 0 ){
-		int r = internal_rand(remaining);
-		remaining--;
-		deck[ count_deck(player) ] = deck[r];
-		remove_card_from_deck( player, r );
-	}
-}
+void do_cascade(int player, int card, int override) { do_multicascade(player, card, override, 1); }
 
 
 
@@ -752,7 +702,7 @@ int card_demonspine_whip(int player, int card, event_t event){
 			return basic_equipment(player, card, event, 1);
 		}
 		if( instance->info_slot == CHOICE_PUMP ){
-			pump_until_eot(instance->parent_controller, instance->parent_card, instance->targets[8].player, instance->targets[8].card,
+			pump_until_eot(instance->parent_controller, instance->parent_card, instance->damage_target_player, instance->damage_target_card,
 							instance->targets[2].player, 0);
 		}
 	}
@@ -1778,122 +1728,141 @@ Sorcery
 Exile target creature card from a graveyard, then create X 1/1 |Sgreen Saproling creature tokens, where X is the exiled card's toughness.
 */
 
-static int mycoid_shepherd_effect(int player, int card, event_t event){
+static int mycoid_shepherd_effect(int player, int card, event_t event)
+{
 
-	//In case something is copying Mycoid Shepherd and then reverts to its original form.
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_MYCOID_SHEPHERD ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  // In case something is copying Mycoid Shepherd and then reverts to its original form.
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_MYCOID_SHEPHERD)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		this_test.power = 4;
-		this_test.power_flag = F5_POWER_GREATER_THAN_VALUE;
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						//Will trigger also if this is not a creature when it goes into the graveyard;
-						if( ! is_what(p, c, TYPE_CREATURE) ){
-							count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
-						}
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-					}
-				}
-				count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, &this_test);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    test_definition_t this_test;
+    default_test_definition(&this_test, TYPE_CREATURE);
+    this_test.power = 4;
+    this_test.power_flag = F5_POWER_GREATER_THAN_VALUE;
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            // Will trigger also if this is not a creature when it goes into the graveyard;
+            if (!is_what(p, c, TYPE_CREATURE) ||
+                !new_make_test_in_play(player, card, 0, &this_test))
+            {
+              count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
+            }
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+              instance->targets[11].player = 0;
+            SET_BYTE2(instance->targets[11].player) = 1;
+          }
+        }
+        count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, &this_test);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			gain_life(player, amount*5);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    for (int amount = BYTE0(result); amount > 0; --amount)
+      gain_life(player, 5);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
-int card_mycoid_shepherd(int player, int card, event_t event){
-/*
-Mycoid Shepherd |1|W|G|G
-Creature — Fungus 5/4,
-Whenever Mycoid Shepherd or another creature you control with power 5 or greater dies, you may gain 5 life.
-*/
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
-				card_instance_t *inst = get_card_instance(player, c);
-				if( inst->info_slot == (int)mycoid_shepherd_effect ){
-					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
-						(inst->targets[0].player == player && inst->targets[0].card == card) )
-					{
-						found = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( ! found ){
-			int legacy = create_targetted_legacy_effect(player, card, &mycoid_shepherd_effect, player, card);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-	}
+int card_mycoid_shepherd(int player, int card, event_t event)
+{
+  /*
+  Mycoid Shepherd |1|W|G|G
+  Creature — Fungus 5/4,
+  Whenever Mycoid Shepherd or another creature you control with power 5 or greater dies, you may
+  gain 5 life.
+  */
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(player, c);
+        if (inst->info_slot == (int)mycoid_shepherd_effect)
+        {
+          if ((inst->damage_target_player == player && inst->damage_target_card == card) ||
+              (inst->targets[0].player == player && inst->targets[0].card == card))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy =
+          create_targetted_legacy_effect(player, card, &mycoid_shepherd_effect, player, card);
+      card_instance_t *inst = get_card_instance(player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		this_test.power = 4;
-		this_test.power_flag = F5_POWER_GREATER_THAN_VALUE;
-		count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, &this_test);
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    test_definition_t this_test;
+    default_test_definition(&this_test, TYPE_CREATURE);
+    this_test.power = 4;
+    this_test.power_flag = F5_POWER_GREATER_THAN_VALUE;
+    count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, &this_test);
+  }
 
-	if( get_card_instance(player, card)->kill_code <= 0 ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			gain_life(player, amount*5);
-		}
-	}
+  if (get_card_instance(player, card)->kill_code <= 0)
+  {
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+    if (result)
+    {
+      int amount = BYTE0(result);
+      gain_life(player, amount * 5);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_naya_hushblade(int player, int card, event_t event)

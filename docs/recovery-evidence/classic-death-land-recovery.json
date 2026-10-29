@@ -1,0 +1,1342 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "fecundity_effect",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x2042d00",
+          "end": "0x2042fd9",
+          "bytes_sha256": "27fd9e3f09820ed3c8f7e8bdff111f7494d8749a17ad491a3875c49a8da49e15",
+          "raw_export": ".recovery/decompiled-classic-death-land/2042d00.c",
+          "raw_export_sha256": "eaa6746bba3096450be37845e685b79abee5eab74a89d822c26dae8cc615462e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fec22e8e701abf2d38093defcb900424845010bdebca712264f102a93279ec9f"
+    },
+    {
+      "name": "remembrance_effect",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x2043920",
+          "end": "0x2043d4e",
+          "bytes_sha256": "0889b52b08e1ffda2b3bd578bd8c481f28394c32cd6b4cbb58a8b1455dca511b",
+          "raw_export": ".recovery/decompiled-classic-death-land/2043920.c",
+          "raw_export_sha256": "77b705cc5b78555a6481739a3bd22d8b0cd045a6b248afab6ff5aeaae63848f8"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "f89dd830456e725e64aa42cfcb0cbf272ec3a9df1548e1978bd309962237b962"
+    },
+    {
+      "name": "temporal_aperture_legacy",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x2043d50",
+          "end": "0x2043e99",
+          "bytes_sha256": "cc40f7b880cacd1612b1a9d1e6bd467b0dc2e9e48e0e01c20e2b9441b451e2f7",
+          "raw_export": ".recovery/decompiled-classic-death-land/2043d50.c",
+          "raw_export_sha256": "adad0bfdcabb8997ea35188a8d2d41b4058fe20af8eece972f5e442d94448137"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "773636d439ce74d51d1243a19965abd46c2d77d5ae506d4937a5583f8c937cb5"
+    },
+    {
+      "name": "diabolic_servitude_effect",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x2043fd0",
+          "end": "0x204413f",
+          "bytes_sha256": "ca58f32df32afe9dfe84a83b18073890de1ba1f660d9c3a2eae71180ab831025",
+          "raw_export": ".recovery/decompiled-classic-death-land/2043fd0.c",
+          "raw_export_sha256": "12ef58b7d0ff6dc690f5fe7350497380b4e92155a04ac6a425def24b46b4cdb7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "04dea04f369ec3d17ebc112b44fdfbe7a32669c87e8147dfb92310e3119f891d"
+    },
+    {
+      "name": "somnophore_effect",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x2044140",
+          "end": "0x20441e0",
+          "bytes_sha256": "d36aedd7610b89e41692ddaab8d4fe43b7dc7553471c054653dd0e898f3e44e2",
+          "raw_export": ".recovery/decompiled-classic-death-land/2044140.c",
+          "raw_export_sha256": "c6b4eb7430e9726ab37816b99b8c528a01c89f4da5afabb12245421bb71bde1f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "642eb2a9cef67882a71f75e8a987fdc314a27b875088688008dbd1ef321a6c41"
+    },
+    {
+      "name": "hidden_enchantment_trigger",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x20444a0",
+          "end": "0x20446cb",
+          "bytes_sha256": "1b05aa2185f0d3a41eb6529d9dc85b670960823a585a3469746c878521f963da",
+          "raw_export": ".recovery/decompiled-classic-death-land/20444a0.c",
+          "raw_export_sha256": "e95f6c17f78feba3750fc484172f5a9c50321de699da84934b4346c7bfa96066"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3b7a8b93eea6ea59c103f7dc4bbb40bd6f40f16e58a8f4101c50f167c80500dc"
+    },
+    {
+      "name": "hidden_enchantment",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x20446d0",
+          "end": "0x204473e",
+          "bytes_sha256": "519d43ff88c0514d3f52cab7b6582f4a700492a2abba6ac4243cb66be6a0ad91",
+          "raw_export": ".recovery/decompiled-classic-death-land/20446d0.c",
+          "raw_export_sha256": "0facaf4c634cee228616cd7e4d5fcfd692a9b2638ab8077222ec81257c27949a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c38a5a6fba703cac0927aa792bfb42db56915007aa23abba02a8acc088f37977"
+    },
+    {
+      "name": "rtrue",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x215f9b0",
+          "end": "0x215f9b6",
+          "bytes_sha256": "2db31f4e09597946e56e859813bfdad7046d457c32332c3a882654d1e3ffdf67",
+          "raw_export": ".recovery/decompiled-classic-death-land/215f9b0.c",
+          "raw_export_sha256": "cc9bcf56cebfef5b2a1a1c871578e1e5727ff39633755f3f31d9ac7566251bfb"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f3fbe793af7331d802330c09b94b01a0cf09ccff98d1a39aa6d2ec258e16ca08"
+    },
+    {
+      "name": "effect_valkyrie",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x215f9e0",
+          "end": "0x215fb6c",
+          "bytes_sha256": "91ec35c02ff71f0d412a2aef897a52857dd0d962c8f51e0bef39eca9db653d89",
+          "raw_export": ".recovery/decompiled-classic-death-land/215f9e0.c",
+          "raw_export_sha256": "578da83aabbc305d3f68dbd5dc356362062c7d4a3c3b9392a855bea6ef6c28f3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ef984b75977034503e8ba7affe06234dd2a8ea51dd23b84748d96c907caa3b6b"
+    },
+    {
+      "name": "sek_kuar_deathkeeper_effect",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x21603e0",
+          "end": "0x2160661",
+          "bytes_sha256": "1e2ac65d2bbceec4f74ad161f62256facc1126507757d895e4193538f310fb74",
+          "raw_export": ".recovery/decompiled-classic-death-land/21603e0.c",
+          "raw_export_sha256": "58ed85e4200d0a7cc66973a2f0f137c072ad7cfe177a92c2fb7dcba83e83418b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "f06acd8bc556191522e03035c6b1292e6657f6b29bd0a4b43171e8ae98bf928d"
+    },
+    {
+      "name": "put_p1_p1_counter_on_opp",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x2160670",
+          "end": "0x216075d",
+          "bytes_sha256": "7ef9d478c25c0b04aa918ba3d41962fe87d214443eada3e944285112128a3a24",
+          "raw_export": ".recovery/decompiled-classic-death-land/2160670.c",
+          "raw_export_sha256": "e7995c907c62365040292c072e6baa8d6ab0837d49a02ef2716b9175abd902f3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d499174cd9cb1e35d20456da2067d79eb880ee73e2564ca46d97a1335932dbef"
+    },
+    {
+      "name": "coldsnap_crusaders",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x2160790",
+          "end": "0x2160b85",
+          "bytes_sha256": "f0571eb0da3cccaa5efc58153825b847ede784fc017cf4d2eb387ce3b50a49c4",
+          "raw_export": ".recovery/decompiled-classic-death-land/2160790.c",
+          "raw_export_sha256": "e2128bc423b72543747815e64dcb12a93aa2aa1ceef2abd30f47cbecfbcf24fe"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fb41c28bacd6bdb913101ea9e3ca1ec802f7d5f62a32a9f6fa332079c6762ab8"
+    },
+    {
+      "name": "opp_can_gain_life_as_cost",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x2160bd0",
+          "end": "0x2160bfd",
+          "bytes_sha256": "452968d97e3bcc5893a6df4464c06db81b945401a9b3f1a6969edc4de248c627",
+          "raw_export": ".recovery/decompiled-classic-death-land/2160bd0.c",
+          "raw_export_sha256": "02341be1c744272206d4a43143bd9b113e3343eace4a399e0cf552983dc53f62"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7aa84bce496178e0b19ba15c44c00cd42227402fa303f22f4d1c06380e8bf194"
+    },
+    {
+      "name": "can_put_p1_p1_counter_on_opp",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x2160f90",
+          "end": "0x2160ffb",
+          "bytes_sha256": "7c0724e061ec93db6cdb587b67f9eacbd24af9b6c88edbebdfec751c1dc1b380",
+          "raw_export": ".recovery/decompiled-classic-death-land/2160f90.c",
+          "raw_export_sha256": "6ab36a19897cb6f88150ecb4d69a08a038a527f0c8282dbcec79bc5219a0b1c4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "67843d00fa19c9723d3f8f39fb1b7852a9edc8c147364f25d213d052638dd8df"
+    },
+    {
+      "name": "part_of_ramos",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x216baf0",
+          "end": "0x216bcff",
+          "bytes_sha256": "9ef4e82e0753176f10be84fcc9fdbd2f73f519dd18cbe626a319f20ab35ff520",
+          "raw_export": ".recovery/decompiled-classic-death-land/216baf0.c",
+          "raw_export_sha256": "f01b4c63fa09527be8cbd7add50fe4a6595225e9e2364c130cc93f136f7e039c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a5eb1b590b3159e331e1ba56cd5957b076b2872e58d7f9739c131b5fab1e8840"
+    },
+    {
+      "name": "foster_effect",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x216bd30",
+          "end": "0x216c0ff",
+          "bytes_sha256": "103a28148bf946f57a44c4639f6eae21308a372a52e6c518811548c86addded3",
+          "raw_export": ".recovery/decompiled-classic-death-land/216bd30.c",
+          "raw_export_sha256": "558d49cc76c3c71d2889a2209a92c283fab493ee28c72e6248a8549325a1f140"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "de1e148a76f8df312c9f8fe8045e775eeec1311e808d03ac6a4708d846b7c65f"
+    },
+    {
+      "name": "moonlit_wake_effect",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x216c100",
+          "end": "0x216c3b1",
+          "bytes_sha256": "559180eb01c99a5c58a3c5d2869c06aa9b19b45dc9dd737820012a4be52f35d3",
+          "raw_export": ".recovery/decompiled-classic-death-land/216c100.c",
+          "raw_export_sha256": "c478f7d1f2928e19fa59e86ac2ac81d9290ede0086f99663ec6272b2db2c8fc3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "37b03e35773aa2977c9371b06f9510f3fe7220f19e61aceb8d95acc5445024cb"
+    },
+    {
+      "name": "depletion_land",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x216c3c0",
+          "end": "0x216c759",
+          "bytes_sha256": "4635be3ca9ddfa71ed0f66f54cb3cc730132aaf24982badc42d4e688a095cbaa",
+          "raw_export": ".recovery/decompiled-classic-death-land/216c3c0.c",
+          "raw_export_sha256": "99b72f602e1d0bbadf128dc1d9086b66255d445a3cac22e9819a277bd41ef188"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b60bdca211ab46f12219dea8145d78b2833a420a1e4e328037eea351ce3d06a4"
+    },
+    {
+      "name": "liability_effect",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x216c760",
+          "end": "0x216ca71",
+          "bytes_sha256": "1f88884415c8164e9feb7a191ad98d6be2c89f957f5215ab25e0478bf1c5d442",
+          "raw_export": ".recovery/decompiled-classic-death-land/216c760.c",
+          "raw_export_sha256": "e291e65f065229c2e4b49233a791e3ccdadd9b9282f74346d6df9664ad17022e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "623840f38d4222e3e0c310bd1c7e8fc0490330bc1ecd5d99a03912455d417b37"
+    },
+    {
+      "name": "generic_subtype_searcher",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x216f000",
+          "end": "0x216f1aa",
+          "bytes_sha256": "77720001ca60bec22ada57f4d5ac0effa8143d5ee031de1510e7f1af35159b10",
+          "raw_export": ".recovery/decompiled-classic-death-land/216f000.c",
+          "raw_export_sha256": "90a9d2ae55816165735283cb9e8ce92b63fc35d367da0fdfce3d0ecd27f2e98f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4f6cfd25df3975e1f2e826843f6f4aa6d2eaacf7867af1d683fb0012f6d870ca"
+    },
+    {
+      "name": "tablet_of_epityr_effect",
+      "source": "cards/antiquities.c",
+      "native_ranges": [
+        {
+          "address": "0x22445e0",
+          "end": "0x22448d9",
+          "bytes_sha256": "124d7bc146ec66310ce619dcaeb8ebd3ad33f37cc03bdd02747945709eff7d22",
+          "raw_export": ".recovery/decompiled-classic-death-land/22445e0.c",
+          "raw_export_sha256": "aa26c5777a5daf5957a04863f8aeaf96dd4db3b66dd47fe1a2afc5567ea3d3ba"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "20513a93ca15c3e1175d0987b8402ad463b32366c63e4e7dcf82178da5544168"
+    },
+    {
+      "name": "urzas_miter_effect",
+      "source": "cards/antiquities.c",
+      "native_ranges": [
+        {
+          "address": "0x22448e0",
+          "end": "0x2244bf1",
+          "bytes_sha256": "c4d11a4a5c36b747cc4c440f55ff0f4448406f96fba9a81a4f7a0d455a44f5a7",
+          "raw_export": ".recovery/decompiled-classic-death-land/22448e0.c",
+          "raw_export_sha256": "deec375ead44845bce0099ab46fafaeb3725f6b1330d8ae6c4731763e7968e38"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "734c4a21113c9117be9b7be5bd0e1ac53825a542f76617c9bc0a229679bcd9f1"
+    },
+    {
+      "name": "titanias_song_legacy",
+      "source": "cards/antiquities.c",
+      "native_ranges": [
+        {
+          "address": "0x2244c00",
+          "end": "0x2244dd9",
+          "bytes_sha256": "64e0099520e976589fa00c36e2809e2f908ff87edf4351c3875801cb5755ff37",
+          "raw_export": ".recovery/decompiled-classic-death-land/2244c00.c",
+          "raw_export_sha256": "2e46a9b93870c56b058be928386b06820615bc90d31b4481cec9e1551b969920"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "05a08ea4db077e7ca39a6d26de2f12b82f78173057f500918c5f13eb00280e56"
+    },
+    {
+      "name": "urzatron_land",
+      "source": "cards/antiquities.c",
+      "native_ranges": [
+        {
+          "address": "0x2244de0",
+          "end": "0x2244f3f",
+          "bytes_sha256": "0e14f7fbc9380e48ffe0867a43ec7af58e034abd115a7cd96108d4c0f6dd2ae8",
+          "raw_export": ".recovery/decompiled-classic-death-land/2244de0.c",
+          "raw_export_sha256": "39cf3d984d88ccf6a15bf7f27f12f2883ede2d60366950fb9ee7ff8eb615e90a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ec697d5670402a07b5eaa2afacaf320bd12255a68c29bb96f28270506f51fa38"
+    },
+    {
+      "name": "permanent_you_control_and_own",
+      "source": "cards/antiquities.c",
+      "native_ranges": [
+        {
+          "address": "0x2245050",
+          "end": "0x22450bd",
+          "bytes_sha256": "e28a26593d32f16a4872ee8c116e0e19128aa8d43128c67445babcafcbeed0a9",
+          "raw_export": ".recovery/decompiled-classic-death-land/2245050.c",
+          "raw_export_sha256": "81d6f4abb33bcd01ad10403f378cd0af12e190a8d3df3ebc07e904f87620ac95"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "aeeaa63a1d93f11675f5ab890eb393394e969b36c3a7f7d686f0d3e3f71c3fe4"
+    },
+    {
+      "name": "is_my_tetravite",
+      "source": "cards/antiquities.c",
+      "native_ranges": [
+        {
+          "address": "0x22450c0",
+          "end": "0x2245108",
+          "bytes_sha256": "fb4abb19cf32ec127fc786232a4281aba1b2f3931338e19e4792e91bf1767716",
+          "raw_export": ".recovery/decompiled-classic-death-land/22450c0.c",
+          "raw_export_sha256": "59f45e557c0083a9a040d22030510363e9eb5876add0c59d6f9b0e08ddbe0532"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b302874e81bd60d7583a0d543e56b2fbb4c5b51a87c8c4ea9959f83513aacd04"
+    },
+    {
+      "name": "acidic_dagger_effect",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x2376220",
+          "end": "0x23764fe",
+          "bytes_sha256": "4853a9d4ed2ac5f26656f72d9245b37a9659040e5210fec54c93347fb3a12efd",
+          "raw_export": ".recovery/decompiled-classic-death-land/2376220.c",
+          "raw_export_sha256": "b48f0daba206997ad1a249f4189c165d7b8efde9a0a4b6a27c15b283db4b7ee6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cf8e1ff9f1ef31f4bae67f60c398b917fa372330ff5e432e16701b6d37bf23a3"
+    },
+    {
+      "name": "old_fetch",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x2376500",
+          "end": "0x237656a",
+          "bytes_sha256": "03eea2696b7bcd038b64ac7646532f94ff84ed80a8562f8aaa82f0b64cbe87a0",
+          "raw_export": ".recovery/decompiled-classic-death-land/2376500.c",
+          "raw_export_sha256": "149b37a618a2782fbf0d1d904f8d7606f8f472ed1134a7a6691f75b9091e64d2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4445f1496f984ae1b2067d91e0ab45758463afbf96092df7c9d3386ebd1263ee"
+    },
+    {
+      "name": "grim_feast_effect",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x2376700",
+          "end": "0x23769bc",
+          "bytes_sha256": "cedd101b9759d1206ca2971774728c1a2fcad25a94f5ad9ac7f61b5e81218428",
+          "raw_export": ".recovery/decompiled-classic-death-land/2376700.c",
+          "raw_export_sha256": "7f51e937dec791fa4134a0481e86d057220c54c1a7f62a41fd1de7aab0c51f92"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ea9d9f1c634b38adf0967e8d36312713ee941f3f9005896ec1e0c1d0c8c376f1"
+    },
+    {
+      "name": "mirage_guildmage",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x2377de0",
+          "end": "0x2378983",
+          "bytes_sha256": "39d1c013de4351f20c71c01db48f3c5282b80caf0a935dfff380771355bdea1f",
+          "raw_export": ".recovery/decompiled-classic-death-land/2377de0.c",
+          "raw_export_sha256": "6364d086daeb1a4dbdef732178fd29376b79a7e3577a9431a5fa9b761caad26a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6e11e1e7c45a642a6ae586b0c4e84875a5435ca10025cb5de576e0b279d98925"
+    },
+    {
+      "name": "bone_harvest_impl",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x2379fb0",
+          "end": "0x237a2b9",
+          "bytes_sha256": "00f12c3dd45c0cf0a221b4cda50a912a0d1d8f408598969ccbb672fcb37713cc",
+          "raw_export": ".recovery/decompiled-classic-death-land/2379fb0.c",
+          "raw_export_sha256": "145bdcd07de816e7e84695c76703505d81648f01f7ce5dcdc4b26f81084af759"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3e9c2c5cda2f054321124ea8ae06615b0c6f8ec3f8608fea5873906d66a19f93"
+    },
+    {
+      "name": "thirst_impl",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x2386a50",
+          "end": "0x2386be7",
+          "bytes_sha256": "33f8c3e2b8f3e07e032f69e35c6e79b4e121e128fccd457c3d5d1b78ee21cd92",
+          "raw_export": ".recovery/decompiled-classic-death-land/2386a50.c",
+          "raw_export_sha256": "2f75f39e7df2080ba3c4ebdd72355c9dfbe985e0312287497ae30de59aafce31"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5b6462560ca40d38e1fc2678e005e90f3c27c5e06f5854e4d5772d8a26f60cb4"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_diabolic_servitude",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x2047e10",
+          "end": "0x2047f13",
+          "bytes_sha256": "639dfb0c3204b2399a32b23938bec61b5e68037694979cf94211bee4ca06b961",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2047e10.c",
+          "raw_export_sha256": "ea14d04ffc56fc4fac468ddc990da19a9aeb5765db37398c3e915406d284d1ec"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "53bfab239a397b0287627383174d1f693bf8d13dd5244419696bb5ebbe6bde28"
+    },
+    {
+      "name": "card_fecundity",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x2049390",
+          "end": "0x204957e",
+          "bytes_sha256": "8cac015e4e99ad2ba5d3ad815ac5716c09e5fbeb9c1fc1aff973e1865f4b8771",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2049390.c",
+          "raw_export_sha256": "1823c52d92531cc58e24f0d823a1eac077900702acf406c03117ea2216cbd9e6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7c7a45613975e55fa5d16948787d8efd453c348987947a35c2069f8a44817804"
+    },
+    {
+      "name": "card_remembrance",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x204f200",
+          "end": "0x204f5aa",
+          "bytes_sha256": "cc111013b570d5a8f25ce8c9029c60f818940fafb8639fdf7f29dcbf1683907b",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/204f200.c",
+          "raw_export_sha256": "25ce9cd6510c7092d11a53a1b5c2a70e840d01e1f91e92b984a620fe5b794f05"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e85571f6e22134f54c69259f526f92e37711915030f7064ac65b03b911917e3c"
+    },
+    {
+      "name": "card_somnophore",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x20511b0",
+          "end": "0x20513b0",
+          "bytes_sha256": "ec61de96bccc116d6439eee0c7a5e5da67e1e0666c7dea4d1a6c775a81b8df8b",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/20511b0.c",
+          "raw_export_sha256": "a043eee2f0fa1afa2cba9df140aad03abde02cc275deb066ec0a20854ea9f092"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5021131852725d995ee29672deff28cdda5941eba041cdc81ba438ec3394d6b1"
+    },
+    {
+      "name": "card_temporal_aperture",
+      "source": "cards/urza_saga.c",
+      "native_ranges": [
+        {
+          "address": "0x2052070",
+          "end": "0x2052232",
+          "bytes_sha256": "9d764afe98ace95ed529a36a4bf3b2b3c6ec5af0c5305497b98ca0213a830e06",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2052070.c",
+          "raw_export_sha256": "d08fb1d9674bd90419c4d6ae6a3fdec3152c0a27fdf7a8c153c8a07987247890"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "82b67248d4a1b8ada205350b5fe354863a6b8b2f8357f319005b118257c4683f"
+    },
+    {
+      "name": "card_adarkar_valkyrie",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x2161270",
+          "end": "0x21613df",
+          "bytes_sha256": "79c98f46f90382c0fef70b4d5089113e342437d8218750787c54704ac09970b7",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2161270.c",
+          "raw_export_sha256": "dabcf800eaa00c81f6d2620a99ff28b1d22936c5c273fb1401be5fd3d17a0e03"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d3215642ea001441f14023107679f4b590fad269b7b647f5fd64d7c3b877ad2b"
+    },
+    {
+      "name": "card_sek_kuar_death_keeper",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x2168fb0",
+          "end": "0x21691c6",
+          "bytes_sha256": "32358d12441e60658f2c6e19872f9e074c73e7973998352b1d1ebc03f1502274",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2168fb0.c",
+          "raw_export_sha256": "d8af762460eeab26d508b101120950dda2b95d0e01007fe99dd7251bb5349461"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4a0e2ffe79c724c6876bd17eaa846f4109317cac446f5c43a2e121844a4fe5dc"
+    },
+    {
+      "name": "card_sheltering_ancient",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x21694a0",
+          "end": "0x21694d3",
+          "bytes_sha256": "a69e259c4023a53bff5721a10c32723145a5b98745edc696ad951c8681691d2e",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/21694a0.c",
+          "raw_export_sha256": "a8c79e509dea7b4b3f6c71332b9660331f187901b44c5c41a1ae63c37a789274"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cdbfc3e12614c19ffc4f38f42813a0957f45c74566e6043c720bf333f484b887"
+    },
+    {
+      "name": "card_stromgald_crusader",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x2169ec0",
+          "end": "0x2169ed9",
+          "bytes_sha256": "eb4e64a7e1fa6b2e6de671eb98b1b55cb689c881260c755347663c43f8e88ec7",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2169ec0.c",
+          "raw_export_sha256": "1287e884c26be92f138f39655e6a7074eb8e2a73179b91bb5f26e31ae15c5d81"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d4b6a2b6ba38f6594ca78f89c2f56758807b5dbb38989b5ae7c9bce845f51499"
+    },
+    {
+      "name": "card_white_shield_crusader",
+      "source": "cards/coldsnap.c",
+      "native_ranges": [
+        {
+          "address": "0x216b0f0",
+          "end": "0x216b109",
+          "bytes_sha256": "c10edd69a7258337075a6f2f85563ebd5f78411066809dc37717a70c61d3152d",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/216b0f0.c",
+          "raw_export_sha256": "0ad5b031e90b6760b5f97f05bf0c8f6aeae3dd93dccbe07bd1624cbba56788f1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8a10ea63964dfc1ecb28d09e0eecaf08ac4c5095d10d3c2aff4a17a217954345"
+    },
+    {
+      "name": "card_armorer_guildmage",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x2379570",
+          "end": "0x23795a1",
+          "bytes_sha256": "bf9575cb7247f9f97170cf4b1e8ce28d6fe21f31c724d41a3c33a0547668df56",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2379570.c",
+          "raw_export_sha256": "8c8d2d3ac3bebfc1d8da41fe062a25e6fe2c5041b900bc620ff91c7c5a5c70ba"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "066af91da96b305bdede7fcf0ec515363c5d2cfce9187a1a49061c8a63e071c7"
+    },
+    {
+      "name": "card_civic_guildmage",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x237bd30",
+          "end": "0x237bd61",
+          "bytes_sha256": "4efc5c68c03057040f828a6d10d9fc9cb5cb2b831a3f17bb98456597a3f70593",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/237bd30.c",
+          "raw_export_sha256": "7869be32472df94201d5fffb98a42262b5528b773a5e07bcf488f614b484ac79"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3a89782d96a797f9f666baf5bfc6dc6606cb4e76697dbbc80c715613e65fe137"
+    },
+    {
+      "name": "card_granger_guildmage",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x237eba0",
+          "end": "0x237ec6e",
+          "bytes_sha256": "9c82a218e0b3eb1f62bb60b959769dda6b8d34782e63c2a4234022b8156216f7",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/237eba0.c",
+          "raw_export_sha256": "9b4763d8150a8199f6bef0ff7b9f6884b88a18fd94673e1692dc65d5b4e6823a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "947887d6166ce64c2dd00d0acec181c0b02032dffff0cf56475c950a302a67ad"
+    },
+    {
+      "name": "card_shadow_guildmage",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x2385250",
+          "end": "0x2385281",
+          "bytes_sha256": "6cd3030c8456b0f2594cbb1ec2bb476af4e4e7feb9b4e1c716fd489b15a8cb7e",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2385250.c",
+          "raw_export_sha256": "c0545035b0832b2d31438a2ae4799af962acd81fdff1703f06ab58a3ad73e76e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "de777eb2aa2516dc5fe9a58eede4b7358984abb2ebb35f6984b95ef9eec9c466"
+    },
+    {
+      "name": "card_shaper_guildmage",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x2385390",
+          "end": "0x238545e",
+          "bytes_sha256": "9562886799a26a88ed9d56df86d0eaaa3373fd0a2518dec92f0f47549f5cd4a4",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2385390.c",
+          "raw_export_sha256": "e06ac3f5689aafe09fb1bcd9f1bf2039df459858cbfb551d73ade0959b93c1b4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "f4810ac1b4ea15a184c08a05372a4621280aa4515894adc3d8cd426f8497a9a1"
+    },
+    {
+      "name": "card_thirst",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x2386bf0",
+          "end": "0x2386c41",
+          "bytes_sha256": "d31c3d8e3e6088ecf4a55ae8136a33ede4e98fd504351019f6b9b82866dc0781",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2386bf0.c",
+          "raw_export_sha256": "673e0be556e1da82d4e014cd06c1650195a722b6e5afd884938547cbd0f0a6ca"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "fce4649cbcb90566a713c3fdfc7a302f424c897bb50a4d051afac1e568aa48e2"
+    },
+    {
+      "name": "card_hickory_woodlot",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x21743f0",
+          "end": "0x2174409",
+          "bytes_sha256": "55db843a4a9b882002f2e81099404941345462f2e6c3ccc7b17d07894df51929",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/21743f0.c",
+          "raw_export_sha256": "8868d2503c39eea3def0ea9f0550bda1f4d9f21d04b25fdd0571ba621dc40cfa"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7ff9f6f43ca11da17c999ce89e73b885628b9df3c396de59b2d1e2f653177684"
+    },
+    {
+      "name": "card_peat_bog",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x2178500",
+          "end": "0x2178519",
+          "bytes_sha256": "da9cfbddf5b87dd50840f17bf07c6e8d820ecc9a204f773aea500435aa3b24de",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2178500.c",
+          "raw_export_sha256": "2061674014e0ebc4785caf574739a6fa48ba628b26d7977a89bfd7d6e8113d61"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "be59d029128fd0a029edcee55e34452ab51edbf92171588a431e29e7de1b01e6"
+    },
+    {
+      "name": "card_remote_farm",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x2178eb0",
+          "end": "0x2178ec9",
+          "bytes_sha256": "b9551663e727c4d73814a92c93e83ac3a5459ea4f6e1e5397f55303c86d2b5d3",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2178eb0.c",
+          "raw_export_sha256": "d964891ea08991074125c8666c04967aa90cef9bbf80df507eadad51fd0e85b4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d195dae256f17080ee6e43ea8c68d875d14f639731fa6b29470fa89a012b3662"
+    },
+    {
+      "name": "card_sandstone_needle",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x2179df0",
+          "end": "0x2179e09",
+          "bytes_sha256": "0509886926afd2ef99a1c67c86c9ad3f617939a43a8b4c698dee5ff01ac8c31d",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/2179df0.c",
+          "raw_export_sha256": "ed58ce625b18c63403813e0b93cd4c5c15fd9fd34bd353e309803d421811daeb"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7f63e2524d238f2c2e60f0f136d6b511566b6b78f035327619c013a7e854956e"
+    },
+    {
+      "name": "card_saprazzan_skerry",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x217a030",
+          "end": "0x217a049",
+          "bytes_sha256": "6721d2c4d5f17e472093daef022af2d6b528b82c03b1796fdc6e299a25d6ef0a",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/217a030.c",
+          "raw_export_sha256": "7631ed29ab46497640e391a908e970994df307695917f651d55df0c0a86bead6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "35347a54453c20f56250e7e1c7ca5a758f911b311fcd33a72fa7187306676365"
+    },
+    {
+      "name": "card_titanias_song",
+      "source": "cards/antiquities.c",
+      "native_ranges": [
+        {
+          "address": "0x224c840",
+          "end": "0x224c8d7",
+          "bytes_sha256": "9bc4a279584161b6ed1ab25a0e973efc91094fcb38e308d096eae03e84380551",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/224c840.c",
+          "raw_export_sha256": "4123e4fe8be822269c2b1ef83f5b9e530d49cc1f9d5bc581540243356ccf8c7b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "826749a675cc62578fd0fff523c29d661449cc13aafb0673877c6d6a4ef25b9c"
+    },
+    {
+      "name": "card_urzas_tower",
+      "source": "cards/antiquities.c",
+      "native_ranges": [
+        {
+          "address": "0x224d0b0",
+          "end": "0x224d0c9",
+          "bytes_sha256": "e27e5413373c87ff5facb0d875a5c349c0b221028d03790f0d53848c8f7a7f12",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/224d0b0.c",
+          "raw_export_sha256": "11363f31ad0b63620bf61c1116cf4a24f1b9b855fc92985fec807bf496227120"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4bca205ac611d22c9728a2635bb8cfbc3a0d7c892d0b145347ba090c33d34a01"
+    },
+    {
+      "name": "card_urzas_mine_card_urzas_power_plant",
+      "source": "cards/antiquities.c",
+      "native_ranges": [
+        {
+          "address": "0x224d0d0",
+          "end": "0x224d0e9",
+          "bytes_sha256": "de5fb6d504152de28665b1ac68a953006cb34f75b6931ce08f43e8347b2fc1a5",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/224d0d0.c",
+          "raw_export_sha256": "ffd2299f4705fa28f4adab3f2370c60f98a39d762ccb5d62add86298a5873890"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "21e94d7b5e5ffcb47bc8f1f417e106ea7f437abcc980342510a017cbd21a3813"
+    },
+    {
+      "name": "card_melancholy",
+      "source": "cards/planar_chaos.c",
+      "native_ranges": [
+        {
+          "address": "0x23bad50",
+          "end": "0x23bada1",
+          "bytes_sha256": "c8649c5a12f17d8156cd81c2b491a55467deca466874db80e17498002049dbec",
+          "raw_export": ".recovery/decompiled-classic-death-land-support/23bad50.c",
+          "raw_export_sha256": "b72ffa47765ea81a74c90ca190312fad80a7068c84e327b0ef4db918c5938754"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3ba0bacbe8b72d36c1e147fe4b8e4ccefdcd454d71ef8ee522471a2f025cefbc"
+    },
+    {
+      "name": "card_foster",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x2173510",
+          "end": "0x21737f6",
+          "bytes_sha256": "8c384b80e45a2071250f83b4179deec9e728544b7eedfca04c34c337855ae9cc",
+          "raw_export": ".recovery/decompiled-classic-death-land-extra/2173510.c",
+          "raw_export_sha256": "3530fc3ba5b1fdab81701443735121fd2e7f83a52f8f0cf54dbc2fb8c138aaec"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b098484e68ae07ffb58944e41eaf4107d2ee01123e329c7a328c65857e0a4b9e"
+    },
+    {
+      "name": "card_monlit_wake",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x2177680",
+          "end": "0x2177846",
+          "bytes_sha256": "f50b96c07eaab116e445a2f561a87135082e194864005768118967c7bb3306cb",
+          "raw_export": ".recovery/decompiled-classic-death-land-extra/2177680.c",
+          "raw_export_sha256": "d40154172b6338f1c426e8c7a0d7cbe2f0ec5696af919a75f14599a2db1e875b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "717106e1939409fd7dcaaf2b31ccdd01628153a873e068a94dadbf671b5fca46"
+    },
+    {
+      "name": "card_liability",
+      "source": "cards/mercadian_masques.c",
+      "native_ranges": [
+        {
+          "address": "0x2175b60",
+          "end": "0x2175dcb",
+          "bytes_sha256": "d6e2d356e05ab59571679a81567948682532716ffd29cdc23133a8c3fe5be776",
+          "raw_export": ".recovery/decompiled-classic-death-land-extra/2175b60.c",
+          "raw_export_sha256": "dfd83f560537cdefe5b0d00d47763665ee97584c4b792149dde855e1b6c12d34"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e382d6842a15143db490e87c9bc5038cd404132c619f26198cd19104e0a02018"
+    },
+    {
+      "name": "card_tablet_of_epityr",
+      "source": "cards/antiquities.c",
+      "native_ranges": [
+        {
+          "address": "0x224b820",
+          "end": "0x224ba36",
+          "bytes_sha256": "996e4f22703e89e018d00431cf1bd23896e3808acb1c7d2a5991f819d1338790",
+          "raw_export": ".recovery/decompiled-classic-death-land-extra/224b820.c",
+          "raw_export_sha256": "6540a9b137f8ea1ff42ab9cc9b5c5c8a7479bf659ecc3fef26ccc5869248c806"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1e3a8199db1ade93154121cec24505e5d090a53c07be11bbdebdf82cdec34a18"
+    },
+    {
+      "name": "card_urzas_miter",
+      "source": "cards/antiquities.c",
+      "native_ranges": [
+        {
+          "address": "0x224d0f0",
+          "end": "0x224d326",
+          "bytes_sha256": "1636c1e0370f407851d2621d6fb32affd05f4a2420b2044ffbc29a34e52925d9",
+          "raw_export": ".recovery/decompiled-classic-death-land-extra/224d0f0.c",
+          "raw_export_sha256": "09b94233a48a969a7720a3a7d83e9834e0225c54c05768b4f0dd225746c3e3fd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "389a9e498ccebe801ee455a5f87153bec6a2f89d5bffb1dae4256459f1691fda"
+    },
+    {
+      "name": "card_grim_feast",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x237ec90",
+          "end": "0x237eee6",
+          "bytes_sha256": "b93bb960640bbb5a1572c77ba19c630156f3da0bb8696164e98bbc908a3c0564",
+          "raw_export": ".recovery/decompiled-classic-death-land-extra/237ec90.c",
+          "raw_export_sha256": "14b8c199afc9d4dcb6b0ed6a7cdc090066b7485c6d9a2a4b3d55115b80d2de69"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4633d3bff79466a80cadf3ec26f03239aacbe2e088a73bb5cee120b4d107071e"
+    }
+  ],
+  "helper_definitions": 32,
+  "native_helper_ranges": 32,
+  "changed_helper_definitions": 24,
+  "changed_card_callers": 10,
+  "optimized_parameter_evidence": {
+    "0x2160790": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "mana_color": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      }
+    }
+  },
+  "native_arrays": {
+    "0x2042d00::ctd": {
+      "dimensions": [
+        2
+      ],
+      "element_bytes": 4
+    },
+    "0x2043920::added": {
+      "dimensions": [
+        18
+      ],
+      "element_bytes": 4
+    },
+    "0x2043920::msg": {
+      "dimensions": [
+        100
+      ],
+      "element_bytes": 1
+    },
+    "0x2043d50::buffer": {
+      "dimensions": [
+        500
+      ],
+      "element_bytes": 1
+    },
+    "0x2160790::c": {
+      "dimensions": [
+        6
+      ],
+      "element_bytes": 4
+    },
+    "0x2160790::abils": {
+      "dimensions": [
+        3
+      ],
+      "element_bytes": 4
+    },
+    "0x2160790::priorities": {
+      "dimensions": [
+        3
+      ],
+      "element_bytes": 4
+    },
+    "0x2377de0::abilities": {
+      "dimensions": [
+        5
+      ],
+      "element_bytes": 4
+    },
+    "0x2049390::ctd": {
+      "dimensions": [
+        2
+      ],
+      "element_bytes": 4
+    },
+    "0x204f200::added": {
+      "dimensions": [
+        20
+      ],
+      "element_bytes": 4
+    },
+    "0x204f200::msg": {
+      "dimensions": [
+        100
+      ],
+      "element_bytes": 1
+    },
+    "0x20511b0::times_damaged": {
+      "dimensions": [
+        2
+      ],
+      "element_bytes": 4
+    },
+    "0x20511b0::msg": {
+      "dimensions": [
+        100
+      ],
+      "element_bytes": 1
+    }
+  },
+  "native_global_evidence": {
+    "absolute_symbols": {
+      "_tapped_for_mana_color": "0x7904bc"
+    },
+    "check_abilities_keywords": "0x78fef0",
+    "first_strike_instruction_blocks": [
+      {
+        "address": "0x237ec5c",
+        "bytes_hex": "a1f0fe780080cc01a3f0fe7800",
+        "instructions": [
+          {
+            "mnemonic": "mov",
+            "op_str": "eax, dword ptr [0x78fef0]"
+          },
+          {
+            "mnemonic": "or",
+            "op_str": "ah, 1"
+          },
+          {
+            "mnemonic": "mov",
+            "op_str": "dword ptr [0x78fef0], eax"
+          }
+        ]
+      },
+      {
+        "address": "0x238544c",
+        "bytes_hex": "a1f0fe780080cc01a3f0fe7800",
+        "instructions": [
+          {
+            "mnemonic": "mov",
+            "op_str": "eax, dword ptr [0x78fef0]"
+          },
+          {
+            "mnemonic": "or",
+            "op_str": "ah, 1"
+          },
+          {
+            "mnemonic": "mov",
+            "op_str": "dword ptr [0x78fef0], eax"
+          }
+        ]
+      }
+    ]
+  },
+  "native_card_ids": [
+    {
+      "name": "CARD_ID_BLIGHTBEETLE",
+      "value": 20284,
+      "die_offset": "0x13b066c"
+    }
+  ],
+  "native_contracts": {
+    "fecundity": {
+      "draw": "draw_up_to_n_cards APNAP",
+      "controller_counts": "BYTE0/BYTE1",
+      "card_and_legacy_updated": true
+    },
+    "remembrance": {
+      "legacy_added": 18,
+      "legacy_target_slots": "1..9",
+      "card_added": 20,
+      "card_target_slots": "0..9",
+      "card_repeat": "card_counts[player][5]+1 per stored name, do-while",
+      "legacy_does_not_repeat": true
+    },
+    "temporal_aperture": {
+      "iid": "targets[0].card",
+      "remove_on_top_change": "EVENT_CHANGE_TYPE",
+      "cleanup_removal": true,
+      "can_activate": "can_legally_play_iid directly",
+      "dialog_ai_default": 0,
+      "card_caches_iid_before_legacy_creation": true,
+      "name": "create_card_name_legacy",
+      "old_legacy_name_event_removed": true
+    },
+    "leave_play": {
+      "diabolic_servitude": "other_leaves_play + EVENT_LEAVES_PLAY_ABILITY",
+      "somnophore": "leaves_play + EVENT_LEAVES_PLAY_ABILITY"
+    },
+    "hidden_enchantments": {
+      "subtype": "add_a_subtype_permanently",
+      "animated_ids": [
+        24932,
+        24933,
+        24935,
+        24938
+      ],
+      "other_dispatch_retained": true
+    },
+    "death_suppression": [
+      "diabolic_servitude_effect",
+      "effect_valkyrie"
+    ],
+    "death_legacies": {
+      "resolver_before_visibility": true,
+      "old_end_trigger_resets_removed": true,
+      "detach_byte2": [
+        "fecundity_effect",
+        "sek_kuar_deathkeeper_effect",
+        "moonlit_wake_effect",
+        "tablet_of_epityr_effect",
+        "urzas_miter_effect",
+        "grim_feast_effect"
+      ],
+      "detach_byte1": [
+        "remembrance_effect"
+      ],
+      "no_detach_counter_marker": [
+        "foster_effect",
+        "liability_effect"
+      ],
+      "tablet_marker_only_on_own_death": true,
+      "miter_marker_for_any_death_while_attached": true,
+      "miter_removes_visible_legacy_even_when_resolver_returns_zero": true,
+      "tablet_legacy_mode": "RESOLVE_TRIGGER_MANDATORY",
+      "tablet_card_mode": "RESOLVE_TRIGGER_AI",
+      "sek_kuar_no_cleanup_removal": true,
+      "moonlit_wake_no_own_noncreature_count": true,
+      "moonlit_wake": "gain_life1 per packet",
+      "liability": "lose_life1 per owner packet APNAP",
+      "liability_token_exclusion": "card only; absent in native legacy"
+    },
+    "cumulative_upkeep": {
+      "opponent_life_payment": "PB_CANT_GAIN_LIFE + life_total_can_change",
+      "counter_availability": "no own Blightbeetle, target opponent creature via can_have_counters_placed_on_it_shim",
+      "counter_payment_retained": true
+    },
+    "crusaders": {
+      "mana_colors": [
+        "BLACK",
+        "WHITE"
+      ],
+      "native_generic_slot_zero": true,
+      "all_live_callers_prove_positive_color": true,
+      "mana_array": 6,
+      "abilities_array": 3,
+      "priorities_array": 3,
+      "pump": "pump_until_eot_merge_previous_alt(...1,0,2)"
+    },
+    "ramos": {
+      "sacrifice_mana": "tapped_for_mana_color=-2"
+    },
+    "depletion": {
+      "can_activate": "CAN_TAP_FOR_MANA and (depletion counters or mana_colors_added)",
+      "basic_choice": "produce_mana_tapped_all_one_color_impl(...,1,0)",
+      "basic_without_counters": true,
+      "basic_does_not_remove_counter_or_sacrifice": true,
+      "depletion_choice": "remove one counter, produce_mana_tapped_impl(...2,1,1), sacrifice at0",
+      "count_mana_requires_depletion_counters": true,
+      "modifiers": [
+        "mana_colors_added",
+        "SF2_CONTAMINATION",
+        "mana_quantity_override",
+        "mana_color_override",
+        "multi_mana_transmutation"
+      ],
+      "declaration": "declare_mana_available_maybe_hex",
+      "all_five_callers_retained": true
+    },
+    "foster": {
+      "dialog_event": "EVENT_ACTIVATE",
+      "card_and_legacy_updated": true
+    },
+    "titania": {
+      "humiliate_event": "EVENT_ABILITIES",
+      "card_resolution_mass_humiliation_removed": true,
+      "eot_mass_dehumiliation_removed": true,
+      "native_eot_default_test_call_retained": true
+    },
+    "urzatron": {
+      "count_mana_color_argument": "mana_colors_added[player]",
+      "activation_color": "COLOR_COLORLESS",
+      "native_mask_as_color_argument_preserved": true
+    },
+    "grim_feast": {
+      "count_player": "1-player",
+      "mode": "GFPC_STORE_TOUGHNESS|GFPC_INTO_WHOSE_GRAVE=0x22",
+      "legacy_storage": 1,
+      "card_storage": 0,
+      "clear_sum_before_gain": true,
+      "legacy_immediate_removal": true
+    },
+    "guildmages": {
+      "tapped_for_mana_color": -1,
+      "first_strike_ai_event": "EVENT_CHECK_ABILITIES",
+      "keyword_global": "EXE_DWORD(0x78fef0)",
+      "granger_shaper_white_untapped_mana_query": true
+    },
+    "thirst": {
+      "tap_dispatch": "etb_ability mandatory + EVENT_ETB_ABILITY",
+      "aura_dispatch": "IS_AURA_EVENT or EVENT_STATIC_EFFECTS",
+      "upkeep_and_untap_suppression_retained": true
+    },
+    "retained_helpers": [
+      "hidden_enchantment",
+      "rtrue",
+      "put_p1_p1_counter_on_opp",
+      "generic_subtype_searcher",
+      "permanent_you_control_and_own",
+      "is_my_tetravite",
+      "acidic_dagger_effect",
+      "bone_harvest_impl"
+    ],
+    "preserved_quirks": [
+      "Acidic Dagger increments targets[2].player instead of its tracking index",
+      "Urzas Miter removes visible legacy even with resolver result0 and marks every death while attached",
+      "Tablet legacy uses mandatory mode while live card uses AI mode",
+      "Remembrance live card repeats its searches but native legacy does not",
+      "Depletion COUNT_MANA omits added basic ability when no depletion counters, although CAN_ACTIVATE allows it",
+      "Urza lands pass mana_colors_added as a color number in COUNT_MANA",
+      "Titanias Song retains unused default_test_definition call before eot removal"
+    ]
+  },
+  "scope": "32 complete helper definitions/native ranges and31 complete paired card callers.24 helpers and10 cards changed. Native fixed frame arrays, Blightbeetle enum and first-strike EXE writes pinned. Existing canonical generic APIs/names retained, native quirks preserved. Built-in dialog backends and gameplay tests remain downstream."
+}

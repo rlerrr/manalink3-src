@@ -197,126 +197,134 @@ void check_for_spliced_spells(int player, int card)
  * shouldn't call kill_card(player, card, KILL_DESTROY) during EVENT_RESOLVE_SPELL.  Even handier when called via the ARCANE_WITH_SPLICE macro.
  * If x == -10, then send EVENT_CAN_SPLICE and EVENT_SPLICE to the supplied function; it should respond only by checking for and charging the splice cost
  * respectively, returning 1 on success or 0 on failure.  This differs from the normal EVENT_CAN_SPLICE/EVENT_SPLICE behavior. */
-int arcane_with_splice(int player, int card, int event, int (*fn)(int,int,event_t), int x, int b, int u, int g, int r, int w)
+int arcane_with_splice(int player, int card, int event, int (*fn)(int, int, event_t), int x, int b,
+                       int u, int g, int r, int w)
 {
   switch (event)
-	{
-	  case EVENT_CAN_CAST:
-		return fn(player, card, event);
+  {
+  case EVENT_CAN_CAST:
+    return fn(player, card, event);
 
-	  case EVENT_CAN_SPLICE:
-		if (x == -10 ? fn(player, card, EVENT_CAN_SPLICE) : has_mana_multi(player, x, b, u, g, r, w))
-		  return fn(player, card, EVENT_CAN_CAST);
-		else
-		  return 0;
+  case EVENT_CAN_SPLICE:
+    if (x == -10 ? fn(player, card, EVENT_CAN_SPLICE) : has_mana_multi(player, x, b, u, g, r, w))
+      return fn(player, card, EVENT_CAN_CAST);
+    else
+      return 0;
 
-	  case EVENT_CAST_SPELL:
-		if (!affect_me(player, card))
-		  return 0;
-		splice_onto_arcane(player, card);
-		if (get_card_instance(player, card)->eot_toughness > 0)
-		  hack_prepend_prompt = get_card_name_by_id(get_id(player, card));
-		int cast_rval = fn(player, card, event);
-		hack_prepend_prompt = NULL;
-		return cast_rval;
+  case EVENT_CAST_SPELL:
+    if (!affect_me(player, card))
+      return 0;
+    splice_onto_arcane(player, card);
+    if (get_card_instance(player, card)->eot_toughness != 0)
+      hack_prepend_prompt = get_card_name_by_id(get_id(player, card));
+    int cast_rval = fn(player, card, event);
+    hack_prepend_prompt = NULL;
+    return cast_rval;
 
-	  case EVENT_SPLICE:
-		if (!(x == -10 ? fn(player, card, EVENT_SPLICE) : charge_mana_multi(player, x, b, u, g, r, w)))
-		  {
-			spell_fizzled = 1;
-			return 0;
-		  }
+  case EVENT_SPLICE:
+    if (!(x == -10 ? fn(player, card, EVENT_SPLICE) : charge_mana_multi(player, x, b, u, g, r, w)))
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
 
-		// Temporary assign affected_card* so we can use the usual EVENT_CAST_SPELL && affect_me(player, card) form in client code
-		int old_affected_card_controller = affected_card_controller, old_affected_card = affected_card;
+    // Temporary assign affected_card* so we can use the usual EVENT_CAST_SPELL && affect_me(player,
+    // card) form in client code
+    int old_affected_card_controller = affected_card_controller, old_affected_card = affected_card;
 
-		affected_card_controller = player;
-		affected_card = card;
+    affected_card_controller = player;
+    affected_card = card;
 
-		int splice_rval = fn(player, card, EVENT_CAST_SPELL);
+    int splice_rval = fn(player, card, EVENT_CAST_SPELL);
 
-		affected_card_controller = old_affected_card_controller;
-		affected_card = old_affected_card;
+    affected_card_controller = old_affected_card_controller;
+    affected_card = old_affected_card;
 
-		return splice_rval;
+    return splice_rval;
 
-	  case EVENT_RESOLVE_SPELL:
-		fn(player, card, event);
-		check_for_spliced_spells(player, card);
-		kill_card(player, card, KILL_DESTROY);
-		return 0;
+  case EVENT_RESOLVE_SPELL:
+    fn(player, card, event);
+    check_for_spliced_spells(player, card);
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
 
-	  case EVENT_RESOLVE_SPLICE:
-		return fn(player, card, EVENT_RESOLVE_SPELL);
+  case EVENT_RESOLVE_SPLICE:
+    return fn(player, card, EVENT_RESOLVE_SPELL);
 
-	  default:
-		return fn(player, card, event);
-	}
+  default:
+    return fn(player, card, event);
+  }
 }
 
 // As arcane_with_splice, but can't be spliced itself.
-int arcane(int player, int card, int event, int (*fn)(int,int,event_t))
+int arcane(int player, int card, int event, int (*fn)(int, int, event_t))
 {
   switch (event)
-	{
-	  case EVENT_CAN_CAST:
-		return fn(player, card, event);
+  {
+  case EVENT_CAN_CAST:
+    return fn(player, card, event);
 
-	  case EVENT_CAST_SPELL:
-		if (!affect_me(player, card))
-		  return 0;
-		splice_onto_arcane(player, card);
-		if (get_card_instance(player, card)->eot_toughness > 0)
-		  hack_prepend_prompt = get_card_name_by_id(get_id(player, card));
-		int cast_rval = fn(player, card, event);
-		hack_prepend_prompt = NULL;
-		return cast_rval;
+  case EVENT_CAST_SPELL:
+    if (!affect_me(player, card))
+      return 0;
+    splice_onto_arcane(player, card);
+    if (get_card_instance(player, card)->eot_toughness != 0)
+      hack_prepend_prompt = get_card_name_by_id(get_id(player, card));
+    int cast_rval = fn(player, card, event);
+    hack_prepend_prompt = NULL;
+    return cast_rval;
 
-	  case EVENT_RESOLVE_SPELL:
-		fn(player, card, event);
-		check_for_spliced_spells(player, card);
-		kill_card(player, card, KILL_DESTROY);
-		return 0;
+  case EVENT_RESOLVE_SPELL:
+    fn(player, card, event);
+    check_for_spliced_spells(player, card);
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
 
-	  default:
-		return fn(player, card, event);
-	}
+  default:
+    return fn(player, card, event);
+  }
 }
 
-int soulshift(int player, int card, event_t event, int cmc, int num){
+int soulshift(int player, int card, event_t event, int cmc, int num)
+{
 
-	if( this_dies_trigger(player, card, event, 2) ){
-		char msg[100];
-		scnprintf(msg, 100, "Select a Spirit card with cmc %d or less.", cmc);
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_ANY, msg);
-		this_test.subtype = SUBTYPE_SPIRIT;
-		this_test.subtype_flag = MATCH;
-		this_test.cmc = cmc+1;
-		this_test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
-		for (; num > 0 && new_special_count_grave(player, &this_test); --num){
-			if( new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test) == -1 ){
-				break;
-			}
-		}
-	}
+  if (this_dies_trigger(player, card, event, 2))
+  {
+    char msg[100];
+    scnprintf(msg, 100, "Select a Spirit card with cmc %d or less.", cmc);
+    test_definition_t this_test;
+    new_default_test_definition(&this_test, TYPE_ANY, msg);
+    this_test.subtype = SUBTYPE_SPIRIT;
+    this_test.subtype_flag = MATCH;
+    this_test.cmc = cmc + 1;
+    this_test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
+    for (; num > 0 && new_special_count_grave(player, &this_test); --num)
+    {
+      if (new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 0, AI_MAX_VALUE,
+                           &this_test) < 0)
+      {
+        break;
+      }
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
-int arcane_spirit_spell_trigger(int player, int card, event_t event, int trigger_mode){
+void arcane_spirit_spell_trigger(int player, int card, event_t event, int trigger_mode)
+{
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && player == reason_for_trigger_controller ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_NONEFFECT);
-		test.subtype = SUBTYPE_ARCANE;
-		test.sub2 = SUBTYPE_SPIRIT;
-		test.subtype_flag = F2_MULTISUBTYPE;
+  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) &&
+      player == reason_for_trigger_controller)
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_NONEFFECT);
+    test.subtype = SUBTYPE_ARCANE;
+    test.sub2 = SUBTYPE_SPIRIT;
+    test.subtype_flag = F2_MULTISUBTYPE;
 
-		return new_specific_spell_played(player, card, event, player, trigger_mode, &test);
-	}
-
-	return 0;
+    sp_ability_trigger(player, event, trigger_mode, TYPE_NONE, &test, player, card);
+  }
 }
 
 static int myojin(int player, int card, event_t event){
@@ -1053,21 +1061,25 @@ int card_dripping_tongue_zubera(int player, int card, event_t event){
 	return 0;
 }
 
-int card_earthshaker(int player, int card, event_t event){
-/* CARD_ID_EARTHSHAKER	7200
-Earthshaker	|4|R|R
-Creature - Spirit 4/5
-Whenever you cast a Spirit or Arcane spell, ~ deals 2 damage to each creature without flying. */
+int card_earthshaker(int player, int card, event_t event)
+{
+  /* CARD_ID_EARTHSHAKER	7200
+  Earthshaker	|4|R|R
+  Creature - Spirit 4/5
+  Whenever you cast a Spirit or Arcane spell, ~ deals 2 damage to each creature without flying. */
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_PERMANENT);
-		test.keyword = KEYWORD_FLYING;
-		test.keyword_flag = DOESNT_MATCH;
-		new_damage_all(player, card, ANYBODY, 2, 0, &test);
-	}
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	return 0;
+  if (event == EVENT_SPA)
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_PERMANENT);
+    test.keyword = KEYWORD_FLYING;
+    test.keyword_flag = DOESNT_MATCH;
+    new_damage_all(player, card, ANYBODY, 2, 0, &test);
+  }
+
+  return 0;
 }
 
 ARCANE(card_eerie_procession){
@@ -1086,18 +1098,19 @@ Search your library for an Arcane card, reveal that card, and put it into your h
 	return 0;
 }
 
-static const char* damage_to_legendary_creature(int who_chooses, int player, int card)
+static const char *damage_to_legendary_creature(int who_chooses, int player, int card)
 {
-	card_instance_t *instance = get_card_instance(player, card);
-	if(	instance->internal_card_id == damage_card ){
-		if( instance->damage_target_card != -1 &&
-			is_what(instance->damage_target_player, instance->damage_target_player, TYPE_CREATURE) &&
-			is_legendary(instance->damage_target_player, instance->damage_target_player) )
-		{
-			return NULL;
-		}
-	}
-	return "must be damage to a Legendary creature";
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->internal_card_id == damage_card)
+  {
+    if (instance->damage_target_card != -1 &&
+        is_what(instance->damage_target_player, instance->damage_target_card, TYPE_CREATURE) &&
+        is_legendary(instance->damage_target_player, instance->damage_target_card))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage to a Legendary creature";
 }
 
 int card_eiganjo_castle(int player, int card, event_t event){
@@ -1857,21 +1870,26 @@ If you do, add this card's effects to that spell.) */
 	return 0;
 }
 
-int card_hikari_twilight_guardian(int player, int card, event_t event){
-/* CARD_ID_HIKARI_TWILIGHT_GUARDIAN	7232
-Hikari, Twilight Guardian	|3|W|W
-Legendary Creature - Spirit 4/4
-Flying
-Whenever you cast a Spirit or Arcane spell, you may exile ~.
-If you do, return it to the battlefield under its owner's control at the beginning of the next end step. */
+int card_hikari_twilight_guardian(int player, int card, event_t event)
+{
+  /* CARD_ID_HIKARI_TWILIGHT_GUARDIAN	7232
+  Hikari, Twilight Guardian	|3|W|W
+  Legendary Creature - Spirit 4/4
+  Flying
+  Whenever you cast a Spirit or Arcane spell, you may exile ~.
+  If you do, return it to the battlefield under its owner's control at the beginning of the next end
+  step. */
 
-	check_legend_rule(player, card, event);
+  check_legend_rule(player, card, event);
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		remove_until_eot(player, card, player, card);
-	}
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-	return 0;
+  if (event == EVENT_SPA)
+  {
+    remove_until_eot(player, card, player, card);
+  }
+
+  return 0;
 }
 
 int card_hinder(int player, int card, event_t event)
@@ -2209,18 +2227,23 @@ Enchanted creature gets +1/+2. */
 	return generic_aura(player, card, event, player, 1, 2, 0, 0, 0, 0, 0);
 }
 
-int card_jade_idol(int player, int card, event_t event){
-/* CARD_ID_JADE_IDOL	7255
-Jade Idol	|4
-Artifact
-Whenever you cast a Spirit or Arcane spell, ~ becomes a 4/4 Spirit artifact creature until end of turn. */
+int card_jade_idol(int player, int card, event_t event)
+{
+  /* CARD_ID_JADE_IDOL	7255
+  Jade Idol	|4
+  Artifact
+  Whenever you cast a Spirit or Arcane spell, ~ becomes a 4/4 Spirit artifact creature until end of
+  turn. */
 
-	if( arcane_spirit_spell_trigger(player, card, event, 2) ){
-		add_a_subtype(player, card, SUBTYPE_SPIRIT);
-		artifact_animation(player, card, player, card, 1, 4, 4, 0, 0);
-	}
+  arcane_spirit_spell_trigger(player, card, event, 2);
 
-	return 0;
+  if (event == EVENT_SPA)
+  {
+    int legacy = artifact_animation(player, card, player, card, 1, 4, 4, 0, 0);
+    get_card_instance(player, legacy)->targets[9].card = SUBTYPE_SPIRIT;
+  }
+
+  return 0;
 }
 
 int card_journeyers_kite(int player, int card, event_t event){
@@ -2385,62 +2408,79 @@ Sacrifice ~: Destroy target enchantment. */
 	return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_ENCHANTMENT");
 }
 
-int card_kami_of_fires_roar(int player, int card, event_t event){
-/* CARD_ID_KAMI_OF_FIRES_ROAR	7265
-Kami of Fire's Roar	|3|R
-Creature - Spirit 2/3
-Whenever you cast a Spirit or Arcane spell, target creature can't block this turn. */
+int card_kami_of_fires_roar(int player, int card, event_t event)
+{
+  /* CARD_ID_KAMI_OF_FIRES_ROAR	7265
+  Kami of Fire's Roar	|3|R
+  Creature - Spirit 2/3
+  Whenever you cast a Spirit or Arcane spell, target creature can't block this turn. */
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE );
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-		card_instance_t *instance= get_card_instance(player, card);
+  if (event == EVENT_SPA)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
 
-		if( can_target(&td) && pick_target(&td, "TARGET_CREATURE") ){
-			pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
-		}
-		instance->number_of_targets = 0;
-	}
+    card_instance_t *instance = get_card_instance(player, card);
 
-	return 0;
+    if (can_target(&td) && pick_target(&td, "TARGET_CREATURE"))
+    {
+      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                             0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
+    }
+    instance->number_of_targets = 0;
+  }
+
+  return 0;
 }
 
-int card_kami_of_the_hunt(int player, int card, event_t event){
-/* CARD_ID_KAMI_OF_THE_HUNT	7268
-Kami of the Hunt	|2|G
-Creature - Spirit 2/2
-Whenever you cast a Spirit or Arcane spell, ~ gets +1/+1 until end of turn. */
+int card_kami_of_the_hunt(int player, int card, event_t event)
+{
+  /* CARD_ID_KAMI_OF_THE_HUNT	7268
+  Kami of the Hunt	|2|G
+  Creature - Spirit 2/2
+  Whenever you cast a Spirit or Arcane spell, ~ gets +1/+1 until end of turn. */
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		pump_until_eot_merge_previous(player, card, player, card, 1, 1);
-	}
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	return 0;
+  if (event == EVENT_SPA)
+  {
+    pump_until_eot_merge_previous(player, card, player, card, 1, 1);
+  }
+
+  return 0;
 }
 
-int card_kami_of_waning_moon(int player, int card, event_t event){
-/* CARD_ID_KAMI_OF_THE_WANING_MOON	7271
-Kami of the Waning Moon	|2|B
-Creature - Spirit 1/1
-Flying
-Whenever you cast a Spirit or Arcane spell, target creature gains fear until end of turn. (It can't be blocked except by artifact creatures and/or black creatures.) */
+int card_kami_of_waning_moon(int player, int card, event_t event)
+{
+  /* CARD_ID_KAMI_OF_THE_WANING_MOON	7271
+  Kami of the Waning Moon	|2|B
+  Creature - Spirit 1/1
+  Flying
+  Whenever you cast a Spirit or Arcane spell, target creature gains fear until end of turn. (It
+  can't be blocked except by artifact creatures and/or black creatures.) */
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE );
-		td.preferred_controller = player;
-        td.allow_cancel = 0;
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-		card_instance_t *instance= get_card_instance(player, card);
+  if (event == EVENT_SPA)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.preferred_controller = player;
+    td.allow_cancel = 0;
 
-		if( can_target(&td) &&  pick_target(&td, "TARGET_CREATURE") ){
-			pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_FEAR);
-		}
-		instance->number_of_targets = 0;
-	}
+    card_instance_t *instance = get_card_instance(player, card);
 
-	return 0;
+    if (can_target(&td) && pick_target(&td, "TARGET_CREATURE"))
+    {
+      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                             0, 0, 0, SP_KEYWORD_FEAR);
+    }
+    instance->number_of_targets = 0;
+  }
+
+  return 0;
 }
 
 int card_kashi_tribe_reaver(int player, int card, event_t event){
@@ -2695,22 +2735,27 @@ Legendary Creature — Fox Wizard 4/5
 	return 0;
 }
 
-int card_kodama_of_the_south_tree(int player, int card, event_t event){
-/* CARD_ID_KODAMA_OF_THE_SOUTH_TREE	7285
-Kodama of the South Tree	|2|G|G
-Legendary Creature - Spirit 4/4
-Whenever you cast a Spirit or Arcane spell, each other creature you control gets +1/+1 and gains trample until end of turn. */
+int card_kodama_of_the_south_tree(int player, int card, event_t event)
+{
+  /* CARD_ID_KODAMA_OF_THE_SOUTH_TREE	7285
+  Kodama of the South Tree	|2|G|G
+  Legendary Creature - Spirit 4/4
+  Whenever you cast a Spirit or Arcane spell, each other creature you control gets +1/+1 and gains
+  trample until end of turn. */
 
-    check_legend_rule(player, card, event);
+  check_legend_rule(player, card, event);
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_CREATURE);
-		test.not_me = 1;
-		pump_creatures_until_eot(player, card, player, 0, 1,1, KEYWORD_TRAMPLE,0, &test);
-	}
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	return 0;
+  if (event == EVENT_SPA)
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    test.not_me = 1;
+    pump_creatures_until_eot(player, card, player, 0, 1, 1, KEYWORD_TRAMPLE, 0, &test);
+  }
+
+  return 0;
 }
 
 int card_kodama_of_the_north_tree(int player, int card, event_t event){
@@ -2884,39 +2929,43 @@ Bushido 5 (Whenever this creature blocks or becomes blocked, it gets +5/+5 until
 	return bushido(player, card, event, 5);
 }
 
-static int rfg_when_die_legacy(int player, int card, event_t event){
+static int rfg_when_die_legacy(int player, int card, event_t event)
+{
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance= get_card_instance(player, card);
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
 
-		if( affect_me(p, c) ){
-			card_instance_t *affected = get_card_instance(p, c);
-			if( affected->kill_code >= KILL_DESTROY && affected->kill_code <= KILL_SACRIFICE ){
-				affected->kill_code = KILL_EXILE;
-				set_special_flags2(p, c, SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE);
-			}
-		}
-	}
+    if (affect_me(p, c))
+    {
+      card_instance_t *affected = get_card_instance(p, c);
+      if (affected->kill_code >= KILL_BURY && affected->kill_code <= KILL_SACRIFICE)
+      {
+        affected->kill_code = KILL_EXILE;
+        set_special_flags2(p, c, SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE);
+      }
+    }
+  }
 
-	if( trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card) ){
-		card_instance_t *instance= get_card_instance(player, card);
-		int p = instance->targets[0].player;
-		int c = instance->targets[0].card;
+  if (trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int p = instance->targets[0].player;
+    int c = instance->targets[0].card;
 
-		if( other_leaves_play(player, card, event, p, c, 0, 0) ){
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+    // The native function passes these arguments in this order.
+    other_leaves_play(player, card, event, p, c, 0, 0);
+  }
 
+  if (event == EVENT_CLEANUP || event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 static int rfg_when_die(int player, int card, int t_player, int t_card){
@@ -4971,24 +5020,30 @@ Whenever ~ deals combat damage to a player, you may return target Arcane card fr
 	return 0;
 }
 
-int card_thief_of_hope(int player, int card, event_t event){
-/* CARD_ID_THIEF_OF_HOPE	7406
-Thief of Hope	|2|B
-Creature - Spirit 2/2
-Whenever you cast a Spirit or Arcane spell, target opponent loses 1 life and you gain 1 life.
-Soulshift 2 (When this creature dies, you may return target Spirit card with converted mana cost 2 or less from your graveyard to your hand.) */
+int card_thief_of_hope(int player, int card, event_t event)
+{
+  /* CARD_ID_THIEF_OF_HOPE	7406
+  Thief of Hope	|2|B
+  Creature - Spirit 2/2
+  Whenever you cast a Spirit or Arcane spell, target opponent loses 1 life and you gain 1 life.
+  Soulshift 2 (When this creature dies, you may return target Spirit card with converted mana cost 2
+  or less from your graveyard to your hand.) */
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.zone = TARGET_ZONE_PLAYERS;
-		if( would_validate_arbitrary_target(&td, 1-player, -1)  ){
-			lose_life(1-player, 1);
-			gain_life(player, 1);
-		}
-	}
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	return soulshift(player, card, event, 2, 1);
+  if (event == EVENT_SPA)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.zone = TARGET_ZONE_PLAYERS;
+    if (would_validate_arbitrary_target(&td, 1 - player, -1))
+    {
+      lose_life(1 - player, 1);
+      gain_life(player, 1);
+    }
+  }
+
+  return soulshift(player, card, event, 2, 1);
 }
 
 ARCANE_WITH_SPLICE(card_through_the_breach, MANACOST_XR(2,2)){

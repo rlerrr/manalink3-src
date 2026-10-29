@@ -5,31 +5,25 @@ static void make_angel(int player, int card, int qty){
 	generate_tokens_by_id(player, card, CARD_ID_ANGEL, qty);
 }
 
-static int m14_staff(int player, int card, event_t event, int clr, int land_type){
-	int trig = 0;
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_ANY);
-		test.color = get_sleighted_color_test(player, card, clr);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			trig = 1;
-		}
-	}
-
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_PERMANENT);
-		test.subtype = get_hacked_subtype(player, card, land_type);
-
-		etb_ability_global(player, event, RESOLVE_TRIGGER_MANDATORY, 0, &test, player, card);
-	}
-
-	if( event == EVENT_ETB_ABILITY || trig ){
-		trig = 0;
-		gain_life(player, 1);
-	}
-
-	return 0;
+static int m14_staff(int player, int card, event_t event, int clr, int land_type)
+{
+  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_ANY);
+    test.color = get_sleighted_color_test(player, card, clr);
+    sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
+  }
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_PERMANENT);
+    test.subtype = get_hacked_subtype(player, card, land_type);
+    etb_ability_global(player, event, RESOLVE_TRIGGER_MANDATORY, 0, &test, player, card);
+  }
+  if (event == EVENT_ETB_ABILITY || event == EVENT_SPA)
+    gain_life(player, 1);
+  return 0;
 }
 
 // Cards
@@ -416,53 +410,88 @@ int card_stonehorn_chanter(int player, int card, event_t event){
 
 // blue
 
-static int colossal_whale_legacy(int player, int card, event_t event){
-	if( get_card_instance(player, card)->targets[0].player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( other_leaves_play(player, card, instance->targets[0].player, instance->targets[0].card, event, 1, 0) ){
-			int owner = instance->targets[1].player;
-			int iid = instance->targets[1].card;
-			if( check_rfg(owner, cards_data[iid].id) ){
-				int card_added = add_card_to_hand(owner, iid);
-				remove_card_from_rfg(owner, cards_data[iid].id);
-				put_into_play(owner, card_added);
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
-	return 0;
+static int colossal_whale_legacy(int player, int card, event_t event)
+{
+  if (get_card_instance(player, card)->targets[0].player >= 0)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    other_leaves_play(player, card, instance->targets[0].player, instance->targets[0].card, event,
+                      1, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      int owner = instance->targets[1].player;
+      int iid = instance->targets[1].card;
+      int csvid = cards_data[iid].id;
+      int csvids[2];
+      unmeld(csvid, &csvids[0], &csvids[1]);
+      if (csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || csvid == CARD_ID_CHITTERING_HOST ||
+          csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP)
+      {
+        iid = get_internal_card_id_from_csv_id(csvids[0]);
+        if (check_rfg(owner, cards_data[iid].id))
+        {
+          int card_added = add_card_to_hand(owner, iid);
+          remove_card_from_rfg(owner, cards_data[iid].id);
+          put_into_play(owner, card_added);
+        }
+        if (check_rfg(owner, csvids[1]))
+        {
+          int card_added = add_card_to_hand(owner, get_internal_card_id_from_csv_id(csvids[1]));
+          remove_card_from_rfg(owner, csvids[1]);
+          put_into_play(owner, card_added);
+        }
+      }
+      else if (check_rfg(owner, cards_data[iid].id))
+      {
+        int card_added = add_card_to_hand(owner, iid);
+        remove_card_from_rfg(owner, cards_data[iid].id);
+        put_into_play(owner, card_added);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
 }
 
-int card_colossal_whale(int player, int card, event_t event){
-	/* Colossal Whale	|5|U|U
-	 * Creature - Whale 5/5
-	 * |H2Islandwalk
-	 * Whenever ~ attacks, you may exile target creature defending player controls until ~ leaves the battlefield. */
+int card_colossal_whale(int player, int card, event_t event)
+{
+  /* Colossal Whale	|5|U|U
+   * Creature - Whale 5/5
+   * |H2Islandwalk
+   * Whenever ~ attacks, you may exile target creature defending player controls until ~ leaves the
+   * battlefield. */
 
-	// Whenever ~ attacks, you may exile target creature defending player controls until ~ leaves the battlefield.
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), player, card)){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.allowed_controller = 1-player;
+  // Whenever ~ attacks, you may exile target creature defending player controls until ~ leaves the
+  // battlefield.
+  dat_ability(player, card, event,
+              duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.allowed_controller = 1 - player;
 
-		card_instance_t* instance = get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
 
-		if( can_target(&td) && pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS") ){
-			if( ! is_token(instance->targets[0].player, instance->targets[0].card) ){
-				int legacy = create_legacy_effect(player, card, &colossal_whale_legacy);
-				card_instance_t *leg = get_card_instance(player, legacy);
-				leg->targets[0].player = player;
-				leg->targets[0].card = card;
-				leg->number_of_targets = 1;
-				leg->targets[1].player = get_owner(instance->targets[0].player, instance->targets[0].card);
-				leg->targets[1].card = get_original_internal_card_id(instance->targets[0].player, instance->targets[0].card);
-				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
-			}
-		}
-		instance->number_of_targets = 0;
-	}
+    if (can_target(&td) && pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS"))
+    {
+      if (!is_token(instance->targets[0].player, instance->targets[0].card))
+      {
+        int legacy = create_legacy_effect(player, card, &colossal_whale_legacy);
+        card_instance_t *leg = get_card_instance(player, legacy);
+        leg->targets[0].player = player;
+        leg->targets[0].card = card;
+        leg->number_of_targets = 1;
+        leg->targets[1].player = get_owner(instance->targets[0].player, instance->targets[0].card);
+        leg->targets[1].card =
+            get_original_internal_card_id(instance->targets[0].player, instance->targets[0].card);
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+      }
+    }
+    instance->number_of_targets = 0;
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_dismiss_into_dream(int player, int card, event_t event)
@@ -941,63 +970,75 @@ int card_corpse_hauler(int player, int card, event_t event){
 															0, &test, GS_GRAVE_RECYCLER);
 }
 
-static int dark_prophecy(int player, int card, event_t event){
+static int dark_prophecy(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_DARK_PROPHECY ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_DARK_PROPHECY)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+          }
+        }
+        count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			draw_cards(player, amount);
-			lose_life(player, amount);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    draw_cards(player, amount);
+    while (amount > 0)
+    {
+      lose_life(player, 1);
+      --amount;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_dark_prophecy(int player, int card, event_t event){
@@ -1406,73 +1447,85 @@ int card_vampire_warlord(int player, int card, event_t event){
 									NULL, NULL);
 }
 
-static int xathrid_necromancer_effect(int player, int card, event_t event){
+static int xathrid_necromancer_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_XATHRID_NECROMANCER ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_XATHRID_NECROMANCER)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						//Will trigger also if this is not a creature when it goes into the graveyard;
-						if( ! is_what(p, c, TYPE_CREATURE) ){
-							count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
-						}
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						return 0;
-					}
-				}
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_CREATURE);
-				this_test.subtype = SUBTYPE_HUMAN;
-				count_for_gfp_ability(player, card, event, player, 0, &this_test);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            // Will trigger also if this is not a creature when it goes into the graveyard;
+            if (!is_what(p, c, TYPE_CREATURE))
+            {
+              count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
+            }
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE1(instance->targets[11].player) = 1;
+            if (is_what(p, c, TYPE_CREATURE))
+              count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
+            return 0;
+          }
+        }
+        test_definition_t this_test;
+        default_test_definition(&this_test, TYPE_PERMANENT);
+        this_test.subtype = SUBTYPE_HUMAN;
+        count_for_gfp_ability(player, card, event, player, 0, &this_test);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			token_generation_t token;
-			default_token_definition(player, card, CARD_ID_ZOMBIE, &token);
-			token.qty = amount;
-			token.action = TOKEN_ACTION_TAPPED;
-			generate_token(&token);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    token_generation_t token;
+    default_token_definition(player, card, CARD_ID_ZOMBIE, &token);
+    token.qty = amount;
+    token.action = TOKEN_ACTION_TAPPED;
+    generate_token(&token);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_xathrid_necromancer(int player, int card, event_t event){

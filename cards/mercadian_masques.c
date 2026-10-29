@@ -34,84 +34,141 @@ int generic_subtype_searcher(int player, int card, event_t event, int subtype, i
 
 
 
-static int part_of_ramos(int player, int card, event_t event, int manacolor){
+static int part_of_ramos(int player, int card, event_t event, int manacolor)
+{
 
-	if( ! IS_GAA_EVENT(event) && !(event == EVENT_COUNT_MANA && affect_me(player, card)) ){
-		return mana_producer(player, card, event);
-	}
+  if (!IS_GAA_EVENT(event) && !(event == EVENT_COUNT_MANA && affect_me(player, card)))
+  {
+    return mana_producer(player, card, event);
+  }
 
-	if( event == EVENT_COUNT_MANA && affect_me(player, card) ){
-		if( ! is_tapped(player, card) && ! is_animated_and_sick(player, card) ){
-			declare_mana_available(player, manacolor, 2);
-		}
-		else{
-			declare_mana_available(player, manacolor, 1);
-		}
-	}
+  if (event == EVENT_COUNT_MANA && affect_me(player, card))
+  {
+    if (!is_tapped(player, card) && !is_animated_and_sick(player, card))
+    {
+      declare_mana_available(player, manacolor, 2);
+    }
+    else
+    {
+      declare_mana_available(player, manacolor, 1);
+    }
+  }
 
-	if( event == EVENT_CAN_ACTIVATE ){
-		return can_produce_mana(player, card);
-	}
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    return can_produce_mana(player, card);
+  }
 
-	if( event == EVENT_ACTIVATE ){
-		int choice = 0;
-		if( ! is_tapped(player, card) && ! is_animated_and_sick(player, card) ){
-			if( player != AI ){
-				choice = do_dialog(player, player, card, -1, -1, " Tap to add mana\n Sac to add mana\n Cancel", 0);
-			}
-		}
-		else{
-			choice = 1;
-		}
+  if (event == EVENT_ACTIVATE)
+  {
+    int choice = 0;
+    if (!is_tapped(player, card) && !is_animated_and_sick(player, card))
+    {
+      if (player != AI)
+      {
+        choice = do_dialog(player, player, card, -1, -1,
+                           " Tap to add mana\n Sac to add mana\n Cancel", 0);
+      }
+    }
+    else
+    {
+      choice = 1;
+    }
 
-		if( choice == 0){
-			return mana_producer(player, card, event);
-		}
+    if (choice == 0)
+    {
+      return mana_producer(player, card, event);
+    }
 
-		else if( choice == 1 ){
-				ai_modifier -= 36;
+    else if (choice == 1)
+    {
+      ai_modifier -= 36;
 
-				produce_mana(player, manacolor, 1);
-				kill_card(player, card, KILL_SACRIFICE);
-		}
-		else{
-			spell_fizzled = 1;
-		}
-	}
+      produce_mana(player, manacolor, 1);
+      tapped_for_mana_color = -2;
+      kill_card(player, card, KILL_SACRIFICE);
+    }
+    else
+    {
+      spell_fizzled = 1;
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 static int depletion_land(int player, int card, event_t event, int manacolor)
 {
-  /* Land
-   * ~ enters the battlefield tapped with two depletion counters on it.
-   * |T, Remove a depletion counter from ~: Add |C|C to your mana pool. If there are no depletion counters on ~, sacrifice it. */
-
-	comes_into_play_tapped(player, card, event);
-	enters_the_battlefield_with_counters(player, card, event, COUNTER_DEPLETION, 2);
-
-	if (event == EVENT_RESOLVE_SPELL)
-		play_land_sound_effect(player, card);
-
-	if (event == EVENT_CAN_ACTIVATE)
-		return CAN_TAP_FOR_MANA(player, card) && count_counters(player, card, COUNTER_DEPLETION);
-
-	if (event == EVENT_ACTIVATE)
-	{
-		if( count_counters(player, card, COUNTER_DEPLETION) == 1 )
-			ai_modifier -= 36;
-		remove_counters(player, card, player, card, COUNTER_DEPLETION, 1);
-		produce_mana_tapped(player, card, manacolor, 2);
-		if (count_counters(player, card, COUNTER_DEPLETION) == 0)
-			kill_card(player, card, KILL_SACRIFICE);
-	}
-
-	if( event == EVENT_COUNT_MANA && affect_me(player, card) && CAN_TAP_FOR_MANA(player, card) &&
-		count_counters(player, card, COUNTER_DEPLETION) )
-		declare_mana_available(player, manacolor, 2);
-
-	return 0;
+  /* Enters tapped with two depletion counters. Spending the depletion ability
+   * produces two mana and sacrifices the land when its last counter is gone. */
+  comes_into_play_tapped(player, card, event);
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_DEPLETION, 2);
+  if (event == EVENT_RESOLVE_SPELL)
+    play_land_sound_effect(player, card);
+  if (event == EVENT_CAN_ACTIVATE)
+    return CAN_TAP_FOR_MANA(player, card) &&
+           (count_counters(player, card, COUNTER_DEPLETION) || mana_colors_added[player]);
+  if (event == EVENT_ACTIVATE)
+  {
+    if (is_what(player, card, TYPE_LAND) && mana_colors_added[player])
+    {
+      int choice = 0;
+      if (count_counters(player, card, COUNTER_DEPLETION) >= 1)
+        choice = do_dialog(player, player, card, -1, -1,
+                           " Basic land ability\n Depletion Mana ability\n Cancel", 1);
+      if (choice == 0)
+      {
+        produce_mana_tapped_all_one_color_impl(player, card, mana_colors_added[player], 1, 0);
+        return 0;
+      }
+      if (choice != 1)
+      {
+        if (choice == 2)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        if (count_counters(player, card, COUNTER_DEPLETION) == 0)
+          kill_card(player, card, KILL_SACRIFICE);
+        return 0;
+      }
+    }
+    if (count_counters(player, card, COUNTER_DEPLETION) == 1)
+      ai_modifier -= 36;
+    remove_counters(player, card, player, card, COUNTER_DEPLETION, 1);
+    produce_mana_tapped_impl(player, card, manacolor, 2, 1, 1);
+    if (count_counters(player, card, COUNTER_DEPLETION) == 0)
+      kill_card(player, card, KILL_SACRIFICE);
+  }
+  if (event == EVENT_COUNT_MANA && affect_me(player, card) && CAN_TAP_FOR_MANA(player, card) &&
+      count_counters(player, card, COUNTER_DEPLETION))
+  {
+    int color_test = color_to_color_test(manacolor);
+    int num_mana;
+    if (!check_special_flags2(player, card, SF2_CONTAMINATION))
+    {
+      num_mana = 2;
+      color_test |= mana_colors_added[player];
+    }
+    else
+    {
+      num_mana = mana_quantity_override[player][manacolor];
+      if (num_mana < 0)
+        num_mana = 2;
+      color_test = mana_color_override[player][manacolor];
+    }
+    if (multi_mana_transmutation[player][0] && num_mana > 1 && is_what(player, card, TYPE_LAND))
+    {
+      num_mana = multi_mana_transmutation[player][1];
+      declare_mana_available(
+          player, single_color_test_bit_to_color(multi_mana_transmutation[player][0]), num_mana);
+    }
+    else
+    {
+      declare_mana_available_maybe_hex(player, color_test, num_mana);
+    }
+  }
+  return 0;
 }
 
 static int rishadan_delinquents(int player, int card, event_t event, int mana_req){
@@ -912,7 +969,7 @@ int card_coastal_piracy(int player, int card, event_t event){
 							player, card, 0, &test);
 	}
 
-	if( resolve_damage_trigger(player, -1, event, RESOLVE_TRIGGER_AI(player) | DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS |
+	if( resolve_damage_trigger(player, card, event, RESOLVE_TRIGGER_AI(player) | DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS |
 								DDBM_MUST_BE_COMBAT_DAMAGE, player, card) )
 	{
 		card_instance_t* instance = get_card_instance(player, card);
@@ -1490,141 +1547,163 @@ Destroy all creatures with converted mana cost X or less. */
 	return generic_spell(player, card, event, GS_X_SPELL, NULL, NULL, 0, NULL);
 }
 
-static int foster_effect(int player, int card, event_t event){
+static int foster_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_FOSTER ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_FOSTER)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+          }
+        }
+        count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
-		if( result ){
-			int amount = BYTE0(result);
-			while( amount && has_mana(player, COLOR_ANY, 1) ){
-					int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
-										"Activate Foster", 1, count_deck(player) >= 20 ? 10 : 1,
-										"Decline", 1, 5);
-					if( choice == 1 ){
-						if( charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 1) ){
-							test_definition_t this_test;
-							default_test_definition(&this_test, TYPE_CREATURE);
-							reveal_card_until_you_reveal_test(player, player, &this_test, RCUYRT_ADD_TEST_TO_HAND | RCUYRT_MILL_REST);
-						}
-					}
-					else{
-						break;
-					}
-					amount--;
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    while (amount && has_mana(player, COLOR_ANY, 1))
+    {
+      int choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
+                          "Activate Foster", 1, count_deck(player) >= 20 ? 10 : 1, "Decline", 1, 5);
+      if (choice == 1)
+      {
+        if (charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 1))
+        {
+          test_definition_t this_test;
+          default_test_definition(&this_test, TYPE_CREATURE);
+          reveal_card_until_you_reveal_test(player, player, &this_test,
+                                            RCUYRT_ADD_TEST_TO_HAND | RCUYRT_MILL_REST);
+        }
+      }
+      else
+      {
+        break;
+      }
+      amount--;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
-int card_foster(int player, int card, event_t event){
-/*
-Foster |2|G|G
-Enchantment
-Whenever a creature you control dies, you may pay {1}. If you do, reveal cards from the top of your library until you reveal a
-	creature card. Put that card into your hand and the rest into your graveyard.
-*/
+int card_foster(int player, int card, event_t event)
+{
+  /*
+  Foster |2|G|G
+  Enchantment
+  Whenever a creature you control dies, you may pay {1}. If you do, reveal cards from the top of
+  your library until you reveal a creature card. Put that card into your hand and the rest into your
+  graveyard.
+  */
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
-				card_instance_t *inst = get_card_instance(player, c);
-				if( inst->info_slot == (int)foster_effect ){
-					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
-						(inst->targets[0].player == player && inst->targets[0].card == card) )
-					{
-						found = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( ! found ){
-			int legacy = create_targetted_legacy_effect(player, card, &foster_effect, player, card);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(player, c);
+        if (inst->info_slot == (int)foster_effect)
+        {
+          if ((inst->damage_target_player == player && inst->damage_target_card == card) ||
+              (inst->targets[0].player == player && inst->targets[0].card == card))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy = create_targetted_legacy_effect(player, card, &foster_effect, player, card);
+      card_instance_t *inst = get_card_instance(player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY){
-		count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
+  }
 
-	if( get_card_instance(player, card)->kill_code <= 0 ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
-		if( result ){
-			int amount = BYTE0(result);
-			while( amount && has_mana(player, COLOR_ANY, 1) ){
-					int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
-										"Activate Foster", 1, count_deck(player) >= 20 ? 10 : 1,
-										"Decline", 1, 5);
-					if( choice == 1 ){
-						if( charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 1) ){
-							test_definition_t this_test;
-							default_test_definition(&this_test, TYPE_CREATURE);
-							reveal_card_until_you_reveal_test(player, player, &this_test, RCUYRT_ADD_TEST_TO_HAND | RCUYRT_MILL_REST);
-						}
-					}
-					else{
-						break;
-					}
-					amount--;
-			}
-		}
-	}
+  if (get_card_instance(player, card)->kill_code <= 0)
+  {
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+    if (result)
+    {
+      int amount = BYTE0(result);
+      while (amount && has_mana(player, COLOR_ANY, 1))
+      {
+        int choice =
+            DIALOG(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
+                   "Activate Foster", 1, count_deck(player) >= 20 ? 10 : 1, "Decline", 1, 5);
+        if (choice == 1)
+        {
+          if (charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY,
+                                          1))
+          {
+            test_definition_t this_test;
+            default_test_definition(&this_test, TYPE_CREATURE);
+            reveal_card_until_you_reveal_test(player, player, &this_test,
+                                              RCUYRT_ADD_TEST_TO_HAND | RCUYRT_MILL_REST);
+          }
+        }
+        else
+        {
+          break;
+        }
+        amount--;
+      }
+    }
+  }
 
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_furious_assault(int player, int card, event_t event){
@@ -2399,111 +2478,138 @@ Whenever a creature you control deals combat damage to a player, that player dis
 	return global_enchantment(player, card, event);
 }
 
-static int liability_effect(int player, int card, event_t event ){
+static int liability_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_LIABILITY ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_LIABILITY)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE2(instance->targets[11].player) = 1;
-					}
-				}
-				count_for_gfp_ability_and_store_values(player, card, event, ANYBODY, TYPE_PERMANENT, NULL, GFPC_TRACK_OWNER, 0);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+          }
+        }
+        count_for_gfp_ability_and_store_values(player, card, event, ANYBODY, TYPE_PERMANENT, NULL,
+                                               GFPC_TRACK_OWNER, 0);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			lose_life(0, BYTE0(result));
-			lose_life(1, BYTE1(result));
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    APNAP(p, {
+      int amount = p == 0 ? BYTE0(result) : BYTE1(result);
+      while (amount > 0)
+      {
+        lose_life(p, 1);
+        --amount;
+      }
+    };);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
-int card_liability(int player, int card, event_t event ){
-/*
-Liability |1|B|B
-Enchantment
-Whenever a nontoken permanent is put into a player's graveyard from the battlefield, that player loses 1 life.
-*/
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
-				card_instance_t *inst = get_card_instance(player, c);
-				if( inst->info_slot == (int)liability_effect ){
-					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
-						(inst->targets[0].player == player && inst->targets[0].card == card) )
-					{
-						found = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( ! found ){
-			int legacy = create_targetted_legacy_effect(player, card, &liability_effect, player, card);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-	}
+int card_liability(int player, int card, event_t event)
+{
+  /*
+  Liability |1|B|B
+  Enchantment
+  Whenever a nontoken permanent is put into a player's graveyard from the battlefield, that player
+  loses 1 life.
+  */
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(player, c);
+        if (inst->info_slot == (int)liability_effect)
+        {
+          if ((inst->damage_target_player == player && inst->damage_target_card == card) ||
+              (inst->targets[0].player == player && inst->targets[0].card == card))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy = create_targetted_legacy_effect(player, card, &liability_effect, player, card);
+      card_instance_t *inst = get_card_instance(player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		if( ! is_token(affected_card_controller, affected_card) ){
-			count_for_gfp_ability_and_store_values(player, card, event, ANYBODY, TYPE_PERMANENT, NULL, GFPC_TRACK_OWNER, 0);
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    if (!is_token(affected_card_controller, affected_card))
+    {
+      count_for_gfp_ability_and_store_values(player, card, event, ANYBODY, TYPE_PERMANENT, NULL,
+                                             GFPC_TRACK_OWNER, 0);
+    }
+  }
 
-	if( get_card_instance(player, card)->kill_code <= 0 ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			lose_life(0, BYTE0(result));
-			lose_life(1, BYTE1(result));
-		}
-	}
+  if (get_card_instance(player, card)->kill_code <= 0)
+  {
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result)
+    {
+      APNAP(p, {
+        int amount = p == 0 ? BYTE0(result) : BYTE1(result);
+        while (amount > 0)
+        {
+          lose_life(p, 1);
+          --amount;
+        }
+      };);
+    }
+  }
 
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_lumbering_satyr(int player, int card, event_t event ){
@@ -2987,113 +3093,134 @@ int card_monkey_cage(int player, int card, event_t event){
 	return 0;
 }
 
-static int moonlit_wake_effect(int player, int card, event_t event){
+static int moonlit_wake_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_MOONLIT_WAKE ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_MOONLIT_WAKE)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						//Will trigger also if this is not a creature when it goes into the graveyard;
-						if( ! is_what(p, c, TYPE_CREATURE) ){
-							count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
-						}
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+          }
+        }
+        count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			gain_life(player, amount);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    while (amount > 0)
+    {
+      gain_life(player, 1);
+      --amount;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
-int card_monlit_wake(int player, int card, event_t event){
-/*
-Moonlit Wake |2|W
-Enchantment
-Whenever a creature dies, you gain 1 life.
-*/
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
-				card_instance_t *inst = get_card_instance(player, c);
-				if( inst->info_slot == (int)moonlit_wake_effect ){
-					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
-						(inst->targets[0].player == player && inst->targets[0].card == card) )
-					{
-						found = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( ! found ){
-			int legacy = create_targetted_legacy_effect(player, card, &moonlit_wake_effect, player, card);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-	}
+int card_monlit_wake(int player, int card, event_t event)
+{
+  /*
+  Moonlit Wake |2|W
+  Enchantment
+  Whenever a creature dies, you gain 1 life.
+  */
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(player, c);
+        if (inst->info_slot == (int)moonlit_wake_effect)
+        {
+          if ((inst->damage_target_player == player && inst->damage_target_card == card) ||
+              (inst->targets[0].player == player && inst->targets[0].card == card))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy = create_targetted_legacy_effect(player, card, &moonlit_wake_effect, player, card);
+      card_instance_t *inst = get_card_instance(player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, 0);
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, 0);
+  }
 
-	if( get_card_instance(player, card)->kill_code <= 0 ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			gain_life(player, amount);
-		}
-	}
+  if (get_card_instance(player, card)->kill_code <= 0)
+  {
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result)
+    {
+      int amount = BYTE0(result);
+      while (amount > 0)
+      {
+        gain_life(player, 1);
+        --amount;
+      }
+    }
+  }
 
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_muzzle(int player, int card, event_t event){

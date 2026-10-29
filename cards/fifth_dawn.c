@@ -1771,7 +1771,7 @@ int card_ensouled_scimitar(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if (is_equipping(player, card)){
-		modify_pt_and_abilities(instance->targets[8].player, instance->targets[8].card, event, 1, 5, 0);
+		modify_pt_and_abilities(instance->damage_target_player, instance->damage_target_card, event, 1, 5, 0);
 	}
 
 	if( event == EVENT_CAN_ACTIVATE ){
@@ -2368,7 +2368,7 @@ int card_healers_headdress(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if (is_equipping(player, card)){
-		modify_pt_and_abilities(instance->targets[8].player, instance->targets[8].card, event, 0, 2, 0);
+		modify_pt_and_abilities(instance->damage_target_player, instance->damage_target_card, event, 0, 2, 0);
 	}
 
 	if( ! IS_GAA_EVENT(event) ){
@@ -2385,7 +2385,7 @@ int card_healers_headdress(int player, int card, event_t event){
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		if (is_equipping(player, card)){
-			int result = granted_generic_activated_ability(player, card, instance->targets[8].player, instance->targets[8].card, event,
+			int result = granted_generic_activated_ability(player, card, instance->damage_target_player, instance->damage_target_card, event,
 													GAA_UNTAPPED | GAA_CAN_TARGET| GAA_DAMAGE_PREVENTION, MANACOST0, 0, &td, "TARGET_DAMAGE");
 			if( result ){
 				return result;
@@ -2402,7 +2402,7 @@ int card_healers_headdress(int player, int card, event_t event){
 		int can_basic_equip = can_activate_basic_equipment(player, card, event, 1);
 		int can_prevent_damage = 0;
 		if (is_equipping(player, card)){
-			can_prevent_damage = granted_generic_activated_ability(player, card, instance->targets[8].player, instance->targets[8].card, EVENT_CAN_ACTIVATE,
+			can_prevent_damage = granted_generic_activated_ability(player, card, instance->damage_target_player, instance->damage_target_card, EVENT_CAN_ACTIVATE,
 																	GAA_UNTAPPED | GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION, MANACOST0, 0, &td, "TARGET_DAMAGE");
 		}
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
@@ -2424,10 +2424,10 @@ int card_healers_headdress(int player, int card, event_t event){
 			}
 		}
 		if( choice == 3 ){
-			if( charge_mana_for_activated_ability(instance->targets[8].player, instance->targets[8].card, MANACOST0) &&
+			if( charge_mana_for_activated_ability(instance->damage_target_player, instance->damage_target_card, MANACOST0) &&
 				pick_target(&td, "TARGET_DAMAGE")
 			  ){
-				tap_card(instance->targets[8].player, instance->targets[8].card);
+				tap_card(instance->damage_target_player, instance->damage_target_card);
 				instance->info_slot = 2;
 			}
 		}
@@ -2502,8 +2502,8 @@ Equip |2 */
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if (is_equipping(player, card)){
-		if( event == EVENT_ABILITIES && affect_me(instance->targets[8].player, instance->targets[8].card) ){
-			haste(instance->targets[8].player, instance->targets[8].card, event);
+		if( event == EVENT_ABILITIES && affect_me(instance->damage_target_player, instance->damage_target_card) ){
+			haste(instance->damage_target_player, instance->damage_target_card, event);
 			event_result |= KEYWORD_FIRST_STRIKE | KEYWORD_TRAMPLE;
 		}
 	}
@@ -3042,8 +3042,8 @@ int card_paradise_mantle(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	int e_player = instance->targets[8].player;
-	int e_card = instance->targets[8].card;
+	int e_player = instance->damage_target_player;
+	int e_card = instance->damage_target_card;
 
 #define CAN_GET_MANA	(is_equipping(player, card) && !is_tapped(e_player, e_card) && !is_sick(e_player, e_card) && can_produce_mana(player, card))
 #define CAN_EQUIP		(can_activate_basic_equipment(player, card, event, 1))

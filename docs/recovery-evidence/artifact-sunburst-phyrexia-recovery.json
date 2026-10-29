@@ -1,0 +1,1062 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "can_generate_kaldra",
+      "source": "cards/fifth_dawn.c",
+      "native_ranges": [
+        {
+          "address": "0x20287c0",
+          "end": "0x202884c",
+          "bytes_sha256": "f3912cba58301ae035346b56028371e0467f350dd4fa34dea362be2072b351da",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/20287c0.c",
+          "raw_export_sha256": "e0295d7a6278e5f936ae5b64373c29aec357bb8193519536909c8ea2d7220276"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d43043517bc6b0c26efd2e95eb7b4c503135a8eda9de3c37bff59e0fffa5af67"
+    },
+    {
+      "name": "num_colors_paid",
+      "source": "cards/fifth_dawn.c",
+      "native_ranges": [
+        {
+          "address": "0x2028b30",
+          "end": "0x2028c47",
+          "bytes_sha256": "def212b83c7afef34da4bab64d9d056aa44be5fb6cb20556f3379f965c3088ca",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2028b30.c",
+          "raw_export_sha256": "54c54dfd96a363f16cf0eb9dbf22f5f1f30f6f779359ba20a0568b4e6fb4dbc4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "6c24da7759c2f65c04c692595af08323f8a5cb5c1d12e76d718bb1703a1793b2"
+    },
+    {
+      "name": "sunburst",
+      "source": "cards/fifth_dawn.c",
+      "native_ranges": [
+        {
+          "address": "0x2028c50",
+          "end": "0x2028ca5",
+          "bytes_sha256": "282fc16cf3d5e65b21fddbf02888cffafb1a1ce5af061e47cb02a24f9fd91613",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2028c50.c",
+          "raw_export_sha256": "87c1e5ac5974462917ec5337725d84d166c7d2ed5e3adebe1c1ac2c45bcd79cf"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "404373b04f97ae7304fda988f07b10c0e6032e5aded5b8391b142d435dc4fc4e"
+    },
+    {
+      "name": "equip_kaldra",
+      "source": "cards/fifth_dawn.c",
+      "native_ranges": [
+        {
+          "address": "0x2028cb0",
+          "end": "0x2028d49",
+          "bytes_sha256": "b6d2bd6692c32ceb08e7cb6e2c057003fb7aa3743af16dd3edf61307abb253c7",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2028cb0.c",
+          "raw_export_sha256": "eee40a3248f02b5fd1b1c2f3d9dd4ba997e011a5e2e231170e3af468ce55f74e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "163a4d0bfcf1a018c2093c2f6d5f98a19e9cdd7c8848d274d20aeb3544189a5b"
+    },
+    {
+      "name": "instant_equipment",
+      "source": "cards/fifth_dawn.c",
+      "native_ranges": [
+        {
+          "address": "0x2028e70",
+          "end": "0x20292ed",
+          "bytes_sha256": "a86fd7200823b5eb242ddc5bbe874239127e105f907cb936fc124dacd864ca3a",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2028e70.c",
+          "raw_export_sha256": "29e3fee21e55525e081f2d35efb2dd366fa926b92d2df5d78413ec1534504238"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "345c0d178a9a22de0079c62d1814e8d4f2b7edff4a137efe8b382887916743b0"
+    },
+    {
+      "name": "store_num_colors_paid_in_info_slot",
+      "source": "cards/fifth_dawn.c",
+      "native_ranges": [
+        {
+          "address": "0x20292f0",
+          "end": "0x202933d",
+          "bytes_sha256": "fbe1fb74cb971658b1ad7c21c960d46ae383eb8bab42c2c289d869b6ec3f0148",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/20292f0.c",
+          "raw_export_sha256": "bb557b5ce3e2f04c2fd522d8383d1afd288e91e49d852d8ea4247abea330a6f6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "296215fd4fb4a577925eb567da2e5ba08720dab8de6f9dbfc60e088141b4525f"
+    },
+    {
+      "name": "modular",
+      "source": "cards/darksteel.c",
+      "native_ranges": [
+        {
+          "address": "0x224d8e0",
+          "end": "0x224da4b",
+          "bytes_sha256": "4fe2d243050275a2f4882be05d8490659cb03ba45ab73c95764210c857087aab",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/224d8e0.c",
+          "raw_export_sha256": "0614c10e4e9f1a5de43ef3ab25ca62f6c6473abb7a8151b78eef90238c867bc3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4aa940f33497243669955babae609096782b4ab0fcb5ffd551eb751188a02c7d"
+    },
+    {
+      "name": "target_must_have_counters",
+      "source": "cards/new_phyrexia.c",
+      "native_ranges": [
+        {
+          "address": "0x226d350",
+          "end": "0x226d37f",
+          "bytes_sha256": "27952e83761bee34d01f2bec60e0d1c0db990623f689a746a0790247944c2ce4",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/226d350.c",
+          "raw_export_sha256": "0e57b40cc8a540842837f9f972199f632ee55e49985ff9c34b794a3c17f202b2"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "393be60f977744ef07682a2b162e8c2f4c844f2cd34012578b73f94974e4f8c6"
+    },
+    {
+      "name": "np_shrines",
+      "source": "cards/new_phyrexia.c",
+      "native_ranges": [
+        {
+          "address": "0x226d380",
+          "end": "0x226d4a7",
+          "bytes_sha256": "ec602c5c9a906c85b339408d14a1883e507a2da21285fcdf966d4e0a391faa6f",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/226d380.c",
+          "raw_export_sha256": "06f64d30ab9f417c56cd77b273ab5c5c14d7833bf843e76ab923b1fc4fcd4632"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b90105a04b1101574a35532aa6db0db7b958d36024b5ec9c04681ec3094e25b2"
+    },
+    {
+      "name": "arm_with_aether_legacy",
+      "source": "cards/new_phyrexia.c",
+      "native_ranges": [
+        {
+          "address": "0x226d520",
+          "end": "0x226d6ea",
+          "bytes_sha256": "3409b98ee608735ab69898fc7e46de547b38030e1b82ada7713d19927dedf1f9",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/226d520.c",
+          "raw_export_sha256": "6a7d741aac648c6ccd0a7edee8c2f674dfed719223353c83fa9df730bdfa3197"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "96c063d59b4ab3094ef4329136cd0233bc8e1a2f1799951f971c3d43f50df18f"
+    },
+    {
+      "name": "can_legally_change_target_to_me",
+      "source": "cards/new_phyrexia.c",
+      "native_ranges": [
+        {
+          "address": "0x226d6f0",
+          "end": "0x226d79b",
+          "bytes_sha256": "1897d2f76affc82cf30619a689275eb39949ade567f2128a40e3e581e51ee312",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/226d6f0.c",
+          "raw_export_sha256": "d33f467d28830d04a0863ced67c562cc54d8816df98b4ee7635c46aefadf400c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "f37b74833ad1926a1855ca6a90192982e6229263275a2059157fcc51acbbca96"
+    },
+    {
+      "name": "glissa_the_traitor_effect",
+      "source": "cards/mirrodin_besieged.c",
+      "native_ranges": [
+        {
+          "address": "0x232a310",
+          "end": "0x232a64e",
+          "bytes_sha256": "cfa9c8647b86d11dea4a2c67453e5c28e69193b1de80eb7bff0d38582e8a8af2",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/232a310.c",
+          "raw_export_sha256": "0c2b5f1813f6bde2df5cc28d04c9b66e9d106768245b845c8b4df37052b48bbd"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e10e7c0d05c4e27fb92fbdf7e54cc0ad6adbf9068d9c66810d1c28122cbe0a37"
+    },
+    {
+      "name": "sangromancer_effect",
+      "source": "cards/mirrodin_besieged.c",
+      "native_ranges": [
+        {
+          "address": "0x232a650",
+          "end": "0x232a909",
+          "bytes_sha256": "23ba2d1b340fbaaa77f6fc3dc2eb4d76e9e4a0d3a73ddae78725cfd56a80f2a6",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/232a650.c",
+          "raw_export_sha256": "422d15d71088b5c27e4857257972f0e301ec0153da750b80a20723a734bd7e8e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "28067b973bcd3a77b9e4fa9292aca19d320445017e399714e5f328fc5d70d3dd"
+    },
+    {
+      "name": "massacre_wurm_effect",
+      "source": "cards/mirrodin_besieged.c",
+      "native_ranges": [
+        {
+          "address": "0x232a910",
+          "end": "0x232ac5d",
+          "bytes_sha256": "2c54ac42b763b2cf59c4d9e7d4a89d11a5f7f8728a0a09c48d8abe79cab24128",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/232a910.c",
+          "raw_export_sha256": "11ee43487333ef54fef8ff5e528f8d17a746cd86a3a93e4397b0755ceee6db71"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ccc9ba641eda413b685bc0e6cc935abadc0e506bb8db6ba8b0ec249b4142a01f"
+    },
+    {
+      "name": "magnetic_mine_effect",
+      "source": "cards/mirrodin_besieged.c",
+      "native_ranges": [
+        {
+          "address": "0x232af80",
+          "end": "0x232b2ba",
+          "bytes_sha256": "b6a830e12b3072edbcdef318ce2a4de7762547334dd3f46e5871fd04d7971f2d",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/232af80.c",
+          "raw_export_sha256": "e83dd1223f9ba4f4200373b9e4c2c1c277c0adb02bcb5d054145cfdc463535b2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5d90e70cafd52b1903ce3a2967aaa42ffe4b9c092113c13e1840580406f56554"
+    },
+    {
+      "name": "virulent_wound_legacy",
+      "source": "cards/mirrodin_besieged.c",
+      "native_ranges": [
+        {
+          "address": "0x232b2c0",
+          "end": "0x232b431",
+          "bytes_sha256": "ca286749f3f127a23b26bf3d7725ce236660df0dbecb77efc9aeefa3aa668e00",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/232b2c0.c",
+          "raw_export_sha256": "4b8dfef0a2e499732c8988cf3427880fde5b1bd8603c0b404076a453e6672fc1"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0f42d860f44a67d74f5f8eab315653166b15918bf2cb113ecd92d5076f8be2e7"
+    },
+    {
+      "name": "cryptoplasm_legacy",
+      "source": "cards/mirrodin_besieged.c",
+      "native_ranges": [
+        {
+          "address": "0x232b4a0",
+          "end": "0x232b5d7",
+          "bytes_sha256": "a6e84ec831fe8f3b9b20d8e6652853d6c3dda586b28d071526bdad45c9b95bcc",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/232b4a0.c",
+          "raw_export_sha256": "412f504327e8f8132a05336a685ebd6fc67e85af74cf6d74786772cbf25f63a2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "797b56023d261c73796432f841872d774508ad3a65aca1714ece4c3985453e4d"
+    },
+    {
+      "name": "lead_the_stampede_effect",
+      "source": "cards/mirrodin_besieged.c",
+      "native_ranges": [
+        {
+          "address": "0x232ea90",
+          "end": "0x232eb5b",
+          "bytes_sha256": "c59ebfb2c91fbc25c36c2f99e226cdfd34bec8fbe4252e4c2133dbcb4c284a32",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/232ea90.c",
+          "raw_export_sha256": "1f901288916073505e807413a56a2502a3b9826ffd60e1ba6d1ef9fb1a206d9b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "349f4cf8af1f533d87134f9ade99afde4031dc99da6adcfefa8b071d708cd103"
+    },
+    {
+      "name": "smiths",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2437190",
+          "end": "0x24371e2",
+          "bytes_sha256": "5285427419abfdc59179cd4d5d57c9c051689b1c22eacfcc33e16db469a9306f",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2437190.c",
+          "raw_export_sha256": "2639e1a78c2188486c5992b6bd4cd73f38adf874256061fb07883f7aeefdde54"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "62e3be08f66cd4e86dacb5d2cec469f2eee1cae8e7afaa7826f534ed76b05adf"
+    },
+    {
+      "name": "trigon",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2437320",
+          "end": "0x2437708",
+          "bytes_sha256": "8b403465151c36705041c55b392b9ef81d004b05e1114d221f8bfd0a70e6b085",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2437320.c",
+          "raw_export_sha256": "818fa571bc582d90896eb70b915c4af50aaf80e4a11c39c9f4fcfe1e35ec3433"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f4b99f6cef92e9cc53c71c1429d83182506367c279ea03713af21b0637413709"
+    },
+    {
+      "name": "animate_glint_hawk_idol",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2437710",
+          "end": "0x243777b",
+          "bytes_sha256": "161063ac322d3bef909ada1aea8f2c76d772801ec119ac25968bc8612d9151d7",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2437710.c",
+          "raw_export_sha256": "51fcfad372c24f2f42de8e223e7aef27240e62c1e06b053e68cffe195dafbcb4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d1f3fb80b1dfbafac8b25318f439c6a78cac9334ea8607f356af6e49d0ffa955"
+    },
+    {
+      "name": "furnace_celebration_effect",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x24377d0",
+          "end": "0x2437b97",
+          "bytes_sha256": "28d152d22b4318b84e0e9110e29b7e66a64da671acef3e49daf03037aa523b0b",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/24377d0.c",
+          "raw_export_sha256": "5621a798aeecef5b0497d7e1197a8cd7085f583512e876e14e6795786ee0ddc0"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "614455492e05e95a19b2a11c6f8008858bd518d9147fe68806adbfaeff4969a2"
+    },
+    {
+      "name": "vigil_for_the_lost_effect",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2437ba0",
+          "end": "0x2437e97",
+          "bytes_sha256": "72d84efd049546ddd421df4b1f79b47168e66b39236d12dcea873e9a3de8de96",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2437ba0.c",
+          "raw_export_sha256": "2883a9962b68c10c8c46488c3e978e83b61d62322e5d0e8a2a9f7caccd7d7a3d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ce7455cb52fd047e7e474353ed81bfdcb6b345234a21203ecc03edb4445cac8b"
+    },
+    {
+      "name": "viridian_revel_effect",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2437ea0",
+          "end": "0x2438182",
+          "bytes_sha256": "619daf39be39bb2c8548e39d6a57945519645b9c676a7f10c451258d61b553a4",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2437ea0.c",
+          "raw_export_sha256": "3d525a53b3edd0110a2b737b508de44e54b19b47a5023c7f38d3f713bd9f2b3c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6c51c959b23333ce004b0af3772b2baddf53dc667d69a691ef7a92a1b7989057"
+    },
+    {
+      "name": "pump_ezuri_archer",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2438190",
+          "end": "0x24381ea",
+          "bytes_sha256": "3fe5abe614dd1ab6ca729a2b67ac5a7ad5733a5dfc9456a22852e4cdcc3264c9",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2438190.c",
+          "raw_export_sha256": "d2c2d0c8dfa1d2b29124ba9f1f64683a0b4896c4c6acdf2c45cdaa06162b1807"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d9c0c78bd2adebc609bd4f173e4928f524577afc22e997b60b97d58328d1d80a"
+    },
+    {
+      "name": "is_not_x_spell",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2536e30",
+          "end": "0x2536e4b",
+          "bytes_sha256": "b9569087840286dcdb7a638d95e3f9efa55786caea6ce828131e668abb11f31e",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2536e30.c",
+          "raw_export_sha256": "19d57773b8089d4d7378a180b8242fd076b7f54c822a4d92a911acf18e8dc126"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d3477d8c368e3046fb537f82df1bf18e681bc35843b18a79cab457b0564a4547"
+    },
+    {
+      "name": "blinding_beam_effect",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2536ec0",
+          "end": "0x2536f92",
+          "bytes_sha256": "e4f96bc2c225b62f73be57e345f004b455c61953453e96889f23b0f3bee85787",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2536ec0.c",
+          "raw_export_sha256": "c5ee6ec14030501947d6a70f1bb59b5ed0e8f081504b640ae49004d580e0125a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c03f57a16f2694db79aac8f6482d257f1def8593071fc8d72673dcb213219e1c"
+    },
+    {
+      "name": "disciple_of_the_vault_effect",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2537200",
+          "end": "0x2537508",
+          "bytes_sha256": "c2c5c80aac6215ab30bdcbcf4ba2871565718330e73c7b5578cee2843bdd3d54",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2537200.c",
+          "raw_export_sha256": "4c69c0e5b4c37f3eb44ee9d6e28fa6a8d7cf6f2012c5dc3eb13fcc8a25ed16ea"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e8957ac2f16ee9a8bd44d59f806b4a822e5b3bf37d1e50217c03ceb4e671e360"
+    },
+    {
+      "name": "dross_harvester_effect",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2537510",
+          "end": "0x25377c1",
+          "bytes_sha256": "2719c2aab45a3a600b3781d495f52673abb2aa64e74b87088bbe1cd99cd8916e",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2537510.c",
+          "raw_export_sha256": "ad4fd2c5ac46afa2151a3da21a73794f1cc1f0869d6edc71815de4b1d79b220b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1d832a6c9ad9835102a15389efab6e28e7dfe7f17a0a44a2755adf89a4aa115e"
+    },
+    {
+      "name": "dross_scorpion_effect",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x25377d0",
+          "end": "0x2537b7b",
+          "bytes_sha256": "34222e630206180d64c312071b207c0314cca5b5edfd66b2a7e41808cd242d54",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/25377d0.c",
+          "raw_export_sha256": "8831af93455e1ae75f0721ceb58a334ec7f3d55038c8928af333c48aa12bc114"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "15bf5b8164f528e0ad12b8535c326d090268d0199912d3ac749283ae22e42bf0"
+    },
+    {
+      "name": "oblivion_stone_effect",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2541f60",
+          "end": "0x25420a9",
+          "bytes_sha256": "3cd9b56a5da71464f9ec3da75f308699e1e2ff0813a82a54f6fc69b686ce8a4a",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2541f60.c",
+          "raw_export_sha256": "a06759da032c23229864bc24f407cde0ca2711845a002720f9cb6c57545fb883"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "591593cfa9e329f7ca99a3d5db1b872612d69b8a1cd865a1c433742860bc2822"
+    },
+    {
+      "name": "soul_foundry_impl",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2545ab0",
+          "end": "0x2545f02",
+          "bytes_sha256": "7ed8a7d51074fdc709a08c96307891b68b0480ad0ec97d6e737f861446668884",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia/2545ab0.c",
+          "raw_export_sha256": "fa555170be049e7b1bded35c3dcdf1afe7e1fe0f2fcac5fd6241bd5174fb85b7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "cbd8e4b2aee654feffb92c9e77cd7865b805a4889b61febe5322619037ad7b0a"
+    },
+    {
+      "name": "not_already_dying",
+      "source": "cards/darksteel.c",
+      "native_ranges": [
+        {
+          "address": "0x224d6b0",
+          "end": "0x224d6d9",
+          "bytes_sha256": "f49ebd4825448fd68899270709be9348899de80fcd1fb929acaf397a927d0e60",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/224d6b0.c",
+          "raw_export_sha256": "c172eeb4af33a96aa69d1890cae4f61a1795cb6e46a184c4014fecee46b63d4f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cbf6b2e80cdcb65c46058b6003b6654438cbdc3946b6e865c22fc08b5335b850"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_sparring_collar",
+      "source": "cards/fifth_dawn.c",
+      "native_ranges": [
+        {
+          "address": "0x2032d60",
+          "end": "0x2032d95",
+          "bytes_sha256": "1e4ef7fd26ba165242f1674077d94b7bb0a519254d9563a0b5f1cb7e763474aa",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/2032d60.c",
+          "raw_export_sha256": "383f82ca62d638b138f26d910f52eecb4ce48074d2495e95c18502f66a8eeeea"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d0ce591f6f857b8d78ef0ee9e8c2a5c4ef2b4e35bea88b2a3b275ba8edfa5de7"
+    },
+    {
+      "name": "card_neurok_stealthsuit",
+      "source": "cards/fifth_dawn.c",
+      "native_ranges": [
+        {
+          "address": "0x20310b0",
+          "end": "0x20310e5",
+          "bytes_sha256": "beaf6cec9c999643a0122b2bd122a8e8077948701ad5c0e3925f6e79164a704a",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/20310b0.c",
+          "raw_export_sha256": "b3e36d7be93f1cd9401d7c9ad85cd18e4c90ea7943900ea3023d39b82155120c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8c3cfbdc8454e110f017f0490bbc70a467c7757aef6491dd7afcaecca6122e92"
+    },
+    {
+      "name": "card_horned_helm",
+      "source": "cards/fifth_dawn.c",
+      "native_ranges": [
+        {
+          "address": "0x202fb00",
+          "end": "0x202fb35",
+          "bytes_sha256": "ab8a58d0bfe81c629392081840c2ec5ae0616566f01d8c4fa8ea8a75a0cd990b",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/202fb00.c",
+          "raw_export_sha256": "20ca2ebec930b7bd402ad657960d99e50bd7da9069d710669c708ee9bcca68ad"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9de7557319f0637b65665f1e578e39cbe108ee827ae5aeb0309e280212005947"
+    },
+    {
+      "name": "card_healers_headdress",
+      "source": "cards/fifth_dawn.c",
+      "native_ranges": [
+        {
+          "address": "0x202f160",
+          "end": "0x202f74a",
+          "bytes_sha256": "f45a8ee34a0b9c54d33021af9fa7b54e58d574f337b8009008b5da8794ca4ef8",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/202f160.c",
+          "raw_export_sha256": "053091af9c55264d51b1c161aaf684fd7381adf90f5559c862dc8d1a1d9afad0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "622be9612b9aca495e0ba97e98baf36036f561c17378209278593e21a282c156"
+    },
+    {
+      "name": "card_cranial_plating",
+      "source": "cards/fifth_dawn.c",
+      "native_ranges": [
+        {
+          "address": "0x202c030",
+          "end": "0x202c07c",
+          "bytes_sha256": "f7b2354f6b67912d0b3474a04bcdd98a377e6310559895af5f9cce67c8ec9762",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/202c030.c",
+          "raw_export_sha256": "bd15cd6064fc8a285ddb6b2df4538614c3e479fa05d91eb43b3bb5c5b486077a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9d7d5e08b15c1e771f44517d604799af4b1ed6d86f08c2bc935527a3e2853a3b"
+    },
+    {
+      "name": "card_spellskite",
+      "source": "cards/new_phyrexia.c",
+      "native_ranges": [
+        {
+          "address": "0x227be30",
+          "end": "0x227c087",
+          "bytes_sha256": "cdf9e9a856543fbd16d3723d4403320cae1023a7d59f600882b4b6e18fbd4d59",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/227be30.c",
+          "raw_export_sha256": "bec2b7f77b0aae37641edddb23b82d20285093e8cc9ba72be1dc57309efb0af7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c9c3dac4c6b6eb5737a2a08ef559c587138e4ab1a8f5111d1314a58c409788c6"
+    },
+    {
+      "name": "card_cryptoplasm",
+      "source": "cards/mirrodin_besieged.c",
+      "native_ranges": [
+        {
+          "address": "0x2330130",
+          "end": "0x23301a2",
+          "bytes_sha256": "9377d0588eb3caeb5a7aca11e3749d695a28db5a3993c8094319912848cb374f",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/2330130.c",
+          "raw_export_sha256": "01686db115c2e3be8f116358db5387a34ee693eee96cb641034d71023347edc6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "baeab4cbc73e1eea4006233104fbcc5919b7e6d162c4f95cb7f91ff69af80de5"
+    },
+    {
+      "name": "card_riddlesmith",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2447d90",
+          "end": "0x2447de6",
+          "bytes_sha256": "c90bb99fcbfa5a0715be81b224d2aab32e8ce223a969c8e79040638f2f9669d4",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/2447d90.c",
+          "raw_export_sha256": "5d9c2f223ab43b6a9ef3ce35889d880be0be78e757a39550fa65a33f53f7218c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "64ba2e05f3656a78ca58759853348ec5c0b4cc3ab4193022a9ba83549ca4d903"
+    },
+    {
+      "name": "card_painsmith",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2446c70",
+          "end": "0x2446d56",
+          "bytes_sha256": "3f60c2ed3521afc530a75df058b453285cb4320fa99087da3260dd873e947059",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/2446c70.c",
+          "raw_export_sha256": "f42456ee7f7023f7a01ef706cf01cae8b787b7f71f11ee44848002078ab68c55"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "426735f3ee03ff77cac96a73c286a216f003067c287085c91d5fc5a63518d3dd"
+    },
+    {
+      "name": "card_myrsmith",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2446240",
+          "end": "0x24462d8",
+          "bytes_sha256": "f14f81ee66472c1145495b5f5fe398da4f4e9af0b5c00c261ff9e4e2d123e652",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/2446240.c",
+          "raw_export_sha256": "9abbfb46202d836f8f2a11be4a8332f9f5cb8805807743c89153610c6ce7a68d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ea040f5b676f1a3091d6bea6cdd22a68b877f91a3e08d100701c5b7b73d37a59"
+    },
+    {
+      "name": "card_lifesmith",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x24454b0",
+          "end": "0x2445541",
+          "bytes_sha256": "043377d52bebefedaef697df12de3ce1991632aae7bb16049fbb81632d825461",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/24454b0.c",
+          "raw_export_sha256": "58dcd5b83538cf2012a5104233a91efee7465a69afd8e08b6bb4aab4a3c17a26"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8f88e8ca98dbbd2fb8129afd302f4fdf4242660b4f4e3be9bdd9b05be1196ae9"
+    },
+    {
+      "name": "card_ezuris_archers",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2441930",
+          "end": "0x24419b3",
+          "bytes_sha256": "02c574ddf0f4b174f742d645c6d8040005df1dd3ada5cac585002e4f0907c1e1",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/2441930.c",
+          "raw_export_sha256": "1a15d284e6fda875414f85faa0d0e102931127d48684f4345e182b68cbddf21b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "87b1ab49d2ef2741bb88f2826d736471596a1b276ce4f558f068a460b13213db"
+    },
+    {
+      "name": "card_embersmith",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x24415c0",
+          "end": "0x24416db",
+          "bytes_sha256": "4efca101409acdefac3e3ffb86698186068b35f40afdb9d13cdf0ace8ded6846",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/24415c0.c",
+          "raw_export_sha256": "2b12fb4abf96ae6cf4257f48c7bccc04af41e8c6a155246a3aa040fb1f74ddbe"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "606644d9c2fd6d0596a9d5262914dd65ef8d5ff14e61bcddac08d532a73b08b0"
+    },
+    {
+      "name": "card_soul_foundry",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2545f10",
+          "end": "0x2546012",
+          "bytes_sha256": "81f36cadf8c37b7bcfa44b0a622102c6bb9e9f99f229d8a278ca3e60ae0102a0",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/2545f10.c",
+          "raw_export_sha256": "6e9e3953404a2455d970b7dc4fab86a18a71650fa5b8dfb271df2a415d2f432b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "76fea6d9725de98df70f90e5a215fae4f13548006a3af2d03a0fd213dfefda68"
+    },
+    {
+      "name": "card_isochron_scepter",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x253eeb0",
+          "end": "0x253f4e7",
+          "bytes_sha256": "27d95841b95c4490696fdd548d2f38193739fd76c3c75dd12ddf5fc941e257c8",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/253eeb0.c",
+          "raw_export_sha256": "10ed7209587d011cdd1ce34f3067118502e66ebaaab06f719c12bf6645451b3a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d681cb81c9034a7c4f9ba590e86185b900bb2e3b16e2d89e0e2274d4f006dd9c"
+    },
+    {
+      "name": "card_blinding_beam",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x2539690",
+          "end": "0x2539c88",
+          "bytes_sha256": "bd3816be292011772cc674b0104890f3ade5bf222ccfa4f2e44dec9f4fd46283",
+          "raw_export": ".recovery/decompiled-artifact-sunburst-phyrexia-support/2539690.c",
+          "raw_export_sha256": "dbe53037a86cfe2d4c0a3b48463f79bc38eac57781df80453d052524a19a254b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "096c76b43d9ee2013b2ebe9d2e1fb2e3705a2c926cbc74cd45f818c3ed90f346"
+    }
+  ],
+  "helper_definitions": 33,
+  "initial_helper_definitions": 32,
+  "supporting_helper_definitions": 1,
+  "native_helper_ranges": 33,
+  "changed_helper_definitions": 23,
+  "changed_card_callers": 9,
+  "optimized_parameter_evidence": {
+    "0x2028e70": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "manacolor": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "pow": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "tou": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "key": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "s_key": {
+        "first_location": null,
+        "constant": 0
+      },
+      "equip_cost": {
+        "first_location": null,
+        "constant": 1
+      }
+    }
+  },
+  "native_array_extents": {
+    "0x2028e70::c": [
+      6
+    ],
+    "0x2028e70::abils": [
+      3
+    ],
+    "0x232af80::dead": [
+      2
+    ],
+    "0x253eeb0::removed": [
+      10
+    ],
+    "0x2539690::abilities": [
+      2
+    ]
+  },
+  "target_initialization_sites": [
+    {
+      "call_address": "0x2028f64",
+      "call_bytes": "e8d7726300",
+      "controller_stores": [
+        {
+          "address": "0x2028f80",
+          "bytes": "895da8",
+          "op_str": "dword ptr [ebp - 0x58], ebx"
+        },
+        {
+          "address": "0x2028f83",
+          "bytes": "895da4",
+          "op_str": "dword ptr [ebp - 0x5c], ebx"
+        }
+      ]
+    },
+    {
+      "call_address": "0x20290fc",
+      "call_bytes": "e83f716300",
+      "controller_stores": [
+        {
+          "address": "0x202914f",
+          "bytes": "895da8",
+          "op_str": "dword ptr [ebp - 0x58], ebx"
+        },
+        {
+          "address": "0x2029152",
+          "bytes": "895da4",
+          "op_str": "dword ptr [ebp - 0x5c], ebx"
+        }
+      ]
+    }
+  ],
+  "native_card_ids": [
+    {
+      "name": "CARD_ID_ZABAZ_THE_GLIMMERWASP",
+      "value": 23212,
+      "die_offset": "0x1f49ff2"
+    }
+  ],
+  "inlined_equipment_query": {
+    "source": "cards/fifth_dawn.c",
+    "function": "can_activate_instant_equipment",
+    "definition_sha256": "00307ec5967db274a71c64cb321e6c4c19941226ed51f5edf55c335d2cafbfe7",
+    "owner_range": "0x2028e70",
+    "standalone_native_range": null,
+    "scope": "Retained original query body reviewed against the native owner CAN_ACTIVATE branch; no standalone body recovery credit."
+  },
+  "dialog_option_data": [
+    {
+      "address": "0x27528da",
+      "bytes_hex": "0102"
+    },
+    {
+      "address": "0x275298d",
+      "bytes_hex": "54617020637265617475726573"
+    },
+    {
+      "address": "0x2752974",
+      "bytes_hex": "45786861757374696f6e20666f7220637265617475726573"
+    },
+    {
+      "address": "0x2752910",
+      "bytes_hex": "456e7477696e65"
+    }
+  ],
+  "native_contracts": {
+    "modular": {
+      "extra_predicate": "not_already_dying",
+      "special_mask": "0xc008",
+      "old_illegal_dying_state_removed": true,
+      "counters": "count_1_1_counters + count_cards_by_id(Zabaz)"
+    },
+    "equipment": {
+      "generic_signature_retained": true,
+      "optimized_constants": {
+        "equip_cost": 1,
+        "s_key": 0
+      },
+      "complete_callers": 5,
+      "controller_stores_after_initialization": true
+    },
+    "sunburst": {
+      "color_count_and_payment_retained": true,
+      "source_aware_counters": true
+    },
+    "shrines": {
+      "dispatch": "sp_ability_trigger mandatory + EVENT_SPA",
+      "upkeep_completion": "EVENT_UPKEEP_TRIGGER_ABILITY"
+    },
+    "arm_with_aether": {
+      "damage_resolver_mode": "!duh_mode(player)",
+      "mode_type": "ddbm_flags_t",
+      "optional_bit": 1
+    },
+    "spellskite": {
+      "saved_target_player": "targeting_player",
+      "probe_event": "EVENT_CAN_CAST",
+      "target_type": "TYPE_ANY"
+    },
+    "death_legacies": {
+      "detach_byte": 1,
+      "resolver_before_visibility": true,
+      "old_end_trigger_resets_removed": true,
+      "per_packet": [
+        "sangromancer.gain_life3",
+        "massacre_wurm.lose_life2",
+        "magnetic_mine.damage_player2 APNAP",
+        "disciple.lose_life1",
+        "dross_harvester.gain_life2"
+      ],
+      "no_immediate_removal": [
+        "glissa_the_traitor_effect",
+        "massacre_wurm_effect"
+      ],
+      "disciple_removes_even_invalid_opponent": true,
+      "dross_scorpion_breaks_failed_target": true
+    },
+    "virulent_wound": {
+      "death_suppression": true
+    },
+    "cryptoplasm": {
+      "attachment_and_humiliation_guard": true,
+      "upkeep_mode": "RESOLVE_TRIGGER_AI",
+      "target_definition_source": "legacy",
+      "target_slot": 0,
+      "self_target_allowed_but_no_clone": true,
+      "target_count_reset_before_pick": true,
+      "card_dispatch": "cloning_card + EVENT_RESOLVE_SPELL targetted legacy effect"
+    },
+    "lead_the_stampede": {
+      "tutor_success": ">=0",
+      "native_odd_result_initial_value": "MIN(amount,count_deck)",
+      "increments_result_per_revealed": true
+    },
+    "smiths": {
+      "return_type": "void",
+      "dispatch": "unconditional sp_ability_trigger AI + EVENT_SPA",
+      "complete_callers": 5
+    },
+    "glint_hawk_idol": {
+      "subtype_storage": "legacy.targets[9].card=SUBTYPE_BIRD",
+      "direct_subtype_change_removed": true,
+      "color_storage": "legacy.targets[6].player=WHITE"
+    },
+    "vigil": {
+      "packet_byte": 0
+    },
+    "viridian_revel": {
+      "draw_call": "draw_up_to_n_cards"
+    },
+    "ezuri_archer": {
+      "checks_blocker_flying": true
+    },
+    "isochron_scepter": {
+      "callback_first_arg": "iid",
+      "imprint_types": "TYPE_INSTANT|TYPE_INTERRUPT",
+      "etb_mode": "player1 mandatory, otherwise AI mode",
+      "reject_negative_iids": true,
+      "activation_requires_castable_imprint": true,
+      "interrupt_activation_return": 99,
+      "empty_resolution": "spell_fizzled1",
+      "native_removed_array": 10
+    },
+    "blinding_beam": {
+      "legacy_controller": "targets[0].player",
+      "remaining_upkeeps": "targets[1].card initialized1",
+      "untap": "PHASE_UNTAP + EVENT_UNTAP clears untap_status bits0,1",
+      "removal": "TRIGGER_UPKEEP current_turn match, decrement without event gate",
+      "dialog": "DLG_RANDOM, default info_slot storage; reset info_slot0 before dialog"
+    },
+    "soul_foundry": {
+      "can_activate_exiledby_tests": "EXBY_CAN_CAST|EXBY_TEST_CAN_CAST|EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC",
+      "other_modes_retained": true
+    },
+    "retained_helpers": [
+      "can_generate_kaldra",
+      "num_colors_paid",
+      "sunburst",
+      "equip_kaldra",
+      "instant_equipment",
+      "store_num_colors_paid_in_info_slot",
+      "target_must_have_counters",
+      "trigon",
+      "oblivion_stone_effect",
+      "not_already_dying"
+    ]
+  },
+  "scope": "32 initial helper bodies plus one supporting predicate (33 native ranges), and16 complete paired card callers.23 helpers and9 cards changed. Original generic equipment signature retained with optimized native argument evidence and all five callers reviewed. Native quirks retained; built-in dialog backends and gameplay tests remain downstream."
+}

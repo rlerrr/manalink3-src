@@ -1,0 +1,622 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "get_attack_power",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2679410",
+          "end": "0x2679557",
+          "bytes_sha256": "68b1c6bd8c54e21ca18eab379d0e6a893ef282bdbacade0b996a2ce81c177158",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/2679410.c",
+          "raw_export_sha256": "03ffea853fcf6ee0a1f13fb9eda8645e899255e46719f124c3f0c1a5f5a7f201"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "bbe2f2d06f8b9444cd1338a5c269403173f71d63060c872e2d3f9a3e9c2b2892"
+    },
+    {
+      "name": "comes_into_play_tapped",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2679aa0",
+          "end": "0x2679b3e",
+          "bytes_sha256": "b34fdc6389b192bbc4475f54dd8ec14e4f3ed724051b94a4d0f598fd587d687f",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/2679aa0.c",
+          "raw_export_sha256": "0e7150b5552f1c06699470d2618385435162229e60915c835d0a98b9d5aa94b3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "96e6a1378d7f9b17fd9327c3230b4e220832ab931621e6719f23950403a7b54d"
+    },
+    {
+      "name": "can_legally_play_iid",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2679eb0",
+          "end": "0x2679f94",
+          "bytes_sha256": "90c0262fc64c2efbdd73d3ef1ab175b7b9d79deddcc5e77eb5137c54d4226f5d",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/2679eb0.c",
+          "raw_export_sha256": "388ee9b1bd43a2c9ba5a9f3d2867d675a975fbce5dea634afbb0e400ed3f3c99"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "f7f29f8ed5f761cc9f27f5462c67d1c302cfddcae2be8d9037eceb79f721fd92"
+    },
+    {
+      "name": "can_legally_play_csvid",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267a020",
+          "end": "0x267a041",
+          "bytes_sha256": "b82cefb0902ac734c002ffa7ff1604c91a047ac7133e73b6efcc518018af2aeb",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267a020.c",
+          "raw_export_sha256": "d99ea1d8d7814935128e30e81bf7957d30ce36f0ae596daf5a967e9ada2c4753"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5c3b38b9adeab9447da443d5ec982b0885a43b20118c7e1b00b3f406559d9bb5"
+    },
+    {
+      "name": "true_return_from_oblivion",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267a3d0",
+          "end": "0x267a50c",
+          "bytes_sha256": "4926605d24fc22a02a13fcdf0fe08bb84b4b58b4029db6d41ef2f19b05c8377c",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267a3d0.c",
+          "raw_export_sha256": "43e1d7b5e6d379f99f8eab391b5017fce1ee358e8fdc8c58870d2a17e9201c3a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "cec348e3aef3e0eb1e539a3bcd1fb3488e5fe0064bc3b9f755725b7c2d89eae6"
+    },
+    {
+      "name": "legacy_switch_power_and_toughness",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267a5d0",
+          "end": "0x267a727",
+          "bytes_sha256": "acf41c95cbc4cecbc16283106fed65a74fc839734a34d3cfd3f784e81137e999",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267a5d0.c",
+          "raw_export_sha256": "7aa0d231136a793fc87c5044bb9c37d6c1b1d07d74a65edc825dcf71a1ffaaf8"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4c15f38af786b3f14d7de9f35c6f6302d2d5d717c9e177199c0f481e6cbfa229"
+    },
+    {
+      "name": "pick_card_from_deck",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267a960",
+          "end": "0x267aa0f",
+          "bytes_sha256": "b64cf826c859285baa4c20dc2eb08c711aea4137218fc632887c1ebde4f735f4",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267a960.c",
+          "raw_export_sha256": "5407131a5e0f0c02ca0ef4913cd34427013be95b01434aeabdd853c0eee3d8c9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b874ef87cee9f7b5bc1bdccd2c56c7f9de25f531000bd035aaa3984a19d4ca40"
+    },
+    {
+      "name": "create_legacy_effect",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267aa10",
+          "end": "0x267aa60",
+          "bytes_sha256": "2f527c20ea197c4b89b7e999919d63b3272484518370347000538730dca4cc82",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267aa10.c",
+          "raw_export_sha256": "3af52b85abc708233e02193000ea3535e52c57ef1838e342d551a04be53a3d45"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "051bdfd818a4372ef21e6be3b7fb18caf157f8f7d682aa4d9568c2d67005a19f"
+    },
+    {
+      "name": "create_legacy_activate",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267aa60",
+          "end": "0x267aab0",
+          "bytes_sha256": "d64257185dd34df275d091e9330d189137f039979b80815b6830c6a3ce28f8d4",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267aa60.c",
+          "raw_export_sha256": "758dc84963828f69bfece33d61de80b8cf9bb99669b9abd43c5dd866746e6bb0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "df13163ba2ba07fb0ac6147fc0cc9a3478ac66c635cff8bec5b12c2d879493c0"
+    },
+    {
+      "name": "create_targetted_legacy_activate",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267aab0",
+          "end": "0x267aafe",
+          "bytes_sha256": "46d70884d81aa9a557ec80e0bbad5bebed709bcdca580eb1646396ea20fefdcb",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267aab0.c",
+          "raw_export_sha256": "5ab4cb3e3c60c31bbded40b524aa702872f486c730a4dbf3cda58ae1f8e28569"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2868ad348ac4cda3af15623924e910dee0697e5986d22be9155534fc85a7f58c"
+    },
+    {
+      "name": "create_targetted_legacy_effect",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267ab00",
+          "end": "0x267ab5d",
+          "bytes_sha256": "06037a845a3fdb3b6c86e94155aa02298eec8f8da3acf957ea03ea0c527829d2",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267ab00.c",
+          "raw_export_sha256": "707875be4ddf5f0ad6ebd5f5343ec2f142f9549811fbd0a9ce92afc846589ce8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2d9e03ad0689936c896ea0a3e46eb688b12f1d97e0ccce17d11b558d5fe704d6"
+    },
+    {
+      "name": "find_repeat_legacy_effect",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267b340",
+          "end": "0x267b37d",
+          "bytes_sha256": "7d75110364aa1ab76c0e65573a26ac7a3a4f48d0ee3879d7026c0a93b71877a8",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267b340.c",
+          "raw_export_sha256": "7896ebcf93f84c538f6724042bc28d5de56639fcd953a60a172266d809bb00fe"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ed368e1c1ea5babd77fdf57a37ea381185abd5bfa84b04cd1c46e6d562f02b5d"
+    },
+    {
+      "name": "create_targetted_legacy_effect_no_repeat",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267b380",
+          "end": "0x267b3f6",
+          "bytes_sha256": "c4bc6be5a52f6b0dfaae2416ff700ba3530d6f5b4d97db8d385e91503443c3b6",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267b380.c",
+          "raw_export_sha256": "71a2be81e498320b303700fc42a7601509bae9c972d0e1b9ffe5963e25f1d79e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "72b6dbabb2eaaa12901d50387f2396ba92e62463621aeddff2be71dc4801ff7f"
+    },
+    {
+      "name": "switch_power_and_toughness_until_eot",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267b400",
+          "end": "0x267b46f",
+          "bytes_sha256": "315baac8859ce03daa08997ef5173466dc212cd198c463e3458e258ec1134c04",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267b400.c",
+          "raw_export_sha256": "4842100194786ea25331ba12fc1aa0a5fbb2e63913cd4f93abe2d294a8d5e5a7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3dbd4e3e9f39a59d414520f1713ac0e57a05418a8f6dcb327801e6c3f2dcbcf1"
+    },
+    {
+      "name": "create_legacy_effect_for_opponent",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267b470",
+          "end": "0x267b599",
+          "bytes_sha256": "cfe1e594f5f8e108f41a484631e8b4b979ae2f2ed5319d8e59b37bdce542af4d",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267b470.c",
+          "raw_export_sha256": "1318fb7a12a81b6272a2db1412c10cb0374e9e7803da2f95c45d691aee0b851b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "926f2b0bd8bbf0318cf477e5913300730be75b9b653d76b2ae5d4c7e3177f5fb"
+    },
+    {
+      "name": "effect_follows_control_of_attachment",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267b6d0",
+          "end": "0x267b785",
+          "bytes_sha256": "dc2d26f612e70174f7089c12cb8f348e00ba8f72d9ad1a9177d71cfc1044fa4a",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267b6d0.c",
+          "raw_export_sha256": "0943ccd0cc5eac51dcb6937a0a01433b65763c453771b460bcc926bacc1a84ee"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8b1f59639775ffe69f79199f5e6ced33a0d35f29e3a0c0835fa5b18235125cd6"
+    },
+    {
+      "name": "create_my_legacy",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267b790",
+          "end": "0x267b7ec",
+          "bytes_sha256": "3e2d7c7bc94f5f49d55de5a1a67bc01fe5cac7eb4ab3ec5e62e655ed8b0cc490",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267b790.c",
+          "raw_export_sha256": "f00f645026d9a189a5922c45e015e72c9f8ae26e5dea43ed1d36fb2f46f139ce"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "6c5ab924166d961e1fc2ed80e80a78407ddb1b5c40e856f63e4a06d04ee088a0"
+    },
+    {
+      "name": "add_legacy_effect_to_all",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267b7f0",
+          "end": "0x267b8b8",
+          "bytes_sha256": "0cd17c61a5b1f55f8adac008475743f93ec4f7b91613853166fe087855eb9077",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267b7f0.c",
+          "raw_export_sha256": "9f88a9cb6a58984ba63d1361873df32b5c5c4c7108112194ca627e91bf4fb6aa"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8d3ab9da46d121c310bd345ce5e4eef82022c926e9d9ecb64c421e76ed2cc71f"
+    },
+    {
+      "name": "graveyard_from_play",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267efb0",
+          "end": "0x267f028",
+          "bytes_sha256": "fc1df65da48a07d3f1b658f66cb317f5d82e6c6cf5fb2f5319d6d39b3e1384ff",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267efb0.c",
+          "raw_export_sha256": "402956f98f00abd9a695fba8c8b8efdb01ba7ebaad28e8f254011fced47b0dca"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "23dc1ab735155ff9dd9648c450df8c3182a51bd1c450d76e6a05bcbf2f20baa8"
+    },
+    {
+      "name": "cannot_be_countered",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267f650",
+          "end": "0x267f691",
+          "bytes_sha256": "4031bd4b9f14385a5ba663da8d0aac9a7db974d380d09bd9fb675ce66e88099e",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/267f650.c",
+          "raw_export_sha256": "2f2373ecee175c24916248cdc74e44241937adda4cb2b3d4c3f088e97427d16a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3826a39757e18c1cdb25b8a05d9ab44212d2ddff8dd0417e759285d0400e15eb"
+    },
+    {
+      "name": "enters_the_battlefield_with_counters",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2681660",
+          "end": "0x2681702",
+          "bytes_sha256": "e16a64cd55602f57fcb687dffe69fb2432784536da5ef84632fbc3ddd66d2f02",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/2681660.c",
+          "raw_export_sha256": "b22f336d7b9cac8727fcf049a66913428f107e5352c9564db9d10be5c06e55a5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3126ddbf49f579644a079b41936da76a02cb08a1a9f8feff9c80510e542822e3"
+    },
+    {
+      "name": "check_for_cip_effects_removal",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2681f30",
+          "end": "0x268201b",
+          "bytes_sha256": "3c92071a169e27c0a18dd52c6d770c63fb5c129af3f5b8d936a325f911051ff7",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/2681f30.c",
+          "raw_export_sha256": "e77efd1303728eb8bcf385731739d0f3227eab7c12f9650cc7aa58a6787c75e5"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "91244b8c372f497c471c5994433c91501d85eefee1607cd5a32fb9c88d4e2634"
+    },
+    {
+      "name": "blink_effect",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2685670",
+          "end": "0x2685841",
+          "bytes_sha256": "2720840518c5ff8bf5c674743401033873b4aa7299c751734a498ab86a2d8b21",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/2685670.c",
+          "raw_export_sha256": "cbb938b034da9aa8680df1d4316c6d3b7ab6f4ba528719855a2d1693819bf49a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5d57c47417abba46a1e870802b865ee308c54d5fea3fbdc2320c6f0ae5e5a2c1"
+    },
+    {
+      "name": "remove_until_eot",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2685850",
+          "end": "0x2685a34",
+          "bytes_sha256": "a0f47e1c191bcb54550ba4220b567c9c2e6277b7babac214d68f036588a81cf4",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/2685850.c",
+          "raw_export_sha256": "7e40bb01291d13ee5391e0fac8067467695aecb1a3a88be9c9c22a63f93462aa"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2a5db5fcd1d665ebba1ab407c4968bb78f1850993833159638a698a0570daa11"
+    },
+    {
+      "name": "blink_effect_controller",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2687b20",
+          "end": "0x2687d39",
+          "bytes_sha256": "dc52bd131faf2e0edd1b18daa62371e93e0fa7319fef44743d2f97fc7173a58f",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/2687b20.c",
+          "raw_export_sha256": "d339f31fc4b44580ab3b7c47dffd1db94dab8302ad447b1cb9008f6bc0fbcfd3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "021c88badc4fca8f2fd21903741ccd89f0bbbdfbf64fde7db4f019df4430d19f"
+    },
+    {
+      "name": "store_and_trigger_graveyard_from_play",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2689260",
+          "end": "0x2689440",
+          "bytes_sha256": "95d93190515c2e5245ecb9a7a20eb18b8d796d88adb5eeb6bb0b48ed9e04fdd0",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/2689260.c",
+          "raw_export_sha256": "db483e898a318d83f6146b42abbfd09083d14b87c0b43ce06618d6ab7f49c30a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8151c1df8d64953680a3f03c5f65c731dc3ddfd27c739b2230299c9d347410f4"
+    },
+    {
+      "name": "count_graveyard_from_play",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2689510",
+          "end": "0x2689800",
+          "bytes_sha256": "d9a38cce39ab9bf71548420b5af1fd1aeb002b92f75a718a6699693ebc4ccf90",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/2689510.c",
+          "raw_export_sha256": "c066a6a6379a64ba695f37c0766f84fae51912f76980c9db237b3319191f771d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fc8de47525b370ce38dcf1aa825b9339f3714f9cb61f7d4e840ca0c35689bec3"
+    },
+    {
+      "name": "legacy_effect_activated",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268fa10",
+          "end": "0x268fc4b",
+          "bytes_sha256": "11fa405f7984b11288b2844a9218d9b4177d80edd67725a589a03e75526251f1",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/268fa10.c",
+          "raw_export_sha256": "f42b9fa1191f5122f82e920bc1d5a2467476ad3c966114aa4beeea04811b4f7b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2cc96640b926fa637949f3e95c86bec2b45e0cbb67c914c81750f2c693282744"
+    },
+    {
+      "name": "set_pt_and_abilities",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2691c20",
+          "end": "0x2691ce3",
+          "bytes_sha256": "00f7974adf3eff4b70ac022fefacba16065a5bdbdb6dfbcc2ce2630c81bc8421",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/2691c20.c",
+          "raw_export_sha256": "b6ba329601b3c63b9f96d10dd635bfee90c58c9e84b0e2c7ae287299d6df2f56"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9eab6afaad18f0a1e667b53494142f20457e552757caa3595c41dc3f0582027d"
+    },
+    {
+      "name": "return_from_oblivion",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a2330",
+          "end": "0x26a238a",
+          "bytes_sha256": "11db439b3ed55ae198d627107dc4d78a5d9babe9b6855bd79127bdc1cbb5d7d3",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/26a2330.c",
+          "raw_export_sha256": "efc9b64ff7b960ae55b5d642052fa3153b97ddcf0c02c1c56a59709f23d7faf2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3f9570eb497125cf0ac91572ba538eed2f569965c5b0b7dea53a71b297626f16"
+    },
+    {
+      "name": "effect_does_not_untap",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a2b00",
+          "end": "0x26a2d3e",
+          "bytes_sha256": "0f24eb7c92e393fc9823eeaf22316e789f1ede8e0dfa2d4a1f8675acfaf3e860",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/26a2b00.c",
+          "raw_export_sha256": "4180e90d0b5b79261f4cc97e44307d11da6d1e3b8ed9437d5bcfb4b0c63f892e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1afd10e3e3112b8b4eed9d276d1923146b3eb4152b28eed2358753adc75379c2"
+    },
+    {
+      "name": "return_cards_exiled_by_me_to_hand",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a7c60",
+          "end": "0x26a7d0b",
+          "bytes_sha256": "b98c69277e690ca0f7bb9043be6ddfe1304282491b150cc3b115e0af2bbf0b03",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/26a7c60.c",
+          "raw_export_sha256": "0e21e822ab4713ce3e1b5395d73845d7170e84a30c5aaeb7cb11b830eac011bc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4fa439e6a23d6abc17eff763b3b7f6f68f7047c415259de32b2e6728e873f571"
+    },
+    {
+      "name": "return_cards_exiled_by_me_to_play",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a7d10",
+          "end": "0x26a7dc9",
+          "bytes_sha256": "fe1f39bfb060c773198f247a0e391bef216ad4e4d5b1885ee1e7728fa1c7904d",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle/26a7d10.c",
+          "raw_export_sha256": "f5a6936e90ce8ebd2eca14f12144a267c2864e4eefb4013cc64c792859ab7178"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "743364e20f426f2e25e1f40e53525c09184c64202735ccaaaf93724363ef71a3"
+    }
+  ],
+  "support_helpers": [
+    {
+      "name": "find_obliviation_legacy",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26774f0",
+          "end": "0x26775b4",
+          "bytes_sha256": "c5b51b29b77c9209eccf208ac21dc50c52d4b5f9e7f7b24ad901b20b8e0f9d83",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle-support/26774f0.c",
+          "raw_export_sha256": "d569d40638712befe9494920cd9884270d2d6f3a9c8aa434bf61177f7ae8d59b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "19f62ad6174128a44e3391dd98cf2adbbba7d0a77d4ee053fbce2af5c78f15dc"
+    },
+    {
+      "name": "remove_until_eot_legacy",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269ed60",
+          "end": "0x269eff6",
+          "bytes_sha256": "2a43dab1d79b4c195d18d6c3ebfd5429d59271664f64b25938321c2c711d77ac",
+          "raw_export": ".recovery/decompiled-legacy-lifecycle-support/269ed60.c",
+          "raw_export_sha256": "3d7d0ae80db5a231322341b972d9cf34bb78301f041196a0bf60d8782605665d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5c75884a61f242e9dae1e36d066cea53d6cf857160237d768be894943e30446a"
+    }
+  ],
+  "helper_definitions": 33,
+  "new_native_helper_ranges": 33,
+  "changed_helper_definitions": 18,
+  "native_contracts": {
+    "cannot_be_countered": {
+      "return_type": "void",
+      "event": "EVENT_CAST_SPELL",
+      "status": "STATUS_CANNOT_BE_COUNTERED",
+      "value": 512
+    },
+    "pt_switch": {
+      "toggle_flag": "SF3_SWITCH_POW_TGH",
+      "value": 1048576,
+      "no_repeat_legacy": true,
+      "cleanup_reverses_toggle": true
+    },
+    "meld_blink": {
+      "meld_csv_ids": [
+        16046,
+        16116,
+        16123
+      ],
+      "constituent_order": "unmeld result[0] then result[1]",
+      "permanent_test": "first constituent only, before either return",
+      "remove_until_eot_return": "last created legacy",
+      "mode2_source_csv_id": 22794,
+      "mode2_native_support_reviewed": true
+    },
+    "death_filters": {
+      "store_and_trigger": true,
+      "count_graveyard": true,
+      "graveyard_exile_replacement_guard": true
+    },
+    "leaves_play": {
+      "return_from_oblivion_trigger_mode": 1,
+      "completion_signal": "EVENT_LEAVES_PLAY_ABILITY"
+    },
+    "attack_power": {
+      "arcades_requires": "KEYWORD_DEFENDER",
+      "additional_source_ids": [
+        18881,
+        19653,
+        19906
+      ]
+    },
+    "etb_tapped": {
+      "player_flag_mask": 8,
+      "checks_manifest": true,
+      "ability_loss_category": "AL_TRIG"
+    },
+    "permanent_pt": "set_base_pt",
+    "ability_copy_size": 300,
+    "legacy_extension_copy": "native shallow memcpy retained"
+  },
+  "scope": "33 directly reviewed native helper bodies, two previously recovered support bodies, native void uncounterability signature and one private declaration relocation. Dialog implementations and gameplay validation remain downstream."
+}

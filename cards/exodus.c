@@ -2,27 +2,24 @@
 
 //----- GLOBAL FUNCTION ----
 
-static int generic_type_recycler_creature(int player, int card, event_t event, test_definition_t *this_test){
-
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-
-	if( event == EVENT_ETB_ABILITY ){
-		if( ! graveyard_has_shroud(player) ){
-			strcpy(this_test->message, "Select target ");
-			if (ai_is_speculating != 1)
-			{
-				int l = strlen(this_test->message);
-				type_text(this_test->message + l, 100 - l, this_test->type, 0);
-				l = strlen(this_test->message);
-				scnprintf(this_test->message + l, 100 - l, " card.");
-			}
-			if( new_special_count_grave(player, this_test) ){
-				new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 0, AI_MAX_VALUE, this_test);
-			}
-		}
-	}
-
-	return 0;
+static int generic_type_recycler_creature(int player, int card, event_t event,
+                                          test_definition_t *this_test)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if (event == EVENT_ETB)
+  {
+    strcpy(this_test->message, "Select target ");
+    if (ai_is_speculating != 1)
+    {
+      int l = strlen(this_test->message);
+      type_text(this_test->message + l, 100 - l, this_test->type, 0);
+      l = strlen(this_test->message);
+      scnprintf(this_test->message + l, 100 - l, " card.");
+    }
+    if (new_special_count_grave(player, this_test) > 0 && !graveyard_has_shroud(player))
+      new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 0, AI_MAX_VALUE, this_test);
+  }
+  return 0;
 }
 
 /* Shared in October 2022 (COFF external); also used by newer sets. */
@@ -113,14 +110,13 @@ int card_allay(int player, int card, event_t event)
 	return 0;
 }
 
-int card_anarchist(int player, int card, event_t event){
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && reason_for_trigger_controller == player ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_SORCERY);
-		this_test.type_flag = F1_NO_CREATURE;
-		return generic_type_recycler_creature(player, card, event, &this_test);
-	}
-	return 0;
+int card_anarchist(int player, int card, event_t event)
+{
+
+  test_definition_t this_test;
+  default_test_definition(&this_test, TYPE_SORCERY);
+  this_test.type_flag = F1_NO_CREATURE;
+  return generic_type_recycler_creature(player, card, event, &this_test);
 }
 
 int card_carnophage(int player, int card, event_t event){
@@ -152,13 +148,12 @@ int card_carnophage(int player, int card, event_t event){
 	return 0;
 }
 
-int card_cartographer(int player, int card, event_t event){
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && reason_for_trigger_controller == player ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_LAND);
-		return generic_type_recycler_creature(player, card, event, &this_test);
-	}
-	return 0;
+int card_cartographer(int player, int card, event_t event)
+{
+
+  test_definition_t this_test;
+  default_test_definition(&this_test, TYPE_LAND);
+  return generic_type_recycler_creature(player, card, event, &this_test);
 }
 
 int not_marked(int iid, int markedptr, int player, int card)
@@ -1956,19 +1951,18 @@ At the beginning of your upkeep, sacrifice ~ unless you pay |1|U. */
 	return 0;
 }
 
-int card_srivener(int player, int card, event_t event){
-/* CARD_ID_SCRIVENER	3555
-Scrivener	|4|U
-Creature - Human Wizard 2/2
-When ~ enters the battlefield, you may return target instant card from your graveyard to your hand. */
+int card_srivener(int player, int card, event_t event)
+{
+  /* CARD_ID_SCRIVENER	3555
+  Scrivener	|4|U
+  Creature - Human Wizard 2/2
+  When ~ enters the battlefield, you may return target instant card from your graveyard to your
+  hand. */
 
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && reason_for_trigger_controller == player ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_INSTANT | TYPE_INTERRUPT);
-		this_test.type_flag = F1_NO_CREATURE;
-		return generic_type_recycler_creature(player, card, event, &this_test);
-	}
-	return 0;
+  test_definition_t this_test;
+  default_test_definition(&this_test, TYPE_INSTANT | TYPE_INTERRUPT);
+  this_test.type_flag = F1_NO_CREATURE;
+  return generic_type_recycler_creature(player, card, event, &this_test);
 }
 
 int card_seismic_assault(int player, int card, event_t event){
@@ -2862,18 +2856,17 @@ Creature - Thrull 1/1
 									&td, "TARGET_PLAYER");
 }
 
-int card_treasure_hunter(int player, int card, event_t event){
-/* CARD_ID_TREASURE_HUNTER	3579
-Treasure Hunter	|2|W
-Creature - Human 2/2
-When ~ enters the battlefield, you may return target artifact card from your graveyard to your hand. */
+int card_treasure_hunter(int player, int card, event_t event)
+{
+  /* CARD_ID_TREASURE_HUNTER	3579
+  Treasure Hunter	|2|W
+  Creature - Human 2/2
+  When ~ enters the battlefield, you may return target artifact card from your graveyard to your
+  hand. */
 
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && reason_for_trigger_controller == player ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_ARTIFACT);
-		return generic_type_recycler_creature(player, card, event, &this_test);
-	}
-	return 0;
+  test_definition_t this_test;
+  default_test_definition(&this_test, TYPE_ARTIFACT);
+  return generic_type_recycler_creature(player, card, event, &this_test);
 }
 
 int card_treasure_trove(int player, int card, event_t event){
@@ -3167,107 +3160,143 @@ static int volraths_dungeon_legacy(int player, int card, event_t event)
   return 0;
 }
 
-int card_volraths_dungeon(int player, int card, event_t event){
-/*
-Volrath's Dungeon |2|B|B
-Enchantment
-Pay 5 life: Destroy Volrath's Dungeon. Any player may activate this ability but only during his or her turn.
-Discard a card: Target player puts a card from his or her hand on top of his or her library.
-	Activate this ability only any time you could cast a sorcery.
-*/
-	card_instance_t *instance = get_card_instance(player, card);
+int card_volraths_dungeon(int player, int card, event_t event)
+{
+  /*
+  Volrath's Dungeon |2|B|B
+  Enchantment
+  Pay 5 life: Destroy Volrath's Dungeon. Any player may activate this ability but only during his or
+  her turn. Discard a card: Target player puts a card from his or her hand on top of his or her
+  library. Activate this ability only any time you could cast a sorcery.
+  */
+  card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found[2] = {-1};
-		CYCLE_ALL_CARDS(p, c, 	{
-									if( in_play(p, c) && is_what(p, c, TYPE_EFFECT) ){
-										card_instance_t *inst = get_card_instance(p, c);
-										if( inst->info_slot == (int)volraths_dungeon_legacy ){
-											if( inst->targets[0].player == player && inst->targets[0].card == card ){
-												found[p] = c;
-											}
-										}
-									}
-								};
-		);
-		if( found[player] > -1 ){
-			kill_card(player, found[player], KILL_EXILE);
-		}
-		if( found[1-player] == -1 ){
-			int fake = add_card_to_hand(1-player, get_original_internal_card_id(player, card));
-			int legacy = create_legacy_effect(1-player, fake, &volraths_dungeon_legacy);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			obliterate_card(1-player, fake);
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if (affect_me(player, card))
+    {
+      int found = 0;
+      for (int p = 0; p < 2; ++p)
+      {
+        for (int c = 0; c <= active_cards_count[p]; ++c)
+        {
+          if (in_play(p, c) && is_what(p, c, TYPE_EFFECT))
+          {
+            card_instance_t *inst = get_card_instance(p, c);
+            if (inst->info_slot == (int)volraths_dungeon_legacy &&
+                inst->targets[0].player == player && inst->targets[0].card == card)
+            {
+              if (p == player)
+                kill_card(player, c, KILL_EXILE);
+              else
+              {
+                found = 1;
+                if (p == 1)
+                  goto dungeon_static_done;
+              }
+            }
+          }
+        }
+      }
+      if (!found)
+      {
+        int opponent = 1 - player;
+        int fake = add_card_to_hand(opponent, instance->internal_card_id);
+        int legacy = create_legacy_activate(opponent, fake, volraths_dungeon_legacy);
+        card_instance_t *inst = get_card_instance(opponent, legacy);
+        inst->targets[0].player = player;
+        inst->targets[0].card = card;
+        inst->number_of_targets = 1;
+        obliterate_card(opponent, fake);
+      }
+    }
+  dungeon_static_done:
+    return global_enchantment(player, card, event);
+  }
 
-	if( ! IS_GAA_EVENT(event) ){
-		return global_enchantment(player, card, event);
-	}
+  if (!IS_GAA_EVENT(event))
+  {
+    return global_enchantment(player, card, event);
+  }
 
-	target_definition_t td1;
-	default_target_definition(player, card, &td1, 0);
-	td1.zone = TARGET_ZONE_PLAYERS;
+  target_definition_t td1;
+  default_target_definition(player, card, &td1, 0);
+  td1.zone = TARGET_ZONE_PLAYERS;
 
-	enum{
-		CHOICE_TARGETED_ABILITY = 1,
-		CHOICE_KILL_VD
-	};
+  enum
+  {
+    CHOICE_TARGETED_ABILITY = 1,
+    CHOICE_KILL_VD
+  };
 
-	if( event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, GAA_DISCARD | GAA_CAN_SORCERY_BE_PLAYED | GAA_CAN_TARGET, MANACOST0, 0,
-									&td1, NULL) )
-		{
-			return 1;
-		}
-		return generic_activated_ability(player, card, event, GAA_IN_YOUR_TURN, MANACOST0, 5, NULL, NULL);
-	}
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (generic_activated_ability(player, card, event,
+                                  GAA_DISCARD | GAA_CAN_SORCERY_BE_PLAYED | GAA_CAN_TARGET,
+                                  MANACOST0, 0, &td1, NULL))
+    {
+      return 1;
+    }
+    return generic_activated_ability(player, card, event, GAA_IN_YOUR_TURN, MANACOST0, 5, NULL,
+                                     NULL);
+  }
 
-	if( event == EVENT_ACTIVATE ){
-		int choice = instance->info_slot = 0;
-		int abilities[2] = {	generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_DISCARD | GAA_CAN_SORCERY_BE_PLAYED | GAA_CAN_TARGET,
-								                           MANACOST0, 0, &td1, NULL),
-								generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_IN_YOUR_TURN, MANACOST0, 5, NULL, NULL)
-		};
-		choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
-						"Targeted ability", abilities[0], 2,
-						"Destroy Volrath's Dungeon", abilities[1], 1);
+  if (event == EVENT_ACTIVATE)
+  {
+    int choice = instance->info_slot = 0;
+    int abilities[2] = {can_sorcery_be_played(player, event) &&
+                            generic_activated_ability(player, card, EVENT_CAN_ACTIVATE,
+                                                      GAA_DISCARD | GAA_CAN_TARGET, MANACOST0, 0,
+                                                      &td1, NULL),
+                        generic_activated_ability(player, card, EVENT_CAN_ACTIVATE,
+                                                  GAA_IN_YOUR_TURN, MANACOST0, 5, NULL, NULL)};
+    choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, "Targeted ability",
+                    abilities[0], 2, "Destroy Volrath's Dungeon", abilities[1], 1);
 
-		if( ! choice ){
-			spell_fizzled = 1;
-			return 0;
-		}
-		if( choice == CHOICE_TARGETED_ABILITY ){
-			generic_activated_ability(player, card, event, GAA_DISCARD | GAA_CAN_SORCERY_BE_PLAYED | GAA_CAN_TARGET, MANACOST0, 0, &td1, "TARGET_PLAYER");
-			if( spell_fizzled != 1 ){
-				instance->info_slot = choice;
-			}
-		}
-		if( choice == CHOICE_KILL_VD ){
-			generic_activated_ability(player, card, event, GAA_IN_YOUR_TURN, MANACOST0, 5, NULL, NULL);
-			if( spell_fizzled != 1 ){
-				instance->info_slot = choice;
-			}
-		}
-	}
+    if (!choice)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == CHOICE_TARGETED_ABILITY)
+    {
+      generic_activated_ability(player, card, event,
+                                GAA_DISCARD | GAA_CAN_SORCERY_BE_PLAYED | GAA_CAN_TARGET, MANACOST0,
+                                0, &td1, "TARGET_PLAYER");
+      if (spell_fizzled != 1)
+      {
+        instance->info_slot = choice;
+      }
+    }
+    if (choice == CHOICE_KILL_VD)
+    {
+      generic_activated_ability(player, card, event, GAA_IN_YOUR_TURN, MANACOST0, 5, NULL, NULL);
+      if (spell_fizzled != 1)
+      {
+        instance->info_slot = choice;
+      }
+    }
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot == CHOICE_TARGETED_ABILITY ){
-			if( validate_target(player, card, &td1, 0) && hand_count[instance->targets[0].player] > 0 ){
-				test_definition_t this_test;
-				new_default_test_definition(&this_test, TYPE_ANY, "Select a card to put on top.");
-				new_global_tutor(instance->targets[0].player, instance->targets[0].player, TUTOR_FROM_HAND, TUTOR_DECK, 1, AI_MIN_VALUE, &this_test);
-			}
-		}
-		if( instance->info_slot == CHOICE_KILL_VD ){
-			kill_card(instance->parent_controller, instance->parent_card, KILL_DESTROY);
-		}
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (instance->info_slot == CHOICE_TARGETED_ABILITY)
+    {
+      if (validate_target(player, card, &td1, 0) && hand_count[instance->targets[0].player] > 0)
+      {
+        test_definition_t this_test;
+        new_default_test_definition(&this_test, TYPE_ANY, "Select a card to put on top.");
+        new_global_tutor(instance->targets[0].player, instance->targets[0].player, TUTOR_FROM_HAND,
+                         TUTOR_DECK, 1, AI_MIN_VALUE, &this_test);
+      }
+    }
+    if (instance->info_slot == CHOICE_KILL_VD)
+    {
+      kill_card(instance->parent_controller, instance->parent_card, KILL_DESTROY);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_wall_of_nets(int player, int card, event_t event){

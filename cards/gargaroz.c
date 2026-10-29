@@ -2,84 +2,47 @@
 
 // Cards that couls change targets
 
-static const char* has_only_1_target_and_could_legally_change_target(int who_chooses, int player, int card)
+static const char *has_only_1_target_and_could_legally_change_target(int who_chooses, int player,
+                                                                     int card)
 {
-	card_instance_t* eff = get_card_instance(player, card);
-	if( eff->number_of_targets == 0 || eff->number_of_targets > 1)
-		return "must have only 1 target";
-	if( ! call_card_function(player, card, EVENT_CAN_CHANGE_TARGET) )
-		return "has only 1 legal target";
+  card_instance_t *eff = get_card_instance(player, card);
+  if (eff->number_of_targets == 0 || eff->number_of_targets > 1)
+    return "must have only 1 target";
+  if (!call_card_function(player, card, EVENT_CAN_CHANGE_TARGET))
+    return "this spell cannot change its target";
 
-	return NULL;
+  return NULL;
 }
 
-int card_deflection(int player, int card, event_t event){
-	// Used externally
-	target_definition_t td_spell;
-	counterspell_target_definition(player, card, &td_spell, TYPE_SPELL);	// Aura spells also target
-	td_spell.extra = (int32_t)has_only_1_target_and_could_legally_change_target;
-	td_spell.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
-
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if (event == EVENT_CAN_CAST ){
-		return counterspell(player, card, event, &td_spell, 0);
-	}
-
-	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		instance->number_of_targets = 0;
-		instance->targets[0].player = card_on_stack_controller;
-		instance->targets[0].card = card_on_stack;
-		call_card_function(instance->targets[0].player, instance->targets[0].card, EVENT_CHANGE_TARGET);
-		if( spell_fizzled != 1 ){
-			instance->targets[1] = get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[9];
-			instance->number_of_targets = 2;
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[9].player = -1;
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[9].card = -1;
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->number_of_targets = 1;
-		}
-	}
-
-	if(event == EVENT_RESOLVE_SPELL){
-		if( counterspell_validate(player, card, &td_spell, 0) ){
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[0] = instance->targets[1];
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-  return 0;
+int card_deflection(int player, int card, event_t event)
+{
+  return deflect_one_target(player, card, event, NULL);
 }
 
-int card_divert(int player, int card, event_t event){
-
-	target_definition_t td_spell;
-	counterspell_target_definition(player, card, &td_spell, TYPE_SPELL);
-	td_spell.extra = (int32_t)has_only_1_target_and_could_legally_change_target;
-	td_spell.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
-
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if (event == EVENT_CAN_CAST ){
-		return card_deflection(player, card, event);
-	}
-
-	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( has_mana(card_on_stack_controller, COLOR_COLORLESS, 2) )
-			ai_modifier-=25;
-		return card_deflection(player, card, event);
-	}
-
-	if(event == EVENT_RESOLVE_SPELL){
-		if( counterspell_validate(player, card, &td_spell, 0) ){
-			charge_mana(instance->targets[0].player, COLOR_COLORLESS, 2);
-			if( spell_fizzled == 1 ){
-				get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[0] = instance->targets[1];
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-  return 0;
+int card_divert(int player, int card, event_t event)
+{
+  if (!IS_GS_EVENT(player, card, event))
+    return 0;
+  target_definition_t td_spell;
+  counterspell_target_definition(player, card, &td_spell, TYPE_ANY);
+  td_spell.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
+  td_spell.extra = (int32_t)has_only_1_target_and_could_legally_change_target;
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CAST_SPELL && affect_me(player, card) &&
+      has_mana(card_on_stack_controller, COLOR_COLORLESS, 2))
+    ai_modifier -= 25;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (counterspell_validate(player, card, &td_spell, 0))
+    {
+      charge_mana(instance->targets[0].player, COLOR_COLORLESS, 2);
+      if (spell_fizzled == 1)
+        get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[0] =
+            instance->targets[1];
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return deflect_one_target(player, card, event, &td_spell);
 }
 
 int card_imps_michief(int player, int card, event_t event){

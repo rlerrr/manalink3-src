@@ -511,48 +511,50 @@ int card_myth_realized(int player, int card, event_t event)
    * Enchantment
    * Whenever you cast a noncreature spell, put a lore counter on ~.
    * |2|W: Put a lore counter on ~.
-   * |W: Until end of turn, ~ becomes a Monk Avatar creature in addition to its other types and gains "This creature's power and toughness are each equal to the number of lore counters on it." */
+   * |W: Until end of turn, ~ becomes a Monk Avatar creature in addition to its other types and
+   * gains "This creature's power and toughness are each equal to the number of lore counters on
+   * it." */
 
-  if (prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	add_counters(player, card, player, card, COUNTER_LORE, 1);
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+    add_counters(player, card, player, card, COUNTER_LORE, 1);
 
   if (IS_ACTIVATING(event))
-	{
-	  if (event == EVENT_CAN_ACTIVATE && !can_use_activated_abilities(player, card))
-		return 0;
+  {
+    if (event == EVENT_CAN_ACTIVATE && !can_use_activated_abilities(player, card))
+      return 0;
 
-	  enum
-	  {
-		CHOICE_COUNTER = 1,
-		CHOICE_ANIMATE
-	  } choice = DIALOG(player, card, event,
-						DLG_RANDOM,
-						"Lore counter",		1,	1,												DLG_MANA(MANACOST_XW(2,1)),
-						"Animate",			1,	is_what(player, card, TYPE_CREATURE) ? 1 : 0,	DLG_MANA(MANACOST_W(1)));
+    enum
+    {
+      CHOICE_COUNTER = 1,
+      CHOICE_ANIMATE
+    } choice =
+        DIALOG(player, card, event, DLG_RANDOM, "Lore counter", 1, 1, DLG_MANA(MANACOST_XW(2, 1)),
+               "Animate", 1, is_what(player, card, TYPE_CREATURE) ? 1 : 0, DLG_MANA(MANACOST_W(1)));
 
-	  if (event == EVENT_CAN_ACTIVATE)
-		return choice;
-	  else if (event == EVENT_RESOLVE_ACTIVATION)
-		switch (choice)
-		  {
-			case CHOICE_COUNTER:
-			  add_counters(player, card, player, card, COUNTER_LORE, 1);
-			  break;
+    if (event == EVENT_CAN_ACTIVATE)
+      return choice;
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+      switch (choice)
+      {
+      case CHOICE_COUNTER:
+        add_counters(player, card, player, card, COUNTER_LORE, 1);
+        break;
 
-			case CHOICE_ANIMATE:
-			  animate_self(player, card, 0,0, 0,0, 0, 0);
-			  break;
-		  }
-	}
+      case CHOICE_ANIMATE:
+        animate_self(player, card, 0, 0, 0, 0, 0, 0);
+        break;
+      }
+  }
 
   has_subtypes_if_animated_self(player, card, event, SUBTYPE_MONK, SUBTYPE_AVATAR);
 
   if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card))
-	{
-	  card_instance_t* inst = get_card_instance(player, card);
-	  if (inst->token_status & STATUS_LEGACY_TYPECHANGE)
-		event_result += count_counters(player, card, COUNTER_LORE);
-	}
+  {
+    card_instance_t *inst = get_card_instance(player, card);
+    if (inst->token_status & STATUS_LEGACY_TYPECHANGE)
+      event_result += count_counters(player, card, COUNTER_LORE);
+  }
 
   return global_enchantment(player, card, event);
 }
@@ -571,44 +573,54 @@ int card_ojutai_exemplars(int player, int card, event_t event)
    * * ~ gains first strike and lifelink until end of turn.
    * * Exile ~, then return it to the battlefield tapped under its owner's control. */
 
-  if (prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	{
-	  target_definition_t td;
-	  default_target_definition(player, card, &td, TYPE_CREATURE);
-	  td.allow_cancel = 0;
+  if (event == EVENT_CHECK_ABILITIES && affect_me(player, card))
+  {
+    for (int c = 0; c < active_cards_count[player]; ++c)
+      if (in_hand(player, c) && !is_what(player, c, TYPE_CREATURE) &&
+          has_mana_to_cast_iid(player, event, get_original_internal_card_id(player, c)) &&
+          can_legally_play_iid_now(player, get_original_internal_card_id(player, c), event))
+        check_abilities_keywords |= KEYWORD_FIRST_STRIKE;
+  }
 
-	  target_definition_t td_pref;
-	  default_target_definition(player, card, &td_pref, TYPE_CREATURE);
-	  td_pref.allowed_controller = 1-player;
-	  td.allow_cancel = 0;
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.allow_cancel = 0;
 
-	  int ai_tap	= can_target(&td_pref) ? 3 : 1;
-	  int ai_pump	= (check_for_ability(player, card, KEYWORD_FIRST_STRIKE) ? 0 : 1) + (check_for_special_ability(player, card, SP_KEYWORD_LIFELINK) ? 0 : 1);
-	  ai_pump *= ai_pump;	// 4 if has neither ability, 1 if has one or the other, 0 if has neither
-	  int ai_blink	= is_stolen(player, card) ? 0 : 2;
+    target_definition_t td_pref;
+    default_target_definition(player, card, &td_pref, TYPE_CREATURE);
+    td_pref.allowed_controller = 1 - player;
+    td.allow_cancel = 0;
 
-	  switch (DIALOG(player, card, EVENT_ACTIVATE,
-					 DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE,
-					 "Tap creature",			can_target(&td),	ai_tap,
-					 "First strike, lifelink",	1,					ai_pump,
-					 "Exile and return",		1,					ai_blink))
-		{
-		  case 1:
-			;card_instance_t* inst = get_card_instance(player, card);
-			pick_target(&td, "TARGET_CREATURE");
-			inst->number_of_targets = 0;
-			tap_card(inst->targets[0].player, inst->targets[0].card);
-			break;
+    int ai_tap = can_target(&td_pref) ? 3 : 1;
+    int ai_pump = (check_for_ability(player, card, KEYWORD_FIRST_STRIKE) ? 0 : 1) +
+                  (check_for_special_ability(player, card, SP_KEYWORD_LIFELINK) ? 0 : 1);
+    ai_pump *= ai_pump; // 4 if has neither ability, 1 if has one or the other, 0 if has neither
+    int ai_blink = is_stolen(player, card) ? 0 : 2;
 
-		  case 2:
-			pump_ability_until_eot(player, card, player, card, 0,0, KEYWORD_FIRST_STRIKE,SP_KEYWORD_LIFELINK);
-			break;
+    switch (DIALOG(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE,
+                   "Tap creature", can_target(&td), ai_tap, "First strike, lifelink", 1, ai_pump,
+                   "Exile and return", 1, ai_blink))
+    {
+    case 1:;
+      card_instance_t *inst = get_card_instance(player, card);
+      pick_target(&td, "TARGET_CREATURE");
+      inst->number_of_targets = 0;
+      tap_card(inst->targets[0].player, inst->targets[0].card);
+      break;
 
-		  case 3:
-			blink_effect(player, card, &add_state_tapped);
-			break;
-		}
-	}
+    case 2:
+      pump_ability_until_eot(player, card, player, card, 0, 0, KEYWORD_FIRST_STRIKE,
+                             SP_KEYWORD_LIFELINK);
+      break;
+
+    case 3:
+      blink_effect(player, card, &add_state_tapped);
+      break;
+    }
+  }
 
   return 0;
 }
@@ -880,8 +892,9 @@ int card_strongarm_monk(int player, int card, event_t event)
    * Creature - Human Monk 3/3
    * Whenever you cast a noncreature spell, creatures you control get +1/+1 until end of turn. */
 
-  if (prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_creatures_until_eot_merge_pt(player, card, player, 1, 1, NULL);
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+    pump_creatures_until_eot_merge_pt(player, card, player, 1, 1, NULL);
 
   return 0;
 }
@@ -892,8 +905,9 @@ int card_student_of_ojutai(int player, int card, event_t event)
    * Creature - Human Monk 2/4
    * Whenever you cast a noncreature spell, you gain 2 life. */
 
-  if (prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	gain_life(player, 2);
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+    gain_life(player, 2);
 
   return 0;
 }
@@ -1120,10 +1134,12 @@ int card_elusive_spellfist(int player, int card, event_t event)
 {
   /* Elusive Spellfist	|1|U	0x200da1d
    * Creature - Human Monk 1/3
-   * Whenever you cast a noncreature spell, ~ gets +1/+0 until end of turn and can't be blocked this turn. */
+   * Whenever you cast a noncreature spell, ~ gets +1/+0 until end of turn and can't be blocked this
+   * turn. */
 
-  if (prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_ability_until_eot(player, card, player, card, 1,0, 0,SP_KEYWORD_UNBLOCKABLE);
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+    pump_ability_until_eot(player, card, player, card, 1, 0, 0, SP_KEYWORD_UNBLOCKABLE);
 
   return 0;
 }
@@ -1656,13 +1672,20 @@ int card_skywise_teachings(int player, int card, event_t event)
 {
   /* Skywise Teachings	|3|U	0x200da72
    * Enchantment
-   * Whenever you cast a noncreature spell, you may pay |1|U. If you do, put a 2/2 |Sblue Djinn Monk creature token with flying onto the battlefield. */
+   * Whenever you cast a noncreature spell, you may pay |1|U. If you do, put a 2/2 |Sblue Djinn Monk
+   * creature token with flying onto the battlefield. */
 
-  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && player == reason_for_trigger_controller
-	  && has_mana_multi(player, MANACOST_XU(1,1))
-	  && prowess_mode(player, card, event, RESOLVE_TRIGGER_AI(player))
-	  && charge_mana_multi_while_resolving(player, card, event, player, MANACOST_XU(1,1)))
-	generate_token_by_id(player, card, CARD_ID_DJINN_MONK);
+  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card))
+  {
+    // The native card initializes only these two test fields.
+    test_definition_t test;
+    test.type = TYPE_CREATURE;
+    test.type_flag = DOESNT_MATCH;
+    sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_SPA && has_mana_multi(player, MANACOST_XU(1, 1)) &&
+      charge_mana_multi_while_resolving(player, card, event, player, MANACOST_XU(1, 1)))
+    generate_token_by_id(player, card, CARD_ID_DJINN_MONK);
 
   return global_enchantment(player, card, event);
 }
@@ -1789,14 +1812,15 @@ int card_zephyr_scribe(int player, int card, event_t event)
    * |U, |T: Draw a card, then discard a card.
    * Whenever you cast a noncreature spell, untap ~. */
 
-  if (prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	untap_card(player, card);
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+    untap_card(player, card);
 
   if (event == EVENT_RESOLVE_ACTIVATION)
-	{
-	  draw_a_card(player);
-	  discard(player, 0, player);
-	}
+  {
+    draw_a_card(player);
+    discard(player, 0, player);
+  }
 
   return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_U(1), 0, NULL, NULL);
 }
@@ -4385,8 +4409,9 @@ int card_cunning_breezedancer(int player, int card, event_t event)
    * Flying
    * Whenever you cast a noncreature spell, ~ gets +2/+2 until end of turn. */
 
-  if (prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_until_eot_merge_previous(player, card, player, card, 2,2);
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+    pump_until_eot_merge_previous(player, card, player, card, 2, 2);
 
   return 0;
 }
@@ -5251,13 +5276,16 @@ int card_pristine_skywise(int player, int card, event_t event)
   /* Pristine Skywise	|4|W|U	0x200dbc1
    * Creature - Dragon 6/4
    * Flying
-   * Whenever you cast a noncreature spell, untap ~. It gains protection from the color of your choice until end of turn. */
+   * Whenever you cast a noncreature spell, untap ~. It gains protection from the color of your
+   * choice until end of turn. */
 
-  if (prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	{
-	  pump_ability_until_eot(player, card, player, card, 0,0, select_a_protection(player)|KEYWORD_RECALC_SET_COLOR,0);
-	  untap_card(player, card);
-	}
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+  {
+    pump_ability_until_eot(player, card, player, card, 0, 0,
+                           select_a_protection(player) | KEYWORD_RECALC_SET_COLOR, 0);
+    untap_card(player, card);
+  }
 
   return 0;
 }

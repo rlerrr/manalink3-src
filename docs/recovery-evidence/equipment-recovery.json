@@ -1,0 +1,2822 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helper_definitions": 19,
+  "native_helper_ranges": 20,
+  "helpers": [
+    {
+      "name": "is_equipped",
+      "native_ranges": [
+        {
+          "address": "0x26eea30",
+          "end": "0x26eea52",
+          "bytes_sha256": "a3ce962569bd1a609f304bff1daa08a15cb774dc2ef0c05683f1f740c8b2eecd",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26eea30.c",
+          "raw_export_sha256": "43885731c8e7e840c4344faf1964d2f111416108da184241c1898ece6419d2d9"
+        }
+      ],
+      "definition_sha256": "fc2d3b1be2895f688199d4c9cb2f8ea4840b077ba7fe56cea7c2b31576d333dd"
+    },
+    {
+      "name": "altar_equipment",
+      "native_ranges": [
+        {
+          "address": "0x26ee720",
+          "end": "0x26eea28",
+          "bytes_sha256": "30e3d13055c42286ae508f00488fe8bf65b757c409592f6e959c48fce39f8b8c",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26ee720.c",
+          "raw_export_sha256": "899e86f10a0b5c9f0d1a5a504554ad0c3b287f28840a912b8b68b892df488c61"
+        }
+      ],
+      "definition_sha256": "7f1577cce6240115b2a0abc5aa0546a7ab027648e398c2648db234afb65be170"
+    },
+    {
+      "name": "equipments_attached_to_me",
+      "native_ranges": [
+        {
+          "address": "0x26ee5f0",
+          "end": "0x26ee6e9",
+          "bytes_sha256": "0ec4216c5fbbf533de9952334ed39fc94f70988459f5561a714adf508e942101",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26ee5f0.c",
+          "raw_export_sha256": "9d1d457640507319642c8492b3aed091c91b1897909dee94cba66d6d5f5c9b25"
+        }
+      ],
+      "definition_sha256": "ebbe811db89e6bdb8e0533b6da3b22fec7abb86ce6e245dc82a85bef69a1ea9a"
+    },
+    {
+      "name": "vanilla_equipment",
+      "native_ranges": [
+        {
+          "address": "0x26ee500",
+          "end": "0x26ee5ec",
+          "bytes_sha256": "13034081d9d911f96187ae05f7d6e047d708d76a00f8b9b921ab0c8c7763e058",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26ee500.c",
+          "raw_export_sha256": "5c431e2ef7ccb683c5772d60ae11f32dff3575d92f8f7771dbe944a4ca8031a2"
+        }
+      ],
+      "definition_sha256": "8c4c04f69c5d81459e7a3aec8aa1deec04002fdd6059810a933254f24f2edce8"
+    },
+    {
+      "name": "living_weapon",
+      "native_ranges": [
+        {
+          "address": "0x26ee470",
+          "end": "0x26ee4fb",
+          "bytes_sha256": "288f5e7d807aea5cdaa88373806c5a5512b358de7ed31218ee62fcb3653b3781",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26ee470.c",
+          "raw_export_sha256": "6c1023b9431962c1fd286e9e56f8db390ecc9db77d4fd6062c0a8d1794950a5a"
+        }
+      ],
+      "definition_sha256": "1b8a414179c3f7cca883d703c41dfff2ec893d9bec6305ca9387e3c82da3384b"
+    },
+    {
+      "name": "basic_equipment",
+      "native_ranges": [
+        {
+          "address": "0x26ee2a0",
+          "end": "0x26ee46c",
+          "bytes_sha256": "1574992f7fbd533ea3a3408d8b3e73eeb15c6ae8b3dd94c42065a2380c8612f7",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26ee2a0.c",
+          "raw_export_sha256": "761afc8481198c7772ac5c92dd0996a2ada406ca02a5d16518cd69b38cebf0d9"
+        }
+      ],
+      "definition_sha256": "996536df91e64f895750c4d709ed75f3b0479a84ab294c653e1aa9d640c2e701"
+    },
+    {
+      "name": "resolve_activation_basic_equipment",
+      "native_ranges": [
+        {
+          "address": "0x26ee230",
+          "end": "0x26ee293",
+          "bytes_sha256": "b5f7e2d3824fe306f4e6f04726b29f262f4c86439f908e3a03a9a9b01cccc39f",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26ee230.c",
+          "raw_export_sha256": "f3e0f482b48684e8d9bf317cdbb77478953e03ab42c73ed4ba970150153722f9"
+        }
+      ],
+      "definition_sha256": "57063cb471e4110112e38c96e87b50efa07ef2c3cee7c00e2b58e6349f85ea77"
+    },
+    {
+      "name": "activate_basic_equipment",
+      "native_ranges": [
+        {
+          "address": "0x26ee090",
+          "end": "0x26ee1f2",
+          "bytes_sha256": "746fcf211e5e3dbd5350c3cdf04ef9728f52f9ad784f31e4158cdb09d55416fd",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26ee090.c",
+          "raw_export_sha256": "12f302aa01803c4f002ac09ffcd3ceb6ac52fb20ef1dda9b79c0c7ba3ed6db0a"
+        }
+      ],
+      "definition_sha256": "b069e961e8030778c23926947c6ece76df8c33ac538c0129882cdeb2a139d5eb"
+    },
+    {
+      "name": "can_activate_basic_equipment",
+      "native_ranges": [
+        {
+          "address": "0x26edf70",
+          "end": "0x26ee082",
+          "bytes_sha256": "5b6d489fe3d188b7e02f611219c1895318c0886d78435e7f15295bb805d870b1",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26edf70.c",
+          "raw_export_sha256": "eeffeb122f0a987c78e2defaa24b7e29684ed837598fa3ca8c326fb2d5489177"
+        }
+      ],
+      "definition_sha256": "50668729fa52d0066532d3bf8e1690c17665015b7dcde495fbf8ace08bc722d7"
+    },
+    {
+      "name": "get_updated_equip_cost",
+      "native_ranges": [
+        {
+          "address": "0x26ede00",
+          "end": "0x26edf68",
+          "bytes_sha256": "4282aec6b1b66da079e9077fdd6fed44d0904a60f35da0f6a4e23f5b4618d6b1",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26ede00.c",
+          "raw_export_sha256": "af781f024bd7ef6f5ddfb73d9270fdbb28ba2c82f2cb8c91522060e3532f9934"
+        }
+      ],
+      "definition_sha256": "f7cbebc9175f21d49b773250dd46f6496eaf9318b8208688969d25b17595a14f"
+    },
+    {
+      "name": "check_for_equipment_targets",
+      "native_ranges": [
+        {
+          "address": "0x26edd90",
+          "end": "0x26eddd7",
+          "bytes_sha256": "7b335d24250842ac23b12526d2f93ad540c79bee24ec9661f493409c82a953d3",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26edd90.c",
+          "raw_export_sha256": "f56d9602b4227e82caa327ce97c702742d218a22d056ad958e4337de987bc09e"
+        }
+      ],
+      "definition_sha256": "ffdb251d3963527040aba5f5c1b725f6d3e1277ca43578e6217a45e91d8acc73"
+    },
+    {
+      "name": "is_equipping",
+      "native_ranges": [
+        {
+          "address": "0x26eda00",
+          "end": "0x26eda75",
+          "bytes_sha256": "69a58db611aa9ea1783626785a1ef0c670505703e95bf1a5a066137a701d5a42",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26eda00.c",
+          "raw_export_sha256": "80f1677e5746d57edca6381a1481e670f361be32ac13044690b04ea1afb9a9df"
+        }
+      ],
+      "definition_sha256": "eca08e09623deedf24c8df2d730cd2ebc5cf1f814003590f3da7f40bc5a00c54"
+    },
+    {
+      "name": "equip_target_creature",
+      "native_ranges": [
+        {
+          "address": "0x26edca0",
+          "end": "0x26edd4a",
+          "bytes_sha256": "b2b82bd94933fe09d42e0d2bcfd6df415f9fa5587066b098fea90a5bdd61ebb4",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26edca0.c",
+          "raw_export_sha256": "763cf2fe13989c6e3a8aebb4f18ab5ad6de8a013c9e3c8464202e7e486ce25f9"
+        }
+      ],
+      "definition_sha256": "17a49b39a12b8f06eb9eab7cc189787d564884516865096051acb2ec5fe5bd4c"
+    },
+    {
+      "name": "is_displayed_as_attached",
+      "native_ranges": [
+        {
+          "address": "0x26ed920",
+          "end": "0x26ed9f6",
+          "bytes_sha256": "c6a1ba27cc3145b9e2390d5c17a64b9622357157adbc9672876dcc4f9a462c70",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26ed920.c",
+          "raw_export_sha256": "5b2fac51bc71a01248ddeb6fbc0f864465ed416895910d4806c066328486f2a8"
+        }
+      ],
+      "definition_sha256": "0034ca982548bc43a13ae24fa4c0d655071994d404570c09360bd1d1520a5ab3"
+    },
+    {
+      "name": "unattach",
+      "native_ranges": [
+        {
+          "address": "0x26eda80",
+          "end": "0x26edb01",
+          "bytes_sha256": "c8a03b9bd46c0054b59c4acd945ad6848054b6cc3988ce10193112b20f487f2e",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26eda80.c",
+          "raw_export_sha256": "1f09e957a95e361c20a9e2f84e06dc27c95b208d250522b5142363725f6bd4b6"
+        }
+      ],
+      "definition_sha256": "9c3a6281c3e6148a1b927574b9740d0d71b3191f3d5993b654dd4515aab93872"
+    },
+    {
+      "name": "equipment_legacy",
+      "native_ranges": [
+        {
+          "address": "0x26edb10",
+          "end": "0x26edc91",
+          "bytes_sha256": "e4bd70eaa149edf52d3c8c3015edb8bc6f9354026e7a68ccfb71cc4faaa56470",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26edb10.c",
+          "raw_export_sha256": "7e2959d770a64150aa823e4e4132017a648963df4c4c27996f8f0d4bdeecaa8d"
+        }
+      ],
+      "definition_sha256": "860bd57a61c053c6b1a67780ea4dba696c4cc3d318d05e18d24213839fe94889"
+    },
+    {
+      "name": "resolve_activation_equipment",
+      "native_ranges": [
+        {
+          "address": "0x26edd50",
+          "end": "0x26edd8a",
+          "bytes_sha256": "997862b3b4f38b18d16cc511a5009385600efb3007670b88e280297afbd46318",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26edd50.c",
+          "raw_export_sha256": "92566127a87670e531590bceed12b8b175c0679f6208e6cb1ea2505f49d077d6"
+        },
+        {
+          "address": "0x26ee200",
+          "end": "0x26ee227",
+          "bytes_sha256": "caf46f2dcb958e919dfe4dbe0d8c1c76b3afb0e471bedd40c80167b99b79f532",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26ee200.c",
+          "raw_export_sha256": "fa5ff0713a0b333023c8f8dc36bb4608ad8d6f9c744d5dcf577d517d616cfae6"
+        }
+      ],
+      "definition_sha256": "021546589733ac46f06f2079423f427db86e9d700d91dd6ad70ab4252253e3a2"
+    },
+    {
+      "name": "check_for_equipment_targets_custom",
+      "native_ranges": [
+        {
+          "address": "0x26edde0",
+          "end": "0x26eddf8",
+          "bytes_sha256": "bd4032b83df302a70b244a1d2969733f7ae284b12ecc0630710a7c29ee1f4a50",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26edde0.c",
+          "raw_export_sha256": "5f7158fc73057003f3070dd1970b038e4c77d914fe47af796263a621e1f934e9"
+        }
+      ],
+      "definition_sha256": "cfcf949949430b9d699640cfa4086ddcf4a0bc83599c6569ca98d3fbfce4f24f"
+    },
+    {
+      "name": "is_equipment",
+      "native_ranges": [
+        {
+          "address": "0x26ee6f0",
+          "end": "0x26ee712",
+          "bytes_sha256": "c73c0122472d026d60d70bb4775dbd1e89908e846b68a92e16ccb19f0c8c0944",
+          "raw_export": ".recovery/decompiled-equipment-helpers/26ee6f0.c",
+          "raw_export_sha256": "0cd240de8c8cff12e302a3405b87d5c25a9be822e916f310ae089a1c6dd880a8"
+        }
+      ],
+      "definition_sha256": "3d0d7520931a9a5d8be3fb98076da7350db9156bb3360d4081e9ff8164ea1b4a"
+    }
+  ],
+  "callers": [
+    {
+      "source": "cards/alara_reborn.c",
+      "name": "card_demonspine_whip",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_demonspine_whip",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 2,
+        "native_operand_witnesses": [
+          {
+            "address": "0x22fc239",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc25e",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc29f",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc2b3",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc31d",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc39f",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc3f8",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc419",
+            "bytes_hex": "c744240400000000",
+            "instruction": "mov dword ptr [esp + 4], 0"
+          },
+          {
+            "address": "0x22fc477",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x22fc47e",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x22fc48c",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc4ae",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc516",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc544",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc57b",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22fc5a3",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x22fc210",
+        "end": "0x22fc5c8",
+        "bytes_sha256": "96d14c91add415b7f2852233b97b37d861e7caf6351180537302fa1821335c30",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/22fc210.c",
+        "raw_export_sha256": "8ae95bfaf04a59be0b9ab41b62babd2f5c888ba8e3a5008602594fabc3abfc81"
+      }
+    },
+    {
+      "source": "cards/battle_for_zendikar.c",
+      "name": "card_pathway_arrows",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_pathway_arrows",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 9,
+        "native_operand_witnesses": [
+          {
+            "address": "0x2459a86",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459aa0",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459b14",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459b32",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x2459b3c",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x2459b53",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459b73",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x2459b7a",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x2459b8d",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459b9f",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459bc6",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459bdd",
+            "bytes_hex": "0fbe4f50",
+            "instruction": "movsx ecx, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x2459c42",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459cc9",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x2459cd0",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x2459cdb",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459cfe",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459d1b",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459d3f",
+            "bytes_hex": "8b4f04",
+            "instruction": "mov ecx, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x2459d45",
+            "bytes_hex": "894c2404",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x2459da5",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x2459dac",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x2459db7",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x2459a50",
+        "end": "0x2459dcb",
+        "bytes_sha256": "6fe7dffb74cbe1942539c73e50f763df717a02385245fb94fc5fd117df97e3e4",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/2459a50.c",
+        "raw_export_sha256": "1847c07a9ad3dfda8728131517ea67828295d435c19834aaf3a321ae45460200"
+      }
+    },
+    {
+      "source": "cards/battle_for_zendikar.c",
+      "name": "card_slab_hammer",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_slab_hammer",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 5,
+        "native_operand_witnesses": [
+          {
+            "address": "0x2459ddf",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2459def",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2459dfd",
+            "bytes_hex": "0fbe4050",
+            "instruction": "movsx eax, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x2459e01",
+            "bytes_hex": "8b5704",
+            "instruction": "mov edx, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x2459e26",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2459e4c",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2459e64",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2459e97",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2459edc",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459eef",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459f04",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2459f32",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x2459dd0",
+        "end": "0x2459f43",
+        "bytes_sha256": "81b4c18286e68e8e887c4ae0c1eb2c7ba7af0ff3111a7f35bd850dcf61a495de",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/2459dd0.c",
+        "raw_export_sha256": "ff8d580e619975cc4ae20ca00a46f535918a2ceb3ac769cff7ff3fa258914984"
+      }
+    },
+    {
+      "source": "cards/betrayers_of_kamigawa.c",
+      "name": "card_neko_te",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_neko_te",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 2,
+        "native_operand_witnesses": [
+          {
+            "address": "0x256d21f",
+            "bytes_hex": "895c2404",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x256d24d",
+            "bytes_hex": "895c2404",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x256d2a1",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x256d2b5",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x256d2e0",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x256d2ef",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x256d31b",
+            "bytes_hex": "c744240401000000",
+            "instruction": "mov dword ptr [esp + 4], 1"
+          },
+          {
+            "address": "0x256d330",
+            "bytes_hex": "895c2404",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x256d349",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x256d36d",
+            "bytes_hex": "3b4704",
+            "instruction": "cmp eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x256d379",
+            "bytes_hex": "3a5750",
+            "instruction": "cmp dl, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x256d3a3",
+            "bytes_hex": "0fbe5150",
+            "instruction": "movsx edx, byte ptr [ecx + 0x50]"
+          },
+          {
+            "address": "0x256d3ad",
+            "bytes_hex": "8b4904",
+            "instruction": "mov ecx, dword ptr [ecx + 4]"
+          },
+          {
+            "address": "0x256d3e0",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x256d210",
+        "end": "0x256d404",
+        "bytes_sha256": "42226b8d3a09fb8b10247280c6a7d3cf7b750117c2322009de7b8192d196e557",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/256d210.c",
+        "raw_export_sha256": "9983f653de86ab80bff17e6dcd5699e17cb12458d6e0acc257e4f27a47db8b82"
+      }
+    },
+    {
+      "source": "cards/commander.c",
+      "name": "card_champions_helm",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_champions_helm",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 2,
+        "native_operand_witnesses": [
+          {
+            "address": "0x23e1c9f",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x23e1cb2",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x23e1cc9",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x23e1d08",
+            "bytes_hex": "8b4004",
+            "instruction": "mov eax, dword ptr [eax + 4]"
+          },
+          {
+            "address": "0x23e1d0e",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x23e1d12",
+            "bytes_hex": "0fbe4250",
+            "instruction": "movsx eax, byte ptr [edx + 0x50]"
+          },
+          {
+            "address": "0x23e1d2d",
+            "bytes_hex": "8b4204",
+            "instruction": "mov eax, dword ptr [edx + 4]"
+          },
+          {
+            "address": "0x23e1d30",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x23e1d34",
+            "bytes_hex": "0fbe4250",
+            "instruction": "movsx eax, byte ptr [edx + 0x50]"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x23e1c90",
+        "end": "0x23e1d42",
+        "bytes_sha256": "f136c88b81838c1756eea2edb125306d041d25b36b68b6d64f3a83c314f97f24",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/23e1c90.c",
+        "raw_export_sha256": "39377413a9ef5061541a19a10b5117190029b0f019ae0452292b064a9f7c15ac"
+      }
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "name": "card_ensouled_scimitar",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_ensouled_scimitar",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 2,
+        "native_operand_witnesses": [
+          {
+            "address": "0x202d19f",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d1ab",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d1dc",
+            "bytes_hex": "8b4304",
+            "instruction": "mov eax, dword ptr [ebx + 4]"
+          },
+          {
+            "address": "0x202d1df",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x202d1e3",
+            "bytes_hex": "0fbe4350",
+            "instruction": "movsx eax, byte ptr [ebx + 0x50]"
+          },
+          {
+            "address": "0x202d23d",
+            "bytes_hex": "89542404",
+            "instruction": "mov dword ptr [esp + 4], edx"
+          },
+          {
+            "address": "0x202d274",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x202d2e8",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d30f",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d327",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d34b",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d388",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d3f4",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d420",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d440",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d4ac",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d4ee",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202d51d",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x202d535",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x202d190",
+        "end": "0x202d55a",
+        "bytes_sha256": "10a0ad5c2438b755babe0c81de48de8cfd075a14e04d58c1b2e130b9c254f1e1",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/202d190.c",
+        "raw_export_sha256": "fc069dad490a16a4e98377d4ef6613e033783a706725fcad01acbd5ac36d537c"
+      }
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "name": "card_healers_headdress",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_healers_headdress",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 10,
+        "native_operand_witnesses": [
+          {
+            "address": "0x202f172",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f17e",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f1af",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x202f1b2",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x202f1b6",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x202f1f0",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f21c",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f262",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f28e",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f2cd",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f32f",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f34b",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f35d",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f3d1",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x202f3d8",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x202f3dc",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f444",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f4c7",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x202f4ca",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x202f4ce",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x202f4e8",
+            "bytes_hex": "c7442404c2417202",
+            "instruction": "mov dword ptr [esp + 4], 0x27241c2"
+          },
+          {
+            "address": "0x202f500",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x202f503",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x202f507",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x202f54e",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x202f578",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f5e2",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x202f5e9",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x202f5ed",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f619",
+            "bytes_hex": "c744240400000000",
+            "instruction": "mov dword ptr [esp + 4], 0"
+          },
+          {
+            "address": "0x202f678",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f6c3",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f6ed",
+            "bytes_hex": "c7442404243d7202",
+            "instruction": "mov dword ptr [esp + 4], 0x2723d24"
+          },
+          {
+            "address": "0x202f72c",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x202f160",
+        "end": "0x202f74a",
+        "bytes_sha256": "f45a8ee34a0b9c54d33021af9fa7b54e58d574f337b8009008b5da8794ca4ef8",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/202f160.c",
+        "raw_export_sha256": "053091af9c55264d51b1c161aaf684fd7381adf90f5559c862dc8d1a1d9afad0"
+      }
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "name": "card_helm_of_kaldra",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_helm_of_kaldra",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 4,
+        "native_operand_witnesses": [
+          {
+            "address": "0x202f765",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f775",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f781",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f7c8",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f810",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x202f81b",
+            "bytes_hex": "0fbe5750",
+            "instruction": "movsx edx, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x202f827",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x202f85f",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f87b",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f89f",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f8ea",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f918",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f957",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x202f99b",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202f9db",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202fa38",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202fa56",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x202fa81",
+            "bytes_hex": "c744240453490000",
+            "instruction": "mov dword ptr [esp + 4], 0x4953"
+          },
+          {
+            "address": "0x202fabb",
+            "bytes_hex": "895c2404",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x202f750",
+        "end": "0x202fafc",
+        "bytes_sha256": "7ae0c441a5258564b6c70c14614bac25c8652bbe43ffd0c40fd655dc032d459f",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/202f750.c",
+        "raw_export_sha256": "da9a10773177aff175912134c0d88f6e76aa7091b90c92b9b893d910a98f7844"
+      }
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "name": "card_paradise_mantle",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_paradise_mantle",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 2,
+        "native_operand_witnesses": [
+          {
+            "address": "0x203147f",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2031493",
+            "bytes_hex": "0fbe4050",
+            "instruction": "movsx eax, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x2031497",
+            "bytes_hex": "8b7e04",
+            "instruction": "mov edi, dword ptr [esi + 4]"
+          },
+          {
+            "address": "0x20314d9",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x20314f3",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2031509",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x203151f",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x203153e",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2031579",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2031593",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x20315aa",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x20315c3",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x20315e5",
+            "bytes_hex": "c74424043e000000",
+            "instruction": "mov dword ptr [esp + 4], 0x3e"
+          },
+          {
+            "address": "0x2031603",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2031619",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x2031634",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x203166b",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x203167e",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x20316a5",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x20316f6",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2031723",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x203175b",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x2031781",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x203179a",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x20317b6",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x2031470",
+        "end": "0x20317d2",
+        "bytes_sha256": "e461ead64b4d20e7fbac2b1eea1c3d252deee57c71d4233b2d179418aa7333d8",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/2031470.c",
+        "raw_export_sha256": "37a9bbff1e6a33db13431e905319f7145b803e18ab5cb7197c6002b2d5fa138c"
+      }
+    },
+    {
+      "source": "cards/innistrad.c",
+      "name": "card_inquisitors_flail",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_inquisitors_flail",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 4,
+        "native_operand_witnesses": [
+          {
+            "address": "0x207bf10",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x207bf23",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x207bf33",
+            "bytes_hex": "8b4804",
+            "instruction": "mov ecx, dword ptr [eax + 4]"
+          },
+          {
+            "address": "0x207bf3b",
+            "bytes_hex": "3b4e04",
+            "instruction": "cmp ecx, dword ptr [esi + 4]"
+          },
+          {
+            "address": "0x207bf40",
+            "bytes_hex": "8a4050",
+            "instruction": "mov al, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x207bf43",
+            "bytes_hex": "384650",
+            "instruction": "cmp byte ptr [esi + 0x50], al"
+          },
+          {
+            "address": "0x207bf4f",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x207bf70",
+            "bytes_hex": "8a5050",
+            "instruction": "mov dl, byte ptr [eax + 0x50]"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x207bef0",
+        "end": "0x207bf82",
+        "bytes_sha256": "8011b0daef490dc16c354dbbf552c60eb1dc1c0ab337a61c7b9a63a2ee999e69",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/207bef0.c",
+        "raw_export_sha256": "f6a4543da568a1a8863487369a4f8a9f999c4620b3373838ef5a4ec20e06c755"
+      }
+    },
+    {
+      "source": "cards/innistrad.c",
+      "name": "card_trepanation_blade",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_trepanation_blade",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 2,
+        "native_operand_witnesses": [
+          {
+            "address": "0x2085eef",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2085eff",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2085f18",
+            "bytes_hex": "8b4004",
+            "instruction": "mov eax, dword ptr [eax + 4]"
+          },
+          {
+            "address": "0x2085f1f",
+            "bytes_hex": "0fbe4250",
+            "instruction": "movsx eax, byte ptr [edx + 0x50]"
+          },
+          {
+            "address": "0x2085f36",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2085f59",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2085f71",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2085fc8",
+            "bytes_hex": "8b4304",
+            "instruction": "mov eax, dword ptr [ebx + 4]"
+          },
+          {
+            "address": "0x2085fe0",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2086031",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2086048",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x2086074",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2086090",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x2085ee0",
+        "end": "0x20860b3",
+        "bytes_sha256": "fc46d8d09f0719d88ad78763fefa686e8d1e98e040208cab7c85dbe9e4abe4c4",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/2085ee0.c",
+        "raw_export_sha256": "d75f553806839c597c3fbefc18ebaf5ba9b4375a493bea2113c582b338689663"
+      }
+    },
+    {
+      "source": "cards/journey_into_nyx.c",
+      "name": "card_godsend",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_godsend",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 1,
+        "native_operand_witnesses": [
+          {
+            "address": "0x24d1b86",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x24d1bb0",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x24d1c08",
+            "bytes_hex": "89542404",
+            "instruction": "mov dword ptr [esp + 4], edx"
+          },
+          {
+            "address": "0x24d1c24",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x24d1c49",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24d1c70",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x24d1c84",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x24d1c93",
+            "bytes_hex": "0fbe4850",
+            "instruction": "movsx ecx, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x24d1ca6",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x24d1d04",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24d1d25",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24d1d50",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x24d1d6a",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24d1d8b",
+            "bytes_hex": "8b4004",
+            "instruction": "mov eax, dword ptr [eax + 4]"
+          },
+          {
+            "address": "0x24d1d8e",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24d1db0",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x24d1b70",
+        "end": "0x24d1de1",
+        "bytes_sha256": "7612aca1dc76d6dd5824ecffdcd648ec6cd25f6b3989da8ebf14c97c2119880d",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/24d1b70.c",
+        "raw_export_sha256": "563f4868336f6f21d212a840dffcbca6cb3e50716eb14b6ba1e6d8dcf56d075c"
+      }
+    },
+    {
+      "source": "cards/journey_into_nyx.c",
+      "name": "card_cloak_of_the_philospher",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_cloak_of_the_philospher",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 2,
+        "native_operand_witnesses": [
+          {
+            "address": "0x24dc462",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc4b7",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc4c3",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc4fd",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24dc527",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc533",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc560",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc5c0",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc5d7",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc646",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc65f",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc676",
+            "bytes_hex": "8b4104",
+            "instruction": "mov eax, dword ptr [ecx + 4]"
+          },
+          {
+            "address": "0x24dc679",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24dc67d",
+            "bytes_hex": "0fbe4150",
+            "instruction": "movsx eax, byte ptr [ecx + 0x50]"
+          },
+          {
+            "address": "0x24dc6a3",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc6f8",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc758",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc76e",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc7da",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc7fd",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc86e",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc8c8",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc8f0",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc910",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc948",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc96c",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc9a8",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dc9f6",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x24dc450",
+        "end": "0x24dca10",
+        "bytes_sha256": "cf01347a8193d5136ed1176d7f5c5c3ac042fc0b1e011aa2c68699bdc33ffb56",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/24dc450.c",
+        "raw_export_sha256": "b158b7c0aacf80e5752b4a9007232ba4abf6b892a1cd857fbd766220aecce2f8"
+      }
+    },
+    {
+      "source": "cards/journey_into_nyx.c",
+      "name": "card_bow_of_the_hunter",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_bow_of_the_hunter",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 12,
+        "native_operand_witnesses": [
+          {
+            "address": "0x24dcac2",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcb1a",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcb35",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcb53",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcba5",
+            "bytes_hex": "8b4204",
+            "instruction": "mov eax, dword ptr [edx + 4]"
+          },
+          {
+            "address": "0x24dcba8",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24dcbac",
+            "bytes_hex": "0fbe4250",
+            "instruction": "movsx eax, byte ptr [edx + 0x50]"
+          },
+          {
+            "address": "0x24dcbd0",
+            "bytes_hex": "8b4104",
+            "instruction": "mov eax, dword ptr [ecx + 4]"
+          },
+          {
+            "address": "0x24dcbd3",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24dcbd7",
+            "bytes_hex": "0fbe4150",
+            "instruction": "movsx eax, byte ptr [ecx + 0x50]"
+          },
+          {
+            "address": "0x24dcbfa",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcc15",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcc33",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcc68",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dccc8",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcce2",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcd54",
+            "bytes_hex": "8b4104",
+            "instruction": "mov eax, dword ptr [ecx + 4]"
+          },
+          {
+            "address": "0x24dcd57",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24dcd5b",
+            "bytes_hex": "0fbe4150",
+            "instruction": "movsx eax, byte ptr [ecx + 0x50]"
+          },
+          {
+            "address": "0x24dcd6e",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcdf1",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dce47",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dce7b",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x24dce7e",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24dce82",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x24dce96",
+            "bytes_hex": "8b4704",
+            "instruction": "mov eax, dword ptr [edi + 4]"
+          },
+          {
+            "address": "0x24dce99",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24dce9d",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x24dcebb",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcf10",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcf70",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcf86",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dcffa",
+            "bytes_hex": "8b4104",
+            "instruction": "mov eax, dword ptr [ecx + 4]"
+          },
+          {
+            "address": "0x24dcffd",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x24dd001",
+            "bytes_hex": "0fbe4150",
+            "instruction": "movsx eax, byte ptr [ecx + 0x50]"
+          },
+          {
+            "address": "0x24dd020",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dd040",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dd078",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dd09c",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dd0e0",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x24dd13c",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x24dcab0",
+        "end": "0x24dd156",
+        "bytes_sha256": "25fee409b3f2a4ff865eecd4ec7402613783ba2676a40960a92eaa7c21c49535",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/24dcab0.c",
+        "raw_export_sha256": "4eec7cf85cd024f52ae60495be368c888355f143e0b2c6432af138b49b9ee5c3"
+      }
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "card_dragon_throne_of_tarkir",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_dragon_throne_of_tarkir",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 13,
+        "native_operand_witnesses": [
+          {
+            "address": "0x21a8f8f",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a8f9b",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a8fb0",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a8fdf",
+            "bytes_hex": "8b4604",
+            "instruction": "mov eax, dword ptr [esi + 4]"
+          },
+          {
+            "address": "0x21a8fe2",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x21a8fe6",
+            "bytes_hex": "0fbe4650",
+            "instruction": "movsx eax, byte ptr [esi + 0x50]"
+          },
+          {
+            "address": "0x21a9043",
+            "bytes_hex": "8b4604",
+            "instruction": "mov eax, dword ptr [esi + 4]"
+          },
+          {
+            "address": "0x21a9046",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x21a904a",
+            "bytes_hex": "0fbe4650",
+            "instruction": "movsx eax, byte ptr [esi + 0x50]"
+          },
+          {
+            "address": "0x21a9068",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a9080",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a9090",
+            "bytes_hex": "397e04",
+            "instruction": "cmp dword ptr [esi + 4], edi"
+          },
+          {
+            "address": "0x21a90be",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x21a90fb",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a9107",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a9176",
+            "bytes_hex": "8b4604",
+            "instruction": "mov eax, dword ptr [esi + 4]"
+          },
+          {
+            "address": "0x21a917d",
+            "bytes_hex": "0fbe4650",
+            "instruction": "movsx eax, byte ptr [esi + 0x50]"
+          },
+          {
+            "address": "0x21a9181",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a91f4",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a924d",
+            "bytes_hex": "8b4604",
+            "instruction": "mov eax, dword ptr [esi + 4]"
+          },
+          {
+            "address": "0x21a9250",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x21a9254",
+            "bytes_hex": "0fbe4650",
+            "instruction": "movsx eax, byte ptr [esi + 0x50]"
+          },
+          {
+            "address": "0x21a9268",
+            "bytes_hex": "8b4604",
+            "instruction": "mov eax, dword ptr [esi + 4]"
+          },
+          {
+            "address": "0x21a926b",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x21a926f",
+            "bytes_hex": "0fbe4650",
+            "instruction": "movsx eax, byte ptr [esi + 0x50]"
+          },
+          {
+            "address": "0x21a9290",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a92f8",
+            "bytes_hex": "8b4604",
+            "instruction": "mov eax, dword ptr [esi + 4]"
+          },
+          {
+            "address": "0x21a92ff",
+            "bytes_hex": "0fbe4650",
+            "instruction": "movsx eax, byte ptr [esi + 0x50]"
+          },
+          {
+            "address": "0x21a9303",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a932b",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a9350",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x21a9388",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x21a8f80",
+        "end": "0x21a9399",
+        "bytes_sha256": "2857ba275e7d138bd7bcce8f85844c87b8f697320ebca5f3a1a9c71bdfee6f7a",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/21a8f80.c",
+        "raw_export_sha256": "a6f6544265eaa61a1f914e7634e27a75e8d057df4103aaecfecf73be09974ce6"
+      }
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "card_heart_piercer_bow",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_heart_piercer_bow",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 2,
+        "native_operand_witnesses": [
+          {
+            "address": "0x21a956f",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x21a957f",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x21a9595",
+            "bytes_hex": "8b4004",
+            "instruction": "mov eax, dword ptr [eax + 4]"
+          },
+          {
+            "address": "0x21a959c",
+            "bytes_hex": "0fbe4750",
+            "instruction": "movsx eax, byte ptr [edi + 0x50]"
+          },
+          {
+            "address": "0x21a95b3",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x21a95d6",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x21a95ee",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x21a961f",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x21a966b",
+            "bytes_hex": "c744240430147302",
+            "instruction": "mov dword ptr [esp + 4], 0x2731430"
+          },
+          {
+            "address": "0x21a9687",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x21a9560",
+        "end": "0x21a9695",
+        "bytes_sha256": "800f3df94d03341661bd9ec4fa94289bffe818865e4018bb67904b5f25bea0d5",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/21a9560.c",
+        "raw_export_sha256": "b0f0da5f2b1195c276fa517be4e7d5b8b21f3dde74efeffa9f29fe1d591c9075"
+      }
+    },
+    {
+      "source": "cards/mirrodin.c",
+      "name": "card_vorrac_battlehorns",
+      "kind": "full_native_body",
+      "native_range": {
+        "address": "0x2548850",
+        "end": "0x2548899",
+        "bytes_sha256": "9e8510ea5afb3623231524fe6dbddd2ef8a1f62328db4d87d7eff1aef4b1c430",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/2548850.c",
+        "raw_export_sha256": "3a03451c028c4b2f7be89b50a87208c24eb99193dc976808214f9792aaf796fd"
+      }
+    },
+    {
+      "source": "cards/origins.c",
+      "name": "card_helm_of_the_gods",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_helm_of_the_gods",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 2,
+        "native_operand_witnesses": [
+          {
+            "address": "0x20e6de0",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e6e18",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e6e2a",
+            "bytes_hex": "395004",
+            "instruction": "cmp dword ptr [eax + 4], edx"
+          },
+          {
+            "address": "0x20e6e2f",
+            "bytes_hex": "0fbe4050",
+            "instruction": "movsx eax, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x20e6e43",
+            "bytes_hex": "c744240404000000",
+            "instruction": "mov dword ptr [esp + 4], 4"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x20e6dc0",
+        "end": "0x20e6e55",
+        "bytes_sha256": "60d004a66d0954581a40b102cfd3832f6237f4bd78dfadc2e424944b584d1b7c",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/20e6dc0.c",
+        "raw_export_sha256": "6a41da914655201ec2d6897ec38b1f0d5576f69609fdda736d22b55f45ddfe67"
+      }
+    },
+    {
+      "source": "cards/origins.c",
+      "name": "card_sigil_of_valor",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_sigil_of_valor",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 5,
+        "native_operand_witnesses": [
+          {
+            "address": "0x20e73b2",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e73c5",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e73d1",
+            "bytes_hex": "0fbe5050",
+            "instruction": "movsx edx, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x20e73d5",
+            "bytes_hex": "8b4004",
+            "instruction": "mov eax, dword ptr [eax + 4]"
+          },
+          {
+            "address": "0x20e73f4",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e7420",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e7438",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e745e",
+            "bytes_hex": "c744240402000000",
+            "instruction": "mov dword ptr [esp + 4], 2"
+          },
+          {
+            "address": "0x20e7490",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x20e74c2",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x20e73a0",
+        "end": "0x20e74d3",
+        "bytes_sha256": "c05c6553315b5e11d68b95804fa36ba106f16cbab53d59f680ee2cc6e53b964a",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/20e73a0.c",
+        "raw_export_sha256": "aaecd2f596b360d068f1f1b7664c5d3b7a7b1d42f8e92e3d47a7c6ff338fbd29"
+      }
+    },
+    {
+      "source": "cards/origins.c",
+      "name": "card_sword_of_the_animist",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_sword_of_the_animist",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 3,
+        "native_operand_witnesses": [
+          {
+            "address": "0x20e74f2",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e7502",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e7512",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e7526",
+            "bytes_hex": "8b5004",
+            "instruction": "mov edx, dword ptr [eax + 4]"
+          },
+          {
+            "address": "0x20e752d",
+            "bytes_hex": "0fbe4050",
+            "instruction": "movsx eax, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x20e7541",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e756b",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e7588",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e75d0",
+            "bytes_hex": "c744240405000000",
+            "instruction": "mov dword ptr [esp + 4], 5"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x20e74e0",
+        "end": "0x20e75e2",
+        "bytes_sha256": "df45b881f629b129acc976c63dd21cb5b484874774d5b93d205804117273aa25",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/20e74e0.c",
+        "raw_export_sha256": "0ce4354b1648c199309e9f210c4ad7974cfe7c286cba5abc113091cfff0030a8"
+      }
+    },
+    {
+      "source": "cards/origins.c",
+      "name": "card_throwing_knife",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_throwing_knife",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 3,
+        "native_operand_witnesses": [
+          {
+            "address": "0x20e75ff",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e7612",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e7626",
+            "bytes_hex": "8b5004",
+            "instruction": "mov edx, dword ptr [eax + 4]"
+          },
+          {
+            "address": "0x20e762d",
+            "bytes_hex": "0fbe4050",
+            "instruction": "movsx eax, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x20e7641",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e766b",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e7688",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e76d7",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e76fc",
+            "bytes_hex": "c7442404fca77202",
+            "instruction": "mov dword ptr [esp + 4], 0x272a7fc"
+          },
+          {
+            "address": "0x20e771c",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e7730",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x20e75f0",
+        "end": "0x20e7741",
+        "bytes_sha256": "8f3e45d42704f7fde24d67cb378d619ebc9f1dccc67af5397816c29885eccd86",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/20e75f0.c",
+        "raw_export_sha256": "871bd27d2a4e16bf8329ad693dc094479434c9b637e32b70ca034cc13abf19e6"
+      }
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_infiltration_lens",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_infiltration_lens",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 4,
+        "native_operand_witnesses": [
+          {
+            "address": "0x2444d17",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x2444d58",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x2444d68",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x2444d74",
+            "bytes_hex": "0fbe5050",
+            "instruction": "movsx edx, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x2444d80",
+            "bytes_hex": "8b4804",
+            "instruction": "mov ecx, dword ptr [eax + 4]"
+          },
+          {
+            "address": "0x2444d86",
+            "bytes_hex": "894c2404",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x2444da3",
+            "bytes_hex": "894c2404",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x2444dd5",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x2444df0",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x2444e02",
+            "bytes_hex": "394804",
+            "instruction": "cmp dword ptr [eax + 4], ecx"
+          },
+          {
+            "address": "0x2444e0b",
+            "bytes_hex": "0fbe4050",
+            "instruction": "movsx eax, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x2444e1b",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x2444cf0",
+        "end": "0x2444e41",
+        "bytes_sha256": "0927094cafff1aafe8428b691d081e65d5e187764a60382d62c10d4cb8a1f99b",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/2444cf0.c",
+        "raw_export_sha256": "7a6c6009e239488583a4888045cbf20118e3f816b89c4e76c76e272e2a3cb205"
+      }
+    },
+    {
+      "source": "cards/darksteel.c",
+      "name": "card_murderous_spoils",
+      "kind": "attachment_fields_only",
+      "migration": {
+        "function": "card_murderous_spoils",
+        "old_slot": 8,
+        "new_fields": [
+          "damage_target_player",
+          "damage_target_card"
+        ],
+        "new_offsets": {
+          "damage_target_player": "0x50",
+          "damage_target_card": "0x4"
+        },
+        "source_replacements": 2,
+        "native_operand_witnesses": [
+          {
+            "address": "0x2252fc5",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2252fdc",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2252fe8",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2253014",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x225304a",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x225307c",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2253093",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x225309f",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2253102",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x225311a",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2253132",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2253142",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2253151",
+            "bytes_hex": "0fbe5050",
+            "instruction": "movsx edx, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x225315d",
+            "bytes_hex": "395004",
+            "instruction": "cmp dword ptr [eax + 4], edx"
+          },
+          {
+            "address": "0x2253166",
+            "bytes_hex": "897c2404",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x2253193",
+            "bytes_hex": "89442404",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22531aa",
+            "bytes_hex": "89742404",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          }
+        ],
+        "scope": "Attachment-field migration only; remaining caller algorithm differences remain separate review work."
+      },
+      "native_range": {
+        "address": "0x2252f80",
+        "end": "0x22531c2",
+        "bytes_sha256": "f530da1e5c30b63d49bbe378d81d98da342ff8480c2278e007fb8d2864a686ee",
+        "raw_export": ".recovery/decompiled-equipment-storage-callers/2252f80.c",
+        "raw_export_sha256": "2d252f67b72855b57c21cb644e917497cce0035ed10ca1d095f4eaf52f9836a7"
+      }
+    }
+  ],
+  "source_sha256": {
+    "functions/equipments.c": "97f7018a74c9a523018b6b09602bf7060111761268ec29cb7bdd8539adc5aa18",
+    "cards/alara_reborn.c": "3e3047721d92102633f12613afad203d16428c79f3942f5575a839bb3a22be80",
+    "cards/battle_for_zendikar.c": "b872c90da3479588ad9100dac30dbc65d48d337b7d6bfdfff9a8e721644ec912",
+    "cards/betrayers_of_kamigawa.c": "af514274af0c07c05fe2993216e3e4987542ef5340fc302b64f201df17cb8e57",
+    "cards/commander.c": "63c89ecb5dec4111dcbd8328f8389def58d381c0763b1bd66d13273d42f6e37b",
+    "cards/fifth_dawn.c": "8c302b83ff7be9a664250d902469c4e8e9de84507cd776db8f7be7b547d23eaf",
+    "cards/innistrad.c": "6b2f0ac078231f4fac79a86900ab5863fadf888a013a964021c6a116adb0bf46",
+    "cards/journey_into_nyx.c": "b77524769e8a578866e3ac9c2ed060320e8680071ad2841feb25d5923f49774e",
+    "cards/khans_of_tarkir.c": "67d6b00e3ee606fca165b228676cff1acc2b80805b6cb869415571f471e6ba22",
+    "cards/mirrodin.c": "624ae004c6a5660c75fc453471a9ee02ee79895da5fb21d718fefb377ec3f408",
+    "cards/origins.c": "83f78254f8c23d6e1335f306838bf968e39a2b1ac3c39a28c46861e806e64d1b",
+    "cards/scars_of_mirrodin.c": "da37197df2fa97520561cf627571391162633e36a20183f57ab1cbf6bde7b332",
+    "cards/darksteel.c": "08c9591014b201e07863fffd0019bbcae72dfbc269ffc5ab4d078aa640b483ff"
+  },
+  "scope": "Complete equipment helper bodies, one complete card wrapper, and explicitly narrow attachment-field caller migrations. No aliases, struct variants or invented private entry points."
+}

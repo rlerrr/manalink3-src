@@ -1,0 +1,1198 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "rfg_whole_deck_impl",
+      "native_ranges": [
+        {
+          "address": "0x26b26d0",
+          "end": "0x26b2783",
+          "bytes_sha256": "4e9485112e54b3fb546df1ff9a20c3d5b3be31a836a819e5151f7890676da77a",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b26d0.c",
+          "raw_export_sha256": "9c58c3dc059f7bf218ba669f7dac27290793b4ba7b2f06d7d9dc95ce6871089b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5b541d78e627f551c53e965cc4d5d3a28f26e4f1abde0e5a59d045bffcc5a9cb"
+    },
+    {
+      "name": "raw_put_iid_on_top_of_graveyard_impl",
+      "native_ranges": [
+        {
+          "address": "0x26b2790",
+          "end": "0x26b283b",
+          "bytes_sha256": "deeced170d8b9995f7e55fe0db4d8b71d00623b6fe83b451e08ebe205279f1e8",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b2790.c",
+          "raw_export_sha256": "456b6f1a3d00c5f49638a876e47fc999e2b3a710b851723ae848af76cda8c614"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3f010a6a499b185c725cdef98873384f01a1e4f5272bb90a008e1e268850ab87"
+    },
+    {
+      "name": "obliterate_card_from_deck_impl",
+      "native_ranges": [
+        {
+          "address": "0x26b2840",
+          "end": "0x26b2871",
+          "bytes_sha256": "33e54111e939c5e054b0e172d073978ff0761feae3ac92b4b1c4809af0e2de01",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b2840.c",
+          "raw_export_sha256": "fc956b6ec59b72f7d0626f46679c929057596acb48825ff596b91fdfdf8b6501"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9186089a562d6322c12f0896322e005fb66cd3492b3dc39e680cdc6d2c22f4af"
+    },
+    {
+      "name": "rfg_card_from_deck_impl",
+      "native_ranges": [
+        {
+          "address": "0x26b2880",
+          "end": "0x26b28f5",
+          "bytes_sha256": "5c692c7476e1b5dc90d7649d466827eaea2c43936739c53cb002d6858f92aba0",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b2880.c",
+          "raw_export_sha256": "afb3415b48f79a694a1f4e70fff3f05ad821bc452fa8a181254968bf0196f901"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a2b616fbd6ad2ebfaf9e1b1c56919f8ba3c920c8272a23ac18cc9c7d9160c88b"
+    },
+    {
+      "name": "calc_initial_attack_rating_by_iid",
+      "native_ranges": [
+        {
+          "address": "0x26b2900",
+          "end": "0x26b2a09",
+          "bytes_sha256": "203fb424b9bc57b4620577989f3dc15a7dfb84f30c3286c5f40be4c0bbecf3a2",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b2900.c",
+          "raw_export_sha256": "ab89acc7620d59c2852b47d74286063a4b7a25c8c9da987bc27629ac291ecfff"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9ee39da5ecc2099b00f3c2a819677789521e5c340ae60b5583885d0162f8bec2"
+    },
+    {
+      "name": "get_card_instance",
+      "native_ranges": [
+        {
+          "address": "0x26b2ab0",
+          "end": "0x26b2b45",
+          "bytes_sha256": "d2b2554cd84c1b80e8a6c0c9ba54981224bbdc9bbb734ab63e00bf8defc922f7",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b2ab0.c",
+          "raw_export_sha256": "62658244d12c65cbe89452d9231b97e59d8785bc0b19e7b3ce2ad0dbd8f83bb7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "92b90eec908c6354123c89a11beef46cf990dbb7169a13a7c799c45c8f96d9c2"
+    },
+    {
+      "name": "create_card_instance",
+      "native_ranges": [
+        {
+          "address": "0x26b2b50",
+          "end": "0x26b2e2f",
+          "bytes_sha256": "1dfc60048ab3c92b17e69af3939e5f052bb176b9d059efd2d7b7e6ad02646f21",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b2b50.c",
+          "raw_export_sha256": "a87cb27b8e6b924edf7e3d44a605544c80c030bc4b04aaeb7193996ec3763536"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d54ca38e1231c33ed3c5bc5878d016e1e020ca1ab307f6c4dae453c75379607e"
+    },
+    {
+      "name": "add_card_to_hand",
+      "native_ranges": [
+        {
+          "address": "0x26b2e30",
+          "end": "0x26b2e81",
+          "bytes_sha256": "3529820c4646fe4e277259092826f659e875173ed3e19d06183c6a422154e570",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b2e30.c",
+          "raw_export_sha256": "dfe5248000b87ae3ef39b3b7044ae342814b93eb437476a6bf29b2df5156b8b1"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5d531eb52df0644a6368c7b226652fcaf2fde92dae9ccf2723ede4f5fe95e98b"
+    },
+    {
+      "name": "raw_put_iid_on_top_of_graveyard_with_triggers",
+      "native_ranges": [
+        {
+          "address": "0x26b2ee0",
+          "end": "0x26b3223",
+          "bytes_sha256": "7a68b6f0091de8197a30dcf265c736a77044e388034b6b842254e975db0aef7f",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b2ee0.c",
+          "raw_export_sha256": "3f54d4a69c06f9a176c8f0fd7694e193bcd98876407c7beb8521c2ae7ad1fe01"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4ba3d0e105bc5b9dc206062b53458f8ccb2966c603db7ff2e680824b504da5fb"
+    },
+    {
+      "name": "get_displayed_card_instance",
+      "native_ranges": [
+        {
+          "address": "0x26b3230",
+          "end": "0x26b32c5",
+          "bytes_sha256": "c9344e74ca9480f5a8462676f96023252ba4f8d16d31f2d2df0b544a3ee2edcd",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b3230.c",
+          "raw_export_sha256": "88de1e241fec3e925e2f568d53b52a166327ef0f7206346fd6118379daffc29f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2cbb155db5007a8cf56f5553acb3263b5c91d27b4974625ba677d4beae6fe69a"
+    },
+    {
+      "name": "in_play",
+      "native_ranges": [
+        {
+          "address": "0x26b32d0",
+          "end": "0x26b3392",
+          "bytes_sha256": "396ebcb9c7b17f8189c2354c996875db337e460b299981ad3bf380b212520009",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b32d0.c",
+          "raw_export_sha256": "cc69eb255eab81fddfc1ec268893475d690764cb5cd41ffd25b840b338976d18"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "225a799d3131adbdbc0a07ffea60fb93dd8898e7431391055660b74d6d6f1880"
+    },
+    {
+      "name": "in_hand",
+      "native_ranges": [
+        {
+          "address": "0x26b33a0",
+          "end": "0x26b33cc",
+          "bytes_sha256": "c32919f42c69d839e36baa654f60c06b141ca7ed175ed4b97bdf669ab7accfc3",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b33a0.c",
+          "raw_export_sha256": "352f8c61ff390ee5f1b394608de687af7d8c1253e269f11c39a58cdccfecf67d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a7102d8b4b9de7562f7f95c337aca73f2fe4ed00bc8b156553330f14ea175557"
+    },
+    {
+      "name": "get_internal_card_id_from_csv_id",
+      "native_ranges": [
+        {
+          "address": "0x26b3410",
+          "end": "0x26b355f",
+          "bytes_sha256": "6dc62e8a7823601dee06d68f5bf7df1d26414dcdf2974c1da78e364d945a53a5",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b3410.c",
+          "raw_export_sha256": "18588b7ad0b5374d2c76349cd9e5be4ce6278d4f93f81837406aecb81d98925c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f430d36f6b41470b22b47d87eaeafcebbaa81be146c17eea8ad1085b411093ae"
+    },
+    {
+      "name": "get_id",
+      "native_ranges": [
+        {
+          "address": "0x26b35a0",
+          "end": "0x26b35e7",
+          "bytes_sha256": "072b659c9801dd4cd8a759f479af951f68353f58d72f30f8e9fbce57eae5d700",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b35a0.c",
+          "raw_export_sha256": "52094e21fa2a4e0b7ed1eb71448aa4fac0fc90b944196cc01653ef7d77bd0d5e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0b16f32794732101ae6bc2d9add4d14acdac0a04e3a817e1954785e5c8b81d11"
+    },
+    {
+      "name": "get_backup_id",
+      "native_ranges": [
+        {
+          "address": "0x26b35f0",
+          "end": "0x26b3627",
+          "bytes_sha256": "8a9ad11c612e1fb5da1404e6ae1a3db2c3130aff8882c51a3aa95ffd5b7d22cf",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b35f0.c",
+          "raw_export_sha256": "f02ac4831d797b51868dde90b17191f5079d39d01c951f7d15c25150b8272cdd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5298c6ab6823166d272b442065a9b83fd1c277bca980547ec8e5d8d020bb621a"
+    },
+    {
+      "name": "get_original_id",
+      "native_ranges": [
+        {
+          "address": "0x26b3630",
+          "end": "0x26b365c",
+          "bytes_sha256": "7e854b13f58ffa0611bb5192ccf77a2aa516ede3e80ade9e9bd880a3afc53efe",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b3630.c",
+          "raw_export_sha256": "e3f402803b01844c66d3892c4e392546bfc122aa8ce6cc27e8d5eb0e55acc377"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b222683b26c21ca46863e7d119eb49f5e86eb54ee33ec45cceb927fddf9b82ef"
+    },
+    {
+      "name": "get_original_internal_card_id",
+      "native_ranges": [
+        {
+          "address": "0x26b3660",
+          "end": "0x26b367d",
+          "bytes_sha256": "ca8e1e08d16b80de8cc8bd236b740c02ebd699109166f82cf25bf3ae3de0165d",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b3660.c",
+          "raw_export_sha256": "db9ef90a7dc9f0baa8c299a295c59caa02447d97012cc9ea3165053312540477"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e010910d492a3b84a51d44bcab8f8b8162ad6cebc3019d7fbaa6ef08460b1432"
+    },
+    {
+      "name": "obliterate_top_card_of_deck",
+      "native_ranges": [
+        {
+          "address": "0x26b3a50",
+          "end": "0x26b3a6b",
+          "bytes_sha256": "fb9e90f2a7d4ef0c520a70c1b3a158d19611b2ad1aeb163456d0ae9b5c01292c",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b3a50.c",
+          "raw_export_sha256": "c72169346db154c1d0721c589fd8047067d2d568f480ef472e6d9178de63cdba"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9349fb4860b7255298de5f1147972313a8d06a21eb50741acc1d372059ee67a1"
+    },
+    {
+      "name": "obliterate_top_n_cards_of_deck",
+      "native_ranges": [
+        {
+          "address": "0x26b3a70",
+          "end": "0x26b3ad2",
+          "bytes_sha256": "fa460fba1e50afe9535ad719c590df6b08b7fc8664e74266bcd1a21593958fd0",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b3a70.c",
+          "raw_export_sha256": "35feb39698a2168a2eed88192df99c9259abf2a54517b92c5b478251945b768a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "02db4cbf30b6489f7f1e2f033b9e23a2df6f99fea86e1a4dee0138594cbb278d"
+    },
+    {
+      "name": "obliterate_top_card_of_grave",
+      "native_ranges": [
+        {
+          "address": "0x26b3ae0",
+          "end": "0x26b3b77",
+          "bytes_sha256": "b291c63b9d2c6ecb34fff18b4d25aaec6a2022db6dcad20f832f83f0aafc9320",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b3ae0.c",
+          "raw_export_sha256": "51e3444d36ad4fb3af4d01458a11479bb9561c3a2dc82262eee1339611422516"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "db1e1c86abb23ba1184ed232052dd3e45e3bb3b691170c39ce31fea997036b34"
+    },
+    {
+      "name": "remove_card_from_grave",
+      "native_ranges": [
+        {
+          "address": "0x26b3b80",
+          "end": "0x26b3c38",
+          "bytes_sha256": "305e698c473c01bcc3ec6abf3962530bbabbc9fa90dece05cf73bf5ad4282ed1",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b3b80.c",
+          "raw_export_sha256": "b9db8cab6db12d9bd2216ba5118596197c579a049d4cca427770f631d5657fc8"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "eafc7ccba94113c413931c70dcf146a05c0b2531ad04afa0d5b9fc053a84b8c0"
+    },
+    {
+      "name": "is_hydra_head",
+      "native_ranges": [
+        {
+          "address": "0x26b3c40",
+          "end": "0x26b3c43",
+          "bytes_sha256": "251447ee91a9067dcd6ab96703133f617565974cd6c4819021760c4688c91abf",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b3c40.c",
+          "raw_export_sha256": "8c974de69c76d2c0576e6d19399501801a770eeb1385cf946575f50578b95999"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0f086f9cc4f03f41165a4c40e561b38a09ef84627d8297b8acc2323b3268d3dd"
+    },
+    {
+      "name": "can_draw_cards_as_cost",
+      "native_ranges": [
+        {
+          "address": "0x26b3c50",
+          "end": "0x26b3cf4",
+          "bytes_sha256": "ee0d4a6d3504ffaf345811168ddbf58d05ff4e7167d38aae07e337a879ceff01",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b3c50.c",
+          "raw_export_sha256": "3e913224a6718ebe960e84104f207bac6656093224cebaa35e77a4e8cf869c78"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1aec6d6d66add6fb38ce053770a12090c0e2dce9ac8b73ab6fbc70d57f9bb95c"
+    },
+    {
+      "name": "draw_a_card",
+      "native_ranges": [
+        {
+          "address": "0x26b3d00",
+          "end": "0x26b4048",
+          "bytes_sha256": "acc6b61c661987fd00fcf0b91234b15669b52aee4295cbd66024a157020f8073",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b3d00.c",
+          "raw_export_sha256": "d47c0c3cd5ef5fdc5ae3688dc9bab95d714bdd53d7c2bf5eea68a78c7dbe0170"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "eb61ac3f058da284e47252c04abfa3cd85de312acfba1ca8419a38460507bc84"
+    },
+    {
+      "name": "draw_cards",
+      "native_ranges": [
+        {
+          "address": "0x26b4050",
+          "end": "0x26b4055",
+          "bytes_sha256": "2b615181e5989918d0f87ece5ef73ec49bbceb8d3e2493f55d4715080bad3c1a",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4050.c",
+          "raw_export_sha256": "d6196602407152babbdbe0bd3e22bea455f7ec6b7df42550ea818329c07bcfb7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "054a8f1922cd2c4f8ee0aaf983e5fe947af98f2ca82de10931553aea6f3800ed"
+    },
+    {
+      "name": "draw_some_cards_if_you_want",
+      "native_ranges": [
+        {
+          "address": "0x26b4060",
+          "end": "0x26b429e",
+          "bytes_sha256": "349972e4cd27161e4db21e197c5b26be7454673b3de1db33c67eda800283c896",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4060.c",
+          "raw_export_sha256": "6ebbdb96b1fc63c8ad26b6d07fb2b8f290175b344b406bd4c92c30b3bbc8da7b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2872b48e107e6bfeccffa5690c56d62d637ac30c6e2de06a615c46bdc22570b3"
+    },
+    {
+      "name": "draw_up_to_n_cards",
+      "native_ranges": [
+        {
+          "address": "0x26b42a0",
+          "end": "0x26b430d",
+          "bytes_sha256": "deafc1db3019f4fb6e538e9760211c4f5da7386d5304c2eddecf120712ca7a06",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b42a0.c",
+          "raw_export_sha256": "d90cfb9cb7014263ef62cbb84d7ee3cc4df423d903e125f363062628591f3b95"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cae2ff0f9eeccadb23f507869e234a5c64376b33c9e4f872e3bd1a1cec27efba"
+    },
+    {
+      "name": "put_on_top_of_deck",
+      "native_ranges": [
+        {
+          "address": "0x26b4310",
+          "end": "0x26b450d",
+          "bytes_sha256": "15d4775129a5b4e2ac1f9b78507d75dce185e17b2815221c8fe9d7588d3b0d5f",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4310.c",
+          "raw_export_sha256": "b2c2cbb49ec52f5374d65ead51032d4d9ed7cbb52208270bab3c4b7133072291"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0875eeeff89c39a2b0064e12276b0b13ab3be25cc8b759314c82f4948a590a49"
+    },
+    {
+      "name": "obliterate_card",
+      "native_ranges": [
+        {
+          "address": "0x26b4510",
+          "end": "0x26b4654",
+          "bytes_sha256": "f83f334db042224720c15683a04c7d7fdbc8014ca07d37a6dcbccdca32ce933f",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4510.c",
+          "raw_export_sha256": "a8b4c012504e5c3d513cdaff31707529f8bcb1937b9d272ffd95928f7e169e96"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "397b49a44fabb306faee0584e1ed489866aea6708ba4617517bfefd1c0eb4989"
+    },
+    {
+      "name": "obliterate_card_and_recycle",
+      "native_ranges": [
+        {
+          "address": "0x26b4660",
+          "end": "0x26b47ab",
+          "bytes_sha256": "71ff9645622eb6c36bfd68157d20f47c7263652a2b85a355be66fce9faa70392",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4660.c",
+          "raw_export_sha256": "8b2fdbca483a578670c60f17d674bb74266fe457e1308424aa60ae39105dc590"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e5e8d6b92b2f43c8d794b803ee81e31f6fb8ceaa8269cbb6f2191ff6321fda8b"
+    },
+    {
+      "name": "from_graveyard_to_deck",
+      "native_ranges": [
+        {
+          "address": "0x26b47b0",
+          "end": "0x26b4894",
+          "bytes_sha256": "2841e76a702b02727c87149e2ca627082fbcf35334e48a386467874bf30a03ca",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b47b0.c",
+          "raw_export_sha256": "b1597f49eb5b621c2d46c1ad6c5a2d8c7eaf140ae633e866bfb28cb5c9be8393"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "03c60c216bb78678d96ca875b4566aaa56647895c9edf6c68ecd8875561adc54"
+    },
+    {
+      "name": "put_card_in_deck_to_bottom",
+      "native_ranges": [
+        {
+          "address": "0x26b48a0",
+          "end": "0x26b48ed",
+          "bytes_sha256": "02eea169a6df48fe937fa9fcf2be6dfca28707d2b486640b302f65be30187993",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b48a0.c",
+          "raw_export_sha256": "407ad1d6eea75a6e0b9b7d89c4ce8e5d9e5b21eac8d8a24cb70bdff9aa06a27d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "739a7b8eb6b63b9032f827547ab8bc50b4d87d7902518c39a85f0cec2f09f312"
+    },
+    {
+      "name": "put_top_card_of_deck_to_bottom",
+      "native_ranges": [
+        {
+          "address": "0x26b48f0",
+          "end": "0x26b490b",
+          "bytes_sha256": "6a9508960af9afff7c9ca008423b6e8add292dac5cfa6fdd2afca0064cd01caa",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b48f0.c",
+          "raw_export_sha256": "381ec1fae4cf14b07919f54c9c93a103517eb318b030335dbc5ecc5a80ee6596"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "aa6766c3aed395123a76b1b9658ea9d5f9b452ff7a2fb3f3a1f9404f8e20030f"
+    },
+    {
+      "name": "put_on_bottom_of_deck",
+      "native_ranges": [
+        {
+          "address": "0x26b4910",
+          "end": "0x26b4bb5",
+          "bytes_sha256": "41a1002d6e152424f1c965ab8d8a479598212e2067daace903e6c3d82eb4cee2",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4910.c",
+          "raw_export_sha256": "7c08292ddc77bf6dd9d73046edc1ccd0e89148057ff6e88ce5c8b175d3baa82f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "bbceda8ab4e81a711e7cc7f5e93ed3e4112f30d63f9c1a66928e3420e74f5b79"
+    },
+    {
+      "name": "put_iid_under_the_first_x_cards_of_library",
+      "native_ranges": [
+        {
+          "address": "0x26b4bc0",
+          "end": "0x26b4c08",
+          "bytes_sha256": "a45a35ec43e0c1ab07676e5413b582caac3586276e7c03413ae91bd11901c4d6",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4bc0.c",
+          "raw_export_sha256": "a152db1cb0f1f243b5bdc7b05a154222dae9bbea4937398d66498de96371e72d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7e395488e8a3440800203cad17166c8a976ca6157ea98e9db70c6e46ddbd9054"
+    },
+    {
+      "name": "put_permanent_under_the_first_x_card_of_its_owners_library",
+      "native_ranges": [
+        {
+          "address": "0x26b4c10",
+          "end": "0x26b4d7b",
+          "bytes_sha256": "2712bdb260deae463d364ea42ec4829b0ffd4f69338ad71d5a0ef014ef7bbb43",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4c10.c",
+          "raw_export_sha256": "04f098bca486bef6969abc102d72eb695ab329e728144998e6098df7ece68448"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5d89d2845f2c69161791862cce8aa2cac4be16a2871f0478f847bff86d6f0ac1"
+    },
+    {
+      "name": "shuffle_into_library",
+      "native_ranges": [
+        {
+          "address": "0x26b4d80",
+          "end": "0x26b4dc0",
+          "bytes_sha256": "952039e27f3ff5e888953eb4d205228f668a0139b6134bc2c3f8c605bbeb9d7b",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4d80.c",
+          "raw_export_sha256": "6d84b1c8d85d6069078c8d28ea8b5d21299a71e60ed9d0dda88ff4bdaf35bc3e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e0c36ef713f0fed93a29e8fd3808b2aac54c7e096401ea6aea8af7f925b53b3d"
+    },
+    {
+      "name": "reshuffle_grave_into_deck",
+      "native_ranges": [
+        {
+          "address": "0x26b4dc0",
+          "end": "0x26b4e51",
+          "bytes_sha256": "2da15b3ec22a7b025560eb81b7f9dd2fb7a85ac414246e3d8d7db0f38024fc75",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4dc0.c",
+          "raw_export_sha256": "4c6726ee03766d87df34c4e5155242725ac10473a39164237f7a005bdf3890cf"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d2bf86c8dec6ba877414039ab9579c8072a4cc02fc28001cc98547738acfddf7"
+    },
+    {
+      "name": "reshuffle_hand_into_deck",
+      "native_ranges": [
+        {
+          "address": "0x26b4e60",
+          "end": "0x26b4ebb",
+          "bytes_sha256": "b70ac9aa0009b4d4c52d0279f7e050f41b9279f8733255652e81accbeca0f83c",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4e60.c",
+          "raw_export_sha256": "78f8d3aa4a135b84efec31146524bec4586f25050e5bd96d6cba5b95ba429d7b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e7538dc709750f76969ba204572701a8baf871ca2439efab158c4c3ee3d406a8"
+    },
+    {
+      "name": "raw_put_card_in_graveyard",
+      "native_ranges": [
+        {
+          "address": "0x26b4f00",
+          "end": "0x26b4f38",
+          "bytes_sha256": "714641079abd9ad5448fad77d3206eb0a7476c2ca323359bc0e4a72588a4c781",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4f00.c",
+          "raw_export_sha256": "5a1f823a811bff0624f66696a300c693464580dc3831ab661b37fed111361582"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a233825de9056c109ae70247ad10ac7273304e9b0cfef4a7cbb72a2f6e99a86d"
+    },
+    {
+      "name": "from_exile_to_graveyard",
+      "native_ranges": [
+        {
+          "address": "0x26b4f40",
+          "end": "0x26b4fc9",
+          "bytes_sha256": "b0b1e13cdde555cfeec47b9c06a27e5b7c49f6c477cc097a2df6eb91e7039008",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4f40.c",
+          "raw_export_sha256": "36753a5aa684abe26a10ad34a85f9b5a5b3bed572b5f2c225b8f018233b74dfc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ca1e6b2b91c4c8c49381eec7aba21095c3502babf11749016f043ff6a9fbcc55"
+    },
+    {
+      "name": "turn_card_in_grave_face_down",
+      "native_ranges": [
+        {
+          "address": "0x26b4fd0",
+          "end": "0x26b504b",
+          "bytes_sha256": "830ff740e8aa97ab8b046b810271150fb43c96b980a8c8e7f835c9d15828d507",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b4fd0.c",
+          "raw_export_sha256": "a920b67dbae86466d97e612340bd6645d03961e1a12c14a04c78f3674555d49f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c346e09a55cec1566a8d537f2073270e012dc58e4e4896ef678c34120a5c4b6c"
+    },
+    {
+      "name": "turn_card_in_grave_face_up",
+      "native_ranges": [
+        {
+          "address": "0x26b5050",
+          "end": "0x26b50d4",
+          "bytes_sha256": "2b35f3b329e5cb5d1464e607e05d40e8089fcdf22223de09c065af951a2767fb",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b5050.c",
+          "raw_export_sha256": "a9bde40c56dd94aaff063ed342a5bb96f5cc9e21675ef7c15b5c92adb7efcee4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d6e770a550f8884c37387b9b5825bcf3764728fd0ec8d88e7f240896df0ba956"
+    },
+    {
+      "name": "can_ante_top_card_of_library",
+      "native_ranges": [
+        {
+          "address": "0x26b50e0",
+          "end": "0x26b511f",
+          "bytes_sha256": "837a60283e3ad771932c3a8e31116b124aa046057d4c6d072e1c0e6aecc53e34",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b50e0.c",
+          "raw_export_sha256": "10dae9f06671107d4d6ff55ccc1ce3604d2ba7141f6c586031caed3e5ab4d0d8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a234ce11ef1a06a4a1bc0197cacd38c53d521c824fb30c9adc3bd913014c3079"
+    },
+    {
+      "name": "rfg_card_in_hand",
+      "native_ranges": [
+        {
+          "address": "0x26b53a0",
+          "end": "0x26b53cd",
+          "bytes_sha256": "a4b2dd3f41887760a0f6ad88b015b69690d8f3f313ac09b580fc0c4588a85f33",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b53a0.c",
+          "raw_export_sha256": "d7ab983d1e00363da8bf657347c5da10d4ab14a387cc72e2b76e520c0219b9a3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9443db030f87c6fbbeeb142219cb8100d676d39895185d669471a10af98a859d"
+    },
+    {
+      "name": "kill_card_impl",
+      "native_ranges": [
+        {
+          "address": "0x26b53d0",
+          "end": "0x26b59f6",
+          "bytes_sha256": "10734bf410837ec97d73ebe3829f0198a0d40920e4afccd53a9724d927ee6bdd",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b53d0.c",
+          "raw_export_sha256": "55805ee158b1fd094c21cbbe31df7ea61f4b5a90d643d6eba3c1cc319315e2cb"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "beefcbc05a944d8e0d9a70abdd87c3fa03709bf3abc65ca78c230f7084f60c51"
+    },
+    {
+      "name": "kill_card",
+      "native_ranges": [
+        {
+          "address": "0x26b5a00",
+          "end": "0x26b5a2a",
+          "bytes_sha256": "dee7135eeb14272fb5e3a58790077c13b77ad26acab604e3f8c03d0d319cf522",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b5a00.c",
+          "raw_export_sha256": "dd193876ee5596dda697c7b9f9d7dca78eeb5e40762049cc7e5abb56ff479cb7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0443b164cc8bd5e580445c311a21e3424b55aa5ab22650e060b0b4b3ade4aef5"
+    },
+    {
+      "name": "destroy_attached_auras_and_obliterate_card",
+      "native_ranges": [
+        {
+          "address": "0x26b5a80",
+          "end": "0x26b5c2a",
+          "bytes_sha256": "30a2a822955104a19e2f6fdbfaddcd17c2b9ba0ec26ccbe0632e202c8e211862",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b5a80.c",
+          "raw_export_sha256": "863ff90dfbc6138a80eb86ecad9518adc3d4ac233f4652e4b98b1e5f2e968a45"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ad3e92fe0590498241ab3748dfc64d0eff41ddc4ecd5560b5d3a3ba9f20ef08b"
+    },
+    {
+      "name": "bounce_permanent",
+      "native_ranges": [
+        {
+          "address": "0x26b5c30",
+          "end": "0x26b5e87",
+          "bytes_sha256": "59f38ba26ec9954d794e2891350697103e27bc747c3866d450603d79274d9c8a",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b5c30.c",
+          "raw_export_sha256": "421cf5241f413c8db1ecd6ce1fd12f4a7dc2e792218224c2ab0f9876b1e295d0"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0756f5f4a6a0a73234f035eba9612e8762ea4fa0569e5d6c50bae5a221132bcb"
+    },
+    {
+      "name": "kill_card_exe",
+      "native_ranges": [
+        {
+          "address": "0x26b6470",
+          "end": "0x26b649a",
+          "bytes_sha256": "ba762e7529d0b29e3c96465d03821da4be2bf0270cda4c03f2f81c25f4f12081",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b6470.c",
+          "raw_export_sha256": "778d83237d556b8bba39b516f2bb6b714c2699ba232c350fb8c0ce82218fa3c3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "40b1e7f143ba8f41a15711dabf65c8018a001fb3115214f4e3e12246f662c6c6"
+    },
+    {
+      "name": "real_counter_a_spell",
+      "native_ranges": [
+        {
+          "address": "0x26b64a0",
+          "end": "0x26b64f7",
+          "bytes_sha256": "615970093868acb4ab85167735372e9688e573b91850e031894f5a3dd980a129",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b64a0.c",
+          "raw_export_sha256": "aee6cfdfe6849ed411c768cb513e807b2f854f91853f5d1f4328afb0ca1ea87c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7524268577fb9947a4674501e9694ccb32ef256d205dc8f062f26beb0f6081b9"
+    },
+    {
+      "name": "rfg_top_card_of_deck",
+      "native_ranges": [
+        {
+          "address": "0x26b6c30",
+          "end": "0x26b6c45",
+          "bytes_sha256": "35e3d2239929d3de58d5faa997e10182933714b603b5df272b2d809ca99c54ca",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b6c30.c",
+          "raw_export_sha256": "00bb6790d91fcb5e8531a142bbf86c90a1eb8f9dd4f488b506759d581a6e6fcd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4656656e846957515a0a771d9a02afc3df915816eef5476712ff1faeaa50e769"
+    },
+    {
+      "name": "rfg_card_in_deck",
+      "native_ranges": [
+        {
+          "address": "0x26b6c50",
+          "end": "0x26b6c66",
+          "bytes_sha256": "d3be4026b09589cac47f63e652203ed3d99e692c6140862e3d0b6eba2952574d",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b6c50.c",
+          "raw_export_sha256": "00fda04eb61d49983c631fa744ca9e268f754b8a4b62f1ba2a5824531b02ee9e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8499c1c479564025977839fed90043f32c7c016bf796c3cbffd544345f9c69ac"
+    },
+    {
+      "name": "rfg_whole_library",
+      "native_ranges": [
+        {
+          "address": "0x26b6db0",
+          "end": "0x26b6dc3",
+          "bytes_sha256": "6f98bf24bbea26ce5a0544e110495234e6c9b052201e768c1f0a2e68bf666d1b",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b6db0.c",
+          "raw_export_sha256": "ca97d68e33104c1cb80ddf011319a8ed53fd58e9e500b97be6586dff19970817"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e9b24f5284a0eb0a70ca8c6c774dfd15a89427dcd1b1ce029ae3d859360f972f"
+    },
+    {
+      "name": "rfg_top_n_cards_of_deck",
+      "native_ranges": [
+        {
+          "address": "0x26b6dd0",
+          "end": "0x26b6ebf",
+          "bytes_sha256": "1dca96dffcce14c291d70c15ae42817f6910f52db13b8deffa80dcbd28293306",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b6dd0.c",
+          "raw_export_sha256": "910c9b79dd032a66069c985dce76a14bdb8cf7072126a4bc704aea71c4084c6f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "eaa1a22ef2f7ecb384c71b1a13c5f1ae6f0eb6a58362d0f1502f5ddaa4a2d512"
+    },
+    {
+      "name": "add_card_to_rfg",
+      "native_ranges": [
+        {
+          "address": "0x26b6ec0",
+          "end": "0x26b6f01",
+          "bytes_sha256": "049a72cd3625f550951ea0daf2a3f9f19345ff48a9acab9fa386e23847a44479",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b6ec0.c",
+          "raw_export_sha256": "8bb939a12b6567fc8c920ace8e82ac9773a59aedb69f0a444a6d2f6f043c54a9"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "40c3c13836d6303426ec48fb3e2ec9e939cf8124295d6bb9b5be126f6f2f1f1a"
+    },
+    {
+      "name": "add_csvid_to_rfg",
+      "native_ranges": [
+        {
+          "address": "0x26b6f10",
+          "end": "0x26b6f2e",
+          "bytes_sha256": "7a59782753b157509daeab8368377febfb9e9681fdb1a74ea267bb79a47b42b0",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b6f10.c",
+          "raw_export_sha256": "c23e2ed332401c87b4f6fec0fcd9e7a399fd2c8b8b89861d00e5b82a9b02f5ac"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5cc48062ea29d3bf5218a7e37cea9b7033f4cdf680b422c6b364142fb877de7b"
+    },
+    {
+      "name": "find_iid_in_rfg",
+      "native_ranges": [
+        {
+          "address": "0x26b6f30",
+          "end": "0x26b6f6d",
+          "bytes_sha256": "a7c010257be93ca6472709a3aab1d08ec9f305a8553f0bdae3928185d2c2b433",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b6f30.c",
+          "raw_export_sha256": "81ab7b30fd5129c15458c4c6980d51ff584b697a0b59fabc78c8dba32e982cde"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5ebe4915ef18ea2484b7015473f672d874784379c7ce9f6482f7921dc6bb442a"
+    },
+    {
+      "name": "remove_card_from_rfg_by_position",
+      "native_ranges": [
+        {
+          "address": "0x26b7690",
+          "end": "0x26b76b2",
+          "bytes_sha256": "25233655a33db9af629f38252a95cc5b0c4ea3b5cfd24d5d537a2ea1cdec4a16",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b7690.c",
+          "raw_export_sha256": "581bcd7a6e122fa0e4e5ae6db93a49060eee995eb8ba5954b84d735168499a5a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1cec07eb52056b2c63a9c3effb29589979da6cf613dcd2ef7797bf6fd7fb446d"
+    },
+    {
+      "name": "remove_card_from_rfg",
+      "native_ranges": [
+        {
+          "address": "0x26b76c0",
+          "end": "0x26b771a",
+          "bytes_sha256": "12f62dffaa37d7b57ec35009adb83bf1183410f8f76ab2ab1c337d98fe91821e",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b76c0.c",
+          "raw_export_sha256": "9c43dcfc41f62221c0fcdcc34ea1ab96caf329c56ee2d5a4533b91943ba9b8f5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b7565b9a21d3a7fca9055b880fdadf094fe525900bc4ff308871500dad71a0b9"
+    },
+    {
+      "name": "check_rfg",
+      "native_ranges": [
+        {
+          "address": "0x26b7720",
+          "end": "0x26b774b",
+          "bytes_sha256": "e08ad98c46fd8c9216dc9e8b39605af8cdbc309846cf7dc4893cc2ac5506fc91",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b7720.c",
+          "raw_export_sha256": "4b0870f2ac30248c539486d004c80fa04db26e0f7128c221c148cd996a742850"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "bffb00663d99683b5cac93afa7cdfe0bf83253509aa951a87af932654e04faed"
+    },
+    {
+      "name": "rfg_target_permanent",
+      "native_ranges": [
+        {
+          "address": "0x26b7750",
+          "end": "0x26b7835",
+          "bytes_sha256": "bde070fb305a474b27624b610be26358cc552d6cda8930b91f3f2ff25e69ab5b",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b7750.c",
+          "raw_export_sha256": "66fb21b57c1262740afc2195e991857d943633852545ab665301c0279d174ef6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2bc41d0ad1b6d629421e4c056070d1c7e57e572a563b5017bb11ae674136046d"
+    },
+    {
+      "name": "put_into_play_a_card_from_deck",
+      "native_ranges": [
+        {
+          "address": "0x26b7840",
+          "end": "0x26b78fd",
+          "bytes_sha256": "d3b523f32631bc26c49a45706088d61099f0cd2f6546695a59cfe82ad9e9cd7f",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b7840.c",
+          "raw_export_sha256": "7cad0c7642b455bc1cea502329a191693e71acda9db6bd2c84623d4fecc35397"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "feae126dd3aa8bcebbe730833bfb9784d937dce8505c4fb5f7379234c7a1f723"
+    },
+    {
+      "name": "mill",
+      "native_ranges": [
+        {
+          "address": "0x26b9430",
+          "end": "0x26b9462",
+          "bytes_sha256": "73ce4c9671aaa99bcdd0fe0b0e7d2bc9f2340755df0343b982e889814c2c32f2",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b9430.c",
+          "raw_export_sha256": "0a4d4dcbcae774698a5db96445926073ed95f116d28c3426c2d613747c4b2c36"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "853d429010176bb7d8c7399287fd10654e129d2a2444cdd0f7c90b9908e7579f"
+    },
+    {
+      "name": "graveyard_has_shroud",
+      "native_ranges": [
+        {
+          "address": "0x26b9670",
+          "end": "0x26b9703",
+          "bytes_sha256": "748adedf00910e2f730097bb70e92f24d7edd33b8b865b0bdd8f069e62f99722",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b9670.c",
+          "raw_export_sha256": "efb1c55fb1f8b35a99e3234d634e3423f652f21bc152b97f7bef82a40fd8642d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fad89a72c5148a22492940d8ae401fd7e50bc196dbe1dae5adff4741d7ee0dd3"
+    },
+    {
+      "name": "good_to_put_in_grave",
+      "native_ranges": [
+        {
+          "address": "0x26b9710",
+          "end": "0x26b976a",
+          "bytes_sha256": "d46b54395fa71c9bfb42c855c7f6e48d696e362db0a424f4dd084dba888f9ad2",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b9710.c",
+          "raw_export_sha256": "0073ebfd1df60d75d3fa519cf7588d34b23f39f26f3bee5700106ecb04901de6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0548033edc0f57bdb2d4f54d83e16e80bd671aa3f3f54c990e7fdcae549a4676"
+    },
+    {
+      "name": "validate_target_from_grave",
+      "native_ranges": [
+        {
+          "address": "0x26b9b90",
+          "end": "0x26b9be8",
+          "bytes_sha256": "22f004ebbc49422729e14f22ab2a87336610bf67e76f3a01f6451b8fd331409f",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b9b90.c",
+          "raw_export_sha256": "b3d382ff76c6809160df4974edfd2c29d14e3b2bf8cf7f60b483549deb3aa17e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a0da6d5e88e96c4079fdf951453a7ce99f8f22d827853297396cc96bd6d1f628"
+    },
+    {
+      "name": "from_grave_to_hand_triggers",
+      "native_ranges": [
+        {
+          "address": "0x26b9cc0",
+          "end": "0x26b9d1b",
+          "bytes_sha256": "c621bdd5c5330093fc800640766ed49fd673db6aa0201f4d62879c2658dddbc1",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b9cc0.c",
+          "raw_export_sha256": "2816f7679675f4d81c1a312e781a0ae8c99da8ef1077f0c21a21aec3cb19393c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a978637447f07ae4184396296882f48c33669f6cba0d7827c8fd56c5ac690852"
+    },
+    {
+      "name": "from_grave_to_hand",
+      "native_ranges": [
+        {
+          "address": "0x26b9d20",
+          "end": "0x26b9d7d",
+          "bytes_sha256": "e6884e87b6f4c8c4bda5b5947b6cc7fb4c5200e7d6c459f3184f5230ca13d5ea",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b9d20.c",
+          "raw_export_sha256": "bca3702ce1fcf2aa6b4aeaf288569d3ad05951fa6178879b37f8bd950d3de246"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "baad135da2dbd9fc302ebb8b0d7d919e060a67882dd61c9ca86fe2eaa38823df"
+    },
+    {
+      "name": "from_grave_to_hand_multiple",
+      "native_ranges": [
+        {
+          "address": "0x26b9d80",
+          "end": "0x26b9f06",
+          "bytes_sha256": "0c88cfb10a407dcc780a42c75bab78aa96c564a67cc784ee6a0f8a3c84c6e3f4",
+          "raw_export": ".recovery/decompiled-deck-helpers/26b9d80.c",
+          "raw_export_sha256": "fc6f2defd8c22737f04a8bcf52fd97c5847f182aada1069712111f85580ee938"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8b570fa65c9ab07dbe36227537da82c1def8db8122e3253572c1965dd93a6d2c"
+    },
+    {
+      "name": "exile_from_owners_graveyard",
+      "native_ranges": [
+        {
+          "address": "0x26ba010",
+          "end": "0x26ba059",
+          "bytes_sha256": "f4d9970d0f43841e9fafa30bf3de582414f4c607d635cb129f638e19eaf7bdf7",
+          "raw_export": ".recovery/decompiled-deck-helpers/26ba010.c",
+          "raw_export_sha256": "0f908f0c4a717137ac5996e19e05eb3ebd18f22ed729e457a1f1e2bfc57bc90f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b1702089dd032ae8fd67f11bbeaea07c962b0cb9dace815d9da46908069ab8c9"
+    }
+  ],
+  "counterspell_callers": [
+    {
+      "source": "cards/future_sight.c",
+      "name": "card_delay",
+      "native_ranges": [
+        {
+          "address": "0x2574770",
+          "end": "0x2574872",
+          "bytes_sha256": "4e3e9b36b1803bb4ea28e539cedcdf67bac3620c77fceab08504f4345b92c664",
+          "raw_export": ".recovery/decompiled-deck-counterspell-callers/2574770.c",
+          "raw_export_sha256": "ea86507d6f4a27052a5939a9077d5ca244a7118fa36aec10acb2a18ed1e35d5f"
+        }
+      ],
+      "definition_sha256": "64dc158ea7b46fb92024d390cb2cb762024919b3604f3728362046121e227677"
+    },
+    {
+      "source": "cards/homelands.c",
+      "name": "card_memory_lapse",
+      "native_ranges": [
+        {
+          "address": "0x2127430",
+          "end": "0x2127534",
+          "bytes_sha256": "1410a99ba9ef39a9d17e6d70a78fb47c754c2aa2ab0ec813d5f0d8d9f622eae5",
+          "raw_export": ".recovery/decompiled-deck-counterspell-callers/2127430.c",
+          "raw_export_sha256": "efc559d0763b9053542a8dcbe6ea3edd562999b02b4ac55bfafe4f8d150c55bc"
+        }
+      ],
+      "definition_sha256": "d15d1e37a4869962d9c36d0ec8430668ce11c33dfdf2150896b8ffa1715bf6df"
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "card_khero_spellsnatcher",
+      "native_ranges": [
+        {
+          "address": "0x219bd50",
+          "end": "0x219bfd2",
+          "bytes_sha256": "0c671e7cd2f7af6ba23a3450185e8841328cf3011d40cee3fc615fb5998e5862",
+          "raw_export": ".recovery/decompiled-deck-counterspell-callers/219bd50.c",
+          "raw_export_sha256": "e204b5af3c1de0f4286d294a22790240477e9b17541462248b65abf0df08e1b1"
+        }
+      ],
+      "definition_sha256": "df94a930a41a7a10e15980fc52a91161f63c962e6341cf4c38a364d11198229c"
+    },
+    {
+      "source": "cards/mirage.c",
+      "name": "card_dissipate",
+      "native_ranges": [
+        {
+          "address": "0x237c210",
+          "end": "0x237c317",
+          "bytes_sha256": "14c912fd6baf17f58272862e836c75c2b5bc28cd29f741447cc4c430dd8cdbdd",
+          "raw_export": ".recovery/decompiled-deck-counterspell-callers/237c210.c",
+          "raw_export_sha256": "362be8622be27f25796d3473bad60e658a71522d55c55214b250e619738b68cb"
+        }
+      ],
+      "definition_sha256": "09d832d4d79f2bd1b3bd513643ad340d80580542767f05e7bd03f4622918b31b"
+    },
+    {
+      "source": "cards/ravnica.c",
+      "name": "card_remand",
+      "native_ranges": [
+        {
+          "address": "0x24eeb60",
+          "end": "0x24eec64",
+          "bytes_sha256": "dec032a600de7a2ddfb0d381dfbb65a7e8378c8fb2d0a400a28924a3695b8d36",
+          "raw_export": ".recovery/decompiled-deck-counterspell-callers/24eeb60.c",
+          "raw_export_sha256": "a83fb8fb5f60d8c914fdabbe46baaff6c5eba58bddd162261f71d67ec38e6a83"
+        }
+      ],
+      "definition_sha256": "c49910107b90d7c91b295d0552807bcff530530fb40a5d4054baa954fe4a7f21"
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "name": "card_deny_existence",
+      "native_ranges": [
+        {
+          "address": "0x22a3c50",
+          "end": "0x22a3e2f",
+          "bytes_sha256": "fd5af4f779102bc1fe3bf49ba42ce77ffbd16a9b8ba59d0056b89f476f7ddee5",
+          "raw_export": ".recovery/decompiled-deck-counterspell-callers/22a3c50.c",
+          "raw_export_sha256": "28e14aecab5e2d01965f569b72d84ae771ce0792a6710bb59e20b751eee231f4"
+        }
+      ],
+      "definition_sha256": "66b672ee304bc1257488244fb51158c78ab6424cee6ba9ffd04fdd42ba4a5a53"
+    }
+  ],
+  "helper_definitions": 71,
+  "native_helper_ranges": 71,
+  "changed_helper_definitions": 19,
+  "templates": [
+    {
+      "name": "card_instance_template",
+      "bytes": 300,
+      "native_address": "0x27650a0",
+      "sha256": "f645c3ee6cfff6201f1130b972219a0430189e4ee3b5626aaab2db917f6cec84"
+    },
+    {
+      "name": "card_ext_template",
+      "bytes": 192,
+      "native_address": "0x2764fe0",
+      "sha256": "d2c999e5e120d666cbad2c2969c3358d7f6c9a7269143576eb9f0ba85d37e565"
+    }
+  ],
+  "fixed_banks": {
+    "raw_card_instances": {
+      "address": "0x4ef540",
+      "players": 2,
+      "slots": 151,
+      "instance_bytes": 300
+    },
+    "raw_displayed_card_instances": {
+      "address": "0x543c10",
+      "players": 2,
+      "slots": 151,
+      "instance_bytes": 300
+    }
+  },
+  "source_sha256": {
+    "functions/deck.c": "75ca0f820a4944c5183dea033c536011b309f4d6fb726c3a45afbb6f65eb097e",
+    "cards/future_sight.c": "cb78b769c1e440724a4e06be7cc3c8d6f60be98c717e9ad7a69b5b6e53461408",
+    "cards/homelands.c": "a59aef17ba9bb5e8073855973178be385ba4fe7ca87f4d9a4e2fd4c0fa2616ab",
+    "cards/khans_of_tarkir.c": "d3e32a47a98ec8dd768ebb10c7f113acf2a54a3cce272f2fc18e9c5821d58de1",
+    "cards/mirage.c": "27261383dd72f3588a08380317be914bed8e257c88e1ad320b477fa55225b740",
+    "cards/ravnica.c": "0afc6b5bbb9d6274dd173c4829df82821eff0fab137c9ffd053e9846bbb32906",
+    "cards/shadows_over_innistrad.c": "fccdba9cd0966b6080cbaecffdae02d33f00786657c6f0ac65b870007913683e",
+    "manalink.h": "6964d86c508202fbb8df8e52558296582b4984c9624082331deeaeb282f1605b"
+  },
+  "scope": "Complete directly reviewed deck bodies and six complete counterspell callers. Verified retained bodies are distinguished from changed source; unrelated helper/caller behavior remains in the review queue."
+}

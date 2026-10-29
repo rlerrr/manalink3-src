@@ -11,18 +11,22 @@ static void gatekeeper(int player, int card, event_t event, int trig_mode){
 
 // Cards
 // White
-int card_boros_mastiff(int player, int card, event_t event){
-/* CARD_ID_BOROS_MASTIFF	13129
-Boros Mastiff	|1|W
-Creature - Hound 2/2
-Battalion - Whenever ~ and at least two other creatures attack, ~ gains lifelink until end of turn.
-(Damage dealt by a creature with lifelink also causes its controller to gain that much life.) */
+int card_boros_mastiff(int player, int card, event_t event)
+{
+  /* CARD_ID_BOROS_MASTIFF	13129
+  Boros Mastiff	|1|W
+  Creature - Hound 2/2
+  Battalion - Whenever ~ and at least two other creatures attack, ~ gains lifelink until end of
+  turn. (Damage dealt by a creature with lifelink also causes its controller to gain that much
+  life.) */
 
-	if( battalion(player, card, event) ){
-		pump_ability_until_eot(player, card, player, card, 0, 0, 0, SP_KEYWORD_LIFELINK);
-	}
-	return 0;
+  battalion(player, card, event);
 
+  if (event == EVENT_DAT_ABILITY)
+  {
+    pump_ability_until_eot(player, card, player, card, 0, 0, 0, SP_KEYWORD_LIFELINK);
+  }
+  return 0;
 }
 
 int card_haazda_snare_squad(int player, int card, event_t event)
@@ -1894,80 +1898,88 @@ int card_lavinia_of_the_tenth(int player, int card, event_t event){
 	return 0;
 }
 
-static int legions_initiative_legacy(int player, int card, event_t event){
-	if( event == EVENT_PHASE_CHANGED && current_phase == PHASE_DECLARE_ATTACKERS && get_card_instance(player, card)->targets[0].card != 66 )
-	{
-		if( current_turn == player ){
-			card_instance_t *instance = get_card_instance(player, card);
-			instance->targets[0].card = 66;
-			int i;
-			for(i=1; i<19; i++){
-				int owner = instance->targets[i].player;
-				int iid = instance->targets[i].card;
-				if( owner > -1 ){
-					if( check_rfg(owner, cards_data[iid].id) ){
-						int card_added = add_card_to_hand(owner, iid);
-						remove_card_from_rfg(owner, cards_data[iid].id);
-						put_into_play(owner, card_added);
-						give_haste(owner, card_added);
-					}
-				}
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
-
-	return 0;
+static int legions_initiative_legacy(int player, int card, event_t event)
+{
+  if (beginning_of_combat(player, card, event, ANYBODY))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    for (int i = 0; i < 19; ++i)
+    {
+      int owner = instance->targets[i].player;
+      if (owner >= 0)
+      {
+        int iid = instance->targets[i].card;
+        if (check_rfg(owner, cards_data[iid].id))
+        {
+          int added = add_card_to_hand(owner, iid);
+          remove_card_from_rfg(owner, cards_data[iid].id);
+          put_into_play(owner, added);
+          pump_ability_until_eot(player, card, owner, added, 0, 0, 0, SP_KEYWORD_HASTE);
+          get_card_instance(owner, added)->regen_status |= KEYWORD_RECALC_ABILITIES;
+          get_abilities(owner, added, EVENT_ABILITIES, -1);
+        }
+      }
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
-int card_legions_initiative(int player, int card, event_t event){
-/*
-Legion's Initiative |W|R
-Enchantment
-Red creatures you control get +1/+0.
-White creatures you control get +0/+1.
-{R}{W}, Exile Legion's Initiative: Exile all creatures you control. At the beginning of the next combat,
-		return those cards to the battlefield under their owner's control and those creatures gain haste until end of turn.
-*/
-	boost_creature_by_color(player, card, event, get_sleighted_color_test(player, card, COLOR_TEST_RED), 1, 0, 0,
-							BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
-
-	boost_creature_by_color(player, card, event, get_sleighted_color_test(player, card, COLOR_TEST_WHITE), 0, 1, 0,
-							BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
-
-	if( IS_GAA_EVENT(event) ){
-		if( event == EVENT_RESOLVE_ACTIVATION ){
-			int marked[151] = {0};
-			CYCLE_ALL_CARDS(p, c, 	{
-										if( p == player && in_play(p, c) && is_what(p, c, TYPE_CREATURE) && ! is_token(p, c) ){
-											marked[c] = 1;
-										}
-									};
-			);
-			int legacy = -1;
-			int removed_count = 1;
-			int i;
-			for(i=150; i>-1; i++){
-				if( marked[i] ){
-					if( legacy == -1 ){
-						legacy = create_legacy_effect(player, card, &legions_initiative_legacy);
-					}
-					if( removed_count > 18 ){
-						legacy = create_legacy_effect(player, card, &legions_initiative_legacy);
-						removed_count = 1;
-					}
-					card_instance_t *leg = get_card_instance(player, legacy);
-					leg->targets[removed_count].player = get_owner(player, marked[i]);
-					leg->targets[removed_count].card = get_original_internal_card_id(player, marked[i]);
-					removed_count++;
-					kill_card(player, marked[i], KILL_EXILE);
-				}
-			}
-		}
-		return generic_activated_ability(player, card, event, GAA_RFG_ME, MANACOST_RW(1, 1), 0, NULL, NULL);
-	}
-
-	return global_enchantment(player, card, event);
+int card_legions_initiative(int player, int card, event_t event)
+{
+  boost_creature_by_color(player, card, event,
+                          get_sleighted_color_test(player, card, COLOR_TEST_RED), 1, 0, 0,
+                          BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
+  boost_creature_by_color(player, card, event,
+                          get_sleighted_color_test(player, card, COLOR_TEST_WHITE), 0, 1, 0,
+                          BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
+  if (!IS_GAA_EVENT(event))
+    return global_enchantment(player, card, event);
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    int marked[151] = {0};
+    CYCLE_ALL_CARDS(p, c, {
+      if (p == player && in_play(p, c) && is_what(p, c, TYPE_CREATURE))
+        marked[c] = 1;
+    });
+    int legacy = -1, removed_count = 0;
+    for (int i = 150; i >= 0; --i)
+    {
+      if (marked[i])
+      {
+        int id = get_id(player, i);
+        int melded = id == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || id == CARD_ID_CHITTERING_HOST ||
+                     id == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP;
+        if (legacy == -1)
+          legacy = create_legacy_effect(player, card, legions_initiative_legacy);
+        int pos;
+        if (removed_count > 18 || (melded && removed_count == 18))
+        {
+          legacy = create_legacy_effect(player, card, legions_initiative_legacy);
+          removed_count = 1;
+          pos = 0;
+        }
+        else
+          pos = removed_count++;
+        card_instance_t *leg = get_card_instance(player, legacy);
+        leg->targets[pos].player = get_owner(player, i);
+        if (melded)
+        {
+          int csvida, csvidb;
+          unmeld(id, &csvida, &csvidb);
+          leg->targets[pos].card = get_internal_card_id_from_csv_id(csvida);
+          leg->targets[removed_count].card = get_internal_card_id_from_csv_id(csvidb);
+          leg->targets[removed_count].player = get_owner(player, i);
+          removed_count = pos + 2;
+        }
+        else
+          leg->targets[pos].card = get_original_internal_card_id(player, i);
+        kill_card(player, i, KILL_EXILE);
+      }
+    }
+  }
+  return generic_activated_ability(player, card, event, GAA_RFG_ME, MANACOST_RW(1, 1), 0, NULL,
+                                   NULL);
 }
 
 int card_master_of_cruelties(int player, int card, event_t event)
@@ -2620,17 +2632,21 @@ int card_species_gorger(int player, int card, event_t event){
 
 // spike jester --> vanilla
 
-int card_tajic_blade_of_the_legion(int player, int card, event_t event){
+int card_tajic_blade_of_the_legion(int player, int card, event_t event)
+{
 
-	check_legend_rule(player, card, event);
+  check_legend_rule(player, card, event);
 
-	indestructible(player, card, event);
+  indestructible(player, card, event);
 
-	if( battalion(player, card, event) ){
-		pump_until_eot(player, card, player, card, 5, 5);
-	}
+  battalion(player, card, event);
 
-	return 0;
+  if (event == EVENT_DAT_ABILITY)
+  {
+    pump_until_eot(player, card, player, card, 5, 5);
+  }
+
+  return 0;
 }
 
 int card_teysa_envoy_of_ghosts(int player, int card, event_t event){
@@ -2644,7 +2660,6 @@ int card_teysa_envoy_of_ghosts(int player, int card, event_t event){
 
 	vigilance(player, card, event);
 
-	protection_from_creatures(player, card, event);
 
 	int flags = DDBM_TRACE_DAMAGING_SOURCES | DDBM_MUST_DAMAGE_TRIGGERING_PLAYER | DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE;
 
@@ -2665,8 +2680,7 @@ int card_teysa_envoy_of_ghosts(int player, int card, event_t event){
 				default_token_definition(player, card, CARD_ID_SPIRIT, &token);
 				token.pow = token.tou = 1;
 				token.key_plus = KEYWORD_FLYING;
-				token.color_forced = 	get_sleighted_color_test(player, card, COLOR_TEST_WHITE) |
-										get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
+				token.color_forced = COLOR_TEST_WHITE | COLOR_TEST_BLACK;
 				generate_token(&token);
 			}
 		}

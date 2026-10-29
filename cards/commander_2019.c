@@ -1020,10 +1020,6 @@ int card_volrath_the_shapestealer(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23b2920; original cards/commander_2019.c:397. */
 int card_doomed_artisan(int player, int card, event_t event)
 {
-  enum
-  {
-    SUBTYPE_SCULPTURE = 257
-  };
 
   int result;
   token_generation_t token;

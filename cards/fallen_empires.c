@@ -7,125 +7,153 @@ void add_spore_counters(int player, int card, event_t event){
 	}
 }
 
-static int fe_knights(int player, int card, event_t event, int mana_color){
+static int fe_knights(int player, int card, event_t event, int mana_color)
+{
 
-	if( event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST ){
-		int c[6] = {0};
-		c[mana_color] = 2;
-		return generic_shade(player, card, event, 0, c[0], c[1], c[2], c[3], c[4], c[5], 1, 0, 0, 0);
-	}
+  if (event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST)
+  {
+    int c[6] = {0};
+    c[mana_color] = 2;
+    return generic_shade(player, card, event, 0, 0, c[1], c[2], c[3], c[4], c[5], 1, 0, 0, 0);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		get_card_instance( player, card )->targets[1].player = 0;
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    get_card_instance(player, card)->targets[1].player = 0;
+  }
 
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
+  if (!IS_GAA_EVENT(event))
+  {
+    return 0;
+  }
 
-	enum{
-		CHOICE_FIRST_STRIKE = 1,
-		CHOICE_PUMP,
-	};
+  enum
+  {
+    CHOICE_FIRST_STRIKE = 1,
+    CHOICE_PUMP,
+  };
 
-	card_instance_t *instance = get_card_instance( player, card );
+  card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_ACTIVATE ){
-		int c[6] = {0};
-		c[mana_color] = 1;
-		return generic_activated_ability(player, card, event, 0, c[0], c[1], c[2], c[3], c[4], c[5], 0, NULL, NULL);
-	}
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    int c[6] = {0};
+    c[mana_color] = 1;
+    return generic_activated_ability(player, card, event, 0, 0, c[1], c[2], c[3], c[4], c[5], 0,
+                                     NULL, NULL);
+  }
 
-	if( event == EVENT_ACTIVATE ){
-		int abils[3] = {0, 1, 0};
-		int c[6] = {0};
-		c[mana_color] = 2;
-		if( has_mana_for_activated_ability(player, card, c[0], c[1], c[2], c[3], c[4], c[5]) ){
-			abils[2] = 1;
-		}
-		int priorities[3] = {
-							0,
-							(instance->targets[1].player > -1 && !(instance->targets[1].player & KEYWORD_FIRST_STRIKE)) &&
-							current_phase < PHASE_DECLARE_BLOCKERS ? 10 : 1,
-							current_phase == PHASE_AFTER_BLOCKING ? 5 : 1,
-		};
-		int choice = DIALOG(player, card, event, DLG_RANDOM,
-							"Gains First Strike", abils[1], priorities[1],
-							"+1/+0 until EOT", abils[2], priorities[2]);
-		if( ! choice ){
-			spell_fizzled = 1;
-			return 0;
-		}
-		c[mana_color] = choice;
-		if( charge_mana_for_activated_ability(player, card, c[0], c[1], c[2], c[3], c[4], c[5]) ){
-			if( instance->targets[1].player < 0 ){
-				instance->targets[1].player = 0;
-			}
-			instance->targets[1].player |= (choice == CHOICE_FIRST_STRIKE ? KEYWORD_FIRST_STRIKE : 0);
-		}
-	}
+  if (event == EVENT_ACTIVATE)
+  {
+    int abils[3] = {0, 1, 0};
+    int c[6] = {0};
+    c[mana_color] = 2;
+    if (has_mana_for_activated_ability(player, card, 0, c[1], c[2], c[3], c[4], c[5]))
+    {
+      abils[2] = 1;
+    }
+    int priorities[3] = {
+        0,
+        (instance->targets[1].player > -1 &&
+         !(instance->targets[1].player & KEYWORD_FIRST_STRIKE)) &&
+                current_phase < PHASE_DECLARE_BLOCKERS
+            ? 10
+            : 1,
+        current_phase == PHASE_AFTER_BLOCKING ? 5 : 1,
+    };
+    int choice = DIALOG(player, card, event, DLG_RANDOM, "Gains First Strike", abils[1],
+                        priorities[1], "+1/+0 until EOT", abils[2], priorities[2]);
+    if (!choice)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    c[mana_color] = choice;
+    if (charge_mana_for_activated_ability(player, card, 0, c[1], c[2], c[3], c[4], c[5]))
+    {
+      if (instance->targets[1].player < 0)
+      {
+        instance->targets[1].player = 0;
+      }
+      instance->targets[1].player |= (choice == CHOICE_FIRST_STRIKE ? KEYWORD_FIRST_STRIKE : 0);
+    }
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION){
-		int pp = instance->parent_controller, pc = instance->parent_card;
-		if( instance->info_slot == CHOICE_FIRST_STRIKE ){
-			alternate_legacy_text(2, pp, pump_ability_until_eot(pp, pc, pp, pc, 0,0, KEYWORD_FIRST_STRIKE,0));
-		}
-		if( instance->info_slot == CHOICE_PUMP){
-			alternate_legacy_text(1, pp, pump_until_eot_merge_previous(pp, pc, pp, pc, 1,0));
-		}
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    int pp = instance->parent_controller, pc = instance->parent_card;
+    if (instance->info_slot == CHOICE_FIRST_STRIKE)
+    {
+      alternate_legacy_text(
+          2, player, pump_ability_until_eot(player, card, pp, pc, 0, 0, KEYWORD_FIRST_STRIKE, 0));
+    }
+    if (instance->info_slot == CHOICE_PUMP)
+    {
+      pump_until_eot_merge_previous_alt(player, card, pp, pc, 1, 0, 1);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
-int fe_chant(int player, int card, event_t event, int land_subtype){
+int fe_chant(int player, int card, event_t event, int land_subtype)
+{
 
-	basic_upkeep(player, card, event, MANACOST_BU((land_subtype == SUBTYPE_FOREST), (land_subtype == SUBTYPE_SWAMP)));
+  basic_upkeep(player, card, event,
+               MANACOST_BU((land_subtype == SUBTYPE_FOREST), (land_subtype == SUBTYPE_SWAMP)));
 
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_LAND);
-		test.subtype = get_hacked_subtype(player, card, land_subtype);
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_LAND);
+    test.subtype = get_hacked_subtype(player, card, land_subtype);
 
-		etb_ability_global(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, 0, &test, player, card);
-	}
+    etb_ability_global(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, 0, &test, player, card);
+  }
 
-	if( event == EVENT_ETB_ABILITY ){
-		card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_ETB_ABILITY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		int p = trigger_cause_controller;
+    int p = trigger_cause_controller;
 
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.allowed_controller = p;
-		td.preferred_controller = p;
-		td.illegal_abilities = 0;
-		td.who_chooses = p;
-		td.allow_cancel = 0;
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.allowed_controller = p;
+    td.preferred_controller = p;
+    td.illegal_abilities = 0;
+    td.who_chooses = p;
+    td.allow_cancel = 0;
 
-		enum{
-			CHOICE_M1_M1_COUNTER = 1,
-			CHOICE_3_DAMAGES
-		};
+    enum
+    {
+      CHOICE_M1_M1_COUNTER = 1,
+      CHOICE_3_DAMAGES
+    };
 
-		int choice = CHOICE_3_DAMAGES;
-		if( can_target( &td ) ){
-			choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE,
-							"Add a -1/-1 counter", 	1, life[player]-3 <= 6 ? 10 : 1,
-							"Take 3 damage", 		1, 5);
-		}
+    int choice = CHOICE_3_DAMAGES;
+    if (can_target(&td))
+    {
+      choice =
+          DIALOG(p, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE,
+                 "Add a -1/-1 counter", 1, life[player] - 3 <= 6 ? 10 : 1, "Take 3 damage", 1, 5);
+    }
 
-		if( choice == CHOICE_M1_M1_COUNTER ){
-			if( new_pick_target(&td, "Select a creature you control", 0, GS_LITERAL_PROMPT) ){
-				add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_M1_M1, 1);
-			}
-			instance->number_of_targets = 0;
-		}
-		if( choice == CHOICE_3_DAMAGES ){
-			damage_player(p, 3, player, card);
-		}
-	}
-	return global_enchantment(player, card, event);
+    if (choice == CHOICE_M1_M1_COUNTER)
+    {
+      if (new_pick_target(&td, "Select a creature you control", 0, GS_LITERAL_PROMPT))
+      {
+        add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                     COUNTER_M1_M1, 1);
+      }
+      instance->number_of_targets = 0;
+    }
+    if (choice == CHOICE_3_DAMAGES)
+    {
+      damage_player(p, 3, player, card);
+    }
+  }
+  return global_enchantment(player, card, event);
 }
 
 // cards
@@ -631,15 +659,20 @@ Create four 1/1 |Swhite Citizen creature tokens. */
 	return basic_spell(player, card, event);
 }
 
-int card_order_of_leitbur(int player, int card, event_t event){
-/* CARD_ID_ORDER_OF_LEITBUR	1555
-Order of Leitbur	|W|W
-Creature - Human Cleric Knight 2/1
-Protection from |Sblack
-|W: ~ gains first strike until end of turn.
-|W|W: ~ gets +1/+0 until end of turn. */
+int card_order_of_leitbur(int player, int card, event_t event)
+{
+  /* CARD_ID_ORDER_OF_LEITBUR	1555
+  Order of Leitbur	|W|W
+  Creature - Human Cleric Knight 2/1
+  Protection from |Sblack
+  |W: ~ gains first strike until end of turn.
+  |W|W: ~ gets +1/+0 until end of turn. */
 
-	return fe_knights(player, card, event, COLOR_WHITE);
+  if (event == EVENT_CHECK_ABILITIES && affect_me(player, card) &&
+      generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_W(1), 0, NULL, NULL))
+    check_abilities_keywords |= KEYWORD_FIRST_STRIKE;
+
+  return fe_knights(player, card, event, COLOR_WHITE);
 }
 
 
@@ -1214,126 +1247,147 @@ int card_vodalian_knights(int player, int card, event_t event)
   return card_gust_skimmer(player, card, event);
 }
 
-static int effect_vodalian_war_machine(int player, int card, event_t event){
+static int effect_vodalian_war_machine(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int vwm_player = instance->targets[0].player;
-		int vwm_card = instance->targets[0].card;
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int vwm_player = instance->targets[0].player;
+    int vwm_card = instance->targets[0].card;
 
-		if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(vwm_player, vwm_card) ){
-			instance->targets[11].player = 1;
-			if( is_this_dying(vwm_player, vwm_card) ){
-				instance->targets[11].player |= 2;
-			}
-		}
-	}
+    if (event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(vwm_player, vwm_card))
+    {
+      instance->targets[11].player = 1;
+      if (is_this_dying(vwm_player, vwm_card) &&
+          !check_for_death_trigger_removal(vwm_player, vwm_card))
+      {
+        instance->targets[11].player |= 2;
+      }
+    }
+  }
 
-	int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-	if( result ){
-		if( result & 2 ){
-			card_instance_t *instance = get_card_instance(player, card);
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result)
+  {
+    if (result & 2)
+    {
+      card_instance_t *instance = get_card_instance(player, card);
 
-			int p = instance->damage_target_player;
-			int c = instance->damage_target_card;
+      int p = instance->damage_target_player;
+      int c = instance->damage_target_card;
 
-			kill_card(p, c, KILL_DESTROY);
-		}
-		kill_card(player, card, KILL_EXILE);
-	}
+      kill_card(p, c, KILL_DESTROY);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE );
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
-int card_vodalian_war_machine(int player, int card, event_t event){
-/*
-Vodalian War Machine |1|U|U
-Creature — Wall 0/4
-Defender (This creature can't attack.)
-Tap an untapped Merfolk you control: Vodalian War Machine can attack this turn as though it didn't have defender.
-Tap an untapped Merfolk you control: Vodalian War Machine gets +2/+1 until end of turn.
-When Vodalian War Machine dies, destroy all Merfolk tapped this turn to pay for its abilities.
-*/
+int card_vodalian_war_machine(int player, int card, event_t event)
+{
+  /*
+  Vodalian War Machine |1|U|U
+  Creature — Wall 0/4
+  Defender (This creature can't attack.)
+  Tap an untapped Merfolk you control: Vodalian War Machine can attack this turn as though it didn't
+  have defender. Tap an untapped Merfolk you control: Vodalian War Machine gets +2/+1 until end of
+  turn. When Vodalian War Machine dies, destroy all Merfolk tapped this turn to pay for its
+  abilities.
+  */
 
-	if( event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST ){
-		if( has_mana_for_activated_ability(player, card, MANACOST0) && !(current_turn == player && current_phase == PHASE_MAIN1) )
-		{
-			target_definition_t td;
-			default_target_definition(player, card, &td, TYPE_CREATURE);
-			td.required_subtype = SUBTYPE_MERFOLK;
-			td.illegal_state = TARGET_STATE_TAPPED;
-			td.allowed_controller = player;
-			td.preferred_controller = player;
-			td.illegal_abilities = 0;
+  if (event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST)
+  {
+    if (has_mana_for_activated_ability(player, card, MANACOST0) &&
+        !(current_turn == player && current_phase == PHASE_MAIN1))
+    {
+      target_definition_t td;
+      default_target_definition(player, card, &td, TYPE_CREATURE);
+      td.required_subtype = SUBTYPE_MERFOLK;
+      td.illegal_state = TARGET_STATE_TAPPED;
+      td.allowed_controller = player;
+      td.preferred_controller = player;
+      td.illegal_abilities = 0;
 
-			int amount = target_available(player, card, &td);
-			return event == EVENT_POW_BOOST ?  amount*2 : amount;
-		}
-	}
+      int amount = target_available(player, card, &td);
+      return event == EVENT_POW_BOOST ? amount * 2 : amount;
+    }
+  }
 
+  if (!IS_GAA_EVENT(event))
+  {
+    return 0;
+  }
 
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
+  card_instance_t *instance = get_card_instance(player, card);
 
-	card_instance_t *instance = get_card_instance(player, card);
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  td.required_subtype = SUBTYPE_MERFOLK;
+  td.illegal_state = TARGET_STATE_TAPPED;
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  td.illegal_abilities = 0;
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.required_subtype = SUBTYPE_MERFOLK;
-	td.illegal_state = TARGET_STATE_TAPPED;
-	td.allowed_controller = player;
-	td.preferred_controller = player;
-	td.illegal_abilities = 0;
+  enum
+  {
+    CHOICE_LOSE_DEFENDER = 1,
+    CHOICE_P2_P1
+  };
 
-	enum{
-		CHOICE_LOSE_DEFENDER = 1,
-		CHOICE_P2_P1
-	};
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST0, 0, &td, NULL);
+  }
 
-	if(event == EVENT_CAN_ACTIVATE ){
-		return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST0, 0, &td, NULL);
-	}
+  if (event == EVENT_ACTIVATE)
+  {
+    instance->info_slot = 0;
+    int priority_can_attack = current_turn == player && current_phase == PHASE_MAIN1 ? 10 : 1;
+    int choice = DIALOG(player, card, event, DLG_RANDOM, "Able to attack", 1, priority_can_attack,
+                        "+2/+1", 1, 5);
+    if (!choice)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
 
-	if( event == EVENT_ACTIVATE ){
-		instance->info_slot = 0;
-		int priority_can_attack = current_turn == player && current_phase == PHASE_MAIN1 ? 10 : 1;
-		int choice = DIALOG(player, card, event, DLG_RANDOM,
-						  "Able to attack", 1, priority_can_attack,
-						  "+2/+1", 			1, 5);
-		if( ! choice ){
-			spell_fizzled = 1;
-			return 0;
-		}
+    if (charge_mana_for_activated_ability(player, card, MANACOST0))
+    {
+      if (new_pick_target(&td, "Select an untapped Merfolk to tap.", 0, 1 | GS_LITERAL_PROMPT))
+      {
+        instance->number_of_targets = 0;
+        tap_card(instance->targets[0].player, instance->targets[0].card);
+        int legacy_card =
+            create_targetted_legacy_effect(player, card, &effect_vodalian_war_machine,
+                                           instance->targets[0].player, instance->targets[0].card);
+        legacy_card = alternate_legacy_text(3, player, legacy_card);
+        card_instance_t *legacy_instance = get_card_instance(player, legacy_card);
+        legacy_instance->targets[0].player = player;
+        legacy_instance->targets[0].card = card;
+        legacy_instance->number_of_targets = 1;
+      }
+    }
+  }
 
-		if( charge_mana_for_activated_ability(player, card, MANACOST0) ){
-			if( new_pick_target(&td, "Select an untapped Merfolk to tap.", 0, 1 | GS_LITERAL_PROMPT) ){
-				instance->number_of_targets = 0;
-				tap_card(instance->targets[0].player, instance->targets[0].card);
-				int legacy_card = create_targetted_legacy_effect(player, card, &effect_vodalian_war_machine,
-																instance->targets[0].player, instance->targets[0].card);
-				card_instance_t *legacy_instance = get_card_instance(player, legacy_card);
-				legacy_instance->targets[0].player = player;
-				legacy_instance->targets[0].card = card;
-				legacy_instance->number_of_targets = 1;
-			}
-		}
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (instance->info_slot == CHOICE_LOSE_DEFENDER)
+      alternate_legacy_text(
+          1, player,
+          create_targetted_legacy_effect(player, card, effect_defender_can_attack_until_eot,
+                                         instance->parent_controller, instance->parent_card));
+    if (instance->info_slot == CHOICE_P2_P1)
+      pump_until_eot_merge_previous_alt(player, card, instance->parent_controller,
+                                        instance->parent_card, 2, 1, 2);
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot == CHOICE_LOSE_DEFENDER ){
-			return generic_shade(player, card, event, 0, MANACOST0, 2, 1, 0, 0);
-		}
-		if( instance->info_slot == CHOICE_P2_P1 ){
-			create_targetted_legacy_effect(instance->parent_controller, instance->parent_card, effect_defender_can_attack_until_eot,
-											instance->parent_controller, instance->parent_card);
-		}
-	}
-
-	return 0;
+  return 0;
 }
 
 
@@ -1570,15 +1624,20 @@ Whenever ~ attacks and isn't blocked, you may sacrifice it. If you do, destroy t
 	return 0;
 }
 
-int card_order_of_the_ebon_hand(int player, int card, event_t event){
-/* CARD_ID_ORDER_OF_THE_EBON_HAND	1556
-Order of the Ebon Hand	|B|B
-Creature - Cleric Knight 2/1
-Protection from |Swhite
-|B: ~ gains first strike until end of turn.
-|B|B: ~ gets +1/+0 until end of turn. */
+int card_order_of_the_ebon_hand(int player, int card, event_t event)
+{
+  /* CARD_ID_ORDER_OF_THE_EBON_HAND	1556
+  Order of the Ebon Hand	|B|B
+  Creature - Cleric Knight 2/1
+  Protection from |Swhite
+  |B: ~ gains first strike until end of turn.
+  |B|B: ~ gets +1/+0 until end of turn. */
 
-	return fe_knights(player, card, event, COLOR_BLACK);
+  if (event == EVENT_CHECK_ABILITIES && affect_me(player, card) &&
+      generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_B(1), 0, NULL, NULL))
+    check_abilities_keywords |= KEYWORD_FIRST_STRIKE;
+
+  return fe_knights(player, card, event, COLOR_BLACK);
 }
 
 int card_soul_exchange(int player, int card, event_t event)
@@ -3759,35 +3818,43 @@ int card_sand_silos(int player, int card, event_t event){
 	return storage_land(player, card, event, COLOR_BLUE);
 }
 
-static int sword_and_shield(int player, int card, event_t event, int cost, int pow, int tou){
+static int sword_and_shield(int player, int card, event_t event, int cost, int pow, int tou)
+{
+  choose_to_untap(player, card, event);
 
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
+  if (!IS_GAA_EVENT(event))
+  {
+    return 0;
+  }
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = player;
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  td.preferred_controller = player;
 
-	card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-	choose_to_untap(player, card, event);
+  if (instance->targets[1].card > -1 && !in_play(player, instance->targets[1].card))
+  {
+    instance->targets[1].card = -1;
+  }
 
-	if( instance->targets[1].card > -1 && ! in_play(player, instance->targets[1].card) ){
-		instance->targets[1].card = -1;
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (valid_target(&td))
+    {
+      pump_ability_t pump;
+      default_pump_ability_definition(instance->parent_controller, instance->parent_card, &pump,
+                                      pow, tou, 0, 0);
+      pump.paue_flags = PAUE_END_IF_SOURCE_UNTAP;
+      pump_ability(instance->parent_controller, instance->parent_card, instance->targets[0].player,
+                   instance->targets[0].card, &pump);
+      get_card_instance(instance->parent_controller, instance->parent_card)->targets[1] =
+          instance->targets[0];
+    }
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( valid_target(&td) ){
-			pump_ability_t pump;
-			default_pump_ability_definition(instance->parent_controller, instance->parent_card, &pump, pow, tou, 0, 0);
-			pump.paue_flags = PAUE_END_IF_SOURCE_UNTAP;
-			pump_ability(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card, &pump);
-			get_card_instance(instance->parent_controller, instance->parent_card)->targets[1] = instance->targets[0];
-		}
-	}
-
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_X(cost), 0, &td, "TARGET_CREATURE");
+  return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET,
+                                   MANACOST_X(cost), 0, &td, "TARGET_CREATURE");
 }
 
 int card_spirit_shield(int player, int card, event_t event){

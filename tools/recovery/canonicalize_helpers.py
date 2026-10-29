@@ -289,6 +289,39 @@ def verify_interface_evidence(proof,root=ROOT):
     from verify_global_array_domains import verify as verify_global_arrays
     from verify_source_spelling_edits import verify as verify_spelling_edits
     from verify_engine_boundaries import verify as verify_engine_boundaries
+    from verify_deck_recovery import verify as verify_deck_recovery
+    from verify_events_damage_recovery import verify as verify_events_damage_recovery
+    from verify_counter_foundation_recovery import verify as verify_counter_foundation_recovery
+    from verify_ability_foundation_recovery import verify as verify_ability_foundation_recovery
+    from verify_damage_token_tutor_recovery import verify as verify_damage_token_tutor_recovery
+    from verify_control_legend_recovery import verify as verify_control_legend_recovery
+    from verify_legacy_lifecycle_recovery import verify as verify_legacy_lifecycle_recovery
+    from verify_subtype_foundation_recovery import verify as verify_subtype_foundation_recovery
+    from verify_cost_phase_life_recovery import verify as verify_cost_phase_life_recovery
+    from verify_free_cast_discard_recovery import verify as verify_free_cast_discard_recovery
+    from verify_commander_haunt_block_recovery import verify as verify_commander_haunt_block_recovery
+    from verify_land_hybrid_core_recovery import verify as verify_land_hybrid_core_recovery
+    from verify_convoke_suspend_upkeep_recovery import verify as verify_convoke_suspend_upkeep_recovery
+    from verify_board_phase_grave_recovery import verify as verify_board_phase_grave_recovery
+    from verify_energy_ice_unlimited_recovery import verify as verify_energy_ice_unlimited_recovery
+    from verify_guild_spirit_tribal_recovery import verify as verify_guild_spirit_tribal_recovery
+    from verify_grave_flashback_stronghold_recovery import verify as verify_grave_flashback_stronghold_recovery
+    from verify_khans_fate_oath_recovery import verify as verify_khans_fate_oath_recovery
+    from verify_classic_lands_slivers_recovery import verify as verify_classic_lands_slivers_recovery
+    from verify_innistrad_theros_gods_recovery import verify as verify_innistrad_theros_gods_recovery
+    from verify_journey_avacyn_tribal_recovery import verify as verify_journey_avacyn_tribal_recovery
+    from verify_transform_awaken_exile_recovery import verify as verify_transform_awaken_exile_recovery
+    from verify_artifact_sunburst_phyrexia_recovery import verify as verify_artifact_sunburst_phyrexia_recovery
+    from verify_classic_death_land_recovery import verify as verify_classic_death_land_recovery
+    from verify_kamigawa_sliver_delve_recovery import verify as verify_kamigawa_sliver_delve_recovery
+    from verify_death_tribal_return_recovery import verify as verify_death_tribal_return_recovery
+    from verify_classic_sliver_protection_recovery import verify as verify_classic_sliver_protection_recovery
+    from verify_grave_library_target_recovery import verify as verify_grave_library_target_recovery
+    from verify_planes_schemes_monarch_recovery import verify as verify_planes_schemes_monarch_recovery
+    from verify_remaining_card_helpers_recovery import verify as verify_remaining_card_helpers_recovery
+    from verify_rules_challenge_recovery import verify as verify_rules_challenge_recovery
+    from verify_windows_general_recovery import verify as verify_windows_general_recovery
+    from verify_compiler_cpp_recovery import verify as verify_compiler_cpp_recovery
     return dict(native_domains=domains,caller_ranges=len(ranges),argument_edits=verify_argument_edits(proof,image,root),
                 constant_argument_edits=verify_constant_edits(proof,image,root),
                 inline_counter_arguments=verify_inline_counters(proof,image,root),
@@ -297,7 +330,50 @@ def verify_interface_evidence(proof,root=ROOT):
                 absolute_global_arrays=verify_global_arrays(proof,root),
                 source_identifier_spellings=verify_spelling_edits(proof,root),
                 executable_fallbacks=verify_engine_boundaries(proof,root),
+                deck_foundation=verify_deck_recovery(proof,image,root),
+                events_and_damage=verify_events_damage_recovery(proof,image,root),
+                counter_foundation=verify_counter_foundation_recovery(proof,image,root),
+                ability_foundation=verify_ability_foundation_recovery(proof,image,root),
+                damage_token_tutor=verify_damage_token_tutor_recovery(proof,image,root),
+                control_legend=verify_control_legend_recovery(proof,image,root),
+                legacy_lifecycle=verify_legacy_lifecycle_recovery(proof,image,root),
+                subtype_foundation=verify_subtype_foundation_recovery(proof,image,root),
+                cost_phase_life=verify_cost_phase_life_recovery(proof,image,root),
+                free_cast_discard=verify_free_cast_discard_recovery(proof,image,root),
+                commander_haunt_block=verify_commander_haunt_block_recovery(proof,image,root),
+                land_hybrid_core=verify_land_hybrid_core_recovery(proof,image,root),
+                convoke_suspend_upkeep=verify_convoke_suspend_upkeep_recovery(proof,image,root),
+                board_phase_grave=verify_board_phase_grave_recovery(proof,image,root),
+                energy_ice_unlimited=verify_energy_ice_unlimited_recovery(proof,image,root),
+                guild_spirit_tribal=verify_guild_spirit_tribal_recovery(proof,image,root),
+                grave_flashback_stronghold=verify_grave_flashback_stronghold_recovery(proof,image,root),
+                khans_fate_oath=verify_khans_fate_oath_recovery(proof,image,root),
+                classic_lands_slivers=verify_classic_lands_slivers_recovery(proof,image,root),
+                innistrad_theros_gods=verify_innistrad_theros_gods_recovery(proof,image,root),
+                journey_avacyn_tribal=verify_journey_avacyn_tribal_recovery(proof,image,root),
+                transform_awaken_exile=verify_transform_awaken_exile_recovery(proof,image,root),
+                artifact_sunburst_phyrexia=verify_artifact_sunburst_phyrexia_recovery(proof,image,root),
+                classic_death_land=verify_classic_death_land_recovery(proof,image,root),
+                kamigawa_sliver_delve=verify_kamigawa_sliver_delve_recovery(proof,image,root),
+                death_tribal_return=verify_death_tribal_return_recovery(proof,image,root),
+                classic_sliver_protection=verify_classic_sliver_protection_recovery(proof,image,root),
+                grave_library_target=verify_grave_library_target_recovery(proof,image,root),
+                planes_schemes_monarch=verify_planes_schemes_monarch_recovery(proof,image,root),
+                remaining_card_helpers=verify_remaining_card_helpers_recovery(proof,image,root),
+                rules_challenge=verify_rules_challenge_recovery(proof,image,root),
+                windows_general=verify_windows_general_recovery(proof,image,root),
+                compiler_cpp=verify_compiler_cpp_recovery(proof,image,root),
                 scope='Reviewed interface edits only; retained custom callers explicitly distinguished from native caller ranges.')
+
+def predecessor_bytes(row,archive,root=ROOT):
+    """Read a checked later-added source without rewriting the original archive."""
+    receipt=row.get('predecessor_input')
+    if receipt:
+        data=(root/receipt['path']).read_bytes()
+        assert sha(data)==receipt['sha256'],receipt['path']
+        return data
+    return archive.read(row['source'])
+
 
 def verify(root=ROOT):
     proof=load(root)
@@ -315,7 +391,7 @@ def verify(root=ROOT):
         assert sha(json.dumps(accepted[e['recovery_name']],sort_keys=True).encode())==e['accepted_recovery_record_sha256']
     with zipfile.ZipFile(root/BEFORE) as archive:
         for row in proof['files']:
-            source=row['source'];before=archive.read(source).decode('latin1').replace('\r\n','\n')
+            source=row['source'];before=predecessor_bytes(row,archive,root).decode('latin1').replace('\r\n','\n')
             assert sha(before.encode())==row['predecessor_sha256'],source
             after=project_file(source,before,function_entries(proof),mapping,sharing,proof.get('source_annotations',[]),proof.get('source_retirements',[]),proof.get('source_edits',[]))
             assert sha(after.encode())==row['canonical_sha256'],source
@@ -342,7 +418,7 @@ def historical_sources(root=ROOT):
         yield;return
     verification=verify(root)
     with zipfile.ZipFile(root/BEFORE) as archive:
-        data={(root/r['source']).resolve():archive.read(r['source']) for r in proof['files']}
+        data={(root/r['source']).resolve():predecessor_bytes(r,archive,root) for r in proof['files']}
     old_bytes=Path.read_bytes;old_text=Path.read_text
     def read_bytes(path):return data.get(path.resolve(),None) if path.resolve() in data else old_bytes(path)
     def read_text(path,*args,**kwargs):

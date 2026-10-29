@@ -1,0 +1,1278 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "has_1_1_counter",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2197b70",
+          "end": "0x2197b9c",
+          "bytes_sha256": "2fec734a9764b5c27a08be6589b91467af846524e57528b3a6a2758be761c784",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2197b70.c",
+          "raw_export_sha256": "630b97e2114e51260812e28e4fbc01301179ac2c088d93517642ef6a4687ec82"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "325fc9c423e769976a593f82ca4ba8791faa5e27ea95f56f123fea2009a618f6"
+    },
+    {
+      "name": "singing_bell_strike_ability",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2197c70",
+          "end": "0x2197e57",
+          "bytes_sha256": "c458c50aa4aa1642c993f6399a8c9149e18d0a7d0a5c7fcbf23db91af9a2cd9f",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2197c70.c",
+          "raw_export_sha256": "beb12619e2fb7764eecc457ea542e88df08b0c1f433a659e15f3493247782dbc"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2065ded719f9d7800d4e8ef70fa1682b95c1b64449239b1672e649d3e4379a03"
+    },
+    {
+      "name": "death_frenzy_legacy",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2197e60",
+          "end": "0x2197f0e",
+          "bytes_sha256": "eeb88986fe295455a54a913b659bc26eb6ed2206e692eac99dfe8f596981a073",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2197e60.c",
+          "raw_export_sha256": "c54b416e5b51b9566dcbe5caac6d23b02032459711dbe77a0c1883e471a35b57"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "60a911f50907238b33ae6a5446e6e34bf456cf97dcde50faf78c1d48de6e422c"
+    },
+    {
+      "name": "ashcloud_phoenix_legacy",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2198a20",
+          "end": "0x2198b1c",
+          "bytes_sha256": "28579c13c5e6d411963818a250ba24c7c53bac422b6d2b3042ff8a148fe965f3",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2198a20.c",
+          "raw_export_sha256": "46c5380baf525b38e91941d44c68089669f963e724bd4b57e2a9a71c4973cb5c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7b02c71e69a22ff9cd64da7ff0cb6b0f535bce13d7fcd14e6775202a5aeb1338"
+    },
+    {
+      "name": "burn_away_legacy",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2198b20",
+          "end": "0x2198c7e",
+          "bytes_sha256": "4647159262ef4d8db218ee590b5c83ab813009252b39dc4f10eb39e0b03b941a",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2198b20.c",
+          "raw_export_sha256": "7f2c38310aeba328990bf75bdabcc80eda728231c6a105ebd538e3b6a192ccc1"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "844e8750ed8336cedaaac111459442ff807b72d43e205680a731ddca462884cf"
+    },
+    {
+      "name": "meandering_towershell_legacy",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2198c80",
+          "end": "0x2198e2c",
+          "bytes_sha256": "fad323379485ff14c777409352c610f596b89b466bb46d786ad34004e570f8d5",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2198c80.c",
+          "raw_export_sha256": "d68a03b81d23fc8c644d624b0dd011845f0feacdbbb44ddac66943eeedbd0ec4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b5913ec9aa12c335ed30432596d172891c260c08858e858df18a1653879d2c3a"
+    },
+    {
+      "name": "kheru_lich_lord_legacy",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2199120",
+          "end": "0x21992fa",
+          "bytes_sha256": "6a48a906d5e1de70840e51c6e8a30e8a7833a8adbec0931f33c33b8fd81d21a5",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2199120.c",
+          "raw_export_sha256": "c60fed2f199b2fb5eae83694ce7fa70c2fada811093d2c8eb844230c9c5daa95"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a3f2d927142a6ddeba6052c48ee2d16c290ecd30fb82f047ff3f4c57867dbd87"
+    },
+    {
+      "name": "raid_cip",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2199330",
+          "end": "0x21993a2",
+          "bytes_sha256": "6299c35c0ac85b77bea041c4bec917e7f1f47752d1ff5de0d59130173dd9e595",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2199330.c",
+          "raw_export_sha256": "28b4b08f872f10ae286c574aff5629c9c8e98e7ed1db8c5dbb15ff4aa0d8be78"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "38fededadddbb9647ed64d3d238445c717d2789078842fd921b6225f636bb4e7"
+    },
+    {
+      "name": "turn_face_up_revealing_card",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x21993b0",
+          "end": "0x2199552",
+          "bytes_sha256": "38fd202897c5ec2a6006ecbd86b69c943c0ad46ba2e3e02b2bc5993ae6c941d0",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/21993b0.c",
+          "raw_export_sha256": "d3ae95f68014ca21934a47e010a27ea1e6aeaa6115a4822135dd3994dc040809"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "87d1b312e587795eb3217a1655854cd727a3a2b73b0220b4915d5783f5dafa13"
+    },
+    {
+      "name": "outlast",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x21997c0",
+          "end": "0x2199881",
+          "bytes_sha256": "12f970ef62385e94d3204efa21ad4f0cbbe76a61711a7a12c867e410f7e13cae",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/21997c0.c",
+          "raw_export_sha256": "581802ce4535eba4cd7e2c6bac902de5e33f891cc97fe760e9854b46dfb77ea4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "492a0f1a57c63e83799e20570a9ec8288183233330b19a5bb4fe7d02017ba814"
+    },
+    {
+      "name": "prowess_mode",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2199890",
+          "end": "0x219991c",
+          "bytes_sha256": "c354d647cda4bce8fd33344632c8727dbd86401a8346dac79213fb7500df2fd5",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2199890.c",
+          "raw_export_sha256": "9a81397795c71cf0d83c86ce6f81b65b9aaaa2d14d69eb5ebd2c71ee58029948"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "83cf084d4f496a26ba97b7a42ccd3b4871a48f935915949a73c03145d820022b"
+    },
+    {
+      "name": "prowess",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2199920",
+          "end": "0x219998c",
+          "bytes_sha256": "ed4cff45231ff97e240ae346048c5d28039dc9aee33dce06ce3eb2e4f93d6d58",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2199920.c",
+          "raw_export_sha256": "a273f83f5d6342ed8d2ab8ce5ec7e9877e676ba051946976f7d5509327c08b24"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9d0dd8b74035cbe420c125353faa3fb8a42327b587898b9a8ff353abdc8994cc"
+    },
+    {
+      "name": "is_creature_or_pwalker",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x22593c0",
+          "end": "0x225940a",
+          "bytes_sha256": "f82713f1a9a88fe19f7ee67d632e0ece9979e2d4562fed096eed1a4b3350a8a2",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/22593c0.c",
+          "raw_export_sha256": "74d4d760be9e62eda162dd28b409ddbd77835e233156c433bd5c5348b97177d6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "928f8c395d90b3958d393de62212b54d0badc0fb1f9d538c71fc8d1461e9b7b1"
+    },
+    {
+      "name": "stone_haven_outfitter_effect",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x2259410",
+          "end": "0x2259702",
+          "bytes_sha256": "7a5c84aed6e545687e2ea17bf660a213c4b3273908e88abc87ff0c16b0595e3a",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2259410.c",
+          "raw_export_sha256": "daf15569438878e4c2c485ffb1ebd3f17bca8dc438e83bac714999cf65d8187a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7ba7c42f3e0863d18b38a14e9bfc8281a6c6f1982831bcf69bbb3e3ac356f4f0"
+    },
+    {
+      "name": "sifter_of_skulls_effect",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x2259710",
+          "end": "0x225996f",
+          "bytes_sha256": "5b3ab321ce600640b709c97fc034f6ae90d7a293be73d4175f3e8b3fed1a4d29",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2259710.c",
+          "raw_export_sha256": "e3f7318b32d6d637eca5e1425e5f45d044fa26339b2697ee42e971ed35605ff1"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "594462d29d536b59e723444fca3948ad275abe5f47095ce2f6c2f03de4d7c6d7"
+    },
+    {
+      "name": "has_1_1_counter",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x2259ac0",
+          "end": "0x2259aec",
+          "bytes_sha256": "0ec50cc5efe332786909788777b773bd827029ab204cd5c4f0808b8e1d54c9b3",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2259ac0.c",
+          "raw_export_sha256": "7992400045fcc648ccb8e2910ca6be05f832b1079bf45fe6a17075053d458ce9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "325fc9c423e769976a593f82ca4ba8791faa5e27ea95f56f123fea2009a618f6"
+    },
+    {
+      "name": "gladehart_cavalry_effect",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x2259af0",
+          "end": "0x2259dba",
+          "bytes_sha256": "23effe533d6a77f8b65efccfd741ed67b1879a533b2818726701e4663d58fec3",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2259af0.c",
+          "raw_export_sha256": "ce5d99e3afada2f3edb568572152a361a59861630de0f993215f3c156c581792"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "dce5f31da41a88938a625494b57ff186ec261f5767a41aec2f02cf07edbe551e"
+    },
+    {
+      "name": "kalitas_traitor_of_ghet_effect",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x2259e70",
+          "end": "0x225a266",
+          "bytes_sha256": "11dbbbaece396f6f7592fc85dbe83d31ac0e2285fc543af44832f65fe6c4d884",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2259e70.c",
+          "raw_export_sha256": "40d473ad28806869b4535333e6ebe346c4fc964d74c8e1fb8aef6cd56c225f2d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "aca92108e48b6b97252715ad0ac2e753d3605e982537d8c8348317b136e0e24c"
+    },
+    {
+      "name": "wandering_fumarole_animated_ability",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x225a270",
+          "end": "0x225a3d0",
+          "bytes_sha256": "7c2f861f7931b44eb17c11e56b6e37c3cc89baff6be8690b3bbfb29036d373e4",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/225a270.c",
+          "raw_export_sha256": "d8b9c26b8903a165fe2e69bf92318751cd3b0711477a4444f3dd3298de6aa9fe"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5cfedcfc3c1294133b2632263bc47fdc0fae24eb6e082c1b980e327413cec0eb"
+    },
+    {
+      "name": "surge",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x225a450",
+          "end": "0x225a5e9",
+          "bytes_sha256": "d40f3389a1c56911914d2ca49227c221e51ea2a7b5422a7aad06ab845e3d0a93",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/225a450.c",
+          "raw_export_sha256": "e230ba020084fcf3718970223fdd522a7755b3b2ca5d12add2231a81efc7a3dc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a3724fd23c2c418c462ad7557292d8bfaa18d29284313870bb3f8c1b42e22dce"
+    },
+    {
+      "name": "charge_colorless_mana_only",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x225a6a0",
+          "end": "0x225a6f0",
+          "bytes_sha256": "9fa9a69e3ac9b70d03be25ea7787d1524a9b374069f8cd31cca3866181c5b7fc",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/225a6a0.c",
+          "raw_export_sha256": "83d7f302ec7d32119639b9a04df379c375afbec2ee1d7888f59d959e407ede1b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8c2d965c85f010fbf6ff515b88ba651841ba4bbf64ced67c1d4e16c98560c662"
+    },
+    {
+      "name": "player_has_generic_and_colorless_available",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x225a6f0",
+          "end": "0x225a76d",
+          "bytes_sha256": "67d87bce60eb5e82f08263aafc74826ee5a67548b99d28aec1309ff05da2b1a3",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/225a6f0.c",
+          "raw_export_sha256": "5e96cb38117d2a7c5be18ac5c24a76388d8cfc9a4ef120798662478c9e613ea6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1b0363006c1e6c6b287c092927bf8b3b67c0c360edaa57e2b919f5fee3173e03"
+    },
+    {
+      "name": "charge_generic_mana_with_colorless_only",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x225a770",
+          "end": "0x225a7c8",
+          "bytes_sha256": "769d44652d9f5dc8a7986e7eef2bd0b04dd1d8fd1cb3dd802011e054b7242fa3",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/225a770.c",
+          "raw_export_sha256": "a42c5df96d468353bb7edcf3c3a492921d6ce610b7eba0e9263b25128caf956e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f687e6e1900772fa8676b4d0aaf58dbaf4b2227ea75827d86a2349dff9b4dfe5"
+    },
+    {
+      "name": "has_colorless_only_mana_in_casting_cost",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_ranges": [
+        {
+          "address": "0x225a7d0",
+          "end": "0x225a8b2",
+          "bytes_sha256": "ac7b65e02ac4501017f245a8475ccc354c25055f58a9617f28b970f94054d08d",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/225a7d0.c",
+          "raw_export_sha256": "f96267d11109d0226c8819ff74f10e0c5f23c5c62da2744205079b244f6357b3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c84fc10d59ca27d1a7988bca5dba5c8dfda212e58c8bd35d32a80e0bd16ab456"
+    },
+    {
+      "name": "renowned_weaponsmith_tutor",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x2621c50",
+          "end": "0x2621c79",
+          "bytes_sha256": "bb64dd889606648694ffa960c1c8dc49eae8fcd7a53cef4cf7a697b7e83fa3dc",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2621c50.c",
+          "raw_export_sha256": "59ac3d4f413346775e12ff01208a7d739ecee9392dda5b0981c35ecd0c93b664"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "786fd2aaebba10cdfe325773dd60519bba6c1ddc66791b621797bf06e670dd1a"
+    },
+    {
+      "name": "is_already_damaged",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x2621c80",
+          "end": "0x2621caa",
+          "bytes_sha256": "1150365b27c55f5ef4fa7228cb1df42711ff23f233aba7e0f77f117df1e1cce8",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2621c80.c",
+          "raw_export_sha256": "aec9b85236f469193e8895b5ce4ca1a620fe4d292ae8949c132676eb253fe022"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b81c7fdcbe85d67136e43c038200593000baf65bddbe06cf8ecf1a2c53eadfcd"
+    },
+    {
+      "name": "choose_khans_or_dragons",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x2621cb0",
+          "end": "0x2621d0a",
+          "bytes_sha256": "2abd94c48f658ce9b11c0554cb7db11b989341b8d4783de15d665aa6d41f6ee3",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2621cb0.c",
+          "raw_export_sha256": "4c17ecd3f3565abbe6a3cbfbf20a34f9c36084b592c1edc4d94a71ea25e91585"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "305168b3f95e978ea34ab7563d859bd0ddc844a7ac7f534808e3386ce5ba9d97"
+    },
+    {
+      "name": "has_1_1_counter",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x2621d90",
+          "end": "0x2621dbc",
+          "bytes_sha256": "26b5eae7a5b5400c5e5f661d52517bc5a956ea9e398d0c61e555fb45b5c9a2ef",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2621d90.c",
+          "raw_export_sha256": "6092803ab7df0cc0388b9227f0e6deafd4436a4a66ecefbe7d50afae4e9cb473"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "92438ea6e2ca2f234c753a730a115589f38835a1abad246106500514c72a08d2"
+    },
+    {
+      "name": "manifesting_aura",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x26222e0",
+          "end": "0x26223e9",
+          "bytes_sha256": "0c6ea578db4283f1ba67c84501851448dd9d5b204bb1d9f32db4f227ebf652e4",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/26222e0.c",
+          "raw_export_sha256": "e402e2f76b4767350f5d2b36dbb8cd6a67607f47a35a6b4f85f7d79a019b7a5e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b08f100c87005f29dab3e8230d07867136aa289131146148995f7dc337d70451"
+    },
+    {
+      "name": "arcbond_legacy",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x2622680",
+          "end": "0x2622867",
+          "bytes_sha256": "bf1c34c86663909bacbb87e4f00e61e68c614c07c50850772462042eb4f02945",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2622680.c",
+          "raw_export_sha256": "299b63315c905f201e6b21918e085100bd0668cf1fd898e5120a09b2811a5894"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "375f791688d6edff55b804d770123ace5f0cf05d8e51cc2f6297d0f9beb84fe6"
+    },
+    {
+      "name": "whisperwood_elemental_legacy",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x2622a50",
+          "end": "0x2622ba0",
+          "bytes_sha256": "33bab0d11ab5193b992a21292607f7e1422b93d9842b464b3a43f7292c3a29b3",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2622a50.c",
+          "raw_export_sha256": "12501ef74ed0b31fabd1562b3f11f11a3a58c6b994b9c50332f906e8a36a4db7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3067e085a69b1d6e6f5d81a73ecd171a7abc01e16f79b32fda2ef65442b8f354"
+    },
+    {
+      "name": "brutal_hordechief_legacy",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x2622ba0",
+          "end": "0x2622be3",
+          "bytes_sha256": "63d0919dceaec647dfbeafb694ca4bb00e2bf3221ed9835a67fbb6effe8fb1fb",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2622ba0.c",
+          "raw_export_sha256": "1a737e0ca38c8c829885349cd3404339659daa1724a9e38c02241add634c4b29"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4d0eba2f0518c431e7d1b2d8bfd11325f93ef28f3dd29d34abd4123cf9d67ec5"
+    },
+    {
+      "name": "rfg_at_end_of_combat",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x2622bf0",
+          "end": "0x2622c58",
+          "bytes_sha256": "6e55a723c87d8cf0ff88877068c1c78834d73d7d272af2aba88e890c064690cf",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2622bf0.c",
+          "raw_export_sha256": "882998d53c64ffd3269b40dfd90b2e7608e22b24efbda846d1687205a7ea7ee5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c85825e3e5564bf37948da9d4a17a57f968c0908b3a9a9e367cbbb1668e00c82"
+    },
+    {
+      "name": "is_artifact_or_enchantment_or_flying_creature",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x2622c60",
+          "end": "0x2622cd1",
+          "bytes_sha256": "f87baa9c7efa4c8bd8610cae78b8913b16fc3bee9fd0e033d35c43c437c2fd4d",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2622c60.c",
+          "raw_export_sha256": "a7d2cd9a204f8fb47eaac9fa873d154d228bc30cbfe8311c294c2ee7d4625e25"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "28f270d885d241e54709a271d18706d38e34535b1ce2382b6d845e6814fa2623"
+    },
+    {
+      "name": "bolster",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x2623070",
+          "end": "0x2623256",
+          "bytes_sha256": "9e68cf6d577cf0694dc36c7c6edad4e5784a48806495a7cc9ba0fb8f9034c435",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2623070.c",
+          "raw_export_sha256": "0ea39f17d8ee887caf0077fd83064d3abc127cedc1f970818537afd6b18c8381"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "992be5c6415f50f74a95c7c0a58e42fd9e35d16a04fe2c4fb3aaf819228fc3c4"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_myth_realized",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x231b200",
+          "end": "0x231b5f1",
+          "bytes_sha256": "3e2798259513cf7f67fef8b88770ef6604c5a0bb0c20e1277b536f46dc864762",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/231b200.c",
+          "raw_export_sha256": "3065f85acba0c5e4e7ea0b043d63f3433c61817a181e54e843f99016a80da1a7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e3ee20d97b7014fb5a716df152ee4655c9ef9b7487ca5390bf7096923eb6be13"
+    },
+    {
+      "name": "card_ojutai_exemplars",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x231b600",
+          "end": "0x231b960",
+          "bytes_sha256": "3826c2f4a54435964dc4359c2c8bfde72e3c5e144a78076138cf8f7ad7e6012e",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/231b600.c",
+          "raw_export_sha256": "5ad4c9ab5407741d2f15980fc1997144702962d4ded697ade70c5cdddd358adc"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fc5867c07ebc59b61feb5f2c3e5fec4bfe20adb0313507c49f0a3897812a21ea"
+    },
+    {
+      "name": "card_strongarm_monk",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x231c120",
+          "end": "0x231c192",
+          "bytes_sha256": "8acba95c3a65b822fea13aa257f4ab1b583fd11410f2f6b2908de583707f4e9d",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/231c120.c",
+          "raw_export_sha256": "119cfe3b1fd0683d15c4cda3d3b462854f9b8126a2eaec92c9aa5ca3d279e4e9"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "16e3d3d92d281e73d9f7c8fb59794a4c55c272e97c7942d0ad0fa7978bf22a01"
+    },
+    {
+      "name": "card_student_of_ojutai",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x231c1a0",
+          "end": "0x231c1f9",
+          "bytes_sha256": "7c4400b4dea668700f2465e3c5616758b17966e71199efdb56dbf9936b535335",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/231c1a0.c",
+          "raw_export_sha256": "0e143665470ae4882ee33771913bc2f84fff8c837e096e666c987f551c06a743"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a0c0164b93c55838fa47ffb760958345dad9421f4685d4c90a56a92efe007804"
+    },
+    {
+      "name": "card_elusive_spellfist",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x231cc40",
+          "end": "0x231ccbe",
+          "bytes_sha256": "764c048ed6250ed01ea25769d599fe0aa654561cef40e5f13254110ba598c111",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/231cc40.c",
+          "raw_export_sha256": "664d5262bc2ff3ed624b079155abe2fd3b2aa955aa09f08d48cb1210ae33e4df"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "54dfc41ce5b93059bf291a710ba793f1fbd3a8f43b33675316e2eb166ecc8953"
+    },
+    {
+      "name": "card_skywise_teachings",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x231e370",
+          "end": "0x231e4b1",
+          "bytes_sha256": "25ccb1b2ad2c859aaf769a3cc9fe00904b6431e36c6f34fbabce37efa59404db",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/231e370.c",
+          "raw_export_sha256": "448b4b06bde01c3dbc3f4f96f03428f9eaeb92c6f851658fb6c67821969a373c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "dbd84e5a646c6cb3a6dc2382852672142bb8d6cd8f434ef9aadb0dc934fb70ae"
+    },
+    {
+      "name": "card_zephyr_scribe",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x231e970",
+          "end": "0x231ea41",
+          "bytes_sha256": "b76062ef4be7ded047642afb862a60b8276100d9cbbbafd4fbb6537ad986abc1",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/231e970.c",
+          "raw_export_sha256": "390b33fc43fccd4548c6d859d2d8b38fc6c4af7388d85e618d1096b3fb780943"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d6a8eecb83d11e4316ff9cf9008c919edaa95f57645c33099b1d1c1dfdacff50"
+    },
+    {
+      "name": "card_cunning_breezedancer",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2326b30",
+          "end": "0x2326b9e",
+          "bytes_sha256": "2b375086a60c0e4ed0f7185beaed4b6c56628d1e67efff4fc79bf84534bca0c6",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/2326b30.c",
+          "raw_export_sha256": "c53bd2db76c48ebb0cb670ecee940137fc127cc1259415b1cd10fb83f082bea3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "617730517ec096982bf06677f515015a1460831478bb8899f805f666d50d4163"
+    },
+    {
+      "name": "card_pristine_skywise",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2328eb0",
+          "end": "0x2328f43",
+          "bytes_sha256": "2d0a498908721ce39b46e76841585bdcb9e8701e65f907a98d723b96c95d4984",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/2328eb0.c",
+          "raw_export_sha256": "e800f62104f38cd8c45d16c0d609a13c8becd73cae1803c286fe0e1c8ac40e8e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "17f7566e69a86025a846446c8c78fd5b675b4f08dc988cffd835f99fe3a2a7a8"
+    },
+    {
+      "name": "card_niblis_of_frost",
+      "source": "cards/eldritch_moon.c",
+      "native_ranges": [
+        {
+          "address": "0x2478950",
+          "end": "0x2478a9d",
+          "bytes_sha256": "3fd1d9d7029bb8a9585849334ea679bbaa0a35fefc671fba7c49a5f85e701cee",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/2478950.c",
+          "raw_export_sha256": "a09edd3edcb4c4a90511bf7c691637538603f496b14f98402b98ba511c56196d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9f165e19577c4b68fc44b2ad92b54d1e34735b27fdb9a5ad4f3edbe440bfd41b"
+    },
+    {
+      "name": "card_monastery_mentor",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x2624960",
+          "end": "0x2624a64",
+          "bytes_sha256": "9985c8fec935adaa9caaf48106868fb3bdc51f8b59b14f69f850d983da99cb4f",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/2624960.c",
+          "raw_export_sha256": "2113e96081c850979e8c010155f31bfcea07110c07372ece306af619dfb32d07"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2e1a60e9b95c001bf1e5ec0b2392ce84ea9aba0b094c5ad405e8ccedf3c4b038"
+    },
+    {
+      "name": "card_mistfire_adept",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x26260d0",
+          "end": "0x262623c",
+          "bytes_sha256": "c82a32a53ec6ad9bce241134d166f03e151838ddd600bd169ca4b71179572104",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/26260d0.c",
+          "raw_export_sha256": "f00c4e89373cf3f18f336f986a4d871b9366a0bce9c1daa8c5f5e7629fdb23ee"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "edf89da7ba17f49243d8d68285aa628aec589a63aa002c20024b2c1bb9fd467f"
+    },
+    {
+      "name": "card_shun_yun_the_silent_tempest",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x26272c0",
+          "end": "0x26274bf",
+          "bytes_sha256": "10d208de4969b7d4e156bd53df51c76a62c1ee27c1af90d1156e90ae18f4b286",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/26272c0.c",
+          "raw_export_sha256": "bd949863ff3f0685827e5f6e64356932c792408d05a5e00b94c487eb768e44cf"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0f993008440ed50ce3a75b39a2d7d5d2170a06121ce25d9c05ceba4bb8db6460"
+    },
+    {
+      "name": "card_scroll_of_the_masters",
+      "source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x262ecb0",
+          "end": "0x262eeaf",
+          "bytes_sha256": "f0964a6d954668ccb2e55fadf824c50820434e4de4fe509630608fb1d687a1f7",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/262ecb0.c",
+          "raw_export_sha256": "fb3f14da207c5e7ca46f3005e75fad9c2a1728a7b7ff424faaefd8615674fa3a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1c185e2e774605c6104e4db575a8be3879fe4e6c0a8786238a243b68295c8880"
+    },
+    {
+      "name": "card_whirlwind_of_thought",
+      "source": "cards/ikoria.c",
+      "native_ranges": [
+        {
+          "address": "0x228cb30",
+          "end": "0x228cb82",
+          "bytes_sha256": "1d17a1d896ed1c4abc7263000fe3c54f9e839ee7d2524790526bc941364384fe",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/228cb30.c",
+          "raw_export_sha256": "14bb1c6c3eff34ee90b7e2aa44186c2b897253d17fab8f0717b06b261119833c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1183b1a8f4c6c235dafff7473e923b41c65e3e63f6890f320835298b49f5d0ce"
+    },
+    {
+      "name": "card_seeker_of_the_way",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x219ac00",
+          "end": "0x219acfd",
+          "bytes_sha256": "f781087853e6459a80a2ec617ebb916d892f8e9942124012f1fd50f8792b4d18",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/219ac00.c",
+          "raw_export_sha256": "c1e697e699925aae9b44ff5b1ab5c5b700c59e1bf7a0f5d5c2b38f5a880692f6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d6c7dcfa0351a00ccce06b0f264a98840f3588e4e678341b25b8dadda581ffc2"
+    },
+    {
+      "name": "card_quiet_contemplation",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x219c410",
+          "end": "0x219c541",
+          "bytes_sha256": "b1b43e025f45c7213ef67cad9dbbd19e4b5d7b558fc4eb9c1e6823c1f51b4326",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/219c410.c",
+          "raw_export_sha256": "5c7e27b61a315106bf5b72c9210a56aec912a069e131b0b7b7ead3299566d2d2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c678b89678ccf75f94b5623b861e703967b3882a37b747069a88cbc9434282c6"
+    },
+    {
+      "name": "card_bellowing_saddlebrute",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x219d1c0",
+          "end": "0x219d2d0",
+          "bytes_sha256": "f81adac75b84e5d1df4f82c17e3a1c1d4ea6cb81672221f8538e98bfa04982f1",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/219d1c0.c",
+          "raw_export_sha256": "e93cb904598d43ea799add1f8a9677eb8fbde07c87362856e0fac421c2e6fa6f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "45fb204fee9485d26fe2caaef881205544e420908f9fecbd05a4f46aefcccca0"
+    },
+    {
+      "name": "card_bloodsoaked_champion",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x219d440",
+          "end": "0x219d523",
+          "bytes_sha256": "d2188f7e94b75770af80d6c02d44756c7a556e7b79184e5ab36e7fe389492917",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/219d440.c",
+          "raw_export_sha256": "09252bc491c7cadfb121c666f239b9a8674fd641a7f43871599989d074df7334"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d8efab6cfa236d87b96081a536433a346d827a67d7014590183d78bdc2807db5"
+    },
+    {
+      "name": "card_arrow_storm",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x219fc30",
+          "end": "0x219fd7a",
+          "bytes_sha256": "d819e09568ce01c622b837a610e72b8c33dfcfcaf5917ee3611cb61f32749fd8",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/219fc30.c",
+          "raw_export_sha256": "20ece7026ca499c3d608af2c128575c414bbc45ae8bc8332e9152573b2dd6061"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "93d8a752ef2c1ac2e4e520f13e52c861f3259c3934e3704ea2a9305e26fb657e"
+    },
+    {
+      "name": "card_ashcloud_phoenix",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x219fd80",
+          "end": "0x219fef2",
+          "bytes_sha256": "23efc627908e5d8444ef6dc83e1ea876f981417a46baa655964450abd5b71cef",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/219fd80.c",
+          "raw_export_sha256": "50f643b46ccaacd464e1c617b12225f99f272b220607c713c4e10c00aa62dceb"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "368f62c7a0cf69b52586c7e3039f7eaeefe6a6a31a855d7d63315eaeea727513"
+    },
+    {
+      "name": "card_goblinslide",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x21a0690",
+          "end": "0x21a0771",
+          "bytes_sha256": "92744dce4983fa24c86f13dc48b39577d5c1af655d94025a958837bfb7e6f6b4",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/21a0690.c",
+          "raw_export_sha256": "edbc97eb996051a8679fa01102711b2ae01ad2331b3441b973a1981e16fb70f2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5b553281766fc9152523f18e1eb854f47ab2971348d3fecb425d31edd091553c"
+    },
+    {
+      "name": "card_war_name_aspirant",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x21a14e0",
+          "end": "0x21a15b8",
+          "bytes_sha256": "407f2994fb40171ee0301824397eb9b284d57a64ce1ea9dc7bf5941c590d35da",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/21a14e0.c",
+          "raw_export_sha256": "6e65142e611b5524d5461a3d5c6eff3c598470b7a46cf1fb49dfc0450ec22896"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3d561655405bc0119822bb10d0f2cfda6644a7cf19c6652f1794bbe4de995ac4"
+    },
+    {
+      "name": "card_meandering_towershell",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x21a1ec0",
+          "end": "0x21a1fb5",
+          "bytes_sha256": "d4d123744a559a38c701fbf11daec6d0517e1495cca551c1031136c4ea9856ab",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/21a1ec0.c",
+          "raw_export_sha256": "4b70b97c602718b8586e56d1c14f5182123d3720d22a1e2cd674e93047469457"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2d1d752c729ca40a52074657d086aa72c05c3bb65a9deff07e031e4befe4c41d"
+    },
+    {
+      "name": "card_jeskai_ascendancy",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x21a4710",
+          "end": "0x21a4848",
+          "bytes_sha256": "24243e997e419d99eeb0829ee380c8b69677d3f943f9d70066cf827ef48dcf2b",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/21a4710.c",
+          "raw_export_sha256": "f4e2dc21ed62073294f0197b812fde5fcbb70266ae74cb91d43dbe6e18f778e9"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "bc8e7cf6632ed0710c18beaacc0af37c9c05bbed85b5a0a754c15e4b4b4cd3be"
+    },
+    {
+      "name": "card_sage_of_the_inward_eye",
+      "source": "cards/khans_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x21a5f80",
+          "end": "0x21a6002",
+          "bytes_sha256": "15498bf90a585cfff6b8415d8164412044dd5c2de40baec7a7105e4d2229e486",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/21a5f80.c",
+          "raw_export_sha256": "d261e201b04393b10f8bdd31b8d287b743b2d93ba1c9422ca3bf1f4339242f8d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4dac56b3601842ee7cd1611f6305f6bca36ca10b92b8626d370a4bfaecd7c1f2"
+    },
+    {
+      "name": "card_kykar_winds_fury",
+      "source": "cards/m20.c",
+      "native_ranges": [
+        {
+          "address": "0x2397800",
+          "end": "0x2397a17",
+          "bytes_sha256": "e0d21a059f3d4bb255e3e99f2a0d239bd780d0aaf6bb6e3fbac9926165588b3e",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/2397800.c",
+          "raw_export_sha256": "ec43542a32b155112c4f77aadbf0b812d64bcec5c0f6479ecd1df919f0a46a53"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "210d652428c201f0f19699e5d6c29caa7ccb6b6ba9151c2cc3ee7e2fcd0aa294"
+    },
+    {
+      "name": "card_cathars_companion",
+      "source": "cards/shadows_over_innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x22a0850",
+          "end": "0x22a08ce",
+          "bytes_sha256": "742b1a527acff69c06360137623ab42b1e1a80010df4646b209e8f9a84a707e3",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/22a0850.c",
+          "raw_export_sha256": "9ad0c4e194be5a2e25a5df93c39723e638541c288570a2c6360e77c70ac9015c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "28582419b047be1ecd4c8f8731219f265232c30d16801ceeee274d8e4bf38933"
+    },
+    {
+      "name": "card_thing_in_the_ice",
+      "source": "cards/shadows_over_innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x22a6810",
+          "end": "0x22a68f6",
+          "bytes_sha256": "02d5ff520457e04110f4bdb29706adae95c0074d5d31ac8c23528b18f59fea57",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/22a6810.c",
+          "raw_export_sha256": "53d0a7ad00eba9f3841e89fb302f58e12c5567a47afd2893d196f7a5a1697edc"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "68ec4cf628e6511acd145cc40f02cc26e1e5c5eaf5ba90dbbb8a1d29a1db343c"
+    },
+    {
+      "name": "card_flux_channeler",
+      "source": "cards/war_of_the_spark.c",
+      "native_ranges": [
+        {
+          "address": "0x21cd7f0",
+          "end": "0x21cd846",
+          "bytes_sha256": "8a6aa95b0340014b3ca02dd967adaec42659efaa434882dcd7bf11d83426cd9a",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/21cd7f0.c",
+          "raw_export_sha256": "4d65a53e05be0d8de71e37fb719dbb0e5dac000ede02fb149d9d58f7cb77970f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "21568533914d11518db63afb151900b4e5f089dc58e0e8a1f3264d27e942977e"
+    },
+    {
+      "name": "card_saheeli_sublime_artificer",
+      "source": "cards/war_of_the_spark.c",
+      "native_ranges": [
+        {
+          "address": "0x21d54d0",
+          "end": "0x21d584d",
+          "bytes_sha256": "a649950f9187f4a6e94af7e60616874138b2ffdc3078f47ecaa13f8737f0a3b7",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/21d54d0.c",
+          "raw_export_sha256": "7bea1d4ad1b0cf1f5f5781bd45d95b35d76cfd33946b70c087073e89606ee16b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f39b5616371c3f46ebe054f4558f71650570fc46b329eb5f386654104f7fb0a4"
+    }
+  ],
+  "inline_support_helpers": [
+    {
+      "name": "raid",
+      "source": "cards/khans_of_tarkir.c",
+      "native_owner": "raid_cip_and_four_cards",
+      "native_owner_ranges": [
+        {
+          "address": "0x2199330",
+          "end": "0x21993a2",
+          "bytes_sha256": "6299c35c0ac85b77bea041c4bec917e7f1f47752d1ff5de0d59130173dd9e595",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2199330.c",
+          "raw_export_sha256": "28b4b08f872f10ae286c574aff5629c9c8e98e7ed1db8c5dbb15ff4aa0d8be78"
+        },
+        {
+          "address": "0x219d1c0",
+          "end": "0x219d2d0",
+          "bytes_sha256": "f81adac75b84e5d1df4f82c17e3a1c1d4ea6cb81672221f8538e98bfa04982f1",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/219d1c0.c",
+          "raw_export_sha256": "e93cb904598d43ea799add1f8a9677eb8fbde07c87362856e0fac421c2e6fa6f"
+        },
+        {
+          "address": "0x219d440",
+          "end": "0x219d523",
+          "bytes_sha256": "d2188f7e94b75770af80d6c02d44756c7a556e7b79184e5ab36e7fe389492917",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/219d440.c",
+          "raw_export_sha256": "09252bc491c7cadfb121c666f239b9a8674fd641a7f43871599989d074df7334"
+        },
+        {
+          "address": "0x219fc30",
+          "end": "0x219fd7a",
+          "bytes_sha256": "d819e09568ce01c622b837a610e72b8c33dfcfcaf5917ee3611cb61f32749fd8",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/219fc30.c",
+          "raw_export_sha256": "20ece7026ca499c3d608af2c128575c414bbc45ae8bc8332e9152573b2dd6061"
+        },
+        {
+          "address": "0x21a14e0",
+          "end": "0x21a15b8",
+          "bytes_sha256": "407f2994fb40171ee0301824397eb9b284d57a64ce1ea9dc7bf5941c590d35da",
+          "raw_export": ".recovery/decompiled-khans-fate-oath-support/21a14e0.c",
+          "raw_export_sha256": "6e65142e611b5524d5461a3d5c6eff3c598470b7a46cf1fb49dfc0450ec22896"
+        }
+      ],
+      "source_changed": true,
+      "definition_sha256": "739520f163b2d692412097b8b2e4eedd61f31ce9c37f739714bd45c5921edebe"
+    },
+    {
+      "name": "choose_khans_or_dragons_no_storage",
+      "source": "cards/fate_reforged.c",
+      "native_owner": "choose_khans_or_dragons",
+      "native_owner_ranges": [
+        {
+          "address": "0x2621cb0",
+          "end": "0x2621d0a",
+          "bytes_sha256": "2abd94c48f658ce9b11c0554cb7db11b989341b8d4783de15d665aa6d41f6ee3",
+          "raw_export": ".recovery/decompiled-khans-fate-oath/2621cb0.c",
+          "raw_export_sha256": "4c17ecd3f3565abbe6a3cbfbf20a34f9c36084b592c1edc4d94a71ea25e91585"
+        }
+      ],
+      "source_changed": false,
+      "definition_sha256": "26c1a86ce17c4f17acd0328a9f942954cfc6c52f0128d02b7d039f48c449dcd1"
+    }
+  ],
+  "helper_definitions": 35,
+  "native_helper_ranges": 35,
+  "changed_helper_definitions": 15,
+  "changed_card_callers": 22,
+  "native_contracts": {
+    "prowess": {
+      "return_types": {
+        "prowess": "void",
+        "prowess_mode": "void"
+      },
+      "mode_argument_ignored": true,
+      "actual_mode": 2,
+      "test_type": "TYPE_CREATURE",
+      "test_flag": "DOESNT_MATCH",
+      "completion": "EVENT_SPA",
+      "direct_boolean_callers_migrated": true
+    },
+    "raid": {
+      "inline_controller": "player",
+      "old_controller": "current_turn",
+      "trap": 1542,
+      "owner_ranges": 5
+    },
+    "singing_bell": {
+      "completion": "EVENT_LEAVES_PLAY_ABILITY"
+    },
+    "death_frenzy": {
+      "old_count_reset_removed": true
+    },
+    "ashcloud": {
+      "dispatch_owner": "legacy player/card",
+      "dispatch": "etb_ability",
+      "completion": "EVENT_ETB_ABILITY"
+    },
+    "burn_away": {
+      "death_trigger_suppression": true,
+      "detach": true,
+      "marker": 66,
+      "resolver": "resolve_gfp_ability",
+      "detached_fields_read_by_native_resolver": true
+    },
+    "towershell": {
+      "attack_dispatch": "dat_ability",
+      "completion": "EVENT_DAT_ABILITY",
+      "return_event": "EVENT_BEGIN_COMBAT",
+      "change_type_flag": "EA_FORCE_ATTACK",
+      "legal_attacker_query": "engine_any_legal_attacker",
+      "owner_iid_slot": "targets[1]",
+      "returned_card_state": "STATE_TAPPED|STATE_ATTACKING",
+      "returned_info_slot": 1,
+      "cleanup_marker": 0,
+      "unmeld": true
+    },
+    "surge": {
+      "constants": {
+        "black": 0,
+        "green": 0,
+        "white": 0
+      },
+      "stack": {
+        "cless": [
+          145,
+          0
+        ],
+        "blue": [
+          145,
+          4
+        ],
+        "red": [
+          145,
+          8
+        ]
+      },
+      "native_dialog_token": "010c00",
+      "source_parameter_order_preserved": true
+    },
+    "color_lookup": {
+      "address": "0x2731500",
+      "entries": 29,
+      "color_masks": [
+        4,
+        8,
+        16,
+        32
+      ],
+      "colors": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "default": 1
+    },
+    "oath_death": {
+      "detach_byte": 1,
+      "resolve_before_visibility": true,
+      "gladehart_gain_per_packet": 2,
+      "sifter_attached_return_behavior_retained": true,
+      "old_end_trigger_resets_removed": true
+    },
+    "kalitas": {
+      "count_flags": 64,
+      "test_type_flag": 3,
+      "counts_before_exile_replacement": true,
+      "default_zombie_definition": true,
+      "result_guard_absent": true,
+      "kill_after_visible_resolution": true
+    },
+    "fumarole": {
+      "eot_removal": true
+    },
+    "arcbond": {
+      "single_anybody_damage_call": true,
+      "array_capacity": 20,
+      "capture_target_pairs": [
+        1,
+        18
+      ],
+      "resolve_target_pairs": [
+        1,
+        17
+      ]
+    },
+    "whisperwood": {
+      "death_trigger_suppression": true,
+      "manifest_amount": "card_counts[player][5]+1"
+    },
+    "brutal_hordechief": {
+      "legacy_removal": "KILL_EXILE"
+    },
+    "callers": {
+      "ojutai": "CHECK_ABILITIES noncreature hand mana/legal scan sets KEYWORD_FIRST_STRIKE",
+      "skywise": "native partial test initialization; SPA payment",
+      "niblis": "pump_until_eot_merge_previous_alt(...1)",
+      "mentor_mistfire_shu_yun_seeker": "Separate dispatch, Prowess pump and extra effect",
+      "thing_in_ice": "TYPE_SPELL trigger"
+    },
+    "combat_estimator_global": {
+      "address": "0x78fef0",
+      "macro": "check_abilities_keywords"
+    },
+    "preserved_quirks": [
+      "Prowess mode parameter is ignored and native dispatch is mandatory",
+      "Burn Away resolver reads detached attachment fields",
+      "Towershell meld branch retains original melded CSV ID for exile checks/removal",
+      "Sifter keeps its attachment fields and attached-death early returns",
+      "Kalitas visible effect generates a default token packet even when result is zero",
+      "Skywise Teachings initializes only test.type and test.type_flag",
+      "Arcbond retains native20-element packet array and asymmetric capture/resolution bounds",
+      "Bolster retains native min-toughness100/count1 initialization"
+    ]
+  },
+  "scope": "35 complete helper definitions/native ranges and31 complete paired card callers;15 helper bodies and22 card callers changed. One changed and one retained private inline helper included. Built-in dialog backends and gameplay tests remain downstream."
+}

@@ -1,0 +1,672 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "create_archenemy_legacy",
+      "source": "cards/archenemy.c",
+      "native_ranges": [
+        {
+          "address": "0x2580930",
+          "end": "0x25809bf",
+          "bytes_sha256": "4600be939bf7b19fd5a4b8ef6dde153edd23d752f69373ce9e7b0ce151c8c306",
+          "raw_export": ".recovery/decompiled-cost-phase/2580930.c",
+          "raw_export_sha256": "f0eea2f0dd0cca72e8142bea6877486e92d70d4880bd34503dd833e2dbceb142"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "83e68627191e0b87cbee871212f0dfed76033b8149d454e514e7beb87f4670e6"
+    },
+    {
+      "name": "put_into_play",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2669e00",
+          "end": "0x2669ecd",
+          "bytes_sha256": "143c8616476c894987348d5ebcc7483b8257b5ef37d1d1aaf856e50cea148009",
+          "raw_export": ".recovery/decompiled-cost-phase/2669e00.c",
+          "raw_export_sha256": "53c29869030d9656124b23101a052770366cd00310fab785b97ce7ebe98b5eac"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "dcb3a71f3ec2c45e923bcdbf6f45ebe88e18b9dccb678b4460bc300ed11f7235"
+    },
+    {
+      "name": "empty",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2677460",
+          "end": "0x2677463",
+          "bytes_sha256": "251447ee91a9067dcd6ab96703133f617565974cd6c4819021760c4688c91abf",
+          "raw_export": ".recovery/decompiled-cost-phase/2677460.c",
+          "raw_export_sha256": "817e4a09765ed8b621722a900fd909ed1f3f798d73c1bc0814d87cd784af5693"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "72e11813822407a5e3de579598a327b1b86ccc1b9fb87f99960244b3deecdafb"
+    },
+    {
+      "name": "reveal_card",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2678b00",
+          "end": "0x2678ba2",
+          "bytes_sha256": "41e1d8af1741eb56e9521ca9f0a68720745da88e995204fecbeaaa43297d45d4",
+          "raw_export": ".recovery/decompiled-cost-phase/2678b00.c",
+          "raw_export_sha256": "90af988c90b9a6796846c6aa348ca7b9196663b5bb4f506ea6878b6e184a48a4"
+        },
+        {
+          "address": "0x2691740",
+          "end": "0x269176a",
+          "bytes_sha256": "dc07ee8152bd10a979e3bed7ac046a813ebe0425439ceb7fb440e2b41fff683a",
+          "raw_export": ".recovery/decompiled-cost-phase/2691740.c",
+          "raw_export_sha256": "93e233a9fc485488a32cd2b740ae18f6078ae52607c1712919bd3fef208f7c81"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "38d2139e992af7aa37775d753b1adeeda0c0f2a9b23a7d771d839ac12397b0bb"
+    },
+    {
+      "name": "reveal_card_iid",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2678bb0",
+          "end": "0x2678c4b",
+          "bytes_sha256": "84676d14e190cdff49f10036a9263114563aaf716243c645f741a0b2241e905a",
+          "raw_export": ".recovery/decompiled-cost-phase/2678bb0.c",
+          "raw_export_sha256": "134ce984aaa1a661fb8f0b93b3c5a8ee9591bd4628bed1da3b2350d48be41472"
+        },
+        {
+          "address": "0x2691770",
+          "end": "0x2691796",
+          "bytes_sha256": "424993b271f2edc47275dabc12b081b6c7ed405f6db55a76b90e838c36d0ee1d",
+          "raw_export": ".recovery/decompiled-cost-phase/2691770.c",
+          "raw_export_sha256": "e7f4d11992a8dc93cfa32344940630e66da7424a1a4f642437074fd217e96577"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b627f08be278e1e011b7fef47080fd19312f77628c51cad09b419aac000ce3fa"
+    },
+    {
+      "name": "duh_mode",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26795b0",
+          "end": "0x26795f1",
+          "bytes_sha256": "37f4744c7a6d87d5d245af0f8f5003ceab9eb3cfd225df1e43602694bebe6cbc",
+          "raw_export": ".recovery/decompiled-cost-phase/26795b0.c",
+          "raw_export_sha256": "bfd10481f0d32cde43aacf66fae45bf5377e26314a44bf91e954a024a9482992"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "89a494e8a3bd0c43313c792e1fd1833a94c243b5e93ce12e5cb036ff42a8c165"
+    },
+    {
+      "name": "is_phyrexian",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268b460",
+          "end": "0x268b52f",
+          "bytes_sha256": "ddc7e4bdc8197a3a83cf8671ab60b34c49b415922842aeef84323db13debff4a",
+          "raw_export": ".recovery/decompiled-cost-phase/268b460.c",
+          "raw_export_sha256": "a153465a871b71fefe3f771e95d464f272b8b2d3f852af417f79d77d0a9806ba"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4da4dc13be573f7bf43a7aaa1c11bd67b6605e7e22102aab4cbe9319cb168fa4"
+    },
+    {
+      "name": "is_normal_hybrid",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268b640",
+          "end": "0x268b6c2",
+          "bytes_sha256": "78f336d2e5f836ef44be253bc4cf047372ff2b8cbd390f41f373bc74520c14bd",
+          "raw_export": ".recovery/decompiled-cost-phase/268b640.c",
+          "raw_export_sha256": "59b1b457d6a8a83178d458763b63886c136d16a56ca5627a884068314df7f22c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "10b24b5e01d2c4d510fd0fbf0775c4e90833934e5ec8809a8fcfab5597d002ea"
+    },
+    {
+      "name": "is_mixed_hybrid",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268b6d0",
+          "end": "0x268b716",
+          "bytes_sha256": "657f24cec3e4164ada09e0a797b78781b4525338629d942905aa81c10d2ecb04",
+          "raw_export": ".recovery/decompiled-cost-phase/268b6d0.c",
+          "raw_export_sha256": "954db8f953d884f23258556ca82cb74032225dba83bf91c1107ed602a3d13f0a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2ee9323e973a6d3a80c4cabeafad74eec6841d71e5c42fb36985bd6dd5a8ce85"
+    },
+    {
+      "name": "charge_mana_from_id",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268bcf0",
+          "end": "0x268bd20",
+          "bytes_sha256": "a8cf1c0e3a6cd3710a91dece2799e923d2416c54f04da0091bd972281e9e6616",
+          "raw_export": ".recovery/decompiled-cost-phase/268bcf0.c",
+          "raw_export_sha256": "992d89dac31948ff1167223888bf4d0a9e064fd16213c5bd3adb0b265603e054"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "329cd948f1726fa0a21397eb5f6ff738925076604ef7a4e6e73feba007c54721"
+    },
+    {
+      "name": "block",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268c150",
+          "end": "0x268c1f7",
+          "bytes_sha256": "15dc36f37ba6d9c41d0aa6d6c47013aaba4b7c4e1ab628a844e462bab9261503",
+          "raw_export": ".recovery/decompiled-cost-phase/268c150.c",
+          "raw_export_sha256": "3c02efe6843367e5a1114d7e698143590257182472d5cbc8e7f1181d25c9ef51"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "43758abcc6c14576ae2ac2e9176b37f3e21747a0b9ac13b61df8155905ec1f27"
+    },
+    {
+      "name": "player_flips_a_coin",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268c200",
+          "end": "0x268c572",
+          "bytes_sha256": "3aed1e086a6f958dd68e506e62ea8194602f0ce240d4121f1001ae3ab5af8faf",
+          "raw_export": ".recovery/decompiled-cost-phase/268c200.c",
+          "raw_export_sha256": "17929fc125bd940f6b21a31352526f276810e5ddb5ed0045c95cf017146e876c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8224049cd9581bbc212b068a00dcc3178e27cc829155c99ae70a6a3d069ef72b"
+    },
+    {
+      "name": "flip_a_coin",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268c580",
+          "end": "0x268c59e",
+          "bytes_sha256": "b52760a98711f93f03a50c52274d22f57bc90f0da912c4e297b691baccb47462",
+          "raw_export": ".recovery/decompiled-cost-phase/268c580.c",
+          "raw_export_sha256": "513cff5d5f246c9f90f131ec31757d4aea10e1d222c3a4613f97afb893ec1c27"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9f3328d8f756e92e2cb73791b4e54074b6bb574c55cba2102667326397f45335"
+    },
+    {
+      "name": "shuffle_for_exe",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268c5a0",
+          "end": "0x268c6d9",
+          "bytes_sha256": "fb30141b52072a484b804506a025e55e599b7d96002396850588f7ed8afb361e",
+          "raw_export": ".recovery/decompiled-cost-phase/268c5a0.c",
+          "raw_export_sha256": "917e60840fd06d0ec1f4f651e8ad0342b59b302ff651ff000b817b7b7f0dfbfe"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c8de225ed6dbb6f888efb9020f2e18fb1af3601e6447ab5619704bd7ac505c2e"
+    },
+    {
+      "name": "end_of_combat_trigger",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268c990",
+          "end": "0x268ca0f",
+          "bytes_sha256": "77ad4f5e6701a860865d9e910249de2809686e6771360109faa9de624368a3fc",
+          "raw_export": ".recovery/decompiled-cost-phase/268c990.c",
+          "raw_export_sha256": "7423cd54e74ad7313c4bea2ec1c24287166486e5c6620cf0fc09dd0a86caa9ef"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "05e4468e2a847d7e083cac0f8e542e089388cef1dc5a2e9ad0e570e5a6afbf72"
+    },
+    {
+      "name": "sacrifice_at_end_of_combat",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268ca10",
+          "end": "0x268caa8",
+          "bytes_sha256": "fd1662ae38b97a9e1648c0def5e4b5c8767e3431716d819fd8357f2ecd9aef59",
+          "raw_export": ".recovery/decompiled-cost-phase/268ca10.c",
+          "raw_export_sha256": "0729377fa1186cca62bdf86b54f160cbe06e1f7ebed1a98a8e1903a4388d9374"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5b3c9f06fb28d7dfcae349fa6afa93002114998c55e857a50621c1d1c9bece2d"
+    },
+    {
+      "name": "discard_trigger",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268cf00",
+          "end": "0x268cfe9",
+          "bytes_sha256": "6a00a14f5391bc4b0d9cb6ae55b5ff9305274ef72f323bd180b959429ba045df",
+          "raw_export": ".recovery/decompiled-cost-phase/268cf00.c",
+          "raw_export_sha256": "a0d077f7499197cbe4e8113fa024c8e24c6563deeace5678da2c7c5a29e3c2a7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1953a71c294c8f142e48dfc042ffae87437db99645152fa92813de1c590236ad"
+    },
+    {
+      "name": "time_walk_effect",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268d110",
+          "end": "0x268d265",
+          "bytes_sha256": "5097f6989febf1ce84abf87ac5c63bbb5f8cbf453e005059c9e8facd525130aa",
+          "raw_export": ".recovery/decompiled-cost-phase/268d110.c",
+          "raw_export_sha256": "c6897f7da28f8f3f4c1fb48abdf8e91e83f23c2358082f716d4f81ac236f6f50"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "90a4cd7d2e241f79a6970092ea00b6e750ad71163f9604425a940850c218b645"
+    },
+    {
+      "name": "target_player_skips_next_untap",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268e800",
+          "end": "0x268e846",
+          "bytes_sha256": "a7a4de3270fc8101c9bda804d3845afab3bbb27454cc6d2df3af14c812d0d31a",
+          "raw_export": ".recovery/decompiled-cost-phase/268e800.c",
+          "raw_export_sha256": "85d4a0293b5dcbfb5869552a3f4b35bbde936dd6ec13bcb0523bb0cb4bd695b0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1e731b31225081dc56fa9e014138f21804a0849ff5332f3aac73148afd2564af"
+    },
+    {
+      "name": "can_pay_life_impl",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268f0e0",
+          "end": "0x268f147",
+          "bytes_sha256": "442ed8efdfd1cff1c8e1cd6f53085bd47c3cbc798c8426a89a074b7b897bfc9b",
+          "raw_export": ".recovery/decompiled-cost-phase/268f0e0.c",
+          "raw_export_sha256": "54593b771d1846cfc59be3ccd8faeb0140349066bc5bc2a1a67fed629604143f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "aed58f95c26e5d0bb8ab083ff2e205d7cb54b1e150b4adc2ff34e1499c051400"
+    },
+    {
+      "name": "can_pay_life_as_cost_for_spells_or_activated_abilities",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268f150",
+          "end": "0x268f172",
+          "bytes_sha256": "b8ef642b7975295e1a07dd642a68248ab4213529c1ccd5111fbe8d09f975cc57",
+          "raw_export": ".recovery/decompiled-cost-phase/268f150.c",
+          "raw_export_sha256": "7ab8018b499f3e630be4f3ce1067059e318c60c4ba434bf92974e936bf67c47a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0d0f0af3062f7791783aa5768720df7c0d8e4d413631449374cf2f282a194702"
+    },
+    {
+      "name": "can_pay_life",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268f180",
+          "end": "0x268f1a2",
+          "bytes_sha256": "c75d630a7f1ecb2c9e514bf766cd4c08307a9afc8df2d4173f0c2ec9f9ee1207",
+          "raw_export": ".recovery/decompiled-cost-phase/268f180.c",
+          "raw_export_sha256": "d7cab4a66e7da5159344f19f887061aa5aee071a7123ecc48e9c081a5c401e51"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1c5d18b8058e568178407aa91062a5496a05dc9878a0e115af72cca07b52b846"
+    },
+    {
+      "name": "lifegaining_charm",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268f920",
+          "end": "0x268f9e6",
+          "bytes_sha256": "4c50ca49149f059817a6d9b6196613b68d342aca01b5159884e0b99e1493aa82",
+          "raw_export": ".recovery/decompiled-cost-phase/268f920.c",
+          "raw_export_sha256": "2ca5f3f2d64644817fe39ac76678cfe53066069bce21f76a98cb28041c449f31"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5f7318147ce02758593dd8d76ca983354d0a1fe92e42e3d7d1ee4017959d5833"
+    },
+    {
+      "name": "exchange_life_totals",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268fc50",
+          "end": "0x268fd78",
+          "bytes_sha256": "4c3d70617e1a7a6527b870c54402ad3c3fa37b8e8493e0f825a8434522eeed75",
+          "raw_export": ".recovery/decompiled-cost-phase/268fc50.c",
+          "raw_export_sha256": "d7adff2d285feb5e7a1c3e510e7f106382119ac4cd89f81bac314c440e0d1ef7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "59d1108631b2148c431eff85136b8e7d349c2a6a2ea0c4e5cad1e605569676bc"
+    },
+    {
+      "name": "set_life_total",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x268fd80",
+          "end": "0x268fde1",
+          "bytes_sha256": "d1090ef8eac4b35d4308557f8a1074ef7d0e9f8ab4a2c40228ae68a1b193f01d",
+          "raw_export": ".recovery/decompiled-cost-phase/268fd80.c",
+          "raw_export_sha256": "1e3d72da9acdf58da2a0d5b47353a1f58e3588c5d38ee3da15f70d27dcdfae0b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "754b6c9f7dd7282cd67be936306889daf18ae53faefd052c91f4dd056466165d"
+    },
+    {
+      "name": "generic_shade_merge_pt",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2690b40",
+          "end": "0x2690d44",
+          "bytes_sha256": "4fad046b32e46c30fd88839999da828638b9af4bb698995fd4928468c14b6244",
+          "raw_export": ".recovery/decompiled-cost-phase/2690b40.c",
+          "raw_export_sha256": "cc20451773cfa68aac36da7c9e807d7e41161563941fc1f12ddf9544d1397ddb"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "608a40868175acde42898c956a194e89135d9bdf8ed9b97fca74b2776da34c85"
+    },
+    {
+      "name": "has_mana_to_cast_iid",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2690d50",
+          "end": "0x2691052",
+          "bytes_sha256": "97a4bc611dad773e98a98aff3b280772a30105c6cff4d726fd65816acfaf866a",
+          "raw_export": ".recovery/decompiled-cost-phase/2690d50.c",
+          "raw_export_sha256": "4c5aa0cb65a7df7173c985ed44d840e494c27be12fbfc737ca0a6b06023cd45c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "10ce1ec792a66b014f82f622138baa1a01251c38065dc8148f1437536aef0532"
+    },
+    {
+      "name": "has_mana_to_cast_id",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2691060",
+          "end": "0x2691089",
+          "bytes_sha256": "8bcbbe3d8fb6e53cb971caeb87da4895385308047b24b49686257acd29e54705",
+          "raw_export": ".recovery/decompiled-cost-phase/2691060.c",
+          "raw_export_sha256": "60d058360f4d70b6a48befeb22eb0b02c5235fe1a10d682ed54a31ff95ca8e73"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "14b0780c7798b78b8e8c9dc6630b98879d462523ddc123f41c2ca7e9d884b0eb"
+    },
+    {
+      "name": "null_casting_cost",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2691170",
+          "end": "0x269122c",
+          "bytes_sha256": "ceae4c0c33691ec851f0ebffd993796542f364a9f01a4e34ec79709222421204",
+          "raw_export": ".recovery/decompiled-cost-phase/2691170.c",
+          "raw_export_sha256": "0bc706d70c24df3eefd9c6a0c2609da6cf82e1913ef3b46ac622d32546b7f4a6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "889a4531f6cd40348d4fe1426ad2a3a17061302deb886ef12c52762de7475f90"
+    },
+    {
+      "name": "die_at_end_of_combat",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2691260",
+          "end": "0x2691308",
+          "bytes_sha256": "17ae050895bfd30ffeae922cfc819e042923de2bbd7c459327a9e1bb01789e1e",
+          "raw_export": ".recovery/decompiled-cost-phase/2691260.c",
+          "raw_export_sha256": "eef6dc8c347e4c758f754b2b2531a2c9a96e74d7672c383146a49278b0abd8ea"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "befb1410f220daf948c9c770311b6c8f838ed543fa26f0a8d419f748cd0c16a0"
+    },
+    {
+      "name": "look_at_iid",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26917a0",
+          "end": "0x2691841",
+          "bytes_sha256": "9f53baa9a8fd3433ecb4bed7068d194428a5fee9ddf1e5a7e6f8f17dc4775c96",
+          "raw_export": ".recovery/decompiled-cost-phase/26917a0.c",
+          "raw_export_sha256": "066469d98b55b511607ed99ce26338ae6841a1b59c6015a67b9a9285702c1f8d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c639fb236a6eb2118fd6437a10e9ecce63545a39b725293862be4b04b106410c"
+    },
+    {
+      "name": "upkeep_trigger_ability_mode",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2695220",
+          "end": "0x2695316",
+          "bytes_sha256": "ff646c3335f2741fbc75b96fed95d8b20c49e6b34b28dbf57b29c83f7cd0ae08",
+          "raw_export": ".recovery/decompiled-cost-phase/2695220.c",
+          "raw_export_sha256": "0ae15129b6ba67c2fe430664a53708c7b6bc7d4c6da916c33fe7810ff515294c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7b1e021e277af3d2cbf6a02e8d0a442c7421dcd4f138bd3a277ad3f2df1dce87"
+    },
+    {
+      "name": "upkeep_trigger_ability",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2695450",
+          "end": "0x2695480",
+          "bytes_sha256": "b7bfdc3337615263a8a0e33ca9215006adf9e6dc6c8bc618560bb4f7eb607ba3",
+          "raw_export": ".recovery/decompiled-cost-phase/2695450.c",
+          "raw_export_sha256": "bd1b19bfdfcbefb8d865776d1b43e1c85bbdc3e3d254a383fd08e7add2f84844"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ef09a907c3c271d9960206413d64a004dc8a88d39f2c9aa178468162be7e780a"
+    },
+    {
+      "name": "get_setting",
+      "source": "functions/rules_engine.c",
+      "native_ranges": [
+        {
+          "address": "0x26c7810",
+          "end": "0x26c781f",
+          "bytes_sha256": "1edd7c31ac781922afe73d07248e89c3a096d616e01ef13766484e7642acd6e7",
+          "raw_export": ".recovery/decompiled-cost-phase/26c7810.c",
+          "raw_export_sha256": "8e6fcdff06d913ef90923006432079218f1e68458de69585d25daba0a768e5f4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d351df832d753decf0d43ff3b923959e04fbf01c930da9876afdd482e35c2666"
+    },
+    {
+      "name": "get_card_image_number",
+      "source": "functions/rules_engine.c",
+      "native_ranges": [
+        {
+          "address": "0x26c79c0",
+          "end": "0x26c7a7c",
+          "bytes_sha256": "6901dedea04aa553b68cf80777d82cc9579507236a624c25cd6028e747616d80",
+          "raw_export": ".recovery/decompiled-cost-phase/26c79c0.c",
+          "raw_export_sha256": "68f93289be31fc6ec088af9690cc3caa470628c6f4c161a1f90822bab9b37eb9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3cfcebefc3698556900a416e7b9f9d66a1861991d643559caf0471174199aa7c"
+    },
+    {
+      "name": "is_blocking",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26ce440",
+          "end": "0x26ce52d",
+          "bytes_sha256": "ce1e7c4f4c3c97c9ca21983b0beff73ccbe41c0d02c8548f0bf9c6bd2fe20e43",
+          "raw_export": ".recovery/decompiled-cost-phase/26ce440.c",
+          "raw_export_sha256": "aa5253ade43a04213211525882944fc9ca6d172a583a4ad542c840f3ed513655"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "48920bc0bd36a634f46896beec43d2d1d172327673988325a3256b31cbc921ab"
+    }
+  ],
+  "inline_support_helpers": [
+    {
+      "source": "functions/functions.c",
+      "name": "check_for_extra_turn_suppression",
+      "definition_sha256": "7fdf0d15eb15a29abef90c117ccdd7d3516e73ab1028e715a6c67e8831e4dfdc",
+      "native_owner": "time_walk_effect",
+      "native_owner_address": "0x268d110"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "create_time_walk_legacy",
+      "definition_sha256": "e5580f0c2136511503efbac093ea7c37e92bf14c4f0c57f39af927235af232dd",
+      "native_owner": "time_walk_effect",
+      "native_owner_address": "0x268d110"
+    }
+  ],
+  "helper_definitions": 36,
+  "new_native_helper_ranges": 38,
+  "changed_helper_definitions": 13,
+  "native_contracts": {
+    "aura_entry": {
+      "reject_negative": true,
+      "check": "EVENT_CAN_CAST",
+      "temporary_flag": "SF3_IN_PLAY_DIRECTLY",
+      "flag_value": 64,
+      "clear_after_attempt": true,
+      "returns_original_card_on_failed_check": true
+    },
+    "phyrexian_additional_csv_id": 20474,
+    "hybrid_scan": "adjacent color pair followed by separator or terminator, anywhere in mana-cost string",
+    "coin_flip": {
+      "new_tails_source": "CARD_ID_RAKDOS_THE_SHOWSTOPPER",
+      "excluded_sources": [
+        "CARD_ID_RAL_ZAREK",
+        "CARD_ID_MANA_CLASH",
+        "CARD_ID_PANDORAS_BOX",
+        "CARD_ID_RAKDOS_THE_SHOWSTOPPER"
+      ],
+      "event": "EVENT_COIN_FLIP_WON_OR_LOST",
+      "event_value": 23296,
+      "affected_player": "who_flips",
+      "affected_card": "win/loss boolean",
+      "old_card_specific_dispatch_removed": true
+    },
+    "lost_abilities": {
+      "end_of_combat": "AL_TRIG",
+      "discard": "AL_TRIG"
+    },
+    "extra_turns": {
+      "medomai_update_removed": true,
+      "unchanged_inlined_helpers": [
+        "check_for_extra_turn_suppression",
+        "create_time_walk_legacy"
+      ]
+    },
+    "life_changes": {
+      "exchange": "life_total_can_change on both players",
+      "set_total": "life_total_can_change",
+      "lich_and_apnap_order_preserved": true
+    },
+    "split_cost": {
+      "first_half": 1,
+      "second_half": 2,
+      "short_circuit_either_half": true
+    },
+    "null_cost": "printed req_colorless passed to updated cost",
+    "shade_pump": "original source + parent target via pump_until_eot_merge_previous_alt, text variant1",
+    "native_dialog_tokens": {
+      "0x275f917": "0106",
+      "0x275f914": "0107",
+      "0x275f911": "0109",
+      "0x275f90e": "010c",
+      "0x275f90b": "0103",
+      "0x275f91a": "0111"
+    }
+  },
+  "scope": "36 directly reviewed C definitions covering 38 native ranges, including two optimized reveal clones; 13 changed definitions. Two unchanged inline extra-turn helpers were reviewed in their owning native range. Built-in dialog bodies and gameplay verification remain downstream."
+}

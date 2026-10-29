@@ -2828,8 +2828,7 @@ int put_card_on_stack3(int player, int card)
 {
   enum
   {
-    STATE_BEING_CAST = 0x80000000u,
-    WAV_SNOW = 84
+    STATE_BEING_CAST = 0x80000000u
   };
 
   card_instance_t *instance = get_card_instance(player, card);

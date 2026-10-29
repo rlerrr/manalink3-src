@@ -3162,10 +3162,6 @@ static int athreos_effect(int player, int card, event_t event);
 /* ManalinkEh 2022: 0x2358760; original cards/theros_beyond_death.c:532. */
 static int athreos_effect(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_COIN = 142
-  };
 
   card_instance_t *pcVar1;
   card_instance_t *pcVar2;
@@ -3323,10 +3319,6 @@ joined_r0x023589c4:
 /* ManalinkEh 2022: 0x235afb0; original cards/theros_beyond_death.c:609. */
 int card_athreos_shroud_veiled(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_COIN = 142
-  };
 
   int iVar1;
   card_instance_t *instance;
@@ -3465,10 +3457,6 @@ LAB_0235b043:
 /* ManalinkEh 2022: 0x2361a10; original cards/theros_beyond_death.c:4071. */
 int card_towering_wave_mystic(int player, int card, event_t event)
 {
-  enum
-  {
-    DDBM_MAY_DAMAGE_PLANESWALKER = 64
-  };
 
   int iVar1;
   card_instance_t *instance;

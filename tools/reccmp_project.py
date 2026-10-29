@@ -133,6 +133,10 @@ def setup(args):
     native = read_functions(original_debug)
     print("Reading rebuilt DWARF names...", flush=True)
     current = read_functions(rebuilt_debug, all_functions=True)
+    # Triage needs these same complete bounds. Persist this parse once per
+    # setup; the consumer rejects it if the actual debug-file hash changes.
+    write_json(local / "triage-rebuilt-bounds.json",
+               {"sha256": digest(rebuilt_debug), "functions": current})
     manifest = json.loads((ROOT / "docs/recovery-evidence/recovered-functions.json").read_text())
     accepted = {int(row["address"], 16): row for row in manifest["accepted_functions"]}
     from canonicalize_helpers import names as canonical_helper_names,verify as verify_canonical_helpers
@@ -142,7 +146,8 @@ def setup(args):
     canonical_data=load_canonical(ROOT)
     equivalent_helpers=verify_native_equivalences(canonical_data,ROOT) if canonical_data else []
     equivalent_addresses={int(e['duplicate_address'],16) for e in equivalent_helpers}
-    stubs = {int(row["native_address"], 16): row for row in manifest["source_stubs"]}
+    stubs = {int(row["native_address"], 16): row for row in
+             manifest["source_stubs"] + (canonical_data or {}).get("additional_source_stubs", [])}
     current_names = defaultdict(set)
     current_ranges = defaultdict(list)
     for row in current:

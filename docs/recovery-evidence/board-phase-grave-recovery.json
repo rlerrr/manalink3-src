@@ -1,0 +1,711 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "get_discard_controller",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2679560",
+          "end": "0x2679566",
+          "bytes_sha256": "7298dd8c7bbad792aa42c15b4eda4996e3d42a41db9eb252d162d2068849f511",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2679560.c",
+          "raw_export_sha256": "92187b092133c6ef75866b1b2120a715e9d54912a747d74682ea6c84f2d004b8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3c8c034e86453bdf0d519d633a0f2e45b51e3a0a2cbcbfa9c36d06e696d22dc0"
+    },
+    {
+      "name": "set_discard_flag",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2679570",
+          "end": "0x26795a8",
+          "bytes_sha256": "3fa6bd41b17a3e37fa111387a6921aaec709e6392e0307bc0792d0bf8b5c09c4",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2679570.c",
+          "raw_export_sha256": "7b96fcf10a2bc5bb9a18b7e90db51d29e389d9d6aa8ba5e676a6f2c17273abd9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "47dc4c776d9bc9701c9fba5156518c02d5ea0db21787424339e25cd48be1f54f"
+    },
+    {
+      "name": "gains_doesnt_untap_while_has_a_counter_and_remove_a_counter_at_upkeep",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267bb60",
+          "end": "0x267bbaa",
+          "bytes_sha256": "1b6b83463764218aec1878e8729d7b555fe35b20d991c1d1219647352ea34c1f",
+          "raw_export": ".recovery/decompiled-board-phase-grave/267bb60.c",
+          "raw_export_sha256": "962eed4574dbcc9324c48f2a091917e5d5443851a2bea759ab0962b12038fe5c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "22fd059537d61630d40d47deb0d47729ee485e44ce8608c7d9afefe92e88697b"
+    },
+    {
+      "name": "impulse_effect",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26810a0",
+          "end": "0x2681239",
+          "bytes_sha256": "f2678665fa7cfdd9021dd6ad2e5f00fb23dc80129bd25c5298a1b4b00e9ddcb0",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26810a0.c",
+          "raw_export_sha256": "ef8cf4beb7c111e302e83243dd8eca7ab8c01d369851581c0854c9a55cb9f70c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "84459bc2fc0aca60332227255f8883fa6ccb28d93c429315dd8eb8d8bd1d1d49"
+    },
+    {
+      "name": "check_battlefield_for_targettable_id",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26819a0",
+          "end": "0x2681ae9",
+          "bytes_sha256": "da7dbed51187604bffeece3749df160b4d6a7cfb36b9874ccdd2e94d7b31dc61",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26819a0.c",
+          "raw_export_sha256": "0c459622e4ca9288517b48c513af9bc7196ab38552ed30dace8da69da395a5b9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7f063d4b77822d9ed9f8c5bf2de12c9faa8fe5f9db10b296e4a7cd591d4c7b6d"
+    },
+    {
+      "name": "generic_painland",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26821e0",
+          "end": "0x26825c6",
+          "bytes_sha256": "17a824bd2a4aa8e992c6c6df8ba48658b990272da0f60523263c739f2f0994a3",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26821e0.c",
+          "raw_export_sha256": "b798b11edca3d49aa43b0b214169d878d7835754b5ba3f9eb4e987c1b27db610"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8ba7cda7358ed96ad0a3dbbbf5d389530f1a697f8203bca8373a2c03b02e6abd"
+    },
+    {
+      "name": "get_cost_for_propaganda_like_effect",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26829b0",
+          "end": "0x2682af0",
+          "bytes_sha256": "40c41f4841818fb13675f3ed5315bc03a4c10435bdc39e4cd6ebf55f853b7459",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26829b0.c",
+          "raw_export_sha256": "4f7fc675139d15969dc4a388b1569296901efc69a7cf3e6013f0ff9e77d619d8"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4ab314bb925a927b89baded84b194f4ec35a6bdcc06d0160d5cca5433ed66d1a"
+    },
+    {
+      "name": "tax_attack",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2682af0",
+          "end": "0x2682d26",
+          "bytes_sha256": "2f65abe9872b5ea44649713cbd6f7719cd25bcfe6d6973dbffad47dc9ffc1c8d",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2682af0.c",
+          "raw_export_sha256": "909ccefac6aeb0c6677c9817b5bd22997fc7e9bfcc8f049bda60119f007f0ae7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d96d0ea5bbabec877570ecc35910623aa7b77ca59b79d8cab30d08f1f6b2262b"
+    },
+    {
+      "name": "pick_targets_for_multidamage",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2687e00",
+          "end": "0x26882e5",
+          "bytes_sha256": "a350240f0bfe25d17f74d67c59520cc8b117320bbf466fedca077b23181f4b76",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2687e00.c",
+          "raw_export_sha256": "fb361b3d542acbd06ae4ef7c87f738584bf03336cac215ccfd1ff8890daf5ee1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cc523664af08221cdd29ca20841225eef440c5e3b2070bffa193ab15e8ec23e5"
+    },
+    {
+      "name": "reveal_card_optional_iid",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2691850",
+          "end": "0x2691942",
+          "bytes_sha256": "5a3fd2ee829c35d34e8d122b64ccd8c72db9b46a06861c89596b2571b08df508",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2691850.c",
+          "raw_export_sha256": "863a8605a9f0fa82b2d51680e5676167befe877df9310a0ef29d6541d0754b7a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "feb62e7393849cd55a4953825c07717e1c632951af59ddad00a9b734db82926c"
+    },
+    {
+      "name": "get_random_card_in_hand",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2691cf0",
+          "end": "0x2691e0f",
+          "bytes_sha256": "ca986fd013620751816800eef8294f2d226dc0eb84d63bde74c2970c47d7a6e1",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2691cf0.c",
+          "raw_export_sha256": "f229085445f73a09a50f4c5bb8f981d21e4ccfc06c61a77ab6b6d876c47891f9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "00ae1936f728ae5455e25363f8785c512e12106b21a1d053882887ea5b1536de"
+    },
+    {
+      "name": "twincast",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2693340",
+          "end": "0x2693447",
+          "bytes_sha256": "efbc73cafdc81250a95ec88ca540395b141a3eb0b1e94e6cbc3b2415ec59abf2",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2693340.c",
+          "raw_export_sha256": "d91ed927ea595103fbe55a3c0c9221d7906b0460ede023418c9f7001f56a269b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c2bf2ddf493827eda219ad805a986ecffe0a80de3a765a0939b7741a689e0c90"
+    },
+    {
+      "name": "activate_twincast",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2693450",
+          "end": "0x269349d",
+          "bytes_sha256": "467c12512b0c6a51691e51dd0c7432df6581f6fc4631be6677a288b5c5e2da41",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2693450.c",
+          "raw_export_sha256": "598aab12bab4d1c05f8e922ab2ba594b94460ab470908ace84519b2fdd6814c1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1c87b25777d73afe1c814700fa87be1a3f8e5f3fd57fcde0acf22fb15b9cb960"
+    },
+    {
+      "name": "obliviation",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2693ce0",
+          "end": "0x2693e74",
+          "bytes_sha256": "27ba259131fa684d2e1c8a24de9b0cc2bb52556db31f0135f1d9c06b85d655cc",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2693ce0.c",
+          "raw_export_sha256": "b1dcf2d52cac8d6e47b61aff269228922df59e29fa02673cec266bd3821790da"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "664397aecd00acd7c82cd3a72d1d951a7b0e44337225a6b38475733832ef8edd"
+    },
+    {
+      "name": "ability_doesnt_untap_while_has_a_counter_and_remove_a_counter_at_upkeep",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2695320",
+          "end": "0x2695444",
+          "bytes_sha256": "c5eb30dce432829e154dd89daba324c70d3ff208b264c5e5c70aa1322a4da1a4",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2695320.c",
+          "raw_export_sha256": "a2c4a7aadc7f246d8f52cf715dc4cb58ae6054b9918272c32a4de1d71e6664ef"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5b5eaae296fbe5bbee01f675ba05157f58ed5286f59f0c1c5b3732b79effa5ce"
+    },
+    {
+      "name": "effect_put_into_a_graveyard_this_way",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2696cc0",
+          "end": "0x2696e2b",
+          "bytes_sha256": "5bfa7264066830fb18c584f731cf1ae44b69a1e80e42b9a1871c788e521c1047",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2696cc0.c",
+          "raw_export_sha256": "4a3910056b205695b27fa73fad0c6ff04e3fcb13b382ab6007afdfd16f97d78f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0c548422331a9e4922129e1b1d9d4368a40326263ecc09f56d4fdcd83201e84c"
+    },
+    {
+      "name": "nightveil_specter_like_ability",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2697380",
+          "end": "0x2697738",
+          "bytes_sha256": "febe5a1d9b9505d5294b0e80ed9fc3d5c8cab7129153b7d7158fc07ee3931011",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2697380.c",
+          "raw_export_sha256": "ced4b14e73ed1dcfce340337e15f9cd4b7b4c39d313d98bd1014b92cd8d0c1a4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d0cc613049ce30a30324572b45aeac5ee6645486c5614e54047b4a7bfd9bf611"
+    },
+    {
+      "name": "beginning_of_phase",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2697870",
+          "end": "0x2697909",
+          "bytes_sha256": "a831767dfa1a5d01c64041f08c77a57a0401dd156366d2034f4ba7d834ba7676",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2697870.c",
+          "raw_export_sha256": "f0354d527b55a1a51ed840bf26084ab56e9e6401a9cfbaf56c2a1921bad9b3c9"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c5146488b76e85faec9a0bf8250e020438dd5630b79cac097994fc794bce98d5"
+    },
+    {
+      "name": "insurrection_effect",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2697f30",
+          "end": "0x269805d",
+          "bytes_sha256": "b784f1ed5415c53a17f07dfbc474a656ab494e5ddca020bc14a052439b92f9a3",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2697f30.c",
+          "raw_export_sha256": "0c7ddf6ae22f2a7a5f84ceb4729abf047ecf1aaaa7a459d96088d616e450330a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3deea6ab37ec9f80d2f1f815824246792bab8ee9a5c31ff1c7d62505a2d66435"
+    },
+    {
+      "name": "for_each_creature_damaged_by_me",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26983f0",
+          "end": "0x269859a",
+          "bytes_sha256": "449a8e8690be5fa7fe9fa99128b0c8160fb8a90250a4ad828812198c097ac7c3",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26983f0.c",
+          "raw_export_sha256": "3a371ffd1d1f8c1b06123b37b0c389b38103512065ffa8b6cb2ebb2a6b74910c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c4c8d572d2d76fbd0b167275d794b80192688ddbcd35296283d752ad5e8fc57e"
+    },
+    {
+      "name": "no_more_than_x_creatures_can_attack",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26985e0",
+          "end": "0x2698691",
+          "bytes_sha256": "92724720c7fab9e42cfa23f545a20ded20e24bb29911124ec4053b074f4d81d6",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26985e0.c",
+          "raw_export_sha256": "496f48e062396ac85cb5b9e987a4c90be03a99f82958491eaf7bd743ce66527c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3bc36be02f962e45a8147e5d9999b3aa845b5f8723aae887d0087bbac567d32b"
+    },
+    {
+      "name": "choose_a_color_and_show_legacy",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2698740",
+          "end": "0x26987cd",
+          "bytes_sha256": "629bbdd14776b36ab88cdd064a95532d24cf4a99d2f978db67b7bc3e28a3c2aa",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2698740.c",
+          "raw_export_sha256": "25a63af6074c5e44e025ef5253c0718f556de9b02a10ea85eb326097571fce85"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "020da731751af5b6ed0bf0176a08d60d90854352235b706b8b9e8b64b0f9c5ad"
+    },
+    {
+      "name": "madness",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2698b20",
+          "end": "0x2698dc2",
+          "bytes_sha256": "6f7a007ecbe8c4effda3b0338dbd3905a04b5d63dc444979cedbd07feb278d0d",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2698b20.c",
+          "raw_export_sha256": "207539dc3298eac29f5f489e53891312230e19b2d3670e89d5c1f9d1d42a81fc"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5c880bb3c10b6bfa3102438a6284009f7ce771c7981a2b43844d00156f8b49f3"
+    },
+    {
+      "name": "cycling_hybrid",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2699770",
+          "end": "0x26998f9",
+          "bytes_sha256": "77d21636c707955fcd77080d010947f655e26a830ee203d836b360ba8069e1df",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2699770.c",
+          "raw_export_sha256": "440f77200edf0d066f9e547b00a46a826dad82624dbbf9fea222dfc13d164bcb"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "cec2a46dac232b98dbcc58a840409961c4df3f3c6d209043c8303ca48a69408c"
+    },
+    {
+      "name": "cycling_special_cost",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2699900",
+          "end": "0x2699b0e",
+          "bytes_sha256": "b976245116186201857d718e3032a5b732ab19a4f1a8d299fa15bb9a391e4370",
+          "raw_export": ".recovery/decompiled-board-phase-grave/2699900.c",
+          "raw_export_sha256": "a5018ab08c6dc9e325aba13be9474c9ea62738cc422905f82e26741947c65b1a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "91922a374e499cc89ef553d5990aa2f540d578fb42b83c17753169cfbb74a62b"
+    },
+    {
+      "name": "new_timestamp",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269f690",
+          "end": "0x269f6b2",
+          "bytes_sha256": "735fba54ed0d9fd11eb8dc9c24250c7d51f8d3eb01f76305291730f27c41c7ba",
+          "raw_export": ".recovery/decompiled-board-phase-grave/269f690.c",
+          "raw_export_sha256": "c89cc414e4b6cd092e71a2a289b1dfedf5f963d14ec8376b8e2f7199da0313a3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "77ee15ee6a7e904499997c55366df0cac724e78279b2f4c591f08c0d7282bd62"
+    },
+    {
+      "name": "you_may_spend_mana_as_though_it_were_mana_of_any_color_to_play_spell",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a1c20",
+          "end": "0x26a200c",
+          "bytes_sha256": "bd740294921d3baca450fa511c91004f465b67169e2dc5fc874400568f811cc7",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26a1c20.c",
+          "raw_export_sha256": "4b727b32811268ff7b9c492ad248af70d8f379c29f9896d7d4e79216a46fce71"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2699ebfa9b030be710ed0516e3232cff365a15d64bd2d95c61f83a844bc18388"
+    },
+    {
+      "name": "sengir_vampire_trigger",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a3ad0",
+          "end": "0x26a3ddf",
+          "bytes_sha256": "9a258d842b46fb4c1d580ecc83e089a6602e845dec61072472e1bb2b5216a2a0",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26a3ad0.c",
+          "raw_export_sha256": "7ef5959ac00c2252b7f61344e296c0b14e34c3047883e7c718d146f119a35497"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4ccda9c536c56bd73a62b416254de5f4d90689c85e4b8fa5f8fdd29c961b67a8"
+    },
+    {
+      "name": "when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a3de0",
+          "end": "0x26a3f19",
+          "bytes_sha256": "8ed2df2918d354e967dabd86ea6fb8538f3fbfb67161da9d43295f6ce15ff18e",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26a3de0.c",
+          "raw_export_sha256": "153428621ebe8d825835fc41cf9db175130f82f6552370365ecba9190373636a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d48b0b7bc860d7855a325cbb10fda73a37c9c7e5f71492d8a0ca99dad3b9e90c"
+    },
+    {
+      "name": "reanimate_csvids_at_eot_legacy",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a4400",
+          "end": "0x26a453d",
+          "bytes_sha256": "533ca435148748b36541b185d8dfea1e26d37f66e1393b62c07b4fca107b6874",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26a4400.c",
+          "raw_export_sha256": "2b8277280a3d31ba595b89aea432a96271e72873de87b2a5dc396b6d8506bc55"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8d50b2b972481ae909ad29620ea0a0bb32b335831924a612e8149d5f1457bf37"
+    },
+    {
+      "name": "cip_damage_creature",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a5580",
+          "end": "0x26a5703",
+          "bytes_sha256": "e9f35a654ef36d5757bfb95e89ad597a2217a26e649c445756f494c600d3c7fe",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26a5580.c",
+          "raw_export_sha256": "d315ac4689a5c797ab5d232276e8d135b92d903056a0910731e53fbe42107959"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8e603d85db91de64f3dda04a55c667fad1b823c96f99b661dce1a6b2dce1dbf5"
+    },
+    {
+      "name": "cip_lifegain",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a5710",
+          "end": "0x26a575d",
+          "bytes_sha256": "ff6081d756ff8bf14c3973e3d33d04bb6c164d2f1c0f98e6d35f4877234ec55b",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26a5710.c",
+          "raw_export_sha256": "5d4e0d836ba7a8fd7f0849cbef8df77dd5f7383e36bc7e4521a642a2a2d26186"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3deb31f2eb284083a19ab9024a84f6605ddad71c0fca6c9d5de0ed2b5a045fcf"
+    },
+    {
+      "name": "karoo",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a5760",
+          "end": "0x26a5a5f",
+          "bytes_sha256": "e6f8e7431c8cf1e7138c28dfc922a71776e3ab081942c4bc01c62ca57ea3b538",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26a5760.c",
+          "raw_export_sha256": "2205ffcc057b20fb472a96db86006373e53a76e918a770c9ed4ff78117ab9ec4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "cc751bb098352199d6af178c1a0613be97a56d8da43855dafda24ee1aa17ed48"
+    },
+    {
+      "name": "spell_puts_up_to_x_target_cards_from_graveyard_on_top_of_deck",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a5f50",
+          "end": "0x26a6338",
+          "bytes_sha256": "95560c56f69fc24b15ec65d34c70acf6dce2fbcf9d187030b07d2761d895fc26",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26a5f50.c",
+          "raw_export_sha256": "73ebf3d28b4d183f27e7383e3b07352faa8dc1e3624f0087e057f4c56a3d8a97"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3e8f593238185294897fe7949112b671c6ba83a12ea162fff916293dc39a4acf"
+    },
+    {
+      "name": "x_spell_with_x_targets",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a7940",
+          "end": "0x26a7c60",
+          "bytes_sha256": "0560f505018da9ff254921bb5584c910ea69d7c61b0f6807d26cce743c0e6150",
+          "raw_export": ".recovery/decompiled-board-phase-grave/26a7940.c",
+          "raw_export_sha256": "fab2c564c7599ca3392adce052b8ece8c2922672c66ba407c89d22698aba73a6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fbaf32041847e7cf14f4e3b0593ce1530aee16bded716acb4a4a3db0754ef289"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_shirei_shizos_caretaker",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256ec30",
+          "end": "0x256ef65",
+          "bytes_sha256": "5c1d6b060a640e966d9b8bbfd85f50c1b737d14771291303aaccf8813e254566",
+          "raw_export": ".recovery/decompiled-board-phase-grave-support/256ec30.c",
+          "raw_export_sha256": "b027d93e3868da98a5d0d335ba758174d7ab1131fd2972241f59085153cca95a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "35dcace5ea6536d18369671d97715b67bda5d1a9be299f23b2a24698075d188f"
+    }
+  ],
+  "helper_definitions": 35,
+  "new_native_helper_ranges": 35,
+  "changed_helper_definitions": 18,
+  "changed_card_callers": 1,
+  "native_enum": {
+    "name": "GFPC_INTO_WHOSE_GRAVE",
+    "value": 32,
+    "die_offset": "0x4ee44a5"
+  },
+  "native_contracts": {
+    "impulse": {
+      "random_bottom_mode": 3
+    },
+    "propaganda": {
+      "baird_csvid": 18350,
+      "tax": 1
+    },
+    "twincast": {
+      "extra_events": [
+        "EVENT_CAN_CHANGE_TARGET",
+        "EVENT_CHANGE_TARGET"
+      ]
+    },
+    "obliviation": {
+      "melds": [
+        16046,
+        16116,
+        16123
+      ],
+      "legacy_per_component": true,
+      "owner_state_bit": 12
+    },
+    "phase": {
+      "marker": "eot_toughness"
+    },
+    "attack_limit": {
+      "event": "EVENT_ATTACK_LEGALITY",
+      "controller": "affected_card_controller",
+      "count_creatures_only": true
+    },
+    "cycling": {
+      "free_source_csvid": 16978,
+      "hand_min": 7,
+      "hybrid_components_zeroed": true,
+      "special_mode_zeroed": true,
+      "discard_flag": "card_is_being_cycled"
+    },
+    "madness": {
+      "query_calls_native_cost": true,
+      "query_mana_uses_original_cost": true,
+      "payment_cost_event": "EVENT_CAN_CAST",
+      "negative_generic_with_positive_penalty": "pay penalty and colors then charge COLOR_ANY for original negative amount"
+    },
+    "karoo": {
+      "lost_ability_guards": true,
+      "ai_no_other_land_modifier": -15
+    },
+    "grave_topdeck": {
+      "retarget_events": true,
+      "uses_selected_graveyard": true,
+      "counts_type": "TYPE_ANY",
+      "ai_choice": "t_player == IS_AI(player) ? AI_MAX_VALUE : AI_MIN_VALUE",
+      "draw_mode": 1,
+      "slowtrip_mode": 2
+    },
+    "x_targets": {
+      "retarget_events": true,
+      "retarget_chooser": "attacking_card_controller",
+      "unused_prompt_preserved": true
+    },
+    "shirei": {
+      "array_size": 22,
+      "stored_target_pairs": 11,
+      "mode": 112,
+      "storage": "first11 in target.player, remaining11 in target.card",
+      "selection_index": "candidate index, not selected count",
+      "clears_live_storage_before_choices": true,
+      "legacy_uses_controller_grave": true,
+      "legacy_uses_default_reanimation": true,
+      "grafdiggers_cage_checks": true,
+      "native_color_id_offset": 64,
+      "native_targets_offset": 116
+    },
+    "painland": {
+      "added_colors": true,
+      "color_overrides": true,
+      "quantity_overrides": true,
+      "count_override_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "contamination_activation_index_test": "(mana_colors_added[player] | 1) & c for c1..6",
+      "damage_test_inside_override_loop": true,
+      "contamination_no_land_type_guard": true
+    },
+    "native_quirks_preserved": [
+      "set_discard_flag writes poison and life debug globals",
+      "check_battlefield_for_targettable_id compares player against2 in the both-player branch",
+      "multidamage AI stores friendly fallback targets at trgts+1",
+      "Shirei declined candidates leave uninitialized holes in the copied prefix",
+      "grave-topdeck ANYBODY storage offset tested after replacing t_player with chosen owner",
+      "X target picker retains its original loop/cancel and unused-message behavior"
+    ]
+  },
+  "scope": "35 complete helper definitions/native ranges and one paired card caller. Eighteen helper bodies and Shirei changed; one native enum constant restored. Built-in chooser backends and gameplay tests remain downstream. Previously reviewed multiblocker predicate also restored to native external linkage.",
+  "support_helpers": [
+    {
+      "name": "is_multiblocker_card_copying",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26cda20",
+          "end": "0x26cda70",
+          "bytes_sha256": "f34272ed8478507d8583cefdf066610eaa960f48eae10f89c93135e160c282ea",
+          "raw_export": ".recovery/decompiled-board-phase-grave-linkage/26cda20.c",
+          "raw_export_sha256": "fd3a3dc6abfb75786f1c35080839ce3f8240a16e93a863b31f35c53914bcaa14"
+        }
+      ],
+      "method": "retained_native_body_restore_external_linkage",
+      "source_changed": true,
+      "definition_sha256": "866e5399cc2b217ada0fd9b58fe37b0f1e34f15013265453035756006247aec0"
+    }
+  ]
+}

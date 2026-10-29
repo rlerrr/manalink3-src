@@ -1286,225 +1286,264 @@ Partner (You can have two commanders if both have partner.)
 	return 0;
 }
 
-static int reyhan_last_of_the_abzan_effect(int player, int card, event_t event){
+static int reyhan_last_of_the_abzan_effect(int player, int card, event_t event)
+{
 
-	//In case something is copying Pawn of Ulamog and then reverts to its original form.
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_REYHAN_LAST_OF_THE_ABZAN ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  // In case something is copying Pawn of Ulamog and then reverts to its original form.
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_REYHAN_LAST_OF_THE_ABZAN)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				if( is_this_dying(affected_card_controller, affected_card) &&
-					is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
-					count_1_1_counters(affected_card_controller, affected_card) )
-				{
-					if( instance->targets[11].player < 0 )
-						instance->targets[11].player = 0;
-					int pos = MAX(1, BYTE0(instance->targets[11].player));
-					while( pos < 10 ){
-							if( instance->targets[pos].player == -1 ){
-								instance->targets[pos].player = count_1_1_counters(affected_card_controller, affected_card);
-								break;
-							}
-							if( instance->targets[pos].card == -1 ){
-								instance->targets[pos].card = count_1_1_counters(affected_card_controller, affected_card);
-								break;
-							}
-							pos++;
-					}
-					SET_BYTE0(instance->targets[11].player) = pos;
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card) &&
+        !check_for_death_trigger_removal(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+          }
+        }
+        if (is_this_dying(affected_card_controller, affected_card) &&
+            is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
+            count_1_1_counters(affected_card_controller, affected_card))
+        {
+          if (instance->targets[11].player < 0)
+            instance->targets[11].player = 0;
+          int pos = MAX(1, BYTE0(instance->targets[11].player));
+          while (pos < 11)
+          {
+            if (instance->targets[pos].player == -1)
+            {
+              instance->targets[pos].player =
+                  count_1_1_counters(affected_card_controller, affected_card);
+              break;
+            }
+            if (instance->targets[pos].card == -1)
+            {
+              instance->targets[pos].card =
+                  count_1_1_counters(affected_card_controller, affected_card);
+              break;
+            }
+            pos++;
+          }
+          SET_BYTE0(instance->targets[11].player) = pos;
+        }
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			card_instance_t *instance = get_card_instance(player, card);
-			int recorded = BYTE0(result);
-			int stored[16];
-			int sc = 0;
-			int i;
-			for(i=1; i<recorded; i++){
-				int amount = instance->targets[i].player;
-				if( amount == -1 ){
-					break;
-				}
-				instance->targets[i].player = -1;
-				stored[sc] = amount;
-				sc++;
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
 
-				amount = instance->targets[i].card;
-				if( amount == -1 ){
-					break;
-				}
-				instance->targets[i].card = -1;
-				stored[sc] = amount;
-				sc++;
-			}
-			target_definition_t td;
-			default_target_definition(player, card, &td, TYPE_CREATURE);
-			td.preferred_controller = player;
+    card_instance_t *instance = get_card_instance(player, card);
+    int recorded = BYTE0(result);
+    int stored[20 * card_counts[player][5]];
+    int sc = 0;
+    int i;
+    for (i = 1; i < recorded && i < 11; ++i)
+    {
+      int repeat = card_counts[player][5] + 1;
+      do
+      {
+        int amount = instance->targets[i].player;
+        if (amount == -1)
+          break;
+        stored[sc++] = amount;
+        instance->targets[i].player = -1;
+        amount = instance->targets[i].card;
+        if (amount == -1)
+          break;
+        stored[sc++] = amount;
+        instance->targets[i].card = -1;
+      } while (--repeat > 0);
+    }
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.preferred_controller = player;
 
-			for(i=0; i<sc; i++){
-				char msg[100];
-				scnprintf(msg, 100, "Select target creature (+%d/+%d)", stored[i], stored[i]);
-				if( can_target(&td) && new_pick_target(&td, msg, 1, GS_LITERAL_PROMPT) ){
-					add_counters(player, card, instance->targets[1].player, instance->targets[1].card, COUNTER_P1_P1, stored[i]);
-					instance->number_of_targets = 1;
-				}
-				else{
-					break;
-				}
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+    for (i = 0; i < sc; i++)
+    {
+      char msg[100];
+      scnprintf(msg, 100, "Select target creature (+%d/+%d)", stored[i], stored[i]);
+      if (can_target(&td) && new_pick_target(&td, msg, 1, GS_LITERAL_PROMPT))
+      {
+        add_counters(player, card, instance->targets[1].player, instance->targets[1].card,
+                     COUNTER_P1_P1, stored[i]);
+        instance->number_of_targets = 1;
+      }
+      else
+      {
+        break;
+      }
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
-int card_reyhan_last_of_the_abzan(int player, int card, event_t event){
-/*
-Reyhan, Last of the Abzan |1|B|G	0x200f64c
-Legendary Creature - Human Warrior 0/0
-Reyhan, Last of the Abzan enters the battlefield with three +1/+1 counters on it.
-Whenever a creature you control dies or is put into the command zone, if it had one or more +1/+1 counters on it,
-	you may put that many +1/+1 counters on target creature.
-Partner (You may have two commanders if both have partner.)
-*/
-	check_legend_rule(player, card, event);
+int card_reyhan_last_of_the_abzan(int player, int card, event_t event)
+{
+  /*
+  Reyhan, Last of the Abzan |1|B|G	0x200f64c
+  Legendary Creature - Human Warrior 0/0
+  Reyhan, Last of the Abzan enters the battlefield with three +1/+1 counters on it.
+  Whenever a creature you control dies or is put into the command zone, if it had one or more +1/+1
+  counters on it, you may put that many +1/+1 counters on target creature. Partner (You may have two
+  commanders if both have partner.)
+  */
+  check_legend_rule(player, card, event);
 
-	enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 3);
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 3);
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
-				card_instance_t *inst = get_card_instance(player, c);
-				if( inst->info_slot == (int)reyhan_last_of_the_abzan_effect ){
-					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
-						(inst->targets[0].player == player && inst->targets[0].card == card) )
-					{
-						found = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( ! found ){
-			int legacy = create_targetted_legacy_effect(player, card, &reyhan_last_of_the_abzan_effect, player, card);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(player, c);
+        if (inst->info_slot == (int)reyhan_last_of_the_abzan_effect)
+        {
+          if ((inst->damage_target_player == player && inst->damage_target_card == card) ||
+              (inst->targets[0].player == player && inst->targets[0].card == card))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy = create_targetted_legacy_effect(player, card, &reyhan_last_of_the_abzan_effect,
+                                                  player, card);
+      card_instance_t *inst = get_card_instance(player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY && in_play(affected_card_controller, affected_card) ){
-		if( is_this_dying(affected_card_controller, affected_card) && is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
-			count_1_1_counters(affected_card_controller, affected_card) )
-		{
-			card_instance_t *instance = get_card_instance(player, card);
-			if( instance->targets[11].player < 0 )
-				instance->targets[11].player = 0;
-			int pos = BYTE0(instance->targets[11].player);
-			while( pos < 10 ){
-					if( instance->targets[pos].player == -1 ){
-						instance->targets[pos].player = count_1_1_counters(affected_card_controller, affected_card);
-						break;
-					}
-					if( instance->targets[pos].card == -1 ){
-						instance->targets[pos].card = count_1_1_counters(affected_card_controller, affected_card);
-						break;
-					}
-					pos++;
-			}
-			SET_BYTE0(instance->targets[11].player) = pos;
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY && in_play(affected_card_controller, affected_card) &&
+      !check_for_death_trigger_removal(affected_card_controller, affected_card))
+  {
+    if (is_this_dying(affected_card_controller, affected_card) &&
+        is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
+        count_1_1_counters(affected_card_controller, affected_card))
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      if (instance->targets[11].player < 0)
+        instance->targets[11].player = 0;
+      int pos = BYTE0(instance->targets[11].player);
+      while (pos < 11)
+      {
+        if (instance->targets[pos].player == -1)
+        {
+          instance->targets[pos].player =
+              count_1_1_counters(affected_card_controller, affected_card);
+          break;
+        }
+        if (instance->targets[pos].card == -1)
+        {
+          instance->targets[pos].card = count_1_1_counters(affected_card_controller, affected_card);
+          break;
+        }
+        pos++;
+      }
+      SET_BYTE0(instance->targets[11].player) = pos;
+    }
+  }
 
-	if( get_card_instance(player, card)->kill_code <= 0 ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			card_instance_t *instance = get_card_instance(player, card);
-			int recorded = BYTE0(result);
-			int stored[18];
-			int sc = 0;
-			int i;
-			for(i=0; i<recorded; i++){
-				int amount = instance->targets[i].player;
-				if( amount == -1 ){
-					break;
-				}
-				instance->targets[i].player = -1;
-				stored[sc] = amount;
-				sc++;
+  if (get_card_instance(player, card)->kill_code <= 0)
+  {
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result)
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      int recorded = BYTE0(result);
+      int stored[20 * card_counts[player][5]];
+      int sc = 0;
+      int i;
+      for (i = 0; i < recorded && i < 11; ++i)
+      {
+        int repeat = card_counts[player][5] + 1;
+        do
+        {
+          int amount = instance->targets[i].player;
+          if (amount == -1)
+            break;
+          stored[sc++] = amount;
+          instance->targets[i].player = -1;
+          amount = instance->targets[i].card;
+          if (amount == -1)
+            break;
+          stored[sc++] = amount;
+          instance->targets[i].card = -1;
+        } while (--repeat > 0);
+      }
+      target_definition_t td;
+      default_target_definition(player, card, &td, TYPE_CREATURE);
+      td.preferred_controller = player;
 
-				amount = instance->targets[i].card;
-				if( amount == -1 ){
-					break;
-				}
-				instance->targets[i].card = -1;
-				stored[sc] = amount;
-				sc++;
-			}
-			target_definition_t td;
-			default_target_definition(player, card, &td, TYPE_CREATURE);
-			td.preferred_controller = player;
+      for (i = 0; i < sc; i++)
+      {
+        char msg[100];
+        scnprintf(msg, 100, "Select target creature (+%d/+%d)", stored[i], stored[i]);
+        if (can_target(&td) && new_pick_target(&td, msg, 0, GS_LITERAL_PROMPT))
+        {
+          add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                       COUNTER_P1_P1, stored[i]);
+          instance->number_of_targets = 0;
+        }
+        else
+        {
+          break;
+        }
+      }
+    }
+  }
 
-			for(i=0; i<sc; i++){
-				char msg[100];
-				scnprintf(msg, 100, "Select target creature (+%d/+%d)", stored[i], stored[i]);
-				if( can_target(&td) && new_pick_target(&td, msg, 0, GS_LITERAL_PROMPT) ){
-					add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, stored[i]);
-					instance->number_of_targets = 0;
-				}
-				else{
-					break;
-				}
-			}
-		}
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_saskia_the_unyielding(int player, int card, event_t event){

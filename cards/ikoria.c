@@ -1434,10 +1434,6 @@ LAB_0228ad9e:
 /* ManalinkEh 2022: 0x2288080; original cards/ikoria.c:1339. */
 static int luminous_broodmoth_effect(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_FLYING = 147
-  };
 
   card_instance_t *pcVar1;
   int iVar2;
@@ -1542,10 +1538,6 @@ LAB_022880dc:
 /* ManalinkEh 2022: 0x228b0d0; original cards/ikoria.c:1398. */
 int card_luminous_broodmoth(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_FLYING = 147
-  };
 
   int player_00;
   card_instance_t *instance;

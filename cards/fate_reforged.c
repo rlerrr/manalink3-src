@@ -892,23 +892,27 @@ int card_mastery_of_the_unseen(int player, int card, event_t event){
 
 // Monk token --> Rhino token
 
-int card_monastery_mentor(int player, int card, event_t event){
-	/*
-	  Monastery Mentor |2|W
-	  Creature - Human Monk
-	  Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)
-	  Whenever you cast a noncreature spell, put a 1/1 white Monk creature token with prowess onto the battlefield.
-	  2/2
-	*/
-	if( prowess(player, card, event) ){
-		token_generation_t token;
-		default_token_definition(player, card, CARD_ID_MONK, &token);
-		token.pow = token.tou = 1;
-		token.color_forced = COLOR_TEST_WHITE;
-		generate_token(&token);
-	}
+int card_monastery_mentor(int player, int card, event_t event)
+{
+  /*
+    Monastery Mentor |2|W
+    Creature - Human Monk
+    Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)
+    Whenever you cast a noncreature spell, put a 1/1 white Monk creature token with prowess onto the
+    battlefield. 2/2
+  */
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+  {
+    prowess(player, card, event);
+    token_generation_t token;
+    default_token_definition(player, card, CARD_ID_MONK, &token);
+    token.pow = token.tou = 1;
+    token.color_forced = COLOR_TEST_WHITE;
+    generate_token(&token);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_pressure_point(int player, int card, event_t event){
@@ -1447,29 +1451,35 @@ int card_mindscour_dragon(int player, int card, event_t event){
 	return 0;
 }
 
-int card_mistfire_adept(int player, int card, event_t event){
-	/*
-	  Mistfire Adept |3|U
-	  Creature - Human Monk
-	  Prowess
-	  Whenever you cast a noncreature spell, target creature gains flying until end of turn.
-	  3/3
-	*/
+int card_mistfire_adept(int player, int card, event_t event)
+{
+  /*
+    Mistfire Adept |3|U
+    Creature - Human Monk
+    Prowess
+    Whenever you cast a noncreature spell, target creature gains flying until end of turn.
+    3/3
+  */
 
-	if( prowess(player, card, event) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.preferred_controller = player;
-		td.allow_cancel = 0;
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+  {
+    prowess(player, card, event);
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.preferred_controller = player;
+    td.allow_cancel = 0;
 
-		if( can_target(&td) && pick_target(&td, "TARGET_CREATURE") ){
-			card_instance_t *instance = get_card_instance(player, card);
-			instance->number_of_targets = 0;
-			pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, KEYWORD_FLYING, 0);
-		}
-	}
+    if (can_target(&td) && pick_target(&td, "TARGET_CREATURE"))
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      instance->number_of_targets = 0;
+      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                             0, 0, KEYWORD_FLYING, 0);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 /*
@@ -1799,35 +1809,44 @@ int card_shifting_loyalties(int player, int card, event_t event){
 	return 0;
 }
 
-int card_shun_yun_the_silent_tempest(int player, int card, event_t event){
-	/*
-	  Shu Yun, the Silent Tempest |2|U
-	  Legendary Creature - Human Monk
-	  Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)
-	  Whenever you cast a noncreature spell, you may pay (R/W)(R/W). If you do, target creature gains double strike until end of turn.
-	  3/2
-	*/
-	check_legend_rule(player, card, event);
+int card_shun_yun_the_silent_tempest(int player, int card, event_t event)
+{
+  /*
+    Shu Yun, the Silent Tempest |2|U
+    Legendary Creature - Human Monk
+    Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)
+    Whenever you cast a noncreature spell, you may pay (R/W)(R/W). If you do, target creature gains
+    double strike until end of turn. 3/2
+  */
+  check_legend_rule(player, card, event);
 
-	if( prowess(player, card, event) ){
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+  {
+    prowess(player, card, event);
 
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.preferred_controller = player;
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.preferred_controller = player;
 
-		card_instance_t *instance = get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
 
-		if( can_target(&td) && has_mana_hybrid(player, 2, COLOR_RED, COLOR_WHITE, 0) ){
-			if( do_dialog(player, player, card, -1, -1, " Give double strike\n Pass", 1) == 0 ){
-				if( charge_mana_hybrid(player, card, 2, COLOR_RED, COLOR_WHITE, 0) && pick_target(&td, "TARGET_CREATURE") ){
-					instance->number_of_targets = 0;
-					pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, KEYWORD_DOUBLE_STRIKE, 0);
-				}
-			}
-		}
-	}
+    if (can_target(&td) && has_mana_hybrid(player, 2, COLOR_RED, COLOR_WHITE, 0))
+    {
+      if (do_dialog(player, player, card, -1, -1, " Give double strike\n Pass", 1) == 0)
+      {
+        if (charge_mana_hybrid(player, card, 2, COLOR_RED, COLOR_WHITE, 0) &&
+            pick_target(&td, "TARGET_CREATURE"))
+        {
+          instance->number_of_targets = 0;
+          pump_ability_until_eot(player, card, instance->targets[0].player,
+                                 instance->targets[0].card, 0, 0, KEYWORD_DOUBLE_STRIKE, 0);
+        }
+      }
+    }
+  }
 
-	return 0;
+  return 0;
 }
 /*
 Sultai Skullkeeper |1|U --> Screeching Skaab
@@ -2150,10 +2169,11 @@ int card_battle_brawler(int player, int card, event_t event){
 static int brutal_hordechief_legacy(int player, int card, event_t event)
 {
   if (event == EVENT_DECLARE_BLOCKERS || event == EVENT_CLEANUP)
-	{
-	  event_flags &= ~EF_ATTACKER_CHOOSES_BLOCKERS;	// Assumes all such effects last only for this combat
-	  kill_card(player, card, event);
-	}
+  {
+    event_flags &=
+        ~EF_ATTACKER_CHOOSES_BLOCKERS; // Assumes all such effects last only for this combat
+    kill_card(player, card, KILL_EXILE);
+  }
 
   return 0;
 }
@@ -2834,64 +2854,82 @@ int card_alesha_who_smileas_at_death(int player, int card, event_t event){
 	return 0;
 }
 
-static int arcbond_legacy(int player, int card, event_t event){
+static int arcbond_legacy(int player, int card, event_t event)
+{
 
-	card_instance_t *instance= get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-	if( instance->damage_target_player > -1 ){
-		int pp = instance->damage_target_player;
-		int cc = instance->damage_target_card;
-		card_instance_t* damage = damage_being_dealt(event);
-		if (damage && damage->damage_target_card == cc && damage->damage_target_player == pp && damage->info_slot > 0){
-			int i;
-			for(i=1; i<19; i++){
-				if( instance->targets[i].player < 1 ){
-					instance->targets[i].player = damage->info_slot;
-					break;
-				}
-				if( instance->targets[i].card < 1 ){
-					instance->targets[i].card = damage->info_slot;
-					break;
-				}
-			}
-		}
+  if (instance->damage_target_player > -1)
+  {
+    int pp = instance->damage_target_player;
+    int cc = instance->damage_target_card;
+    card_instance_t *damage = damage_being_dealt(event);
+    if (damage && damage->damage_target_card == cc && damage->damage_target_player == pp &&
+        damage->info_slot > 0)
+    {
+      int i;
+      for (i = 1; i < 19; i++)
+      {
+        if (instance->targets[i].player < 1)
+        {
+          instance->targets[i].player = damage->info_slot;
+          break;
+        }
+        if (instance->targets[i].card < 1)
+        {
+          instance->targets[i].card = damage->info_slot;
+          break;
+        }
+      }
+    }
 
-		if (trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) && reason_for_trigger_controller == player){
-			if( instance->targets[1].player > 0 ){
-				if (event == EVENT_TRIGGER){
-					event_result |= RESOLVE_TRIGGER_MANDATORY;
-				}
-				if (event == EVENT_RESOLVE_TRIGGER){
-					// Free up targets, just in case something triggers instantly (and improperly) which eventually results in dealing damage back.
-					int i, dam[20], dc = 0;
-					for(i=1; i<18; i++){
-						if( instance->targets[i].player > 0 ){
-							dam[dc] = instance->targets[i].player;
-							dc++;
-							instance->targets[i].player = 0;
-						}
-						if( instance->targets[i].card > 0 ){
-							dam[dc] = instance->targets[i].card;
-							dc++;
-							instance->targets[i].card = 0;
-						}
-					}
-					test_definition_t this_test;
-					default_test_definition(&this_test, TYPE_CREATURE);
-					this_test.not_me = 1;
-					for (i = 0; i < dc; ++i){
-						APNAP(p, {new_damage_all(pp, cc, p, dam[i], NDA_PLAYER_TOO, &this_test);};);
-					}
-				}
-			}
-		}
-	}
+    if (trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) &&
+        reason_for_trigger_controller == player)
+    {
+      if (instance->targets[1].player > 0)
+      {
+        if (event == EVENT_TRIGGER)
+        {
+          event_result |= RESOLVE_TRIGGER_MANDATORY;
+        }
+        if (event == EVENT_RESOLVE_TRIGGER)
+        {
+          // Free up targets, just in case something triggers instantly (and improperly) which
+          // eventually results in dealing damage back.
+          int i, dam[20], dc = 0;
+          for (i = 1; i < 18; i++)
+          {
+            if (instance->targets[i].player > 0)
+            {
+              dam[dc] = instance->targets[i].player;
+              dc++;
+              instance->targets[i].player = 0;
+            }
+            if (instance->targets[i].card > 0)
+            {
+              dam[dc] = instance->targets[i].card;
+              dc++;
+              instance->targets[i].card = 0;
+            }
+          }
+          test_definition_t this_test;
+          default_test_definition(&this_test, TYPE_CREATURE);
+          this_test.not_me = 1;
+          for (i = 0; i < dc; ++i)
+          {
+            new_damage_all(pp, cc, ANYBODY, dam[i], NDA_PLAYER_TOO, &this_test);
+          }
+        }
+      }
+    }
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_arcbond(int player, int card, event_t event){
@@ -4242,29 +4280,43 @@ int card_whisperer_of_the_wilds(int player, int card, event_t event){
 	return 0;
 }
 
-static int whisperwood_elemental_legacy(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance( player, card);
-	if( instance->damage_target_player > -1 ){
-		if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(instance->damage_target_player, instance->damage_target_card) ){
-			if( get_card_instance(instance->damage_target_player, instance->damage_target_card)->kill_code > 0 &&
-				get_card_instance(instance->damage_target_player, instance->damage_target_card)->kill_code < KILL_EXILE
-			  ){
-				instance->damage_target_player = instance->damage_target_card = -1;
-				instance->targets[11].player = 66;
-			}
-		}
-	}
+static int whisperwood_elemental_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->damage_target_player > -1)
+  {
+    if (event == EVENT_GRAVEYARD_FROM_PLAY &&
+        affect_me(instance->damage_target_player, instance->damage_target_card))
+    {
+      if (get_card_instance(instance->damage_target_player, instance->damage_target_card)
+                  ->kill_code > 0 &&
+          get_card_instance(instance->damage_target_player, instance->damage_target_card)
+                  ->kill_code < KILL_EXILE &&
+          !check_for_death_trigger_removal(instance->damage_target_player,
+                                           instance->damage_target_card))
+      {
+        instance->damage_target_player = instance->damage_target_card = -1;
+        instance->targets[11].player = 66;
+      }
+    }
+  }
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		manifest(player, card);
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    int amount = card_counts[player][5] + 1;
+    do
+    {
+      manifest(player, card);
+    } while (--amount);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_whisperwood_elemental(int player, int card, event_t event){
@@ -4759,40 +4811,48 @@ First strike, trample
 6/4
 */
 
-int card_scroll_of_the_masters(int player, int card, event_t event){
-	/*
-	  Scroll of the Masters |2
-	  Artifact
-	  Whenever you cast a noncreature spell, put a lore counter on Scroll of the Masters.
-	  3,T: Target creature you control gets +1/+1 until end of turn for each lore counter on Scroll of the Masters.
-	*/
+int card_scroll_of_the_masters(int player, int card, event_t event)
+{
+  /*
+    Scroll of the Masters |2
+    Artifact
+    Whenever you cast a noncreature spell, put a lore counter on Scroll of the Masters.
+    3,T: Target creature you control gets +1/+1 until end of turn for each lore counter on Scroll of
+    the Masters.
+  */
 
-	if( prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		add_counters(player, card, player, card, COUNTER_LORE, 1);
-	}
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+  {
+    add_counters(player, card, player, card, COUNTER_LORE, 1);
+  }
 
-	if (!IS_GAA_EVENT(event)){
-		return 0;
-	}
+  if (!IS_GAA_EVENT(event))
+  {
+    return 0;
+  }
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.allowed_controller = player;
-	td.preferred_controller = player;
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
 
-	card_instance_t* instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_ACTIVATE ){
-		instance->info_slot = count_counters(player, card, COUNTER_LORE);
-	}
+  if (event == EVENT_ACTIVATE)
+  {
+    instance->info_slot = count_counters(player, card, COUNTER_LORE);
+  }
 
-	if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td)){
-		pump_until_eot(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card,
-						instance->info_slot, instance->info_slot);
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
+  {
+    pump_until_eot(instance->parent_controller, instance->parent_card, instance->targets[0].player,
+                   instance->targets[0].card, instance->info_slot, instance->info_slot);
+  }
 
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET|GAA_LITERAL_PROMPT, MANACOST_X(3), 0,
-									&td, "Select target creature you control.");
+  return generic_activated_ability(player, card, event,
+                                   GAA_UNTAPPED | GAA_CAN_TARGET | GAA_LITERAL_PROMPT,
+                                   MANACOST_X(3), 0, &td, "Select target creature you control.");
 }
 
 int card_ugins_contruct(int player, int card, event_t event){

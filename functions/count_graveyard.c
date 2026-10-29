@@ -3,22 +3,61 @@
 /* Canonical recovered helper declarations. */
 int new_special_count_grave(int player, test_definition_t *this_test);
 
-int count_graveyard_by_color(int player, int selected_color){
-	if( get_global_color_hack(player) & selected_color ){
-		return count_graveyard(player);
-	}
-
-	const int *grave = get_grave(player);
-	int count = 0;
-	int result = 0;
-	while( grave[count] != -1 ){
-			if( ! is_what(-1, grave[count], TYPE_LAND) && (cards_data[grave[count]].color & selected_color) ){
-				result++;
-			}
-			count++;
-	}
-
-	return result;
+int count_graveyard_by_color(int player, int selected_color)
+{
+  unsigned int timestamp = 0;
+  int changer = -1, hack = 0;
+  for (int p = 0; p < 2; ++p)
+    for (int c = 0; c < active_cards_count[p]; ++c)
+      if (in_play(p, c))
+      {
+        if (get_id(p, c) == CARD_ID_PAINTERS_SERVANT)
+        {
+          card_instance_t *instance = get_card_instance(p, c);
+          if (instance->targets[1].card >= 0 && instance->timestamp > timestamp)
+          {
+            hack |= instance->targets[1].card;
+            changer = CARD_ID_PAINTERS_SERVANT;
+            timestamp = instance->timestamp;
+          }
+        }
+        if (p == player && get_id(player, c) == CARD_ID_CELESTIAL_DAWN)
+        {
+          card_instance_t *instance = get_card_instance(player, c);
+          unsigned int next_timestamp = instance->timestamp;
+          if (next_timestamp > timestamp)
+          {
+            hack = get_sleighted_color_test(player, c, COLOR_TEST_WHITE);
+            changer = CARD_ID_CELESTIAL_DAWN;
+            timestamp = next_timestamp;
+          }
+        }
+        if (get_id(p, c) == CARD_ID_MYCOSYNTH_LATTICE)
+        {
+          card_instance_t *instance = get_card_instance(p, c);
+          if (instance->timestamp > timestamp)
+          {
+            hack = COLOR_TEST_COLORLESS;
+            changer = CARD_ID_MYCOSYNTH_LATTICE;
+            timestamp = instance->timestamp;
+          }
+        }
+      }
+  const int *grave = get_grave(player);
+  int result = 0;
+  for (int i = 0; grave[i] != -1; ++i)
+  {
+    if (changer == CARD_ID_CELESTIAL_DAWN)
+    {
+      if (!is_what(-1, grave[i], TYPE_LAND) && (selected_color & hack))
+        ++result;
+    }
+    else if ((changer == CARD_ID_PAINTERS_SERVANT || changer == CARD_ID_MYCOSYNTH_LATTICE) &&
+             (selected_color & hack))
+      return count_graveyard(player);
+    // Native has no fallback that counts printed colors.
+  }
+  return result;
 }
 
 

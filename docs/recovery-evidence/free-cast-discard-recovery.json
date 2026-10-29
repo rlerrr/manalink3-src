@@ -1,0 +1,1048 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "fill_arr",
+      "source": "functions/targets.c",
+      "native_ranges": [
+        {
+          "address": "0x265d3b0",
+          "end": "0x265d532",
+          "bytes_sha256": "ad06985677532bdad0d4c9259abcb4fa26cf5b6f6796ed5dd60544ac1f50c281",
+          "raw_export": ".recovery/decompiled-free-play-targets/265d3b0.c",
+          "raw_export_sha256": "0b494daf551b69f8b92f0c098aef78f91d46ee9e6a5693bb8f5cd52167639953"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "93908f3747112c9c0ac69c9cb488750340e46e5d2d323c8c7ba41074f770b6dc",
+      "prior_category": "small_diff_review"
+    },
+    {
+      "name": "becomes_target_of_spell",
+      "source": "functions/targets.c",
+      "native_ranges": [
+        {
+          "address": "0x2661960",
+          "end": "0x2661a63",
+          "bytes_sha256": "52c0263a94e5a64687490bafaeaafa5b664f5e0008f0f37b7c85e63aac48619f",
+          "raw_export": ".recovery/decompiled-free-play-targets/2661960.c",
+          "raw_export_sha256": "cf91d74e1daa50053e9cc4da4df1abb62185ff8427cbe748efa2fd147a97f069"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "fa4b4a629294d9192c915c8bd6fbdba73851dad8ca2e55e597770bec6fa4e619",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "becomes_target_of_spell_or_effect",
+      "source": "functions/targets.c",
+      "native_ranges": [
+        {
+          "address": "0x2661b90",
+          "end": "0x2661c6d",
+          "bytes_sha256": "38342d9312d70a0005f4026597af9036a47b5da94dd7be639de0071558f9ab13",
+          "raw_export": ".recovery/decompiled-free-play-targets/2661b90.c",
+          "raw_export_sha256": "9d5b0b9a751044c4ac771a088f361e950188311f8d1ba2280f603c677465842a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5930e6eba4c54f7d83372997471d181e2bf405f69730349e219d9277e39b1a25",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "any_becomes_target",
+      "source": "functions/targets.c",
+      "native_ranges": [
+        {
+          "address": "0x2661c70",
+          "end": "0x2661e60",
+          "bytes_sha256": "52c2f207025e10c47886965716bf0fe7b1f3f788e63b20ffd32b843ebc8adaf1",
+          "raw_export": ".recovery/decompiled-free-play-targets/2661c70.c",
+          "raw_export_sha256": "f573aa166497fbd7207253a1873e5c0437286ba214f43a5891e8674051573771"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "660922dc857517140894c3d90973b0d0e8b7c2bc0e33c0b0e5f265d9d6152780",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "any_creature_becomes_target_of_spell_or_effect",
+      "source": "functions/targets.c",
+      "native_ranges": [
+        {
+          "address": "0x2661e60",
+          "end": "0x2661eb8",
+          "bytes_sha256": "78a3c952f7566c606122f05d9a88b545b95c02caaa82ed340f3a65c08c51752b",
+          "raw_export": ".recovery/decompiled-free-play-targets/2661e60.c",
+          "raw_export_sha256": "7ba7532e077e269b5346f399c677472b0732158007b37b77fa568db03b0ebc0d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "bfa3eaa41cbdeaea54f25c1142a1d58c8242594908cb42dee6b638aa188abaf8",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "attached_creature_gains_sacrifice_when_becomes_target",
+      "source": "functions/targets.c",
+      "native_ranges": [
+        {
+          "address": "0x2661ec0",
+          "end": "0x2661f7e",
+          "bytes_sha256": "f93ca045f8c63f37ea283b56a07bd9d0533382d13c404202b959bd3da0197a6c",
+          "raw_export": ".recovery/decompiled-free-play-targets/2661ec0.c",
+          "raw_export_sha256": "0c83a183fcf83825c133056f9110f8c7a075b13e7ae012ecd3f93f375b9ce21d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d8936029df54391f9f9dbf58259d6013b703845e306f4036855b7b2a9763b8a1",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "kill_attachment_when_creature_is_targeted",
+      "source": "functions/targets.c",
+      "native_ranges": [
+        {
+          "address": "0x2661f80",
+          "end": "0x2662034",
+          "bytes_sha256": "e2ac6e199d320705b89b086e457c91a266ea05ae2aea0ab796eeba004d8304d7",
+          "raw_export": ".recovery/decompiled-free-play-targets/2661f80.c",
+          "raw_export_sha256": "709bf0160f997cace94b3650aa7cde5bef65c5ffad8f23596b0123f52498831e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d7ce5d59acdc2c5061073fb58b3b502c3825e8daf89714f1c5c04a9506d0f15b",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "kill_attachment_when_creature_is_targeted_by_spell",
+      "source": "functions/targets.c",
+      "native_ranges": [
+        {
+          "address": "0x2662040",
+          "end": "0x26620ff",
+          "bytes_sha256": "dc7d549a7815cec6d54ba41f51997e6d69246ffaa10fe056f59a073aae5ff718",
+          "raw_export": ".recovery/decompiled-free-play-targets/2662040.c",
+          "raw_export_sha256": "e663fd38a96e276097e795228cf2ebf6bd502c4ae37f67db691bf5ce0fa25a94"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3652e6f6c3d21ad1d909645fc9de3684b253f20b004c952051f969c5132462f4",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "create_spell_has_flashback_legacy",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x26681f0",
+          "end": "0x2668290",
+          "bytes_sha256": "4b014ff7aba773e40578cfe55c54c2614a3226320de356619c163b5fd3afe42f",
+          "raw_export": ".recovery/decompiled-free-play-targets/26681f0.c",
+          "raw_export_sha256": "bd80db15db3d6531e0f4db5085b3392f8f3a9336b8ee0112a9513573ad79358e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "371002907b5db1a8b1c6283abaafc9b2fbd2d7ea4c66c06c4b85f1146b1f88a2",
+      "prior_category": "full_review"
+    },
+    {
+      "name": "real_play_spell_for_free",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2668760",
+          "end": "0x26689ca",
+          "bytes_sha256": "eaf761fc2da55b705dd5ff5591c979e81b8c71592898af10e192891f4c336853",
+          "raw_export": ".recovery/decompiled-free-play-targets/2668760.c",
+          "raw_export_sha256": "94e4cb27accb13d15c5f0d4062a849f585c65b6d4448e2bbc28f0d03b2f8c873"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a592ea3193b1e88efef19d20c59c196d0d8ede2bf9d9c32fdb439b4a4c69dbc3",
+      "prior_category": "full_review"
+    },
+    {
+      "name": "play_card_in_deck_for_free",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x26689d0",
+          "end": "0x2668aad",
+          "bytes_sha256": "4d7276e3b940f5b992c018661f5e684ff4251fb7848dae230b0b30b7569ccc25",
+          "raw_export": ".recovery/decompiled-free-play-targets/26689d0.c",
+          "raw_export_sha256": "7e6712d8f9cab54e031d33ca89250f5f50acbfc9d2e6adba63c09ce67772062c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7dc1050435184551ed40901135bac4c15021b3f982b713fe662eece813a9c17b",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "fake_play_card_in_zone_for_free",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2668ab0",
+          "end": "0x2668b36",
+          "bytes_sha256": "db101c7979c0d2aefb23e230c7dc9180f8aa28a842f6a5c37e1dbd5b708a710e",
+          "raw_export": ".recovery/decompiled-free-play-targets/2668ab0.c",
+          "raw_export_sha256": "36604f8d6210d86bb5e2fb85486c9a41e7d38b186675ae3659051bd37f7ec665"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "eb44b43e7aa9dbbf5ce5a71d79677831b34e88a917565261d6f84d2c447c3dd3",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "play_card_in_grave_for_free_impl",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2668b40",
+          "end": "0x2668c35",
+          "bytes_sha256": "464d37bb8e59758cd34bce3843345757a567a010870c1e035e6b2cabfe64b368",
+          "raw_export": ".recovery/decompiled-free-play-targets/2668b40.c",
+          "raw_export_sha256": "b845c861cc9425850f279b2589c2697c25ab451f52e9dacd3a01ef92e26362fa"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "bd097655d69e9acf1874553525410ad4189e6dc3b3880a29fee48f1c07165580",
+      "prior_category": "full_review"
+    },
+    {
+      "name": "play_card_in_grave_for_free",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2668c40",
+          "end": "0x2668c59",
+          "bytes_sha256": "741db41f9ddd66e06c2cf971232dd14d897f580e9543933fbafb71120328efa7",
+          "raw_export": ".recovery/decompiled-free-play-targets/2668c40.c",
+          "raw_export_sha256": "64d7aabcd4ebbd2da85eeefc68805f284a7de4f668d9c0668a623de4cf77e553"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "57550a7c8b46fcce93d45d6caf0b84f7d1d88e943c37b54cf4d4468da6351775",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "can_activate_to_play_cards_from_graveyard",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2668c60",
+          "end": "0x2668eec",
+          "bytes_sha256": "63d805604861b9443af8fcbbc4325b80ca195bf4c8692341069612c0595902ac",
+          "raw_export": ".recovery/decompiled-free-play-targets/2668c60.c",
+          "raw_export_sha256": "59cec182c6aaa8ee7151db208efc66896f17f8dc0b21b83a0873e92042cfafb3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d3539ee77e2fd7e92d97e51cdd0e03c134dc2434fc322fe4ffcf6c4f8f4e6d3d",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "play_card_in_grave_for_free_and_exile_it",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2668ef0",
+          "end": "0x2668f09",
+          "bytes_sha256": "0c0f977e5e82cfdee944c0ec80b8b3fc3da1507da96fa532dd1dc0f6e0b3b92b",
+          "raw_export": ".recovery/decompiled-free-play-targets/2668ef0.c",
+          "raw_export_sha256": "b9779e31ed71b3c76e074d372e49f78bbb9d83832171133801196b828ff58ce3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b6795d8195ce417f3f4745440e1bcbed2d4566aa44e696555b6624210c1dd69d",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "spell_has_flashback_legacy",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2668f10",
+          "end": "0x266913d",
+          "bytes_sha256": "75e15f57a597f40d3799590e6c2129b10a2b121b5ccbbb78b68b8169a9580926",
+          "raw_export": ".recovery/decompiled-free-play-targets/2668f10.c",
+          "raw_export_sha256": "baeafa54f295024ca574941dbcb6ab13b263ea649ee66ce6b06a5e813722f1e8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "bb6fd3918cb786cb6c19f22c283579bc0051ff1a51f723ca6b30ce05b29f0981",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "flashback_spell",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2669140",
+          "end": "0x2669158",
+          "bytes_sha256": "217a89b27d859848a08ede2b5e816b67eca5fd3f92876455facdbf0f247bde88",
+          "raw_export": ".recovery/decompiled-free-play-targets/2669140.c",
+          "raw_export_sha256": "1e2b03895d68670b45b58ffe43f75b000684ca9ec99dcfa93de4b7b0b11f3ce6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f59093d946ba929f92257ff7e213a927b5eb0d246b91bdc6672e953b20514c51",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "play_card_in_exile_for_free_impl",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2669230",
+          "end": "0x266931e",
+          "bytes_sha256": "585b78cd516992ce6d2c85c455235cc61c4ffaffb41019f4ac05fc3de7f17797",
+          "raw_export": ".recovery/decompiled-free-play-targets/2669230.c",
+          "raw_export_sha256": "173818a5e3c06a99d3d2b24e015778d588ddb9c944076688da403d061172d48e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "951aecfc181d8c201cc0f5c6cee847905e4020dec651d34cd311d61112a3f75f",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "play_card_in_exile_for_free",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2669320",
+          "end": "0x2669351",
+          "bytes_sha256": "fcb4a7824e372a029719493160c87fe43c57ff080fb04f4537037bb4c9facf91",
+          "raw_export": ".recovery/decompiled-free-play-targets/2669320.c",
+          "raw_export_sha256": "6b95436322a6c53b7e1649fcddbdb3cae54b4412e04337ab435106a336468b6e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "29f02763421d160021ec0f5f2b37383ebde9f10d6b4e8502d4db27f538efebeb",
+      "prior_category": "small_diff_review"
+    },
+    {
+      "name": "play_card_in_exile_for_free_commander",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2669360",
+          "end": "0x2669436",
+          "bytes_sha256": "f9d05f12dfb4b174a8f6b93c05bc41198c3a15857f2c88e2c2f9b2be7e79980c",
+          "raw_export": ".recovery/decompiled-free-play-targets/2669360.c",
+          "raw_export_sha256": "31d0b991481fdc845237f40b46c632b6cb9a958d914ac91474a379de760d7f6b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "07f3c302c8ae030fdd4c3709c574faec75feee8f1c827c97082dc6a972df64fe",
+      "prior_category": "full_review"
+    },
+    {
+      "name": "play_card_in_hand_for_free",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2669440",
+          "end": "0x2669462",
+          "bytes_sha256": "2e272284a4f45f2fd25fd9943e5607ad9c655aceb6f5625ad4daa988266f7296",
+          "raw_export": ".recovery/decompiled-free-play-targets/2669440.c",
+          "raw_export_sha256": "921bc58dd814c35baaf2ff35d35030b313a3238710bbcdaf7bc73504fcd512d2"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "fbd4672c8a537825782c08d1f284d88f422ac6a56df746024d42a3a2f8f87252",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "play_card_in_hand_for_free_miracle",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2669470",
+          "end": "0x26694d3",
+          "bytes_sha256": "fd5981ead0d87875bb64affd4c02e251774f57ac0e90affb100031395cb5db7e",
+          "raw_export": ".recovery/decompiled-free-play-targets/2669470.c",
+          "raw_export_sha256": "d5f1d6f7ebadc406bd30e33c0c00ebb86e3dc84f7690c70a6ee5593e33413f90"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5dfc63cbdfce954ce181a5f899e355ad011390e6469233704ad7817c96e9b80d",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "play_card_in_hand_madness",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x26694e0",
+          "end": "0x2669502",
+          "bytes_sha256": "ab2bd90589bc5b4f6241c97827fcbe3c8cca4d04cad45d81470f126ff93b174f",
+          "raw_export": ".recovery/decompiled-free-play-targets/26694e0.c",
+          "raw_export_sha256": "788ce761cc80b4724d1a036feca79d9b5a7cf1d454ca65e2d252c1c8051e0d8c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c654f7e762abdd24ab3009b0bde98c7f0c0aa7880438020fe41d03b9234b9e61",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "opponent_plays_card_in_your_hand_for_free",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2669510",
+          "end": "0x2669596",
+          "bytes_sha256": "bcea975f2e206ed57d54a314b9dc235a2e554927fd0ef6cb5d55896a4de58a11",
+          "raw_export": ".recovery/decompiled-free-play-targets/2669510.c",
+          "raw_export_sha256": "01513adf9a1e4c3fcb31bda7049ddba1236a21301b5d45a7dfa3d4860b74fdf9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "61e69f414fc16cd7e7fbd839e1fe283cbb8f91edcd23d201ed220675f7dbcdbe",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "play_card_in_opponent_hand_by_test",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2669ed0",
+          "end": "0x266a012",
+          "bytes_sha256": "714c02a00d4aa03a123cb1921432e5cc09450e761df820532bb5fd29e5864cdb",
+          "raw_export": ".recovery/decompiled-free-play-targets/2669ed0.c",
+          "raw_export_sha256": "566406ddd5a89f35edda0e29e9adcb0fd85ce36f29992823bf5bf4a8ca9113f7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "22766e7787760705399c7d338d169148e58ede7d76b2c73e996ecb05d2268207",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "increase_trap_condition_impl",
+      "source": "functions/rules_engine.c",
+      "native_ranges": [
+        {
+          "address": "0x26c3530",
+          "end": "0x26c37e1",
+          "bytes_sha256": "c763c4d6fb2de9069aa7b6daa2938d94d49a82ef85c5539b2f0688026880f273",
+          "raw_export": ".recovery/decompiled-free-play-targets/26c3530.c",
+          "raw_export_sha256": "018910675fa7b4826c0c223c6e859afc65e8b0155dab61d238da7dc71b54266a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8e410406a7b23e45caec6b3a965093e5a1dd9f96f470214945b46914b8cbcb91",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "get_rules_engine_infos",
+      "source": "functions/rules_engine.c",
+      "native_ranges": [
+        {
+          "address": "0x26c8ba0",
+          "end": "0x26c8bc9",
+          "bytes_sha256": "a3849025f421b7305729299b82fdfbf3008d2816ffe4d06c6713e6e4fca3bcb6",
+          "raw_export": ".recovery/decompiled-free-play-targets/26c8ba0.c",
+          "raw_export_sha256": "84796009e0ce31af8bc120f33f507002159103f6efddf275728106dc4e3baafa"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "14ef428a5dcc8b09085a5b2ba54d6d5b94995f366e07b75b28e32e4ed483333f",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "get_deadbox_card",
+      "source": "functions/rules_engine.c",
+      "native_ranges": [
+        {
+          "address": "0x26c8bd0",
+          "end": "0x26c8bdf",
+          "bytes_sha256": "b22430ca0c60b70a65626b5ede53434b56e6a24c270360b5bb71dfb4e6fb8b47",
+          "raw_export": ".recovery/decompiled-free-play-targets/26c8bd0.c",
+          "raw_export_sha256": "54bacfd30694e997fffe17db4c71b65c9572922bd29c813218228b328497bfb1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5cf35c081d8b5f408e05677d7edd112cb2d815807b1c55864c2f331ea64fa877",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "get_trap_condition",
+      "source": "functions/rules_engine.c",
+      "native_ranges": [
+        {
+          "address": "0x26c8f90",
+          "end": "0x26c90c0",
+          "bytes_sha256": "605b73d4e9d45bf3023f4656f8b11674747e4c46014b13dee9d6763982e9908b",
+          "raw_export": ".recovery/decompiled-free-play-targets/26c8f90.c",
+          "raw_export_sha256": "b4d3e8230c22ca3b0f294b267a4c46d2f05cb35be83295dda3dc703b2d7075de"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "38a42b3fb5d2e3cbddb0c5e8b072efb277304552d6094489c755afe108f36ec6",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "increase_trap_condition",
+      "source": "functions/rules_engine.c",
+      "native_ranges": [
+        {
+          "address": "0x26c90f0",
+          "end": "0x26c9112",
+          "bytes_sha256": "9c6dff22fb4a0d401bd3461ce4c7ed97cc91b90eeb18f9f6068a76526612cdff",
+          "raw_export": ".recovery/decompiled-free-play-targets/26c90f0.c",
+          "raw_export_sha256": "379c392133a206aec40b736e13127cc161ca06a9e5bbc2780cb1de66833c7bcb"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b1071dcae3fb3ef0419c7a94071c5f1e7fc884373a0653485603716d892cf1c3",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "set_trap_condition",
+      "source": "functions/rules_engine.c",
+      "native_ranges": [
+        {
+          "address": "0x26c9120",
+          "end": "0x26c9139",
+          "bytes_sha256": "5798f896da870b51d9e097362e0062a1d1c54a3371f1b5426f23d11a2402e34e",
+          "raw_export": ".recovery/decompiled-free-play-targets/26c9120.c",
+          "raw_export_sha256": "0516e486e7e81ec667f2f5bf1e5c7a9059b000ab392df786d6c73d3aa2038ce3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "56698d4948360a56fec26ef5ff832cd5c0c6e41b9c8e6eaa26c38a3a8732eeb0",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "vscnprintf",
+      "source": "functions/helper_functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26cea40",
+          "end": "0x26cea74",
+          "bytes_sha256": "9374c897afbae012fd90ec64ac5b431d7a7a7423f31e195d703dd967d0a5c265",
+          "raw_export": ".recovery/decompiled-free-play-targets/26cea40.c",
+          "raw_export_sha256": "751b034e1893ffb78d56760b26bf37f8d666a3b5fa2a87cd556423385842c5b6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "901edf1dbe5d635ea2060357e1e9adab0d11ec28a5e454b8bb920153241e0c1b",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "scnprintf",
+      "source": "functions/helper_functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26cea80",
+          "end": "0x26ceab4",
+          "bytes_sha256": "103b6355414a9e449a709635bd2840d7daa24ea21eb51a883b9becb61806b22b",
+          "raw_export": ".recovery/decompiled-free-play-targets/26cea80.c",
+          "raw_export_sha256": "c592d17df4cce04a2eb224c58653d849e2ac59a29fbf386951f6498b0b961d79"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "83ebfc66551284641d616efc42f54b638087767b9219d15cfc673dc6ee6e1dda",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "can_sorcery_be_played",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2679b40",
+          "end": "0x2679bcf",
+          "bytes_sha256": "36b273ab7b393b40c310690d67cf3e1d39664774afebb445752701c275de287a",
+          "raw_export": ".recovery/decompiled-cast-discard/2679b40.c",
+          "raw_export_sha256": "ae66389abdbd8a013fbe7f984fb45149d58344abe38ea0c08eb43b7da76d8f8b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c21b345310160e2dffa8d6a738a83299f9563a62bbb2389be8fd5029fee81e2f",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "can_legally_play_iid_now",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2679fa0",
+          "end": "0x2679fe6",
+          "bytes_sha256": "d020495c761739965f9c776a27387d685ca1ed76f9bb29b597cd2329e1fa688e",
+          "raw_export": ".recovery/decompiled-cast-discard/2679fa0.c",
+          "raw_export_sha256": "f3fa0d233211b39f6c5e50bfced020d4bbc853fea09a6ea7b78e7856674bcd53"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0fb9151415588ee02fa10c8c0b18e341b6c21f9abc05c99718f21757713ce2b1",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "can_legally_play_csvid_now",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2679ff0",
+          "end": "0x267a016",
+          "bytes_sha256": "ad5e97fdb5b1b40709dad29926179252e942fab658558f9a03462f043f321e49",
+          "raw_export": ".recovery/decompiled-cast-discard/2679ff0.c",
+          "raw_export_sha256": "5dd4ef95a01abad717302dcfd2ac3969f71d5d24a20f420c52a5713481108ee7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "100e711f6e54808b227626dc6d0f040a639af3997c7271fd68745bac00c8db50",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "select_a_protection",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26847b0",
+          "end": "0x268486c",
+          "bytes_sha256": "bf1163da4d544191e256d480cc2c1f661ecb3ecaf1830d43215f611f5c5b7fe5",
+          "raw_export": ".recovery/decompiled-cast-discard/26847b0.c",
+          "raw_export_sha256": "aa1036b2462085252c76da1e0f6d2d9f452567f8a8a6a27100822a3c361da51a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b06ffe9233ea849f9ef37b99e2e2585a991b62414f8a969cdc53ffff945059f0",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "total_playable_lands",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2684870",
+          "end": "0x2684ceb",
+          "bytes_sha256": "1fa1d48a69549b60d7454a95fab79dced5a12b7bb006e8d08f7469f05605f6ff",
+          "raw_export": ".recovery/decompiled-cast-discard/2684870.c",
+          "raw_export_sha256": "ee8379fbb88b5fddbab32b021bcf5c2a9a0c48955ca9388afac38203870d3dff"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "be183e227c5116857d0a3d81e682ce8c0ab72512d31ea4e8847203eb31dbe288",
+      "prior_category": "full_review"
+    },
+    {
+      "name": "discard_card",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269a400",
+          "end": "0x269a426",
+          "bytes_sha256": "91d73ce0f423dced38ad04d36de9e8d1e8111202e2fcb7dbd9dd3ea90b0c24f5",
+          "raw_export": ".recovery/decompiled-cast-discard/269a400.c",
+          "raw_export_sha256": "208620dd0fbcde64fa5343891c44f4eff64f904f9f04a696706918ebf1eff315"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a511b61a2ea8f207dc900704eed6d084befc8238dcf380510646206ffa033786",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "new_discard_card",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269a430",
+          "end": "0x269a435",
+          "bytes_sha256": "44d593728ce63e9767b9a1041802d349314a804123dca29a6aea36e4a20057ce",
+          "raw_export": ".recovery/decompiled-cast-discard/269a430.c",
+          "raw_export_sha256": "45230e71b28cc2578686ab67d0b59efc3f7678c68c16523a6083b7cd2d339139"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8d641bb4058fb46fe5b64f9cc34db562ab87fca512262e52b57ce96f843d7e53",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "discard",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269a440",
+          "end": "0x269a802",
+          "bytes_sha256": "5828519026acbaa3588e5e6d4cd9fd4c2052e8ba7b2795480d0ae1f07a471b5d",
+          "raw_export": ".recovery/decompiled-cast-discard/269a440.c",
+          "raw_export_sha256": "03430c496c008d87ed71d934f652adf5ff04d6da185fd11ef85103759645fe08"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0b3e727a6afb5a775978d6899c649b84acf34b99abf2480e11cbea19b91b2b11",
+      "prior_category": "full_review"
+    },
+    {
+      "name": "tutor",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269abf0",
+          "end": "0x269ad0e",
+          "bytes_sha256": "d7c4be71f7dc1a6ee95b1a35a9c68fccb59801b882837637154f68a5810b8644",
+          "raw_export": ".recovery/decompiled-cast-discard/269abf0.c",
+          "raw_export_sha256": "2e81e33e13105041e0fe9028eef465ffe32e235ba3679bcd238cde5d110c093c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d2d0dc79b9d2eaa46e85986b2ed3942bfffc0a0c0b0ad12bd9d147e8d2f51dca",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "pattern_of_rebirth_tutor",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269ad10",
+          "end": "0x269ad3b",
+          "bytes_sha256": "6b6332216d33ad851d847f1adc48ebc334578fe4947a6333fcebac334ca6a9b7",
+          "raw_export": ".recovery/decompiled-cast-discard/269ad10.c",
+          "raw_export_sha256": "e7dccfec1d8d779d645b7e4f0da9fa37bfe7c5912ea3754803c22c109117b052"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "98bd8d6bba5efb8af4177d8e3b0d8718ffba38c96e3d92d49f42517015cf47c4",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "discard_trigger_delayed_ability",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269b7e0",
+          "end": "0x269b8e2",
+          "bytes_sha256": "9c203709a2af88a7c8d79d71f52ab26006d1227212516eff9b8c7c6339af3c86",
+          "raw_export": ".recovery/decompiled-cast-discard/269b7e0.c",
+          "raw_export_sha256": "9649af4ff75baf4b9af25fc354fcf6d0c82dd3d85423cf027b7adf15712ef667"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "041285f43ec7c5a5bbac755bb7d6a492a225b16297dbb0d20589399fe18d9cef",
+      "prior_category": "small_diff_review"
+    },
+    {
+      "name": "new_multidiscard",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269ebd0",
+          "end": "0x269ecb7",
+          "bytes_sha256": "ea1d877e9c4dd1afed113a2257b81a3881f85a2383da2c9d694a3612aa1d1850",
+          "raw_export": ".recovery/decompiled-cast-discard/269ebd0.c",
+          "raw_export_sha256": "d7e29be8595fab31f7d548e40216613c4ab1efb91062e3a9246a10d25c3276bd"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0ee4742fc387eff31752d77ef9f8dcbfbc06de2910b5e37c2188e3fc518e4942",
+      "prior_category": "full_review"
+    },
+    {
+      "name": "whenever_i_deal_damage_to_a_player_he_discards_a_card",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269ecc0",
+          "end": "0x269ed5e",
+          "bytes_sha256": "e47244eee7d6b5b3e21c84b981f4d4d74e6c5a053abcf8e22a2525776c4e6ac9",
+          "raw_export": ".recovery/decompiled-cast-discard/269ecc0.c",
+          "raw_export_sha256": "36c7123b21d8730a39368c44e03dd5fe56c76a090c4be2cbd9d4a563354d52e6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "fd7ae443ea0de35fd60c076b5dedf53e9d0df5d633c276f7002f1ac9025f0805",
+      "prior_category": "full_review"
+    },
+    {
+      "name": "multidiscard",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269f1b0",
+          "end": "0x269f1dc",
+          "bytes_sha256": "0a72f34c40dee2df6da732b93ec4e716df827b3a0f3d303439061d934990a7fc",
+          "raw_export": ".recovery/decompiled-cast-discard/269f1b0.c",
+          "raw_export_sha256": "3e0ab44f10063417ad687094eb7dc942a01ff92ec36190742dee93cee578badf"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "83124eaa49e5d5d52da5bbd361bd5bebfc54966559417503bc9717533643b52a",
+      "prior_category": "full_review"
+    },
+    {
+      "name": "new_discard_all",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269f1e0",
+          "end": "0x269f2b7",
+          "bytes_sha256": "b3e2fa34c77f4379f75f31761653265bdffb874cfa3fb6125ee3e367cba94d0e",
+          "raw_export": ".recovery/decompiled-cast-discard/269f1e0.c",
+          "raw_export_sha256": "a669a6219cd69175cdcca6795a378dc8ad34110fa2509effc3f6645e8edb8cf7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "63d61159f8454eac33eb61eb3b781a75523707b6d9539c053a8c2f66d3b74e70",
+      "prior_category": "reference_review"
+    },
+    {
+      "name": "discard_all",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269f2c0",
+          "end": "0x269f2d7",
+          "bytes_sha256": "efde6604061b70ab197010a350040ddd71ce3d60efdd95ceedd1f7fd150bdafe",
+          "raw_export": ".recovery/decompiled-cast-discard/269f2c0.c",
+          "raw_export_sha256": "251416d34f78a1d878e2e989b288cf6df079c68798d5a163b05bebe625cf0a72"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "644fa56c36f2be0a98537d834255c9ab941a9a86a3f522a6c940a819628d0c68",
+      "prior_category": "same_local_code"
+    },
+    {
+      "name": "generic_shade",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x269f350",
+          "end": "0x269f68e",
+          "bytes_sha256": "5ef730bb768f8dde71c45a7f398d0a1990f44f4d7b33996b151258ed54842bac",
+          "raw_export": ".recovery/decompiled-cast-discard/269f350.c",
+          "raw_export_sha256": "b31212f79cabac00b031a8b933fcdbc282d9577880b0791b37d838c261e3c5bc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c08d30a41950bc81971172215579fa3339c16c459355efbbec315ba5c664a65d",
+      "prior_category": "full_review"
+    },
+    {
+      "name": "discard_card_impl",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2698dd0",
+          "end": "0x2699588",
+          "bytes_sha256": "913013b4c64d74f8e05993645ad6fe27756569ef9cbb0a171ce81630eb814004",
+          "raw_export": ".recovery/decompiled-cast-discard-support/2698dd0.c",
+          "raw_export_sha256": "0a94b1b95ff78c73850357bc26d49c78bcc6c1feb4cebfc322bd6c8a32353205"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c4156d75ed947d51dfee184b31daa17b55074ce0f3a4b47967f846a8550849b0",
+      "prior_category": "full_review"
+    }
+  ],
+  "support_helpers": [
+    {
+      "name": "target_player_cant_cast_csvid",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x266a3e0",
+          "end": "0x266a469",
+          "bytes_sha256": "f595a6a5623bb9eae2e6a69942440150a805c778d45e0897ff353c0e7ed70bc3",
+          "raw_export": ".recovery/decompiled-free-play-targets/266a3e0.c",
+          "raw_export_sha256": "c02955d075d49b3002d6d383c3f526f3ccbbe6a29e9daae85854153dda299133"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a28eb9d10016e2fa0b1fe858fe0a2729b223cc7562373c15e8b22e154b98c486",
+      "prior_category": "verified_retained_source"
+    },
+    {
+      "name": "target_player_cant_cast_type",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x266a470",
+          "end": "0x266a4f9",
+          "bytes_sha256": "13580268b37f0d11a728ea581e464deffa325f08e7445fae57057aa0a4461f73",
+          "raw_export": ".recovery/decompiled-free-play-targets/266a470.c",
+          "raw_export_sha256": "01d849fef2c7bfbdcaf0764d3715d6fd67607130d3423fe279499ca50ff06e3b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2c3e976c521965c37bbc20bcf23fae8c223073effcf62b5b90e3e7ae5690bd94",
+      "prior_category": "verified_retained_source"
+    },
+    {
+      "name": "target_player_cant_attack",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x266a500",
+          "end": "0x266a583",
+          "bytes_sha256": "4e271c661d9c7da3d6cde0fed600c812344ae55649645612b6344a63654cef84",
+          "raw_export": ".recovery/decompiled-free-play-targets/266a500.c",
+          "raw_export_sha256": "6a22607a3360df909fe0a16a25e16ec596081b68b18054d760cf70cadccbfc3f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "12b01337666a5ca2d0ef02893ffc24268f1b42f069839a818fb255d351e384d3",
+      "prior_category": "verified_retained_source"
+    }
+  ],
+  "inline_support_helpers": [
+    {
+      "source": "functions/play_spell_for_free.c",
+      "name": "totally_bletcherous_hack_put_card_on_stack0_without_resetting_x_value",
+      "definition_sha256": "f1e1e1fd0f0637ad818d620b773d0df94d02a417a8a0ad63ce6db55fa78f1a4c",
+      "native_owner": "real_play_spell_for_free",
+      "native_owner_address": "0x2668760"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "actually_has_a_card_in_hand",
+      "definition_sha256": "08e6e789ffda2c1b2e70939525380a16299b77227d54ebed0c8ba2caf31c66cd",
+      "native_owner": "new_discard_all",
+      "native_owner_address": "0x269f1e0"
+    }
+  ],
+  "helper_definitions": 52,
+  "new_native_helper_ranges": 52,
+  "changed_helper_definitions": 12,
+  "native_discard_flags": {
+    "die_offset": "0x6570162",
+    "byte_size": 4,
+    "values": {
+      "DISC_RANDOM": 1,
+      "DISC_CAUSED": 2,
+      "DISC_OPTIONAL": 4,
+      "DISC_JUST_MARK": 8
+    }
+  },
+  "native_rules_layout": {
+    "die_offset": "0x68bc873",
+    "byte_size": 152,
+    "fields": {
+      "targets": 0,
+      "shorts_per_turn": 40,
+      "unassigned1": 48,
+      "shorts_persistent": 68,
+      "unassigned2": 70,
+      "bytes_per_turn": 86,
+      "unassigned3": 102,
+      "bytes_persistent": 112,
+      "unassigned4": 114,
+      "nybbles_per_turn": 120,
+      "unassigned5": 128,
+      "bits_per_turn": 133,
+      "unassigned6": 137,
+      "bits_persistent": 140,
+      "unassigned7": 141,
+      "counters": 144
+    }
+  },
+  "native_contracts": {
+    "flashback": {
+      "allowed_cc_flags": 24,
+      "required_special_flag": "SF_FLASHBACK",
+      "named_legacy": true
+    },
+    "free_cast": {
+      "direct_entry_cast_trigger": "TRIGGER_SPELL_CAST",
+      "trigger_prompt_address": "0x715a04",
+      "commander_codes": [
+        1,
+        2
+      ],
+      "commander_callback_unless_flag": "SF2_COMMANDER"
+    },
+    "commander": {
+      "remove_from_normal_exile": false,
+      "free_cast_flags": 0,
+      "ownership": "human-from-AI sets opponent ownership; all other cases clear it",
+      "mana_paid_slot": "targets[3].card"
+    },
+    "exile_mana_paid_sentinel": -1,
+    "trap_zero_guard": "public increase wrapper; private writer retains native unguarded contract",
+    "discard": {
+      "optional_flag": 4,
+      "mark_flag": 8,
+      "mark_state": "STATE_CANNOT_TARGET",
+      "mark_state_value": 1048576,
+      "optional_batch_marks_before_any_discard": true,
+      "cancellation_clears_marks": true,
+      "opponent_prevention_csv_id": 20016,
+      "prevention_checks_lost_abilities": "AL_STATIC",
+      "random_candidate_excluded_state_mask": 1048610,
+      "random_tries": 999,
+      "network_packet_type": 20,
+      "madness_dialog_omits_illegal": true,
+      "madness_prompt": "Pay Madness cost",
+      "additional_replacement": "CARD_ID_NULLHIDE_FEROX",
+      "nephalia_lost_ability_check": "discarded card, preserving native target",
+      "quagnoth_return_mode": "REANIMATEXTRA_RETURN_TO_HAND2",
+      "delayed_return_removes_from": "graveyard"
+    },
+    "playable_lands_flag": {
+      "storage": "player_bits[player]",
+      "mask": 8,
+      "native_index_stride": 4
+    },
+    "formatting_backend": "___ms_vsnprintf",
+    "formatting_scope": "Both helper bodies call the native-selected MS stdio API; library implementation remains independently scoped.",
+    "native_dialog_token": {
+      "address": "0x2763595",
+      "bytes": "010400"
+    }
+  },
+  "scope": "52 directly reviewed manual helper ranges plus three previously automatically retained support ranges; 12 changed bodies, native four-member discard flags, native/rebuilt rules layout, MS formatting call bindings and two inlined private helper definitions. Existing built-in chooser implementations remain deferred; gameplay testing remains downstream."
+}

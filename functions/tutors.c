@@ -146,45 +146,55 @@ int select_one_and_put_the_rest_on_bottom(int player, int t_player, int number){
 	return card_added;
 }
 
-int reveal_x_and_choose_a_card_type( int player, int card, int to_reveal, int selected_type ){
+int reveal_x_and_choose_a_card_type(int player, int card, int to_reveal, int selected_type)
+{
 
-	if( count_deck(player) < to_reveal ){
-		to_reveal = count_deck(player);
-	}
+  if (count_deck(player) < to_reveal)
+  {
+    to_reveal = count_deck(player);
+  }
 
-	test_definition_t this_test;
-	char buffer[100];
-	int pos = scnprintf(buffer, 100, " Select a");
-	if( selected_type == TYPE_CREATURE ){
-		pos += scnprintf(buffer + pos, 100-pos, " creature");
-	}
-	if( selected_type == TYPE_LAND ){
-		pos += scnprintf(buffer + pos, 100-pos, " land");
-	}
-	if( selected_type == TYPE_ARTIFACT ){
-		pos += scnprintf(buffer + pos, 100-pos, "n artifact");
-	}
-	if( selected_type == TYPE_ENCHANTMENT ){
-		pos += scnprintf(buffer + pos, 100-pos, " enchantment");
-	}
-	pos += scnprintf(buffer + pos, 100-pos, " card.");
-	new_default_test_definition(&this_test, selected_type, buffer);
-	this_test.create_minideck = to_reveal;
-	this_test.no_shuffle = 1;
+  test_definition_t this_test;
+  char buffer[100];
+  int pos = scnprintf(buffer, 100, " Select a");
+  if (selected_type == TYPE_CREATURE)
+  {
+    pos += scnprintf(buffer + pos, 100 - pos, " creature");
+  }
+  if (selected_type == TYPE_LAND)
+  {
+    pos += scnprintf(buffer + pos, 100 - pos, " land");
+  }
+  if (selected_type == TYPE_ARTIFACT)
+  {
+    pos += scnprintf(buffer + pos, 100 - pos, "n artifact");
+  }
+  if (selected_type == TYPE_ENCHANTMENT)
+  {
+    pos += scnprintf(buffer + pos, 100 - pos, " enchantment");
+  }
+  pos += scnprintf(buffer + pos, 100 - pos, " card.");
+  new_default_test_definition(&this_test, selected_type, buffer);
+  this_test.create_minideck = to_reveal;
+  this_test.no_shuffle = 1;
 
-	int card_added = -1;
+  int card_added = -1;
 
-	if( to_reveal > 0 ){
-		card_added = new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test);
-		if( card_added != -1 ){
-			to_reveal--;
-		}
-		if( to_reveal > 0 ){
-			put_top_x_on_bottom(player, player, to_reveal);
-		}
-	}
+  if (to_reveal > 0)
+  {
+    card_added =
+        new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test);
+    if (card_added >= 0)
+    {
+      to_reveal--;
+    }
+    if (to_reveal > 0)
+    {
+      put_top_x_on_bottom(player, player, to_reveal);
+    }
+  }
 
-	return card_added;
+  return card_added;
 }
 
 void tutor_lands(int player, tutor_t destination, int num){
@@ -218,19 +228,23 @@ void tutor_basic_lands(int player, tutor_t destination, int num){
 }
 
 // Tutor two basic lands, one onto bf tapped, one into hand, then shuffle
-void cultivate(int player){
-	test_definition_t test;
-	new_default_test_definition(&test, TYPE_LAND, "Choose a basic land card to put on the battlefield tapped.");
-	test.subtype = SUBTYPE_BASIC;
-	test.subtype_flag = MATCH;
-	test.no_shuffle = 1;
+void cultivate(int player)
+{
+  test_definition_t test;
+  new_default_test_definition(&test, TYPE_LAND,
+                              "Choose a basic land card to put on the battlefield tapped.");
+  test.subtype = SUBTYPE_BASIC;
+  test.subtype_flag = MATCH;
+  test.no_shuffle = 1;
 
-	if (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY_TAPPED, 0, AI_MAX_VALUE, &test) != -1){
-		strcpy(test.message, "Choose a basic land card to put in your hand.");
-		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test);
-	}
+  if (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY_TAPPED, 0, AI_MAX_VALUE,
+                       &test) >= 0)
+  {
+    strcpy(test.message, "Choose a basic land card to put in your hand.");
+    new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test);
+  }
 
-	shuffle(player);
+  shuffle(player);
 }
 
 // Simple n^2 insertion sort on array[].player, descending.  Poorly suited if number is greater than about 30.
@@ -360,103 +374,106 @@ int spell_return_one_or_two_cards_from_gy_to_hand(int player, int card, event_t 
 // Separates the first number cards in source_deck[] into two piles.  AI attempts to divide evenly by base_value.
 // Preconditions: piles is an array of int[2][number].  Elements of source_deck[] are internal_card_ids (such as from deck_ptr[], get_grave(), or rfg_ptr[]).
 // Postcondition: For each i in [0..number), one of piles[0][i] and piles[1][i] will be set to source_deck[i], and the other iid_draw_a_card.
-void separate_into_two_piles(int who_separates, const int* source_deck, int number, void* piles_)
+void separate_into_two_piles(int who_separates, const int *source_deck, int number, void *piles_)
 {
   int (*piles)[number] = piles_;
   int i;
   for (i = 0; i < number; ++i)
-	{
-	  piles[0][i] = source_deck[i];
-	  piles[1][i] = iid_draw_a_card;
-	}
+  {
+    piles[0][i] = source_deck[i];
+    piles[1][i] = iid_draw_a_card;
+  }
 
   if (number <= 1)
-	return;
+    return;
 
   if (who_separates == AI || ai_is_speculating == 1)
-	{
-	  /* Evenly separating a pile of things with various scores into two piles of roughly equal total scores is a variant of the Knapsack Problem, and is NP
-	   * complete.  On the other hand, we could solve it exactly, since we know number is always very small (5 or under).  But, it's not worth even that much
-	   * effort.  What we're going to do instead is sort on score, then for each card, put it into the pile with the lowest total score so far. */
-	  int scores[2] = {0,0};
+  {
+    /* Evenly separating a pile of things with various scores into two piles of roughly equal total
+     * scores is a variant of the Knapsack Problem, and is NP complete.  On the other hand, we could
+     * solve it exactly, since we know number is always very small (5 or under).  But, it's not
+     * worth even that much effort.  What we're going to do instead is sort on score, then for each
+     * card, put it into the pile with the lowest total score so far. */
+    int scores[2] = {0, 0};
 
-	  target_t vals[number];	// vals[].player = score, vals[].card = index into source deck
-	  for (i = 0; i < number; ++i)
-		{
-		  vals[i].player = my_base_value_by_id(source_deck[i]);
-		  vals[i].player = MAX(1, vals[i].player);
-		  vals[i].card = i;
-		}
+    target_t vals[number]; // vals[].player = score, vals[].card = index into source deck
+    for (i = 0; i < number; ++i)
+    {
+      vals[i].player = my_base_value_by_id(source_deck[i]);
+      vals[i].player = MAX(1, vals[i].player);
+      vals[i].card = i;
+    }
 
-	  descending_insertion_sort_on_player(number, vals);
+    descending_qsort_on_player(number, vals);
 
-	  for (i = 0; i < number; ++i)
-		if (scores[0] <= scores[1])
-		  // Leave in pile 0
-		  scores[0] += vals[i].player;
-		else
-		  {
-			// Move to pile 1
-			scores[1] += vals[i].player;
-			SWAP(piles[0][vals[i].card], piles[1][vals[i].card]);
-		  }
-	}
+    for (i = 0; i < number; ++i)
+      if (scores[0] <= scores[1])
+        // Leave in pile 0
+        scores[0] += vals[i].player;
+      else
+      {
+        // Move to pile 1
+        scores[1] += vals[i].player;
+        SWAP(piles[0][vals[i].card], piles[1][vals[i].card]);
+      }
+  }
   else
-	while (1)
-	  {
-		int selected = show_deck(who_separates, piles[0], number, "Choose pile 1.", 0, 0x7375B0);
-		if (selected == -1)
-		  break;
+    while (1)
+    {
+      int selected = show_deck(who_separates, piles[0], number, "Choose pile 1.", 0, 0x7375B0);
+      if (selected == -1)
+        break;
 
-		SWAP(piles[0][selected], piles[1][selected]);
-	  }
+      SWAP(piles[0][selected], piles[1][selected]);
+    }
 }
 
 // Chooses between two piles of cards each with number cards.
 // Preconditions: piles is an array of int[2][number].  Elements of piles[][] are internal_card_ids.  ai_selection_mode is AI_MAX_VALUE or AI_MIN_VALUE.  choice_txt is 11 chars or less.
 // Returns chosen pile, 0 or 1.
-int choose_between_two_piles(int chooser, int number, void* piles_, int ai_selection_mode, const char* choice_txt)
+int choose_between_two_piles(int chooser, int number, void *piles_, int ai_selection_mode,
+                             const char *choice_txt)
 {
   ASSERT(ai_selection_mode == AI_MIN_VALUE || ai_selection_mode == AI_MAX_VALUE);
 
   int (*piles)[number] = piles_;
 
   if (chooser == AI || ai_is_speculating == 1)
-	{
-	  int scores[2] = {0, 0};
+  {
+    int scores[2] = {0, 0};
 
-	  int i, j;
-	  for (i = 0; i < 2; ++i)
-		for (j = 0; j < number; ++j)
-		  if (piles[i][j] != -1
-			  && piles[i][j] != iid_draw_a_card)
-			{
-			  int val = my_base_value_by_id(piles[i][j]);
-			  val = MAX(1, val);
-			  scores[i] += val;
-			}
+    int i, j;
+    for (i = 0; i < 2; ++i)
+      for (j = 0; j < number; ++j)
+        if (piles[i][j] != -1 && piles[i][j] != iid_draw_a_card)
+        {
+          int val = my_base_value_by_id(piles[i][j]);
+          val = MAX(1, val);
+          scores[i] += val;
+        }
 
-	  int chosen;
-	  if (scores[0] > scores[1])
-		chosen = ai_selection_mode == AI_MAX_VALUE ? 0 : 1;
-	  else
-		chosen = ai_selection_mode == AI_MAX_VALUE ? 1 : 0;
+    int chosen;
+    if (scores[0] > scores[1])
+      chosen = ai_selection_mode == AI_MAX_VALUE ? 0 : 1;
+    else
+      chosen = ai_selection_mode == AI_MAX_VALUE ? 1 : 0;
 
-	  show_deck(HUMAN, piles[chosen], number, "Opponent chose this pile.", 0, (int)"OK");
+    show_deck(HUMAN, piles[chosen], number, "Opponent chose this pile.", 0, (int)EXE_STR(0x78f0a8));
 
-	  return chosen;
-	}
+    return chosen;
+  }
   else
-	{
-	  int selected, chosen = 1;
-	  do
-		{
-		  chosen = 1 - chosen;
-		  selected = show_deck(chooser, piles[chosen], number, "Click a card to see the other pile.", 0, (int)choice_txt);
-		} while (selected != -1);
+  {
+    int selected, chosen = 1;
+    do
+    {
+      chosen = 1 - chosen;
+      selected = show_deck(chooser, piles[chosen], number, "Click a card to see the other pile.", 0,
+                           (int)choice_txt);
+    } while (selected != -1);
 
-	  return chosen;
-	}
+    return chosen;
+  }
 }
 
 // 1-who_chooses separates the top number cards of player's deck into two piles.  who_chooses picks a pile to put in player's hand.
@@ -578,227 +595,248 @@ int get_total_available_lands(int player){
 	return total_lands;
 }
 
-void scrylike_effect(int player, int t_player, int remaining){
-	int *deck = deck_ptr[t_player];
-	if( remaining > count_deck(t_player) ){
-		remaining = count_deck(t_player);
-	}
-	if( remaining > 0 ){
-		if( IS_AI(player) ){
-			int lands = get_total_available_lands(t_player);
-			if( player != t_player ){
-				if( lands <= 3 ){
-					test_definition_t test;
-					default_test_definition(&test, TYPE_LAND);
-					test.create_minideck = remaining;
-					test.no_shuffle = 1;
-					test.qty = remaining;
-					int result = new_global_tutor(player, t_player, TUTOR_FROM_DECK, TUTOR_BOTTOM_OF_DECK, 0, AI_MAX_VALUE, &test);
-					remaining -= result;
-				}
-				if( lands >= 6 ){
-					test_definition_t test;
-					default_test_definition(&test, TYPE_LAND);
-					test.type = DOESNT_MATCH;
-					test.create_minideck = remaining;
-					test.no_shuffle = 1;
-					test.qty = remaining;
-					int result = new_global_tutor(player, t_player, TUTOR_FROM_DECK, TUTOR_BOTTOM_OF_DECK, 0, AI_MAX_VALUE, &test);
-					remaining -= result;
-				}
-			}
-			else{
-				if( lands <= 3 ){
-					test_definition_t test;
-					default_test_definition(&test, TYPE_LAND);
-					test.type = DOESNT_MATCH;
-					test.create_minideck = remaining;
-					test.no_shuffle = 1;
-					test.qty = remaining;
-					int result = new_global_tutor(player, t_player, TUTOR_FROM_DECK, TUTOR_BOTTOM_OF_DECK, 0, AI_MAX_VALUE, &test);
-					remaining -= result;
-				}
-				if( lands >= 6 ){
-					test_definition_t test;
-					default_test_definition(&test, TYPE_LAND);
-					test.create_minideck = remaining;
-					test.no_shuffle = 1;
-					test.qty = remaining;
-					int result = new_global_tutor(player, t_player, TUTOR_FROM_DECK, TUTOR_BOTTOM_OF_DECK, 0, AI_MAX_VALUE, &test);
-					remaining -= result;
-				}
-			}
-		} 
-		else{
-			// put cards to bottom first
-			while( remaining > 0 ){
-					int selected = show_deck( player, deck, remaining, "Choose a card to put on the bottom", 0, 0x7375B0 );
-					if( selected != -1 ){
-						deck[ count_deck(t_player) ] = deck[selected];
-						remove_card_from_deck( t_player, selected );
-						remaining--;
-					}
-					else{
-						break;
-					}
-			}
-		}
-
-		// put cards to the top now
-		if( remaining > 1 ){
-			rearrange_top_x(t_player, player, remaining);
-		}
-	}
+void scrylike_effect(int player, int t_player, int remaining)
+{
+  int *deck = deck_ptr[t_player];
+  if (remaining > count_deck(t_player))
+    remaining = count_deck(t_player);
+  if (remaining <= 0)
+    return;
+  if (IS_AI(player))
+  {
+    int lands = get_total_available_lands(t_player);
+    if (lands < 4 || lands >= 6)
+    {
+      test_definition_t test;
+      default_test_definition(&test, TYPE_LAND);
+      if ((player == t_player && lands < 4) || (player != t_player && lands >= 6))
+        test.type_flag = DOESNT_MATCH;
+      test.no_shuffle = 1;
+      test.qty = remaining;
+      test.create_minideck = remaining;
+      int result = new_global_tutor(player, t_player, TUTOR_FROM_DECK, TUTOR_BOTTOM_OF_DECK, 0,
+                                    AI_MAX_VALUE, &test);
+      if (test.qty < 2)
+        remaining -= result >= 0 ? 1 : 0;
+      else
+        remaining -= result;
+    }
+  }
+  else
+  {
+    while (remaining > 0)
+    {
+      int selected =
+          show_deck(player, deck, remaining, "Choose a card to put on the bottom", 0, 0x7375B0);
+      if (selected == -1)
+        break;
+      deck[count_deck(t_player)] = deck[selected];
+      remove_card_from_deck(t_player, selected);
+      --remaining;
+    }
+  }
+  if (remaining > 1)
+    rearrange_top_x(t_player, player, remaining);
 }
 
-void scry(int player, int number_of_cards){
-	scrylike_effect(player, player, number_of_cards);
-	dispatch_xtrigger2(player, XTRIGGER_SCRY, "Scrying", 0, player, number_of_cards);
+void scry(int player, int number_of_cards)
+{
+  if (check_battlefield_for_id(player, 0x565b)) /* Eligeth, Crossroads Augur */
+    draw_cards(player, number_of_cards);
+  else
+  {
+    scrylike_effect(player, player, number_of_cards);
+    dispatch_xtrigger2(player, XTRIGGER_SCRY, "Scrying", 0, player, number_of_cards);
+  }
 }
 
-void rearrange_top_x(int t_player, int who_chooses, int number){
-	// t_player = target player
-	// who_chooses = player who rearranges
+void rearrange_top_x(int t_player, int who_chooses, int number)
+{
+  // t_player = target player
+  // who_chooses = player who rearranges
 
-	int *deck = deck_ptr[t_player];
-	number = MIN(number, count_deck(t_player));
-	if( number == 1 ){
-		show_deck( who_chooses, deck, 1, "Top card of library", 0, 0x7375B0 );
-	}
-	else{
-		int backup_deck[number];
-		int i;
-		for(i=0; i<number; i++){
-			backup_deck[i] = deck_ptr[t_player][0];
-			remove_card_from_deck(t_player, 0);
-		}
-		if( ! IS_AI(who_chooses) ){
-			test_definition_t test;
-			new_default_test_definition(&test, TYPE_ANY, "Pick a card to put on top.");
-			while( 1 ){
-					int selected = select_card_from_zone(who_chooses, who_chooses, backup_deck, number, 0, AI_MAX_VALUE, -1, &test);
-					if( selected != -1 ){
-						int transit = backup_deck[0];
-						backup_deck[0] = backup_deck[selected];
-						backup_deck[selected] = transit;
-					}
-					else{
-						break;
-					}
-			}
-			for(i=number-1; i > -1; i--){
-				raw_put_iid_on_top_of_deck(t_player, backup_deck[i]);
-			}
-		}
-		else{
-			int lands = get_total_available_lands(t_player);
-			int remaining = number;
-			if( who_chooses != t_player ){
-				if( lands <= 3 ){
-					for(i=0; i<number; i++){
-						if( is_what(-1, backup_deck[i], TYPE_LAND) ){
-							raw_put_iid_on_top_of_deck(t_player, backup_deck[i]);
-							backup_deck[i] = -1;
-							remaining--;
-						}
-					}
-					while( remaining ){
-							int max_cmc = -1;
-							int selected = -1;
-							for(i=0; i<number; i++){
-								if( backup_deck[i] > -1 ){
-									int this_cmc = get_cmc_by_internal_id(backup_deck[i]);
-									if( this_cmc > max_cmc ){
-										max_cmc = this_cmc;
-										selected = i;
-									}
-								}
-							}
-							raw_put_iid_on_top_of_deck(t_player, backup_deck[selected]);
-							backup_deck[selected] = -1;
-							remaining--;
-					}
-				}
-				if( lands >= 6 ){
-					for(i=0; i<number; i++){
-						if( ! is_what(-1, backup_deck[i], TYPE_LAND) ){
-							raw_put_iid_on_top_of_deck(t_player, backup_deck[i]);
-							backup_deck[i] = -1;
-							remaining--;
-						}
-					}
-					while( remaining ){
-							int min_cmc = 1000;
-							int selected = -1;
-							for(i=0; i<number; i++){
-								if( backup_deck[i] > -1 ){
-									int this_cmc = get_cmc_by_internal_id(backup_deck[i]);
-									if( this_cmc < min_cmc ){
-										min_cmc = this_cmc;
-										selected = i;
-									}
-								}
-							}
-							raw_put_iid_on_top_of_deck(t_player, backup_deck[selected]);
-							backup_deck[selected] = -1;
-							remaining--;
-					}
-				}
-			}
-			else{
-				if( lands <= 3 ){
-					for(i=0; i<number; i++){
-						if( ! is_what(-1, backup_deck[i], TYPE_LAND) ){
-							raw_put_iid_on_top_of_deck(t_player, backup_deck[i]);
-							backup_deck[i] = -1;
-							remaining--;
-						}
-					}
-					while( remaining ){
-							int min_cmc = 1000;
-							int selected = -1;
-							for(i=0; i<number; i++){
-								if( backup_deck[i] > -1 ){
-									int this_cmc = get_cmc_by_internal_id(backup_deck[i]);
-									if( this_cmc < min_cmc ){
-										min_cmc = this_cmc;
-										selected = i;
-									}
-								}
-							}
-							raw_put_iid_on_top_of_deck(t_player, backup_deck[selected]);
-							backup_deck[selected] = -1;
-							remaining--;
-					}
-				}
-				if( lands >= 6 ){
-					for(i=0; i<number; i++){
-						if( is_what(-1, backup_deck[i], TYPE_LAND) ){
-							raw_put_iid_on_top_of_deck(t_player, backup_deck[i]);
-							backup_deck[i] = -1;
-							remaining--;
-						}
-					}
-					while( remaining ){
-							int max_cmc = -1;
-							int selected = -1;
-							for(i=0; i<number; i++){
-								if( backup_deck[i] > -1 ){
-									int this_cmc = get_cmc_by_internal_id(backup_deck[i]);
-									if( this_cmc > max_cmc ){
-										max_cmc = this_cmc;
-										selected = i;
-									}
-								}
-							}
-							raw_put_iid_on_top_of_deck(t_player, backup_deck[selected]);
-							backup_deck[selected] = -1;
-							remaining--;
-					}
-				}
-			}
-		}
-	}
+  int *deck = deck_ptr[t_player];
+  number = MIN(number, count_deck(t_player));
+  if (number <= 0)
+    return;
+  if (number == 1)
+  {
+    show_deck(who_chooses, deck, 1, "Top card of library", 0, 0x7375B0);
+  }
+  else
+  {
+    int backup_deck[number];
+    int i;
+    for (i = 0; i < number; i++)
+    {
+      backup_deck[i] = deck_ptr[t_player][0];
+      remove_card_from_deck(t_player, 0);
+    }
+    if (!IS_AI(who_chooses))
+    {
+      test_definition_t test;
+      new_default_test_definition(&test, TYPE_ANY, "Pick a card to put on top.");
+      while (1)
+      {
+        int selected = select_card_from_zone(who_chooses, who_chooses, backup_deck, number, 0,
+                                             AI_MAX_VALUE, -1, &test);
+        if (selected != -1)
+        {
+          int transit = backup_deck[selected];
+          for (int j = selected; j > 0; --j)
+            backup_deck[j] = backup_deck[j - 1];
+          backup_deck[0] = transit;
+        }
+        else
+        {
+          break;
+        }
+      }
+      for (i = number - 1; i > -1; i--)
+      {
+        raw_put_iid_on_top_of_deck(t_player, backup_deck[i]);
+      }
+    }
+    else
+    {
+      int lands = get_total_available_lands(t_player);
+      int remaining = number;
+      if (who_chooses != t_player)
+      {
+        if (lands <= 3)
+        {
+          for (i = 0; i < number; i++)
+          {
+            if (is_what(-1, backup_deck[i], TYPE_LAND))
+            {
+              raw_put_iid_on_top_of_deck(t_player, backup_deck[i]);
+              backup_deck[i] = -1;
+              remaining--;
+            }
+          }
+          while (remaining)
+          {
+            int max_cmc = -1;
+            int selected = -1;
+            for (i = 0; i < number; i++)
+            {
+              if (backup_deck[i] > -1)
+              {
+                int this_cmc = get_cmc_by_internal_id(backup_deck[i]);
+                if (this_cmc > max_cmc)
+                {
+                  max_cmc = this_cmc;
+                  selected = i;
+                }
+              }
+            }
+            raw_put_iid_on_top_of_deck(t_player, backup_deck[selected]);
+            backup_deck[selected] = -1;
+            remaining--;
+          }
+        }
+        if (lands >= 6)
+        {
+          for (i = 0; i < number; i++)
+          {
+            if (!is_what(-1, backup_deck[i], TYPE_LAND))
+            {
+              raw_put_iid_on_top_of_deck(t_player, backup_deck[i]);
+              backup_deck[i] = -1;
+              remaining--;
+            }
+          }
+          while (remaining)
+          {
+            int min_cmc = 1000;
+            int selected = -1;
+            for (i = 0; i < number; i++)
+            {
+              if (backup_deck[i] > -1)
+              {
+                int this_cmc = get_cmc_by_internal_id(backup_deck[i]);
+                if (this_cmc < min_cmc)
+                {
+                  min_cmc = this_cmc;
+                  selected = i;
+                }
+              }
+            }
+            raw_put_iid_on_top_of_deck(t_player, backup_deck[selected]);
+            backup_deck[selected] = -1;
+            remaining--;
+          }
+        }
+      }
+      else
+      {
+        if (lands <= 3)
+        {
+          for (i = 0; i < number; i++)
+          {
+            if (!is_what(-1, backup_deck[i], TYPE_LAND))
+            {
+              raw_put_iid_on_top_of_deck(t_player, backup_deck[i]);
+              backup_deck[i] = -1;
+              remaining--;
+            }
+          }
+          while (remaining)
+          {
+            int min_cmc = 1000;
+            int selected = -1;
+            for (i = 0; i < number; i++)
+            {
+              if (backup_deck[i] > -1)
+              {
+                int this_cmc = get_cmc_by_internal_id(backup_deck[i]);
+                if (this_cmc < min_cmc)
+                {
+                  min_cmc = this_cmc;
+                  selected = i;
+                }
+              }
+            }
+            raw_put_iid_on_top_of_deck(t_player, backup_deck[selected]);
+            backup_deck[selected] = -1;
+            remaining--;
+          }
+        }
+        if (lands >= 6)
+        {
+          for (i = 0; i < number; i++)
+          {
+            if (is_what(-1, backup_deck[i], TYPE_LAND))
+            {
+              raw_put_iid_on_top_of_deck(t_player, backup_deck[i]);
+              backup_deck[i] = -1;
+              remaining--;
+            }
+          }
+          while (remaining)
+          {
+            int max_cmc = -1;
+            int selected = -1;
+            for (i = 0; i < number; i++)
+            {
+              if (backup_deck[i] > -1)
+              {
+                int this_cmc = get_cmc_by_internal_id(backup_deck[i]);
+                if (this_cmc > max_cmc)
+                {
+                  max_cmc = this_cmc;
+                  selected = i;
+                }
+              }
+            }
+            raw_put_iid_on_top_of_deck(t_player, backup_deck[selected]);
+            backup_deck[selected] = -1;
+            remaining--;
+          }
+        }
+      }
+    }
+  }
 }
 
 int show_bottom_of_deck(int player, int* deck, int num_cards, const char* prompt, int count_in_deck){

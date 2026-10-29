@@ -3,6 +3,9 @@
 
 #include "manalink.h"
 
+color_test_t debug_addcard_last_color = COLOR_TEST_ANY;
+type_t debug_addcard_last_type = TYPE_ANY;
+
 static const int cardclass_offset_player = 0;
 static const int cardclass_offset_card = 4;
 static const int cardclass_offset_unk1 = 8;
@@ -22,6 +25,9 @@ static const int territoryclass_offset_card_hwnd_length = 4;
 #define option_ShowPowerToughnessOnCards	EXE_DWORD(0x787240)
 #define path_CardArt						EXE_STR(0x60eda0)
 #define pen_autotap_blue					EXE_TYP(HPEN, 0x608d40)
+#define display_dblbfr_hdc EXE_TYP(HDC, 0x62047c)
+#define display_critical_section_for_painting EXE_TYP_PTR(CRITICAL_SECTION, 0x790500)
+#define display_tick_adjustment EXE_DWORD(0x62c370)
 
 #define str_Activation						EXE_BYTE_PTR(0x62bd98)
 #define str_Damage							EXE_STR(0x73b538)
@@ -32,10 +38,15 @@ static const int territoryclass_offset_card_hwnd_length = 4;
 // from Drawcardlib.dll
 #define DLLIMPORT __attribute__((dllimport))
 DLLIMPORT int DrawSmallCard(HDC hdc, const RECT* card_rect, const card_ptr_t* cp, int version, int mode, int player, int card);
-DLLIMPORT int DrawSmallCardTitle(HDC hdc, const RECT* dest_rect, const char* card_title, int color, int controlled_by_owner, const card_ptr_t* cp, int player, int card);
+/* Native 2022 callers supply the image version as a ninth argument. */
+DLLIMPORT int DrawSmallCardTitle(HDC hdc, const RECT* dest_rect, const char* card_title, int color, int controlled_by_owner, const card_ptr_t* cp, int player, int card, int version);
 DLLIMPORT int DrawCardBack(HDC hdc, const RECT* dest_rect, int mode);
 DLLIMPORT void draw_special_counters(HDC hdc, const RECT* rect, int player, int card);
 DLLIMPORT void draw_standard_counters(HDC hdc, const RECT* rect, int player, int card);
+DLLIMPORT int DrawSmallCardEx(HDC hdc, const RECT *rect, const card_ptr_t *cp, int version, int mode, int player, int card, int expansion);
+void draw_smallcard_activation_card(HDC hdc, RECT *rect, int csvid, int player, int card, int parent_player, int parent_card);
+void draw_smallcard_special_effect_card(HDC hdc, RECT *rect, int csvid, int player, int card);
+void draw_smallcard_normal(HDC hdc, RECT *rect, int player, int card, int unused_a5, int unused_a6, int unused_a7, int force_to_activation, int force_to_upkeep);
 
 #define blt_dying_pic						EXE_FN(void, 0x4d49b0, HDC hdc, RECT* rect)
 #define blt_summon_pic						EXE_FN(void, 0x4d4820, HDC hdc, RECT* rect)
@@ -194,13 +205,13 @@ static bitset128 get_icons(int player, int card, int is_damage_card)
   bitset128_reset_all(&rval);
 
   if (player < 0 || player > 1 || card < 0 || card >= 150)
-	return rval;
+    return rval;
 
   if (get_setting(SETTING_ABILITY_ICON_MAX) < 0)
-	{
-	  bitset128_set_all(&rval);
-	  return rval;
-	}
+  {
+    bitset128_set_all(&rval);
+    return rval;
+  }
 
   keyword_t kw = 0;
   int spkw = 0;
@@ -208,61 +219,63 @@ static bitset128 get_icons(int player, int card, int is_damage_card)
   int not_valid_card = 0;
   type_t typ;
   {
-    card_instance_t* instance = get_displayed_card_instance(player, card);
+    card_instance_t *instance = get_displayed_card_instance(player, card);
 
     EnterCriticalSection(critical_section_for_display);
 
     iid_t iid = instance->internal_card_id;
 
-	/* This check is the equivalent of !in_play(player, card), using instance instead of calling get_card_instance()
-	 * internally. */
-    if (iid >= 0
-		  && (instance->state & (STATE_OUBLIETTED|STATE_INVISIBLE|STATE_IN_PLAY)) == STATE_IN_PLAY)
+    /* This check is the equivalent of !in_play(player, card), using instance instead of calling
+     * get_card_instance() internally. */
+    if (iid >= 0 &&
+        (instance->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)) == STATE_IN_PLAY)
+    {
+      if (is_damage_card == -1) // i.e., caller doesn't know
+        is_damage_card = cards_data[iid].id == 901;
+
+      if (is_damage_card)
       {
-		if (is_damage_card == -1)	// i.e., caller doesn't know
-		  is_damage_card = cards_data[iid].id == 901;
+        spkw = instance->targets[16].card &
+               (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_LIFELINK | SP_KEYWORD_WITHER);
 
-		if (is_damage_card)
-		  {
-			spkw = instance->targets[16].card & (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_LIFELINK | SP_KEYWORD_WITHER);
+        if (instance->regen_status & KEYWORD_INFECT)
+          bitset128_set(&rval, ICON_INFECT);
 
-			if (instance->regen_status & KEYWORD_INFECT)
-			  bitset128_set(&rval, ICON_INFECT);
+        if (instance->token_status & STATUS_FIRST_STRIKE_DAMAGE)
+          bitset128_set(&rval, ICON_FIRST_STRIKE);
 
-			if (instance->token_status & STATUS_FIRST_STRIKE_DAMAGE)
-			  bitset128_set(&rval, ICON_FIRST_STRIKE);
+        if (instance->token_status & STATUS_TRAMPLE_DAMAGE)
+          bitset128_set(&rval, ICON_TRAMPLE);
 
-			if (instance->token_status & STATUS_TRAMPLE_DAMAGE)
-			  bitset128_set(&rval, ICON_TRAMPLE);
-
-			typ = TYPE_EFFECT;
-		  }
-		else
-		  {
-			kw = (keyword_t)instance->regen_status;
-			spkw = get_special_abilities_by_instance(instance);
-			if (spkw == -1)
-			  spkw = 0;
-			//untap_status = (untap_status_t)instance->untap_status;
-
-			typ = (type_t)cards_data[iid].type;
-
-			// This is mildly dangerous; cards_data can change during speculation.  But it's rare, and magic.exe already does it lots.
-			// const card_data_t* cd = &cards_data[iid];
-			// if ((typ & (TYPE_INSTANT|TYPE_INTERRUPT)) && (cd->type & TYPE_PERMANENT))
-			// bitset128_set(&rval, ICON_FLASH);	// won't actually show up in Manalink since all icons are suppressed while off battlefield
-
-			if (is_humiliated_by_instance(instance, AL_ALL))
-			  bitset128_set(&rval, ICON_LOST_ABILITIES);
-			else if (!can_use_activated_abilities_by_instance(instance))
-			  bitset128_set(&rval, ICON_CANT_ACTIVATE);
-
-			sf2 = get_special_flags2_by_instance(instance);
-			sf3 = get_special_flags3_by_instance(instance);
-		  }
+        typ = TYPE_EFFECT;
       }
-	else
-	  not_valid_card = 1;
+      else
+      {
+        kw = (keyword_t)instance->regen_status;
+        spkw = get_special_abilities_by_instance(instance);
+        if (spkw == -1)
+          spkw = 0;
+        // untap_status = (untap_status_t)instance->untap_status;
+
+        typ = (type_t)cards_data[iid].type;
+
+        // This is mildly dangerous; cards_data can change during speculation.  But it's rare, and
+        // magic.exe already does it lots. const card_data_t* cd = &cards_data[iid]; if ((typ &
+        // (TYPE_INSTANT|TYPE_INTERRUPT)) && (cd->type & TYPE_PERMANENT)) bitset128_set(&rval,
+        // ICON_FLASH);	// won't actually show up in Manalink since all icons are suppressed while
+        // off battlefield
+
+        if (is_humiliated_by_instance(instance, AL_ALL))
+          bitset128_set(&rval, ICON_LOST_ABILITIES);
+        else if (!can_use_activated_abilities_by_instance(instance))
+          bitset128_set(&rval, ICON_CANT_ACTIVATE);
+
+        sf2 = get_special_flags2_by_instance(instance);
+        sf3 = get_special_flags3_by_instance(instance);
+      }
+    }
+    else
+      not_valid_card = 1;
 
     LeaveCriticalSection(critical_section_for_display);
   }
@@ -271,151 +284,157 @@ static bitset128 get_icons(int player, int card, int is_damage_card)
     return rval;
 
   if (kw)
+  {
+    // Infuriating that display order doesn't match keyword order.
+    if (kw & (KEYWORD_FLYING | KEYWORD_REACH | KEYWORD_BANDING | KEYWORD_PROT_CREATURES |
+              KEYWORD_TRAMPLE | KEYWORD_DEFENDER))
     {
-      // Infuriating that display order doesn't match keyword order.
-      if (kw & (KEYWORD_FLYING | KEYWORD_REACH | KEYWORD_BANDING | KEYWORD_PROT_CREATURES | KEYWORD_TRAMPLE | KEYWORD_DEFENDER))
-		{
-		  if (kw & KEYWORD_FLYING)
-			bitset128_set(&rval, ICON_FLYING);
-		  if (kw & KEYWORD_REACH)
-			bitset128_set(&rval, ICON_REACH);
-		  if (kw & KEYWORD_BANDING)
-			bitset128_set(&rval, ICON_BANDING);
-		  if (kw & KEYWORD_TRAMPLE)
-			bitset128_set(&rval, ICON_TRAMPLE);
-		  //if (kw & KEYWORD_PROT_CREATURES)	// no bit actually assigned; this means something else in Manalink
-		  //bitset128_set(&rval, ICON_PROT_CREATURES);
-		  if (kw & KEYWORD_DEFENDER)
-			bitset128_set(&rval, ICON_DEFENDER);
-		}
-
-      if (kw & (KEYWORD_REGENERATION | KEYWORD_DOUBLE_STRIKE | KEYWORD_FIRST_STRIKE | KEYWORD_SHROUD | KEYWORD_INFECT))
-		{
-		  if (kw & KEYWORD_DOUBLE_STRIKE)
-			bitset128_set(&rval, ICON_DOUBLE_STRIKE);
-		  else if (kw & KEYWORD_FIRST_STRIKE)
-			bitset128_set(&rval, ICON_FIRST_STRIKE);
-
-		  if (kw & KEYWORD_REGENERATION)
-			bitset128_set(&rval, ICON_REGENERATION);
-		  if (kw & KEYWORD_SHROUD)
-			bitset128_set(&rval, ICON_SHROUD);
-		  if (kw & KEYWORD_INFECT)
-			bitset128_set(&rval, ICON_INFECT);
-		}
-
-      if (kw & KEYWORD_BASIC_LANDWALK)
-		rval.ull[0] |= (kw & KEYWORD_BASIC_LANDWALK) << ICON_SWAMPWALK;	// KEYWORD_SWAMPWALK is the first, so this is right
-
-      if (kw & (KEYWORD_PROT_COLORED | KEYWORD_PROT_ARTIFACTS))
-		rval.ull[0] |= (kw & (KEYWORD_PROT_COLORED | KEYWORD_PROT_ARTIFACTS)) << 4;	// KEYWORD PROT_BLACK 1<<11 to ICON_PROT_BLACK 15
+      if (kw & KEYWORD_FLYING)
+        bitset128_set(&rval, ICON_FLYING);
+      if (kw & KEYWORD_REACH)
+        bitset128_set(&rval, ICON_REACH);
+      if (kw & KEYWORD_BANDING)
+        bitset128_set(&rval, ICON_BANDING);
+      if (kw & KEYWORD_TRAMPLE)
+        bitset128_set(&rval, ICON_TRAMPLE);
+      if (kw & KEYWORD_PROT_CREATURES)
+        bitset128_set(&rval, ICON_PROT_CREATURES);
+      if (kw & KEYWORD_DEFENDER)
+        bitset128_set(&rval, ICON_DEFENDER);
     }
+
+    if (kw & (KEYWORD_REGENERATION | KEYWORD_DOUBLE_STRIKE | KEYWORD_FIRST_STRIKE | KEYWORD_SHROUD |
+              KEYWORD_INFECT))
+    {
+      if (kw & KEYWORD_DOUBLE_STRIKE)
+        bitset128_set(&rval, ICON_DOUBLE_STRIKE);
+      else if (kw & KEYWORD_FIRST_STRIKE)
+        bitset128_set(&rval, ICON_FIRST_STRIKE);
+
+      if (kw & KEYWORD_REGENERATION)
+        bitset128_set(&rval, ICON_REGENERATION);
+      if (kw & KEYWORD_SHROUD)
+        bitset128_set(&rval, ICON_SHROUD);
+      if (kw & KEYWORD_INFECT)
+        bitset128_set(&rval, ICON_INFECT);
+    }
+
+    if (kw & KEYWORD_BASIC_LANDWALK)
+      rval.ull[0] |= (kw & KEYWORD_BASIC_LANDWALK)
+                     << ICON_SWAMPWALK; // KEYWORD_SWAMPWALK is the first, so this is right
+
+    if (kw & (KEYWORD_PROT_COLORED | KEYWORD_PROT_ARTIFACTS))
+      rval.ull[0] |= (kw & (KEYWORD_PROT_COLORED | KEYWORD_PROT_ARTIFACTS))
+                     << 4; // KEYWORD PROT_BLACK 1<<11 to ICON_PROT_BLACK 15
+  }
 
   if (sf3 & SF3_RENOWNED)
-	bitset128_set(&rval, ICON_RENOWNED);
+    bitset128_set(&rval, ICON_RENOWNED);
   if (sf2 & SF2_MONSTROUS)
-	bitset128_set(&rval, ICON_MONSTROUS);
-  if ((sf2 & SF2_KATABATIC_WINDS)
-	  && !bitset128_isset(&rval, ICON_CANT_ACTIVATE))
-	bitset128_set(&rval, ICON_CANT_ACTIVATE_TAP);
+    bitset128_set(&rval, ICON_MONSTROUS);
+  if (sf2 & SF2_KATABATIC_WINDS)
+    bitset128_set(&rval, ICON_CANT_ACTIVATE_TAP);
   if (sf2 & SF2_PAIRED)
-	bitset128_set(&rval, ICON_SOULBOND);
+    bitset128_set(&rval, ICON_SOULBOND);
 
-  if (spkw)	// All the icons that can't be shown in Manalink are commented-out in here, too, though they obviously won't all fit in sp_keyword_t
-    {
-	  if (spkw & SP_KEYWORD_VIGILANCE)
-		bitset128_set(&rval, ICON_VIGILANCE);
-      //if (spkw & SP_KEYWORD_MADNESS)	// no bit assigned, and can't display anyway in Manalink since all icons are suppress while off battlefield
-	  //bitset128_set(&rval, ICON_MADNESS);
-	  if (spkw & SP_KEYWORD_CANNOT_BLOCK)
-		bitset128_set(&rval, ICON_CANT_BLOCK);
-	  if (spkw & SP_KEYWORD_UNBLOCKABLE)
-		bitset128_set(&rval, ICON_UNBLOCKABLE);
-	  if (spkw & SP_KEYWORD_SHADOW)
-		bitset128_set(&rval, ICON_SHADOW);
-	  if (spkw & SP_KEYWORD_HORSEMANSHIP)
-		bitset128_set(&rval, ICON_HORSEMANSHIP);
-	  if (spkw & SP_KEYWORD_FEAR)
-		bitset128_set(&rval, ICON_FEAR);
-	  if (spkw & SP_KEYWORD_INTIMIDATE)
-		bitset128_set(&rval, ICON_INTIMIDATE);
-	  if (spkw & SP_KEYWORD_DEATHTOUCH)
-		bitset128_set(&rval, ICON_DEATHTOUCH);
-	  if (spkw & SP_KEYWORD_LIFELINK)
-		bitset128_set(&rval, ICON_LIFELINK);
-	  if (spkw & SP_KEYWORD_FLANKING)
-		bitset128_set(&rval, ICON_FLANKING);
-	  //if (spkw & SP_KEYWORD_RAMPAGE)	// no bit assigned
-	  //bitset128_set(&rval, ICON_RAMPAGE);
-	  if (spkw & SP_KEYWORD_BUSHIDO)
-		bitset128_set(&rval, ICON_BUSHIDO);
-	  if (spkw & SP_KEYWORD_WITHER)
-		bitset128_set(&rval, ICON_WITHER);
-	  //if (spkw & SP_KEYWORD_EXALTED)	// no bit assigned
-	  //bitset128_set(&rval, ICON_EXALTED);
-	  if (spkw & SP_KEYWORD_INDESTRUCTIBLE)
-		bitset128_set(&rval, ICON_INDESTRUCTIBLE);
-	  if (spkw & SP_KEYWORD_HASTE)
-		bitset128_set(&rval, ICON_HASTE);
-	  if (spkw & SP_KEYWORD_HEXPROOF)
-		bitset128_set(&rval, ICON_HEXPROOF);
-      //if (spkw & SP_KEYWORD_PROWESS)	// no bit assigned
-	  //bitset128_set(&rval, ICON_PROWESS);
-	  //if (spkw & SP_KEYWORD_DOESNT_UNTAP)	// no bit assigned
-	  //bitset128_set(&rval, ICON_DOESNT_UNTAP);
-      //if (spkw & SP_KEYWORD_PERSIST)	// no bit assigned
-	  //bitset128_set(&rval, ICON_PERSIST);
-      //if (spkw & SP_KEYWORD_UNDYING)	// no bit assigned
-	  //bitset128_set(&rval, ICON_UNDYING);
-      //if (spkw & SP_KEYWORD_NINJUTSU)	// no bit assigned, and can't display anyway in Manalink since all icons are suppressed while off battlefield
-	  //bitset128_set(&rval, ICON_NINJUTSU);
-      //if (spkw & SP_KEYWORD_CANT_BE_COUNTERED)	// no bit assigned, and can't display anyway in Manalink since all icons are suppressed while off battlefield
-	  //bitset128_set(&rval, ICON_CANT_BE_COUNTERED);
-      //if (spkw & (SP_KEYWORD_PROT_MISC | SP_KEYWORD_GRANTED_PROT_MISC))	// no bit assigned
-	  //bitset128_set(&rval, ICON_PROT_MISC);
-      if (spkw & SP_KEYWORD_SKULK)
-		bitset128_set(&rval, ICON_SKULK);
-      if (spkw & SP_KEYWORD_MENACE)
-		bitset128_set(&rval, ICON_MENACE);
-	  //if (spkw & SP_KEYWORD_MORPH)	// no bit assigned
-	  //bitset128_set(&rval, ICON_MORPH);
-	  //if (spkw & SP_KEYWORD_MANIFEST)	// no bit assigned.  SF2_FACE_DOWN_DUE_TO_MANIFEST is closest, but gives away information - it's not set on manifested cards whose front has morph.
-	  //bitset128_set(&rval, ICON_MANIFEST);
-	  //if (spkw & SP_KEYWORD_DELVE)	// no bit assigned
-	  //bitset128_set(&rval, ICON_DELVE);
-	  //if (spkw & SP_KEYWORD_IMPROVISE)	// no bit assigned
-	  //bitset128_set(&rval, ICON_IMPROVISE);
-	  //if (spkw & SP_KEYWORD_CONVOKE)	// no bit assigned
-	  //bitset128_set(&rval, ICON_CONVOKE);
-	  //if (spkw & SP_KEYWORD_CANT_ATTACK)	// no bit assigned
-	  //bitset128_set(&rval, ICON_CANT_ATTACK);
-	  //if (spkw & SP_KEYWORD_REBOUND)	// no bit assigned
-	  //bitset128_set(&rval, ICON_REBOUND);
-	  //if (spkw & SP_KEYWORD_STORM)	// no bit assigned
-	  //bitset128_set(&rval, ICON_STORM);
-	  //if (spkw & SP_KEYWORD_PROVOKE)	// no bit assigned
-	  //bitset128_set(&rval, ICON_PROVOKE);
-	  //if (spkw & SP_KEYWORD_REPLICATE)	// no bit assigned
-	  //bitset128_set(&rval, ICON_REPLICATE);
-	  //if (spkw & SP_KEYWORD_PHASING)	// no bit assigned
-	  //bitset128_set(&rval, ICON_PHASING);
-	  //if (spkw & SP_KEYWORD_SQUIRRELLINK)	// no bit assigned
-	  //bitset128_set(&rval, ICON_SQUIRRELLINK);
-	  //if (spkw & SP_KEYWORD_SPLIT_SECOND)	// no bit assigned
-	  //bitset128_set(&rval, ICON_SPLIT_SECOND);
-	  //if (spkw & SP_KEYWORD_HEXPROOF_MONOCOLORED)	// no bit assigned
-	  //bitset128_set(&rval, ICON_HEXPROOF_MONOCOLORED);
-	  //if (spkw & SP_KEYWORD_HEXPROOF_BLACK)	// no bit assigned
-	  //bitset128_set(&rval, ICON_HEXPROOF_BLACK);
-	  //if (spkw & SP_KEYWORD_HEXPROOF_BLUE)	// no bit assigned
-	  //bitset128_set(&rval, ICON_HEXPROOF_BLUE);
-	  //if (spkw & SP_KEYWORD_HEXPROOF_GREEN)	// no bit assigned
-	  //bitset128_set(&rval, ICON_HEXPROOF_GREEN);
-	  //if (spkw & SP_KEYWORD_HEXPROOF_RED)	// no bit assigned
-	  //bitset128_set(&rval, ICON_HEXPROOF_RED);
-	  //if (spkw & SP_KEYWORD_HEXPROOF_WHITE)	// no bit assigned
-	  //bitset128_set(&rval, ICON_HEXPROOF_WHITE);
-    }
+  if (spkw) // All the icons that can't be shown in Manalink are commented-out in here, too, though
+            // they obviously won't all fit in sp_keyword_t
+  {
+    if (spkw & SP_KEYWORD_VIGILANCE)
+      bitset128_set(&rval, ICON_VIGILANCE);
+    // if (spkw & SP_KEYWORD_MADNESS)	// no bit assigned, and can't display anyway in Manalink
+    // since all icons are suppress while off battlefield bitset128_set(&rval, ICON_MADNESS);
+    if (spkw & SP_KEYWORD_CANNOT_BLOCK)
+      bitset128_set(&rval, ICON_CANT_BLOCK);
+    if (spkw & SP_KEYWORD_UNBLOCKABLE)
+      bitset128_set(&rval, ICON_UNBLOCKABLE);
+    if (spkw & SP_KEYWORD_SHADOW)
+      bitset128_set(&rval, ICON_SHADOW);
+    if (spkw & SP_KEYWORD_HORSEMANSHIP)
+      bitset128_set(&rval, ICON_HORSEMANSHIP);
+    if (spkw & SP_KEYWORD_FEAR)
+      bitset128_set(&rval, ICON_FEAR);
+    if (spkw & SP_KEYWORD_INTIMIDATE)
+      bitset128_set(&rval, ICON_INTIMIDATE);
+    if (spkw & SP_KEYWORD_DEATHTOUCH)
+      bitset128_set(&rval, ICON_DEATHTOUCH);
+    if (spkw & SP_KEYWORD_LIFELINK)
+      bitset128_set(&rval, ICON_LIFELINK);
+    if (spkw & SP_KEYWORD_FLANKING)
+      bitset128_set(&rval, ICON_FLANKING);
+    // if (spkw & SP_KEYWORD_RAMPAGE)	// no bit assigned
+    // bitset128_set(&rval, ICON_RAMPAGE);
+    if (spkw & SP_KEYWORD_BUSHIDO)
+      bitset128_set(&rval, ICON_BUSHIDO);
+    if (spkw & SP_KEYWORD_WITHER)
+      bitset128_set(&rval, ICON_WITHER);
+    // if (spkw & SP_KEYWORD_EXALTED)	// no bit assigned
+    // bitset128_set(&rval, ICON_EXALTED);
+    if (spkw & SP_KEYWORD_INDESTRUCTIBLE)
+      bitset128_set(&rval, ICON_INDESTRUCTIBLE);
+    if (spkw & SP_KEYWORD_HASTE)
+      bitset128_set(&rval, ICON_HASTE);
+    if (spkw & SP_KEYWORD_HEXPROOF)
+      bitset128_set(&rval, ICON_HEXPROOF);
+    // if (spkw & SP_KEYWORD_PROWESS)	// no bit assigned
+    // bitset128_set(&rval, ICON_PROWESS);
+    // if (spkw & SP_KEYWORD_DOESNT_UNTAP)	// no bit assigned
+    // bitset128_set(&rval, ICON_DOESNT_UNTAP);
+    // if (spkw & SP_KEYWORD_PERSIST)	// no bit assigned
+    // bitset128_set(&rval, ICON_PERSIST);
+    // if (spkw & SP_KEYWORD_UNDYING)	// no bit assigned
+    // bitset128_set(&rval, ICON_UNDYING);
+    // if (spkw & SP_KEYWORD_NINJUTSU)	// no bit assigned, and can't display anyway in Manalink
+    // since all icons are suppressed while off battlefield bitset128_set(&rval, ICON_NINJUTSU);
+    // if (spkw & SP_KEYWORD_CANT_BE_COUNTERED)	// no bit assigned, and can't display anyway in
+    // Manalink since all icons are suppressed while off battlefield bitset128_set(&rval,
+    // ICON_CANT_BE_COUNTERED);
+    // if (spkw & (SP_KEYWORD_PROT_MISC | SP_KEYWORD_GRANTED_PROT_MISC))	// no bit assigned
+    // bitset128_set(&rval, ICON_PROT_MISC);
+    if (spkw & SP_KEYWORD_SKULK)
+      bitset128_set(&rval, ICON_SKULK);
+    if (spkw & SP_KEYWORD_MENACE)
+      bitset128_set(&rval, ICON_MENACE);
+    // if (spkw & SP_KEYWORD_MORPH)	// no bit assigned
+    // bitset128_set(&rval, ICON_MORPH);
+    // if (spkw & SP_KEYWORD_MANIFEST)	// no bit assigned.  SF2_FACE_DOWN_DUE_TO_MANIFEST is
+    // closest, but gives away information - it's not set on manifested cards whose front has morph.
+    // bitset128_set(&rval, ICON_MANIFEST);
+    // if (spkw & SP_KEYWORD_DELVE)	// no bit assigned
+    // bitset128_set(&rval, ICON_DELVE);
+    // if (spkw & SP_KEYWORD_IMPROVISE)	// no bit assigned
+    // bitset128_set(&rval, ICON_IMPROVISE);
+    // if (spkw & SP_KEYWORD_CONVOKE)	// no bit assigned
+    // bitset128_set(&rval, ICON_CONVOKE);
+    // if (spkw & SP_KEYWORD_CANT_ATTACK)	// no bit assigned
+    // bitset128_set(&rval, ICON_CANT_ATTACK);
+    // if (spkw & SP_KEYWORD_REBOUND)	// no bit assigned
+    // bitset128_set(&rval, ICON_REBOUND);
+    // if (spkw & SP_KEYWORD_STORM)	// no bit assigned
+    // bitset128_set(&rval, ICON_STORM);
+    // if (spkw & SP_KEYWORD_PROVOKE)	// no bit assigned
+    // bitset128_set(&rval, ICON_PROVOKE);
+    // if (spkw & SP_KEYWORD_REPLICATE)	// no bit assigned
+    // bitset128_set(&rval, ICON_REPLICATE);
+    // if (spkw & SP_KEYWORD_PHASING)	// no bit assigned
+    // bitset128_set(&rval, ICON_PHASING);
+    if (spkw & SP_KEYWORD_SQUIRRELLINK)
+      bitset128_set(&rval, ICON_SQUIRRELLINK);
+    // if (spkw & SP_KEYWORD_SPLIT_SECOND)	// no bit assigned
+    // bitset128_set(&rval, ICON_SPLIT_SECOND);
+    // if (spkw & SP_KEYWORD_HEXPROOF_MONOCOLORED)	// no bit assigned
+    // bitset128_set(&rval, ICON_HEXPROOF_MONOCOLORED);
+    // if (spkw & SP_KEYWORD_HEXPROOF_BLACK)	// no bit assigned
+    // bitset128_set(&rval, ICON_HEXPROOF_BLACK);
+    // if (spkw & SP_KEYWORD_HEXPROOF_BLUE)	// no bit assigned
+    // bitset128_set(&rval, ICON_HEXPROOF_BLUE);
+    // if (spkw & SP_KEYWORD_HEXPROOF_GREEN)	// no bit assigned
+    // bitset128_set(&rval, ICON_HEXPROOF_GREEN);
+    // if (spkw & SP_KEYWORD_HEXPROOF_RED)	// no bit assigned
+    // bitset128_set(&rval, ICON_HEXPROOF_RED);
+    // if (spkw & SP_KEYWORD_HEXPROOF_WHITE)	// no bit assigned
+    // bitset128_set(&rval, ICON_HEXPROOF_WHITE);
+  }
 
   return rval;
 }
@@ -520,40 +539,46 @@ static void draw_abilities(HDC hdc, RECT* rect, int player, int card, int is_dam
   RestoreDC(hdc, saved_dc);
 }
 
-static int card_instances_will_have_same_icons(card_instance_t* inst1, card_instance_t* inst2)
+static int card_instances_will_have_same_icons(card_instance_t *inst1, card_instance_t *inst2)
 {
-  // By the time we get here, we already know that the cards have the same iid, so no change in flash.
-  if ((inst1->regen_status ^ inst2->regen_status)
-      & (((KEYWORD_SHROUD<<1)-1) /*| KEYWORD_PROT_CREATURES*/ | KEYWORD_DEFENDER | KEYWORD_INFECT | KEYWORD_DOUBLE_STRIKE))
+  // By the time we get here, we already know that the cards have the same iid, so no change in
+  // flash.
+  if ((inst1->regen_status ^ inst2->regen_status) &
+      (((KEYWORD_SHROUD << 1) - 1) | KEYWORD_PROT_CREATURES | KEYWORD_DEFENDER | KEYWORD_INFECT |
+       KEYWORD_DOUBLE_STRIKE))
     return 0;
 
-  //if ((inst1->untap_status ^ inst2->untap_status) & UNTAP_STATUS_DOESNT_UNTAP)	// no bit assigned
-  //return 0;
+  // if ((inst1->untap_status ^ inst2->untap_status) & UNTAP_STATUS_DOESNT_UNTAP)	// no bit
+  // assigned return 0;
 
   if (is_humiliated_by_instance(inst1, AL_ALL) != is_humiliated_by_instance(inst2, AL_ALL))
-	return 0;
+    return 0;
 
   int spkw1 = get_special_abilities_by_instance(inst1);
   if (spkw1 == -1)
-	spkw1 = 0;
+    spkw1 = 0;
   int spkw2 = get_special_abilities_by_instance(inst2);
   if (spkw2 == -1)
-	spkw2 = 0;
+    spkw2 = 0;
 
-  if ((spkw1 ^ spkw2) & (SP_KEYWORD_VIGILANCE | SP_KEYWORD_CANNOT_BLOCK | SP_KEYWORD_UNBLOCKABLE | SP_KEYWORD_SHADOW
-						 | SP_KEYWORD_HORSEMANSHIP | SP_KEYWORD_FEAR | SP_KEYWORD_INTIMIDATE | SP_KEYWORD_DEATHTOUCH
-						 | SP_KEYWORD_LIFELINK | SP_KEYWORD_FLANKING | SP_KEYWORD_BUSHIDO | SP_KEYWORD_WITHER
-						 | SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_HASTE | SP_KEYWORD_HEXPROOF | SP_KEYWORD_SKULK
-						 | SP_KEYWORD_MENACE))
+  if ((spkw1 ^ spkw2) &
+      (SP_KEYWORD_VIGILANCE | SP_KEYWORD_CANNOT_BLOCK | SP_KEYWORD_UNBLOCKABLE | SP_KEYWORD_SHADOW |
+       SP_KEYWORD_HORSEMANSHIP | SP_KEYWORD_FEAR | SP_KEYWORD_INTIMIDATE | SP_KEYWORD_DEATHTOUCH |
+       SP_KEYWORD_LIFELINK | SP_KEYWORD_FLANKING | SP_KEYWORD_BUSHIDO | SP_KEYWORD_WITHER |
+       SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_HASTE | SP_KEYWORD_HEXPROOF | SP_KEYWORD_SKULK |
+       SP_KEYWORD_MENACE))
     return 0;
 
-  if ((get_special_flags3_by_instance(inst1) ^ get_special_flags3_by_instance(inst2)) & SF3_RENOWNED)
-	return 0;
-  if ((get_special_flags2_by_instance(inst1) ^ get_special_flags2_by_instance(inst2)) & SF2_MONSTROUS)
-	return 0;
+  if ((get_special_flags3_by_instance(inst1) ^ get_special_flags3_by_instance(inst2)) &
+      SF3_RENOWNED)
+    return 0;
+  if ((get_special_flags2_by_instance(inst1) ^ get_special_flags2_by_instance(inst2)) &
+      SF2_MONSTROUS)
+    return 0;
 
-  if (can_use_activated_abilities_by_instance(inst1) != can_use_activated_abilities_by_instance(inst2))
-	return 0;
+  if (can_use_activated_abilities_by_instance(inst1) !=
+      can_use_activated_abilities_by_instance(inst2))
+    return 0;
 
   return 1;
 }
@@ -641,340 +666,451 @@ static const char* get_name_for_ability_icon_at_point(const RECT* rect, int play
 LRESULT __stdcall wndproc_CardClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
   int player, card;
-  card_instance_t actual;
+  inst_and_ext_t xactual;
+  card_instance_t *actual = &xactual.inst;
 
   switch (msg)
-	{
-	  case WM_COMMAND:	// Popup menu
-		switch (LOWORD(wparam))
-		  {
-			case 0x72:	// Card name from Original Type submenu
-			  {
-				player = GetWindowLongA(hwnd, cardclass_offset_player);
-				card = GetWindowLongA(hwnd, cardclass_offset_card);
+  {
+  case WM_CREATE:
+  {
+    target_t *target = ((CREATESTRUCT *)lparam)->lpCreateParams;
+    if (!target)
+      return -1;
+    SetWindowLongA(hwnd, cardclass_offset_player, target->player);
+    SetWindowLongA(hwnd, cardclass_offset_card, target->card);
+    SetWindowLongA(hwnd, cardclass_offset_unk1, 0);
+    inst_and_ext_t *xstashed = calloc(1, sizeof(inst_and_ext_t));
+    SetWindowLongA(hwnd, cardclass_offset_instance_copy, (LONG)xstashed);
+    SetWindowLongA(hwnd, 16, 0);
+    if (!xstashed)
+      return -1;
+    xstashed->inst.ext = &xstashed->ext;
+    return 0;
+  }
+  case WM_DESTROY:
+    free((void *)GetWindowLongA(hwnd, cardclass_offset_instance_copy));
+    return 0;
+  case WM_PAINT:
+  {
+    player = GetWindowLongA(hwnd, cardclass_offset_player);
+    card = GetWindowLongA(hwnd, cardclass_offset_card);
+    if (SendMessageA(hwnd, WM_USER + 4, 0, 0))
+      InvalidateRect(hwnd, NULL, FALSE);
+    EnterCriticalSection(display_critical_section_for_painting);
+    unsigned int tickcount = GetTickCount();
+    RECT card_rect;
+    GetClientRect(hwnd, &card_rect);
+    PAINTSTRUCT paint;
+    HDC hdc = BeginPaint(hwnd, &paint);
+    if (hdc)
+    {
+      set_palette_and_stretch_mode(hdc);
+      if (player == -1 && card == -1)
+        DrawCardBack(hdc, &card_rect, 0);
+      else if (card == -1)
+      {
+        EXE_FN(void, 0x44da00, HDC, RECT *, int)(hdc, &card_rect, player);
+        FrameRect(hdc, &card_rect, GetStockObject(BLACK_BRUSH));
+      }
+      else
+      {
+        int csvid = get_displayed_csvid(player, card);
+        if (csvid >= 0 && csvid < available_slots)
+        {
+          switch (csvid)
+          {
+          case 901:
+          case 902:
+          case 903:
+          case 905:
+          case 907:
+            draw_smallcard_special_effect_card(hdc, &card_rect, csvid, player, card);
+            break;
+          case 904:
+            DrawCardBack(hdc, &card_rect, 0);
+            DrawSmallCardTitle(hdc, &card_rect, str_Draw_a_card,
+                               get_displayed_unknown0x70(player, card), 1, NULL, -1, -1, 0);
+            break;
+          case 906:
+            draw_smallcard_activation_card(hdc, &card_rect, csvid, player, card, -1, -1);
+            break;
+          default:
+            draw_smallcard_normal(display_dblbfr_hdc, &card_rect, player, card, 0, 0, 0, 0, 0);
+            BitBlt(hdc, 0, 0, card_rect.right, card_rect.bottom, display_dblbfr_hdc, 0, 0, SRCCOPY);
+            break;
+          }
+          inst_and_ext_t *xstashed =
+              (inst_and_ext_t *)GetWindowLongA(hwnd, cardclass_offset_instance_copy);
+          memcpy_displayed_inst_and_ext(xstashed, player, card);
+          if (EXE_DWORD(0x60ed98))
+            EXE_FN(void, 0x48cfb0, HDC, RECT *, int, int)(hdc, &card_rect, player, card);
+        }
+      }
+      EndPaint(hwnd, &paint);
+    }
+    display_tick_adjustment += GetTickCount() - tickcount;
+    LeaveCriticalSection(display_critical_section_for_painting);
+    return 0;
+  }
+  case WM_USER + 4:
+  {
+    player = GetWindowLongA(hwnd, cardclass_offset_player);
+    card = GetWindowLongA(hwnd, cardclass_offset_card);
+    if (card == -1 && player != -1)
+      return 0;
+    inst_and_ext_t *xstashed =
+        (inst_and_ext_t *)GetWindowLongA(hwnd, cardclass_offset_instance_copy);
+    memcpy_displayed_inst_and_ext(&xactual, player, card);
+    // Compare the records after accounting for each snapshot's own extension pointer.
+    xactual.inst.ext = xstashed->inst.ext;
+    return memcmp(xstashed, &xactual, sizeof(xactual));
+  }
 
-				card_instance_t* instance = get_displayed_card_instance(player, card);
-				int oici = instance->original_internal_card_id;
-				int csvid = cards_data[oici].id;
-				SendMessage(hwnd_FullCardClass, 0x401, csvid, 0);
-			  }
-			  return 0;
+  case WM_COMMAND: // Popup menu
+    switch (LOWORD(wparam))
+    {
+    case 0x72: // Card name from Original Type submenu
+    {
+      player = GetWindowLongA(hwnd, cardclass_offset_player);
+      card = GetWindowLongA(hwnd, cardclass_offset_card);
 
-			case 0x264:	// Bury this card
-			  if (debug_mode)
-				{
-				  int old_phasestopper = option_PhaseStoppers[current_turn][current_phase];
-				  option_PhaseStoppers[current_turn][current_phase] &= ~1;
+      card_instance_t *instance = get_displayed_card_instance(player, card);
+      int oici = instance->original_internal_card_id;
+      int csvid = cards_data[oici].id;
+      SendMessage(hwnd_FullCardClass, 0x401, csvid, 0);
+    }
+      return 0;
 
-				  player = GetWindowLongA(hwnd, cardclass_offset_player);
-				  card = GetWindowLongA(hwnd, cardclass_offset_card);
+    case 0x265: // Toggle summoning sickness in debug mode.
+      if (debug_mode)
+      {
+        player = GetWindowLongA(hwnd, cardclass_offset_player);
+        card = GetWindowLongA(hwnd, cardclass_offset_card);
+        card_instance_t *instance = get_card_instance(player, card);
+        if (instance->state & STATE_SUMMON_SICK)
+          instance->state &= ~(STATE_SUMMON_SICK | STATE_SICKNESS_UNUSED);
+        else
+          instance->state |= STATE_SUMMON_SICK | STATE_SICKNESS_UNUSED;
+        EXE_FN(int, 0x437ec0, int, int)(0, 0xff);
+      }
+      return 0;
 
-				  card_instance_t* instance = get_card_instance(player, card);
-				  instance->token_status |= STATUS_OBLITERATED;	// prevents it from being put into graveyard
+    case 0x264: // Bury this card
+      if (debug_mode)
+      {
+        int old_phasestopper = option_PhaseStoppers[current_turn][current_phase];
+        option_PhaseStoppers[current_turn][current_phase] &= ~1;
 
-				  if (in_play(player, card) && is_what(player, card, TYPE_PERMANENT))
-					kill_card(player, card, KILL_STATE_BASED_ACTION);	// Added
-				  else
-					kill_card(player, card, KILL_BURY);
+        player = GetWindowLongA(hwnd, cardclass_offset_player);
+        card = GetWindowLongA(hwnd, cardclass_offset_card);
 
-				  option_PhaseStoppers[current_turn][current_phase] = old_phasestopper;
-				}
-			  return 0;
-		  }
-		break;	// And fall through to call to wndproc_CardClass() below
+        card_instance_t *instance = get_card_instance(player, card);
+        instance->token_status |= STATUS_OBLITERATED; // prevents it from being put into graveyard
 
-      case WM_LBUTTONDOWN:
-		{
-		  int attachedto_cast_to_int = GetWindowLong(hwnd, cardclass_offset_unk1);
-		  HWND attachedto = (HWND)attachedto_cast_to_int;
-		  Sleep(GetDoubleClickTime() - (GetMessageTime() - GetTickCount()));
+        if (in_play(player, card) && is_what(player, card, TYPE_PERMANENT))
+          kill_card(player, card, KILL_STATE_BASED_ACTION); // Added
+        else
+          kill_card(player, card, KILL_BURY);
 
-		  MSG ignore;
-		  int saw_dblclk = PeekMessage(&ignore, hwnd, WM_LBUTTONDBLCLK, WM_LBUTTONDBLCLK, PM_NOREMOVE);
+        option_PhaseStoppers[current_turn][current_phase] = old_phasestopper;
+      }
+      return 0;
+    }
+    break; // And fall through to call to wndproc_CardClass() below
 
-		  int ignore_clk;
-		  HWND parent = GetParent(hwnd);
-		  if (parent != hwnd_TerritoryClass_player && parent != hwnd_TerritoryClass_opponent)
-			ignore_clk = FALSE;
-		  else
-			{
-			  if (!attachedto)
-				attachedto = hwnd;
-			  else
-				for (;;)
-				  {
-					int next_cast_to_int = GetWindowLong(attachedto, cardclass_offset_unk1);
-					if (next_cast_to_int)
-					  attachedto = (HWND)next_cast_to_int;
-					else
-					  break;
-				  }
+  case WM_LBUTTONDOWN:
+  {
+    int attachedto_cast_to_int = GetWindowLong(hwnd, cardclass_offset_unk1);
+    HWND attachedto = (HWND)attachedto_cast_to_int;
+    Sleep(GetDoubleClickTime() - (GetMessageTime() - GetTickCount()));
 
-			  RECT orig;
-			  GetWindowRect(attachedto, &orig);
-			  HWND insert_after = GetWindow(attachedto, GW_HWNDPREV);
-			  SendMessage(attachedto, WM_SYSCOMMAND, 0xF012, 0);
-			  RECT curr;
-			  GetWindowRect(attachedto, &curr);
-			  if (abs(curr.top - orig.top) + abs(curr.right - orig.right) >= 1)
-				{
-				  ignore_clk = TRUE;
-				  BringWindowToTop(attachedto);
-				}
-			  else
-				{
-				  ignore_clk = FALSE;
-				  SetWindowPos(attachedto, insert_after, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-				}
-			}
+    MSG ignore;
+    int saw_dblclk = PeekMessage(&ignore, hwnd, WM_LBUTTONDBLCLK, WM_LBUTTONDBLCLK, PM_NOREMOVE);
 
-		  if (!ignore_clk
-			  && EXE_DWORD(0x738a10)
-			  && card_is_valid_for_leftclick(hwnd))
-			{
-			  ldoubleclicked = saw_dblclk;
-			  card_leftclick(hwnd);
-			}
-		  return 0;
-		}
+    int ignore_clk;
+    HWND parent = GetParent(hwnd);
+    if (parent != hwnd_TerritoryClass_player && parent != hwnd_TerritoryClass_opponent)
+      ignore_clk = FALSE;
+    else
+    {
+      if (!attachedto)
+        attachedto = hwnd;
+      else
+        for (;;)
+        {
+          int next_cast_to_int = GetWindowLong(attachedto, cardclass_offset_unk1);
+          if (next_cast_to_int)
+            attachedto = (HWND)next_cast_to_int;
+          else
+            break;
+        }
 
-	  case 0x432:	// redraw title
-		if (!IsWindowVisible(hwnd))
-		  return 0;
+      RECT orig;
+      GetWindowRect(attachedto, &orig);
+      HWND insert_after = GetWindow(attachedto, GW_HWNDPREV);
+      SendMessage(attachedto, WM_SYSCOMMAND, 0xF012, 0);
+      RECT curr;
+      GetWindowRect(attachedto, &curr);
+      if (abs(curr.top - orig.top) + abs(curr.right - orig.right) >= 1)
+      {
+        ignore_clk = TRUE;
+        BringWindowToTop(attachedto);
+      }
+      else
+      {
+        ignore_clk = FALSE;
+        SetWindowPos(attachedto, insert_after, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+      }
+    }
 
-		player = GetWindowLong(hwnd, cardclass_offset_player);
-		card = GetWindowLong(hwnd, cardclass_offset_card);
-		if (card == -1 && player != -1)
-		  return 0;
+    if (!ignore_clk && EXE_DWORD(0x738a10) && card_is_valid_for_leftclick(hwnd))
+    {
+      ldoubleclicked = saw_dblclk;
+      card_leftclick(hwnd);
+    }
+    return 0;
+  }
 
-		int stashed_instance_cast_to_int = GetWindowLong(hwnd, cardclass_offset_instance_copy);
-		card_instance_t* stashed = (card_instance_t *)stashed_instance_cast_to_int;
-		memcpy_displayed_card_instance_t(&actual, player, card);
-		if (!card_instances_should_be_displayed_identically(stashed, &actual)
-			|| (option_ShowAbilitiesOnCards && !card_instances_will_have_same_icons(stashed, &actual)))
-		  {
-			InvalidateRect(hwnd, 0, 0);
-			return 0;
-		  }
+  case 0x432: // redraw title
+    if (!IsWindowVisible(hwnd))
+      return 0;
 
-		if (stashed->unknown0x70 == actual.unknown0x70)	// highlight color
-		  return 0;
+    player = GetWindowLong(hwnd, cardclass_offset_player);
+    card = GetWindowLong(hwnd, cardclass_offset_card);
+    if (card == -1 && player != -1)
+      return 0;
 
-		if (actual.unknown0x70 == 0)
-		  {
-			/* i.e., the default color - in modern frames, this is drawn without a shadow, while can-activate/
-			 * must-activate are drawn with one, so always redraw the whole card if the new color is default */
-			InvalidateRect(hwnd, 0, 0);
-			return 0;
-		  }
+    int stashed_instance_cast_to_int = GetWindowLong(hwnd, cardclass_offset_instance_copy);
+    card_instance_t *stashed = (card_instance_t *)stashed_instance_cast_to_int;
+    memcpy_displayed_inst_and_ext(&xactual, player, card);
+    if (!card_instances_should_be_displayed_identically(stashed, actual) ||
+        (option_ShowAbilitiesOnCards && !card_instances_will_have_same_icons(stashed, actual)))
+    {
+      InvalidateRect(hwnd, 0, 0);
+      return 0;
+    }
 
-		if ((actual.state & STATE_TAPPED)
-			|| actual.internal_card_id == -1)
-		  {
-			InvalidateRect(hwnd, 0, 0);
-			return 0;
-		  }
+    if (stashed->unknown0x70 == actual->unknown0x70) // highlight color
+      return 0;
 
-		int csvid = cards_data[actual.internal_card_id].id;
-		if (csvid >= 901 && csvid <= 907)
-		  {
-			InvalidateRect(hwnd, 0, 0);
-			return 0;
-		  }
+    if (actual->unknown0x70 == 0)
+    {
+      /* i.e., the default color - in modern frames, this is drawn without a shadow, while
+       * can-activate/ must-activate are drawn with one, so always redraw the whole card if the new
+       * color is default */
+      InvalidateRect(hwnd, 0, 0);
+      return 0;
+    }
 
-		HDC hdc = GetDC(hwnd);
-		set_palette_and_stretch_mode(hdc);
-		RECT r;
-		GetClientRect(hwnd, &r);
-		int controlled_by_owner = !(actual.state & STATE_OWNED_BY_OPPONENT) == !player;
-		uint32_t title_hilit = actual.unknown0x70;
-		const card_ptr_t* cp = cards_ptr[csvid];
-		DrawSmallCardTitle(hdc, &r, cp->name, title_hilit, controlled_by_owner | 0x8, cp, player, card);
-		ReleaseDC(hwnd, hdc);
-		stashed->unknown0x70 = actual.unknown0x70;
+    if ((actual->state & STATE_TAPPED) || actual->internal_card_id == -1)
+    {
+      InvalidateRect(hwnd, 0, 0);
+      return 0;
+    }
 
-		return 0;
+    int csvid = cards_data[actual->internal_card_id].id;
+    if (csvid >= 901 && csvid <= 907)
+    {
+      InvalidateRect(hwnd, 0, 0);
+      return 0;
+    }
 
-	  case 0x437:	// tooltips
-		;char tooltip[100];
-		tooltip[0] = 0;
+    HDC hdc = GetDC(hwnd);
+    set_palette_and_stretch_mode(hdc);
+    RECT r;
+    GetClientRect(hwnd, &r);
+    int controlled_by_owner = !(actual->state & STATE_OWNED_BY_OPPONENT) == !player;
+    uint32_t title_hilit = actual->unknown0x70;
+    const card_ptr_t *cp = cards_ptr[csvid];
+    uint16_t version = (unsigned)(cp->id - 901) < 7 ? actual->display_pic_num
+                                                    : get_card_image_number(cp->id, player, card);
+    DrawSmallCardTitle(hdc, &r, cp->name, title_hilit, controlled_by_owner | 0x8, cp, player, card,
+                       version);
+    ReleaseDC(hwnd, hdc);
+    stashed->unknown0x70 = actual->unknown0x70;
 
-		player = GetWindowLongA(hwnd, cardclass_offset_player);
-		card = GetWindowLongA(hwnd, cardclass_offset_card);
-		POINT pt;
-		pt.x = LOWORD(lparam);
-		pt.y = HIWORD(lparam);
+    return 0;
 
-		if (player != -1 && card == -1)
-		  strcpy(tooltip, EXE_STR(0x6286f4));	// CUECARD_SMALLCARD[0] = Damage to player
-		else
-		  {
-			RECT client_rect, rect;
-			GetClientRect(hwnd, &client_rect);
+  case 0x437: // tooltips
+      ;
+    char tooltip[100];
+    tooltip[0] = 0;
 
-			memcpy_displayed_card_instance_t(&actual, player, card);
-			card_instance_t* instance = &actual;
+    player = GetWindowLongA(hwnd, cardclass_offset_player);
+    card = GetWindowLongA(hwnd, cardclass_offset_card);
+    POINT pt;
+    pt.x = LOWORD(lparam);
+    pt.y = HIWORD(lparam);
 
-			if (instance->state & STATE_TAPPED)
-			  {
-				int rotate = pt.x;
-				pt.x = pt.y;
-				pt.y = client_rect.bottom - rotate;
-			  }
+    if (player != -1 && card == -1)
+      strcpy(tooltip, EXE_STR(0x6286f4)); // CUECARD_SMALLCARD[0] = Damage to player
+    else
+    {
+      RECT client_rect, rect;
+      GetClientRect(hwnd, &client_rect);
 
-			const char* ability_tooltip;
+      memcpy_displayed_inst_and_ext(&xactual, player, card);
+      card_instance_t *instance = actual;
 
-			if (((instance->untap_status & (UNTAP_STATUS_COULD_UNTAP|UNTAP_STATUS_WILL_UNTAP))
-				 == (UNTAP_STATUS_COULD_UNTAP|UNTAP_STATUS_WILL_UNTAP))
-				&& (EXE_FN(void, 0x4d4c20, RECT*, RECT*)(&rect, &client_rect),	// copy_untap_status_rect()
-					PtInRect(&rect, pt)))
-			  strcpy(tooltip, EXE_STR(0x78f0cc));	// CUECARD_SMALLCARD[1] = This card will untap
-			else if ((ability_tooltip = get_name_for_ability_icon_at_point(&client_rect, player, card, pt.x, pt.y)))
-			  {
-				/* Replace detection of ability icon tooltips.  Magic.exe inlines the logic to get an index into
-				 * Text.res::ABILITYWORDS, (which, much later, it dereferences), or -1 if the mouse isn't over an
-				 * ability icon.  We instead put it all into one function, get_name_for_ability_icon_at_point(),
-				 * which returns either the strings or NULL.  get_name_for_ability_icon_at_point() also checks
-				 * option_ShowAbilitiesOnCards and works correctly for the icons on damage cards, both of which the
-				 * exe version neglects to do. */
+      if (instance->state & STATE_TAPPED)
+      {
+        int rotate = pt.x;
+        pt.x = pt.y;
+        pt.y = client_rect.bottom - rotate;
+      }
 
-				strcpy(tooltip, ability_tooltip);
-			  }
-			else if (instance->damage_on_card > 0
-					 && (EXE_FN(void, 0x4d3770, RECT*, RECT*)(&rect, &client_rect),	// copy_damage_rect()
-						 PtInRect(&rect, pt)))
-			  sprintf(tooltip, EXE_STR(0x786230), instance->damage_on_card);	// CUECARD_SMALLCARD[2] = Damage: %d
-			else if (instance->special_counters > 0
-					 && (EXE_FN(void, 0x4d3b60, RECT*, RECT*, int)(&rect, &client_rect, instance->special_counters),	// copy_special_counter_rect()
-						 PtInRect(&rect, pt)))
-			  get_counter_name_by_type(tooltip, instance->special_counter_type, instance->special_counters);
-			else if (instance->counters2
-					 && 90 * client_rect.bottom / 256 < pt.y && pt.y < 159 * client_rect.bottom / 256
-					 && client_rect.left + 2 * (client_rect.right - client_rect.left) / 3 <= pt.x)
-			  get_counter_name_by_type(tooltip, BYTE0(instance->targets[18].player), instance->counters2);
-			else if (instance->counters3
-					 && 90 * client_rect.bottom / 256 < pt.y && pt.y < 159 * client_rect.bottom / 256
-					 && client_rect.left + (client_rect.right - client_rect.left) / 3 <= pt.x
-					 && pt.x < client_rect.left + 2 * (client_rect.right - client_rect.left) / 3)
-			  get_counter_name_by_type(tooltip, BYTE1(instance->targets[18].player), instance->counters3);
-			else if (instance->counters4
-					 && 90 * client_rect.bottom / 256 < pt.y && pt.y < 159 * client_rect.bottom / 256
-					 && pt.x < client_rect.left + (client_rect.right - client_rect.left) / 3)
-			  get_counter_name_by_type(tooltip, BYTE2(instance->targets[18].player), instance->counters4);
-			else if (instance->counters5
-					 && 53 * client_rect.bottom / 100 < pt.y && pt.y < 89 * client_rect.bottom / 100
-					 && (client_rect.right + client_rect.left) / 2 <= pt.x)
-			  get_counter_name_by_type(tooltip, BYTE3(instance->targets[18].player), instance->counters5);
-			else if ((instance->counters || instance->counters_m1m1)
-					 && 53 * client_rect.bottom / 100 < pt.y && pt.y < 89 * client_rect.bottom / 100
-					 && pt.x < (client_rect.right + client_rect.left) / 2)
-			  {
-				if (instance->counters_m1m1 == 0)
-				  get_counter_name_by_type(tooltip, COUNTER_P1_P1, instance->counters);
-				else if (instance->counters == 0)
-				  get_counter_name_by_type(tooltip, COUNTER_M1_M1, instance->counters_m1m1);
-				else
-				  {
-					char m1m1[100];
-					get_counter_name_by_type(m1m1, COUNTER_M1_M1, instance->counters_m1m1);
-					char p1p1[100];
-					get_counter_name_by_type(p1p1, COUNTER_P1_P1, instance->counters);
-					scnprintf(tooltip, 100, "%s; %s", m1m1, p1p1);
-				  }
-			  }
-			else if (!(instance->state & STATE_OWNED_BY_OPPONENT) != !player && pt.y < 12 * client_rect.bottom / 100)
-			  strcpy(tooltip, EXE_STR(0x7283b4));	// CUECARD_SMALLCARD[3] = Card is not controlled by owner
-			else if (5 * client_rect.right / 100 < pt.x
-					 && 95 * client_rect.right / 100 > pt.x
-					 && 15 * client_rect.bottom / 100 < pt.y
-					 && 95 * client_rect.bottom / 100 > pt.y)
-			  {
-				if (instance->state & (STATE_TARGETTED | STATE_CANNOT_TARGET))
-				  {
-					switch (instance->state & (STATE_TARGETTED | STATE_CANNOT_TARGET))
-					  {
-						case STATE_TARGETTED | STATE_CANNOT_TARGET:	strcpy(tooltip, EXE_STR(0x739dd0));	break;	// CUECARD_SMALLCARD[6] = Is a target, can't target again
-						case STATE_TARGETTED:							strcpy(tooltip, EXE_STR(0x620d5c));	break;	// CUECARD_SMALLCARD[4] = Is a target
-						case STATE_CANNOT_TARGET:						strcpy(tooltip, EXE_STR(0x737e24));	break;	// CUECARD_SMALLCARD[5] = Can't target this
-					  }
-				  }
-				else if (instance->kill_code == KILL_DESTROY)
-				  strcpy(tooltip, EXE_STR(0x786f08));	// CUECARD_SMALLCARD[7] = Dying
-				else
-				  {
-					int is_summonsick = ((instance->state & STATE_SUMMON_SICK)
-										 && (option_ShowAllCardsSummonSickness
-											 || (cards_data[instance->internal_card_id].type & TYPE_CREATURE)));
-					int is_phased = instance->state & STATE_OUBLIETTED;
-					if (is_summonsick && is_phased)
-					  sprintf(tooltip, "%s, %s",
-							  EXE_STR(0x728374),	// CUECARD_SMALLCARD[8] = Summoning sickness
-							  EXE_STR(0x62bcf0));	// CUECARD_SMALLCARD[9] = Phased
-					else if (is_summonsick)
-					  strcpy(tooltip, EXE_STR(0x728374));	// CUECARD_SMALLCARD[8] = Summoning sickness
-					else if (is_phased)
-					  strcpy(tooltip, EXE_STR(0x62bcf0));	// CUECARD_SMALLCARD[9] = Phased
-				  }
-			  }
-		  }
+      const char *ability_tooltip;
 
-		if (tooltip[0])
-		  strcpy((char *)wparam, tooltip);
+      if (((instance->untap_status & (UNTAP_STATUS_COULD_UNTAP | UNTAP_STATUS_WILL_UNTAP)) ==
+           (UNTAP_STATUS_COULD_UNTAP | UNTAP_STATUS_WILL_UNTAP)) &&
+          (EXE_FN(void, 0x4d4c20, RECT *, RECT *)(&rect, &client_rect), // copy_untap_status_rect()
+           PtInRect(&rect, pt)))
+        strcpy(tooltip, EXE_STR(0x78f0cc)); // CUECARD_SMALLCARD[1] = This card will untap
+      else if ((ability_tooltip =
+                    get_name_for_ability_icon_at_point(&client_rect, player, card, pt.x, pt.y)))
+      {
+        /* Replace detection of ability icon tooltips.  Magic.exe inlines the logic to get an index
+         * into Text.res::ABILITYWORDS, (which, much later, it dereferences), or -1 if the mouse
+         * isn't over an ability icon.  We instead put it all into one function,
+         * get_name_for_ability_icon_at_point(), which returns either the strings or NULL.
+         * get_name_for_ability_icon_at_point() also checks option_ShowAbilitiesOnCards and works
+         * correctly for the icons on damage cards, both of which the exe version neglects to do. */
 
-		if (option_Layout != 2)
-		  SendMessageA(hwnd, WM_COMMAND, 0x6E, 0);
-		return tooltip[0] != 0;
-	}
+        strcpy(tooltip, ability_tooltip);
+      }
+      else if (instance->damage_on_card > 0 &&
+               (EXE_FN(void, 0x4d3770, RECT *, RECT *)(&rect, &client_rect), // copy_damage_rect()
+                PtInRect(&rect, pt)))
+        sprintf(tooltip, EXE_STR(0x786230),
+                instance->damage_on_card); // CUECARD_SMALLCARD[2] = Damage: %d
+      else if (instance->special_counters > 0 &&
+               (EXE_FN(void, 0x4d3b60, RECT *, RECT *, int)(
+                    &rect, &client_rect, instance->special_counters), // copy_special_counter_rect()
+                PtInRect(&rect, pt)))
+        get_counter_name_by_type(tooltip, instance->special_counter_type,
+                                 instance->special_counters);
+      else if (instance->counters2 && 90 * client_rect.bottom / 256 < pt.y &&
+               pt.y < 159 * client_rect.bottom / 256 &&
+               client_rect.left + 2 * (client_rect.right - client_rect.left) / 3 <= pt.x)
+        get_counter_name_by_type(tooltip, BYTE0(instance->targets[18].player), instance->counters2);
+      else if (instance->counters3 && 90 * client_rect.bottom / 256 < pt.y &&
+               pt.y < 159 * client_rect.bottom / 256 &&
+               client_rect.left + (client_rect.right - client_rect.left) / 3 <= pt.x &&
+               pt.x < client_rect.left + 2 * (client_rect.right - client_rect.left) / 3)
+        get_counter_name_by_type(tooltip, BYTE1(instance->targets[18].player), instance->counters3);
+      else if (instance->counters4 && 90 * client_rect.bottom / 256 < pt.y &&
+               pt.y < 159 * client_rect.bottom / 256 &&
+               pt.x < client_rect.left + (client_rect.right - client_rect.left) / 3)
+        get_counter_name_by_type(tooltip, BYTE2(instance->targets[18].player), instance->counters4);
+      else if (instance->counters5 && 53 * client_rect.bottom / 100 < pt.y &&
+               pt.y < 89 * client_rect.bottom / 100 &&
+               (client_rect.right + client_rect.left) / 2 <= pt.x)
+        get_counter_name_by_type(tooltip, BYTE3(instance->targets[18].player), instance->counters5);
+      else if ((instance->counters || instance->counters_m1m1) &&
+               53 * client_rect.bottom / 100 < pt.y && pt.y < 89 * client_rect.bottom / 100 &&
+               pt.x < (client_rect.right + client_rect.left) / 2)
+      {
+        if (instance->counters_m1m1 == 0)
+          get_counter_name_by_type(tooltip, COUNTER_P1_P1, instance->counters);
+        else if (instance->counters == 0)
+          get_counter_name_by_type(tooltip, COUNTER_M1_M1, instance->counters_m1m1);
+        else
+        {
+          char m1m1[100];
+          get_counter_name_by_type(m1m1, COUNTER_M1_M1, instance->counters_m1m1);
+          char p1p1[100];
+          get_counter_name_by_type(p1p1, COUNTER_P1_P1, instance->counters);
+          scnprintf(tooltip, 100, "%s; %s", m1m1, p1p1);
+        }
+      }
+      else if (!(instance->state & STATE_OWNED_BY_OPPONENT) != !player &&
+               pt.y < 12 * client_rect.bottom / 100)
+        strcpy(tooltip,
+               EXE_STR(0x7283b4)); // CUECARD_SMALLCARD[3] = Card is not controlled by owner
+      else if (5 * client_rect.right / 100 < pt.x && 95 * client_rect.right / 100 > pt.x &&
+               15 * client_rect.bottom / 100 < pt.y && 95 * client_rect.bottom / 100 > pt.y)
+      {
+        if (instance->state & (STATE_TARGETTED | STATE_CANNOT_TARGET))
+        {
+          switch (instance->state & (STATE_TARGETTED | STATE_CANNOT_TARGET))
+          {
+          case STATE_TARGETTED | STATE_CANNOT_TARGET:
+            strcpy(tooltip, EXE_STR(0x739dd0));
+            break; // CUECARD_SMALLCARD[6] = Is a target, can't target again
+          case STATE_TARGETTED:
+            strcpy(tooltip, EXE_STR(0x620d5c));
+            break; // CUECARD_SMALLCARD[4] = Is a target
+          case STATE_CANNOT_TARGET:
+            strcpy(tooltip, EXE_STR(0x737e24));
+            break; // CUECARD_SMALLCARD[5] = Can't target this
+          }
+        }
+        else if (instance->kill_code == KILL_DESTROY)
+          strcpy(tooltip, EXE_STR(0x786f08)); // CUECARD_SMALLCARD[7] = Dying
+        else
+        {
+          int is_summonsick = ((instance->state & STATE_SUMMON_SICK) &&
+                               (option_ShowAllCardsSummonSickness ||
+                                (cards_data[instance->internal_card_id].type & TYPE_CREATURE)));
+          int is_phased = instance->state & STATE_OUBLIETTED;
+          if (is_summonsick && is_phased)
+            sprintf(tooltip, "%s, %s",
+                    EXE_STR(0x728374),  // CUECARD_SMALLCARD[8] = Summoning sickness
+                    EXE_STR(0x62bcf0)); // CUECARD_SMALLCARD[9] = Phased
+          else if (is_summonsick)
+            strcpy(tooltip, EXE_STR(0x728374)); // CUECARD_SMALLCARD[8] = Summoning sickness
+          else if (is_phased)
+            strcpy(tooltip, EXE_STR(0x62bcf0)); // CUECARD_SMALLCARD[9] = Phased
+        }
+      }
+    }
 
-  return EXE_STDCALL_FN(LRESULT, 0x489d60, HWND, UINT, WPARAM, LPARAM)(hwnd, msg, wparam, lparam);	// wndproc_CardClass()
+    if (tooltip[0])
+      strcpy((char *)wparam, tooltip);
+
+    if (option_Layout != 2)
+      SendMessageA(hwnd, WM_COMMAND, 0x6E, 0);
+    return tooltip[0] != 0;
+  }
+
+  return EXE_STDCALL_FN(LRESULT, 0x489d60, HWND, UINT, WPARAM,
+                        LPARAM)(hwnd, msg, wparam, lparam); // wndproc_CardClass()
 }
 
 LRESULT __stdcall wndproc_MainClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-  switch (msg)
-	{
-	  case WM_COMMAND:	// Popup menu
-		;int cmd = LOWORD(wparam);
-		switch (cmd)
-		  {
-            case 0x26b:
-            case 0x26c:
-            case 0x26d:
-            case 0x26e:
-              if (!debug_mode)
-				return 0;
-
-			  int player = (cmd == 0x26b || cmd == 0x26d) ? 0 : 1;
-			  int onto_bf = cmd == 0x26b || cmd == 0x26c;
-			  int iid = choose_a_card(onto_bf
-									  ? (player == 0 ? "Pick a card to put on battlefield"
-										 : "Pick a card to put on opponent's battlefield")
-									  : (player == 0 ? "Pick a card to put in your hand"
-										 : "Pick a card to put in opponent's hand"),
-									  -1, -1);
-			  if (iid < 0)
-				return 0;
-
-			  int old_phasestopper = option_PhaseStoppers[current_turn][current_phase];
-			  option_PhaseStoppers[current_turn][current_phase] &= ~1;
-
-			  int c = add_card_to_hand(player, iid);
-			  if (c != -1)
-				{
-				  update_rules_engine(check_card_for_rules_engine(iid));
-				  if (onto_bf)
-					put_into_play(player, c);
-				}
-
-			  option_PhaseStoppers[current_turn][current_phase] = old_phasestopper;
-			  EXE_FN(int, 0x437ec0, int, int)(0, 0xFF);	// redisplay_all()
-
-			  return 0;
-		  }
-		break;	// And fall through to call to wndproc_CardClass() below
-	}
-
-  return EXE_STDCALL_FN(LRESULT, 0x4933c0, HWND, UINT, WPARAM, LPARAM)(hwnd, msg, wparam, lparam);	// wndproc_MainClass()
+  if (msg == WM_COMMAND && LOWORD(wparam) >= 0x26b && LOWORD(wparam) <= 0x26e)
+  {
+    if (!debug_mode)
+      return 0;
+    int cmd = LOWORD(wparam);
+    int player = cmd == 0x26b || cmd == 0x26d ? HUMAN : AI;
+    int onto_bf = cmd == 0x26b || cmd == 0x26c;
+    char *prompt = onto_bf ? (player == HUMAN ? "Pick a card to put on battlefield"
+                                              : "Pick a card to put on opponent's battlefield")
+                           : (player == HUMAN ? "Pick a card to put in your hand"
+                                              : "Pick a card to put in opponent's hand");
+    type_t allowable_types = (onto_bf ? TYPE_PERMANENT : TYPE_NONEFFECT) | TARGET_TYPE_PLANESWALKER;
+    int csvid = choose_a_card_allow_cancel_with_defaults(
+        prompt, COLOR_TEST_ANY, allowable_types, debug_addcard_last_color, debug_addcard_last_type);
+    choose_a_card_get_last_options(&debug_addcard_last_color, &debug_addcard_last_type);
+    if (csvid < 0)
+      return 0;
+    int iid = get_internal_card_id_from_csv_id(csvid);
+    int old_phasestopper = option_PhaseStoppers[current_turn][current_phase];
+    option_PhaseStoppers[current_turn][current_phase] &= ~1;
+    int added = add_card_to_hand(player, iid);
+    if (added != -1)
+    {
+      update_rules_engine(check_card_for_rules_engine(iid));
+      if (onto_bf)
+        put_into_play(player, added);
+    }
+    option_PhaseStoppers[current_turn][current_phase] = old_phasestopper;
+    EXE_FN(int, 0x437ec0, int, int)(0, 0xff);
+    return 0;
+  }
+  return EXE_STDCALL_FN(LRESULT, 0x4933c0, HWND, UINT, WPARAM, LPARAM)(hwnd, msg, wparam, lparam);
 }
 
 //[[[ display experience counters
@@ -1640,6 +1776,11 @@ static const char* wav_filenames[WAV_HIGHEST + 1] =
   "Scheme.wav",
   "Monarch.wav",
   "Ascend.wav",
+  "Snow.wav",
+  "Poison.wav",
+  "Energy_plus.wav",
+  "Energy_minus.wav",
+  "Dice.wav",
 };
 
 int play_sound_effect(wav_t soundnum)
@@ -1647,48 +1788,49 @@ int play_sound_effect(wav_t soundnum)
   if (ai_is_speculating == 1)
     return 0;
 
-  typedef struct	// very little idea what any of these fields do.
+  typedef struct
   {
-	int field_0;
-	int field_4;
-	int field_8;
-	int field_C;
-	int field_10;
-	int field_14;
-	int field_18;
-	int field_1C;
+    int volume;
+    int frequency;
+    int field_8;
+    int field_C;
+    int field_10;
+    int field_14;
+    int soundnum;
+    int field_1C;
   } sound_t;
 
   sound_t snd;
-  snd.field_0 = 300;
-  snd.field_4 = 0;
+  snd.volume = 400;
+  snd.frequency = 0;
   snd.field_8 = 0;
   snd.field_C = 0;
   snd.field_10 = 0;
   snd.field_14 = 0;
-  snd.field_18 = soundnum;
+  snd.soundnum = soundnum;
   snd.field_1C = 0;
 
   if (soundnum >= WAV_ASWANJAG && soundnum <= WAV_TOSS)
-    {
-      snd.field_0 = 400;
-      if (soundnum == WAV_CATATAP)
-		snd.field_14 = -1;
-      else
-		snd.field_1C |= 4;
-    }
+  {
+    if (soundnum == WAV_CATATAP)
+      snd.field_14 = -1;
+    else
+      snd.field_1C |= 4;
+  }
+  else if (soundnum == WAV_DICE)
+    snd.volume = 300;
 
   wav_t adj_soundnum = soundnum;
-  if (!EXE_FN(int, 0x45a270, wav_t, wav_t*)(soundnum, &adj_soundnum))	// call_IsSndLoaded()
-    {
-      char path[300];
-      strcpy(path, EXE_STR(0x715788));	// path_DuelSounds
-      strcat(path, "\\");
-      strcat(path, wav_filenames[soundnum]);
-      EXE_FN(int, 0x45a1c0, const char*, int, sound_t*)(path, adj_soundnum, &snd);	// call_LoadSnd()
-    }
+  if (!EXE_FN(int, 0x45a270, wav_t, wav_t *)(soundnum, &adj_soundnum)) // call_IsSndLoaded()
+  {
+    char path[300];
+    strcpy(path, EXE_STR(0x715788)); // path_DuelSounds
+    strcat(path, "\\");
+    strcat(path, wav_filenames[soundnum]);
+    EXE_FN(int, 0x45a1c0, const char *, int, sound_t *)(path, adj_soundnum, &snd); // call_LoadSnd()
+  }
 
-  EXE_FN(int, 0x45a240, int, sound_t*)(adj_soundnum, 0);	// call_PlaySnd()
+  EXE_FN(int, 0x45a240, int, sound_t *)(adj_soundnum, &snd); // call_PlaySnd()
 
   return 1;
 }
@@ -1712,10 +1854,10 @@ int get_displayed_pic_num_and_pic_csv_id_of_parent_playercard(target_t* ret_pare
 }
 
 #define path_DuelArt		EXE_STR(0x739e30)
-void load_startduel_assets(HGDIOBJ* a1, COLORREF* a2, HGDIOBJ* a3, HGDIOBJ* a4, HGDIOBJ* a5, COLORREF* a6,
-						   COLORREF* a7)
+void load_startduel_assets(HGDIOBJ *a1, COLORREF *a2, HGDIOBJ *a3, HGDIOBJ *a4, HGDIOBJ *a5,
+                           COLORREF *a6, COLORREF *a7)
 {
-  char path[264];
+  char path[297];
 
   sprintf(path, "%s\\WINBK_StartDuel.bmp", path_DuelArt);
   *a1 = read_graphics_file(path);
@@ -1730,9 +1872,10 @@ void load_startduel_assets(HGDIOBJ* a1, COLORREF* a2, HGDIOBJ* a3, HGDIOBJ* a4, 
   *a7 = 0x10000BF;
 }
 
-void load_startduel_assets2(HGDIOBJ* a1, COLORREF* a2, HGDIOBJ* a3, HGDIOBJ* a4, COLORREF* a5, COLORREF* a6)
+void load_startduel_assets2(HGDIOBJ *a1, COLORREF *a2, HGDIOBJ *a3, HGDIOBJ *a4, COLORREF *a5,
+                            COLORREF *a6)
 {
-  char path[264];
+  char path[297];
 
   sprintf(path, "%s\\WINBK_StartDuel2.bmp", path_DuelArt);
   *a1 = read_graphics_file(path);
@@ -1749,10 +1892,10 @@ void load_startduel_assets2(HGDIOBJ* a1, COLORREF* a2, HGDIOBJ* a3, HGDIOBJ* a4,
 #define manalink_CreatePen			EXE_STDCALL_FN(HPEN, 0x4d5ccc, int, int, COLORREF)
 #define manalink_CreateSolidBrush	EXE_STDCALL_FN(HBRUSH, 0x4d5c42, COLORREF)
 #define manalink_GetStockObject		EXE_STDCALL_FN(HGDIOBJ, 0x4d5c9c, int)
-void load_endduel_assets(HGDIOBJ *a1, COLORREF *a2, COLORREF *a3, HBRUSH *a4, HPEN *a5, HPEN *a6, COLORREF *a7,
-						 COLORREF *a8)
+void load_endduel_assets(HGDIOBJ *a1, COLORREF *a2, COLORREF *a3, HBRUSH *a4, HPEN *a5, HPEN *a6,
+                         COLORREF *a7, COLORREF *a8)
 {
-  char path[264];
+  char path[297];
 
   sprintf(path, "%s\\WINBK_EndDuel.bmp", path_DuelArt);
   *a1 = read_graphics_file(path);
@@ -1784,9 +1927,9 @@ int launch_mcu(void)
   call_UnloadAllSnds();
   TENTATIVE_finalize_sound_system();
   game_type = 4;
-  strcpy(cmd_line, path_base);
+  EXE_FN(void, 0x466020, char *)(cmd_line); // get_path_base()
   strcat(cmd_line, "\\LaunchMCu.exe /MTGshell");
-  int rval = WinExec(cmd_line, SW_SHOW);	// :(
+  int rval = WinExec(cmd_line, SW_SHOW); // :(
   if (rval >= 0x20)
     rval = PostMessageA(hwnd_shell, WM_CLOSE, 0, 0);
   return rval;
@@ -1820,24 +1963,24 @@ void make_smallcard_visible(int player, int card)
     }
 }
 
-void draw_smallcard_activation_card(HDC hdc, RECT* card_rect, int csvidraw, int player, int card, int parent_player,
-									int parent_card)
+void draw_smallcard_activation_card(HDC hdc, RECT *card_rect, int csvidraw, int player, int card,
+                                    int parent_player, int parent_card)
 {
   if (!hdc && !card_rect)
-	return;
+    return;
 
-  card_instance_t* dispinst = get_displayed_card_instance(player, card);
+  card_instance_t *dispinst = get_displayed_card_instance(player, card);
   card_instance_t inst;
   EnterCriticalSection(critical_section_for_display);
   memcpy(&inst, dispinst, sizeof(inst));
   LeaveCriticalSection(critical_section_for_display);
 
   if (csvidraw == 906 && (int)inst.original_internal_card_id == iid_draw_a_card)
-	{
-	  DrawCardBack(hdc, card_rect, 0);
-	  DrawSmallCardTitle(hdc, card_rect, str_Activation, 0, 1, NULL, -1, -1);
-	  return;
-	}
+  {
+    DrawCardBack(hdc, card_rect, 0);
+    DrawSmallCardTitle(hdc, card_rect, str_Activation, 0, 1, NULL, -1, -1, 0);
+    return;
+  }
 
   card_ptr_t cp;
   memset(&cp, 0, sizeof(cp));
@@ -1847,9 +1990,9 @@ void draw_smallcard_activation_card(HDC hdc, RECT* card_rect, int csvidraw, int 
 
   static char name[128];
   if (csvidraw == 906)
-	strcpy(name, str_Activation);
+    strcpy(name, str_Activation);
   else
-	name[0] = 0;
+    name[0] = 0;
 
   cp.name = name;
   cp.full_name = name;
@@ -1860,28 +2003,36 @@ void draw_smallcard_activation_card(HDC hdc, RECT* card_rect, int csvidraw, int 
   cp.subtype2 = -1;
   cp.db_card_type_2 = -1;
 
-  static char emptystr[1];	// Probably useless, but definitely harmless
+  static char emptystr[1]; // Probably useless, but definitely harmless
   emptystr[0] = 0;
   cp.rules_text = emptystr;
   cp.flavor_text = emptystr;
 
-  DrawSmallCard(hdc, card_rect, &cp, version, 1, player, card);
-  draw_manastripes(hdc, card_rect, parent_player, parent_card);
+  DrawSmallCardEx(hdc, card_rect, &cp, version, 1, player, card, 0);
+  draw_manastripes(hdc, card_rect, inst.parent_controller, inst.parent_card);
 
   int controlled_by_owner = !(inst.state & STATE_OWNED_BY_OPPONENT) == !player;
   uint32_t title_hilit = inst.unknown0x70;
-  DrawSmallCardTitle(hdc, card_rect, cp.name, title_hilit, controlled_by_owner | 0x8, &cp, player, card);
+  DrawSmallCardTitle(hdc, card_rect, cp.name, title_hilit, controlled_by_owner | 0x8, &cp, player,
+                     card, version);
+  if (inst.state & (STATE_TARGETTED | STATE_CANNOT_TARGET))
+    EXE_FN(void, 0x4d4a40, HDC, RECT *, int, int)(hdc, card_rect, inst.state & STATE_TARGETTED,
+                                                  !(inst.state & STATE_CANNOT_TARGET));
+  if (EXE_DWORD(0x787250))
+    EXE_FN(void, 0x4d3800, HDC, RECT *, int, int, int)(hdc, card_rect, inst.parent_controller,
+                                                       inst.parent_card, EXE_DWORD(0x787250));
 }
 
-void draw_smallcard_special_effect_card(HDC hdc, RECT* card_rect, int csvidraw, int player, int card)
+void draw_smallcard_special_effect_card(HDC hdc, RECT *card_rect, int csvidraw, int player,
+                                        int card)
 {
   if (!hdc || !card_rect)
-	return;
+    return;
 
   card_ptr_t cp;
   memset(&cp, 0, sizeof(cp));
 
-  card_instance_t* dispinst = get_displayed_card_instance(player, card);
+  card_instance_t *dispinst = get_displayed_card_instance(player, card);
   card_instance_t inst;
   EnterCriticalSection(critical_section_for_display);
   memcpy(&inst, dispinst, sizeof(inst));
@@ -1890,57 +2041,58 @@ void draw_smallcard_special_effect_card(HDC hdc, RECT* card_rect, int csvidraw, 
   csvid_t src_csvid = inst.display_pic_csv_id;
   uint16_t version = inst.display_pic_num;
 
-  static char card_name[100];	// Shandalar only assigns 52 bytes, so should be plenty.
+  static char card_name[100]; // Shandalar only assigns 52 bytes, so should be plenty.
   switch (csvidraw)
-	{
-	  case 901:;
-		int l = sprintf(card_name, "%s: %d", str_Damage, inst.info_slot);
-		color_test_t cols = inst.color & COLOR_TEST_ANY_COLORED;
-		if (num_bits_set(cols) > 1)
-		  strcpy(card_name + l, " (Multi)");
-		else if (cols)
-		  sprintf(card_name + l, " (%s)", strs_Colorless_Black_Blue_Green_Red_White[single_color_test_bit_to_color(cols)]);
-		break;
+  {
+  case 901:;
+    int l = sprintf(card_name, "%s: %d", str_Damage, inst.info_slot);
+    color_test_t cols = inst.color & COLOR_TEST_ANY_COLORED;
+    if (num_bits_set(cols) > 1)
+      strcpy(card_name + l, " (Multi)");
+    else if (cols)
+      sprintf(card_name + l, " (%s)",
+              strs_Colorless_Black_Blue_Green_Red_White[single_color_test_bit_to_color(cols)]);
+    break;
 
-	  case 902:
-		strcpy(card_name, cards_txt[src_csvid].legacy_title_text);
-		break;
+  case 902:
+    strcpy(card_name, cards_txt[src_csvid].legacy_title_text);
+    break;
 
-	  case 903:;
-		const char* src = cards_txt[src_csvid].effect_title_text;
-		if (!src)
-		  src = "";
+  case 903:;
+    const char *src = cards_txt[src_csvid].effect_title_text;
+    if (!src)
+      src = "";
 
-		if (src_csvid == CARD_ID_FAERIE_DRAGON || src_csvid == CARD_ID_WHIMSY)
-		  strcpy(card_name, src);
-		else if (inst.eot_toughness > 0)
-		  {
-			strcpy(card_name, src);
-			legacy_name(card_name, player, card);
-		  }
-		else
-		  strcpy(card_name, src);
+    if (src_csvid == CARD_ID_FAERIE_DRAGON || src_csvid == CARD_ID_WHIMSY)
+      strcpy(card_name, src);
+    else if (inst.eot_toughness > 0)
+    {
+      strcpy(card_name, src);
+      legacy_name(card_name, player, card);
+    }
+    else
+      strcpy(card_name, src);
 
-		if (!*card_name)
-		  strcpy(card_name, cards_ptr[src_csvid]->name);
-		break;
+    if (!*card_name)
+      strcpy(card_name, cards_ptr[src_csvid]->name);
+    break;
 
-	  case 905:
-		strcpy(card_name, get_card_or_subtype_name(inst.info_slot));
-		break;
+  case 905:
+    strcpy(card_name, get_card_or_subtype_name(inst.info_slot));
+    break;
 
-	  case 906:
-		strcpy(card_name, str_Activation);
-		break;
+  case 906:
+    strcpy(card_name, str_Activation);
+    break;
 
-	  case 907:
-		strcpy(card_name, str_MultiBlock_Creature);
-		break;
+  case 907:
+    strcpy(card_name, str_MultiBlock_Creature);
+    break;
 
-	  default:
-		card_name[0] = 0;
-		break;
-	}
+  default:
+    card_name[0] = 0;
+    break;
+  }
 
   cp.id = src_csvid;
   cp.full_name = card_name;
@@ -1952,117 +2104,145 @@ void draw_smallcard_special_effect_card(HDC hdc, RECT* card_rect, int csvidraw, 
   cp.subtype2 = -1;
   cp.db_card_type_2 = -1;
 
-  DrawSmallCard(hdc, card_rect, &cp, version, 73, player, card);
+  DrawSmallCardEx(hdc, card_rect, &cp, version, 73, player, card, 0);
 
   draw_manastripes(hdc, card_rect, player, card);
 
   int controlled_by_owner = !(inst.state & STATE_OWNED_BY_OPPONENT) == !player;
   uint32_t title_hilit = inst.unknown0x70;
 
-  DrawSmallCardTitle(hdc, card_rect, cp.name, title_hilit, controlled_by_owner | 0x8, &cp, player, card);
+  DrawSmallCardTitle(hdc, card_rect, cp.name, title_hilit, controlled_by_owner | 0x8, &cp, player,
+                     card, version);
 
   if (csvidraw == 901)
     draw_abilities(hdc, card_rect, player, card, 1);
+  if (inst.token_status & STATUS_RED_BORDER)
+    EXE_FN(void, 0x4d4b50, HDC, RECT *, int)(hdc, card_rect, STATUS_RED_BORDER);
+  if (inst.state & (STATE_TARGETTED | STATE_CANNOT_TARGET))
+    EXE_FN(void, 0x4d4a40, HDC, RECT *, int, int)(hdc, card_rect, inst.state & STATE_TARGETTED,
+                                                  !(inst.state & STATE_CANNOT_TARGET));
+  if (EXE_DWORD(0x787250))
+    EXE_FN(void, 0x4d3800, HDC, RECT *, int, int, int)(
+        hdc, card_rect, inst.damage_source_player, inst.damage_source_card, EXE_DWORD(0x787250));
 }
 
-void draw_smallcard_normal(HDC hdc, RECT* card_rect, int player, int card, int unused_a5, int unused_a6,
-						   int unused_a7, int force_to_activation, int force_to_upkeep)
+void draw_smallcard_normal(HDC hdc, RECT *card_rect, int player, int card, int unused_a5,
+                           int unused_a6, int unused_a7, int force_to_activation,
+                           int force_to_upkeep)
 {
   // unused_a5 is a redundantly-fetched copy of inst.unknown0x70.
-  // unused_a6 is a redundantly-fetched 4 if inst is attacking and this card isn't being drawn in the attack window.
-  // unused_a7 is a redundantly-fetched copy of inst.blocking if this card isn't being drawn in the attack window.
-  // force_to_activation and force_to_upkeep are never set to nonzero.
+  // unused_a6 is a redundantly-fetched 4 if inst is attacking and this card isn't being drawn in
+  // the attack window. unused_a7 is a redundantly-fetched copy of inst.blocking if this card isn't
+  // being drawn in the attack window. force_to_activation and force_to_upkeep are never set to
+  // nonzero.
 
   if (!hdc || !card_rect)
-	return;
+    return;
 
-  int csvid = get_displayed_csvid(player, card);
-  if (csvid == -1)
-	return;
+  card_instance_t inst;
+  card_instance_t *dispinst = get_displayed_card_instance(player, card);
+  EnterCriticalSection(critical_section_for_display);
+  memcpy(&inst, dispinst, sizeof(inst));
+  LeaveCriticalSection(critical_section_for_display);
+  int csvid = cards_data[inst.internal_card_id].id;
 
   int saved_dc = SaveDC(hdc);
 
   card_ptr_t cp;
   memcpy(&cp, cards_ptr[csvid], sizeof(card_ptr_t));
 
-  if (player <= 1)
-	cp.color = (((unsigned int)card & 0xFFFF) << 16) | (player ? 1 : 0) | 0xC3D4;	// magic number for drawcardlib
+  if ((unsigned)player <= 1)
+    cp.color = (((unsigned int)card & 0xFFFF) << 16) | (player ? 1 : 0) |
+               0xC3D4; // magic number for drawcardlib
 
   if (force_to_activation)
-	{
-	  cp.name = cp.full_name = str_Activation;
-	  cp.color = -1;
-	}
+  {
+    cp.name = cp.full_name = str_Activation;
+    cp.color = -1;
+  }
 
   if (force_to_upkeep)
-	{
-	  cp.name = cp.full_name = str_Upkeep;
-	  cp.color = -1;
-	}
+  {
+    cp.name = cp.full_name = str_Upkeep;
+    cp.color = -1;
+  }
 
   int version = get_card_image_number(csvid, player, card);
 
-  DrawSmallCard(hdc, card_rect, &cp, version, 1, player, card);
+  DrawSmallCardEx(hdc, card_rect, &cp, version, 1, player, card, 0);
 
-  if (1)	// (!(player & (TARGET_ZONE_GRAVEYARD | TARGET_ZONE_EXILE)))
-	{
-	  draw_manastripes(hdc, card_rect, player, card);
+  if (1) // (!(player & (TARGET_ZONE_GRAVEYARD | TARGET_ZONE_EXILE)))
+  {
+    draw_manastripes(hdc, card_rect, player, card);
 
-	  type_t typ = get_displayed_type(player, card);
+    type_t typ = get_displayed_type(player, card);
 
-	  if (option_ShowPowerToughnessOnCards && (typ & TYPE_CREATURE))
-		{
-		  int tgh = get_displayed_toughness(player, card);
-		  int pow = get_displayed_power(player, card);
-		  draw_powertoughness_on_smallcard(hdc, card_rect, pow, tgh);
-		}
+    if (option_ShowPowerToughnessOnCards && (typ & TYPE_CREATURE))
+    {
+      int tgh = inst.toughness;
+      int pow = inst.power;
+      draw_powertoughness_on_smallcard(hdc, card_rect, pow, tgh);
+    }
 
-	  int bitfield = return_displayed_bitfield_of_1summonsick_2tapped_4attacking_8blocking_10damage_target_player_and_damage_target_card_20oublietted(player, card);
-	  if (((typ & TYPE_CREATURE) || option_ShowAllCardsSummonSickness) && (bitfield & 1))
-		blt_summon_pic(hdc, card_rect);
+    if (((typ & TYPE_CREATURE) || option_ShowAllCardsSummonSickness) &&
+        (inst.state & STATE_SUMMON_SICK))
+      blt_summon_pic(hdc, card_rect);
 
-	  if (bitfield & 0x20)
-		draw_oublietted_effect(hdc, card_rect);
+    if (inst.state & STATE_OUBLIETTED)
+      draw_oublietted_effect(hdc, card_rect);
 
-	  if ((typ & TYPE_PERMANENT) && get_displayed_kill_code(player, card) == KILL_DESTROY)
-		blt_dying_pic(hdc, card_rect);
+    if ((typ & TYPE_PERMANENT) && inst.kill_code == KILL_DESTROY)
+      blt_dying_pic(hdc, card_rect);
 
-      draw_abilities(hdc, card_rect, player, card, 0);
+    draw_abilities(hdc, card_rect, player, card, 0);
 
-	  int dmg = get_displayed_damage_on_card(player, card);
-	  if (dmg)
-		draw_damage(hdc, card_rect, dmg);
+    int dmg = inst.damage_on_card;
+    if (dmg)
+      draw_damage(hdc, card_rect, dmg);
 
-	  RECT rect_counter;
-	  rect_counter.left = 7 * (card_rect->right - card_rect->left) / 100 + card_rect->left;
-	  rect_counter.right = card_rect->right - 10 * (card_rect->right - card_rect->left) / 100;
-	  rect_counter.top = 8 * (card_rect->bottom - card_rect->top) / 100 + card_rect->top;
-	  rect_counter.bottom = 35 * (card_rect->bottom - card_rect->top) / 100 + card_rect->top;
+    RECT rect_counter;
+    rect_counter.left = 7 * (card_rect->right - card_rect->left) / 100 + card_rect->left;
+    rect_counter.right = card_rect->right - 10 * (card_rect->right - card_rect->left) / 100;
+    rect_counter.top = 8 * (card_rect->bottom - card_rect->top) / 100 + card_rect->top;
+    rect_counter.bottom = 35 * (card_rect->bottom - card_rect->top) / 100 + card_rect->top;
 
-	  draw_special_counters(hdc, card_rect, player, card);
+    draw_special_counters(hdc, card_rect, player, card);
 
-	  rect_counter.top = 35 * (card_rect->bottom - card_rect->top) / 100 + card_rect->top;
-	  rect_counter.bottom = 62 * (card_rect->bottom - card_rect->top) / 100 + card_rect->top;
+    rect_counter.top = 35 * (card_rect->bottom - card_rect->top) / 100 + card_rect->top;
+    rect_counter.bottom = 62 * (card_rect->bottom - card_rect->top) / 100 + card_rect->top;
 
-	  draw_standard_counters(hdc, &rect_counter, player, card);
+    draw_standard_counters(hdc, &rect_counter, player, card);
 
-	  int controlled_by_owner = get_displayed_owned_by_opponent(player, card) == player;
-	  uint32_t title_hilit = get_displayed_unknown0x70(player, card);
+    int controlled_by_owner = !(inst.state & STATE_OWNED_BY_OPPONENT) == !player;
+    uint32_t title_hilit = inst.unknown0x70;
 
-	  DrawSmallCardTitle(hdc, card_rect, cp.name, title_hilit, controlled_by_owner | 0x8, &cp, player, card);
+    DrawSmallCardTitle(hdc, card_rect, cp.name, title_hilit, controlled_by_owner | 0x8, &cp, player,
+                       card, version);
 
-	  if (player == HUMAN && (get_displayed_state(0, card) & STATE_NO_AUTO_TAPPING))
-		{
-		  HGDIOBJ old_pen = SelectObject(hdc, pen_autotap_blue);
-		  HGDIOBJ brush = GetStockObject(HOLLOW_BRUSH);
-		  HGDIOBJ old_brush = SelectObject(hdc, brush);
-		  Rectangle(hdc, card_rect->left, card_rect->top, card_rect->right, card_rect->bottom);
-		  SelectObject(hdc, old_brush);
-		  SelectObject(hdc, old_pen);
-		}
-	}
+    if (player == HUMAN && (inst.state & STATE_NO_AUTO_TAPPING))
+    {
+      HGDIOBJ old_pen = SelectObject(hdc, pen_autotap_blue);
+      HGDIOBJ brush = GetStockObject(HOLLOW_BRUSH);
+      HGDIOBJ old_brush = SelectObject(hdc, brush);
+      Rectangle(hdc, card_rect->left, card_rect->top, card_rect->right, card_rect->bottom);
+      SelectObject(hdc, old_brush);
+      SelectObject(hdc, old_pen);
+    }
+  }
 
   RestoreDC(hdc, saved_dc);
+  if (inst.token_status & STATUS_RED_BORDER)
+    EXE_FN(void, 0x4d4b50, HDC, RECT *, int)(hdc, card_rect, STATUS_RED_BORDER);
+  if (inst.state & (STATE_TARGETTED | STATE_CANNOT_TARGET))
+    EXE_FN(void, 0x4d4a40, HDC, RECT *, int, int)(hdc, card_rect, inst.state & STATE_TARGETTED,
+                                                  !(inst.state & STATE_CANNOT_TARGET));
+  EXE_FN(void, 0x4d4be0, HDC, RECT *, int)(hdc, card_rect, inst.untap_status);
+  if (EXE_DWORD(0x787250))
+    EXE_FN(void, 0x4d3800, HDC, RECT *, int, int, int)(hdc, card_rect, player, card,
+                                                       EXE_DWORD(0x787250));
+  if (inst.state & STATE_TAPPED)
+    EXE_FN(void, 0x466cf0, const char *, HDC, const RECT *)(EXE_STR(0x73781c),
+                                                            EXE_TYP(HDC, 0x739b54), card_rect);
 }
 
 
@@ -2177,10 +2357,10 @@ void sleepms(int ms)
 #ifndef SHANDALAR
 #include <ctype.h>
 static char *kws_strs[32], *spkws_strs[32];
-#define display_dblbfr_hdc EXE_TYP(HDC, 0x62047c)
-#define display_critical_section_for_painting EXE_TYP_PTR(CRITICAL_SECTION, 0x790500)
+
+
 #define display_last_hover_hwnd EXE_TYP(HWND, 0x56bec8)
-#define display_tick_adjustment EXE_DWORD(0x62c370)
+
 #define display_draw_numeral EXE_FN(void, 0x4d34e0, HDC, RECT *, int)
 #define display_get_infoslot EXE_FN(int, 0x4389a0, int, int)
 #define display_get_counters EXE_FN(void, 0x438e80, int, int, int *, int *)
@@ -2190,7 +2370,7 @@ static char *kws_strs[32], *spkws_strs[32];
 #define display_sleight_text EXE_FN(void, 0x439010, int, int, char *)
 #define display_hack_text EXE_FN(void, 0x439070, int, int, char *)
 #define display_replace_text EXE_FN(void, 0x466e90, char *, const char *, int, const char *)
-DLLIMPORT int DrawSmallCardEx(HDC hdc, const RECT *rect, const card_ptr_t *cp, int version, int mode, int player, int card, int expansion);
+
 DLLIMPORT int DrawFullCard(HDC hdc, const RECT *rect, const card_ptr_t *cp, int version, int style, int expanded_text, const char *illustrator);
 DLLIMPORT int DrawFullCardEx(HDC hdc, const RECT *rect, const card_ptr_t *cp, int version, int style, int expanded_text, const char *illustrator, int expansion);
 void effect_card_text_replace_pipe_n(char *buf, int pow, int tgh);
@@ -2255,6 +2435,92 @@ void legacy_name_or_text(char *str, int player, int card, event_t event)
       else
         ++p;
     }
+}
+
+/* Native October 2022: 0x2659710. */
+void legacy_name(char *name, int player, int card)
+{
+  legacy_name_or_text(name, player, card, EVENT_SET_LEGACY_EFFECT_NAME);
+}
+
+/* Native October 2022: 0x2659740. */
+void effect_card_text_replace_pipe_n(char *buf, int pow, int tgh)
+{
+  /* Mingw doesn't come with posix regex.h, and using c++11's std::regex and std::string (which it
+   * requires) increases object size by a full sixth. That's unacceptable if we only need it for
+   * this function, so suffer through doing it manually. */
+
+  char *begin_repl = strstr(buf, "|n");
+  if (!begin_repl) // No |n to replace
+    return;
+
+  // We may have to start replacing earlier than this.  The furthest we have to go back is four
+  // bytes, for "+0/+|n".
+  begin_repl -= 4;
+  if (begin_repl < buf)
+    begin_repl = buf;
+
+  /* We have to match "[+-]?\|n/", "/[+-]?\|n", and "[+-]?n" to deal with existing data.  Replace is
+   * complicated slightly by 0's, which have to be properly signed to match the other value. */
+  char *p = begin_repl;
+
+  char replacement[400]; // size of the original buffer
+  char *q = replacement;
+  while (*p)
+  {
+    // Power
+    if (!strncmp(p, "+|n/", 4) || !strncmp(p, "-|n/", 4) || !strncmp(p, "|n/", 3))
+    {
+      // move p to the / (so it'll match the signed toughness pattern in the next iteration)
+      if (*p == '|')
+        p += 2;
+      else
+        p += 3;
+
+      if (pow == 0 && tgh < 0)
+        q += sprintf(q, "-0");
+      else
+        q += sprintf(q, "%+d", pow);
+    }
+    // Toughness
+    else if (!strncmp(p, "/+|n", 4) || !strncmp(p, "/-|n", 4) || !strncmp(p, "/|n", 3))
+    {
+      // move p past the end
+      if (*(p + 1) == '|')
+        p += 3;
+      else
+        p += 4;
+
+      if (tgh == 0 && pow < 0)
+        q += sprintf(q, "/-0");
+      else
+        q += sprintf(q, "/%+d", tgh);
+    }
+    else if (!strncmp(p, "|n\\|n", 5))
+    {
+      p += 5;
+      q += sprintf(q, "%d/%d", pow, tgh);
+    }
+    else if (!strncmp(p, "\\|n", 3))
+    {
+      p += 3;
+      q += sprintf(q, "%d", pow);
+    }
+    /* The irritating handful of effects that just have a |n by itself to represent a number, and
+     * shove that number in counter_toughness.  These get an unsigned 0 and positive numbers, which
+     * is why /[+-]|n has to be handled separately above. */
+    else if (!strncmp(p, "|n", 2))
+    {
+      p += 2;
+      q += sprintf(q, "%d", tgh);
+    }
+    // Non-matching
+    else
+      *q++ = *p++;
+  }
+  *q = 0;
+
+  strcpy(begin_repl, replacement);
 }
 
 #endif

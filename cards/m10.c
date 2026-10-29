@@ -61,18 +61,21 @@ Gain control of target creature until end of turn. Untap that creature. It gains
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-static int effect_must_attack(int player, int card, event_t event){
+static int effect_must_attack(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_card > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		attack_if_able(instance->damage_target_player, instance->damage_target_card, event);
-	}
+  if (get_card_instance(player, card)->damage_target_card > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    attack_if_able(instance->damage_target_player, instance->damage_target_card, event);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_PHASE_CHANGED && current_phase >= PHASE_MAIN2)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_alluring_siren(int player, int card, event_t event){
@@ -915,29 +918,39 @@ Other Soldier creatures you control have first strike. */
 	return 0;
 }
 
-static void sphinx_ambassador_ability(int player, int card, int t_player){
-/* Search that [t_player] library for a card, then that player names a card. If you searched for a creature card that isn't the named card,
- * you may put it onto the battlefield under your control. Then that player shuffles his or her library.
-*/
-	int *deck = deck_ptr[t_player];
-	if( deck[0] != -1 ){
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_ANY, "Select a card.");
-		if( IS_AI(player) ){
-			default_test_definition(&this_test, TYPE_CREATURE);
-		}
-		int selected = new_select_a_card(player, 1-player, TUTOR_FROM_DECK, 0, AI_MAX_VALUE, -1, &this_test);
-		if( selected != -1 ){
-			int csvid = -1;
-			if( ! IS_AI(t_player) ){
-				csvid = card_from_list(player, 3, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-			}
-			if( cards_data[deck[selected]].id != csvid && is_what(-1, deck[selected], TYPE_CREATURE) ){
-				put_into_play_a_card_from_deck(player, t_player, selected);
-			}
-		}
-		shuffle(1-player);
-	}
+static void sphinx_ambassador_ability(int player, int card, int t_player)
+{
+  /* Search that [t_player] library for a card, then that player names a card. If you searched for a
+   * creature card that isn't the named card, you may put it onto the battlefield under your
+   * control. Then that player shuffles his or her library.
+   */
+  int *deck = deck_ptr[t_player];
+  if (deck[0] != -1)
+  {
+    test_definition_t this_test;
+    new_default_test_definition(&this_test, TYPE_ANY, "Select a card.");
+    if (IS_AI(player))
+    {
+      default_test_definition(&this_test, TYPE_CREATURE);
+    }
+    int selected =
+        new_select_a_card(player, 1 - player, TUTOR_FROM_DECK, 0, AI_MAX_VALUE, -1, &this_test);
+    if (selected != -1)
+    {
+      int csvid = -1;
+      if (!IS_AI(t_player))
+      {
+        test_definition_t test;
+        new_default_test_definition(&test, TYPE_ANY, "Choose a card name.");
+        csvid = new_card_from_list(player, 3, &test);
+      }
+      if (cards_data[deck[selected]].id != csvid && is_what(-1, deck[selected], TYPE_CREATURE))
+      {
+        put_into_play_a_card_from_deck(player, t_player, selected);
+      }
+    }
+    shuffle(1 - player);
+  }
 }
 
 int card_sphinx_ambassador(int player, int card, event_t event){

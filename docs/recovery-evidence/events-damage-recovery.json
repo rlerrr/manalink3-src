@@ -1,0 +1,744 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "source": "functions/functions.c",
+      "name": "damage_dealt_to_me_arbitrary",
+      "native_ranges": [
+        {
+          "address": "0x268e480",
+          "end": "0x268e79a",
+          "bytes_sha256": "ce3ffe44dd98325dc5c7ccb226dbaf6cde82f3f354d7f23189e3dabc7321a1e3",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/268e480.c",
+          "raw_export_sha256": "fafce86747f76971bf307188d8fab74dd969263d8a8c6755bae1ec3ee29d543f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5eb9f54e5f37b9cb5f7d18a7bba6ffc7d9e35d7743cce3f5eadfb1648e305aae"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "equipped_creature_deals_damage",
+      "native_ranges": [
+        {
+          "address": "0x268e460",
+          "end": "0x268e472",
+          "bytes_sha256": "c828a9ab494baca39ecb49bfa250d7bcd0f7a7cb5b288eaca9ff92878142665c",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/268e460.c",
+          "raw_export_sha256": "21a347edbd3c66499d114d21d71a21123e057ae7508480db6cbfe0ab0858c78f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f87a679db57b51910a9e71c6d77d731733961614d13cbac3300a5bc7f9cadc05"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "damage_dealt_by_me_arbitrary",
+      "native_ranges": [
+        {
+          "address": "0x268de80",
+          "end": "0x268e314",
+          "bytes_sha256": "448358e72e08874fe9ad471bbc8262f474c7a4ac645662c8854e201392c5f19b",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/268de80.c",
+          "raw_export_sha256": "9ee125b49dcc3220f390175f34e12d1a057d56296597b7c2317f5ea82b8b38c6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "311b92c3ade08eeeecfd4071713181127abeba87d964d37129064f44890e39ce"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "damage_dealt_by_me",
+      "native_ranges": [
+        {
+          "address": "0x268e3a0",
+          "end": "0x268e3d0",
+          "bytes_sha256": "b6af7bb0f9a9d3bdeba645d8fe9fa61e13d319a8cd823a6c9cd62bc475807fb3",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/268e3a0.c",
+          "raw_export_sha256": "0face6e7570a36c36f978e28f773e77ef81c47af1a4e0d253f9c00b4c55f7c57"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "6bee6b96d1e7a6865755ad35e4ac797b2eb78bdb40a83e127895cb72afd51644"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "attached_creature_deals_damage",
+      "native_ranges": [
+        {
+          "address": "0x268e3d0",
+          "end": "0x268e451",
+          "bytes_sha256": "86348094ee23a6ea40bcdae525f6a4c99fe536b2952c94deff1b853f6d165e1a",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/268e3d0.c",
+          "raw_export_sha256": "f0fbfdb78fc4fa4117e38095d509f980eb7f14ed7e9dd7c2c51811d503c42540"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4f7222e5e5a367f521405a76cd3f344713abc8fdff20be06fa41d674a3137697"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "current_trigger_or_event_is_forced",
+      "native_ranges": [
+        {
+          "address": "0x26cd7e0",
+          "end": "0x26cd81f",
+          "bytes_sha256": "68f4605a46a3dea51acf625e73b2f82981a0ee0d687569b7925214fab56479c9",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cd7e0.c",
+          "raw_export_sha256": "823522c4242603f847e04b287e7ec3af9a232a4ec24f9ebf3bc802a568995b07"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "477996ba43ee1ad0cbba98c36706bc97b3fd81e4bfa5345d581b7cbcd0670fa6"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "event_activate_then_duplicate_into_stack",
+      "native_ranges": [
+        {
+          "address": "0x26cd6c0",
+          "end": "0x26cd7e0",
+          "bytes_sha256": "b5ef6d82d957fc25c75a4edfa03c3d859daf11106284c17d1ad59ca60125c8f3",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cd6c0.c",
+          "raw_export_sha256": "83e936320c722335d62628a822327d08e0112cf66f4e74d76d798742f3134d23"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "6665f9646d202f33aafbcae9a765674feab0b58634e7ae9604492cece9d74846"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "get_abilities",
+      "native_ranges": [
+        {
+          "address": "0x26cc810",
+          "end": "0x26cd643",
+          "bytes_sha256": "59895686947bb965b7b3843de07d3d60d74f8664e0e341fd30e401b2620ed284",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cc810.c",
+          "raw_export_sha256": "c111904367da26ba576b2b6df8cbd786fd79b7b6fcfdf2a29d2bbf3901e873e8"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "99a2176ea307f2c893e64da24eb627aea308ddf28338268780fa3db21aff6376"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "resolve_trigger",
+      "native_ranges": [
+        {
+          "address": "0x26cbfe0",
+          "end": "0x26cc801",
+          "bytes_sha256": "df8bea8f4edd1fc9c0cd7e8e6d1e8f279d63973c9ecb6d0ce4e5118374f1519c",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cbfe0.c",
+          "raw_export_sha256": "6cf3857b6b11bcf5b29090c0e7d5bc04d5de0c0ed4e9d046adbd7bf412f2dc6b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0e9a5149322b6d518bd3312debb684ebe59bd753301fe5d385bd3739557f188e"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_xtrigger2",
+      "native_ranges": [
+        {
+          "address": "0x26cba00",
+          "end": "0x26cba87",
+          "bytes_sha256": "0261d0a5d097f821652ff0ba978894f1a0e8b17c2da2e208fa72bbb5c8382749",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cba00.c",
+          "raw_export_sha256": "26d0e7ae0b51891932b5e66b10c7890ec5644bbaa6efac16255df676bf8b4b25"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0cac6c28126d76af15f7ce85cd7e0710d9a5d46a922a91d5f3e9f87c7023a222"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_trigger2",
+      "native_ranges": [
+        {
+          "address": "0x26cb970",
+          "end": "0x26cb9f1",
+          "bytes_sha256": "6486b61c3a6d8a8f4fe83fd4ddb1d1b38f38ae482ae3807364664fba0d4511ef",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cb970.c",
+          "raw_export_sha256": "039985216dba9acbc68c45463f22086ef6d8ed5b6b1adbc193df5caca2272e52"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7223902c8dc2a944812ebacc708adea10e93f314e88453f25435f121165486d4"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_trigger",
+      "native_ranges": [
+        {
+          "address": "0x26cb930",
+          "end": "0x26cb964",
+          "bytes_sha256": "dcc65bc5a450f7df76992e4a19b99a788335b3240327be33312e06d64bcc7fcf",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cb930.c",
+          "raw_export_sha256": "74e0d1f25b953fc59bcc2b8f3e87c2260b65bf50675c1226b6a7bc8c09755fca"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d7c3ed4e25be7d9e2a9aca434d49488a203637f7db55f907c2c2896f2a33e585"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_trigger_impl",
+      "native_ranges": [
+        {
+          "address": "0x26cb0a0",
+          "end": "0x26cb5a8",
+          "bytes_sha256": "4a1a02306ea108c295b199c7b4008a0e8080ab3a1144f036be64d50810662ca1",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cb0a0.c",
+          "raw_export_sha256": "4828d4e1e585bf9307b8d228d3758992408fda2f3bad96ae0377137cb55ff46c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "03dc787735956deae35b7f42565fa54d2eedfa77c85fcef8857a7e6b9a9d46ca"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_trigger_to_one_card",
+      "native_ranges": [
+        {
+          "address": "0x26cbeb0",
+          "end": "0x26cbf50",
+          "bytes_sha256": "38f7f0986e1b2eb1593958964543415a9e15460f086b6c5cafa131f87d27403e",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cbeb0.c",
+          "raw_export_sha256": "379d68ae392672e831a3d524409ce2ff055fcb1a62bce4632563ac62229a3bef"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "dd5fa16ccaa891b9119f5225b6e67eeeb449fce85f894da39bb1bded19a1faa7"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_event_to_single_card_overriding_function",
+      "native_ranges": [
+        {
+          "address": "0x26cb870",
+          "end": "0x26cb92b",
+          "bytes_sha256": "006972395e5391af194ac07be2e703870349914e182983bc738fcdae3e9c607c",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cb870.c",
+          "raw_export_sha256": "b193bd11ec20c033829bb6730f4a97a959086451da470f54e9805a267950a38a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "6e6cfabfaabd4e581aae3280bfe5a5849e12294a52d866e2a8713c9b242ef99d"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_event_to_single_card",
+      "native_ranges": [
+        {
+          "address": "0x26cb6e0",
+          "end": "0x26cb869",
+          "bytes_sha256": "892475664f27362c4df756ede87e9051b2442c314956852bc8036867c68d6b51",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cb6e0.c",
+          "raw_export_sha256": "89d35dbe6de23daafcb7396fcda2b5b5a1e9b0442ff69f5cf8f5d67c8f1560ed"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8ea096544b4a6a3ea9ba29f6d112da162041ecde95874d8d0cab14368c619d74"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_event_with_attacker",
+      "native_ranges": [
+        {
+          "address": "0x26cbe70",
+          "end": "0x26cbea7",
+          "bytes_sha256": "ef2efb98c78db5ebf472e8a53dc20ac7fd0d327f2479a1268f64234d16de395c",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cbe70.c",
+          "raw_export_sha256": "4b56d05522b30e9af3d788d10d0b512df232b0bde116055f5cbefbc9cbc35f8e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b942aa6dcbd75a873d417e2735ebea425987feba628557ba54f9be191521a97b"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_event_with_initial_event_result",
+      "native_ranges": [
+        {
+          "address": "0x26cbe30",
+          "end": "0x26cbe6b",
+          "bytes_sha256": "64c0549c6ae0793bf687c8b5a71dc852cdd5dce16b53160e8e3dd6579db20f60",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cbe30.c",
+          "raw_export_sha256": "cf1255207b2f415f934558bb70b6cbd582f58db718ae6a8682fae531a8ad18f7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d29e801b7d6b331ac7e694d2751803230cb8df499a4b2196d1eb33473a710264"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_event_raw",
+      "native_ranges": [
+        {
+          "address": "0x26cba90",
+          "end": "0x26cbdb0",
+          "bytes_sha256": "19c2d08a3f37e53b89b7c7a0fa82c7a419339dc1668e2b3c74392c84aa410111",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cba90.c",
+          "raw_export_sha256": "ef86614391ef386e968fa652963810c657b18a97fda11f0da9c2fe7db3e07d02"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f7eff47ecd95198900c57226ff9faf91f71fc8a402baf9e421ce482038c8f5f8"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "call_card_fn",
+      "native_ranges": [
+        {
+          "address": "0x26caf40",
+          "end": "0x26cafed",
+          "bytes_sha256": "d2cb93a83b295cc6e4448ce3a45d34ff8831595a5a71c6f1a3763c2c87d7e833",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26caf40.c",
+          "raw_export_sha256": "594e6d1b5afb479061448b0a266108a5cb33c93d0109a36beab6277fa7903fed"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "debed7d24977daaf3d194e572846538c54a03b93655a0d459a0e5964bd800aee"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "call_card_function",
+      "native_ranges": [
+        {
+          "address": "0x26caff0",
+          "end": "0x26cb052",
+          "bytes_sha256": "6f16d8e5bed6efabefac9283288eb48aacece29573cbbad65b94581c7b30decc",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26caff0.c",
+          "raw_export_sha256": "a72de083ca410800238c922ebfb0b9641844c3aac3d30b492b1c219ce6f63fb9"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "829d1e6686be421d07937b2d3c0f56cc0627dc939cae7a1ef6b5f7dd982dc41d"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "call_card_function_i",
+      "native_ranges": [
+        {
+          "address": "0x26cb060",
+          "end": "0x26cb099",
+          "bytes_sha256": "ec848c184d5f3e34709458947660a0ddfb6dbb4d705b207f2f07998287feaa63",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cb060.c",
+          "raw_export_sha256": "925175e151953ae8238bb8d00c52212ba851cdcdaf653a73cdbabcda726cb387"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "eac59bbbf5af6d550e1811ef7052c6c00109a17174b16cf01c8248593ade4d47"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_event_with_attacker_to_one_card",
+      "native_ranges": [
+        {
+          "address": "0x26cb650",
+          "end": "0x26cb68f",
+          "bytes_sha256": "56a2b813ac4159d2785ec5958c9382f41508e12afbf51ad4449d735d6f2c562a",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cb650.c",
+          "raw_export_sha256": "bf4ae914f4cca7867d790f88dc87182ef01491ce8db4f4799bfb306e2a842579"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "359c0b3a1a96b5ff33ed67240cc4dc55444f2f402ada9da857b12a83eeb3d177"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_event_arbitrary_to_one_card",
+      "native_ranges": [
+        {
+          "address": "0x26cb690",
+          "end": "0x26cb6d5",
+          "bytes_sha256": "f7514d8ca84b485b744853b397efeb086a49a80a004081994c8d75e3abd593ae",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/26cb690.c",
+          "raw_export_sha256": "e366cd34bc887cfb4180792ec465b8a290bb904b3e135f46996c61c73615a73e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ce86be9e924d44e27de2123b2566f9b5db895d6ae5006d301ba3f8b314486236"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "resolve_damage_trigger",
+      "native_ranges": [
+        {
+          "address": "0x268dcf0",
+          "end": "0x268de7b",
+          "bytes_sha256": "deb32d728efc27c62bc34d33709b67317160bb5bd70b5b7a5a8498d5a3661406",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/268dcf0.c",
+          "raw_export_sha256": "93ad9a071671f4a4e6e0ae44329256307898e96ab8ab9b51c02b6486b53ab3a7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3e435c61d799301adda62c8258d17b17253887f4a297b481642d20c98126d9e6"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "check_damage_test",
+      "native_ranges": [
+        {
+          "address": "0x2685330",
+          "end": "0x268566b",
+          "bytes_sha256": "8b7bd7616e299ec9691914995af02c4cddc61dc9f7a1daec99bbf25fc7103b5d",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/2685330.c",
+          "raw_export_sha256": "91776a267781bfc1fbe771e725b3738d9f9824d1c51630cce5550b1a6b673ac9"
+        },
+        {
+          "address": "0x268dc60",
+          "end": "0x268dca9",
+          "bytes_sha256": "341a646e3f03de73a4bcfe909dfcc3a7a42b4fe9d0a23df34c220411e3be5cf5",
+          "raw_export": ".recovery/decompiled-events-damage-helpers/268dc60.c",
+          "raw_export_sha256": "0aee08bc35eafcd7e3c61586a52acce8ae5678ada119c977c5c8b5af21a62c39"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": true,
+      "definition_sha256": "2475a1a7326c0e78bc9b351fb00c43759dda5dccf214f45fb05f07ba043fcf1b"
+    }
+  ],
+  "callers": [
+    {
+      "source": "cards/dragons_maze.c",
+      "name": "card_bred_for_the_hunt",
+      "native_ranges": [
+        {
+          "address": "0x2294da0",
+          "end": "0x2294efa",
+          "bytes_sha256": "453cea77788d587236c0d757f6fcef48c4b01ac1e0dd971bafad1f0e95fdb39f",
+          "raw_export": ".recovery/decompiled-damage-source-callers/2294da0.c",
+          "raw_export_sha256": "3847f51bf725ca0f0622dfb4ef92977af87f63b490d242600ef42dea17fb554b"
+        }
+      ],
+      "source_changed": false,
+      "definition_sha256": "5dd854fda3cb77538b9bafe3a431e34f2376ae8c3ea86d8b79036ab6a6562577",
+      "native_negative_source_slot_preserved": true
+    },
+    {
+      "source": "cards/dragons_maze.c",
+      "name": "card_teysa_envoy_of_ghosts",
+      "native_ranges": [
+        {
+          "address": "0x2299010",
+          "end": "0x229916d",
+          "bytes_sha256": "74ef75cb99ed8d54b69f15b66edad1616f23bfee814e85b50d00ad74709f101a",
+          "raw_export": ".recovery/decompiled-damage-source-callers/2299010.c",
+          "raw_export_sha256": "9817c7a503d050fe0846a1515b6e0b3dfb500b3eaf415d16299ff0ec2a3698f2"
+        }
+      ],
+      "source_changed": true,
+      "definition_sha256": "a622fd4dc7a04ead2b7a9b9ae60e7d4007218243dda5278b5a029c5121c55f54",
+      "native_negative_source_slot_preserved": true
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_coastal_piracy",
+      "native_ranges": [
+        {
+          "address": "0x2171800",
+          "end": "0x217194e",
+          "bytes_sha256": "63f7b4092ccae6291be0bbefd901f0ac3380ad251a092e55de28ca0a64a754f0",
+          "raw_export": ".recovery/decompiled-damage-source-callers/2171800.c",
+          "raw_export_sha256": "9be2daef838fd0dc7d623a01e7c6d8d5f0912a3cf1951c1c6df2a20fbc29b507"
+        }
+      ],
+      "source_changed": true,
+      "definition_sha256": "99a1cb0b3e183c735e7c6d092a2c9f0fe828353be7248726c392f13af75195ce",
+      "native_negative_source_slot_preserved": false
+    }
+  ],
+  "reviewed_helper_definitions": 26,
+  "reviewed_native_helper_ranges": 27,
+  "changed_helper_definitions": 14,
+  "shared_enum": {
+    "type": "ddbm_flags_t",
+    "name": "DDBM_MAY_DAMAGE_PLANESWALKER",
+    "value": 64,
+    "retired_name": "DDBM_MUST_DAMAGE_PLANESWALKER",
+    "local_shadow_declarations_removed": 5
+  },
+  "equipment_callback": {
+    "name": "equipment_legacy",
+    "native_address": "0x26edb10",
+    "coff_storage_class": 2,
+    "DW_AT_external": true
+  },
+  "callback_address_guard": {
+    "linker_marker": "etext",
+    "native_address": "0x270fb30",
+    "engine_min": "0x401000",
+    "engine_max": "0x4ea000",
+    "dll_min": "0x2001000",
+    "inclusive_upper_marker": true
+  },
+  "optimized_damage_filter": {
+    "public_address": "0x268dc60",
+    "private_address": "0x2685330",
+    "public_source_parameters": 8,
+    "private_physical_parameters": 7,
+    "private_registers": {
+      "EAX": "source_of_damage_player",
+      "EDX": "source_of_damage_card",
+      "ECX": "mode"
+    },
+    "private_stack": [
+      "triggering_player",
+      "triggering_card",
+      "type",
+      "test"
+    ],
+    "event_constant": "EVENT_DEAL_DAMAGE",
+    "call_witness": {
+      "start": "0x268e170",
+      "end": "0x268e19a",
+      "bytes_sha256": "eb5e1ca0ece9739112dcac9ae387d4b6fb98ec05ba114eca187befadc6d96e98",
+      "type": -1,
+      "test": 0
+    },
+    "ghidra_prototype_correction": "The optimized worker omits the constant event argument. Its raw DWARF-derived Ghidra prototype is shifted; source keeps the public eight-argument signature."
+  },
+  "native_inconsistencies": [
+    {
+      "callers": [
+        "card_bred_for_the_hunt",
+        "card_teysa_envoy_of_ghosts"
+      ],
+      "issue": "Native callers pass card=-1 to resolve_damage_trigger, whose new cleanup reads the source instance. Preserved for binary fidelity; gameplay repair remains separate work."
+    }
+  ],
+  "scope": "Complete directly reviewed helper bodies plus three complete callers. Existing accepted event helpers remain untouched; dialog implementation remains an executable boundary.",
+  "counter_enum": {
+    "native_die_offset": "0xb0882",
+    "values": {
+      "COUNTER_P1_P1": 0,
+      "COUNTER_M1_M1": 1,
+      "COUNTER_P0_P1": 2,
+      "COUNTER_P0_P2": 3,
+      "COUNTER_P1_P0": 4,
+      "COUNTER_P1_P2": 5,
+      "COUNTER_P2_P0": 6,
+      "COUNTER_P2_P2": 7,
+      "COUNTER_M0_M1": 8,
+      "COUNTER_M0_M2": 9,
+      "COUNTER_M1_M0": 10,
+      "COUNTER_M2_M1": 11,
+      "COUNTER_M2_M2": 12,
+      "COUNTER_AGE": 13,
+      "COUNTER_AIM": 14,
+      "COUNTER_ARROW": 15,
+      "COUNTER_ARROWHEAD": 16,
+      "COUNTER_AWAKENING": 17,
+      "COUNTER_BLAZE": 18,
+      "COUNTER_BLOOD": 19,
+      "COUNTER_BOUNTY": 20,
+      "COUNTER_BRIBERY": 21,
+      "COUNTER_CARRION": 22,
+      "COUNTER_CHIP": 23,
+      "COUNTER_CORPSE": 24,
+      "COUNTER_CREDIT": 25,
+      "COUNTER_CUBE": 26,
+      "COUNTER_CURRENCY": 27,
+      "COUNTER_DEATH": 28,
+      "COUNTER_DELAY": 29,
+      "COUNTER_DEPLETION": 30,
+      "COUNTER_DESPAIR": 31,
+      "COUNTER_DEVOTION": 32,
+      "COUNTER_DIVINITY": 33,
+      "COUNTER_DOOM": 34,
+      "COUNTER_DREAM": 35,
+      "COUNTER_ECHO": 36,
+      "COUNTER_ELIXIR": 37,
+      "COUNTER_VORTEX": 38,
+      "COUNTER_EON": 39,
+      "COUNTER_EYEBALL": 40,
+      "COUNTER_FADE": 41,
+      "COUNTER_FATE": 42,
+      "COUNTER_FEATHER": 43,
+      "COUNTER_FILIBUSTER": 44,
+      "COUNTER_FLAME": 45,
+      "COUNTER_FLOOD": 46,
+      "COUNTER_FUNGUS": 47,
+      "COUNTER_FUNK": 48,
+      "COUNTER_FUSE": 49,
+      "COUNTER_GLYPH": 50,
+      "COUNTER_GOLD": 51,
+      "COUNTER_GROWTH": 52,
+      "COUNTER_HATCHLING": 53,
+      "COUNTER_HEALING": 54,
+      "COUNTER_HOOFPRINT": 55,
+      "COUNTER_HOURGLASS": 56,
+      "COUNTER_HUNGER": 57,
+      "COUNTER_HUSK": 58,
+      "COUNTER_ICE": 59,
+      "COUNTER_INFECTION": 60,
+      "COUNTER_INTERVENTION": 61,
+      "COUNTER_JAVELIN": 62,
+      "COUNTER_KI": 63,
+      "COUNTER_LEVEL": 64,
+      "COUNTER_LORE": 65,
+      "COUNTER_LOYALTY": 66,
+      "COUNTER_LUCK": 67,
+      "COUNTER_MAGNET": 68,
+      "COUNTER_MANIFESTATION": 69,
+      "COUNTER_MANNEQUIN": 70,
+      "COUNTER_MATRIX": 71,
+      "COUNTER_MINE": 72,
+      "COUNTER_MINING": 73,
+      "COUNTER_MIRE": 74,
+      "COUNTER_MUSIC": 75,
+      "COUNTER_MUSTER": 76,
+      "COUNTER_NET": 77,
+      "COUNTER_OMEN": 78,
+      "COUNTER_ORE": 79,
+      "COUNTER_PAGE": 80,
+      "COUNTER_PAIN": 81,
+      "COUNTER_PARALYZATION": 82,
+      "COUNTER_PETAL": 83,
+      "COUNTER_PETRIFICATION": 84,
+      "COUNTER_PHYLACTERY": 85,
+      "COUNTER_PIN": 86,
+      "COUNTER_PLAGUE": 87,
+      "COUNTER_POLYP": 88,
+      "COUNTER_POP": 89,
+      "COUNTER_PRESSURE": 90,
+      "COUNTER_PUPA": 91,
+      "COUNTER_QUEST": 92,
+      "COUNTER_RUST": 93,
+      "COUNTER_SCREAM": 94,
+      "COUNTER_SCROLL": 95,
+      "COUNTER_SHELL": 96,
+      "COUNTER_PALLIATION": 97,
+      "COUNTER_SHOE": 98,
+      "COUNTER_SHRED": 99,
+      "COUNTER_SLEEP": 100,
+      "COUNTER_SLEIGHT": 101,
+      "COUNTER_SLIME": 102,
+      "COUNTER_SOOT": 103,
+      "COUNTER_SPORE": 104,
+      "COUNTER_STORAGE": 105,
+      "COUNTER_STRIFE": 106,
+      "COUNTER_STUDY": 107,
+      "COUNTER_THEFT": 108,
+      "COUNTER_THIRD_DEGREE_BURN": 109,
+      "COUNTER_TIDE": 110,
+      "COUNTER_TIME": 111,
+      "COUNTER_TOWER": 112,
+      "COUNTER_TRAINING": 113,
+      "COUNTER_TRAP": 114,
+      "COUNTER_TREASURE": 115,
+      "COUNTER_VELOCITY": 116,
+      "COUNTER_VERSE": 117,
+      "COUNTER_VITALITY": 118,
+      "COUNTER_WAGE": 119,
+      "COUNTER_WINCH": 120,
+      "COUNTER_WIND": 121,
+      "COUNTER_WISH": 122,
+      "COUNTER_CHARGE": 123,
+      "COUNTER_CRYSTAL": 124,
+      "COUNTER_GEM": 125,
+      "COUNTER_ISOLATION": 126,
+      "COUNTER_PLOT": 127,
+      "COUNTER_HOUR": 128,
+      "COUNTER_FURY": 129,
+      "COUNTER_SPITE": 130,
+      "COUNTER_UNITY": 131,
+      "COUNTER_BRICK": 132,
+      "COUNTER_GLOBE": 133,
+      "COUNTER_CAGE": 134,
+      "COUNTER_LANDMARK": 135,
+      "COUNTER_PREY": 136,
+      "COUNTER_SLUMBER": 137,
+      "COUNTER_HIT": 138,
+      "COUNTER_EGG": 139,
+      "COUNTER_SILVER": 140,
+      "COUNTER_KNOWLEDGE": 141,
+      "COUNTER_COIN": 142,
+      "COUNTER_TASK": 143,
+      "COUNTER_DEATHTOUCH": 144,
+      "COUNTER_DOUBLE_STRIKE": 145,
+      "COUNTER_FIRST_STRIKE": 146,
+      "COUNTER_FLYING": 147,
+      "COUNTER_HEXPROOF": 148,
+      "COUNTER_INDESTRUCTIBLE": 149,
+      "COUNTER_LIFELINK": 150,
+      "COUNTER_MENACE": 151,
+      "COUNTER_REACH": 152,
+      "COUNTER_TRAMPLE": 153,
+      "COUNTER_VIGILANCE": 154,
+      "COUNTER_MANABOND": 155,
+      "COUNTER_FETCH": 156,
+      "COUNTER_FORESHADOW": 157,
+      "COUNTER_INCARNATION": 158,
+      "COUNTER_SOUL": 159,
+      "COUNTER_ACORN": 160,
+      "COUNTER_BOOK": 161,
+      "COUNTER_COMPONENT": 162,
+      "COUNTER_CORRUPTION": 163,
+      "COUNTER_ENLIGHTENED": 164,
+      "COUNTER_GHOSTFORM": 165,
+      "COUNTER_HARMONY": 166,
+      "COUNTER_HONE": 167,
+      "COUNTER_NIGHT": 168,
+      "COUNTER_POINT": 169,
+      "COUNTER_VOID": 170,
+      "COUNTER_VOW": 171,
+      "COUNTER_VOYAGE": 172,
+      "COUNTER_AEGIS": 173,
+      "COUNTER_EMBER": 174,
+      "COUNTER_RITUAL": 175,
+      "COUNTER_VALOR": 176,
+      "COUNTER_BLOODLINE": 177,
+      "COUNTER_CROAK": 178,
+      "COUNTER_INVITATION": 179,
+      "COUNTER_JUDGMENT": 180,
+      "COUNTER_SUSPECT": 181,
+      "COUNTER_HATCHING": 182,
+      "COUNTER_COLLECTION": 183,
+      "COUNTER_CONTESTED": 184,
+      "COUNTER_SHIELD": 185,
+      "COUNTER_STASH": 186,
+      "COUNTER_end": 187,
+      "COUNTER_invalid": 255
+    },
+    "added_members": 46,
+    "local_shadows_removed": 16,
+    "storage_bytes": 4,
+    "palliation_value": 97,
+    "shield_value": 185,
+    "sentinel": 187
+  },
+  "legacy_effect_boundary": {
+    "address": "0x628c64",
+    "native_coff_symbol": "_LEGACY_EFFECT_628C64",
+    "storage_class": 2,
+    "section": -1
+  }
+}

@@ -2481,71 +2481,80 @@ When ~ dies, add |C|C|C|C to your mana pool. */
 	return 0;
 }
 
-static int tablet_of_epityr_effect(int player, int card, event_t event){
+static int tablet_of_epityr_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_TABLET_OF_EPITYR ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_TABLET_OF_EPITYR)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-					}
-					if( instance->targets[11].player < 0 ){
-						instance->targets[11].player = 0;
-					}
-					SET_BYTE1(instance->targets[11].player) = 1;
-				}
-				count_for_gfp_ability(player, card, event, player, TYPE_ARTIFACT, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+              instance->targets[11].player = 0;
+            SET_BYTE2(instance->targets[11].player) = 1;
+          }
+        }
+        count_for_gfp_ability(player, card, event, player, TYPE_ARTIFACT, NULL);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
-		if( result ){
-			int amount = BYTE0(result);
-			while( amount && has_mana(player, COLOR_ANY, 1) ){
-					charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 1);
-					if( spell_fizzled != 1 ){
-						gain_life(player, 1);
-					}
-					else{
-						break;
-					}
-					amount--;
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    while (amount && has_mana(player, COLOR_ANY, 1))
+    {
+      charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 1);
+      if (spell_fizzled != 1)
+      {
+        gain_life(player, 1);
+      }
+      else
+      {
+        break;
+      }
+      amount--;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_tablet_of_epityr(int player, int card, event_t event){
@@ -2979,66 +2988,64 @@ int card_the_rack(int player, int card, event_t event){
 	return 0;
 }
 
-static int titanias_song_legacy(int player, int card, event_t event){
+static int titanias_song_legacy(int player, int card, event_t event)
+{
 
-	card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CHANGE_TYPE ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_ARTIFACT);
-		this_test.type_flag = F1_NO_CREATURE;
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    test_definition_t this_test;
+    default_test_definition(&this_test, TYPE_ARTIFACT);
+    this_test.type_flag = F1_NO_CREATURE;
 
-		global_type_change(player, card, event, 2, TYPE_CREATURE, &this_test, 16384, 16384, 0, 0, 0);
-	}
+    global_type_change(player, card, event, 2, TYPE_CREATURE, &this_test, 16384, 16384, 0, 0, 0);
+  }
 
-	if( event == EVENT_CAST_SPELL && is_what(affected_card_controller, affected_card, TYPE_ARTIFACT) &&
-		! is_what(affected_card_controller, affected_card, TYPE_CREATURE) && ! is_what(affected_card_controller, affected_card, TYPE_EFFECT)
-	  ){
-		humiliate(player, card, affected_card_controller, affected_card, 1);
-	}
+  if (event == EVENT_ABILITIES && is_what(affected_card_controller, affected_card, TYPE_ARTIFACT) &&
+      !is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
+      !is_what(affected_card_controller, affected_card, TYPE_EFFECT))
+  {
+    humiliate(player, card, affected_card_controller, affected_card, 1);
+  }
 
-	if( instance->targets[0].player > -1 && ! in_play(instance->targets[0].player, instance->targets[0].card) ){
-		if( instance->token_status & STATUS_INVISIBLE_FX){
-			remove_status(player, card, STATUS_INVISIBLE_FX);
-		}
-		if( eot_trigger(player, card, event) ){
-			test_definition_t this_test;
-			default_test_definition(&this_test, TYPE_ARTIFACT);
-			new_manipulate_all(player, card, player, &this_test, ACT_DE_HUMILIATE);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  if (instance->targets[0].player > -1 &&
+      !in_play(instance->targets[0].player, instance->targets[0].card))
+  {
+    if (instance->token_status & STATUS_INVISIBLE_FX)
+    {
+      remove_status(player, card, STATUS_INVISIBLE_FX);
+    }
+    if (eot_trigger(player, card, event))
+    {
+      test_definition_t this_test;
+      default_test_definition(&this_test, TYPE_ARTIFACT);
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
-int card_titanias_song(int player, int card, event_t event){
-/* CARD_ID_TITANIAS_SONG	536
-Titania's Song	|3|G
-Enchantment
-Each noncreature artifact loses all abilities and becomes an artifact creature with power and toughness each equal to its converted mana cost.
-If ~ leaves the battlefield, this effect continues until end of turn. */
+int card_titanias_song(int player, int card, event_t event)
+{
+  /* CARD_ID_TITANIAS_SONG	536
+  Titania's Song	|3|G
+  Enchantment
+  Each noncreature artifact loses all abilities and becomes an artifact creature with power and
+  toughness each equal to its converted mana cost. If ~ leaves the battlefield, this effect
+  continues until end of turn. */
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		int i;
-		for(i=0; i<2; i++){
-			int count = active_cards_count[i]-1;
-			while( count > -1 ){
-					if( in_play(i, count) && is_what(i, count, TYPE_ARTIFACT) && ! is_what(i, count, TYPE_CREATURE)){
-						humiliate(player, card, i, count, 1);
-					}
-					count--;
-			}
-		}
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    int legacy = create_legacy_effect(player, card, &titanias_song_legacy);
+    get_card_instance(player, legacy)->targets[0].player = player;
+    get_card_instance(player, legacy)->targets[0].card = card;
+    get_card_instance(player, legacy)->number_of_targets = 1;
+    get_card_instance(player, legacy)->token_status |= STATUS_INVISIBLE_FX;
+  }
 
-		int legacy = create_legacy_effect(player, card, &titanias_song_legacy);
-		get_card_instance(player, legacy)->targets[0].player = player;
-		get_card_instance(player, legacy)->targets[0].card = card;
-		get_card_instance(player, legacy)->number_of_targets = 1;
-		get_card_instance(player, legacy)->token_status |= STATUS_INVISIBLE_FX;
-	}
-
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_transmute_artifact(int player, int card, event_t event){
@@ -3188,18 +3195,20 @@ Whenever a player casts an artifact spell, you may pay |1. If you do, you gain 1
 
 static int urzatron_land(int player, int card, event_t event, int mana_amt)
 {
-  if (event == EVENT_COUNT_MANA && affect_me(player, card)
-	  && !is_tapped(player, card) && !is_animated_and_sick(player, card) && can_produce_mana(player, card))
-	declare_mana_available(player, COLOR_COLORLESS, urzatron_parts(player) == 7 ? mana_amt : 1);
+  if (event == EVENT_COUNT_MANA && affect_me(player, card) && !is_tapped(player, card) &&
+      !is_animated_and_sick(player, card) && can_produce_mana(player, card))
+    declare_mana_available(player, mana_colors_added[player],
+                           urzatron_parts(player) == 7 ? mana_amt : 1);
 
   if (event == EVENT_CAN_ACTIVATE)
-	return !is_tapped(player, card) && !is_animated_and_sick(player, card) && can_produce_mana(player, card);
+    return !is_tapped(player, card) && !is_animated_and_sick(player, card) &&
+           can_produce_mana(player, card);
 
   if (event == EVENT_ACTIVATE)
-	produce_mana_tapped(player, card, COLOR_COLORLESS, urzatron_parts(player) == 7 ? mana_amt : 1);
+    produce_mana_tapped(player, card, COLOR_COLORLESS, urzatron_parts(player) == 7 ? mana_amt : 1);
 
   if (event == EVENT_RESOLVE_SPELL)
-	play_land_sound_effect(player, card);
+    play_land_sound_effect(player, card);
 
   return 0;
 }
@@ -3226,74 +3235,86 @@ Land - Urza's Mine
   return urzatron_land(player, card, event, 2);
 }
 
-static int urzas_miter_effect(int player, int card, event_t event){
+static int urzas_miter_effect(int player, int card, event_t event)
+{
 
-	//In case something is copying Tablet of Epityr and then reverts to its original form.
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_URZAS_MITER ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  // In case something is copying Tablet of Epityr and then reverts to its original form.
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_URZAS_MITER)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-					}
-					if( instance->targets[11].player < 0 ){
-						instance->targets[11].player = 0;
-					}
-					SET_BYTE1(instance->targets[11].player) = 1;
-				}
-				if( kill_code == KILL_DESTROY || kill_code == KILL_BURY ){
-					count_for_gfp_ability(player, card, event, player, TYPE_ARTIFACT, NULL);
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+          }
+          if (instance->targets[11].player < 0)
+          {
+            instance->targets[11].player = 0;
+          }
+          SET_BYTE2(instance->targets[11].player) = 1;
+        }
+        if (kill_code == KILL_DESTROY || kill_code == KILL_BURY)
+        {
+          count_for_gfp_ability(player, card, event, player, TYPE_ARTIFACT, NULL);
+        }
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
-		if( result ){
-			int amount = BYTE0(result);
-			while( amount && has_mana(player, COLOR_ANY, 3) ){
-					charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 3);
-					if( spell_fizzled != 1 ){
-						draw_cards(player, 1);
-					}
-					else{
-						break;
-					}
-					amount--;
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if (!check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    while (amount && has_mana(player, COLOR_ANY, 3))
+    {
+      charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 3);
+      if (spell_fizzled != 1)
+      {
+        draw_cards(player, 1);
+      }
+      else
+      {
+        break;
+      }
+      amount--;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_urzas_miter(int player, int card, event_t event){

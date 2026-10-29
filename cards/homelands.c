@@ -111,56 +111,93 @@ int hom_clockwork(int player, int card, event_t event, int amount)
   return iVar2;
 }
 
-static int homelands_triple_land(int player, int card, event_t event, color_test_t primary, color_test_t secondary)
+static int homelands_triple_land(int player, int card, event_t event, color_test_t primary,
+                                 color_test_t secondary)
 {
-  card_instance_t* inst = get_card_instance(player, card);
-
+  card_instance_t *inst = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
-	{
-	  inst->info_slot = COLOR_TEST_COLORLESS;
-	  play_land_sound_effect_force_color(player, card, COLOR_TEST_COLORLESS | primary | secondary);
-	  count_mana();	// So it immediately goes back to proper colors when other mana sources are available
-	}
-
+  {
+    inst->info_slot = COLOR_TEST_COLORLESS;
+    play_land_sound_effect_force_color(player, card, primary | secondary | COLOR_TEST_COLORLESS);
+    count_mana();
+    return 0;
+  }
   if (event == EVENT_CHANGE_TYPE)
-	{
-	  int avail = has_mana(player, COLOR_COLORLESS, 1);
-	  inst->info_slot = COLOR_TEST_COLORLESS | (avail < 2 ? 0 : (primary | (avail < 3 ? 0 : secondary)));
-	}
-
-  if (event == EVENT_CAN_ACTIVATE
-	  || (event == EVENT_COUNT_MANA && affect_me(player, card)))
-	return inst->targets[1].player != 66 && mana_producer(player, card, event);
-
+  {
+    int avail = has_mana(player, COLOR_COLORLESS, 1);
+    inst->info_slot = mana_colors_added[player] | COLOR_TEST_COLORLESS |
+                      (avail < 2 ? 0 : primary | (avail < 3 ? 0 : secondary));
+    return 0;
+  }
+  if (event == EVENT_COUNT_MANA)
+  {
+    if (affect_me(player, card) && CAN_TAP_FOR_MANA(player, card) && inst->targets[1].player != 66)
+    {
+      int avail = has_mana(player, COLOR_ANY, 1);
+      color_test_t colors = mana_colors_added[player] | COLOR_TEST_COLORLESS;
+      if (avail == 1)
+        colors |= primary;
+      else if (avail > 1)
+        colors |= primary | secondary;
+      declare_mana_available_hex(player, colors, 1);
+    }
+    return 0;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+    return inst->targets[1].player != 66 && mana_producer(player, card, event);
   if (event == EVENT_ACTIVATE)
-	{
-	  if (inst->targets[1].player == 66)
-		return 0;
-
-	  int avail = has_mana(player, COLOR_COLORLESS, 1);
-	  int choice = COLOR_COLORLESS;
-	  if (avail >= 2)
-		choice = choose_a_color_exe(player, "What kind of mana?", 1, 0,
-									COLOR_TEST_COLORLESS | primary | (avail < 3 ? 0 : secondary));
-
-	  if (choice == -1)
-		{
-		  cancel = 1;
-		  return 0;
-		}
-
-	  if (choice != COLOR_COLORLESS)
-		{
-		  inst->targets[1].player = 66;
-		  charge_mana(player, COLOR_COLORLESS, (primary & (1<<choice)) ? 1 : 2);
-		  inst->targets[1].player = 0;
-		  if (cancel == 1)
-			return 0;
-		}
-
-	  produce_mana_tapped(player, card, choice, 1);
-	}
-
+  {
+    int avail = has_mana(player, COLOR_COLORLESS, 1);
+    int choice = COLOR_COLORLESS;
+    for (int i = 0; i < 7; ++i)
+      tapped_for_mana[i] = 0;
+    if (check_special_flags2(player, card, SF2_CONTAMINATION) && is_what(player, card, TYPE_LAND))
+    {
+      produce_mana(player, COLOR_BLACK, 1);
+      tapped_for_mana_color = COLOR_BLACK;
+    }
+    else if (check_special_flags2(player, card, SF2_DEEP_WATER) && card >= 0 &&
+             is_what(player, card, TYPE_LAND))
+    {
+      produce_mana(player, COLOR_BLUE, 1);
+      tapped_for_mana_color = COLOR_BLUE;
+    }
+    else
+    {
+      if (inst->targets[1].player == 66)
+        return 0;
+      color_test_t colors = mana_colors_added[player];
+      if (avail >= 2)
+      {
+        colors |= primary;
+        if (avail > 2)
+          colors |= secondary;
+      }
+      if (avail >= 2 || colors)
+        choice = choose_mana_all_one_color(player, colors | COLOR_TEST_COLORLESS, 1,
+                                           "What kind of mana?", COLOR_TEST_COLORLESS);
+      if (choice == -1)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+    }
+    if (!((mana_colors_added[player] | COLOR_TEST_COLORLESS) & color_to_color_test(choice)))
+    {
+      inst->targets[1].player = 66;
+      charge_mana(player, COLOR_COLORLESS, (primary & (1 << choice)) ? 1 : 2);
+      inst->targets[1].player = 0;
+      if (spell_fizzled == 1)
+        return 0;
+    }
+    if (!check_special_flags2(player, card, SF2_CONTAMINATION | SF2_DEEP_WATER) &&
+        is_what(player, card, TYPE_LAND))
+    {
+      produce_mana(player, choice, 1);
+      tapped_for_mana_color = choice;
+    }
+    get_card_instance(player, card)->state |= STATE_TAPPED;
+  }
   return 0;
 }
 
@@ -1440,39 +1477,47 @@ int card_ghost_hounds(int player, int card, event_t event)
 	return 0;
 }
 
-static int giant_albatross_legacy(int player, int card, event_t event){
+static int giant_albatross_legacy(int player, int card, event_t event)
+{
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( affect_me(instance->targets[0].player, instance->targets[0].card) &&
-			is_this_dying(instance->targets[0].player, instance->targets[0].card) )
-		{
-			instance->targets[11].player = 1;
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (affect_me(instance->targets[0].player, instance->targets[0].card) &&
+        is_this_dying(instance->targets[0].player, instance->targets[0].card) &&
+        !check_for_death_trigger_removal(instance->targets[0].player, instance->targets[0].card))
+    {
+      instance->targets[11].player = 1;
+    }
+  }
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int choice = 1;
-		if( can_pay_life(instance->damage_target_player, 2) ){
-			choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_WHO_CHOOSES(instance->damage_target_player),
-							"Bury this creature", 1, life[player] <= 6 ? 10 : 1,
-							"Pay 2 life", life[player] > 6 ? 10 : 1);
-		}
-		if( choice == 1 ){
-			kill_card(instance->damage_target_player, instance->damage_target_card, KILL_BURY);
-		}
-		if( choice == 2 ){
-			lose_life(instance->damage_target_player, 2);
-		}
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int choice = 1;
+    if (can_pay_life(instance->damage_target_player, 2))
+    {
+      choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
+                      DLG_WHO_CHOOSES(instance->damage_target_player), "Bury this creature", 1,
+                      life[player] <= 6 ? 10 : 1, "Pay 2 life", life[player] > 6 ? 10 : 1);
+    }
+    if (choice == 1)
+    {
+      kill_card(instance->damage_target_player, instance->damage_target_card, KILL_BURY);
+    }
+    if (choice == 2)
+    {
+      lose_life(instance->damage_target_player, 2);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_giant_albatross(int player, int card, event_t event)
@@ -2063,29 +2108,34 @@ int card_mammoth_harness(int player, int card, event_t event)
    * Enchantment - Aura
    * Enchant creature
    * Enchanted creature loses flying.
-   * Whenever enchanted creature blocks or becomes blocked by a creature, the other creature gains first strike until end of turn. */
+   * Whenever enchanted creature blocks or becomes blocked by a creature, the other creature gains
+   * first strike until end of turn. */
 
   if (event == EVENT_ABILITIES)
-	{
-	  card_instance_t* inst = get_card_instance(player, card);
-	  if (!affect_me(inst->damage_target_player, inst->damage_target_card))
-		return 0;
-	  event_result &= ~KEYWORD_FLYING;
-	}
+  {
+    card_instance_t *inst = get_card_instance(player, card);
+    if (!affect_me(inst->damage_target_player, inst->damage_target_card))
+      return 0;
+    event_result &= ~KEYWORD_FLYING;
+  }
 
   if (event == EVENT_DECLARE_BLOCKERS)
-	{
-	  card_instance_t* inst = get_card_instance(player, card);
-	  card_instance_t* ench = get_card_instance(inst->damage_target_player, inst->damage_target_card);
+  {
+    card_instance_t *inst = get_card_instance(player, card);
+    card_instance_t *ench = get_card_instance(inst->damage_target_player, inst->damage_target_card);
 
-	  if (ench->state & STATE_ATTACKING)
-		for_each_creature_blocking_me(inst->damage_target_player, inst->damage_target_card, give_first_strike, player, card);
+    if (ench->state & STATE_ATTACKING)
+      for_each_creature_blocking_me(inst->damage_target_player, inst->damage_target_card,
+                                    give_first_strike, player, card);
 
-	  if (ench->state & STATE_BLOCKING)
-		for_each_creature_blocked_by_me(inst->damage_target_player, inst->damage_target_card, give_first_strike, player, card);
-	}
+    if (ench->state & STATE_BLOCKING)
+      for_each_creature_blocked_by_me(inst->damage_target_player, inst->damage_target_card,
+                                      give_first_strike, player, card);
+  }
 
-  return vanilla_aura(player, card, event, 1-player);
+  if (IS_AURA_EVENT(player, card, event) || event == EVENT_STATIC_EFFECTS)
+    return vanilla_aura(player, card, event, 1 - player);
+  return 0;
 }
 
 int card_marjhan(int player, int card, event_t event){
@@ -2167,29 +2217,34 @@ int card_marjhan(int player, int card, event_t event){
 	return 0;
 }
 
-int card_memory_lapse(int player, int card, event_t event){
-	/* Memory Lapse	|1|U	0x200ccc6
-	 * Instant
-	 * Counter target spell. If that spell is countered this way, put it on top of its owner's library instead of into that player's graveyard. */
+int card_memory_lapse(int player,int card,event_t event)
 
-	if( event == EVENT_CAN_CAST || (event == EVENT_CAST_SPELL && affect_me(player, card)) ){
-		return counterspell(player, card, event, NULL, 0);
-	}
+{
+  int iVar1;
+  card_instance_t *pcVar2;
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( counterspell_validate(player, card, NULL, 0) ){
-			card_instance_t *instance = get_card_instance(player, card);
-			if( manage_counterspell_linked_hacks(player, card, instance->targets[0].player, instance->targets[0].card) != KILL_EXILE ){
-				put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
-			}
-			else{
-				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
+  if (event != EVENT_CAN_CAST) {
+    if (event == EVENT_CAST_SPELL) {
+      if ((card == affected_card) && (player == affected_card_controller)) goto LAB_0212746e;
+    }
+    else if (event == EVENT_RESOLVE_SPELL) {
+      iVar1 = counterspell_validate(player,card,(target_definition_t *)0x0,0);
+      if (iVar1 != 0) {
 
-	return 0;
+        pcVar2 = get_card_instance(player,card);
+        iVar1 = pre_counterspell(player,card,pcVar2->targets[0].player,pcVar2->targets[0].card);
+        if (iVar1 != 0) {
+          put_on_top_of_deck(pcVar2->targets[0].player,pcVar2->targets[0].card);
+        }
+      }
+      kill_card(player,card,KILL_DESTROY);
+      return 0;
+    }
+    return 0;
+  }
+LAB_0212746e:
+  iVar1 = counterspell(player,card,event,(target_definition_t *)0x0,0);
+  return iVar1;
 }
 
 int card_merchant_scroll(int player, int card, event_t event){

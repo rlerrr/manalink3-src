@@ -314,24 +314,27 @@ static int scheme_i_call_on_the_ancient_magics(int player, int card, event_t eve
 {
   /* I Call on the Ancient Magics	""
    * Scheme
-   * When you set this scheme in motion, each other player searches their library for a card, reveals it, and puts it into their hand. Then you search your library for two cards and put them into your hand. Each player shuffles their library. */
+   * When you set this scheme in motion, each other player searches their library for a card,
+   * reveals it, and puts it into their hand. Then you search your library for two cards and put
+   * them into your hand. Each player shuffles their library. */
 
   if (event == EVENT_SET_IN_MOTION)
-	{
-	  test_definition_t test;
-	  default_test_definition(&test, 0);
-	  test.no_shuffle = 1;
+  {
+    test_definition_t test;
+    default_test_definition(&test, 0);
+    test.no_shuffle = 1;
 
-	  int card_added = new_global_tutor(1-player, 1-player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test);
-	  if (card_added != -1)
-		reveal_card(1-player, card_added, -1, -1);
+    int card_added = new_global_tutor(1 - player, 1 - player, TUTOR_FROM_DECK, TUTOR_HAND, 0,
+                                      AI_MAX_VALUE, &test);
+    if (card_added >= 0)
+      reveal_card(1 - player, card_added, -1, -1);
 
-	  test.qty = 2;
-	  new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test);
+    test.qty = 2;
+    new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test);
 
-	  shuffle(player);
-	  shuffle(1-player);
-	}
+    shuffle(player);
+    shuffle(1 - player);
+  }
   return 0;
 }
 
@@ -635,24 +638,25 @@ static int effect_my_undead_horde_awakens_target(int player, int card, event_t e
 static int effect_my_undead_horde_awakens(int player, int card, event_t event)
 {
   if (current_turn == player && eot_trigger(player, card, event))
-	{
-	  test_definition_t test;
-	  new_default_test_definition(&test, TYPE_CREATURE, "Select target creature card.");
-	  int result = new_global_tutor(player, 1-player, TUTOR_FROM_GRAVE, TUTOR_PLAY, 0, AI_MAX_CMC, &test);
-	  if (result != -1)
-		{
-		  card_instance_t* instance = get_card_instance(player, card);
-		  int leg = create_archenemy_legacy(instance->damage_source_player, instance->damage_source_card,
-											CARD_ID_MY_UNDEAD_HORDE_AWAKENS, &effect_my_undead_horde_awakens_target,
-											player, result);
-		  if (leg != -1)
-			{
-			  card_instance_t* legacy = get_card_instance(player, leg);
-			  legacy->targets[1].player = player;
-			  legacy->targets[1].card = card;
-			}
-		}
-	}
+  {
+    test_definition_t test;
+    new_default_test_definition(&test, TYPE_CREATURE, "Select target creature card.");
+    int result =
+        new_global_tutor(player, 1 - player, TUTOR_FROM_GRAVE, TUTOR_PLAY, 0, AI_MAX_CMC, &test);
+    if (result >= 0)
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      int leg = create_archenemy_legacy(
+          instance->damage_source_player, instance->damage_source_card,
+          CARD_ID_MY_UNDEAD_HORDE_AWAKENS, &effect_my_undead_horde_awakens_target, player, result);
+      if (leg != -1)
+      {
+        card_instance_t *legacy = get_card_instance(player, leg);
+        legacy->targets[1].player = player;
+        legacy->targets[1].card = card;
+      }
+    }
+  }
 
   return 0;
 }

@@ -9979,10 +9979,6 @@ int card_radiant_scrollwielder(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23dcb20; original cards/strixhaven.c:7116. */
 int card_spell_satchel(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_BOOK = 161
-  };
 
   card_instance_t *instance;
   int result;
@@ -10073,10 +10069,6 @@ int card_spell_satchel(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23dd0c0; original cards/strixhaven.c:7277. */
 int card_strixhaven_stadium(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_POINT = 169
-  };
 
   unsigned int uVar1;
   int iVar2;
@@ -11289,10 +11281,6 @@ int uvilda_legacy(int player, int card, event_t event);
 /* ManalinkEh 2022: 0x23c8860; original cards/strixhaven.c:7771. */
 int uvilda_legacy(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_HONE = 167
-  };
 
   int iVar1;
   card_instance_t *instance;
@@ -11334,10 +11322,6 @@ int uvilda_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23de890; original cards/strixhaven.c:7793. */
 int card_uvilda_dean_of_perfection(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_HONE = 167
-  };
 
   int iVar1;
   int iVar2;

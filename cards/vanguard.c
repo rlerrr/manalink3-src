@@ -454,307 +454,408 @@ static void raw_put_hand_in_deck(int player)
 	EXE_FN(void, 0x437E20, void)();	// force redisplay
 }
 
-int vanguard_card(int player, int card, event_t event, int cards, int starting_life, int special){
-	// set the max hand size
-	if(event == EVENT_MAX_HAND_SIZE && current_turn == player){
-		event_result = cards;
-	}
+int vanguard_card(int player, int card, event_t event, int cards, int starting_life, int special)
+{
+  // set the max hand size
+  if (event == EVENT_MAX_HAND_SIZE && current_turn == player)
+  {
+    event_result = cards;
+  }
 
-	indestructible(player, card, event);
+  indestructible(player, card, event);
 
-	// perform the first turn mulligans
-	if( mulligans_complete[player] != 1 && trigger_condition == TRIGGER_UPKEEP && affect_me(player, card)
-	    && reason_for_trigger_controller == player && ai_is_speculating != 1 ){
-		if(event == EVENT_TRIGGER){
-			event_result |= RESOLVE_TRIGGER_MANDATORY;
-		}
-		else if(event == EVENT_RESOLVE_TRIGGER){
-			// set the deck from challenge mode, if applicable
-			if( get_setting(SETTING_CHALLENGE_MODE) ){
-				challenge_mode_upkeep(1);
-			}
+  // perform the first turn mulligans
+  if (mulligans_complete[player] != 1 && trigger_condition == TRIGGER_UPKEEP &&
+      affect_me(player, card) && reason_for_trigger_controller == player && ai_is_speculating != 1)
+  {
+    if (event == EVENT_TRIGGER)
+    {
+      event_result |= RESOLVE_TRIGGER_MANDATORY;
+    }
+    else if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      // set the deck from challenge mode, if applicable
+      if (get_setting(SETTING_CHALLENGE_MODE))
+      {
+        challenge_mode_upkeep(1);
+      }
 
-			// set the life total
-			set_starting_life_total(player, starting_life);
-			mulligans_complete[player] = 1;
+      // set the life total
+      set_starting_life_total(player, starting_life);
+      mulligans_complete[player] = 1;
 
-			// put every non-avatar card back into the deck
-			raw_put_hand_in_deck(player);
+      // put every non-avatar card back into the deck
+      raw_put_hand_in_deck(player);
 
-			// remove any remaining avatars (and generals) from the deck
-			int *deck = deck_ptr[player];
-			int i;
-			card_instance_t *instance = get_card_instance(player, card);
-			int general_csvid = 0;
-			if( special == 6 ){
-				general_csvid = cards_data[instance->info_slot].id;
-			}
-			int counter=0;
-			for(i = 0; i < 500; i++){
-				if(deck[i] != -1 ){
-					if ( cards_data[  deck[i] ].cc[2] == 3 || ( general_csvid > 0 && cards_data[  deck[i] ].id == general_csvid ) ){
-						if( counter++ > 1 && cards_data[  deck[i] ].cc[2] == 3 && general_csvid == 0 ){ life[player] = counter; }
-						remove_card_from_deck( player, i );
-						i--;
-					}
-				}
-			}
+      // remove any remaining avatars (and generals) from the deck
+      int *deck = deck_ptr[player];
+      int i;
+      card_instance_t *instance = get_card_instance(player, card);
+      int general_csvid = 0;
+      int second_general_csvid = 0;
+      if (special == 6)
+      {
+        general_csvid = cards_data[instance->targets[2].player].id;
+        second_general_csvid = cards_data[instance->targets[2].card].id;
+      }
+      int counter = 0;
+      for (i = 0; i < 500; i++)
+      {
+        if (deck[i] != -1)
+        {
+          if (cards_data[deck[i]].cc[2] == 3 ||
+              (general_csvid > 0 && cards_data[deck[i]].id == general_csvid) ||
+              (second_general_csvid > 0 && cards_data[deck[i]].id == second_general_csvid))
+          {
+            if (counter++ > 1 && cards_data[deck[i]].cc[2] == 3 && general_csvid == 0)
+            {
+              life[player] = counter;
+            }
+            remove_card_from_deck(player, i);
+            i--;
+          }
+        }
+      }
 
-			// internal_randomize the deck if that's our thing
-			int skip_mulligans = 0;
-			if( special == 4 ){
-				create_random_test_deck(player, card, color_to_color_test(internal_rand(5)+1), 0, available_slots-1, 60);
-			}
-			else if( special == 5 ){
-				create_spat_deck(player);
-				skip_mulligans = 1;
-			}
-			else if( special == 9 ){
-					 int clrs = 0;
-					 int choice2 = internal_rand(3);
-					 if( player != AI ){
-						 choice2 = do_dialog(player, player, card, -1, -1, " Monocolored deck\n Two-colors deck\n Three-colors deck", 0);
-					 }
-					 choice2++;
-					 int k;
-					 for(k=0; k<choice2; k++){
-						 if( player != AI ){
-							 clrs |= select_a_color(player);
-						 }
-						 else{
-							  clrs |= color_to_color_test(internal_rand(5)+1);
-						 }
-					 }
-					choice2 = 0;
-					int min = 0;
-					int max = available_slots;
-					if( player == AI ){
-						choice2 = 22+internal_rand(2);
-					}
-					else{
-						while( 1 ){
-								choice2 = do_dialog(player, player, card, -1, -1, " Everything\n Unlimited\n DK+AN+AQ\n Legends\n 8th Edition\n FE + Homelands\n Ice Age Block\n Mirage block\n Tempest block\n Urza block\n Zendikar block\n Scars block\n Innistrad block\n More sets", 0);
-								if( choice2 != 13 ){
-									break;
-								}
-								else{
-									choice2 = do_dialog(player, player, card, -1, -1, " Previous expansions\n Masques Block\n Mirrodin Block\n Kamigawa Block\n M13\n Ravnica block\n Lorwyn block\n Shadowmoor block\n Shards block\n M10\n Return to Ravnica block", 0);
-									if( choice2 != 0 ){
-										choice2+=13;
-										break;
-									}
-								}
-						}
-					}
-					if( choice2 == 1 ){
-						min = CARD_ID_AIR_ELEMENTAL;
-						max = CARD_ID_ZOMBIE_MASTER;
-					}
-					if( choice2 == 2 ){
-						min = CARD_ID_AMNESIA;
-						max = CARD_ID_YOTIAN_SOLDIER;
-					}
-					if( choice2 == 3 ){
-						min = CARD_ID_ABOMINATION;
-						max = CARD_ID_ZEPHYR_FALCON;
-					}
-					if( choice2 == 4 ){
-						min = CARD_ID_ANGEL_OF_MERCY;
-						max = CARD_ID_YAVIMAYA_ENCHANTRESS;
-					}
-					if( choice2 == 5 ){
-						min = CARD_ID_AEOLIPILE;
-						max = CARD_ID_WIZARDS_SCHOOL;
-					}
-					if( choice2 == 6 ){
-						min = CARD_ID_ADARKAR_SENTINEL ;
-						max = CARD_ID_ZUR_THE_ENCHANTER;
-					}
-					if( choice2 == 7 ){
-						min = CARD_ID_ABYSSAL_HUNTER ;
-						max = CARD_ID_ZOMBIE_SCAVENGERS;
-					}
-					if( choice2 == 8 ){
-						min = CARD_ID_ABANDON_HOPE ;
-						max = CARD_ID_ZEALOTS_EN_DAL;
-					}
-					if( choice2 == 9 ){
-						min = CARD_ID_ABSOLUTE_GRACE  ;
-						max = CARD_ID_YAWGMOTHS_BARGAIN;
-					}
-					if( choice2 == 10 ){
-						min = CARD_ID_ADVENTURING_GEAR;
-						max = CARD_ID_ZULAPORT_ENFORCER ;
-					}
-					if( choice2 == 11 ){
-						min = CARD_ID_ABUNA_ACOLYTE;
-						max = CARD_ID_XENOGRAFT ;
-					}
-					if( choice2 == 12 ){
-						min = CARD_ID_ABATTOIR_GHOUL;
-						max = CARD_ID_ZEALOUS_STRIKE ;
-					}
-					if( choice2 == 14 ){
-						min = CARD_ID_AERIAL_CARAVAN;
-						max = CARD_ID_ZERAPA_MINOTAUR;
-					}
-					if( choice2 == 15 ){
-						min = CARD_ID_ALTAR_OF_SHADOWS;
-						max = CARD_ID_VIRIDIAN_SCOUT;
-					}
-					if( choice2 == 16 ){
-						min = CARD_ID_AKKI_AVALANCHERS;
-						max = CARD_ID_YUKI_ONNA;
-					}
-					if( choice2 == 17 ){
-						min = CARD_ID_AJANI_CALLER_OF_THE_PRIDE;
-						max = CARD_ID_YEVAS_FORCEMAGE;
-					}
-					if( choice2 == 18 ){
-						min = CARD_ID_AGRUS_KOS_WOJEK_VETERAN ;
-						max = CARD_ID_WRIT_OF_PASSAGE;
-					}
-					if( choice2 == 19 ){
-						min = CARD_ID_ADDER_STAFF_BOGGART;
-						max = CARD_ID_WOLF_SKULL_SHAMAN;
-					}
-					if( choice2 == 20 ){
-						min = CARD_ID_ADVICE_FROM_THE_FAE;
-						max = CARD_ID_WORM_HARVEST;
-					}
-					if( choice2 == 21 ){
-						min = CARD_ID_AD_NAUSEAM;
-						max = CARD_ID_ZEALOUS_PERSECUTION;
-					}
-					if( choice2 == 22 ){
-						min = CARD_ID_ACIDIC_SLIME;
-						max = CARD_ID_ZOMBIE_GOLIATH;
-					}
-					if( choice2 == 23 ){
-						min = CARD_ID_ABRUPT_DECAY;
-						max = CARD_ID_ZHUR_TAA_DRUID;
-					}
-					create_random_test_deck(player, card, clrs, min, max, 60);
-			}
-			else if( special == 10 ){ // Face the horde
-					int choice = do_dialog(HUMAN, player, card, -1, -1, " Level: Standard\n Level: Legacy\n Legal: Vintage\n Level: Illegal deck", 0);
-					get_card_instance(player, card)->targets[0].player = 1; // Zombie horde
-					get_card_instance(player, card)->targets[0].card = 2+choice;
-			}
-			else if( special == 11 ){ // Hidden agenda
-					call_card_function(player, card, EVENT_HIDDEN_AGENDA);
-			}
+      if (general_csvid == CARD_ID_OLORO_AGELESS_ASCETIC && player == current_turn)
+        gain_life(player, 2 * count_upkeeps(player));
 
-			// if we are playing momir basic, give both players a deck of
-			// basic lands
-			if( get_momir()){
-				create_internal_random_basic_deck(player);
-				skip_mulligans = 1;
-			}
-			else if( get_setting(SETTING_CHALLENGE_MODE) && get_challenge_round() == 13 ){
-				//gain_life(AI, 17);
-				create_internal_random_basic_deck(player);
-				skip_mulligans = 1;
-			}
-			if( general_csvid > 1 ){
-				shuffle_vanguard(player, 1);
-				draw_cards(player, cards);
-				if( player == HUMAN ){
-					test_definition_t this_test;
-					new_default_test_definition(&this_test, 0, "Select a card to exile.");
+      // internal_randomize the deck if that's our thing
+      int skip_mulligans = 0;
+      if (special == 4)
+      {
+        create_random_test_deck(player, card, color_to_color_test(internal_rand(5) + 1), 0,
+                                available_slots - 1, 60);
+      }
+      else if (special == 5)
+      {
+        create_spat_deck(player);
+        skip_mulligans = 1;
+      }
+      else if (special == 9)
+      {
+        int clrs = 0;
+        int choice2 = internal_rand(3);
+        if (player != AI)
+        {
+          choice2 = do_dialog(player, player, card, -1, -1,
+                              " Monocolored deck\n Two-colors deck\n Three-colors deck", 0);
+        }
+        choice2++;
+        int k;
+        for (k = 0; k < choice2; k++)
+        {
+          if (player != AI)
+          {
+            clrs |= select_a_color(player);
+          }
+          else
+          {
+            clrs |= color_to_color_test(internal_rand(5) + 1);
+          }
+        }
+        choice2 = 0;
+        int min = 0;
+        int max = available_slots;
+        if (player == AI)
+        {
+          choice2 = 22 + internal_rand(2);
+        }
+        else
+        {
+          while (1)
+          {
+            choice2 =
+                do_dialog(player, player, card, -1, -1,
+                          " Everything\n Unlimited\n DK+AN+AQ\n Legends\n 8th Edition\n FE + "
+                          "Homelands\n Ice Age Block\n Mirage block\n Tempest block\n Urza block\n "
+                          "Zendikar block\n Scars block\n Innistrad block\n More sets",
+                          0);
+            if (choice2 != 13)
+            {
+              break;
+            }
+            else
+            {
+              choice2 = do_dialog(player, player, card, -1, -1,
+                                  " Previous expansions\n Masques Block\n Mirrodin Block\n "
+                                  "Kamigawa Block\n M13\n Ravnica block\n Lorwyn block\n "
+                                  "Shadowmoor block\n Shards block\n M10\n Return to Ravnica block",
+                                  0);
+              if (choice2 != 0)
+              {
+                choice2 += 13;
+                break;
+              }
+            }
+          }
+        }
+        if (choice2 == 1)
+        {
+          min = CARD_ID_AIR_ELEMENTAL;
+          max = CARD_ID_ZOMBIE_MASTER;
+        }
+        if (choice2 == 2)
+        {
+          min = CARD_ID_AMNESIA;
+          max = CARD_ID_YOTIAN_SOLDIER;
+        }
+        if (choice2 == 3)
+        {
+          min = CARD_ID_ABOMINATION;
+          max = CARD_ID_ZEPHYR_FALCON;
+        }
+        if (choice2 == 4)
+        {
+          min = CARD_ID_ANGEL_OF_MERCY;
+          max = CARD_ID_YAVIMAYA_ENCHANTRESS;
+        }
+        if (choice2 == 5)
+        {
+          min = CARD_ID_AEOLIPILE;
+          max = CARD_ID_WIZARDS_SCHOOL;
+        }
+        if (choice2 == 6)
+        {
+          min = CARD_ID_ADARKAR_SENTINEL;
+          max = CARD_ID_ZUR_THE_ENCHANTER;
+        }
+        if (choice2 == 7)
+        {
+          min = CARD_ID_ABYSSAL_HUNTER;
+          max = CARD_ID_ZOMBIE_SCAVENGERS;
+        }
+        if (choice2 == 8)
+        {
+          min = CARD_ID_ABANDON_HOPE;
+          max = CARD_ID_ZEALOTS_EN_DAL;
+        }
+        if (choice2 == 9)
+        {
+          min = CARD_ID_ABSOLUTE_GRACE;
+          max = CARD_ID_YAWGMOTHS_BARGAIN;
+        }
+        if (choice2 == 10)
+        {
+          min = CARD_ID_ADVENTURING_GEAR;
+          max = CARD_ID_ZULAPORT_ENFORCER;
+        }
+        if (choice2 == 11)
+        {
+          min = CARD_ID_ABUNA_ACOLYTE;
+          max = CARD_ID_XENOGRAFT;
+        }
+        if (choice2 == 12)
+        {
+          min = CARD_ID_ABATTOIR_GHOUL;
+          max = CARD_ID_ZEALOUS_STRIKE;
+        }
+        if (choice2 == 14)
+        {
+          min = CARD_ID_AERIAL_CARAVAN;
+          max = CARD_ID_ZERAPA_MINOTAUR;
+        }
+        if (choice2 == 15)
+        {
+          min = CARD_ID_ALTAR_OF_SHADOWS;
+          max = CARD_ID_VIRIDIAN_SCOUT;
+        }
+        if (choice2 == 16)
+        {
+          min = CARD_ID_AKKI_AVALANCHERS;
+          max = CARD_ID_YUKI_ONNA;
+        }
+        if (choice2 == 17)
+        {
+          min = CARD_ID_AJANI_CALLER_OF_THE_PRIDE;
+          max = CARD_ID_YEVAS_FORCEMAGE;
+        }
+        if (choice2 == 18)
+        {
+          min = CARD_ID_AGRUS_KOS_WOJEK_VETERAN;
+          max = CARD_ID_WRIT_OF_PASSAGE;
+        }
+        if (choice2 == 19)
+        {
+          min = CARD_ID_ADDER_STAFF_BOGGART;
+          max = CARD_ID_WOLF_SKULL_SHAMAN;
+        }
+        if (choice2 == 20)
+        {
+          min = CARD_ID_ADVICE_FROM_THE_FAE;
+          max = CARD_ID_WORM_HARVEST;
+        }
+        if (choice2 == 21)
+        {
+          min = CARD_ID_AD_NAUSEAM;
+          max = CARD_ID_ZEALOUS_PERSECUTION;
+        }
+        if (choice2 == 22)
+        {
+          min = CARD_ID_ACIDIC_SLIME;
+          max = CARD_ID_ZOMBIE_GOLIATH;
+        }
+        if (choice2 == 23)
+        {
+          min = CARD_ID_ABRUPT_DECAY;
+          max = CARD_ID_ZHUR_TAA_DRUID;
+        }
+        create_random_test_deck(player, card, clrs, min, max, 60);
+      }
+      else if (special == 10)
+      { // Face the horde
+        int choice =
+            do_dialog(HUMAN, player, card, -1, -1,
+                      " Level: Standard\n Level: Legacy\n Legal: Vintage\n Level: Illegal deck", 0);
+        get_card_instance(player, card)->targets[0].player = 1; // Zombie horde
+        get_card_instance(player, card)->targets[0].card = 2 + choice;
+      }
+      else if (special == 11)
+      { // Hidden agenda
+        call_card_function(player, card, EVENT_HIDDEN_AGENDA);
+      }
 
-					int mulliganed_cards[200];	// More than safe, since deck should've been flagged illegal if it didn't contain exactly 100 cards
-					memset(mulliganed_cards, -1, sizeof(mulliganed_cards));
-					int* mull = &mulliganed_cards[0];
-					while (hand_count[player] > 0 && do_dialog(player, player, card, -1, -1, " Keep\n EDH Mulligan", 0) == 1){
-						int num_exiled = 0, selected;
-						while (hand_count[player] > 0 && (selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MAX_CMC, -1, &this_test)) != -1){
-							*mull++ = get_card_instance(player, selected)->internal_card_id;
-							obliterate_card(player, selected);	// not kill_card(...KILL_EXILE), since it's exiled face-down
-							play_sound_effect(WAV_DESTROY);	// the exile sound effect, despite its name
-							num_exiled++;
-						}
-						if (num_exiled > 1){
-							draw_cards(player, num_exiled - 1);
-						}
-					}
-					if (mulliganed_cards[0] != -1){
-						int bottom = count_deck(player);
-						for (mull = &mulliganed_cards[0]; *mull != -1; ++mull){
-							deck_ptr[player][bottom++] = *mull;
-						}
-						shuffle(player);
-					}
-				}
-			}
-			else{
-				int max_hand = cards;
-				// perform any mulliganing
-				while(max_hand > 0 ){
-					// draw the appropriate number of cards
-					shuffle_vanguard(player, 1);
-					draw_cards(player, max_hand);
+      // if we are playing momir basic, give both players a deck of
+      // basic lands
+      if (get_momir())
+      {
+        create_internal_random_basic_deck(player);
+        skip_mulligans = 1;
+      }
+      else if (get_setting(SETTING_CHALLENGE_MODE) && get_challenge_round() == 13)
+      {
+        // gain_life(AI, 17);
+        create_internal_random_basic_deck(player);
+        skip_mulligans = 1;
+      }
+      if (general_csvid > 1)
+      {
+        shuffle_vanguard(player, 1);
+        draw_cards(player, cards);
+        if (player == HUMAN)
+        {
+          test_definition_t this_test;
+          new_default_test_definition(&this_test, 0, "Select a card to exile.");
 
-					// allow the choice to mulligan
-					int choice = 0;
-					if( player == HUMAN && ! skip_mulligans ){
-						choice = do_dialog(player, player, card, -1, -1, " Keep\n Mulligan", 0);
-						if( choice == 1 ){
-							max_hand--;
-							raw_put_hand_in_deck(player);
-						}
-						else{
-							break;
-						}
-					} else {
-						break;
-					}
-				}
-			}
+          int mulliganed_cards[200]; // More than safe, since deck should've been flagged illegal if
+                                     // it didn't contain exactly 100 cards
+          memset(mulliganed_cards, -1, sizeof(mulliganed_cards));
+          int *mull = &mulliganed_cards[0];
+          while (hand_count[player] > 0 &&
+                 do_dialog(player, player, card, -1, -1, " Keep\n EDH Mulligan", 0) == 1)
+          {
+            int num_exiled = 0, selected;
+            while (hand_count[player] > 0 &&
+                   (selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MAX_CMC, -1,
+                                                 &this_test)) != -1)
+            {
+              *mull++ = get_card_instance(player, selected)->internal_card_id;
+              obliterate_card(
+                  player, selected); // not kill_card(...KILL_EXILE), since it's exiled face-down
+              play_sound_effect(WAV_DESTROY); // the exile sound effect, despite its name
+              num_exiled++;
+            }
+            if (num_exiled > 1)
+            {
+              draw_cards(player, num_exiled - 1);
+            }
+          }
+          if (mulliganed_cards[0] != -1)
+          {
+            int bottom = count_deck(player);
+            for (mull = &mulliganed_cards[0]; *mull != -1; ++mull)
+            {
+              deck_ptr[player][bottom++] = *mull;
+            }
+            shuffle(player);
+          }
+        }
+      }
+      else
+      {
+        int max_hand = cards;
+        // perform any mulliganing
+        while (max_hand > 0)
+        {
+          // draw the appropriate number of cards
+          shuffle_vanguard(player, 1);
+          draw_cards(player, max_hand);
 
-			// elvish champion
-			if( special == 1 ){
-				token_generation_t token;
-				default_token_definition(player, card, CARD_ID_ELF, &token);
-				token.action = TOKEN_ACTION_HASTE;
-				token.special_infos = 66;
-				generate_token(&token);
-			}
-			// royal assassin
-			else if( special == 2 && current_turn == player ){
-					lose_life(player, 1);
-					draw_a_card(player);
-			}
-			// prodigal_sorcerer
-			else if( special == 3 && current_turn == player ){
-				effect_prodigal_sorcerer(player, card);
-			}
-			// chaos orb - give the AI a Sol Ring
-			else if( special == 4 && player == AI && cards > 7){
-					add_card_to_hand( player, get_internal_card_id_from_csv_id(CARD_ID_SOL_RING));
-			}
-			// Planechase - get the first Plane
-			else if( special == 8 ){
-					if( player == HUMAN ){
-						planeswalk_to(player, get_new_plane(-1), 1);
-					}
-			}
-			else if( special == 9 ){
-					obliterate_card(player, card);
-			}
-		}
-	}
+          // allow the choice to mulligan
+          int choice = 0;
+          if (player == HUMAN && !skip_mulligans)
+          {
+            choice = do_dialog(player, player, card, -1, -1, " Keep\n Mulligan", 0);
+            if (choice == 1)
+            {
+              max_hand--;
+              raw_put_hand_in_deck(player);
+            }
+            else
+            {
+              break;
+            }
+          }
+          else
+          {
+            break;
+          }
+        }
+      }
 
-	return 0;
+      // elvish champion
+      if (special == 1)
+      {
+        token_generation_t token;
+        default_token_definition(player, card, CARD_ID_ELF, &token);
+        token.action = TOKEN_ACTION_HASTE;
+        token.special_infos = 66;
+        generate_token(&token);
+      }
+      // royal assassin
+      else if (special == 2 && current_turn == player)
+      {
+        lose_life(player, 1);
+        draw_a_card(player);
+      }
+      // prodigal_sorcerer
+      else if (special == 3 && current_turn == player)
+      {
+        effect_prodigal_sorcerer(player, card);
+      }
+      // chaos orb - give the AI a Sol Ring
+      else if (special == 4 && player == AI && cards > 7)
+      {
+        add_card_to_hand(player, get_internal_card_id_from_csv_id(CARD_ID_SOL_RING));
+      }
+      // Planechase - get the first Plane
+      else if (special == 8)
+      {
+        if (player == HUMAN)
+        {
+          planeswalk_to(player, get_new_plane(-1), 1);
+        }
+      }
+      else if (special == 9)
+      {
+        obliterate_card(player, card);
+      }
+    }
+  }
+
+  return 0;
 }
 
-static int legacy_avatar(int player, int card, event_t event, int (*func_ptr)(int, int, event_t) ){
-	if( comes_into_play(player, card, event) > 0 ){
-		create_legacy_effect(player, card, func_ptr);
-		kill_card(player, card, KILL_EXILE);
-		purge_rfg(player);
-	}
-	return 0;
+static int legacy_avatar(int player, int card, event_t event, int (*func_ptr)(int, int, event_t))
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    create_legacy_effect(player, card, func_ptr);
+    kill_card(player, card, KILL_EXILE);
+    purge_rfg(player);
+  }
+  return 0;
 }
 
 

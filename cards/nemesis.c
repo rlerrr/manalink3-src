@@ -2005,48 +2005,57 @@ static int saproling_cluster_legacy(int player, int card, event_t event)
   return 0;
 }
 
-int card_saproling_cluster(int player, int card, event_t event ){//UNUSEDCARD
-	/* Saproling Cluster	|1|G
-	 * Enchantment
-	 * |1, Discard a card: Put a 1/1 |Sgreen Saproling creature token onto the battlefield. Any player may activate this ability. */
+int card_saproling_cluster(int player, int card, event_t event)
+{ // UNUSEDCARD
+  /* Saproling Cluster	|1|G
+   * Enchantment
+   * |1, Discard a card: Put a 1/1 |Sgreen Saproling creature token onto the battlefield. Any player
+   * may activate this ability. */
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found[2] = {-1};
-		CYCLE_ALL_CARDS(p, c, 	{
-									if( in_play(p, c) && is_what(p, c, TYPE_EFFECT) ){
-										card_instance_t *inst = get_card_instance(p, c);
-										if( inst->info_slot == (int)saproling_cluster_legacy ){
-											if( inst->targets[0].player == player && inst->targets[0].card == card ){
-												found[p] = c;
-											}
-										}
-									}
-								};
-		);
-		if( found[player] > -1 ){
-			kill_card(player, found[player], KILL_EXILE);
-		}
-		if( found[1-player] == -1 ){
-			int fake = add_card_to_hand(1-player, get_original_internal_card_id(player, card));
-			int legacy = create_legacy_effect(1-player, fake, &saproling_cluster_legacy);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			obliterate_card(1-player, fake);
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found[2] = {-1, -1};
+    CYCLE_ALL_CARDS(p, c, {
+      if (in_play(p, c) && is_what(p, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(p, c);
+        if (inst->info_slot == (int)saproling_cluster_legacy)
+        {
+          if (inst->targets[0].player == player && inst->targets[0].card == card)
+          {
+            found[p] = c;
+          }
+        }
+      }
+    };);
+    if (found[player] > -1)
+    {
+      kill_card(player, found[player], KILL_EXILE);
+    }
+    if (found[1 - player] == -1)
+    {
+      int fake = add_card_to_hand(1 - player, get_card_instance(player, card)->internal_card_id);
+      int legacy = create_legacy_activate(1 - player, fake, &saproling_cluster_legacy);
+      card_instance_t *inst = get_card_instance(1 - player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      obliterate_card(1 - player, fake);
+    }
+  }
 
-	if( ! IS_GAA_EVENT(event) ){
-		return global_enchantment(player, card, event);
-	}
+  if (!IS_GAA_EVENT(event))
+  {
+    return global_enchantment(player, card, event);
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *instance = get_card_instance(player, card);
-		generate_token_by_id(instance->parent_controller, instance->parent_card, CARD_ID_SAPROLING);
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    generate_token_by_id(instance->parent_controller, instance->parent_card, CARD_ID_SAPROLING);
+  }
 
-	return generic_activated_ability(player, card, event, GAA_DISCARD, MANACOST_X(1), 0, NULL, NULL);
+  return generic_activated_ability(player, card, event, GAA_DISCARD, MANACOST_X(1), 0, NULL, NULL);
 }
 
 int card_seahunter(int player, int card, event_t event){

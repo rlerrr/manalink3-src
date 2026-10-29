@@ -1,0 +1,1927 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "marchesa_effect",
+      "source": "cards/conspiracy.c",
+      "native_source": "cards/conspiracy.c",
+      "native_ranges": [
+        {
+          "address": "0x2118160",
+          "end": "0x211840e",
+          "bytes_sha256": "d023e84719c5242c7e2a2ee2c59799cc669e1ff1a492295a76d5e7bf841e46c2",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2118160.c",
+          "raw_export_sha256": "8e4cf5bfca58f36625e04201de3d767e291164f4d7015146e3dea3f6bcd47efe"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d6a3446e08b4a79e529d431eb9300fe8d82412f8a7188d048ded61820e07893b"
+    },
+    {
+      "name": "will_of_the_council_impl",
+      "source": "cards/conspiracy.c",
+      "native_source": "cards/conspiracy.c",
+      "native_ranges": [
+        {
+          "address": "0x2118410",
+          "end": "0x2118774",
+          "bytes_sha256": "de709fc17dc7b90044b8c587b4db372f5e040338789ecf8424c49ca420e3a9ad",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2118410.c",
+          "raw_export_sha256": "e3ae5fcfd7a24400db9dd6ad1cd56da92a1abc9bc9319e8fad1130ccac7e403f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "463ecdd2e9879df01e4a36dfb6cb52d51804f875cb191f72f9b93916d8c47b69"
+    },
+    {
+      "name": "will_of_the_council",
+      "source": "cards/conspiracy.c",
+      "native_source": "cards/conspiracy.c",
+      "native_ranges": [
+        {
+          "address": "0x2118780",
+          "end": "0x21188c7",
+          "bytes_sha256": "0e4e069370e7438e1a66928e57416145ab614a4113f1adbeb947b124f57808d0",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2118780.c",
+          "raw_export_sha256": "5b444be00e41495443110963fc6da44bc2b621536e39d5dbd1e149bc398d56d4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3a025e2032ed5371925df8b860c3eb5fdc51a38bb82ad0ca574518e813ad41b3"
+    },
+    {
+      "name": "dethrone",
+      "source": "cards/conspiracy.c",
+      "native_source": "cards/conspiracy.c",
+      "native_ranges": [
+        {
+          "address": "0x2118a00",
+          "end": "0x2118a8b",
+          "bytes_sha256": "8a3575a4670fef5f229ae9b9cbaf87c0cf57993d798bd37179d2bc205e98a33f",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2118a00.c",
+          "raw_export_sha256": "3dddb0980010b02322c81628919dd9517de94fb1e4e36f7a7d43e4c8390dcba5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9d8146efc727d56d877f50368de7da6f9221a079e945b9596076ff6f06968ccc"
+    },
+    {
+      "name": "effect_dacks_duplicant",
+      "source": "cards/conspiracy.c",
+      "native_source": "cards/conspiracy.c",
+      "native_ranges": [
+        {
+          "address": "0x2118a90",
+          "end": "0x2118aeb",
+          "bytes_sha256": "c3f8eed8fd3a79044481b600b73594d1de6fd45c1e2ea47f61e475d96a36883d",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2118a90.c",
+          "raw_export_sha256": "45938c2b5d0d5e058bfddb6bf0032876a75fcadb41d155e484cb773176e88dbc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7de4f85751e8d26d54c571673cee6ec47ee89f6be70c9a294c344def9bb25bcd"
+    },
+    {
+      "name": "necrotic_sliver_shared_ability",
+      "source": "cards/planar_chaos.c",
+      "native_source": "cards/planar_chaos.c",
+      "native_ranges": [
+        {
+          "address": "0x23b4170",
+          "end": "0x23b43b1",
+          "bytes_sha256": "975ab11cf07f1f5a6eca979ab8ffe817b92fbac70b7bd5154e3d058618aa89af",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/23b4170.c",
+          "raw_export_sha256": "74147b3edf510151cf2832298623f7ae477b8b8729da4e28524e6598e59cff93"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ce0751c83ca4c12175c5307cdaefb7898dec13ea1023e87618faee9096363e61"
+    },
+    {
+      "name": "is_permanent_or_suspend_legacy",
+      "source": "cards/planar_chaos.c",
+      "native_source": "cards/planar_chaos.c",
+      "native_ranges": [
+        {
+          "address": "0x23b4400",
+          "end": "0x23b446e",
+          "bytes_sha256": "19940fe1a8f29a8a13327adb93dd8ffeaba170fb3c39bdbde89f4005a55424d0",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/23b4400.c",
+          "raw_export_sha256": "063d6dd3ce20247ffe7c1451c7076ec5d3c928389a6f1e6891ee9a0dd7437f32"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a456891683463a8f3d0186bd09040e0d8bc980c1c17f382f373248b4d468390a"
+    },
+    {
+      "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+      "source": "cards/time_spiral.c",
+      "native_source": "cards/planar_chaos.c",
+      "native_ranges": [
+        {
+          "address": "0x23b4470",
+          "end": "0x23b4500",
+          "bytes_sha256": "b32017557aaba46b000f96ff03802c5795e984c946dae941c922700f872feb71",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/23b4470.c",
+          "raw_export_sha256": "189b1471cbdb9a96cd8eee3eb2a258152cfbd64c8a95a0a8027852b630f165f7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cd6ee8f4a862388f74f9439a243d92012d18096f38d69d4d1b9d8dd761e5a705"
+    },
+    {
+      "name": "cautery_sliver_shared_ability",
+      "source": "cards/planar_chaos.c",
+      "native_source": "cards/planar_chaos.c",
+      "native_ranges": [
+        {
+          "address": "0x23b4500",
+          "end": "0x23b4b53",
+          "bytes_sha256": "297e2fc7a566fbe130d45a76a9af9df375502e59943885c1e38e6aa1580d0d49",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/23b4500.c",
+          "raw_export_sha256": "9855f96e1065f4f35694399080b0021f0b3f16d48b5d634fc75ed5ea05690625"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ed5398ef8b1541e06af3b7bbb5e0b57e4e1bce13a5292d3c152d64b5db539487"
+    },
+    {
+      "name": "darkheart_sliver_shared_ability",
+      "source": "cards/planar_chaos.c",
+      "native_source": "cards/planar_chaos.c",
+      "native_ranges": [
+        {
+          "address": "0x23b4b60",
+          "end": "0x23b4d4d",
+          "bytes_sha256": "821c6c6896d019cfa9d42ff3710290e95996c5c9b77930df57f1374e9ddaf467",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/23b4b60.c",
+          "raw_export_sha256": "a7430c4da5e9eee9c48dd6965e57940e4e0bc27dc4d42990a672eadf720f4bf1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c53c4c513e76e305ea907f6a06fd6dfc87ad23b52de91d674430bdd6cac34a2d"
+    },
+    {
+      "name": "frenetic_sliver_shared_ability",
+      "source": "cards/planar_chaos.c",
+      "native_source": "cards/planar_chaos.c",
+      "native_ranges": [
+        {
+          "address": "0x23b4e80",
+          "end": "0x23b50ce",
+          "bytes_sha256": "ca4ee10453b54ad2a37204378ef6b2b6a1043460018c815e1e0e035815f04471",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/23b4e80.c",
+          "raw_export_sha256": "96c606701c9dfeb59fb58e76724df6caa7ed2e929bce25b2d749269ba315bef5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "16a2baf84314a703ace1f306424ac76d239f0b753d4a548aad1b85a4a147a719"
+    },
+    {
+      "name": "shrouded_lore_impl",
+      "source": "cards/planar_chaos.c",
+      "native_source": "cards/planar_chaos.c",
+      "native_ranges": [
+        {
+          "address": "0x23bd870",
+          "end": "0x23bdce1",
+          "bytes_sha256": "97ada69bb8137ba0a16b8598569fd3ab87facb5f962372e8f9276cd1a14a7e5d",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/23bd870.c",
+          "raw_export_sha256": "a15e174548f60211d1db06a7d133588913925ca7d3a2730e1b6d8593c0c1ab18"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b24f9719dd3a925e9de028b7bd8039f680cbc913126869593a764a4abba4a594"
+    },
+    {
+      "name": "jace_weaken_attackers",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x245b010",
+          "end": "0x245b156",
+          "bytes_sha256": "e2990c6f9aead02449a7be88b9e331c46ce9177bfd2870c925ef6196ccc8f0dd",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/245b010.c",
+          "raw_export_sha256": "34ae4666f3aee52b0c07b7a1eb1e2c90555fa07763ca2ffd7d8756719499bd79"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "54a15bb5a5e4785875eca621e06598b75793dd579f8f9c200d4022fcc5e6c47c"
+    },
+    {
+      "name": "grave_betrayal_effect",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x245b270",
+          "end": "0x245b595",
+          "bytes_sha256": "36b3d2646d697c9f4bc00e7d78b7b7eac2e31a8e9f33230b7aeaa65293bba215",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/245b270.c",
+          "raw_export_sha256": "ac848aee21dfb36e1c98d7f88151a36d99f9e9c8a27f6643647e2078738e3330"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3844975b1d1ec4249a26ef7750c08981724926e5e7460ca61c7e5de55952c5bb"
+    },
+    {
+      "name": "detain_legacy",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x245bd60",
+          "end": "0x245be21",
+          "bytes_sha256": "dfa870125cee39f001f42f9d56e947c1844d78f173a514f1fa7d6dc64ede9684",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/245bd60.c",
+          "raw_export_sha256": "5450be638ac46ece103f0aeb7ba456ddfff40932491d06e8895f73f71e580ce6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2841b60604b5f62639b6939e27883226ba03841dfc53d41dd86845c350cf2f2b"
+    },
+    {
+      "name": "detain",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x245bf50",
+          "end": "0x245bf80",
+          "bytes_sha256": "821169f6822ab5e1209f827914d6972b565294430955ea66f46bf1e275cfd0e5",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/245bf50.c",
+          "raw_export_sha256": "7d19e5aacc01dd4e6fc2520ef796538956e883b3be2507ebba1297c03994d714"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "63a23384dccd318f69756c1787afd4ed55896cb24f97bb3674a13c77454efaa6"
+    },
+    {
+      "name": "unleash",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x245c3f0",
+          "end": "0x245c509",
+          "bytes_sha256": "59f83d566f89c8d7f1e944500cac930a30b9ff1dc9687fbe69787374b8a2749b",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/245c3f0.c",
+          "raw_export_sha256": "9229ac63cba59e665bd67f7969611b94b5b647e4546b6ba9faae25c5d1f8fb8d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c4977c0a2b3f4165bead9267feafc130573da7c8c8e0c53e8d44e885b2a3a536"
+    },
+    {
+      "name": "keyrune",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x245c6a0",
+          "end": "0x245caac",
+          "bytes_sha256": "07fd45c8605a6824abfb2d61d5a9a5f336064145b1e094893c75bcb07b4a256b",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/245c6a0.c",
+          "raw_export_sha256": "2652b496ec4bbda7d8528e058eb14590c98db63a36953a4fe2bef202149f221f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0b1b8352b26430c88c93c241d1839a637d48f549da0cbd0b4b3f9f014a2484c5"
+    },
+    {
+      "name": "shoal",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2566700",
+          "end": "0x2566ab8",
+          "bytes_sha256": "16aef1131f15ab0e1470d4c2cf75cf0fb43f6c35cc9405d5a5f4750c7d019f05",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2566700.c",
+          "raw_export_sha256": "793ad02e17417c58502c9089090ee765f2e4734730f7d63d964fab374aae61f0"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8799ac51cfb521a67c7c4da3a116e19b626864129ac65dd8438640287ca59b73"
+    },
+    {
+      "name": "is_damaging_opal_eye",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2566d40",
+          "end": "0x2566da8",
+          "bytes_sha256": "d3b15bf2efb99cf74ba239e4cf0f56e72e6f4b0b090bba9ba9007fb72f5a36f7",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2566d40.c",
+          "raw_export_sha256": "ff2ff4d29cfd6574dad59121c908214c63a6a4fc87a633066fa8930a2199db31"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "540219a7d262318fc28394885bd852619805d48117aeabbf567372a9d586784d"
+    },
+    {
+      "name": "neko_te_legacy",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2567760",
+          "end": "0x25677f0",
+          "bytes_sha256": "a4603e28915251a9f6fcad7ec6f7e77af1b1106f5dbad836ed254c8feffcaccb",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2567760.c",
+          "raw_export_sha256": "12fbc82a177a2f10a19b53f27b890dd9b13e91ca11f258784111cd81ce0eb430"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7890e3b5178b7cc30a53798f214c363d4f6abdf22b05ffdcffb16aa306c7f312"
+    },
+    {
+      "name": "patron",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x25677f0",
+          "end": "0x2567d6c",
+          "bytes_sha256": "ad590b902ce6342371841a7fe107ea7d53d7d4e44b0f7ec8143778f6047c6766",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/25677f0.c",
+          "raw_export_sha256": "18d33af93968b6e0e16fe1ee8f53c9f37305b1c24cfcb79f5721c52f1a9a2f51"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "51a8392b549e3d7177c1773c7ea64ef0525592c058bee6843b89f1f89007c3bd"
+    },
+    {
+      "name": "patron_of_the_nezumi_effect",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2567d70",
+          "end": "0x2568033",
+          "bytes_sha256": "987e3977a531c93d0be67d889abc6c81f715cbda128b1b010186a1c5298fb986",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2567d70.c",
+          "raw_export_sha256": "7845f3ed9df9074f472e13767d8791f0f2cb6c499772826b68e2c12933f55037"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3376d09a5c64e3a08699d71b7c61d2ab487a25a85bd6b2102fc6b6c8e37baccb"
+    },
+    {
+      "name": "yomiji_who_bars_the_way_effect",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2568040",
+          "end": "0x256835b",
+          "bytes_sha256": "b77fc0e75de7072ec4e0483186cfd1d81ff54efb5751163409b4f6c20e4fd321",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2568040.c",
+          "raw_export_sha256": "84f647ee04379e534fa0ab1c32508389d0f5fbbe5e861597a8afb1b51bd67de7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0eab1792c2acbd0418cc15954df8c3db865bf5be57bba0242f14fbbdd1d12d0e"
+    },
+    {
+      "name": "redirect_damage_legacy",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x25685a0",
+          "end": "0x25686a2",
+          "bytes_sha256": "9194a03f305d2073ccb622755210f3cbe8151daacf1f82e9b3e97fe27d5c5848",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/25685a0.c",
+          "raw_export_sha256": "dfe5afc2f359b35ff0c1d24775a06042896b321be8d99c3b7b5f19672293627a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e02a9d59d9bbcc10c3da48692e033bf24d2cab9ebc8ba9e86e9f450a3c14a623"
+    },
+    {
+      "name": "genju",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x25692e0",
+          "end": "0x25696ac",
+          "bytes_sha256": "34012234114059aa593b01a6fe711c765a570162bb16de6d42d7da1d0f4ee4f4",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/25692e0.c",
+          "raw_export_sha256": "68e0208f02b42c9ffaed98ceb62cc6b7efd017c70e8d5ea8641dc89494ea369d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ca8e8a7431e6367f492651eab3dfc65e788f26d7ce59c8b843cad8f54d4f32c6"
+    },
+    {
+      "name": "target_is_already_enchanted",
+      "source": "cards/future_sight.c",
+      "native_source": "cards/future_sight.c",
+      "native_ranges": [
+        {
+          "address": "0x2571790",
+          "end": "0x2571837",
+          "bytes_sha256": "77e6c95b77e2ba1f80b10ac5075466d8fcf3bc504fde69a14193507ebf365c07",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2571790.c",
+          "raw_export_sha256": "2723368220c79ad8343d320b9c839ac9e4fbf643ee3e2a6d39fc1cd30c61846a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d4ed655421f898337f6dfc71b0526b7f1838e5dfd4f4177ef1ea09d7f8a9ec05"
+    },
+    {
+      "name": "has_virtual_mana_multi",
+      "source": "cards/future_sight.c",
+      "native_source": "cards/future_sight.c",
+      "native_ranges": [
+        {
+          "address": "0x25718e0",
+          "end": "0x2571a09",
+          "bytes_sha256": "8025e1baee2a0d7680c34e64a0e23a1614eb07467aa499f371ff958224663009",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/25718e0.c",
+          "raw_export_sha256": "2f01fbb9e4a4d808a3d3b4913536590d14efc492fa617d91b5fcd28aea938953"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c928bf00254f6bc0be89e3b195af01aded109e7a4f2d03044e55bd637af389e2"
+    },
+    {
+      "name": "spellweaver_volute_name_legacy",
+      "source": "cards/future_sight.c",
+      "native_source": "cards/future_sight.c",
+      "native_ranges": [
+        {
+          "address": "0x2571f00",
+          "end": "0x2571f87",
+          "bytes_sha256": "0ec74369c7ccddddf48901b883776b9a418be94689d5da17cd33b7e0db1545e0",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2571f00.c",
+          "raw_export_sha256": "e93ab1ca23b73c7b832bcc694b5741a1b70799ae43f3cfdbd1bfc68b1361103a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "876e78af2d0401573b690a4d9b9a20978c2aec12b78b6ee17eb1ab74b1e1d511"
+    },
+    {
+      "name": "cast_spell_with_delve",
+      "source": "cards/future_sight.c",
+      "native_source": "cards/future_sight.c",
+      "native_ranges": [
+        {
+          "address": "0x2572410",
+          "end": "0x25727a9",
+          "bytes_sha256": "ef8d958566cd56d741c0eb5d0d7862e68158a7c55052db1071d156a242c682fc",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/2572410.c",
+          "raw_export_sha256": "59913aa3ad8fcd819d990fa72df114620a2243a7223969b7d1cb28f1c247592f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "21d7f1ca695832e5031570eea299253f030d9d4c9a22f333721554b939392a87"
+    },
+    {
+      "name": "delve",
+      "source": "cards/future_sight.c",
+      "native_source": "cards/future_sight.c",
+      "native_ranges": [
+        {
+          "address": "0x25727b0",
+          "end": "0x2572842",
+          "bytes_sha256": "5b770d5cefeb263c2f079cdf76d31f327388ad2e17ae4170ae0870e108371210",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/25727b0.c",
+          "raw_export_sha256": "227bb603293fbea2c6068398f5fb3d9394d508be407d39514fc60ed0faab5341"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2727a60825f6e2e209d042d7c8d74d78fb7b9f0a1cdcd082eb84e3146ce3ac06"
+    },
+    {
+      "name": "bridge_from_below",
+      "source": "cards/future_sight.c",
+      "native_source": "cards/future_sight.c",
+      "native_ranges": [
+        {
+          "address": "0x25738a0",
+          "end": "0x2573a81",
+          "bytes_sha256": "f180f46712c5223d1f3db1a8436314946103068c9c01b8356c5a5fe7e57b4202",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve/25738a0.c",
+          "raw_export_sha256": "14c72d1bdf57695389dd4134063315a3f2f66b19e5e0da1e68d7ca0eacd3589c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7cfb912e91493e504e7800f8f21689ed6988cfcdb0e95c907e465994f83515b0"
+    }
+  ],
+  "support_helpers": [
+    {
+      "name": "player_or_planeswalker_or_sliver_creature",
+      "source": "cards/planar_chaos.c",
+      "native_source": "cards/planar_chaos.c",
+      "native_ranges": [
+        {
+          "address": "0x23b4100",
+          "end": "0x23b4169",
+          "bytes_sha256": "70ad26e6f260885c86a8b90d084154825e0c9a07670327952c4f33c9594bf01d",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/23b4100.c",
+          "raw_export_sha256": "c92c3a9cad8cffca307f898c96f143f3d859891f516afec3e331f9601622e59d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3cba29d8e882ca0b0408932f06779672948e6e5b7dc038658acb215a866bfa7d"
+    },
+    {
+      "name": "marchesa_reanimation_legacy",
+      "source": "cards/conspiracy.c",
+      "native_source": "cards/conspiracy.c",
+      "native_ranges": [
+        {
+          "address": "0x21180e0",
+          "end": "0x2118160",
+          "bytes_sha256": "c2c62dc7a9ce45bc39e9009838ca94ac04146f4669165c07f10b54b60e8ab290",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/21180e0.c",
+          "raw_export_sha256": "55fe4529a1165d87336085b17151d1c1220f8bfb2f58b90cd1e318d65e1273bf"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "dda27d9b906a842a077e5a9301be72a8ac3a771fa7a905bbb20fd96ef26db01f"
+    },
+    {
+      "name": "grave_betrayal_reanimation_legacy",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x245be30",
+          "end": "0x245bee9",
+          "bytes_sha256": "d142b3bba5c9e6976f599edaa2adc21a328cd660c8d7f24038507655541b92d7",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/245be30.c",
+          "raw_export_sha256": "19614d8fc44a8f53961bcc913e91780671dde26188d478b23fb781c5a1806472"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "18483349075199a3fb511619cb651fff4b2de0914b089ccdb8862f2108cbf7b8"
+    },
+    {
+      "name": "genju_return_legacy",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x25670b0",
+          "end": "0x2567190",
+          "bytes_sha256": "5ea5906bd054a0dd488d2facc9eef2202771bdd58528ae93f03169fc1850e67e",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/25670b0.c",
+          "raw_export_sha256": "349a276fbadb9cb00737d8d3d08e9bcc92d77b4e0eaceeb5ffa7463872fc58f4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c285307dcb99a194973dfef039afa6e9ad8e8cad6b47e260e4bbc977ae1c6397"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_genju_of_the_cedars",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256aee0",
+          "end": "0x256af1d",
+          "bytes_sha256": "fd64d4c1855564331e30041955042ebf6814bc9168c818df22d7d72934d4a169",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/256aee0.c",
+          "raw_export_sha256": "4df00fd324e78c958601129225136cd1d22b9bfa62cab93db42d2cbffff5ce9e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ad32cf353fe45a9fcf5ba0c6675af869c5d3f4b8ec8c9ab49794d9b40422820b"
+    },
+    {
+      "name": "card_genju_of_the_falls",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256af20",
+          "end": "0x256af5d",
+          "bytes_sha256": "6fec5f91c8d5d6c2c49935d9a989ab14f642d7abab488f06721741c9eebb5406",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/256af20.c",
+          "raw_export_sha256": "b33a99b137f1c7e8647e3b692d37c93e3628c0628937eedb5d211d0ce45641dc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cb312c8c0aff8364bb7db9aa17f4d11b806350bcb1df569d06dbcd239466c1ec"
+    },
+    {
+      "name": "card_genju_of_the_fields",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256af60",
+          "end": "0x256af9d",
+          "bytes_sha256": "c17e8e5634832dd26fb19f0f1b82dfee8d87de4b304f8fe99e35d890f92dbf40",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/256af60.c",
+          "raw_export_sha256": "97e1d7de98f2cdcf46772df92ba62a3add3506517c1c6f01d053e4198a82af1c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3744457710de76dc9deb84e613dd1b019cd18d6ad05e81954aaf787371588b2d"
+    },
+    {
+      "name": "card_genju_of_the_realm",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256afa0",
+          "end": "0x256aff6",
+          "bytes_sha256": "0de1ec1ab12a2805cac52bc4fafc4f2ccadcb6150d1ff85e4bb47efb63be2ca7",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/256afa0.c",
+          "raw_export_sha256": "6319c0a84f6488e1b5443ea477fd6dffcbc6da0e7b0d5d870f75caf9914a82a3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b91d2dfc72754ec5240fffbff7275c87302db7bc95430d46552d8ed23dc57f0a"
+    },
+    {
+      "name": "card_genju_of_the_spires",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256b000",
+          "end": "0x256b03d",
+          "bytes_sha256": "77f76facd90466ab99ad769c54240d98a3ff9cf6940b0f308b596a3dcc826740",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/256b000.c",
+          "raw_export_sha256": "4e6467383b0e4c3545033058b2acac514cbeece84635dd5094cb9fb5a5a29028"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c1dedda178a9b86985e8c17007d27c1013e946f64469363d454cb95743c7ec44"
+    },
+    {
+      "name": "card_azorius_keyrune",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x2470170",
+          "end": "0x24701f1",
+          "bytes_sha256": "4e29a4551b40891d4961379bbc375aa50390e795702ea0c1b8b0bc813ea4a18c",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2470170.c",
+          "raw_export_sha256": "e39d60e9eb667847691df4ce9d4c82bc01c6a71fb863597db7eaf7c5f623d36c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "18f8e374a10e537917d5721402ee9d7d34b8f59668e833af03dd24afb88d887c"
+    },
+    {
+      "name": "card_golgari_keyrune",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x2470a00",
+          "end": "0x2470a81",
+          "bytes_sha256": "dc7f0d3b9b4611dae79fd9948003783c15abe578d0d1f74b7c64236593a4a504",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2470a00.c",
+          "raw_export_sha256": "264adeda3cfb660997665ef990ed8d2326f1523c381a6b548e158998a0f0a7c8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a09dc052a694a34ffe290eacd2a59bb47f9c57432120ecd3245e7e3470e7b2bc"
+    },
+    {
+      "name": "card_izzet_keyrune",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x2470a90",
+          "end": "0x2470b7a",
+          "bytes_sha256": "ca8ebee577d9779778b6951e4793d88de22a4160cbfe63d1f07d4803c16d94ab",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2470a90.c",
+          "raw_export_sha256": "f2f413a8e830f73cef2dd395574841d0c6de0b060c4b9b92f400c2b9d54382b0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5d7fecd69b8a8652cfead69d2fcfa028819f1758480ccbde8116b095e7ce16fd"
+    },
+    {
+      "name": "card_rakdos_keyrune",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x2470b80",
+          "end": "0x2470c01",
+          "bytes_sha256": "02b329f2fd8412822c5a43f24466e807d21c7de218f3b1d1cf4dedb9a99d8a3e",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2470b80.c",
+          "raw_export_sha256": "a3ea10b3fa212f5281b86c47fa0f5787f929e6f3b73c2eb48cf6b17a359d8ce6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "83cb71edbc3dc62083b4da80a3272a02d7f20234940d1030017d30f43a7a7483"
+    },
+    {
+      "name": "card_selesnya_keyrune",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x2470c10",
+          "end": "0x2470c91",
+          "bytes_sha256": "2717fb16de18a6fedf81f3dc1c55581cff7608ad2a7931a1b3818e7b3477130a",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2470c10.c",
+          "raw_export_sha256": "b7b36ebb7ed46a8bad2367115ccc99ce65e6f5239632fa9d79a34bf483463874"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "484c3db312dd304a8f1ce88d8d2b8f4bd08723386bfe6615c7205924514e158e"
+    },
+    {
+      "name": "card_boros_keyrune",
+      "source": "cards/gatecrash.c",
+      "native_source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2529b80",
+          "end": "0x2529c32",
+          "bytes_sha256": "4832c74e5c5c23aa3313936761878559153de6369f031e645eb27c34e0f4fc22",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2529b80.c",
+          "raw_export_sha256": "96f01ef2ead318d975c4e5dabaf0019769aef8c5e23faa901e2bda5b87504547"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a7d87aa84543c74e14e0a07752d4d37be4f227f0e5bd43827f281dbf50a38a94"
+    },
+    {
+      "name": "card_dimir_keyrune",
+      "source": "cards/gatecrash.c",
+      "native_source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2529c40",
+          "end": "0x2529cf2",
+          "bytes_sha256": "7be1eaf6dcca81b739033430445fe00647cc7e18c66aec8764260e71abd949c1",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2529c40.c",
+          "raw_export_sha256": "0e2465bcf21628d2df45e076d0aeff6ac0246b7bfae4bf5a7f5b8a68c7603a71"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "fff325d43b280d60ed4cf63304527b032f0f89dbd872097e832ef57368b4dd3d"
+    },
+    {
+      "name": "card_gruul_keyrune",
+      "source": "cards/gatecrash.c",
+      "native_source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2529eb0",
+          "end": "0x2529f62",
+          "bytes_sha256": "e0c9ad7626838dae8bec9d439451de426db73bcf5bf920db31dbc4dc03bdeaa6",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2529eb0.c",
+          "raw_export_sha256": "8990ce0c997f25b652954d57a3f545b14c4adcd1380f5c76f918e0494e48b4f9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "22f469789e3da9657df29dd4d677a5779ca7f8cb630c413ae492d2bbcd3db5a3"
+    },
+    {
+      "name": "card_orzhov_keyrune",
+      "source": "cards/gatecrash.c",
+      "native_source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x2529f70",
+          "end": "0x252a022",
+          "bytes_sha256": "14a4f8b30bc0e0546f98a22b9b41ffbb68b526c1efa4913fd8c054ccdceabcd8",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2529f70.c",
+          "raw_export_sha256": "b5b3c1eacb0d8befe06c71d6e4ded5341e97dfb6d7c3141dbaa272a61e45b458"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a3061ebb763c7a4a67c0323198595314636874d4d7350336adfcd69798fdab79"
+    },
+    {
+      "name": "card_simic_keyrune",
+      "source": "cards/gatecrash.c",
+      "native_source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x252a180",
+          "end": "0x252a232",
+          "bytes_sha256": "ba282567f2b92b773dc0128a6563e36218defa7503f6912732b85c5b41a26a59",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/252a180.c",
+          "raw_export_sha256": "714c22f993f875655f7820f5f823bfc1133832f26073cd8a1675a266fa9f9f9b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a0677996c515ad116a7be733ec739fdfab0a2efe174a6ed1dabdaf019873d88a"
+    },
+    {
+      "name": "card_marchesa_the_black_rose",
+      "source": "cards/conspiracy.c",
+      "native_source": "cards/conspiracy.c",
+      "native_ranges": [
+        {
+          "address": "0x211eed0",
+          "end": "0x211f107",
+          "bytes_sha256": "b31c17c2148c32de669355ed34a5360f24a47cea0f9abf183c2a8917eba7de0f",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/211eed0.c",
+          "raw_export_sha256": "61c2fbe98d033c6dc39f153cd887125c10aa2dde2d34a17ddbfc1a6cb663a481"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "21d5763b69a945b09a05841727e16199461130e597852655fda08693425c684d"
+    },
+    {
+      "name": "card_expropriate",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "native_source": "cards/conspiracy-take-the-crown.c",
+      "native_ranges": [
+        {
+          "address": "0x220ed90",
+          "end": "0x220f04b",
+          "bytes_sha256": "3a9c371c7a30b74995fa9a160c3ed37d97bda1d30ce886d1f56325c3d7948258",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/220ed90.c",
+          "raw_export_sha256": "15cc245667b3dc9e01a107b3ab998e8e8fe595cd52fc73ad260e65ba9e9c1f1a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b6bded83a054df9dbe56f34534f9a4fa74a3446a784ab0e7eb00f687cd79cec7"
+    },
+    {
+      "name": "card_cautery_sliver",
+      "source": "cards/planar_chaos.c",
+      "native_source": "cards/planar_chaos.c",
+      "native_ranges": [
+        {
+          "address": "0x23b6ae0",
+          "end": "0x23b6baf",
+          "bytes_sha256": "4c5e55bc756abcf0e80717afb17a93df7edf215427db969edceaac4dfb118e58",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/23b6ae0.c",
+          "raw_export_sha256": "21566e9a2f5a90cf863503577d64da1ba3edd69b32b333c25059d9d273d2c7e2"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "159513da7493b20b2c3f46894cfae90f1b56458e5f77d50bf290e2fac6ce98d9"
+    },
+    {
+      "name": "card_jace_architect_of_thought",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x245f580",
+          "end": "0x245f995",
+          "bytes_sha256": "7e3b4340791c3375103980eef2c06ca27a644d08ef5d7f9e9bcc0381c9d467a7",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/245f580.c",
+          "raw_export_sha256": "1d7376ced44b0720d34b6f57e3169ae4ae2923be0dd993c4cd01793cc760b5b0"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9048a3e443c7b1fbb67619b9344028f902c52ab1a877b20b37858a1f425eddab"
+    },
+    {
+      "name": "card_grave_betrayal",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x24611c0",
+          "end": "0x24613f6",
+          "bytes_sha256": "f2293a3accc10811b045f38149456cb203bbab99a8e40ec3f6275277f775b7ff",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/24611c0.c",
+          "raw_export_sha256": "2161a737aff86e2ca1ec82e8d18593e68f5c118021321f5d6a7e4c45d2d068a0"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b62749ef6deec64da2b1fdaa4be476bc0db9167dd9481256824cd2caf320dd40"
+    },
+    {
+      "name": "card_hellhole_flailer",
+      "source": "cards/return_to_ravnica.c",
+      "native_source": "cards/return_to_ravnica.c",
+      "native_ranges": [
+        {
+          "address": "0x2468540",
+          "end": "0x24686cf",
+          "bytes_sha256": "e8a15b968d3c6953a428605a737224ce5c5f60a16b84d290d368cdb43f7ae39f",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2468540.c",
+          "raw_export_sha256": "dcd3c67c2791fa92fa89144ba0688a3c64b56b44f9cc68170e4f8bed44ffe8f8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "09579d5151b29dd82e685429dc7171e22978897afaddebdcd3860d7fc547bc12"
+    },
+    {
+      "name": "card_patron_of_the_nezumi",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256e090",
+          "end": "0x256e2aa",
+          "bytes_sha256": "b9da626feca107e6fa8344abc59139330694f56aa80d9453b719a31b411774aa",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/256e090.c",
+          "raw_export_sha256": "059e33e03b69ac99d67752551f28d784b5efd13ba6f7656c13c21716d9b314de"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6d77a8a0e36d18f3f584abaa005ece1186c60287b2023b197404f58df0ef828a"
+    },
+    {
+      "name": "card_yomiji_who_bars_the_way",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x2571390",
+          "end": "0x25715e6",
+          "bytes_sha256": "fb176972728f4ee512f1189e74732a731323fae1039fbd04409b7bd21d281352",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2571390.c",
+          "raw_export_sha256": "2d15b8e032a9b6fbcbfdbe81745c2d6bf2208a09a754e555e125a9692b6f904f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cfdb0072ad9e8456b2a2fcf9afa6d6844af4bd96f2d961065132dbe28d5cac63"
+    },
+    {
+      "name": "card_neko_te",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256d210",
+          "end": "0x256d404",
+          "bytes_sha256": "42226b8d3a09fb8b10247280c6a7d3cf7b750117c2322009de7b8192d196e557",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/256d210.c",
+          "raw_export_sha256": "9983f653de86ab80bff17e6dcd5699e17cb12458d6e0acc257e4f27a47db8b82"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ce29e0e3752a7b63658e7a3301bddff3b53548dbf6820b17876948711b437d17"
+    },
+    {
+      "name": "card_daybreak_coronet",
+      "source": "cards/future_sight.c",
+      "native_source": "cards/future_sight.c",
+      "native_ranges": [
+        {
+          "address": "0x25741b0",
+          "end": "0x257430d",
+          "bytes_sha256": "2467d3051640cf895eacb16e6d0bca31eaa6e9c6676504e4ae47cc23c12afded",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/25741b0.c",
+          "raw_export_sha256": "e5906e9dba44909761073b4cf5aec8a5215d43439ea61378e5a486b5d342c93f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4423dff1fe1bc73fbb00ac01e6b7c28c8f3571cd78ecde01de5625bd61c05cbe"
+    },
+    {
+      "name": "card_spellweaver_volute",
+      "source": "cards/future_sight.c",
+      "native_source": "cards/future_sight.c",
+      "native_ranges": [
+        {
+          "address": "0x257b680",
+          "end": "0x257bc82",
+          "bytes_sha256": "0fb9dde84b5f8c63b9f2eea7399a5955df7fa115d1539704a89635fb41dfab19",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/257b680.c",
+          "raw_export_sha256": "0bdd6c6536f241afe287a2f035163df5a053b32ee278f49f3be5e7b58ebd7ae6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "af9a80b8f299b1f0fca38d6b6b6ffe2de86ad4f5027817387ff0a02c89b9c9fb"
+    },
+    {
+      "name": "card_bridge_from_below",
+      "source": "cards/future_sight.c",
+      "native_source": "cards/future_sight.c",
+      "native_ranges": [
+        {
+          "address": "0x2573880",
+          "end": "0x2573897",
+          "bytes_sha256": "dc6d7953c540d3c854d542cb9cdc9b7841a4452522c277cf11d58cf57dfdf211",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/2573880.c",
+          "raw_export_sha256": "eaf1063958835be1a5cb0d93ba3e3d68d12a7aa3629e6a9e0a2497775817b13e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ea2c3b472ef2d4e3661c10fb0bde4f5cd7f4ac72b5e313a46c4a310c8bd6467f"
+    },
+    {
+      "name": "card_murktide_regent",
+      "source": "cards/modern_horizons_2.c",
+      "native_source": "cards/modern_horizons_2.c",
+      "native_ranges": [
+        {
+          "address": "0x223a530",
+          "end": "0x223a618",
+          "bytes_sha256": "b89c4f45c5c72a4b81f4dfab7c07eebe6bc17da6362d65fabc2d169729e5a584",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/223a530.c",
+          "raw_export_sha256": "46e832a10ca4dbd76df7439beae72c65602dcf0ffd3d5d64cecb9fa2d97bed94"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cbdf81a27f0edfca5f8df30e0bf4489a6db09b0bad45f35ca32c0dc0d6b78f5b"
+    },
+    {
+      "name": "card_soulflayer",
+      "source": "cards/fate_reforged.c",
+      "native_source": "cards/fate_reforged.c",
+      "native_ranges": [
+        {
+          "address": "0x26298f0",
+          "end": "0x26299e2",
+          "bytes_sha256": "79af5d3309746490c1b13568791c006a4fd1337bd919f91b6a52fce7a42cc045",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-support/26298f0.c",
+          "raw_export_sha256": "66dc210947240110b6a6468e1d522eb0a94df435c3c8e9a0bb133c036b2d00e5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "483c2b9b22f0e0f749de346caf3fd860850bbd384cedbc9ac72ee2084f01dc7e"
+    },
+    {
+      "name": "card_blazing_shoal",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256a040",
+          "end": "0x256a069",
+          "bytes_sha256": "66475c385f5067e49e1b6b87e4d6ec9b7ac071aa10d8ad17d1c3bf7e7ee91a45",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-shoals/256a040.c",
+          "raw_export_sha256": "3b6cbbe1a89eba8c249be109a9e537c6bb28e1caeee6ba46480422df8b4cd53c"
+        },
+        {
+          "address": "0x2566ac0",
+          "end": "0x2566bfe",
+          "bytes_sha256": "4f8b54fe2330f89b8a82aede976ddf5f30850c980263b41e3d94c0ab901980bd",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-shoals/2566ac0.c",
+          "raw_export_sha256": "aee58fcb4f2e1c36c1590fd4ba250cad365e29ea83c1fe5e2d3a94e30ea161bd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a14422737a48d428a0852d81107b94d59becbd8079da50754d2d8720b23bac46",
+      "source_macro": "ARCANE"
+    },
+    {
+      "name": "card_disrupting_shoal",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256a5f0",
+          "end": "0x256a619",
+          "bytes_sha256": "50e7d5b02a6d5d35a711b8ae01ff30dd00a1a9a9cd63049488595e293f1c11fb",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-shoals/256a5f0.c",
+          "raw_export_sha256": "1be0d055864fc89797b2c3bccd848c5932f024cb9367d803f85ffface18f8e28"
+        },
+        {
+          "address": "0x2566db0",
+          "end": "0x256700b",
+          "bytes_sha256": "e473c0b1fa947f89cd04ff3abc687e2a6a62e00d33c21b621db48778770d4575",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-shoals/2566db0.c",
+          "raw_export_sha256": "bf2e92e6aea83ec5bb50ba6dc91a2bc7e7032b3b91ce8efc28318b2cdc890e44"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d4caa27ca2c2c50a281eb445e9133a344a7de167528aeffac8894d22939d6944",
+      "source_macro": "ARCANE"
+    },
+    {
+      "name": "card_nourishing_shoal",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256d4c0",
+          "end": "0x256d4e9",
+          "bytes_sha256": "94cfc821f631631386b660ec0ad701991bda9fa871a48d4132e95bdec434f07b",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-shoals/256d4c0.c",
+          "raw_export_sha256": "224cb4f85c19c89f32b771331affa4d3fef80c5e5673bf80ac2b32a5458a1dbc"
+        },
+        {
+          "address": "0x2567450",
+          "end": "0x2567517",
+          "bytes_sha256": "1582905f88b10c285d2a1f34ae5791cda97b0ce0dfd78864a0868c6c44b7b3cf",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-shoals/2567450.c",
+          "raw_export_sha256": "888ba2802c72acb0598f839ad4dd2528a5257121308dd56c8278b407989b7b1f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "87a6196748de14e1efca9106bac75c3c766c4bd1d1585b65dbad781737ee7149",
+      "source_macro": "ARCANE"
+    },
+    {
+      "name": "card_shining_shoal",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256ec00",
+          "end": "0x256ec29",
+          "bytes_sha256": "27a5adc6f80a42cdc298a48d01dd621fe003c1e4dc492e5444630ad888384a75",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-shoals/256ec00.c",
+          "raw_export_sha256": "8ed42d2d876fabee6a6186ff5bd522182411bd347790436e762f712709635818"
+        },
+        {
+          "address": "0x2568360",
+          "end": "0x2568595",
+          "bytes_sha256": "178e64929e975bc96800f75bd248e02444d201aa81570c5023c0c069f08e2703",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-shoals/2568360.c",
+          "raw_export_sha256": "0ae971d8ce68fdd7578b6aaea8780c75db37a0b0e9ab2c1c20ad3eb3e484a33f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "09a3f6268ce73164a60df6611befed9f16265e58c92f18f60b7328c5551f5049",
+      "source_macro": "ARCANE"
+    },
+    {
+      "name": "card_sickening_shoal",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_source": "cards/betrayers_of_kamigawa.c",
+      "native_ranges": [
+        {
+          "address": "0x256f060",
+          "end": "0x256f089",
+          "bytes_sha256": "2383f6209354ed954f44b3ba65dc892b2d1c28997fb7883f4ebf669c374c1f85",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-shoals/256f060.c",
+          "raw_export_sha256": "c8b2f5c55328b8d88e60b825dac884875e8048de64e9732230904cbde7115464"
+        },
+        {
+          "address": "0x2566c00",
+          "end": "0x2566d36",
+          "bytes_sha256": "2c019020688e698a081a08849d0d506170aa6a83dc8a128e35721581829d1c38",
+          "raw_export": ".recovery/decompiled-kamigawa-sliver-delve-shoals/2566c00.c",
+          "raw_export_sha256": "3584e944be66cee2ebd176b936413fddc93f48367b26914527c63769c8ac4c7e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3670adb8b4e5e01f84b8068656e17d3eea6ef23b2d8d7d1653202b2b9bc5df68",
+      "source_macro": "ARCANE"
+    }
+  ],
+  "helper_definitions": 32,
+  "native_helper_ranges": 32,
+  "changed_helper_definitions": 18,
+  "changed_card_callers": 6,
+  "optimized_parameter_evidence": {
+    "0x25692e0": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "subtype": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "pow": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "tou": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "key": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "clr": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      },
+      "s_key": {
+        "first_location": null,
+        "constant": 0
+      }
+    },
+    "0x2566700": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "test": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "td": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "buffer": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "td2": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "buffer2": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      }
+    },
+    "0x25718e0": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "cless": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "black": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "blue": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "green": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "red": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "white": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      }
+    }
+  },
+  "native_arrays": {
+    "0x2118780::p_votes": {
+      "dimensions": [
+        2
+      ],
+      "element_bytes": 4
+    },
+    "0x23bd870::g_copy": {
+      "dimensions": [
+        "dynamic"
+      ],
+      "element_bytes": 4
+    },
+    "0x23bd870::buffer": {
+      "dimensions": [
+        100
+      ],
+      "element_bytes": 1
+    },
+    "0x25718e0::total": {
+      "dimensions": [
+        6
+      ],
+      "element_bytes": 4
+    },
+    "0x25677f0::costs": {
+      "dimensions": [
+        6
+      ],
+      "element_bytes": 4
+    },
+    "0x220ed90::pos1": {
+      "dimensions": [
+        100
+      ],
+      "element_bytes": 1
+    },
+    "0x220ed90::pos2": {
+      "dimensions": [
+        100
+      ],
+      "element_bytes": 1
+    },
+    "0x220ed90::ai_priorities": {
+      "dimensions": [
+        2
+      ],
+      "element_bytes": 4
+    },
+    "0x220ed90::gain_control_of_permanent_owned_by": {
+      "dimensions": [
+        2
+      ],
+      "element_bytes": 4
+    },
+    "0x245f580::selected": {
+      "dimensions": [
+        2
+      ],
+      "element_bytes": 4
+    },
+    "0x245f580::can_play_exiled_spell": {
+      "dimensions": [
+        2
+      ],
+      "element_bytes": 4
+    },
+    "0x257b680::targettable_grave_for_spellweaver_volute": {
+      "dimensions": [
+        2
+      ],
+      "element_bytes": 4
+    }
+  },
+  "native_dynamic_array_bounds": {
+    "0x23bd870::g_copy": {
+      "form": "DW_FORM_exprloc",
+      "expressions": [
+        [
+          112,
+          127
+        ]
+      ]
+    }
+  },
+  "native_instruction_blocks": [
+    {
+      "name": "nezumi_legacy_decreasing_count",
+      "address": "0x2567ef8",
+      "bytes_hex": "8b45f0897c2404890424e8a97212004f75ee",
+      "instructions": [
+        {
+          "mnemonic": "mov",
+          "op_str": "eax, dword ptr [ebp - 0x10]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [esp + 4], edi"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [esp], eax"
+        },
+        {
+          "mnemonic": "call",
+          "op_str": "0x268f1b0"
+        },
+        {
+          "mnemonic": "dec",
+          "op_str": "edi"
+        },
+        {
+          "mnemonic": "jne",
+          "op_str": "0x2567ef8"
+        }
+      ]
+    },
+    {
+      "name": "nezumi_card_decreasing_count",
+      "address": "0x256e1a8",
+      "bytes_hex": "89542404893c248955ece8f90f12008b55ec4a75eb",
+      "instructions": [
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [esp + 4], edx"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [esp], edi"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [ebp - 0x14], edx"
+        },
+        {
+          "mnemonic": "call",
+          "op_str": "0x268f1b0"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "edx, dword ptr [ebp - 0x14]"
+        },
+        {
+          "mnemonic": "dec",
+          "op_str": "edx"
+        },
+        {
+          "mnemonic": "jne",
+          "op_str": "0x256e1a8"
+        }
+      ]
+    },
+    {
+      "name": "shrouded_lore_deck_sized_allocation",
+      "address": "0x23bda02",
+      "bytes_hex": "893c24e866833200c1e002e8bee7330029c4",
+      "instructions": [
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [esp], edi"
+        },
+        {
+          "mnemonic": "call",
+          "op_str": "0x26e5d70"
+        },
+        {
+          "mnemonic": "shl",
+          "op_str": "eax, 2"
+        },
+        {
+          "mnemonic": "call",
+          "op_str": "0x26fc1d0"
+        },
+        {
+          "mnemonic": "sub",
+          "op_str": "esp, eax"
+        }
+      ]
+    },
+    {
+      "name": "bridge_death_reset",
+      "address": "0x2573a4b",
+      "bytes_hex": "c7434c00000000",
+      "instructions": [
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [ebx + 0x4c], 0"
+        }
+      ]
+    },
+    {
+      "name": "bridge_resolution_reset",
+      "address": "0x2573973",
+      "bytes_hex": "c7434c00000000",
+      "instructions": [
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [ebx + 0x4c], 0"
+        }
+      ]
+    },
+    {
+      "name": "bridge_snapshot_before_resolver",
+      "address": "0x25738d1",
+      "bytes_hex": "8b434cc744240c020000008945f08b450c8974240889442404893c24e84e5b1100",
+      "instructions": [
+        {
+          "mnemonic": "mov",
+          "op_str": "eax, dword ptr [ebx + 0x4c]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [esp + 0xc], 2"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [ebp - 0x10], eax"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "eax, dword ptr [ebp + 0xc]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [esp + 8], esi"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [esp + 4], eax"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [esp], edi"
+        },
+        {
+          "mnemonic": "call",
+          "op_str": "0x2689440"
+        }
+      ]
+    },
+    {
+      "name": "volute_player_register",
+      "address": "0x257b68f",
+      "bytes_hex": "8b5d08",
+      "instructions": [
+        {
+          "mnemonic": "mov",
+          "op_str": "ebx, dword ptr [ebp + 8]"
+        }
+      ]
+    },
+    {
+      "name": "volute_resolve_own_grave_cache",
+      "address": "0x257b846",
+      "bytes_hex": "8b0c9d18704d008b95bcfeffff8b0cb9898a88000000",
+      "instructions": [
+        {
+          "mnemonic": "mov",
+          "op_str": "ecx, dword ptr [ebx*4 + 0x4d7018]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "edx, dword ptr [ebp - 0x144]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "ecx, dword ptr [ecx + edi*4]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [edx + 0x88], ecx"
+        }
+      ]
+    },
+    {
+      "name": "volute_retarget_target_grave_cache",
+      "address": "0x257ba20",
+      "bytes_hex": "8b42748b4a7c8b048518704d008b0488c7423842000000898288000000",
+      "instructions": [
+        {
+          "mnemonic": "mov",
+          "op_str": "eax, dword ptr [edx + 0x74]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "ecx, dword ptr [edx + 0x7c]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "eax, dword ptr [eax*4 + 0x4d7018]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "eax, dword ptr [eax + ecx*4]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [edx + 0x38], 0x42"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [edx + 0x88], eax"
+        }
+      ]
+    },
+    {
+      "name": "volute_static_own_grave_cache",
+      "address": "0x257bb11",
+      "bytes_hex": "8b0c9d18704d008b0481898288000000",
+      "instructions": [
+        {
+          "mnemonic": "mov",
+          "op_str": "ecx, dword ptr [ebx*4 + 0x4d7018]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "eax, dword ptr [ecx + eax*4]"
+        },
+        {
+          "mnemonic": "mov",
+          "op_str": "dword ptr [edx + 0x88], eax"
+        }
+      ]
+    }
+  ],
+  "native_card_ids": [
+    {
+      "name": "CARD_ID_MURKTIDE_REGENT",
+      "value": 23095,
+      "die_offset": "0x1f493b9"
+    }
+  ],
+  "arcane_macro_definition_sha256": "3a8d17cd1ffb23353079e842cd3c45060bdf5ea2ddbf88f14e8560f94ae90b98",
+  "inlined_callback_dependency": {
+    "source": "cards/time_spiral.c",
+    "function": "target_must_be_permanent_or_suspend",
+    "definition_sha256": "b0c3768d8e93dcdc670ea2663e416d53c79c902900d6446f3d1f33517abab78a",
+    "owner_range": "0x23b4470",
+    "standalone_native_range": null,
+    "scope": "Existing canonical predicate body matches the inlined prefix of the private Planar Chaos owner. Reuse it and the existing canonical five-argument callback; no duplicate declaration or invented entry."
+  },
+  "native_source_mapping": {
+    "native": "cards/planar_chaos.c",
+    "physical": "cards/time_spiral.c",
+    "function": "target_must_be_permanent_or_suspend_and_have_time_counters",
+    "owner_range": "0x23b4470",
+    "scope": "Complete private native owner mapped to the existing canonical public callback; no new C body."
+  },
+  "native_contracts": {
+    "marchesa": {
+      "count_mode": "GFPC_TRACK_DEAD_CREATURES|GFPC_STORE_OWNER=0x90",
+      "storage": "targets[0..9] owner/iid pairs",
+      "return_legacy": "owner/csvid",
+      "clear_both_fields": true,
+      "card_and_return_legacy_retained": true
+    },
+    "council": {
+      "aggregate_channels": [
+        "BYTE0",
+        "BYTE1",
+        "BYTE2"
+      ],
+      "expropriate_opponent_money_channel": 2,
+      "grudge_keeper_life_loss_aggregation_retained": true,
+      "voting_impl_retained": true
+    },
+    "cautery": {
+      "source_exit": "EVENT_LEAVES_PLAY_ABILITY or id!=Cautery",
+      "source_target": "base target, own Sliver, activating_sliver",
+      "prevention_target": "default target, player/planeswalker/Sliver predicate",
+      "can_activate": "scan both controllers after own-source can_target, GAA flags0xc returns1",
+      "choice": "Prevent1 / Deal1 / Do nothing, default1",
+      "activation_event": "EVENT_ACTIVATE",
+      "prevention_flags": "SAC_ME|CAN_TARGET|LITERAL_PROMPT=0xe",
+      "damage_flags": "SAC_ME|CAN_TARGET=0xc",
+      "persistent_prevention": "prevent_the_next_n_damage(...1,0,0,0)",
+      "old_damage_packet_targeting_removed": true,
+      "no_new_fizzle_when_can_use_returns_zero": true
+    },
+    "retained_shared_slivers": [
+      "necrotic_sliver_shared_ability",
+      "darkheart_sliver_shared_ability",
+      "frenetic_sliver_shared_ability"
+    ],
+    "shrouded_lore": {
+      "native_vla": "g_copy[count_deck(player)]",
+      "bound_expression": [
+        112,
+        127
+      ],
+      "allocation": "count_deck -> shl eax2 -> stack_probe -> sub esp,eax",
+      "buffer": 100,
+      "native_unsafe_deck_vs_grave_size_retained": true
+    },
+    "jace": {
+      "attack_dispatch": "store_attackers DAT_TRACK + dat_ability mandatory1 + EVENT_DAT_ABILITY",
+      "count": "targets[1].player",
+      "card_legend_rule_added": true,
+      "ultimate_accepts_only_nonnegative_ids": true
+    },
+    "grave_betrayal": {
+      "count_mode": "TRACK_DEAD_CREATURES|STORE_OWNER=0x90",
+      "detach_byte": 2,
+      "amount": "opposite owner byte (player0 BYTE1, player1 BYTE0)",
+      "storage": "sequential targets[i] owner/iid pairs",
+      "resolver_before_visibility": true,
+      "old_end_trigger_reset_removed": true
+    },
+    "detain": {
+      "disabling": "every attached legacy handler pass",
+      "release": "attached p/c at own BEGIN_TURN",
+      "creator_only_creates_legacy": true
+    },
+    "unleash": {
+      "restriction_event": "EVENT_ABILITIES"
+    },
+    "keyrune": {
+      "query": "mana_producer boolean OR generic TYPE_CHANGE activation boolean",
+      "dialog_mana_availability": "mana_producer CAN_ACTIVATE",
+      "animation_subtype": "legacy.targets[9].card",
+      "direct_subtype_change_removed": true,
+      "complete_callers": 10
+    },
+    "shoal": {
+      "cast_dialog": "all nonfree/nontoken casts, independent of SF3_NULLIFIED",
+      "pitch_info": "exiled CMC before rfg, no subtraction",
+      "null_target_exception": "Nourishing Shoal",
+      "normal_x_payment": "charge_mana COLOR_COLORLESS -1, set_x only when not fizzled",
+      "free_token_normal_path_also_pays_x": true,
+      "source_construct": "ARCANE retained",
+      "complete_macro_cards": 5,
+      "native_macro_ranges": 10,
+      "disrupting_cast_target": "&td,TARGET_SPELL",
+      "disrupting_mismatch_no_impl_kill": true
+    },
+    "patron": {
+      "offering_helper_retained": true,
+      "cost_array": 6
+    },
+    "nezumi": {
+      "death_filter": "GFPC_INTO_WHOSE_GRAVE",
+      "detach_byte": 2,
+      "marker_only_on_own_death": true,
+      "resolver_before_visibility": true,
+      "old_end_trigger_reset_removed": true,
+      "life_loss": "amount, amount-1, ...1 on live card and legacy",
+      "triangular_native_behavior_preserved": true
+    },
+    "yomiji": {
+      "detach_byte": 2,
+      "visibility_gate_still_before_resolver": true,
+      "old_end_trigger_reset_removed": true,
+      "storage_flag_stays_0x10": true,
+      "live_card_retained": true
+    },
+    "neko_te": {
+      "leave_play_dispatch": "leaves_play + EVENT_LEAVES_PLAY_ABILITY",
+      "card_retained": true
+    },
+    "genju": {
+      "optimized_s_key": 0,
+      "complete_callers": 5,
+      "death_suppression_coordinates": "attached land, not aura",
+      "subtype_storage": "animation legacy.targets[9].card=SPIRIT",
+      "aura_dispatch_includes_static": true,
+      "stolen_aura_return_restriction_retained": true
+    },
+    "daybreak_coronet": {
+      "predicate": "another Aura excluding targeting aura",
+      "pump": "default pump + pump_attached + aura",
+      "abilities": "FIRST_STRIKE + VIGILANCE + LIFELINK",
+      "prompt": "DAYBREAK_CORONET",
+      "aura_dispatch_includes_static": true
+    },
+    "virtual_mana": {
+      "total_array": 6,
+      "all_mana_source_permanents": true,
+      "one_mana_for_each_color_bit": true,
+      "overgenerous_native_heuristic_retained": true
+    },
+    "volute": {
+      "dispatch": "sp_ability_trigger mandatory + EVENT_SPA",
+      "name_event_gate_first": true,
+      "cached_iid": "targets[2].card",
+      "static_and_resolve_cache_grave": "player (native own-grave quirk)",
+      "retarget_cache_grave": "targets[0].player",
+      "empty_retarget_kill": "KILL_STATE_BASED_ACTION",
+      "name_legacy_flag": 256
+    },
+    "delve": {
+      "murktide_exiled_type": "TYPE_SPELL=0x38",
+      "murktide_counter": "increment_data(instance,MURKTIDE_REGENT) before exile",
+      "soulflayer_static_mask": "0x400005a0",
+      "wrong_native_has_mana_argument_order_retained": true,
+      "soulflayer_zero_keywords_can_fizzle_native_behavior_retained": true
+    },
+    "bridge": {
+      "counters": "eot_toughness bytes0,1",
+      "reset_each_qualifying_death": true,
+      "token_deaths_excluded_for_both_owners": true,
+      "death_removal_suppression": true,
+      "own_count": "card_counts[player][5]+1",
+      "no_grave_presence_guard": true,
+      "snapshot_before_resolver": true,
+      "resolution": "scan own grave in reverse, tokens per Bridge, optional exile per Bridge, clear eot afterward",
+      "native_last_death_overwrites_prior_packets_preserved": true
+    },
+    "preserved_quirks": [
+      "Nezumi triangular life-loss loop",
+      "Bridge resets counts on each qualifying death",
+      "Volute static/resolve name cache reads own grave even when attached to opponent grave",
+      "Shrouded Lore VLA sized by deck count",
+      "Yomiji retains 0x10 storage mode while interpreting owner/iid pairs",
+      "Soulflayer can fizzle on a zero ability result",
+      "Delve retains swapped has_mana_to_cast_iid arguments",
+      "Shining Shoal retains max-=its own info_slot and whole damage redirection",
+      "Expropriate selects controlled permanents in the native code"
+    ]
+  },
+  "scope": "32 initial complete helper ranges, four complete supporting helper ranges, and34 paired card source definitions including five retained ARCANE macro constructs (39 native card ranges).18 initial helpers and6 cards changed.75 native ranges reviewed. Native ownership, specialized arguments, dynamic array bounds, opcode quirks and Murktide enum pinned. Existing canonical names/types retained; no ABI aliases or duplicate private callback introduced. Built-in dialogs and gameplay tests remain downstream."
+}

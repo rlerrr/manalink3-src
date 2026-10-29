@@ -2553,85 +2553,90 @@ static int effect_sorin_markov(int player, int card, event_t event){
 	return 0;
 }
 
-int card_sorin_markov(int player, int card, event_t event){
-	/* Sorin Markov	|3|B|B|B	0x2001ccc
-	 * Legendary Planeswalker - Sorin (4)
-	 * +2: ~ deals 2 damage to any target and you gain 2 life.
-	 * -3: Target opponent's life total becomes 10.
-	 * -7: You control target player during that player's next turn. */
-	if (IS_ACTIVATING(event)){
+int card_sorin_markov(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  /* Sorin Markov	|3|B|B|B	0x2001ccc
+   * Legendary Planeswalker - Sorin (4)
+   * +2: ~ deals 2 damage to any target and you gain 2 life.
+   * -3: Target opponent's life total becomes 10.
+   * -7: You control target player during that player's next turn. */
+  if (IS_ACTIVATING(event))
+  {
 
-		card_instance_t* instance = get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
 
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
-		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
-		target_definition_t td2;
-		default_target_definition(player, card, &td2, 0);
-		td2.zone = TARGET_ZONE_PLAYERS;
+    target_definition_t td2;
+    default_target_definition(player, card, &td2, 0);
+    td2.zone = TARGET_ZONE_PLAYERS;
 
-		enum{
-			CHOICE_DAMAGE = 1,
-			CHOICE_SET_LIFE,
-			CHOICE_MINDSLAVER
-		}
-		choice = DIALOG(player, card, event,
-						DLG_RANDOM, DLG_PLANESWALKER,
-						"Damage & gain life", can_target(&td), 10, 2,
-						"Set life to 10", would_validate_arbitrary_target(&td2, 1-player, -1), (life[1-player]-10)*3, -3,
-						"Mindslaver (approx.)", would_validate_arbitrary_target(&td2, 1-player, -1), 20, -7);
+    enum
+    {
+      CHOICE_DAMAGE = 1,
+      CHOICE_SET_LIFE,
+      CHOICE_MINDSLAVER
+    } choice = DIALOG(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Damage & gain life",
+                      can_target(&td), 10, 2, "Set life to 10",
+                      would_validate_arbitrary_target(&td2, 1 - player, -1),
+                      (life[1 - player] - 10) * 3, -3, "Mindslaver (approx.)",
+                      would_validate_arbitrary_target(&td2, 1 - player, -1), 20, -7);
 
-	  if (event == EVENT_CAN_ACTIVATE)
-		{
-		  if (!choice)
-			return 0;
-		}
-	  else if (event == EVENT_ACTIVATE)
-		{
-		  instance->number_of_targets = 0;
-		  switch (choice)
-			{
-				case CHOICE_DAMAGE:
-					pick_target(&td, "TARGET_ANY");
-					break;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (!choice)
+        return 0;
+    }
+    else if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = 0;
+      switch (choice)
+      {
+      case CHOICE_DAMAGE:
+        pick_target(&td, "TARGET_ANY");
+        break;
 
-				case CHOICE_SET_LIFE:
-				case CHOICE_MINDSLAVER:
-				{
-					instance->targets[0].player = 1-player;
-					instance->targets[0].card = -1;
-					instance->number_of_targets =  1;
-				}
-				break;
+      case CHOICE_SET_LIFE:
+      case CHOICE_MINDSLAVER:
+      {
+        instance->targets[0].player = 1 - player;
+        instance->targets[0].card = -1;
+        instance->number_of_targets = 1;
+      }
+      break;
+      }
+    }
+    else // event == EVENT_RESOLVE_ACTIVATION
+      switch (choice)
+      {
+      case CHOICE_DAMAGE:
+        if (valid_target(&td))
+        {
+          damage_target0(player, card, 2);
+          gain_life(player, 2);
+        }
+        break;
 
-			}
-		}
-	  else	// event == EVENT_RESOLVE_ACTIVATION
-		switch (choice)
-		{
-			case CHOICE_DAMAGE:
-				if ( valid_target(&td)){
-					damage_target0(player, card, 2);
-					gain_life(player, 2);
-				}
-				break;
+      case CHOICE_SET_LIFE:
+        if (valid_target(&td2))
+        {
+          set_life_total(instance->targets[0].player, 10);
+        }
+        break;
 
-			case CHOICE_SET_LIFE:
-				if ( valid_target(&td2)){
-					set_life_total(instance->targets[0].player , 10);
-				}
-				break;
+      case CHOICE_MINDSLAVER:
+        if (valid_target(&td2))
+        {
+          create_legacy_effect(player, card, &effect_sorin_markov);
+        }
+        break;
+      }
+  }
 
-			case CHOICE_MINDSLAVER:
-				if ( valid_target(&td2) ){
-					create_legacy_effect(player, card, &effect_sorin_markov );
-				}
-				break;
-		}
-	}
-
-	return planeswalker(player, card, event, 4);
+  return planeswalker(player, card, event, 4);
 }
 
 int card_soul_stair_expedition(int player, int card, event_t event)

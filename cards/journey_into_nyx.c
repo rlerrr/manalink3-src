@@ -418,7 +418,7 @@ int card_godsend(int player, int card, event_t event)
 			/* STATE_ISBLOCKED isn't set until after EVENT_DECLARE_BLOCKERS, so exiling the only blocker would allow this creature to
 			 * deal combat damage if we don't set it manually - see #14389 */
 			if (current_turn == p){
-				get_card_instance(p, instance->targets[8].card)->state |= STATE_ISBLOCKED;
+				get_card_instance(p, instance->damage_target_card)->state |= STATE_ISBLOCKED;
 			}
 		}
 	}
@@ -461,17 +461,23 @@ int card_harvestguard_alseids(int player, int card, event_t event){
 
 static int launch_the_fleet_legacy(int player, int card, event_t event)
 {
-	card_instance_t *instance = get_card_instance(player, card);
-	if( declare_attackers_trigger(player, card, event, 0, instance->damage_target_player, instance->damage_target_card)){
-		token_generation_t token;
-		default_token_definition(instance->damage_target_player, instance->damage_target_card, CARD_ID_SOLDIER, &token);
-		token.action = TOKEN_ACTION_ATTACKING;
-		generate_token(&token);
-	}
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
+  if (get_card_instance(player, card)->damage_target_player >= 0)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    store_attackers(player, card, event, DAT_DONT_REPORT_VALUE, instance->damage_target_player,
+                    instance->damage_target_card, NULL);
+    dat_ability(player, card, event, DAT_DONT_REPORT_VALUE | DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    if (event == EVENT_DAT_ABILITY)
+    {
+      token_generation_t token;
+      default_token_definition(instance->damage_target_player, instance->damage_target_card,
+                               CARD_ID_SOLDIER, &token);
+      token.action = TOKEN_ACTION_ATTACKING;
+      generate_token(&token);
+    }
+  }
+  if (event == EVENT_CLEANUP)
+    kill_card(player, card, KILL_EXILE);
   return 0;
 }
 
@@ -542,54 +548,69 @@ int card_leonin_iconoclast(int player, int card, event_t event){
 	return 0;
 }
 
-static int common_mortal_obstinacy_flamespeakers_will(int player, int card, event_t event, type_t type, const char* prompt)
+static int common_mortal_obstinacy_flamespeakers_will(int player, int card, event_t event,
+                                                      type_t type, const char *prompt)
 {
-	/* Enchantment - Aura
-	 * Enchant creature you control
-	 * Enchanted creature gets +1/+1.
-	 * Whenever enchanted creature deals combat damage to a player, you may sacrifice ~. If you do, destroy target [type]. */
+  /* Enchantment - Aura
+   * Enchant creature you control
+   * Enchanted creature gets +1/+1.
+   * Whenever enchanted creature deals combat damage to a player, you may sacrifice ~. If you do,
+   * destroy target [type]. */
 
+  card_instance_t *instance = in_play(player, card);
+  if (instance)
+  {
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
 
-	card_instance_t *instance = in_play(player, card);
-	if ( instance ){
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
+    if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(p, c))
+    {
+      ++event_result;
+    }
 
-		if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(p, c)){
-			++event_result;
-		}
+    if (damage_dealt_by_me_arbitrary(p, c, event,
+                                     DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_MUST_DAMAGE_PLAYER |
+                                         DDBM_TRIGGER_OPTIONAL,
+                                     player, card))
+    {
+      target_definition_t td1;
+      default_target_definition(player, card, &td1, type);
+      /* The AI always activates optional triggers; here, that's a very bad idea if there's nothing
+       * the AI would want to target.  So make the targeting optional, and if the AI decides not to
+       * target, pretend it decided not to trigger in the first place. */
+      if (!IS_AI(player))
+      {
+        td1.allow_cancel = 0;
+      }
 
-		if( damage_dealt_by_me_arbitrary(p, c, event, DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_MUST_DAMAGE_PLAYER | DDBM_TRIGGER_OPTIONAL, player, card) ){
-			target_definition_t td1;
-			default_target_definition(player, card, &td1, type);
-			/* The AI always activates optional triggers; here, that's a very bad idea if there's nothing the AI would want to target.  So make the targeting
-			 * optional, and if the AI decides not to target, pretend it decided not to trigger in the first place. */
-			if (!IS_AI(player)){
-				td1.allow_cancel = 0;
-			}
+      instance->number_of_targets = 0;
+      if (can_target(&td1) && pick_target(&td1, prompt))
+      {
+        kill_card(player, card, KILL_SACRIFICE);
+        if (valid_target(&td1))
+        {
+          kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+        }
+      }
+      else if (!IS_AI(player))
+      {
+        kill_card(player, card, KILL_SACRIFICE);
+      }
+    }
+  }
 
-			instance->number_of_targets = 0;
-			if (can_target(&td1) && pick_target(&td1, prompt)){
-				kill_card(player, card, KILL_SACRIFICE);
-				if (valid_target(&td1)){
-					kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-				}
-			} else if (!IS_AI(player)){
-				kill_card(player, card, KILL_SACRIFICE);
-			}
-		}
-	}
+  if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS)
+  {
+    return 0;
+  }
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
-		return 0;
-	}
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  td.preferred_controller = player;
+  td.allowed_controller = player;
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = player;
-	td.allowed_controller = player;
-
-	return targeted_aura_custom_prompt(player, card, event, &td, "Select target creature you control.");
+  return targeted_aura_custom_prompt(player, card, event, &td,
+                                     "Select target creature you control.");
 }
 
 int card_mortal_obstinacy(int player, int card, event_t event){
@@ -2425,14 +2446,15 @@ int card_akroan_line_breaker(int player, int card, event_t event)
 
 static int bearer_of_the_heavens_legacy(int player, int card, event_t event)
 {
-	if( eot_trigger(player, card, event) ){
-		test_definition_t test;
-		new_default_test_definition(&test, TYPE_PERMANENT, "");
-		new_manipulate_all(player, card, 2, &test, KILL_DESTROY);
-		kill_card(player, card, KILL_DESTROY);
-	}
+  if (eot_trigger(player, card, event))
+  {
+    test_definition_t test;
+    new_default_test_definition(&test, TYPE_PERMANENT, "");
+    new_manipulate_all(player, card, 2, &test, ACT_KILL_DESTROY);
+    kill_card(player, card, KILL_DESTROY);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_bearer_of_the_heavens(int player, int card, event_t event)
@@ -4473,7 +4495,7 @@ int card_cloak_of_the_philospher(int player, int card, event_t event){
 		int can_untap = is_equipping(player, card) && generic_activated_ability(player, card, event, 0, MANACOST_X(2), 0, NULL, NULL);
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
 							"Equip", can_equip, is_equipping(player, card) ? 1 : 10,
-							"Untap equipped creature", can_untap, is_equipping(player, card) && is_tapped(instance->targets[8].player, instance->targets[8].card) ? 11 : 1
+							"Untap equipped creature", can_untap, is_equipping(player, card) && is_tapped(instance->damage_target_player, instance->damage_target_card) ? 11 : 1
 							);
 
 		if( choice == 0 ){
@@ -4550,7 +4572,7 @@ int card_bow_of_the_hunter(int player, int card, event_t event){
 			result |= check_for_equipment_targets(player, card);
 		}
 		if( is_equipping(player, card) &&
-			generic_activated_ability(instance->targets[8].player, instance->targets[8].card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0, &td1, "TARGET_ZONE_CREATURE_OR_PLAYER")
+			generic_activated_ability(instance->damage_target_player, instance->damage_target_card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0, &td1, "TARGET_ZONE_CREATURE_OR_PLAYER")
 		  ){
 			result |= 1;
 		}
@@ -4561,7 +4583,7 @@ int card_bow_of_the_hunter(int player, int card, event_t event){
 		int can_equip = generic_activated_ability(player, card, event, GAA_CAN_SORCERY_BE_PLAYED, MANACOST_X(get_updated_equip_cost(player, card, 2)), 0, NULL, NULL) &&
 						check_for_equipment_targets(player, card);
 		int can_damage = is_equipping(player, card) &&
-						generic_activated_ability(instance->targets[8].player, instance->targets[8].card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0,
+						generic_activated_ability(instance->damage_target_player, instance->damage_target_card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0,
 													0, &td1, "TARGET_ZONE_CREATURE_OR_PLAYER");
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
 							"Equip", can_equip, is_equipping(player, card) ? 1 : 10,
@@ -4586,9 +4608,9 @@ int card_bow_of_the_hunter(int player, int card, event_t event){
 		}
 		if( choice == 2 ){
 			if( charge_mana_for_activated_ability(player, card, MANACOST0) &&
-				select_target(instance->targets[8].player, instance->targets[8].card, &td1, "Select a target creature or player.", NULL)
+				select_target(instance->damage_target_player, instance->damage_target_card, &td1, "Select a target creature or player.", NULL)
 			  ){
-				tap_card(instance->targets[8].player, instance->targets[8].card);
+				tap_card(instance->damage_target_player, instance->damage_target_card);
 				instance->info_slot = 66+choice;
 			}
 			else{
@@ -4602,8 +4624,8 @@ int card_bow_of_the_hunter(int player, int card, event_t event){
 		if( instance->info_slot == 66 && valid_target(&td) ){
 			equip_target_creature(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card);
 		}
-		if( instance->info_slot == 67 && validate_target(instance->targets[8].player, instance->targets[8].card, &td1, 0) ){
-			damage_target0(instance->targets[8].player, instance->targets[8].card, 2);
+		if( instance->info_slot == 67 && validate_target(instance->damage_target_player, instance->damage_target_card, &td1, 0) ){
+			damage_target0(instance->damage_target_player, instance->damage_target_card, 2);
 		}
 	}
 
@@ -4769,16 +4791,10 @@ int card_xenagos_strike(int player, int card, event_t event){
 
 int card_ecstatic_piper(int player, int card, event_t event)
 {
-  int tou;
-  int key;
-  event_t s_key;
-  tou = player;
-  key = card;
-  s_key = event;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    pump_xenagos(player, card, 0, tou, key, s_key);
+    pump_xenagos(player, card, 0, 0, 0, SP_KEYWORD_MUST_ATTACK);
     leaves_play(player, card, EVENT_ETB, 1, 1);
     return 0;
   }

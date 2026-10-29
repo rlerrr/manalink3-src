@@ -344,48 +344,57 @@ int card_lingering_souls(int player, int card, event_t event){
 	return do_flashback(player, card, event, MANACOST_XB(1, 1));
 }
 
-static int loyal_cathar_legacy(int player, int card, event_t event){
+static int loyal_cathar_legacy(int player, int card, event_t event)
+{
 
-	if( eot_trigger(player, card, event) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int owner = instance->targets[0].player;
-		int iid = instance->targets[0].card;
-		int count = count_graveyard(owner);
-		while( count > -1 ){
-				if( cards_data[get_grave(owner)[count]].id == iid ){
-					reanimate_permanent(player, card, owner, count, REANIMATE_RETURN_TO_PLAY_TRANSFORMED);
-					break;
-				}
-				count--;
-		}
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (eot_trigger(player, card, event))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int owner = instance->targets[0].player;
+    int iid = instance->targets[0].card;
+    int count = count_graveyard(owner) - 1;
+    while (count > -1)
+    {
+      if (get_grave(owner)[count] == iid)
+      {
+        reanimate_permanent(player, card, owner, count, REANIMATE_RETURN_TO_PLAY_TRANSFORMED);
+        break;
+      }
+      count--;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
-int card_loyal_cathar(int player, int card, event_t event){
-/* CARD_ID_LOYAL_CATHAR	12227
-Loyal Cathar	|W|W
-Creature - Human Soldier 2/2
-Vigilance
-When ~ dies, return it to the battlefield transformed under your control at the beginning of the next end step.
-(Unhallowed Cathar - 2/1) Unhallowed Cathar can't block. */
+int card_loyal_cathar(int player, int card, event_t event)
+{
+  /* CARD_ID_LOYAL_CATHAR	12227
+  Loyal Cathar	|W|W
+  Creature - Human Soldier 2/2
+  Vigilance
+  When ~ dies, return it to the battlefield transformed under your control at the beginning of the
+  next end step. (Unhallowed Cathar - 2/1) Unhallowed Cathar can't block. */
 
-	vigilance(player, card, event);
+  vigilance(player, card, event);
+  double_faced_card(player, card, event);
 
-	nice_creature_to_sacrifice(player, card);
+  nice_creature_to_sacrifice(player, card);
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(player, card) && in_play(player, card) && ! is_humiliated(player, card, AL_TRIG) ){
-		if( is_this_dying(player, card) ){
-			int legacy = create_legacy_effect(player, card, &loyal_cathar_legacy);
-			card_instance_t *instance = get_card_instance(player, legacy);
-			instance->targets[0].player = get_owner(player, card);
-			instance->targets[0].card = get_original_internal_card_id(player, card);
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(player, card) && in_play(player, card) &&
+      !is_humiliated(player, card, AL_TRIG))
+  {
+    if (is_this_dying(player, card) && !check_for_death_trigger_removal(player, card))
+    {
+      int legacy = create_legacy_effect(player, card, &loyal_cathar_legacy);
+      card_instance_t *instance = get_card_instance(player, legacy);
+      instance->targets[0].player = get_owner(player, card);
+      instance->targets[0].card = get_original_internal_card_id(player, card);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_unhallowed_cathar(int player, int card, event_t event){
@@ -440,74 +449,83 @@ When ~ enters the battlefield, you may tap target creature. */
 	return 0;
 }
 
-static int requiem_angel_effect(int player, int card, event_t event){
+static int requiem_angel_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_REQUIEM_ANGEL ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_REQUIEM_ANGEL)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						return 0;
-					}
-				}
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_CREATURE);
-				this_test.subtype = SUBTYPE_SPIRIT;
-				this_test.subtype_flag = DOESNT_MATCH;
-				count_for_gfp_ability(player, card, event, player, 0, &this_test);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        test_definition_t this_test;
+        default_test_definition(&this_test, TYPE_CREATURE);
+        this_test.type = TYPE_LAND | TYPE_CREATURE;
+        this_test.subtype = SUBTYPE_SPIRIT;
+        this_test.subtype_flag = DOESNT_MATCH;
+        count_for_gfp_ability(player, card, event, player, 0, &this_test);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
 
-			token_generation_t token;
-			default_token_definition(player, card, CARD_ID_SPIRIT, &token);
-			token.key_plus = KEYWORD_FLYING;
-			token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
-			token.qty = amount;
-			generate_token(&token);
+    token_generation_t token;
+    default_token_definition(player, card, CARD_ID_SPIRIT, &token);
+    token.key_plus = KEYWORD_FLYING;
+    token.color_forced = COLOR_TEST_WHITE;
+    token.qty = amount;
+    generate_token(&token);
 
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_requiem_angel(int player, int card, event_t event){
@@ -1892,76 +1910,94 @@ void mikaeus_undying(int player, int card){
 	}
 }
 
-static int mikaeus_the_unhallowed_effect(int player, int card, event_t event){
+static int mikaeus_the_unhallowed_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_MIKAEUS_THE_UNHALLOWED ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_MIKAEUS_THE_UNHALLOWED)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-					}
-					if( instance->targets[11].player < 0 ){
-						instance->targets[11].player = 0;
-					}
-					SET_BYTE1(instance->targets[11].player) = 1;
-				}
-				if( ! count_1_1_counters(affected_card_controller, affected_card) &&
-					! has_subtype(affected_card_controller, affected_card, SUBTYPE_HUMAN) )
-				{
-					count_for_gfp_ability_and_store_values(player, card, event, player, TYPE_CREATURE, NULL,
-															GFPC_TRACK_DEAD_CREATURES | GFPC_STORE_OWNER, 1);
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY &&
+      is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
+      !count_1_1_counters(affected_card_controller, affected_card) &&
+      !has_subtype(affected_card_controller, affected_card, SUBTYPE_HUMAN))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+              instance->targets[11].player = 0;
+            SET_BYTE2(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        count_for_gfp_ability_and_store_values(player, card, event, player, TYPE_CREATURE, NULL,
+                                               GFPC_TRACK_DEAD_CREATURES | GFPC_STORE_OWNER, 1);
+      }
+    }
+  }
 
-	if( ! check_state(player, card, STATE_INVISIBLE) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			mikaeus_undying(player, card);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
-	else{
-		card_instance_t *instance = get_card_instance(player, card);
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-		if( instance->targets[11].player > 0 && trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && p == reason_for_trigger_controller &&
-			affect_me(p, c) && trigger_cause_controller == p && trigger_cause == c )
-		{
-			if(event == EVENT_TRIGGER){
-				event_result |= RESOLVE_TRIGGER_MANDATORY;
-			}
-			else if(event == EVENT_RESOLVE_TRIGGER){
-					instance->targets[11].player = 0;
-					mikaeus_undying(player, card);
-			}
-			else if (event == EVENT_END_TRIGGER){
-					instance->targets[11].player = 0;
-			}
-		}
-	}
+  if (!check_state(player, card, STATE_INVISIBLE))
+  {
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result)
+    {
+      mikaeus_undying(player, card);
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  else
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
+    if (instance->targets[11].player > 0 && trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY &&
+        p == reason_for_trigger_controller && affect_me(p, c) && trigger_cause_controller == p &&
+        trigger_cause == c)
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        event_result |= RESOLVE_TRIGGER_MANDATORY;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        instance->targets[11].player = 0;
+        mikaeus_undying(player, card);
+      }
+      else if (event == EVENT_END_TRIGGER)
+      {
+        instance->targets[11].player = 0;
+      }
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_mikaeus_the_unhallowed(int player, int card, event_t event)
@@ -2231,35 +2267,43 @@ int card_tragic_slip(int player, int card, event_t event){
 	return vanilla_instant_pump(player, card, event, ANYBODY, 1-player, morbid() ? -13 : -1, morbid() ? -13 : -1, 0, 0);
 }
 
-static int undying_evil_legacy(int player, int card, event_t event){
+static int undying_evil_legacy(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-		if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c) && ! is_token(p, c) && count_counters(p, c, COUNTER_P1_P1) < 1 ){
-			if( is_this_dying(p, c) ){
-				instance->targets[0].player = get_owner(p, c);
-				instance->targets[0].card = get_original_internal_card_id(p, c);
-				instance->targets[11].player = 1;
-				instance->damage_target_player = instance->damage_target_card = -1;
-			}
-		}
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
+    if (event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c) && !is_token(p, c) &&
+        count_counters(p, c, COUNTER_P1_P1) < 1)
+    {
+      if (!check_for_death_trigger_removal(p, c) && is_this_dying(p, c))
+      {
+        instance->targets[0].player = get_owner(p, c);
+        instance->targets[0].card = get_original_internal_card_id(p, c);
+        instance->targets[11].player = 1;
+        instance->damage_target_player = instance->damage_target_card = -1;
+      }
+    }
+  }
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int owner = instance->targets[0].player;
-		int iid = instance->targets[0].card;
-		seek_grave_for_id_to_reanimate(owner, -1, owner, cards_data[iid].id, REANIMATE_PLUS1_PLUS1_COUNTER);
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int owner = instance->targets[0].player;
+    int iid = instance->targets[0].card;
+    seek_grave_for_id_to_reanimate(owner, -1, owner, cards_data[iid].id,
+                                   REANIMATE_PLUS1_PLUS1_COUNTER);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_undying_evil(int player, int card, event_t event){
@@ -2336,10 +2380,18 @@ Return all Zombie creature cards from your graveyard to the battlefield tapped, 
 static int effect_werewolf_ransacker(int player, int card, event_t event)
 {
   if (effect_put_into_a_graveyard_this_way(player, card, event))
-	{
-	  card_instance_t* instance = get_card_instance(player, card);
-	  damage_player(instance->targets[0].player, 3, instance->damage_source_player, instance->damage_source_card);
-	}
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int amount =
+        is_what(instance->damage_target_player, instance->damage_target_card, TYPE_CREATURE)
+            ? card_counts[player][5] + 1
+            : 1;
+    do
+    {
+      damage_player(instance->targets[0].player, 3, instance->damage_source_player,
+                    instance->damage_source_card);
+    } while (--amount != 0);
+  }
 
   return 0;
 }
@@ -3464,73 +3516,84 @@ Flashback |3|R (You may cast this card from your graveyard for its flashback cos
 
 
 // GOLD
-static int diregraf_captain_effect(int player, int card, event_t event){
+static int diregraf_captain_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_DIREGRAF_CAPTAIN ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_DIREGRAF_CAPTAIN)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						return 0;
-					}
-				}
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_PERMANENT);
-				this_test.subtype = SUBTYPE_ZOMBIE;
-				count_for_gfp_ability(player, card, event, player, 0, &this_test);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        test_definition_t this_test;
+        default_test_definition(&this_test, TYPE_PERMANENT);
+        this_test.subtype = SUBTYPE_ZOMBIE;
+        count_for_gfp_ability(player, card, event, player, 0, &this_test);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
 
-			target_definition_t td;
-			default_target_definition(player, card, &td, TYPE_CREATURE);
-			td.zone = TARGET_ZONE_PLAYERS;
-			if( would_validate_arbitrary_target(&td, 1-player, -1) ){
-				lose_life(1-player, amount);
-			}
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.zone = TARGET_ZONE_PLAYERS;
+    while (amount > 0)
+    {
+      if (would_validate_arbitrary_target(&td, 1 - player, -1))
+        lose_life(1 - player, 1);
+      --amount;
+    }
 
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_diregraf_captain(int player, int card, event_t event){

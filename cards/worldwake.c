@@ -482,71 +482,78 @@ int card_bojuka_bog(int player, int card, event_t event){
 	return mana_producer(player, card, event);
 }
 
-static int butcher_of_malakir_effect(int player, int card, event_t event){
+static int butcher_of_malakir_effect(int player, int card, event_t event)
+{
 
-	//In case something is copying Pawn of Ulamog and then reverts to its original form.
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_BUTCHER_OF_MALAKIR ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  // In case something is copying Pawn of Ulamog and then reverts to its original form.
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_BUTCHER_OF_MALAKIR)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						//Will trigger also if this is not a creature when it goes into the graveyard;
-						if( ! is_what(p, c, TYPE_CREATURE) ){
-							count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
-						}
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            // Will trigger also if this is not a creature when it goes into the graveyard;
+            if (!is_what(p, c, TYPE_CREATURE))
+            {
+              count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
+            }
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE1(instance->targets[11].player) = 1;
+          }
+        }
+        count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    test_definition_t test;
+    new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice.");
+    test.qty = BYTE0(result);
+    new_sacrifice(player, card, 1 - player, SAC_CAUSED | SAC_NO_CANCEL, &test);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-			test_definition_t test;
-			new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice.");
-			test.qty = amount;
-			new_sacrifice(player, card, 1-player, SAC_CAUSED | SAC_NO_CANCEL, &test);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
-
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_butcher_of_malakir(int player, int card, event_t event){
@@ -1096,129 +1103,141 @@ Creature - Human Druid Ally 0/1
 	return mana_producing_creature_all_one_color(player, card, event, 24, COLOR_TEST_ANY_COLORED, count);
 }
 
-int card_jace_the_mind_sculptor(int player, int card, event_t event){
+int card_jace_the_mind_sculptor(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
 
-	/* Jace, the Mind Sculptor	|2|U|U
-	 * Planeswalker - Jace (3)
-	 * +2: Look at the top card of target player's library. You may put that card on the bottom of that player's library.
-	 * 0: Draw three cards, then put two cards from your hand on top of your library in any order.
-	 * -1: Return target creature to its owner's hand.
-	 * -12: Exile all cards from target player's library, then that player shuffles his or her hand into his or her library. */
+  /* Jace, the Mind Sculptor	|2|U|U
+   * Planeswalker - Jace (3)
+   * +2: Look at the top card of target player's library. You may put that card on the bottom of
+   * that player's library. 0: Draw three cards, then put two cards from your hand on top of your
+   * library in any order. -1: Return target creature to its owner's hand. -12: Exile all cards from
+   * target player's library, then that player shuffles his or her hand into his or her library. */
 
-	if (IS_ACTIVATING(event)){
+  if (IS_ACTIVATING(event))
+  {
 
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
 
-		target_definition_t td1;
-		default_target_definition(player, card, &td1, TYPE_CREATURE);
-		td1.zone = TARGET_ZONE_PLAYERS;
+    target_definition_t td1;
+    default_target_definition(player, card, &td1, TYPE_CREATURE);
+    td1.zone = TARGET_ZONE_PLAYERS;
 
-		card_instance_t *instance = get_card_instance(player,card);
+    card_instance_t *instance = get_card_instance(player, card);
 
-		int priority_bstorm = 0;
-		int priority_bounce = 0;
+    int priority_bstorm = 0;
+    int priority_bounce = 0;
 
-		if (event == EVENT_ACTIVATE){
-			priority_bstorm = (hand_count[1-player]-hand_count[player])*5;
-			td.allowed_controller = 1-player;
-			priority_bounce = life[player] < 10 && can_target(&td) ? 15 : 5;
-			td.allowed_controller = ANYBODY;
-		}
+    if (event == EVENT_ACTIVATE)
+    {
+      priority_bstorm = (hand_count[1 - player] - hand_count[player]) * 5;
+      td.allowed_controller = 1 - player;
+      priority_bounce = life[player] < 10 && can_target(&td) ? 15 : 5;
+      td.allowed_controller = ANYBODY;
+    }
 
-		enum{
-			CHOICE_SCRY1 = 1,
-			CHOICE_BRAINSTORM,
-			CHOICE_BOUNCE,
-			CHOICE_ULTIMATUM
-		}
-		choice = DIALOG(player, card, event,
-						DLG_RANDOM, DLG_PLANESWALKER,
-						"Scry 1", can_target(&td1), 10, 2,
-						"Brainstorm", 1, priority_bstorm, 0,
-						"Bounce creature", can_target(&td), priority_bounce, -1,
-						"Ultimatum", can_target(&td1), 30, -12);
+    enum
+    {
+      CHOICE_SCRY1 = 1,
+      CHOICE_BRAINSTORM,
+      CHOICE_BOUNCE,
+      CHOICE_ULTIMATUM
+    } choice = DIALOG(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Scry 1", can_target(&td1),
+                      10, 2, "Brainstorm", 1, priority_bstorm, 0, "Bounce creature",
+                      can_target(&td), priority_bounce, -1, "Ultimatum", can_target(&td1), 30, -12);
 
-	  if (event == EVENT_CAN_ACTIVATE)
-		{
-		  if (!choice)
-			return 0;
-		}
-	  else if (event == EVENT_ACTIVATE)
-		{
-			instance->number_of_targets = 0;
-			switch (choice)
-			{
-				case CHOICE_SCRY1:
-				case CHOICE_ULTIMATUM:
-					pick_target(&td1, "TARGET_PLAYER");
-					break;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (!choice)
+        return 0;
+    }
+    else if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = 0;
+      switch (choice)
+      {
+      case CHOICE_SCRY1:
+      case CHOICE_ULTIMATUM:
+        pick_target(&td1, "TARGET_PLAYER");
+        break;
 
-				case CHOICE_BOUNCE:
-					pick_target(&td, "TARGET_CREATURE");
-					break;
+      case CHOICE_BOUNCE:
+        pick_target(&td, "TARGET_CREATURE");
+        break;
 
-				default:
-					break;
-			}
-		}
-	  else	// event == EVENT_RESOLVE_ACTIVATION
-		switch (choice)
-		{
-			case CHOICE_SCRY1:
-				if( valid_target(&td1) ){
-					show_deck( player, deck_ptr[instance->targets[0].player], 1, "Jace Reveals...", 0, 0x7375B0 );
-					int ai_choice = 1;
-					if( is_what(-1, deck_ptr[instance->targets[0].player][0], TYPE_LAND) && count_subtype(1-player, TYPE_LAND, -1) > 4 ){
-						ai_choice = 0;
-					}
-					if( do_dialog(player, player, card, -1, -1, " Top\n Bottom", ai_choice) == 1 ){
-						put_top_card_of_deck_to_bottom(instance->targets[0].player);
-					}
-				}
-				break;
+      default:
+        break;
+      }
+    }
+    else // event == EVENT_RESOLVE_ACTIVATION
+      switch (choice)
+      {
+      case CHOICE_SCRY1:
+        if (valid_target(&td1))
+        {
+          show_deck(player, deck_ptr[instance->targets[0].player], 1, "Jace Reveals...", 0,
+                    0x7375B0);
+          int ai_choice = 1;
+          if (is_what(-1, deck_ptr[instance->targets[0].player][0], TYPE_LAND) &&
+              count_subtype(1 - player, TYPE_LAND, -1) > 4)
+          {
+            ai_choice = 0;
+          }
+          if (do_dialog(player, player, card, -1, -1, " Top\n Bottom", ai_choice) == 1)
+          {
+            put_top_card_of_deck_to_bottom(instance->targets[0].player);
+          }
+        }
+        break;
 
-			case CHOICE_BRAINSTORM:
-				{
-					draw_cards(player, 3);
-					int max = MIN(2, hand_count[player]);
-					char msg[100] = "Select a card to put on top of deck.";
-					test_definition_t this_test;
-					new_default_test_definition(&this_test, TYPE_ANY, msg);
-					while( max > 0 ){
-							int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 1, AI_MIN_VALUE, -1, &this_test);
-							put_on_top_of_deck(player, selected);
-							max--;
-					}
-				}
-				break;
+      case CHOICE_BRAINSTORM:
+      {
+        draw_cards(player, 3);
+        int max = MIN(2, hand_count[player]);
+        char msg[100] = "Select a card to put on top of deck.";
+        test_definition_t this_test;
+        new_default_test_definition(&this_test, TYPE_ANY, msg);
+        while (max > 0)
+        {
+          int selected =
+              new_select_a_card(player, player, TUTOR_FROM_HAND, 1, AI_MIN_VALUE, -1, &this_test);
+          put_on_top_of_deck(player, selected);
+          max--;
+        }
+      }
+      break;
 
-			case CHOICE_BOUNCE:
-				if( valid_target(&td) ) {
-					bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-				}
-				break;
+      case CHOICE_BOUNCE:
+        if (valid_target(&td))
+        {
+          bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+        }
+        break;
 
-			case CHOICE_ULTIMATUM:
-				{
-					if( valid_target(&td1) ){
-						int p = instance->targets[0].player;
-						rfg_whole_library(p);
-						int i= active_cards_count[p]-1;
-						while( i > -1  ){
-								if( in_hand(p, i) ){
-									put_on_top_of_deck(p, i);
-								}
-								i--;
-						}
-						shuffle(p);
-					}
-				}
-				break;
-		}
-	}
+      case CHOICE_ULTIMATUM:
+      {
+        if (valid_target(&td1))
+        {
+          int p = instance->targets[0].player;
+          rfg_whole_library(p);
+          int i = active_cards_count[p] - 1;
+          while (i > -1)
+          {
+            if (in_hand(p, i))
+            {
+              put_on_top_of_deck(p, i);
+            }
+            i--;
+          }
+          shuffle(p);
+        }
+      }
+      break;
+      }
+  }
 
-	return planeswalker(player, card, event, 3);
+  return planeswalker(player, card, event, 3);
 }
 
 int card_join_the_ranks(int player, int card, event_t event){
@@ -1269,83 +1288,95 @@ int card_jwari_shapeshifter(int player, int card, event_t event)
   return 0;
 }
 
-static int kalastria_highborn_effect(int player, int card, event_t event){
+static int kalastria_highborn_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_KALASTRIA_HIGHBORN ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_KALASTRIA_HIGHBORN)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
-						return 0;
-					}
-				}
-				test_definition_t test;
-				default_test_definition(&test, TYPE_PERMANENT);
-				test.subtype = SUBTYPE_VAMPIRE;
-				count_for_gfp_ability(player, card, event, player, 0, &test);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            if (!is_what(p, c, TYPE_CREATURE))
+              count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE1(instance->targets[11].player) = 1;
+            if (is_what(p, c, TYPE_CREATURE))
+              count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
+            return 0;
+          }
+        }
+        test_definition_t test;
+        default_test_definition(&test, TYPE_PERMANENT);
+        test.subtype = SUBTYPE_VAMPIRE;
+        count_for_gfp_ability(player, card, event, player, 0, &test);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
-		if( result ){
-			int amount = BYTE0(result);
-			while( amount && has_mana(player, COLOR_BLACK, 1) ){
-					target_definition_t td;
-					default_target_definition(player, card, &td, 0);
-					td.zone = TARGET_ZONE_PLAYERS;
-					card_instance_t *instance = get_card_instance(player, card);
-					if( charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_BLACK, 1) &&
-						new_pick_target(&td, "TARGET_PLAYER", 1, 0) )
-					{
-						lose_life(instance->targets[1].player, 2);
-						gain_life(player, 2);
-						amount--;
-						instance->number_of_targets = 1;
-					}
-					else{
-						break;
-					}
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    while (amount && has_mana(player, COLOR_BLACK, 1))
+    {
+      target_definition_t td;
+      default_target_definition(player, card, &td, TYPE_NONE);
+      td.zone = TARGET_ZONE_PLAYERS;
+      card_instance_t *instance = get_card_instance(player, card);
+      if (charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_BLACK,
+                                      1) &&
+          new_pick_target(&td, "TARGET_PLAYER", 1, 0))
+      {
+        lose_life(instance->targets[1].player, 2);
+        gain_life(player, 2);
+        --amount;
+        instance->number_of_targets = 1;
+      }
+      else
+        break;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_kalastria_highborn(int player, int card, event_t event){

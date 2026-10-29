@@ -14,22 +14,29 @@ static int outlast(int player, int card, event_t event, int cless, int black, in
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_SORCERY_BE_PLAYED, cless, black, blue, green, red, white, 0, NULL, NULL);
 }
 
-int prowess_mode(int player, int card, event_t event, int mode){
-	return specific_spell_played(player, card, event, player, mode, TYPE_CREATURE, DOESNT_MATCH, 0, 0, 0, 0, 0, 0, -1, 0);
+void prowess_mode(int player, int card, event_t event, int mode)
+{
+  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    test.type_flag = DOESNT_MATCH;
+    // The native dispatcher uses mandatory resolution regardless of mode.
+    sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
+  }
 }
 
-int prowess(int player, int card, event_t event){
-	// Prowess (Whenever you cast a noncreature spell, [do something].
-	if (prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY)){
-		pump_until_eot_merge_previous(player, card, player, card, 1, 1);
-		return 1;
-	}
-	return 0;
+void prowess(int player, int card, event_t event)
+{
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+    pump_until_eot_merge_previous(player, card, player, card, 1, 1);
 }
 
-static int raid(int player, int card){
-	//Raid - If you attacked with a creature this turn, [do something].
-	return get_trap_condition(current_turn, TRAP_RAID);
+static int raid(int player, int card)
+{
+  // Raid - If you attacked with a creature this turn, [do something].
+  return get_trap_condition(player, TRAP_RAID);
 }
 
 static void raid_cip(int player, int card, event_t event){
@@ -451,18 +458,22 @@ int card_salt_road_patrol(int player, int card, event_t event){
 	return outlast(player, card, event, MANACOST_XW(1, 1));
 }
 
-int card_seeker_of_the_way(int player, int card, event_t event){
-	/*
-	  Seeker of the Way |1|W
-	  Creature - Human Warrior
-	  Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn)
-	  Whenever you cast a noncreature spell, Seeker of the Way gains lifelink until end of turn.
-	  2/2
-	*/
-	if( prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		pump_ability_until_eot(player, card, player, card, 1, 1, 0, SP_KEYWORD_LIFELINK);
-	}
-	return 0;
+int card_seeker_of_the_way(int player, int card, event_t event)
+{
+  /*
+    Seeker of the Way |1|W
+    Creature - Human Warrior
+    Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn)
+    Whenever you cast a noncreature spell, Seeker of the Way gains lifelink until end of turn.
+    2/2
+  */
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+  {
+    prowess(player, card, event);
+    pump_ability_until_eot(player, card, player, card, 0, 0, 0, SP_KEYWORD_LIFELINK);
+  }
+  return 0;
 }
 
 int card_siegecraft(int player, int card, event_t event){
@@ -910,59 +921,63 @@ int card_jeskai_windscout(int player, int card, event_t event){
 	return 0;
 }
 
-int card_khero_spellsnatcher(int player, int card, event_t event){
-	/* todo
-	   Kheru Spellsnatcher |3|U
-	   Creature - Naga Wizard
-	   Morph 4UU
-	   When Kheru Spellsnatcher is turned face up, counter target spell. If that spell is countered this way,
-	   exile it instead of putting it into its owner's graveyard. You may cast that card without paying its mana cost as long as it remains exiled.
-	   3/3
-	*/
-	card_instance_t *instance = get_card_instance(player, card);
-    int mof = morph(player, card, event, MANACOST_XU(4, 2));
+int card_khero_spellsnatcher(int player,int card,event_t event)
 
-	if( event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || (event == EVENT_CAST_SPELL && affect_me(player, card)) ){
-		return mof;
-	}
+{
+  uint16_t uVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
 
-	if ( event == EVENT_CAN_UNMORPH ){
-		if(! has_mana_multi(player, MANACOST_XU(4, 2)) )
-	       return 0;
+  pcVar2 = get_card_instance(player,card);
+  iVar3 = morph(player,card,event,4,0,2,0,0,0);
+  if (((event != EVENT_MODIFY_COST) && (event != EVENT_CHANGE_TYPE)) && (event != EVENT_CAST_SPELL))
+  {
+    if (event == EVENT_CAN_UNMORPH) {
 
-	  int cs = instance->targets[9].card = counterspell(player, card, EVENT_CAN_CAST, NULL, -1);
-	  return cs ? cs : 1;
-	}
+      iVar4 = has_mana_multi(player,4,0,2,0,0,0);
+      iVar3 = 0;
+      if (iVar4 != 0) {
+        iVar3 = counterspell(player,card,EVENT_CAN_CAST,(target_definition_t *)0x0,-1);
+        pcVar2->targets[9].card = iVar3;
+        if (iVar3 == 0) {
+          iVar3 = 1;
+        }
+      }
+    }
+    else if (event == EVENT_UNMORPH) {
+      if (((spell_fizzled == 1) || (card_on_stack_controller == -1)) ||
+         (pcVar2->targets[9].card != 99)) {
+        ai_modifier = ai_modifier + -0x60;
+      }
+      else {
+        counterspell(player,card,EVENT_CAST_SPELL,(target_definition_t *)0x0,0);
+        if (spell_fizzled == 1) {
+          spell_fizzled = 0;
+          ai_modifier = ai_modifier + -0x60;
+          pcVar2->targets[9].card = 0;
+        }
+      }
+    }
+    else if ((event == EVENT_TURNED_FACE_UP) && (pcVar2->targets[9].card == 99)) {
+      iVar4 = counterspell_validate(player,card,(target_definition_t *)0x0,0);
+      if (iVar4 != 0) {
 
-	if( event == EVENT_UNMORPH )
-	{
-	  if (cancel != 1 && card_on_stack_controller != -1 && instance->targets[9].card == 99)
-		{
-		  counterspell(player, card, EVENT_CAST_SPELL, NULL, 0);
-		  if (cancel == 1)
-			{
-			  cancel = 0;
-			  instance->targets[9].card = 0;
-			  ai_modifier -= 96;
-			}
-		}
-	  else
-		ai_modifier -= 96;
-	}
+        iVar4 = pre_counterspell(pcVar2->parent_controller,pcVar2->parent_card,
+                                 pcVar2->targets[0].player,pcVar2->targets[0].card);
+        if (iVar4 != 0) {
 
-	if( event == EVENT_TURNED_FACE_UP ){
-		if (instance->targets[9].card == 99 && counterspell_validate(player, card, NULL, 0)){
-			int result = manage_counterspell_linked_hacks(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card);
-			if( result != KILL_EXILE ){
-				int csvid = cards_data[get_original_internal_card_id(instance->targets[0].player, instance->targets[0].card)].id;
-				put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
-				rfg_top_card_of_deck(instance->targets[0].player);
-				create_may_play_card_from_exile_effect(player, card, instance->targets[0].player, csvid, MPCFE_FOR_FREE);
-			}
-		}
-	}
-
-	return mof;
+          iVar4 = get_original_internal_card_id(pcVar2->targets[0].player,pcVar2->targets[0].card);
+          uVar1 = cards_data[iVar4].id;
+          put_on_top_of_deck(pcVar2->targets[0].player,pcVar2->targets[0].card);
+          rfg_top_card_of_deck(pcVar2->targets[0].player);
+          create_may_play_card_from_exile_effect
+                    (player,card,pcVar2->targets[0].player,(unsigned int)uVar1,MPCFE_FOR_FREE);
+        }
+      }
+    }
+  }
+  return iVar3;
 }
 
 int card_mistfire_weaver(int player, int card, event_t event){
@@ -1075,31 +1090,31 @@ int card_pearl_lake_ancient(int player, int card, event_t event){
 	return flash(player, card, event);
 }
 
-int card_quiet_contemplation(int player, int card, event_t event){
-	/*
-	  Quiet Contemplation |2|U
-	  Enchantment
-	  Whenever you cast a noncreature spell, you may pay 1. If you do, tap target creature an opponent controls and it doesn't untap during its controller's next untap step.
-	*/
+int card_quiet_contemplation(int player, int card, event_t event)
+{
+  /*
+    Quiet Contemplation |2|U
+    Enchantment
+    Whenever you cast a noncreature spell, you may pay 1. If you do, tap target creature an opponent
+    controls and it doesn't untap during its controller's next untap step.
+  */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && reason_for_trigger_controller == player ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.allowed_controller = 1-player;
-		td.preferred_controller = 1-player;
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if (event == EVENT_SPA && has_mana(player, COLOR_COLORLESS, 1))
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.allowed_controller = td.preferred_controller = 1 - player;
+    card_instance_t *instance = get_card_instance(player, card);
+    instance->number_of_targets = 0;
+    charge_mana(player, COLOR_COLORLESS, 1);
+    if (spell_fizzled != 1 &&
+        new_pick_target(&td, "Select target creature an opponent controls.", 0, GS_LITERAL_PROMPT))
+      effect_frost_titan(player, card, instance->targets[0].player, instance->targets[0].card);
+    instance->number_of_targets = 0;
+  }
 
-		if( has_mana(player, COLOR_COLORLESS, 1) && prowess_mode(player, card, event, can_target(&td) ? RESOLVE_TRIGGER_AI(player) : 0) ){
-			card_instance_t *instance = get_card_instance(player, card);
-			instance->number_of_targets = 0;
-			charge_mana(player, COLOR_COLORLESS, 1);
-			if( spell_fizzled != 1 && new_pick_target(&td, "Select target creature an opponent controls.", 0, GS_LITERAL_PROMPT) ){
-				effect_frost_titan(player, card, instance->targets[0].player, instance->targets[0].card);
-			}
-			instance->number_of_targets = 0;
-		}
-	}
-
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 /*
@@ -1171,37 +1186,46 @@ int card_set_adrift(int player, int card, event_t event){
 	return 0;
 }
 
-static int singing_bell_strike_ability(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance( player, card);
+static int singing_bell_strike_ability(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
 
-	int aura_player = instance->targets[0].player;
-	if( aura_player > -1 ){
-		int aura_card = instance->targets[0].card;
+  int aura_player = instance->targets[0].player;
+  if (aura_player > -1)
+  {
+    int aura_card = instance->targets[0].card;
 
-		if( leaves_play(aura_player, aura_card, event, 0, 0)){
-			kill_card(player, card, KILL_EXILE);
-		}
-		card_instance_t *attached = get_card_instance( aura_player, aura_card);
-		int enc_player = attached->damage_target_player;
-		int enc_card = attached->damage_target_card;
+    leaves_play(aura_player, aura_card, event, 0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+    card_instance_t *attached = get_card_instance(aura_player, aura_card);
+    int enc_player = attached->damage_target_player;
+    int enc_card = attached->damage_target_card;
 
-		if( is_what(player, card, TYPE_EFFECT) ){
-			if( enc_player != player && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-				add_status(player, card, STATUS_INVISIBLE_FX);
-			}
+    if (is_what(player, card, TYPE_EFFECT))
+    {
+      if (enc_player != player && !check_status(player, card, STATUS_INVISIBLE_FX))
+      {
+        add_status(player, card, STATUS_INVISIBLE_FX);
+      }
 
-			if( enc_player == player && check_status(player, card, STATUS_INVISIBLE_FX) ){
-				remove_status(player, card, STATUS_INVISIBLE_FX);
-			}
-		}
+      if (enc_player == player && check_status(player, card, STATUS_INVISIBLE_FX))
+      {
+        remove_status(player, card, STATUS_INVISIBLE_FX);
+      }
+    }
 
-		if( event == EVENT_RESOLVE_ACTIVATION ){
-			untap_card(enc_player, enc_card);
-		}
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      untap_card(enc_player, enc_card);
+    }
 
-		return granted_generic_activated_ability(player, card, enc_player, enc_card, event, 0, MANACOST_X(6), 0, NULL, NULL);
-	}
-	return 0;
+    return granted_generic_activated_ability(player, card, enc_player, enc_card, event, 0,
+                                             MANACOST_X(6), 0, NULL, NULL);
+  }
+  return 0;
 }
 
 int card_singing_bell_strike(int player, int card, event_t event){
@@ -2381,22 +2405,27 @@ int card_arrow_storm(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_ANY", 1, NULL);
 }
 
-int ashcloud_phoenix_legacy(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance(player, card);
-	if( event == EVENT_CHANGE_TYPE && instance->targets[0].player > -1 && affect_me(instance->targets[0].player, instance->targets[0].card) &&
-		instance->targets[1].player != 66
-	  ){
-		if( instance->targets[1].card == -1 ){
-			instance->targets[1].card = get_internal_card_id_from_csv_id(CARD_ID_FACE_DOWN_CREATURE);
-		}
-		event_result = instance->targets[1].card;
-	}
-	if( comes_into_play(instance->targets[0].player, instance->targets[0].card, event) ){
-		turn_face_down(instance->targets[0].player, instance->targets[0].card);
-		instance->targets[1].player = 66;
-		kill_card(player, card, KILL_EXILE);
-	}
-	return 0;
+int ashcloud_phoenix_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CHANGE_TYPE && instance->targets[0].player > -1 &&
+      affect_me(instance->targets[0].player, instance->targets[0].card) &&
+      instance->targets[1].player != 66)
+  {
+    if (instance->targets[1].card == -1)
+    {
+      instance->targets[1].card = get_internal_card_id_from_csv_id(CARD_ID_FACE_DOWN_CREATURE);
+    }
+    event_result = instance->targets[1].card;
+  }
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB_ABILITY)
+  {
+    turn_face_down(instance->targets[0].player, instance->targets[0].card);
+    instance->targets[1].player = 66;
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
 int card_ashcloud_phoenix(int player, int card, event_t event){
@@ -2506,18 +2535,30 @@ int card_bring_low(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-static int burn_away_legacy(int player, int card, event_t event){
-	card_instance_t* instance = get_card_instance(player, card);
-	if( instance->damage_target_player > -1 ){
-		if( graveyard_from_play(instance->damage_target_player, instance->damage_target_card, event) ){
-			get_card_instance(instance->damage_target_player, instance->damage_target_card)->kill_code = KILL_EXILE;
-			rfg_whole_graveyard(instance->damage_target_player);
-		}
-	}
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
-	return 0;
+static int burn_away_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->damage_target_player > -1 && event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
+    if (affect_me(p, c) && !check_for_death_trigger_removal(p, c) && is_this_dying(p, c))
+    {
+      instance->damage_target_player = instance->damage_target_card = -1;
+      instance->targets[11].player = 66;
+    }
+  }
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    instance = get_card_instance(player, card);
+    // The native resolver reads the attachment fields after detaching.
+    get_card_instance(instance->damage_target_player, instance->damage_target_card)->kill_code =
+        KILL_EXILE;
+    rfg_whole_graveyard(instance->damage_target_player);
+  }
+  if (event == EVENT_CLEANUP)
+    kill_card(player, card, KILL_EXILE);
+  return 0;
 }
 
 int card_burn_away(int player, int card, event_t event){
@@ -2608,26 +2649,31 @@ Double strike
 Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)
 */
 
-int card_goblinslide(int player, int card, event_t event){
-	/* todo
-	   Goblinslide |2|R
-	   Enchantment
-	   Whenever you cast a noncreature spell, you may pay 1. If you do, put a 1/1 red Goblin creature token with haste onto the battlefield.
-	*/
+int card_goblinslide(int player, int card, event_t event)
+{
+  /* todo
+     Goblinslide |2|R
+     Enchantment
+     Whenever you cast a noncreature spell, you may pay 1. If you do, put a 1/1 red Goblin creature
+     token with haste onto the battlefield.
+  */
 
-	if( has_mana(player, COLOR_COLORLESS, 1) && prowess_mode(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		charge_mana(player, COLOR_COLORLESS, 1);
-		if( spell_fizzled != 1 ){
-			token_generation_t token;
-			default_token_definition(player, card, CARD_ID_GOBLIN, &token);
-			token.color_forced = COLOR_TEST_RED;
-			token.pow = token.tou = 1;
-			token.s_key_plus = SP_KEYWORD_HASTE;
-			generate_token(&token);
-		}
-	}
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if (event == EVENT_SPA && has_mana(player, COLOR_COLORLESS, 1))
+  {
+    charge_mana(player, COLOR_COLORLESS, 1);
+    if (spell_fizzled != 1)
+    {
+      token_generation_t token;
+      default_token_definition(player, card, CARD_ID_GOBLIN, &token);
+      token.color_forced = COLOR_TEST_RED;
+      token.pow = token.tou = 1;
+      token.s_key_plus = SP_KEYWORD_HASTE;
+      generate_token(&token);
+    }
+  }
 
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_horde_ambusher(int player, int card, event_t event){
@@ -3217,41 +3263,74 @@ int card_longshot_squad(int player, int card, event_t event){
 	return outlast(player, card, event, MANACOST_XG(1, 1));
 }
 
-static int meandering_towershell_legacy(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( current_turn == player && beginning_of_combat(player, card, event, player) ){
-		int iid = instance->targets[0].card;
-		if( iid > -1 && check_rfg(player, cards_data[iid].id) ){
-			int card_added = add_card_to_hand(player, iid);
-			remove_card_from_rfg(player, cards_data[iid].id);
-			add_state(player, card, STATE_TAPPED | STATE_ATTACKING);
-			put_into_play(player, card_added);
-		}
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+static int meandering_towershell_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    if (!engine_any_legal_attacker(player))
+      event_flags |= EA_FORCE_ATTACK;
+  }
+  else if (event == EVENT_BEGIN_COMBAT && current_turn == player)
+  {
+    int iid = instance->targets[1].card;
+    int csvids[2] = {-1, -1};
+    int csvid = cards_data[iid].id;
+    int meld = csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || csvid == CARD_ID_CHITTERING_HOST ||
+               csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP;
+    if (meld)
+    {
+      unmeld(csvid, &csvids[0], &csvids[1]);
+      iid = get_internal_card_id_from_csv_id(csvids[0]);
+    }
+    for (;;)
+    {
+      // The native meld path keeps using the original melded CSV ID here.
+      if (iid > -1 && check_rfg(instance->targets[1].player, csvid))
+      {
+        int card_added = add_card_to_hand(player, iid);
+        remove_card_from_rfg(instance->targets[1].player, csvid);
+        add_state(player, card_added, STATE_TAPPED | STATE_ATTACKING);
+        get_card_instance(player, card_added)->info_slot = 1;
+        put_into_play(player, card_added);
+      }
+      if (!meld)
+        break;
+      meld = 0;
+      iid = get_internal_card_id_from_csv_id(csvids[1]);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
-int card_meandering_towershell(int player, int card, event_t event){
-	/*
-	  Meandering Towershell |3|G|G
-	  Creature - Turtle
-	  Islandwalk
-	  Whenever Meandering Towershell attacks, exile it. Return it to the battlefield under your control tapped and attacking
-	  at the beginning of the next declare attackers step on your next turn.
-	  5/9
-	*/
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
-		int legacy = create_legacy_effect(player, card, &meandering_towershell_legacy);
-		card_instance_t *instance = get_card_instance(player, legacy);
-		instance->targets[0].player = get_owner(player, card);
-		instance->targets[0].card = get_original_internal_card_id(player, card);
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+int card_meandering_towershell(int player, int card, event_t event)
+{
+  /*
+    Meandering Towershell |3|G|G
+    Creature - Turtle
+    Islandwalk
+    Whenever Meandering Towershell attacks, exile it. Return it to the battlefield under your
+    control tapped and attacking at the beginning of the next declare attackers step on your next
+    turn. 5/9
+  */
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    if (get_card_instance(player, card)->info_slot != 1)
+    {
+      int legacy = create_legacy_effect(player, card, meandering_towershell_legacy);
+      card_instance_t *instance = get_card_instance(player, legacy);
+      instance->targets[1].player = player;
+      if (check_state(player, card, STATE_OWNED_BY_OPPONENT))
+        instance->targets[1].player = 1 - player;
+      instance->targets[1].card = get_original_internal_card_id(player, card);
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+    get_card_instance(player, card)->info_slot = 0;
+  return 0;
 }
 
 int card_pine_walker(int player, int card, event_t event){
@@ -3935,21 +4014,23 @@ int card_crackling_doom(int player, int card, event_t event){
 	return 0;
 }
 
-int death_frenzy_legacy(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance(player, card);
+int death_frenzy_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
 
-	count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
+  count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		gain_life(player, instance->targets[11].card);
-		instance->targets[11].card = 0;
-	}
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    gain_life(player, instance->targets[11].card);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_death_frenzy(int player, int card, event_t event){
@@ -4138,28 +4219,36 @@ int card_ivorytusk_fortress(int player, int card, event_t event){
 	return 0;
 }
 
-int card_jeskai_ascendancy(int player, int card, event_t event){
-	/*
-	  Jeskai Ascendancy |U|R|W
-	  Enchantment
-	  Whenever you cast a noncreature spell, creatures you control get +1/+1 until end of turn. Untap those creatures.
-	  Whenever you cast a noncreature spell, you may draw a card. If you do, discard a card.
-	*/
-	if( prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		int c = active_cards_count[player]-1;
-		while( c > -1 ){
-				if( in_play(player, c) && is_what(player, c, TYPE_CREATURE) ){
-					untap_card(player, c);
-					pump_until_eot_merge_previous(player, card, player, c, 1, 1);
-				}
-				c--;
-		}
-		if( do_dialog(player, player, card, -1, -1, " Draw & discard\n Pass", count_deck(player) <= 10) == 0 ){
-			draw_cards(player, 1);
-			discard(player, 0, player);
-		}
-	}
-	return global_enchantment(player, card, event);
+int card_jeskai_ascendancy(int player, int card, event_t event)
+{
+  /*
+    Jeskai Ascendancy |U|R|W
+    Enchantment
+    Whenever you cast a noncreature spell, creatures you control get +1/+1 until end of turn. Untap
+    those creatures. Whenever you cast a noncreature spell, you may draw a card. If you do, discard
+    a card.
+  */
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+  {
+    int c = active_cards_count[player] - 1;
+    while (c > -1)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_CREATURE))
+      {
+        untap_card(player, c);
+        pump_until_eot_merge_previous(player, card, player, c, 1, 1);
+      }
+      c--;
+    }
+    if (do_dialog(player, player, card, -1, -1, " Draw & discard\n Pass",
+                  count_deck(player) <= 10) == 0)
+    {
+      draw_cards(player, 1);
+      discard(player, 0, player);
+    }
+  }
+  return global_enchantment(player, card, event);
 }
 
 int card_jeskai_charm(int player, int card, event_t event){
@@ -4658,19 +4747,22 @@ int card_ride_down(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select target blocking creature.", 1, NULL);
 }
 
-int card_sage_of_the_inward_eye(int player, int card, event_t event){
-	/*
-	  Sage of the Inward Eye |2|U|R|W
-	  Creature - Djinn Wizard
-	  Flying
-	  Whenever you cast a noncreature spell, creatures you control gain lifelink until end of turn.
-	  3/4
-	*/
-	if( prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		pump_subtype_until_eot(player, card, player, -1, 0, 0, 0, SP_KEYWORD_LIFELINK);
-	}
+int card_sage_of_the_inward_eye(int player, int card, event_t event)
+{
+  /*
+    Sage of the Inward Eye |2|U|R|W
+    Creature - Djinn Wizard
+    Flying
+    Whenever you cast a noncreature spell, creatures you control gain lifelink until end of turn.
+    3/4
+  */
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+  {
+    pump_subtype_until_eot(player, card, player, -1, 0, 0, 0, SP_KEYWORD_LIFELINK);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_sagu_mauler(int player, int card, event_t event){
@@ -5643,7 +5735,7 @@ int card_dragon_throne_of_tarkir(int player, int card, event_t event){
 	check_legend_rule(player, card, event);
 
 	if (is_equipping(player, card)){
-		modify_pt_and_abilities(instance->targets[8].player, instance->targets[8].card, event, 0, 0, KEYWORD_DEFENDER);
+		modify_pt_and_abilities(instance->damage_target_player, instance->damage_target_card, event, 0, 0, KEYWORD_DEFENDER);
 	}
 
 	if( ! IS_GAA_EVENT(event) ){
@@ -5652,7 +5744,7 @@ int card_dragon_throne_of_tarkir(int player, int card, event_t event){
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		if (is_equipping(player, card)){
-			int result = granted_generic_activated_ability(player, card, instance->targets[8].player, instance->targets[8].card, event,
+			int result = granted_generic_activated_ability(player, card, instance->damage_target_player, instance->damage_target_card, event,
 															GAA_UNTAPPED, MANACOST_X(2), 0, NULL, NULL);
 			if( result ){
 				return result;
@@ -5667,7 +5759,7 @@ int card_dragon_throne_of_tarkir(int player, int card, event_t event){
 		int can_pump = 0;
 		int can_equip = can_activate_basic_equipment(player, card, event, 3);
 		if(is_equipping(player, card)){
-			can_pump = granted_generic_activated_ability(player, card, instance->targets[8].player, instance->targets[8].card, EVENT_CAN_ACTIVATE,
+			can_pump = granted_generic_activated_ability(player, card, instance->damage_target_player, instance->damage_target_card, EVENT_CAN_ACTIVATE,
 														GAA_UNTAPPED, MANACOST_X(2), 0, NULL, NULL);
 		}
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
@@ -5684,8 +5776,8 @@ int card_dragon_throne_of_tarkir(int player, int card, event_t event){
 			return basic_equipment(player, card, event, 3);
 		}
 		if( choice == 2 ){
-			if( charge_mana_for_activated_ability(instance->targets[8].player, instance->targets[8].card, MANACOST_X(2)) ){
-				tap_card(instance->targets[8].player, instance->targets[8].card);
+			if( charge_mana_for_activated_ability(instance->damage_target_player, instance->damage_target_card, MANACOST_X(2)) ){
+				tap_card(instance->damage_target_player, instance->damage_target_card);
 			}
 		}
 	}
@@ -5695,11 +5787,11 @@ int card_dragon_throne_of_tarkir(int player, int card, event_t event){
 			return basic_equipment(player, card, event, 3);
 		}
 		if( instance->info_slot == 2 ){
-			int amount = get_power(instance->targets[8].player, instance->targets[8].card);
+			int amount = get_power(instance->damage_target_player, instance->damage_target_card);
 			int count = active_cards_count[player]-1;
 			while( count > -1 ){
 					if( in_play(player, count) && is_what(player, count, TYPE_CREATURE) ){
-						if( count != instance->targets[8].card ){
+						if( count != instance->damage_target_card ){
 							pump_ability_until_eot(instance->parent_controller, instance->parent_card, player, count, amount, amount, KEYWORD_TRAMPLE, 0);
 						}
 					}
@@ -5780,7 +5872,7 @@ int card_heart_piercer_bow(int player, int card, event_t event){
 	*/
 	if( is_equipping(player, card) ){
 		card_instance_t *instance = get_card_instance(player, card);
-		if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, instance->targets[8].player, instance->targets[8].card) ){
+		if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, instance->damage_target_player, instance->damage_target_card) ){
 			target_definition_t td;
 			default_target_definition(player, card, &td, TYPE_CREATURE);
 			td.allowed_controller = 1-player;

@@ -1,6 +1,7 @@
 #include "manalink.h"
 
 /* Canonical recovered helper declarations. */
+static int legacy_negate_static_abilities(int player, int card, event_t event);
 void default_token_definition(int player, int card, int id, token_generation_t *token);
 void copy_token_definition(int player, int card, token_generation_t *token, int t_player,
                                 int t_card);
@@ -73,12 +74,16 @@ void set_special_infos(int player, int card, int infos){
 	instance->targets[14].player = infos;
 }
 
-int get_special_infos(int player, int card){
-	card_instance_t *instance = get_card_instance(player, card);
-	if( instance->targets[14].player > -1 ){
-		return instance->targets[14].player;
-	}
-	return 0;
+int get_special_infos(int player, int card)
+{
+  if (player < 0 || card < 0)
+    return 0;
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->targets[14].player > -1)
+  {
+    return instance->targets[14].player;
+  }
+  return 0;
 }
 
 
@@ -107,261 +112,54 @@ static int real_generate_token(int player, int int_id, token_generation_t *token
 
 
 
-void copy_all_tokens(int player, int card, int type, test_definition_t *test){
-	int c, marked[151] = {0};
-	for (c = 0; c < active_cards_count[player]; ++c){
-		if (in_play(player, c) && is_token(player, c)){
-			if( (type && is_what(player, c, type)) || (test != NULL && new_make_test_in_play(player, c, -1, test)) ){
-				marked[c] = 1;
-			}
-		}
-	}
+void copy_all_tokens(int player, int card, int type, test_definition_t *test)
+{
+  int c, marked[151] = {0};
+  for (c = 0; c < active_cards_count[player]; ++c)
+  {
+    if (in_play(player, c) && is_token(player, c))
+    {
+      if ((type && is_what(player, c, type)) ||
+          (test != NULL && new_make_test_in_play(player, c, -1, test)))
+      {
+        marked[c] = 1;
+      }
+    }
+  }
 
-	for (c = active_cards_count[player]-1; c >-1 ; c--){
-		if (marked[c]){
-			copy_token(player, card, player, c);
-		}
-	}
+  for (c = active_cards_count[player] - 1; c > -1; c--)
+  {
+    if (marked[c] && player >= 0)
+    {
+      copy_token(player, card, player, c);
+    }
+  }
 }
 
-static int from_subtype_to_token_id(int subtype){
-	switch( subtype ){
-			case	SUBTYPE_ADVISOR: return 0;
-			case	SUBTYPE_ALLY: return 0;
-			case	SUBTYPE_ANGEL: return CARD_ID_ANGEL;
-			case	SUBTYPE_ANTEATER: return 0;
-			case	SUBTYPE_ANTELOPE: return 0;
-			case	SUBTYPE_APE: return CARD_ID_APE;
-			case	SUBTYPE_ARCHER: return 0;
-			case	SUBTYPE_ARCHON: return 0;
-			case	SUBTYPE_ARTIFICER: return 0;
-			case	SUBTYPE_ASSASSIN: return CARD_ID_ASSASSIN;
-			case	SUBTYPE_ASSEMBLY_WORKER: return 0;
-			case	SUBTYPE_ATOG: return 0;
-			case	SUBTYPE_AUROCHS: return 0;
-			case	SUBTYPE_AVATAR: return CARD_ID_AVATAR;
-			case	SUBTYPE_BADGER: return 0;
-			case	SUBTYPE_BARBARIAN: return 0;
-			case	SUBTYPE_BASILISK: return 0;
-			case	SUBTYPE_BAT: return CARD_ID_BAT;
-			case	SUBTYPE_BEAR: return CARD_ID_BEAR;
-			case	SUBTYPE_BEAST: return CARD_ID_BEAST;
-			case	SUBTYPE_BEEBLE: return 0;
-			case	SUBTYPE_BERSERKER: return 0;
-			case	SUBTYPE_BIRD: return CARD_ID_BIRD;
-			case	SUBTYPE_BLINKMOTH: return 0;
-			case	SUBTYPE_BOAR: return CARD_ID_BOAR;
-			case	SUBTYPE_BRINGER: return 0;
-			case	SUBTYPE_BRUSHWAGG: return 0;
-			case	SUBTYPE_CAMARID: return CARD_ID_CAMARID;
-			case	SUBTYPE_CAMEL: return 0;
-			case	SUBTYPE_CARIBOU: return CARD_ID_CARIBOU;
-			case	SUBTYPE_CARRIER: return 0;
-			case	SUBTYPE_CAT: return CARD_ID_CAT;
-			case	SUBTYPE_CENTAUR: return CARD_ID_CENTAUR;
-			case	SUBTYPE_CEPHALID: return 0;
-			case	SUBTYPE_CHIMERA: return 0;
-			case	SUBTYPE_CITIZEN: return CARD_ID_CITIZEN;
-			case	SUBTYPE_CLERIC: return CARD_ID_CLERIC;
-			case	SUBTYPE_COCKATRICE: return 0;
-			case	SUBTYPE_CONSTRUCT: return CARD_ID_CONSTRUCT;
-			case	SUBTYPE_COWARD: return 0;
-			case	SUBTYPE_CRAB: return 0;
-			case	SUBTYPE_CROCODILE: return 0;
-			case	SUBTYPE_CYCLOPS: return 0;
-			case	SUBTYPE_DAUTHI: return 0;
-			case	SUBTYPE_DEMON: return CARD_ID_DEMON;
-			case	SUBTYPE_DESERTER: return CARD_ID_DESERTER;
-			case	SUBTYPE_DEVIL: return CARD_ID_DEVIL;
-			case	SUBTYPE_DJINN: return 0;
-			case	SUBTYPE_DRAGON: return CARD_ID_DRAGON;
-			case	SUBTYPE_DRAKE: return CARD_ID_DRAKE;
-			case	SUBTYPE_DREADNOUGHT: return 0;
-			case	SUBTYPE_DRONE: return 0;
-			case	SUBTYPE_DRUID: return 0;
-			case	SUBTYPE_DRYAD: return 0;
-			case	SUBTYPE_DWARF: return 0;
-			case	SUBTYPE_EFREET: return 0;
-			case	SUBTYPE_ELDER: return 0;
-			case	SUBTYPE_ELDRAZI: return CARD_ID_ELDRAZI;
-			case	SUBTYPE_ELEMENTAL: return CARD_ID_ELEMENTAL;
-			case	SUBTYPE_ELEPHANT: return CARD_ID_ELEPHANT;
-			case	SUBTYPE_ELF: return 0;
-			case	SUBTYPE_ELK: return 0;
-			case	SUBTYPE_EYE: return 0;
-			case	SUBTYPE_FAERIE: return CARD_ID_FAERIE;
-			case	SUBTYPE_FERRET: return 0;
-			case	SUBTYPE_FISH: return CARD_ID_FISH;
-			case	SUBTYPE_FLAGBEARER: return 0;
-			case	SUBTYPE_FOX: return 0;
-			case	SUBTYPE_FROG: return 0;
-			case	SUBTYPE_FUNGUS: return 0;
-			case	SUBTYPE_GARGOYLE: return CARD_ID_GARGOYLE;
-			case	SUBTYPE_GERM: return CARD_ID_GERM;
-			case	SUBTYPE_GIANT: return CARD_ID_GIANT;
-			case	SUBTYPE_GNOME: return CARD_ID_GNOME;
-			case	SUBTYPE_GOAT: return CARD_ID_GOAT;
-			case	SUBTYPE_GOBLIN: return CARD_ID_GOBLIN;
-			case	SUBTYPE_GOD: return 0;
-			case	SUBTYPE_GOLEM: return CARD_ID_GOLEM;
-			case	SUBTYPE_GORGON: return 0;
-			case	SUBTYPE_GRAVEBORN: return CARD_ID_GRAVEBORN;
-			case	SUBTYPE_GREMLIN: return 0;
-			case	SUBTYPE_GRIFFIN: return CARD_ID_GRIFFIN;
-			case	SUBTYPE_HAG: return 0;
-			case	SUBTYPE_HARPY: return CARD_ID_HARPY;
-			case	SUBTYPE_HEAD: return 0;
-			case	SUBTYPE_HELLION: return CARD_ID_HELLION;
-			case	SUBTYPE_HIPPO: return CARD_ID_HIPPO;
-			case	SUBTYPE_HIPPOGRIFF: return 0;
-			case	SUBTYPE_HOMARID: return 0;
-			case	SUBTYPE_HOMUNCULUS: return CARD_ID_HOMUNCULUS;
-			case	SUBTYPE_HORROR: return CARD_ID_HORROR;
-			case	SUBTYPE_HORSE: return 0;
-			case	SUBTYPE_HOUND: return CARD_ID_HOUND;
-			case	SUBTYPE_HUMAN: return CARD_ID_HUMAN;
-			case	SUBTYPE_HYDRA: return CARD_ID_HYDRA;
-			case	SUBTYPE_HYENA: return 0;
-			case	SUBTYPE_ILLUSION: return CARD_ID_ILLUSION_TOKEN;
-			case	SUBTYPE_IMP: return 0;
-			case	SUBTYPE_INCARNATION: return 0;
-			case	SUBTYPE_INSECT: return CARD_ID_INSECT;
-			case	SUBTYPE_JELLYFISH: return 0;
-			case	SUBTYPE_JUGGERNAUT: return 0;
-			case	SUBTYPE_KAVU: return CARD_ID_KAVU;
-			case	SUBTYPE_KIRIN: return 0;
-			case	SUBTYPE_KITHKIN: return 0;
-			case	SUBTYPE_KNIGHT: return CARD_ID_KNIGHT;
-			case	SUBTYPE_KOBOLD: return 0;
-			case	SUBTYPE_KOR: return 0;
-			case	SUBTYPE_KRAKEN: return CARD_ID_KRAKEN;
-			case	SUBTYPE_LAMIA: return 0;
-			case	SUBTYPE_LAMMASU: return 0;
-			case	SUBTYPE_LEECH: return 0;
-			case	SUBTYPE_LEVIATHAN: return 0;
-			case	SUBTYPE_LHURGOYF: return 0;
-			case	SUBTYPE_LICID: return 0;
-			case	SUBTYPE_LIZARD: return CARD_ID_LIZARD;
-			case	SUBTYPE_MANTICORE: return 0;
-			case	SUBTYPE_MASTICORE: return 0;
-			case	SUBTYPE_MERCENARY: return 0;
-			case	SUBTYPE_MERFOLK: return CARD_ID_MERFOLK;
-			case	SUBTYPE_METATHRAN: return 0;
-			case	SUBTYPE_MINION: return CARD_ID_MINION;
-			case	SUBTYPE_MINOTAUR: return CARD_ID_MINOTAUR;
-			case	SUBTYPE_MOLE: return 0;
-			case	SUBTYPE_MONGER: return 0;
-			case	SUBTYPE_MONGOOSE: return 0;
-			case	SUBTYPE_MONK: return CARD_ID_MONK;
-			case	SUBTYPE_MOONFOLK: return 0;
-			case	SUBTYPE_MUTANT: return 0;
-			case	SUBTYPE_MYR: return CARD_ID_MYR;
-			case	SUBTYPE_MYSTIC: return 0;
-			case	SUBTYPE_NAGA: return 0;
-			case	SUBTYPE_NAUTILUS: return 0;
-			case	SUBTYPE_NEPHILIM: return 0;
-			case	SUBTYPE_NIGHTMARE: return 0;
-			case	SUBTYPE_NIGHTSTALKER: return 0;
-			case	SUBTYPE_NINJA: return 0;
-			case	SUBTYPE_NOGGLE: return 0;
-			case	SUBTYPE_NOMAD: return 0;
-			case	SUBTYPE_NYMPH: return 0;
-			case	SUBTYPE_OCTOPUS: return CARD_ID_OCTOPUS;
-			case	SUBTYPE_OGRE: return CARD_ID_OGRE;
-			case	SUBTYPE_OOZE: return CARD_ID_OOZE;
-			case	SUBTYPE_ORB: return CARD_ID_ORB;
-			case	SUBTYPE_ORC: return 0;
-			case	SUBTYPE_ORGG: return 0;
-			case	SUBTYPE_OUPHE: return 0;
-			case	SUBTYPE_OX: return 0;
-			case	SUBTYPE_OYSTER: return 0;
-			case	SUBTYPE_PEGASUS: return CARD_ID_PEGASUS;
-			case	SUBTYPE_PENTAVITE: return CARD_ID_PENTAVITE;
-			case	SUBTYPE_PEST: return CARD_ID_PEST;
-			case	SUBTYPE_PHELDDAGRIF: return 0;
-			case	SUBTYPE_PHOENIX: return 0;
-			case	SUBTYPE_PINCHER: return CARD_ID_PINCHER;
-			case	SUBTYPE_PIRATE: return 0;
-			case	SUBTYPE_PLANT: return CARD_ID_PLANT;
-			case	SUBTYPE_PRAETOR: return 0;
-			case	SUBTYPE_PRISM: return CARD_ID_PRISM;
-			case	SUBTYPE_PROCESSOR: return 0;
-			case	SUBTYPE_RABBIT: return 0;
-			case	SUBTYPE_RAT: return CARD_ID_RAT;
-			case	SUBTYPE_REBEL: return 0;
-			case	SUBTYPE_REFLECTION: return CARD_ID_REFLECTION;
-			case	SUBTYPE_REVELER: return 0;
-			case	SUBTYPE_RHINO: return CARD_ID_RHINO;
-			case	SUBTYPE_RIGGER: return 0;
-			case	SUBTYPE_ROGUE: return 0;
-			case	SUBTYPE_SABLE: return 0;
-			case	SUBTYPE_SALAMANDER: return 0;
-			case	SUBTYPE_SAMURAI: return 0;
-			case	SUBTYPE_SAND: return 0;
-			case	SUBTYPE_SAPROLING: return CARD_ID_SAPROLING;
-			case	SUBTYPE_SATYR: return CARD_ID_SATYR;
-			case	SUBTYPE_SCARECROW: return 0;
-			case	SUBTYPE_SCION: return 0;
-			case	SUBTYPE_SCORPION: return 0;
-			case	SUBTYPE_SCOUT: return 0;
-			case	SUBTYPE_SERF: return CARD_ID_SERF;
-			case	SUBTYPE_SERPENT: return 0;
-			case	SUBTYPE_SHADE: return 0;
-			case	SUBTYPE_SHAMAN: return 0;
-			case	SUBTYPE_SHAPESHIFTER: return CARD_ID_SHAPESHIFTER_TOKEN;
-			case	SUBTYPE_SHEEP: return CARD_ID_SHEEP;
-			case	SUBTYPE_SIREN: return 0;
-			case	SUBTYPE_SKELETON: return CARD_ID_SKELETON;
-			case	SUBTYPE_SLITH: return 0;
-			case	SUBTYPE_SLIVER: return CARD_ID_SLIVER;
-			case	SUBTYPE_SLUG: return 0;
-			case	SUBTYPE_SNAKE: return CARD_ID_SNAKE;
-			case	SUBTYPE_SOLDIER: return CARD_ID_SOLDIER;
-			case	SUBTYPE_SOLTARI: return 0;
-			case	SUBTYPE_SPAWN: return CARD_ID_SPAWN;
-			case	SUBTYPE_SPECTER: return 0;
-			case	SUBTYPE_SPELLSHAPER: return 0;
-			case	SUBTYPE_SPHINX: return CARD_ID_SPHINX;
-			case	SUBTYPE_SPIDER: return CARD_ID_SPIDER;
-			case	SUBTYPE_SPIKE: return CARD_ID_SPIKE;
-			case	SUBTYPE_SPIRIT: return CARD_ID_SPIRIT;
-			case	SUBTYPE_SPLINTER: return CARD_ID_SPLINTER_TOKEN;
-			case	SUBTYPE_SPONGE: return 0;
-			case	SUBTYPE_SQUID: return CARD_ID_SQUID;
-			case	SUBTYPE_SQUIRREL: return CARD_ID_SQUIRREL;
-			case	SUBTYPE_STARFISH: return CARD_ID_STARFISH;
-			case	SUBTYPE_SURRAKAR: return CARD_ID_SURVIVOR;
-			case	SUBTYPE_SURVIVOR: return 0;
-			case	SUBTYPE_TETRAVITE: return 0;
-			case	SUBTYPE_THALAKOS: return 0;
-			case	SUBTYPE_THOPTER: return CARD_ID_THOPTER;
-			case	SUBTYPE_THRULL: return CARD_ID_THRULL;
-			case	SUBTYPE_TREEFOLK: return CARD_ID_TREEFOLK;
-			case	SUBTYPE_TRISKELAVITE: return CARD_ID_TRISKELAVITE;
-			case	SUBTYPE_TROLL: return 0;
-			case	SUBTYPE_TURTLE: return 0;
-			case	SUBTYPE_UNICORN: return 0;
-			case	SUBTYPE_VAMPIRE: return CARD_ID_VAMPIRE;
-			case	SUBTYPE_VEDALKEN: return 0;
-			case	SUBTYPE_VIASHINO: return 0;
-			case	SUBTYPE_VOLVER: return 0;
-			case	SUBTYPE_WALL: return 0;
-			case	SUBTYPE_WARRIOR: return CARD_ID_WARRIOR;
-			case	SUBTYPE_WEIRD: return CARD_ID_WEIRD;
-			case	SUBTYPE_WEREWOLF: return 0;
-			case	SUBTYPE_WHALE: return CARD_ID_WHALE;
-			case	SUBTYPE_WIZARD: return 0;
-			case	SUBTYPE_WOLF: return CARD_ID_WOLF;
-			case	SUBTYPE_WOLVERINE: return 0;
-			case	SUBTYPE_WOMBAT: return 0;
-			case	SUBTYPE_WORM: return CARD_ID_WORM;
-			case	SUBTYPE_WRAITH: return 0;
-			case	SUBTYPE_WURM: return 0;
-			case	SUBTYPE_YETI: return 0;
-			case	SUBTYPE_ZOMBIE: return CARD_ID_ZOMBIE;
-			case	SUBTYPE_ZUBERA: return 0;
-			default: return 0;
-	}
+static int from_subtype_to_token_id(int subtype)
+{
+  /* Native signed 16-bit token IDs, indexed by creature subtype minus two. */
+  static const int16_t token_ids[221] = {
+      18687, 0,     0,     18689, 0,     0,     0,     18691, 0,     0,     0,     18692, 0,
+      0,     0,     18693, 18694, 18695, 0,     0,     18696, 0,     18698, 0,     0,     18701,
+      0,     18702, 0,     18704, 18708, 0,     0,     18709, 18710, 0,     18712, 0,     0,
+      0,     0,     0,     18714, 18715, 18716, 0,     18719, 18721, 0,     0,     0,     0,
+      0,     0,     0,     18722, 18726, 18729, 0,     0,     0,     18735, 0,     18738, 0,
+      0,     0,     0,     18740, 18741, 18742, 18744, 18745, 18746, 18752, 0,     18753, 0,
+      18755, 0,     18756, 18757, 18758, 0,     0,     18759, 18761, 0,     18763, 18764, 18768,
+      0,     18769, 0,     0,     18770, 0,     0,     18773, 0,     0,     18776, 0,     0,
+      18780, 0,     0,     0,     0,     0,     18783, 0,     0,     0,     18785, 0,     18787,
+      18788, 0,     0,     18789, 0,     0,     18792, 0,     0,     0,     0,     0,     0,
+      0,     0,     18794, 18795, 18796, 18797, 0,     0,     0,     0,     0,     18798, 18799,
+      18800, 0,     0,     18801, 0,     18803, 0,     18804, 0,     18806, 0,     18807, 18808,
+      0,     0,     0,     0,     0,     18813, 18814, 0,     0,     0,     18815, 0,     0,
+      0,     18817, 18818, 0,     18819, 0,     18820, 0,     18821, 18822, 0,     18824, 0,
+      0,     18826, 18827, 18828, 18829, 18831, 0,     18832, 18833, 18834, 18836, 0,     0,
+      0,     18837, 18838, 18841, 18844, 0,     0,     0,     18848, 0,     0,     0,     0,
+      18852, 18853, 0,     18854, 0,     18856, 0,     0,     18858, 0,     0,     0,     18860,
+  };
+  unsigned int index = (unsigned int)subtype - 2;
+  return index < 221 ? token_ids[index] : 0;
 }
 
 static void store_selected_subtype(token_generation_t* token, int beast, int unused)
@@ -369,28 +167,34 @@ static void store_selected_subtype(token_generation_t* token, int beast, int unu
 	get_card_instance(token->t_player, beast)->targets[1].card = token->action_argument;
 }
 
-void generate_custom_token_from_subtype(int player, int card, int subtype, int color, int pow, int tou, int amount){
-	// See Riptide Replicator and Volrath's Laboratory
-
-	int csvid = from_subtype_to_token_id(subtype);
-
-	token_generation_t token;
-	if( csvid ){
-		default_token_definition(player, card, csvid, &token);
-	}
-	else{
-		default_token_definition(player, card, CARD_ID_RIPTIDE_REPLICATOR_TOKEN, &token);
-	}
-	token.qty = amount;
-	token.pow = pow;
-	token.tou = tou;
-	token.color_forced = color;
-	token.no_sleight = 1;
-	if( ! csvid ){
-		token.special_code_on_generation = &store_selected_subtype;
-		token.action_argument = subtype;
-	}
-	generate_token(&token);
+void generate_custom_token_from_subtype(int player, int card, int subtype, int color, int pow,
+                                        int tou, int amount)
+{
+  int csvid = from_subtype_to_token_id(subtype);
+  token_generation_t token;
+  if (csvid)
+  {
+    default_token_definition(player, card, csvid, &token);
+    int iid = get_internal_card_id_from_csv_id(csvid);
+    if (cards_data[iid].static_ability)
+    {
+      token.legacy = 1;
+      token.special_code_for_legacy = legacy_negate_static_abilities;
+    }
+  }
+  else
+  {
+    default_token_definition(player, card, CARD_ID_RIPTIDE_REPLICATOR_TOKEN, &token);
+    token.action = TOKEN_ACTION_ADD_SUBTYPE;
+    token.special_code_on_generation = store_selected_subtype;
+    token.action_argument = subtype;
+  }
+  token.qty = amount;
+  token.color_forced = color;
+  token.pow = pow;
+  token.tou = tou;
+  token.no_sleight = 1;
+  generate_token(&token);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */

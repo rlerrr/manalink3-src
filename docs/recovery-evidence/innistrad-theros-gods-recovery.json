@@ -1,0 +1,1057 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "touch_of_the_horned_god_legacy",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x2034b70",
+          "end": "0x2034ca1",
+          "bytes_sha256": "5889849cf0aef2a49295ec264961f8bc2dbff09fffc57dda1f609e04932895a2",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2034b70.c",
+          "raw_export_sha256": "30fa283ac99d2b0c6d47378099fb69abbae46bd2d0cec8e12cd94114e1c7f333"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d7c1c918fae01b008d0c01e666d8dca1f65a78d77ac1ed58eb523ce653c01f43"
+    },
+    {
+      "name": "descend_of_the_prey_legacy",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x2034cb0",
+          "end": "0x2034de1",
+          "bytes_sha256": "36746ef60d5065258b546d50cf1785598cccc1013980c3d8c1be7ad542164200",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2034cb0.c",
+          "raw_export_sha256": "c19db8270ef6accf55a30550506ca9b7f8c475ed3e84fa146b7bf183493785ac"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "337bbaa17acf21ff8b44366eddd28744fbd8f9ce1d6cc1fae9ff8697ab8668bd"
+    },
+    {
+      "name": "effect_searing_blood",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x2034df0",
+          "end": "0x2034f66",
+          "bytes_sha256": "07ac64a60267bad162554933ce8c47206b177bac94b8200c1daa907476b0f5d7",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2034df0.c",
+          "raw_export_sha256": "5832b378016dbb824b05c14aeee2b23b8f1240855d480c24d2a94b3cab464709"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "84cd8331f4db50de65612f9960e1569000ed64ac4984f012ab69d6b50fe2ab60"
+    },
+    {
+      "name": "effect_prevent_damage_to_or_from_until_my_next_turn",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x2035040",
+          "end": "0x20350ea",
+          "bytes_sha256": "f5ce81f8e4e31e1d12eed37f8320268e780bb51837c01925c24ed2457d24cfb1",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2035040.c",
+          "raw_export_sha256": "fac8cb5a8fe96246988d919f3088964002681d32d72b27b0e15f4ac581613ba8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1b3a00b529c5c2fc1eafdb7855f1827e1a099aec1f20f886377d24b21c774fbc"
+    },
+    {
+      "name": "unquenchable_fury_legacy",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x20351a0",
+          "end": "0x203527c",
+          "bytes_sha256": "2ddb18cb4d2c46726ac307b0cd7d3c420be98c0ca272b850a56c8d7baab735fa",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/20351a0.c",
+          "raw_export_sha256": "e93888dad4a2f3ad0b96d7d9bd5ca34449c60cfed21a539d43e078c1fc56b172"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "12ebcef7728aab0c0985ef943393b0ed3b1508658a47b1e2ee42f21281d2f2b2"
+    },
+    {
+      "name": "consuming_rage_legacy",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x2035280",
+          "end": "0x20353e6",
+          "bytes_sha256": "a9f131e3e4af2531e3c2aee7c480f93d9e4d7b85b8bc567dd182cb4a68fd1d23",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2035280.c",
+          "raw_export_sha256": "ccdedf8a9c25f0d038e28448a63033bc33ab20b68fc0abbfbc7f278dab7a3b89"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "46f18ae1cd4033f326aa0ce6a9824f8d973d960387234630c6e56b5e864dbb6c"
+    },
+    {
+      "name": "archetype",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x20353f0",
+          "end": "0x20354c2",
+          "bytes_sha256": "17d1016ae1e1b9fce64b5b2d267bf3f4e7d630a56a12a9eb626299152acb85b4",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/20353f0.c",
+          "raw_export_sha256": "3b7104cbe80049f09caae472c81453c593eefbdcacbe4b0f3d6008b5ceadb45b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8eaaaff491489315a9ef5483df157f954cd4a5218c88a621c8486b900b1cbc95"
+    },
+    {
+      "name": "tribute",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x20354d0",
+          "end": "0x203562b",
+          "bytes_sha256": "df0dfc2e1aac1ca16dd2822ad74b1a1278a14535925ed35164f42769e2201331",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/20354d0.c",
+          "raw_export_sha256": "349f1b1e5adf102f1e1a5f622cf0ca3019ccb35512c1eb76830ba1bb7e48111b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2e48df6df079cbbfef77949c9224b965d6745f6fb7d1e78adc829aaeeca4be55"
+    },
+    {
+      "name": "create_spirit",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2072580",
+          "end": "0x20725c2",
+          "bytes_sha256": "c2a390f996d03f163013d47c4160672b9de5915aa940359d2fe957c079258d38",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2072580.c",
+          "raw_export_sha256": "6df64feba9f6018e50e3a2f2a9f14db49c590532e5d0e762f33f908d22cd2fd1"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "52c534414b001c2fe74d79894ddb4bd9d1d51b4cf13b1c6a886cef22319cc16b"
+    },
+    {
+      "name": "gutter_grime_effect",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x20725f0",
+          "end": "0x2072926",
+          "bytes_sha256": "c4e951c5b8dd342082aa74bd2463184cc93f37a200d0c1f46513bfd4703df8fe",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/20725f0.c",
+          "raw_export_sha256": "389a4f95448586af453e50c571f4be3f84be672746248cfbe90e8ebaa82ab473"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "dea2843750f6637a8c155438edefad8b22f79679bc63b143f159042164807b9a"
+    },
+    {
+      "name": "murder_of_crows_legacy",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2072930",
+          "end": "0x2072cb3",
+          "bytes_sha256": "009a8d001a32cbd4b1eea197525b866b40500a9de3223f56c7caa1d9648b15e0",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2072930.c",
+          "raw_export_sha256": "69c7af722e384c8f7527a068b6ae116a6fb61e523b37bffff895d1ab2ba6721d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "59d48e728e3a05de2ed861ef899c02672cb6f70ded257264a20f9fd5e72167b1"
+    },
+    {
+      "name": "selhoff_occultist_legacy",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2072cc0",
+          "end": "0x2073045",
+          "bytes_sha256": "3af53ce52d7559f5cee441a657e62183354b0bc286e7d6b9ab3b5956711e94d1",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2072cc0.c",
+          "raw_export_sha256": "867a49e3f8c6847d3ebdbad074a8699c98a0f5511c680ee839e669ad72bb8e44"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "cb18e704b7882816405e658170839105be4403ce91a8b539b87b37774dee18c8"
+    },
+    {
+      "name": "falkenrath_noble_effect",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2073050",
+          "end": "0x207337c",
+          "bytes_sha256": "71f2fec461f0be310354ef622c4277dad1d9ce8d556f349759eaff2cae767ba4",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2073050.c",
+          "raw_export_sha256": "5ba6f0b7de6dacfbb173e06dc9ec5b2aa5ddcdbb7d2b41264b7781e70079e05e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1752ae4cfcb3db3c89ec7085be752269ac8e73ce935378273c7e239bb823f4a2"
+    },
+    {
+      "name": "rage_thrower_legacy",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2073380",
+          "end": "0x207370b",
+          "bytes_sha256": "ae478a38c2d43ca7de18a4d5449af79ef68d84f65daabd60d3255d1f94318f0c",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2073380.c",
+          "raw_export_sha256": "f35cf30dde58cf2af24f4a382ea0b1d435fbf406fe556dd0b97b596eab7a44d9"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "de04451863163569e0dbf7c54bebf0229f3e09b1a19c0e494a6dfd6c15778177"
+    },
+    {
+      "name": "spare_from_evil_legacy",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2073710",
+          "end": "0x20737ee",
+          "bytes_sha256": "183790d50dcfda6d9374ee0e5f593d8cc2a13b0917deceddd1cfe18474617a77",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2073710.c",
+          "raw_export_sha256": "cb278f1b34716cd0957f00cadeaea175135982a6dd3be3863a6dcd61bbbdaea8"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "17893dec51c6e40a4cfb992ff9a01de1b3dbcf9f8a6b8aa2a4f1669452db1543"
+    },
+    {
+      "name": "innistrad_exile_at_end_of_combat_legacy",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2073940",
+          "end": "0x20739f9",
+          "bytes_sha256": "b789fa958f95d8c7b920455f255c2db7d5721f229e4bbb4c54aba150e84e1233",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2073940.c",
+          "raw_export_sha256": "9efb1303019acf29b7a3ffe39d3dfac31b0463736b3f7886d21d7216ebb9134b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cad1bf3b2f7c4a4db182ad43bb9147140647c282b2370a07d44f56cdd5f9e559"
+    },
+    {
+      "name": "gather_body_parts",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2073d00",
+          "end": "0x207402e",
+          "bytes_sha256": "ec82a52a24d99a86e80b76e302e9640a00713a48b6ceebed3f9f510252f94a59",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2073d00.c",
+          "raw_export_sha256": "e3bfd9bc67f6b43f0ef7e648adf8daea74987e33e628bccc433d3039cb5ca3dd"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "f61add0ab0784fab09ce60ca27f9c33054561f169a2702ce2f48ceb33b54e3aa"
+    },
+    {
+      "name": "skaabs",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2074030",
+          "end": "0x20740d8",
+          "bytes_sha256": "2c4d3bc4f9238e3a8bb2c51d8395ded2ec4dbcde3a64565b9301d6e93f5aa8c7",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2074030.c",
+          "raw_export_sha256": "5c5605746ebb06d59655f8f4fcd9f624e68f825877ce09cd3cddac96276b6578"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9bef4c9e60c65a57a7814fb0d7427fb819d5b3d97aa3ede5734a7e110bb36a18"
+    },
+    {
+      "name": "curse",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x20740e0",
+          "end": "0x2074183",
+          "bytes_sha256": "2c73d45978aeead4dd58dd762063a8300d43842dc6ed3173f5528b6181410615",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/20740e0.c",
+          "raw_export_sha256": "fdef6dd59e9370f4f4a5a2185c8314e9fcc228f28d6e6e02820aa521f9e86c96"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9443fe456870c0b30052a66c170763905f69df080704470220fe6b50f6b22c4b"
+    },
+    {
+      "name": "saint_traft_ability",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x207bdc0",
+          "end": "0x207be86",
+          "bytes_sha256": "a22856f467fd7955282b6f3927759e4bbdb2a21afcb8f6562edf5f791e2e3959",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/207bdc0.c",
+          "raw_export_sha256": "bf019d311ef5e27f88fafa4a9501927329a24bb535ef98c6fcba8b21adcf47ec"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e7440acc979042ab9bfbdff195cfbfc1f5a9ff5faf8906f23f215092249423c0"
+    },
+    {
+      "name": "requiem_angel_effect",
+      "source": "cards/dark_ascension.c",
+      "native_ranges": [
+        {
+          "address": "0x210a2e0",
+          "end": "0x210a5f3",
+          "bytes_sha256": "3254b31524a4b8d63389bf63352d5250ba55ce6df4e6423fe4a3c895cfdebd50",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/210a2e0.c",
+          "raw_export_sha256": "74b5078916e5e9d6e573ac9f46b225250309b091d79ef24c21752ba690dc0e70"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "634ba5a79009731abfbb69cfec381dcf668a2a64a0931b5238340546595ca3fa"
+    },
+    {
+      "name": "undying_evil_legacy",
+      "source": "cards/dark_ascension.c",
+      "native_ranges": [
+        {
+          "address": "0x210a720",
+          "end": "0x210a916",
+          "bytes_sha256": "9c4dd2ec0d22980d7a16e93995e4ff4605eed44dc9ae70df78f55a8413eb12d3",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/210a720.c",
+          "raw_export_sha256": "cc0911b7193c6919c4d3c34b8116767642e308436f155944371fb6c393d156b2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6ea79fcafa464c0d9b4ac48c3bf5a24f57c94ed941f3e9c38938b32cc6f364ee"
+    },
+    {
+      "name": "diregraf_captain_effect",
+      "source": "cards/dark_ascension.c",
+      "native_ranges": [
+        {
+          "address": "0x210ab30",
+          "end": "0x210ae6b",
+          "bytes_sha256": "8ffd659f06327d01a2bb5ab2b30ada62676fd76c389075ccfb936d660b9e926c",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/210ab30.c",
+          "raw_export_sha256": "57c6618221555ab85a6e02da1d95fb43445cd9cfd7cc372a644361983cd41911"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1fd322d9f2f81dfea2b6f1bf97dfa7e69389ac3d3aa8b93760b055756ac36dc8"
+    },
+    {
+      "name": "loyal_cathar_legacy",
+      "source": "cards/dark_ascension.c",
+      "native_ranges": [
+        {
+          "address": "0x210ae70",
+          "end": "0x210af15",
+          "bytes_sha256": "7ff97d72c1ce406e5edc436fa8ef40753f77e8c8b4047c909320c503e4ec2cf1",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/210ae70.c",
+          "raw_export_sha256": "ec513ff41960cded528dbef5897f7479bb1fd84685519984257cb339bf84729e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0e651915d63c0363bc59cdd53ad0ae85062f698ca8f8b7ab9d3d0cece93b1547"
+    },
+    {
+      "name": "effect_werewolf_ransacker",
+      "source": "cards/dark_ascension.c",
+      "native_ranges": [
+        {
+          "address": "0x210b080",
+          "end": "0x210b153",
+          "bytes_sha256": "2ce19290046a62bc4b73fb57715bfff8167dbe0698eed99a43768a1cb3938e4d",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/210b080.c",
+          "raw_export_sha256": "fb35333de00d6b9969bef9b64d767263542741df2d743e866d5ee88bae14eb6a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3fe55dcdbcb3659778c7621dfd050adcddd29c7849205d27ea2481d1f5875eb5"
+    },
+    {
+      "name": "mikaeus_the_unhallowed_effect",
+      "source": "cards/dark_ascension.c",
+      "native_ranges": [
+        {
+          "address": "0x21104d0",
+          "end": "0x211084d",
+          "bytes_sha256": "b56f85b6087ad61ddae53a99a7cabe15d93003a172d1d4487f5148d08f7aabca",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/21104d0.c",
+          "raw_export_sha256": "55760526ecd7cf104c3a1fa3dbfe704911ed489e90f367f578db830ec3b49466"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e22e50380fd64ef95a3ca67bb46f857267b37a5a209e9db26258b2653a094e73"
+    },
+    {
+      "name": "target_damaged_me_this_turn",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x262f2e0",
+          "end": "0x262f33b",
+          "bytes_sha256": "e40dcd9514c792505a32da98ec63e7bbf68e39c982c8a79285a8f63ca3b8f46b",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/262f2e0.c",
+          "raw_export_sha256": "993c78dbe8f838b87116f447aaa0fc537b95e58ff02726260c93fce9a087cb56"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "fbeb5d8ed050c01bcdafff0dd4c0791762813a464b2cd0cb71b2cfa2a79d15c0"
+    },
+    {
+      "name": "gift_of_immortality_legacy",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x262f450",
+          "end": "0x262f588",
+          "bytes_sha256": "2c8f3ae92e6f6484c8778e5f910fd2fba10237cf5ec001ea2c75907bc74f1902",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/262f450.c",
+          "raw_export_sha256": "90a3fb37935853399974e6c2c032f363a80f3980c90671f89bb209c838992199"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2cd9de5c27829a5c540530bd391540cb80b2417ee5692b12a5cde175378147a7"
+    },
+    {
+      "name": "time_to_feed_legacy",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x262f590",
+          "end": "0x262f6ce",
+          "bytes_sha256": "f21ca33fa8f58e5515a5e5e26c375a3b9c3b450faa4d70483d82b2abf0561e7c",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/262f590.c",
+          "raw_export_sha256": "852734498174d7b644da2c337269db06daafeab6e421caf605d33ed5f234ac4e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "33fff6cdb97a136b27f1ae1dc12ad4fd98b487e93daec76d88bc945ea605ba14"
+    },
+    {
+      "name": "ordeal",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x262f6d0",
+          "end": "0x262f909",
+          "bytes_sha256": "f7cd6ac24808411f11270dacf86caff167b660d84ad4be9c45b0215945ef3d5b",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/262f6d0.c",
+          "raw_export_sha256": "4bf4a0b1d45db99ff10285620bab3bb78e465cc1d808600907aba3ee4d0baff2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b66dbfedd2e1ad37261e3fb5375da9ca18b96211c2bdc6765dddf383d28939b9"
+    },
+    {
+      "name": "sealock_monster_legacy",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x262f910",
+          "end": "0x262fa29",
+          "bytes_sha256": "267a52ed8fb9ce4904d56feea5703c40d4a7a6265b9178e32df88eca673d4488",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/262f910.c",
+          "raw_export_sha256": "4edbccaad6b6c54b765acfd56fc71c47649ea4007c1d572617d7124d80a5fe58"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "da7f079e6a2e503abf317d93eabee16d778aa1cafb7132f3231698513f63dc74"
+    },
+    {
+      "name": "effect_warriors_lesson",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x262fbf0",
+          "end": "0x262fcb6",
+          "bytes_sha256": "cb70f81b8dbf1ec9fa44190e9dfb6b499f6577e731b4bfcaa4ad96f27323be75",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/262fbf0.c",
+          "raw_export_sha256": "b8a2fc1799d31b5361a18353ecac49c9a3fb913ea6f2ba49755497351544befa"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b7982a6e38311250a67f1b1e93fc32a2e9895f0c45c8603f6cf9557d4106eda0"
+    },
+    {
+      "name": "ashiok_exiledby_remember",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x262fda0",
+          "end": "0x262fe05",
+          "bytes_sha256": "e53996a107e1d9474ec83d017b9e7a8275a69366f4307af02949bf581addc840",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/262fda0.c",
+          "raw_export_sha256": "64a9369dae4b5693520044abe7e53c93339ef94d1d9fb537c99dca20b15f23e7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5120ae07aab87b777a15eaa80fc718e77a31da242fc4432639e3883af2ef382d"
+    },
+    {
+      "name": "reaper_of_the_wilds_effect",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x262fe10",
+          "end": "0x26300f3",
+          "bytes_sha256": "49a6119e7df7d4bed8e268a922a520b4421e0d5e0896e43f6ed8a62af4958a16",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/262fe10.c",
+          "raw_export_sha256": "73289d879ab782bd520b6ad5c3c76fafe3e257de6c8be3d79f90843d489a6670"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "07592c5a60f1e7a6835e01017de50c103d7fc5e4a3ed8c7a012055c546e68708"
+    },
+    {
+      "name": "generic_hydra_head",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x26305d0",
+          "end": "0x263068a",
+          "bytes_sha256": "3c0b29a7f9ebc6b3be946aa554f1c8b4ba14dffe97b72bc57238a21f254540e8",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/26305d0.c",
+          "raw_export_sha256": "7ce412906ca2f09812dd756a42509147d55d74da466f4c5bf2e2d749553f3790"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b7e6671411b7283ec3aabc9c75d5ae645042dc0ad5417c03dd07ef61e963e7eb"
+    },
+    {
+      "name": "creature_with_targeted_bestow",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x2630690",
+          "end": "0x263098e",
+          "bytes_sha256": "1022b50239bc22a67c3aa39fa6bff566ad7cd833fef3acd03247d784c5df3a54",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2630690.c",
+          "raw_export_sha256": "3abd71d0a4b87b238d2e4a033d52b960b3eb53a7cee2cdce7dca3709b427b97e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2259a637f60ccea3046fea7e8cc3bd7146332fbaaf3a60aeda5d81934946174c"
+    },
+    {
+      "name": "generic_creature_with_bestow",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x2630990",
+          "end": "0x2630a28",
+          "bytes_sha256": "45c3f073fc85687e8871941cea0cfeee5c4a8763d9d5bda3329cd5a76b3e6679",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods/2630990.c",
+          "raw_export_sha256": "7f369c21db339231d2b81e4408888c96b55a257b9c2dd078bc80a22833c94cc4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "23e6b6d5019796236a6451c993c04705798395f7282759b2d04d5741aa108781"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_fanatic_of_xenagos",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x2040760",
+          "end": "0x2040866",
+          "bytes_sha256": "02a371a20cb00631873888d736b99a9ee508ca450e315db9f4102e90482f839b",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/2040760.c",
+          "raw_export_sha256": "a2745401171c9c449ba9701d1bb90dc6b1b76158bd95088411b8c3c62c6fa90f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "6164d58ed9191fba01be9cfbed1a5ac25f12ca23079b09c891d5c13aa53006f0"
+    },
+    {
+      "name": "card_snake_of_the_golden_grove",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x20401f0",
+          "end": "0x20402ce",
+          "bytes_sha256": "9d797ca64579ccfe770b085c3e9441a8e1d1ecd5c5475e217fefc1d1cb0e98b9",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/20401f0.c",
+          "raw_export_sha256": "289032bf5f1125ec9e772915a3c624ad6db0876158c3c541d135f203ac7e7eaf"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1ac67db07bfce91e07b495e9fddfea1fd47f3a1a91f618906b11666b23ed30bf"
+    },
+    {
+      "name": "card_nessian_wilds_ravager",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x203f7f0",
+          "end": "0x203f93e",
+          "bytes_sha256": "fb6380748e57a87260e64bb0062bd1f8d5d7aa467d16e847c9c59b353fb9a533",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/203f7f0.c",
+          "raw_export_sha256": "db18c42816bd46378e18b2869206f08960579229ee6295cc9751afb53c8a1dbc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1e1976fa8e4231c632f589089dd4c111d0f2b8662cb0d72e7edf379bfd50cf9e"
+    },
+    {
+      "name": "card_nessian_demolok",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x203f6a0",
+          "end": "0x203f7e6",
+          "bytes_sha256": "fa93e42238720660c5a4ecacc20711b4c546ee040698b2a001b47d7160d7da3e",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/203f6a0.c",
+          "raw_export_sha256": "b3653a150e5c74b8845c7a4d4a4977e11534f913a6932d988f671041d68ddea8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "523bf160b5c7175cdf6fdd418507c3312d8b8bd256d641a666889c82c50a8ded"
+    },
+    {
+      "name": "card_thunder_brute",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x203e0e0",
+          "end": "0x203e1e6",
+          "bytes_sha256": "6d2d4fbe67362096b7a0d876b78c8357daeff0978f083c454280d389b10b3107",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/203e0e0.c",
+          "raw_export_sha256": "7e372ea2bab301218c05e89b302e61a9ecaeb203ddc2946b2b126d382529f5d6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "506e283cfbe94f4e6950a231485858658790c2de6617ec7685b587549509ce80"
+    },
+    {
+      "name": "card_pharagax_giant",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x203d2b0",
+          "end": "0x203d3a6",
+          "bytes_sha256": "e8ac08af7a22b5bce139d1a3a6de9da511246a381738f5db529e8e6c3f902ab4",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/203d2b0.c",
+          "raw_export_sha256": "be20a325cbad56c57e760fec88684835336747625116c3e0203b91f8b3da7e8f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "15ae12e98fef073b5ea2e7564543d673d70b942ab8b430a0307020ae17af8176"
+    },
+    {
+      "name": "card_oracle_of_bones",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x203d130",
+          "end": "0x203d2ae",
+          "bytes_sha256": "ced0ddd88330570ff5d43b3ae5f43ab94f0897b4f7e03ef4a3d5fddafe26de38",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/203d130.c",
+          "raw_export_sha256": "5ee411edee6f527e8c2c9c9adb8175a9ac968602d0e492c2d8fda95625975195"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "96a13a587bc78306e53569b24c256da56132027a18b07f03409f55a19214e6fc"
+    },
+    {
+      "name": "card_flame_wreathed_phoenix",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x203cc50",
+          "end": "0x203cdd1",
+          "bytes_sha256": "a0ef8f8e384afa55223923cf13f955c85952e60d743a8f9b7a92586b5c7440bd",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/203cc50.c",
+          "raw_export_sha256": "2a5565eb908d973ed82ce3d928534b43abe9e2e03338c2ac21fb55979bbd9335"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b653ff8e63f4f78be029f74b66a199502a789d3fd8a972643fdefa53068e8229"
+    },
+    {
+      "name": "card_shrike_harpy",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x203b970",
+          "end": "0x203ba7e",
+          "bytes_sha256": "17adefba63e6b61e39106354cd585e9e046a27a656bd4f1cecf755393b759a5c",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/203b970.c",
+          "raw_export_sha256": "43f7bebd3f5988c5100474d595fe679151b8c3b9fd0355682b7ecb7e760d2b8c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8fd2863b71b3f52fcecfccd4c0f5127696fe43f051ebe3c00097ed95eadf5f7d"
+    },
+    {
+      "name": "card_siren_of_the_fanged_coast",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x2038910",
+          "end": "0x2038a4e",
+          "bytes_sha256": "cca921ff70d5107ae61b9a28e82a0da6e5531e1f0514b01ccd20fc25d48a8c6d",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/2038910.c",
+          "raw_export_sha256": "e062169109bccc9e4acedc607d9976b25538478633754b26e3158cda7784c07b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4e4afd51b664deb32457be88c4348c1f29aec965c7d57bbf6fc8b855315f2dbe"
+    },
+    {
+      "name": "card_ornitharch",
+      "source": "cards/born_of_the_gods.c",
+      "native_ranges": [
+        {
+          "address": "0x2036fc0",
+          "end": "0x20370ae",
+          "bytes_sha256": "721f9d29c9f571e2539d4bd49fb94d47ba128b96cbb2bbed6a08b583bf6e729c",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/2036fc0.c",
+          "raw_export_sha256": "7a590c8b107cbec8993c7d947683e83c0372dd08f02460076e352d77ad179892"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a8330cf5be5c60ac4e6c166b3c23cf56ed559a7a217a7774b2c4269eaab39fd6"
+    },
+    {
+      "name": "card_spare_from_evil",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2084fa0",
+          "end": "0x208505c",
+          "bytes_sha256": "df127dfac09e151812d4fec564254e49e4c4d51cf7b2cf545aafc8d8b5ee2fff",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/2084fa0.c",
+          "raw_export_sha256": "7f5a741b7e65278db82d98e43491526e6c0bf80097cc8494ed3e5b12bf5ca323"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "12795d703979910f12c0da844e96afcb07165aeadc5a390e895268450b9ca502"
+    },
+    {
+      "name": "card_geist_of_saint_traft",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x207be90",
+          "end": "0x207bee4",
+          "bytes_sha256": "9bbe3d8de02318188247e796894f2ea7e1423c16bb94778642a28d209d1a559d",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/207be90.c",
+          "raw_export_sha256": "2fead51a5c3db4d96a0538b851cc65e478f6254ceca5062bf94545268d02c9a1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "953ea19036438667f1ecbfdf83ead015815aa6443dc564a594ae99d382d2cacf"
+    },
+    {
+      "name": "card_skaab_ruinator",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2078e40",
+          "end": "0x2078fb1",
+          "bytes_sha256": "2663474917c2f1ea814d1d3a924e61018636613570b927d613a3af44aa58547b",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/2078e40.c",
+          "raw_export_sha256": "a9e04f5ee3ccddf9c3d9190c2aad3efc6aa8ae8a7b856af13445391b0ec9f675"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6f9cae9f95d36ee48449fc82bc099957e85fdb4ff7309f2d05186391eb7b405b"
+    },
+    {
+      "name": "card_loyal_cathar",
+      "source": "cards/dark_ascension.c",
+      "native_ranges": [
+        {
+          "address": "0x210c3d0",
+          "end": "0x210c4bd",
+          "bytes_sha256": "008734a0f21d9a4a0e2789e0c2717bb0f531c75891464fd1da3cff93f544b924",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/210c3d0.c",
+          "raw_export_sha256": "e5452e0f70624851c2981fafb77a594c9b93dc51adfc4bfc0df189af4ebb52c7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "329b8db0b02be3fb242b403066b39b9eb4ebd6d549b98e23339941951ecc58a6"
+    },
+    {
+      "name": "card_sealock_monster",
+      "source": "cards/theros.c",
+      "native_ranges": [
+        {
+          "address": "0x2634de0",
+          "end": "0x263502a",
+          "bytes_sha256": "736ec5d1074670462298db1a5170a51f11856a0942f41c49a1896a1b598dce3b",
+          "raw_export": ".recovery/decompiled-innistrad-theros-gods-support/2634de0.c",
+          "raw_export_sha256": "e7cf6c06f3b887349aa54aaaa4c4c6158b41e542854d0a0333d5071a5e6f6194"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "365f9e38814d9058724927577f300d1d4c0bb97ebaa6ad25f8e95a1c99f7e933"
+    }
+  ],
+  "helper_definitions": 37,
+  "native_helper_ranges": 37,
+  "changed_helper_definitions": 29,
+  "changed_card_callers": 4,
+  "tribute_entry_locations": {
+    "player": [
+      80
+    ],
+    "card": [
+      82
+    ],
+    "num_counters": [
+      81
+    ],
+    "event": [
+      250,
+      114,
+      73,
+      12,
+      0,
+      159
+    ]
+  },
+  "native_fixed_array_extents": {
+    "tribute.buf": 100,
+    "gather_body_parts.backup.rows": 3,
+    "gather_body_parts.backup_special.rows": 3
+  },
+  "native_dynamic_array_bounds": {
+    "backup.columns.upper_bound_locations": [
+      [
+        112,
+        127,
+        159
+      ],
+      [
+        145,
+        8,
+        6,
+        49,
+        28,
+        159
+      ],
+      [
+        145,
+        8,
+        6,
+        49,
+        28,
+        159
+      ]
+    ]
+  },
+  "native_contracts": {
+    "attack_triggers": {
+      "helpers": [
+        "touch_of_the_horned_god_legacy",
+        "descend_of_the_prey_legacy",
+        "consuming_rage_legacy",
+        "saint_traft_ability",
+        "ordeal"
+      ],
+      "dispatch": "store_attackers + dat_ability + EVENT_DAT_ABILITY",
+      "tracked_count": "targets[1].player",
+      "packed_attackers": "targets[2]",
+      "consuming_rage_removal": "KILL_BURY"
+    },
+    "archetype": {
+      "special_keywords": "card_instance_t.ext->sp_keywords",
+      "old_target_alias_removed": true
+    },
+    "tribute": {
+      "retained_generic_signature": true,
+      "optimized_registers": {
+        "eax": "player",
+        "edx": "card",
+        "ecx": "num_counters"
+      },
+      "all_eleven_callers_resolve_gated": true,
+      "counts": [
+        1,
+        2,
+        3,
+        6
+      ],
+      "choice_owner": "1-player",
+      "unpaid_marker": "targets[6].card=94"
+    },
+    "death_packets": {
+      "resolver_before_visibility": [
+        "gutter_grime_effect",
+        "murder_of_crows_legacy",
+        "selhoff_occultist_legacy",
+        "falkenrath_noble_effect",
+        "rage_thrower_legacy",
+        "requiem_angel_effect",
+        "diregraf_captain_effect",
+        "reaper_of_the_wilds_effect"
+      ],
+      "detach_byte2": [
+        "gutter_grime_effect",
+        "murder_of_crows_legacy",
+        "selhoff_occultist_legacy",
+        "falkenrath_noble_effect",
+        "rage_thrower_legacy",
+        "requiem_angel_effect",
+        "diregraf_captain_effect",
+        "mikaeus_the_unhallowed_effect"
+      ],
+      "detach_byte1": [
+        "reaper_of_the_wilds_effect"
+      ],
+      "per_packet": [
+        "falkenrath_noble_effect.life_sucking1",
+        "diregraf_captain_effect.lose_life1",
+        "effect_werewolf_ransacker.damage3"
+      ],
+      "old_end_trigger_resets_removed": true
+    },
+    "death_suppression": [
+      "effect_searing_blood",
+      "time_to_feed_legacy",
+      "undying_evil_legacy",
+      "card_loyal_cathar"
+    ],
+    "mikaeus": {
+      "gate": "creature, no +1/+1 counters, nonhuman",
+      "detach_returns_early": true,
+      "stored_flags": "GFPC_TRACK_DEAD_CREATURES|GFPC_STORE_OWNER"
+    },
+    "requiem": {
+      "test_type": "TYPE_LAND|TYPE_CREATURE",
+      "spirit_color": "COLOR_TEST_WHITE"
+    },
+    "gather_body_parts": {
+      "backup_rows": [
+        "internal_id",
+        "position_hint",
+        "graveyard_source"
+      ],
+      "special_source": "targets[3].card",
+      "restore": "turn_card_in_grave_face_up_src",
+      "restore_order": "reverse",
+      "exile_uses_restored_position": true,
+      "old_iid_sort_removed": true
+    },
+    "skaab_ruinator": {
+      "payment": "charge_mana_from_id(player,-1,event,get_id(player,card))",
+      "cancel_sets_spell_fizzled": true
+    },
+    "loyal_cathar": {
+      "stored_id": "original internal card id",
+      "reverse_grave_scan": true,
+      "double_faced_card": true
+    },
+    "gift_of_immortality": {
+      "eot_requires_returned_creature_in_play": true,
+      "mode": "REANIMATE_ATTACH_AS_AURA",
+      "reanimate_source": "returned creature coordinates",
+      "aura_owner": "targets[1].player"
+    },
+    "sealock_monster": {
+      "stored_subtype": "targets[1].card",
+      "legacy_created_for_land_controller": true,
+      "opponent_land_uses_temporary_card": true,
+      "attached_additional_subtype": true,
+      "production": "produce_mana_tapped",
+      "static_missing_land_removal_and_recalculation": true
+    },
+    "spare_from_evil": {
+      "grant": "SP_KEYWORD2_GRANTED_PROT_MISC",
+      "event": "EVENT_PROT_MISC",
+      "stored_target": "targets[0]",
+      "high_event_byte_exception": 6
+    },
+    "bestow": {
+      "leave_play_completion": "EVENT_LEAVES_PLAY_ABILITY"
+    },
+    "warriors_lesson": {
+      "extra_events": [
+        "EVENT_GRAVEYARD_FROM_PLAY",
+        "EVENT_CHANGE_TYPE"
+      ],
+      "global_macro_unchanged": true
+    },
+    "siren": {
+      "control": "gain_control_permanently"
+    },
+    "hydra": {
+      "high_kill_code_rewritten_to": "KILL_DESTROY",
+      "leave_play_completion": "EVENT_LEAVES_PLAY_ABILITY"
+    },
+    "preserved_quirks": [
+      "Searing Blood reads detached target player=-1 at damage resolution",
+      "Murder of Crows repeats draw/discard offers without decrementing amount until declined",
+      "Reaper retains detach byte1 while other selected death legacies use byte2",
+      "Requiem test type explicitly includes lands and creatures",
+      "Gather Body Parts keeps native failed-source lookup handling",
+      "Warriors Lesson retains SHOULD_AI_PLAY cleanup, Time to Feed only CLEANUP"
+    ]
+  },
+  "scope": "37 complete helper definitions/native ranges and16 complete paired card callers. Twenty-nine helpers and four cards changed. Existing descriptive end-of-combat callback retained. Built-in chooser/formatting backends and gameplay tests remain downstream."
+}

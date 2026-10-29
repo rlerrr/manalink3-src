@@ -47,52 +47,106 @@ int pay_flashback(int player, int iid, event_t event, int colorless, int black, 
 	return 0;
 }
 
-int do_flashback(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white){
-	card_instance_t *instance = get_card_instance(player, card);
-	if( event == EVENT_GRAVEYARD_ABILITY &&
-		can_pay_flashback(player, instance->internal_card_id, event, colorless, black, blue, green, red, white) )
-	{
-		if( can_legally_play_iid_now(player, get_card_instance(player, card)->internal_card_id, event) ){
-			return GA_PLAYABLE_FROM_GRAVE;
-		}
-	}
-	if( event == EVENT_PAY_FLASHBACK_COSTS ){
-		return pay_flashback(player, instance->internal_card_id, event, colorless, black, blue, green, red, white);
-	}
-	return 0;
+int do_flashback(int player, int card, event_t event, int colorless, int black, int blue, int green,
+                 int red, int white)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_GRAVEYARD_ABILITY &&
+      can_pay_flashback(player, get_internal_card_id_from_csv_id(get_id(player, card)), event,
+                        colorless, black, blue, green, red, white))
+  {
+    if (can_legally_play_iid_now(player, get_internal_card_id_from_csv_id(get_id(player, card)),
+                                 event))
+      return GA_PLAYABLE_FROM_GRAVE |
+             ((cards_data[get_internal_card_id_from_csv_id(get_id(player, card))].type &
+               TYPE_INTERRUPT)
+                  ? GA_INTERRUPT_ABILITY
+                  : 0);
+  }
+  if (event == EVENT_PAY_FLASHBACK_COSTS)
+  {
+    if (cards_data[get_internal_card_id_from_csv_id(get_id(player, card))].type & TYPE_INTERRUPT)
+    {
+      instance->targets[0].player = card_on_stack_controller;
+      instance->targets[0].card = card_on_stack;
+      instance->number_of_targets = 1;
+    }
+    return pay_flashback(player, get_internal_card_id_from_csv_id(get_id(player, card)), event,
+                         colorless, black, blue, green, red, white);
+  }
+  return 0;
 }
 
-static int od_land(int player, int card, event_t event, int color1, int color2){
+static int od_land(int player, int card, event_t event, int color1, int color2)
+{
+  if (event == EVENT_RESOLVE_SPELL)
+    play_land_sound_effect(player, card);
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		play_land_sound_effect(player, card);
-	}
+  if (event == EVENT_CAN_ACTIVATE && !is_tapped(player, card) &&
+      (has_mana(player, COLOR_COLORLESS, 1) || mana_colors_added[player]) &&
+      get_card_instance(player, card)->targets[1].player != 66)
+    return can_produce_mana(player, card);
 
-	if( event == EVENT_CAN_ACTIVATE && ! is_tapped(player, card) && has_mana(player, COLOR_COLORLESS, 1) &&
-		get_card_instance(player, card)->targets[1].player != 66
-	  ){
-		return can_produce_mana(player, card);
-	}
+  if (event == EVENT_ACTIVATE)
+  {
+    if (is_what(player, card, TYPE_LAND) && mana_colors_added[player])
+    {
+      int choice = 0;
+      if (has_mana(player, COLOR_COLORLESS, 2))
+        choice = do_dialog(player, player, card, -1, -1,
+                           " Basic land ability\n Double Mana ability\n Cancel", 1);
+      if (choice == 0)
+      {
+        produce_mana_tapped_all_one_color(player, card, mana_colors_added[player], 1);
+        return 0;
+      }
+      if (choice != 1)
+      {
+        if (choice == 2)
+          spell_fizzled = 1;
+        return 0;
+      }
+    }
+    get_card_instance(player, card)->targets[1].player = 66;
+    charge_mana(player, COLOR_COLORLESS, 1);
+    if (spell_fizzled != 1)
+      produce_mana_tapped2_impl(player, card, color1, 1, color2, 1, 0);
+    get_card_instance(player, card)->targets[1].player = 0;
+  }
 
-	if(event == EVENT_ACTIVATE ){
-		get_card_instance(player, card)->targets[1].player = 66;
-		charge_mana(player, COLOR_COLORLESS, 1);
-		if( spell_fizzled != 1 ){
-			produce_mana_tapped2(player, card, color1, 1, color2, 1);
-		}
-		get_card_instance(player, card)->targets[1].player = 0;
-	}
-
-	if( event == EVENT_COUNT_MANA && affect_me(player, card) ){
-		if( ! is_tapped(player, card) && has_mana(player, COLOR_COLORLESS, 1) && get_card_instance(player, card)->targets[1].player != 66 &&
-			can_produce_mana(player, card) )
-		{
-			declare_mana_available(player, color1, 1);
-			declare_mana_available(player, color2, 1);
-		}
-	}
-
-	return 0;
+  if (event == EVENT_COUNT_MANA && affect_me(player, card))
+  {
+    if (!is_tapped(player, card) && has_mana(player, COLOR_COLORLESS, 1) &&
+        get_card_instance(player, card)->targets[1].player != 66 && can_produce_mana(player, card))
+    {
+      if (multi_mana_transmutation[player][0] &&
+          check_battlefield_for_id(player, CARD_ID_MANA_REFLECTION) &&
+          is_what(player, card, TYPE_LAND))
+      {
+        declare_mana_available_maybe_hex(
+            player, multi_mana_transmutation[player][0] | mana_colors_added[player],
+            multi_mana_transmutation[player][1]);
+        return 0;
+      }
+      if (check_special_flags2(player, card, SF2_CONTAMINATION) && card >= 0)
+      {
+        int amount1 = mana_quantity_override[player][color1];
+        int amount2 = 0;
+        if (amount1 < 0 && mana_quantity_override[player][color2] < 0)
+          amount1 = amount2 = 1;
+        declare_mana_available(player, mana_color_override[player][color1], amount1);
+        declare_mana_available(player, mana_color_override[player][color2], amount2);
+        return 0;
+      }
+      declare_mana_available(player, COLOR_COLORLESS, -1);
+      declare_mana_available(player, color1, 1);
+      declare_mana_available(player, color2, 1);
+    }
+    else if (mana_colors_added[player] && !is_tapped(player, card) &&
+             can_produce_mana(player, card))
+      declare_mana_available_maybe_hex(player, mana_colors_added[player], 1);
+  }
+  return 0;
 }
 
 static int od_egg(int player, int card, event_t event, int color1, int color2){
@@ -120,17 +174,16 @@ static int od_egg(int player, int card, event_t event, int color1, int color2){
 	return 0;
 }
 
-static int od_shrine(int player, int card, event_t event){
-
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		int csvid = get_card_name(trigger_cause_controller, trigger_cause);
-		int amount = count_graveyard_by_id(ANYBODY, csvid);
-		if( amount && new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-			return amount;
-		}
-	}
-
-	return 0;
+static void od_shrine(int player, int card, event_t event)
+{
+  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card))
+  {
+    int csvid = get_card_name(trigger_cause_controller, trigger_cause);
+    int amount = count_graveyard_by_id(ANYBODY, csvid);
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+    if (amount)
+      sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+  }
 }
 
 static void threshold_mod_for_pt_and_abilitie(int player, int card, event_t event, int pow, int tou, int key, int s_key){
@@ -489,18 +542,23 @@ When ~ enters the battlefield, you may return target enchantment card from your 
 	return 0;
 }
 
-int card_aven_shrine(int player, int card, event_t event){
-/* CARD_ID_AVEN_SHRINE	5475
-Aven Shrine	|1|W|W
-Enchantment
-Whenever a player casts a spell, that player gains X life, where X is the number of cards in all graveyards with the same name as that spell.*/
+int card_aven_shrine(int player, int card, event_t event)
+{
+  /* CARD_ID_AVEN_SHRINE	5475
+  Aven Shrine	|1|W|W
+  Enchantment
+  Whenever a player casts a spell, that player gains X life, where X is the number of cards in all
+  graveyards with the same name as that spell.*/
 
-	int result = od_shrine(player, card, event);
-	if( result ){
-		gain_life(trigger_cause_controller, result);
-	}
+  od_shrine(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    int csvid = get_card_name(trigger_cause_controller, trigger_cause);
+    int result = count_graveyard_by_id(ANYBODY, csvid);
+    gain_life(trigger_cause_controller, result);
+  }
 
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_aven_fisher(int player, int card, event_t event){
@@ -894,71 +952,80 @@ At the beginning of each player's upkeep, that player sacrifices an artifact, cr
 	return 0;
 }
 
-static int burning_sands_effect(int player, int card, event_t event){
+static int burning_sands_effect(int player, int card, event_t event)
+{
 
-	//In case something is copying Pawn of Ulamog and then reverts to its original form.
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_BURNING_SANDS ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  // In case something is copying Pawn of Ulamog and then reverts to its original form.
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_BURNING_SANDS)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE2(instance->targets[11].player) = 1;
-					}
-				}
-				count_for_gfp_ability_and_store_values(player, card, event, ANYBODY, TYPE_CREATURE, NULL, GFPC_TRACK_CONTROLLER, 0);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+          }
+        }
+        count_for_gfp_ability_and_store_values(player, card, event, ANYBODY, TYPE_CREATURE, NULL,
+                                               GFPC_TRACK_CONTROLLER, 0);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int creatures_dead_by_owner[2] = {BYTE0(result), BYTE1(result)};
-			test_definition_t test;
-			default_test_definition(&test, TYPE_LAND);
-			APNAP(p,{
-						if( creatures_dead_by_owner[p] ){
-							test.qty = creatures_dead_by_owner[p];
-							new_sacrifice(player, card, p, SAC_CAUSED | SAC_NO_CANCEL, &test);
-						}
-					}
-			);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int creatures_dead_by_owner[2] = {BYTE0(result), BYTE1(result)};
+    test_definition_t test;
+    default_test_definition(&test, TYPE_LAND);
+    APNAP(p, {
+      if (creatures_dead_by_owner[p])
+      {
+        test.qty = creatures_dead_by_owner[p];
+        new_sacrifice(player, card, p, SAC_CAUSED | SAC_NO_CANCEL, &test);
+      }
+    });
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_burning_sands(int player, int card, event_t event)
@@ -1152,18 +1219,23 @@ int card_cabal_pit(int player, int card, event_t event){
 	return 0;
 }
 
-int card_cabal_shrine(int player, int card, event_t event){
-/* CARD_ID_CABAL_SHRINE	5500
-Cabal Shrine	|1|B|B
-Enchantment
-Whenever a player casts a spell, that player discards X cards, where X is the number of cards in all graveyards with the same name as that spell.*/
+int card_cabal_shrine(int player, int card, event_t event)
+{
+  /* CARD_ID_CABAL_SHRINE	5500
+  Cabal Shrine	|1|B|B
+  Enchantment
+  Whenever a player casts a spell, that player discards X cards, where X is the number of cards in
+  all graveyards with the same name as that spell.*/
 
-	int result = od_shrine(player, card, event);
-	if( result ){
-		new_multidiscard(trigger_cause_controller, result, 0, player);
-	}
+  od_shrine(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    int csvid = get_card_name(trigger_cause_controller, trigger_cause);
+    int result = count_graveyard_by_id(ANYBODY, csvid);
+    new_multidiscard(trigger_cause_controller, result, 0, player);
+  }
 
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_call_of_the_herd(int player, int card, event_t event){
@@ -1508,26 +1580,33 @@ Creature - Cephalid 2/3
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_U(2), 0, &td, "TARGET_CREATURE");
 }
 
-int card_cephalid_shrine(int player, int card, event_t event){
-/* CARD_ID_CEPHALID_SHRINE	5512
-Cephalid Shrine	|1|U|U
-Enchantment
-Whenever a player casts a spell, counter that spell unless that player pays |X, where X is the number of cards in all graveyards with the same name as the spell.*/
+int card_cephalid_shrine(int player, int card, event_t event)
+{
+  /* CARD_ID_CEPHALID_SHRINE	5512
+  Cephalid Shrine	|1|U|U
+  Enchantment
+  Whenever a player casts a spell, counter that spell unless that player pays |X, where X is the
+  number of cards in all graveyards with the same name as the spell.*/
 
-	int result = od_shrine(player, card, event);
-	if( result ){
-		int kill = 1;
-		if( has_mana(trigger_cause_controller, COLOR_ANY, result) &&
-			charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, trigger_cause_controller, COLOR_ANY, result) )
-		{
-			kill = 0;
-		}
-		if( kill ){
-			real_counter_a_spell(player, card, trigger_cause_controller, trigger_cause);
-		}
-	}
+  od_shrine(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    int csvid = get_card_name(trigger_cause_controller, trigger_cause);
+    int result = count_graveyard_by_id(ANYBODY, csvid);
+    int kill = 1;
+    if (has_mana(trigger_cause_controller, COLOR_ANY, result) &&
+        charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, trigger_cause_controller,
+                                    COLOR_ANY, result))
+    {
+      kill = 0;
+    }
+    if (kill)
+    {
+      real_counter_a_spell(player, card, trigger_cause_controller, trigger_cause);
+    }
+  }
 
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_chamber_of_manipulation(int player, int card, event_t event){
@@ -2368,18 +2447,23 @@ Shuffle your library, then put them on top of it in any order. */
 	return 0;
 }
 
-int card_dwarven_shrine(int player, int card, event_t event){
-/* CARD_ID_DWARVEN_SHRINE	5551
-Dwarven Shrine	|1|R|R
-Enchantment
-Whenever a player casts a spell, ~ deals X damage to that player, where X is twice the number of cards in all graveyards with the same name as that spell.*/
+int card_dwarven_shrine(int player, int card, event_t event)
+{
+  /* CARD_ID_DWARVEN_SHRINE	5551
+  Dwarven Shrine	|1|R|R
+  Enchantment
+  Whenever a player casts a spell, ~ deals X damage to that player, where X is twice the number of
+  cards in all graveyards with the same name as that spell.*/
 
-	int amount = od_shrine(player, card, event);
-	if( amount ){
-		damage_player(trigger_cause_controller,  2*amount, player, card);
-	}
+  od_shrine(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    int csvid = get_card_name(trigger_cause_controller, trigger_cause);
+    int amount = count_graveyard_by_id(ANYBODY, csvid);
+    damage_player(trigger_cause_controller, 2 * amount, player, card);
+  }
 
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_earnest_fellowship(int player, int card, event_t event){
@@ -3731,21 +3815,27 @@ int card_nantuko_mentor(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_XG(2, 1), 0, &td, "TARGET_CREATURE");
 }
 
-int card_nantuko_shrine(int player, int card, event_t event){
-	/* Nantuko Shrine	|1|G|G
-	 * Enchantment
-	 * Whenever a player casts a spell, that player puts X 1/1 |Sgreen Squirrel creature tokens onto the battlefield, where X is the number of cards in all graveyards with the same name as that spell. */
+int card_nantuko_shrine(int player, int card, event_t event)
+{
+  /* Nantuko Shrine	|1|G|G
+   * Enchantment
+   * Whenever a player casts a spell, that player puts X 1/1 |Sgreen Squirrel creature tokens onto
+   * the battlefield, where X is the number of cards in all graveyards with the same name as that
+   * spell. */
 
-	int amount = od_shrine(player, card, event);
-	if( amount ){
-		token_generation_t token;
-		default_token_definition(player, card, CARD_ID_SQUIRREL, &token);
-		token.t_player = trigger_cause_controller;
-		token.qty = amount;
-		generate_token(&token);
-	}
+  od_shrine(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    int csvid = get_card_name(trigger_cause_controller, trigger_cause);
+    int amount = count_graveyard_by_id(ANYBODY, csvid);
+    token_generation_t token;
+    default_token_definition(player, card, CARD_ID_SQUIRREL, &token);
+    token.t_player = trigger_cause_controller;
+    token.qty = amount;
+    generate_token(&token);
+  }
 
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_need_for_speed(int player, int card, event_t event){
@@ -4853,44 +4943,72 @@ Draw a card. */
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE_YOU_CONTROL", 1, NULL);
 }
 
-static int shifty_doppelganger_legacy(int player, int card, event_t event){
+static int shifty_doppelganger_legacy(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
 
-		haste(p, c, event);
+    haste(p, c, event);
 
-		if( trigger_condition == TRIGGER_EOT && affect_me(player, card) && reason_for_trigger_controller == player ){
-			if( instance->targets[2].player > 0 ){
-				instance->targets[2].player--;
-			}
-			else{
-				if(event == EVENT_TRIGGER){
-					event_result |= RESOLVE_TRIGGER_MANDATORY;
-				}
-				else if(event == EVENT_RESOLVE_TRIGGER){
-						if( ! check_state(p, c, STATE_OUBLIETTED) ){
-							state_untargettable(p, c, 1);
-							int owner = instance->targets[1].player;
-							int iid = instance->targets[1].card;
-							if( check_rfg(owner, cards_data[iid].id) ){
-								int card_added = add_card_to_hand(owner, iid);
-								remove_card_from_rfg(owner, cards_data[iid].id);
-								put_into_play(owner, card_added);
-							}
-							kill_card(p, c, KILL_SACRIFICE);
-						}
-						else{
-							kill_card(player, card, KILL_EXILE);
-						}
-				}
-			}
-		}
-	}
+    if (trigger_condition == TRIGGER_EOT && affect_me(player, card) &&
+        reason_for_trigger_controller == player)
+    {
+      if (instance->targets[2].player > 0)
+      {
+        instance->targets[2].player--;
+      }
+      else
+      {
+        if (event == EVENT_TRIGGER)
+        {
+          event_result |= RESOLVE_TRIGGER_MANDATORY;
+        }
+        else if (event == EVENT_RESOLVE_TRIGGER)
+        {
+          if (!check_state(p, c, STATE_OUBLIETTED))
+          {
+            state_untargettable(p, c, 1);
+            int owner = instance->targets[1].player;
+            int iid = instance->targets[1].card;
+            int csvid = cards_data[iid].id;
+            if (csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || csvid == CARD_ID_CHITTERING_HOST ||
+                csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP)
+            {
+              int csvids[2];
+              unmeld(csvid, &csvids[0], &csvids[1]);
+              for (int i = 0; i < 2; ++i)
+              {
+                iid = get_internal_card_id_from_csv_id(csvids[i]);
+                if (check_rfg(owner, csvids[i]))
+                {
+                  int card_added = add_card_to_hand(owner, iid);
+                  remove_card_from_rfg(owner, csvids[i]);
+                  put_into_play(owner, card_added);
+                }
+              }
+            }
+            else if (check_rfg(owner, csvid))
+            {
+              int card_added = add_card_to_hand(owner, iid);
+              remove_card_from_rfg(owner, csvid);
+              put_into_play(owner, card_added);
+            }
+            kill_card(p, c, KILL_SACRIFICE);
+          }
+          else
+          {
+            kill_card(player, card, KILL_EXILE);
+          }
+        }
+      }
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_shifty_doppelganger(int player, int card, event_t event){

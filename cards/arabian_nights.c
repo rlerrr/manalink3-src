@@ -2135,32 +2135,38 @@ int card_rukh_egg(int player, int card, event_t event){
 	return 0;
 }
 
-int sandals_check(int player, int card, event_t event){
+int sandals_check(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
 
-		if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c) ){
-			if( is_this_dying(p, c) ){
-				instance->targets[11].player = 1;
-				instance->damage_target_player = instance->damage_target_card = -1;
-			}
-		}
-	}
+    if (event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c))
+    {
+      if (!check_for_death_trigger_removal(p, c) && is_this_dying(p, c))
+      {
+        instance->targets[11].player = 1;
+        instance->damage_target_player = instance->damage_target_card = -1;
+      }
+    }
+  }
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		kill_card(instance->targets[1].player, instance->targets[1].card, KILL_DESTROY);
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    kill_card(instance->targets[1].player, instance->targets[1].card, KILL_DESTROY);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_sandals_of_abdallah(int player, int card, event_t event){

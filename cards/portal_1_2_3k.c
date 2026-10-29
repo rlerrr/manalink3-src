@@ -442,38 +442,48 @@ int card_gravedigger(int player, int card, event_t event)
   return 0;
 }
 
-static int harsh_justice_legacy(int player, int card, event_t event ){
+static int harsh_justice_legacy(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
 
-		card_instance_t *source = damage_being_dealt(player);
-		if( source ){
-			if( source->damage_source_player == p && source->damage_source_card == c ){
-				if( source->damage_target_player == instance->targets[1].player && source->damage_target_card == -1 ){
-					if( ! damage_is_to_planeswalker(source) ){
-						if( instance->targets[8].player < 0 ){
-							instance->targets[8].player = 0;
-						}
-						instance->targets[8].player += source->info_slot;
-					}
-				}
-			}
-		}
-		int result = resolve_damage_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card);
-		if( result ){
-			damage_player(p, result, p, c);
-		}
-	}
+    card_instance_t *source = damage_being_dealt(player);
+    if (source)
+    {
+      if (source->damage_source_player == p && source->damage_source_card == c)
+      {
+        if (source->damage_target_player == instance->targets[1].player &&
+            source->damage_target_card == -1)
+        {
+          if (!damage_is_to_planeswalker(source))
+          {
+            if (instance->targets[8].player < 0)
+            {
+              instance->targets[8].player = 0;
+            }
+            instance->targets[8].player += source->info_slot;
+          }
+        }
+      }
+    }
+    int result = resolve_damage_trigger(player, card, event, DDBM_0, player, card);
+    if (result)
+    {
+      damage_player(p, result, p, c);
+    }
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_harsh_justice(int player, int card, event_t event){

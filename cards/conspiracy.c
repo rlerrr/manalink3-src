@@ -69,24 +69,31 @@ int will_of_the_council_impl(int player, int card, int voting_player, char pos1_
 	return result;
 }
 
-int will_of_the_council(int player, int card, char pos1_description[100], char pos2_description[100], int priorities[2]){
-	int i;
-	int result = 0;
-	int p_votes[2] = {0, 0};
-	for(i=0; i<2; i++){
-		int p = i == 0 ? player : 1-player;
-		int r2 = will_of_the_council_impl(player, card, p, pos1_description, pos2_description, priorities);
-		if( BYTE0(r2)== 0 || BYTE1(r2)== 0 ){
-			p_votes[p] = BYTE0(r2) > 0 ? 1 : 2;
-		}
-		SET_BYTE0(result)+=BYTE0(r2);
-		SET_BYTE1(result)+=BYTE1(r2);
-	}
-	if( p_votes[0] && p_votes[1] && (p_votes[0] != p_votes[1]) ){
-		lose_life(0, count_cards_by_id(1, CARD_ID_GRUDGE_KEEPER)*2);
-		lose_life(1, count_cards_by_id(0, CARD_ID_GRUDGE_KEEPER)*2);
-	}
-	return result;
+int will_of_the_council(int player, int card, char pos1_description[100],
+                        char pos2_description[100], int priorities[2])
+{
+  int i;
+  int result = 0;
+  int p_votes[2] = {0, 0};
+  for (i = 0; i < 2; i++)
+  {
+    int p = i == 0 ? player : 1 - player;
+    int r2 =
+        will_of_the_council_impl(player, card, p, pos1_description, pos2_description, priorities);
+    if (BYTE0(r2) == 0 || BYTE1(r2) == 0)
+    {
+      p_votes[p] = BYTE0(r2) > 0 ? 1 : 2;
+    }
+    SET_BYTE0(result) += BYTE0(r2);
+    SET_BYTE1(result) += BYTE1(r2);
+    SET_BYTE2(result) += BYTE2(r2);
+  }
+  if (p_votes[0] && p_votes[1] && (p_votes[0] != p_votes[1]))
+  {
+    lose_life(0, count_cards_by_id(1, CARD_ID_GRUDGE_KEEPER) * 2);
+    lose_life(1, count_cards_by_id(0, CARD_ID_GRUDGE_KEEPER) * 2);
+  }
+  return result;
 }
 
 void multikicked_with_1_1_counters(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white){
@@ -2546,60 +2553,67 @@ static int marchesa_reanimation_legacy(int player, int card, event_t event){
 	return 0;
 }
 
-int marchesa_effect(int player, int card, event_t event){
+int marchesa_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_MARCHESA_THE_BLACK_ROSE ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_MARCHESA_THE_BLACK_ROSE)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 && affect_me(instance->damage_target_player, instance->damage_target_card) ){
-			card_instance_t *aff = get_card_instance(affected_card_controller, affected_card);
-			if( aff->kill_code > 0 ){
-				instance->damage_target_player = instance->damage_target_card = -1;
-			}
-		}
-		if( ! is_token(affected_card_controller, affected_card) && count_1_1_counters(affected_card_controller, affected_card) ){
-			count_for_gfp_ability_and_store_values(player, card, event, player, TYPE_CREATURE, NULL, GFPC_TRACK_DEAD_CREATURES, 0);
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1 &&
+        affect_me(instance->damage_target_player, instance->damage_target_card))
+    {
+      card_instance_t *aff = get_card_instance(affected_card_controller, affected_card);
+      if (aff->kill_code > 0)
+      {
+        instance->damage_target_player = instance->damage_target_card = -1;
+      }
+    }
+    if (!is_token(affected_card_controller, affected_card) &&
+        count_1_1_counters(affected_card_controller, affected_card))
+    {
+      count_for_gfp_ability_and_store_values(player, card, event, player, TYPE_CREATURE, NULL,
+                                             GFPC_TRACK_DEAD_CREATURES | GFPC_STORE_OWNER, 0);
+    }
+  }
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		card_instance_t *instance = get_card_instance( player, card );
-		instance->targets[11].card = 0;
-		int k;
-		for(k=0; k<10; k++){
-			if( instance->targets[k].player != -1 ){
-				int legacy = create_legacy_effect(player, card, &marchesa_reanimation_legacy);
-				card_instance_t *leg = get_card_instance(player, legacy);
-				leg->targets[0].player = player;
-				leg->targets[0].card = cards_data[instance->targets[k].player].id;
-				instance->targets[k].player = -1;
-			}
-			if( instance->targets[k].card != -1 ){
-				int legacy = create_legacy_effect(player, card, &marchesa_reanimation_legacy);
-				card_instance_t *leg = get_card_instance(player, legacy);
-				leg->targets[0].player = player;
-				leg->targets[0].card = cards_data[instance->targets[k].card].id;
-				instance->targets[k].card = -1;
-			}
-		}
-		if( instance->damage_target_player == -1 ){
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
-
-	return 0;
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    instance->targets[11].card = 0;
+    for (int k = 0; k < 10; ++k)
+    {
+      if (instance->targets[k].player != -1)
+      {
+        int legacy = create_legacy_effect(player, card, &marchesa_reanimation_legacy);
+        card_instance_t *leg = get_card_instance(player, legacy);
+        leg->targets[0].player = instance->targets[k].player;
+        leg->targets[0].card = cards_data[instance->targets[k].card].id;
+        instance->targets[k].player = instance->targets[k].card = -1;
+      }
+    }
+    if (instance->damage_target_player == -1)
+      kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
 int card_marchesa_the_black_rose(int player, int card, event_t event)

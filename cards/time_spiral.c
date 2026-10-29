@@ -265,98 +265,115 @@ LAB_020eab6a:
   return 0;
 }
 
-int suspend(int player, int card, event_t event, int turns, int colorless, int black, int blue, int green, int red, int white, target_definition_t* td, const char* prompt){
-	if( event == EVENT_MODIFY_COST ){
-		card_instance_t* instance = get_card_instance(player, card);
-		int csvid = get_id(player, card);
-		int cless = colorless;
-		if( cless == -1 ){
-			cless = 0;
-		}
-		if (csvid == CARD_ID_DETRITIVORE ||
-			csvid == CARD_ID_BENALISH_COMMANDER ||
-			csvid == CARD_ID_FUNGAL_BEHEMOTH ||
-			csvid == CARD_ID_ROILING_HORROR
-		  ){
-			cless = 1; //Cannot be suspended with X = 0
-		}
-		if( has_mana_multi(player, cless, black, blue, green, red, white) ){
-			null_casting_cost(player, card);
-			instance->info_slot = 1;
-		}
-		else{
-			instance->info_slot = 0;
-		}
-	}
+int suspend(int player, int card, event_t event, int turns, int colorless, int black, int blue,
+            int green, int red, int white, target_definition_t *td, const char *prompt)
+{
+  if (event == EVENT_MODIFY_COST)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int csvid = get_id(player, card);
+    int cless = colorless;
+    if (cless == -1)
+    {
+      cless = 0;
+    }
+    if (csvid == CARD_ID_DETRITIVORE || csvid == CARD_ID_BENALISH_COMMANDER ||
+        csvid == CARD_ID_FUNGAL_BEHEMOTH || csvid == CARD_ID_ROILING_HORROR)
+    {
+      cless = 1; // Cannot be suspended with X = 0
+    }
+    if (has_mana_multi(player, cless, black, blue, green, red, white))
+    {
+      null_casting_cost(player, card);
+      instance->info_slot = 1;
+    }
+    else
+    {
+      instance->info_slot = 0;
+    }
+  }
 
-	if (event == EVENT_CAN_CAST){
-		card_instance_t* instance = get_card_instance(player, card);
-		if (instance->info_slot && !played_for_free(player, card) && !is_token(player, card)){
-			return 1;
-		}
-		return !td || can_target(td);
-	}
+  if (event == EVENT_CAN_CAST)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->info_slot && !played_for_free(player, card) && !is_token(player, card))
+    {
+      return 1;
+    }
+    return !td || can_target(td);
+  }
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		card_instance_t* instance = get_card_instance(player, card);
-		enum{
-			CHOICE_NORMAL = 1,
-			CHOICE_SUSPEND
-		} choice = CHOICE_NORMAL;
-		int ff = played_for_free(player, card) | is_token(player, card);
-		if( ! ff && instance->info_slot == 1){
-			int cless = colorless;
-			if (cless == -1){
-				cless = 0;
-			}
-			int csvid = get_id(player, card);
-			choice = DIALOG(player, card, event, DLG_NO_STORAGE, DLG_AUTOCHOOSE_IF_1,
-							"Play normally", has_mana_to_cast_id(player, event, csvid) && (!td || can_target(td)), 2,
-							"Suspend", has_mana_multi(player, cless, black, blue, green, red, white), 1);
-		}
-		if(choice == CHOICE_NORMAL){
-			if(instance->info_slot == 1 && ! ff ){
-				if( ! charge_mana_from_id(player, card, event, get_id(player, card)) ){
-					spell_fizzled = 1;
-					return 0;
-				}
-			}
-			if (td){
-				instance->number_of_targets = 0;
-				pick_target(td, prompt);
-			}
-		}
-		else if (choice == CHOICE_SUSPEND){
-				int csvid = get_id(player, card);
-				int cless = colorless;
-				if( cless == -1 ){
-					cless = 0;
-				}
-				if (charge_mana_multi(player, cless, black, blue, green, red, white)){
-					if (csvid == CARD_ID_DETRITIVORE ||
-						csvid == CARD_ID_BENALISH_COMMANDER ||
-						csvid == CARD_ID_FUNGAL_BEHEMOTH ||
-						csvid == CARD_ID_ROILING_HORROR
-					   ){
-						charge_mana(player, COLOR_COLORLESS, -1);
-						if( x_value == 0 ){ //Cannot be suspended with X = 0
-							spell_fizzled = 1;
-							return 0;
-						}
-					}
-					if (turns == -1){
-						turns = x_value;
-					}
-					suspend_a_card(player, card, player, card, turns);
-					land_can_be_played &= ~LCBP_SPELL_BEING_PLAYED;
-				}
-		}
-		else {
-			spell_fizzled = 1;
-		}
-	}
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    enum
+    {
+      CHOICE_NORMAL = 1,
+      CHOICE_SUSPEND
+    } choice = CHOICE_NORMAL;
+    int ff = played_for_free(player, card) | is_token(player, card);
+    if (!ff && instance->info_slot == 1)
+    {
+      int cless = colorless;
+      if (cless == -1)
+      {
+        cless = 0;
+      }
+      int csvid = get_id(player, card);
+      choice = DIALOG(player, card, event, DLG_NO_STORAGE, DLG_AUTOCHOOSE_IF_1, "Play normally",
+                      has_mana_to_cast_id(player, event, csvid) && (!td || can_target(td)), 2,
+                      "Suspend", has_mana_multi(player, cless, black, blue, green, red, white), 1);
+    }
+    if (choice == CHOICE_NORMAL)
+    {
+      if (instance->info_slot == 1 && !ff)
+      {
+        if (!charge_mana_from_id(player, card, event, get_id(player, card)))
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+      }
+      if (td)
+      {
+        instance->number_of_targets = 0;
+        pick_target(td, prompt);
+      }
+    }
+    else if (choice == CHOICE_SUSPEND)
+    {
+      int csvid = get_id(player, card);
+      int cless = colorless;
+      if (cless == -1)
+      {
+        cless = 0;
+      }
+      if (charge_mana_multi(player, cless, black, blue, green, red, white))
+      {
+        if (csvid == CARD_ID_DETRITIVORE || csvid == CARD_ID_BENALISH_COMMANDER ||
+            csvid == CARD_ID_FUNGAL_BEHEMOTH || csvid == CARD_ID_ROILING_HORROR)
+        {
+          charge_mana(player, COLOR_COLORLESS, -1);
+          if (x_value == 0)
+          { // Cannot be suspended with X = 0
+            spell_fizzled = 1;
+            return 0;
+          }
+        }
+        if (turns == -1)
+        {
+          turns = x_value;
+        }
+        suspend_a_card(player, card, player, card, turns);
+      }
+    }
+    else
+    {
+      spell_fizzled = 1;
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int suspend_only(int player, int card, event_t event, int turns, int colorless, int black, int blue, int green, int red, int white)
@@ -391,17 +408,34 @@ int suspend_only(int player, int card, event_t event, int turns, int colorless, 
   return 0;
 }
 
-int is_suspend_only_card(int player, int card){
-	int csvid = player == -1 ? cards_data[card].id : get_id(player, card);
-	switch( csvid ){
-			case CARD_ID_HYPERGENESIS: return 1;
-			case CARD_ID_ANCESTRAL_VISION: return 1;
-			case CARD_ID_LIVING_END: return 1;
-			case CARD_ID_RESTORE_BALANCE: return 1;
-			case CARD_ID_WHEEL_OF_FATE: return 1;
-			case CARD_ID_LOTUS_BLOOM: return 1;
-	};
-	return 0;
+int is_suspend_only_card(int player, int card)
+{
+  int csvid = player == -1 ? cards_data[card].id : get_id(player, card);
+  switch (csvid)
+  {
+  case CARD_ID_HYPERGENESIS:
+    return 1;
+  case CARD_ID_ANCESTRAL_VISION:
+    return 1;
+  case CARD_ID_LIVING_END:
+    return 1;
+  case CARD_ID_RESTORE_BALANCE:
+    return 1;
+  case CARD_ID_WHEEL_OF_FATE:
+    return 1;
+  case CARD_ID_LOTUS_BLOOM:
+    return 1;
+  case CARD_ID_CRASHING_FOOTFALLS:
+  case CARD_ID_MOX_TANTALITE:
+  case CARD_ID_GAEAS_WILL:
+  case CARD_ID_GLIMPSE_OF_TOMORROW:
+  case CARD_ID_INEVITABLE_BETRAYAL:
+  case CARD_ID_PROFANE_TUTOR:
+  case CARD_ID_RESURGENT_BELIEF:
+  case CARD_ID_SOL_TALISMAN:
+    return 1;
+  };
+  return 0;
 }
 
 void holy_nimbus(int player, int card, event_t event, int cost)
@@ -3078,10 +3112,11 @@ void damage_all_my_blockers(int player, int card, int dmg){
 
 static void sac_and_damage_blockers(int player, int card, int t_player, int t_card)
 {
-	damage_creature(t_player, t_card, 4, player, card);
-	if( in_play(player, card) ){
-		kill_card(player, card, KILL_SACRIFICE);
-	}
+  if (in_play(player, card))
+  {
+    damage_creature(t_player, t_card, 4, player, card);
+    kill_card(player, card, KILL_SACRIFICE);
+  }
 }
 
 int card_ib_halfheart_goblin_tactician(int player, int card, event_t event)
@@ -3715,95 +3750,112 @@ int card_lightning_axe(int player, int card, event_t event)
   return 0;
 }
 
-static int lim_dul_the_necromancer_effect(int player, int card, event_t event){
+static int lim_dul_the_necromancer_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_LIM_DUL_THE_NECROMANCER ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_LIM_DUL_THE_NECROMANCER)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				count_for_gfp_ability_and_store_values(player, card, event, 1-player, TYPE_CREATURE, NULL, GFPC_TRACK_DEAD_CREATURES, 1);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+          }
+        }
+        count_for_gfp_ability_and_store_values(player, card, event, 1 - player, TYPE_CREATURE, NULL,
+                                               GFPC_TRACK_DEAD_CREATURES, 1);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			card_instance_t *instance = get_card_instance(player, card);
-			int dead_array[3][9];
-			int dac = 0;
-			int i;
-			for(i=1; i<10; i++){
-				dead_array[0][dac] = instance->targets[i].player;
-				dead_array[1][dac] = instance->targets[i].card;
-				dead_array[2][dac] = dead_array[1][dac];
-				instance->targets[i].player = instance->targets[i].card = -1;
-				dac++;
-			}
-			int chosen = 0;
-			test_definition_t test;
-			new_default_test_definition(&test, TYPE_ANY, "Select a permanent to bring back.");
-			test.id = cards_data[iid_draw_a_card].id;
-			test.id_flag = DOESNT_MATCH;
-			while( has_mana_multi(player, MANACOST_XB(chosen, chosen)) ){
-					int selected = select_card_from_zone(player, player, dead_array[1], dac, 0, AI_MAX_CMC, -1, &test);
-					if( selected == -1 ){
-						break;
-					}
-					dead_array[1][selected] = iid_draw_a_card;
-					chosen++;
-			}
-			if( chosen ){
-				if( charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, MANACOST_XB(chosen, chosen)) ){
-					for(i=0; i<dac; i++){
-						if( dead_array[1][i] == iid_draw_a_card ){
-							int owner = dead_array[0][i];
-							int csvid = cards_data[dead_array[2][i]].id;
-							seek_grave_for_id_to_reanimate(player, card, owner, csvid, REANIMATE_ADD_BLACK_ZOMBIE);
-						}
-					}
-				}
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result)
+  {
+    if (!check_status(player, card, STATUS_INVISIBLE_FX))
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      int dead_array[3][9];
+      int dac = 0;
+      int i;
+      for (i = 1; i < 10; i++)
+      {
+        dead_array[0][dac] = instance->targets[i].player;
+        dead_array[1][dac] = instance->targets[i].card;
+        dead_array[2][dac] = dead_array[1][dac];
+        instance->targets[i].player = instance->targets[i].card = -1;
+        dac++;
+      }
+      int chosen = 0;
+      test_definition_t test;
+      new_default_test_definition(&test, TYPE_ANY, "Select a permanent to bring back.");
+      test.id = cards_data[iid_draw_a_card].id;
+      test.id_flag = DOESNT_MATCH;
+      while (has_mana_multi(player, MANACOST_XB(chosen + 1, chosen + 1)))
+      {
+        int selected =
+            select_card_from_zone(player, player, dead_array[1], dac, 0, AI_MAX_CMC, -1, &test);
+        if (selected == -1)
+        {
+          break;
+        }
+        dead_array[1][selected] = iid_draw_a_card;
+        chosen++;
+      }
+      if (chosen)
+      {
+        if (charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player,
+                                              MANACOST_XB(chosen, chosen)))
+        {
+          for (i = 0; i < dac; i++)
+          {
+            if (dead_array[1][i] == iid_draw_a_card)
+            {
+              int owner = dead_array[0][i];
+              int csvid = cards_data[dead_array[2][i]].id;
+              seek_grave_for_id_to_reanimate(player, card, owner, csvid,
+                                             REANIMATE_ADD_BLACK_ZOMBIE);
+            }
+          }
+        }
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_lim_dul_the_necromancer(int player, int card, event_t event){
@@ -5465,33 +5517,38 @@ int card_riftwing_cloudskate(int player, int card, event_t event){
 	return suspend(player, card, event, 3, MANACOST_XU(1, 1), NULL, NULL);
 }
 
-static int saffi_legacy(int player, int card, event_t event){
+static int saffi_legacy(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-		if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-			if( affect_me(p, c) && is_this_dying(p, c) ){
-				instance->targets[0].player = get_owner(p, c);
-				instance->targets[0].card = get_original_internal_card_id(p, c);
-				instance->number_of_targets = 0;
-				instance->damage_target_player = instance->damage_target_card = -1;
-				instance->targets[11].player = 66;
-			}
-		}
-	}
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    {
+      if (affect_me(p, c) && is_this_dying(p, c) && !check_for_death_trigger_removal(p, c))
+      {
+        instance->targets[0].player = get_owner(p, c);
+        instance->targets[0].card = get_original_internal_card_id(p, c);
+        instance->number_of_targets = 0;
+        instance->damage_target_player = instance->damage_target_card = -1;
+        instance->targets[11].player = 66;
+      }
+    }
+  }
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int owner = instance->targets[0].player;
-		int iid = instance->targets[0].card;
-		seek_grave_for_id_to_reanimate(owner, -1, owner, cards_data[iid].id, REANIMATE_DEFAULT);
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int owner = instance->targets[0].player;
+    int iid = instance->targets[0].card;
+    seek_grave_for_id_to_reanimate(owner, -1, owner, cards_data[iid].id, REANIMATE_DEFAULT);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 
@@ -7468,29 +7525,40 @@ Land - Urza's
 	return 0;
 }
 
-static int vampiric_sliver_legacy(int player, int card, event_t event){
+static int vampiric_sliver_legacy(int player, int card, event_t event)
+{
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance( player, card );
-		if( affect_me(instance->damage_target_player, instance->damage_target_card) ){
-			instance->damage_target_player = instance->damage_target_card = -1;
-			instance->targets[11].player = 1;
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (affect_me(instance->damage_target_player, instance->damage_target_card) &&
+        !check_for_death_trigger_removal(instance->damage_target_player,
+                                         instance->damage_target_card))
+    {
+      instance->damage_target_player = instance->damage_target_card = -1;
+      instance->targets[11].player = card_counts[player][5] + 1;
+    }
+  }
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		card_instance_t *instance = get_card_instance( player, card );
-		if( instance->targets[1].player > -1 && in_play(instance->targets[1].player, instance->targets[1].card) ){
-			add_counters(player, card, instance->targets[1].player, instance->targets[1].card, COUNTER_P1_P1, 1);
-		}
-		kill_card(player, card, KILL_EXILE);
-	}
+  int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (amount)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->targets[1].player > -1 &&
+        in_play(instance->targets[1].player, instance->targets[1].card))
+    {
+      add_counters(player, card, instance->targets[1].player, instance->targets[1].card,
+                   COUNTER_P1_P1, amount);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( current_phase == PHASE_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (current_phase == PHASE_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 

@@ -61,70 +61,93 @@ int clash(int player, int card){
 	return result;
 }
 
-int evoke(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white){
+int evoke(int player, int card, event_t event, int colorless, int black, int blue, int green,
+          int red, int white)
+{
 
-	card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-	if(event == EVENT_MODIFY_COST ){
-		int c1 = get_updated_casting_cost(player, card, -1, event, colorless);
-		if( has_mana_multi( player, c1, black, blue, green, red, white) ){
-			null_casting_cost(player, card);
-			instance->targets[1].player = 1;
-		}
-		else{
-			instance->targets[1].player = 0;
-		}
-	}
+  if (event == EVENT_MODIFY_COST)
+  {
+    int c1 = get_updated_casting_cost(player, card, -1, event, colorless);
+    if (has_mana_multi(player, c1, black, blue, green, red, white))
+    {
+      null_casting_cost(player, card);
+      SET_BYTE0(instance->eot_toughness) = 1;
+    }
+    else
+    {
+      SET_BYTE0(instance->eot_toughness) = 0;
+    }
+  }
 
-	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( ! played_for_free(player, card) && ! is_token(player, card) && instance->targets[1].player == 1){
-			int choice = 1;
-			if( has_mana_to_cast_id(player, event, get_id(player, card) ) ){
-				choice = do_dialog(player, player, card, -1, -1, " Play normally\n Evoke\n Cancel", 0);
-			}
-			if( choice == 0 ){
-				charge_mana_from_id(player, card, event, get_id(player, card));
-			}
-			else if( choice == 1 ){
-					int c1 = get_updated_casting_cost(player, card, -1, event, colorless);
-					charge_mana_multi( player, c1, black, blue, green, red, white);
-					if( spell_fizzled != 1 ){
-						instance->info_slot = 1;
-					}
-			}
-			else{
-				spell_fizzled = 1;
-			}
-		}
-	}
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    if (!played_for_free(player, card) && !is_token(player, card) &&
+        BYTE0(instance->eot_toughness) == 1)
+    {
+      int choice = 1;
+      if (has_mana_to_cast_id(player, event, get_id(player, card)))
+      {
+        choice = do_dialog(player, player, card, -1, -1, " Play normally\n Evoke\n Cancel", 0);
+      }
+      if (choice == 0)
+      {
+        charge_mana_from_id(player, card, event, get_id(player, card));
+      }
+      else if (choice == 1)
+      {
+        int c1 = get_updated_casting_cost(player, card, -1, event, colorless);
+        charge_mana_multi(player, c1, black, blue, green, red, white);
+        if (spell_fizzled != 1)
+        {
+          SET_BYTE1(instance->eot_toughness) = 1;
+        }
+      }
+      else
+      {
+        spell_fizzled = 1;
+      }
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
-int evoked(int player, int card){
-	if( ! is_humiliated(player, card, AL_STATIC) ){
-		return get_card_instance(player, card)->info_slot;
-	}
-	return 0;
+int evoked(int player, int card)
+{
+  if (!is_humiliated(player, card, AL_STATIC))
+  {
+    return BYTE1(get_card_instance(player, card)->eot_toughness) == 1;
+  }
+  return 0;
 }
 
-void lorwyn_need_subtype_land(int player, int card, event_t event, subtype_t subtype){
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) && !is_tapped(player, card) ){	// e.g. from Kismet
-		int tapme = 1;
-		if( is_subtype_in_hand(player, subtype) ){
-			test_definition_t this_test;
-			new_default_test_definition(&this_test, 0, get_subtype_text("Select %a card to reveal.", subtype));
-			this_test.subtype = subtype;
-			int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &this_test);
-			if (selected != -1){
-				reveal_card(player, card, player, selected);
-				tapme = 0;
-			}
-		}
-		if( tapme ){
-			get_card_instance(player, card)->state |= STATE_TAPPED;
-		}
-	}
+void lorwyn_need_subtype_land(int player, int card, event_t event, subtype_t subtype)
+{
+  if (event == EVENT_CAST_SPELL && affect_me(player, card) &&
+      !is_humiliated(player, card, AL_TRIG) && !is_tapped(player, card))
+  { // e.g. from Kismet
+    int tapme = 1;
+    if (is_subtype_in_hand(player, subtype))
+    {
+      test_definition_t this_test;
+      new_default_test_definition(&this_test, 0,
+                                  get_subtype_text("Select %a card to reveal.", subtype));
+      this_test.subtype = subtype;
+      int selected =
+          new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &this_test);
+      if (selected != -1)
+      {
+        reveal_card(player, card, player, selected);
+        tapme = 0;
+      }
+    }
+    if (tapme)
+    {
+      get_card_instance(player, card)->state |= STATE_TAPPED;
+    }
+  }
 }
 
 static int harbinger(int player, int card, event_t event, subtype_t subtype){
@@ -279,111 +302,134 @@ static int boost_if_subtype_is_present(int player, int card, event_t event, subt
 	return 0;
 }
 
-static int hideaway(int player, int card, event_t event, int mana_color){
-/* This land enters the battlefield tapped. When it does, look at the top four cards of your library, exile one face down,
- * then put the rest on the bottom of your library. */
+static int hideaway(int player, int card, event_t event, int mana_color)
+{
+  /* This land enters the battlefield tapped. When it does, look at the top four cards of your
+   * library, exile one face down, then put the rest on the bottom of your library. */
 
-	comes_into_play_tapped(player, card, event);
+  comes_into_play_tapped(player, card, event);
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY ){
-		int amount = MIN(4, count_deck(player) );
-		if( amount > 0 ){
-			card_ptr_t* c = cards_ptr[get_id(player, card)];
-			test_definition_t this_test;
-			new_default_test_definition(&this_test, 0, "");
-			scnprintf(this_test.message, 100, " Select a card to exile with %s.", c->name);
-			this_test.create_minideck = amount;
-			this_test.no_shuffle = 1;
-			int selected = new_select_a_card(player, player, TUTOR_FROM_DECK, 1, AI_MAX_CMC, -1, &this_test);
-			int iid = deck_ptr[player][selected];
-			int leg, idx;
-			exiledby_remember(player, card, player, iid, &leg, &idx);
-			rfg_card_in_deck(player, selected);
-			amount--;
-			if( amount > 0 ){
-				put_top_x_on_bottom(player, player, amount);
-			}
-		}
-	}
+  if (event == EVENT_ETB_ABILITY && !is_humiliated(player, card, AL_TRIG))
+  {
+    int amount = MIN(4, count_deck(player));
+    if (amount > 0)
+    {
+      card_ptr_t *c = cards_ptr[get_id(player, card)];
+      test_definition_t this_test;
+      new_default_test_definition(&this_test, 0, "");
+      scnprintf(this_test.message, 100, " Select a card to exile with %s.", c->name);
+      this_test.create_minideck = amount;
+      this_test.no_shuffle = 1;
+      int selected =
+          new_select_a_card(player, player, TUTOR_FROM_DECK, 1, AI_MAX_CMC, -1, &this_test);
+      int iid = deck_ptr[player][selected];
+      int leg, idx;
+      exiledby_remember(player, card, player, iid, &leg, &idx);
+      rfg_card_in_deck(player, selected);
+      amount--;
+      if (amount > 0)
+      {
+        put_top_x_on_bottom(player, player, amount);
+      }
+    }
+  }
 
-	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE ){
-		return mana_producer(player, card, event);
-	}
+  if (!IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE)
+  {
+    return mana_producer(player, card, event);
+  }
 
-	card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-	enum{
-		CHOICE_MANA = 1,
-		CHOICE_PLAY_EXILED_CARD,
-		CHOICE_SHOW_EXILED_CARD
-	};
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_PLAY_EXILED_CARD,
+    CHOICE_SHOW_EXILED_CARD
+  };
 
-	if( event == EVENT_ACTIVATE ){
-		int abils[4] = {0, 1, 0, 0};
-		int choice = instance->info_slot = CHOICE_MANA;
-		int leg = 0;
-		int idx = 0;
-		if( exiledby_find_any(player, card, &leg, &idx) && ! IS_AI(player) ){
-			abils[3] = 1;
-		}
-		int c[6] = {0};
-		c[mana_color] = 2;
-		if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, c[0], c[1], c[2], c[3], c[4], c[5], 0, NULL, NULL) &&
-			call_card_function(player, card, EVENT_CAN_ACTIVATE_HIDEAWAY_LAND) )
-		{
-			if( exiledby_choose(player, card, get_id(player, card), EXBY_FIRST_FOUND | EXBY_TEST_CAN_CAST, 0, "Cards", 1) ){
-				abils[2] = 1;
-			}
-		}
-		if( ! paying_mana() ){
-			choice = DIALOG(player, card, event, DLG_RANDOM,
-							"Get mana", abils[1], 5,
-							"Play the exiled card", abils[2], 10,
-							"Show exiled card", abils[3], 1);
-			if( ! choice ){
-				spell_fizzled = 1;
-				return 0;
-			}
-		}
+  if (event == EVENT_ACTIVATE)
+  {
+    int abils[4] = {0, 1, 0, 0};
+    int choice = instance->info_slot = CHOICE_MANA;
+    int leg = 0;
+    int idx = 0;
+    if (exiledby_find_any(player, card, &leg, &idx) && !IS_AI(player))
+    {
+      abils[3] = 1;
+    }
+    int c[6] = {0};
+    c[mana_color] = 2;
+    if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, 0, c[1], c[2],
+                                  c[3], c[4], c[5], 0, NULL, NULL) &&
+        call_card_function(player, card, EVENT_CAN_ACTIVATE_HIDEAWAY_LAND))
+    {
+      if (exiledby_choose(player, card, get_id(player, card), EXBY_FIRST_FOUND | EXBY_TEST_CAN_CAST,
+                          0, "Cards", 1))
+      {
+        abils[2] = 1;
+      }
+    }
+    if (!paying_mana())
+    {
+      choice = DIALOG(player, card, event, DLG_RANDOM, "Get mana", abils[1], 5,
+                      "Play the exiled card", abils[2], 10, "Show exiled card", abils[3], 1);
+      if (!choice)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+    }
 
-		if( choice == CHOICE_MANA ){
-			return mana_producer(player, card, event);
-		}
+    if (choice == CHOICE_MANA)
+    {
+      return mana_producer(player, card, event);
+    }
 
-		if( choice == CHOICE_PLAY_EXILED_CARD ){
-			add_state(player, card, STATE_TAPPED);
-			c[mana_color] = 1;
-			generic_activated_ability(player, card, event, 0, c[0], c[1], c[2], c[3], c[4], c[5], 0, NULL, NULL);
-			if( spell_fizzled == 1 ){
-				remove_state(player, card, STATE_TAPPED);
-			}
-		}
+    if (choice == CHOICE_PLAY_EXILED_CARD)
+    {
+      add_state(player, card, STATE_TAPPED);
+      c[mana_color] = 1;
+      generic_activated_ability(player, card, event, 0, 0, c[1], c[2], c[3], c[4], c[5], 0, NULL,
+                                NULL);
+      if (spell_fizzled == 1)
+      {
+        remove_state(player, card, STATE_TAPPED);
+      }
+    }
 
-		if( choice == CHOICE_SHOW_EXILED_CARD ){
-			exiledby_choose(player, card, get_id(player, card), EXBY_CHOOSE, 0, "Cards", 1);
-			spell_fizzled = 1;
-		}
-	}
+    if (choice == CHOICE_SHOW_EXILED_CARD)
+    {
+      exiledby_choose(player, card, get_id(player, card), EXBY_CHOOSE, 0, "Cards", 1);
+      spell_fizzled = 1;
+    }
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot == CHOICE_PLAY_EXILED_CARD ){
-			int csvid = get_id(instance->parent_controller, instance->parent_card);
-			int rval = exiledby_choose(instance->parent_controller, instance->parent_card, csvid, EXBY_CHOOSE | EXBY_TEST_CAN_CAST, 0, "Card", 1);
-			int* loc = (int*)rval;
-			if( loc ){
-				int *loc2 = exiledby_find(instance->parent_controller, instance->parent_card, *loc, NULL, NULL);
-				int iid = *loc2 & ~0x80000000;
-				*loc2 = -1;
-				if( check_rfg(player, cards_data[iid].id) ){
-					play_card_in_exile_for_free(player, player, cards_data[iid].id);
-				}
-			}
-		}
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (instance->info_slot == CHOICE_PLAY_EXILED_CARD)
+    {
+      int csvid = get_id(instance->parent_controller, instance->parent_card);
+      int rval = exiledby_choose(instance->parent_controller, instance->parent_card, csvid,
+                                 EXBY_CHOOSE | EXBY_TEST_CAN_CAST, 0, "Card", 1);
+      int *loc = (int *)rval;
+      if (loc)
+      {
+        int *loc2 =
+            exiledby_find(instance->parent_controller, instance->parent_card, *loc, NULL, NULL);
+        int iid = *loc2 & ~0x80000000;
+        *loc2 = -1;
+        if (check_rfg(player, cards_data[iid].id))
+        {
+          play_card_in_exile_for_free(player, player, cards_data[iid].id);
+        }
+      }
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 static int vivid_land(int player, int card, event_t event, int color, color_test_t test_color)
@@ -394,28 +440,34 @@ static int vivid_land(int player, int card, event_t event, int color, color_test
    * |T: Add |C to your mana pool.
    * |T, Remove a charge counter from ~: Add one mana of any color to your mana pool. */
 
-  comes_into_play_tapped(player, card, event);
-
-  enters_the_battlefield_with_counters(player, card, event, COUNTER_CHARGE, 2);
+  if (!is_humiliated(player, card, AL_TRIG))
+  {
+    comes_into_play_tapped(player, card, event);
+    enters_the_battlefield_with_counters(player, card, event, COUNTER_CHARGE, 2);
+  }
 
   if (event == EVENT_CHANGE_TYPE)
-	get_card_instance(player, card)->info_slot = count_counters(player, card, COUNTER_CHARGE) > 0 ? COLOR_TEST_ANY_COLORED : test_color;
+    get_card_instance(player, card)->info_slot =
+        count_counters(player, card, COUNTER_CHARGE) > 0 ? COLOR_TEST_ANY_COLORED : test_color;
 
   if (event == EVENT_RESOLVE_SPELL)
-	play_land_sound_effect(player, card);	// An argument could be made for play_land_sound_effect_force_color(player, card, COLOR_TEST_ANY_COLORED) instead
+    play_land_sound_effect(
+        player, card); // An argument could be made for play_land_sound_effect_force_color(player,
+                       // card, COLOR_TEST_ANY_COLORED) instead
 
   if (event == EVENT_CAN_ACTIVATE)
-	return CAN_TAP_FOR_MANA(player, card);
+    return CAN_TAP_FOR_MANA(player, card);
 
   if (event == EVENT_ACTIVATE)
-	{
-	  if (produce_mana_tapped_all_one_color_with_default(player, card, get_card_instance(player, card)->info_slot, 1, test_color)
-		  && chosen_colors && !(chosen_colors == test_color))
-		remove_counters(player, card, player, card, COUNTER_CHARGE, 1);
-	}
+  {
+    if (produce_mana_tapped_all_one_color_with_default(
+            player, card, get_card_instance(player, card)->info_slot, 1, test_color) &&
+        chosen_colors && !(chosen_colors == test_color))
+      remove_counters(player, card, player, card, COUNTER_CHARGE, 1);
+  }
 
-  if (event == EVENT_COUNT_MANA && affect_me(player, card))
-	declare_mana_available_maybe_hex(player, get_card_instance(player, card)->info_slot, 1);
+  if (event == EVENT_COUNT_MANA && affect_me(player, card) && CAN_TAP_FOR_MANA(player, card))
+    declare_mana_available_maybe_hex(player, get_card_instance(player, card)->info_slot, 1);
 
   return 0;
 }
@@ -1181,76 +1233,87 @@ int card_boggart_mob(int player, int card, event_t event){
 	return champion(player, card, event, SUBTYPE_GOBLIN, -1);
 }
 
-static int boggart_shenanigans_effect(int player, int card, event_t event){
+static int boggart_shenanigans_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_BOGGART_SHENANIGANS ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_BOGGART_SHENANIGANS)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_PERMANENT);
-				this_test.subtype = SUBTYPE_GOBLIN;
-				count_for_gfp_ability(player, card, event, player, 0, &this_test);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        test_definition_t this_test;
+        default_test_definition(&this_test, TYPE_PERMANENT);
+        this_test.subtype = SUBTYPE_GOBLIN;
+        count_for_gfp_ability(player, card, event, player, 0, &this_test);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
-		if( result ){
-			int amount = BYTE0(result);
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
 
-			target_definition_t td;
-			default_target_definition(player, card, &td, TYPE_CREATURE);
-			td.zone = TARGET_ZONE_PLAYERS;
-			card_instance_t *instance = get_card_instance(player, card);
-			while( amount ){
-					if( new_pick_target(&td, "TARGET_PLAYER", 1, 0) ){
-						damage_player(instance->targets[1].player, 1, player, card);
-					}
-					instance->number_of_targets = 1;
-					amount--;
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.zone = TARGET_ZONE_PLAYERS;
+    card_instance_t *instance = get_card_instance(player, card);
+    while (amount)
+    {
+      if (new_pick_target(&td, "TARGET_PLAYER", 1, 0))
+      {
+        damage_player(instance->targets[1].player, 1, player, card);
+      }
+      instance->number_of_targets = 1;
+      amount--;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_boggart_shenanigans(int player, int card, event_t event){
@@ -3706,69 +3769,77 @@ When ~ enters the battlefield, you may search your library for a Kithkin card, r
 	return harbinger(player, card, event, SUBTYPE_KITHKIN);
 }
 
-static int kithkin_mourncaller_effect(int player, int card, event_t event){
+static int kithkin_mourncaller_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_KITHKIN_MOURNCALLER ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_KITHKIN_MOURNCALLER)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						return 0;
-					}
-				}
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_CREATURE);
-				this_test.subtype = SUBTYPE_KITHKIN;
-				this_test.subtype_flag = F2_MULTISUBTYPE;
-				this_test.sub2 = SUBTYPE_ELF;
-				this_test.state = STATE_ATTACKING;
-				count_for_gfp_ability(player, card, event, ANYBODY, 0, &this_test);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+          }
+        }
+        test_definition_t this_test;
+        default_test_definition(&this_test, TYPE_CREATURE);
+        this_test.subtype = SUBTYPE_KITHKIN;
+        this_test.subtype_flag = F2_MULTISUBTYPE;
+        this_test.sub2 = SUBTYPE_ELF;
+        this_test.state = STATE_ATTACKING;
+        count_for_gfp_ability_and_store_values(player, card, event, player, 0, &this_test,
+                                               GFPC_INTO_WHOSE_GRAVE, 0);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			draw_some_cards_if_you_want(player, card, player, amount);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    draw_up_to_n_cards(player, amount);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_kithkin_mourncaller(int player, int card, event_t event){
@@ -5032,74 +5103,84 @@ int card_profane_command(int player, int card, event_t event)
   return 0;
 }
 
-static int prowess_of_the_fair_effect(int player, int card, event_t event){
+static int prowess_of_the_fair_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_PROWESS_OF_THE_FAIR ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_PROWESS_OF_THE_FAIR)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						return 0;
-					}
-				}
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_PERMANENT);
-				this_test.type_flag = F1_NO_TOKEN;
-				this_test.subtype = SUBTYPE_ELF;
-				count_for_gfp_ability(player, card, event, player, 0, &this_test);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        test_definition_t this_test;
+        default_test_definition(&this_test, TYPE_PERMANENT);
+        this_test.type_flag = F1_NO_TOKEN;
+        this_test.subtype = SUBTYPE_ELF;
+        count_for_gfp_ability_and_store_values(player, card, event, player, 0, &this_test,
+                                               GFPC_INTO_WHOSE_GRAVE, 0);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			if( amount ){
-				int choice = DIALOG(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
-									"Create Elf Warrior tokens", 1, 10,
-									"Decline", 1, 1);
-				if( choice == 1 ){
-					generate_tokens_by_id(player, card, CARD_ID_ELF_WARRIOR, amount);
-				}
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    if (amount)
+    {
+      int choice = DIALOG(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
+                          "Create Elf Warrior tokens", 1, 10, "Decline", 1, 1);
+      if (choice == 1)
+      {
+        generate_tokens_by_id(player, card, CARD_ID_ELF_WARRIOR, amount);
+      }
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_prowess_of_the_fair(int player, int card, event_t event){

@@ -879,43 +879,38 @@ int card_goblin_razerunners(int player, int card, event_t event)
   return 0;
 }
 
-static int grixis_slavedriver_death_effect(int player, int card, event_t event){
-
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance= get_card_instance(player, card);
-
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-
-		if( trigger_condition == TRIGGER_LEAVE_PLAY ){
-			if( affect_me( player, card) && trigger_cause == c && trigger_cause_controller == p
-				&& reason_for_trigger_controller == player )
-			{
-				if(event == EVENT_TRIGGER){
-					event_result |= RESOLVE_TRIGGER_MANDATORY;
-				}
-				else if(event == EVENT_RESOLVE_TRIGGER){
-						generate_token_by_id(p, c, CARD_ID_ZOMBIE);
-						kill_card(player, card, KILL_EXILE);
-				}
-			}
-		}
-	}
-
-	return 0;
+static int grixis_slavedriver_death_effect(int player, int card, event_t event)
+{
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
+    // Preserve the native call's event/p/c argument order.
+    other_leaves_play(player, card, event, p, c, 1, 1);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      generate_token_by_id(p, c, CARD_ID_ZOMBIE);
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
 }
 
-int card_grixis_slavedriver(int player, int card, event_t event){
-	/* Grixis Slavedriver	|5|B
-	 * Creature - Zombie Giant 4/4
-	 * When ~ leaves the battlefield, put a 2/2 |Sblack Zombie creature token onto the battlefield.
-	 * Unearth |3|B */
+int card_grixis_slavedriver(int player, int card, event_t event)
+{
+  /* Grixis Slavedriver	|5|B
+   * Creature - Zombie Giant 4/4
+   * When ~ leaves the battlefield, put a 2/2 |Sblack Zombie creature token onto the battlefield.
+   * Unearth |3|B */
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		create_targetted_legacy_effect(player, card, &grixis_slavedriver_death_effect, player, card);
-	}
+  leaves_play(player, card, event, 1, 1);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    create_targetted_legacy_effect(player, card, &grixis_slavedriver_death_effect, player, card);
+  }
 
-	return unearth(player, event, MANACOST_XB(3, 1));
+  return unearth(player, event, MANACOST_XB(3, 1));
 }
 
 int card_hellkite_hatchling(int player, int card, event_t event){

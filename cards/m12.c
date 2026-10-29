@@ -160,26 +160,34 @@ When enchanted creature dies, return ~ to its owner's hand. */
 	return generic_aura(player, card, event, player, 4, 4, KEYWORD_FLYING | KEYWORD_FIRST_STRIKE, 0, SUBTYPE_ANGEL, 0, 0);
 }
 
-static int aegis_angel_effect(int player, int card, event_t event){
+static int aegis_angel_effect(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-		indestructible(p, c, event);
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
+    indestructible(p, c, event);
+  }
 
-	if( get_card_instance(player, card)->targets[1].player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( other_leaves_play(player, card, instance->targets[1].player, instance->targets[1].card, event, 0, 0) ){
-			kill_card(player, card, KILL_EXILE);
-		}
-		if( event == EVENT_CARDCONTROLLED && affect_me(instance->targets[1].player, instance->targets[1].card) ){
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  if (get_card_instance(player, card)->targets[1].player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    other_leaves_play(player, card, instance->targets[1].player, instance->targets[1].card, event,
+                      0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+    if (event == EVENT_CARDCONTROLLED &&
+        affect_me(instance->targets[1].player, instance->targets[1].card))
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_aegis_angel(int player, int card, event_t event){
@@ -800,7 +808,7 @@ static int hunters_insight_legacy(int player, int card, event_t event){
 		int p = instance->damage_target_player;
 		int c = instance->damage_target_card;
 
-		if( damage_dealt_by_me_arbitrary(p, c, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_DAMAGE_PLANESWALKER | DDBM_MUST_BE_COMBAT_DAMAGE |
+		if( damage_dealt_by_me_arbitrary(p, c, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_MAY_DAMAGE_PLANESWALKER | DDBM_MUST_BE_COMBAT_DAMAGE |
 										 DDBM_REPORT_DAMAGE_DEALT, player, card) )
 		{
 			draw_cards(player, instance->targets[16].player);

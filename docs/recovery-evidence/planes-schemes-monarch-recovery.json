@@ -1,0 +1,8445 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "attacking_planeswalker",
+      "source": "cards/planeswalker.c",
+      "native_ranges": [
+        {
+          "address": "0x215e940",
+          "end": "0x215eacb",
+          "bytes_sha256": "55ce55ebef8ef7365f326173603b4651a76e51b34837a2acb0fb4382e1124659",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/215e940.c",
+          "raw_export_sha256": "a5c6b9ce6d83dd5d23a561b17f478333f1843893e7f7fc2ff2dd5606e02e77e1"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a11ff71d79cfb6cf7ea82658a82fe2b79dcc9d30df27a0cef7dabd8d72c00514"
+    },
+    {
+      "name": "choose_who_attack",
+      "source": "cards/planeswalker.c",
+      "native_ranges": [
+        {
+          "address": "0x215ec90",
+          "end": "0x215f335",
+          "bytes_sha256": "febc1d8c1ee8a12572474a7ebc2dfeb43a6956535200374089a9754e9fc7d8b4",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/215ec90.c",
+          "raw_export_sha256": "1d4528639c20198033f3d23b1babe7eda11ccecf47d2b1e695aadc57a9a3eaa3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d0b3607b174ed85dcaeaa0cf6620fbacaab26f721fd7d84e796112e2fdc3aafb"
+    },
+    {
+      "name": "planeswalker_its_attacking",
+      "source": "cards/planeswalker.c",
+      "native_ranges": [
+        {
+          "address": "0x215f340",
+          "end": "0x215f41c",
+          "bytes_sha256": "307cc700e795552a4437e9ec4fcb263c5c9a049404c8e49fe609eafc71469b4f",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/215f340.c",
+          "raw_export_sha256": "a4466391a6bfae2fd50179dc5446c1734b1b49a2aa297fa196af5bbd6fc7e9ec"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "204ff846a346bb465f5fb4080ff4e5b5c99fe82172735472202ff2a527951969"
+    },
+    {
+      "name": "planeswalker",
+      "source": "cards/planeswalker.c",
+      "native_ranges": [
+        {
+          "address": "0x215f420",
+          "end": "0x215f9ae",
+          "bytes_sha256": "2f6e7d6826282026cbf66f50c32e3f50c80c2bacdf496abcbab107434f70b2b0",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/215f420.c",
+          "raw_export_sha256": "e0bf91de6a2390f981a1a4c2fd7edc8622b1ceb8780344cca388b39d8662d5b4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4b818f1baa584820ef4fc0552a8afeb431fe2b1fa6cfff3578e44ea7bffcc926"
+    },
+    {
+      "name": "deadly_designs_legacy",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "native_ranges": [
+        {
+          "address": "0x220cbe0",
+          "end": "0x220cd16",
+          "bytes_sha256": "26031bb4d39443c01024dce0206341900cc9d07d3b3af7b58ea9940e19b796e3",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/220cbe0.c",
+          "raw_export_sha256": "c6a09cb1e49eca6a77d0596e32238ac73e4b99db3cd201208f12045c85a45747"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "364168327661e40489025c1f0f7067daaafd99c0e04e85fdeaf1ccc182eda8d6"
+    },
+    {
+      "name": "deadly_designs_effect",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "native_ranges": [
+        {
+          "address": "0x220cd20",
+          "end": "0x220cf2d",
+          "bytes_sha256": "974531d9d1092fa973c5831f9852b104588c243b30d36434efdda891e6e5af2c",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/220cd20.c",
+          "raw_export_sha256": "9fe3f7e35b65d253c345106dabb95c8e64b940dfe091f41ad1b04998f2500c7a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "419414f5ffbe78bd1aef0043e3aa54932b2beed7c451ffe3ef1af6114924c75b"
+    },
+    {
+      "name": "you_become_the_monarch",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "native_ranges": [
+        {
+          "address": "0x220d080",
+          "end": "0x220d44a",
+          "bytes_sha256": "ca343f1cbd74527e0dba2931139f945735fadd5bebeaafd5db94c9098022b2cd",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/220d080.c",
+          "raw_export_sha256": "cb73c89658e27c29559b18e6e60ff69b38a08cac1e1083a44bceda2fcdf811c6"
+        },
+        {
+          "address": "0x220d4f0",
+          "end": "0x220d513",
+          "bytes_sha256": "69f89bf051a0fa1acfe623a4440da832a215accaf41c6799659c0db2233578ee",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/220d4f0.c",
+          "raw_export_sha256": "ba59ec28831ffd4aedcf9059389c265bf014fb56444bae7a356933cedf9753dd"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1a91d1a0faab43d5eca1d0c2fb26c1df70b57416d20182ff466e241e12fd4d85"
+    },
+    {
+      "name": "evolution_vat_legacy",
+      "source": "cards/dissension.c",
+      "native_ranges": [
+        {
+          "address": "0x221aa90",
+          "end": "0x221abe3",
+          "bytes_sha256": "ed876e7c18d7d15195495fca7afdef9c0599b1ec3152ff26fb32392c0e60af9e",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/221aa90.c",
+          "raw_export_sha256": "5b4671b23a3ea92006e277f851735e4844bf9f1b92dcd1ad71b22d110e334a34"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5289a82046ffb9634bfe39b50f41c39ad3a0bf80d16384421cd6706ecde1201d"
+    },
+    {
+      "name": "has_1_1_counter",
+      "source": "cards/dragons_maze.c",
+      "native_ranges": [
+        {
+          "address": "0x2290d60",
+          "end": "0x2290d8c",
+          "bytes_sha256": "5ccf260574790573bd7bbba55a43cbc5b85438f8c9880b81fa2cf513bc04254a",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/2290d60.c",
+          "raw_export_sha256": "13b6ec81c191fab2fd9d03c16cd341bff7ea7cfd70794ef6a01d855678118b36"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5aeb1891f6561b5e6463731f3f64183f7f52f34a760f141b58d7ded2756b5eb4"
+    },
+    {
+      "name": "get_global_gate_code",
+      "source": "cards/dragons_maze.c",
+      "native_ranges": [
+        {
+          "address": "0x2291080",
+          "end": "0x2291142",
+          "bytes_sha256": "e65fafc43071693ff063f0fc35d0b2cd207f8a9d29cf8c6d232499c3b4b12551",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/2291080.c",
+          "raw_export_sha256": "9cf0b9b729387179f0c0692f205b7ee4723c2cc520339c61688d44ba9378547e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "140a2f626a8c4a43f3418aeb040bc40b8f520366c25851e566385f0a1c1349ec"
+    },
+    {
+      "name": "legions_initiative_legacy",
+      "source": "cards/dragons_maze.c",
+      "native_ranges": [
+        {
+          "address": "0x22911c0",
+          "end": "0x229132b",
+          "bytes_sha256": "c3c198756d4d23bfce67f0127bc511aec365da1c48c6ab35fc3e1f3569239140",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/22911c0.c",
+          "raw_export_sha256": "23c9b93406ff7827e426eed49b92a5b3c70edd263b420c809974eae5899f6d08"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e5d40f4b07c43bfaa95ac2ea487c1a8dea394c7a5aa4401a9f71c0da1d3acacb"
+    },
+    {
+      "name": "put_1_1_on_each_other_dragon_creature_you_control",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2319cc0",
+          "end": "0x2319d22",
+          "bytes_sha256": "5379443b262a18b4cc20dacd65a5d416073e1e7e2ee1ecc3df38a0451803688e",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/2319cc0.c",
+          "raw_export_sha256": "f4f317e5b919b9b4341b0e311de3c3dcb3370b36fa739eda5c67a407fe517691"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "20a971431ebe5db972fb2fe3562dbd22493182ab92dd205822f1d47d46c02238"
+    },
+    {
+      "name": "monument",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x231a270",
+          "end": "0x231a42b",
+          "bytes_sha256": "2aa617d2e1a2fe7248e19abf0c643fa9dd36929a68e42fc27c2be2671eb4a4c5",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/231a270.c",
+          "raw_export_sha256": "76d34aa1ba9da0485b55b11e442f1d35e629b7211253e22612c3291df7b9579b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "771a51c097d7df1225680b16c96c25208c724047b120590304c80d36170036bf"
+    },
+    {
+      "name": "agyrem_gfp_ability",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x2411540",
+          "end": "0x2411762",
+          "bytes_sha256": "12f258199e69069600d2106f1a14f59695a4e23c564043ee6a787177502fb8cd",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/2411540.c",
+          "raw_export_sha256": "26ed2cd55d6aee8f0b2205552487e514fa25865b8a7cb7ca833f65663c47dca4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a1252d34bcd28b77506e7c959529bef6f0bab3d02ce0e5a24fa9da8ae7d64f1e"
+    },
+    {
+      "name": "stensia_chaos_legacy",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x24118e0",
+          "end": "0x2411a4c",
+          "bytes_sha256": "06f86416d6e9225f9b1a1026b9bfc8715352802fbd234d8d7a29a3c7c3fddab8",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/24118e0.c",
+          "raw_export_sha256": "8924ef0c922e4fd49b550475fd9cdf897b9e10299352b3c8c871c76fb5b479b8"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "42bf168829ba290c67b3a0332d5ef12fa1660ec417abd05fd6e0529a9db1289c"
+    },
+    {
+      "name": "get_new_plane",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x2411d00",
+          "end": "0x2411e96",
+          "bytes_sha256": "07d270609fb402c9267eeac7af8f91362069b5c516453081068cd1653d4afd21",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/2411d00.c",
+          "raw_export_sha256": "a5c84b55a35f54f67a5419c51faae9b73f1207b793216a6e4aca2b67b632b8ea"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "23cfea030f471724ea94c17b19e73a2f51bab7d1a9701ea05fd228165f082dcb"
+    },
+    {
+      "name": "planeswalk_to",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x2411ea0",
+          "end": "0x2412044",
+          "bytes_sha256": "34bad62ccabd08ba85838ee773df79ceecbf28e3a2d9fc98a50c7c2a0f659c4c",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/2411ea0.c",
+          "raw_export_sha256": "18e2d2f717681ecbb5662a4927824438e83fc5aec34ac6c00ebe4b4fa197253b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0a84111e7c82bfbd433810966ef81e3fe590570ce3c0fcb630c3f698984a74d0"
+    },
+    {
+      "name": "casting_the_planar_dice",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x2412050",
+          "end": "0x24122c1",
+          "bytes_sha256": "fcf55cf6d4755ec10927d7597c45baf97af8911291f49c1f1b8ced3e81ea0439",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/2412050.c",
+          "raw_export_sha256": "89d7bb95bbddf5b413d27931690e2d9bc603673700c5e2f36d8555d6ce41dba6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7773586a4e5ad13831a94f734c9a225199244fecbb0d8568a1873bdc29a44f30"
+    },
+    {
+      "name": "generic_plane",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x24122d0",
+          "end": "0x241246a",
+          "bytes_sha256": "42a15cd5d0f1db69f135b1ad0739512c252fb1af7a1bb5b947545a2208262c84",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/24122d0.c",
+          "raw_export_sha256": "b6bc104ea98bca62e0e7b917383c341e73bb625d34fd3965657644558e4d50af"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "217ca4ca987ee4cfb7cc87ac37b33b5ce1d34de18c18bd5324680f992465b24a"
+    },
+    {
+      "name": "scheme_behold_my_grandeur",
+      "source": "cards/archenemy_nicol_bolas.c",
+      "native_ranges": [
+        {
+          "address": "0x24859e0",
+          "end": "0x2485bdd",
+          "bytes_sha256": "d53f666834f7072dfccbf65f84d8f59d26aee58b41711a12dad9f19ba984428b",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/24859e0.c",
+          "raw_export_sha256": "86dff57b9d0f3d5473d8a40fb2054e837eb85d7d018a3bb9870e028f811574df"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "879e2b2df5c7941d958c8dadce4d072d413f44e540ac7115e63f551168b559d3"
+    },
+    {
+      "name": "scheme_a_reckoning_approaches",
+      "source": "cards/archenemy_nicol_bolas.c",
+      "native_ranges": [
+        {
+          "address": "0x2485be0",
+          "end": "0x2485caa",
+          "bytes_sha256": "56e945cf3121b7fc1016b83185c7f8b141e3dbbdddf50a2d5876a1f9edb04bf2",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/2485be0.c",
+          "raw_export_sha256": "7dc85cadddacdf7be858ef1c2127c17dcc572b3b83bef0e12a5f9ada62f8094c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5acb9469d9f8cb63ef1a28c6f497481c551c6990744a7bf1633cf8c5eaaf188b"
+    },
+    {
+      "name": "register_archenemy_nicol_bolas_schemes",
+      "source": "cards/archenemy_nicol_bolas.c",
+      "native_ranges": [
+        {
+          "address": "0x2485cb0",
+          "end": "0x2485f45",
+          "bytes_sha256": "bcc91ad6e9dbc8d5907b6a9af7b40eddfbd2802d43d6e258a2198d49ab46f53c",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/2485cb0.c",
+          "raw_export_sha256": "8087feb1b8e7e3dab42b5b194a607a94f685976cbe38ef0b4156f97ddc68ffa4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5a667570c208378a3782d14cd027da2e803ef3a9df31a86835fda8e6aa4c7ceb"
+    },
+    {
+      "name": "register_archenemy_schemes",
+      "source": "cards/archenemy.c",
+      "native_ranges": [
+        {
+          "address": "0x257d700",
+          "end": "0x257e1cb",
+          "bytes_sha256": "9d2967c6f2dc3c6cfbb7a470b4e27281b862689a86e6fc521d278161a25f4c7f",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/257d700.c",
+          "raw_export_sha256": "9b693cfc2cbe6eee4a026ab335a72a4dd023c746cc335b76840878d3add2725b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "56a6e51d8ce332de0c3631aea0c602240ba258fec2621874c07efd4bdd01305b"
+    },
+    {
+      "name": "effect_my_undead_horde_awakens_target",
+      "source": "cards/archenemy.c",
+      "native_ranges": [
+        {
+          "address": "0x257e4c0",
+          "end": "0x257e5b0",
+          "bytes_sha256": "db6f31ddedccdc91c6b337b666ae2f522b1b918beced31780a3decb5afb6b7fd",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/257e4c0.c",
+          "raw_export_sha256": "e84f973aa9e40d61c8eff1dd9f393e0a16917d8dff0714ecbb79d821758509ad"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "6d712ae36b26e919df8f35bc9c7318b6391a6ed3892818c27ea63cdad59cc44c"
+    },
+    {
+      "name": "effect_a_display_of_my_dark_power",
+      "source": "cards/archenemy.c",
+      "native_ranges": [
+        {
+          "address": "0x257e710",
+          "end": "0x257e75e",
+          "bytes_sha256": "faf86047363445e19f6e92896f64b5a2b0a6f860b24e14bf133ce67daef7f353",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/257e710.c",
+          "raw_export_sha256": "95e48461eec627a7c248529ddec77f98166d673d6a833ce46ea859bc24498af8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "88ddccdc73223c187890cccf176c11306a2acd8b91c563ab15751da8aa4a13dc"
+    },
+    {
+      "name": "set_scheme_in_motion",
+      "source": "cards/archenemy.c",
+      "native_ranges": [
+        {
+          "address": "0x257e760",
+          "end": "0x257e9e9",
+          "bytes_sha256": "ba75fb924aeb3f2cc587fe5b66c793b87833d7fb5de491cced3031fbafd12787",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/257e760.c",
+          "raw_export_sha256": "9078b0f88217d1b30d881e5bc46ca6dc9ce7880bdc5418ebfbf62b78747ca079"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e682bcbd97382d5ad9824a5a2e962ea16348c0d5be5ef68e9ec557c19e876220"
+    },
+    {
+      "name": "scheme_introductions_are_in_order",
+      "source": "cards/archenemy.c",
+      "native_ranges": [
+        {
+          "address": "0x257fc60",
+          "end": "0x257fe90",
+          "bytes_sha256": "6cf951afcb0b46c90b0913a01dffc056ac531be618752bd0206e0ba999b3765b",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/257fc60.c",
+          "raw_export_sha256": "f2d710f3106f56d65362dc3cb38810f4e4a86f6243fb2a1887ad23499abc51c3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5e4465347c3da477c4a14ac2d06d63aa2fb8610051b7ee1033ceea3bb1c824fd"
+    },
+    {
+      "name": "scheme_i_call_on_the_ancient_magics",
+      "source": "cards/archenemy.c",
+      "native_ranges": [
+        {
+          "address": "0x25801e0",
+          "end": "0x25802d6",
+          "bytes_sha256": "0f19d7305d8234531d3626b3ef03fc2b2b71a8fac52d7cab1ca21402e0f30e85",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/25801e0.c",
+          "raw_export_sha256": "575315e2802a2a5ed2de2a33db80e1cff9e1e7d2f8d3c5079365e242c02063a6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d219a86bd4673fb9ae3a2931d17198e2cab3f1897915067030805e4790283231"
+    },
+    {
+      "name": "scheme_my_undead_horde_awakens",
+      "source": "cards/archenemy.c",
+      "native_ranges": [
+        {
+          "address": "0x2580de0",
+          "end": "0x2580e2f",
+          "bytes_sha256": "d86e0719a4a79ff5a7203f3b4b2899bab1e95b2fd695f406132371a0e4572b0f",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/2580de0.c",
+          "raw_export_sha256": "11a08183a09206d770ee5f13c52f3c78ab38ab017133ef7ebfec72367996e689"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "916e0b741cdc7f0a543ba4be3ccf8088af7ca6bd81c2a82d28ff0bf5c51e5b13"
+    },
+    {
+      "name": "effect_my_undead_horde_awakens",
+      "source": "cards/archenemy.c",
+      "native_ranges": [
+        {
+          "address": "0x2580e30",
+          "end": "0x2580f31",
+          "bytes_sha256": "7343c5e6c44e8dcb8d8780273e9f5a18af3ea922c0b6c0e1eafdb0847b3ab768",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/2580e30.c",
+          "raw_export_sha256": "f24ecc691b87a84ce86771300d2d464a5598c85b67ba29c8ed5adaedf4533c8f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c928176ecf40a4397d3ca37c3ed2d6674daab0b39fc414e08da320c0b5299564"
+    },
+    {
+      "name": "scheme_a_display_of_my_dark_power",
+      "source": "cards/archenemy.c",
+      "native_ranges": [
+        {
+          "address": "0x25810a0",
+          "end": "0x25810ef",
+          "bytes_sha256": "cfac46dff58a9f07c69474d995d09be9ae49d8a6f6a126e1397acfdfbde5c4ff",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch/25810a0.c",
+          "raw_export_sha256": "0b70a82881b895c1aa89287fd199b0f0748d6eefc4e58d96a785e38f691b18f5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1b4aea5922be9bc83870df26a1b31a6cbc8a7ed78fe7994e57113749f95c6930"
+    }
+  ],
+  "support_helpers": [
+    {
+      "source": "cards/conspiracy-take-the-crown.c",
+      "name": "check_for_jared_carthalion_legacy",
+      "native_ranges": [
+        {
+          "address": "0x220cad0",
+          "end": "0x220cb54",
+          "bytes_sha256": "e395828189fbb1595c01f776dba17df6c0040e4a751652c4589684cb2b703d44",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-dependency/220cad0.c",
+          "raw_export_sha256": "04236f5f29c087859b971b609268b45eedb312c73891a279607632017af8ebe0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "90e120179437b5dbb20e6a3ca4a5398bf1aa63eba8fef8d7db94aaccdffccbb0"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_garruk_relentless",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2076000",
+          "end": "0x20762d7",
+          "bytes_sha256": "748578a11842d88d90529a879efaa3fbe74a47510ac91865a28e190313129c63",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2076000.c",
+          "raw_export_sha256": "8bf3eeeb657b167e9d3c729ac5fa699751ff0cbeb9f39ef6baf20843f21ec12f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5d228c8d91e209c0619f5932c0b6c3c4af2d541c09bec9d8174363f659102fea"
+    },
+    {
+      "name": "card_gideon_battle_forged",
+      "source": "cards/origins.c",
+      "native_ranges": [
+        {
+          "address": "0x20db1f0",
+          "end": "0x20db664",
+          "bytes_sha256": "cb4836d5f372e6a1f772526b25ed1097bb2549d9c8885a7872738a9b5194963b",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/20db1f0.c",
+          "raw_export_sha256": "655f3ff931ad352f7ff467500aead36d68f59098301d541907436c130db192bd"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "586995792fb21ee5e750ccc506ef988a09f89f64d1cca18f3dc93ab85be4a200"
+    },
+    {
+      "name": "card_throne_of_the_high_city",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "native_ranges": [
+        {
+          "address": "0x22121b0",
+          "end": "0x2212415",
+          "bytes_sha256": "b301dde9b4c2fbd6ed23a02c37c634e6c6791f34d56b301fea39c6102e2f440c",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/22121b0.c",
+          "raw_export_sha256": "6b484bda1eea3ade23e8de221f39db387342e48407d94715e3597d7d590608ef"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e8e09cbe7a16a0bb959e15b132f8787faf8109a53606d601e23a30dcf69dd743"
+    },
+    {
+      "name": "card_regal_behemoth",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "native_ranges": [
+        {
+          "address": "0x2210700",
+          "end": "0x22108af",
+          "bytes_sha256": "a064aa1166907ad2a49c56db9b1f9d07ed53493fa982af635dfaa91235cfbd3e",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2210700.c",
+          "raw_export_sha256": "9e63febf21939d102ba220bd1bf293bd8931480adaff2a698348b8d4e91b3dbb"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "5ed72a82bc93f0e1e06937bba6dca46b9f15e95c98fd8dc81f36d4e09517b025"
+    },
+    {
+      "name": "card_marchesas_decreee",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "native_ranges": [
+        {
+          "address": "0x220fa20",
+          "end": "0x220fbd9",
+          "bytes_sha256": "2cf8216d9cc737aa2c5f376ee17d0669eb38c96ee711e7e1c80d79352ac76381",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/220fa20.c",
+          "raw_export_sha256": "ffc01f6551a1109ec9d0c4e2f6cae801e5047006bcd27659fca9cf702072e014"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "264437cf8d26f91c0b7de68ad7de247ad1fcb3c29cd057f00859f9a264b89fea"
+    },
+    {
+      "name": "card_deadly_designs",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "native_ranges": [
+        {
+          "address": "0x220f620",
+          "end": "0x220f983",
+          "bytes_sha256": "4e7fc8f98d8205bfc09efaf66f5d53cade858a360025647ab427c22f8b281970",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/220f620.c",
+          "raw_export_sha256": "7c022221b870a6cac9ff2aa2f94e2ffb36829e731b8e05e604b822ce9e5e3320"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b7a10e27428569f42a6aa1b02deb59f36ec89ed7bce7b96ad70cf66c1a7f3399"
+    },
+    {
+      "name": "card_palace_jailer",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "native_ranges": [
+        {
+          "address": "0x220e6d0",
+          "end": "0x220e831",
+          "bytes_sha256": "c36835f7536d5933adb3a961c74a580fb8f5e8b91950ddada6f8103614f6d727",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/220e6d0.c",
+          "raw_export_sha256": "18327654e1ae6c6a8baa8a98522232fed6c8be26a04846c85804a3d427d7fc8a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0c157a0b164e39020ea5ae847967861c26fe38c366b807eb6953ba38b9be36fd"
+    },
+    {
+      "name": "card_the_monarch",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "native_ranges": [
+        {
+          "address": "0x220d520",
+          "end": "0x220d5e1",
+          "bytes_sha256": "5bb1b7c96905c50d9e45583d3dd9fb680aaf4f385c23867cbdc7dbc29547af05",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/220d520.c",
+          "raw_export_sha256": "be021af192d584706408259619507edda71a6b1cd79b860a1b4a370c3bb41828"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9f314af48d4b75c6ff5b8ef540a1975b772dfbbefec455c1526aa229a6d9b266"
+    },
+    {
+      "name": "card_palace_sentinels",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "native_ranges": [
+        {
+          "address": "0x220e840",
+          "end": "0x220e891",
+          "bytes_sha256": "db73ac06f105f4d62c8b12b0003778222ff5668e21f3910d020750492e4584a6",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/220e840.c",
+          "raw_export_sha256": "2b8e25c3c2cc1a4513a243bc8bf52933c1316466929f5adc8cd0901b82d8ad6e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "46cda0b9f0efb9aad214219f9a8a025522796c7299b052f6cdaafe5725f4a0dd"
+    },
+    {
+      "name": "card_wars_toll",
+      "source": "cards/dissension.c",
+      "native_ranges": [
+        {
+          "address": "0x2229e90",
+          "end": "0x222a186",
+          "bytes_sha256": "b61c2f972fe3937ccd38377a93d0ee7b9964d5943b1f62ede7ebd8a2d77b9b55",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2229e90.c",
+          "raw_export_sha256": "013090b656ca4d214234a24ff2d5e95f333fbaf5eeb53aaa90dd94579166dfa2"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "84bcd69e91f38f89335d18e7a80a65070d23d85a8a884138422de340498b55e2"
+    },
+    {
+      "name": "card_evolution_vat",
+      "source": "cards/dissension.c",
+      "native_ranges": [
+        {
+          "address": "0x221f380",
+          "end": "0x221f598",
+          "bytes_sha256": "4a260632a12b69070bf5fbaed796572cf2b283eb8e73f095eb86acd88621126f",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/221f380.c",
+          "raw_export_sha256": "9fd48090d2bc3220d6d1902fe1d7fede866f577362e4b2921499ef7fbce6deb2"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "737cf1196d3f16b77dc8df00938698437fc8b4df9c8a4c57a6c1210edc630e56"
+    },
+    {
+      "name": "card_mazes_end",
+      "source": "cards/dragons_maze.c",
+      "native_ranges": [
+        {
+          "address": "0x229db20",
+          "end": "0x229e035",
+          "bytes_sha256": "5a3f9cf3734cde82d023eff8f4f54bfe15d2a0ead7867d654d2b9907d6eac4b7",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/229db20.c",
+          "raw_export_sha256": "059289a9fed8ea473657c2902963bc674854336016fb28c5d17d4c208ada3c63"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0e2d82e8ac18aa8299a81c514633333c2cf300dd229acbb1c5f314cedb439f47"
+    },
+    {
+      "name": "card_legions_initiative",
+      "source": "cards/dragons_maze.c",
+      "native_ranges": [
+        {
+          "address": "0x2296a00",
+          "end": "0x2296e4a",
+          "bytes_sha256": "f3fc303e1961b51d22f3156d554c5c4dd8f4820b492f7c115a5b51486d959607",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2296a00.c",
+          "raw_export_sha256": "1888e0a127f2ceed6e1d0ac67f53fd1c088857f1e9631948e1a36fc9bd56a5d6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "50aa7b016a6a569d33060bfe48a22dcd324c011811959392e32873c457cd0dfc"
+    },
+    {
+      "name": "card_bred_for_the_hunt",
+      "source": "cards/dragons_maze.c",
+      "native_ranges": [
+        {
+          "address": "0x2294da0",
+          "end": "0x2294efa",
+          "bytes_sha256": "453cea77788d587236c0d757f6fcef48c4b01ac1e0dd971bafad1f0e95fdb39f",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2294da0.c",
+          "raw_export_sha256": "3847f51bf725ca0f0622dfb4ef92977af87f63b490d242600ef42dea17fb554b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5dd854fda3cb77538b9bafe3a431e34f2376ae8c3ea86d8b79036ab6a6562577"
+    },
+    {
+      "name": "card_renegade_krasis",
+      "source": "cards/dragons_maze.c",
+      "native_ranges": [
+        {
+          "address": "0x22944f0",
+          "end": "0x229469b",
+          "bytes_sha256": "febe7628c9e0096ac05593ed1089f8cf1491ca8db76c9a83b9c8844e3639b38f",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/22944f0.c",
+          "raw_export_sha256": "a109656c8427c947c4b620836a601ae193cc16e94629823eac59468a1f151188"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5b422bb2abbecd14dfcb44103a4503e6893dd4dc5e4c5817f778dcaf4aa2548f"
+    },
+    {
+      "name": "card_oath_of_teferi",
+      "source": "cards/dominaria.c",
+      "native_ranges": [
+        {
+          "address": "0x22d1980",
+          "end": "0x22d1c3d",
+          "bytes_sha256": "05905720e969f793a2fa51a865189b375700b0de78fd6ae885d62d8d884532b7",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/22d1980.c",
+          "raw_export_sha256": "c16a0459c45036c940b068ae6d0e0872f14356374a190d879da87325135471f8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a1ba53e7f44f65637b0fa21978e0d2f4f1f670e59720fa49d9f19a87e78f6fa5"
+    },
+    {
+      "name": "card_silumgar_monument",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x232a020",
+          "end": "0x232a065",
+          "bytes_sha256": "4cc2848e2795a5ced8e7de5bc5a3416ece5440a5aa37adb5ed4d897141831962",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/232a020.c",
+          "raw_export_sha256": "2098090f995fd8a0d05e350fb5495a62c5d2003f3d32d207689a1ddf5f4129e2"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1289bdeca18decc3e504011860701240322ad0b24d84ed4c4c01d8914394fa74"
+    },
+    {
+      "name": "card_ojutai_monument",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2329fd0",
+          "end": "0x232a015",
+          "bytes_sha256": "29a9a6c1751c3b1c9b7d8c9a3f7236063e5737e3fa61ede32084e99eeb7bede1",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2329fd0.c",
+          "raw_export_sha256": "8fe7c40ab482a7c35d7f4c0eb15c8a8ebc43e66adc2e70c94f24b57683573733"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e811ab209b44fb511e38a986ad179b4b3528cb7d9f757d5c5a002c8f093128aa"
+    },
+    {
+      "name": "card_kolaghan_monument",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2329f80",
+          "end": "0x2329fc5",
+          "bytes_sha256": "38f42575f79e99131c1f2bfde25fec8ffd273d97a5c77eb14db8a18d6baf6f2e",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2329f80.c",
+          "raw_export_sha256": "a6bbf38df143e481653ea1a77079e82b41c9d587cf8fb3bd364fe3b64a3cbf48"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3237156126a4a6ef01d2e1239b2da9c96d5898a389fe65853eff0f95c2c6fe0f"
+    },
+    {
+      "name": "card_dromoka_monument",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2329d10",
+          "end": "0x2329d55",
+          "bytes_sha256": "9f4e26f5a4798e34009946b00fe7a2e051206f1b45b7a5fb3136541afa28c7f4",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2329d10.c",
+          "raw_export_sha256": "5b0f919466f4bc561ce2833cf2b9d6487a68f8cd2289b1602302beace6a4feeb"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3a27a46dc05928e67bc0ebcbca810ed733adbbed62d01ebf513fc1ebdd3117ba"
+    },
+    {
+      "name": "card_atarka_monument",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2329c30",
+          "end": "0x2329c75",
+          "bytes_sha256": "1b152c06162ddab93fca85a0f462a63a2a5c4472b19ed483b6e46c3c6b9a04c0",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2329c30.c",
+          "raw_export_sha256": "bd31d08d78b2f4bc732a6dbc8483231749b8f12cf24d3273b7c80c2cad04bdff"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9117e3e72018588f57dbd0c0fc076ed50acc70b963a3a849b4ca627d9b318352"
+    },
+    {
+      "name": "card_herdchaser_dragon",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2325430",
+          "end": "0x2325490",
+          "bytes_sha256": "bb808afef932e004aeb56b3e3b8c66591803e94bdeed24c985b47eff380e090e",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2325430.c",
+          "raw_export_sha256": "8783ede3b047b00fca6c4ffbce9ead687957919750958cce612bb133e72fe138"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "17cba138af9c278c744b234cf9131879b8f04499be393a318f0b107bc0655ab0"
+    },
+    {
+      "name": "card_stormwing_dragon",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x2322f50",
+          "end": "0x2322fb0",
+          "bytes_sha256": "27ee0bf939c05986dcf521a222fd7ed27670e477ac470916117569cabee4253a",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2322f50.c",
+          "raw_export_sha256": "950147e8ef25dcbe1ea8dc4c9696553eed05e3ff2fb401510e0b33130b74ae38"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1e863d0fca25828086afedfa020fd30faaa316b623ee71daaa44231310a6a0bb"
+    },
+    {
+      "name": "card_acid_spewer_dragon",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x231ea50",
+          "end": "0x231eac8",
+          "bytes_sha256": "39b7bec3eb1e5ce0e3bab8fad226b55a27cbcc37c7edb017f3544d849f171eea",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/231ea50.c",
+          "raw_export_sha256": "661ab00adc5930564a4d7218c726855c193bde5162e685282e32a53230348f48"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8d282ec8a61be213414e2c9dc4ce0cf5d415f71eb5c9be0d1598aeefa97d9a3f"
+    },
+    {
+      "name": "card_belltoll_dragon",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x231c4e0",
+          "end": "0x231c558",
+          "bytes_sha256": "58390e2b64e12ebbcccb5ceedf4d914a6544136b6d4e5e9d3216c8e2607a68f6",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/231c4e0.c",
+          "raw_export_sha256": "13673c9e291c5ecc3bd826ed64ab3f529be47a9c76dfedca0e0c7e10e679e9ca"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f82dd0152d8f867affb55be3d125f037555a5a222284b5c2474d1ba1305b041e"
+    },
+    {
+      "name": "card_shieldhide_dragon",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_ranges": [
+        {
+          "address": "0x231bf90",
+          "end": "0x231c008",
+          "bytes_sha256": "e7c9426fee1c0734bfb4ab6755756b9c8c6a2a1b29ca602e731231e09e339e80",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/231bf90.c",
+          "raw_export_sha256": "af12c4ab6213c6326ede9adc89472ac1b35dc4f531a2aa328001351880ec8323"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4cf964e002896ce7f00582bc38b285fd02f5230f402bbc991eb69c616d2def6d"
+    },
+    {
+      "name": "card_windriddle_palaces",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x241abd0",
+          "end": "0x241b102",
+          "bytes_sha256": "2f2bcdb3757146f0903a3c208b754a0b43140370f35cc0a97d73c5db7e7725b8",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/241abd0.c",
+          "raw_export_sha256": "bce9292ad24d6b97e8aaaadde95ab4e0f097577bd829a2132394f7041bf7c2e2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ac1d50c27a81b04bac62fed18f48128d17364d812f81917e68583d9ce231b0b0"
+    },
+    {
+      "name": "card_talon_gates",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x241a2e0",
+          "end": "0x241a724",
+          "bytes_sha256": "3f480ca6444d69cfdeb064b49ac84d362646c363fee61b239379e9d9bdf81039",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/241a2e0.c",
+          "raw_export_sha256": "a66d71f80a02b4e322779aed55c28d62f1c89e5ce10c1e0bd7ccb9cd877b9a40"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2149d5f50e4d5469416e7da9372a554f4a3b50abc3865ee89544af6968c9ea05"
+    },
+    {
+      "name": "card_stensia",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x2419da0",
+          "end": "0x241a130",
+          "bytes_sha256": "202827d6a4ce24fd438f2ebac623d2b0261739f978749439a59deeb2727b67ac",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2419da0.c",
+          "raw_export_sha256": "fb61ef80d5feec107f7259fe61cfe905e755678c3498c09c927c15513dcae69a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d38f47be4864a0260c64ab29448d360985a8d72e040eb55bc36ea7264ffeb2e6"
+    },
+    {
+      "name": "card_lair_of_the_ashen_idol",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x2418e60",
+          "end": "0x241913d",
+          "bytes_sha256": "d3a03149551b72682ced848bf0628ad1121b3da06de33961e573e98ac3046fd0",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2418e60.c",
+          "raw_export_sha256": "bc2f2ebfd1a14fc53bb2d43d51671bcde9e93b946af16d1ad1618437e38ac92a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8bde998c3aff9c7f18328152db780a9bbc4f767fe64af79795fb1ed273d37bf4"
+    },
+    {
+      "name": "card_grand_ossuary",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x2417fe0",
+          "end": "0x2418465",
+          "bytes_sha256": "df1981575799a709ea771924463d24a47b9d021dcb75b53e7f935020f95e5950",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2417fe0.c",
+          "raw_export_sha256": "789cb72c678702a55db8007c548b970187b74a44b5c5716734a27a65782fca5b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7f10d664d70968909f6679595d98f14e9ca870b2e6125445146e3614df99ffe4"
+    },
+    {
+      "name": "card_aretopolis",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x24177b0",
+          "end": "0x24179a1",
+          "bytes_sha256": "9404c266f9a0386e0f45561864f2965e022cff044c6f9963ba31003cad9d4e9e",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/24177b0.c",
+          "raw_export_sha256": "14920e92f1cbc32bc311afca9546c59c3b52ac0c43d764291632374837d4e27d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0bd7392a42b0171a23d7c4aec7b78a38e989793b209f494bde602e0c78dc5db9"
+    },
+    {
+      "name": "card_shiv2",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x24161a0",
+          "end": "0x2416639",
+          "bytes_sha256": "672981a07b0e77b4810998fe8b1ba25e42284afdf21a7b21cdd18efcc4c9f05b",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/24161a0.c",
+          "raw_export_sha256": "12abd80cf9e0765545e291810e487966fbb258820e4497815faf4005fc53409b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a2df419a5f518d717a58796b178952e6f5252e9cdfa6523820b3ea416859941d"
+    },
+    {
+      "name": "card_pools_of_becoming",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x2415b20",
+          "end": "0x2415d49",
+          "bytes_sha256": "57e1eb1d867f947836215b538862f0e6242c866bdb82ac7bb56e99cda37355a0",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2415b20.c",
+          "raw_export_sha256": "f6a59a8e1fe8e9664351cf878f16ea750ec274400f9ba69b4902685ad1257a6c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8dcf8f06ecc9ab800fbec9a1882348e89ee9eee361d314d9d7a51cc9ec3506e8"
+    },
+    {
+      "name": "card_otaria",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x24156b0",
+          "end": "0x2415a8a",
+          "bytes_sha256": "f069be370ac2f435eb4d05829ea0200214d093545428d20c675b70c215113b1c",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/24156b0.c",
+          "raw_export_sha256": "8c7d96b909382ae673a3792b24b5006b4c247389f6d2055a3790fd1af117659f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b72526362e8315b9c507f5425b9b55dda7e5a08441cab5e532be37679ababc4f"
+    },
+    {
+      "name": "card_agyrem",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x2413a90",
+          "end": "0x2413b52",
+          "bytes_sha256": "48909a3b531c7f52818f1c81f49832017ea1e7ad2f700d2d2dcc0a1f3645627d",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2413a90.c",
+          "raw_export_sha256": "ffc1629d348ec9efb9b0f8b936e0f2de5662b7b7c73f502fce107901d492d1c8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "208d2bba673fc66cf05da66d8484dbe377c9f88430e82cea6f8f08a09bfbf5e4"
+    },
+    {
+      "name": "card_fractured_powerstone",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x2413680",
+          "end": "0x2413913",
+          "bytes_sha256": "869d14fc7ae46fe45ba0af4a500f57a336d88d77e44066197b56c81d56ba4dea",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2413680.c",
+          "raw_export_sha256": "a45406ea1fe29dccfd5f107c7605c33d73ea3b6d78d1136d338782e7c5393b6a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7e7a3ed4b863b941c603c35d5eb6bab05013ad672c44ea0554a0e816e0b0fc39"
+    },
+    {
+      "name": "card_planechase",
+      "source": "cards/planechase.c",
+      "native_ranges": [
+        {
+          "address": "0x2412470",
+          "end": "0x24124c0",
+          "bytes_sha256": "c8de8cf1666622f318ac8c305b2dae3c63d208fd8aaba6d366834fbc06f94eca",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/2412470.c",
+          "raw_export_sha256": "29f7b8e6c675af5b369637008f36594d52433d2b5be2d20057485c9a3389ab91"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7ddf272046299cc65557a43a556c33b95b92f909ba327cdf2a326de273ef6c1b"
+    },
+    {
+      "name": "card_gideon_jura",
+      "source": "cards/rise_of_the_eldrazi.c",
+      "native_ranges": [
+        {
+          "address": "0x24aeaf0",
+          "end": "0x24aed90",
+          "bytes_sha256": "0714409ffd23f0a5707c47e0a6774058cca8345d565a045276cbed09a31142d3",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/24aeaf0.c",
+          "raw_export_sha256": "e7fe9893a0f056c063627ee38304bdf116a6321d8e5123b27a78d480f5d1d072"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8454bf5dcadc381e6b1537585f89dbc143123ee3a7f959fab88d838e36b678c2"
+    },
+    {
+      "name": "card_gyre_sage",
+      "source": "cards/gatecrash.c",
+      "native_ranges": [
+        {
+          "address": "0x251f2a0",
+          "end": "0x251f3ae",
+          "bytes_sha256": "c71286b85ad6f2ef4b08e3d76877d809c62ab3c744b920b616c2d90f71568ec5",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/251f2a0.c",
+          "raw_export_sha256": "59db0bf53d368d4889868b485d9ec97dcc11d0c413fc0cd481bbc1e4efd8f4cd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a7eb8a183278b75105f61a64b42efc744229ab066b73fe6d51742160a9424bef"
+    },
+    {
+      "name": "card_archenemy",
+      "source": "cards/archenemy.c",
+      "native_ranges": [
+        {
+          "address": "0x25810f0",
+          "end": "0x2581470",
+          "bytes_sha256": "4c0b4faf6fb5a56a533447f6d5fb4984e081e477af53fe6c704197ec0c9b4b7e",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/25810f0.c",
+          "raw_export_sha256": "34def4f0e345caf2136a899afdbe1d944618d9c528576730c313470b8b552123"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "973d97e043191b6523d24e1c7ea2bc8cd4525c3f614e0c5e82774f26c1393f7d"
+    },
+    {
+      "name": "card_jace_the_mind_sculptor",
+      "source": "cards/worldwake.c",
+      "native_ranges": [
+        {
+          "address": "0x25871b0",
+          "end": "0x25877cf",
+          "bytes_sha256": "f0ccd5f76c73d2015a73bf346070fa3f158d1ec2145616f18fd32dfab26b0da1",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/25871b0.c",
+          "raw_export_sha256": "33fb49e1823d8f5f11175cfee1cc7bf830be0c8d8cb8803ecba215ce0de03f7b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "391fec82f3e528b7af9184a063990c860ac7c30c26fdb0b80e6c58956e2a81d4"
+    },
+    {
+      "name": "card_jared_carthalion_true_heir",
+      "source": "cards/commander_legends.c",
+      "native_ranges": [
+        {
+          "address": "0x25a90a0",
+          "end": "0x25a91f1",
+          "bytes_sha256": "b5a7b89cffc9cd52d64b9dc846dd60be58a17f55434d79567c3e4cd19dbaa066",
+          "raw_export": ".recovery/decompiled-planes-schemes-monarch-support/25a90a0.c",
+          "raw_export_sha256": "4239b32bf89db1b973eaf3bd890e18186d385ce6bea07ca68f9d23f7a0dbe983"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ebd4b7b8a68cbeb9b00aa6ede8a75e607754bf84846b21eae804d8271ffffbf3"
+    }
+  ],
+  "helper_definitions": 31,
+  "native_helper_ranges": 32,
+  "changed_helper_definitions": 14,
+  "changed_card_callers": 10,
+  "source_dependencies": [
+    {
+      "source": "cards/dragons_maze.c",
+      "name": "get_gate_code",
+      "definition_sha256": "f4e452c784281c88c7f78d65866373774502bfc91529d52f76c87ddf26cd2b02",
+      "standalone_native_range": null,
+      "inline_owner": "0x2291080",
+      "scope": "Existing source dependency read against concrete caller-owned DWARF inline instance and complete owner decompilation. No fabricated standalone address or extra helper credit."
+    },
+    {
+      "source": "cards/archenemy.c",
+      "name": "create_schemes_deck",
+      "definition_sha256": "0e43a38770011ead3e71188a6d5e12ce55b28fafdc68a3786dd885ade465b72a",
+      "standalone_native_range": null,
+      "inline_owner": "0x25810f0",
+      "scope": "Existing source dependency read against concrete caller-owned DWARF inline instance and complete owner decompilation. No fabricated standalone address or extra helper credit."
+    }
+  ],
+  "native_contracts": {
+    "planeswalker.c": "Four complete helper bodies read. Attack legacy no longer redirects combat packets. Chooser retains10x2/600 buffers and unbounded walker accumulation, adds IPF_DAMAGE tests in both AI preference loops. Native loyalty helper dispatches ETB/cant-respond, settings29 old uniqueness opt-in, own affected-card zero loyalty check, remaining activation count reset1/2 by Oath, AL_LOYALTY suppression, decrement/costbyte/reset, multi-PW targets8 coordination, cleanup fog flag. planeswalker_its_attacking retained. Three live walker callers add check_legend_rule; Garruk and Oath already native retained.",
+    "conspiracy-take-the-crown.c": "Monarch native compiler .part.0+public guard wrapper belong to ONE C definition. Recover missing private check_for_jared_carthalion_legacy with real native range, no ABI adapter. Proper old-owner passed into gain_control; subsequent instance lookup still uses old owner as native does. All200 marked entries initialize-1; native first-slot-only storage/unconditional break and shared removal index remain. Emblem usescheck_damage/DDBM_0 and Jared guard. Regal checks actual monarch for counted/tapped lands. Throne retains native info1-vs2 mismatch, removes tap event and resets tappedmana-1. Deadly helpers/card move leaves_play toshared event, static stackempty/sourceid inclusive scan, swapped grant-source argument order, pre-sac marker66/numbertargets2, cleanup. Opponent-player1 early return and marker quirks retained. Jailer/PalaceSentinels/Marchesa retained.",
+    "dissension.c": "Vat cleanup must precede attachment-control follow/granted ability. Native doubled counters/2UG paths retained. Vat/WarsToll full live callers retained.",
+    "dragons_maze.c": "has1counter retained. Global gate worker retained with concrete inline get_gate_code/10entry native-data table pinned. Legion legacy usesbeginning_of_combat ANYBODY and all19targets, source-attributed haste/recalc. Live card includes tokens, reverse151index scan,0..18 storage and meld2part slots; fixes originalincrementing loop/wrong marked-index use. MazeEnd count_zone VLA path and Renegade/Bred full bodies retained.",
+    "dragons_of_tarkir.c": "Counter-worker +five dragon/megamorph callers retained. Monument has optimized x constant4/no physical location; cols andfivecolors stack0..20. Logical Csignature remains; Ghidra shifted argument labels/phantomEBP ignored. Allfive monument callers retained verified actualcost/color contracts.",
+    "planechase.c": "Agyrem suppresses removed death triggers. Stensia legacy now direct attached-source GAA/planeswalker target, with cleanup behavior retained. Native getnewplane cache/currentplane unused, planeswalk_to including player-vsloop-owner marker bug retained. Planardice result1 unconditionalsourceid, othernativechaos conditions retained. Genericplane cost/counter/random/cleanup retained. Windriddle usesreveal_top_card. Shiv info10 setonly aftercanuse, not failure. Otherpairedplanes retained with originalquirks/typedstackviews.",
+    "archenemy_nicol_bolas.c": "Registration all11 nativeid/callback bindings in null/non-null paths verified. Behold worker retained. Reckoning decrements remainingcards only when tutorreturn>=0.",
+    "archenemy.c": "Registration all46 nativeid/callback bindings in null/non-null paths verified. Remaining eighthelpers fullread retained except AncientMagics/UndeadHorde nonnegative-result guards. Setscheme recursion/20card rotation/SFX/prompts/events/assertions retained. CardArchenemy fullread +concrete inlinecreate_schemes_deck inspected/pinned with57schemes and chosenVLA; no invented standalone range for inline.",
+    "evidence": "33 helper native ranges (32 initially queued+1 existing accepted Jared helper reviewed again),43 paired card ranges=76 fullranges. Native Monarch compilerpartitions grouped in one Cdefinition; settings29/30/MAX31 restored; 8framearrays,7fullfunction instruction witnesses,2concreteinline dependencies,57registrationbindings,10gateIDs pinned. Built-in dialog implementation stays deferred; no gameplay tests."
+  },
+  "dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "optimized_parameter_evidence": {
+    "0x220cad0": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      }
+    },
+    "0x215e940": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x215ec90": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      }
+    },
+    "0x215f340": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      }
+    },
+    "0x215f420": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "loyalty": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      }
+    },
+    "0x220cbe0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x220cd20": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x220d080": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      }
+    },
+    "0x220d4f0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      }
+    },
+    "0x221aa90": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x2290d60": {
+      "unused1": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "unused2": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "player": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      }
+    },
+    "0x2291080": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      }
+    },
+    "0x22911c0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x2319cc0": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      }
+    },
+    "0x231a270": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "cols": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "b": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "u": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "g": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "r": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      },
+      "w": {
+        "first_location": [
+          145,
+          20
+        ],
+        "constant": null
+      },
+      "x": {
+        "first_location": null,
+        "constant": 4
+      }
+    },
+    "0x2411540": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x24118e0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x2411d00": {
+      "current_plane": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      }
+    },
+    "0x2411ea0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "target_plane": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "override": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x2412050": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "result": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      }
+    },
+    "0x24122d0": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      }
+    },
+    "0x24859e0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x2485be0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x2485cb0": {
+      "schemes_list": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      }
+    },
+    "0x257d700": {
+      "schemes_list": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      }
+    },
+    "0x257e4c0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x257e710": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x257e760": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "csvid": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      }
+    },
+    "0x257fc60": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x25801e0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x2580de0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x2580e30": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x25810a0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    }
+  },
+  "native_frame_arrays": [
+    {
+      "owner": "0x215ec90",
+      "name": "planeswalkers",
+      "die_offset": "0x13281eb",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 10
+        },
+        {
+          "form": "DW_FORM_data1",
+          "extent": 2
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x215ec90",
+      "name": "buffer",
+      "die_offset": "0x1328205",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data2",
+          "extent": 600
+        }
+      ],
+      "element_bytes": 1
+    },
+    {
+      "owner": "0x220d080",
+      "name": "marked",
+      "die_offset": "0x1d29b1e",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 2
+        },
+        {
+          "form": "DW_FORM_data1",
+          "extent": 100
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x2291080",
+      "name": "gates",
+      "die_offset": "0x257e99c",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 10
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x2412050",
+      "name": "buffer",
+      "die_offset": "0x3d25fb6",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 100
+        }
+      ],
+      "element_bytes": 1
+    },
+    {
+      "owner": "0x2412050",
+      "name": "buffer",
+      "die_offset": "0x3d260c6",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 100
+        }
+      ],
+      "element_bytes": 1
+    },
+    {
+      "owner": "0x2296a00",
+      "name": "marked",
+      "die_offset": "0x2586fcf",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 151
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x25810f0",
+      "name": "chosen",
+      "die_offset": "0x506ab21",
+      "dimensions": [
+        {
+          "form": "DW_FORM_ref4",
+          "expressions": [
+            [
+              114,
+              127,
+              159
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    }
+  ],
+  "native_instruction_blocks": {
+    "planeswalker_state_machine": {
+      "owner": "0x215f420",
+      "address": "0x215f420",
+      "end": "0x215f9ae",
+      "bytes_sha256": "2f6e7d6826282026cbf66f50c32e3f50c80c2bacdf496abcbab107434f70b2b0",
+      "instructions": [
+        [
+          "0x215f420",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x215f421",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x215f423",
+          "push",
+          "edi"
+        ],
+        [
+          "0x215f424",
+          "push",
+          "esi"
+        ],
+        [
+          "0x215f425",
+          "push",
+          "ebx"
+        ],
+        [
+          "0x215f426",
+          "sub",
+          "esp, 0x3c"
+        ],
+        [
+          "0x215f429",
+          "mov",
+          "esi, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215f42c",
+          "mov",
+          "ebx, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x215f42f",
+          "mov",
+          "eax, dword ptr [ebp + 0x14]"
+        ],
+        [
+          "0x215f432",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f436",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f439",
+          "mov",
+          "edi, dword ptr [ebp + 0x10]"
+        ],
+        [
+          "0x215f43c",
+          "mov",
+          "dword ptr [ebp - 0x14], eax"
+        ],
+        [
+          "0x215f43f",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x215f444",
+          "cmp",
+          "dword ptr [0x7a2d78], 0xdb"
+        ],
+        [
+          "0x215f44e",
+          "mov",
+          "dword ptr [ebp - 0x10], eax"
+        ],
+        [
+          "0x215f451",
+          "je",
+          "0x215f648"
+        ],
+        [
+          "0x215f457",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f45b",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f45e",
+          "call",
+          "0x26b3560"
+        ],
+        [
+          "0x215f463",
+          "cmp",
+          "byte ptr [eax + 0x2d], 9"
+        ],
+        [
+          "0x215f467",
+          "je",
+          "0x215f480"
+        ],
+        [
+          "0x215f469",
+          "cmp",
+          "edi, 0x74"
+        ],
+        [
+          "0x215f46c",
+          "je",
+          "0x215f480"
+        ],
+        [
+          "0x215f46e",
+          "xor",
+          "edx, edx"
+        ],
+        [
+          "0x215f470",
+          "add",
+          "esp, 0x3c"
+        ],
+        [
+          "0x215f473",
+          "mov",
+          "eax, edx"
+        ],
+        [
+          "0x215f475",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x215f476",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x215f477",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x215f478",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x215f479",
+          "ret",
+          ""
+        ],
+        [
+          "0x215f47a",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f480",
+          "mov",
+          "eax, dword ptr [ebp - 0x14]"
+        ],
+        [
+          "0x215f483",
+          "mov",
+          "dword ptr [esp + 0xc], 0x42"
+        ],
+        [
+          "0x215f48b",
+          "mov",
+          "dword ptr [esp + 0x10], eax"
+        ],
+        [
+          "0x215f48f",
+          "mov",
+          "dword ptr [esp + 8], edi"
+        ],
+        [
+          "0x215f493",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f497",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f49a",
+          "call",
+          "0x2681660"
+        ],
+        [
+          "0x215f49f",
+          "cmp",
+          "edi, 0x4700"
+        ],
+        [
+          "0x215f4a5",
+          "je",
+          "0x215f5d0"
+        ],
+        [
+          "0x215f4ab",
+          "cmp",
+          "edi, 0x71"
+        ],
+        [
+          "0x215f4ae",
+          "jne",
+          "0x215f6f0"
+        ],
+        [
+          "0x215f4b4",
+          "mov",
+          "eax, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f4b7",
+          "mov",
+          "dword ptr [eax + 0xbc], 2"
+        ],
+        [
+          "0x215f4c1",
+          "cmp",
+          "edi, 0x6a"
+        ],
+        [
+          "0x215f4c4",
+          "jne",
+          "0x215f860"
+        ],
+        [
+          "0x215f4ca",
+          "mov",
+          "dword ptr [esp + 4], 0x482a"
+        ],
+        [
+          "0x215f4d2",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f4d5",
+          "call",
+          "0x2681910"
+        ],
+        [
+          "0x215f4da",
+          "mov",
+          "ecx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f4dd",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f4df",
+          "setne",
+          "al"
+        ],
+        [
+          "0x215f4e2",
+          "and",
+          "eax, 0xff"
+        ],
+        [
+          "0x215f4e7",
+          "inc",
+          "eax"
+        ],
+        [
+          "0x215f4e8",
+          "mov",
+          "dword ptr [ecx + 0xc0], eax"
+        ],
+        [
+          "0x215f4ee",
+          "cmp",
+          "dword ptr [0x7a2d78], 0xdc"
+        ],
+        [
+          "0x215f4f8",
+          "jne",
+          "0x215f72b"
+        ],
+        [
+          "0x215f4fe",
+          "cmp",
+          "dword ptr [0x4ef184], 0x15"
+        ],
+        [
+          "0x215f505",
+          "jne",
+          "0x215f72b"
+        ],
+        [
+          "0x215f50b",
+          "mov",
+          "eax, 1"
+        ],
+        [
+          "0x215f510",
+          "sub",
+          "eax, esi"
+        ],
+        [
+          "0x215f512",
+          "cmp",
+          "eax, dword ptr [0x628670]"
+        ],
+        [
+          "0x215f518",
+          "jne",
+          "0x215f72b"
+        ],
+        [
+          "0x215f51e",
+          "mov",
+          "eax, dword ptr [0x739a20]"
+        ],
+        [
+          "0x215f523",
+          "cmp",
+          "eax, dword ptr [0x7a398c]"
+        ],
+        [
+          "0x215f529",
+          "jne",
+          "0x215f72b"
+        ],
+        [
+          "0x215f52f",
+          "mov",
+          "edx, dword ptr [0x62c17c]"
+        ],
+        [
+          "0x215f535",
+          "cmp",
+          "edx, dword ptr [0x738c84]"
+        ],
+        [
+          "0x215f53b",
+          "jne",
+          "0x215f72b"
+        ],
+        [
+          "0x215f541",
+          "cmp",
+          "dword ptr [0x737e1c], edx"
+        ],
+        [
+          "0x215f547",
+          "jne",
+          "0x215f72b"
+        ],
+        [
+          "0x215f54d",
+          "mov",
+          "dword ptr [esp], edx"
+        ],
+        [
+          "0x215f550",
+          "mov",
+          "dword ptr [esp + 8], 0x40"
+        ],
+        [
+          "0x215f558",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215f55c",
+          "call",
+          "0x2679dd0"
+        ],
+        [
+          "0x215f561",
+          "mov",
+          "edx, eax"
+        ],
+        [
+          "0x215f563",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f565",
+          "jne",
+          "0x215f72b"
+        ],
+        [
+          "0x215f56b",
+          "mov",
+          "dword ptr [0x628b34], 1"
+        ],
+        [
+          "0x215f575",
+          "cmp",
+          "edi, 0x7d"
+        ],
+        [
+          "0x215f578",
+          "je",
+          "0x215f91e"
+        ],
+        [
+          "0x215f57e",
+          "cmp",
+          "edi, 0x7e"
+        ],
+        [
+          "0x215f581",
+          "jne",
+          "0x215f72b"
+        ],
+        [
+          "0x215f587",
+          "mov",
+          "eax, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f58a",
+          "cmp",
+          "dword ptr [eax + 0xb4], -1"
+        ],
+        [
+          "0x215f591",
+          "je",
+          "0x215f92a"
+        ],
+        [
+          "0x215f597",
+          "mov",
+          "eax, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f59a",
+          "mov",
+          "dword ptr [eax + 0xb8], 0xffffffff"
+        ],
+        [
+          "0x215f5a4",
+          "mov",
+          "dword ptr [eax + 0xb4], 0xffffffff"
+        ],
+        [
+          "0x215f5ae",
+          "mov",
+          "dword ptr [esp + 8], 2"
+        ],
+        [
+          "0x215f5b6",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f5ba",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f5bd",
+          "mov",
+          "dword ptr [ebp - 0x10], edx"
+        ],
+        [
+          "0x215f5c0",
+          "call",
+          "0x2679dd0"
+        ],
+        [
+          "0x215f5c5",
+          "mov",
+          "edx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f5c8",
+          "jmp",
+          "0x215f470"
+        ],
+        [
+          "0x215f5cd",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f5d0",
+          "cmp",
+          "ebx, dword ptr [0x7a398c]"
+        ],
+        [
+          "0x215f5d6",
+          "je",
+          "0x215f828"
+        ],
+        [
+          "0x215f5dc",
+          "cmp",
+          "ebx, dword ptr [0x7a398c]"
+        ],
+        [
+          "0x215f5e2",
+          "jne",
+          "0x215f4c1"
+        ],
+        [
+          "0x215f5e8",
+          "cmp",
+          "esi, dword ptr [0x738c84]"
+        ],
+        [
+          "0x215f5ee",
+          "jne",
+          "0x215f4c1"
+        ],
+        [
+          "0x215f5f4",
+          "mov",
+          "dword ptr [esp + 8], 0x42"
+        ],
+        [
+          "0x215f5fc",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f600",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f603",
+          "call",
+          "0x26d1730"
+        ],
+        [
+          "0x215f608",
+          "mov",
+          "edx, eax"
+        ],
+        [
+          "0x215f60a",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f60c",
+          "jne",
+          "0x215f4c1"
+        ],
+        [
+          "0x215f612",
+          "mov",
+          "eax, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f615",
+          "cmp",
+          "byte ptr [eax + 0xbc], 2"
+        ],
+        [
+          "0x215f61c",
+          "jne",
+          "0x215f4c1"
+        ],
+        [
+          "0x215f622",
+          "mov",
+          "byte ptr [eax + 0xbc], 3"
+        ],
+        [
+          "0x215f629",
+          "mov",
+          "dword ptr [esp + 8], 0x11"
+        ],
+        [
+          "0x215f631",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f635",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f638",
+          "mov",
+          "dword ptr [ebp - 0x14], edx"
+        ],
+        [
+          "0x215f63b",
+          "call",
+          "0x26b5a00"
+        ],
+        [
+          "0x215f640",
+          "mov",
+          "edx, dword ptr [ebp - 0x14]"
+        ],
+        [
+          "0x215f643",
+          "jmp",
+          "0x215f470"
+        ],
+        [
+          "0x215f648",
+          "cmp",
+          "ebx, dword ptr [0x7a398c]"
+        ],
+        [
+          "0x215f64e",
+          "jne",
+          "0x215f457"
+        ],
+        [
+          "0x215f654",
+          "cmp",
+          "esi, dword ptr [0x738c84]"
+        ],
+        [
+          "0x215f65a",
+          "jne",
+          "0x215f457"
+        ],
+        [
+          "0x215f660",
+          "cmp",
+          "dword ptr [0x737e1c], esi"
+        ],
+        [
+          "0x215f666",
+          "jne",
+          "0x215f457"
+        ],
+        [
+          "0x215f66c",
+          "cmp",
+          "dword ptr [0x62c17c], esi"
+        ],
+        [
+          "0x215f672",
+          "jne",
+          "0x215f457"
+        ],
+        [
+          "0x215f678",
+          "cmp",
+          "dword ptr [0x739a20], ebx"
+        ],
+        [
+          "0x215f67e",
+          "jne",
+          "0x215f457"
+        ],
+        [
+          "0x215f684",
+          "mov",
+          "dword ptr [0x628b34], 1"
+        ],
+        [
+          "0x215f68e",
+          "cmp",
+          "edi, 0x7d"
+        ],
+        [
+          "0x215f691",
+          "je",
+          "0x215f912"
+        ],
+        [
+          "0x215f697",
+          "cmp",
+          "edi, 0x7e"
+        ],
+        [
+          "0x215f69a",
+          "jne",
+          "0x215f457"
+        ],
+        [
+          "0x215f6a0",
+          "mov",
+          "dword ptr [esp + 8], 0x5100"
+        ],
+        [
+          "0x215f6a8",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f6ac",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f6af",
+          "call",
+          "0x26caff0"
+        ],
+        [
+          "0x215f6b4",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f6b8",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f6bb",
+          "call",
+          "0x26b3560"
+        ],
+        [
+          "0x215f6c0",
+          "cmp",
+          "byte ptr [eax + 0x2d], 9"
+        ],
+        [
+          "0x215f6c4",
+          "je",
+          "0x215f6cf"
+        ],
+        [
+          "0x215f6c6",
+          "cmp",
+          "edi, 0x74"
+        ],
+        [
+          "0x215f6c9",
+          "jne",
+          "0x215f46e"
+        ],
+        [
+          "0x215f6cf",
+          "mov",
+          "eax, dword ptr [ebp - 0x14]"
+        ],
+        [
+          "0x215f6d2",
+          "mov",
+          "dword ptr [esp + 0xc], 0x42"
+        ],
+        [
+          "0x215f6da",
+          "mov",
+          "dword ptr [esp + 0x10], eax"
+        ],
+        [
+          "0x215f6de",
+          "mov",
+          "dword ptr [esp + 8], edi"
+        ],
+        [
+          "0x215f6e2",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f6e6",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f6e9",
+          "call",
+          "0x2681660"
+        ],
+        [
+          "0x215f6ee",
+          "nop",
+          ""
+        ],
+        [
+          "0x215f6f0",
+          "cmp",
+          "edi, 0xc7"
+        ],
+        [
+          "0x215f6f6",
+          "je",
+          "0x215f8b8"
+        ],
+        [
+          "0x215f6fc",
+          "cmp",
+          "edi, 0x74"
+        ],
+        [
+          "0x215f6ff",
+          "je",
+          "0x215f816"
+        ],
+        [
+          "0x215f705",
+          "cmp",
+          "edi, 0x73"
+        ],
+        [
+          "0x215f708",
+          "jne",
+          "0x215f870"
+        ],
+        [
+          "0x215f70e",
+          "mov",
+          "eax, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f711",
+          "mov",
+          "ecx, dword ptr [eax + 0xc0]"
+        ],
+        [
+          "0x215f717",
+          "test",
+          "ecx, ecx"
+        ],
+        [
+          "0x215f719",
+          "jg",
+          "0x215f770"
+        ],
+        [
+          "0x215f71b",
+          "cmp",
+          "dword ptr [0x7a2d78], 0xdc"
+        ],
+        [
+          "0x215f725",
+          "je",
+          "0x215f4fe"
+        ],
+        [
+          "0x215f72b",
+          "mov",
+          "dword ptr [esp + 8], 2"
+        ],
+        [
+          "0x215f733",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f737",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f73a",
+          "call",
+          "0x2679dd0"
+        ],
+        [
+          "0x215f73f",
+          "cmp",
+          "edi, 0x22"
+        ],
+        [
+          "0x215f742",
+          "jne",
+          "0x215f46e"
+        ],
+        [
+          "0x215f748",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f74a",
+          "je",
+          "0x215f46e"
+        ],
+        [
+          "0x215f750",
+          "mov",
+          "dword ptr [esp + 8], 2"
+        ],
+        [
+          "0x215f758",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f75c",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f75f",
+          "call",
+          "0x267a050"
+        ],
+        [
+          "0x215f764",
+          "jmp",
+          "0x215f46e"
+        ],
+        [
+          "0x215f769",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f770",
+          "mov",
+          "dword ptr [esp + 8], 0x20"
+        ],
+        [
+          "0x215f778",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f77c",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f77f",
+          "call",
+          "0x26dd430"
+        ],
+        [
+          "0x215f784",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f786",
+          "jne",
+          "0x215f71b"
+        ],
+        [
+          "0x215f788",
+          "mov",
+          "dword ptr [esp + 0x30], 0"
+        ],
+        [
+          "0x215f790",
+          "mov",
+          "dword ptr [esp + 0x2c], 0"
+        ],
+        [
+          "0x215f798",
+          "mov",
+          "dword ptr [esp + 0x28], 0"
+        ],
+        [
+          "0x215f7a0",
+          "mov",
+          "dword ptr [esp + 0x24], 0"
+        ],
+        [
+          "0x215f7a8",
+          "mov",
+          "dword ptr [esp + 0x20], 0"
+        ],
+        [
+          "0x215f7b0",
+          "mov",
+          "dword ptr [esp + 0x1c], 0"
+        ],
+        [
+          "0x215f7b8",
+          "mov",
+          "dword ptr [esp + 0x18], 0"
+        ],
+        [
+          "0x215f7c0",
+          "mov",
+          "dword ptr [esp + 0x14], 0"
+        ],
+        [
+          "0x215f7c8",
+          "mov",
+          "dword ptr [esp + 0x10], 0"
+        ],
+        [
+          "0x215f7d0",
+          "mov",
+          "dword ptr [esp + 0xc], 0"
+        ],
+        [
+          "0x215f7d8",
+          "mov",
+          "dword ptr [esp + 8], 0x73"
+        ],
+        [
+          "0x215f7e0",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f7e4",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f7e7",
+          "call",
+          "0x269db00"
+        ],
+        [
+          "0x215f7ec",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f7ee",
+          "je",
+          "0x215f71b"
+        ],
+        [
+          "0x215f7f4",
+          "mov",
+          "dword ptr [esp + 4], 0x73"
+        ],
+        [
+          "0x215f7fc",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f7ff",
+          "call",
+          "0x2679b40"
+        ],
+        [
+          "0x215f804",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f806",
+          "jne",
+          "0x215f816"
+        ],
+        [
+          "0x215f808",
+          "test",
+          "byte ptr [esi*4 + 0x4ef1a6], 4"
+        ],
+        [
+          "0x215f810",
+          "je",
+          "0x215f71b"
+        ],
+        [
+          "0x215f816",
+          "add",
+          "esp, 0x3c"
+        ],
+        [
+          "0x215f819",
+          "mov",
+          "edx, 1"
+        ],
+        [
+          "0x215f81e",
+          "mov",
+          "eax, edx"
+        ],
+        [
+          "0x215f820",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x215f821",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x215f822",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x215f823",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x215f824",
+          "ret",
+          ""
+        ],
+        [
+          "0x215f825",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f828",
+          "cmp",
+          "esi, dword ptr [0x738c84]"
+        ],
+        [
+          "0x215f82e",
+          "jne",
+          "0x215f5e8"
+        ],
+        [
+          "0x215f834",
+          "mov",
+          "dword ptr [esp], 0x1d"
+        ],
+        [
+          "0x215f83b",
+          "call",
+          "0x26c7810"
+        ],
+        [
+          "0x215f840",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f842",
+          "je",
+          "0x215f5dc"
+        ],
+        [
+          "0x215f848",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f84c",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f84f",
+          "call",
+          "0x215ead0"
+        ],
+        [
+          "0x215f854",
+          "jmp",
+          "0x215f5dc"
+        ],
+        [
+          "0x215f859",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f860",
+          "cmp",
+          "edi, 0x71"
+        ],
+        [
+          "0x215f863",
+          "je",
+          "0x215f4ca"
+        ],
+        [
+          "0x215f869",
+          "jmp",
+          "0x215f71b"
+        ],
+        [
+          "0x215f86e",
+          "nop",
+          ""
+        ],
+        [
+          "0x215f870",
+          "cmp",
+          "edi, 0x6d"
+        ],
+        [
+          "0x215f873",
+          "jne",
+          "0x215f4c1"
+        ],
+        [
+          "0x215f879",
+          "cmp",
+          "dword ptr [0x4ef194], 1"
+        ],
+        [
+          "0x215f880",
+          "je",
+          "0x215f71b"
+        ],
+        [
+          "0x215f886",
+          "mov",
+          "eax, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f889",
+          "mov",
+          "edx, dword ptr [eax + 0xc0]"
+        ],
+        [
+          "0x215f88f",
+          "dec",
+          "edx"
+        ],
+        [
+          "0x215f890",
+          "mov",
+          "dword ptr [eax + 0xc0], edx"
+        ],
+        [
+          "0x215f896",
+          "mov",
+          "eax, dword ptr [eax + 0xbc]"
+        ],
+        [
+          "0x215f89c",
+          "movsx",
+          "eax, ah"
+        ],
+        [
+          "0x215f89f",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f8a1",
+          "jne",
+          "0x215f8f8"
+        ],
+        [
+          "0x215f8a3",
+          "mov",
+          "eax, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f8a6",
+          "mov",
+          "byte ptr [eax + 0xbd], 0"
+        ],
+        [
+          "0x215f8ad",
+          "jmp",
+          "0x215f71b"
+        ],
+        [
+          "0x215f8b2",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f8b8",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f8bc",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f8bf",
+          "mov",
+          "dword ptr [esp + 8], 0x42"
+        ],
+        [
+          "0x215f8c7",
+          "call",
+          "0x26d1730"
+        ],
+        [
+          "0x215f8cc",
+          "mov",
+          "edi, dword ptr [0x7a31a8]"
+        ],
+        [
+          "0x215f8d2",
+          "mov",
+          "dword ptr [ebp + 0xc], ebx"
+        ],
+        [
+          "0x215f8d5",
+          "mov",
+          "dword ptr [ebp + 8], esi"
+        ],
+        [
+          "0x215f8d8",
+          "lea",
+          "eax, [eax + eax*2]"
+        ],
+        [
+          "0x215f8db",
+          "shl",
+          "eax, 3"
+        ],
+        [
+          "0x215f8de",
+          "add",
+          "edi, eax"
+        ],
+        [
+          "0x215f8e0",
+          "mov",
+          "dword ptr [0x7a31a8], edi"
+        ],
+        [
+          "0x215f8e6",
+          "add",
+          "esp, 0x3c"
+        ],
+        [
+          "0x215f8e9",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x215f8ea",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x215f8eb",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x215f8ec",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x215f8ed",
+          "jmp",
+          "0x4377b0"
+        ],
+        [
+          "0x215f8f2",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f8f8",
+          "mov",
+          "dword ptr [esp + 0xc], eax"
+        ],
+        [
+          "0x215f8fc",
+          "mov",
+          "dword ptr [esp + 8], 0x42"
+        ],
+        [
+          "0x215f904",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f908",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f90b",
+          "call",
+          "0x26d5910"
+        ],
+        [
+          "0x215f910",
+          "jmp",
+          "0x215f8a3"
+        ],
+        [
+          "0x215f912",
+          "or",
+          "dword ptr [0x6205b4], 2"
+        ],
+        [
+          "0x215f919",
+          "jmp",
+          "0x215f6b4"
+        ],
+        [
+          "0x215f91e",
+          "or",
+          "dword ptr [0x6205b4], 2"
+        ],
+        [
+          "0x215f925",
+          "jmp",
+          "0x215f5ae"
+        ],
+        [
+          "0x215f92a",
+          "cmp",
+          "dword ptr [eax + 0xb8], -1"
+        ],
+        [
+          "0x215f931",
+          "jne",
+          "0x215f597"
+        ],
+        [
+          "0x215f937",
+          "xor",
+          "edi, edi"
+        ],
+        [
+          "0x215f939",
+          "cmp",
+          "dword ptr [esi*4 + 0x4ef520], edi"
+        ],
+        [
+          "0x215f940",
+          "mov",
+          "dword ptr [ebp - 0x10], edx"
+        ],
+        [
+          "0x215f943",
+          "jle",
+          "0x215f972"
+        ],
+        [
+          "0x215f945",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x215f949",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f94c",
+          "call",
+          "0x26b32d0"
+        ],
+        [
+          "0x215f951",
+          "mov",
+          "edx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f954",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f956",
+          "je",
+          "0x215f96f"
+        ],
+        [
+          "0x215f958",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x215f95c",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f95f",
+          "call",
+          "0x2681af0"
+        ],
+        [
+          "0x215f964",
+          "cmp",
+          "edi, ebx"
+        ],
+        [
+          "0x215f966",
+          "mov",
+          "edx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f969",
+          "je",
+          "0x215f96f"
+        ],
+        [
+          "0x215f96b",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f96d",
+          "jne",
+          "0x215f990"
+        ],
+        [
+          "0x215f96f",
+          "inc",
+          "edi"
+        ],
+        [
+          "0x215f970",
+          "jmp",
+          "0x215f939"
+        ],
+        [
+          "0x215f972",
+          "mov",
+          "eax, dword ptr [0x7a398c]"
+        ],
+        [
+          "0x215f977",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215f97b",
+          "mov",
+          "eax, dword ptr [0x738c84]"
+        ],
+        [
+          "0x215f980",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215f983",
+          "call",
+          "0x215ec90"
+        ],
+        [
+          "0x215f988",
+          "mov",
+          "edx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f98b",
+          "jmp",
+          "0x215f5ae"
+        ],
+        [
+          "0x215f990",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x215f994",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f997",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x215f99c",
+          "inc",
+          "edi"
+        ],
+        [
+          "0x215f99d",
+          "mov",
+          "edx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x215f9a0",
+          "mov",
+          "dword ptr [eax + 0xb4], esi"
+        ],
+        [
+          "0x215f9a6",
+          "mov",
+          "dword ptr [eax + 0xb8], ebx"
+        ],
+        [
+          "0x215f9ac",
+          "jmp",
+          "0x215f939"
+        ]
+      ]
+    },
+    "choose_attack_protection": {
+      "owner": "0x215ec90",
+      "address": "0x215ec90",
+      "end": "0x215f335",
+      "bytes_sha256": "febc1d8c1ee8a12572474a7ebc2dfeb43a6956535200374089a9754e9fc7d8b4",
+      "instructions": [
+        [
+          "0x215ec90",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x215ec91",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x215ec93",
+          "push",
+          "edi"
+        ],
+        [
+          "0x215ec94",
+          "push",
+          "esi"
+        ],
+        [
+          "0x215ec95",
+          "mov",
+          "esi, 1"
+        ],
+        [
+          "0x215ec9a",
+          "push",
+          "ebx"
+        ],
+        [
+          "0x215ec9b",
+          "lea",
+          "eax, [ebp - 0x264]"
+        ],
+        [
+          "0x215eca1",
+          "sub",
+          "esp, 0x2d4"
+        ],
+        [
+          "0x215eca7",
+          "mov",
+          "dword ptr [esp + 8], 0x272eaa2"
+        ],
+        [
+          "0x215ecaf",
+          "mov",
+          "dword ptr [esp + 4], 0x258"
+        ],
+        [
+          "0x215ecb7",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215ecba",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x215ecbf",
+          "mov",
+          "dword ptr [ebp - 0x2bc], eax"
+        ],
+        [
+          "0x215ecc5",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x215ecc8",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215eccc",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215eccf",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215ecd2",
+          "call",
+          "0x2679410"
+        ],
+        [
+          "0x215ecd7",
+          "mov",
+          "dword ptr [ebp - 0x2c4], eax"
+        ],
+        [
+          "0x215ecdd",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215ece0",
+          "sub",
+          "esi, eax"
+        ],
+        [
+          "0x215ece2",
+          "mov",
+          "eax, dword ptr [esi*4 + 0x4ef520]"
+        ],
+        [
+          "0x215ece9",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215eceb",
+          "jle",
+          "0x215f278"
+        ],
+        [
+          "0x215ecf1",
+          "mov",
+          "dword ptr [ebp - 0x2c0], 0"
+        ],
+        [
+          "0x215ecfb",
+          "mov",
+          "dword ptr [ebp - 0x2b8], 0"
+        ],
+        [
+          "0x215ed05",
+          "xor",
+          "edi, edi"
+        ],
+        [
+          "0x215ed07",
+          "jmp",
+          "0x215ed20"
+        ],
+        [
+          "0x215ed09",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215ed10",
+          "inc",
+          "edi"
+        ],
+        [
+          "0x215ed11",
+          "mov",
+          "eax, dword ptr [esi*4 + 0x4ef520]"
+        ],
+        [
+          "0x215ed18",
+          "cmp",
+          "eax, edi"
+        ],
+        [
+          "0x215ed1a",
+          "jle",
+          "0x215ee48"
+        ],
+        [
+          "0x215ed20",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x215ed24",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215ed27",
+          "call",
+          "0x26b32d0"
+        ],
+        [
+          "0x215ed2c",
+          "mov",
+          "ebx, eax"
+        ],
+        [
+          "0x215ed2e",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215ed30",
+          "je",
+          "0x215ed10"
+        ],
+        [
+          "0x215ed32",
+          "mov",
+          "eax, dword ptr [0x735ed0]"
+        ],
+        [
+          "0x215ed37",
+          "cmp",
+          "dword ptr [ebx + 0x6c], eax"
+        ],
+        [
+          "0x215ed3a",
+          "jne",
+          "0x215ed10"
+        ],
+        [
+          "0x215ed3c",
+          "mov",
+          "eax, dword ptr [ebx + 0x38]"
+        ],
+        [
+          "0x215ed3f",
+          "cmp",
+          "eax, 0x24ac430"
+        ],
+        [
+          "0x215ed44",
+          "je",
+          "0x215ed60"
+        ],
+        [
+          "0x215ed46",
+          "cmp",
+          "eax, 0x20d92f0"
+        ],
+        [
+          "0x215ed4b",
+          "jne",
+          "0x215ed10"
+        ],
+        [
+          "0x215ed4d",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x215ed50",
+          "cmp",
+          "dword ptr [ebx + 4], eax"
+        ],
+        [
+          "0x215ed53",
+          "jne",
+          "0x215ed10"
+        ],
+        [
+          "0x215ed55",
+          "movsx",
+          "eax, byte ptr [ebx + 0x50]"
+        ],
+        [
+          "0x215ed59",
+          "cmp",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215ed5c",
+          "jne",
+          "0x215ed10"
+        ],
+        [
+          "0x215ed5e",
+          "nop",
+          ""
+        ],
+        [
+          "0x215ed60",
+          "mov",
+          "eax, dword ptr [ebx + 0x48]"
+        ],
+        [
+          "0x215ed63",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215ed67",
+          "movsx",
+          "eax, byte ptr [ebx + 0xc]"
+        ],
+        [
+          "0x215ed6b",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215ed6e",
+          "call",
+          "0x26b32d0"
+        ],
+        [
+          "0x215ed73",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215ed75",
+          "je",
+          "0x215ed10"
+        ],
+        [
+          "0x215ed77",
+          "mov",
+          "eax, dword ptr [ebx + 0x48]"
+        ],
+        [
+          "0x215ed7a",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215ed7e",
+          "movsx",
+          "eax, byte ptr [ebx + 0xc]"
+        ],
+        [
+          "0x215ed82",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215ed85",
+          "call",
+          "0x2681af0"
+        ],
+        [
+          "0x215ed8a",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215ed8c",
+          "je",
+          "0x215ed10"
+        ],
+        [
+          "0x215ed8e",
+          "movsx",
+          "eax, byte ptr [ebx + 0xc]"
+        ],
+        [
+          "0x215ed92",
+          "cmp",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215ed95",
+          "je",
+          "0x215ed10"
+        ],
+        [
+          "0x215ed9b",
+          "mov",
+          "ecx, dword ptr [ebp - 0x2c0]"
+        ],
+        [
+          "0x215eda1",
+          "test",
+          "ecx, ecx"
+        ],
+        [
+          "0x215eda3",
+          "je",
+          "0x215f308"
+        ],
+        [
+          "0x215eda9",
+          "mov",
+          "edx, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215edaf",
+          "inc",
+          "edx"
+        ],
+        [
+          "0x215edb0",
+          "mov",
+          "dword ptr [ebp - 0x2b8], edx"
+        ],
+        [
+          "0x215edb6",
+          "mov",
+          "edx, dword ptr [ebx + 0x48]"
+        ],
+        [
+          "0x215edb9",
+          "mov",
+          "ecx, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215edbf",
+          "mov",
+          "dword ptr [esp + 4], edx"
+        ],
+        [
+          "0x215edc3",
+          "mov",
+          "dword ptr [esp + 8], 0x42"
+        ],
+        [
+          "0x215edcb",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215edce",
+          "mov",
+          "dword ptr [ebp + ecx*8 - 0x2b4], edx"
+        ],
+        [
+          "0x215edd5",
+          "call",
+          "0x26d1730"
+        ],
+        [
+          "0x215edda",
+          "mov",
+          "ecx, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215ede0",
+          "mov",
+          "dword ptr [ebp + ecx*8 - 0x2b0], eax"
+        ],
+        [
+          "0x215ede7",
+          "mov",
+          "eax, dword ptr [ebx + 0x48]"
+        ],
+        [
+          "0x215edea",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215edee",
+          "movsx",
+          "eax, byte ptr [ebx + 0xc]"
+        ],
+        [
+          "0x215edf2",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215edf5",
+          "call",
+          "0x26b35a0"
+        ],
+        [
+          "0x215edfa",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215edfd",
+          "call",
+          "0x26798f0"
+        ],
+        [
+          "0x215ee02",
+          "mov",
+          "ebx, dword ptr [ebp - 0x2bc]"
+        ],
+        [
+          "0x215ee08",
+          "mov",
+          "dword ptr [esp + 0xc], eax"
+        ],
+        [
+          "0x215ee0c",
+          "mov",
+          "eax, 0x258"
+        ],
+        [
+          "0x215ee11",
+          "sub",
+          "eax, ebx"
+        ],
+        [
+          "0x215ee13",
+          "mov",
+          "dword ptr [esp + 8], 0x272eac7"
+        ],
+        [
+          "0x215ee1b",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215ee1f",
+          "lea",
+          "eax, [ebp - 0x264]"
+        ],
+        [
+          "0x215ee25",
+          "add",
+          "eax, ebx"
+        ],
+        [
+          "0x215ee27",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215ee2a",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x215ee2f",
+          "mov",
+          "dword ptr [ebp - 0x2c0], 1"
+        ],
+        [
+          "0x215ee39",
+          "add",
+          "ebx, eax"
+        ],
+        [
+          "0x215ee3b",
+          "mov",
+          "dword ptr [ebp - 0x2bc], ebx"
+        ],
+        [
+          "0x215ee41",
+          "jmp",
+          "0x215ed10"
+        ],
+        [
+          "0x215ee46",
+          "nop",
+          ""
+        ],
+        [
+          "0x215ee48",
+          "mov",
+          "ecx, dword ptr [ebp - 0x2c0]"
+        ],
+        [
+          "0x215ee4e",
+          "test",
+          "ecx, ecx"
+        ],
+        [
+          "0x215ee50",
+          "je",
+          "0x215f098"
+        ],
+        [
+          "0x215ee56",
+          "cmp",
+          "dword ptr [0x728574], 1"
+        ],
+        [
+          "0x215ee5d",
+          "je",
+          "0x215efea"
+        ],
+        [
+          "0x215ee63",
+          "cmp",
+          "dword ptr [ebp + 8], 1"
+        ],
+        [
+          "0x215ee67",
+          "je",
+          "0x215f260"
+        ],
+        [
+          "0x215ee6d",
+          "mov",
+          "ebx, dword ptr [ebp - 0x2c0]"
+        ],
+        [
+          "0x215ee73",
+          "mov",
+          "ecx, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215ee79",
+          "test",
+          "ecx, ecx"
+        ],
+        [
+          "0x215ee7b",
+          "jle",
+          "0x215eebd"
+        ],
+        [
+          "0x215ee7d",
+          "mov",
+          "edx, dword ptr [ebp - 0x2c0]"
+        ],
+        [
+          "0x215ee83",
+          "test",
+          "edx, edx"
+        ],
+        [
+          "0x215ee85",
+          "jne",
+          "0x215eebd"
+        ],
+        [
+          "0x215ee87",
+          "lea",
+          "eax, [ebp - 0x264]"
+        ],
+        [
+          "0x215ee8d",
+          "mov",
+          "dword ptr [esp + 0x18], ebx"
+        ],
+        [
+          "0x215ee91",
+          "mov",
+          "dword ptr [esp + 0x14], eax"
+        ],
+        [
+          "0x215ee95",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x215ee98",
+          "mov",
+          "dword ptr [esp + 8], eax"
+        ],
+        [
+          "0x215ee9c",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215ee9f",
+          "mov",
+          "dword ptr [esp + 0x10], 0xffffffff"
+        ],
+        [
+          "0x215eea7",
+          "mov",
+          "dword ptr [esp + 0xc], 0xffffffff"
+        ],
+        [
+          "0x215eeaf",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215eeb3",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215eeb6",
+          "call",
+          "0x471eb0"
+        ],
+        [
+          "0x215eebb",
+          "mov",
+          "ebx, eax"
+        ],
+        [
+          "0x215eebd",
+          "test",
+          "ebx, ebx"
+        ],
+        [
+          "0x215eebf",
+          "jle",
+          "0x215ef97"
+        ],
+        [
+          "0x215eec5",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x215eec8",
+          "mov",
+          "dword ptr [esp + 8], 0x40"
+        ],
+        [
+          "0x215eed0",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215eed4",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215eed7",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215eeda",
+          "call",
+          "0x2679e00"
+        ],
+        [
+          "0x215eedf",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x215eee2",
+          "mov",
+          "dword ptr [esp + 0x10], eax"
+        ],
+        [
+          "0x215eee6",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215eee9",
+          "mov",
+          "dword ptr [esp + 0xc], eax"
+        ],
+        [
+          "0x215eeed",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x215eef0",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215eef4",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215eef7",
+          "mov",
+          "dword ptr [esp + 8], 0x215e940"
+        ],
+        [
+          "0x215eeff",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215ef02",
+          "call",
+          "0x267ab00"
+        ],
+        [
+          "0x215ef07",
+          "mov",
+          "dword ptr [esp + 8], 0x40"
+        ],
+        [
+          "0x215ef0f",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215ef13",
+          "mov",
+          "dword ptr [ebp - 0x2b8], eax"
+        ],
+        [
+          "0x215ef19",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215ef1c",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215ef1f",
+          "call",
+          "0x2679e00"
+        ],
+        [
+          "0x215ef24",
+          "mov",
+          "eax, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215ef2a",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215ef2e",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215ef31",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215ef34",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x215ef39",
+          "mov",
+          "edx, dword ptr [ebp + ebx*8 - 0x2b4]"
+        ],
+        [
+          "0x215ef40",
+          "mov",
+          "edi, eax"
+        ],
+        [
+          "0x215ef42",
+          "mov",
+          "dword ptr [ebp - 0x2b8], edx"
+        ],
+        [
+          "0x215ef48",
+          "mov",
+          "dword ptr [eax + 0x80], edx"
+        ],
+        [
+          "0x215ef4e",
+          "mov",
+          "dword ptr [eax + 0x7c], esi"
+        ],
+        [
+          "0x215ef51",
+          "mov",
+          "dword ptr [eax + 0x84], 0x309"
+        ],
+        [
+          "0x215ef5b",
+          "mov",
+          "dword ptr [eax + 0x88], ebx"
+        ],
+        [
+          "0x215ef61",
+          "mov",
+          "dword ptr [eax + 0x4c], 0x300"
+        ],
+        [
+          "0x215ef68",
+          "mov",
+          "dword ptr [esp + 4], edx"
+        ],
+        [
+          "0x215ef6c",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215ef6f",
+          "call",
+          "0x26b35a0"
+        ],
+        [
+          "0x215ef74",
+          "mov",
+          "edx, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215ef7a",
+          "mov",
+          "word ptr [edi + 0x64], ax"
+        ],
+        [
+          "0x215ef7e",
+          "and",
+          "eax, 0xffff"
+        ],
+        [
+          "0x215ef83",
+          "mov",
+          "dword ptr [esp + 8], edx"
+        ],
+        [
+          "0x215ef87",
+          "mov",
+          "dword ptr [esp + 4], esi"
+        ],
+        [
+          "0x215ef8b",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215ef8e",
+          "call",
+          "0x26c79c0"
+        ],
+        [
+          "0x215ef93",
+          "mov",
+          "word ptr [edi + 0x66], ax"
+        ],
+        [
+          "0x215ef97",
+          "add",
+          "esp, 0x2d4"
+        ],
+        [
+          "0x215ef9d",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x215ef9e",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x215ef9f",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x215efa0",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x215efa1",
+          "ret",
+          ""
+        ],
+        [
+          "0x215efa2",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215efa8",
+          "cmp",
+          "dword ptr [0x728574], 1"
+        ],
+        [
+          "0x215efaf",
+          "je",
+          "0x215efc8"
+        ],
+        [
+          "0x215efb1",
+          "cmp",
+          "dword ptr [ebp + 8], 1"
+        ],
+        [
+          "0x215efb5",
+          "jne",
+          "0x215ee6d"
+        ],
+        [
+          "0x215efbb",
+          "test",
+          "byte ptr [0x790640], 2"
+        ],
+        [
+          "0x215efc2",
+          "jne",
+          "0x215ee6d"
+        ],
+        [
+          "0x215efc8",
+          "mov",
+          "eax, dword ptr [esi*4 + 0x4ef528]"
+        ],
+        [
+          "0x215efcf",
+          "mov",
+          "edx, dword ptr [ebp - 0x2c4]"
+        ],
+        [
+          "0x215efd5",
+          "sub",
+          "eax, edx"
+        ],
+        [
+          "0x215efd7",
+          "cmp",
+          "eax, 6"
+        ],
+        [
+          "0x215efda",
+          "jle",
+          "0x215f2a0"
+        ],
+        [
+          "0x215efe0",
+          "mov",
+          "dword ptr [ebp - 0x2c0], 0"
+        ],
+        [
+          "0x215efea",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215efed",
+          "mov",
+          "eax, dword ptr [eax*4 + 0x4ef520]"
+        ],
+        [
+          "0x215eff4",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215eff6",
+          "jle",
+          "0x215f170"
+        ],
+        [
+          "0x215effc",
+          "xor",
+          "ebx, ebx"
+        ],
+        [
+          "0x215effe",
+          "mov",
+          "edi, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215f001",
+          "jmp",
+          "0x215f016"
+        ],
+        [
+          "0x215f003",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f007",
+          "nop",
+          ""
+        ],
+        [
+          "0x215f008",
+          "inc",
+          "ebx"
+        ],
+        [
+          "0x215f009",
+          "cmp",
+          "dword ptr [edi*4 + 0x4ef520], ebx"
+        ],
+        [
+          "0x215f010",
+          "jle",
+          "0x215f170"
+        ],
+        [
+          "0x215f016",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f01a",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x215f01d",
+          "call",
+          "0x26b32d0"
+        ],
+        [
+          "0x215f022",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f024",
+          "je",
+          "0x215f008"
+        ],
+        [
+          "0x215f026",
+          "mov",
+          "dword ptr [esp + 8], 0x80"
+        ],
+        [
+          "0x215f02e",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f032",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x215f035",
+          "call",
+          "0x2681ca0"
+        ],
+        [
+          "0x215f03a",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f03c",
+          "je",
+          "0x215f008"
+        ],
+        [
+          "0x215f03e",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f042",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x215f045",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x215f04a",
+          "mov",
+          "edx, eax"
+        ],
+        [
+          "0x215f04c",
+          "cmp",
+          "dword ptr [eax + 0x38], 0x215e940"
+        ],
+        [
+          "0x215f053",
+          "jne",
+          "0x215f008"
+        ],
+        [
+          "0x215f055",
+          "mov",
+          "eax, dword ptr [eax + 4]"
+        ],
+        [
+          "0x215f058",
+          "mov",
+          "dword ptr [ebp - 0x2bc], edx"
+        ],
+        [
+          "0x215f05e",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215f062",
+          "movsx",
+          "eax, byte ptr [edx + 0x50]"
+        ],
+        [
+          "0x215f066",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215f069",
+          "call",
+          "0x2679410"
+        ],
+        [
+          "0x215f06e",
+          "mov",
+          "edx, dword ptr [ebp - 0x2bc]"
+        ],
+        [
+          "0x215f074",
+          "mov",
+          "ecx, eax"
+        ],
+        [
+          "0x215f076",
+          "mov",
+          "eax, dword ptr [edx + 0x88]"
+        ],
+        [
+          "0x215f07c",
+          "mov",
+          "edx, dword ptr [ebp + eax*8 - 0x2b0]"
+        ],
+        [
+          "0x215f083",
+          "sub",
+          "edx, ecx"
+        ],
+        [
+          "0x215f085",
+          "mov",
+          "dword ptr [ebp + eax*8 - 0x2b0], edx"
+        ],
+        [
+          "0x215f08c",
+          "jmp",
+          "0x215f008"
+        ],
+        [
+          "0x215f091",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f098",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f09a",
+          "jle",
+          "0x215efa8"
+        ],
+        [
+          "0x215f0a0",
+          "xor",
+          "ebx, ebx"
+        ],
+        [
+          "0x215f0a2",
+          "mov",
+          "edi, 0x258"
+        ],
+        [
+          "0x215f0a7",
+          "jmp",
+          "0x215f0be"
+        ],
+        [
+          "0x215f0a9",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f0b0",
+          "inc",
+          "ebx"
+        ],
+        [
+          "0x215f0b1",
+          "cmp",
+          "dword ptr [esi*4 + 0x4ef520], ebx"
+        ],
+        [
+          "0x215f0b8",
+          "jle",
+          "0x215efa8"
+        ],
+        [
+          "0x215f0be",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f0c2",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f0c5",
+          "call",
+          "0x26b32d0"
+        ],
+        [
+          "0x215f0ca",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f0cc",
+          "je",
+          "0x215f0b0"
+        ],
+        [
+          "0x215f0ce",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f0d2",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f0d5",
+          "call",
+          "0x2681af0"
+        ],
+        [
+          "0x215f0da",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f0dc",
+          "je",
+          "0x215f0b0"
+        ],
+        [
+          "0x215f0de",
+          "mov",
+          "ecx, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215f0e4",
+          "mov",
+          "dword ptr [esp + 8], 0x42"
+        ],
+        [
+          "0x215f0ec",
+          "inc",
+          "ecx"
+        ],
+        [
+          "0x215f0ed",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f0f1",
+          "mov",
+          "dword ptr [ebp - 0x2b8], ecx"
+        ],
+        [
+          "0x215f0f7",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f0fa",
+          "mov",
+          "eax, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215f100",
+          "mov",
+          "dword ptr [ebp + eax*8 - 0x2b4], ebx"
+        ],
+        [
+          "0x215f107",
+          "call",
+          "0x26d1730"
+        ],
+        [
+          "0x215f10c",
+          "mov",
+          "ecx, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215f112",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x215f116",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f119",
+          "mov",
+          "dword ptr [ebp + ecx*8 - 0x2b0], eax"
+        ],
+        [
+          "0x215f120",
+          "call",
+          "0x26b35a0"
+        ],
+        [
+          "0x215f125",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215f128",
+          "call",
+          "0x26798f0"
+        ],
+        [
+          "0x215f12d",
+          "mov",
+          "ecx, dword ptr [ebp - 0x2bc]"
+        ],
+        [
+          "0x215f133",
+          "mov",
+          "dword ptr [esp + 0xc], eax"
+        ],
+        [
+          "0x215f137",
+          "mov",
+          "eax, edi"
+        ],
+        [
+          "0x215f139",
+          "sub",
+          "eax, ecx"
+        ],
+        [
+          "0x215f13b",
+          "mov",
+          "dword ptr [esp + 8], 0x272eac7"
+        ],
+        [
+          "0x215f143",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215f147",
+          "lea",
+          "eax, [ebp - 0x264]"
+        ],
+        [
+          "0x215f14d",
+          "add",
+          "eax, ecx"
+        ],
+        [
+          "0x215f14f",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215f152",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x215f157",
+          "mov",
+          "edx, dword ptr [ebp - 0x2bc]"
+        ],
+        [
+          "0x215f15d",
+          "add",
+          "edx, eax"
+        ],
+        [
+          "0x215f15f",
+          "mov",
+          "dword ptr [ebp - 0x2bc], edx"
+        ],
+        [
+          "0x215f165",
+          "jmp",
+          "0x215f0b0"
+        ],
+        [
+          "0x215f16a",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f170",
+          "mov",
+          "edi, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215f176",
+          "mov",
+          "ebx, 1"
+        ],
+        [
+          "0x215f17b",
+          "test",
+          "edi, edi"
+        ],
+        [
+          "0x215f17d",
+          "jle",
+          "0x215ef97"
+        ],
+        [
+          "0x215f183",
+          "mov",
+          "edi, dword ptr [ebp - 0x2c4]"
+        ],
+        [
+          "0x215f189",
+          "jmp",
+          "0x215f199"
+        ],
+        [
+          "0x215f18b",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f18f",
+          "nop",
+          ""
+        ],
+        [
+          "0x215f190",
+          "inc",
+          "ebx"
+        ],
+        [
+          "0x215f191",
+          "cmp",
+          "ebx, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215f197",
+          "jg",
+          "0x215f1f0"
+        ],
+        [
+          "0x215f199",
+          "mov",
+          "eax, dword ptr [ebp + ebx*8 - 0x2b0]"
+        ],
+        [
+          "0x215f1a0",
+          "mov",
+          "dword ptr [ebp - 0x2bc], eax"
+        ],
+        [
+          "0x215f1a6",
+          "sub",
+          "eax, edi"
+        ],
+        [
+          "0x215f1a8",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f1aa",
+          "jg",
+          "0x215f190"
+        ],
+        [
+          "0x215f1ac",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x215f1af",
+          "mov",
+          "dword ptr [esp + 0x10], 1"
+        ],
+        [
+          "0x215f1b7",
+          "mov",
+          "dword ptr [esp + 0xc], eax"
+        ],
+        [
+          "0x215f1bb",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215f1be",
+          "mov",
+          "dword ptr [esp + 8], eax"
+        ],
+        [
+          "0x215f1c2",
+          "mov",
+          "eax, dword ptr [ebp + ebx*8 - 0x2b4]"
+        ],
+        [
+          "0x215f1c9",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215f1cd",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f1d0",
+          "call",
+          "0x265d6c0"
+        ],
+        [
+          "0x215f1d5",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f1d7",
+          "jne",
+          "0x215f190"
+        ],
+        [
+          "0x215f1d9",
+          "mov",
+          "dword ptr [ebp + ebx*8 - 0x2b0], 0"
+        ],
+        [
+          "0x215f1e4",
+          "test",
+          "ebx, ebx"
+        ],
+        [
+          "0x215f1e6",
+          "jne",
+          "0x215ee73"
+        ],
+        [
+          "0x215f1ec",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f1f0",
+          "mov",
+          "ebx, 1"
+        ],
+        [
+          "0x215f1f5",
+          "mov",
+          "edi, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215f1fb",
+          "jmp",
+          "0x215f205"
+        ],
+        [
+          "0x215f1fd",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f200",
+          "inc",
+          "ebx"
+        ],
+        [
+          "0x215f201",
+          "cmp",
+          "ebx, edi"
+        ],
+        [
+          "0x215f203",
+          "jg",
+          "0x215f245"
+        ],
+        [
+          "0x215f205",
+          "cmp",
+          "dword ptr [ebp + ebx*8 - 0x2b0], 1"
+        ],
+        [
+          "0x215f20d",
+          "jle",
+          "0x215f200"
+        ],
+        [
+          "0x215f20f",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x215f212",
+          "mov",
+          "dword ptr [esp + 0x10], 1"
+        ],
+        [
+          "0x215f21a",
+          "mov",
+          "dword ptr [esp + 0xc], eax"
+        ],
+        [
+          "0x215f21e",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215f221",
+          "mov",
+          "dword ptr [esp + 8], eax"
+        ],
+        [
+          "0x215f225",
+          "mov",
+          "eax, dword ptr [ebp + ebx*8 - 0x2b4]"
+        ],
+        [
+          "0x215f22c",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x215f230",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x215f233",
+          "call",
+          "0x265d6c0"
+        ],
+        [
+          "0x215f238",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f23a",
+          "je",
+          "0x215ee73"
+        ],
+        [
+          "0x215f240",
+          "inc",
+          "ebx"
+        ],
+        [
+          "0x215f241",
+          "cmp",
+          "ebx, edi"
+        ],
+        [
+          "0x215f243",
+          "jle",
+          "0x215f205"
+        ],
+        [
+          "0x215f245",
+          "mov",
+          "eax, dword ptr [ebp - 0x2c0]"
+        ],
+        [
+          "0x215f24b",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x215f24d",
+          "jne",
+          "0x215ef97"
+        ],
+        [
+          "0x215f253",
+          "xor",
+          "ebx, ebx"
+        ],
+        [
+          "0x215f255",
+          "jmp",
+          "0x215ee87"
+        ],
+        [
+          "0x215f25a",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f260",
+          "test",
+          "byte ptr [0x790640], 2"
+        ],
+        [
+          "0x215f267",
+          "je",
+          "0x215efea"
+        ],
+        [
+          "0x215f26d",
+          "jmp",
+          "0x215ee6d"
+        ],
+        [
+          "0x215f272",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x215f278",
+          "cmp",
+          "dword ptr [0x728574], 1"
+        ],
+        [
+          "0x215f27f",
+          "je",
+          "0x215f2c5"
+        ],
+        [
+          "0x215f281",
+          "cmp",
+          "dword ptr [ebp + 8], 1"
+        ],
+        [
+          "0x215f285",
+          "je",
+          "0x215f2b0"
+        ],
+        [
+          "0x215f287",
+          "mov",
+          "dword ptr [ebp - 0x2b8], 0"
+        ],
+        [
+          "0x215f291",
+          "mov",
+          "dword ptr [ebp - 0x2c0], 0"
+        ],
+        [
+          "0x215f29b",
+          "jmp",
+          "0x215ee6d"
+        ],
+        [
+          "0x215f2a0",
+          "mov",
+          "ecx, dword ptr [ebp - 0x2b8]"
+        ],
+        [
+          "0x215f2a6",
+          "test",
+          "ecx, ecx"
+        ],
+        [
+          "0x215f2a8",
+          "jle",
+          "0x215ef97"
+        ],
+        [
+          "0x215f2ae",
+          "jmp",
+          "0x215f253"
+        ],
+        [
+          "0x215f2b0",
+          "mov",
+          "eax, dword ptr [0x790640]"
+        ],
+        [
+          "0x215f2b5",
+          "and",
+          "eax, 2"
+        ],
+        [
+          "0x215f2b8",
+          "mov",
+          "dword ptr [ebp - 0x2b8], eax"
+        ],
+        [
+          "0x215f2be",
+          "jne",
+          "0x215f287"
+        ],
+        [
+          "0x215f2c0",
+          "jmp",
+          "0x215efc8"
+        ],
+        [
+          "0x215f2c5",
+          "mov",
+          "eax, dword ptr [esi*4 + 0x4ef528]"
+        ],
+        [
+          "0x215f2cc",
+          "mov",
+          "edi, dword ptr [ebp - 0x2c4]"
+        ],
+        [
+          "0x215f2d2",
+          "sub",
+          "eax, edi"
+        ],
+        [
+          "0x215f2d4",
+          "cmp",
+          "eax, 6"
+        ],
+        [
+          "0x215f2d7",
+          "jle",
+          "0x215ef97"
+        ],
+        [
+          "0x215f2dd",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x215f2e0",
+          "mov",
+          "dword ptr [ebp - 0x2b8], 0"
+        ],
+        [
+          "0x215f2ea",
+          "mov",
+          "dword ptr [ebp - 0x2c0], 0"
+        ],
+        [
+          "0x215f2f4",
+          "mov",
+          "ebx, dword ptr [eax*4 + 0x4ef520]"
+        ],
+        [
+          "0x215f2fb",
+          "test",
+          "ebx, ebx"
+        ],
+        [
+          "0x215f2fd",
+          "jg",
+          "0x215effc"
+        ],
+        [
+          "0x215f303",
+          "jmp",
+          "0x215ef97"
+        ],
+        [
+          "0x215f308",
+          "lea",
+          "eax, [ebp - 0x264]"
+        ],
+        [
+          "0x215f30e",
+          "mov",
+          "dword ptr [esp + 8], 0x272eab4"
+        ],
+        [
+          "0x215f316",
+          "mov",
+          "dword ptr [esp + 4], 0x258"
+        ],
+        [
+          "0x215f31e",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x215f321",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x215f326",
+          "mov",
+          "dword ptr [ebp - 0x2bc], eax"
+        ],
+        [
+          "0x215f32c",
+          "movsx",
+          "eax, byte ptr [ebx + 0xc]"
+        ],
+        [
+          "0x215f330",
+          "jmp",
+          "0x215eda9"
+        ]
+      ]
+    },
+    "monarch_worker": {
+      "owner": "0x220d080",
+      "address": "0x220d080",
+      "end": "0x220d44a",
+      "bytes_sha256": "ca343f1cbd74527e0dba2931139f945735fadd5bebeaafd5db94c9098022b2cd",
+      "instructions": [
+        [
+          "0x220d080",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x220d081",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x220d083",
+          "push",
+          "edi"
+        ],
+        [
+          "0x220d084",
+          "push",
+          "esi"
+        ],
+        [
+          "0x220d085",
+          "mov",
+          "esi, eax"
+        ],
+        [
+          "0x220d087",
+          "push",
+          "ebx"
+        ],
+        [
+          "0x220d088",
+          "sub",
+          "esp, 0x468"
+        ],
+        [
+          "0x220d08e",
+          "mov",
+          "ebx, dword ptr [0x628670]"
+        ],
+        [
+          "0x220d094",
+          "mov",
+          "edi, dword ptr [ebx*4 + 0x4ef520]"
+        ],
+        [
+          "0x220d09b",
+          "dec",
+          "edi"
+        ],
+        [
+          "0x220d09c",
+          "js",
+          "0x220d3fb"
+        ],
+        [
+          "0x220d0a2",
+          "mov",
+          "dword ptr [ebp - 0x460], 0xffffffff"
+        ],
+        [
+          "0x220d0ac",
+          "mov",
+          "dword ptr [ebp - 0x45c], 0xffffffff"
+        ],
+        [
+          "0x220d0b6",
+          "nop",
+          ""
+        ],
+        [
+          "0x220d0b8",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x220d0bc",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x220d0bf",
+          "call",
+          "0x26b32d0"
+        ],
+        [
+          "0x220d0c4",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220d0c6",
+          "je",
+          "0x220d0e8"
+        ],
+        [
+          "0x220d0c8",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x220d0cc",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x220d0cf",
+          "call",
+          "0x26b35a0"
+        ],
+        [
+          "0x220d0d4",
+          "cmp",
+          "eax, 0x40c7"
+        ],
+        [
+          "0x220d0d9",
+          "jne",
+          "0x220d0e8"
+        ],
+        [
+          "0x220d0db",
+          "mov",
+          "dword ptr [ebp - 0x460], edi"
+        ],
+        [
+          "0x220d0e1",
+          "mov",
+          "dword ptr [ebp - 0x45c], ebx"
+        ],
+        [
+          "0x220d0e7",
+          "nop",
+          ""
+        ],
+        [
+          "0x220d0e8",
+          "dec",
+          "edi"
+        ],
+        [
+          "0x220d0e9",
+          "cmp",
+          "edi, -1"
+        ],
+        [
+          "0x220d0ec",
+          "jne",
+          "0x220d0b8"
+        ],
+        [
+          "0x220d0ee",
+          "mov",
+          "edi, 1"
+        ],
+        [
+          "0x220d0f3",
+          "mov",
+          "ecx, dword ptr [0x628670]"
+        ],
+        [
+          "0x220d0f9",
+          "sub",
+          "edi, ecx"
+        ],
+        [
+          "0x220d0fb",
+          "mov",
+          "ebx, dword ptr [edi*4 + 0x4ef520]"
+        ],
+        [
+          "0x220d102",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x220d108",
+          "dec",
+          "ebx"
+        ],
+        [
+          "0x220d109",
+          "js",
+          "0x220d140"
+        ],
+        [
+          "0x220d10b",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x220d10f",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x220d112",
+          "call",
+          "0x26b32d0"
+        ],
+        [
+          "0x220d117",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220d119",
+          "je",
+          "0x220d108"
+        ],
+        [
+          "0x220d11b",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x220d11f",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x220d122",
+          "call",
+          "0x26b35a0"
+        ],
+        [
+          "0x220d127",
+          "cmp",
+          "eax, 0x40c7"
+        ],
+        [
+          "0x220d12c",
+          "jne",
+          "0x220d108"
+        ],
+        [
+          "0x220d12e",
+          "mov",
+          "dword ptr [ebp - 0x460], ebx"
+        ],
+        [
+          "0x220d134",
+          "dec",
+          "ebx"
+        ],
+        [
+          "0x220d135",
+          "mov",
+          "dword ptr [ebp - 0x45c], edi"
+        ],
+        [
+          "0x220d13b",
+          "jns",
+          "0x220d10b"
+        ],
+        [
+          "0x220d13d",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x220d140",
+          "cmp",
+          "dword ptr [ebp - 0x45c], -1"
+        ],
+        [
+          "0x220d147",
+          "je",
+          "0x220d428"
+        ],
+        [
+          "0x220d14d",
+          "mov",
+          "eax, dword ptr [ebp - 0x460]"
+        ],
+        [
+          "0x220d153",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220d156",
+          "mov",
+          "dword ptr [esp + 8], eax"
+        ],
+        [
+          "0x220d15a",
+          "mov",
+          "eax, dword ptr [ebp - 0x45c]"
+        ],
+        [
+          "0x220d160",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x220d164",
+          "call",
+          "0x2664690"
+        ],
+        [
+          "0x220d169",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x220d16d",
+          "mov",
+          "eax, dword ptr [ebp - 0x45c]"
+        ],
+        [
+          "0x220d173",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x220d176",
+          "mov",
+          "edi, 1"
+        ],
+        [
+          "0x220d17b",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x220d180",
+          "sub",
+          "edi, esi"
+        ],
+        [
+          "0x220d182",
+          "cmp",
+          "dword ptr [eax + 0x74], edi"
+        ],
+        [
+          "0x220d185",
+          "je",
+          "0x220d378"
+        ],
+        [
+          "0x220d18b",
+          "lea",
+          "ebx, [ebp - 0x32c]"
+        ],
+        [
+          "0x220d191",
+          "or",
+          "eax, 0xffffffff"
+        ],
+        [
+          "0x220d194",
+          "mov",
+          "ecx, 0xc8"
+        ],
+        [
+          "0x220d199",
+          "mov",
+          "edi, ebx"
+        ],
+        [
+          "0x220d19b",
+          "mov",
+          "edx, dword ptr [esi*4 + 0x4ef520]"
+        ],
+        [
+          "0x220d1a2",
+          "rep stosd",
+          "dword ptr es:[edi], eax"
+        ],
+        [
+          "0x220d1a4",
+          "xor",
+          "edi, edi"
+        ],
+        [
+          "0x220d1a6",
+          "test",
+          "edx, edx"
+        ],
+        [
+          "0x220d1a8",
+          "jg",
+          "0x220d1be"
+        ],
+        [
+          "0x220d1aa",
+          "jmp",
+          "0x220d443"
+        ],
+        [
+          "0x220d1af",
+          "nop",
+          ""
+        ],
+        [
+          "0x220d1b0",
+          "inc",
+          "edi"
+        ],
+        [
+          "0x220d1b1",
+          "cmp",
+          "edi, dword ptr [esi*4 + 0x4ef520]"
+        ],
+        [
+          "0x220d1b8",
+          "jge",
+          "0x220d300"
+        ],
+        [
+          "0x220d1be",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x220d1c2",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220d1c5",
+          "call",
+          "0x26b32d0"
+        ],
+        [
+          "0x220d1ca",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220d1cc",
+          "je",
+          "0x220d1b0"
+        ],
+        [
+          "0x220d1ce",
+          "mov",
+          "dword ptr [esp + 8], 2"
+        ],
+        [
+          "0x220d1d6",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x220d1da",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220d1dd",
+          "call",
+          "0x26dd430"
+        ],
+        [
+          "0x220d1e2",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220d1e4",
+          "jne",
+          "0x220d1b0"
+        ],
+        [
+          "0x220d1e6",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x220d1ea",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220d1ed",
+          "call",
+          "0x26b35a0"
+        ],
+        [
+          "0x220d1f2",
+          "cmp",
+          "eax, 0x3fce"
+        ],
+        [
+          "0x220d1f7",
+          "jne",
+          "0x220d1b0"
+        ],
+        [
+          "0x220d1f9",
+          "lea",
+          "eax, [ebp - 0x458]"
+        ],
+        [
+          "0x220d1ff",
+          "mov",
+          "dword ptr [esp + 0xc], 0"
+        ],
+        [
+          "0x220d207",
+          "mov",
+          "dword ptr [esp + 8], eax"
+        ],
+        [
+          "0x220d20b",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x220d20f",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220d212",
+          "call",
+          "0x2660240"
+        ],
+        [
+          "0x220d217",
+          "lea",
+          "eax, [ebp - 0x458]"
+        ],
+        [
+          "0x220d21d",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x220d220",
+          "mov",
+          "dword ptr [ebp - 0x44c], 0x1000"
+        ],
+        [
+          "0x220d22a",
+          "mov",
+          "dword ptr [ebp - 0x414], 0"
+        ],
+        [
+          "0x220d234",
+          "call",
+          "0x26604c0"
+        ],
+        [
+          "0x220d239",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220d23b",
+          "je",
+          "0x220d1b0"
+        ],
+        [
+          "0x220d241",
+          "lea",
+          "eax, [ebp - 0x458]"
+        ],
+        [
+          "0x220d247",
+          "mov",
+          "dword ptr [esp + 4], 0x273553c"
+        ],
+        [
+          "0x220d24f",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x220d252",
+          "call",
+          "0x2660d50"
+        ],
+        [
+          "0x220d257",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220d259",
+          "je",
+          "0x220d1b0"
+        ],
+        [
+          "0x220d25f",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x220d263",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220d266",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x220d26b",
+          "mov",
+          "dword ptr [esp + 8], 0x273554c"
+        ],
+        [
+          "0x220d273",
+          "mov",
+          "dword ptr [ebp - 0x45c], eax"
+        ],
+        [
+          "0x220d279",
+          "lea",
+          "eax, [ebp - 0x404]"
+        ],
+        [
+          "0x220d27f",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x220d282",
+          "mov",
+          "dword ptr [esp + 4], 2"
+        ],
+        [
+          "0x220d28a",
+          "call",
+          "0x26bea60"
+        ],
+        [
+          "0x220d28f",
+          "mov",
+          "edx, dword ptr [ebp - 0x45c]"
+        ],
+        [
+          "0x220d295",
+          "lea",
+          "eax, [ebp - 0x404]"
+        ],
+        [
+          "0x220d29b",
+          "mov",
+          "dword ptr [esp + 0xc], 0x65"
+        ],
+        [
+          "0x220d2a3",
+          "mov",
+          "dword ptr [esp + 0x10], eax"
+        ],
+        [
+          "0x220d2a7",
+          "mov",
+          "eax, dword ptr [edx + 0x74]"
+        ],
+        [
+          "0x220d2aa",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x220d2ae",
+          "mov",
+          "dword ptr [esp + 8], eax"
+        ],
+        [
+          "0x220d2b2",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220d2b5",
+          "call",
+          "0x26e4e30"
+        ],
+        [
+          "0x220d2ba",
+          "mov",
+          "edx, dword ptr [ebp - 0x45c]"
+        ],
+        [
+          "0x220d2c0",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220d2c2",
+          "mov",
+          "byte ptr [edx + 0x36], 0"
+        ],
+        [
+          "0x220d2c6",
+          "je",
+          "0x220d1b0"
+        ],
+        [
+          "0x220d2cc",
+          "mov",
+          "edx, eax"
+        ],
+        [
+          "0x220d2ce",
+          "sar",
+          "edx, 0x10"
+        ],
+        [
+          "0x220d2d1",
+          "and",
+          "edx, 0xff"
+        ],
+        [
+          "0x220d2d7",
+          "lea",
+          "edx, [edx + edx*4]"
+        ],
+        [
+          "0x220d2da",
+          "lea",
+          "ecx, [edx + edx*4]"
+        ],
+        [
+          "0x220d2dd",
+          "shl",
+          "ecx, 4"
+        ],
+        [
+          "0x220d2e0",
+          "cmp",
+          "dword ptr [ebp + ecx - 0x32c], -1"
+        ],
+        [
+          "0x220d2e8",
+          "lea",
+          "edx, [ebp + ecx - 0xc]"
+        ],
+        [
+          "0x220d2ec",
+          "jne",
+          "0x220d1b0"
+        ],
+        [
+          "0x220d2f2",
+          "shr",
+          "eax, 0x18"
+        ],
+        [
+          "0x220d2f5",
+          "mov",
+          "dword ptr [edx - 0x320], eax"
+        ],
+        [
+          "0x220d2fb",
+          "jmp",
+          "0x220d1b0"
+        ],
+        [
+          "0x220d300",
+          "mov",
+          "eax, dword ptr [ebp - 0x32c]"
+        ],
+        [
+          "0x220d306",
+          "xor",
+          "esi, esi"
+        ],
+        [
+          "0x220d308",
+          "cmp",
+          "eax, -1"
+        ],
+        [
+          "0x220d30b",
+          "je",
+          "0x220d331"
+        ],
+        [
+          "0x220d30d",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x220d310",
+          "inc",
+          "esi"
+        ],
+        [
+          "0x220d311",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x220d315",
+          "mov",
+          "dword ptr [esp + 8], 3"
+        ],
+        [
+          "0x220d31d",
+          "mov",
+          "dword ptr [esp], 0"
+        ],
+        [
+          "0x220d324",
+          "call",
+          "0x26b5a00"
+        ],
+        [
+          "0x220d329",
+          "mov",
+          "eax, dword ptr [ebx + esi*4]"
+        ],
+        [
+          "0x220d32c",
+          "cmp",
+          "eax, -1"
+        ],
+        [
+          "0x220d32f",
+          "jne",
+          "0x220d310"
+        ],
+        [
+          "0x220d331",
+          "mov",
+          "eax, dword ptr [ebp + esi*4 - 0x19c]"
+        ],
+        [
+          "0x220d338",
+          "lea",
+          "ebx, [ebx + esi*4 + 0x194]"
+        ],
+        [
+          "0x220d33f",
+          "cmp",
+          "eax, -1"
+        ],
+        [
+          "0x220d342",
+          "je",
+          "0x220d36b"
+        ],
+        [
+          "0x220d344",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x220d348",
+          "add",
+          "ebx, 4"
+        ],
+        [
+          "0x220d34b",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x220d34f",
+          "mov",
+          "dword ptr [esp + 8], 3"
+        ],
+        [
+          "0x220d357",
+          "mov",
+          "dword ptr [esp], 1"
+        ],
+        [
+          "0x220d35e",
+          "call",
+          "0x26b5a00"
+        ],
+        [
+          "0x220d363",
+          "mov",
+          "eax, dword ptr [ebx - 4]"
+        ],
+        [
+          "0x220d366",
+          "cmp",
+          "eax, -1"
+        ],
+        [
+          "0x220d369",
+          "jne",
+          "0x220d348"
+        ],
+        [
+          "0x220d36b",
+          "add",
+          "esp, 0x468"
+        ],
+        [
+          "0x220d371",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x220d372",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x220d373",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x220d374",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x220d375",
+          "ret",
+          ""
+        ],
+        [
+          "0x220d376",
+          "nop",
+          ""
+        ],
+        [
+          "0x220d378",
+          "mov",
+          "eax, dword ptr [edi*4 + 0x4ef520]"
+        ],
+        [
+          "0x220d37f",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220d381",
+          "jle",
+          "0x220d18b"
+        ],
+        [
+          "0x220d387",
+          "xor",
+          "ebx, ebx"
+        ],
+        [
+          "0x220d389",
+          "jmp",
+          "0x220d39e"
+        ],
+        [
+          "0x220d38b",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x220d38f",
+          "nop",
+          ""
+        ],
+        [
+          "0x220d390",
+          "inc",
+          "ebx"
+        ],
+        [
+          "0x220d391",
+          "cmp",
+          "ebx, dword ptr [edi*4 + 0x4ef520]"
+        ],
+        [
+          "0x220d398",
+          "jge",
+          "0x220d18b"
+        ],
+        [
+          "0x220d39e",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x220d3a2",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x220d3a5",
+          "call",
+          "0x26b32d0"
+        ],
+        [
+          "0x220d3aa",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220d3ac",
+          "je",
+          "0x220d390"
+        ],
+        [
+          "0x220d3ae",
+          "mov",
+          "dword ptr [esp + 8], 2"
+        ],
+        [
+          "0x220d3b6",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x220d3ba",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x220d3bd",
+          "call",
+          "0x26dd430"
+        ],
+        [
+          "0x220d3c2",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220d3c4",
+          "jne",
+          "0x220d390"
+        ],
+        [
+          "0x220d3c6",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x220d3ca",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x220d3cd",
+          "call",
+          "0x26b35a0"
+        ],
+        [
+          "0x220d3d2",
+          "cmp",
+          "eax, 0x402a"
+        ],
+        [
+          "0x220d3d7",
+          "jne",
+          "0x220d390"
+        ],
+        [
+          "0x220d3d9",
+          "mov",
+          "dword ptr [esp + 4], 2"
+        ],
+        [
+          "0x220d3e1",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220d3e4",
+          "call",
+          "0x268f1b0"
+        ],
+        [
+          "0x220d3e9",
+          "mov",
+          "dword ptr [esp + 4], 2"
+        ],
+        [
+          "0x220d3f1",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x220d3f4",
+          "call",
+          "0x268f900"
+        ],
+        [
+          "0x220d3f9",
+          "jmp",
+          "0x220d390"
+        ],
+        [
+          "0x220d3fb",
+          "mov",
+          "edi, 1"
+        ],
+        [
+          "0x220d400",
+          "mov",
+          "dword ptr [ebp - 0x460], 0xffffffff"
+        ],
+        [
+          "0x220d40a",
+          "sub",
+          "edi, ebx"
+        ],
+        [
+          "0x220d40c",
+          "mov",
+          "dword ptr [ebp - 0x45c], 0xffffffff"
+        ],
+        [
+          "0x220d416",
+          "mov",
+          "ebx, dword ptr [edi*4 + 0x4ef520]"
+        ],
+        [
+          "0x220d41d",
+          "dec",
+          "ebx"
+        ],
+        [
+          "0x220d41e",
+          "jns",
+          "0x220d10b"
+        ],
+        [
+          "0x220d424",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x220d428",
+          "mov",
+          "dword ptr [esp + 4], 0x40c7"
+        ],
+        [
+          "0x220d430",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220d433",
+          "call",
+          "0x2666790"
+        ],
+        [
+          "0x220d438",
+          "mov",
+          "dword ptr [ebp - 0x45c], esi"
+        ],
+        [
+          "0x220d43e",
+          "jmp",
+          "0x220d169"
+        ],
+        [
+          "0x220d443",
+          "xor",
+          "esi, esi"
+        ],
+        [
+          "0x220d445",
+          "jmp",
+          "0x220d331"
+        ]
+      ]
+    },
+    "monarch_guard_wrapper": {
+      "owner": "0x220d4f0",
+      "address": "0x220d4f0",
+      "end": "0x220d513",
+      "bytes_sha256": "69f89bf051a0fa1acfe623a4440da832a215accaf41c6799659c0db2233578ee",
+      "instructions": [
+        [
+          "0x220d4f0",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x220d4f1",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x220d4f3",
+          "push",
+          "ebx"
+        ],
+        [
+          "0x220d4f4",
+          "mov",
+          "ebx, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x220d4f7",
+          "mov",
+          "eax, ebx"
+        ],
+        [
+          "0x220d4f9",
+          "call",
+          "0x220cad0"
+        ],
+        [
+          "0x220d4fe",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220d500",
+          "jne",
+          "0x220d510"
+        ],
+        [
+          "0x220d502",
+          "mov",
+          "eax, ebx"
+        ],
+        [
+          "0x220d504",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x220d505",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x220d506",
+          "jmp",
+          "0x220d080"
+        ],
+        [
+          "0x220d50b",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x220d50f",
+          "nop",
+          ""
+        ],
+        [
+          "0x220d510",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x220d511",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x220d512",
+          "ret",
+          ""
+        ]
+      ]
+    },
+    "jared_guard": {
+      "owner": "0x220cad0",
+      "address": "0x220cad0",
+      "end": "0x220cb54",
+      "bytes_sha256": "e395828189fbb1595c01f776dba17df6c0040e4a751652c4589684cb2b703d44",
+      "instructions": [
+        [
+          "0x220cad0",
+          "mov",
+          "edx, dword ptr [eax*4 + 0x4ef520]"
+        ],
+        [
+          "0x220cad7",
+          "test",
+          "edx, edx"
+        ],
+        [
+          "0x220cad9",
+          "jle",
+          "0x220cb51"
+        ],
+        [
+          "0x220cadb",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x220cadc",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x220cade",
+          "push",
+          "esi"
+        ],
+        [
+          "0x220cadf",
+          "push",
+          "ebx"
+        ],
+        [
+          "0x220cae0",
+          "mov",
+          "esi, eax"
+        ],
+        [
+          "0x220cae2",
+          "sub",
+          "esp, 0xc"
+        ],
+        [
+          "0x220cae5",
+          "xor",
+          "ebx, ebx"
+        ],
+        [
+          "0x220cae7",
+          "jmp",
+          "0x220cafa"
+        ],
+        [
+          "0x220cae9",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x220caf0",
+          "inc",
+          "ebx"
+        ],
+        [
+          "0x220caf1",
+          "cmp",
+          "dword ptr [esi*4 + 0x4ef520], ebx"
+        ],
+        [
+          "0x220caf8",
+          "jle",
+          "0x220cb48"
+        ],
+        [
+          "0x220cafa",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x220cafe",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220cb01",
+          "call",
+          "0x26b32d0"
+        ],
+        [
+          "0x220cb06",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220cb08",
+          "je",
+          "0x220caf0"
+        ],
+        [
+          "0x220cb0a",
+          "mov",
+          "dword ptr [esp + 8], 0x80"
+        ],
+        [
+          "0x220cb12",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x220cb16",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220cb19",
+          "call",
+          "0x2681ca0"
+        ],
+        [
+          "0x220cb1e",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x220cb20",
+          "je",
+          "0x220caf0"
+        ],
+        [
+          "0x220cb22",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x220cb26",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x220cb29",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x220cb2e",
+          "cmp",
+          "dword ptr [eax + 0x38], 0x259ff40"
+        ],
+        [
+          "0x220cb35",
+          "jne",
+          "0x220caf0"
+        ],
+        [
+          "0x220cb37",
+          "add",
+          "esp, 0xc"
+        ],
+        [
+          "0x220cb3a",
+          "mov",
+          "eax, 1"
+        ],
+        [
+          "0x220cb3f",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x220cb40",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x220cb41",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x220cb42",
+          "ret",
+          ""
+        ],
+        [
+          "0x220cb43",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x220cb47",
+          "nop",
+          ""
+        ],
+        [
+          "0x220cb48",
+          "add",
+          "esp, 0xc"
+        ],
+        [
+          "0x220cb4b",
+          "xor",
+          "eax, eax"
+        ],
+        [
+          "0x220cb4d",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x220cb4e",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x220cb4f",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x220cb50",
+          "ret",
+          ""
+        ],
+        [
+          "0x220cb51",
+          "xor",
+          "eax, eax"
+        ],
+        [
+          "0x220cb53",
+          "ret",
+          ""
+        ]
+      ]
+    },
+    "rekoning_success": {
+      "owner": "0x2485be0",
+      "address": "0x2485be0",
+      "end": "0x2485caa",
+      "bytes_sha256": "56e945cf3121b7fc1016b83185c7f8b141e3dbbdddf50a2d5876a1f9edb04bf2",
+      "instructions": [
+        [
+          "0x2485be0",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x2485be1",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x2485be3",
+          "push",
+          "esi"
+        ],
+        [
+          "0x2485be4",
+          "push",
+          "ebx"
+        ],
+        [
+          "0x2485be5",
+          "sub",
+          "esp, 0xf4"
+        ],
+        [
+          "0x2485beb",
+          "cmp",
+          "dword ptr [ebp + 0x10], 0x5500"
+        ],
+        [
+          "0x2485bf2",
+          "je",
+          "0x2485c00"
+        ],
+        [
+          "0x2485bf4",
+          "add",
+          "esp, 0xf4"
+        ],
+        [
+          "0x2485bfa",
+          "xor",
+          "eax, eax"
+        ],
+        [
+          "0x2485bfc",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x2485bfd",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x2485bfe",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x2485bff",
+          "ret",
+          ""
+        ],
+        [
+          "0x2485c00",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x2485c03",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x2485c06",
+          "call",
+          "0x26e5d70"
+        ],
+        [
+          "0x2485c0b",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x2485c0d",
+          "jle",
+          "0x2485bf4"
+        ],
+        [
+          "0x2485c0f",
+          "mov",
+          "ebx, eax"
+        ],
+        [
+          "0x2485c11",
+          "cmp",
+          "eax, 6"
+        ],
+        [
+          "0x2485c14",
+          "jg",
+          "0x2485ca0"
+        ],
+        [
+          "0x2485c1a",
+          "lea",
+          "esi, [ebp - 0xe0]"
+        ],
+        [
+          "0x2485c20",
+          "mov",
+          "dword ptr [esp + 8], 0x274da1d"
+        ],
+        [
+          "0x2485c28",
+          "mov",
+          "dword ptr [esp + 4], 2"
+        ],
+        [
+          "0x2485c30",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x2485c33",
+          "call",
+          "0x26bea60"
+        ],
+        [
+          "0x2485c38",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x2485c3b",
+          "mov",
+          "dword ptr [esp + 0x18], esi"
+        ],
+        [
+          "0x2485c3f",
+          "mov",
+          "dword ptr [esp + 0x14], 2"
+        ],
+        [
+          "0x2485c47",
+          "mov",
+          "dword ptr [esp + 0x10], 0"
+        ],
+        [
+          "0x2485c4f",
+          "mov",
+          "dword ptr [esp + 0xc], 4"
+        ],
+        [
+          "0x2485c57",
+          "mov",
+          "dword ptr [esp + 8], 1"
+        ],
+        [
+          "0x2485c5f",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x2485c63",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x2485c66",
+          "mov",
+          "word ptr [ebp - 0x1e], bx"
+        ],
+        [
+          "0x2485c6a",
+          "mov",
+          "word ptr [ebp - 0x20], 1"
+        ],
+        [
+          "0x2485c70",
+          "call",
+          "0x2651990"
+        ],
+        [
+          "0x2485c75",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x2485c77",
+          "js",
+          "0x2485c88"
+        ],
+        [
+          "0x2485c79",
+          "dec",
+          "ebx"
+        ],
+        [
+          "0x2485c7a",
+          "test",
+          "ebx, ebx"
+        ],
+        [
+          "0x2485c7c",
+          "jle",
+          "0x2485bf4"
+        ],
+        [
+          "0x2485c82",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x2485c88",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x2485c8b",
+          "mov",
+          "dword ptr [esp + 8], ebx"
+        ],
+        [
+          "0x2485c8f",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x2485c93",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x2485c96",
+          "call",
+          "0x26548a0"
+        ],
+        [
+          "0x2485c9b",
+          "jmp",
+          "0x2485bf4"
+        ],
+        [
+          "0x2485ca0",
+          "mov",
+          "ebx, 6"
+        ],
+        [
+          "0x2485ca5",
+          "jmp",
+          "0x2485c1a"
+        ]
+      ]
+    },
+    "legions_all_slots": {
+      "owner": "0x22911c0",
+      "address": "0x22911c0",
+      "end": "0x229132b",
+      "bytes_sha256": "c3c198756d4d23bfce67f0127bc511aec365da1c48c6ab35fc3e1f3569239140",
+      "instructions": [
+        [
+          "0x22911c0",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x22911c1",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x22911c3",
+          "push",
+          "edi"
+        ],
+        [
+          "0x22911c4",
+          "push",
+          "esi"
+        ],
+        [
+          "0x22911c5",
+          "push",
+          "ebx"
+        ],
+        [
+          "0x22911c6",
+          "sub",
+          "esp, 0x28"
+        ],
+        [
+          "0x22911c9",
+          "mov",
+          "eax, dword ptr [ebp + 0x10]"
+        ],
+        [
+          "0x22911cc",
+          "mov",
+          "dword ptr [esp + 8], eax"
+        ],
+        [
+          "0x22911d0",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x22911d3",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x22911d7",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x22911da",
+          "mov",
+          "dword ptr [esp + 0xc], 2"
+        ],
+        [
+          "0x22911e2",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x22911e5",
+          "call",
+          "0x2697910"
+        ],
+        [
+          "0x22911ea",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x22911ec",
+          "jne",
+          "0x22911f8"
+        ],
+        [
+          "0x22911ee",
+          "add",
+          "esp, 0x28"
+        ],
+        [
+          "0x22911f1",
+          "xor",
+          "eax, eax"
+        ],
+        [
+          "0x22911f3",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x22911f4",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x22911f5",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x22911f6",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x22911f7",
+          "ret",
+          ""
+        ],
+        [
+          "0x22911f8",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x22911fb",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x22911ff",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x2291202",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x2291205",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x229120a",
+          "lea",
+          "ebx, [eax + 0x74]"
+        ],
+        [
+          "0x229120d",
+          "add",
+          "eax, 0x10c"
+        ],
+        [
+          "0x2291212",
+          "mov",
+          "dword ptr [ebp - 0x10], eax"
+        ],
+        [
+          "0x2291215",
+          "mov",
+          "esi, ebx"
+        ],
+        [
+          "0x2291217",
+          "jmp",
+          "0x229122c"
+        ],
+        [
+          "0x2291219",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x2291220",
+          "add",
+          "esi, 8"
+        ],
+        [
+          "0x2291223",
+          "cmp",
+          "esi, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x2291226",
+          "je",
+          "0x2291307"
+        ],
+        [
+          "0x229122c",
+          "mov",
+          "ebx, dword ptr [esi]"
+        ],
+        [
+          "0x229122e",
+          "test",
+          "ebx, ebx"
+        ],
+        [
+          "0x2291230",
+          "js",
+          "0x2291220"
+        ],
+        [
+          "0x2291232",
+          "mov",
+          "edi, dword ptr [esi + 4]"
+        ],
+        [
+          "0x2291235",
+          "xor",
+          "ecx, ecx"
+        ],
+        [
+          "0x2291237",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x229123a",
+          "lea",
+          "eax, [edi + edi*8]"
+        ],
+        [
+          "0x229123d",
+          "mov",
+          "cx, word ptr [eax*8 + 0x7e7034]"
+        ],
+        [
+          "0x2291245",
+          "lea",
+          "edx, [eax*8 + 0x7e7010]"
+        ],
+        [
+          "0x229124c",
+          "mov",
+          "eax, ecx"
+        ],
+        [
+          "0x229124e",
+          "mov",
+          "dword ptr [ebp - 0x14], edx"
+        ],
+        [
+          "0x2291251",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x2291255",
+          "call",
+          "0x26b7720"
+        ],
+        [
+          "0x229125a",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x229125c",
+          "je",
+          "0x2291220"
+        ],
+        [
+          "0x229125e",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x2291262",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x2291265",
+          "call",
+          "0x26b2e30"
+        ],
+        [
+          "0x229126a",
+          "mov",
+          "edx, dword ptr [ebp - 0x14]"
+        ],
+        [
+          "0x229126d",
+          "mov",
+          "edi, eax"
+        ],
+        [
+          "0x229126f",
+          "xor",
+          "eax, eax"
+        ],
+        [
+          "0x2291271",
+          "mov",
+          "ax, word ptr [edx + 0x24]"
+        ],
+        [
+          "0x2291275",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x2291278",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x229127c",
+          "add",
+          "esi, 8"
+        ],
+        [
+          "0x229127f",
+          "call",
+          "0x26b76c0"
+        ],
+        [
+          "0x2291284",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x2291288",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x229128b",
+          "call",
+          "0x2669e00"
+        ],
+        [
+          "0x2291290",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x2291293",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x2291297",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x229129a",
+          "mov",
+          "dword ptr [esp + 0x1c], 4"
+        ],
+        [
+          "0x22912a2",
+          "mov",
+          "dword ptr [esp + 0x18], 0"
+        ],
+        [
+          "0x22912aa",
+          "mov",
+          "dword ptr [esp + 0x14], 0"
+        ],
+        [
+          "0x22912b2",
+          "mov",
+          "dword ptr [esp + 0x10], 0"
+        ],
+        [
+          "0x22912ba",
+          "mov",
+          "dword ptr [esp + 0xc], edi"
+        ],
+        [
+          "0x22912be",
+          "mov",
+          "dword ptr [esp + 8], ebx"
+        ],
+        [
+          "0x22912c2",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x22912c5",
+          "call",
+          "0x267af00"
+        ],
+        [
+          "0x22912ca",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x22912ce",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x22912d1",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x22912d6",
+          "mov",
+          "edx, dword ptr [eax + 0x28]"
+        ],
+        [
+          "0x22912d9",
+          "or",
+          "edx, 0x8000000"
+        ],
+        [
+          "0x22912df",
+          "mov",
+          "dword ptr [eax + 0x28], edx"
+        ],
+        [
+          "0x22912e2",
+          "mov",
+          "dword ptr [esp + 0xc], 0xffffffff"
+        ],
+        [
+          "0x22912ea",
+          "mov",
+          "dword ptr [esp + 8], 0x34"
+        ],
+        [
+          "0x22912f2",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x22912f6",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x22912f9",
+          "call",
+          "0x26cc810"
+        ],
+        [
+          "0x22912fe",
+          "cmp",
+          "esi, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x2291301",
+          "jne",
+          "0x229122c"
+        ],
+        [
+          "0x2291307",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x229130a",
+          "mov",
+          "dword ptr [esp + 8], 4"
+        ],
+        [
+          "0x2291312",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x2291316",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x2291319",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x229131c",
+          "call",
+          "0x26b5a00"
+        ],
+        [
+          "0x2291321",
+          "add",
+          "esp, 0x28"
+        ],
+        [
+          "0x2291324",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x2291325",
+          "xor",
+          "eax, eax"
+        ],
+        [
+          "0x2291327",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x2291328",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x2291329",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x229132a",
+          "ret",
+          ""
+        ]
+      ]
+    }
+  },
+  "native_settings": [
+    {
+      "name": "SETTING_AUTO_MILL",
+      "value": 0,
+      "die_offset": "0x132590c"
+    },
+    {
+      "name": "SETTING_UNLIMITED_MANA",
+      "value": 1,
+      "die_offset": "0x1325920"
+    },
+    {
+      "name": "SETTING_AUTO_HASTE",
+      "value": 2,
+      "die_offset": "0x1325939"
+    },
+    {
+      "name": "SETTING_QUICK_START",
+      "value": 3,
+      "die_offset": "0x132594e"
+    },
+    {
+      "name": "SETTING_CRIPPLE_AI",
+      "value": 4,
+      "die_offset": "0x1325964"
+    },
+    {
+      "name": "SETTING_CHECK_DECK_LEGALITY",
+      "value": 5,
+      "die_offset": "0x1325979"
+    },
+    {
+      "name": "SETTING_CHALLENGE_MODE",
+      "value": 6,
+      "die_offset": "0x1325997"
+    },
+    {
+      "name": "SETTING_SMART_TARGET",
+      "value": 7,
+      "die_offset": "0x13259b0"
+    },
+    {
+      "name": "SETTING_GAMESTART_SETTINGS_APPLIED",
+      "value": 8,
+      "die_offset": "0x13259c7"
+    },
+    {
+      "name": "SETTING_SETTING_FILE_READ",
+      "value": 9,
+      "die_offset": "0x13259ec"
+    },
+    {
+      "name": "SETTING_ALPHABETIZE_DECK",
+      "value": 10,
+      "die_offset": "0x1325a08"
+    },
+    {
+      "name": "SETTING_DUH_MODE",
+      "value": 11,
+      "die_offset": "0x1325a23"
+    },
+    {
+      "name": "SETTING_TOURNAMENT_MODE",
+      "value": 12,
+      "die_offset": "0x1325a36"
+    },
+    {
+      "name": "SETTING_AI_DECISION_TIME",
+      "value": 13,
+      "die_offset": "0x1325a50"
+    },
+    {
+      "name": "SETTING_DEBUG",
+      "value": 14,
+      "die_offset": "0x1325a6b"
+    },
+    {
+      "name": "SETTING_RULES_ENGINE",
+      "value": 15,
+      "die_offset": "0x1325a7b"
+    },
+    {
+      "name": "SETTING_ATTACH_EQUIPMENT",
+      "value": 16,
+      "die_offset": "0x1325a92"
+    },
+    {
+      "name": "SETTING_AUTOTAP_ARTIFACTS",
+      "value": 17,
+      "die_offset": "0x1325aad"
+    },
+    {
+      "name": "SETTING_AUTOTAP_CREATURES",
+      "value": 18,
+      "die_offset": "0x1325ac9"
+    },
+    {
+      "name": "SETTING_VERIFY_HAND_COUNT",
+      "value": 19,
+      "die_offset": "0x1325ae5"
+    },
+    {
+      "name": "SETTING_ARCHENEMY",
+      "value": 20,
+      "die_offset": "0x1325b01"
+    },
+    {
+      "name": "SETTING_MIN_PICS_TO_RANDOMIZE",
+      "value": 21,
+      "die_offset": "0x1325b15"
+    },
+    {
+      "name": "SETTING_MANA_BURN",
+      "value": 22,
+      "die_offset": "0x1325b35"
+    },
+    {
+      "name": "SETTING_AI_USES_RULES_ENGINE",
+      "value": 23,
+      "die_offset": "0x1325b49"
+    },
+    {
+      "name": "SETTING_SMALLCARD_SIZE",
+      "value": 24,
+      "die_offset": "0x1325b68"
+    },
+    {
+      "name": "SETTING_HAND_SIZE",
+      "value": 25,
+      "die_offset": "0x1325b81"
+    },
+    {
+      "name": "SETTING_ABILITY_ICON_MAX",
+      "value": 26,
+      "die_offset": "0x1325b95"
+    },
+    {
+      "name": "SETTING_ABILITY_ICON_SIZE",
+      "value": 27,
+      "die_offset": "0x1325bb0"
+    },
+    {
+      "name": "SETTING_ABILITY_ICON_FILE",
+      "value": 28,
+      "die_offset": "0x1325bcc"
+    },
+    {
+      "name": "SETTING_OLD_PW_RULES",
+      "value": 29,
+      "die_offset": "0x1325be8"
+    },
+    {
+      "name": "SETTING_OPPONENT_SKILL",
+      "value": 30,
+      "die_offset": "0x1325bff"
+    },
+    {
+      "name": "SETTING_MAX_PLUS_1",
+      "value": 31,
+      "die_offset": "0x1325c18"
+    }
+  ],
+  "native_compiler_partitions": [
+    {
+      "symbol": "_you_become_the_monarch.part.0",
+      "address": "0x220d080",
+      "storage": 3
+    },
+    {
+      "symbol": "_you_become_the_monarch",
+      "address": "0x220d4f0",
+      "storage": 2
+    }
+  ],
+  "native_inline_dependencies": [
+    {
+      "owner": "0x2291080",
+      "name": "get_gate_code",
+      "instances": [
+        {
+          "die_offset": "0x257e974",
+          "low_pc": null,
+          "high_pc": null,
+          "high_pc_form": null,
+          "ranges": 120056,
+          "abstract_origin": 729278
+        }
+      ]
+    },
+    {
+      "owner": "0x25810f0",
+      "name": "create_schemes_deck",
+      "instances": [
+        {
+          "die_offset": "0x506aaeb",
+          "low_pc": null,
+          "high_pc": null,
+          "high_pc_form": null,
+          "ranges": 266488,
+          "abstract_origin": 727529
+        }
+      ]
+    }
+  ],
+  "native_gate_table": {
+    "address": "0x2721140",
+    "bytes_sha256": "d9352306592b5abcfeaa5e317cb0101ecc7134c0f727506d3ab7feac786bbbc4",
+    "values": [
+      12662,
+      12900,
+      12926,
+      12733,
+      12964,
+      12754,
+      13025,
+      12794,
+      12815,
+      13058
+    ],
+    "source_names": [
+      "CARD_ID_AZORIUS_GUILDGATE",
+      "CARD_ID_BOROS_GUILDGATE",
+      "CARD_ID_DIMIR_GUILDGATE",
+      "CARD_ID_GOLGARI_GUILDGATE",
+      "CARD_ID_GRUUL_GUILDGATE",
+      "CARD_ID_IZZET_GUILDGATE",
+      "CARD_ID_ORZHOV_GUILDGATE",
+      "CARD_ID_RAKDOS_GUILDGATE",
+      "CARD_ID_SELESNYA_GUILDGATE",
+      "CARD_ID_SIMIC_GUILDGATE"
+    ]
+  },
+  "native_registration_tables": [
+    {
+      "source": "cards/archenemy.c",
+      "name": "register_archenemy_schemes",
+      "entries": [
+        {
+          "card_id": "CARD_ID_A_DISPLAY_OF_MY_DARK_POWER",
+          "value": 14786,
+          "function": "scheme_a_display_of_my_dark_power"
+        },
+        {
+          "card_id": "CARD_ID_ALL_IN_GOOD_TIME",
+          "value": 14787,
+          "function": "scheme_all_in_good_time"
+        },
+        {
+          "card_id": "CARD_ID_ALL_SHALL_SMOLDER_IN_MY_WAKE",
+          "value": 14788,
+          "function": "scheme_all_shall_smolder_in_my_wake"
+        },
+        {
+          "card_id": "CARD_ID_APPROACH_MY_MOLTEN_REALM",
+          "value": 14789,
+          "function": "scheme_approach_my_molten_realm"
+        },
+        {
+          "card_id": "CARD_ID_BEHOLD_THE_POWER_OF_DESTRUCTION",
+          "value": 14790,
+          "function": "scheme_behold_the_power_of_destruction"
+        },
+        {
+          "card_id": "CARD_ID_DANCE_PATHETIC_MARIONETTE",
+          "value": 14792,
+          "function": "scheme_dance_pathetic_marionette"
+        },
+        {
+          "card_id": "CARD_ID_EMBRACE_MY_DIABOLICAL_VISION",
+          "value": 14793,
+          "function": "scheme_embrace_my_diabolical_vision"
+        },
+        {
+          "card_id": "CARD_ID_EVERY_HOPE_SHALL_VANISH",
+          "value": 14794,
+          "function": "scheme_every_hope_shall_vanish"
+        },
+        {
+          "card_id": "CARD_ID_EVERY_LAST_VESTIGE_SHALL_ROT",
+          "value": 14795,
+          "function": "scheme_every_last_vestige_shall_rot"
+        },
+        {
+          "card_id": "CARD_ID_EVIL_COMES_TO_FRUITION",
+          "value": 14796,
+          "function": "scheme_evil_comes_to_fruition"
+        },
+        {
+          "card_id": "CARD_ID_FEED_THE_MACHINE",
+          "value": 14797,
+          "function": "scheme_feed_the_machine"
+        },
+        {
+          "card_id": "CARD_ID_I_CALL_ON_THE_ANCIENT_MAGICS",
+          "value": 14799,
+          "function": "scheme_i_call_on_the_ancient_magics"
+        },
+        {
+          "card_id": "CARD_ID_I_DELIGHT_IN_YOUR_CONVULSIONS",
+          "value": 14800,
+          "function": "scheme_i_delight_in_your_convulsions"
+        },
+        {
+          "card_id": "CARD_ID_I_KNOW_ALL_I_SEE_ALL",
+          "value": 14801,
+          "function": "scheme_i_know_all_i_see_all"
+        },
+        {
+          "card_id": "CARD_ID_IGNITE_THE_CLONEFORGE",
+          "value": 14802,
+          "function": "scheme_ignite_the_cloneforge"
+        },
+        {
+          "card_id": "CARD_ID_IMPRISON_THIS_INSOLENT_WRETCH",
+          "value": 14831,
+          "function": "scheme_imprison_this_insolent_wretch"
+        },
+        {
+          "card_id": "CARD_ID_INTO_THE_EARTHEN_MAW",
+          "value": 14803,
+          "function": "scheme_into_the_earthen_maw"
+        },
+        {
+          "card_id": "CARD_ID_INTRODUCTIONS_ARE_IN_ORDER",
+          "value": 14804,
+          "function": "scheme_introductions_are_in_order"
+        },
+        {
+          "card_id": "CARD_ID_KNOW_NAUGHT_BUT_FIRE",
+          "value": 14805,
+          "function": "scheme_know_naught_but_fire"
+        },
+        {
+          "card_id": "CARD_ID_LOOK_SKYWARD_AND_DESPAIR",
+          "value": 14806,
+          "function": "scheme_look_skyward_and_despair"
+        },
+        {
+          "card_id": "CARD_ID_MAY_CIVILIZATION_COLLAPSE",
+          "value": 14807,
+          "function": "scheme_may_civilization_collapse"
+        },
+        {
+          "card_id": "CARD_ID_MY_CRUSHING_MASTERSTROKE",
+          "value": 14809,
+          "function": "scheme_my_crushing_masterstroke"
+        },
+        {
+          "card_id": "CARD_ID_MY_GENIUS_KNOWS_NO_BOUNDS",
+          "value": 14810,
+          "function": "scheme_my_genius_knows_no_bounds"
+        },
+        {
+          "card_id": "CARD_ID_MY_UNDEAD_HORDE_AWAKENS",
+          "value": 14811,
+          "function": "scheme_my_undead_horde_awakens"
+        },
+        {
+          "card_id": "CARD_ID_MY_WISH_IS_YOUR_COMMAND",
+          "value": 14812,
+          "function": "scheme_my_wish_is_your_command"
+        },
+        {
+          "card_id": "CARD_ID_NATURE_DEMANDS_AN_OFFERING",
+          "value": 14813,
+          "function": "scheme_nature_demands_an_offering"
+        },
+        {
+          "card_id": "CARD_ID_NATURE_SHIELDS_ITS_OWN",
+          "value": 14814,
+          "function": "scheme_nature_shields_its_own"
+        },
+        {
+          "card_id": "CARD_ID_NOTHING_CAN_STOP_ME_NOW",
+          "value": 14815,
+          "function": "scheme_nothing_can_stop_me_now"
+        },
+        {
+          "card_id": "CARD_ID_ONLY_BLOOD_ENDS_YOUR_NIGHTMARES",
+          "value": 14816,
+          "function": "scheme_only_blood_ends_your_nightmares"
+        },
+        {
+          "card_id": "CARD_ID_PERHAPS_YOUVE_MET_MY_COHORT",
+          "value": 14832,
+          "function": "scheme_perhaps_youve_met_my_cohort"
+        },
+        {
+          "card_id": "CARD_ID_PLOTS_THAT_SPAN_CENTURIES",
+          "value": 14833,
+          "function": "scheme_plots_that_span_centuries"
+        },
+        {
+          "card_id": "CARD_ID_REALMS_BEFITTING_MY_MAJESTY",
+          "value": 14817,
+          "function": "scheme_realms_befitting_my_majesty"
+        },
+        {
+          "card_id": "CARD_ID_ROOTS_OF_ALL_EVIL",
+          "value": 14818,
+          "function": "scheme_roots_of_all_evil"
+        },
+        {
+          "card_id": "CARD_ID_ROTTED_ONES_LAY_SIEGE",
+          "value": 14819,
+          "function": "scheme_rotted_ones_lay_siege"
+        },
+        {
+          "card_id": "CARD_ID_SURRENDER_YOUR_THOUGHTS",
+          "value": 14820,
+          "function": "scheme_surrender_your_thoughts"
+        },
+        {
+          "card_id": "CARD_ID_THE_DEAD_SHALL_SERVE",
+          "value": 14821,
+          "function": "scheme_the_dead_shall_serve"
+        },
+        {
+          "card_id": "CARD_ID_THE_FATE_OF_THE_FLAMMABLE",
+          "value": 14822,
+          "function": "scheme_the_fate_of_the_flammable"
+        },
+        {
+          "card_id": "CARD_ID_THE_IRON_GUARDIAN_STIRS",
+          "value": 14823,
+          "function": "scheme_the_iron_guardian_stirs"
+        },
+        {
+          "card_id": "CARD_ID_THE_PIECES_ARE_COMING_TOGETHER",
+          "value": 14824,
+          "function": "scheme_the_pieces_are_coming_together"
+        },
+        {
+          "card_id": "CARD_ID_THE_VERY_SOIL_SHALL_SHAKE",
+          "value": 14825,
+          "function": "scheme_the_very_soil_shall_shake"
+        },
+        {
+          "card_id": "CARD_ID_TOOTH_CLAW_AND_TAIL",
+          "value": 14826,
+          "function": "scheme_tooth_claw_and_tail"
+        },
+        {
+          "card_id": "CARD_ID_WHICH_OF_YOU_BURNS_BRIGHTEST",
+          "value": 14827,
+          "function": "scheme_which_of_you_burns_brightest"
+        },
+        {
+          "card_id": "CARD_ID_YOUR_FATE_IS_THRICE_SEALED",
+          "value": 14828,
+          "function": "scheme_your_fate_is_thrice_sealed"
+        },
+        {
+          "card_id": "CARD_ID_YOUR_INESCAPABLE_DOOM",
+          "value": 14834,
+          "function": "scheme_your_inescapable_doom"
+        },
+        {
+          "card_id": "CARD_ID_YOUR_PUNY_MINDS_CANNOT_FATHOM",
+          "value": 14829,
+          "function": "scheme_your_puny_minds_cannot_fathom"
+        },
+        {
+          "card_id": "CARD_ID_YOUR_WILL_IS_NOT_YOUR_OWN",
+          "value": 14830,
+          "function": "scheme_your_will_is_not_your_own"
+        }
+      ],
+      "native_range": "0x257d700",
+      "raw_export": ".recovery/decompiled-planes-schemes-monarch/257d700.c"
+    },
+    {
+      "source": "cards/archenemy_nicol_bolas.c",
+      "name": "register_archenemy_nicol_bolas_schemes",
+      "entries": [
+        {
+          "card_id": "CARD_ID_A_RECKONING_APPROACHES",
+          "value": 17260,
+          "function": "scheme_a_reckoning_approaches"
+        },
+        {
+          "card_id": "CARD_ID_BEHOLD_MY_GRANDEUR",
+          "value": 17262,
+          "function": "scheme_behold_my_grandeur"
+        },
+        {
+          "card_id": "CARD_ID_DELIGHT_IN_THE_HUNT",
+          "value": 17265,
+          "function": "scheme_delight_in_the_hunt"
+        },
+        {
+          "card_id": "CARD_ID_EVERY_DREAM_A_NIGHTMARE",
+          "value": 17266,
+          "function": "scheme_every_dream_a_nightmare"
+        },
+        {
+          "card_id": "CARD_ID_FOR_EACH_OF_YOU_A_GIFT",
+          "value": 17267,
+          "function": "scheme_for_each_of_you_a_gift"
+        },
+        {
+          "card_id": "CARD_ID_NO_ONE_WILL_HEAR_YOUR_CRIES",
+          "value": 17272,
+          "function": "scheme_no_one_will_hear_your_cries"
+        },
+        {
+          "card_id": "CARD_ID_PAY_TRIBUTE_TO_ME",
+          "value": 17273,
+          "function": "scheme_pay_tribute_to_me"
+        },
+        {
+          "card_id": "CARD_ID_THE_MIGHTY_WILL_FALL",
+          "value": 17275,
+          "function": "scheme_the_mighty_will_fall"
+        },
+        {
+          "card_id": "CARD_ID_THERE_IS_NO_REFUGE",
+          "value": 17276,
+          "function": "scheme_there_is_no_refuge"
+        },
+        {
+          "card_id": "CARD_ID_THIS_WORLD_BELONGS_TO_ME",
+          "value": 17277,
+          "function": "scheme_this_world_belongs_to_me"
+        },
+        {
+          "card_id": "CARD_ID_WHATS_YOURS_IS_NOW_MINE",
+          "value": 17278,
+          "function": "scheme_whats_yours_is_now_mine"
+        }
+      ],
+      "native_range": "0x2485cb0",
+      "raw_export": ".recovery/decompiled-planes-schemes-monarch/2485cb0.c"
+    }
+  ],
+  "scope": "31 initial helper definitions cover32 native ranges including Monarch compiler partitions;one existing Jared helper plus43 paired cards produce76 complete native ranges reviewed.14 initial helper definitions and10 cards changed. Two settings restored. Original files/canonical APIs; existing Jared implementation retained with a forward declaration. Native ABI/frame/registration/inline/data/partition evidence included. Built-in dialog backends and gameplay tests remain deferred."
+}

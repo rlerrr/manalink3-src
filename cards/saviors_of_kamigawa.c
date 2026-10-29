@@ -36,17 +36,20 @@ static int sweep(int player, int card, int subtype){
 	return amount;
 }
 
-int epic_legacy(int player, int card, event_t event){
-/* Epic (For the rest of the game, you can't cast spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability.)*/
-	int card_added = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);
-	card_instance_t *instance = get_card_instance(player, card_added);
-	instance->targets[0].player = player;
-	instance->targets[0].card = SE_TYPE_CANT_BE_PLAYED | SE_EPIC;
-	instance->targets[1].player = TYPE_CREATURE | TYPE_ENCHANTMENT | TYPE_ARTIFACT | TYPE_SPELL | TARGET_TYPE_PLANESWALKER;
-	instance->targets[1].card = get_id(player, card);
-	put_into_play(player, card_added);
-	create_card_name_legacy(player, card_added, get_id(player, card));
-	return card_added;
+int epic_legacy(int player, int card, event_t event)
+{
+  /* Epic (For the rest of the game, you can't cast spells. At the beginning of each of your
+   * upkeeps, copy this spell except for its epic ability.)*/
+  int card_added = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);
+  card_instance_t *instance = get_card_instance(player, card_added);
+  instance->targets[0].player = player;
+  instance->targets[0].card = SE_TYPE_CANT_BE_PLAYED | SE_EPIC;
+  instance->targets[1].player =
+      TYPE_CREATURE | TYPE_ENCHANTMENT | TYPE_ARTIFACT | TYPE_SPELL | TARGET_TYPE_PLANESWALKER;
+  instance->targets[1].card = get_internal_card_id_from_csv_id(get_id(player, card));
+  put_into_play(player, card_added);
+  create_card_name_legacy(player, card_added, get_id(player, card));
+  return card_added;
 }
 
 
@@ -256,42 +259,52 @@ Choose one -
 
 // blood clock --> umbilicus
 
-int card_bounteous_kirin(int player, int card, event_t event){
-/* CARD_ID_BOUNTEOUS_KIRIN	7608
-Bounteous Kirin	|5|G|G
-Legendary Creature - Kirin Spirit 4/4
-Flying
-Whenever you cast a Spirit or Arcane spell, you may gain life equal to that spell's converted mana cost. */
+int card_bounteous_kirin(int player, int card, event_t event)
+{
+  /* CARD_ID_BOUNTEOUS_KIRIN	7608
+  Bounteous Kirin	|5|G|G
+  Legendary Creature - Kirin Spirit 4/4
+  Flying
+  Whenever you cast a Spirit or Arcane spell, you may gain life equal to that spell's converted mana
+  cost. */
 
-	check_legend_rule(player, card, event);
+  check_legend_rule(player, card, event);
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		gain_life(player, get_cmc(trigger_cause_controller, trigger_cause));
-	}
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-	return 0;
+  if (event == EVENT_SPA)
+  {
+    gain_life(player, get_cmc(trigger_cause_controller, trigger_cause));
+  }
+
+  return 0;
 }
 
 // captive flame --> Ghitu war cry
 
-int card_celestial_kirin(int player, int card, event_t event){
-/* CARD_ID_CELESTIAL_KIRIN	7612
-Celestial Kirin	|2|W|W
-Legendary Creature - Kirin Spirit 3/3
-Flying
-Whenever you cast a Spirit or Arcane spell, destroy all permanents with that spell's converted mana cost. */
+int card_celestial_kirin(int player, int card, event_t event)
+{
+  /* CARD_ID_CELESTIAL_KIRIN	7612
+  Celestial Kirin	|2|W|W
+  Legendary Creature - Kirin Spirit 3/3
+  Flying
+  Whenever you cast a Spirit or Arcane spell, destroy all permanents with that spell's converted
+  mana cost. */
 
-	check_legend_rule(player, card, event);
+  check_legend_rule(player, card, event);
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_PERMANENT);
-		test.cmc = get_cmc(trigger_cause_controller, trigger_cause);
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-		APNAP(p, { new_manipulate_all(player, card, p, &test, KILL_DESTROY); };);
-	}
+  if (event == EVENT_SPA)
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_PERMANENT);
+    test.cmc = get_cmc(trigger_cause_controller, trigger_cause);
 
-	return 0;
+    new_manipulate_all(player, card, ANYBODY, &test, ACT_KILL_DESTROY);
+  }
+
+  return 0;
 }
 
 ARCANE(card_charge_across_the_araba){
@@ -365,32 +378,37 @@ If you don't, that player sacrifices all but that many permanents.
 	return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, NULL, 1, NULL);
 }
 
-int card_cloudhoof_kirin(int player, int card, event_t event){
-/* CARD_ID_CLOUDHOOF_KIRIN	7615
-Cloudhoof Kirin	|3|U|U
-Legendary Creature - Kirin Spirit 4/4
-Flying
-Whenever you cast a Spirit or Arcane spell, you may have target player put the top X cards of his or her library into his or her graveyard,
-where X is that spell's converted mana cost. */
+int card_cloudhoof_kirin(int player, int card, event_t event)
+{
+  /* CARD_ID_CLOUDHOOF_KIRIN	7615
+  Cloudhoof Kirin	|3|U|U
+  Legendary Creature - Kirin Spirit 4/4
+  Flying
+  Whenever you cast a Spirit or Arcane spell, you may have target player put the top X cards of his
+  or her library into his or her graveyard, where X is that spell's converted mana cost. */
 
-	check_legend_rule(player, card, event);
+  check_legend_rule(player, card, event);
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		int amount = get_cmc(trigger_cause_controller, trigger_cause);
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-		target_definition_t td;
-		default_target_definition(player, card, &td, 0);
-		td.zone = TARGET_ZONE_PLAYERS;
+  if (event == EVENT_SPA)
+  {
+    int amount = get_cmc(trigger_cause_controller, trigger_cause);
 
-		card_instance_t *instance = get_card_instance(player, card);
+    target_definition_t td;
+    default_target_definition(player, card, &td, 0);
+    td.zone = TARGET_ZONE_PLAYERS;
 
-		if( can_target(&td) && new_pick_target(&td, "TARGET_PLAYER", 0, 0) ){
-			mill(instance->targets[0].player, amount);
-		}
-		instance->number_of_targets = 0;
-	}
+    card_instance_t *instance = get_card_instance(player, card);
 
-	return 0;
+    if (can_target(&td) && new_pick_target(&td, "TARGET_PLAYER", 0, 0))
+    {
+      mill(instance->targets[0].player, amount);
+    }
+    instance->number_of_targets = 0;
+  }
+
+  return 0;
 }
 
 ARCANE(card_death_denied)
@@ -662,38 +680,38 @@ At the beginning of your upkeep, return a |Swhite creature you control to its ow
 }
 
 
-int card_elder_pine_of_jukai(int player, int card, event_t event){
-/* CARD_ID_ELDER_PINE_OF_JUKAI	7631
-Elder Pine of Jukai	|2|G
-Creature - Spirit 2/1
-Whenever you cast a Spirit or Arcane spell, reveal the top three cards of your library.
-Put all land cards revealed this way into your hand and the rest on the bottom of your library in any order.
-Soulshift 2 (When this creature dies, you may return target Spirit card with converted mana cost 2 or less from your graveyard to your hand.) */
+int card_elder_pine_of_jukai(int player, int card, event_t event)
+{
+  /* CARD_ID_ELDER_PINE_OF_JUKAI	7631
+  Elder Pine of Jukai	|2|G
+  Creature - Spirit 2/1
+  Whenever you cast a Spirit or Arcane spell, reveal the top three cards of your library.
+  Put all land cards revealed this way into your hand and the rest on the bottom of your library in
+  any order. Soulshift 2 (When this creature dies, you may return target Spirit card with converted
+  mana cost 2 or less from your graveyard to your hand.) */
 
-	if( arcane_spirit_spell_trigger(player, card, event, 2) ){
-		int amount = MIN(3, count_deck(player));
-		if( ! amount ){
-			return 0;
-		}
-		int *deck = deck_ptr[player];
-		show_deck(0, deck, amount, "Here's the revealed cards", 0, 0x7375B0 );
-		show_deck(1, deck, amount, "Here's the revealed cards", 0, 0x7375B0 );
-		int i;
-		int found = 0;
-		for(i=0; i<amount; i++){
-			if( is_what(-1, deck[i], TYPE_LAND) ){
-				add_card_to_hand(player, deck[i]);
-				remove_card_from_deck(player, i);
-				found++;
-			}
-		}
-		amount-=found;
-		if( amount > 0 ){
-			put_top_x_on_bottom(player, player, amount);
-		}
-	}
+  arcane_spirit_spell_trigger(player, card, event, 2);
 
-	return soulshift(player, card, event, 2, 1);
+  if (event == EVENT_SPA)
+  {
+    int *deck = deck_ptr[player];
+    show_deck(current_turn, deck, 3, "Here's the revealed cards", 0, ENGINE_DONE_LABEL);
+    show_deck(current_turn ^ 1, deck, 3, "Here's the revealed cards", 0, ENGINE_DONE_LABEL);
+    int amount = MIN(3, count_deck(player));
+    for (int i = amount - 1; i >= 0; --i)
+    {
+      if (is_what(-1, deck[i], TYPE_LAND))
+      {
+        add_card_to_hand(player, deck[i]);
+        remove_card_from_deck(player, i);
+        --amount;
+      }
+    }
+    if (amount > 0)
+      put_top_x_on_bottom(player, player, amount);
+  }
+
+  return soulshift(player, card, event, 2, 1);
 }
 
 int card_endless_swarm(int player, int card, event_t event){
@@ -1096,24 +1114,29 @@ int card_ghost_lit_stalker(int player, int card, event_t event){
 
 // hand of cruelty / honor --> devoted retainer
 
-int card_haru_onna(int player, int card, event_t event){
-/* CARD_ID_HARU_ONNA	7655
-Haru-Onna	|3|G
-Creature - Spirit 2/1
-When ~ enters the battlefield, draw a card.
-Whenever you cast a Spirit or Arcane spell, you may return ~ to its owner's hand. */
+int card_haru_onna(int player, int card, event_t event)
+{
+  /* CARD_ID_HARU_ONNA	7655
+  Haru-Onna	|3|G
+  Creature - Spirit 2/1
+  When ~ enters the battlefield, draw a card.
+  Whenever you cast a Spirit or Arcane spell, you may return ~ to its owner's hand. */
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY ){
-		draw_cards(player, 1);
-	}
+  if (event == EVENT_ETB_ABILITY)
+  {
+    draw_cards(player, 1);
+  }
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		bounce_permanent(player, card);
-	}
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-	return 0;
+  if (event == EVENT_SPA)
+  {
+    bounce_permanent(player, card);
+  }
+
+  return 0;
 }
 
 int card_hidetsugus_second_rite(int player, int card, event_t event){
@@ -1328,39 +1351,45 @@ int card_iname_as_one(int player, int card, event_t event)
 	return 0;
 }
 
-int card_infernal_kirin(int player, int card, event_t event){
-/* CARD_ID_INFERNAL_KIRIN	7662
-Infernal Kirin	|2|B|B
-Legendary Creature - Kirin Spirit 3/3
-Flying
-Whenever you cast a Spirit or Arcane spell, target player reveals his or her hand and discards all cards with that spell's converted mana cost. */
+int card_infernal_kirin(int player, int card, event_t event)
+{
+  /* CARD_ID_INFERNAL_KIRIN	7662
+  Infernal Kirin	|2|B|B
+  Legendary Creature - Kirin Spirit 3/3
+  Flying
+  Whenever you cast a Spirit or Arcane spell, target player reveals his or her hand and discards all
+  cards with that spell's converted mana cost. */
 
-	check_legend_rule(player, card, event);
+  check_legend_rule(player, card, event);
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		int amount = get_cmc(trigger_cause_controller, trigger_cause);
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.zone = TARGET_ZONE_PLAYERS;
-		td.allow_cancel = 0;
+  if (event == EVENT_SPA)
+  {
+    int amount = get_cmc(trigger_cause_controller, trigger_cause);
 
-		card_instance_t *instance = get_card_instance(player, card);
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.zone = TARGET_ZONE_PLAYERS;
+    td.allow_cancel = 0;
 
-		if( can_target(&td) && new_pick_target(&td, "TARGET_PLAYER", 0, 0) ){
-			ec_definition_t ec;
-			default_ec_definition(instance->targets[0].player, player, &ec);
-			ec.effect = EC_ALL_WHICH_MATCH_CRITERIA | EC_DISCARD;
+    card_instance_t *instance = get_card_instance(player, card);
 
-			test_definition_t this_test;
-			default_test_definition(&this_test, TYPE_ANY);
-			this_test.cmc = amount;
-			new_effect_coercion(&ec, &this_test);
-		}
-		instance->number_of_targets = 0;
-	}
+    if (can_target(&td) && new_pick_target(&td, "TARGET_PLAYER", 0, 0))
+    {
+      ec_definition_t ec;
+      default_ec_definition(instance->targets[0].player, player, &ec);
+      ec.effect = EC_ALL_WHICH_MATCH_CRITERIA | EC_DISCARD;
 
-	return 0;
+      test_definition_t this_test;
+      default_test_definition(&this_test, TYPE_ANY);
+      this_test.cmc = amount;
+      new_effect_coercion(&ec, &this_test);
+    }
+    instance->number_of_targets = 0;
+  }
+
+  return 0;
 }
 
 int card_ivory_crane_netsuke(int player, int card, event_t event){
@@ -1766,34 +1795,40 @@ All artifacts have "At the beginning of your upkeep, sacrifice this artifact unl
 	return 0;
 }
 
-int card_kemuri_onna(int player, int card, event_t event){
-/* CARD_ID_KEMURI_ONNA	7676
-Kemuri-Onna	|4|B
-Creature - Spirit 3/3
-When ~ enters the battlefield, target player discards a card.
-Whenever you cast a Spirit or Arcane spell, you may return ~ to its owner's hand. */
+int card_kemuri_onna(int player, int card, event_t event)
+{
+  /* CARD_ID_KEMURI_ONNA	7676
+  Kemuri-Onna	|4|B
+  Creature - Spirit 3/3
+  When ~ enters the battlefield, target player discards a card.
+  Whenever you cast a Spirit or Arcane spell, you may return ~ to its owner's hand. */
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.zone = TARGET_ZONE_PLAYERS;
-		td.allow_cancel = 0;
+  if (event == EVENT_ETB_ABILITY)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.zone = TARGET_ZONE_PLAYERS;
+    td.allow_cancel = 0;
 
-		card_instance_t *instance = get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
 
-		if( can_target(&td) && new_pick_target(&td, "TARGET_PLAYER", 0, 0) ){
-			discard(instance->targets[0].player, 0, player);
-		}
-		instance->number_of_targets = 0;
-	}
+    if (can_target(&td) && new_pick_target(&td, "TARGET_PLAYER", 0, 0))
+    {
+      discard(instance->targets[0].player, 0, player);
+    }
+    instance->number_of_targets = 0;
+  }
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		bounce_permanent(player, card);
-	}
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-	return 0;
+  if (event == EVENT_SPA)
+  {
+    bounce_permanent(player, card);
+  }
+
+  return 0;
 }
 
 int card_kikus_shadow(int player, int card, event_t event){
@@ -1822,26 +1857,26 @@ Target creature deals damage to itself equal to its power. */
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-int card_kiri_onna(int player, int card, event_t event){
-/* CARD_ID_KIRI_ONNA	7678
-Kiri-Onna	|4|U
-Creature - Spirit 2/2
-When ~ enters the battlefield, return target creature to its owner's hand.
-Whenever you cast a Spirit or Arcane spell, you may return ~ to its owner's hand. */
+int card_kiri_onna(int player, int card, event_t event)
+{
+  /* CARD_ID_KIRI_ONNA	7678
+  Kiri-Onna	|4|U
+  Creature - Spirit 2/2
+  When ~ enters the battlefield, return target creature to its owner's hand.
+  Whenever you cast a Spirit or Arcane spell, you may return ~ to its owner's hand. */
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		bounce_permanent(player, card);
-	}
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-	return card_man_o_war(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    bounce_permanent(player, card);
+  }
+
+  return card_man_o_war(player, card, event);
 }
 
 int card_kiyomaro_first_to_stand(int player, int card, event_t event)
 {
-  enum
-  {
-    DDBM_MAY_DAMAGE_PLANESWALKER = 64
-  };
   card_instance_t *instance;
   int result;
   check_legend_rule(player, card, event);
@@ -2303,13 +2338,17 @@ int card_nightsoil_kami(int player, int card, event_t event){
 	return soulshift(player, card, event, 5, 1);
 }
 
-int card_nikko_onna(int player, int card, event_t event){
+int card_nikko_onna(int player, int card, event_t event)
+{
 
-	if( arcane_spirit_spell_trigger(player, card, event, 1+player) ){
-		bounce_permanent(player, card);
-	}
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-	return card_monk_realist(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    bounce_permanent(player, card);
+  }
+
+  return card_monk_realist(player, card, event);
 }
 
 int card_o_naginata(int player, int card, event_t event){
@@ -3106,36 +3145,44 @@ At the beginning of your upkeep, return a |Sblack creature you control to its ow
 	return regeneration(player, card, event, MANACOST_XB(1, 1));
 }
 
-int card_skyfire_kirin(int player, int card, event_t event){
-/* CARD_ID_SKYFIRE_KIRIN	7749
-Skyfire Kirin	|2|R|R
-Legendary Creature - Kirin Spirit 3/3
-Flying
-Whenever you cast a Spirit or Arcane spell, you may gain control of target creature with that spell's converted mana cost until end of turn. */
+int card_skyfire_kirin(int player, int card, event_t event)
+{
+  /* CARD_ID_SKYFIRE_KIRIN	7749
+  Skyfire Kirin	|2|R|R
+  Legendary Creature - Kirin Spirit 3/3
+  Flying
+  Whenever you cast a Spirit or Arcane spell, you may gain control of target creature with that
+  spell's converted mana cost until end of turn. */
 
-	check_legend_rule(player, card, event);
+  check_legend_rule(player, card, event);
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		int cmc = get_cmc(trigger_cause_controller, trigger_cause);
+  arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.extra = cmc;
-		td.special = TARGET_SPECIAL_CMC_EQUAL;
+  if (event == EVENT_SPA)
+  {
+    int cmc = get_cmc(trigger_cause_controller, trigger_cause);
 
-		card_instance_t *instance = get_card_instance(player, card);
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.extra = cmc;
+    td.special = TARGET_SPECIAL_CMC_EQUAL;
 
-		if( can_target(&td) ){
-			char msg[100];
-			scnprintf(msg, 100, "Select target creature with CMC %d.", cmc);
-			if( new_pick_target(&td, msg, 0, GS_LITERAL_PROMPT) ){
-				gain_control_until_eot(player, card, instance->targets[0].player, instance->targets[0].card);
-			}
-			instance->number_of_targets = 0;
-		}
-	}
+    card_instance_t *instance = get_card_instance(player, card);
 
-	return 0;
+    if (can_target(&td))
+    {
+      char msg[100];
+      scnprintf(msg, 100, "Select target creature with CMC %d.", cmc);
+      if (new_pick_target(&td, msg, 0, GS_LITERAL_PROMPT))
+      {
+        gain_control_until_eot(player, card, instance->targets[0].player,
+                               instance->targets[0].card);
+      }
+      instance->number_of_targets = 0;
+    }
+  }
+
+  return 0;
 }
 
 int card_soramaro_first_to_dream(int player, int card, event_t event)
@@ -3505,18 +3552,22 @@ Artifact, 3 (3)
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_X(4), 0, &td, "TARGET_CREATURE");
 }
 
-int card_yuki_onna(int player, int card, event_t event){
-/* CARD_ID_YUKI_ONNA	7764
-Yuki-Onna	|3|R
-Creature - Spirit 3/1
-When ~ enters the battlefield, destroy target artifact.
-Whenever you cast a Spirit or Arcane spell, you may return ~ to its owner's hand. */
+int card_yuki_onna(int player, int card, event_t event)
+{
+  /* CARD_ID_YUKI_ONNA	7764
+  Yuki-Onna	|3|R
+  Creature - Spirit 3/1
+  When ~ enters the battlefield, destroy target artifact.
+  Whenever you cast a Spirit or Arcane spell, you may return ~ to its owner's hand. */
 
-	if( arcane_spirit_spell_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		bounce_permanent(player, card);
-	}
+  sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_CREATURE, NULL, player, card);
 
-	return card_uktabi_orangutan(player, card, event);
+  if (event == EVENT_SPA)
+  {
+    bounce_permanent(player, card);
+  }
+
+  return card_uktabi_orangutan(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */

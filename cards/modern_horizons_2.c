@@ -3131,6 +3131,13 @@ void ward_granted(int player, int card, event_t event, int t_player, int t_card,
   return;
 }
 
+void ward(int player, int card, event_t event, int flags, int cless, int black, int blue, int green,
+          int red, int white, int life_to_pay)
+{
+  ward_granted(player, card, event, player, card, TYPE_NONE, SUBTYPE_INVALID, flags, cless, black,
+               blue, green, red, white, life_to_pay);
+}
+
 /* ManalinkEh 2022: 0x222c220; original cards/modern_horizons_2.c:231. */
 void ward_mana(int player, int card, event_t event, int cless, int black, int blue, int green,
                int red, int white)
@@ -8062,10 +8069,6 @@ int card_chatterfang_squirrel_general(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2230860; original cards/modern_horizons_2.c:1655. */
 int card_chitterspitter(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_ACORN = 160
-  };
 
   int result;
   card_instance_t *instance;
@@ -8119,10 +8122,6 @@ int card_chitterspitter(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x222ba50; original cards/modern_horizons_2.c:1961. */
 static int card_exiled_with_void_counter(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_VOID = 170
-  };
 
   card_instance_t *instance;
   int iVar2;
@@ -8227,10 +8226,6 @@ int card_galvanic_relay(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x22419b0; original cards/modern_horizons_2.c:6955. */
 int card_tizerus_charger(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_FLYING = 147
-  };
 
   int result;
 
@@ -8382,10 +8377,6 @@ LAB_0223828c:
 /* ManalinkEh 2022: 0x22361d0; original cards/modern_horizons_2.c:3234. */
 int card_geyadrone_dihada(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_CORRUPTION = 163
-  };
 
   card_instance_t *instance;
   int iVar2;
@@ -11046,10 +11037,6 @@ code_r0x022432f6:
 /* ManalinkEh 2022: 0x222b230; original cards/modern_horizons_2.c:1987. */
 static int create_dauthi_voidwalker_legacy(int player, int card, int iid)
 {
-  enum
-  {
-    COUNTER_VOID = 170
-  };
   int legacy =
       create_legacy_effect_for_opponent(player, card, card_exiled_with_void_counter, -1, -1);
   if (legacy != -1)
@@ -11076,10 +11063,6 @@ static int create_dauthi_voidwalker_legacy(int player, int card, int iid)
 /* ManalinkEh 2022: 0x2231790; original cards/modern_horizons_2.c:2001. */
 int card_dauthi_voidwalker(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_VOID = 170
-  };
   shadow(player, card, event);
   int opponent = 1 - player;
   if (if_a_card_would_be_put_into_graveyard_from_library_do_something_instead(

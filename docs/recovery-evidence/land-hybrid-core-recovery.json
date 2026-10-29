@@ -1,0 +1,635 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "spell_is_targeting_me",
+      "source": "cards/the_dark.c",
+      "native_ranges": [
+        {
+          "address": "0x24298a0",
+          "end": "0x24298e2",
+          "bytes_sha256": "541839f21f73e103e813e72841b541d0bc70139dd5d6ba56a04a16dd76c41072",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/24298a0.c",
+          "raw_export_sha256": "675d39d77a761e05c5fdd473c9a5231047c43b3c54ed00af88d46d7841c1c41d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e470ce8838a908273a134b88a107b98b1adb9ef6995bb3fd1b78a60e14ccf75d"
+    },
+    {
+      "name": "give_first_strike",
+      "source": "cards/the_dark.c",
+      "native_ranges": [
+        {
+          "address": "0x2429ab0",
+          "end": "0x2429af8",
+          "bytes_sha256": "3c2f644670816aa796cd7f66ab9af0cd6316d558a1579b765259f1c2929600f4",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/2429ab0.c",
+          "raw_export_sha256": "5727c92aa4f7078fb3b155ae993393384b9139ab67d1952977e59f0ffcc31403"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e19aa39521d1c42d0be0d00ad280406bbff5400bac53cee0cb62b20bae1653f4"
+    },
+    {
+      "name": "war_barge_legacy",
+      "source": "cards/the_dark.c",
+      "native_ranges": [
+        {
+          "address": "0x2429b00",
+          "end": "0x2429bc6",
+          "bytes_sha256": "81f3e35596cfdbf3cd45fbadd26b2159d0aedb1e27962475028ea200ec51beca",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/2429b00.c",
+          "raw_export_sha256": "7ff4f45e30036623930111ca6b5c6b50bc0a0bbe7efa5b9c052adb2d2ca0053a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "f5d506c6a6fbecef4702ea73bc0021fa5ecb0fc008edca953e6276112cb1cb7b"
+    },
+    {
+      "name": "effect_runesword",
+      "source": "cards/the_dark.c",
+      "native_ranges": [
+        {
+          "address": "0x2429ce0",
+          "end": "0x2429f94",
+          "bytes_sha256": "bf15ecb93589e99a326debc8bb1e87a2e1ea6738ae71a395de3d86b26b0ec9f6",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/2429ce0.c",
+          "raw_export_sha256": "69c2c9efdd1c895c20b87021d6410d2255b8e7d0b4eaf72e7c39735ee89df666"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ebe0a44481e01f45072bd6ad8c14cd00082171f9505fc583c5d93688266c733e"
+    },
+    {
+      "name": "whippoorwill_legacy",
+      "source": "cards/the_dark.c",
+      "native_ranges": [
+        {
+          "address": "0x242a120",
+          "end": "0x242a260",
+          "bytes_sha256": "0809c43e7e78a22802264c84017227739a29421221ac4dc76393229fbf79d01f",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/242a120.c",
+          "raw_export_sha256": "9f0b03c589c6898e994a885510068179ebcc3bb0827241954290de9bf3d26b4f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b8396898c5794babd0185169d4ee088ef5cc68cff1fdcad90bc763fe074fdaa0"
+    },
+    {
+      "name": "dance_of_many_legacy",
+      "source": "cards/the_dark.c",
+      "native_ranges": [
+        {
+          "address": "0x242a310",
+          "end": "0x242a47f",
+          "bytes_sha256": "4a1129ab66579e87870a5e4d00d274cc6a3b67cbf402836dde154b2d40773f64",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/242a310.c",
+          "raw_export_sha256": "3e83f1b451d6a926b60d291737bc703a9938a0799e346524ec0a848711ccb49c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "036a553c5df44e7f67eb818b8af20fa140f8025de7ee43914cc470549714a141"
+    },
+    {
+      "name": "destroy_nonwall_at_end_of_combat",
+      "source": "cards/the_dark.c",
+      "native_ranges": [
+        {
+          "address": "0x242a620",
+          "end": "0x242a67a",
+          "bytes_sha256": "ca38a696e5afd27c234f0541af339bbd8b9ccc72ed5917b7f8452e4ccccf6102",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/242a620.c",
+          "raw_export_sha256": "4486523768d690f4597eef8915d9bd8ed562646c6689adf49f07e9b21550f919"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c1e4531241a311e9157e6b872dd555935bdf4fe3eaf03cb40474731e609001f4"
+    },
+    {
+      "name": "land_into_new_basic_land_type",
+      "source": "cards/the_dark.c",
+      "native_ranges": [
+        {
+          "address": "0x242a720",
+          "end": "0x242a7b7",
+          "bytes_sha256": "9610179b3f36ecbfb1579a13db1d08b509508aaa155a86c29da7932dea2ee773",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/242a720.c",
+          "raw_export_sha256": "886fcefcdd2e87b2e4312dce7131c333894df5b84e8142c07972bd70b714aa0e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4278afdd55b8ea31631298176d0d24b6bae90f1f0d64b509e3b221d326948993"
+    },
+    {
+      "name": "change_lands_into_new_land_type",
+      "source": "cards/the_dark.c",
+      "native_ranges": [
+        {
+          "address": "0x242b0c0",
+          "end": "0x242b364",
+          "bytes_sha256": "a2c162fd222a0bb975a3f948619a325bbb6a5007c6e132c075d427dbef4d3b6f",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/242b0c0.c",
+          "raw_export_sha256": "22f7d988a0dcd41f9be32093c8865610744f29f9640d56b7fc0436d0af9ff6fc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5529310e1396b540e83fa8c7fc4e43a2950b7281fadf07a23f05cfa9ddc4f352"
+    },
+    {
+      "name": "test_exclude_this_creature",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x25494e0",
+          "end": "0x254950a",
+          "bytes_sha256": "dd2dfdea62110381605fd97e5f7e3b9f4218a81e9eb51ebf0de80bb3d2e7d08e",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/25494e0.c",
+          "raw_export_sha256": "8e8a96b31a9c32787e9cdde6a548e664900dfb592058809be4928d0067aecd7b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2ae2a2d5bb87bf7d350736e271efd727b3bc12ee711b89ba13585f6ad2888724"
+    },
+    {
+      "name": "target_must_have_counters",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x2549510",
+          "end": "0x254953f",
+          "bytes_sha256": "a08ef24e7ba01331b78fd3a2958a3dbf1963613ebeb1a3895f39ede7c4df9a0f",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/2549510.c",
+          "raw_export_sha256": "bae9f0fd893822dca91ca5746416f8c755038f32d7c668cc7eeab77361c7b8f6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "393be60f977744ef07682a2b162e8c2f4c844f2cd34012578b73f94974e4f8c6"
+    },
+    {
+      "name": "persist_granted",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x2549540",
+          "end": "0x2549762",
+          "bytes_sha256": "428cb22e5eb46d6534b7cb7cc8b9fe6c484999a0c600291d18cb880e2db9c677",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/2549540.c",
+          "raw_export_sha256": "bbef43c540f68e6736785d29ff73c120926de1a72f949e4b9ac37ba1705b7302"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "19057eed222c59efd95d82ee1fe5122ca1b90f408613a836b390060f527b9729"
+    },
+    {
+      "name": "cemetery_puca_impl",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x2549ba0",
+          "end": "0x254a098",
+          "bytes_sha256": "1e97a661cc91a075609a5d24d8afb5e0fa43b845515f99d417d590e841337d53",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/2549ba0.c",
+          "raw_export_sha256": "5a95f69709668f6dd5bfe806c8e0c3c5f7f337a724ec247c545e9aa89397ac0d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "288d8a822ce3582e916ff353a4717142aabb174379d6f1c395f401a6ba27bd30"
+    },
+    {
+      "name": "effect_cemetery_puca",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x254a0a0",
+          "end": "0x254a0dc",
+          "bytes_sha256": "39f10b18a0ba8cefddd4a6229d691a3258311c1b6867a525614bf86a903120ab",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/254a0a0.c",
+          "raw_export_sha256": "4ff30fb16e6cd7c722b06891ba0bc044462f8c4494b141caa00be2cc97caad24"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7af2b6d7dc8ab93cf27c97ca874ca8370f920791fd634f41cf6a447998879103"
+    },
+    {
+      "name": "tower_above_legacy",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x254a0e0",
+          "end": "0x254a3eb",
+          "bytes_sha256": "4aa251821a3b36681c00e42b18231366b4dc4920ca8d5dc8f5c2058f16879958",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/254a0e0.c",
+          "raw_export_sha256": "a6bda9727b669d8b3503de7d1315908f8846c8a268ed9fda766e1bea0b1c497b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7066cb74d593a7872050c420b1cca6327f1b972c1a3b6541c71d8acc02a20f1a"
+    },
+    {
+      "name": "furystoke_giant_effect",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x254a490",
+          "end": "0x254a5e9",
+          "bytes_sha256": "f807b28a0ed6156fb912a403a8522b58f1771da487cf8fcfe8c466f3e9873678",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/254a490.c",
+          "raw_export_sha256": "1b52a69c844556fb06302b976f01d5a0aae1d22448db168bfebc283ac7816a40"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e4c045c5a37a2791466981e86f21aea78be39ffd8db7cc0ad23b1d44affe709e"
+    },
+    {
+      "name": "hybrid_casting",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x254b4d0",
+          "end": "0x254b730",
+          "bytes_sha256": "3c0d6df32683e48de6daf0a86114c70ed7c5c16cc143e749173ef2e966431ea5",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/254b4d0.c",
+          "raw_export_sha256": "611ccb6fc41d949c62a4b5940d07aafb2ab65a8367aee6e5807123db55250775"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8cfec8cec6a0e692b16440243ed3ec75685e2406ed4934a2f92aa82c23e41225"
+    },
+    {
+      "name": "monocolor_hybrid",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x254b730",
+          "end": "0x254b790",
+          "bytes_sha256": "d3921b7441b510e51eff18689358bcb6540d958b12f6732704399f889dd65299",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/254b730.c",
+          "raw_export_sha256": "6f9964afe22cb9409f231d1f1476c7d45f26ff056695e9d5227297e2557a0971"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3d09aa92021172bc951b3d3df2210212a4ac05f0016113016073db5b2e1870fe"
+    },
+    {
+      "name": "hybrid",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x254b7d0",
+          "end": "0x254b85d",
+          "bytes_sha256": "3e2cacb83f991655d93f8e1adefbf38118d32d2ef45b68aaa35e4de142d30b33",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/254b7d0.c",
+          "raw_export_sha256": "6f88138998fac25b9a05918edf8d3e5ed5071acbf15754d635733a6754fbeddf"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8fc4657f20421a9d0464be91f36e46f1b76ff1d4e686a6e3f13375cb5a786b8e"
+    },
+    {
+      "name": "liege",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x254bb20",
+          "end": "0x254bbbb",
+          "bytes_sha256": "dacaa36d1239e19cd7c1ed5102ee8c900467abc2f5e3f7e1a6b3896a4eb288ea",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/254bb20.c",
+          "raw_export_sha256": "07b4c8735298d7fa1dc832a78ccde75e3306bff429899a90ac84e6a77b9ca3af"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "961a81e7ff2b1a9882e3731cd0c19eadc4ade421a159aa6c60b2a16f57fd4487"
+    },
+    {
+      "name": "casting_reaper_king",
+      "source": "cards/shadowmoor.c",
+      "native_ranges": [
+        {
+          "address": "0x2558020",
+          "end": "0x255861d",
+          "bytes_sha256": "a1cdd907d4c5e0fccdf468cbe2a6a8dc423541650a90799ca2b0e3fa44e2df0b",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/2558020.c",
+          "raw_export_sha256": "72046923aaadcf79b7a55ba5c4656832cb68af5e66657f9a0f932ddf114fd6df"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fbe50284918a95a3290f6a2f61be5580d71c4887f42103aa582e1499a11cfb55"
+    },
+    {
+      "name": "effect_nobody_can_attack_until_eot",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2677660",
+          "end": "0x26778f8",
+          "bytes_sha256": "ad43d4bea17bc1e1f5b21172910d731a9d0d9a063d63d6293ed7da4b03f82e28",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/2677660.c",
+          "raw_export_sha256": "097c14a43dd2676c5c01b47c733b367c8bae9b0dcb1737539a82121094094008"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fc60a7a5065cda6511268bbdfbfcc1fc9c8622cdc827f9f14fecb647ae9148a2"
+    },
+    {
+      "name": "get_cmc_by_id",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x267ee00",
+          "end": "0x267ee80",
+          "bytes_sha256": "b3907de8156bbf5dae66fcf184dff17af88c8f62cd450fcf035b7a1ce84b8214",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/267ee00.c",
+          "raw_export_sha256": "058ad8e48b95378c19031b4dc71d4ab15f2a1224afd1e9941ceb0463e04686ce"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "aea9eecef089c5c6686a799612471d50ade0b41f7bdfeba25fd029aa2ec8771e"
+    },
+    {
+      "name": "fight",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26950c0",
+          "end": "0x269521c",
+          "bytes_sha256": "c0b50834e8212513b58609d05921a544c05f54f36425f259f8afc3450b305a2a",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/26950c0.c",
+          "raw_export_sha256": "4cc16b50c489c09788c68b09048e413139507d9e81d425192d6ab83e7aa5ef61"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4033fea138888540e02b336adf90e429dce5327086b8d3fd0ad867890fd4cf3f"
+    },
+    {
+      "name": "play_land_sound_effect_force_color",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2698060",
+          "end": "0x26983a1",
+          "bytes_sha256": "5f142f31f47bdddaa0b0d3222ff0816336f2f0c1dc0b55bfe9383d10980da72f",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/2698060.c",
+          "raw_export_sha256": "c71261f805ee2d3965375194f3392032007b49b265785f6e0d27588e5957b138"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "05ab6401a3fbc4ff9ffabbce0b598fcac3601ab6b1898104fc8ad196a8d70ede"
+    },
+    {
+      "name": "cycling",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x2699590",
+          "end": "0x269976f",
+          "bytes_sha256": "44659dbd3c3dbab213fb55f439ff2e4708c1c04c2f89807955274ab99d380f07",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/2699590.c",
+          "raw_export_sha256": "0f06231e1f791ca42823c4135dc8a07f246160ddb33836de72e9ad4f94133887"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "97b1db74423d5231ea8948f039fb8d9967bc0dc6c024273130891f368c582abd"
+    },
+    {
+      "name": "find_in_owners_graveyard",
+      "source": "functions/deck.c",
+      "native_ranges": [
+        {
+          "address": "0x26b9f10",
+          "end": "0x26ba001",
+          "bytes_sha256": "d26eb970c456c23d162009d85640aba62045b29ff9f0c14e4db13f45c386576e",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/26b9f10.c",
+          "raw_export_sha256": "a5982f934c58aefa0b5e5827201e8464b8f7bb6a7a64623f5484239d20b86b3b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d1569c480aba6dc87e42ca3d5560a28df9ff971c46632eaf4ac06d37a492cd89"
+    },
+    {
+      "name": "check_card_for_rules_engine",
+      "source": "functions/rules_engine.c",
+      "native_ranges": [
+        {
+          "address": "0x26c8340",
+          "end": "0x26c890c",
+          "bytes_sha256": "41474d31cb5e8ca8b892c8ad58f7a6fd4a98ccd4bc2da5ff9d5e31de8d16ab1f",
+          "raw_export": ".recovery/decompiled-land-hybrid-core/26c8340.c",
+          "raw_export_sha256": "5287ffa4c588e54e03ad285badca5ff2c4a86838cb636a74f219b64af72b08c8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "418c086d601bc5c0858950805bfdc2af65e0220376559b549547729eada392db"
+    },
+    {
+      "name": "play_sound_effect",
+      "source": "functions/windows.c",
+      "native_ranges": [
+        {
+          "address": "0x2658860",
+          "end": "0x26589ef",
+          "bytes_sha256": "735c9dc62884e70fe521176df7f13476556d38d1aff0b42754b1f5901763d4f1",
+          "raw_export": ".recovery/decompiled-land-hybrid-core-support/2658860.c",
+          "raw_export_sha256": "a2e3b2fd41ad2dea8eca1c19f95ff113119878bfdbf455c1f2dff3fc80350981"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e632852297d11251d7910c4b03744549002e6eef40c1a23bd6653e3f55164df6"
+    }
+  ],
+  "inline_support_helpers": [
+    {
+      "source": "cards/shadowmoor.c",
+      "name": "get_number_of_monocolored_hybrid_mana",
+      "definition_sha256": "087f8f1b0603d27d48e8cd4dd7feec2d636a2a28a1db77707b89ca25b004172e",
+      "native_owner": "hybrid_casting",
+      "native_owner_address": "0x254b4d0"
+    },
+    {
+      "source": "cards/shadowmoor.c",
+      "name": "tap_and_damage",
+      "definition_sha256": "b40dd302e5ef2707f87195c3796b087df76dafb05d8992421030e9dc98223d32",
+      "native_owner": "furystoke_giant_effect",
+      "native_owner_address": "0x254a490"
+    }
+  ],
+  "helper_definitions": 29,
+  "new_native_helper_ranges": 29,
+  "changed_helper_definitions": 11,
+  "native_sound_record": {
+    "die_offset": "0x5ef391a",
+    "byte_size": 32,
+    "fields": {
+      "volume": 0,
+      "frequency": 4,
+      "field_8": 8,
+      "field_C": 12,
+      "field_10": 16,
+      "field_14": 20,
+      "soundnum": 24,
+      "field_1C": 28
+    }
+  },
+  "native_reaper_arrays": {
+    "manaCless": {
+      "die_offset": "0x4d5a3cf",
+      "shape": [
+        32
+      ]
+    },
+    "manaBlack": {
+      "die_offset": "0x4d5a3cf",
+      "shape": [
+        32
+      ]
+    },
+    "manaBlue": {
+      "die_offset": "0x4d5a3cf",
+      "shape": [
+        32
+      ]
+    },
+    "manaGreen": {
+      "die_offset": "0x4d5a3cf",
+      "shape": [
+        32
+      ]
+    },
+    "manaRed": {
+      "die_offset": "0x4d5a3cf",
+      "shape": [
+        32
+      ]
+    },
+    "manaWhite": {
+      "die_offset": "0x4d5a3cf",
+      "shape": [
+        32
+      ]
+    },
+    "castingCosts": {
+      "die_offset": "0x4d6499d",
+      "shape": [
+        3,
+        200
+      ],
+      "dynamic_bound": {
+        "reference_die": "0x4d647ae",
+        "location_list_offset": 1978973,
+        "constant_upper_bound": 199
+      }
+    },
+    "maxPos": {
+      "die_offset": "0x4d5d817",
+      "shape": [
+        3
+      ]
+    }
+  },
+  "native_contracts": {
+    "cmc": {
+      "no_cost": "has_no_mana_cost on iid",
+      "split_no_match": -1,
+      "split_zero_is_valid": true,
+      "x_colorless_sentinel": 40
+    },
+    "hybrid": {
+      "can_cast_return": 1,
+      "monocolor_get_number_inlined": "printed req_colorless minus zero"
+    },
+    "cycling": {
+      "free_source_csv_id": 16978,
+      "free_hand_min": 7,
+      "all_six_mana_components_zero": true,
+      "cycled_flag": "card_is_being_cycled",
+      "flag_set_before_discard": true,
+      "flag_cleared_after_discard": true
+    },
+    "reaper": {
+      "ordered_colors": [
+        "black",
+        "blue",
+        "green",
+        "red",
+        "white"
+      ],
+      "choices_per_color": [
+        1,
+        0
+      ],
+      "max_combinations": 32,
+      "generic": "updated cost minus twice the selected colored pips",
+      "negative_generic_excluded": true,
+      "max_pages": 3,
+      "choices_per_page": 12,
+      "page_bytes": 200,
+      "page_count": "available combinations /12 plus1, including an empty final page at exact multiples",
+      "dialog_header": " Pay\n",
+      "next_label": " Next\n",
+      "cancel_label": " Cancel\n",
+      "ai_first_option": true,
+      "zero_option_ai_behavior": "zero-initialized first option retained",
+      "artifact_mana": "selected generic cost, charged once"
+    },
+    "completion": {
+      "war_barge": "EVENT_LEAVES_PLAY_ABILITY",
+      "runesword": "EVENT_LEAVES_PLAY_ABILITY",
+      "whippoorwill_cleanup_requires_attachment": true
+    },
+    "targeting": {
+      "single_target_no_retarget_callback": true
+    },
+    "persist": {
+      "death_suppression_check": true
+    },
+    "attack_restriction": {
+      "begin_turn_marker_slot": "targets[2].card",
+      "begin_turn_marker": 66,
+      "cleanup_after_begin_turn_flag": 16
+    },
+    "sound": {
+      "default_volume": 400,
+      "dice_volume": 300,
+      "dice_id": 88,
+      "playback_descriptor": true,
+      "descriptor_bytes": 32,
+      "api_load_test": "0x45a270",
+      "api_load": "0x45a1c0",
+      "api_play": "0x45a240"
+    },
+    "preserved_quirks": {
+      "runesword_source_player_card_comparison_swapped": true,
+      "reaper_empty_ai_option": true
+    }
+  },
+  "scope": "29 newly reviewed native helper definitions/ranges, 11 changed complete C bodies, two inlined helper definitions, native/rebuilt payment-array extents and 32-byte sound record. Built-in chooser/audio backend implementations and gameplay tests remain downstream."
+}

@@ -234,7 +234,7 @@ Equip |1 */
 	if( is_equipping(player, card) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		if( event == EVENT_ABILITIES && is_legendary(instance->damage_target_player, instance->damage_target_card) ){
-			hexproof(instance->targets[8].player, instance->targets[8].card, event);
+			hexproof(instance->damage_target_player, instance->damage_target_card, event);
 		}
 	}
 
@@ -819,144 +819,181 @@ Join forces - Whenever ~ attacks or blocks, each player starting with you may pa
   return 0;
 }
 
-static int martyrs_bond_effect(int player, int card, event_t event){
+static int martyrs_bond_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_MARTYRS_BOND ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_MARTYRS_BOND)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY && affected_card_controller == player ){
-		card_instance_t *instance= get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-					}
-				}
-			}
-			if( is_what(affected_card_controller, affected_card, TYPE_PERMANENT) &&
-				! is_what(affected_card_controller, affected_card, TYPE_LAND) )
-			{
-				if( is_this_dying(affected_card_controller, affected_card) ){
-					if( instance->targets[11].player < 0 ){
-						instance->targets[11].player = 0;
-					}
-					int pointer = instance->targets[11].player;
-					if( pointer < 10 ){
-						instance->targets[pointer].card = get_type(affected_card_controller, affected_card);
-						instance->targets[11].player++;
-					}
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY && affected_card_controller == player)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code && instance->damage_target_player > -1 &&
+          affect_me(instance->damage_target_player, instance->damage_target_card))
+      {
+        instance->damage_target_player = instance->damage_target_card = -1;
+        remove_status(player, card, STATUS_INVISIBLE_FX);
+        if (instance->targets[11].player < 0)
+          instance->targets[11].player = 0;
+        SET_BYTE2(instance->targets[11].player) = 1;
+      }
+      if (is_what(affected_card_controller, affected_card, TYPE_PERMANENT) &&
+          !is_what(affected_card_controller, affected_card, TYPE_LAND) &&
+          is_this_dying(affected_card_controller, affected_card) &&
+          !check_for_death_trigger_removal(affected_card_controller, affected_card))
+      {
+        if (instance->targets[11].player < 0)
+          instance->targets[11].player = 0;
+        int pointer = instance->targets[11].player;
+        if (pointer < 11)
+        {
+          instance->targets[pointer].card = get_type(affected_card_controller, affected_card);
+          ++instance->targets[11].player;
+          int copies = card_counts[player][5];
+          if (is_what(affected_card_controller, affected_card, TYPE_CREATURE))
+          {
+            for (; copies > 0; --copies)
+            {
+              if (instance->targets[11].player < 11)
+              {
+                instance->targets[instance->targets[11].player].card =
+                    get_type(affected_card_controller, affected_card);
+                ++instance->targets[11].player;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( amount ){
-			card_instance_t *instance= get_card_instance(player, card);
-			int i;
-			for(i=0; i<amount; i++){
-				test_definition_t test;
-				default_test_definition(&test, instance->targets[i].card);
-				new_sacrifice(player, card, 1-player, SAC_NO_CANCEL | SAC_CAUSED, &test);
-			}
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    for (int i = 0; i < BYTE0(result) && i < 11; ++i)
+    {
+      test_definition_t test;
+      default_test_definition(&test, instance->targets[i].card);
+      new_sacrifice(player, card, 1 - player, SAC_CAUSED | SAC_NO_CANCEL, &test);
+    }
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
-int card_martyrs_bond(int player, int card, event_t event){
-/*
-Martyr's Bond |4|W|W
-Enchantment
-Whenever Martyr's Bond or another nonland permanent you control is put into a graveyard from the battlefield,
-	each opponent sacrifices a permanent that shares a card type with it.
-*/
+int card_martyrs_bond(int player, int card, event_t event)
+{
+  /*
+  Martyr's Bond |4|W|W
+  Enchantment
+  Whenever Martyr's Bond or another nonland permanent you control is put into a graveyard from the
+  battlefield, each opponent sacrifices a permanent that shares a card type with it.
+  */
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
-				card_instance_t *inst = get_card_instance(player, c);
-				if( inst->info_slot == (int)martyrs_bond_effect ){
-					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
-						(inst->targets[0].player == player && inst->targets[0].card == card) )
-					{
-						found = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( ! found ){
-			int legacy = create_targetted_legacy_effect(player, card, &martyrs_bond_effect, player, card);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(player, c);
+        if (inst->info_slot == (int)martyrs_bond_effect)
+        {
+          if ((inst->damage_target_player == player && inst->damage_target_card == card) ||
+              (inst->targets[0].player == player && inst->targets[0].card == card))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy = create_targetted_legacy_effect(player, card, &martyrs_bond_effect, player, card);
+      card_instance_t *inst = get_card_instance(player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY && affected_card_controller == player ){
-		if( in_play(affected_card_controller, affected_card) &&
-			is_what(affected_card_controller, affected_card, TYPE_PERMANENT) &&
-			! is_what(affected_card_controller, affected_card, TYPE_LAND) )
-		{
-			if( is_this_dying(affected_card_controller, affected_card) ){
-				card_instance_t *instance= get_card_instance(player, card);
-				if( instance->targets[11].player < 0 ){
-					instance->targets[11].player = 0;
-				}
-				int pointer = instance->targets[11].player;
-				if( pointer < 10 ){
-					instance->targets[pointer].card = get_type(affected_card_controller, affected_card);
-					instance->targets[11].player++;
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY && affected_card_controller == player &&
+      in_play(affected_card_controller, affected_card) &&
+      is_what(affected_card_controller, affected_card, TYPE_PERMANENT) &&
+      !is_what(affected_card_controller, affected_card, TYPE_LAND) &&
+      is_this_dying(affected_card_controller, affected_card) &&
+      !check_for_death_trigger_removal(affected_card_controller, affected_card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->targets[11].player < 0)
+      instance->targets[11].player = 0;
+    int pointer = instance->targets[11].player;
+    if (pointer < 11)
+    {
+      instance->targets[pointer].card = get_type(affected_card_controller, affected_card);
+      ++instance->targets[11].player;
+      int copies = card_counts[player][5];
+      if (is_what(affected_card_controller, affected_card, TYPE_CREATURE))
+      {
+        for (; copies > 0; --copies)
+        {
+          if (instance->targets[11].player < 11)
+          {
+            instance->targets[instance->targets[11].player].card =
+                get_type(affected_card_controller, affected_card);
+            ++instance->targets[11].player;
+          }
+        }
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->kill_code <= 0 ){
-		int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( amount ){
-			card_instance_t *instance= get_card_instance(player, card);
-			int i;
-			for(i=0; i<amount; i++){
-				test_definition_t test;
-				default_test_definition(&test, instance->targets[i].card);
-				new_sacrifice(player, card, 1-player, SAC_NO_CANCEL | SAC_CAUSED, &test);
-			}
-		}
-	}
+  if (get_card_instance(player, card)->kill_code <= 0)
+  {
+    int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (amount)
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      int i;
+      for (i = 0; i < amount && i < 11; i++)
+      {
+        test_definition_t test;
+        default_test_definition(&test, instance->targets[i].card);
+        new_sacrifice(player, card, 1 - player, SAC_NO_CANCEL | SAC_CAUSED, &test);
+      }
+    }
+  }
 
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_minds_aglow(int player, int card, event_t event){

@@ -722,10 +722,10 @@ int card_jack_in_the_mox(int player, int card, event_t event){
  * Instant
  * Open a sealed Magic booster pack, reveal the cards, and put one of those cards into your hand. (Remove that card from your deck before beginning a new game.) */
 
-static const char* target_has_reminder_text(int who_chooses, int player, int card)
+static const char *target_has_reminder_text(int who_chooses, int player, int card,
+                                            int targeting_player, int targeting_card)
 {
-  card_ptr_t* cp = cards_ptr[get_id(player, card)];
-  return cp->rules_text && strchr(cp->rules_text, '(') ? NULL : "no reminder text";
+  return has_reminder_text(player, card) ? NULL : "reminder text";
 }
 
 int card_duh(int player, int card, event_t event)

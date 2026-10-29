@@ -130,6 +130,8 @@ extern int must_attack;
 extern int needed_mana_colors;
 extern char opponent_name[100];
 extern int opponent_skill;
+extern color_test_t debug_addcard_last_color;
+extern type_t debug_addcard_last_type;
 extern char option_PhaseStoppers[2][38];
 extern player_bits_t player_bits[2];
 extern PlayerCounters player_counters[2];	// never access directly - use POISON_COUNTERS(), poison(), raw_set_poison() or EXPERIENCE_COUNTERS(), add_experience(), raw_set_experience() instead
@@ -196,6 +198,7 @@ extern int *charge_mana_addr_of_max_x_value;			// copy of max_x_value before act
 
 extern int LEGACY_EFFECT_CUSTOM;
 extern int LEGACY_EFFECT_ACTIVATED;
+extern int LEGACY_EFFECT_ACTIVATED_PROTECT;
 extern int LEGACY_EFFECT_PUMP;
 extern int LEGACY_EFFECT_GENERIC;
 extern int LEGACY_EFFECT_ITH;
@@ -611,7 +614,7 @@ static inline void obliterate_card_in_grave(int player, int position){remove_car
 int is_equipment(int player, int card );
 int graveyard_from_play(int player, int card, event_t event);
 int duh_mode(int player);
-int cannot_be_countered(int player, int card, event_t event);
+void cannot_be_countered(int player, int card, event_t event);
 int get_discard_controller(void);
 
 void tax_attack(int player, int card, event_t event);
@@ -789,7 +792,7 @@ int is_humiliated_by_instance(card_instance_t* instance, ability_loss_t mode);
 int humiliate(int src_player, int src_card, int t_player, int t_card, int mode);
 int is_nice_creature_to_sacrifice(int player, int card);
 int pick_creature_for_sacrifice(int player, int card, int);
-void protection_from_subtype(int player, int card, event_t event, int);
+void protection_from_subtype(int player, int card, event_t event, subtype_t subt);
 int played_for_free(int player, int card);
 void phantom_effect(int player, int card, event_t event, int requires_counter);
 int is_tribal(int player, int card);
@@ -857,6 +860,7 @@ int charge_mana_from_id(int player_to_charge, int card_to_charge_for/*optional; 
 void remove_id_from_grave(int player, int csvid, remove_id_from_grave_t mode);
 void skaabs(int player, int card, event_t event, int);
 int gather_body_parts(int player, int card, int body_parts, int special);
+int equipment_legacy(int player, int card, event_t event);
 void unattach(int, int);
 int tutor_random_permanent_from_grave(int player, int card, int t_player, int tutor_type, int type, int amount, reanimate_mode_t reanimation_mode);
 int trigger_gain_life(int player, int card, event_t event, int who_gains, resolve_trigger_t trigger_mode);	// Returns the amount of life gained, which will always be at least 1.  EA_LICH must be set in event_flags for the trigger to be dispatched (so a card with Flags: Lich set in ct_all.csv must have been on the battlefield this turn, or set it manually each turn during EVENT_CAN_SKIP_TURN).
@@ -949,7 +953,7 @@ int arcane_with_splice(int player, int card, int event, int (*fn)(int,int,event_
 int arcane(int player, int card, int event, int (*fn)(int,int,event_t));	// As arcane_with_splice, but can't be spliced itself.
 #define ARCANE(spell_fn)	static int spell_fn##_impl(int player, int card, event_t event); int spell_fn(int player, int card, event_t event) { return arcane(player, card, event, spell_fn##_impl); } static int spell_fn##_impl(int player, int card, event_t event)
 int soulshift(int player, int card, event_t event, int cmc, int num);
-int arcane_spirit_spell_trigger(int player, int card, event_t event, int);
+void arcane_spirit_spell_trigger(int player, int card, event_t event, int);
 int attachment_granting_activated_ability(int player, int card, event_t event, int mode, int cless, int black, int blue, int green, int red, int white, uint32_t variable_costs, target_definition_t *td, const char *prompt);	// Uses targets[9] to store the player/card it was attached to at the time it was activated.  Should be called *before* the EVENT_RESOLVE_ACTIVATION handler if td is provided.
 int aura_granting_activated_ability(int player, int card, event_t event, int preferred_controller, int mode, int cless, int black, int blue, int green, int red, int white, uint32_t variable_costs, target_definition_t *td, const char *prompt);	// Uses targets[9] to store the player/card it was attached to at the time it was activated.  Should be called *before* the EVENT_RESOLVE_ACTIVATION handler if td is provided.
 	// Uses targets[9] to store the player/card it was attached to at the time it was activated and info_slot to store the choice made.  Returns 1 during EVENT_RESOLVE_ACTIVATION if the activated ability was selected, 0 if it was equipped.
@@ -1077,7 +1081,7 @@ int hom_clockwork(int player, int card, event_t event, int);
 int unleash(int player, int card, event_t event);
 int detain(int player, int card, int, int);
 int mind_funeral_effect(int player, int card, int);
-int battalion(int player, int card, event_t event);
+void battalion(int player, int card, event_t event);
 int can_cast_creature_from_grave(int player, int mode, event_t event);
 void populate(int player, int card);
 void cipher(int player, int card);
@@ -1150,6 +1154,7 @@ int is_blocking(int blocking_card, int attack_card);	// Preconditions: attack_ca
 int is_blocking_or_blocked_by(int player1, int card1, int player2, int card2);	// player1/card1 and player2/card2 are interchangeable.
 void for_each_creature_blocked_by_me(int player, int card, void (*fn)(int, int, int, int), int arg1, int arg2);	// Preconditions: (player,card) is blocking; fn is a function with signature void fn(int arg1, int arg2, int blocked_controller, int blocked_card).  fn() will be called with arguments arg1, arg2, blocked_controller, blocked_card for each (blocked_controller,blocked_card) blocked by (player,card). */
 void mark_each_creature_blocked_by_me(int player, int card, char (*marked)[151]);	// A simple interface to for_each_creature_blocked_by_me() handling a common case.  marked should be a char array[2][151] initialized to 0; each element of marked[blocked_controller][blocked_card] will be set to 1.
+int is_multiblocker_card_copying(int player, int card, int orig_player, int orig_card);
 void for_each_creature_blocking_me(int player, int card, void (*fn)(int, int, int, int), int arg1, int arg2);	// Preconditions: (player,card) is attacking; fn is a function with signature void fn(int arg1, int arg2, int blocking_controller, int blocking_card).  fn() will be called with arguments arg1, arg2, blocking_controller, blocking_card for each (blocking_controller,blocking_card) blocking (player,card). */
 void mark_each_creature_blocking_me(int player, int card, char (*marked)[151]);	// A simple interface to for_each_creature_blocking_me() handling a common case.  marked should be a char array[2][151] initialized to 0; each element of marked[blocking_controller][blocking_card] will be set to 1.
 int generic_licid(int player, int card, event_t event, int, int, int, int, int, int, int, int, int, int, int);
@@ -1239,7 +1244,7 @@ void declare_mana_available_maybe_hex(int player, color_test_t colors, int amoun
 void block(int player, int card, int player_to_block, int card_to_block);	// Makes player/card block player_to_block/card_to_block.  Doesn't check legality.
 void holy_nimbus(int player, int card, event_t event, int cost);
 void recalculate_all_cards_in_play(void);	// *SLOW*.  Make sure it's really needed before considering calling.
-int unlimited_allowed_in_deck(int csvid);
+
 
 int enable_flash_land(int player, int card, event_t event, int x, int b, int u, int g, int r, int w, int required_type, int illegal_type, const char* prompt, int literal);
 int effect_put_into_a_graveyard_this_way(int player, int card, event_t event);	// See effect_werewolf_ransacker() in dark_ascension.c for intended usage.
@@ -1293,7 +1298,6 @@ void abyss_trigger(int player, int card, event_t event);	// At the beginning of 
 void landwalk_disabling_card(int player, int card, event_t event, player_bits_t landwalk_disabled);
 int play_card_in_exile_for_free_commander(int player, int t_player, int csvid, int mana_paid_for_this);
 void real_counter_a_spell(int player, int card, int to_counter_player, int to_counter_card);
-int manage_counterspell_linked_hacks(int player, int card, int to_counter_player, int to_counter_card);
 
 int already_dead(int player, int card);
 int get_cost_for_propaganda_like_effect(int player, int card);
@@ -1329,15 +1333,14 @@ void lowland_basilisk_effect(int player, int card, int t_player, int t_card);
 int real_set_pt(int player, int card, int t_player, int t_card, int pow, int tou, int mode);
 int set_pt_legacy(int player, int card, event_t event);
 int humility_legacy(int player, int card, event_t event);
-void disable_other_pt_setting_effects_attached_to_me(int t_player, int t_card);
 unsigned int round_down_value(unsigned int orig_value);
 unsigned int round_up_value(unsigned int orig_value);
 void no_more_than_x_creatures_can_attack(int player, int card, event_t event, int t_player, int max_value);
 void no_more_than_x_creatures_can_block(int player, int card, event_t event, int t_player, int max_value);
 int us_cycling(int player, int card, event_t event); // AKA cycling(player, card, event, MANACOST_X(2))
 void tutor_multiple_card_from_hand(int who_chooses, int t_player, int who_gets_the_card, int destination, int must_select, int ai_selection_mode, test_definition_t *this_test);
-int prowess_mode(int player, int card, event_t event, int mode) __attribute__((warn_unused_result));
-int prowess(int player, int card, event_t event);
+void prowess_mode(int player, int card, event_t event, int mode);
+void prowess(int player, int card, event_t event);
 int ferocious(int player, int card);
 const char* is_face_down_creature(int who_chooses, int player, int card);
 int can_block(int player, int card);
@@ -1376,7 +1379,6 @@ int re_enable_the_other_most_recent_control_effect_attached_to_me(int player, in
 int mana_battery_generic(int player, int card, event_t event, color_t color, int colorless_cost);
 void if_a_creature_damaged_by_me_dies_do_something(int player, int card, event_t event, int mode);
 int destroy_attached_auras_and_obliterate_card(int player, int card);
-void reactivate_the_most_recent_pt_setting_effects_attached_to_me(int t_player, int t_card);
 void constellation(int player, int card, event_t event);
 
 int check_battlefield_for_name(int player, int type, int name);
@@ -1450,7 +1452,7 @@ int effect_yawgmoths_will(int player, int card, event_t event);
 void make_servo(int player, int card, int amount);
 int vehicle(int player, int card, event_t event, int crew);
 void etb_energy(int player, int card, event_t event, int amount);
-int attack_trigger_with_energy(int player, int card, event_t event, int amount);
+void attack_trigger_with_energy(int player, int card, event_t event, int amount);
 
 /* Cards in already coded, for re-utilization purposes */
 int card_aladdin(int, int, event_t);
@@ -1932,11 +1934,12 @@ typedef enum
   DLGIMPL_99_CH						=0x19,
 #define DLG_RANDOM_NO_SAVE	DLGIMPL	"\x1A"
   DLGIMPL_RANDOM_NO_SAVE_CH			=0x1A,
+  DLGIMPL_MODE = 0x1B,
 } DlgImplCh;
 
 // C interface to std::set<void*>
 typedef struct SetVoidptr_t* SetVoidptr;
-int SetVoidptr_insert(SetVoidptr* s, void* val);	// Inserts val into the set described by s, creating the set first if s is NULL.  Returns nonzero if val was already in the set.
+int SetVoidptr_insert(SetVoidptr* s, void* val);	// Inserts val into the set described by s, creating the set first if *s is NULL.  Returns nonzero if val was inserted.
 
 // C interface to std::sort
 void sort_ArrayConstCharPtr(const char** arr, int num_elements);	// In-place textual sort on a num_elements-length array of const char*.
@@ -1944,7 +1947,7 @@ void sort_ArrayConstCharPtr(const char** arr, int num_elements);	// In-place tex
 // C Interface to std::unordered_map<int, int>
 typedef struct UnorderedMapIntInt_t* UnorderedMapIntInt;
 int* UnorderedMapIntInt_fetch(UnorderedMapIntInt* m, int key);	// Returns a pointer to the value for key in the map described by m.  If key isn't in the map, returns NULL.
-int* UnorderedMapIntInt_set(UnorderedMapIntInt* m, int key);	// Returns a pointer to the value for key in the map described by m, creating the map first if m is NULL.  If key isn't in the map, inserts it first.
+int* UnorderedMapIntInt_set(UnorderedMapIntInt* m, int key);	// Returns a pointer to the value for key in the map described by m, creating the map first if *m is NULL.  If key isn't in the map, inserts it first.
 void UnorderedMapIntInt_delete(UnorderedMapIntInt* m);	// Destroys the map described by m.
 
 /* Interfaces recovered from October 2022 DWARF. */
@@ -3242,6 +3245,9 @@ void replace_all_instances_of_one_basic_land_type_word_with_another(int player, 
 
 /* October 2022 filter-aware Wish APIs and out-of-scope dialog boundaries. */
 #ifndef SHANDALAR
+int choose_a_card_iid(char *prompt, color_test_t colors, type_t types);
+int choose_a_card_allow_cancel_with_defaults(char *prompt, color_test_t allowable_colors, type_t allowable_types, color_test_t initial_color, type_t initial_type);
+void choose_a_card_get_last_options(color_test_t *cols, type_t *typs);
 int choose_a_card_test_ct(char *prompt, test_definition_t *constraints, color_test_t colors, type_t types);
 int choose_a_card_test_ct_allow_cancel(char *prompt, test_definition_t *constraints, color_test_t colors, type_t types);
 int new_card_from_list(int player, int mode, test_definition_t *test);

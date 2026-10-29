@@ -6412,10 +6412,6 @@ int card_amareth_the_lustrous(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25a20f0; original cards/commander_legends.c:3737. */
 static int card_exiled_with_aegis_counter(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_AEGIS = 173
-  };
 
   card_instance_t *instance;
   int iVar2;
@@ -8837,10 +8833,6 @@ LAB_025a5f22:
 /* ManalinkEh 2022: 0x25abb10; original cards/commander_legends.c:3784. */
 int card_livio_oathsworn_sentinel(int player, int card, event_t event)
 {
-  enum
-  {
-    COUNTER_AEGIS = 173
-  };
   check_legend_rule(player, card, event);
   if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
       event != EVENT_CLEANUP)

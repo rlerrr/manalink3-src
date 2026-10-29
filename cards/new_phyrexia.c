@@ -40,29 +40,33 @@ static int generic_splicer(int player, int card, event_t event, int pow, int tou
 	return boost_creature_type(player, card, event, SUBTYPE_GOLEM, pow, tou, keyword, BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
 }
 
-static void np_shrines(int player, int card, event_t event, int clr){
+static void np_shrines(int player, int card, event_t event, int clr)
+{
 
-	/* Shrine of [Something]	|[cost]
-	 * Artifact
-	 * At the beginning of your upkeep or whenever you cast a [clr] spell, put a charge counter on ~.
-	 * |[act_cost] |T, Sacrifice ~: [do something] */
+  /* Shrine of [Something]	|[cost]
+   * Artifact
+   * At the beginning of your upkeep or whenever you cast a [clr] spell, put a charge counter on ~.
+   * |[act_cost] |T, Sacrifice ~: [do something] */
 
-	// This shouldn't include resolution or construction of the target object - you can't factor out a function by special-casing all of its callers.
+  // This shouldn't include resolution or construction of the target object - you can't factor out a
+  // function by special-casing all of its callers.
 
-	upkeep_trigger_ability(player, card, event, player);
+  upkeep_trigger_ability(player, card, event, player);
 
-	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		add_counters(player, card, player, card, COUNTER_CHARGE, 1);
-	}
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    add_counters(player, card, player, card, COUNTER_CHARGE, 1);
+  }
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_ANY);
-		test.color = get_sleighted_color_test(player, card, clr);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			add_counters(player, card, player, card, COUNTER_CHARGE, 1);
-		}
-	}
+  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_ANY);
+    test.color = get_sleighted_color_test(player, card, clr);
+    sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_SPA)
+    add_counters(player, card, player, card, COUNTER_CHARGE, 1);
 }
 
 static int is_poisoned(int player){
@@ -2362,44 +2366,53 @@ int card_apostles_blessing(int player, int card, event_t event){
 	return 0;
 }
 
-static int arm_with_aether_legacy(int player, int card, event_t event){
+static int arm_with_aether_legacy(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
 
-		card_instance_t* damage = damage_being_dealt(event);
-		if( damage ){
-			if( damage->damage_source_player == p && damage->damage_source_card == c ){
-				if( damage->damage_target_player == 1-p && damage->damage_target_card == -1 && ! damage_is_to_planeswalker(damage) ){
-					if( instance->targets[8].player < 0 ){
-						instance->targets[8].player = 0;
-					}
-					instance->targets[8].player++;
-				}
-			}
-		}
+    card_instance_t *damage = damage_being_dealt(event);
+    if (damage)
+    {
+      if (damage->damage_source_player == p && damage->damage_source_card == c)
+      {
+        if (damage->damage_target_player == 1 - p && damage->damage_target_card == -1 &&
+            !damage_is_to_planeswalker(damage))
+        {
+          if (instance->targets[8].player < 0)
+          {
+            instance->targets[8].player = 0;
+          }
+          instance->targets[8].player++;
+        }
+      }
+    }
 
-		if( resolve_damage_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), player, card) ){
-			target_definition_t td;
-			default_target_definition(player, card, &td, TYPE_CREATURE );
-			td.allowed_controller = td.preferred_controller = 1-player;
-			td.illegal_abilities = get_protections_from(p, c);
-			if( can_target(&td) && new_pick_target(&td, "TARGET_CREATURE", 0, 0) ){
-				bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-			}
-			instance->number_of_targets = 0;
-		}
-	}
+    if (resolve_damage_trigger(player, card, event, !duh_mode(player), player, card))
+    {
+      target_definition_t td;
+      default_target_definition(player, card, &td, TYPE_CREATURE);
+      td.allowed_controller = td.preferred_controller = 1 - player;
+      td.illegal_abilities = get_protections_from(p, c);
+      if (can_target(&td) && new_pick_target(&td, "TARGET_CREATURE", 0, 0))
+      {
+        bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+      }
+      instance->number_of_targets = 0;
+    }
+  }
 
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_arm_with_aether(int player, int card, event_t event){
@@ -4701,63 +4714,77 @@ Artifact
 	return 0;
 }
 
-static const char* can_legally_change_target_to_me(int who_chooses, int player, int card, int targeting_player, int targeting_card)
+static const char *can_legally_change_target_to_me(int who_chooses, int player, int card,
+                                                   int targeting_player, int targeting_card)
 {
-	card_instance_t* eff = get_card_instance(player, card);
-	if( eff->number_of_targets == 0 )
-		return "must have at least 1 target";
-	eff->targets[9].player = who_chooses;
-	eff->targets[9].card = targeting_card;
-	set_special_flags2(player, card, SF2_SPELLSKITE);
-	int rvalue = call_card_function(player, card, EVENT_CAN_CHANGE_TARGET);
-	eff->targets[9].player = -1;
-	eff->targets[9].card = -1;
-	remove_special_flags2(player, card, SF2_SPELLSKITE);
-	return rvalue ? NULL :"cannot target Spellskite";
+  card_instance_t *eff = get_card_instance(player, card);
+  if (eff->number_of_targets == 0)
+    return "must have at least 1 target";
+  eff->targets[9].player = targeting_player;
+  eff->targets[9].card = targeting_card;
+  set_special_flags2(player, card, SF2_SPELLSKITE);
+  int rvalue = call_card_function(player, card, EVENT_CAN_CAST);
+  eff->targets[9].player = -1;
+  eff->targets[9].card = -1;
+  remove_special_flags2(player, card, SF2_SPELLSKITE);
+  return rvalue ? NULL : "cannot target Spellskite";
 }
 
-int card_spellskite(int player, int card, event_t event){
-	target_definition_t td_spell;
-	counterspell_target_definition(player, card, &td_spell, TYPE_SPELL);
-	td_spell.extra = (int32_t)can_legally_change_target_to_me;
-	td_spell.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
+int card_spellskite(int player, int card, event_t event)
+{
+  target_definition_t td_spell;
+  counterspell_target_definition(player, card, &td_spell, TYPE_ANY);
+  td_spell.extra = (int32_t)can_legally_change_target_to_me;
+  td_spell.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
 
-	card_instance_t *instance = get_card_instance( player, card );
+  card_instance_t *instance = get_card_instance(player, card);
 
-	if (event == EVENT_CAN_ACTIVATE ){
-		if( has_phyrexian_mana_for_activated_ability(player, card, 0, 0, 1, 0, 0, 0) ){
-			if( generic_activated_ability(player, card, event, GAA_SPELL_ON_STACK, 0, 0, 0, 0, 0, 0, 0, &td_spell, "TARGET_SPELL") ){
-				return 99;
-			}
-		}
-	}
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (has_phyrexian_mana_for_activated_ability(player, card, 0, 0, 1, 0, 0, 0))
+    {
+      if (generic_activated_ability(player, card, event, GAA_SPELL_ON_STACK, 0, 0, 0, 0, 0, 0, 0,
+                                    &td_spell, "TARGET_SPELL"))
+      {
+        return 99;
+      }
+    }
+  }
 
-	if(event == EVENT_ACTIVATE ){
-		if( charge_phyrexian_mana_for_activated_ability(player, card, 0, 0, 1, 0, 0, 0) ){
-			instance->targets[0].player = card_on_stack_controller;
-			instance->targets[0].card = card_on_stack;
-			instance->number_of_targets = 1;
-			set_special_flags2(instance->targets[0].player, instance->targets[0].card, SF2_SPELLSKITE);
-			int rvalue = call_card_function(instance->targets[0].player, instance->targets[0].card, EVENT_CHANGE_TARGET);
-			remove_special_flags2(instance->targets[0].player, instance->targets[0].card, SF2_SPELLSKITE);
-			if( rvalue != -1 ){
-				instance->info_slot = rvalue;
-			}
-			else{
-				spell_fizzled = 1;
-			}
-		}
-	}
+  if (event == EVENT_ACTIVATE)
+  {
+    if (charge_phyrexian_mana_for_activated_ability(player, card, 0, 0, 1, 0, 0, 0))
+    {
+      instance->targets[0].player = card_on_stack_controller;
+      instance->targets[0].card = card_on_stack;
+      instance->number_of_targets = 1;
+      set_special_flags2(instance->targets[0].player, instance->targets[0].card, SF2_SPELLSKITE);
+      int rvalue = call_card_function(instance->targets[0].player, instance->targets[0].card,
+                                      EVENT_CHANGE_TARGET);
+      remove_special_flags2(instance->targets[0].player, instance->targets[0].card, SF2_SPELLSKITE);
+      if (rvalue != -1)
+      {
+        instance->info_slot = rvalue;
+      }
+      else
+      {
+        spell_fizzled = 1;
+      }
+    }
+  }
 
-	if(event == EVENT_RESOLVE_ACTIVATION){
-		if( counterspell_validate(player, card, &td_spell, 0) ){
-			card_instance_t *spell = get_card_instance( instance->targets[0].player, instance->targets[0].card );
-			spell->targets[instance->info_slot].player = player;
-			spell->targets[instance->info_slot].card = instance->parent_card;
-		}
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (counterspell_validate(player, card, &td_spell, 0))
+    {
+      card_instance_t *spell =
+          get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      spell->targets[instance->info_slot].player = player;
+      spell->targets[instance->info_slot].card = instance->parent_card;
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 static int artifact_natively_use_charge_counters(int player, int card)

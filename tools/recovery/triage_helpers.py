@@ -16,6 +16,7 @@ from helper_fingerprints import LocalCode
 ROOT=Path(__file__).resolve().parents[2]
 CATEGORIES={
  'same_local_code':'Same local machine code after verified address translation; keep existing source and track dependencies.',
+ 'verified_retained_source':'Visible source with identical complete local instructions, matching DWARF calling/storage contracts and already reviewed direct call/reference targets; retain without another decompilation pass.',
  'callee_binding_only':'Same local instructions; retained callees need canonical 2022 binding/ABI review.',
  'reference_review':'High normalized score; unresolved code/data or indirect references prevent a strict identity claim.',
  'small_diff_review':'At least 90% normalized score; inspect the assembly diff and edit existing source before considering full decompilation.',
@@ -23,6 +24,8 @@ CATEGORIES={
  'mapping_first':'No unambiguous reccmp pair; fix pairing or compiler-part/inline coverage first.',
  'deferred_chooser':'User-deferred chooser UI.',
  'cpp_review':'C++/library helper, outside the initial C source triage.',
+ 'reviewed_cpp_source':'Complete C++ utility body, authored source and native ABI/storage manually reviewed; dependencies remain separately tracked.',
+ 'reviewed_compiler_source':'Complete native header specialization/instantiation and corresponding toolchain source reviewed; not authored recovery or strict rebuilt instruction identity.',
  'reconstructed_source':'Complete native body already reconstructed during consolidation; retain its provenance and track callees separately.',
 }
 
@@ -53,7 +56,7 @@ def reconstructed_sources(proof,native):
     projection audit separately verifies every native/export hash and replays
     all later edits against the physical source.
     """
-    from canonicalize_helpers import span,rename
+    from canonicalize_helpers import span,rename,mask
     mapping={e['recovery_name']:e['canonical_name'] for e in proof.get('functions',[])+proof.get('auxiliary_functions',[])}
     result={}
     tags={'keyword_writer','native_counter_caller','caller_preparation',
@@ -64,6 +67,21 @@ def reconstructed_sources(proof,native):
     for index,edit in enumerate(proof.get('source_edits',[])):
         if edit.get('interface_only') or narrow.intersection(edit) or not tags.intersection(edit):continue
         after=rename(edit['after'],mapping)
+        # A historical source span can include the tail of a preceding macro.
+        # Explicit full-body records name their owner; find its real signature
+        # with horizontal whitespace in the return type, so a macro's "case"
+        # line cannot be mistaken for part of the function declaration.
+        reconstruction=edit.get('native_source_reconstruction')
+        if isinstance(reconstruction,dict) and reconstruction.get('function'):
+            name=reconstruction['function']
+            # Mask comments without shifting offsets. Permit one line break
+            # before the function name ("static int\nfoo"), while keeping the
+            # return-type token list horizontal so earlier macro tails cannot
+            # become part of the declaration span.
+            head=re.search(r'(?m)^[ \t]*(?:[A-Za-z_]\w*[ \t*]+)*[A-Za-z_]\w*(?=[ \t*\r\n])[ \t*]*(?:\r?\n[ \t*]*)?'
+                           +re.escape(name)+r'\s*\([^;{}]*\)\s*\{',mask(after))
+            if head is None:continue
+            after=after[head.start():]
         match=re.match(r'\s*(?:[A-Za-z_]\w*[\s*]+)+?([A-Za-z_]\w*)\s*\(',after)
         if not match:continue
         name=match[1];body=span(after,name)
@@ -73,11 +91,65 @@ def reconstructed_sources(proof,native):
         for row in ranges:
             at=int(row['address'],16)
             if at not in native:continue
-            assert source_key(native[at]['source'])==source_key(edit['source'])
+            # A reviewed unit can have a different historical filename (e.g.
+            # odyssey.c in release DWARF versus retained odissey.c). Full-body
+            # receipts must name the native unit explicitly in that case.
+            native_source=reconstruction.get('native_source',edit['source']) if isinstance(reconstruction,dict) else edit['source']
+            assert source_key(native[at]['source'])==source_key(native_source)
             assert int(native[at]['high_pc'],16)==int(row['end'],16)
             result[at]=dict(source=edit['source'],source_function=name,source_edit=index,
                             source_edit_sha256=edit['after_sha256'],native_range=row)
     return result
+
+
+def retain_local_matches(rows,reviewed_bodies):
+    """Close body review from strict equality, never from a reccmp score.
+
+    Each wave depends only on pre-existing body reviews or earlier waves.
+    Cycles without an independently reviewed entry remain pending. A target
+    body review is not a claim that its own transitive behavior is complete.
+    """
+    reviewed=set(reviewed_bodies);roots=set(reviewed);waves=[]
+    def exact(row):
+        counts=row.get('instruction_counts',[])
+        fingerprint=row.get('original_fingerprint')
+        return (row['category']=='same_local_code' and row.get('source_definition_found')
+                and bool(row.get('source_body_sha256'))
+                and isinstance(fingerprint,str) and len(fingerprint)==64
+                and fingerprint==row.get('rebuilt_fingerprint')
+                and len(counts)==2 and counts[0]>0 and counts[0]==counts[1]
+                and row.get('storage_contract',{}).get('verified') is True
+                and not row.get('review_reasons') and not row.get('binding_repairs'))
+    while True:
+        ready=sorted((row for row in rows if exact(row)
+                      and {int(a,16) for a in row.get('dependencies',[])}<=reviewed),
+                     key=lambda r:int(r['address'],16))
+        if not ready:break
+        wave=len(waves)+1
+        for row in ready:
+            row['category']='verified_retained_source'
+            row['retention_evidence']=dict(method='strict_local_instruction_identity',wave=wave,
+                source_body_sha256=row['source_body_sha256'],fingerprint_sha256=row['original_fingerprint'],
+                contract_sha256=row['storage_contract']['fingerprint_sha256'],
+                reviewed_direct_targets=row.get('dependencies',[]),source_edited=False,
+                scope='Complete local body and recorded direct targets only; callees retain their independently tracked dependencies. No global-content or gameplay proof.')
+        addresses=[row['address'] for row in ready];waves.append(addresses)
+        reviewed.update(int(a,16) for a in addresses)
+    # Validate the dependency order independently of the worklist selection.
+    checked=set(roots);by_address={row['address']:row for row in rows}
+    for number,addresses in enumerate(waves,1):
+        for address in addresses:
+            row=by_address[address];assert row['retention_evidence']['wave']==number
+            assert {int(a,16) for a in row['dependencies']}<=checked,address
+            assert row['original_fingerprint']==row['rebuilt_fingerprint']
+            assert row['storage_contract']['verified'] is True
+            assert not row['review_reasons'] and not row['binding_repairs']
+        checked.update(int(a,16) for a in addresses)
+    assert checked==reviewed
+    for row in rows:
+        row['unreviewed_dependencies']=[a for a in row.get('dependencies',[]) if int(a,16) not in reviewed]
+    return dict(verified_ranges=sum(map(len,waves)),review_waves=waves,initial_reviewed_bodies=len(roots),
+                scope='Current-build instruction identity and direct target body reviews. Recomputed on every run; cycles, unresolved references, indirect flow, stubs and missing source do not close review. Transitive dependencies remain independently tracked.')
 
 
 def main():
@@ -136,10 +208,15 @@ def main():
     # Register identity only: do not fabricate a body score or hide collisions.
     from canonicalize_helpers import load as load_canonical,verify_symbols,verify_native_equivalences
     canonical_data=load_canonical(ROOT);canonical_entry_bindings={};canonical_inlined={}
+    unsafe.update(int(f["native_address"],16) for f in
+                  (canonical_data or {}).get("additional_source_stubs",[]))
     native_equivalences=verify_native_equivalences(canonical_data,ROOT) if canonical_data else []
     covered_native_helpers={int(e['duplicate_address'],16) for e in native_equivalences}
     reconstructed=reconstructed_sources(canonical_data or {},native)
-    reviewed_bodies=set(accepted)|set(reconstructed)|covered_native_helpers
+    from verify_compiler_cpp_recovery import coverage as compiler_cpp_coverage
+    compiler_cpp=compiler_cpp_coverage(canonical_data or {},ROOT)
+    assert not (set(compiler_cpp)&unsafe),'Deferred UI cannot receive compiler/C++ review credit'
+    reviewed_bodies=set(accepted)|set(reconstructed)|covered_native_helpers|set(compiler_cpp)
     for e in native_equivalences:
         originals[int(e['duplicate_address'],16)]={int(e['canonical_address'],16)}
     if canonical_data:
@@ -222,10 +299,23 @@ def main():
             out.update(rebuilt_address=score['recomp'],reccmp_score=score['matching'],effective_match=bool(score.get('effective')))
         if a in reconstructed:
             category='reconstructed_source';out['source_reconstruction']=reconstructed[a]
-            recovered=body_for(r['source'],reconstructed[a]['source_function'])
-            assert recovered is not None,(r['source'],reconstructed[a]['source_function'])
+            physical_source=reconstructed[a]['source']
+            recovered=body_for(physical_source,reconstructed[a]['source_function'])
+            assert recovered is not None,(physical_source,reconstructed[a]['source_function'])
+            if physical_source!=r['source']:
+                out['source_definition_source']=physical_source
+                out['source_definition_found']=True
+                out['source_body_sha256']=sha(recovered.encode())
             out['reconstructed_body_sha256']=sha(recovered.encode())
             original=original_code.fingerprint(a,out['native_bytes'],strings(recovered))
+            out['dependencies']=[hex(x) for x in sorted(set(original.dependencies))]
+            out['unreviewed_dependencies']=[hex(x) for x in sorted(set(original.dependencies)-reviewed_bodies)]
+        elif a in compiler_cpp:
+            review=compiler_cpp[a];category=review['category']
+            out.update(source_definition_found=True,source_definition_source=review['source'],
+                       source_function=review['source_function'],source_body_sha256=review['source_body_sha256'],
+                       source_review=review['review'])
+            original=original_code.fingerprint(a,out['native_bytes'],strings(review['source_body']))
             out['dependencies']=[hex(x) for x in sorted(set(original.dependencies))]
             out['unreviewed_dependencies']=[hex(x) for x in sorted(set(original.dependencies)-reviewed_bodies)]
         elif r['source']=='functions/choose_a_card.cpp':category='deferred_chooser'
@@ -290,6 +380,9 @@ def main():
                                category=category,proof=proof,retained_body_sha256=sha(old_body.encode()),
                                recovered_body_sha256=f.get('reconstruction_body_sha256'),abi_and_caller_review_required=True))
         else:dedupe_screen['different local code or unresolved compiler representation']+=1
+    from helper_contracts import annotate as annotate_storage_contracts
+    storage_contracts=annotate_storage_contracts(rows,ROOT)
+    local_retention=retain_local_matches(rows,reviewed_bodies)
     counts=collections.Counter(r['category'] for r in rows);hist=collections.Counter()
     for r in rows:
         v=r.get('reccmp_score');hist['unpaired' if v is None else '100%' if v==1 else '90-99%' if v>=.9 else '75-90%' if v>=.75 else 'below 75%']+=1
@@ -303,9 +396,12 @@ def main():
     binding_groups.sort(key=lambda g:(-g['caller_count'],g['native_target']))
     from unify_scalar_helpers import verify_source
     unification=verify_source(ROOT)
-    pending_count=len(rows)-counts['reconstructed_source']
+    pending_count=len(rows)-counts['reconstructed_source']-counts['verified_retained_source']-counts['reviewed_cpp_source']-counts['reviewed_compiler_source']
     result=dict(status='triage complete; no source or recovery-ledger mutation',pending_helper_ranges=pending_count,
                 unledgered_helper_ranges=len(rows),reconstructed_consolidation_helpers=counts['reconstructed_source'],
+                verified_retained_helpers=counts['verified_retained_source'],local_retention=local_retention,
+                reviewed_cpp_helpers=counts['reviewed_cpp_source'],reviewed_compiler_ranges=counts['reviewed_compiler_source'],
+                storage_contracts=storage_contracts,
                 helper_unification=unification,canonical_entry_bindings=canonical_entry_bindings,canonical_inlined_helpers=canonical_inlined,native_equivalent_helpers=native_equivalences,verified_compiler_folds=setup.get('folded_recovered_helpers',[]),
                 category_counts=dict(counts),category_definitions=CATEGORIES,reccmp_score_histogram=dict(hist),
                 local_match_dependency_screen=dict(with_pending_callees=sum(bool(r.get('unreviewed_dependencies')) for r in rows if r['category']=='same_local_code'),
@@ -322,6 +418,9 @@ def main():
     if unification:
         for p in ['docs/recovery-evidence/helper-unification.json','tools/recovery/unify_scalar_helpers.py']:
             result['inputs'][str(ROOT/p)]=sha((ROOT/p).read_bytes())
+    for path in ['tools/recovery/helper_contracts.py',storage_contracts['cache']]:
+        result['inputs'][str(ROOT/path)]=sha((ROOT/path).read_bytes())
+    result['inputs'][storage_contracts['original_debug_path']]=storage_contracts['inputs']['original_debug_sha256']
     for p in ['docs/recovery-evidence/canonical-records.json','tools/recovery/canonicalize_records.py',
               'docs/recovery-evidence/canonical-record-storage.json','tools/recovery/restore_record_storage.py',
               'tools/recovery/qualify_activation_prompts.py','docs/recovery-evidence/canonical-reanimation.json',
@@ -333,11 +432,20 @@ def main():
               'docs/recovery-evidence/helper-canonicalization.json','tools/recovery/canonicalize_helpers.py','tools/recovery/verify_inline_helpers.py',
               'docs/recovery-evidence/attachment-predicate-equivalence.json','tools/recovery/verify_helper_equivalences.py']:
         if (ROOT/p).exists():result['inputs'][str(ROOT/p)]=sha((ROOT/p).read_bytes())
+    if compiler_cpp:
+        from verify_compiler_cpp_recovery import evidence as compiler_cpp_evidence
+        reviewed=compiler_cpp_evidence(canonical_data,ROOT)
+        for path in [canonical_data['native_compiler_cpp_recovery'],'tools/recovery/verify_compiler_cpp_recovery.py']:
+            result['inputs'][str(ROOT/path)]=sha((ROOT/path).read_bytes())
+        for row in list(reviewed['header_fragments'].values())+reviewed['header_dependencies']:
+            result['inputs'][row['path']]=sha(Path(row['path']).read_bytes())
     args.output.parent.mkdir(parents=True,exist_ok=True);args.summary.parent.mkdir(parents=True,exist_ok=True)
     save_json(args.output,result)
-    lines=['# Helper recovery triage','',f'Current review frame: **{pending_count:,} native helper ranges**, plus **{counts["reconstructed_source"]:,} explicitly tagged bodies already reconstructed during consolidation**. The classifier does not edit C source or recovery records. Narrow argument/interface edits do not close whole-body review.','',
+    lines=['# Helper recovery triage','',f'Remaining manual review: **{pending_count:,} native helper ranges**. Separately tracked: **{counts["reconstructed_source"]:,} explicitly reviewed/reconstructed ranges** and **{counts["verified_retained_source"]:,} verified retained ranges**. The classifier does not edit C source or recovery records. Narrow argument/interface edits do not close whole-body review.','',
            '| Review queue | Ranges |','| --- | ---: |']
     lines += [f'| `{k}` | {counts[k]:,} |' for k in CATEGORIES]
+    if compiler_cpp:
+        lines += ['',f"Separately reviewed: **{counts['reviewed_cpp_source']} C++ utility bodies** (one restored member, six retained definitions) and **{counts['reviewed_compiler_source']} compiler-header ranges**. Complete native bodies, specialized parameters and corresponding source were reviewed. Header copies are supplied by GCC and are excluded from authored/reconstructed-function totals; their review does not assert byte identity or CRT/caller equivalence."]
     if unification and 'canonical_functions' in unification:
         accepted_names=unification.get('accepted_function_names',unification['canonical_functions'])
         auxiliary=unification['canonical_functions']-accepted_names
@@ -348,11 +456,12 @@ def main():
         lines += ['',f"**{unification['shared_implementations']} helper pairs already share one recovered implementation**: {unification.get('alias_pairs',unification['shared_implementations'])} same-address aliases and {unification.get('const_return_adapters',0)} typed const-return tail adapters. Old retained bodies are archived as history. These are separate from the remaining duplicate candidates below.",
                   f"The setup records {len(result['verified_compiler_folds'])} compiler-shared recovered helpers without separate qualified DWARF ranges. Verified JMP targets or same-address COFF aliases count as valid callee bindings; these entries are excluded from full-body reccmp scores."]
     lines += ['',f'**{len(dedupe):,} duplicate implementation candidates** were found among retained/recovered pairs. These require ABI and caller review before canonicalizing names.','',
-              f"Of the {counts['same_local_code']} local matches, {result['local_match_dependency_screen']['without_pending_callees']} have no pending callees in the recorded dependency list; {result['local_match_dependency_screen']['with_pending_callees']} still depend on functions without an accepted recovery or explicitly tagged full reconstruction. Keep this distinction when tracking completion.",'',
+              f"{counts['verified_retained_source']} existing ranges pass strict complete-body instruction equality, matching DWARF calling/storage contracts, visible source and reviewed direct targets. Their source is retained without another decompilation pass. This category is recomputed from current binaries on every run and is distinct from decompiled source recovery. {storage_contracts['manual_contract_review']} local-code matches still need signature/storage-contract review.",'',
+              f"Of the {counts['same_local_code']} remaining local matches, {result['local_match_dependency_screen']['without_pending_callees']} have no pending direct targets but fail another retention prerequisite; {result['local_match_dependency_screen']['with_pending_callees']} still have unreviewed direct targets. Reviewed target bodies keep their own dependency tracking; this is not a transitive gameplay-equivalence claim.",'',
               'Reccmp scores are used to order review. A 100% score alone is insufficient because unknown addresses can be replaced with matching placeholders. The strict comparison keeps numeric constants and structure/stack offsets, checks complete DWARF ranges, and only translates known function identities and exact source-string bytes. Unresolved data and indirect-call dependencies remain review work. Local equality is not transitive semantic or gameplay proof.','',
               'The report compares the current recovery build to October 2022. Recovered bodies, canonical caller contracts and modern headers can create differences from retained source; it is not an isolated 2020 build. A small assembly delta can still have a large gameplay effect; scores never authorize ignoring changed constants or flags.','',
               '## Next workflow','',
-              '1. Keep `same_local_code` bodies; review their recorded dependency closure rather than decompiling them again.',
+              '1. Keep `verified_retained_source` bodies; every refresh rechecks their strict machine identity and direct target review prerequisites. For remaining `same_local_code` bodies, review the pending targets rather than decompiling an identical body again.',
               '2. Review `callee_binding_only` and `small_diff_review` against the existing C source and captured instruction deltas. Make targeted edits where the evidence supports them.',
               '3. Resolve unknown references and ambiguous mappings before interpreting their scores.',
               '4. Reserve full Ghidra decompilation for substantial changes, missing source, and complex workers.',

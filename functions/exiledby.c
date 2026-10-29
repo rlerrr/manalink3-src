@@ -36,150 +36,164 @@ static int exiledby_legacymatches(card_instance_t* instance, int player, int car
  * mode, testarg: Action and constraints per exiledby_choose_mode_t, documented in manalink.h.
  * cardtype_txt: Descriptor of cards exiled (e.g. "creature"), or NULL if arbitrary cards.
  * faceup: Whether the cards are exiled face-up (and thus should exist in rfg_ptr[][]) or face-down (and thus should not yet). */
-int exiledby_choose(int player, int card, int csvid, exiledby_choose_mode_t mode, int testarg, const char* cardtype_txt, int faceup)
+int exiledby_choose(int player, int card, int csvid, exiledby_choose_mode_t mode, int testarg,
+                    const char *cardtype_txt, int faceup)
 {
   int iids[1000];
-  int* locs[1000];
+  int *locs[1000];
   int num_found = 0;
 
   int tests = mode & ~EXBY_MODE_MASK;
   mode &= EXBY_MODE_MASK;
 
   if (mode != EXBY_MAX_VALUE && mode != EXBY_FIRST_FOUND)
-	{
-	  memset(iids, -1, 1000 * sizeof(int));
-	  memset(locs, 0, 1000 * sizeof(int*));
-	}
+  {
+    memset(iids, -1, 1000 * sizeof(int));
+    memset(locs, 0, 1000 * sizeof(int *));
+  }
 
   int p = player;
   if (player < 0)
-	player += 2;
+    player += 2;
 
-  card_instance_t* instance;
+  card_instance_t *instance;
   int i, leg, field, ai_choice = -1, highest_value = INT_MIN, can_cast = 0;
-  /* We look at all cards each call, so if a card's no longer exiled, we remove it immediately.  Not quite as good as we'd like - if you exile two Atogs, then
-   * Pull From Reality one, it'll still be listed twice. */
+  /* We look at all cards each call, so if a card's no longer exiled, we remove it immediately.  Not
+   * quite as good as we'd like - if you exile two Atogs, then Pull From Reality one, it'll still be
+   * listed twice. */
   for (leg = 0; leg < active_cards_count[player]; ++leg)
-	{
-	  instance = get_card_instance(player, leg);
-	  if (exiledby_legacymatches(instance, p, card))
-		for (i = 0; i < 18; ++i)
-		  for (field = 0; field < 2; ++field)
-			{
-			  int* loc = field == 0 ? &instance->targets[i].player : &instance->targets[i].card;
+  {
+    instance = get_card_instance(player, leg);
+    if (exiledby_legacymatches(instance, p, card))
+      for (i = 0; i < 18; ++i)
+        for (field = 0; field < 2; ++field)
+        {
+          int *loc = field == 0 ? &instance->targets[i].player : &instance->targets[i].card;
 
-			  if (*loc != -1)
-				{
-				  int plr = (*loc & 0x80000000) ? 1 : 0;
-				  int iid = *loc & ~0x80000000;
-				  if (faceup && !check_rfg(plr, cards_data[iid].id))
-					*loc = -1;
-				  else
-					{
-					  // > 0: pass test.  == 0: pass test, but just barely.  < 0: fail.
-					  int test_cmc = (tests & EXBY_TEST_CMC_LE) ? testarg - get_cmc_by_id(cards_data[iid].id) : 99;
-					  if (test_cmc < 0)
-						continue;
+          if (*loc != -1)
+          {
+            int plr = (*loc & 0x80000000) ? 1 : 0;
+            int iid = *loc & ~0x80000000;
+            if (faceup > 0 && !check_rfg(plr, cards_data[iid].id))
+              *loc = -1;
+            else
+            {
+              // > 0: pass test.  == 0: pass test, but just barely.  < 0: fail.
+              int test_cmc =
+                  (tests & EXBY_TEST_CMC_LE) ? testarg - get_cmc_by_id(cards_data[iid].id) : 99;
+              if (test_cmc < 0)
+                continue;
 
-					  int test_iid = ((tests & EXBY_TEST_IID) && !(iid == testarg || cards_data[iid].id == csvid)) ? -1 : 99;
-					  if (test_iid < 0)
-						continue;
+              int test_iid =
+                  ((tests & EXBY_TEST_IID) && !(iid == testarg || cards_data[iid].id == csvid))
+                      ? -1
+                      : 99;
+              if (test_iid < 0)
+                continue;
 
-					  int test_can_cast = 99;
-					  if (tests & EXBY_TEST_CAN_CAST)
-						{
-							if( testarg )
-								test_can_cast = can_legally_play_iid_now(player, iid, testarg);
-							else
-								test_can_cast = can_legally_play_iid(player, iid);
-						  if (!test_can_cast)
-							continue;
-						  else if (test_can_cast != 99)
-							test_can_cast = 1;
-						}
+              int test_can_cast = 99;
+              if (tests & EXBY_TEST_CAN_CAST)
+              {
+                if (testarg)
+                  test_can_cast = can_legally_play_iid_now(player, iid, testarg);
+                else
+                  test_can_cast = can_legally_play_iid(player, iid);
+                if (!test_can_cast)
+                  continue;
+                else if (test_can_cast != 99)
+                  test_can_cast = 1;
+              }
 
-					  int test_has_mana_to_cast = ((tests & EXBY_TEST_HAS_MANA_TO_CAST) && !has_mana_to_cast_iid(player, testarg, iid)) ? -1 : 99;
-					  if( tests & EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC ){
-						  int cmc = get_cmc_by_internal_id(iid);
-						  test_has_mana_to_cast = has_mana_for_activated_ability(player, card, MANACOST_X(cmc)) ? 99 : -1;
-					  }
-					  if (test_has_mana_to_cast < 0)
-						continue;
+              int test_has_mana_to_cast = ((tests & EXBY_TEST_HAS_MANA_TO_CAST) &&
+                                           !has_mana_to_cast_iid(player, testarg, iid))
+                                              ? -1
+                                              : 99;
+              if (tests & EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC)
+              {
+                int cmc = get_cmc_by_internal_id(iid);
+                test_has_mana_to_cast =
+                    has_mana_for_activated_ability(player, card, MANACOST_X(cmc)) ? 99 : -1;
+              }
+              if (test_has_mana_to_cast < 0)
+                continue;
 
-					  int pass = MIN(test_cmc, test_iid);
-					  pass = MIN(pass, test_can_cast);
+              int pass = MIN(test_cmc, test_iid);
+              pass = MIN(pass, test_can_cast);
 
-					  if (pass < 0)
-						continue;
+              if (pass < 0)
+                continue;
 
-					  if (mode == EXBY_FIRST_FOUND)
-						return (int)loc;
+              if (mode == EXBY_FIRST_FOUND)
+                return (int)loc;
 
-					  if (mode == EXBY_CAN_CAST)
-						{
-						  if (test_can_cast == 99)
-							return 99;
-						  can_cast = 1;
-						}
+              if (mode == EXBY_CAN_CAST)
+              {
+                if (test_can_cast == 99)
+                  return 99;
+                can_cast = 1;
+              }
 
-					  if (mode == EXBY_MAX_VALUE || mode == EXBY_CHOOSE)
-						{
-						  int val = my_base_value_by_id(iid);
-						  if (pass == 0)
-							val /= 2;
-						  if (val > highest_value)
-							{
-							  highest_value = val;
-							  ai_choice = num_found;
-							}
-						}
+              if (mode == EXBY_MAX_VALUE || mode == EXBY_CHOOSE)
+              {
+                int val = my_base_value_by_id(iid);
+                if (pass == 0)
+                  val /= 2;
+                if (val > highest_value)
+                {
+                  highest_value = val;
+                  ai_choice = num_found;
+                }
+              }
 
-					  if (mode == EXBY_CHOOSE)
-						{
-						  iids[num_found] = iid;
-						  locs[num_found] = loc;
-						  ++num_found;
-						}
-					}
-				}
-			}
-	}
+              if (mode == EXBY_CHOOSE)
+              {
+                iids[num_found] = iid;
+                locs[num_found] = loc;
+                ++num_found;
+              }
+            }
+          }
+        }
+  }
 
   if (mode == EXBY_MAX_VALUE)
-	return highest_value;
+    return highest_value;
 
   if (mode == EXBY_FIRST_FOUND)
-	return 0;
+    return 0;
 
   if (mode == EXBY_CAN_CAST)
-	return can_cast;
+    return can_cast;
 
   if (IS_AI(player))
-	{
-	  if (ai_choice == -1)
-		return 0;
-	  else
-		return (int)(locs[ai_choice]);
-	}
+  {
+    if (ai_choice == -1)
+      return 0;
+    else
+      return (int)(locs[ai_choice]);
+  }
 
   char buf[200];
   if (num_found == 0)
-	{
-	  sprintf(buf, "No %s%scards have been exiled by %s.", cardtype_txt ? cardtype_txt : "", cardtype_txt ? " " : "", cards_ptr[csvid]->name);
-	  DIALOG(player, card, EVENT_ACTIVATE,
-			 DLG_FULLCARD_CSVID(csvid),
-			 DLG_MSG(buf));
-	  return 0;
-	}
+  {
+    sprintf(buf, "No %s%scards have been exiled by %s.", cardtype_txt ? cardtype_txt : "",
+            cardtype_txt ? " " : "", cards_ptr[csvid]->name);
+    DIALOG(player, card, EVENT_ACTIVATE, DLG_FULLCARD_CSVID(csvid), DLG_MSG(buf));
+    return 0;
+  }
 
-  sprintf(buf, "%s%scards exiled by %s", cardtype_txt ? cardtype_txt : "", cardtype_txt ? " " : "", cards_ptr[csvid]->name);
+  sprintf(buf, "%s%scards exiled by %s", cardtype_txt ? cardtype_txt : "", cardtype_txt ? " " : "",
+          cards_ptr[csvid]->name);
   buf[0] = toupper(buf[0]);
-  int selected = show_deck(player, iids, num_found, buf, 0, 0x7375B0);
+  int selected = show_deck(player, iids, num_found, buf, 0, ENGINE_DONE_LABEL);
 
-  if (selected == -1){
-	  return 0;
-  } else {
-	  return (int)(locs[selected]);
+  if (selected == -1)
+  {
+    return 0;
+  }
+  else
+  {
+    return (int)(locs[selected]);
   }
 }
 
@@ -307,35 +321,52 @@ int exiledby_count(int player, int card, int owned_by)
 }
 
 // Remembers that a card with iid owned by t_player was exiled.  This doesn't actually exiled the card; if the exiled card is to be face-up, the caller should do so.
-void exiledby_remember(int player, int card, int t_player, int iid, int* ret_leg, int* ret_idx)
+void exiledby_remember(int player, int card, int t_player, int iid, int *ret_leg, int *ret_idx)
 {
   if (iid == -1)
-	return;
+    return;
 
   ASSERT(player >= 0 && "exiledby_remember() cannot be called on detached effects");
 
-  int* loc = exiledby_find(player, card, -1, ret_leg, ret_idx);
+  int csvid = cards_data[iid].id;
+  int csvids[2];
+  int meld = csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || csvid == CARD_ID_CHITTERING_HOST ||
+             csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP;
+  if (meld)
+  {
+    unmeld(csvid, &csvids[0], &csvids[1]);
+    iid = get_internal_card_id_from_csv_id(csvids[0]);
+  }
+  for (;;)
+  {
+    int *loc = exiledby_find(player, card, -1, ret_leg, ret_idx);
 
-  if (!loc)
-	{
-	  int leg = create_targetted_legacy_effect(player, card, exiledby_legacy, player, card);
-	  card_instance_t* instance = get_card_instance(player, leg);
-	  instance->targets[0].player = instance->targets[0].card = -1;
-	  instance->token_status |= STATUS_INVISIBLE_FX;
-	  if (ret_leg)
-		*ret_leg = leg;
-	  if (ret_idx)
-		*ret_idx = 0;
-	  loc = &instance->targets[0].player;
-	}
+    if (!loc)
+    {
+      int leg = create_targetted_legacy_effect(player, card, exiledby_legacy, player, card);
+      card_instance_t *instance = get_card_instance(player, leg);
+      instance->targets[0].player = instance->targets[0].card = -1;
+      instance->token_status |= STATUS_INVISIBLE_FX;
+      if (ret_leg)
+        *ret_leg = leg;
+      if (ret_idx)
+        *ret_idx = 0;
+      loc = &instance->targets[0].player;
+    }
 
-  ASSERT(!(iid & 0x80000000));
-  if (t_player == 1)
-	{
-	  iid |= 0x80000000;
-	  ASSERT(iid != -1);
-	}
-  *loc = iid;
+    ASSERT(!(iid & 0x80000000));
+    if (t_player == 1)
+    {
+      iid |= 0x80000000;
+      ASSERT(iid != -1);
+    }
+    *loc = iid;
+
+    if (!meld)
+      break;
+    meld = 0;
+    iid = get_internal_card_id_from_csv_id(csvids[1]);
+  }
 }
 
 /* Normally, these legacies are attached to the card that exiled them.  This is problematic when that permanent leaves the battlefield: all the attached effects
@@ -506,21 +537,27 @@ static int return_auras_counters_if_source_leaves_play(int player, int card, eve
 	return 0;
 }
 
-static int tawnoss_coffin_legacy(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance(player, card);
-	if (event == EVENT_SET_LEGACY_EFFECT_NAME && instance->targets[0].card > -1 ){
-		scnprintf(set_legacy_effect_name_addr, 51, "%s", cards_ptr[cards_data[instance->targets[0].card].id]->name);
-	}
-	if( instance->damage_target_player > -1 ){
-		player_bits[player] |= PB_SEND_EVENT_UNTAP_CARD_TO_ALL;
-		if( leaves_play(instance->damage_target_player, instance->damage_target_card, event, 0, 0) ||
-			(event == EVENT_UNTAP_CARD && affect_me(instance->damage_target_player, instance->damage_target_card))
-		  ){
-			return_auras_and_counters_to_play(player, card);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
-	return 0;
+static int tawnoss_coffin_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_SET_LEGACY_EFFECT_NAME && instance->targets[0].card > -1)
+  {
+    scnprintf(set_legacy_effect_name_addr, 51, "%s",
+              cards_ptr[cards_data[instance->targets[0].card].id]->name);
+  }
+  if (instance->damage_target_player > -1)
+  {
+    player_bits[player] |= PB_SEND_EVENT_UNTAP_CARD_TO_ALL;
+    leaves_play(instance->damage_target_player, instance->damage_target_card, event, 0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY ||
+        (event == EVENT_UNTAP_CARD &&
+         affect_me(instance->damage_target_player, instance->damage_target_card)))
+    {
+      return_auras_and_counters_to_play(player, card);
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
 }
 
 static void store_permanent_on_legacy(card_instance_t* leg, int to_copy_player, int to_copy_card, int targ_min, int targ_max){

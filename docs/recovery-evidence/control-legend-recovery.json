@@ -1,0 +1,654 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "get_back_your_permanents",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664c60",
+          "end": "0x2664df6",
+          "bytes_sha256": "c0d6eda41bb9ee8c6447c1696dd79f13fc514efbe7c7eaa06fd05ac7c8976367",
+          "raw_export": ".recovery/decompiled-control-legend/2664c60.c",
+          "raw_export_sha256": "05b89d1cbda4278729b87c16180ddd28d8357cb6de756c1bc8c183f86e248f71"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "ac607d31b86dfe3603161475de22738856fcfaa1be73d3b5bce86c19c0583b12"
+    },
+    {
+      "name": "gain_control_until_source_is_in_play_and_tapped",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664af0",
+          "end": "0x2664c09",
+          "bytes_sha256": "688afbe6160667807f77ea87e85e5de018115718ebca3bcaa4bdc5ee2ab9fc97",
+          "raw_export": ".recovery/decompiled-control-legend/2664af0.c",
+          "raw_export_sha256": "eae05fade7cf16e69acfbc30c152a3164cfbfdace93c1629796381a1c3dde306"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "source_moved": false,
+      "definition_sha256": "38e31692ecae82718dedd0a689af3cea660f96c5efae9082d643f190f55ad127"
+    },
+    {
+      "name": "effect_act_of_treason",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664a00",
+          "end": "0x2664a48",
+          "bytes_sha256": "05c3ed5023b98b123df3071172b1565aa135981b4f57a4febdf95816aa3a892d",
+          "raw_export": ".recovery/decompiled-control-legend/2664a00.c",
+          "raw_export_sha256": "96c198368f902b904e445e0a79eb4bf82c31805b9593cff248d6ae6014acd053"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "323d6449b98e41b30569b0e08bd6ae5bb43a5753040f3cc1b76b0baa21f2abca"
+    },
+    {
+      "name": "give_control_of_self",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x26648e0",
+          "end": "0x2664926",
+          "bytes_sha256": "adf011921a8cea541ae4769583d4b0c264488af5cc2191982343d1d91bbc7ec8",
+          "raw_export": ".recovery/decompiled-control-legend/26648e0.c",
+          "raw_export_sha256": "bdc93932bc75bc9678110f1d0021bce028b13e38a970b065054a7d8e94093363"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "source_moved": false,
+      "definition_sha256": "1544f27b318d50b1c9dd12ad17ac30fe7d7af1e568fba12db7e32acddf1ee702"
+    },
+    {
+      "name": "give_control_until_eot",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664820",
+          "end": "0x26648d1",
+          "bytes_sha256": "66028e838bace6f5b1a4981e0ac6e664f103308654692a00ba5457937f799f9e",
+          "raw_export": ".recovery/decompiled-control-legend/2664820.c",
+          "raw_export_sha256": "176b32c71f5108648927dcc534583239118177899335cbdb1018d9ab550f1b9f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "d455a442dd890d09f1c9cd129d08cdc42c742f58517311bf7e4f1822039ea707"
+    },
+    {
+      "name": "give_control",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x26647a0",
+          "end": "0x2664813",
+          "bytes_sha256": "9acfa353ae0427fe39e4680d783ed57e0d63a4c9447062be555c541f49460b6e",
+          "raw_export": ".recovery/decompiled-control-legend/26647a0.c",
+          "raw_export_sha256": "883d7581f94fe5f4510381adbb27fa8a1eabc8a354d6e46f8b27a90d90b1afa5"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "source_moved": false,
+      "definition_sha256": "e6c1405e385e8089774caae285574ddf20cf348bae69f7ca38256133f7398ad4"
+    },
+    {
+      "name": "gain_control_until_clause",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664590",
+          "end": "0x2664690",
+          "bytes_sha256": "1d817bea11090a2e43b36faaa1463d5e234aeb07b0d2b5db4bf075623d8f4ad4",
+          "raw_export": ".recovery/decompiled-control-legend/2664590.c",
+          "raw_export_sha256": "283821606c0a68f80db21468f847e27d0af83beb6d9ba768f901a3ed9b15d603"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "source_moved": false,
+      "definition_sha256": "dbd7cef91cde14d3d1ee019c2ebcd3ed946ecab16d49c631455bf612b3e47011"
+    },
+    {
+      "name": "exchange_control_of_target_permanents",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x26646f0",
+          "end": "0x266479d",
+          "bytes_sha256": "dfd01e1b8b10eb3f939abe7f10d0a18dbb700317350145a45482a513ff8673ac",
+          "raw_export": ".recovery/decompiled-control-legend/26646f0.c",
+          "raw_export_sha256": "c29d0279cc8c2de06467fdacff125d0aa573e68985eb52f65b9c71df568afbf8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "cf47ed8f9c18342e208f189ed81f4f0e3c09b472133252a17d1926e496835da8"
+    },
+    {
+      "name": "re_enable_the_most_recent_control_effect_attached_to_me",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664490",
+          "end": "0x26644b0",
+          "bytes_sha256": "3fa0cf21d9f9cf81eb73a9a2907d2e58194d752139111b779795535a8faaffd9",
+          "raw_export": ".recovery/decompiled-control-legend/2664490.c",
+          "raw_export_sha256": "cce0c5be16b775e593b194097271e5e2ed2f51fd0f66020ccf27389a528dd20f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "d38fc9058303af1468aa5b88099bd6cfc352fcb1481972337b1d02178b7f03c6"
+    },
+    {
+      "name": "effect_on_all_control_effects_attached_to_me",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2663380",
+          "end": "0x266353f",
+          "bytes_sha256": "b12b62d220843ed4f8effd560579f0a8c2d5e99a285fe521c3df161b7d976b10",
+          "raw_export": ".recovery/decompiled-control-legend/2663380.c",
+          "raw_export_sha256": "ee37a8326f6f968124dea0216159ea0ad0d082ea49af49f52ba773be7be60406"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "9657ff7e3df577a88baf1becbd659470f291acc93a48762dc66bee97572346e2"
+    },
+    {
+      "name": "gain_control",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664410",
+          "end": "0x2664463",
+          "bytes_sha256": "7b745229845e070823cf697fcb5caef4d526b9858e3c56724cbb1a73d7b3733f",
+          "raw_export": ".recovery/decompiled-control-legend/2664410.c",
+          "raw_export_sha256": "c0673ecf010bb582e8f8c465a9bdfa034b3e958e45725126ae413438b051ca4f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "ed1cec1b691d68d71d2c5bf46714cdd42f4753fe806cc0518b3c8bf7608400ca"
+    },
+    {
+      "name": "switch_control",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664310",
+          "end": "0x2664406",
+          "bytes_sha256": "2cc27461fde61b02ec8557ddc3d231b8d0de3472c5fd9ec1411ca854174e4262",
+          "raw_export": ".recovery/decompiled-control-legend/2664310.c",
+          "raw_export_sha256": "45a888064775ca7de395c95e1caff2dd57fd598bbf574b77376ea5373c0ba407"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "source_moved": false,
+      "definition_sha256": "4a34746eb97613a2670d69539d36929734391a5aa1e684cabdffd4eb94112105"
+    },
+    {
+      "name": "verify_legend_rule",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2663930",
+          "end": "0x2663989",
+          "bytes_sha256": "6528e3a00b255a400b1a4b1f183140826243eadfecf51062b25d54b1b503f9f4",
+          "raw_export": ".recovery/decompiled-control-legend/2663930.c",
+          "raw_export_sha256": "32e7d695b073f60a81a398ea93ea38ec1b7ed8e12c3e6ab6c19763b4601597ae"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "source_moved": false,
+      "definition_sha256": "fd5417411adce8f41d454782bedd593daade939e88930ec9a79eafaf25f1a02a"
+    },
+    {
+      "name": "check_legend_rule",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2663890",
+          "end": "0x2663902",
+          "bytes_sha256": "4bf65b3435d7a118042e5db23c04e599bbf680f4ddac83533c335e70fe9946f7",
+          "raw_export": ".recovery/decompiled-control-legend/2663890.c",
+          "raw_export_sha256": "8a9ae11a21d63510855db2f1fcf9ab0410633c74bde211cd25233d3efad1c1d5"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "source_moved": false,
+      "definition_sha256": "a1e6c9a240fbbdf6468603629c4c871c795ecb724b34429eb7ee59d15a75c830"
+    },
+    {
+      "name": "is_legendary",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2663540",
+          "end": "0x2663642",
+          "bytes_sha256": "e5e0c09ffe3ff25fa851ce836299e702458e224b0ca92aa27e15ef1998737c41",
+          "raw_export": ".recovery/decompiled-control-legend/2663540.c",
+          "raw_export_sha256": "dae725cde088c32dc063675c225723f82985d1c990d2c06360da3a004375a529"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "source_moved": true,
+      "definition_sha256": "9f092bd41387330e7d9796bd5c0c26b4089a26aaeb02ddc4450d5c4b42052fb3"
+    },
+    {
+      "name": "true_verify_legend_rule",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2663650",
+          "end": "0x2663888",
+          "bytes_sha256": "dc144177f7ca618e188442d9b148347e3c7c9de4106906b3ec1d9d68d7e7c78c",
+          "raw_export": ".recovery/decompiled-control-legend/2663650.c",
+          "raw_export_sha256": "de96c1cca1b195748e7c8394e156f6f9b70752f8a4d1e582fe131c9d81341abe"
+        },
+        {
+          "address": "0x2663910",
+          "end": "0x266392c",
+          "bytes_sha256": "2e6dacfdc0713f4b446dde058281534bbeb01b8a3ba73625535e1b4fc970bc99",
+          "raw_export": ".recovery/decompiled-control-legend/2663910.c",
+          "raw_export_sha256": "992e26fe920c0f2aadeff9344a0bf4508cc605f056878392df5a49efd2df2b60"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "source_moved": false,
+      "definition_sha256": "09e372220070836b1ccb0168c1f6e5b5c77cd1238ccd30c4f4b2e32c84e58ecc"
+    },
+    {
+      "name": "generic_control_legacy",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2663bc0",
+          "end": "0x2664307",
+          "bytes_sha256": "a52f3e3f54edf8bf82ef08474dd0cf587a862e2230420eef5ce8d34458da9691",
+          "raw_export": ".recovery/decompiled-control-legend/2663bc0.c",
+          "raw_export_sha256": "b0d99c8efb7440f0397b4efb3055fd2957bf7e033f97305fbb71eeee1edfaeb5"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "source_moved": false,
+      "definition_sha256": "daa1b1b712ca3fca17ad95c2d1618ac94f942ec98eafcbcdd2f57dc48e7b539d"
+    },
+    {
+      "name": "disable_all_control_effects_attached_to_me",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664470",
+          "end": "0x2664490",
+          "bytes_sha256": "e0ca4a38f5810987014e9bef71e14f5467c2b79efdb57d92b86b45bc89ea88ff",
+          "raw_export": ".recovery/decompiled-control-legend/2664470.c",
+          "raw_export_sha256": "e4558b4dd6d4261d6b1d18d525867c444e87bb0d8ca2dccfc0e547e3f72a1d60"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "33c5347744f278ba76c44eca24dd2dfeb0d72b65f7ebe2b73357c7991bb716bc"
+    },
+    {
+      "name": "re_enable_the_other_most_recent_control_effect_attached_to_me",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x26644b0",
+          "end": "0x26644cf",
+          "bytes_sha256": "385236fba50388190de47049f22b8d50bd205a189dcf87b4385a6481d13ffccf",
+          "raw_export": ".recovery/decompiled-control-legend/26644b0.c",
+          "raw_export_sha256": "479727eaeb5584b9062200182e08ea0d4fb15b0c7491292d132817b05e84d2a1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "437acefa5d2d6bcf387f036ffb0f762a06c0ec483f7a21158415f2089ec0ae0d"
+    },
+    {
+      "name": "gain_control_permanently_impl",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x26644d0",
+          "end": "0x2664588",
+          "bytes_sha256": "aa55e4590c562c5a1d4b102693f696c587df3c87b24cb169de77211d7505b106",
+          "raw_export": ".recovery/decompiled-control-legend/26644d0.c",
+          "raw_export_sha256": "a6c61c783880e4a03209e9844a922cd2c884c82099eea32b19e770aeaf863490"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "source_moved": false,
+      "definition_sha256": "047afc17430fd08cf00a02d78fe1bbc00783e14e16073a539bbc50492ede5eec"
+    },
+    {
+      "name": "gain_control_permanently",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664690",
+          "end": "0x26646b9",
+          "bytes_sha256": "e72cf6a1fbe7074bf1aa0545543dcda3568e23d7f4967a2951c8832990b0a4b1",
+          "raw_export": ".recovery/decompiled-control-legend/2664690.c",
+          "raw_export_sha256": "80bb555c91f63b384be211def2c9c96513949ddcd1e837f57734d3617b1c61fe"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "f1cc0b08e39873fa4ebf9ae666f87e7a58c9b6a6d73b01be25568523de9af95e"
+    },
+    {
+      "name": "gain_control_permanently_no_sound",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x26646c0",
+          "end": "0x26646e9",
+          "bytes_sha256": "04d64e9fcc1da168497f9012abbe7e20b3860427524bd07ac8b4570299a7d545",
+          "raw_export": ".recovery/decompiled-control-legend/26646c0.c",
+          "raw_export_sha256": "ccfde736005afbc7833dd1a3d25d0c1a3e6f127a056f79b4870d075a72116cc4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "5cf9e8ecb66ad8a1ebc58985cce287fc8713dd93dabb2a6aaee4fde2eabf18f2"
+    },
+    {
+      "name": "effect_act_of_treason_and_modify_pt_or_abilities",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664930",
+          "end": "0x26649f4",
+          "bytes_sha256": "f53bac4184e120f52a893eb489e11fe1ec20eea52d08d9071b40e1fe0fb310a2",
+          "raw_export": ".recovery/decompiled-control-legend/2664930.c",
+          "raw_export_sha256": "b6f7de3e03813be69b187d1b1d26d7e8c0205df26a68fa7b3bf72175a6ed6d7c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "da590a12e07679651df0b546970fcd18cbf0c4cacc1307e4682a5b5c1c8d371e"
+    },
+    {
+      "name": "gain_control_until_eot",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2664a50",
+          "end": "0x2664a94",
+          "bytes_sha256": "cec5d4d2e71d323384eb608457c9b0757266820fa36115c21d19a8b150fed0e4",
+          "raw_export": ".recovery/decompiled-control-legend/2664a50.c",
+          "raw_export_sha256": "c20d02f85a6593444dc8875b2c05ba42386086365a6c0c1b2992a53ec3fc08ae"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "source_moved": false,
+      "definition_sha256": "f600c75fb47f6e739000463e58ef5e0001a63309f2d8426823c0e5b353231a12"
+    }
+  ],
+  "callers": [
+    {
+      "name": "card_null_rod",
+      "source": "cards/weatherlight.c",
+      "native_ranges": [
+        {
+          "address": "0x22f23c0",
+          "end": "0x22f2449",
+          "bytes_sha256": "2afdb0789e8de658304863a3364f33623f41b961b140333b68da8582f798ab38",
+          "raw_export": ".recovery/decompiled-control-legend-callers/22f23c0.c",
+          "raw_export_sha256": "a7c52c8613f6dd882ce15d0b1009b7097b4b5acda0a13e570d362767784c5605"
+        }
+      ],
+      "definition_sha256": "2c0a612e299fb24405f03fff44535506416a74d18c3013d0e4ea18e2ababab2e",
+      "source_changed": true
+    },
+    {
+      "name": "card_cursed_totem",
+      "source": "cards/mirage.c",
+      "native_ranges": [
+        {
+          "address": "0x237bf50",
+          "end": "0x237bfd9",
+          "bytes_sha256": "1269b5d86d944ae36eb9f9545e6e0eafef0e97bd8bc0fb87940af4c8519e7877",
+          "raw_export": ".recovery/decompiled-control-legend-callers/237bf50.c",
+          "raw_export_sha256": "0d9d5a050c4d6915b2528617fd5ddbfa18047688a1e95253bb8b8ff6052c9e79"
+        }
+      ],
+      "definition_sha256": "90f4b08f99b280a20b1bfcd7283c6332b33e9326b509b5c1d8ab49a8c50397c9",
+      "source_changed": true
+    },
+    {
+      "name": "card_linvala_keeper_of_silence",
+      "source": "cards/rise_of_the_eldrazi.c",
+      "native_ranges": [
+        {
+          "address": "0x24af5b0",
+          "end": "0x24af652",
+          "bytes_sha256": "92a15b4b25e6682903736a98862654ce2c44448bf01de9b7c47da8bfbc2df750",
+          "raw_export": ".recovery/decompiled-control-legend-callers/24af5b0.c",
+          "raw_export_sha256": "e536f05ab9df525d9050995fb8f06265b4f8a188fa23e80fa9e817fa280307b4"
+        }
+      ],
+      "definition_sha256": "2dfb81e98f0a8e018b300c391df250f33818fd49ed92fccfc4a6920be39c8572",
+      "source_changed": true
+    },
+    {
+      "name": "card_damping_matrix",
+      "source": "cards/mirrodin.c",
+      "native_ranges": [
+        {
+          "address": "0x253b7e0",
+          "end": "0x253b869",
+          "bytes_sha256": "c99519c5e2c13efc3f7c0f62ba620d7c03122269c852a63aea13da7f4817ae53",
+          "raw_export": ".recovery/decompiled-control-legend-callers/253b7e0.c",
+          "raw_export_sha256": "2cfd57b41df32d96013e2047b9e4a93fd8ea668b8928fec08b451e70ad5a1328"
+        }
+      ],
+      "definition_sha256": "fec0eafeebcbf1b7ce0c3bbf6b433c2228fe35b604e6631ce59c5d3c71929cbd",
+      "source_changed": true
+    }
+  ],
+  "support_helpers": [
+    {
+      "name": "gain_control_impl",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_ranges": [
+        {
+          "address": "0x2663990",
+          "end": "0x2663bbf",
+          "bytes_sha256": "16fcc0fa17d7f3f6d784c7a93eb6ba603bcde1c8926210fffee16cd2a4c6a16b",
+          "raw_export": ".recovery/decompiled-control-legend-callers/2663990.c",
+          "raw_export_sha256": "5b76557fccef4850f39ee5bda28f887bb79a7d8369422f8e944d72347c2b727c"
+        }
+      ],
+      "definition_sha256": "7ba2abe8466666e4617942edab0ce6ae3826e9b6b92353c068cd93519df2d5eb",
+      "source_changed": false
+    },
+    {
+      "name": "disable_legend_rule",
+      "source": "functions/functions.c",
+      "native_ranges": [
+        {
+          "address": "0x26a8080",
+          "end": "0x26a8115",
+          "bytes_sha256": "86268569d834e7435644bc5c1da756d951639927792b3c11e53b4a4799a79cdd",
+          "raw_export": ".recovery/decompiled-control-legend-callers/26a8080.c",
+          "raw_export_sha256": "3a276ee4a4fc6429697392bc9e87f0197f2f70bce15a7fe102fba17b4b25544e"
+        }
+      ],
+      "definition_sha256": "70a3d57e1f947539bccaedc57aa1febc13bef223cd544cfe5e62f24d5bf22ff9",
+      "source_changed": true
+    }
+  ],
+  "helper_definitions": 24,
+  "new_native_helper_ranges": 25,
+  "changed_helper_definitions": 11,
+  "moved_definitions": 1,
+  "retired_predecessors": [
+    "real_switch_control",
+    "PB_ACTIVATE_ABILITIES_OF_CREATURES_DISABLED",
+    "PB_ACTIVATE_ABILITIES_OF_ARTIFACTS_DISABLED",
+    "PB_NONMANA_ACTIVATE_ABILITIES_OF_CREATURES_DISABLED",
+    "PB_NONMANA_ACTIVATE_ABILITIES_OF_ARTIFACTS_DISABLED"
+  ],
+  "native_enums": {
+    "STATUS_TOKEN": {
+      "die_offset": "0x610b6d8",
+      "byte_size": 4,
+      "values": {
+        "STATUS_0": 0,
+        "STATUS_HACKED": 2,
+        "STATUS_SLEIGHTED": 4,
+        "STATUS_OBLITERATED": 8,
+        "STATUS_TOKEN": 16,
+        "STATUS_PERMANENT": 32,
+        "STATUS_ANIMATED": 64,
+        "STATUS_DYING": 128,
+        "STATUS_TIMEWALK": 256,
+        "STATUS_CANNOT_BE_COUNTERED": 512,
+        "STATUS_WALL_CAN_ATTACK": 2048,
+        "STATUS_LEGACY_TYPECHANGE": 4096,
+        "STATUS_COLOR_FORCED": 8192,
+        "STATUS_BERSERK": 16384,
+        "STATUS_CANT_ATTACK": 32768,
+        "STATUS_INVISIBLE_FX": 65536,
+        "STATUS_RED_BORDER": 131072,
+        "STATUS_COMBAT_DAMAGE": 262144,
+        "STATUS_TRAMPLE_DAMAGE": 524288,
+        "STATUS_FIRST_STRIKE_DAMAGE": 1048576,
+        "STATUS_ISLAND_SANCTUARY": 4194304,
+        "STATUS_CANNOT_REGENERATE": 8388608,
+        "STATUS_CONTROLLED": 16777216,
+        "STATUS_BASICLAND_DEPENDANT": 33554432,
+        "STATUS_CANNOT_BE_DESTROYED": 67108864,
+        "STATUS_SPECIAL_BLOCKER": 134217728,
+        "STATUS_CANNOT_LEAVE_PLAY": 1073741824,
+        "STATUS_TRIGGER_CARD": 2147483648
+      }
+    },
+    "PB_OPPONENT_CHECKS_ATTACK_LEGALITY": {
+      "die_offset": "0x610dd99",
+      "byte_size": 4,
+      "values": {
+        "PB_OPPONENT_CHECKS_ATTACK_LEGALITY": 1,
+        "PB_SHANDALAR_LIBRARY_OF_LENG": 2,
+        "PB_SEND_EVENT_UNTAP_CARD_TO_ALL": 4,
+        "PB_COUNT_TOTAL_PLAYABLE_LANDS": 8,
+        "PB_CANT_HAVE_OR_GAIN_FIRST_STRIKE": 16,
+        "PB_CANT_HAVE_OR_GAIN_FLYING": 32,
+        "PB_CANT_HAVE_OR_GAIN_DEATHTOUCH": 64,
+        "PB_CANT_HAVE_OR_GAIN_TRAMPLE": 128,
+        "PB_CANT_HAVE_OR_GAIN_HEXPROOF": 256,
+        "PB_HAND_REVEALED": 512,
+        "PB_SWAMPWALK_DISABLED": 1024,
+        "PB_ISLANDWALK_DISABLED": 2048,
+        "PB_FORESTWALK_DISABLED": 4096,
+        "PB_MOUNTAINWALK_DISABLED": 8192,
+        "PB_PLAINSWALK_DISABLED": 16384,
+        "PB_NONSTANDARD_LANDWALK_DISABLED": 32768,
+        "PB_LANDWALK_DISABLED_MASK": 64512,
+        "PB_PLAYER_HAS_SHROUD": 65536,
+        "PB_PLAYER_HAS_HEXPROOF": 131072,
+        "PB_CAN_USE_PW_ABILITIES_AS_INSTANT": 262144,
+        "PB_COMMANDER_IN_PLAY": 524288,
+        "PB_CANT_HAVE_OR_GAIN_SHROUD": 1048576,
+        "PB_CANT_HAVE_OR_GAIN_ABILITIES_MASK": 1049072,
+        "PB_CANT_GAIN_LIFE": 2097152,
+        "PB_CAST_APPROACH_OF_THE_SECOND_SUN1": 4194304,
+        "PB_CAST_APPROACH_OF_THE_SECOND_SUN2": 8388608,
+        "PB_HAND_ABILITIES_DISABLED": 16777216,
+        "PB_GY_ABILITIES_DISABLED": 33554432,
+        "PB_PROTECTION": 67108864,
+        "PB_LEGEND_RULE_DISABLED": 134217728,
+        "PB_RESET_ON_RECALC_MASK": 255852528
+      }
+    },
+    "SF3_ECHO_PAID": {
+      "die_offset": "0x610eeb2",
+      "byte_size": 4,
+      "values": {
+        "SF3_0": 0,
+        "SF3_REANIMATED": 1,
+        "SF3_MANACOST_NULLIFIED": 2,
+        "SF3_ENCHANTED_PERMANENT_DYING": 4,
+        "SF3_MOVING_AURA_PLAYER0_SELECT_TARGET": 8,
+        "SF3_RENOWNED": 16,
+        "SF3_WONT_TRIGGER_AT_THIS_EOT": 32,
+        "SF3_IN_PLAY_DIRECTLY": 64,
+        "SF3_ARCHANGEL_OF_THUNE_COUNTER": 128,
+        "SF3_IS_STEALING_AURA": 256,
+        "SF3_CARD_IS_FLIPPED": 512,
+        "SF3_EPIC": 1024,
+        "SF3_ECHO_PAID": 2048,
+        "SF3_MADNESS_COST_PAID": 4096,
+        "SF3_HARDCODED_SLEIGHT_WORDS_REPLACED": 8192,
+        "SF3_HARDCODED_HACK_WORDS_REPLACED": 16384,
+        "SF3_ENCHANTMENT_ALTERATION_P0": 32768,
+        "SF3_ENCHANTMENT_ALTERATION_P1": 65536,
+        "SF3_EMULATING_LANDS_PLAYED": 131072,
+        "SF3_EMBALMED_OR_ETERNALIZED": 262144,
+        "SF3_ESCAPE": 524288,
+        "SF3_SWITCH_POW_TGH": 1048576,
+        "SF3_IMPROVISE_PAID": 2097152,
+        "SF3_IN_PLAY_VIA_KODAMA_EAST_TREE": 4194304,
+        "SF3_CANNOT_PHASE_IN": 8388608,
+        "SF3_LEGEND_RULE_DISABLED": 16777216
+      }
+    }
+  },
+  "native_contracts": {
+    "legend_check_event": "EVENT_STATIC_EFFECTS",
+    "legend_rule_player_flag": "0x8000000",
+    "sakashima_original_id": "0x56b3",
+    "excluded_original_id": "0x4e25",
+    "control_magic_boundary": {
+      "name": "u4585f0",
+      "address": "0x4585f0",
+      "arguments": [
+        "player",
+        "legacy_card"
+      ],
+      "ghidra_omitted_arguments": true,
+      "argument_write_addresses": [
+        "0x2664373",
+        "0x2664376"
+      ],
+      "call_address": "0x266437a"
+    },
+    "switch_control_recipient": "1 - tar_player",
+    "control_clause_recalculates_after_legacy_creation": true,
+    "legacy_selection": "last collected eligible legacy, preserving native behavior"
+  },
+  "scope": "24 directly reviewed helper definitions / 25 new native ranges, four complete card callers, two previously recovered support bodies, three native shared enums, native source-unit placement, and retirement of the old transfer implementation/activation bits. EXE dialog bodies and gameplay validation remain downstream."
+}

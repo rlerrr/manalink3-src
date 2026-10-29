@@ -51,44 +51,49 @@ static int generic_creature_with_discard_type_on_cip(int player, int card, event
 
 // ---- CARDS
 
-int card_abeyance(int player, int card, event_t event){
-/*CARD_ID_ABEYANCE	2922
-Abeyance	|1|W
-Instant
-Until end of turn, target player can't cast instant or sorcery spells, and that player can't activate abilities that aren't mana abilities.
-Draw a card.*/
+int card_abeyance(int player, int card, event_t event)
+{
+  /*CARD_ID_ABEYANCE	2922
+  Abeyance	|1|W
+  Instant
+  Until end of turn, target player can't cast instant or sorcery spells, and that player can't
+  activate abilities that aren't mana abilities. Draw a card.*/
 
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
+  if (!IS_GS_EVENT(player, card, event))
+  {
+    return 0;
+  }
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, 0);
-	td.zone = TARGET_ZONE_PLAYERS;
+  target_definition_t td;
+  default_target_definition(player, card, &td, 0);
+  td.zone = TARGET_ZONE_PLAYERS;
 
-	card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( current_phase <= PHASE_MAIN1 ){
-			ai_modifier += 24;
-		}
-		if( current_turn == 1-player ){
-			ai_modifier += 24;
-		}
-	}
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    if (current_phase <= PHASE_MAIN1)
+    {
+      ai_modifier += 24;
+    }
+    if (current_turn == 1 - player)
+    {
+      ai_modifier += 24;
+    }
+  }
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( valid_target(&td) ){
-			test_definition_t this_test;
-			default_test_definition(&this_test, TYPE_PERMANENT);
-			new_manipulate_all(player, card, instance->targets[0].player, &this_test, ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES);
-			target_player_cant_cast_type(player, card, instance->targets[0].player, TYPE_SORCERY | TYPE_INSTANT);
-			draw_cards(player, 1);
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (validate_target(player, card, &td, 0))
+    {
+      target_player_cant_cast_type(player, card, instance->targets[0].player,
+                                   TYPE_SORCERY | TYPE_INSTANT);
+      draw_cards(player, 1);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
 
-   return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
+  return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
 }
 
 
@@ -1071,132 +1076,131 @@ int card_dense_foliage(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
-static int dingus_staff_effect(int player, int card, event_t event){
+static int dingus_staff_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_DINGUS_STAFF ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_DINGUS_STAFF)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance= get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) && is_this_dying(affected_card_controller, affected_card) )
-		{
-			int p = instance->damage_target_player;
-			int c = instance->damage_target_card;
-			if( affect_me(p, c) ){
-				instance->damage_target_player = instance->damage_target_card = -1;
-				remove_status(player, card, STATUS_INVISIBLE_FX);
-				if( instance->targets[11].player < 0 ){
-					instance->targets[11].player = 0;
-				}
-				SET_BYTE2(instance->targets[11].player) = 1;
-			}
-			if( is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
-				if( instance->targets[11].player < 0 ){
-					instance->targets[11].player = 0;
-				}
-				if( affected_card_controller == 0 ){
-					SET_BYTE0(instance->targets[11].player)++;
-				}
-				if( affected_card_controller == 1 ){
-					SET_BYTE1(instance->targets[11].player)++;
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card) &&
+        is_this_dying(affected_card_controller, affected_card))
+    {
+      int p = instance->damage_target_player;
+      int c = instance->damage_target_card;
+      if (affect_me(p, c))
+      {
+        instance->damage_target_player = instance->damage_target_card = -1;
+        remove_status(player, card, STATUS_INVISIBLE_FX);
+        if (instance->targets[11].player < 0)
+        {
+          instance->targets[11].player = 0;
+        }
+        SET_BYTE2(instance->targets[11].player) = 1;
+      }
+      count_for_gfp_ability_and_store_values(player, card, event, ANYBODY, TYPE_CREATURE, NULL,
+                                             GFPC_TRACK_CONTROLLER, 0);
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			damage_player(0, 2*BYTE0(result), player, card);
-			damage_player(1, 2*BYTE1(result), player, card);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    APNAP(p, {
+      int amount = p == 0 ? BYTE0(result) : BYTE1(result);
+      for (; amount > 0; --amount)
+        damage_player(p, 2, player, card);
+    });
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
-int card_dingus_staff(int player, int card, event_t event ){
-/* CARD_ID_DINGUS_STAFF	2961
-Dingus Staff	|4
-Artifact
-Whenever a creature dies, ~ deals 2 damage to that creature's controller. */
+int card_dingus_staff(int player, int card, event_t event)
+{
+  /* CARD_ID_DINGUS_STAFF	2961
+  Dingus Staff	|4
+  Artifact
+  Whenever a creature dies, ~ deals 2 damage to that creature's controller. */
 
-	if( is_humiliated(player, card, AL_TRIG) ){
-		return 0;
-	}
+  if (is_humiliated(player, card, AL_TRIG))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
-				card_instance_t *inst = get_card_instance(player, c);
-				if( inst->info_slot == (int)dingus_staff_effect ){
-					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
-						(inst->targets[0].player == player && inst->targets[0].card == card) )
-					{
-						found = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( ! found ){
-			int legacy = create_targetted_legacy_effect(player, card, &dingus_staff_effect, player, card);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(player, c);
+        if (inst->info_slot == (int)dingus_staff_effect)
+        {
+          if ((inst->damage_target_player == player && inst->damage_target_card == card) ||
+              (inst->targets[0].player == player && inst->targets[0].card == card))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy = create_targetted_legacy_effect(player, card, &dingus_staff_effect, player, card);
+      card_instance_t *inst = get_card_instance(player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance= get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) && is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
-			is_this_dying(affected_card_controller, affected_card) )
-		{
-			if( instance->targets[11].player < 0 ){
-				instance->targets[11].player = 0;
-			}
-			if( affected_card_controller == 0 ){
-				SET_BYTE0(instance->targets[11].player)++;
-			}
-			if( affected_card_controller == 1 ){
-				SET_BYTE1(instance->targets[11].player)++;
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    count_for_gfp_ability_and_store_values(player, card, event, ANYBODY, TYPE_CREATURE, NULL,
+                                           GFPC_TRACK_CONTROLLER, 0);
 
-	if( get_card_instance(player, card)->kill_code <= 0 ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			damage_player(0, 2*BYTE0(result), player, card);
-			damage_player(1, 2*BYTE1(result), player, card);
-		}
-	}
+  if (get_card_instance(player, card)->kill_code <= 0)
+  {
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result)
+    {
+      APNAP(p, {
+        int amount = p == 0 ? BYTE0(result) : BYTE1(result);
+        for (; amount > 0; --amount)
+          damage_player(p, 2, player, card);
+      });
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_disrupt(int player, int card, event_t event)
@@ -2291,16 +2295,43 @@ static int if_would_enter_bf_sac_two_untapped_lands_instead(int player, int card
 
 int card_lotus_vale(int player, int card, event_t event)
 {
-  /* Lotus Vale	""
-   * Land
-   * If ~ would enter the battlefield, sacrifice two untapped lands instead. If you do, put ~ onto the battlefield. If you don't, put it into its owner's
-   * graveyard.
-   * |T: Add three mana of any one color to your mana pool. */
-
-  if (if_would_enter_bf_sac_two_untapped_lands_instead(player, card, event))
-	return 0;
-
-  return card_gilded_lotus(player, card, event);
+  if (if_would_enter_bf_sac_two_untapped_lands_instead(player, card, event) &&
+      !is_humiliated(player, card, AL_TRIG))
+    return 0;
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    if (affect_me(player, card) && instance->targets[12].card != -1 && instance->parent_card < 0)
+      event_result = instance->targets[12].card;
+  }
+  else if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    ai_modifier += 100;
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    if (!can_produce_mana(player, card))
+      spell_fizzled = 1;
+    else
+      produce_mana_tapped_all_one_color(player, card, COLOR_TEST_ANY_COLORED, 3);
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    play_land_sound_effect(player, card);
+    instance->targets[13].player = get_id(player, card);
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+    return CAN_TAP_FOR_MANA(player, card);
+  }
+  else if (event == EVENT_COUNT_MANA && affect_me(player, card) && CAN_TAP_FOR_MANA(player, card))
+  {
+    if (check_special_flags2(player, card, SF2_CONTAMINATION) && is_what(player, card, TYPE_LAND))
+      declare_mana_available(player, COLOR_BLACK, 1);
+    else
+      declare_mana_available_hex(player, COLOR_TEST_ANY_COLORED, 3);
+  }
+  return 0;
 }
 
 int card_maraxus_of_keld(int player, int card, event_t event)
@@ -2473,18 +2504,15 @@ Exile the top creature card of your graveyard: ~ gets +2/+2 until end of turn. *
    return 0;
 }
 
-int card_null_rod(int player, int card, event_t event){
-/* CARD_ID_NULL_ROD	3018
-Null Rod	|2
-Artifact
-Activated abilities of artifacts can't be activated. */
-
-	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
-		player_bits[0] |= PB_ACTIVATE_ABILITIES_OF_ARTIFACTS_DISABLED;
-		player_bits[1] |= PB_ACTIVATE_ABILITIES_OF_ARTIFACTS_DISABLED;
-	}
-
-	return 0;
+int card_null_rod(int player, int card, event_t event)
+{
+  if (in_play(player, card) && !is_humiliated(player, card, AL_STATIC))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_ARTIFACT);
+    remove_abilities_by_test(ANYBODY, event, &test, AL_ALL_ACT);
+  }
+  return 0;
 }
 
 int card_ophidian(int player, int card, event_t event){
@@ -2808,21 +2836,22 @@ int card_scorched_ruins(int player, int card, event_t event)
 {
   /* Scorched Ruins	""
    * Land
-   * If ~ would enter the battlefield, sacrifice two untapped lands instead. If you do, put ~ onto the battlefield. If you don't, put it into its owner's
-   * graveyard.
-   * |T: Add |4 to your mana pool. */
+   * If ~ would enter the battlefield, sacrifice two untapped lands instead. If you do, put ~ onto
+   * the battlefield. If you don't, put it into its owner's graveyard. |T: Add |4 to your mana pool.
+   */
 
-  if (if_would_enter_bf_sac_two_untapped_lands_instead(player, card, event))
-	return 0;
+  if (if_would_enter_bf_sac_two_untapped_lands_instead(player, card, event) &&
+      !is_humiliated(player, card, AL_TRIG))
+    return 0;
 
   if (event == EVENT_CAN_ACTIVATE)
-	return CAN_TAP_FOR_MANA(player, card);
+    return CAN_TAP_FOR_MANA(player, card);
 
   if (event == EVENT_ACTIVATE)
-	produce_mana_tapped(player, card, COLOR_COLORLESS, 4);
+    produce_mana_tapped(player, card, COLOR_COLORLESS, 4);
 
   if (event == EVENT_COUNT_MANA && affect_me(player, card) && CAN_TAP_FOR_MANA(player, card))
-	declare_mana_available(player, COLOR_COLORLESS, 4);
+    declare_mana_available(player, COLOR_COLORLESS, 4);
 
   return 0;
 }

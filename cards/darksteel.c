@@ -1,30 +1,41 @@
 #include "manalink.h"
 
+static char *not_already_dying(int who_chooses, int player, int card);
+
 // Global functions
 
-int modular(int player, int card, event_t event, int initial_counters){
+int modular(int player, int card, event_t event, int initial_counters)
+{
 
-	enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, initial_counters);
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, initial_counters);
 
-	if (event == EVENT_ABILITIES && affect_me(player, card) && !is_humiliated(player, card, AL_KEY)){
-		set_special_flags(player, card, SF_MODULAR);
-	}
+  if (event == EVENT_ABILITIES && affect_me(player, card) && !is_humiliated(player, card, AL_KEY))
+  {
+    set_special_flags(player, card, SF_MODULAR);
+  }
 
-	if( this_dies_trigger(player, card, event, 2) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.preferred_controller = player;
-		td.special = TARGET_SPECIAL_NOT_ME | TARGET_SPECIAL_ARTIFACT_CREATURE;
-		td.illegal_state = TARGET_STATE_DYING;
+  if (this_dies_trigger(player, card, event, 2))
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.preferred_controller = player;
+    td.special =
+        TARGET_SPECIAL_NOT_ME | TARGET_SPECIAL_ARTIFACT_CREATURE | TARGET_SPECIAL_EXTRA_FUNCTION;
+    td.extra = (int32_t)not_already_dying;
 
-		card_instance_t *instance = get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
 
-		if( can_target(&td) && select_target(player, card, &td, "Select target artifact creature", &(instance->targets[0])) ){
-			add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, count_1_1_counters(player, card));
-		}
-	}
+    if (can_target(&td) && select_target(player, card, &td, "Select target artifact creature",
+                                         &(instance->targets[0])))
+    {
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                   COUNTER_P1_P1,
+                   count_1_1_counters(player, card) +
+                       count_cards_by_id(player, CARD_ID_ZABAZ_THE_GLIMMERWASP));
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int echoing_effect(int player, int card, int t_player, int t_card, target_definition_t *td, int effect){
@@ -1860,7 +1871,7 @@ int card_murderous_spoils(int player, int card, event_t event){
 				while( count > -1 ){
 						if( i != player && in_play(i, count) && is_what(i, count, TYPE_ARTIFACT) && has_subtype(i, count, SUBTYPE_EQUIPMENT) ){
 							card_instance_t *this = get_card_instance( i, count );
-							if( this->targets[8].player == instance->targets[0].player && this->targets[8].card == instance->targets[0].card ){
+							if( this->damage_target_player == instance->targets[0].player && this->damage_target_card == instance->targets[0].card ){
 								gain_control_permanently(player, i, count);
 							}
 						}

@@ -5482,10 +5482,6 @@ void amass(int player, int card, int amount)
   card_instance_t *instance;
   target_definition_t td;
   token_generation_t token;
-  enum
-  {
-    SUBTYPE_ARMY = 254
-  };
 
   iVar1 = count_subtype(player, -1, 0xfe);
   if (iVar1 == 1)
@@ -6012,10 +6008,6 @@ LAB_021d87c7:
 /* ManalinkEh 2022: 0x21cbdd0; original cards/war_of_the_spark.c:1588. */
 int card_dreadhorde_butcher(int player, int card, event_t event)
 {
-  enum
-  {
-    DDBM_MAY_DAMAGE_PLANESWALKER = 64
-  };
 
   int result;
   card_instance_t *instance;
@@ -6054,10 +6046,6 @@ int card_dreadhorde_butcher(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x21d2250; original cards/war_of_the_spark.c:4294. */
 int card_neheb_dreadhorde_champion(int player, int card, event_t event)
 {
-  enum
-  {
-    DDBM_MAY_DAMAGE_PLANESWALKER = 64
-  };
 
   int result;
   int card_00;
@@ -6097,10 +6085,6 @@ int card_neheb_dreadhorde_champion(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x21d9130; original cards/war_of_the_spark.c:7043. */
 int card_vraska_swarms_eminence(int player, int card, event_t event)
 {
-  enum
-  {
-    DDBM_MAY_DAMAGE_PLANESWALKER = 64
-  };
 
   card_instance_t *instance;
   int result;

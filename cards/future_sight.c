@@ -111,50 +111,70 @@ void modify_cost_for_delve(int player, int card, event_t event){
 	}
 }
 
-int cast_spell_with_delve(int player, int card){
-	card_instance_t *instance = get_card_instance(player, card);
-	int choice = 0;
-	if( has_mana_to_cast_iid(player, EVENT_CAST_SPELL, get_card_instance(player, card)->internal_card_id) ){
-		choice = do_dialog(player, player, card, -1, -1, " Use Delve\n Play normally\n Cancel", 1);
-	}
-	if( choice == 2 ){
-		spell_fizzled = 1;
-		return 0;
-	}
-	int i;
-	int id = get_id(player, card);
-	card_ptr_t* c = cards_ptr[ id ];
-	int cless = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL, -1);
-	if( choice == 0 ){
-		int max = MIN(cless, count_graveyard(player));
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_ANY, "Select a card to exile for Delve.");
-		int trc = select_multiple_cards_from_graveyard(player, player, 0, AI_MIN_VALUE, &this_test, max, &instance->targets[0]);
-		charge_mana_multi(player, cless-trc, c->req_black, c->req_blue, c->req_green, c->req_red, c->req_white);
-		if( spell_fizzled != 1 ){
-			int result = get_id(player, card) == CARD_ID_SOULFLAYER ? 0 : 2;
-			const int *grave = get_grave(player);
-			for(i=0; i<trc; i++){
-				if( get_id(player, card) == CARD_ID_SOULFLAYER ){
-					int ability_mask = KEYWORD_FIRST_STRIKE | KEYWORD_DOUBLE_STRIKE | KEYWORD_TRAMPLE | KEYWORD_FLYING | KEYWORD_REACH;
-					result |= (cards_data[grave[instance->targets[i].player]].static_ability & ability_mask);
-				}
-				rfg_card_from_grave(player, instance->targets[i].player);
-			}
-			return result;
-		}
-		else{
-			return 0;
-		}
-	}
+int cast_spell_with_delve(int player, int card)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  int choice = 0;
+  if (has_mana_to_cast_iid(player, EVENT_CAST_SPELL,
+                           get_card_instance(player, card)->internal_card_id))
+  {
+    choice = do_dialog(player, player, card, -1, -1, " Use Delve\n Play normally\n Cancel", 1);
+  }
+  if (choice == 2)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+  int i;
+  int id = get_id(player, card);
+  card_ptr_t *c = cards_ptr[id];
+  int cless = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL, -1);
+  if (choice == 0)
+  {
+    int max = MIN(cless, count_graveyard(player));
+    test_definition_t this_test;
+    new_default_test_definition(&this_test, TYPE_ANY, "Select a card to exile for Delve.");
+    int trc = select_multiple_cards_from_graveyard(player, player, 0, AI_MIN_VALUE, &this_test, max,
+                                                   &instance->targets[0]);
+    charge_mana_multi(player, cless - trc, c->req_black, c->req_blue, c->req_green, c->req_red,
+                      c->req_white);
+    if (spell_fizzled != 1)
+    {
+      int result = get_id(player, card) == CARD_ID_SOULFLAYER ? 0 : 2;
+      const int *grave = get_grave(player);
+      for (i = 0; i < trc; i++)
+      {
+        if (get_id(player, card) == CARD_ID_SOULFLAYER)
+        {
+          int ability_mask = KEYWORD_FIRST_STRIKE | KEYWORD_DOUBLE_STRIKE | KEYWORD_TRAMPLE |
+                             KEYWORD_FLYING | KEYWORD_REACH;
+          result |= (cards_data[grave[instance->targets[i].player]].static_ability & ability_mask);
+        }
+        else if (get_id(player, card) == CARD_ID_MURKTIDE_REGENT &&
+                 is_what(-1, grave[instance->targets[i].player], TYPE_SPELL))
+        {
+          increment_data(instance, CARD_ID_MURKTIDE_REGENT);
+        }
+        rfg_card_from_grave(player, instance->targets[i].player);
+      }
+      return result;
+    }
+    else
+    {
+      return 0;
+    }
+  }
 
-	if( choice == 1 ){
-		charge_mana_multi(player, cless, c->req_black, c->req_blue, c->req_green, c->req_red, c->req_white);
-		if( spell_fizzled != 1 ){
-			return 1;
-		}
-	}
-	return 0;
+  if (choice == 1)
+  {
+    charge_mana_multi(player, cless, c->req_black, c->req_blue, c->req_green, c->req_red,
+                      c->req_white);
+    if (spell_fizzled != 1)
+    {
+      return 1;
+    }
+  }
+  return 0;
 }
 
 int delve(int player, int card, event_t event){
@@ -552,54 +572,39 @@ int card_bridge_from_below(int player, int card, event_t event){
 	return 0;
 }
 
-int bridge_from_below(int player, int card, event_t event){
-	/* Bridge from Below	|B|B|B
-	 * Enchantment
-	 * Whenever a nontoken creature is put into your graveyard from the battlefield, if ~ is in your graveyard, put a 2/2 |Sblack Zombie creature token onto the battlefield.
-	 * When a creature is put into an opponent's graveyard from the battlefield, if ~ is in your graveyard, exile ~. */
-
-	if (event == EVENT_GRAVEYARD_ABILITY){
-		return 0;
-	}
-
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance= get_card_instance(player, card);
-		if(! in_play(affected_card_controller, affected_card) || count_graveyard_by_id(player, CARD_ID_BRIDGE_FROM_BELOW) < 1){
-			return 0;
-		}
-			if( is_this_dying(affected_card_controller, affected_card) && is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
-				if( instance->targets[11].player < 0 ){
-					instance->targets[11].player = 0;
-				}
-				int owner = get_owner(affected_card_controller, affected_card);
-				if( owner == player && ! is_token(affected_card_controller, affected_card)){
-					SET_BYTE0(instance->targets[11].player)++;
-				}
-				else{
-					SET_BYTE1(instance->targets[11].player)++;
-				}
-			}
-	}
-
-	int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-	if( amount ){
-		int zombies = BYTE0(amount);
-		int kill_bridges = BYTE1(amount) ? 1 : 0;
-
-		generate_tokens_by_id(player, card, CARD_ID_ZOMBIE, zombies);
-
-		if( kill_bridges ){
-			int count = count_graveyard(player)-1;
-			while( count > -1 ){
-					if( cards_data[get_grave(player)[count]].id == CARD_ID_BRIDGE_FROM_BELOW ){
-						rfg_card_from_grave(player, count);
-					}
-					count--;
-			}
-		}
-	}
-
-	return 0;
+int bridge_from_below(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_GRAVEYARD_ABILITY)
+    return 0;
+  if (event == EVENT_GRAVEYARD_FROM_PLAY && in_play(affected_card_controller, affected_card) &&
+      !is_token(affected_card_controller, affected_card) &&
+      is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
+      !check_for_death_trigger_removal(affected_card_controller, affected_card) &&
+      is_this_dying(affected_card_controller, affected_card))
+  {
+    instance->eot_toughness = 0;
+    if (get_owner(affected_card_controller, affected_card) == player)
+      instance->eot_toughness0 += card_counts[player][5] + 1;
+    else
+      ++instance->eot_toughness1;
+  }
+  unsigned int amount = instance->eot_toughness;
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    for (int count = count_graveyard(player) - 1; count >= 0; --count)
+    {
+      if (cards_data[get_grave(player)[count]].id == CARD_ID_BRIDGE_FROM_BELOW)
+      {
+        if (amount)
+          generate_tokens_by_id(player, card, CARD_ID_ZOMBIE, BYTE0(amount));
+        if (BYTE1(amount))
+          rfg_card_from_grave(player, count);
+      }
+    }
+    instance->eot_toughness = 0;
+  }
+  return 0;
 }
 
 // bound in silence --> pacifism
@@ -803,49 +808,44 @@ If you do, return this card from your graveyard to your hand. Otherwise, draw a 
 	return mana_producer(player, card, event);
 }
 
-static const char* target_is_already_enchanted(int who_chooses, int player, int card, int targeting_player, int targeting_card)
+static const char *target_is_already_enchanted(int who_chooses, int player, int card,
+                                               int targeting_player, int targeting_card)
 {
-  return is_enchanted(player, card) ? NULL : "another Aura attached";
+  for (int p = 0; p < 2; ++p)
+  {
+    for (int c = 0; c < active_cards_count[p]; ++c)
+    {
+      if (p == targeting_player && c == targeting_card)
+        continue;
+      card_instance_t *aura = in_play(p, c);
+      if (aura && is_what(p, c, TYPE_ENCHANTMENT) && has_subtype(p, c, SUBTYPE_AURA) &&
+          aura->damage_target_player == player && aura->damage_target_card == card)
+        return NULL;
+    }
+  }
+  return "another Aura attached";
 }
 int card_daybreak_coronet(int player, int card, event_t event)
 {
-/* CARD_ID_DAYBREAK_CORONET	8912
-Daybreak Coronet	|W|W
-Enchantment - Aura
-Enchant creature with another Aura attached to it
-Enchanted creature gets +3/+3 and has first strike, vigilance, and lifelink. (Damage dealt by the creature also causes its controller to gain that much life.) */
+  /* CARD_ID_DAYBREAK_CORONET	8912
+  Daybreak Coronet	|W|W
+  Enchantment - Aura
+  Enchant creature with another Aura attached to it
+  Enchanted creature gets +3/+3 and has first strike, vigilance, and lifelink. (Damage dealt by the
+  creature also causes its controller to gain that much life.) */
 
+  if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS)
+    return 0;
   target_definition_t td;
   default_target_definition(player, card, &td, TYPE_CREATURE);
   td.preferred_controller = player;
   td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   td.extra = (int32_t)target_is_already_enchanted;
-
-  card_instance_t* instance;
-  if ((event == EVENT_POWER || event == EVENT_TOUGHNESS)
-	  && (instance = in_play(player, card))
-	  && affect_me(instance->damage_target_player, instance->damage_target_card))
-	event_result += 3;
-
-  if (event == EVENT_ABILITIES
-	  && (instance = in_play(player, card))
-	  && affect_me(instance->damage_target_player, instance->damage_target_card))
-	{
-	  event_result |= KEYWORD_FIRST_STRIKE;
-	  vigilance(instance->damage_target_player, instance->damage_target_card, event);
-	  lifelink(instance->damage_target_player, instance->damage_target_card, event);
-	}
-
-  // Until aura target legality is handled centrally, though in this case it'll probably end up forwarding here anyway.
-  if (event == EVENT_STATIC_EFFECTS
-	  && (instance = in_play(player, card))
-	  && instance->damage_target_player >= 0
-	  && (instance->damage_target_card == -1
-		  || count_auras_enchanting_me(instance->damage_target_player, instance->damage_target_card) < 2
-		  || !is_what(instance->damage_target_player, instance->damage_target_card, TYPE_CREATURE)))
-	kill_card(player, card, KILL_STATE_BASED_ACTION);
-
-  return targeted_aura(player, card, event, &td, "TARGET_CREATURE");
+  pump_ability_t ability_mod;
+  default_pump_ability_definition(player, card, &ability_mod, 3, 3, KEYWORD_FIRST_STRIKE,
+                                  SP_KEYWORD_VIGILANCE | SP_KEYWORD_LIFELINK);
+  pump_attached(player, card, event, &ability_mod);
+  return aura(player, card, event, &td, "DAYBREAK_CORONET");
 }
 
 int card_deepcavern_imp(int player, int card, event_t event){
@@ -933,29 +933,34 @@ Destroy target non|Sgreen creature. It can't be regenerated. */
 	return 0;
 }
 
-int card_delay(int player, int card, event_t event){
-/* CARD_ID_DELAY	8915
-Delay	|1|U
-Instant
-Counter target spell. If the spell is countered this way, exile it with three time counters on it instead of putting it into its owner's graveyard.
-If it doesn't have suspend, it gains suspend. (At the beginning of its owner's upkeep, remove a time counter from that card.
-When the last is removed, the player plays it without paying its mana cost. If it's a creature, it has haste.) */
+int card_delay(int player,int card,event_t event)
 
-	card_instance_t *instance = get_card_instance(player, card);
+{
+  card_instance_t *pcVar1;
+  int iVar2;
 
-	if( event == EVENT_CAN_CAST || (event == EVENT_CAST_SPELL && affect_me(player, card)) ){
-		return counterspell(player, card, event, NULL, 0);
-	}
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( counterspell_validate(player, card, NULL, 0) ){
-			int result = manage_counterspell_linked_hacks(player, card, instance->targets[0].player, instance->targets[0].card);
-			if( result != KILL_EXILE ){
-				suspend_a_card(player, card, instance->targets[0].player, instance->targets[0].card, 3);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-	return 0;
+  pcVar1 = get_card_instance(player,card);
+  if (event != EVENT_CAN_CAST) {
+    if (event == EVENT_CAST_SPELL) {
+      if ((card == affected_card) && (player == affected_card_controller)) goto LAB_025747c2;
+    }
+    else if (event == EVENT_RESOLVE_SPELL) {
+      iVar2 = counterspell_validate(player,card,(target_definition_t *)0x0,0);
+      if (iVar2 != 0) {
+
+        iVar2 = pre_counterspell(player,card,pcVar1->targets[0].player,pcVar1->targets[0].card);
+        if (iVar2 != 0) {
+          suspend_a_card(player,card,pcVar1->targets[0].player,pcVar1->targets[0].card,3);
+        }
+      }
+      kill_card(player,card,KILL_DESTROY);
+      return 0;
+    }
+    return 0;
+  }
+LAB_025747c2:
+  iVar2 = counterspell(player,card,event,(target_definition_t *)0x0,0);
+  return iVar2;
 }
 
 int card_dryad_arbor(int player, int card, event_t event){
@@ -3052,122 +3057,134 @@ int card_sparkspitter(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_DISCARD, MANACOST_R(1), 0, NULL, NULL);
 }
 
-static int spellweaver_volute_name_legacy(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance(player, card);
-	if( instance->damage_target_player > -1 ){
-		card_instance_t *sw_card = get_card_instance(instance->damage_target_player, instance->damage_target_card);
-		if (event == EVENT_SET_LEGACY_EFFECT_NAME && sw_card->targets[2].card > -1 ){
-			scnprintf(set_legacy_effect_name_addr, 51, "%s", cards_ptr[cards_data[sw_card->targets[2].card].id]->name);
-		}
-	}
-	return 0;
+static int spellweaver_volute_name_legacy(int player, int card, event_t event)
+{
+  if (event == EVENT_SET_LEGACY_EFFECT_NAME)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player >= 0)
+    {
+      card_instance_t *sw_card =
+          get_card_instance(instance->damage_target_player, instance->damage_target_card);
+      if (sw_card->targets[2].card >= 0)
+        scnprintf(set_legacy_effect_name_addr, 51, "%s",
+                  cards_ptr[cards_data[sw_card->targets[2].card].id]->name);
+    }
+  }
+  return 0;
 }
 
-int card_spellweaver_volute(int player, int card, event_t event){
-/*
-Spellweaver Volute |3|U|U
-Enchantment — Aura
-Enchant instant card in a graveyard
-Whenever you cast a sorcery spell, copy the enchanted instant card. You may cast the copy without paying its mana cost.
-If you do, exile the enchanted card and attach Spellweaver Volute to another instant card in a graveyard.
-*/
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) && get_card_instance(player, card)->info_slot == 66 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int pos = find_in_graveyard_by_source(instance->targets[0].player, instance->targets[1].card,
-												instance->targets[1].player);
-		if( pos == -1 ){
-			kill_card(player, card, KILL_SACRIFICE);
-		}
-	}
-
-	if( get_card_instance(player, card)->info_slot == 66 && trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_SORCERY);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			card_instance_t *instance = get_card_instance(player, card);
-
-			int pos = instance->targets[1].player;
-			int iid = get_grave(instance->targets[0].player)[pos];
-			int new_attaching = 0;
-			if( can_legally_play_iid(player, iid) ){
-				copy_spell(player, cards_data[iid].id);
-				new_attaching = 1;
-			}
-			if( ! new_attaching ){
-				return 0;
-			}
-			instance->info_slot = 0;
-			rfg_card_from_grave(instance->targets[0].player, pos);
-
-			test_definition_t test2;
-			new_default_test_definition(&test2, TYPE_INSTANT | TYPE_INTERRUPT, "Select target instant card.");
-			int targettable_grave_for_spellweaver_volute[2] = {0};
-			APNAP(p,{
-						if( ! graveyard_has_shroud(p) && new_special_count_grave(p, &test2) ){
-							targettable_grave_for_spellweaver_volute[p] = 1;
-						}
-					}
-			);
-			if( targettable_grave_for_spellweaver_volute[player] + targettable_grave_for_spellweaver_volute[1-player] == 0 ){
-				kill_card(player, card, KILL_SACRIFICE);
-				return 0;
-			}
-			int t_player = player;
-			if( targettable_grave_for_spellweaver_volute[player] ){
-				if( targettable_grave_for_spellweaver_volute[1-player] ){
-					target_definition_t td;
-					default_target_definition(player, card, &td, 0);
-					td.zone = TARGET_ZONE_PLAYERS;
-					td.allow_cancel = 0;
-					td.illegal_abilities = 0;
-
-					new_pick_target(&td, "Whose graveyard?", 0, GS_LITERAL_PROMPT);
-					t_player = instance->targets[0].player;
-					instance->number_of_targets = 0;
-				}
-			}
-			else{
-				t_player = 1-player;
-			}
-			if( select_target_from_grave_source(player, card, t_player, 1, AI_MAX_CMC, &test2, 1) ){
-				instance->info_slot = 66;
-			}
-		}
-	}
-
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
-
-	test_definition_t test;
-	new_default_test_definition(&test, TYPE_INSTANT | TYPE_INTERRUPT, "Select target instant card.");
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return generic_spell(player, card, event, GS_GRAVE_RECYCLER_BOTH_GRAVES, NULL, NULL, 1, &test);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		generic_spell(player, card, event, GS_GRAVE_RECYCLER_BOTH_GRAVES, NULL, NULL, 1, &test);
-		if( spell_fizzled != 1 ){
-			ai_modifier += 25;
-		}
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		int selected = validate_target_from_grave_source(player, card, instance->targets[0].player, 1);
-		if( selected != -1 ){
-			instance->info_slot = 66;
-			int legacy = create_targetted_legacy_effect(player, card, &spellweaver_volute_name_legacy, player, card);
-			get_card_instance(player, legacy)->eot_toughness = EVENT_SET_LEGACY_EFFECT_NAME;
-		}
-		else{
-			kill_card(player, card, KILL_SACRIFICE);
-		}
-	}
-
-	return 0;
+int card_spellweaver_volute(int player, int card, event_t event)
+{
+  /*
+  Spellweaver Volute |3|U|U
+  Enchantment — Aura
+  Enchant instant card in a graveyard
+  Whenever you cast a sorcery spell, copy the enchanted instant card. You may cast the copy without
+  paying its mana cost. If you do, exile the enchanted card and attach Spellweaver Volute to another
+  instant card in a graveyard.
+  */
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card) &&
+      get_card_instance(player, card)->info_slot == 66)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int pos = find_in_graveyard_by_source(instance->targets[0].player, instance->targets[1].card,
+                                          instance->targets[1].player);
+    if (pos == -1)
+      kill_card(player, card, KILL_SACRIFICE);
+    else
+      instance->targets[2].card = get_grave(player)[pos];
+  }
+  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) &&
+      get_card_instance(player, card)->info_slot == 66)
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_SORCERY);
+    sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int pos = instance->targets[1].player;
+    int iid = get_grave(instance->targets[0].player)[pos];
+    if (!can_legally_play_iid(player, iid))
+      return 0;
+    copy_spell(player, cards_data[iid].id);
+    instance->info_slot = 0;
+    rfg_card_from_grave(instance->targets[0].player, pos);
+    test_definition_t test2;
+    new_default_test_definition(&test2, TYPE_INSTANT | TYPE_INTERRUPT,
+                                "Select target instant card.");
+    int targettable_grave_for_spellweaver_volute[2] = {0};
+    APNAP(p, {
+      if (!graveyard_has_shroud(p) && new_special_count_grave(p, &test2))
+        targettable_grave_for_spellweaver_volute[p] = 1;
+    };);
+    if (targettable_grave_for_spellweaver_volute[player] +
+            targettable_grave_for_spellweaver_volute[1 - player] ==
+        0)
+    {
+      kill_card(player, card, KILL_STATE_BASED_ACTION);
+      return 0;
+    }
+    int t_player = player;
+    if (targettable_grave_for_spellweaver_volute[player])
+    {
+      if (targettable_grave_for_spellweaver_volute[1 - player])
+      {
+        target_definition_t td;
+        default_target_definition(player, card, &td, TYPE_NONE);
+        td.zone = TARGET_ZONE_PLAYERS;
+        td.allow_cancel = 0;
+        td.illegal_abilities = 0;
+        new_pick_target(&td, "Whose graveyard?", 0, GS_LITERAL_PROMPT);
+        t_player = instance->targets[0].player;
+        instance->number_of_targets = 0;
+      }
+    }
+    else
+    {
+      t_player = 1 - player;
+    }
+    if (select_target_from_grave_source(player, card, t_player, SFG_CANNOT_CANCEL, AI_MAX_CMC,
+                                        &test2, 1))
+    {
+      instance->info_slot = 66;
+      instance->targets[2].card =
+          get_grave(instance->targets[0].player)[instance->targets[1].player];
+    }
+    return 0;
+  }
+  if (!IS_GS_EVENT(player, card, event))
+    return 0;
+  test_definition_t test;
+  new_default_test_definition(&test, TYPE_INSTANT | TYPE_INTERRUPT, "Select target instant card.");
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_CAST)
+    return generic_spell(player, card, event, GS_GRAVE_RECYCLER_BOTH_GRAVES, NULL, NULL, 1, &test);
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    generic_spell(player, card, event, GS_GRAVE_RECYCLER_BOTH_GRAVES, NULL, NULL, 1, &test);
+    if (spell_fizzled != 1)
+      ai_modifier += 25;
+  }
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    int selected = validate_target_from_grave_source(player, card, instance->targets[0].player, 1);
+    if (selected != -1)
+    {
+      instance->info_slot = 66;
+      int legacy = create_targetted_legacy_effect(player, card, &spellweaver_volute_name_legacy,
+                                                  player, card);
+      get_card_instance(player, legacy)->eot_toughness = EVENT_SET_LEGACY_EFFECT_NAME;
+      instance->targets[2].card = get_grave(player)[selected];
+    }
+    else
+    {
+      kill_card(player, card, KILL_SACRIFICE);
+    }
+  }
+  return 0;
 }
 
 int card_spin_into_myth(int player, int card, event_t event){

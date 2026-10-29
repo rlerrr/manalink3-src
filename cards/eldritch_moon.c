@@ -3,83 +3,105 @@
 
 /***** Functions *****/
 
-static void modify_casting_cost_for_emerge(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white){
-// "You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's converted mana cost.
+static void modify_casting_cost_for_emerge(int player, int card, event_t event, int cless,
+                                           int black, int blue, int green, int red, int white)
+{
+  // "You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that
+  // creature's converted mana cost.
 
-	if( event == EVENT_MODIFY_COST ){
-		int null_cost = 0;
-		test_definition_t test;
-		new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice.");
-		if( new_can_sacrifice_as_cost(player, card, &test) ){
-			int c1 = get_updated_casting_cost(player, card, -1, event, cless);
-			int i;
-			for(i=0; i<active_cards_count[player]; i++){
-				if( in_play(player, i) && is_what(player, i, TYPE_CREATURE) ){
-					int c2 = MIN(c1-get_cmc(player, i), 0);
-					if( has_mana_multi(player, c2, black, blue, green, red, white) ){
-						null_cost = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( null_cost ){
-			null_casting_cost(player, card);
-		}
-		get_card_instance(player, card)->info_slot = null_cost;
-	}
+  if (event == EVENT_MODIFY_COST)
+  {
+    int null_cost = 0;
+    test_definition_t test;
+    new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice.");
+    if (new_can_sacrifice_as_cost(player, card, &test))
+    {
+      int c1 = get_updated_casting_cost(player, card, -1, event, cless);
+      int i;
+      for (i = 0; i < active_cards_count[player]; i++)
+      {
+        if (in_play(player, i) && is_what(player, i, TYPE_CREATURE))
+        {
+          int c2 = MAX(c1 - get_cmc(player, i), 0);
+          if (has_mana_multi(player, c2, black, blue, green, red, white))
+          {
+            null_cost = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (null_cost)
+    {
+      null_casting_cost(player, card);
+    }
+    get_card_instance(player, card)->info_slot = null_cost;
+  }
 }
 
-static int pay_cost_for_emerge(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white){
-	int choice = DIALOG(player, card, event, DLG_NO_STORAGE, DLG_RANDOM, DLG_NO_CANCEL,
-						"Pay Emerge cost", 1, 10,
-						"Play normally", 1, 5);
-	if( ! choice ){
-		return 0;
-	}
+static int pay_cost_for_emerge(int player, int card, event_t event, int cless, int black, int blue,
+                               int green, int red, int white)
+{
+  int choice = DIALOG(player, card, event, DLG_NO_STORAGE, DLG_RANDOM, DLG_NO_CANCEL,
+                      "Pay Emerge cost", 1, 10, "Play normally", 1, 5);
+  if (!choice)
+  {
+    return 0;
+  }
 
-	if( choice == 1 ){
-		test_definition_t test;
-		new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice.");
-		int sac = new_sacrifice(player, card, player, SAC_JUST_MARK|SAC_AS_COST|SAC_RETURN_CHOICE, &test);
-		if (sac){
-			int c1 = get_updated_casting_cost(player, card, -1, event, cless);
-			int c2 = MIN(c1-get_cmc(BYTE2(sac), BYTE3(sac)), 0);
-			charge_mana_multi(player, c2, black, blue, green, red, white);
-			if( spell_fizzled != 1 ){
-				int foul_emissary_flag = get_id(BYTE2(sac), BYTE3(sac)) == CARD_ID_FOUL_EMISSARY ? 1 : 0;
-				kill_card(BYTE2(sac), BYTE3(sac), KILL_SACRIFICE);
-				if( foul_emissary_flag ){
-					generate_token_by_id(player, card, CARD_ID_ELDRAZI_HORROR);
-				}
-				return 1;
-			}
-			else{
-				state_untargettable(BYTE2(sac), BYTE3(sac), 0);
-				return 0;
-			}
-		}
-		else{
-			return 0;
-		}
-	}
+  if (choice == 1)
+  {
+    test_definition_t test;
+    new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice.");
+    int sac =
+        new_sacrifice(player, card, player, SAC_JUST_MARK | SAC_AS_COST | SAC_RETURN_CHOICE, &test);
+    if (sac)
+    {
+      int c1 = get_updated_casting_cost(player, card, -1, event, cless);
+      int c2 = MAX(c1 - get_cmc(BYTE2(sac), BYTE3(sac)), 0);
+      charge_mana_multi(player, c2, black, blue, green, red, white);
+      if (spell_fizzled != 1)
+      {
+        int foul_emissary_flag = get_id(BYTE2(sac), BYTE3(sac)) == CARD_ID_FOUL_EMISSARY ? 1 : 0;
+        kill_card(BYTE2(sac), BYTE3(sac), KILL_SACRIFICE);
+        if (foul_emissary_flag)
+        {
+          generate_token_by_id(player, card, CARD_ID_ELDRAZI_HORROR);
+        }
+        return 1;
+      }
+      else
+      {
+        state_untargettable(BYTE2(sac), BYTE3(sac), 0);
+        return 0;
+      }
+    }
+    else
+    {
+      return 0;
+    }
+  }
 
-	if( choice == 2 ){
-		charge_mana_from_id(player, -1, event, get_id(player, card));
-		if( spell_fizzled != 1 ){
-			return 1;
-		}
-		else{
-			return 0;
-		}
-	}
+  if (choice == 2)
+  {
+    charge_mana_from_id(player, -1, event, get_id(player, card));
+    if (spell_fizzled != 1)
+    {
+      return 1;
+    }
+    else
+    {
+      return 0;
+    }
+  }
 
-	if( ! choice ){
-		spell_fizzled = 1;
-		return 0;
-	}
+  if (!choice)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
 
-	return 0;
+  return 0;
 }
 
 /***** Cards *****/
@@ -88,28 +110,33 @@ static int pay_cost_for_emerge(int player, int card, event_t event, int cless, i
 
 int card_abundant_maw(int player, int card, event_t event)
 {
-/* Abundant Maw	|8	0x200eed1
- * Creature - Eldrazi Leech 6/4
- * Emerge |6|B
- * When you cast ~, target opponent loses 3 life and you gain 3 life. */
+  /* Abundant Maw	|8	0x200eed1
+   * Creature - Eldrazi Leech 6/4
+   * Emerge |6|B
+   * When you cast ~, target opponent loses 3 life and you gain 3 life. */
 
-	modify_casting_cost_for_emerge(player, card, event, MANACOST_XB(6,1));
+  modify_casting_cost_for_emerge(player, card, event, MANACOST_XB(6, 1));
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( ! is_token(player, card) ){
-			if( ! played_for_free(player, card) && get_card_instance(player, card)->info_slot == 1 ){
-				if( ! pay_cost_for_emerge(player, card, event, MANACOST_XB(6,1)) ){
-					spell_fizzled = 1;
-				}
-			}
-			if( spell_fizzled != 1 ){
-				lose_life(1-player, 3);
-				gain_life(player, 3);
-			}
-		}
-	}
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    if (!is_token(player, card))
+    {
+      if (!played_for_free(player, card) && get_card_instance(player, card)->info_slot == 1)
+      {
+        if (!pay_cost_for_emerge(player, card, event, MANACOST_XB(6, 1)))
+        {
+          spell_fizzled = 1;
+        }
+      }
+      if (spell_fizzled != 1 && opponent_is_valid_target(player, card))
+      {
+        lose_life(1 - player, 3);
+        gain_life(player, 3);
+      }
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_decimator_of_the_provinces(int player, int card, event_t event)
@@ -198,39 +225,45 @@ int card_distended_mindbender(int player, int card, event_t event)
 
 int card_drownyard_behemoth(int player, int card, event_t event)
 {
-/* Drownyard Behemoth	|9	0x200eee0
- * Creature - Eldrazi Crab 5/7
- * Flash
- * Emerge |7|U
- * ~ has hexproof as long as it entered the battlefield this turn. */
+  /* Drownyard Behemoth	|9	0x200eee0
+   * Creature - Eldrazi Crab 5/7
+   * Flash
+   * Emerge |7|U
+   * ~ has hexproof as long as it entered the battlefield this turn. */
 
-	modify_casting_cost_for_emerge(player, card, event, MANACOST_XU(7,1));
+  modify_casting_cost_for_emerge(player, card, event, MANACOST_XU(7, 1));
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( ! is_token(player, card) ){
-			if( ! played_for_free(player, card) && get_card_instance(player, card)->info_slot == 1 ){
-				if( ! pay_cost_for_emerge(player, card, event, MANACOST_XU(7,1)) ){
-					spell_fizzled = 1;
-				}
-			}
-		}
-	}
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    if (!is_token(player, card))
+    {
+      if (!played_for_free(player, card) && get_card_instance(player, card)->info_slot == 1)
+      {
+        if (!pay_cost_for_emerge(player, card, event, MANACOST_XU(7, 1)))
+        {
+          spell_fizzled = 1;
+        }
+      }
+    }
+  }
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		get_card_instance(player, card)->info_slot |= 2;
-	}
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    get_card_instance(player, card)->info_slot |= 2;
+  }
 
-	if( event == EVENT_ABILITIES && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) &&
-		(get_card_instance(player, card)->info_slot & 2) )
-	{
-		hexproof(player, card, event);
-	}
+  if (event == EVENT_ABILITIES && in_play(player, card) &&
+      !is_humiliated(player, card, AL_STATIC) && (get_card_instance(player, card)->info_slot & 2))
+  {
+    hexproof(player, card, event);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		get_card_instance(player, card)->info_slot = 0;
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    get_card_instance(player, card)->info_slot = 0;
+  }
 
-	return 0;
+  return flash(player, card, event);
 }
 
 int card_elder_deep_fiend(int player, int card, event_t event)
@@ -303,34 +336,39 @@ int card_eternal_scourge(int player, int card, event_t event)
 
 int card_it_of_the_horrid_swarm(int player, int card, event_t event)
 {
-/* It of the Horrid Swarm	|8	0x200eee
- * Creature - Eldrazi Insect 4/4
- * Emerge |6|G
- * When you cast ~, put two 1/1 |Sgreen Insect creature tokens onto the battlefield. */
-	modify_casting_cost_for_emerge(player, card, event, MANACOST_XG(6,1));
+  /* It of the Horrid Swarm	|8	0x200eee
+   * Creature - Eldrazi Insect 4/4
+   * Emerge |6|G
+   * When you cast ~, put two 1/1 |Sgreen Insect creature tokens onto the battlefield. */
+  modify_casting_cost_for_emerge(player, card, event, MANACOST_XG(6, 1));
 
-	haste(player, card, event);
+  haste(player, card, event);
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( ! is_token(player, card) ){
-			if( ! played_for_free(player, card) && get_card_instance(player, card)->info_slot == 1 ){
-				if( ! pay_cost_for_emerge(player, card, event, MANACOST_XG(6,1)) ){
-					spell_fizzled = 1;
-				}
-			}
-			if( spell_fizzled != 1 ){
-				token_generation_t token;
-				default_token_definition(player, card, CARD_ID_INSECT, &token);
-				token.pow = token.tou = 1;
-				token.key_plus = KEYWORD_FLYING;
-				token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
-				token.qty = 2;
-				generate_token(&token);
-			}
-		}
-	}
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    if (!is_token(player, card))
+    {
+      if (!played_for_free(player, card) && get_card_instance(player, card)->info_slot == 1)
+      {
+        if (!pay_cost_for_emerge(player, card, event, MANACOST_XG(6, 1)))
+        {
+          spell_fizzled = 1;
+        }
+      }
+      if (spell_fizzled != 1)
+      {
+        token_generation_t token;
+        default_token_definition(player, card, CARD_ID_INSECT, &token);
+        token.pow = token.tou = 1;
+        token.key_plus = KEYWORD_FLYING;
+        token.color_forced = COLOR_TEST_GREEN;
+        token.qty = 2;
+        generate_token(&token);
+      }
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_lashweed_lurker(int player, int card, event_t event)
@@ -2232,29 +2270,31 @@ int card_niblis_of_frost(int player, int card, event_t event)
    * Creature - Spirit 3/3
    * Flying
    * Prowess
-   * Whenever you cast an instant or sorcery spell, tap target creature an opponent controls. That creature doesn't untap during its controller's next untap step. */
+   * Whenever you cast an instant or sorcery spell, tap target creature an opponent controls. That
+   * creature doesn't untap during its controller's next untap step. */
 
-  if (prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	{
-	  alternate_legacy_text(1, player, pump_until_eot_merge_previous(player, card, player, card, 1, 1));
-	  if (is_what(trigger_cause_controller, trigger_cause, TYPE_SPELL))
-		{
-		  target_definition_t td;
-		  default_target_definition(player, card, &td, TYPE_CREATURE);
-		  td.allowed_controller = 1-player;
-		  td.allow_cancel = 0;
+  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_SPA)
+  {
+    pump_until_eot_merge_previous_alt(player, card, player, card, 1, 1, 1);
+    if (is_what(trigger_cause_controller, trigger_cause, TYPE_SPELL))
+    {
+      target_definition_t td;
+      default_target_definition(player, card, &td, TYPE_CREATURE);
+      td.allowed_controller = 1 - player;
+      td.allow_cancel = 0;
 
-		  card_instance_t* inst = get_card_instance(player, card);
-		  inst->number_of_targets = 0;
-		  if (can_target(&td) && pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS"))
-			{
-			  tap_card(inst->targets[0].player, inst->targets[0].card);
-			  alternate_legacy_text(2, player,
-									does_not_untap_effect(player, card,
-														  inst->targets[0].player, inst->targets[0].card, 0, 1));
-			}
-		}
-	}
+      card_instance_t *inst = get_card_instance(player, card);
+      inst->number_of_targets = 0;
+      if (can_target(&td) && pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS"))
+      {
+        tap_card(inst->targets[0].player, inst->targets[0].card);
+        alternate_legacy_text(2, player,
+                              does_not_untap_effect(player, card, inst->targets[0].player,
+                                                    inst->targets[0].card, 0, 1));
+      }
+    }
+  }
 
   return 0;
 }
@@ -4266,20 +4306,27 @@ int card_nahiris_wrath(int player, int card, event_t event){
 
 static int fx_otherworldly_outburst(int player, int card, event_t event)
 {
-  card_instance_t* inst = get_card_instance(player, card);
-
-  if (event == EVENT_POWER && affect_me(inst->damage_target_player, inst->damage_target_card))
-	event_result += 1;
-
-  if (graveyard_from_play(inst->damage_target_player, inst->damage_target_card, event))
-	{
-	  generate_token_by_id(player, card, CARD_ID_ELDRAZI_HORROR);
-	  kill_card(player, card, KILL_EXILE);
-	}
-
+  if (get_card_instance(player, card)->damage_target_player >= 0)
+  {
+    card_instance_t *inst = get_card_instance(player, card);
+    int p = inst->damage_target_player;
+    int c = inst->damage_target_card;
+    if (event == EVENT_POWER && affect_me(p, c))
+      ++event_result;
+    if (event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c) &&
+        !check_for_death_trigger_removal(p, c) && is_this_dying(p, c))
+    {
+      inst->damage_target_player = inst->damage_target_card = -1;
+      inst->targets[11].player = 66;
+    }
+  }
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    generate_token_by_id(player, card, CARD_ID_ELDRAZI_HORROR);
+    kill_card(player, card, KILL_EXILE);
+  }
   if (event == EVENT_CLEANUP)
-	kill_card(player, card, KILL_EXILE);
-
+    kill_card(player, card, KILL_EXILE);
   return 0;
 }
 int card_otherworldly_outburst(int player, int card, event_t event)
@@ -5447,66 +5494,74 @@ int card_ulvenwald_captive(int player, int card, event_t event)
  * Creature - Eldrazi Werewolf 4/6
  * |T: Add |C|C to your mana pool. */
 
-static int ulvenwald_observer_effect(int player, int card, event_t event){
+static int ulvenwald_observer_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_ULVENWALD_OBSERVER ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_ULVENWALD_OBSERVER)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_CREATURE);
-				this_test.toughness = 3;
-				this_test.toughness_flag = F5_TOUGHNESS_GREATER_THAN_VALUE;
-				count_for_gfp_ability(player, card, event, player, 0, &this_test);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+          }
+        }
+        test_definition_t this_test;
+        default_test_definition(&this_test, TYPE_CREATURE);
+        this_test.toughness = 3;
+        this_test.toughness_flag = F5_TOUGHNESS_GREATER_THAN_VALUE;
+        count_for_gfp_ability(player, card, event, player, 0, &this_test);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			draw_cards(player, amount);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    draw_cards(player, amount);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_ulvenwald_observer(int player, int card, event_t event){
@@ -5825,11 +5880,12 @@ int card_herons_grace_champion(int player, int card, event_t event)
 
 static int fx_creatures_power_le_2_cant_block(int player, int card, event_t event)
 {
-  if (event == EVENT_ABILITIES && get_power(affected_card_controller, affected_card) < 3)
-	cannot_block(affected_card_controller, affected_card, event);
+  if (event == EVENT_ABILITIES && is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
+      get_power(affected_card_controller, affected_card) < 3)
+    cannot_block(affected_card_controller, affected_card, event);
 
   if (event == EVENT_CLEANUP)
-	kill_card(player, card, KILL_EXILE);
+    kill_card(player, card, KILL_EXILE);
 
   return 0;
 }
@@ -5953,22 +6009,29 @@ int card_spell_queller(int player, int card, event_t event)
   return iVar2;
 }
 
-static int tamiyo_field_researcher_effect(int player, int card, event_t event){
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
+static int tamiyo_field_researcher_effect(int player, int card, event_t event)
+{
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
 
-		if( damage_dealt_by_me_arbitrary(p, c, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_REPORT_DAMAGE_DEALT, player, card) ){
-			draw_cards(player, 1);
-		}
-	}
+    if (damage_dealt_by_me_arbitrary(p, c, event,
+                                     DDBM_MAY_DAMAGE_PLANESWALKER | DDBM_MUST_BE_COMBAT_DAMAGE |
+                                         DDBM_REPORT_DAMAGE_DEALT,
+                                     player, card))
+    {
+      draw_cards(player, 1);
+    }
+  }
 
-	if( current_turn != player && event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (current_turn != player && event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_tamiyo_field_researcher(int player, int card, event_t event){
@@ -6448,32 +6511,44 @@ int card_geier_reach_sanitarium(int player, int card, event_t event)
   return mana_producer(player, card, event);
 }
 
-static int hanweir_battlements_meld_ability(int player, int card, int mode){
-// Mode = 1 --> Check
-// Mode = 2 --> Meld
-	int done = 0;
-	int marked[2] = {-1, -1};
-	int i;
-	for(i=0; i<active_cards_count[player] && done != 3; i++){
-		if( in_play(player, i) && get_owner(player, i) == player ){
-			if( get_card_name(player, i) == CARD_ID_HANWEIR_BATTLEMENTS ){
-				done |= 1;
-				marked[0] = i;
-			}
-			if( get_card_name(player, i) == CARD_ID_HANWEIR_GARRISON ){
-				done |= 2;
-				marked[1] = i;
-			}
-		}
-	}
-	if( done == 3 && mode == 2){
-		for(i=0; i<2; i++){
-			kill_card(player, marked[i], KILL_EXILE);
-		}
-		int card_added = add_card_to_hand(player, get_internal_card_id_from_csv_id(CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP));
-		put_into_play(player, card_added);
-	}
-	return done == 3 ? 1 : 0;
+static int hanweir_battlements_meld_ability(int player, int card, int mode)
+{
+  // Mode = 1 --> Check
+  // Mode = 2 --> Meld
+  if (is_token(player, card))
+    return 0;
+  int done = 0;
+  int marked[2] = {-1, -1};
+  int i;
+  for (i = 0; i < active_cards_count[player] && done != 3; i++)
+  {
+    if (in_play(player, i) && get_owner(player, i) == player && !is_token(player, i))
+    {
+      if (get_card_name(player, i) == CARD_ID_HANWEIR_BATTLEMENTS)
+      {
+        done |= 1;
+        marked[0] = i;
+      }
+      if (get_card_name(player, i) == CARD_ID_HANWEIR_GARRISON)
+      {
+        done |= 2;
+        marked[1] = i;
+      }
+    }
+  }
+  if (done == 3 && mode == 2)
+  {
+    for (i = 0; i < 2; i++)
+    {
+      kill_card(player, marked[i], KILL_EXILE);
+    }
+    remove_card_from_rfg(player, CARD_ID_HANWEIR_BATTLEMENTS);
+    remove_card_from_rfg(player, CARD_ID_HANWEIR_GARRISON);
+    int card_added = add_card_to_hand(
+        player, get_internal_card_id_from_csv_id(CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP));
+    put_into_play(player, card_added);
+  }
+  return done == 3 ? 1 : 0;
 }
 
 int card_hanweir_battlements(int player, int card, event_t event){

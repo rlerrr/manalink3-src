@@ -130,12 +130,13 @@ Artifact Creature - Construct 0/3
 									&td, "Select another target creature you control.");
 }
 
-static const char* is_creature_or_vehicle(int who_chooses, int player, int card){
+static const char *is_creature_or_vehicle(int who_chooses, int player, int card)
+{
 
-	if( is_what(player, card, TYPE_CREATURE) || has_subtype(player, card, SUBTYPE_VEHICLE) )
-		return NULL;
+  if (is_what(player, card, TYPE_CREATURE) || has_subtype(player, card, SUBTYPE_VEHICLE))
+    return NULL;
 
-	return "must be a creature or a Vehicle.";
+  return "must be a creature or vehicle.";
 }
 
 int card_aerial_modification(int player, int card, event_t event)
@@ -242,20 +243,25 @@ Vehicles you control have flying.
 	return boost_creature_type(player, card, event, SUBTYPE_VEHICLE, 0, 0, KEYWORD_FLYING, BCT_CONTROLLER_ONLY);
 }
 
-int card_aether_chaser(int player, int card, event_t event){
-/*
-Aether Chaser	|1|R
-Creature - Human Artificer 2/1
-First strike
-When ~ enters the battlefield, you get |E|E (two energy counters).
-Whenever ~ attacks, you may pay |E|E. If you do, create a 1/1 colorless Servo artifact creature token.
-*/
-	// Used externally
-	etb_energy(player, card, event, 2);
-	if( attack_trigger_with_energy(player, card, event, 2) )
-	    remove_energy(player, 2);
-		make_servo(player, card, 1);
-	return 0;
+int card_aether_chaser(int player, int card, event_t event)
+{
+  /*
+  Aether Chaser	|1|R
+  Creature - Human Artificer 2/1
+  First strike
+  When ~ enters the battlefield, you get |E|E (two energy counters).
+  Whenever ~ attacks, you may pay |E|E. If you do, create a 1/1 colorless Servo artifact creature
+  token.
+  */
+  // Used externally
+  etb_energy(player, card, event, 2);
+  attack_trigger_with_energy(player, card, event, 2);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    remove_energy(player, 2);
+    make_servo(player, card, 1);
+  }
+  return 0;
 }
 
 /*
@@ -385,19 +391,23 @@ Crew 1 (Tap any number of creatures you control with total power 1 or more: This
 }
 
 
-int card_aetherstream_leopard(int player, int card, event_t event){
-/*
-Aetherstream Leopard	|2|G
-Creature - Cat 2/3
-Trample
-When ~ enters the battlefield, you get |E (an energy counter).
-Whenever ~ attacks, you may pay |E. If you do, it gets +2/+0 until end of turn.
-*/
-	etb_energy(player, card, event, 1);
-	if( attack_trigger_with_energy(player, card, event, 1) )
-	    remove_energy(player, 1);
-		pump_until_eot(player, card, player, card, 2, 0);
-	return 0;
+int card_aetherstream_leopard(int player, int card, event_t event)
+{
+  /*
+  Aetherstream Leopard	|2|G
+  Creature - Cat 2/3
+  Trample
+  When ~ enters the battlefield, you get |E (an energy counter).
+  Whenever ~ attacks, you may pay |E. If you do, it gets +2/+0 until end of turn.
+  */
+  etb_energy(player, card, event, 1);
+  attack_trigger_with_energy(player, card, event, 1);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    remove_energy(player, 1);
+    pump_until_eot(player, card, player, card, 2, 0);
+  }
+  return 0;
 }
 
 int card_aethertide_whale(int player, int card, event_t event){

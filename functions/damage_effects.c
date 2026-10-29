@@ -1237,58 +1237,76 @@ int damage_is_to_planeswalker(card_instance_t* damage)
 		  : is_planeswalker(damage->damage_target_player, damage->damage_target_card));
 }
 
-static int if_attached_creature_dies_do_something(int player, int card, event_t event){
+static int if_attached_creature_dies_do_something(int player, int card, event_t event)
+{
 
-	card_instance_t *instance = get_card_instance(player, card);
-	int p = instance->damage_target_player;
-	int c = instance->damage_target_card;
+  card_instance_t *instance = get_card_instance(player, card);
+  int p = instance->damage_target_player;
+  int c = instance->damage_target_card;
 
-	int mode = instance->targets[1].card;
-	// modes
-	// 1<<0 --> Controller of source gains life equal to attached creature toughness [Abattoir Ghoul]
-	// 1<<1 --> Controller of source may draw a card [Rot Wolf]
+  int mode = instance->targets[1].card;
+  // modes
+  // 1<<0 --> Controller of source gains life equal to attached creature toughness [Abattoir Ghoul]
+  // 1<<1 --> Controller of source may draw a card [Rot Wolf]
 
-	if( p > -1 ){
-		if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-			if( affect_me(p, c) && in_play(p, c) && get_card_instance(p, c)->kill_code > 0 &&
-				get_card_instance(p, c)->kill_code < KILL_EXILE &&
-				! check_special_flags2(p, c, SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE)
-			  ){
-				if( mode && (mode & 1) ){
-					instance->targets[1].player = get_toughness(p, c);
-				}
-				instance->targets[11].player = 1; //Otherwise "resolve_gfp_ability" won't trigger
-				instance->damage_target_player = instance->damage_target_card = -1;
-			}
-		}
-	}
+  if (p > -1)
+  {
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    {
+      if (affect_me(p, c) && in_play(p, c) && get_card_instance(p, c)->kill_code > 0 &&
+          get_card_instance(p, c)->kill_code < KILL_EXILE &&
+          !check_special_flags2(p, c, SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE) &&
+          !check_for_death_trigger_removal(p, c))
+      {
+        if (mode && (mode & 1))
+        {
+          int toughness = get_toughness(p, c);
+          instance->targets[1].player = (card_counts[player][5] + 1) * toughness;
+        }
+        instance->targets[11].player = 1; // Otherwise "resolve_gfp_ability" won't trigger
+        instance->damage_target_player = instance->damage_target_card = -1;
+      }
+    }
+  }
 
-	//This check is mandatory or the legacy card will be removed before EVENT_GRAVEYARD_ABILITY if source is killed in combat
-	if( instance->targets[0].player > -1 && current_phase != PHASE_NORMAL_COMBAT_DAMAGE &&
-		current_phase != PHASE_FIRST_STRIKE_DAMAGE
-	  ){
-		if( other_leaves_play(player, card, instance->targets[0].player, instance->targets[0].card, event, 0, 0) ){
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  // This check is mandatory or the legacy card will be removed before EVENT_GRAVEYARD_ABILITY if
+  // source is killed in combat
+  if (instance->targets[0].player > -1 && current_phase != PHASE_NORMAL_COMBAT_DAMAGE &&
+      current_phase != PHASE_FIRST_STRIKE_DAMAGE)
+  {
+    other_leaves_play(player, card, instance->targets[0].player, instance->targets[0].card, event,
+                      0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		if( mode && (mode & 1) && instance->targets[1].player > 0 ){
-			gain_life(instance->targets[0].player, instance->targets[1].player);
-		}
-		if( mode && (mode & 2) ){
-			if( do_dialog(instance->targets[0].player, player, card, -1, -1, " Draw a card\n Pass", 0) == 0 ){
-				draw_cards(instance->targets[0].player, 1);
-			}
-		}
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    if (mode && (mode & 1) && instance->targets[1].player > 0)
+    {
+      gain_life(instance->targets[0].player, instance->targets[1].player);
+    }
+    if (mode && (mode & 2))
+    {
+      int amount = card_counts[player][5] + 1;
+      do
+      {
+        if (do_dialog(instance->targets[0].player, player, card, -1, -1, " Draw a card\n Pass",
+                      0) == 0)
+          draw_cards(instance->targets[0].player, 1);
+      } while (--amount != 0);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( current_phase == PHASE_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (current_phase == PHASE_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 void if_a_creature_damaged_by_me_dies_do_something(int player, int card, event_t event, int mode){

@@ -29,29 +29,34 @@ static int vis_karoo(int player, int card, event_t event, color_t color, int sub
 {
   /* Land
    * ~ enters the battlefield tapped.
-   * When ~ enters the battlefield, sacrifice it unless you return an untapped [subtype] you control to its owner's hand.
-   * |T: Add |1|C to your mana pool. */
+   * When ~ enters the battlefield, sacrifice it unless you return an untapped [subtype] you control
+   * to its owner's hand. |T: Add |1|C to your mana pool. */
 
   comes_into_play_tapped(player, card, event);
 
-  if (comes_into_play(player, card, event))
-	{
-	  subtype = get_hacked_subtype(player, card, subtype);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    subtype = get_hacked_subtype(player, card, subtype);
 
-	  target_definition_t td;
-	  base_target_definition(player, card, &td, TYPE_LAND);
-	  td.allowed_controller = player;
-	  td.preferred_controller = player;
-	  td.illegal_state = TARGET_STATE_TAPPED;
-	  td.required_subtype = subtype;
+    target_definition_t td;
+    base_target_definition(player, card, &td, TYPE_LAND);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    td.illegal_state = TARGET_STATE_TAPPED;
+    td.required_subtype = subtype;
 
-	  card_instance_t* instance = get_card_instance(player, card);
-	  instance->number_of_targets = 0;
-	  if (can_target(&td) && select_target(player, card, &td, get_hacked_land_text(player, card, "Select an untapped %s you control.", subtype), NULL))
-		bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-	  else
-		kill_card(player, card, KILL_SACRIFICE);
-	}
+    card_instance_t *instance = get_card_instance(player, card);
+    instance->number_of_targets = 0;
+    if (can_target(&td) &&
+        select_target(
+            player, card, &td,
+            get_hacked_land_text(player, card, "Select an untapped %s you control.", subtype),
+            NULL))
+      bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+    else
+      kill_card(player, card, KILL_SACRIFICE);
+  }
 
   return two_mana_land(player, card, event, COLOR_COLORLESS, color);
 }
@@ -1027,62 +1032,69 @@ Flanking (Whenever a creature without flanking blocks this creature, the blockin
 	return 0;
 }
 
-static int femeref_enchantress_effect(int player, int card, event_t event){
+static int femeref_enchantress_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_FEMEREF_ENCHANTRESS ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_FEMEREF_ENCHANTRESS)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				count_for_gfp_ability(player, card, event, ANYBODY, TYPE_ENCHANTMENT, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE1(instance->targets[11].player) = 1;
+          }
+        }
+        count_for_gfp_ability(player, card, event, ANYBODY, TYPE_ENCHANTMENT, NULL);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			draw_cards(player, amount);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    draw_cards(player, BYTE0(result));
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_femeref_enchantress(int player, int card, event_t event){

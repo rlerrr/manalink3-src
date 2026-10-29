@@ -48,10 +48,9 @@ static int provoke_impl(int src_player, int src_card, int player, int card, even
 
 static int provoke(int player, int card, event_t event)
 {
-  // When this attacks, you may have target creature defending player controls untap and block it if able.
-  if (declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), player, card))
-	provoke_impl(player, card, player, card, event);
-
+  dat_ability(player, card, event, RESOLVE_TRIGGER_AI(player), 0);
+  if (event == EVENT_DAT_ABILITY && !is_humiliated(player, card, AL_TRIG))
+    provoke_impl(player, card, player, card, event);
   return 0;
 }
 
@@ -619,21 +618,33 @@ When ~ is turned face up, creatures you control get +0/+2 until end of turn. */
 	return morph(player, card, event, MANACOST_W(2));
 }
 
-int card_deftblade_elite(int player, int card, event_t event){
-/* CARD_ID_DEFTBLADE_ELITE	6365
-Deftblade Elite	|W
-Creature - Human Soldier 1/1
-Provoke (Whenever this creature attacks, you may have target creature defending player controls untap and block it if able.)
-|1|W: Prevent all combat damage that would be dealt to and dealt by ~ this turn. */
+int card_deftblade_elite(int player, int card, event_t event)
+{
+  /* CARD_ID_DEFTBLADE_ELITE	6365
+  Deftblade Elite	|W
+  Creature - Human Soldier 1/1
+  Provoke (Whenever this creature attacks, you may have target creature defending player controls
+  untap and block it if able.) |1|W: Prevent all combat damage that would be dealt to and dealt by ~
+  this turn. */
 
-	provoke(player, card, event);
+  if (event == EVENT_CHECK_ABILITIES && affect_me(player, card) &&
+      card_deftblade_elite(player, card, EVENT_CAN_ACTIVATE))
+  {
+    if (current_turn == 1 - player)
+      check_abilities_power -= get_power(player, card);
+    check_abilities_toughness += 0x3fff;
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *instance = get_card_instance(player, card);
-		maze_of_ith_effect(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card);
-	}
+  provoke(player, card, event);
 
-	return generic_activated_ability(player, card, event, 0, MANACOST_XW(1, 1), 0, NULL, NULL);
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    maze_of_ith_effect(instance->parent_controller, instance->parent_card,
+                       instance->parent_controller, instance->parent_card);
+  }
+
+  return generic_activated_ability(player, card, event, 0, MANACOST_XW(1, 1), 0, NULL, NULL);
 }
 
 int card_dreamborn_muse(int player, int card, event_t event){
@@ -1048,27 +1059,28 @@ Whenever Hollow Specter deals combat damage to a player, you may pay {X}. If you
 
 int card_hunter_sliver(int player, int card, event_t event, int trigger_mode)
 {
-/* CARD_ID_HUNTER_SLIVER	6400
-Hunter Sliver	|1|R
-Creature - Sliver 1/1
-All Sliver creatures have provoke. (Whenever a Sliver attacks, its controller may have target creature defending player controls untap and block it if able.)*/
-
-  if (xtrigger_condition() == XTRIGGER_ATTACKING || event == EVENT_DECLARE_ATTACKERS)
-	{
-	  test_definition_t test;
-	  new_default_test_definition(&test, TYPE_CREATURE, "");
-	  test.subtype = SUBTYPE_SLIVER;
-
-	  int amt;
-	  if ((amt = declare_attackers_trigger_test(player, card, event, RESOLVE_TRIGGER_AI(player) | DAT_TRACK, 2, -1, &test)))
-		{
-		  card_instance_t* instance = get_card_instance(player, card);
-		  unsigned char* attackers = (unsigned char*)(&instance->targets[2].player);
-		  for (--amt; amt >= 0; --amt)
-			provoke_impl(player, card, current_turn, attackers[amt], event);
-		}
-	}
-
+  if (event == EVENT_DECLARE_ATTACKERS)
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    test.subtype = SUBTYPE_SLIVER;
+    store_attackers(player, card, event, DAT_TRACK, ANYBODY, -1, &test);
+  }
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    // The native handler reads info_slot here despite the default attacker-count storage.
+    int amount = instance->info_slot;
+    unsigned char *attackers = (unsigned char *)&instance->targets[2].player;
+    for (--amount; amount >= 0; --amount)
+    {
+      int p = current_turn;
+      int attacker = attackers[amount];
+      if (!is_humiliated(p, attacker, AL_TRIG))
+        provoke_impl(player, card, p, attacker, event);
+    }
+  }
   return slivercycling(player, card, event);
 }
 

@@ -111,43 +111,41 @@ static int effect_become_enchantment_haste_and_exile_at_next_eot(int player, int
 	return effect_become_enchantment(player, card, event);
 }
 
-static int archetype(int player, event_t event, keyword_t keyword, sp_keyword_t sp_keyword, player_bits_t cant_have_or_gain_bit)
+static int archetype(int player, event_t event, keyword_t keyword, sp_keyword_t sp_keyword,
+                     player_bits_t cant_have_or_gain_bit)
 {
- /* Approximation: Many "X gains flying until end of turn" effects created while the Archetype is in play will start working if the Archetype leaves play during
-  * that turn.  It's unlikely that all such will ever be fixed. */
+  /* Approximation: Many "X gains flying until end of turn" effects created while the Archetype is
+   * in play will start working if the Archetype leaves play during that turn.  It's unlikely that
+   * all such will ever be fixed. */
 
   if (event != EVENT_ABILITIES)
-	return 0;
+    return 0;
 
-  player_bits[1-player] |= cant_have_or_gain_bit;
+  player_bits[1 - player] |= cant_have_or_gain_bit;
 
   if (!is_what(affected_card_controller, affected_card, TYPE_CREATURE))
-	return 0;
+    return 0;
 
   if (affected_card_controller == player)
-	{
-	  event_result |= keyword;
+  {
+    event_result |= keyword;
 
-	  if (sp_keyword)
-		{
-		  card_instance_t* aff = get_card_instance(affected_card_controller, affected_card);
-		  if (aff->targets[16].card < 0)
-			aff->targets[16].card = 0;
-		  aff->targets[16].card |= sp_keyword;
-		}
-	}
+    if (sp_keyword)
+    {
+      card_instance_t *aff = get_card_instance(affected_card_controller, affected_card);
+      aff->ext->sp_keywords |= sp_keyword;
+    }
+  }
   else
-	{
-	  event_result &= ~keyword;
+  {
+    event_result &= ~keyword;
 
-	  if (sp_keyword)
-		{
-		  card_instance_t* aff = get_card_instance(affected_card_controller, affected_card);
-		  if (aff->targets[16].card < 0)
-			aff->targets[16].card = 0;
-		  aff->targets[16].card &= ~sp_keyword;
-		}
-	}
+    if (sp_keyword)
+    {
+      card_instance_t *aff = get_card_instance(affected_card_controller, affected_card);
+      aff->ext->sp_keywords &= ~sp_keyword;
+    }
+  }
 
   return 0;
 }
@@ -1225,22 +1223,23 @@ int card_siren_of_the_fanged_coast(int player, int card, event_t event)
    * Tribute 3
    * When ~ enters the battlefield, if tribute wasn't paid, gain control of target creature. */
 
-	tribute(player, card, event, 3);
+  tribute(player, card, event, 3);
 
-	etb_ability(player, card, event, tribute_wasnt_paid(player, card) ? RESOLVE_TRIGGER_MANDATORY : 0);
+  etb_ability(player, card, event,
+              tribute_wasnt_paid(player, card) ? RESOLVE_TRIGGER_MANDATORY : 0);
 
-	if( event == EVENT_ETB_ABILITY )
-	{
-	  target_definition_t td;
-	  default_target_definition(player, card, &td, TYPE_CREATURE);
-	  td.allow_cancel = 0;
+  if (event == EVENT_ETB_ABILITY)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.allow_cancel = 0;
 
-	  card_instance_t* instance = get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
 
-	  instance->number_of_targets = 0;
-	  if (can_target(&td) && pick_target(&td, "TARGET_CREATURE"))
-		gain_control(player, card, instance->targets[0].player, instance->targets[0].card);
-	}
+    instance->number_of_targets = 0;
+    if (can_target(&td) && pick_target(&td, "TARGET_CREATURE"))
+      gain_control_permanently(player, instance->targets[0].player, instance->targets[0].card);
+  }
 
   return 0;
 }
@@ -2948,16 +2947,29 @@ int card_scouring_sands(int player, int card, event_t event)
 
 static int effect_searing_blood(int player, int card, event_t event)
 {
-  card_instance_t* instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-  if (graveyard_from_play(instance->damage_target_player, instance->damage_target_card, event))
-	{
-	  damage_player(instance->damage_target_player, 3, instance->damage_source_player, instance->damage_source_card);
-	  kill_card(player, card, KILL_EXILE);
-	}
+  if (instance->damage_target_player >= 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
+    if (affect_me(p, c) && !check_for_death_trigger_removal(p, c) && is_this_dying(p, c))
+    {
+      instance->damage_target_player = instance->damage_target_card = -1;
+      instance->targets[11].player = 66;
+    }
+  }
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    instance = get_card_instance(player, card);
+    // The native implementation reads the detached target player here.
+    damage_player(instance->damage_target_player, 3, instance->damage_source_player,
+                  instance->damage_source_card);
+    kill_card(player, card, KILL_EXILE);
+  }
 
   if ((event == EVENT_CLEANUP || event == EVENT_SHOULD_AI_PLAY) && affect_me(player, card))
-	kill_card(player, card, KILL_EXILE);
+    kill_card(player, card, KILL_EXILE);
 
   return 0;
 }
@@ -4641,22 +4653,30 @@ int card_unquenchable_fury(int player, int card, event_t event){
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
-int touch_of_the_horned_god_legacy(int player, int card, event_t event){
-	card_instance_t *instance= get_card_instance(player, card);
-	int amt;
-	if ((amt = declare_attackers_trigger(player, card, event, DAT_TRACK, player, -1))){
-		unsigned char* attackers = (unsigned char*)(&instance->targets[2].player);
-		for (--amt; amt >= 0; --amt){
-			if (in_play(current_turn, attackers[amt]) ){
-				pump_ability_until_eot(player, card, current_turn, attackers[amt], 0, 0, 0, SP_KEYWORD_DEATHTOUCH);
-			}
-		}
-	}
+int touch_of_the_horned_god_legacy(int player, int card, event_t event)
+{
+  store_attackers(player, card, event, DAT_TRACK, player, -1, NULL);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int amt = instance->targets[1].player;
+    unsigned char *attackers = (unsigned char *)(&instance->targets[2].player);
+    for (--amt; amt >= 0; --amt)
+    {
+      if (in_play(current_turn, attackers[amt]))
+      {
+        pump_ability_until_eot(player, card, current_turn, attackers[amt], 0, 0, 0,
+                               SP_KEYWORD_DEATHTOUCH);
+      }
+    }
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
-	return 0;
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
 int card_touch_of_the_horned_god(int player, int card, event_t event){
@@ -4689,22 +4709,30 @@ int card_intervention_of_keranos(int player, int card, event_t event){
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
-int descend_of_the_prey_legacy(int player, int card, event_t event){
-	card_instance_t *instance= get_card_instance(player, card);
-	int amt;
-	if ((amt = declare_attackers_trigger(player, card, event, DAT_TRACK, player, -1))){
-		unsigned char* attackers = (unsigned char*)(&instance->targets[2].player);
-		for (--amt; amt >= 0; --amt){
-			if (in_play(current_turn, attackers[amt]) ){
-				pump_ability_until_eot(player, card, current_turn, attackers[amt], 0, 0, KEYWORD_FIRST_STRIKE, SP_KEYWORD_MUST_BE_BLOCKED);
-			}
-		}
-	}
+int descend_of_the_prey_legacy(int player, int card, event_t event)
+{
+  store_attackers(player, card, event, DAT_TRACK, player, -1, NULL);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int amt = instance->targets[1].player;
+    unsigned char *attackers = (unsigned char *)(&instance->targets[2].player);
+    for (--amt; amt >= 0; --amt)
+    {
+      if (in_play(current_turn, attackers[amt]))
+      {
+        pump_ability_until_eot(player, card, current_turn, attackers[amt], 0, 0,
+                               KEYWORD_FIRST_STRIKE, SP_KEYWORD_MUST_BE_BLOCKED);
+      }
+    }
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
-	return 0;
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
 int card_descend_of_the_prey(int player, int card, event_t event){
@@ -4715,26 +4743,33 @@ int card_descend_of_the_prey(int player, int card, event_t event){
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
-int consuming_rage_legacy(int player, int card, event_t event){
-	card_instance_t *instance= get_card_instance(player, card);
-	int amt;
-	if ((amt = declare_attackers_trigger(player, card, event, DAT_TRACK, player, -1))){
-		unsigned char* attackers = (unsigned char*)(&instance->targets[2].player);
-		for (--amt; amt >= 0; --amt){
-			if (in_play(current_turn, attackers[amt]) ){
-				pump_ability_t pump;
-				default_pump_ability_definition(player, card, &pump, 2, 0, 0, 0);
-				pump.paue_flags = PAUE_END_AT_EOT | PAUE_REMOVE_TARGET_AT_EOT;
-				pump.eot_removal_method = KILL_DESTROY;
-				pump_ability(player, card, current_turn, attackers[amt], &pump);
-			}
-		}
-	}
+int consuming_rage_legacy(int player, int card, event_t event)
+{
+  store_attackers(player, card, event, DAT_TRACK, player, -1, NULL);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int amt = instance->targets[1].player;
+    unsigned char *attackers = (unsigned char *)(&instance->targets[2].player);
+    for (--amt; amt >= 0; --amt)
+    {
+      if (in_play(current_turn, attackers[amt]))
+      {
+        pump_ability_t pump;
+        default_pump_ability_definition(player, card, &pump, 2, 0, 0, 0);
+        pump.paue_flags = PAUE_END_AT_EOT | PAUE_REMOVE_TARGET_AT_EOT;
+        pump.eot_removal_method = KILL_BURY;
+        pump_ability(player, card, current_turn, attackers[amt], &pump);
+      }
+    }
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
-	return 0;
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
 int card_consuming_rage(int player, int card, event_t event){

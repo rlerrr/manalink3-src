@@ -1698,44 +1698,57 @@ static int check_deck_for_test(int player, test_definition_t *test){
 	return 0;
 }
 
-int card_guided_passage(int player, int card, event_t event){
-/*
-Guided Passage |U|R|G
-Sorcery
-Reveal the cards in your library. An opponent chooses from among them a creature card, a land card, and a noncreature,
-nonland card. You put the chosen cards into your hand. Then shuffle your library.
-*/
-	if( event == EVENT_RESOLVE_SPELL ){
-		int tutored = 0;
-		while( tutored < 3 ){
-				test_definition_t this_test;
-				if( tutored == 0 ){
-					new_default_test_definition(&this_test, TYPE_CREATURE, "Select a Creature to add to opponent's hand.");
-					this_test.no_shuffle = 1;
-				}
-				if( tutored == 1 ){
-					new_default_test_definition(&this_test, TYPE_LAND, "Select a Land to add to opponent's hand.");
-					this_test.no_shuffle = 1;
-				}
-				if( tutored == 2 ){
-					new_default_test_definition(&this_test, TYPE_CREATURE | TYPE_LAND, "Select a noncreature, nonland card.");
-					this_test.type_flag = 1;
-					this_test.no_shuffle = 1;
-				}
-				if( check_deck_for_test(1-player, &this_test) ){
-					int selected = new_select_a_card(1-player, player, TUTOR_FROM_DECK, 1, AI_MIN_VALUE, -1, &this_test);
-					if( selected != -1 ){
-						add_card_to_hand(1-player, deck_ptr[1-player][selected]);
-						remove_card_from_deck(1-player, selected);
-					}
-				}
-				tutored++;
-		}
-		shuffle(player);
-		kill_card(player, card, KILL_DESTROY);
-	}
+int card_guided_passage(int player, int card, event_t event)
+{
+  /*
+  Guided Passage |U|R|G
+  Sorcery
+  Reveal the cards in your library. An opponent chooses from among them a creature card, a land
+  card, and a noncreature, nonland card. You put the chosen cards into your hand. Then shuffle your
+  library.
+  */
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    int tutored = 0;
+    while (tutored < 3)
+    {
+      test_definition_t this_test;
+      if (tutored == 0)
+      {
+        new_default_test_definition(&this_test, TYPE_CREATURE,
+                                    "Select a Creature to add to opponent's hand.");
+        this_test.no_shuffle = 1;
+      }
+      if (tutored == 1)
+      {
+        new_default_test_definition(&this_test, TYPE_LAND,
+                                    "Select a Land to add to opponent's hand.");
+        this_test.no_shuffle = 1;
+      }
+      if (tutored == 2)
+      {
+        new_default_test_definition(&this_test, TYPE_CREATURE | TYPE_LAND,
+                                    "Select a noncreature, nonland card.");
+        this_test.type_flag = 1;
+        this_test.no_shuffle = 1;
+      }
+      if (check_deck_for_test(player, &this_test))
+      {
+        int selected =
+            new_select_a_card(1 - player, player, TUTOR_FROM_DECK, 1, AI_MIN_VALUE, -1, &this_test);
+        if (selected != -1)
+        {
+          add_card_to_hand(player, deck_ptr[player][selected]);
+          remove_card_from_deck(player, selected);
+        }
+      }
+      tutored++;
+    }
+    shuffle(player);
+    kill_card(player, card, KILL_DESTROY);
+  }
 
-	return basic_spell(player, card, event);
+  return basic_spell(player, card, event);
 }
 
 int card_index2(int player, int card, event_t event){

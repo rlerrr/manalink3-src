@@ -1,0 +1,1000 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "legacy_edh_general",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c2f10",
+          "end": "0x22c3216",
+          "bytes_sha256": "6881b126e75b9f7d1e2aafb6895a8b312545b047907b4282a801734297564b49",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c2f10.c",
+          "raw_export_sha256": "e137428575683759006236dd86789fddc0156fb3ce1d5189a47f34f0241736e3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "babe65817e1e5a6714a13581ee69d2ac759a3d84a9095cb3b42c6b081cc58e0e",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "is_legal_general",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c3220",
+          "end": "0x22c3342",
+          "bytes_sha256": "5ab8d906374b8114d9a45053642496e25752f6a899c6ab1db9ddf355f2155b40",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c3220.c",
+          "raw_export_sha256": "0b998d8a608602a976c87dff2fe85a677389d97fe6c54b678d968c7c6beb32d6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "3c729c0a074df1515140cbb96d1c7cd2a95a3fce49152f04ec29da1a06b494bc",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "edh_special_case",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c3380",
+          "end": "0x22c3404",
+          "bytes_sha256": "8d316a5966e7767fe265219a0019f5328784a12b3317d23dab2c591b96779ede",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c3380.c",
+          "raw_export_sha256": "16a931b839734e927cda509ea7464cd07e0846ada7d6073647f3c8a0bcd7b213"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "1ee60d8bcb999340fcf8e71d8340e1901f8298cf1ab7ec31f000739aa19a2366",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "raw_put_hand_in_deck",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c3410",
+          "end": "0x22c34b0",
+          "bytes_sha256": "0df94f38b2479edcff5f3775310f9269c220da1fcbbf399c301b80695c7383f8",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c3410.c",
+          "raw_export_sha256": "19fc4846c0b80c02e7916ec6220377c64d00eb83ce78750f5baa8043c3f82eae"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "aa639addbe36f6f42fca22d7316071f4abcd7c8ad5a554a5ff5d5d89575f66be",
+      "prior_categories": [
+        "reference_review"
+      ]
+    },
+    {
+      "name": "legacy_avatar",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c3590",
+          "end": "0x22c3609",
+          "bytes_sha256": "578afea493381f2413882cba22a34640c34c6a02041d83be722d5db35fe092db",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c3590.c",
+          "raw_export_sha256": "58fd5a8f19daebb313be3b0aa4e5fee36ec4e9c1ee033aa58ba94eace881faf2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "40f04d3c540b54964441a15f0907f0b2956a6cb0843910ee23812cbf270becdb",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "can_play_commander",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c36d0",
+          "end": "0x22c3b11",
+          "bytes_sha256": "16b5436d05824da997d5920076be99c3542b53b3fef1eaa74aa14242941bb963",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c36d0.c",
+          "raw_export_sha256": "8b285bc31dc34e01d05e6c8942779805eee8b86b7714cc1401d722ff376db1d1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "1e14341be6b13e5237e51a8d328c85418bc09b46cd4343358e453c3886f8f4af",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "get_random_card_special",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c3bc0",
+          "end": "0x22c3cf2",
+          "bytes_sha256": "db30f864a76e10f8fe082be2974129b197313e1602689814620997261043a022",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c3bc0.c",
+          "raw_export_sha256": "a9743ee9f93e3416bb30707710951e839ffc898fb022a4bdad95b02dba8d0599"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "4c827c757d1485b27e4cff7337622739853113e365ac28ff2a490461a1916536",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "create_random_test_deck",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c3e20",
+          "end": "0x22c4155",
+          "bytes_sha256": "4e674946020e896a84c7ca7958c6e5f39effdc6693f93608ca69e4f6ab00ae66",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c3e20.c",
+          "raw_export_sha256": "60511b166719cbc938f70b8a4775422c8b979cea17d40738b7e05605db292782"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "fdf5795bd07f00de372829bc79e26a5f67ea9a2061332918129c461b2abf9fd9",
+      "prior_categories": [
+        "reference_review"
+      ]
+    },
+    {
+      "name": "vanguard_card",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c4160",
+          "end": "0x22c4c91",
+          "bytes_sha256": "ec8db8f4eb627af1f11a5c1b6e402dc7a0ae1d8d28b8f3f6c3b29d21b8e6e259",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c4160.c",
+          "raw_export_sha256": "e14399e8a44de1387c7d708c6976f2ae222e9d8f4fc0f72913dd2ffd5d5e7665"
+        },
+        {
+          "address": "0x22c4ca0",
+          "end": "0x22c4d49",
+          "bytes_sha256": "11bb4c68e01ecf276c955da25b753dc5654f3986ab8580cf32e40fe682df4675",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c4ca0.c",
+          "raw_export_sha256": "c7381389f33dab70fdb2310851263097f45326b3ae2a33540256d9eea43ab78f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b28b271102a94065de858e4b0f419a47567536001a82916f5ccd528c6fbedac5",
+      "prior_categories": [
+        "full_review",
+        "reference_review"
+      ]
+    },
+    {
+      "name": "effect_avatar_oni_of_wild_places",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c4d50",
+          "end": "0x22c4ea6",
+          "bytes_sha256": "04a7a6c9b7ba06093d2678c942865b91f2c3f2627c434ade808b31258ed50f88",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c4d50.c",
+          "raw_export_sha256": "6c30b376e74335c16bd827bca1e52768ddeec0263756d22e5f6bbda1031d1349"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "fcd2a6eef5932cb5494770cd09b87c1ba87684dec54cf15da75af67201115fd4",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "effect_avatar_elvish_champion",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c4eb0",
+          "end": "0x22c4eeb",
+          "bytes_sha256": "c9b8eac3bbd504a30d39e4dcd9d2770ad8d672a4ec51b209ea63be84518f21f0",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c4eb0.c",
+          "raw_export_sha256": "3be62cfe085b114e232224ddd411f3e64f2b90bec8eb90bde5a979be13aa4579"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "48a846cc76e93266847912b5b0fd0f287b2e126b5648d066fae13049515c1e40",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "effect_avatar_akroma",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c4ef0",
+          "end": "0x22c5070",
+          "bytes_sha256": "7ccba8640dee9f1d5deec83245ca1b2075b1ba278cc5b7eb2173cb62c70a4cc6",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c4ef0.c",
+          "raw_export_sha256": "44f0859867ccec81c1acd4a130bb9171fae5643c0819cb85f46fa267aba406ed"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "5255b58f45ce98979eedfdab83c60454e322605bc119017e6c1fd362bc53a7f8",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "effect_avatar_erhnam_djinn",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c5070",
+          "end": "0x22c512a",
+          "bytes_sha256": "502f5605ddeee1b86b33a147c9bedab38f31a4e89efabe59a43b7f92bb517c5b",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c5070.c",
+          "raw_export_sha256": "f96c88e64781db2b6a5dadf7cd41d85e9ee46ec22fa3af2f87b5068cfd3266b0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "8620c6c72b8e44bafff9ac2656ff450dccb886068a35d7e3bbf2c614b20a75ea",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "effect_avatar_royal_assassin",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c5130",
+          "end": "0x22c517f",
+          "bytes_sha256": "fea69316485ded088764b22d8895733e557ce16232d1ae092ee81b87ce923eb0",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c5130.c",
+          "raw_export_sha256": "9604556b51ba54990251f91277a13b540bc29a02c6f4de27d8a2b0ce4b5c7936"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "4ebf7c4fd09b149e0233f8792d3020807148951ba7242ab786478a95948f5d2c",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "effect_avatar_serra_angel",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c5180",
+          "end": "0x22c5294",
+          "bytes_sha256": "4f4a583e722d089ae3762f8031171dd259a9ccbd097255230c34930d1aa983c2",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c5180.c",
+          "raw_export_sha256": "74bc4eb5af85327d2e2edae701214780401e933503e88942c7eb15ec4f70c3f1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "c99313cbeeaed225e261aab030fa963adbafb28236aabff6697db8e7dd0fbd65",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "effect_avatar_reaper_king",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c52a0",
+          "end": "0x22c538a",
+          "bytes_sha256": "46515af21a6985f3c73f7fe082badde04eb420b9be0321f92e075b9fb4ce5015",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c52a0.c",
+          "raw_export_sha256": "cb18a8c89d2499e4f5d6e9622b9f89d1ac47cbb1b898b7dd49c29f646b527cce"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "a5aada30634e98830ce01b2837d8d56baf6cfb71b4cd5c501fc03f068ffe3326",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "effect_avatar_prodigal_sorcerer",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c5390",
+          "end": "0x22c5426",
+          "bytes_sha256": "2ca76c3e03663820abaadf442747edf5f8aefd3c96274e0fb851fa5ae33ffaaf",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c5390.c",
+          "raw_export_sha256": "e5134d35fcf99c0f0b99c2d2ac58fadd416021b7bb59de8629698811ec431648"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "8f24b333c942638dcdf869082c29b0379886bdcab5c6744ba27ead176b15b162",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "effect_avatar_chaos_orb_lite",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c5430",
+          "end": "0x22c546b",
+          "bytes_sha256": "d39d36a64b09016f91a2dd21f5ec2da0ba19bb572eacb7257fdd07fd55c8e7e9",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c5430.c",
+          "raw_export_sha256": "a2b1653128ecace03c2b560f7956341ac336600212314bcc50f516615d9fce6c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "3ce6ce0c058f69584eb12af59f88f080f4acbf9e086a21fadad2c3432b52f3cf",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "effect_avatar_goblin_warchief",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c5850",
+          "end": "0x22c589f",
+          "bytes_sha256": "b74766d9ce5f0333b92d0dc683d0b94f861790fd05a6bedb4575b4477598acd9",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c5850.c",
+          "raw_export_sha256": "6d76fb6a3e47dfce77c39769db8f3cf3e02714b3463794ffaedb1413dbd1ecb1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "7ecedd4f5233677665b2aa656d9e2a1ebeb14ac1c62a208e29cf63ac2040a610",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "get_color_from_remainder_text",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c62e0",
+          "end": "0x22c63bd",
+          "bytes_sha256": "cf76ed1ce2c07d4d6af9b511bad162fe4a03ca0029013b099e7295bc2cb24186",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c62e0.c",
+          "raw_export_sha256": "5560c7e9b1caf44fcaa34c3b6aea66201251b71e467b96ab12f637939e3a1139"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "0be4f2731fef304812f1d53ee6ae9c9a3ad8d8d2f30076caab9b1392eadba0ca",
+      "prior_categories": [
+        "reference_review"
+      ]
+    },
+    {
+      "name": "commander_enters_the_battlefield",
+      "source": "cards/vanguard.c",
+      "native_ranges": [
+        {
+          "address": "0x22c6430",
+          "end": "0x22c64e2",
+          "bytes_sha256": "902b576be783d72bbc56fa524a3d99aef6b0a2b27fde6d0a296955d6bbe91100",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/22c6430.c",
+          "raw_export_sha256": "c2fb565d6311dd64b3a8946eee8f34cc192dfef5c5f261d4c3cc24b51e51136d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "0600a27fecf0dbcff52be767bab524a2746903e9f08b897d4c4e0dee51e58c35",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "haunt_legacy",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x252a450",
+          "end": "0x252a61f",
+          "bytes_sha256": "caa9e83f9fba04816113238bbbd2ad241aeb18f1b8af51f0909f67dfa80b07f3",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/252a450.c",
+          "raw_export_sha256": "3fcc15139fc796e6602ce6c6610028d4714cc9e2208f3db7fd9e830da4546b17"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "206415beff10477035c77b1cd799c5c78090f18bec16429064c04a7d029518d7",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "absolver_thrull_legacy",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x252a620",
+          "end": "0x252a6db",
+          "bytes_sha256": "c0eec0bacce353b5e17576db2c173b4fb092725323b492f8ce07e79ec81fd132",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/252a620.c",
+          "raw_export_sha256": "80441dbe19ef1b3776e49d52b9a53169031b540795f5cb9e0231b829f94e94b4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "114003d45dd2d9f0418daa00c86135ee7d8c20831f9df0757d6ba4d73844bc91",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "belfry_spirit_legacy",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x252a800",
+          "end": "0x252a854",
+          "bytes_sha256": "94f21a56673e9c84bde17bebf4ab230e9a05a31272e6a046ee9276d263089ec1",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/252a800.c",
+          "raw_export_sha256": "efe02750ff732d75d78119110583cb828dee0ae32ceace5b70257e02c047e05d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "a03984f10e2faa632f00627f84c98e51a192a404a89887b0c63e0d8bfb9beee9",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "blind_hunter_legacy",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x252a860",
+          "end": "0x252a940",
+          "bytes_sha256": "3b21708bae15f3b1f10e1e0e82523a84aa5a91c7e67cbd9756cd2346fc64b2a5",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/252a860.c",
+          "raw_export_sha256": "38a6d8d1258128fb60ce1957f4a79219e6aa9acdea7ac419d16fa8c2f833eed2"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "c6ffabb7a483e1f00f8939f05fafcc1b547dd67abb89b779ead31bd489fb7739",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "cry_of_contrition_legacy",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x252a940",
+          "end": "0x252aa06",
+          "bytes_sha256": "e59e437e90c951a873e278b67c0e83943217418590b55970c2405ac1cafdb6a1",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/252a940.c",
+          "raw_export_sha256": "7676f565a9d67019b9e9d6f6104efa05777a71a5a83459257aa77725c69681f8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "3ca04c0c2942bc58e699ee4885f544aaa011069ef791d66b02a092242607d12d",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "graven_dominator_legacy",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x252aa10",
+          "end": "0x252abd3",
+          "bytes_sha256": "4864f6793db84751f116f64cbbe452295589584955fa130eeb720ba936fca07f",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/252aa10.c",
+          "raw_export_sha256": "77fd9f82a1a829c9195f93ddcbcf19660c61a4f4cf6734a0645bb12bbfd95121"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "884f82bef7b707591eac8a2365064f6ef1e4576ac5e9946661b0669880ad7375",
+      "prior_categories": [
+        "small_diff_review"
+      ]
+    },
+    {
+      "name": "necromancers_magemark_effect",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x252ad50",
+          "end": "0x252b03e",
+          "bytes_sha256": "847c2e8735822f43ac218d33479bdc6659868da7fab3d0c3b5631aa5cd0f1e7c",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/252ad50.c",
+          "raw_export_sha256": "ca6f2b99da74dc60409699ba4ce639c5092cfdeee347a66cf1c2ae998de1f86d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0a3475780b9b57c2dd617a32d82803315d05aba0acf5d50ff2dc7421be313634",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "orzhov_pontiff_legacy",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x252b040",
+          "end": "0x252b171",
+          "bytes_sha256": "0b18339f7e36f92aaac2b4cc068a8108fe7eeceeb4d6b3bee0fe72514d4113fe",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/252b040.c",
+          "raw_export_sha256": "d95bf39e8d9b9d443ac2bf7b40c53c901af27bcff0e829582a3f0d4b862ffa0e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "099635b244a994a77ba0dd679174fba5cd53d1ec1c21ce09f932c0f074666b4f",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "seize_the_soul_legacy",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x252b1f0",
+          "end": "0x252b3b2",
+          "bytes_sha256": "f6d8f9bc79da6e05d990d07b65cbd15cb97072893f2d85d3dcd693744a910876",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/252b1f0.c",
+          "raw_export_sha256": "d497b1c4975d9a475685a5eb6552fd10c65e69478d73e513a143f9ceb595d329"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "9c48a9512efef5501ce8fe17611368812f575a022c657ab9b210d3ce5ff8af90",
+      "prior_categories": [
+        "reference_review"
+      ]
+    },
+    {
+      "name": "teysa_orzhov_scion_effect",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x252b3c0",
+          "end": "0x252b713",
+          "bytes_sha256": "90550c2b35af860fd17d7046b14dd700c842bfb40059084a7772d43bb7c90c82",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/252b3c0.c",
+          "raw_export_sha256": "19d38930c6b368141d657412e56eaf4c9673ab5d875742705223164040f455de"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "68a2e89f0207cb2ab9c35e201e34834c2a11182f9ea078cbc2d449ec7dda5f5c",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "twiddle_on_attached_creature",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x2534df0",
+          "end": "0x2534efa",
+          "bytes_sha256": "659e78877fb5fb13ecc7a8b3c97bd1d3d625c8a56c8c6fe53ae9cae8cd2456f1",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/2534df0.c",
+          "raw_export_sha256": "8411259beb017361426a2c0b3efce8f97b2947ce6e3f2d2924db322b7ba09075"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "3f71a09582bab07aa6c6cefb18499beac76362cf88af21ec75dd9e8cabcc3329",
+      "prior_categories": [
+        "reference_review"
+      ]
+    },
+    {
+      "name": "create_multiblocker",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26cd820",
+          "end": "0x26cd960",
+          "bytes_sha256": "163f6d50e8c30251c8dd9946165782e9fa792365be330114498a839adb9f8ffd",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26cd820.c",
+          "raw_export_sha256": "1c1ad837bbfc0a45dd84456d35ed2278fdde7502c5b68fe680e7661f9a5bd0fd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "680945fa2247cd1d1da636061994d17f758509733cf71e7fcc8d4f2f9071daf5",
+      "prior_categories": [
+        "small_diff_review"
+      ]
+    },
+    {
+      "name": "arbitrary_can_block_additional",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26cd960",
+          "end": "0x26cda16",
+          "bytes_sha256": "8d24e9e5fc92d8506782cc2271fa8f0d0f8686a6b06072941ef5eb0337921435",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26cd960.c",
+          "raw_export_sha256": "b19cea23cdb65b0648463d3862895459a0fb5bb5024ce509804f0b7fd1b760cd"
+        },
+        {
+          "address": "0x26cdc60",
+          "end": "0x26cdc7a",
+          "bytes_sha256": "459009f3c90dd4d3ea5ed149e0e2d795c8699c59dd1d757bca6a649d1faa909b",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26cdc60.c",
+          "raw_export_sha256": "e034ae963985f5ab9102d0b20e71bf9f2d0960d8a9cd7fb2ceb78161ddd375ee"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "a123c0243fd6098c4727fee40ceecbbe424a113081a2e3253a40f9add8e38dcb",
+      "prior_categories": [
+        "same_local_code",
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "is_multiblocker_card_copying",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26cda20",
+          "end": "0x26cda70",
+          "bytes_sha256": "f34272ed8478507d8583cefdf066610eaa960f48eae10f89c93135e160c282ea",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26cda20.c",
+          "raw_export_sha256": "fd3a3dc6abfb75786f1c35080839ce3f8240a16e93a863b31f35c53914bcaa14"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "39613be7a53ceae3eac0b8fdb7bcbb222e4bc8399ed2cd644b34f2897857126e",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "count_and_reap_multiblockers",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26cda70",
+          "end": "0x26cdc5d",
+          "bytes_sha256": "6cd75ce49c99cce5c27fbc64f35a38e03ad841ae4d886cb476ad45ec44dfd06b",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26cda70.c",
+          "raw_export_sha256": "680eb88bf98dd5c9395d689a0ce085d2646caf0bbe73260749d3dc7662815447"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "821a28d2500df37f6745982455fb418bee7ac93f533774306501fa5405236522",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "creature_can_block_additional",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26cdc80",
+          "end": "0x26cdcb5",
+          "bytes_sha256": "1a295f27273948696042f1fef2f6b995725c25725a4326fb4df83afb6086e7f7",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26cdc80.c",
+          "raw_export_sha256": "ea116863089136dda1a0e3937cb96981ff91e61859c9e03427d15d1d0a20e0d4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "7b777c6182d2f0ca3d310974740dcdd946ddfb2a33139ed1b46ae939979f9856",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "attached_creature_can_block_additional",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26cdcc0",
+          "end": "0x26cdd1a",
+          "bytes_sha256": "fd586047dcb38372889913ca3d0d485a8266053983c39d5f98952155f149fee8",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26cdcc0.c",
+          "raw_export_sha256": "9522a05fb53fb2ea122d8b910cff6fd7fb6f41b96cab9ebc1d13f68c7a3edeb5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "9b9329f810f4a41cbc5f816012f6b0c3cf38f62bdc1ad02c7611a364a8fac15c",
+      "prior_categories": [
+        "same_local_code"
+      ]
+    },
+    {
+      "name": "process_multiblock",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26cdd20",
+          "end": "0x26cde6d",
+          "bytes_sha256": "f345207e6cece9b40d07eb3be398dca6737354f894e1c41a925be77d47f78c9c",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26cdd20.c",
+          "raw_export_sha256": "39dffc276c116ede2ee457b3957430d67f177c1c6b5c8d6b3941dbe7a415dc3f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "901049bd20c28181d50f7746e007509f4210f7b2262745b65b1b5cdbf203740c",
+      "prior_categories": [
+        "full_review"
+      ]
+    },
+    {
+      "name": "count_creatures_this_is_blocking",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26ce260",
+          "end": "0x26ce390",
+          "bytes_sha256": "30b4866935bd60ff4beda5ec4eff7209b594cae7d58c5ae0cdbdec4651f1b25c",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26ce260.c",
+          "raw_export_sha256": "136327ed0aa6fb14fb0795bc91f9d209b7923d85d6e69b41387e666da8766359"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "0070137756c883666786baca4bfc5303b7810a42583862674a9cd88d39076e97",
+      "prior_categories": [
+        "small_diff_review"
+      ]
+    },
+    {
+      "name": "for_each_creature_blocked_by_me",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26ce5b0",
+          "end": "0x26ce708",
+          "bytes_sha256": "82051690d47ee00380ac51a44205aa28921ee2b33676ed763ae63c5af3e82466",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26ce5b0.c",
+          "raw_export_sha256": "d598b0892a5c318256b086b15bc1ed5256682d04a957d5859c439261f4a8106f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "6de36cfae4edc4d505d4064e14821291326a6ed9d1f1483857dcf123adaa31ef",
+      "prior_categories": [
+        "small_diff_review"
+      ]
+    },
+    {
+      "name": "mark_each_creature_blocked_by_me",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26ce710",
+          "end": "0x26ce847",
+          "bytes_sha256": "555385994afdc5775f71bb1ff42badfca3a5508cfc990a72409f6974aa49c599",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26ce710.c",
+          "raw_export_sha256": "587db0452553dc1efb468ded80624570b48c4db4e24a6ff5a2dfb1fc85b5cb7b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "5d1a41460b86e6c772ad953bb890760d9c662203fa0051d01fee9ff5b7e3d0c4",
+      "prior_categories": [
+        "small_diff_review"
+      ]
+    },
+    {
+      "name": "for_each_creature_blocking_me",
+      "source": "functions/multiblock.c",
+      "native_ranges": [
+        {
+          "address": "0x26ce850",
+          "end": "0x26ce93b",
+          "bytes_sha256": "d821d08a429fd43a121420b721a586765bccf3a6f409025548d3b81f578d1876",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/26ce850.c",
+          "raw_export_sha256": "c16ae8a12aa56c875c955c498e0cb5ade192b26480da12f6ac950078d869b8df"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "f1223866deef6543c675df9fa9318df02045502b844abfc3f7916c011bc60e56",
+      "prior_categories": [
+        "reference_review"
+      ]
+    }
+  ],
+  "support_helpers": [
+    {
+      "name": "bloodthirst",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x252b9e0",
+          "end": "0x252bac0",
+          "bytes_sha256": "bd83c672eeabec1a1e47628f1b0b5b9185abb896f7fd9bd893b25a302bf9e39d",
+          "raw_export": ".recovery/decompiled-commander-haunt-block/252b9e0.c",
+          "raw_export_sha256": "129824d681ae66843f9a3b428356a315b9c2c332dc1681a1b25dde9a786e86be"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_compiled_owner",
+      "source_changed": false,
+      "definition_sha256": "a89b9f0202ca7bb516f6018c892d5ce0b4065b21a79de1064eb6d4d0c6ff3802",
+      "prior_categories": [
+        "verified_retained_source"
+      ]
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_teysa_orzhov_scion",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x2535470",
+          "end": "0x2535a1f",
+          "bytes_sha256": "8acb1fc53f4b85c77bec27b721ff7f81544d9f1d6116a77667208fd1341ca04e",
+          "raw_export": ".recovery/decompiled-commander-haunt-block-support/2535470.c",
+          "raw_export_sha256": "5dfc210d6b13a6df056173c65ca3d5476181e666018e2559d055d74f1397cd38"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "31744454866350e9a3a64f9d3c8d67efcc4a64dadbe7d6d20c57d3ddedc05f83"
+    },
+    {
+      "name": "card_necromancers_magemark",
+      "source": "cards/guildpact.c",
+      "native_ranges": [
+        {
+          "address": "0x25312d0",
+          "end": "0x2531623",
+          "bytes_sha256": "daaf40ea68c467ca2d31015f20a2114aa1936674944afea96b108c09f8771380",
+          "raw_export": ".recovery/decompiled-commander-haunt-block-support/25312d0.c",
+          "raw_export_sha256": "f575a5fa8152b576ebf2b2588f821bc2aecea160e016e5646e69afb3c1ca10d6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "cd168a9e73500f31dba22a76cf85d58d135061f24e653493fd186e79037555df"
+    }
+  ],
+  "inline_support_helpers": [
+    {
+      "source": "cards/vanguard.c",
+      "name": "create_spat_deck",
+      "definition_sha256": "3c771d32a997e7edee3a8b04ffa1af77f99527aa1565956d7599034a4a50d564",
+      "native_owner": "vanguard_card",
+      "native_owner_address": "0x22c4160"
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "get_random_card_special2",
+      "definition_sha256": "86229f64f93fe4f5fc0bd9fbd96e254c1741d4a637b5af630d852295623d9c02",
+      "native_owner": "create_random_test_deck",
+      "native_owner_address": "0x22c3e20"
+    },
+    {
+      "source": "functions/multiblock.c",
+      "name": "is_multiblocker_card",
+      "definition_sha256": "7d4d6beeaa9626f3d2c86fdabf585a66d0e4b502778e16d97b1b7df9cb9575f4",
+      "native_owner": "create_multiblocker",
+      "native_owner_address": "0x26cd820"
+    }
+  ],
+  "helper_definitions": 43,
+  "new_native_helper_ranges": 45,
+  "changed_helper_definitions": 5,
+  "changed_card_callers": 1,
+  "native_parts": [
+    {
+      "function": "vanguard_card",
+      "private": "0x22c4160",
+      "public": "0x22c4ca0"
+    },
+    {
+      "function": "arbitrary_can_block_additional",
+      "private": "0x26cd960",
+      "public": "0x26cdc60"
+    }
+  ],
+  "native_contracts": {
+    "commander_startup": {
+      "first_iid": "targets[2].player",
+      "second_iid": "targets[2].card",
+      "both_removed_from_deck": true,
+      "oloro_csvid": 13628,
+      "oloro_life_per_upkeep": 2
+    },
+    "avatar_entry": {
+      "api": "etb_ability",
+      "mode": "RESOLVE_TRIGGER_MANDATORY",
+      "event": "EVENT_ETB",
+      "purges_exile_after_avatar_exile": true
+    },
+    "haunt": {
+      "death_suppression": true,
+      "marker_base": 66,
+      "creature_marker": 67,
+      "repetition_count": "card_counts[player][5] + 1 for marker67; otherwise1"
+    },
+    "necromancers_magemark": {
+      "store_mode": 144,
+      "store_flags": [
+        "GFPC_TRACK_DEAD_CREATURES",
+        "GFPC_STORE_OWNER"
+      ],
+      "record": "target.player=owner,target.card=iid",
+      "legacy_storage_start": 1,
+      "live_card_storage_start": 0,
+      "record_end_exclusive": 10,
+      "legacy_seek_source": -1,
+      "live_seek_source": "card",
+      "clears_pair_before_iid_check": true,
+      "death_detach_byte": 2,
+      "legacy_calls_resolver_before_visibility_test": true
+    },
+    "teysa": {
+      "death_detach_byte": 2,
+      "source_origin": "targets[0].player/card",
+      "color_sleight_and_token_source_use_origin": true,
+      "resolver_before_visibility_test": true,
+      "old_end_trigger_reset_removed": true
+    },
+    "native_quirks_preserved": {
+      "graven_dominator_target": "marked[p][c] value, not c",
+      "seize_soul_white_color_call_result": "discarded",
+      "random_basic_land_loop": "may write beyond requested decksize on final color cycle"
+    },
+    "specialized_random_card": {
+      "min": 292,
+      "max": 737,
+      "unused_no_mana_land_parameter": true
+    },
+    "tasigur_cost_pointer": {
+      "cards_ptr_base": "0x73bb00",
+      "csv_id": 14638,
+      "pointer_cell": "0x749fb8"
+    },
+    "multiblock": {
+      "code_pointer": "0x401010",
+      "copy_state_excludes": 8,
+      "token_status": 134217736,
+      "num_additional_max": 254,
+      "marked_row_bytes": 151,
+      "original_always_in_count": true
+    }
+  },
+  "scope": "43 newly reviewed helper definitions /45 native ranges, one previously retained support range, two live card callers, three inline private helpers and both specialized/public part pairs. Five helper bodies plus one card body changed. Built-in chooser implementations and gameplay tests remain downstream."
+}

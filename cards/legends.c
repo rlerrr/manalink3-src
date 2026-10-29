@@ -5,50 +5,62 @@ void spirit_link_effect(int player, int card, event_t event, int who_gains);
 
 // Functions
 
-static int song(int player, int card, event_t event, int clr){
-// Any number of target creatures become "clr" until end of turn.
+static int song(int player, int card, event_t event, int clr)
+{
+  // Any number of target creatures become "clr" until end of turn.
 
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
+  if (!IS_GS_EVENT(player, card, event))
+  {
+    return 0;
+  }
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = player;
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  td.preferred_controller = player;
+  td.allow_cancel = 0;
 
-	card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST ){
-		return basic_spell(player, card, event);
-	}
+  if (event == EVENT_CAN_CAST)
+  {
+    return generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL);
+  }
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		int trgs = 0;
-		while( can_target(&td) && trgs < 10 ){
-				if( new_pick_target(&td, "TARGET_CREATURE", trgs, 0) ){
-					state_untargettable(instance->targets[trgs].player, instance->targets[trgs].card, 1);
-					trgs++;
-				}
-				else{
-					break;
-				}
-		}
-		int i;
-		for(i=0; i<trgs; i++){
-			state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
-		}
-	}
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    int trgs = 0;
+    while (can_target(&td) && trgs < 10)
+    {
+      if (new_pick_target(&td, "TARGET_CREATURE", trgs, 0))
+      {
+        state_untargettable(instance->targets[trgs].player, instance->targets[trgs].card, 1);
+        trgs++;
+        td.allow_cancel = 2;
+      }
+      else
+      {
+        break;
+      }
+    }
+    int i;
+    for (i = 0; i < trgs; i++)
+    {
+      state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
+    }
+  }
 
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    int i;
+    for (i = 0; i < instance->number_of_targets; i++)
+    {
+      change_color(player, card, instance->targets[i].player, instance->targets[i].card, clr,
+                   CHANGE_COLOR_SET | CHANGE_COLOR_END_AT_EOT);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		int i;
-		for(i=0; i<instance->number_of_targets; i++){
-			change_color(player, card, instance->targets[i].player, instance->targets[i].card, clr, CHANGE_COLOR_SET|CHANGE_COLOR_END_AT_EOT);
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return 0;
+  return 0;
 }
 
 int mana_battery_generic(int player, int card, event_t event, color_t color, int colorless_cost)
@@ -1276,91 +1288,120 @@ As long as you control another creature, prevent all damage that would be dealt 
 	return 0;
 }
 
-static int brine_hag_effect(int player, int card, event_t event){
+static int brine_hag_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_BRINE_HAG ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_BRINE_HAG)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            if (check_for_death_trigger_removal(p, c))
+            {
+              kill_card(player, card, KILL_EXILE);
+              return 0;
+            }
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE1(instance->targets[11].player) = 1;
+          }
+        }
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			card_instance_t *instance = get_card_instance(player, card);
-			int amount = BYTE0(result);
-			int i;
-			for(i=1; i<amount; i++){
-				set_pt_and_abilities_until_eot(player, card, instance->targets[i].player, instance->targets[i].card, 2, 0, 0, 0, 0);
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  if (!check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result)
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      int amount = BYTE0(result);
+      int i;
+      for (i = 1; i < amount; i++)
+      {
+        int legacy = real_set_pt(player, card, instance->targets[i].player,
+                                 instance->targets[i].card, 2, 0, 0);
+        add_status(player, legacy, STATUS_INVISIBLE_FX);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
 
-	if( event == EVENT_DEAL_DAMAGE ){
-		card_instance_t *instance = get_card_instance(player, card);
-		card_instance_t *damage = damage_being_dealt(event);
-		if( damage ){
-			if( damage->damage_target_player == instance->damage_target_player &&
-				damage->damage_target_card == instance->damage_target_card &&
-				is_what(damage->damage_source_player, damage->damage_source_card, TYPE_CREATURE) )
-			{
-				if( instance->targets[11].player < 0 ){
-					instance->targets[11].player = 0;
-					SET_BYTE0(instance->targets[11].player) = 1;
-				}
-				int pos = BYTE0(instance->targets[11].player);
-				if( pos < 10 ){
-					instance->targets[pos].player = damage->damage_source_player;
-					instance->targets[pos].card = damage->damage_source_card;
-					SET_BYTE0(instance->targets[11].player)++;
-				}
-			}
-		}
-	}
+  if (event == EVENT_DEAL_DAMAGE)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    card_instance_t *damage = damage_being_dealt(event);
+    if (damage)
+    {
+      if (damage->damage_target_player == instance->damage_target_player &&
+          damage->damage_target_card == instance->damage_target_card &&
+          is_what(damage->damage_source_player, damage->damage_source_card, TYPE_CREATURE))
+      {
+        if (instance->targets[11].player < 0)
+        {
+          instance->targets[11].player = 0;
+          SET_BYTE0(instance->targets[11].player) = 1;
+        }
+        int pos = BYTE0(instance->targets[11].player);
+        if (pos < 10)
+        {
+          instance->targets[pos].player = damage->damage_source_player;
+          instance->targets[pos].card = damage->damage_source_card;
+          SET_BYTE0(instance->targets[11].player)++;
+        }
+      }
+    }
+  }
 
-	if( event == EVENT_CLEANUP ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-			kill_card(player, card, KILL_EXILE);
-			return 0;
-		}
-		instance->targets[11].player = 0;
-		int i;
-		for(i=1; i<10; i++){
-			instance->targets[i].player = instance->targets[i].card = -1;
-		}
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (!check_status(player, card, STATUS_INVISIBLE_FX))
+    {
+      kill_card(player, card, KILL_EXILE);
+      return 0;
+    }
+    instance->targets[11].player = 0;
+    int i;
+    for (i = 1; i < 10; i++)
+    {
+      instance->targets[i].player = instance->targets[i].card = -1;
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_brine_hag(int player, int card, event_t event){
@@ -4222,44 +4263,49 @@ Sorcery
 	return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, NULL, NULL, 1, NULL);
 }
 
-static int get_permanent_with_highest_cmc(int player, int card, int sel_type, int t_player){
-	int result = -1;
-	int doubles = 0;
-	int max_cmc = -1;
-	CYCLE_ALL_CARDS(p, c, 	{
-								if( p == t_player && in_play(p, c) && is_what(p, c, sel_type) ){
-									int this_cmc = get_cmc(p, c);
-									if( this_cmc == max_cmc ){
-										doubles++;
-									}
-									if( this_cmc > max_cmc ){
-										max_cmc = this_cmc;
-										doubles = 0;
-										result = c;
-									}
-								}
-							}
-	);
-	if( doubles ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, sel_type);
-		td.illegal_abilities = 0;
-		td.extra = max_cmc;
-		td.special = TARGET_SPECIAL_CMC_GREATER_OR_EQUAL;
-		td.allowed_controller = td.preferred_controller = t_player;
-		td.who_chooses = t_player;
-		td.allow_cancel = 0;
+static int get_permanent_with_highest_cmc(int player, int card, int sel_type, int t_player)
+{
+  int result = -1;
+  int doubles = 0;
+  int max_cmc = -1;
+  CYCLE_ALL_CARDS(p, c, {
+    if (p == t_player && in_play(p, c) && is_what(p, c, sel_type))
+    {
+      int this_cmc = get_cmc(p, c);
+      if (this_cmc == max_cmc)
+      {
+        doubles++;
+      }
+      if (this_cmc > max_cmc)
+      {
+        max_cmc = this_cmc;
+        doubles = 0;
+        result = c;
+      }
+    }
+  });
+  if (doubles)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, sel_type);
+    td.illegal_abilities = 0;
+    td.extra = max_cmc;
+    td.special = TARGET_SPECIAL_CMC_GREATER_OR_EQUAL;
+    td.allowed_controller = td.preferred_controller = t_player;
+    td.who_chooses = t_player;
+    td.allow_cancel = 0;
 
-		card_instance_t *instance = get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
 
-		char msg[100];
-		char ttext[100];
-		scnprintf(msg, 100, "Select a%s you control with CMC %d", type_text(ttext, 100, sel_type, 0), max_cmc);
-		new_pick_target(&td, msg, 0, GS_LITERAL_PROMPT);
-		result = instance->targets[0].card;
-		instance->number_of_targets = 0;
-	}
-	return result;
+    char msg[100];
+    char ttext[100];
+    scnprintf(msg, 100, "Select a %s you control with CMC %d", type_text(ttext, 100, sel_type, 0),
+              max_cmc);
+    new_pick_target(&td, msg, 0, GS_LITERAL_PROMPT);
+    result = instance->targets[0].card;
+    instance->number_of_targets = 0;
+  }
+  return result;
 }
 
 int card_juxtapose(int player, int card, event_t event){
@@ -6623,42 +6669,51 @@ Artifact
   return mana_battery(player, card, event, COLOR_RED);
 }
 
-static int reincarnation_legacy(int player, int card, event_t event){
+static int reincarnation_legacy(int player, int card, event_t event)
+{
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			if( instance->damage_target_player > -1 ){
-				int p = instance->damage_target_player;
-				int c = instance->damage_target_card;
-				if( affect_me(p, c) && is_this_dying(p, c) ){
-					if( instance->targets[11].player < 0 ){
-						instance->targets[11].player = 0;
-					}
-					SET_BYTE1(instance->targets[11].player) = 1;
-					SET_BYTE0(instance->targets[11].player) = get_owner(p, c);
-					instance->damage_target_card = instance->damage_target_player = -1;
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      if (instance->damage_target_player > -1)
+      {
+        int p = instance->damage_target_player;
+        int c = instance->damage_target_card;
+        if (affect_me(p, c) && is_this_dying(p, c) && !check_for_death_trigger_removal(p, c))
+        {
+          if (instance->targets[11].player < 0)
+          {
+            instance->targets[11].player = 0;
+          }
+          SET_BYTE1(instance->targets[11].player) = 1;
+          SET_BYTE0(instance->targets[11].player) = get_owner(p, c);
+          instance->damage_target_card = instance->damage_target_player = -1;
+        }
+      }
+    }
+  }
 
-	int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-	if( result ){
-		int owner = BYTE0(result);
-		if( count_graveyard_by_type(owner, TYPE_CREATURE) ){
-			test_definition_t test;
-			new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card.");
-			new_global_tutor(owner, owner, TUTOR_FROM_GRAVE, TUTOR_PLAY, 1, AI_MAX_CMC, &test);
-		}
-		kill_card(player, card, KILL_EXILE);
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result)
+  {
+    int owner = BYTE0(result);
+    if (count_graveyard_by_type(owner, TYPE_CREATURE))
+    {
+      test_definition_t test;
+      new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card.");
+      new_global_tutor(owner, owner, TUTOR_FROM_GRAVE, TUTOR_PLAY, 1, AI_MAX_CMC, &test);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_reincarnation(int player, int card, event_t event){

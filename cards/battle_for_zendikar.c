@@ -138,80 +138,81 @@ static int awaken_validate(int player, int card, int target_idx)
 
 static int awaken_resolve(int player, int card, int target_idx, int number_of_counters)
 {
-  card_instance_t* inst = get_card_instance(player, card);
-  /* Normally, awaken_validate() - which must always be called and return true before calling this - will ensure that the target is in play.  It's conceivable,
-   * though, that the card's other effects will have removed it from the bf. */
-  if (inst->info_slot != CARD_ID_AWAKENING + 1
-	  || !in_play(inst->targets[target_idx].player, inst->targets[target_idx].card))
-	return -1;
+  card_instance_t *inst = get_card_instance(player, card);
+  /* Normally, awaken_validate() - which must always be called and return true before calling this -
+   * will ensure that the target is in play.  It's conceivable, though, that the card's other
+   * effects will have removed it from the bf. */
+  if (inst->info_slot != CARD_ID_AWAKENING + 1 ||
+      !in_play(inst->targets[target_idx].player, inst->targets[target_idx].card))
+    return -1;
 
-  add_a_subtype(inst->targets[target_idx].player, inst->targets[target_idx].card, SUBTYPE_ELEMENTAL);
-  add_counters(player, card, inst->targets[target_idx].player, inst->targets[target_idx].card, COUNTER_P1_P1, number_of_counters);
-  return animate_other(player, card, inst->targets[target_idx].player, inst->targets[target_idx].card, 0,0, 0,SP_KEYWORD_HASTE, 0, 1);
+  add_a_subtype_permanently(player, card, inst->targets[target_idx].player,
+                            inst->targets[target_idx].card, SUBTYPE_ELEMENTAL);
+  add_counters(player, card, inst->targets[target_idx].player, inst->targets[target_idx].card,
+               COUNTER_P1_P1, number_of_counters);
+  return animate_other(player, card, inst->targets[target_idx].player,
+                       inst->targets[target_idx].card, 0, 0, 0, SP_KEYWORD_HASTE, 0, 1);
 }
 
-static int blighted_land(int player, int card, event_t event,
-						 int x, int b, int u, int g, int r, int w,
-						 const char* label, int ai,
-						 target_definition_t* td, const char* prompt,
-						 void (*impl)(int, int, target_definition_t*))
+static int blighted_land(int player, int card, event_t event, int x, int b, int u, int g, int r,
+                         int w, const char *label, int ai, target_definition_t *td,
+                         const char *prompt, void (*impl)(int, int, target_definition_t *))
 {
   if (IS_ACTIVATING(event))
-	{
-	  enum
-	  {
-		CHOICE_MANA = 1,
-		CHOICE_SACRIFICE_FOR_EFFECT
-	  } choice = DIALOG(player, card, event,
-						DLG_AUTOCHOOSE_IF_1, paying_mana() ? DLG_NO_DISPLAY_FOR_AI : DLG_NO_OP,
-						"Produce mana",
-							mana_producer(player, card, EVENT_CAN_ACTIVATE),
-							paying_mana(),
-						label,
-							/* This calls generic_activated_ability() and charges mana manually instead of using a DLG_MANA() clause because both this and its
-							 * mana ability have T in their costs */
-							!paying_mana() && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE,
-																		GAA_UNTAPPED|GAA_SACRIFICE_ME|(td ? GAA_CAN_TARGET : 0),
-																		x+1,b,u,g,r,w, 0, td, prompt),
-							landsofcolor_controlled[player][COLOR_ANY] - 6);
-	  if (event == EVENT_CAN_ACTIVATE)
-		return choice;
-	  else if (choice == 0)	// cancelled
-		return 0;
-	  else if (choice == CHOICE_SACRIFICE_FOR_EFFECT)
-		{
-		  if (event == EVENT_ACTIVATE)
-			{
-			  add_state(player, card, STATE_TAPPED);
-			  charge_mana_for_activated_ability(player, card, x,b,u,g,r,w);
-			  if (td && cancel != 1)
-				{
-				  card_instance_t* inst = get_card_instance(player, card);
-				  if (td->zone == TARGET_ZONE_PLAYERS && td->allowed_controller == 1-player)
-					{	// As usual, don't prompt for "target opponent", just do it.
-					  inst->targets[0].player = 1-player;
-					  inst->targets[0].card = -1;
-					  inst->number_of_targets = 1;
-					}
-				  else
-					{
-					  inst->number_of_targets = 0;
-					  pick_target(td, prompt);
-					}
-				}
+  {
+    enum
+    {
+      CHOICE_MANA = 1,
+      CHOICE_SACRIFICE_FOR_EFFECT
+    } choice = DIALOG(
+        player, card, event, DLG_AUTOCHOOSE_IF_1, paying_mana() ? DLG_NO_DISPLAY_FOR_AI : DLG_NO_OP,
+        "Produce mana", mana_producer(player, card, EVENT_CAN_ACTIVATE), paying_mana(), label,
+        /* This calls generic_activated_ability() and charges mana manually instead of using a
+         * DLG_MANA() clause because both this and its mana ability have T in their costs */
+        !paying_mana() &&
+            generic_activated_ability(player, card, EVENT_CAN_ACTIVATE,
+                                      GAA_UNTAPPED | GAA_SACRIFICE_ME | (td ? GAA_CAN_TARGET : 0),
+                                      x + 1, b, u, g, r, w, 0, td, prompt),
+        landsofcolor_controlled[player][COLOR_ANY] - 6);
+    if (event == EVENT_CAN_ACTIVATE)
+      return choice;
+    else if (choice == 0) // cancelled
+      return 0;
+    else if (choice == CHOICE_SACRIFICE_FOR_EFFECT)
+    {
+      if (event == EVENT_ACTIVATE)
+      {
+        add_state(player, card, STATE_TAPPED);
+        charge_mana_for_activated_ability(player, card, x, b, u, g, r, w);
+        if (td && cancel != 1)
+        {
+          card_instance_t *inst = get_card_instance(player, card);
+          if (td->zone == TARGET_ZONE_PLAYERS && td->allowed_controller == 1 - player)
+          { // As usual, don't prompt for "target opponent", just do it.
+            inst->targets[0].player = 1 - player;
+            inst->targets[0].card = -1;
+            inst->number_of_targets = 1;
+          }
+          else
+          {
+            inst->number_of_targets = 0;
+            pick_target(td, prompt);
+          }
+        }
 
-			  if (cancel != 1)
-				kill_card(player, card, KILL_SACRIFICE);
-			  else
-				remove_state(player, card, STATE_TAPPED);
-			}
-		  else if (event == EVENT_RESOLVE_ACTIVATION)
-			(*impl)(player, card, td);
+        if (cancel != 1)
+          kill_card(player, card, KILL_SACRIFICE);
+        else
+          remove_state(player, card, STATE_TAPPED);
+        tapped_for_mana_color = -1;
+      }
+      else if (event == EVENT_RESOLVE_ACTIVATION)
+        (*impl)(player, card, td);
 
-		  return 0;
-		}
-	  // else fall through to mana_producer below
-	}
+      return 0;
+    }
+    // else fall through to mana_producer below
+  }
 
   return mana_producer(player, card, event);
 }
@@ -250,21 +251,23 @@ static int can_process(int who_processes, int num_cards)
 
 static int process(int who_processes, int num_cards)
 {
-  // You may put [num_cards] cards your opponents own from exile into their owners' graveyards.  If you do, [return nonzero]
-  if (num_cards > 0 && can_process(who_processes, num_cards))
-	{
-	  test_definition_t test;
-	  default_test_definition(&test, TYPE_ANY);
-	  if (new_global_tutor(who_processes, 1-who_processes, TUTOR_FROM_RFG, TUTOR_GRAVE, 0, AI_MIN_VALUE, &test) != -1)
-		{
-		  if (num_cards > 1)
-			{
-			  test.qty = num_cards - 1;
-			  new_global_tutor(who_processes, 1-who_processes, TUTOR_FROM_RFG, TUTOR_GRAVE, 1, AI_MIN_VALUE, &test);
-			}
-		  return 1;
-		}
-	}
+  int opponent = 1 - who_processes;
+  if (count_rfg(opponent) >= num_cards)
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_ANY);
+    if (new_global_tutor(who_processes, opponent, TUTOR_FROM_RFG, TUTOR_GRAVE, 0, AI_MIN_VALUE,
+                         &test) >= 0)
+    {
+      if (num_cards > 1)
+      {
+        test.qty = 1;
+        new_global_tutor(who_processes, opponent, TUTOR_FROM_RFG, TUTOR_GRAVE, 1, AI_MIN_VALUE,
+                         &test);
+      }
+      return 1;
+    }
+  }
   return 0;
 }
 
@@ -483,72 +486,90 @@ static const char* can_activate_colorless_creature(int who_chooses, int player, 
 	return "this creature can't use activated abilities.";
 }
 
-static int gruesome_slaughter_legacy(int player, int card, event_t event){
-// Until end of turn, colorless creatures you control gain "|T: This creature deals damage equal to its power to target creature."
+static int gruesome_slaughter_legacy(int player, int card, event_t event)
+{
+  // Until end of turn, colorless creatures you control gain "|T: This creature deals damage equal
+  // to its power to target creature."
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( !IS_GAA_EVENT(event)  ){
-		return 0;
-	}
+  if (!IS_GAA_EVENT(event))
+  {
+    return 0;
+  }
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.allowed_controller = td.preferred_controller = player;
-	td.illegal_abilities = 0;
-	td.illegal_state = TARGET_STATE_TAPPED;
-	td.extra = (int32_t)can_activate_colorless_creature;
-	td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  td.allowed_controller = td.preferred_controller = player;
+  td.illegal_abilities = 0;
+  td.illegal_state = TARGET_STATE_TAPPED;
+  td.extra = (int32_t)can_activate_colorless_creature;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
 
-	card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_ACTIVATE ){
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_CREATURE) ){
-				if( has_mana_for_activated_ability(player, c, MANACOST0) && ! is_tapped(player, c) && ! is_sick(player, c) &&
-					can_use_activated_abilities(player, c) && get_color(player, c) == 0 )
-				{
-					target_definition_t td2;
-					default_target_definition(player, c, &td2, TYPE_CREATURE);
-					if( can_target(&td2) ){
-						return 1;
-					}
-				}
-			}
-		}
-	}
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_CREATURE))
+      {
+        if (has_mana_for_activated_ability(player, c, MANACOST0) && !is_tapped(player, c) &&
+            !is_sick(player, c) && can_use_activated_abilities(player, c) &&
+            get_color(player, c) == 0)
+        {
+          target_definition_t td2;
+          default_target_definition(player, c, &td2, TYPE_CREATURE);
+          if (can_target(&td2))
+          {
+            return 1;
+          }
+        }
+      }
+    }
+  }
 
+  if (event == EVENT_ACTIVATE)
+  {
+    instance->number_of_targets = 0;
+    if (new_pick_target(&td, "Select an untapped colorless creature you control.", 0,
+                        1 | GS_LITERAL_PROMPT))
+    {
+      target_definition_t td2;
+      default_target_definition(instance->targets[0].player, instance->targets[0].card, &td2,
+                                TYPE_CREATURE);
 
-	if( event == EVENT_ACTIVATE  ){
-		instance->number_of_targets = 0;
-		if( new_pick_target(&td, "Select an untapped colorless creature you control.", 0, 1 | GS_LITERAL_PROMPT) ){
-			target_definition_t td2;
-			default_target_definition(instance->targets[0].player, instance->targets[0].card, &td2, TYPE_CREATURE);
+      if (charge_mana_for_activated_ability(instance->targets[0].player, instance->targets[0].card,
+                                            MANACOST0))
+      {
+        get_card_instance(instance->targets[0].player, instance->targets[0].card)
+            ->number_of_targets = 0;
+        if (new_pick_target(&td2, "TARGET_CREATURE", 0, 1))
+        {
+          tap_card(instance->targets[0].player, instance->targets[0].card);
+        }
+      }
+    }
+  }
 
-			if( charge_mana_for_activated_ability(instance->targets[0].player, instance->targets[0].card, MANACOST0) ){
-				get_card_instance(instance->targets[0].player, instance->targets[0].card)->number_of_targets = 0;
-				if( new_pick_target(&td2, "TARGET_CREATURE", 0, 1) ){
-					tap_card(instance->targets[0].player, instance->targets[0].card);
-				}
-			}
-		}
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    target_definition_t td2;
+    default_target_definition(instance->targets[0].player, instance->targets[0].card, &td2,
+                              TYPE_CREATURE);
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		target_definition_t td2;
-		default_target_definition(instance->targets[0].player, instance->targets[0].card, &td2, TYPE_CREATURE);
+    if (validate_target(instance->targets[0].player, instance->targets[0].card, &td2, 0))
+    {
+      damage_target0(instance->targets[0].player, instance->targets[0].card,
+                     get_power(instance->targets[0].player, instance->targets[0].card));
+    }
+  }
 
-		card_instance_t *crit = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-		if( validate_target(crit->targets[0].player, crit->targets[0].card, &td2, 0) ){
-			damage_target0(crit->targets[0].player, crit->targets[0].card,
-							get_power(instance->targets[0].player, instance->targets[0].card));
-		}
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_gruesome_slaughter(int player, int card, event_t event){
@@ -1139,18 +1160,22 @@ int card_makindi_patrol(int player, int card, event_t event)
 
 static int fx_when_creature_attacks_it_gains_lifelink(int player, int card, event_t event)
 {
-  int amt;
-  if ((amt = declare_attackers_trigger(player, card, event, DAT_TRACK, ANYBODY, -1)))
-	{
-	  card_instance_t* inst = get_card_instance(player, card);
-	  unsigned char* attackers = (unsigned char*)(&inst->targets[2].player);
-	  for (--amt; amt >= 0; --amt)
-		if (in_play(current_turn, attackers[amt]))
-		  alternate_legacy_text(1, player, pump_ability_until_eot(player, card, current_turn, attackers[amt], 0,0, 0,SP_KEYWORD_LIFELINK));
-	}
+  store_attackers(player, card, event, DAT_TRACK, ANYBODY, -1, NULL);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    card_instance_t *inst = get_card_instance(player, card);
+    int amt = inst->targets[1].player;
+    unsigned char *attackers = (unsigned char *)(&inst->targets[2].player);
+    for (--amt; amt >= 0; --amt)
+      if (in_play(current_turn, attackers[amt]))
+        alternate_legacy_text(1, player,
+                              pump_ability_until_eot(player, card, current_turn, attackers[amt], 0,
+                                                     0, 0, SP_KEYWORD_LIFELINK));
+  }
 
   if (event == EVENT_CLEANUP)
-	kill_card(player, card, KILL_EXILE);
+    kill_card(player, card, KILL_EXILE);
 
   return 0;
 }
@@ -4784,65 +4809,57 @@ int card_noyan_dar_roil_shaper(int player, int card, event_t event)
 
 static int omnath_death_trigger(int player, int card, event_t event)
 {
-  /* This function implements the "Whenever [this card] or [something else] dies, ..." trigger on both Omnath and the effect card he makes when he dies.  Don't
-   * try to shoehorn it directly into a card's function unless the card does nothing else. */
   if (event == EVENT_GRAVEYARD_FROM_PLAY)
-	{
-	  test_definition_t test;
-	  new_default_test_definition(&test, TYPE_PERMANENT, "");
-	  test.subtype = SUBTYPE_ELEMENTAL;
-
-	  card_instance_t* inst = get_card_instance(player, card);
-	  if (inst->internal_card_id != LEGACY_EFFECT_CUSTOM)
-		{
-		  count_for_gfp_ability(player, card, event, player, 0, &test);
-
-		  if (affect_me(player, card))
-			{
-			  card_instance_t* legacy = get_card_instance(player, create_legacy_effect(player, card, omnath_death_trigger));
-			  legacy->targets[11].player = inst->targets[11].player;
-			  inst->targets[1].player = CARD_ID_OMNATH_LOCUS_OF_RAGE;	// prevent main card from triggering
-			}
-		}
-	  else if (!affect_me(inst->damage_source_player, inst->damage_source_card))
-		count_for_gfp_ability(player, card, event, player, 0, &test);
-	}
-
-  if (trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && affect_me(player, card) && player == reason_for_trigger_controller)
-	{
-	  card_instance_t* inst = get_card_instance(player, card);
-	  if (event == EVENT_TRIGGER)
-		{
-		  if (inst->targets[11].player > 0	// deaths recorded
-			  && inst->targets[1].player != CARD_ID_OMNATH_LOCUS_OF_RAGE)	// hasn't handed off to an effect card
-			event_result |= RESOLVE_TRIGGER_MANDATORY;
-		}
-	  if (event == EVENT_RESOLVE_TRIGGER)
-		{
-		  int num = MAX(0, inst->targets[11].player);
-		  inst->targets[11].player = 0;
-		  if (num > 0)
-			{
-			  target_definition_t td;
-			  default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
-			  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-			  td.allow_cancel = 0;
-
-			  for (; num > 0; --num)
-				{
-				  inst->number_of_targets = 0;
-				  if (can_target(&td) && pick_target(&td, "TARGET_ANY"))
-					damage_target0(player, card, 3);
-				  else
-					break;
-				}
-			}
-		}
-	  if (event == EVENT_END_TRIGGER
-		  && get_card_instance(player, card)->internal_card_id == LEGACY_EFFECT_CUSTOM)
-		kill_card(player, card, KILL_EXILE);
-	}
-
+  {
+    test_definition_t test;
+    new_default_test_definition(&test, TYPE_PERMANENT, "");
+    test.subtype = SUBTYPE_ELEMENTAL;
+    card_instance_t *inst = get_card_instance(player, card);
+    if (inst->internal_card_id != LEGACY_EFFECT_CUSTOM && affect_me(player, card))
+    {
+      count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
+      card_instance_t *legacy =
+          get_card_instance(player, create_legacy_effect(player, card, omnath_death_trigger));
+      legacy->targets[11].player = inst->targets[11].player;
+      inst->targets[1].player = CARD_ID_OMNATH_LOCUS_OF_RAGE;
+      return 0;
+    }
+    count_for_gfp_ability(player, card, event, player, 0, &test);
+  }
+  if (trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && affect_me(player, card) &&
+      player == reason_for_trigger_controller)
+  {
+    card_instance_t *inst = get_card_instance(player, card);
+    if (event == EVENT_TRIGGER)
+    {
+      if (inst->targets[11].player > 0 && inst->targets[1].player != CARD_ID_OMNATH_LOCUS_OF_RAGE)
+        event_result |= RESOLVE_TRIGGER_MANDATORY;
+    }
+    else if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      int num = inst->targets[11].player;
+      if (inst->kill_code < 4 && num > 0)
+      {
+        target_definition_t td;
+        default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+        td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+        td.allow_cancel = 0;
+        for (; num > 0; --num)
+        {
+          inst->number_of_targets = 0;
+          if (!can_target(&td) || !pick_target(&td, "TARGET_ANY"))
+            return 0;
+          damage_target0(player, card, 3);
+        }
+      }
+    }
+    else if (event == EVENT_END_TRIGGER)
+    {
+      inst->targets[11].player = 0;
+      if (get_card_instance(player, card)->internal_card_id == LEGACY_EFFECT_CUSTOM)
+        kill_card(player, card, KILL_EXILE);
+    }
+  }
   return 0;
 }
 int card_omnath_locus_of_rage(int player, int card, event_t event)
@@ -5203,7 +5220,7 @@ int card_pathway_arrows(int player, int card, event_t event)
 
   card_instance_t* inst = get_card_instance(player, card);
 
-#define ACTIVATE(ev)	granted_generic_activated_ability(player, card, inst->targets[8].player, inst->targets[8].card, ev,	\
+#define ACTIVATE(ev)	granted_generic_activated_ability(player, card, inst->damage_target_player, inst->damage_target_card, ev,	\
 														  GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST_X(2), 0, &td, "TARGET_CREATURE")
 
   typedef enum
@@ -5221,10 +5238,10 @@ int card_pathway_arrows(int player, int card, event_t event)
 	can_damage = 1;
   else
 	{
-	  can_damage = is_equipping(player, card) && inst->targets[8].player == player;
+	  can_damage = is_equipping(player, card) && inst->damage_target_player == player;
 	  if (can_damage)
 		{
-		  default_target_definition(inst->targets[8].player, inst->targets[8].card, &td, TYPE_CREATURE);
+		  default_target_definition(inst->damage_target_player, inst->damage_target_card, &td, TYPE_CREATURE);
 		  can_damage = ACTIVATE(EVENT_CAN_ACTIVATE);
 		}
 	}
@@ -5257,13 +5274,13 @@ int card_pathway_arrows(int player, int card, event_t event)
 		  break;
 
 		case CHOICE_DAMAGE:
-		  inst->parent_controller = inst->targets[8].player;	// since it's the creature doing the targeting
-		  inst->parent_card = inst->targets[8].card;
+		  inst->parent_controller = inst->damage_target_player;	// since it's the creature doing the targeting
+		  inst->parent_card = inst->damage_target_card;
 		  default_target_definition(player, card, &td, TYPE_CREATURE);	// after reassigning parent
 		  if (valid_target(&td))
 			{
 				//The "tap" effects is done inside of "effect_damage.c" in "damage_effects".
-			  int dmg = damage_creature(inst->targets[0].player, inst->targets[0].card, 1, inst->targets[8].player, inst->targets[8].card);
+			  int dmg = damage_creature(inst->targets[0].player, inst->targets[0].card, 1, inst->damage_target_player, inst->damage_target_card);
 			  get_card_instance(player, dmg)->targets[10].card = CARD_ID_PATHWAY_ARROWS;
 			}
 		  break;
@@ -5286,16 +5303,16 @@ int card_slab_hammer(int player, int card, event_t event)
    * Equip |2 */
 
   card_instance_t* inst = get_card_instance(player, card);
-  if (inst->targets[8].card >= 0
-	  && declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), inst->targets[8].player, inst->targets[8].card))
+  if (inst->damage_target_card >= 0
+	  && declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), inst->damage_target_player, inst->damage_target_card))
 	{
 	  target_definition_t td;
 	  base_target_definition(player, card, &td, TYPE_LAND);
 	  td.allowed_controller = player;
 	  td.preferred_controller = player;
 
-	  int eqp = inst->targets[8].player;
-	  int eqc = inst->targets[8].card;
+	  int eqp = inst->damage_target_player;
+	  int eqc = inst->damage_target_card;
 
 	  target_t land;
 	  if (can_target(&td) && select_target(player, card-1000, &td, "Select a land you control.", &land))

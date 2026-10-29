@@ -1,0 +1,6048 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "effect_incite",
+      "source": "cards/m11.c",
+      "native_ranges": [
+        {
+          "address": "0x2087180",
+          "end": "0x2087224",
+          "bytes_sha256": "727ccc3bc37309e192c1f747683b65237f67199214f7f3ca079072ad8dc3b068",
+          "raw_export": ".recovery/decompiled-grave-library-target/2087180.c",
+          "raw_export_sha256": "d2dc87c8eb6c08c5ddd150a4d0e6cc95418519a82efb16f0d6a50244c47e85fa"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "3fd4e70749723990c305d165bc2ec5aa90be9e79607d4bc8ae982281d228b533"
+    },
+    {
+      "name": "hoarding_dragon_legacy",
+      "source": "cards/m11.c",
+      "native_ranges": [
+        {
+          "address": "0x20872d0",
+          "end": "0x2087417",
+          "bytes_sha256": "78b00245a4a6ade884ba147ea1b0de2b52043936c16559c0a22b6316b7873a5d",
+          "raw_export": ".recovery/decompiled-grave-library-target/20872d0.c",
+          "raw_export_sha256": "61cef50ab83778d854d69dd715c6df123f016b9a85c1b8eb08b8d6d8a706949d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "86214b6c384e24820393954fc261c30f6173a36766c58321990ba7e0ad053b9c"
+    },
+    {
+      "name": "harsh_justice_legacy",
+      "source": "cards/portal_1_2_3k.c",
+      "native_ranges": [
+        {
+          "address": "0x21b8b70",
+          "end": "0x21b8ca7",
+          "bytes_sha256": "94002032d79f9bbe42508828902081f683d357fd007d3ba242276dc77f33e0ce",
+          "raw_export": ".recovery/decompiled-grave-library-target/21b8b70.c",
+          "raw_export_sha256": "c185fefa900c369f7b20a4985b77754709c49ddd3264b09d5326b66c4b2b9257"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "8a94687d6f0e55f26336ab471c79c21b3e430f52a02bf6055875bdcac898c2be"
+    },
+    {
+      "name": "target_damaged_me_this_turn",
+      "source": "cards/conflux.c",
+      "native_ranges": [
+        {
+          "address": "0x21e2690",
+          "end": "0x21e26eb",
+          "bytes_sha256": "a8813a7f1e9f502627898bba9b66235693410161153a0957c449bf7372344087",
+          "raw_export": ".recovery/decompiled-grave-library-target/21e2690.c",
+          "raw_export_sha256": "9d7912d54a0cc0d8599efbcdd56676c234136c1f979b1d88055c2d7550d9e71c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "fbeb5d8ed050c01bcdafff0dd4c0791762813a464b2cd0cb71b2cfa2a79d15c0"
+    },
+    {
+      "name": "m13_ring",
+      "source": "cards/m13.c",
+      "native_ranges": [
+        {
+          "address": "0x22b41a0",
+          "end": "0x22b4867",
+          "bytes_sha256": "df9879d7691f4f3bb1912790d1825d7ff80275cc1166346a827adf74e5e0eea3",
+          "raw_export": ".recovery/decompiled-grave-library-target/22b41a0.c",
+          "raw_export_sha256": "336cbfe723a328ae9b198bf69e723edbeb987df1d4c803a75fc688209fbca37c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "37519e0029ccaf8d8454ee96b936393a7479e29bbd13bfe4246eb486de927cb8"
+    },
+    {
+      "name": "odric_effect",
+      "source": "cards/m13.c",
+      "native_ranges": [
+        {
+          "address": "0x22b4870",
+          "end": "0x22b48b3",
+          "bytes_sha256": "2d3702dc602957c9aa683f25ae9268a26fad1ee4629fdfeb64a3faa330654901",
+          "raw_export": ".recovery/decompiled-grave-library-target/22b4870.c",
+          "raw_export_sha256": "132acbaa2f814b4d420bcd893abe22264db8e0f8e934f65a06863520d31f8335"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9d0f56e3008ecebc44def7478775de7a648802c20e485cf38d4a2bec07778f7d"
+    },
+    {
+      "name": "get_mana_from_text",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x23629b0",
+          "end": "0x2362ae9",
+          "bytes_sha256": "3e6811583b00f52cd38a0736321c0f436e819baba6ee695c63e5b3ba6ec449a2",
+          "raw_export": ".recovery/decompiled-grave-library-target/23629b0.c",
+          "raw_export_sha256": "e40cde5cb5c00212bb65494218947c4dcad78e2d619babf93918c8dd23c292e6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6333545b8360cc2e8a8fe120ca11b5f1a4835a717f8f0df802924536f8df93ce"
+    },
+    {
+      "name": "hatchling",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x2362af0",
+          "end": "0x2362cfa",
+          "bytes_sha256": "b903d4a1333d479d17d5059d1742668eec233b2524d17104495e7e67fa4b946d",
+          "raw_export": ".recovery/decompiled-grave-library-target/2362af0.c",
+          "raw_export_sha256": "e06d9377df280117f182c2e8284b457b8dfdf5d156dfc403d35ab2f0a7c92dc6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "fe397d5120b5b3d0beb641a8215f96c0c0cfa212d867e05046ba7cd5d7f23ccf"
+    },
+    {
+      "name": "target_is_targeting_mirror_sheen_player",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x23630e0",
+          "end": "0x236311c",
+          "bytes_sha256": "a83c78bb53d13b203c073b90c571ee6fd6598fed48b1f0ff268b362e202c9756",
+          "raw_export": ".recovery/decompiled-grave-library-target/23630e0.c",
+          "raw_export_sha256": "b1dc3452ea1006ef84c79a6cc6665f051e95c7bf9f7980d33f5155deddb14d19"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "291a877bbd7ed94f84e2433acbe1f7c88ae5eb11f7f287a0aef5983c655caea8"
+    },
+    {
+      "name": "pingers",
+      "source": "cards/m12.c",
+      "native_ranges": [
+        {
+          "address": "0x249edd0",
+          "end": "0x249ef1e",
+          "bytes_sha256": "766023a76375b86a4d15f5f76dcf0ba09f169e46d3c91e8174eb0edb6029d31d",
+          "raw_export": ".recovery/decompiled-grave-library-target/249edd0.c",
+          "raw_export_sha256": "f176a1c8f7f3e1306ca8279a590a5ef6d6bff265ea04f95163416c6229743505"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e66ea17bde427d41fa78662e73b55db9ea8ec6101c9368cbbb87eaeda2e4be2e"
+    },
+    {
+      "name": "aegis_angel_effect",
+      "source": "cards/m12.c",
+      "native_ranges": [
+        {
+          "address": "0x249f090",
+          "end": "0x249f181",
+          "bytes_sha256": "0e9a762294d9be4cd996645c3437ca471f5baa1737f658973a70323926cb5da5",
+          "raw_export": ".recovery/decompiled-grave-library-target/249f090.c",
+          "raw_export_sha256": "284acea25b8e606c6088b0ed9e45bad36a8f8c658c1ce197f8e3ff6d7562132e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ca227ea279afbffd7a6d852e95f502c9e9ab33058a3b69bf7b79431dfb88d136"
+    },
+    {
+      "name": "fetchland",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25e82c0",
+          "end": "0x25e8757",
+          "bytes_sha256": "637477c7f1b6eed65df196fa56f213bc1f0ee5180218f43e4352d10755e2c14a",
+          "raw_export": ".recovery/decompiled-grave-library-target/25e82c0.c",
+          "raw_export_sha256": "18f20e33911cdbe72da40e344f8b5551d135cdb8474a718ea4883f4a9f36328c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "9efd419fa6c76cd7780d4bfa56c49ae23a1fbf75d2fa9c376f3c8611f783c33a"
+    },
+    {
+      "name": "casting_permanent_with_morph",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25e9010",
+          "end": "0x25e92cc",
+          "bytes_sha256": "25bb335761a4eb0b8293efc5f395f89ebcbb0b0d4b2ca4954f6f4041afef3420",
+          "raw_export": ".recovery/decompiled-grave-library-target/25e9010.c",
+          "raw_export_sha256": "80e6c3133c6f37c6150e76e732014a630deb8299248ef730a9771cf5cfb68259"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "59bb411c7f1e7b4c06127466037c79f03c20935da90a785550a4c1f187d0e165"
+    },
+    {
+      "name": "morph",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25e9320",
+          "end": "0x25e954b",
+          "bytes_sha256": "7c45f6dcd290e1bdb1bfe1ec67669e27820311517c0ea69cd9017080eaa1eb1d",
+          "raw_export": ".recovery/decompiled-grave-library-target/25e9320.c",
+          "raw_export_sha256": "573113b7ff9a097cd03cc115e81ca967c1c5b6618e25f859af449808ec8f37cd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "51595243076bc12244e7e4e8aad1b7cdd1788b69616619906e206d975bbca179"
+    },
+    {
+      "name": "activate_astral_slide",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25ea680",
+          "end": "0x25eaa6b",
+          "bytes_sha256": "f22ca523d15acc095ed60e12910daec48b4118efafb419162acbbd52a1b7dbbf",
+          "raw_export": ".recovery/decompiled-grave-library-target/25ea680.c",
+          "raw_export_sha256": "1942bdcb131f01741681ec705a8279c1a0cf11c988c7390a4da527b8825f304c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8247a8ee3745c1f5f90d4612a6102fe2d8addd8ebbae70d9ee7ea616885b1366"
+    },
+    {
+      "name": "action_on_target",
+      "source": "functions/manipulate_and_damage_all.c",
+      "native_ranges": [
+        {
+          "address": "0x2667050",
+          "end": "0x26670b9",
+          "bytes_sha256": "6c7775d8a431cb25196500ff5eef318fc778e1c4cd8c985ad67d3cddaba3dcde",
+          "raw_export": ".recovery/decompiled-grave-library-target/2667050.c",
+          "raw_export_sha256": "eedd0df2a1cd0bc39bc18446ab71e0f3313cf53b34acc03e7290c2569bd2654f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "dbb50c50dc6647a7887a02a74acfc74fd99cdc908ee4a0a3cfc2d4869cf21058"
+    },
+    {
+      "name": "manipulate_type",
+      "source": "functions/manipulate_and_damage_all.c",
+      "native_ranges": [
+        {
+          "address": "0x2667640",
+          "end": "0x2667694",
+          "bytes_sha256": "d7596929f3de62b8025545d15968d7d61018a73e322b0a0e70a952d0648daafe",
+          "raw_export": ".recovery/decompiled-grave-library-target/2667640.c",
+          "raw_export_sha256": "2a5fb2e1b65146895c7780d43cf5b56840610033eda1db609ad21fc232dc2ef5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "15b0e0a2d20f0fe66a8fb38f163a85e1b9807f506662e08fd0d989dff6b8a858"
+    },
+    {
+      "name": "manipulate_auras_enchanting_target",
+      "source": "functions/manipulate_and_damage_all.c",
+      "native_ranges": [
+        {
+          "address": "0x26676a0",
+          "end": "0x26677ed",
+          "bytes_sha256": "d6346a56dc5626ff96962d211dd4a8f2e5515bce5131a06defffba671334f9d0",
+          "raw_export": ".recovery/decompiled-grave-library-target/26676a0.c",
+          "raw_export_sha256": "e1a1e6bfd649d4c1a1bf82d77dfb981d718da1369383bdcf19cb9c8ae14f00b0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c6cc15326b58c89c423aff2d17494e60d5305203b5ae602efd26e0c5bad82979"
+    },
+    {
+      "name": "damage_all",
+      "source": "functions/manipulate_and_damage_all.c",
+      "native_ranges": [
+        {
+          "address": "0x2667a70",
+          "end": "0x2667b0b",
+          "bytes_sha256": "e2b66daa461b6dca0d82b5f3c325c19506a95b8cf69d3934f975a7ef45b1c165",
+          "raw_export": ".recovery/decompiled-grave-library-target/2667a70.c",
+          "raw_export_sha256": "2a93ca74392968ae8debe0cf09c4beecfcc2825387c92d3c9a085367fff0e142"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "69385f141e42de294eec382aa2ad4696e7e1c8b390776570b015c0810af6c626"
+    },
+    {
+      "name": "compute_and_check_casting_cost",
+      "source": "functions/play_spell_for_free.c",
+      "native_ranges": [
+        {
+          "address": "0x2667ca0",
+          "end": "0x2668149",
+          "bytes_sha256": "a490428a50b6758a28880296ae184d1ab5f19f4dbe987ab627ba14bfffb5c2ca",
+          "raw_export": ".recovery/decompiled-grave-library-target/2667ca0.c",
+          "raw_export_sha256": "ca791e12f934b31fbff25eb4eb4f8d36d0b6b0c437184f41836ab213cbc8253b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "61f7fbb370ca3b84c3c8606f721eff27083f6b209a39884f8b1e1e089adc02c0"
+    },
+    {
+      "name": "raw_put_iid_on_top_of_graveyard",
+      "source": "functions/deck.c",
+      "native_ranges": [
+        {
+          "address": "0x26b4ec0",
+          "end": "0x26b4efb",
+          "bytes_sha256": "2cc489d7f7603e61e4c2b6c2ae6a005d2f8b8219f954413cfe16496c7606a5a3",
+          "raw_export": ".recovery/decompiled-grave-library-target/26b4ec0.c",
+          "raw_export_sha256": "a1f3cce6cb4bbcc783626a3a7dc715094e9dddcd2fb334f65d6d52c206753f09"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c3b1ab7edb8e39bc95112faa70a08cd9ef3f3f9f8527afac3b7775588ac04833"
+    },
+    {
+      "name": "ante_top_card_of_library",
+      "source": "functions/deck.c",
+      "native_ranges": [
+        {
+          "address": "0x26b5120",
+          "end": "0x26b5218",
+          "bytes_sha256": "2781ca60efb5bbcf2dafabf250fa747f744e0f645e5f3f3bccb0df40495eb87f",
+          "raw_export": ".recovery/decompiled-grave-library-target/26b5120.c",
+          "raw_export_sha256": "0a69b50bab1e5477f5953b5142a16cc2567ed03599f8874ae2c31afdf9ca95a7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "02fa01bf7862fad042da63e4a817b8c03f2b930206c5542a4918390726ebde2d"
+    },
+    {
+      "name": "reshuffle_all_into_deck",
+      "source": "functions/deck.c",
+      "native_ranges": [
+        {
+          "address": "0x26b6f70",
+          "end": "0x26b764a",
+          "bytes_sha256": "6bfb5fcc0f9d63b4e264af67b205e1082a724de1d5d16a96c8071968e6f30df3",
+          "raw_export": ".recovery/decompiled-grave-library-target/26b6f70.c",
+          "raw_export_sha256": "fb04544b0e130ee87b9bc11f8d3af7b539b859f5cda3e773186c3d0b2ce59cab"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0e42968900293d4fd5ef2e39b6c46ffb311a988b4fe623f106f277c6dd4c0b0a"
+    },
+    {
+      "name": "special_mill",
+      "source": "functions/deck.c",
+      "native_ranges": [
+        {
+          "address": "0x26b7900",
+          "end": "0x26b9422",
+          "bytes_sha256": "57f617c31b9b790d943b3da3a171caf519db0019474cf872e50563306cc8cf0d",
+          "raw_export": ".recovery/decompiled-grave-library-target/26b7900.c",
+          "raw_export_sha256": "716d4e66c0e0c3a65f6f5f58d0247ce3c434f446920ca8831c71d88c33e9d7c7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e7a42ac3740ac281a145b35c58190f37872ed9fcb5b4cac4c1b336905ff8a5ee"
+    },
+    {
+      "name": "whenever_type_is_put_into_graveyard_from_anywhere",
+      "source": "functions/deck.c",
+      "native_ranges": [
+        {
+          "address": "0x26b9470",
+          "end": "0x26b9663",
+          "bytes_sha256": "db187d48b6103eb04f28d33f81e569bc25b665a20f379ae151db48eb6e553b36",
+          "raw_export": ".recovery/decompiled-grave-library-target/26b9470.c",
+          "raw_export_sha256": "7c716e283ec549bd21031bd1f24cd19385161cdd2af0b466151c48f9941e789b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "25214bdaa11ebae270c30f1a69277b32e200127710fe8eed2a4a0fb8f31e8d03"
+    },
+    {
+      "name": "validate_target_from_grave_source",
+      "source": "functions/deck.c",
+      "native_ranges": [
+        {
+          "address": "0x26b9bf0",
+          "end": "0x26b9cb5",
+          "bytes_sha256": "392cf8cced98ec7ae31f17e7d0183f4923a08d071d3ba777b4dc40dc2351cf9f",
+          "raw_export": ".recovery/decompiled-grave-library-target/26b9bf0.c",
+          "raw_export_sha256": "c6182da3056d050e578bbfb40d70bbfc1a454ccd473fd26532f62f318d2a21e9"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "81fc93d2644551ba09caaefaaf23ea66c45a7edc4a3b5f5d8265593cde2b8780"
+    },
+    {
+      "name": "find_in_graveyard_by_source",
+      "source": "functions/deck.c",
+      "native_ranges": [
+        {
+          "address": "0x26ba060",
+          "end": "0x26ba0de",
+          "bytes_sha256": "60cba32ee45b64a10f0f7844e3269182baaaa726bf944f7ed6e1cfaef6dd978a",
+          "raw_export": ".recovery/decompiled-grave-library-target/26ba060.c",
+          "raw_export_sha256": "e365593eccba7bdf9359304d382ea36e7e9676af93ece1cf571229f96c1b31c5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "54d18f43d5c59c77e228bf745a7477cd18f640d8d78678abc41eb003b5cc1539"
+    },
+    {
+      "name": "whenever_a_card_is_put_into_a_graveyard_from_anywhere_exile_that_card",
+      "source": "functions/deck.c",
+      "native_ranges": [
+        {
+          "address": "0x26ba0e0",
+          "end": "0x26ba41e",
+          "bytes_sha256": "b653f06976909a29e55480e2bcb5458442ff0b617967853573a47b3dffa98f1d",
+          "raw_export": ".recovery/decompiled-grave-library-target/26ba0e0.c",
+          "raw_export_sha256": "9b7c91525f68765c384d75da7e1e1cd3b451467f5a019b037d59936af7a3a545"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "810e9ed36441d2652321511f01ed1dd8272b0817968ff4910207a7f11a26a942"
+    },
+    {
+      "name": "my_base_value_by_id",
+      "source": "functions/global_checking.c",
+      "native_ranges": [
+        {
+          "address": "0x26c01c0",
+          "end": "0x26c04ca",
+          "bytes_sha256": "0d22a74a68584a8f5a6ea4e93881f252dfcebf5813656e035d03949771eeb626",
+          "raw_export": ".recovery/decompiled-grave-library-target/26c01c0.c",
+          "raw_export_sha256": "8d42f53e45417f4680a14d96ad4ceff2426b1cd24c4d359864b44c4d784192cd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "78ae422c4e0a95a2ca772ce21b93008a5afd42afb60c02abc743469de9bbb710"
+    },
+    {
+      "name": "my_base_value",
+      "source": "functions/global_checking.c",
+      "native_ranges": [
+        {
+          "address": "0x26c04d0",
+          "end": "0x26c0851",
+          "bytes_sha256": "e65cf0fdf830d5ee54f1cbeab80482eeb1e2a72db18a812943f3e8963865ae81",
+          "raw_export": ".recovery/decompiled-grave-library-target/26c04d0.c",
+          "raw_export_sha256": "d7164a6c61873431020c1dc691c5c5bd510f85ed8ef1329f282fbb297a92d951"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7223d9def6226f2ffef6c3c8e24f53796b09c50fddf9d939d563ab200c7f7f95"
+    },
+    {
+      "name": "select_card_to_play_from_zone",
+      "source": "functions/global_checking.c",
+      "native_ranges": [
+        {
+          "address": "0x26c0dd0",
+          "end": "0x26c0f54",
+          "bytes_sha256": "d841caa6fa9589138e28880c973074cd1a01ceb3ffa7c401fcc2ef88068c7231",
+          "raw_export": ".recovery/decompiled-grave-library-target/26c0dd0.c",
+          "raw_export_sha256": "2557c531950b355387238a9c62a4eef0b0c7a012a5eaba240ce788376fa28814"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b48f130e652f51142e4d5e41ee61c8e2611924838e2c934fb535d4b4bb8a8138"
+    },
+    {
+      "name": "count_graveyard_by_color",
+      "source": "functions/count_graveyard.c",
+      "native_ranges": [
+        {
+          "address": "0x26e5df0",
+          "end": "0x26e6001",
+          "bytes_sha256": "1d1a2cdfb3eeff201de731dbf50f7d6a1b7f22912625deedcc0225d91a2d3c89",
+          "raw_export": ".recovery/decompiled-grave-library-target/26e5df0.c",
+          "raw_export_sha256": "f60757ea0c0fab46487d38f84eda1b7abe3e8409b6d2ff4374eb9cb06275a02a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0e2005c9e5aa3296b18295197c07ecf9126807951e84e7e0fcf27add927a20e1"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_incite",
+      "source": "cards/m11.c",
+      "native_ranges": [
+        {
+          "address": "0x208c2f0",
+          "end": "0x208c4a3",
+          "bytes_sha256": "cadb257e99ffe6d2b38901cfb1de94b207f4bbaa542c5728b57a0e7b18c82948",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/208c2f0.c",
+          "raw_export_sha256": "4cb875bf0f192805a83df45d2427d1e637790d18953bbccbf7dafc8556f2fcb9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "da874d3197cbceca88c9d39bb98c2bbddd1add27ef513009fb77e7b0258365a4"
+    },
+    {
+      "name": "card_hoarding_dragon",
+      "source": "cards/m11.c",
+      "native_ranges": [
+        {
+          "address": "0x208c150",
+          "end": "0x208c2e6",
+          "bytes_sha256": "870d57d9b922f1a5f77ef66ade0c864479a53efda5de31522a7e47a3141bdf0e",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/208c150.c",
+          "raw_export_sha256": "61d4993c8571ee233e1b95a9a57e9d4a6589efc7409549fb8fb4207c3d622ee3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "536e5a3145fb55e22ecfa340c3fc73f0d08f5cbbb79c8c7ac4eb7250359b2677"
+    },
+    {
+      "name": "card_harsh_justice",
+      "source": "cards/portal_1_2_3k.c",
+      "native_ranges": [
+        {
+          "address": "0x21ba670",
+          "end": "0x21ba7e7",
+          "bytes_sha256": "10b79d72a521743bb56087f5dd736dc2ddbbb4cadacc402e7125951d0b165dd5",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/21ba670.c",
+          "raw_export_sha256": "a5ccae2cba300b44ddcc49d011347893da418864a85d04c0976dad4ceef6431d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0212ea3135a3d64331c5c995b18c33ec5acb150f441231415316da2dfb768c32"
+    },
+    {
+      "name": "card_giltspire_avenger",
+      "source": "cards/conflux.c",
+      "native_ranges": [
+        {
+          "address": "0x21e4cb0",
+          "end": "0x21e4e1c",
+          "bytes_sha256": "d1536ba4111be6532886c34e9657b2ce7c1e931a047e652caf76121f70fc6822",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/21e4cb0.c",
+          "raw_export_sha256": "e11400a75c2573f717aeb8793e96f3eabb37528f22308fa6b4df817296881067"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5f83217456e608382bd3d5076099f5b4f9c76dae6bc622aa07a770f081716d99"
+    },
+    {
+      "name": "card_ring_of_xathrid",
+      "source": "cards/m13.c",
+      "native_ranges": [
+        {
+          "address": "0x22b87e0",
+          "end": "0x22b88f9",
+          "bytes_sha256": "04394c552b5574100c997f44a7144cc83ad69131f48fe81a943e2144af08abef",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/22b87e0.c",
+          "raw_export_sha256": "21c9c0da84024928f606fcc072da244a9b78899560cc67f8414057be637ba377"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7885c4d7a5ee9970652a392db33ed9439a5e3abada429c27f88ee68015f47327"
+    },
+    {
+      "name": "card_ring_of_valkas",
+      "source": "cards/m13.c",
+      "native_ranges": [
+        {
+          "address": "0x22b87b0",
+          "end": "0x22b87d7",
+          "bytes_sha256": "e85fb61eb392e93809b7d34332600be2baa4f417b8c493dfbddfb3ad1f1b1b30",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/22b87b0.c",
+          "raw_export_sha256": "f5c55e5c16b431f7c12a99d59db68fbaaf5455e3e44b4ecf63ef852fc4bf4fb8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "349e4d3f015907ed9bd873faf569b3e807c7b80877db85a276bc68d11b7405b7"
+    },
+    {
+      "name": "card_ring_of_thune",
+      "source": "cards/m13.c",
+      "native_ranges": [
+        {
+          "address": "0x22b8780",
+          "end": "0x22b87a7",
+          "bytes_sha256": "f22a53ccc87d58d445b4c99c6a881b97caac3587c775fc7dafdbf3b4da5fa711",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/22b8780.c",
+          "raw_export_sha256": "bfe3f6e4a3fd07ae696d5bd9619586143d14cb5f3b70f99d8a0e531179635395"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "369d0d2acc0e7947505f94929a7947f6ce6bb2d606343f8a4e010452fe93060a"
+    },
+    {
+      "name": "card_ring_of_kalonia",
+      "source": "cards/m13.c",
+      "native_ranges": [
+        {
+          "address": "0x22b8750",
+          "end": "0x22b8777",
+          "bytes_sha256": "3a4ff9fdcac9c32eac319c1178cc6151be8672725979cb662a857c97fbb64365",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/22b8750.c",
+          "raw_export_sha256": "9d7619bd0f98683771060857ed479a2a14a27c498afd7e956ba41de0fede59de"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9feeb28d05d99f0d814abbb1b5f3cdbac62b28ee334e699d1a9ab12ff0c079be"
+    },
+    {
+      "name": "card_card_ring_of_evos_isle",
+      "source": "cards/m13.c",
+      "native_ranges": [
+        {
+          "address": "0x22b8720",
+          "end": "0x22b8747",
+          "bytes_sha256": "e3610b755ff50409d882157f5c1cba8562cf1830d6b4c40c792740ebb40c7d9c",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/22b8720.c",
+          "raw_export_sha256": "8a4d4a9a266f035864a0af83e9e088f9dffd9ef0941ff7bd6f35c42020b33d2e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "917104fa6c44ab2e6a49f99d7ec5fcae92b54caa7eb93afee3d24bb618d319b4"
+    },
+    {
+      "name": "card_odric_master_tactician",
+      "source": "cards/m13.c",
+      "native_ranges": [
+        {
+          "address": "0x22b7dd0",
+          "end": "0x22b7e60",
+          "bytes_sha256": "6ec51cf7147ba1ba24193204aac40e8c1bdf51e2962fbc827691d1aec3b58599",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/22b7dd0.c",
+          "raw_export_sha256": "e98151c04e508c1d6c56707729848f9cf8e427c98775133a00f8282c6b20c6bc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8c66b0bf5a720e54e89260d5d75fcf3e760f277bb4cec69da6da1239733ae868"
+    },
+    {
+      "name": "card_voracious_hatchling",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x2371d50",
+          "end": "0x2371d95",
+          "bytes_sha256": "fdabc4f74b03da0c31d7eb1248f6c286b76d199ca65b79b9a6756e4584ebfa65",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/2371d50.c",
+          "raw_export_sha256": "ab73f5ae43f5950b97baa78c69111e824cf273df43e6e403d14f7981600bd73e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2e4df7e6fd4a07cedc8ee4d9540f8a5be1391f21235a500b245c55995672670c"
+    },
+    {
+      "name": "card_unnerving_assault",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x23713b0",
+          "end": "0x2371bd1",
+          "bytes_sha256": "45d952240dbc8079021b7e888a36e36e5deb8ec917fab72b08e308a6dd249f54",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/23713b0.c",
+          "raw_export_sha256": "e1e91b4e9a3697a1a5071ed9f8133751c8af3c12023821c2f65669ab8ae92097"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "07b4dbda42dcc9590f55593cee50ab76af7a38fc85433f20df19457567eb8ab5"
+    },
+    {
+      "name": "card_sturdy_hatchling",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x2370780",
+          "end": "0x23709ec",
+          "bytes_sha256": "8c794be67f0c32f19f53e66c27c7ce91360f157ec10fc91334f3350ce966dd8a",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/2370780.c",
+          "raw_export_sha256": "6755a235fe23b1afd3c693548625ea27a72054d9405f83655822305a344c2452"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4da933e9f4ec5403545b970011ee7b472afc2d87baaa53c30b97932edbe83016"
+    },
+    {
+      "name": "card_shrewd_hatchling",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x236ec30",
+          "end": "0x236eeef",
+          "bytes_sha256": "272a0b375996278b27c47b4d0f8bc6a90d10922e5775b7165975d53267990e3c",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/236ec30.c",
+          "raw_export_sha256": "dcfdab49e09e7969df07c70cace6544b168ac4df62403461257e9f5ad11a1360"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2022a332cfe9284c0417739831a9d8ee38cd24afc8afa7898e9cb6496d903dd2"
+    },
+    {
+      "name": "card_noxious_hatchling",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x236c3f0",
+          "end": "0x236c435",
+          "bytes_sha256": "9a0b247a2f2d954bd757694c8d0e5eb5400147f5551aa9b4805f4fd82312a53c",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/236c3f0.c",
+          "raw_export_sha256": "1547dbc418d7aef65c02deda434d8f61430743c5d3416a4dd91b3839be4d0269"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2da45cfb41b0d3f613f5d05b3f9607d28264e4e94d624cc587427c05c63b8ce8"
+    },
+    {
+      "name": "card_mirror_sheen",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x236b4c0",
+          "end": "0x236b79b",
+          "bytes_sha256": "eab2caa1d92b101f903971b7dbecec54f463c76cc27f3d60baddb6dfb01f2167",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/236b4c0.c",
+          "raw_export_sha256": "78b8c8e89505af4576d8b9ed6d6f58e0c2b5f2e72e040fff67748abda151f5c0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "80fd819415715851863fc5a4676e6afd1c1ed0a776658ac30956c97b8b5d25f0"
+    },
+    {
+      "name": "card_invert_the_skies",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x236a330",
+          "end": "0x236ab51",
+          "bytes_sha256": "8e589ecd6c5a56602e8be306f9c572c5ebd3c0b7d589b607bbdea9ed9d740b09",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/236a330.c",
+          "raw_export_sha256": "aa5db275f11f85e1bd31b7bb5e67c8578dac57bd69e2370c7abcb0e476ad3fdf"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3303b210d0910868c9d3f07c966b0e3ea2e5f048079bbfcbbd7fec92e9272212"
+    },
+    {
+      "name": "card_cankerous_thirst",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x2364d20",
+          "end": "0x2365654",
+          "bytes_sha256": "fd52256f98a12224f4301ce2b04cf64af2e4daa4665c4938ff47add0a310f802",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/2364d20.c",
+          "raw_export_sha256": "9cc9e736ab0ba74d3e2b17d228c0374ca0dacc9f4e0e64da25bd2767fecded4e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4e2df2efaeee562d5c85c1b2f0f6a72e5b70075af497ea7427ae7271cd38293b"
+    },
+    {
+      "name": "card_belligerent_hatchling",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x2364850",
+          "end": "0x2364870",
+          "bytes_sha256": "4683ef4bcaa582ff0d0bf2a2ef0598254975acb414aec6329249c22d604afa90",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/2364850.c",
+          "raw_export_sha256": "52c6658f4e1b5a9c796c35749f5c92c9ae7a67b5fd4424c251db5a308184ce40"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7e63d9299e86b77fc51545489e75b27ca655ae8d8a09e4b64da2500f185dec32"
+    },
+    {
+      "name": "card_batwing_brume",
+      "source": "cards/eventide.c",
+      "native_ranges": [
+        {
+          "address": "0x2363d60",
+          "end": "0x2364521",
+          "bytes_sha256": "f068178ed297577bdbdebf3585e4c57e2811078a59b9e70f3299b5ecd10e1451",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/2363d60.c",
+          "raw_export_sha256": "b8a72a26d6a4ed7243f7689d6217a18d9f666ee51c9aab8269e1889569d24e6a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "162aa0931f1c4359f7f35a0712b68d3f9880792929899b91fd96832ebca86ef0"
+    },
+    {
+      "name": "card_taste_of_blood",
+      "source": "cards/m12.c",
+      "native_ranges": [
+        {
+          "address": "0x24a3c70",
+          "end": "0x24a3c89",
+          "bytes_sha256": "99f24cea30f08bf306499a6204784977c679c1398d9a9a14c875a3112f739153",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/24a3c70.c",
+          "raw_export_sha256": "b41c06ee094981ba41ad0146088a754993d3325e0ebe7cd937609b4a8751926d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "352eb5e284b5e9d65a3562f2522bcfba0c40191d50f791abbea3681ec9ec9765"
+    },
+    {
+      "name": "card_sorins_vengeance",
+      "source": "cards/m12.c",
+      "native_ranges": [
+        {
+          "address": "0x24a3c50",
+          "end": "0x24a3c69",
+          "bytes_sha256": "11bea3ab6b8fe37b82b07bbd9a25d5a2f0d68f9f63d3e2751e6801bfd315f058",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/24a3c50.c",
+          "raw_export_sha256": "e891ca6090fdb044bfdef6fcbae71c86b7d602a7467a8906c520802b384fba51"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "60c0ec698f2a473509e741eaa140701dd29554f6bbcbb8edd56eaea51b81e7d1"
+    },
+    {
+      "name": "card_aegis_angel",
+      "source": "cards/m12.c",
+      "native_ranges": [
+        {
+          "address": "0x249f400",
+          "end": "0x249f507",
+          "bytes_sha256": "4a8c526e8aedc956dfc064d39b0abf7ecb1d287db03a674f6f657d8a43474be6",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/249f400.c",
+          "raw_export_sha256": "63575089fc2873872438797cb63f302390caea26090ff246be49ffe1c9c9b778"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ed2043a22fd86232efd0834f72b62bbbe05a51cab2560639cc18a6cd9e89e565"
+    },
+    {
+      "name": "card_wooded_foothills",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f83d0",
+          "end": "0x25f8409",
+          "bytes_sha256": "2384c93c5c5f5903ae99576bfa35776e133aa5d63d2dafd47045782ce4044772",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f83d0.c",
+          "raw_export_sha256": "8b571cc187011bdb54bb0e9453bac44a8e98f5073116a84cdae72c371519d1a0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "af8849c8eb84111eb5c101bc1ebef8f0d724ee972ea5c855b149ceedeb1cd9a9"
+    },
+    {
+      "name": "card_windswept_heath",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f7e10",
+          "end": "0x25f7e49",
+          "bytes_sha256": "a9227bce37b1fba34c08f1d0643a7535daee88d32304dcf2076330a04c4b6a57",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f7e10.c",
+          "raw_export_sha256": "b115b8bfa3aa058591dc8dd1a26940a73b132a9fdd6155276e1a63a0ec558f14"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "75d99b0cb2cd3527a2f248f92a4946706ddf5d32a189a6181cd1da073461ddf7"
+    },
+    {
+      "name": "card_whipcorder",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f7d90",
+          "end": "0x25f7e0b",
+          "bytes_sha256": "34c8f4fde2f1937082e179bfeb3d5f1fb0e1d2e189b3f24d517532c930230f39",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f7d90.c",
+          "raw_export_sha256": "e5ef537626e6e1b399d636c2a17ea9ff91c97a9f246da1c19fb4f2a23f8b6369"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e0380b627a89ea92af477a8a0bae61d7e953d99a39d349bf2afef937838f3de5"
+    },
+    {
+      "name": "card_voidmage_prodigy",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f75e0",
+          "end": "0x25f77d1",
+          "bytes_sha256": "5b1bc40f4e3bec9b9312a3708a4e517997336849e34b657538f6506b8b286b9c",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f75e0.c",
+          "raw_export_sha256": "017fd2f74cb14832ab9ebf9d5b5ab478203f2a907ee09528e35fedc19df4bee2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4123497d6dcd57841858bfffa181ba39d10f055c93e857ff3c53fae0572b00ba"
+    },
+    {
+      "name": "card_towering_baloth",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f6a40",
+          "end": "0x25f6a91",
+          "bytes_sha256": "0c2feb5eafbf67fbc4af95080ce2fe5b4382210089e4af5153cb18fa60c85da8",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f6a40.c",
+          "raw_export_sha256": "93899c6336170a1d39afe68a81f4d9bf37374bb1b6a2de65d1ff83ef7456a30d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "11477a91a666dad5bef55b1de02dd444c925382b45bb96e0c74b4d7eace44d51"
+    },
+    {
+      "name": "card_spined_basher",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f5c70",
+          "end": "0x25f5cc1",
+          "bytes_sha256": "90c17f6a7c2bfdbb9bb4cb1e66eb213207a3abcfae30b073ef930957a95b7641",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f5c70.c",
+          "raw_export_sha256": "a040dbc7939a973d3bbc56b762b07533e2de93be0f07a5e4a6d682b4f5f8e658"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a7720048a064bfe2f042a33ff1f46603d00c07a26025b21bf190d8d8573e33e4"
+    },
+    {
+      "name": "card_snarling_undorak",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f5780",
+          "end": "0x25f5951",
+          "bytes_sha256": "cd7e6d903b5f2098944a69d815faf9df49113e2b781aad8a323fd29761ece8d1",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f5780.c",
+          "raw_export_sha256": "aee70c88ca83509234363e8793ce91733d658328e8ac9013ad44ea298eb742e6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a71412c0ae60ca2f09203eeb13e0f7e71a5c56f4230d9b198cd88c8403f6aa18"
+    },
+    {
+      "name": "card_silent_specter",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f4bb0",
+          "end": "0x25f4c8c",
+          "bytes_sha256": "8b6d8ff6e7bebbe8021267ba1116db89e242279b0491e4b1a71c67cba604ff65",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f4bb0.c",
+          "raw_export_sha256": "bd90805309e0c4fa296c7f76ed58fb79aaa472813dfcc468b8ef9dcbdc479047"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "597ef0ffec779dcc552cf3199e22e5ca607d9731ba4949388dc85047b2fdca6b"
+    },
+    {
+      "name": "card_polluted_delta",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f2dd0",
+          "end": "0x25f2e09",
+          "bytes_sha256": "63343b6f56d860396caa306d7754804dc3da2e3c4491a3abeee4c31ed8e783ba",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f2dd0.c",
+          "raw_export_sha256": "52634239a442c48938ca6a8c6a9e5a803ce2c075dda228f0ca137184366898b7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d223dbbe5024e7d9cf91278db0d2f449d9d3a1f662d26b2fc4d59d4aa7521211"
+    },
+    {
+      "name": "card_nameless_one",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f2000",
+          "end": "0x25f209e",
+          "bytes_sha256": "3bcb2f5289e1abb5d44e43c211d50e28b68a463335d2615157dd316228616861",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f2000.c",
+          "raw_export_sha256": "8a329e3d4c094a1cf7972e3d981f1cd5945d2c89f48ad408f0fc575c2bbec9cd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "6d68abb304d68912101b56586fd69c3b9974773036dabb0a724674eb9f996eb9"
+    },
+    {
+      "name": "card_krosan_colossus",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f1960",
+          "end": "0x25f19b1",
+          "bytes_sha256": "e12dfaf86d9d7d5e09b7f03f2488da860f88fde0557bf3364a6c7f7427235aa4",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f1960.c",
+          "raw_export_sha256": "1c81d4eb5457f2da70386633a0bd9ecb8ac3e9c7bf64fa44bfef4c40aabe31ac"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5525f33cd83775b346f3038b89068f64e0ccef7ffca12978cd02f03f57c02550"
+    },
+    {
+      "name": "card_ironfist_crusher",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f1120",
+          "end": "0x25f1192",
+          "bytes_sha256": "8276e38404e481dfe0e01c306587bd90ac5f4e9f4d0664e0e5af8f332b099f36",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f1120.c",
+          "raw_export_sha256": "a4a600d24eb3aa30130a290af18e32f41b6a5c0540e1c54bc9251c6cfd1900f3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "797aaf91541b529e3681ed6a7ef4815113e5c58af8d07d3a462bd178c681bb43"
+    },
+    {
+      "name": "card_hystrodon",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f0e40",
+          "end": "0x25f0ed0",
+          "bytes_sha256": "ffdd0262ff19208987293c1f88db274588b1ff2feb235db7630ef3ed12a4657e",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f0e40.c",
+          "raw_export_sha256": "69b77f87c746b9887fcd9f93ec3a451dcc2254cffb7c545de8dedd9c9b3e4662"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ab74f9624cbfe117d38f07211b4341365c1b32e3cecd212aad2b5259af03d7f6"
+    },
+    {
+      "name": "card_headhunter",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f0dc0",
+          "end": "0x25f0e3a",
+          "bytes_sha256": "f1b2066baea9f2687f183c4b55b3ed7a65e08452a9eb3850b96b1bab1171b919",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f0dc0.c",
+          "raw_export_sha256": "f40307fc5f01fb718f1bd2a52cf350bcbce654c95d99416fa8c992addccc22b1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a3c9906ed19f59633d415fc137513194adc26ead18d3ee0a890e67a6677619a3"
+    },
+    {
+      "name": "card_haunted_cadaver",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f0770",
+          "end": "0x25f08e6",
+          "bytes_sha256": "545994b3e913d7995c943f108b71306a9e1d7e9830551c4e66ba2232f24ea315",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f0770.c",
+          "raw_export_sha256": "7eb2444ff023e45fdf98eba4d75915c26aa7dabf626ef2425927ed615f99947c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "129ac4eb8861c5d48b849ba7fe9272cef74e1aacf0a33dab2000f58ff3d72059"
+    },
+    {
+      "name": "card_grinning_demon",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f06e0",
+          "end": "0x25f076a",
+          "bytes_sha256": "7c1bf42478e8b2f02ea2c6c1379ff0238a1620cd72bd223e820f8472ed0bc270",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f06e0.c",
+          "raw_export_sha256": "a96c2b947b14b45d872fc029a6117143011cfff619d30f668757eed0d83b2394"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "c1d5ad8f220fd4b033fa20fbf1b8db2c917d9a61a0693e92599e86a803b8f9bb"
+    },
+    {
+      "name": "card_goblin_taskmaster",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25f0170",
+          "end": "0x25f0329",
+          "bytes_sha256": "d785bd14dd26f79ffdeaa501e1c0beab1f70caf45f24b2edc99fba43004bd774",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25f0170.c",
+          "raw_export_sha256": "5dc20d401461535bdc88df529c717194cb86be09a05ac16aadc77e2a47dea71f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "73187125e90bb2a6e67762e5438a1f4999c646220cf4d5058ed798251eb68c4d"
+    },
+    {
+      "name": "card_flooded_strand",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25ef590",
+          "end": "0x25ef5c9",
+          "bytes_sha256": "0ed2cd5e5e51f3105d7d69f8413222732d1fc483e08fa76c2205e2b7a7b64a69",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25ef590.c",
+          "raw_export_sha256": "d9fd30cee89aae53c240722526f98d60b3a2edd44186f049673bf193f845c771"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3f15200d86d569d8c4d1521d13c4ce256d26428f56a3d0232e7e551df0aee8c9"
+    },
+    {
+      "name": "card_exalted_angel",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25ef2c0",
+          "end": "0x25ef32e",
+          "bytes_sha256": "b8a0d3ce34dce2e59794cf55107545bd77369e06e9e5db0cd763d3c89b7684a6",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25ef2c0.c",
+          "raw_export_sha256": "7eb12ea9969fe56714f7611c75c60677ee087187c6139e8e208403c48796c341"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5f13627ddb0806f035dc0dbea7db6a32758ed9a748d89db2cb093c66148fbb23"
+    },
+    {
+      "name": "card_ebonblade_reaper",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25eec00",
+          "end": "0x25eed5c",
+          "bytes_sha256": "11d5681de554ca2a812544a472d6538adfb5916a9e681de16c2266e5f88b82f8",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25eec00.c",
+          "raw_export_sha256": "2666b1b5ebe43084c3772f53c52688ff67c3680ebf476235357b274f4a67780f"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b45290ac22a8eaa426d0bb487bb1f6944b81d531e5e576d5746613593f6596ca"
+    },
+    {
+      "name": "card_dwarven_blastminer",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25eeb80",
+          "end": "0x25eebfb",
+          "bytes_sha256": "6d9a620effc62bf403922947a4869573845ca51e15705a9ecfb085f8439e7e00",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25eeb80.c",
+          "raw_export_sha256": "544ea4b70b2f13f58f9b031edd0de5672ec1d27ba2f18b62d6cf2a2d83177d96"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "512ca000b331945d1e1dd1e90e76f6db30f641acd387df149574b273c9445d15"
+    },
+    {
+      "name": "card_disruptive_pitmage",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25ee670",
+          "end": "0x25ee7d0",
+          "bytes_sha256": "03bc751dccf173f35989d7f79268b94a6f0eb5af3eb5d40b1a055d9dfe7507a1",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25ee670.c",
+          "raw_export_sha256": "8a5c9727614c7a146a7cc2e1e91c05daddc9737e9e90e97de4df3f772e633255"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ee7ddcd50d8cdc58a6b4a46a8faa8a2b17013e3164d05c537114432cfadaed12"
+    },
+    {
+      "name": "card_daru_lancer",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25edd30",
+          "end": "0x25edd81",
+          "bytes_sha256": "3a67530c75a0b8281b1376a249efca7b496f86dc3ac75c6403f0e03f88af5b78",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25edd30.c",
+          "raw_export_sha256": "7eb0334a45e52fba22623d8a2473030befa0f03d8a01b4b56309a0c457136014"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f5328672af93da87e75ede291f1e499815e4b6bb37c94df429b4c1d6c0f49f31"
+    },
+    {
+      "name": "card_charging_slateback",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25ec9b0",
+          "end": "0x25eca1a",
+          "bytes_sha256": "236128c7d08fa838bbddac25fe619aca42c97fa5dae4ad6cf5853d211b0ad12a",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25ec9b0.c",
+          "raw_export_sha256": "a698140e2165afc8b42a8f20e27eea90f0a2c5c65b81a8e20d725ab87a2de2a6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "fccf70e74f164aedd57d872acc8c0c427d057823439d46c5382fd975cdaa5a9a"
+    },
+    {
+      "name": "card_broodhatch_nantuko",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25ebfd0",
+          "end": "0x25ec048",
+          "bytes_sha256": "20fc7f7fc1b7bd28a3fdacdba1d8227a59d673cf7ab0a569a19aa25808d06889",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25ebfd0.c",
+          "raw_export_sha256": "63c3103e4d81c16ca568922c9daa101445828e2a5fe27a9c8f327f7f2a95f333"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "95466eda0a46fe1636c77bf5ef546c945bc490e4fa726b5637a2783c1eb02d44"
+    },
+    {
+      "name": "card_boneknitter",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25ebc80",
+          "end": "0x25ebef9",
+          "bytes_sha256": "bd9bab3e880cc8652f2ede2c8f61204d8130e01520caa937df1cc26d961f0a30",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25ebc80.c",
+          "raw_export_sha256": "ba024162edc89fb62529a75a3c5ea676fdf472ee9d2c78395ed3b41966e65a0a"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "81b59ee1d3957bb801fe6b245e03a4d30ac9da0e1cc7033b44d552cbadc15c3e"
+    },
+    {
+      "name": "card_bloodstained_mire",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25ebc40",
+          "end": "0x25ebc79",
+          "bytes_sha256": "4d2020708b700ba561c2501e701eabe3093515d926beb95ec60471188ce236bd",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25ebc40.c",
+          "raw_export_sha256": "168e48e173d5d2281e0f3897364b1e5e88fa47375aa88040ec8e13818256c340"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "17e6a370ca54c40d1a66aa47859cef19706f7e332f5df8bc667ec6ec6f2e48fb"
+    },
+    {
+      "name": "card_blistering_firecat",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25eb9f0",
+          "end": "0x25ebadd",
+          "bytes_sha256": "f7b6e10f779ff29190acde32a87772e2f9c880c3027b763cbde72b8128e45a17",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25eb9f0.c",
+          "raw_export_sha256": "0c464dac9a126a6e50c1ef78d16357bbf04af2e0cd8e129812fb9c8ceb107eb1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2a8486679bbb47c9f93ec1cbcc9f5446d2fe9fd625382d4fdfffa07a5132fbe2"
+    },
+    {
+      "name": "card_birchlore_rangers",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25eb5b0",
+          "end": "0x25eb895",
+          "bytes_sha256": "4a3c81952f05bc1e88584956417cfa7d55f9346633a4a241e6f8c17c3e4d0c9f",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25eb5b0.c",
+          "raw_export_sha256": "ab5d1babef2f3a8418b972325e2d1ae84a9723fdc3ae109349bf92959af83161"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a9c839ec373419d8c0f7db8ac2c7d33c3531d9fa240665153cf819532be44d24"
+    },
+    {
+      "name": "card_battering_craghorn",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25eb290",
+          "end": "0x25eb2e1",
+          "bytes_sha256": "b6744f8c53d9adb237a866dfa121988aa84ff4717672eadda9d93e9837d420e8",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25eb290.c",
+          "raw_export_sha256": "a2b9e4bf39f5813b6369095cb441d66a0d1cdbaf1d21013ac543c19b9c90ddd6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "462e51d4af9f07fea299c2e6fd544078b7d0eee3acfd943dad8d826e43543cd8"
+    },
+    {
+      "name": "card_aphetto_alchemist",
+      "source": "cards/onslaught.c",
+      "native_ranges": [
+        {
+          "address": "0x25e9cb0",
+          "end": "0x25e9e45",
+          "bytes_sha256": "25cf2a7c58ab23fd0fc5a0ee941c5e0a88ad83f3914c312892d0ce5105c6e131",
+          "raw_export": ".recovery/decompiled-grave-library-target-support/25e9cb0.c",
+          "raw_export_sha256": "26b6701c4470796354ebd5c0608cbe493dc03beadff88b2261b666c3d1a347eb"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "37d758c4443fa64716fabe34402525eb9a7cc2aaf913929a5fdac6277ec54948"
+    },
+    {
+      "name": "card_jaces_mindseeker",
+      "source": "cards/m14.c",
+      "native_ranges": [
+        {
+          "address": "0x206c790",
+          "end": "0x206c809",
+          "bytes_sha256": "e7de3852d7fb42a42ddef3f31afee1d2c171e8694ef06a99eb74dee188cd2b60",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/206c790.c",
+          "raw_export_sha256": "33e0db1db38675a08d9a15d129454d6ee425d5adf6d048fd6d7dbc3f4f34ec8d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d936ead4b20ef886dfac5601c0fb493a86c99f3481bde48ccf33b6e1e49f5734"
+    },
+    {
+      "name": "card_heretics_punishment",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x2080bf0",
+          "end": "0x2080dbe",
+          "bytes_sha256": "053f6df1e6bca9611f5cfbda22d5870ae3e218a989ba7104201622f3e4440b3d",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/2080bf0.c",
+          "raw_export_sha256": "fc386586f1ecc8a7302b5db0ee13734d57e9a994084d485057fd189d6a634746"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8ff2ec563d1b9f5003582caed635ca0bb5c3d306c8c67ad690bbcb8ccac0a757"
+    },
+    {
+      "name": "card_cellar_door",
+      "source": "cards/innistrad.c",
+      "native_ranges": [
+        {
+          "address": "0x207d6c0",
+          "end": "0x207d80b",
+          "bytes_sha256": "6ab493a638658142fe43ebdfa2bffc6e68471e282d821030631d12968f9490b6",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/207d6c0.c",
+          "raw_export_sha256": "fe52c8a57fe3230771098f5f446cf8417f6f988de580127a7dd07ff1278528f2"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "73062e190aaad760cef83a54185b27fff66d001840afd5ff68bb858380fd41e8"
+    },
+    {
+      "name": "card_helm_of_obedience",
+      "source": "cards/alliances.c",
+      "native_ranges": [
+        {
+          "address": "0x20a2240",
+          "end": "0x20a2499",
+          "bytes_sha256": "d10dadeeda27791d5090aa748c445f00e21ec0ae7a582d836b4fccdac4b21990",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/20a2240.c",
+          "raw_export_sha256": "340f29a00a45656a9b6d5165040d8e1894ff619b0000418bb517e5edfcae6752"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2bc76dcc1db95a563033ad44092bea433b1917049d70e2f314093e8f99828bbb"
+    },
+    {
+      "name": "card_grenzo_dungeon_warden",
+      "source": "cards/conspiracy.c",
+      "native_ranges": [
+        {
+          "address": "0x211eba0",
+          "end": "0x211ece7",
+          "bytes_sha256": "1c315f29036f325f2526e6d3e8f37d1f81b76fc9f4a6452a435d9f77253bee6b",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/211eba0.c",
+          "raw_export_sha256": "cb1be2211f878aa650b0df9dad603c16a4bf661235aabb508bd21fb1cfc58b43"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "289dc71165faeae8907658855a8599b0bce5b677ce962e24be8346f82bc4ff38"
+    },
+    {
+      "name": "card_stitcher_geralf",
+      "source": "cards/commander_2014.c",
+      "native_ranges": [
+        {
+          "address": "0x21dbd60",
+          "end": "0x21dbefb",
+          "bytes_sha256": "5855fc268d985b376950a07d666eec445a551faad1507872e26b2f0fe6c7948f",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/21dbd60.c",
+          "raw_export_sha256": "41fc71e214054c6976a97c6bdac7b9185b9847e2710de953d38abe74ebd4cbc7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "25b0ab1c613928bfbb805daa09d425d9ea32dc924f6d7b3252abb97c048ba3ef"
+    },
+    {
+      "name": "card_grist_the_hunger_tide",
+      "source": "cards/modern_horizons_2.c",
+      "native_ranges": [
+        {
+          "address": "0x22378f0",
+          "end": "0x2237e91",
+          "bytes_sha256": "f2bc379fcd61685c54f856aa503ade8f4eef8f0492163e14ae16feb710321a5b",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/22378f0.c",
+          "raw_export_sha256": "8e3f216345c11cc9dbac3baef109fce7fe38072c9882157e4a930c35270d8e3f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b8e78f2b395f0cfc8cba19833fe83dad306437a86521fad224b3b579112734ba"
+    },
+    {
+      "name": "card_gyruda_doom_of_depths",
+      "source": "cards/ikoria.c",
+      "native_ranges": [
+        {
+          "address": "0x2289c30",
+          "end": "0x2289d67",
+          "bytes_sha256": "029cbacc2f950564b1756a51d9ec3b9b0abb62db983ef01b9c109fa066e81869",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/2289c30.c",
+          "raw_export_sha256": "eac923fa2c5eef4fcc15e83dd29f223eeac0615ef404d69dbee21f5104014758"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "389437653ef5389b4c7a8b13988cf9689fb3250486a1143e82a0137d772a73f8"
+    },
+    {
+      "name": "card_anowon_the_ruin_thief",
+      "source": "cards/zendikar_rising.c",
+      "native_ranges": [
+        {
+          "address": "0x2307e10",
+          "end": "0x2307f7c",
+          "bytes_sha256": "fda30398eff3b54b8234443c0d33d83201c50a6336b7d53a657a85a243da287a",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/2307e10.c",
+          "raw_export_sha256": "5258bb12a8d70b60e2cc75cd8d3f95bc5be620dde362241fb3bfcde51eb0aca0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5d1f5e72968101ecee1d0f40ea6b869fd01d20bb69125c96021588a2084c16f5"
+    },
+    {
+      "name": "card_dread_summons",
+      "source": "cards/commander_2015.c",
+      "native_ranges": [
+        {
+          "address": "0x23540c0",
+          "end": "0x235417f",
+          "bytes_sha256": "5178f3a55163e89496eef6dc122b246f9e5bd473f18391dee0ee4343f7f1d781",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/23540c0.c",
+          "raw_export_sha256": "be6c32ed01f0e1432339c5486c6d969073cbf53ef56a163af8eea0f94900d4c4"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "10007b36a290fa1d650d6d3153f0fabf89afc81c734f85883034eaace6ec1ae6"
+    },
+    {
+      "name": "card_gorging_vulture",
+      "source": "cards/m20.c",
+      "native_ranges": [
+        {
+          "address": "0x2397240",
+          "end": "0x23972b2",
+          "bytes_sha256": "090e78f914184b6415234d49806a7c41266445386c1fde88da697d1f59c30bb1",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/2397240.c",
+          "raw_export_sha256": "c2ccf9d5cfbb5e514ac3abdd56c7516a45b60ac9df0611b0fd9bb3fb82e63dd5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b19edb32abd0d6cc8d27135cced62e7f782858021955b20016ca3db159f1057b"
+    },
+    {
+      "name": "card_combustible_gearhulk",
+      "source": "cards/kaladesh.c",
+      "native_ranges": [
+        {
+          "address": "0x23a4ed0",
+          "end": "0x23a5015",
+          "bytes_sha256": "d6c971d55f0d425364f970ed6d62ba6a16138c11e7ea887012ae4cb34839711c",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/23a4ed0.c",
+          "raw_export_sha256": "421083389334136c9aa923936bc0cc2323cac7ed76151076980a284415b58b6c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "758f1a99a0eb2c01af7299ad2c53a1a1959991774d1bd9a7fa06f1e3442fbaf9"
+    },
+    {
+      "name": "card_lorehold_excavation",
+      "source": "cards/strixhaven.c",
+      "native_ranges": [
+        {
+          "address": "0x23d3d20",
+          "end": "0x23d3ff9",
+          "bytes_sha256": "0285bfd3fe2e188fac4d11c45eae0d35782caa243e794e2da7ef092d919fc766",
+          "raw_export": ".recovery/decompiled-grave-library-target-extra/23d3d20.c",
+          "raw_export_sha256": "f1470420671df35e64cfa67831498e802ee824945cbe3f22acd23c2e2a5f0f31"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4f4835a2f41113f4acc650754cd635b33bf4d6a3b4c4f69e7a264058a4c7a606"
+    }
+  ],
+  "helper_definitions": 32,
+  "native_helper_ranges": 32,
+  "changed_helper_definitions": 12,
+  "changed_card_callers": 5,
+  "source_dependencies": [],
+  "native_contracts": {
+    "cards/m11.c": "Incite sets red exclusively. Hoarding legacy retained complete dialog/detached exiledby iteration; live dragon now suppresses removed death triggers.",
+    "cards/portal_1_2_3k.c": "Harsh Justice damage worker passes DDBM_0, not resolve_trigger flags; attached attacker source and per-player raw damage aggregation retained. Live spell unchanged.",
+    "cards/conflux.c": "Target predicate complete native body retains controller-based flags and exact failure text. Giltspire caller retained.",
+    "cards/m13.c": "Ring grants key in event_result and s_key through special_abilities. Four-entry activation table, mode costs/AI priorities and regeneration preserved. Xathrid publishes regeneration keyword during CHECK_ABILITIES. Odric removes effect with KILL_EXILE. Other four rings/Odric live handler retained.",
+    "cards/eventide.c": "Mana prompt native emits each nonzero colored symbol once, not a loop (all four paired hybrid card callers pass colored 0/1). Buffer100, hybrid card prompts3x100. Hatchling and five callers, Mirror Sheen predicate/live caller, four hybrid spells all retained against full native bodies. Cankerous Thirst native clears info_slot before testing it; preserve unreachable normally-paid chooser quirk.",
+    "cards/m12.c": "Pingers and two live cards retained. Aegis legacy delegates other_leaves_play then removes on EVENT_LEAVES_PLAY_ABILITY or linked control change; live angel retained.",
+    "cards/onslaught.c": "Fetchlands honor added mana colors, forced mana path and RANDOM chooser Get mana/Use Ability, initialize modes1/2 and gate fetch resolution. Native CAN_ACT mana path checks mana_producer exclusively; fetch eligibility test costs1 but actual payment0. Casting morph clears ext->sp_keywords. Morph/Astral Slide workers retained fully including Lightning Rift picking target after charge without fizzle check. Voidmage activation gate/costUU recovered, Ebonblade moves to dat_ability. Remaining paired morph/fetch cards retained, including Snarling Undorak GAA-only gate/native disabled usual morph events.",
+    "functions/manipulate_and_damage_all.c": "All four complete bodies retained: target assertion, manipulate_type constructor, reverse aura scan cooks actions before validity, complete damage filter forwarding. Assertion source-line diagnostic naturally follows reconstructed file layout.",
+    "functions/play_spell_for_free.c": "Casting cost uses local iid, removes obsolete EXE73825c stash/store. Native black life-payment flag2 subtracts half life payable as signed byte, clamps0, copies mana bytes and restores original black after check. Artifact path distinct. Free spell, negative surplus, override4ef160 and affected globals retained.",
+    "functions/deck.c": "Six helpers retained completely: source ID/turn packing, ante16slots/dialog, restart commander/planes/counters VLA, graveyard-anywhere triggers with hardcoded LAND and player quirks, source search500/hints, exile trigger rawsource-as-iid quirk. Validator recovers uint16 hint and owner<<16 packing. special_mill updated fully: REPLACE_MILL_CARDS APNAP counts, number[player]+1 records, preserved early returns, per-card replacement, self-shuffle triggers, Helm/Grenzo/Cellar/Dread, Jace/Stitcher/Heretic/Gearhulk existing branches. Adds Gorging, Lorehold constant1damage, Grist marker, Anowon one draw, Gyruda5x8. Native Gyruda stops milling on first replacement and processes only already-recorded cards, skips discard sound on this path, fixed capacity not clamped; exile selection puts copy in play without removing exile entry. Native zero first-player counts return from whole function. Independent helper dependencies separately tracked.",
+    "functions/global_checking.c": "All three complete bodies retained. Base-value static/extra loops32, type stacking and \u00d75 clamp. Zone selection native mode1 argument order event-as-iid preserved, count_zone VLA.",
+    "functions/count_graveyard.c": "Native scans Painter/Celestial Dawn/Lattice timestamps with Painter OR and no humiliation filter. No fallback for printed colors: unchanged native bug. Dawn counts only nonlands; matching Painter/Lattice returns whole grave count. Assembly pins full body.",
+    "paired_special_mill_cards": "All13 complete card bodies reviewed. Gearhulk now targets opponent, explicit do_dialog with opponent life>10 AI default, correctly ordered damage_player, removes nonnative menace. Other12 retained, including Grist typed union and persistent marker/loop; Gyruda4cards bothplayers; Anowonbyte16counts; Stitcher parent vs activation reset quirk; Dread APNAP.",
+    "native_evidence": "32 ABI parameter maps,24 frame array declarations including real DW_FORM_ref4 dynamic bounds,10 instruction blocks and5 DWARF card IDs. No invented standalone inline helpers or new aliases. Built-in dialog backends remain out of scope; calls/frontends reviewed."
+  },
+  "dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "optimized_parameter_evidence": {
+    "0x2087180": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x20872d0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x21b8b70": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x21e2690": {
+      "who_chooses": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "player": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "targeting_player": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "targeting_card": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      }
+    },
+    "0x22b41a0": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "clr": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "key": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "s_key": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x22b4870": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x23629b0": {
+      "test": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "cless": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "black": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "blue": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "green": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "red": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "white": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      }
+    },
+    "0x2362af0": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "c1": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "c2": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      }
+    },
+    "0x23630e0": {
+      "who_chooses": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "player": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x249edd0": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "life_to_drain": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      }
+    },
+    "0x249f090": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x25e82c0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "subtype1": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "subtype2": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      },
+      "lifecost": {
+        "first_location": [
+          145,
+          20
+        ],
+        "constant": null
+      }
+    },
+    "0x25e9010": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x25e9320": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "colorless": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "black": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      },
+      "blue": {
+        "first_location": [
+          145,
+          20
+        ],
+        "constant": null
+      },
+      "green": {
+        "first_location": [
+          145,
+          24
+        ],
+        "constant": null
+      },
+      "red": {
+        "first_location": [
+          145,
+          28
+        ],
+        "constant": null
+      },
+      "white": {
+        "first_location": [
+          145,
+          32
+        ],
+        "constant": null
+      }
+    },
+    "0x25ea680": {},
+    "0x2667050": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "target_number": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "raw_action": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      }
+    },
+    "0x2667640": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "t_player": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "type": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "action": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      }
+    },
+    "0x26676a0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "t_player": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "t_card": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "this_test": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      },
+      "raw_action": {
+        "first_location": [
+          145,
+          20
+        ],
+        "constant": null
+      }
+    },
+    "0x2667a70": {
+      "p": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "c": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "controller": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "amount_damage": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "all": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      },
+      "player_too": {
+        "first_location": [
+          145,
+          20
+        ],
+        "constant": null
+      },
+      "keyword": {
+        "first_location": [
+          145,
+          24
+        ],
+        "constant": null
+      },
+      "flag1": {
+        "first_location": [
+          145,
+          28
+        ],
+        "constant": null
+      },
+      "subtype": {
+        "first_location": [
+          145,
+          32
+        ],
+        "constant": null
+      },
+      "flag2": {
+        "first_location": [
+          145,
+          36
+        ],
+        "constant": null
+      },
+      "color": {
+        "first_location": [
+          145,
+          40
+        ],
+        "constant": null
+      },
+      "flag3": {
+        "first_location": [
+          145,
+          44
+        ],
+        "constant": null
+      },
+      "id": {
+        "first_location": [
+          145,
+          48
+        ],
+        "constant": null
+      },
+      "flag4": {
+        "first_location": [
+          145,
+          52
+        ],
+        "constant": null
+      },
+      "cc": {
+        "first_location": [
+          145,
+          56
+        ],
+        "constant": null
+      },
+      "flag5": {
+        "first_location": [
+          145,
+          60
+        ],
+        "constant": null
+      }
+    },
+    "0x2667ca0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "unused": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x26b4ec0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "iid": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      }
+    },
+    "0x26b5120": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      }
+    },
+    "0x26b6f70": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "mode": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      }
+    },
+    "0x26b7900": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "source_csvid": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "orig_t_player": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "amount": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      }
+    },
+    "0x26b9470": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "t_player": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "type": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      },
+      "test": {
+        "first_location": [
+          145,
+          20
+        ],
+        "constant": null
+      }
+    },
+    "0x26b9bf0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "whose_graveyard": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "target_location": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      }
+    },
+    "0x26ba060": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "source": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "position_hint": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      }
+    },
+    "0x26ba0e0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "t_player": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "type": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      },
+      "this_test": {
+        "first_location": [
+          145,
+          20
+        ],
+        "constant": null
+      }
+    },
+    "0x26c01c0": {
+      "csvid": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      }
+    },
+    "0x26c04d0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      }
+    },
+    "0x26c0dd0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "zone": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "test": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      },
+      "mode": {
+        "first_location": [
+          145,
+          20
+        ],
+        "constant": null
+      }
+    },
+    "0x26e5df0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "selected_color": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      }
+    }
+  },
+  "native_frame_arrays": [
+    {
+      "owner": "0x26b7900",
+      "name": "gyruda_iids",
+      "die_offset": "0x67341dd",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 5
+        },
+        {
+          "form": "DW_FORM_data1",
+          "extent": 8
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "number",
+      "die_offset": "0x673421b",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 2
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "prompt",
+      "die_offset": "0x6734288",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 100
+        }
+      ],
+      "element_bytes": 1
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "local_milled",
+      "die_offset": "0x67343a9",
+      "dimensions": [
+        {
+          "form": "DW_FORM_exprloc",
+          "expressions": [
+            [
+              118,
+              0
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 12
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "prompt",
+      "die_offset": "0x673448a",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 100
+        }
+      ],
+      "element_bytes": 1
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "iids",
+      "die_offset": "0x6734781",
+      "dimensions": [
+        {
+          "form": "DW_FORM_ref4",
+          "expressions": [
+            [
+              112,
+              127,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "indices",
+      "die_offset": "0x6734796",
+      "dimensions": [
+        {
+          "form": "DW_FORM_ref4",
+          "expressions": [
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "iids",
+      "die_offset": "0x67348de",
+      "dimensions": [
+        {
+          "form": "DW_FORM_ref4",
+          "expressions": [
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "indices",
+      "die_offset": "0x67348f3",
+      "dimensions": [
+        {
+          "form": "DW_FORM_ref4",
+          "expressions": [
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "iids",
+      "die_offset": "0x6734a65",
+      "dimensions": [
+        {
+          "form": "DW_FORM_ref4",
+          "expressions": [
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "iids",
+      "die_offset": "0x6734b69",
+      "dimensions": [
+        {
+          "form": "DW_FORM_ref4",
+          "expressions": [
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "iids",
+      "die_offset": "0x6734c22",
+      "dimensions": [
+        {
+          "form": "DW_FORM_ref4",
+          "expressions": [
+            [
+              112,
+              127,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "iids",
+      "die_offset": "0x6734cd0",
+      "dimensions": [
+        {
+          "form": "DW_FORM_ref4",
+          "expressions": [
+            [
+              112,
+              127,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "iids",
+      "die_offset": "0x6734da2",
+      "dimensions": [
+        {
+          "form": "DW_FORM_ref4",
+          "expressions": [
+            [
+              112,
+              127,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ],
+            [
+              145,
+              216,
+              124,
+              6,
+              49,
+              28,
+              159
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26b7900",
+      "name": "prompt",
+      "die_offset": "0x6734f27",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 100
+        }
+      ],
+      "element_bytes": 1
+    },
+    {
+      "owner": "0x26b6f70",
+      "name": "planes",
+      "die_offset": "0x6737e77",
+      "dimensions": [
+        {
+          "form": "DW_FORM_ref4",
+          "expressions": [
+            [
+              86
+            ],
+            [
+              86
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x26c0dd0",
+      "name": "ng",
+      "die_offset": "0x67fbb2c",
+      "dimensions": [
+        {
+          "form": "DW_FORM_exprloc",
+          "expressions": [
+            [
+              112,
+              127
+            ]
+          ]
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x22b41a0",
+      "name": "abils",
+      "die_offset": "0x271b8e1",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 4
+        }
+      ],
+      "element_bytes": 4
+    },
+    {
+      "owner": "0x23629b0",
+      "name": "buffer",
+      "die_offset": "0x333c2f6",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 100
+        }
+      ],
+      "element_bytes": 1
+    },
+    {
+      "owner": "0x25ea680",
+      "name": "buffer",
+      "die_offset": "0x58c89a0",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 50
+        }
+      ],
+      "element_bytes": 1
+    },
+    {
+      "owner": "0x23713b0",
+      "name": "mana_text",
+      "die_offset": "0x3329fec",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 3
+        },
+        {
+          "form": "DW_FORM_data1",
+          "extent": 100
+        }
+      ],
+      "element_bytes": 1
+    },
+    {
+      "owner": "0x236a330",
+      "name": "mana_text",
+      "die_offset": "0x333329c",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 3
+        },
+        {
+          "form": "DW_FORM_data1",
+          "extent": 100
+        }
+      ],
+      "element_bytes": 1
+    },
+    {
+      "owner": "0x2364d20",
+      "name": "mana_text",
+      "die_offset": "0x333a061",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 3
+        },
+        {
+          "form": "DW_FORM_data1",
+          "extent": 100
+        }
+      ],
+      "element_bytes": 1
+    },
+    {
+      "owner": "0x2363d60",
+      "name": "mana_text",
+      "die_offset": "0x333b3c8",
+      "dimensions": [
+        {
+          "form": "DW_FORM_data1",
+          "extent": 3
+        },
+        {
+          "form": "DW_FORM_data1",
+          "extent": 100
+        }
+      ],
+      "element_bytes": 1
+    }
+  ],
+  "native_instruction_blocks": {
+    "gyruda_exile_branch": {
+      "owner": "0x26b7900",
+      "address": "0x26b7b59",
+      "end": "0x26b7bd8",
+      "bytes_sha256": "f7d4a53f7cf4ae7e8366be93db15bece1d5ea97083e4bcbecbfc8b4936d2adec",
+      "instructions": [
+        [
+          "0x26b7b59",
+          "cmp",
+          "eax, 2"
+        ],
+        [
+          "0x26b7b5c",
+          "jne",
+          "0x26b792e"
+        ],
+        [
+          "0x26b7b62",
+          "mov",
+          "eax, dword ptr [ebp + ebx*4 - 0x184]"
+        ],
+        [
+          "0x26b7b69",
+          "lea",
+          "esi, [ebx + 0x10]"
+        ],
+        [
+          "0x26b7b6c",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x26b7b70",
+          "mov",
+          "eax, dword ptr [ebp + esi*4 - 0x184]"
+        ],
+        [
+          "0x26b7b77",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x26b7b7a",
+          "call",
+          "0x26b6f30"
+        ],
+        [
+          "0x26b7b7f",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x26b7b81",
+          "js",
+          "0x26b792e"
+        ],
+        [
+          "0x26b7b87",
+          "mov",
+          "eax, dword ptr [ebp + ebx*4 - 0x184]"
+        ],
+        [
+          "0x26b7b8e",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x26b7b92",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x26b7b95",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x26b7b98",
+          "call",
+          "0x26b2e30"
+        ],
+        [
+          "0x26b7b9d",
+          "mov",
+          "ebx, eax"
+        ],
+        [
+          "0x26b7b9f",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x26b7ba2",
+          "cmp",
+          "dword ptr [ebp + esi*4 - 0x184], eax"
+        ],
+        [
+          "0x26b7ba9",
+          "je",
+          "0x26b7bc2"
+        ],
+        [
+          "0x26b7bab",
+          "mov",
+          "dword ptr [esp + 8], 0x1000"
+        ],
+        [
+          "0x26b7bb3",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x26b7bb7",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x26b7bba",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x26b7bbd",
+          "call",
+          "0x2687990"
+        ],
+        [
+          "0x26b7bc2",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x26b7bc6",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x26b7bc9",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x26b7bcc",
+          "call",
+          "0x2669e00"
+        ],
+        [
+          "0x26b7bd1",
+          "jmp",
+          "0x26b792e"
+        ],
+        [
+          "0x26b7bd6",
+          "nop",
+          ""
+        ]
+      ]
+    },
+    "gyruda_replacement_exit": {
+      "owner": "0x26b7900",
+      "address": "0x26b7daa",
+      "end": "0x26b7dd1",
+      "bytes_sha256": "f82b650eb1540443a562adf732d44c788916110fbdc9987d8682f595ca297332",
+      "instructions": [
+        [
+          "0x26b7daa",
+          "cmp",
+          "dword ptr [ebp + 0x10], 0x8f9"
+        ],
+        [
+          "0x26b7db1",
+          "je",
+          "0x26b8168"
+        ],
+        [
+          "0x26b7db7",
+          "cmp",
+          "byte ptr [ebp - 0x193], 0"
+        ],
+        [
+          "0x26b7dbe",
+          "jne",
+          "0x26b8168"
+        ],
+        [
+          "0x26b7dc4",
+          "cmp",
+          "dword ptr [ebp + 0x10], 0x5337"
+        ],
+        [
+          "0x26b7dcb",
+          "je",
+          "0x26b8182"
+        ]
+      ]
+    },
+    "mill_count_replacement": {
+      "owner": "0x26b7900",
+      "address": "0x26b7948",
+      "end": "0x26b7a0f",
+      "bytes_sha256": "51c5a3533ff1b06705a67623cd5eeabf319003b052bd95012655133aed05ddfe",
+      "instructions": [
+        [
+          "0x26b7948",
+          "test",
+          "byte ptr [0x2795280], 1"
+        ],
+        [
+          "0x26b794f",
+          "je",
+          "0x26b7a0f"
+        ],
+        [
+          "0x26b7955",
+          "mov",
+          "eax, dword ptr [0x2794008]"
+        ],
+        [
+          "0x26b795a",
+          "xor",
+          "ebx, ebx"
+        ],
+        [
+          "0x26b795c",
+          "mov",
+          "dword ptr [ebp - 0x190], eax"
+        ],
+        [
+          "0x26b7962",
+          "lea",
+          "esi, [ebp - 0xe4]"
+        ],
+        [
+          "0x26b7968",
+          "mov",
+          "edx, dword ptr [0x628670]"
+        ],
+        [
+          "0x26b796e",
+          "mov",
+          "edi, edx"
+        ],
+        [
+          "0x26b7970",
+          "xor",
+          "edi, ebx"
+        ],
+        [
+          "0x26b7972",
+          "mov",
+          "eax, dword ptr [ebp + edi*4 - 0x18c]"
+        ],
+        [
+          "0x26b7979",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x26b797b",
+          "jle",
+          "0x26b79fa"
+        ],
+        [
+          "0x26b797d",
+          "cmp",
+          "dword ptr [0x728574], 1"
+        ],
+        [
+          "0x26b7984",
+          "mov",
+          "dword ptr [0x2794008], eax"
+        ],
+        [
+          "0x26b7989",
+          "je",
+          "0x26b8400"
+        ],
+        [
+          "0x26b798f",
+          "cmp",
+          "edx, ebx"
+        ],
+        [
+          "0x26b7991",
+          "je",
+          "0x26b8410"
+        ],
+        [
+          "0x26b7997",
+          "mov",
+          "edx, 0x628b70"
+        ],
+        [
+          "0x26b799c",
+          "mov",
+          "dword ptr [esp + 0x10], eax"
+        ],
+        [
+          "0x26b79a0",
+          "mov",
+          "dword ptr [esp + 0xc], edx"
+        ],
+        [
+          "0x26b79a4",
+          "mov",
+          "dword ptr [esp + 8], 0x2764ef2"
+        ],
+        [
+          "0x26b79ac",
+          "mov",
+          "dword ptr [esp + 4], 0x64"
+        ],
+        [
+          "0x26b79b4",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x26b79b7",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x26b79bc",
+          "mov",
+          "dword ptr [esp + 0x14], 0"
+        ],
+        [
+          "0x26b79c4",
+          "mov",
+          "dword ptr [esp + 0x10], edi"
+        ],
+        [
+          "0x26b79c8",
+          "mov",
+          "dword ptr [esp + 0xc], 0"
+        ],
+        [
+          "0x26b79d0",
+          "mov",
+          "dword ptr [esp + 8], esi"
+        ],
+        [
+          "0x26b79d4",
+          "mov",
+          "dword ptr [esp + 4], 0x1000500"
+        ],
+        [
+          "0x26b79dc",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x26b79df",
+          "call",
+          "0x26cba00"
+        ],
+        [
+          "0x26b79e4",
+          "mov",
+          "eax, dword ptr [0x2794008]"
+        ],
+        [
+          "0x26b79e9",
+          "mov",
+          "edx, eax"
+        ],
+        [
+          "0x26b79eb",
+          "xor",
+          "edx, 0xffffffff"
+        ],
+        [
+          "0x26b79ee",
+          "sar",
+          "edx, 0x1f"
+        ],
+        [
+          "0x26b79f1",
+          "and",
+          "eax, edx"
+        ],
+        [
+          "0x26b79f3",
+          "mov",
+          "dword ptr [ebp + edi*4 - 0x18c], eax"
+        ],
+        [
+          "0x26b79fa",
+          "inc",
+          "ebx"
+        ],
+        [
+          "0x26b79fb",
+          "cmp",
+          "ebx, 2"
+        ],
+        [
+          "0x26b79fe",
+          "jne",
+          "0x26b7968"
+        ],
+        [
+          "0x26b7a04",
+          "mov",
+          "eax, dword ptr [ebp - 0x190]"
+        ],
+        [
+          "0x26b7a0a",
+          "mov",
+          "dword ptr [0x2794008], eax"
+        ]
+      ]
+    },
+    "black_life_payment": {
+      "owner": "0x2667ca0",
+      "address": "0x26680ea",
+      "end": "0x2668149",
+      "bytes_sha256": "631580831c4776ec01523c3cc7aa667554470d6c592ca55305793a0529b0f737",
+      "instructions": [
+        [
+          "0x26680ea",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x26680ed",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x26680f0",
+          "call",
+          "0x26910e0"
+        ],
+        [
+          "0x26680f5",
+          "mov",
+          "cl, byte ptr [0x55cf19]"
+        ],
+        [
+          "0x26680fb",
+          "mov",
+          "edx, eax"
+        ],
+        [
+          "0x26680fd",
+          "shr",
+          "edx, 0x1f"
+        ],
+        [
+          "0x2668100",
+          "add",
+          "eax, edx"
+        ],
+        [
+          "0x2668102",
+          "sar",
+          "eax, 1"
+        ],
+        [
+          "0x2668104",
+          "sub",
+          "cl, al"
+        ],
+        [
+          "0x2668106",
+          "js",
+          "0x2668140"
+        ],
+        [
+          "0x2668108",
+          "mov",
+          "byte ptr [0x55cf19], cl"
+        ],
+        [
+          "0x266810e",
+          "mov",
+          "dword ptr [esp + 8], 8"
+        ],
+        [
+          "0x2668116",
+          "mov",
+          "dword ptr [esp + 4], 0x55cf18"
+        ],
+        [
+          "0x266811e",
+          "mov",
+          "dword ptr [esp], 0x55cf10"
+        ],
+        [
+          "0x2668125",
+          "call",
+          "0x2679400"
+        ],
+        [
+          "0x266812a",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x266812d",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x2668130",
+          "call",
+          "0x402be0"
+        ],
+        [
+          "0x2668135",
+          "mov",
+          "byte ptr [0x55cf19], bl"
+        ],
+        [
+          "0x266813b",
+          "jmp",
+          "0x2667ee2"
+        ],
+        [
+          "0x2668140",
+          "mov",
+          "byte ptr [0x55cf19], 0"
+        ],
+        [
+          "0x2668147",
+          "jmp",
+          "0x266810e"
+        ]
+      ]
+    },
+    "grave_owner_position": {
+      "owner": "0x26b9bf0",
+      "address": "0x26b9bf0",
+      "end": "0x26b9cb5",
+      "bytes_sha256": "392cf8cced98ec7ae31f17e7d0183f4923a08d071d3ba777b4dc40dc2351cf9f",
+      "instructions": [
+        [
+          "0x26b9bf0",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x26b9bf1",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x26b9bf3",
+          "push",
+          "edi"
+        ],
+        [
+          "0x26b9bf4",
+          "push",
+          "esi"
+        ],
+        [
+          "0x26b9bf5",
+          "push",
+          "ebx"
+        ],
+        [
+          "0x26b9bf6",
+          "sub",
+          "esp, 0xc"
+        ],
+        [
+          "0x26b9bf9",
+          "mov",
+          "esi, dword ptr [ebp + 0x10]"
+        ],
+        [
+          "0x26b9bfc",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x26b9bff",
+          "call",
+          "0x26b9670"
+        ],
+        [
+          "0x26b9c04",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x26b9c06",
+          "jne",
+          "0x26b9ca8"
+        ],
+        [
+          "0x26b9c0c",
+          "mov",
+          "ebx, eax"
+        ],
+        [
+          "0x26b9c0e",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x26b9c11",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x26b9c15",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x26b9c18",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x26b9c1b",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x26b9c20",
+          "mov",
+          "edx, dword ptr [ebp + 0x14]"
+        ],
+        [
+          "0x26b9c23",
+          "lea",
+          "ecx, [eax + edx*8]"
+        ],
+        [
+          "0x26b9c26",
+          "mov",
+          "eax, dword ptr [ecx + 0x78]"
+        ],
+        [
+          "0x26b9c29",
+          "cmp",
+          "eax, -1"
+        ],
+        [
+          "0x26b9c2c",
+          "je",
+          "0x26b9ca8"
+        ],
+        [
+          "0x26b9c2e",
+          "lea",
+          "edi, [esi + esi*4]"
+        ],
+        [
+          "0x26b9c31",
+          "xor",
+          "edx, edx"
+        ],
+        [
+          "0x26b9c33",
+          "mov",
+          "dx, word ptr [ecx + 0x74]"
+        ],
+        [
+          "0x26b9c37",
+          "lea",
+          "edi, [edi + edi*4]"
+        ],
+        [
+          "0x26b9c3a",
+          "lea",
+          "edi, [edi + edi*4]"
+        ],
+        [
+          "0x26b9c3d",
+          "shl",
+          "edi, 2"
+        ],
+        [
+          "0x26b9c40",
+          "mov",
+          "dword ptr [ebp - 0x10], edi"
+        ],
+        [
+          "0x26b9c43",
+          "add",
+          "edi, edx"
+        ],
+        [
+          "0x26b9c45",
+          "cmp",
+          "eax, dword ptr [edi*4 + 0x2794020]"
+        ],
+        [
+          "0x26b9c4c",
+          "je",
+          "0x26b9ca0"
+        ],
+        [
+          "0x26b9c4e",
+          "test",
+          "edx, edx"
+        ],
+        [
+          "0x26b9c50",
+          "jle",
+          "0x26b9c61"
+        ],
+        [
+          "0x26b9c52",
+          "dec",
+          "edx"
+        ],
+        [
+          "0x26b9c53",
+          "mov",
+          "edi, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x26b9c56",
+          "add",
+          "edi, edx"
+        ],
+        [
+          "0x26b9c58",
+          "cmp",
+          "eax, dword ptr [edi*4 + 0x2794020]"
+        ],
+        [
+          "0x26b9c5f",
+          "je",
+          "0x26b9ca0"
+        ],
+        [
+          "0x26b9c61",
+          "lea",
+          "edx, [esi + esi*4]"
+        ],
+        [
+          "0x26b9c64",
+          "lea",
+          "edx, [edx + edx*4]"
+        ],
+        [
+          "0x26b9c67",
+          "lea",
+          "edi, [edx + edx*4]"
+        ],
+        [
+          "0x26b9c6a",
+          "shl",
+          "edi, 4"
+        ],
+        [
+          "0x26b9c6d",
+          "jmp",
+          "0x26b9c7c"
+        ],
+        [
+          "0x26b9c6f",
+          "nop",
+          ""
+        ],
+        [
+          "0x26b9c70",
+          "inc",
+          "edx"
+        ],
+        [
+          "0x26b9c71",
+          "je",
+          "0x26b9ca8"
+        ],
+        [
+          "0x26b9c73",
+          "inc",
+          "ebx"
+        ],
+        [
+          "0x26b9c74",
+          "cmp",
+          "ebx, 0x1f4"
+        ],
+        [
+          "0x26b9c7a",
+          "je",
+          "0x26b9ca8"
+        ],
+        [
+          "0x26b9c7c",
+          "mov",
+          "edx, dword ptr [edi + ebx*4 + 0x2794020]"
+        ],
+        [
+          "0x26b9c83",
+          "cmp",
+          "eax, edx"
+        ],
+        [
+          "0x26b9c85",
+          "jne",
+          "0x26b9c70"
+        ],
+        [
+          "0x26b9c87",
+          "cmp",
+          "ebx, -1"
+        ],
+        [
+          "0x26b9c8a",
+          "je",
+          "0x26b9ca8"
+        ],
+        [
+          "0x26b9c8c",
+          "shl",
+          "esi, 0x10"
+        ],
+        [
+          "0x26b9c8f",
+          "mov",
+          "eax, ebx"
+        ],
+        [
+          "0x26b9c91",
+          "or",
+          "esi, ebx"
+        ],
+        [
+          "0x26b9c93",
+          "mov",
+          "dword ptr [ecx + 0x74], esi"
+        ],
+        [
+          "0x26b9c96",
+          "add",
+          "esp, 0xc"
+        ],
+        [
+          "0x26b9c99",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x26b9c9a",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x26b9c9b",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x26b9c9c",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x26b9c9d",
+          "ret",
+          ""
+        ],
+        [
+          "0x26b9c9e",
+          "nop",
+          ""
+        ],
+        [
+          "0x26b9ca0",
+          "mov",
+          "ebx, edx"
+        ],
+        [
+          "0x26b9ca2",
+          "jmp",
+          "0x26b9c8c"
+        ],
+        [
+          "0x26b9ca4",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x26b9ca8",
+          "add",
+          "esp, 0xc"
+        ],
+        [
+          "0x26b9cab",
+          "or",
+          "ebx, 0xffffffff"
+        ],
+        [
+          "0x26b9cae",
+          "mov",
+          "eax, ebx"
+        ],
+        [
+          "0x26b9cb0",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x26b9cb1",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x26b9cb2",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x26b9cb3",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x26b9cb4",
+          "ret",
+          ""
+        ]
+      ]
+    },
+    "native_color_count": {
+      "owner": "0x26e5df0",
+      "address": "0x26e5df0",
+      "end": "0x26e6001",
+      "bytes_sha256": "1d1a2cdfb3eeff201de731dbf50f7d6a1b7f22912625deedcc0225d91a2d3c89",
+      "instructions": [
+        [
+          "0x26e5df0",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x26e5df1",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x26e5df3",
+          "push",
+          "edi"
+        ],
+        [
+          "0x26e5df4",
+          "push",
+          "esi"
+        ],
+        [
+          "0x26e5df5",
+          "or",
+          "edi, 0xffffffff"
+        ],
+        [
+          "0x26e5df8",
+          "push",
+          "ebx"
+        ],
+        [
+          "0x26e5df9",
+          "xor",
+          "esi, esi"
+        ],
+        [
+          "0x26e5dfb",
+          "sub",
+          "esp, 0x20"
+        ],
+        [
+          "0x26e5dfe",
+          "mov",
+          "dword ptr [ebp - 0x14], edi"
+        ],
+        [
+          "0x26e5e01",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x26e5e04",
+          "mov",
+          "edx, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x26e5e07",
+          "mov",
+          "dword ptr [ebp - 0x1c], eax"
+        ],
+        [
+          "0x26e5e0a",
+          "mov",
+          "dword ptr [ebp - 0x20], edx"
+        ],
+        [
+          "0x26e5e0d",
+          "mov",
+          "dword ptr [ebp - 0x10], 0"
+        ],
+        [
+          "0x26e5e14",
+          "mov",
+          "dword ptr [ebp - 0x18], 0"
+        ],
+        [
+          "0x26e5e1b",
+          "mov",
+          "edi, eax"
+        ],
+        [
+          "0x26e5e1d",
+          "mov",
+          "ecx, dword ptr [esi*4 + 0x4ef520]"
+        ],
+        [
+          "0x26e5e24",
+          "xor",
+          "ebx, ebx"
+        ],
+        [
+          "0x26e5e26",
+          "test",
+          "ecx, ecx"
+        ],
+        [
+          "0x26e5e28",
+          "jle",
+          "0x26e5e80"
+        ],
+        [
+          "0x26e5e2a",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x26e5e30",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x26e5e34",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x26e5e37",
+          "call",
+          "0x26b32d0"
+        ],
+        [
+          "0x26e5e3c",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x26e5e3e",
+          "je",
+          "0x26e5e76"
+        ],
+        [
+          "0x26e5e40",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x26e5e44",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x26e5e47",
+          "call",
+          "0x26b35a0"
+        ],
+        [
+          "0x26e5e4c",
+          "cmp",
+          "eax, 0x2596"
+        ],
+        [
+          "0x26e5e51",
+          "je",
+          "0x26e5f60"
+        ],
+        [
+          "0x26e5e57",
+          "cmp",
+          "edi, esi"
+        ],
+        [
+          "0x26e5e59",
+          "je",
+          "0x26e5fa0"
+        ],
+        [
+          "0x26e5e5f",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x26e5e63",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x26e5e66",
+          "call",
+          "0x26b35a0"
+        ],
+        [
+          "0x26e5e6b",
+          "cmp",
+          "eax, 0x1b08"
+        ],
+        [
+          "0x26e5e70",
+          "je",
+          "0x26e5f30"
+        ],
+        [
+          "0x26e5e76",
+          "inc",
+          "ebx"
+        ],
+        [
+          "0x26e5e77",
+          "cmp",
+          "dword ptr [esi*4 + 0x4ef520], ebx"
+        ],
+        [
+          "0x26e5e7e",
+          "jg",
+          "0x26e5e30"
+        ],
+        [
+          "0x26e5e80",
+          "inc",
+          "esi"
+        ],
+        [
+          "0x26e5e81",
+          "cmp",
+          "esi, 2"
+        ],
+        [
+          "0x26e5e84",
+          "jne",
+          "0x26e5e1d"
+        ],
+        [
+          "0x26e5e86",
+          "mov",
+          "eax, dword ptr [ebp - 0x1c]"
+        ],
+        [
+          "0x26e5e89",
+          "mov",
+          "edi, dword ptr [ebp - 0x14]"
+        ],
+        [
+          "0x26e5e8c",
+          "mov",
+          "esi, dword ptr [eax*4 + 0x4d7018]"
+        ],
+        [
+          "0x26e5e93",
+          "mov",
+          "eax, dword ptr [esi]"
+        ],
+        [
+          "0x26e5e95",
+          "cmp",
+          "eax, -1"
+        ],
+        [
+          "0x26e5e98",
+          "je",
+          "0x26e5ff5"
+        ],
+        [
+          "0x26e5e9e",
+          "mov",
+          "ebx, dword ptr [ebp - 0x20]"
+        ],
+        [
+          "0x26e5ea1",
+          "mov",
+          "edx, dword ptr [ebp - 0x18]"
+        ],
+        [
+          "0x26e5ea4",
+          "add",
+          "esi, 4"
+        ],
+        [
+          "0x26e5ea7",
+          "mov",
+          "dword ptr [ebp - 0x10], 0"
+        ],
+        [
+          "0x26e5eae",
+          "and",
+          "ebx, edx"
+        ],
+        [
+          "0x26e5eb0",
+          "jmp",
+          "0x26e5ed2"
+        ],
+        [
+          "0x26e5eb2",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x26e5eb8",
+          "cmp",
+          "edi, 0x2596"
+        ],
+        [
+          "0x26e5ebe",
+          "je",
+          "0x26e5f18"
+        ],
+        [
+          "0x26e5ec0",
+          "cmp",
+          "edi, 0x1b08"
+        ],
+        [
+          "0x26e5ec6",
+          "je",
+          "0x26e5f18"
+        ],
+        [
+          "0x26e5ec8",
+          "mov",
+          "eax, dword ptr [esi]"
+        ],
+        [
+          "0x26e5eca",
+          "add",
+          "esi, 4"
+        ],
+        [
+          "0x26e5ecd",
+          "cmp",
+          "eax, -1"
+        ],
+        [
+          "0x26e5ed0",
+          "je",
+          "0x26e5f08"
+        ],
+        [
+          "0x26e5ed2",
+          "cmp",
+          "edi, 0x97a"
+        ],
+        [
+          "0x26e5ed8",
+          "jne",
+          "0x26e5eb8"
+        ],
+        [
+          "0x26e5eda",
+          "mov",
+          "dword ptr [esp + 8], 1"
+        ],
+        [
+          "0x26e5ee2",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x26e5ee6",
+          "mov",
+          "dword ptr [esp], 0xffffffff"
+        ],
+        [
+          "0x26e5eed",
+          "call",
+          "0x2681ca0"
+        ],
+        [
+          "0x26e5ef2",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x26e5ef4",
+          "jne",
+          "0x26e5ec8"
+        ],
+        [
+          "0x26e5ef6",
+          "cmp",
+          "ebx, 1"
+        ],
+        [
+          "0x26e5ef9",
+          "sbb",
+          "dword ptr [ebp - 0x10], -1"
+        ],
+        [
+          "0x26e5efd",
+          "add",
+          "esi, 4"
+        ],
+        [
+          "0x26e5f00",
+          "mov",
+          "eax, dword ptr [esi - 4]"
+        ],
+        [
+          "0x26e5f03",
+          "cmp",
+          "eax, -1"
+        ],
+        [
+          "0x26e5f06",
+          "jne",
+          "0x26e5ed2"
+        ],
+        [
+          "0x26e5f08",
+          "mov",
+          "eax, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x26e5f0b",
+          "add",
+          "esp, 0x20"
+        ],
+        [
+          "0x26e5f0e",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x26e5f0f",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x26e5f10",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x26e5f11",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x26e5f12",
+          "ret",
+          ""
+        ],
+        [
+          "0x26e5f13",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x26e5f17",
+          "nop",
+          ""
+        ],
+        [
+          "0x26e5f18",
+          "test",
+          "ebx, ebx"
+        ],
+        [
+          "0x26e5f1a",
+          "je",
+          "0x26e5ec8"
+        ],
+        [
+          "0x26e5f1c",
+          "mov",
+          "eax, dword ptr [ebp - 0x1c]"
+        ],
+        [
+          "0x26e5f1f",
+          "mov",
+          "dword ptr [ebp + 8], eax"
+        ],
+        [
+          "0x26e5f22",
+          "add",
+          "esp, 0x20"
+        ],
+        [
+          "0x26e5f25",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x26e5f26",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x26e5f27",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x26e5f28",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x26e5f29",
+          "jmp",
+          "0x26e5da0"
+        ],
+        [
+          "0x26e5f2e",
+          "nop",
+          ""
+        ],
+        [
+          "0x26e5f30",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x26e5f34",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x26e5f37",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x26e5f3c",
+          "mov",
+          "eax, dword ptr [eax + 0x54]"
+        ],
+        [
+          "0x26e5f3f",
+          "cmp",
+          "eax, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x26e5f42",
+          "jbe",
+          "0x26e5e76"
+        ],
+        [
+          "0x26e5f48",
+          "mov",
+          "dword ptr [ebp - 0x10], eax"
+        ],
+        [
+          "0x26e5f4b",
+          "mov",
+          "dword ptr [ebp - 0x14], 0x1b08"
+        ],
+        [
+          "0x26e5f52",
+          "mov",
+          "dword ptr [ebp - 0x18], 1"
+        ],
+        [
+          "0x26e5f59",
+          "jmp",
+          "0x26e5e76"
+        ],
+        [
+          "0x26e5f5e",
+          "nop",
+          ""
+        ],
+        [
+          "0x26e5f60",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x26e5f64",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x26e5f67",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x26e5f6c",
+          "mov",
+          "edx, dword ptr [eax + 0x80]"
+        ],
+        [
+          "0x26e5f72",
+          "test",
+          "edx, edx"
+        ],
+        [
+          "0x26e5f74",
+          "js",
+          "0x26e5e57"
+        ],
+        [
+          "0x26e5f7a",
+          "mov",
+          "eax, dword ptr [eax + 0x54]"
+        ],
+        [
+          "0x26e5f7d",
+          "cmp",
+          "eax, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x26e5f80",
+          "jbe",
+          "0x26e5e57"
+        ],
+        [
+          "0x26e5f86",
+          "mov",
+          "ecx, dword ptr [ebp - 0x18]"
+        ],
+        [
+          "0x26e5f89",
+          "mov",
+          "dword ptr [ebp - 0x10], eax"
+        ],
+        [
+          "0x26e5f8c",
+          "or",
+          "ecx, edx"
+        ],
+        [
+          "0x26e5f8e",
+          "mov",
+          "dword ptr [ebp - 0x14], 0x2596"
+        ],
+        [
+          "0x26e5f95",
+          "mov",
+          "dword ptr [ebp - 0x18], ecx"
+        ],
+        [
+          "0x26e5f98",
+          "cmp",
+          "edi, esi"
+        ],
+        [
+          "0x26e5f9a",
+          "jne",
+          "0x26e5e5f"
+        ],
+        [
+          "0x26e5fa0",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x26e5fa4",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x26e5fa7",
+          "call",
+          "0x26b35a0"
+        ],
+        [
+          "0x26e5fac",
+          "cmp",
+          "eax, 0x97a"
+        ],
+        [
+          "0x26e5fb1",
+          "jne",
+          "0x26e5e5f"
+        ],
+        [
+          "0x26e5fb7",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x26e5fbb",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x26e5fbe",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x26e5fc3",
+          "mov",
+          "edx, dword ptr [eax + 0x54]"
+        ],
+        [
+          "0x26e5fc6",
+          "cmp",
+          "edx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x26e5fc9",
+          "jbe",
+          "0x26e5e5f"
+        ],
+        [
+          "0x26e5fcf",
+          "mov",
+          "dword ptr [esp + 8], 0x20"
+        ],
+        [
+          "0x26e5fd7",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x26e5fdb",
+          "mov",
+          "dword ptr [esp], edi"
+        ],
+        [
+          "0x26e5fde",
+          "mov",
+          "dword ptr [ebp - 0x10], edx"
+        ],
+        [
+          "0x26e5fe1",
+          "call",
+          "0x26803c0"
+        ],
+        [
+          "0x26e5fe6",
+          "mov",
+          "dword ptr [ebp - 0x14], 0x97a"
+        ],
+        [
+          "0x26e5fed",
+          "mov",
+          "dword ptr [ebp - 0x18], eax"
+        ],
+        [
+          "0x26e5ff0",
+          "jmp",
+          "0x26e5e5f"
+        ],
+        [
+          "0x26e5ff5",
+          "mov",
+          "dword ptr [ebp - 0x10], 0"
+        ],
+        [
+          "0x26e5ffc",
+          "jmp",
+          "0x26e5f08"
+        ]
+      ]
+    },
+    "fetch_choice_marker": {
+      "owner": "0x25e82c0",
+      "address": "0x25e8626",
+      "end": "0x25e86c7",
+      "bytes_sha256": "c5ef0d473f6f57aef41fc6cbac89954c3fc933e6d197beb6245b7c2887ff129f",
+      "instructions": [
+        [
+          "0x25e8626",
+          "mov",
+          "dword ptr [edx + 0x38], 2"
+        ],
+        [
+          "0x25e862d",
+          "je",
+          "0x25e86c7"
+        ],
+        [
+          "0x25e8633",
+          "cmp",
+          "esi, 1"
+        ],
+        [
+          "0x25e8636",
+          "jne",
+          "0x25e8645"
+        ],
+        [
+          "0x25e8638",
+          "test",
+          "byte ptr [0x790640], 2"
+        ],
+        [
+          "0x25e863f",
+          "je",
+          "0x25e86c7"
+        ],
+        [
+          "0x25e8645",
+          "mov",
+          "dword ptr [esp + 0x34], 0"
+        ],
+        [
+          "0x25e864d",
+          "mov",
+          "dword ptr [esp + 0x30], 0"
+        ],
+        [
+          "0x25e8655",
+          "mov",
+          "dword ptr [esp + 0x2c], 0"
+        ],
+        [
+          "0x25e865d",
+          "mov",
+          "dword ptr [esp + 0x28], 0"
+        ],
+        [
+          "0x25e8665",
+          "mov",
+          "dword ptr [esp + 0x24], 1"
+        ],
+        [
+          "0x25e866d",
+          "mov",
+          "dword ptr [esp + 0x20], 1"
+        ],
+        [
+          "0x25e8675",
+          "mov",
+          "dword ptr [esp + 0x1c], 0x275910f"
+        ],
+        [
+          "0x25e867d",
+          "mov",
+          "dword ptr [esp + 0x18], 1"
+        ],
+        [
+          "0x25e8685",
+          "mov",
+          "dword ptr [esp + 0x14], 1"
+        ],
+        [
+          "0x25e868d",
+          "mov",
+          "dword ptr [esp + 0x10], 0x275911b"
+        ],
+        [
+          "0x25e8695",
+          "mov",
+          "dword ptr [esp + 0xc], 0x2759124"
+        ],
+        [
+          "0x25e869d",
+          "mov",
+          "dword ptr [esp + 8], 0x6d"
+        ],
+        [
+          "0x25e86a5",
+          "mov",
+          "dword ptr [esp + 4], edi"
+        ],
+        [
+          "0x25e86a9",
+          "mov",
+          "dword ptr [esp], esi"
+        ],
+        [
+          "0x25e86ac",
+          "call",
+          "0x26e9c50"
+        ],
+        [
+          "0x25e86b1",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x25e86b3",
+          "je",
+          "0x25e872f"
+        ],
+        [
+          "0x25e86b5",
+          "cmp",
+          "eax, 1"
+        ],
+        [
+          "0x25e86b8",
+          "je",
+          "0x25e873e"
+        ],
+        [
+          "0x25e86be",
+          "cmp",
+          "eax, 2"
+        ],
+        [
+          "0x25e86c1",
+          "jne",
+          "0x25e8318"
+        ]
+      ]
+    },
+    "ring_regeneration_hint": {
+      "owner": "0x22b87e0",
+      "address": "0x22b87e0",
+      "end": "0x22b88f9",
+      "bytes_sha256": "04394c552b5574100c997f44a7144cc83ad69131f48fe81a943e2144af08abef",
+      "instructions": [
+        [
+          "0x22b87e0",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x22b87e1",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x22b87e3",
+          "push",
+          "esi"
+        ],
+        [
+          "0x22b87e4",
+          "push",
+          "ebx"
+        ],
+        [
+          "0x22b87e5",
+          "sub",
+          "esp, 0x28"
+        ],
+        [
+          "0x22b87e8",
+          "mov",
+          "edx, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x22b87eb",
+          "mov",
+          "ebx, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x22b87ee",
+          "mov",
+          "ecx, dword ptr [ebp + 0x10]"
+        ],
+        [
+          "0x22b87f1",
+          "mov",
+          "dword ptr [esp + 4], edx"
+        ],
+        [
+          "0x22b87f5",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x22b87f8",
+          "mov",
+          "dword ptr [ebp - 0x10], ecx"
+        ],
+        [
+          "0x22b87fb",
+          "mov",
+          "dword ptr [ebp - 0xc], edx"
+        ],
+        [
+          "0x22b87fe",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x22b8803",
+          "mov",
+          "ecx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x22b8806",
+          "mov",
+          "edx, dword ptr [ebp - 0xc]"
+        ],
+        [
+          "0x22b8809",
+          "cmp",
+          "ecx, 0x8c"
+        ],
+        [
+          "0x22b880f",
+          "je",
+          "0x22b8838"
+        ],
+        [
+          "0x22b8811",
+          "mov",
+          "dword ptr [ebp + 0x10], 0"
+        ],
+        [
+          "0x22b8818",
+          "mov",
+          "dword ptr [ebp + 0xc], 0"
+        ],
+        [
+          "0x22b881f",
+          "mov",
+          "dword ptr [ebp + 8], 2"
+        ],
+        [
+          "0x22b8826",
+          "add",
+          "esp, 0x28"
+        ],
+        [
+          "0x22b8829",
+          "mov",
+          "eax, ebx"
+        ],
+        [
+          "0x22b882b",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x22b882c",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x22b882d",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x22b882e",
+          "jmp",
+          "0x22b41a0"
+        ],
+        [
+          "0x22b8833",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x22b8837",
+          "nop",
+          ""
+        ],
+        [
+          "0x22b8838",
+          "mov",
+          "esi, eax"
+        ],
+        [
+          "0x22b883a",
+          "mov",
+          "eax, dword ptr [0x7a398c]"
+        ],
+        [
+          "0x22b883f",
+          "cmp",
+          "dword ptr [esi + 4], eax"
+        ],
+        [
+          "0x22b8842",
+          "jne",
+          "0x22b8811"
+        ],
+        [
+          "0x22b8844",
+          "movsx",
+          "eax, byte ptr [esi + 0x50]"
+        ],
+        [
+          "0x22b8848",
+          "cmp",
+          "eax, dword ptr [0x738c84]"
+        ],
+        [
+          "0x22b884e",
+          "jne",
+          "0x22b8811"
+        ],
+        [
+          "0x22b8850",
+          "mov",
+          "dword ptr [esp + 4], edx"
+        ],
+        [
+          "0x22b8854",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x22b8857",
+          "call",
+          "0x26eda00"
+        ],
+        [
+          "0x22b885c",
+          "mov",
+          "edx, dword ptr [ebp - 0xc]"
+        ],
+        [
+          "0x22b885f",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x22b8861",
+          "mov",
+          "ecx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x22b8864",
+          "je",
+          "0x22b8811"
+        ],
+        [
+          "0x22b8866",
+          "mov",
+          "dword ptr [esp + 4], edx"
+        ],
+        [
+          "0x22b886a",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x22b886d",
+          "call",
+          "0x26dd340"
+        ],
+        [
+          "0x22b8872",
+          "mov",
+          "edx, dword ptr [ebp - 0xc]"
+        ],
+        [
+          "0x22b8875",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x22b8877",
+          "mov",
+          "ecx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x22b887a",
+          "je",
+          "0x22b8811"
+        ],
+        [
+          "0x22b887c",
+          "mov",
+          "dword ptr [esp + 4], edx"
+        ],
+        [
+          "0x22b8880",
+          "mov",
+          "dword ptr [esp + 0x1c], 0"
+        ],
+        [
+          "0x22b8888",
+          "mov",
+          "dword ptr [esp + 0x18], 0"
+        ],
+        [
+          "0x22b8890",
+          "mov",
+          "dword ptr [esp + 0x14], 0"
+        ],
+        [
+          "0x22b8898",
+          "mov",
+          "dword ptr [esp + 0x10], 0"
+        ],
+        [
+          "0x22b88a0",
+          "mov",
+          "dword ptr [esp + 0xc], 0"
+        ],
+        [
+          "0x22b88a8",
+          "mov",
+          "dword ptr [esp + 8], 2"
+        ],
+        [
+          "0x22b88b0",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x22b88b3",
+          "call",
+          "0x26901c0"
+        ],
+        [
+          "0x22b88b8",
+          "mov",
+          "edx, dword ptr [ebp - 0xc]"
+        ],
+        [
+          "0x22b88bb",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x22b88bd",
+          "mov",
+          "ecx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x22b88c0",
+          "je",
+          "0x22b8811"
+        ],
+        [
+          "0x22b88c6",
+          "mov",
+          "eax, dword ptr [esi + 4]"
+        ],
+        [
+          "0x22b88c9",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x22b88cd",
+          "movsx",
+          "eax, byte ptr [esi + 0x50]"
+        ],
+        [
+          "0x22b88d1",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x22b88d4",
+          "call",
+          "0x26de970"
+        ],
+        [
+          "0x22b88d9",
+          "mov",
+          "edx, dword ptr [ebp - 0xc]"
+        ],
+        [
+          "0x22b88dc",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x22b88de",
+          "mov",
+          "ecx, dword ptr [ebp - 0x10]"
+        ],
+        [
+          "0x22b88e1",
+          "je",
+          "0x22b8811"
+        ],
+        [
+          "0x22b88e7",
+          "mov",
+          "eax, dword ptr [0x78fef0]"
+        ],
+        [
+          "0x22b88ec",
+          "or",
+          "ah, 2"
+        ],
+        [
+          "0x22b88ef",
+          "mov",
+          "dword ptr [0x78fef0], eax"
+        ],
+        [
+          "0x22b88f4",
+          "jmp",
+          "0x22b8811"
+        ]
+      ]
+    },
+    "mana_text_once_per_color": {
+      "owner": "0x23629b0",
+      "address": "0x23629b0",
+      "end": "0x2362ae9",
+      "bytes_sha256": "3e6811583b00f52cd38a0736321c0f436e819baba6ee695c63e5b3ba6ec449a2",
+      "instructions": [
+        [
+          "0x23629b0",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x23629b1",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x23629b3",
+          "push",
+          "edi"
+        ],
+        [
+          "0x23629b4",
+          "push",
+          "esi"
+        ],
+        [
+          "0x23629b5",
+          "mov",
+          "edi, ecx"
+        ],
+        [
+          "0x23629b7",
+          "push",
+          "ebx"
+        ],
+        [
+          "0x23629b8",
+          "lea",
+          "ebx, [ebp - 0x70]"
+        ],
+        [
+          "0x23629bb",
+          "sub",
+          "esp, 0x7c"
+        ],
+        [
+          "0x23629be",
+          "mov",
+          "dword ptr [ebp - 0x78], edx"
+        ],
+        [
+          "0x23629c1",
+          "mov",
+          "dword ptr [ebp - 0x74], eax"
+        ],
+        [
+          "0x23629c4",
+          "mov",
+          "dword ptr [esp + 8], 0x27428b7"
+        ],
+        [
+          "0x23629cc",
+          "mov",
+          "dword ptr [esp + 4], 0x64"
+        ],
+        [
+          "0x23629d4",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x23629d7",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x23629dc",
+          "mov",
+          "edx, dword ptr [ebp - 0x78]"
+        ],
+        [
+          "0x23629df",
+          "mov",
+          "esi, eax"
+        ],
+        [
+          "0x23629e1",
+          "test",
+          "edx, edx"
+        ],
+        [
+          "0x23629e3",
+          "jne",
+          "0x2362ac0"
+        ],
+        [
+          "0x23629e9",
+          "test",
+          "edi, edi"
+        ],
+        [
+          "0x23629eb",
+          "je",
+          "0x2362a0d"
+        ],
+        [
+          "0x23629ed",
+          "mov",
+          "eax, 0x64"
+        ],
+        [
+          "0x23629f2",
+          "mov",
+          "dword ptr [esp + 8], 0x27428bf"
+        ],
+        [
+          "0x23629fa",
+          "sub",
+          "eax, esi"
+        ],
+        [
+          "0x23629fc",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x2362a00",
+          "lea",
+          "eax, [ebx + esi]"
+        ],
+        [
+          "0x2362a03",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x2362a06",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x2362a0b",
+          "add",
+          "esi, eax"
+        ],
+        [
+          "0x2362a0d",
+          "mov",
+          "edi, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x2362a10",
+          "test",
+          "edi, edi"
+        ],
+        [
+          "0x2362a12",
+          "je",
+          "0x2362a34"
+        ],
+        [
+          "0x2362a14",
+          "mov",
+          "eax, 0x64"
+        ],
+        [
+          "0x2362a19",
+          "mov",
+          "dword ptr [esp + 8], 0x27428c1"
+        ],
+        [
+          "0x2362a21",
+          "sub",
+          "eax, esi"
+        ],
+        [
+          "0x2362a23",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x2362a27",
+          "lea",
+          "eax, [ebx + esi]"
+        ],
+        [
+          "0x2362a2a",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x2362a2d",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x2362a32",
+          "add",
+          "esi, eax"
+        ],
+        [
+          "0x2362a34",
+          "mov",
+          "ecx, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x2362a37",
+          "test",
+          "ecx, ecx"
+        ],
+        [
+          "0x2362a39",
+          "je",
+          "0x2362a5b"
+        ],
+        [
+          "0x2362a3b",
+          "mov",
+          "eax, 0x64"
+        ],
+        [
+          "0x2362a40",
+          "mov",
+          "dword ptr [esp + 8], 0x27428c3"
+        ],
+        [
+          "0x2362a48",
+          "sub",
+          "eax, esi"
+        ],
+        [
+          "0x2362a4a",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x2362a4e",
+          "lea",
+          "eax, [ebx + esi]"
+        ],
+        [
+          "0x2362a51",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x2362a54",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x2362a59",
+          "add",
+          "esi, eax"
+        ],
+        [
+          "0x2362a5b",
+          "mov",
+          "edx, dword ptr [ebp + 0x10]"
+        ],
+        [
+          "0x2362a5e",
+          "test",
+          "edx, edx"
+        ],
+        [
+          "0x2362a60",
+          "je",
+          "0x2362a82"
+        ],
+        [
+          "0x2362a62",
+          "mov",
+          "eax, 0x64"
+        ],
+        [
+          "0x2362a67",
+          "mov",
+          "dword ptr [esp + 8], 0x27428c5"
+        ],
+        [
+          "0x2362a6f",
+          "sub",
+          "eax, esi"
+        ],
+        [
+          "0x2362a71",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x2362a75",
+          "lea",
+          "eax, [ebx + esi]"
+        ],
+        [
+          "0x2362a78",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x2362a7b",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x2362a80",
+          "add",
+          "esi, eax"
+        ],
+        [
+          "0x2362a82",
+          "mov",
+          "eax, dword ptr [ebp + 0x14]"
+        ],
+        [
+          "0x2362a85",
+          "test",
+          "eax, eax"
+        ],
+        [
+          "0x2362a87",
+          "je",
+          "0x2362aa7"
+        ],
+        [
+          "0x2362a89",
+          "mov",
+          "eax, 0x64"
+        ],
+        [
+          "0x2362a8e",
+          "lea",
+          "ecx, [ebx + esi]"
+        ],
+        [
+          "0x2362a91",
+          "sub",
+          "eax, esi"
+        ],
+        [
+          "0x2362a93",
+          "mov",
+          "dword ptr [esp + 8], 0x27428c7"
+        ],
+        [
+          "0x2362a9b",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x2362a9f",
+          "mov",
+          "dword ptr [esp], ecx"
+        ],
+        [
+          "0x2362aa2",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x2362aa7",
+          "mov",
+          "eax, dword ptr [ebp - 0x74]"
+        ],
+        [
+          "0x2362aaa",
+          "mov",
+          "dword ptr [esp + 4], ebx"
+        ],
+        [
+          "0x2362aae",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x2362ab1",
+          "call",
+          "0x2701dd0"
+        ],
+        [
+          "0x2362ab6",
+          "add",
+          "esp, 0x7c"
+        ],
+        [
+          "0x2362ab9",
+          "pop",
+          "ebx"
+        ],
+        [
+          "0x2362aba",
+          "pop",
+          "esi"
+        ],
+        [
+          "0x2362abb",
+          "pop",
+          "edi"
+        ],
+        [
+          "0x2362abc",
+          "pop",
+          "ebp"
+        ],
+        [
+          "0x2362abd",
+          "ret",
+          ""
+        ],
+        [
+          "0x2362abe",
+          "nop",
+          ""
+        ],
+        [
+          "0x2362ac0",
+          "mov",
+          "eax, 0x64"
+        ],
+        [
+          "0x2362ac5",
+          "mov",
+          "dword ptr [esp + 0xc], edx"
+        ],
+        [
+          "0x2362ac9",
+          "sub",
+          "eax, esi"
+        ],
+        [
+          "0x2362acb",
+          "mov",
+          "dword ptr [esp + 8], 0x27428bc"
+        ],
+        [
+          "0x2362ad3",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x2362ad7",
+          "lea",
+          "eax, [ebx + esi]"
+        ],
+        [
+          "0x2362ada",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x2362add",
+          "call",
+          "0x26cea80"
+        ],
+        [
+          "0x2362ae2",
+          "add",
+          "esi, eax"
+        ],
+        [
+          "0x2362ae4",
+          "jmp",
+          "0x23629e9"
+        ]
+      ]
+    },
+    "odric_exile": {
+      "owner": "0x22b4870",
+      "address": "0x22b4870",
+      "end": "0x22b48b3",
+      "bytes_sha256": "2d3702dc602957c9aa683f25ae9268a26fad1ee4629fdfeb64a3faa330654901",
+      "instructions": [
+        [
+          "0x22b4870",
+          "push",
+          "ebp"
+        ],
+        [
+          "0x22b4871",
+          "mov",
+          "ebp, esp"
+        ],
+        [
+          "0x22b4873",
+          "sub",
+          "esp, 0xc"
+        ],
+        [
+          "0x22b4876",
+          "mov",
+          "eax, dword ptr [ebp + 0x10]"
+        ],
+        [
+          "0x22b4879",
+          "sub",
+          "eax, 0x1a"
+        ],
+        [
+          "0x22b487c",
+          "and",
+          "eax, 0xfffffff7"
+        ],
+        [
+          "0x22b487f",
+          "je",
+          "0x22b4888"
+        ],
+        [
+          "0x22b4881",
+          "xor",
+          "eax, eax"
+        ],
+        [
+          "0x22b4883",
+          "leave",
+          ""
+        ],
+        [
+          "0x22b4884",
+          "ret",
+          ""
+        ],
+        [
+          "0x22b4885",
+          "lea",
+          "esi, [esi]"
+        ],
+        [
+          "0x22b4888",
+          "mov",
+          "eax, dword ptr [0x4ef188]"
+        ],
+        [
+          "0x22b488d",
+          "mov",
+          "dword ptr [esp + 8], 4"
+        ],
+        [
+          "0x22b4895",
+          "and",
+          "eax, 0xfffffff7"
+        ],
+        [
+          "0x22b4898",
+          "mov",
+          "dword ptr [0x4ef188], eax"
+        ],
+        [
+          "0x22b489d",
+          "mov",
+          "eax, dword ptr [ebp + 0xc]"
+        ],
+        [
+          "0x22b48a0",
+          "mov",
+          "dword ptr [esp + 4], eax"
+        ],
+        [
+          "0x22b48a4",
+          "mov",
+          "eax, dword ptr [ebp + 8]"
+        ],
+        [
+          "0x22b48a7",
+          "mov",
+          "dword ptr [esp], eax"
+        ],
+        [
+          "0x22b48aa",
+          "call",
+          "0x26b5a00"
+        ],
+        [
+          "0x22b48af",
+          "xor",
+          "eax, eax"
+        ],
+        [
+          "0x22b48b1",
+          "leave",
+          ""
+        ],
+        [
+          "0x22b48b2",
+          "ret",
+          ""
+        ]
+      ]
+    }
+  },
+  "native_card_ids": [
+    {
+      "name": "CARD_ID_GORGING_VULTURE",
+      "value": 20345,
+      "die_offset": "0x1f360e2"
+    },
+    {
+      "name": "CARD_ID_GYRUDA_DOOM_OF_DEPTHS",
+      "value": 21303,
+      "die_offset": "0x1f3caf0"
+    },
+    {
+      "name": "CARD_ID_ANOWON_THE_RUIN_THIEF",
+      "value": 21772,
+      "die_offset": "0x1f3ff36"
+    },
+    {
+      "name": "CARD_ID_LOREHOLD_EXCAVATION",
+      "value": 22715,
+      "die_offset": "0x1f469da"
+    },
+    {
+      "name": "CARD_ID_GRIST_THE_HUNGER_TIDE",
+      "value": 23059,
+      "die_offset": "0x1f48ffd"
+    }
+  ],
+  "scope": "32 initial helper ranges and67 card handlers;99 complete native ranges reviewed.12 helpers and5 cards changed. Five card IDs restored. Original files and canonical APIs, no ABI aliases/duplicate types. Native ABI/frame and quirk instruction evidence included. Gameplay tests and built-in dialog backends remain deferred."
+}

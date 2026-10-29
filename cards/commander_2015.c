@@ -295,41 +295,46 @@ int card_shielded_by_faith(int player, int card, event_t event){
  * Myriad
  * Whenever ~ deals combat damage to a player, you may draw a card. */
 
- static int effect_gigantoplasm(int player, int card, event_t event){
-	if (effect_follows_control_of_attachment(player, card, event))
-		return 0;
+static int effect_gigantoplasm(int player, int card, event_t event)
+{
+  if (effect_follows_control_of_attachment(player, card, event))
+    return 0;
 
-	card_instance_t* instance = get_card_instance(player, card);
-	int p = instance->damage_target_player, c = instance->damage_target_card;
-	if( p > -1 && c > -1 ){
-		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(p, c) && instance->targets[1].card > -1 ){
-			if( check_status(player, card, STATUS_CONTROLLED) ){
-				event_result = instance->targets[1].card;
-			}
-		}
+  card_instance_t *instance = get_card_instance(player, card);
+  int p = instance->damage_target_player, c = instance->damage_target_card;
+  if (p > -1 && c > -1)
+  {
+    if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(p, c) &&
+        instance->targets[1].card > -1)
+    {
+      set_base_pt(instance->targets[1].card);
+    }
 
-		if( event == EVENT_CAN_ACTIVATE ){
-			return granted_generic_activated_ability(player, card, p, c, event, 0, MANACOST_X(-1), 0, NULL, NULL);
-		}
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      return granted_generic_activated_ability(player, card, p, c, event, 0, MANACOST_X(-1), 0,
+                                               NULL, NULL);
+    }
 
-		if( event == EVENT_ACTIVATE ){
-			charge_mana_for_activated_ability(p, c, MANACOST0);
-			if( spell_fizzled != 1 ){
-				charge_mana(player, COLOR_COLORLESS, -1);
-				if( spell_fizzled != 1 ){
-					instance->targets[1].player = x_value;
-				}
-			}
-		}
+    if (event == EVENT_ACTIVATE)
+    {
+      charge_mana_for_activated_ability(p, c, MANACOST0);
+      if (spell_fizzled != 1)
+      {
+        charge_mana(player, COLOR_COLORLESS, -1);
+        if (spell_fizzled != 1)
+        {
+          instance->targets[1].player = x_value;
+        }
+      }
+    }
 
-		if( event == EVENT_RESOLVE_ACTIVATION ){
-			get_card_instance(instance->parent_controller, instance->parent_card)->targets[1].card = instance->targets[1].player;
-			disable_other_pt_setting_effects_attached_to_me(p, c);
-			if( ! check_status(instance->parent_controller, instance->parent_card, STATUS_CONTROLLED) ){
-				add_status(instance->parent_controller, instance->parent_card, STATUS_CONTROLLED);
-			}
-		}
-	}
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      get_card_instance(instance->parent_controller, instance->parent_card)->targets[1].card =
+          instance->targets[1].player;
+    }
+  }
 
   return 0;
 }
@@ -1937,65 +1942,73 @@ static void counters_from_mazirek(int player, int card, int amount){
 	new_manipulate_all(player, card, player, &test, ACT_ADD_COUNTERS(COUNTER_P1_P1, amount));
 }
 
-static int mazirek_kraul_death_priest_effect(int player, int card, event_t event){
+static int mazirek_kraul_death_priest_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_MAZIREK_KRAUL_DEATH_PRIEST ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_MAZIREK_KRAUL_DEATH_PRIEST)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						return 0;
-					}
-				}
-				if( kill_code == KILL_SACRIFICE ){
-					count_for_gfp_ability(player, card, event, ANYBODY, TYPE_PERMANENT, NULL);
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        if (kill_code == KILL_SACRIFICE)
+        {
+          count_for_gfp_ability(player, card, event, ANYBODY, TYPE_PERMANENT, NULL);
+        }
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			counters_from_mazirek(player, card, amount);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    counters_from_mazirek(player, card, BYTE0(result));
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_mazirek_kraul_death_priest(int player, int card, event_t event){
@@ -2051,143 +2064,173 @@ int card_mazirek_kraul_death_priest(int player, int card, event_t event){
 	return 0;
 }
 
-static int meren_of_clan_nel_toth_effect(int player, int card, event_t event){
+static int meren_of_clan_nel_toth_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_MEREN_OF_CLAN_NEL_TOTH ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_MEREN_OF_CLAN_NEL_TOTH)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						return 0;
-					}
-				}
-				count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			add_experience(player, amount);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    for (int amount = BYTE0(result); amount > 0; --amount)
+      add_experience(player, 1);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
-int card_meren_of_clan_nel_toth(int player, int card, event_t event){
-	/* Meren of Clan Nel Toth	|2|B|G	0x200e3eb
-	 * Legendary Creature - Human Shaman 3/4
-	 * Whenever another creature you control dies, you get an experience counter.
-	 * At the beginning of your end step, choose target creature card in your graveyard.
-	 *	If that card's converted mana cost is less than or equal to the number of experience counters you have, return it to the battlefield.
-	 *	Otherwise, put it into your hand. */
+int card_meren_of_clan_nel_toth(int player, int card, event_t event)
+{
+  /* Meren of Clan Nel Toth	|2|B|G	0x200e3eb
+   * Legendary Creature - Human Shaman 3/4
+   * Whenever another creature you control dies, you get an experience counter.
+   * At the beginning of your end step, choose target creature card in your graveyard.
+   *	If that card's converted mana cost is less than or equal to the number of experience
+   * counters you have, return it to the battlefield. Otherwise, put it into your hand. */
 
-	check_legend_rule(player, card, event);
+  check_legend_rule(player, card, event);
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
-				card_instance_t *inst = get_card_instance(player, c);
-				if( inst->info_slot == (int)meren_of_clan_nel_toth_effect ){
-					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
-						(inst->targets[0].player == player && inst->targets[0].card == card) )
-					{
-						found = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( ! found ){
-			int legacy = create_targetted_legacy_effect(player, card, &meren_of_clan_nel_toth_effect, player, card);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(player, c);
+        if (inst->info_slot == (int)meren_of_clan_nel_toth_effect)
+        {
+          if ((inst->damage_target_player == player && inst->damage_target_card == card) ||
+              (inst->targets[0].player == player && inst->targets[0].card == card))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy = create_targetted_legacy_effect(player, card, &meren_of_clan_nel_toth_effect,
+                                                  player, card);
+      card_instance_t *inst = get_card_instance(player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		if( ! affect_me(player, card) ){
-			count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    if (!affect_me(player, card))
+    {
+      count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
+    }
+  }
 
-	if( get_card_instance(player, card)->kill_code <= 0 ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			add_experience(player, amount);
-		}
-	}
+  if (get_card_instance(player, card)->kill_code <= 0)
+  {
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result)
+    {
+      int amount = BYTE0(result);
+      for (; amount > 0; --amount)
+        add_experience(player, 1);
+    }
+  }
 
-	if( current_turn == player && eot_trigger(player, card, event) ){
-		if( ! graveyard_has_shroud(player) && count_graveyard_by_type(player, TYPE_CREATURE) ){
-			test_definition_t test;
-			new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card.");
-			if( player == AI ){
-				test.cmc = EXPERIENCE_COUNTERS(player);
-				int selected = new_select_a_card(player, player, TUTOR_FROM_GRAVE, 0, AI_MAX_VALUE, -1, &test);
-				if( selected != -1 ){
-					reanimate_permanent(player, card, player, selected, REANIMATE_DEFAULT);
-				}
-				else{
-					new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card.");
-					new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 0, AI_MAX_VALUE, &test);
-				}
-			}
-			else{
-				int selected = new_select_a_card(player, player, TUTOR_FROM_GRAVE, 1, AI_MAX_VALUE, -1, &test);
-				if( get_cmc_by_internal_id(get_grave(player)[selected]) <= EXPERIENCE_COUNTERS(player) ){
-					reanimate_permanent(player, card, player, selected, REANIMATE_DEFAULT);
-				}
-				else{
-					from_grave_to_hand(player, selected, TUTOR_HAND);
-				}
-			}
-		}
-	}
+  if (current_turn == player && eot_trigger(player, card, event))
+  {
+    if (!graveyard_has_shroud(player) && count_graveyard_by_type(player, TYPE_CREATURE))
+    {
+      test_definition_t test;
+      new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card.");
+      if (player == AI)
+      {
+        test.cmc = EXPERIENCE_COUNTERS(player);
+        int selected =
+            new_select_a_card(player, player, TUTOR_FROM_GRAVE, 0, AI_MAX_VALUE, -1, &test);
+        if (selected != -1)
+        {
+          reanimate_permanent(player, card, player, selected, REANIMATE_DEFAULT);
+        }
+        else
+        {
+          new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card.");
+          new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 0, AI_MAX_VALUE, &test);
+        }
+      }
+      else
+      {
+        int selected =
+            new_select_a_card(player, player, TUTOR_FROM_GRAVE, 1, AI_MAX_VALUE, -1, &test);
+        if (get_cmc_by_internal_id(get_grave(player)[selected]) <= EXPERIENCE_COUNTERS(player))
+        {
+          reanimate_permanent(player, card, player, selected, REANIMATE_DEFAULT);
+        }
+        else
+        {
+          from_grave_to_hand(player, selected, TUTOR_HAND);
+        }
+      }
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_mizzix_of_the_izmagus(int player, int card, event_t event){

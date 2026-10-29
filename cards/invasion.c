@@ -61,130 +61,162 @@ int kicked(int player, int card){
 
 
 
-static int invasion_apprentices(int player, int card, event_t event, int clr1, int clr2){
+static int invasion_apprentices(int player, int card, event_t event, int clr1, int clr2)
+{
 
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
+  if (!IS_GAA_EVENT(event))
+  {
+    return 0;
+  }
 
-	target_definition_t td1;
-	default_target_definition(player, card, &td1, 0);
-	td1.zone = TARGET_ZONE_PLAYERS;
+  target_definition_t td1;
+  default_target_definition(player, card, &td1, 0);
+  td1.zone = TARGET_ZONE_PLAYERS;
 
-	target_definition_t td2;
-	default_target_definition(player, card, &td2, TYPE_CREATURE);
-	td2.preferred_controller = player;
-	td2.allowed_controller = player;
+  target_definition_t td2;
+  default_target_definition(player, card, &td2, TYPE_CREATURE);
+  td2.preferred_controller = player;
+  td2.allowed_controller = player;
 
-	target_definition_t td3;
-	default_target_definition(player, card, &td3, TYPE_CREATURE);
-	td3.preferred_controller = player;
+  target_definition_t td3;
+  default_target_definition(player, card, &td3, TYPE_CREATURE);
+  td3.preferred_controller = player;
 
-	target_definition_t td4;
-	default_target_definition(player, card, &td4, TYPE_CREATURE);
+  target_definition_t td4;
+  default_target_definition(player, card, &td4, TYPE_CREATURE);
 
+  card_instance_t *instance = get_card_instance(player, card);
 
-	card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if ((clr1 == COLOR_BLACK || clr2 == COLOR_BLACK) &&
+        generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_B(1),
+                                  0, &td1, NULL))
+    {
+      return 1;
+    }
+    if ((clr1 == COLOR_BLUE || clr2 == COLOR_BLUE) &&
+        generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_U(1),
+                                  0, &td2, NULL))
+    {
+      return 1;
+    }
+    if ((clr1 == COLOR_GREEN || clr2 == COLOR_GREEN) &&
+        generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_G(1),
+                                  0, &td3, NULL))
+    {
+      return 1;
+    }
+    if ((clr1 == COLOR_RED || clr2 == COLOR_RED) &&
+        generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_R(1),
+                                  0, &td3, NULL))
+    {
+      return 1;
+    }
+    if ((clr1 == COLOR_WHITE || clr2 == COLOR_WHITE) &&
+        generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_W(1),
+                                  0, &td4, NULL))
+    {
+      return 1;
+    }
+  }
 
-	if( event == EVENT_CAN_ACTIVATE ){
-		if( (clr1 == COLOR_BLACK || clr2 == COLOR_BLACK) &&
-			generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_B(1), 0, &td1, NULL)
-		  ){
-			return 1;
-		}
-		if( (clr1 == COLOR_BLUE || clr2 == COLOR_BLUE) &&
-			generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_U(1), 0, &td2, NULL)
-		  ){
-			return 1;
-		}
-		if( (clr1 == COLOR_GREEN || clr2 == COLOR_GREEN ) &&
-			generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_G(1), 0, &td3, NULL)
-		  ){
-			return 1;
-		}
-		if( (clr1 == COLOR_RED || clr2 == COLOR_RED ) &&
-			generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_R(1), 0, &td3, NULL)
-		  ){
-			return 1;
-		}
-		if( (clr1 == COLOR_WHITE || clr2 == COLOR_WHITE) &&
-			generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_W(1), 0, &td4, NULL)
-		  ){
-			return 1;
-		}
-	}
+  if (event == EVENT_ACTIVATE)
+  {
+    instance->number_of_targets = 0;
+    instance->info_slot = 0;
+    int abilities[5] = {
+        generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET,
+                                  MANACOST_B(1), 0, &td1, NULL),
+        generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET,
+                                  MANACOST_U(1), 0, &td2, NULL),
+        generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET,
+                                  MANACOST_G(1), 0, &td3, NULL),
+        generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET,
+                                  MANACOST_R(1), 0, &td3, NULL),
+        generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET,
+                                  MANACOST_W(1), 0, &td4, NULL)};
+    int priorities[5] = {
+        life[1 - player] < 6 && would_validate_arbitrary_target(&td1, 1 - player, -1) ? 5 : 15, 8,
+        10, 5 + (10 * current_phase == PHASE_AFTER_BLOCKING), 10};
 
-	if(event == EVENT_ACTIVATE ){
-		instance->number_of_targets = 0;
-		instance->info_slot = 0;
-		int abilities[5] = {generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_B(1), 0, &td1, NULL),
-							generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_U(1), 0, &td2, NULL),
-							generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_G(1), 0, &td3, NULL),
-							generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_R(1), 0, &td3, NULL),
-							generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_W(1), 0, &td4, NULL)
-							};
-		int priorities[5] = {	life[1-player] < 6 && would_validate_arbitrary_target(&td1, 1-player, -1) ? 5 : 15,
-								8,
-								10,
-								5+(10*current_phase == PHASE_AFTER_BLOCKING),
-								10
-							};
+    int choice = DIALOG(
+        player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL,
+        "Target player loses 1 life", abilities[0] && (clr1 == COLOR_BLACK || clr2 == COLOR_BLACK),
+        priorities[0], "Put target creature on top of your deck",
+        abilities[1] && (clr1 == COLOR_BLUE || clr2 == COLOR_BLUE), priorities[1],
+        "Pump a creature", abilities[2] && (clr1 == COLOR_GREEN || clr2 == COLOR_GREEN),
+        priorities[2], "Give first strike",
+        abilities[3] && (clr1 == COLOR_RED || clr2 == COLOR_RED), priorities[3],
+        "Tap target creature", abilities[4] && (clr1 == COLOR_WHITE || clr2 == COLOR_WHITE),
+        priorities[4]);
+    if (!choice)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (charge_mana_for_activated_ability(player, card, 0, (choice == 1), (choice == 2),
+                                          (choice == 3), (choice == 4), (choice == 5)))
+    {
+      instance->number_of_targets = 0;
+      if (choice == 1)
+      {
+        pick_target(&td1, "TARGET_PLAYER");
+      }
+      if (choice == 2)
+      {
+        new_pick_target(&td2, "Select target creature you control.", 0,
+                        GS_CAN_TARGET | GS_LITERAL_PROMPT);
+      }
+      if (choice == 3)
+      {
+        pick_target(&td3, "TARGET_CREATURE");
+      }
+      if (choice == 4)
+      {
+        pick_target(&td3, "TARGET_CREATURE");
+      }
+      if (choice == 5)
+      {
+        pick_target(&td4, "TARGET_CREATURE");
+      }
+      if (spell_fizzled != 1)
+      {
+        instance->number_of_targets = 1;
+        instance->info_slot = choice;
+        tap_card(player, card);
+      }
+    }
+  }
 
-		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL,
-							"Target player loses 1 life", abilities[0] && (clr1 == COLOR_BLACK || clr2 == COLOR_BLACK), priorities[0],
-							"Put target creature on top of your deck", abilities[1] && (clr1 == COLOR_BLUE || clr2 == COLOR_BLUE), priorities[1],
-							"Pump a creature", abilities[2] && (clr1 == COLOR_GREEN || clr2 == COLOR_GREEN), priorities[2],
-							"Give first strike", abilities[3] && (clr1 == COLOR_RED || clr2 == COLOR_RED), priorities[3],
-							"Tap target creature", abilities[4] && (clr1 == COLOR_WHITE || clr2 == COLOR_WHITE), priorities[4]);
-		if( ! choice ){
-			spell_fizzled = 1;
-			return 0;
-		}
-		if( charge_mana_for_activated_ability(player, card, 0, (choice == 1), (choice == 2), (choice == 3), (choice == 4), (choice == 5)) ){
-			instance->number_of_targets = 0;
-			if( choice == 1 ){
-				pick_target(&td1, "TARGET_PLAYER");
-			}
-			if( choice == 2 ){
-				new_pick_target(&td2, "Select target creature you control.", 0, 1);
-			}
-			if( choice == 3 ){
-				pick_target(&td3, "TARGET_CREATURE");
-			}
-			if( choice == 4 ){
-				pick_target(&td3, "TARGET_CREATURE");
-			}
-			if( choice == 5 ){
-				pick_target(&td4, "TARGET_CREATURE");
-			}
-			if( spell_fizzled != 1 ){
-				instance->number_of_targets = 1;
-				instance->info_slot = choice;
-				tap_card(player, card);
-			}
-		}
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (instance->info_slot == 1 && valid_target(&td1))
+    {
+      lose_life(instance->targets[0].player, 1);
+    }
+    if (instance->info_slot == 2 && valid_target(&td2))
+    {
+      put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
+    }
+    if (instance->info_slot == 3 && valid_target(&td3))
+    {
+      pump_until_eot(instance->parent_controller, instance->parent_card,
+                     instance->targets[0].player, instance->targets[0].card, 1, 1);
+    }
+    if (instance->info_slot == 4 && valid_target(&td3))
+    {
+      pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                             instance->targets[0].player, instance->targets[0].card, 0, 0,
+                             KEYWORD_FIRST_STRIKE, 0);
+    }
+    if (instance->info_slot == 5 && valid_target(&td4))
+    {
+      tap_card(instance->targets[0].player, instance->targets[0].card);
+    }
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot == 1 && valid_target(&td1) ){
-			lose_life(instance->targets[0].player, 1);
-		}
-		if( instance->info_slot == 2 && valid_target(&td2) ){
-			put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
-		}
-		if( instance->info_slot == 3 && valid_target(&td3) ){
-			pump_until_eot(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card, 1, 1);
-		}
-		if( instance->info_slot == 4 && valid_target(&td3) ){
-			pump_ability_until_eot(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card,
-									0, 0, KEYWORD_FIRST_STRIKE, 0);
-		}
-		if( instance->info_slot == 5 && valid_target(&td4) ){
-			tap_card(instance->targets[0].player, instance->targets[0].card);
-		}
-	}
-
-	return 0;
+  return 0;
 }
 
 static int mutation_spell(int player, int card, event_t event, int type, const char *buffer){
@@ -353,40 +385,47 @@ void spell_can_be_cast_as_instant_by_paying_2(int player, int card, event_t even
 	}
 }
 
-static void invasion_dragon(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white){
+static void invasion_dragon(int player, int card, event_t event, int cless, int black, int blue,
+                            int green, int red, int white)
+{
 
-	if (damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_BE_COMBAT_DAMAGE))
-	{
-		card_instance_t* instance = get_card_instance(player, card);
-		int times_damaged[2] = { BYTE0(instance->targets[1].player), BYTE1(instance->targets[1].player) };
-		instance->targets[1].player = 0;
-		APNAP(p,{
-					if( times_damaged[p] ){
-						char buffer[100];
-						if( p == player ){
-							scnprintf(buffer, 100, "Activate %s (you were damaged)", cards_ptr[get_id(player, card)]->name);
-						}
-						else{
-							scnprintf(buffer, 100, "Activate %s (opponent was damaged)", cards_ptr[get_id(player, card)]->name);
-						}
-						while( times_damaged[p] && has_mana_multi(player, cless, black, blue, green, red, white) ){
-								int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
-													buffer, 1, p != player ? 10 : 1,
-													"Decline", 5);
-								if( choice == 1 ){
-									charge_mana_multi(player, cless, black, blue, green, red, white);
-									if( spell_fizzled != 1 ){
-										SET_BYTE1(instance->info_slot) = p;
-										call_card_function(player, card, EVENT_DAMAGE_TRIGGER_ABILITY);
-										instance->info_slot = 0;
-									}
-								}
-								times_damaged[p]--;
-						}
-					}
-				};
-		);
-	}
+  if (damage_dealt_by_me(player, card, event,
+                         DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS |
+                             DDBM_MUST_BE_COMBAT_DAMAGE))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int times_damaged[2] = {BYTE0(instance->targets[1].player), BYTE1(instance->targets[1].player)};
+    instance->targets[1].player = 0;
+    APNAP(p, {
+      if (times_damaged[p])
+      {
+        char buffer[100];
+        if (p == player)
+        {
+          scnprintf(buffer, 100, " Activate (you were damaged)\n Cancel");
+        }
+        else
+        {
+          scnprintf(buffer, 100, " Activate (opponent was damaged)\n Cancel");
+        }
+        while (times_damaged[p] && has_mana_multi(player, cless, black, blue, green, red, white))
+        {
+          int choice = do_dialog(player, player, card, -1, -1, buffer, p == player);
+          if (choice == 0)
+          {
+            charge_mana_multi(player, cless, black, blue, green, red, white);
+            if (spell_fizzled != 1)
+            {
+              SET_BYTE1(instance->info_slot) = p;
+              call_card_function(player, card, EVENT_DAMAGE_TRIGGER_ABILITY);
+              instance->info_slot = 0;
+            }
+          }
+          times_damaged[p]--;
+        }
+      }
+    };);
+  }
 }
 
 
@@ -1491,26 +1530,28 @@ Return X target nonland permanents to their owners' hands. */
 
 // drake skull cameo -->  bloodstone cameo
 
-int card_dromar_the_banisher(int player, int card, event_t event){
-/*
-Dromar, the Banisher |3|W|U|B
-Legendary Creature — Dragon 6/6
-Flying
-Whenever Dromar, the Banisher deals combat damage to a player, you may pay {2}{U}.
-If you do, choose a color, then return all creatures of that color to their owners' hands.
-*/
-	check_legend_rule(player, card, event);
+int card_dromar_the_banisher(int player, int card, event_t event)
+{
+  /*
+  Dromar, the Banisher |3|W|U|B
+  Legendary Creature — Dragon 6/6
+  Flying
+  Whenever Dromar, the Banisher deals combat damage to a player, you may pay {2}{U}.
+  If you do, choose a color, then return all creatures of that color to their owners' hands.
+  */
+  check_legend_rule(player, card, event);
 
-	invasion_dragon(player, card, event, MANACOST_XU(2, 1));
+  invasion_dragon(player, card, event, MANACOST_XU(2, 1));
 
-	if( event == EVENT_DAMAGE_TRIGGER_ABILITY ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		this_test.color = 1<<choose_a_color(player, get_deck_color(player, 1-player));
-		APNAP(p, { new_manipulate_all(player, card, p, &this_test, ACT_BOUNCE); };);
-	}
+  if (event == EVENT_DAMAGE_TRIGGER_ABILITY)
+  {
+    test_definition_t this_test;
+    default_test_definition(&this_test, TYPE_CREATURE);
+    this_test.color = 1 << choose_a_color(player, get_deck_color(player, 1 - player));
+    new_manipulate_all(player, card, ANYBODY, &this_test, ACT_BOUNCE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_elfhame_sanctuary(int player, int card, event_t event){
@@ -2298,14 +2339,20 @@ int card_meteor_storm(int player, int card, event_t event){
 	return 0;
 }
 
-int card_nightscape_apprentice(int player, int card, event_t event){
-	/*
-	  Nightscape Apprentice |B
-	  Creature - Zombie Wizard 1/1
-	  {U}, {T}: Put target creature you control on top of its owner's library.
-	  {R}, {T}: Target creature gains first strike until end of turn.
-	*/
-	return invasion_apprentices(player, card, event, COLOR_BLUE, COLOR_RED);
+int card_nightscape_apprentice(int player, int card, event_t event)
+{
+  if (event == EVENT_CHECK_ABILITIES && affected_card_controller == player &&
+      generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_R(1), 0,
+                                NULL, NULL))
+    check_abilities_keywords |= KEYWORD_FIRST_STRIKE;
+
+  /*
+    Nightscape Apprentice |B
+    Creature - Zombie Wizard 1/1
+    {U}, {T}: Put target creature you control on top of its owner's library.
+    {R}, {T}: Target creature gains first strike until end of turn.
+  */
+  return invasion_apprentices(player, card, event, COLOR_BLUE, COLOR_RED);
 }
 
 int card_nightscape_master(int player, int card, event_t event){
@@ -3550,14 +3597,20 @@ int card_thicket_elemental(int player, int card, event_t event){
 	return kicker(player, card, event, MANACOST_XG(1, 1));
 }
 
-int card_thornscape_apprentice(int player, int card, event_t event){
-	/*
-	  Thornscape Apprentice |G
-	  Creature - Human Wizard 1/1
-	  {R}, {T}: Target creature gains first strike until end of turn.
-	  {W}, {T}: Tap target creature.
-	*/
-	return invasion_apprentices(player, card, event, COLOR_RED, COLOR_WHITE);
+int card_thornscape_apprentice(int player, int card, event_t event)
+{
+  if (event == EVENT_CHECK_ABILITIES && affected_card_controller == player &&
+      generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_R(1), 0,
+                                NULL, NULL))
+    check_abilities_keywords |= KEYWORD_FIRST_STRIKE;
+
+  /*
+    Thornscape Apprentice |G
+    Creature - Human Wizard 1/1
+    {R}, {T}: Target creature gains first strike until end of turn.
+    {W}, {T}: Tap target creature.
+  */
+  return invasion_apprentices(player, card, event, COLOR_RED, COLOR_WHITE);
 }
 
 int card_thornscape_master(int player, int card, event_t event){

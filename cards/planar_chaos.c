@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+static char *player_or_planeswalker_or_sliver_creature(int who_chooses, int player, int card,
+                                                       int targeting_player, int targeting_card);
+
 // Functions
 void vanishing(int player, int card, event_t event, int number)
 {
@@ -634,110 +637,117 @@ static const char* is_damage_to_player_or_planeswalker_or_sliver_creature(int wh
 	return NULL;
 }
 
-int cautery_sliver_shared_ability(int player, int card, event_t event){
-
-	if( get_card_instance(player, card)->targets[1].player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-
-		int p = instance->targets[1].player;
-		int c = instance->targets[1].card;
-
-		if( leaves_play(p, c, event, 0, 0) ){
-			kill_card(player, card, KILL_EXILE);
-		}
-
-		if( is_humiliated(p, c, AL_NM_NL_ACT) ){
-			return 0;
-		}
-
-		if( ! IS_GAA_EVENT(event) ){
-			return 0;
-		}
-
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_PERMANENT);
-		td.preferred_controller = player;
-		td.required_subtype = SUBTYPE_SLIVER;
-		td.extra = (int32_t)activating_sliver;
-		td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-		td.illegal_abilities = 0;
-
-		target_definition_t td2;
-		default_target_definition(player, card, &td2, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
-		td2.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-		td2.allow_cancel = 0;
-
-		target_definition_t td3;
-		base_target_definition(player, card, &td3, 0);
-		td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-		td.extra = (int32_t)is_damage_to_player_or_planeswalker_or_sliver_creature;
-		td3.allow_cancel = 0;
-
-		if( event == EVENT_CAN_ACTIVATE && in_play(player, card) ){
-			int pp, cc, result = 0;
-			for(pp = 0; pp<2; pp++){
-				for(cc=0; cc < active_cards_count[pp]; cc++){
-					if( in_play(pp, cc) && is_what(pp, cc, TYPE_PERMANENT) && has_subtype(pp, cc, SUBTYPE_SLIVER) ){
-						result = generic_activated_ability(pp, cc, EVENT_CAN_ACTIVATE, GAA_SACRIFICE_ME | GAA_DAMAGE_PREVENTION | GAA_CAN_TARGET,
-															MANACOST_X(1), 0, &td3, NULL);
-						if( result == 99 ){
-							return result;
-						}
-						if( generic_activated_ability(pp, cc, EVENT_CAN_ACTIVATE, GAA_SACRIFICE_ME | GAA_CAN_TARGET, MANACOST_X(1), 0, &td2, NULL) ){
-							result = 1;
-						}
-					}
-				}
-			}
-			return result;
-		}
-
-		if( event == EVENT_ACTIVATE ){
-			if( new_pick_target(&td, "Select a Sliver to activate", 0, 1 | GS_LITERAL_PROMPT) ){
-				instance->number_of_targets = 1;
-				if( can_use_activated_abilities(instance->targets[0].player, instance->targets[0].card) ){
-					if( generic_activated_ability(instance->targets[0].player, instance->targets[0].card, EVENT_CAN_ACTIVATE,
-													GAA_SACRIFICE_ME | GAA_DAMAGE_PREVENTION | GAA_CAN_TARGET, MANACOST_X(1), 0, &td3, NULL)
-					  ){
-						generic_activated_ability(instance->targets[0].player, instance->targets[0].card, EVENT_CAN_ACTIVATE,
-													GAA_SACRIFICE_ME | GAA_DAMAGE_PREVENTION | GAA_CAN_TARGET, MANACOST_X(1), 0, &td3, "TARGET_DAMAGE") ;
-						if( spell_fizzled != 1 ){
-							instance->targets[2] = get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[0];
-							instance->targets[3].player = 1;
-						}
-					}
-					else{
-						generic_activated_ability(instance->targets[0].player, instance->targets[0].card, EVENT_CAN_ACTIVATE,
-													GAA_SACRIFICE_ME | GAA_CAN_TARGET, MANACOST_X(1), 0, &td2, "TARGET_ANY");
-						if( spell_fizzled != 1 ){
-							instance->targets[2] = get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[0];
-							instance->targets[3].player = 2;
-						}
-					}
-				}
-				else{
-					spell_fizzled = 1;
-				}
-			}
-		}
-
-		if( event == EVENT_RESOLVE_ACTIVATION ){
-			if( instance->targets[3].player == 1 ){
-				if( would_validate_arbitrary_target(&td3, instance->targets[2].player, instance->targets[2].card) ){
-					card_instance_t *dmg = get_card_instance(instance->targets[2].player, instance->targets[2].card);
-					int amount = dmg->info_slot;
-					dmg->info_slot = amount > 1 ? amount-1: 0;
-				}
-			}
-			if( instance->targets[3].player == 2 ){
-				if( would_validate_arbitrary_target(&td2, instance->targets[2].player, instance->targets[2].card) ){
-					damage_creature(instance->targets[2].player, instance->targets[2].card, 1, instance->targets[0].player, instance->targets[0].card);
-				}
-			}
-		}
-	}
-
-	return 0;
+int cautery_sliver_shared_ability(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->targets[1].player >= 0)
+  {
+    int p = instance->targets[1].player;
+    int c = instance->targets[1].card;
+    leaves_play(p, c, event, 0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY || get_id(p, c) != CARD_ID_CAUTERY_SLIVER)
+      kill_card(player, card, KILL_EXILE);
+    if (is_humiliated(p, c, AL_NM_NL_ACT))
+      return 0;
+    if (!IS_GAA_EVENT(event))
+      return 0;
+    target_definition_t td;
+    base_target_definition(player, card, &td, TYPE_PERMANENT);
+    td.allowed_controller = td.preferred_controller = player;
+    td.required_subtype = SUBTYPE_SLIVER;
+    td.extra = (int32_t)activating_sliver;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+    target_definition_t td2;
+    default_target_definition(player, card, &td2, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+    td2.preferred_controller = 1 - player;
+    td2.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+    td2.allow_cancel = 0;
+    target_definition_t td3;
+    default_target_definition(player, card, &td3, TYPE_NONE);
+    td3.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+    td3.extra = (int32_t)player_or_planeswalker_or_sliver_creature;
+    td3.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+    td3.preferred_controller = player;
+    td3.allow_cancel = 0;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (can_target(&td))
+      {
+        for (int pp = 0; pp < 2; ++pp)
+        {
+          for (int cc = 0; cc < active_cards_count[pp]; ++cc)
+          {
+            if (in_play(pp, cc) && is_what(pp, cc, TYPE_PERMANENT) &&
+                has_subtype(pp, cc, SUBTYPE_SLIVER) &&
+                (generic_activated_ability(pp, cc, event, GAA_SACRIFICE_ME | GAA_CAN_TARGET,
+                                           MANACOST_X(1), 0, &td3, NULL) ||
+                 generic_activated_ability(pp, cc, event, GAA_SACRIFICE_ME | GAA_CAN_TARGET,
+                                           MANACOST_X(1), 0, &td2, NULL)))
+              return 1;
+          }
+        }
+      }
+    }
+    else if (event == EVENT_ACTIVATE)
+    {
+      if (new_pick_target(&td, "Select a Sliver to activate", 0, 1 | GS_LITERAL_PROMPT))
+      {
+        instance->number_of_targets = 1;
+        if (can_use_activated_abilities(instance->targets[0].player, instance->targets[0].card))
+        {
+          int choice = do_dialog(player, player, card, -1, -1,
+                                 " Prevent 1 damage\n Deal 1 damage\n Do nothing", 1);
+          if (choice == 0)
+          {
+            generic_activated_ability(instance->targets[0].player, instance->targets[0].card, event,
+                                      GAA_SACRIFICE_ME | GAA_CAN_TARGET | GAA_LITERAL_PROMPT,
+                                      MANACOST_X(1), 0, &td3,
+                                      "Prevent the next 1 damage to target player, planeswalker, "
+                                      "or Sliver creature this turn.");
+            if (spell_fizzled != 1)
+            {
+              instance->targets[2] =
+                  get_card_instance(instance->targets[0].player, instance->targets[0].card)
+                      ->targets[0];
+              instance->targets[3].player = 1;
+            }
+          }
+          else if (choice == 1)
+          {
+            generic_activated_ability(instance->targets[0].player, instance->targets[0].card, event,
+                                      GAA_SACRIFICE_ME | GAA_CAN_TARGET, MANACOST_X(1), 0, &td2,
+                                      "TARGET_ANY");
+            if (spell_fizzled != 1)
+            {
+              instance->targets[2] =
+                  get_card_instance(instance->targets[0].player, instance->targets[0].card)
+                      ->targets[0];
+              instance->targets[3].player = 2;
+            }
+          }
+          else
+          {
+            spell_fizzled = 1;
+          }
+        }
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      if (instance->targets[3].player == 1 &&
+          would_validate_arbitrary_target(&td3, instance->targets[2].player,
+                                          instance->targets[2].card))
+        prevent_the_next_n_damage(instance->targets[0].player, instance->targets[0].card,
+                                  instance->targets[2].player, instance->targets[2].card, 1, 0, 0,
+                                  0);
+      if (instance->targets[3].player == 2 &&
+          would_validate_arbitrary_target(&td2, instance->targets[2].player,
+                                          instance->targets[2].card))
+        damage_creature(instance->targets[2].player, instance->targets[2].card, 1,
+                        instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  return 0;
 }
 
 int card_cautery_sliver(int player, int card, event_t event){

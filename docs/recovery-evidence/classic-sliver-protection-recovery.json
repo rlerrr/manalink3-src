@@ -1,0 +1,2048 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "homelands_triple_land",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x211ff90",
+          "end": "0x21203e2",
+          "bytes_sha256": "8228cac835f39794f6f1d8fee47e8940df2ec3d6fbe2432d3ed23fd62be8cc5d",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/211ff90.c",
+          "raw_export_sha256": "01c50461a84d547b9eaa20caf3fe87e542bb423a6242027a5649ae7effbe8c71"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "12d8cc83451425e799e7f5d5cf2502092e078cc13c257469deff460700d49bbb"
+    },
+    {
+      "name": "effect_cant_be_blocked_except_by_walls",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x21203f0",
+          "end": "0x212048e",
+          "bytes_sha256": "730e5b51a315d1cb26d7a0db5a935d21373767c421c14f881bc234aed4147a2c",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/21203f0.c",
+          "raw_export_sha256": "6d78a251bf967bc4c96d094fb8a17c75484f12b2cd13c4746dec3ed9a9a8ae32"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "a94f5d18766d4f0c8fdd74d96d1b2f16cf2062f53267b57f9a2067d7591e56d3"
+    },
+    {
+      "name": "give_first_strike",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x21206e0",
+          "end": "0x2120728",
+          "bytes_sha256": "47510b7846539ce86f16c575e7ac27185ae7fb34202b084d0f68005e45765671",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/21206e0.c",
+          "raw_export_sha256": "50edcff010be8feb5c4f395d1c765c7a1921857a444bbb295482c760e769d15d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d3b6707b107b2411c110f8203655a72470107d77042ee63f7b07eff6d5484600"
+    },
+    {
+      "name": "giant_albatross_legacy",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2120730",
+          "end": "0x212093d",
+          "bytes_sha256": "c97aef813137a266667812056b01f3c34f97f86d2f679e93f43f4e4551d02db6",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/2120730.c",
+          "raw_export_sha256": "6d9cc96fb6af8d7e02477978c297afd27da3b0d237d0eb6f4429c41583e06583"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "936bcd570b4bd3db8296d4e5d3c20988ce478f602a411a24ac15444515a11493"
+    },
+    {
+      "name": "giant_oyster_effect",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2120d40",
+          "end": "0x2120f3e",
+          "bytes_sha256": "b86929186a38c3b3d6eb7d7b860cfff1fc8d2b0f1f1df5d86facd0550098d444",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/2120d40.c",
+          "raw_export_sha256": "73a033b05271fdda7832cc8fb5007f3dde6b67e64b0f1554ed58dd9973e7febe"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f83c83ea0be62531a22d11014904a5f6d9fb0c5e44ec6c192414422c20b653bf"
+    },
+    {
+      "name": "hom_clockwork",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2120f40",
+          "end": "0x21213b8",
+          "bytes_sha256": "b8abdec0cc88afb32440caa1d61f3879515a9857857081a2b72411534d436744",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/2120f40.c",
+          "raw_export_sha256": "39ab6cb2bb0f0e7d5591fcc416c084a600d883eee675adcfccb18310431de3b1"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "171203a7c5db4ec3c69f7ffbdbe9a3a828525e034b0abd344199f7c4c834a941"
+    },
+    {
+      "name": "fe_knights",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x241b160",
+          "end": "0x241b549",
+          "bytes_sha256": "6fd666bb2be26f0371812ac87a4b76121b5e2b949b1a6a767729f28a36563999",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/241b160.c",
+          "raw_export_sha256": "42be877399c8e1013c6d0ba757b231b17b10b514f76ff066084d854fe3ba4a98"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "08c30aa87b88c5a01bbf7af96524ce46c9c74d5cec5fd6a0d1b054c1b1823750"
+    },
+    {
+      "name": "effect_vodalian_war_machine",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x241b9a0",
+          "end": "0x241bb15",
+          "bytes_sha256": "ebca4382979188cd8ff7985db0a6e03a8e6829ef93f4e2339cd52b62b4086b32",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/241b9a0.c",
+          "raw_export_sha256": "cefdd47ccd5e9f8134c852a0e75a1469fde3b6f630f07e66a99ee54dc4ba5c8b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b2981873fc79209495a6006991d267934467ff7aae831af9e4c4acbc6f5609e7"
+    },
+    {
+      "name": "storage_land",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x241bb20",
+          "end": "0x241c103",
+          "bytes_sha256": "2fc31a5243278aa0c6f94c864cc4d2c5e5078939d63300bbb28ba45fd789bfb8",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/241bb20.c",
+          "raw_export_sha256": "182fe35da170f27b2d19c76e15d876132fe6f7d5452af786227147af2c04d1eb"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4b648b26de81894295cd7f6f129ed315614e419bebbd04cb80bce195fdde75a6"
+    },
+    {
+      "name": "effect_delifs_cone",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x241c110",
+          "end": "0x241c28a",
+          "bytes_sha256": "c8db57fa91c6eaea54d28234055b56b2b958e214b1d440753b415b26d2e15659",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/241c110.c",
+          "raw_export_sha256": "6e64214174932efcdbef02a7da0138449f0befe7f14532f2643cf59a725a27ed"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4bad7da86a451fae521ae21889c27da80389419d233d21818d20c7091f7d301c"
+    },
+    {
+      "name": "sword_and_shield",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x241c390",
+          "end": "0x241c57c",
+          "bytes_sha256": "f1bfab6c0f9826d8172fb9047b1f0fe3679861a71017dc77b7525675fdd2300a",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/241c390.c",
+          "raw_export_sha256": "fb9c8eb1259634f613d5362c1ee8639dd0d72b9ecc829fabf84c4ba51691aae6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b3902817f297977e1b4f8180c6905bdd305fa0fa674cd05c37bd7496d13e1960"
+    },
+    {
+      "name": "fe_chant",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x241c960",
+          "end": "0x241cc23",
+          "bytes_sha256": "19697c179b80a8af24c75f33f5f702d347e3a1215d8c162b75e4485947135dd1",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/241c960.c",
+          "raw_export_sha256": "c7a6289c98b602de9adbd1e92bbf8a33bb8843e0a81c0e9de50ec297fefa608a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "4cf387e40fa209ab3460520f7a3328e5b90b754001fc346429e5bf29911aafef"
+    },
+    {
+      "name": "crypt_sliver_shared_ability",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a5c70",
+          "end": "0x24a5ee1",
+          "bytes_sha256": "6d66ed7e380228c61223bb8ef747553fdc4475558ef1a8218bc414f120e98ca6",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/24a5c70.c",
+          "raw_export_sha256": "7b53c54f3e54a18ac7de531dbb94a95d6b9276f87d329d1cf3890f4835398840"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cadec3a6be8d092f2678623d30dddd427d14ee6640db32ac9eea7fe1cc2a5c47"
+    },
+    {
+      "name": "magma_sliver_shared_ability",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a5ef0",
+          "end": "0x24a615f",
+          "bytes_sha256": "74fa4d7ba1e703f492732ce9f25b47ac53d22d3c769a899bdf3fe373f3c14b60",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/24a5ef0.c",
+          "raw_export_sha256": "983c88e7e32d1b50d90f5efd0137ffcc6596d19643c56433e770ff99be60675e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4b74547933160f673e494757c3b88493ad123bb2c5931637b24b66679b030024"
+    },
+    {
+      "name": "provoke_impl",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a61c0",
+          "end": "0x24a6353",
+          "bytes_sha256": "e4c9f82b42fdf21b8627ed09da03b00ce0f68d183320e6cb94caf0e94c5b72f2",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/24a61c0.c",
+          "raw_export_sha256": "1dd1d07f7f010c56db7abbd48fbca7bceb459db7f1d05913d6478c86d4dd3b1b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9091612492fdfb6d9a66c3f7a362b733d7069431d71d7cbfcf5adc4abdf98f60"
+    },
+    {
+      "name": "provoke",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a6580",
+          "end": "0x24a65f8",
+          "bytes_sha256": "110f9d6a18dac61d56c895b469b3caec862b12905a440c59f1b138539fcc59d0",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/24a6580.c",
+          "raw_export_sha256": "efc9ebb3bd0ad595b6a21e212dfc964b40550e45517783f8ec65edf3f69c85c2"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e797c3b3503da62e10b07fd165e20b68050dd1d4f8f3c5c6c5c30261d4d4e2d7"
+    },
+    {
+      "name": "gilded_light_legacy",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24f6110",
+          "end": "0x24f6176",
+          "bytes_sha256": "7fcf6c6a92f720bb742d89afcb3c415a38d0f279364d5689553883abf53ccd8d",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/24f6110.c",
+          "raw_export_sha256": "b5db9e4d612b490a645ff600de07dc66273224041628b16dcdc7be8d7301b6ae"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c2bc08a2299a87f1f794179e04ec8cd329f0d238fc53c621b8004b379af52d5b"
+    },
+    {
+      "name": "effect_lethal_vapors",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24f6180",
+          "end": "0x24f6414",
+          "bytes_sha256": "ff46e06d8432276e1ab64bc488e7d7577afedec6e200bb103f36211c51ef6db5",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/24f6180.c",
+          "raw_export_sha256": "bf51619a883fae52713b3b68edaf4e13c378525d85257fe913a62329430b2f57"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0ebba886be593117d299f078e59e5250bdb2de5cdcf60a5bbe89b636fcce1e7c"
+    },
+    {
+      "name": "minds_desire_legacy",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24f6420",
+          "end": "0x24f663c",
+          "bytes_sha256": "935ab7a5febf3e406d75762e5e216372620f0a6efe1c500762f21b7a263410e0",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/24f6420.c",
+          "raw_export_sha256": "20b6f17ef8bc4f44522ef8d0fe6f9e7445f46fa40dc5db5dfb0e59d1e0cfbcc0"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "fcad819b6bc57df4735ec6d6754b82c9e6a971a3a3924cab319000bdc2537c66"
+    },
+    {
+      "name": "vengeful_dead_effect",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24f6640",
+          "end": "0x24f697f",
+          "bytes_sha256": "0abb35c0f68efb040aa340944e420d9dcfb19c5777222f9239f10befa329d602",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/24f6640.c",
+          "raw_export_sha256": "30b684a15ee670a5ef0a761d3086db2c24ada8bf11ba72fccf135663833499f0"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "e072e8a4b37bf774763581c3d4f9d186365c61dfb71baf568f509f6651ab7748"
+    },
+    {
+      "name": "landcycling",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24f6cc0",
+          "end": "0x24f6e29",
+          "bytes_sha256": "fcc84fdd7fc0f67599259f22057e44acd71f6d75541967b4c3541fb6337c5ee9",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/24f6cc0.c",
+          "raw_export_sha256": "b7d6c1ce4e557d030b65d81661fdc10340fb16cd7a68458b40057b63cf447df8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f2bfa13b7e740ace11fb2ed440cdff1300ad7a9d1e268a54cab846a08a453709"
+    },
+    {
+      "name": "vis_karoo",
+      "source": "cards/visions.c",
+      "native_ranges": [
+        {
+          "address": "0x2013ea0",
+          "end": "0x2013fe2",
+          "bytes_sha256": "cc032e4b6715a636cd059f85b2acaa31b21143b056d614cdc3fb70ce26772ad9",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/2013ea0.c",
+          "raw_export_sha256": "8b2b728b16e9edf46ec1a5caea25ccfdfc9feae8eb092b5777fd16d0958e4745"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "f34a032755a78bec87a1228a5175eccfd70f981039f5ef901dd2dc1452d0a0df"
+    },
+    {
+      "name": "femeref_enchantress_effect",
+      "source": "cards/visions.c",
+      "native_ranges": [
+        {
+          "address": "0x20140a0",
+          "end": "0x2014344",
+          "bytes_sha256": "c44a2131775d8c4b86035c320bd2a2c921e2c1158d13b33f418a4d048d7e2b3c",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/20140a0.c",
+          "raw_export_sha256": "84b89c7addfc4c0b80e6e78d20cea09e88016898acb59ebf2773f425cf223b71"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "60c0c7f29efd2ef200d611ac9c0d3e510897d416add0edd757a02f25303f56e8"
+    },
+    {
+      "name": "teferis_puzzle_box_effect",
+      "source": "cards/visions.c",
+      "native_ranges": [
+        {
+          "address": "0x201ed20",
+          "end": "0x201eebb",
+          "bytes_sha256": "31981bc0ab4a7cc2721c017ae0348ec7f0fec77fddb9cadfcd16f7fd6ed90598",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/201ed20.c",
+          "raw_export_sha256": "56769feafb4dc80d9237e9006a9ab442572ab783f8e600c12af1b04c5c9b777e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e5d27108f9a795cfd457dbfccf7305dc82994fbcb1693332d60baddc59416961"
+    },
+    {
+      "name": "lose_2_life_thunk",
+      "source": "cards/weatherlight.c",
+      "native_ranges": [
+        {
+          "address": "0x22ea620",
+          "end": "0x22ea641",
+          "bytes_sha256": "30c170d5aeb3f717716df4e55027382ac5ca468d96e55bd29b71d90d9da3471b",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/22ea620.c",
+          "raw_export_sha256": "6d754b83bbbdc634f9c207d47af03d9a2a335b230968357151d8618451cb5b0d"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8e1122c0029c0244942b6c7f61c1242d52711c3020756b3cdc01cdfdc45d7f00"
+    },
+    {
+      "name": "can_pay_2_life_thunk",
+      "source": "cards/weatherlight.c",
+      "native_ranges": [
+        {
+          "address": "0x22eaa40",
+          "end": "0x22eaa51",
+          "bytes_sha256": "3bc73cce5068ae5309b229c6cc11a73898a4acfef9f6d5d770cafdbecefa66ca",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/22eaa40.c",
+          "raw_export_sha256": "bce4ff6a8aaebe3a839ff1b53c91b2cd027bd93eedfb5540e065dc7b522d7044"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0f454fe3c486a2301c38a6a60922a2c02e5894745d32ac0512e6f642230f6452"
+    },
+    {
+      "name": "if_would_enter_bf_sac_two_untapped_lands_instead",
+      "source": "cards/weatherlight.c",
+      "native_ranges": [
+        {
+          "address": "0x22eaa60",
+          "end": "0x22eabb6",
+          "bytes_sha256": "a69f7a77a4e80256d5d31283d6965531455502c603cc4216dd53af3a12b4c86a",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/22eaa60.c",
+          "raw_export_sha256": "c5bad4fee16ddc76c541314ca2e9806b6e872385b526d2c844686f174ed2c215"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f9d0db1db31cf59ad6a27a2739c95ece0e10272f353401a6de9aae1731b77ad0"
+    },
+    {
+      "name": "enable_flash_land",
+      "source": "cards/weatherlight.c",
+      "native_ranges": [
+        {
+          "address": "0x22f5f70",
+          "end": "0x22f6319",
+          "bytes_sha256": "e3eb2ff0fd43732d0c057aa40fc43c7c63ec67b7d640e236c7505642c8ecedb8",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/22f5f70.c",
+          "raw_export_sha256": "9322294e0ffe82f17457a11ad3f1cef5589672ec9e6cef1c48b29aea430a35a5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e4bd0f3a24b359e59d1f1c4da74818027c1b4dae2cb98deb3e9ab82eb626529b"
+    },
+    {
+      "name": "grixis_slavedriver_death_effect",
+      "source": "cards/conflux.c",
+      "native_ranges": [
+        {
+          "address": "0x21e26f0",
+          "end": "0x21e279a",
+          "bytes_sha256": "14e1ed95d18298ce9b04397cfc107f33dfd38549bd8e751f68546b517557a2c0",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/21e26f0.c",
+          "raw_export_sha256": "24ddb4587a668999b040338e25d85ea7e3de46a7a11831b2f4367223bb647476"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1ad3c014af72595a787f783828a2c4630656f790506c4207f35598cf52970a70"
+    },
+    {
+      "name": "martyrs_bond_effect",
+      "source": "cards/commander.c",
+      "native_ranges": [
+        {
+          "address": "0x23e0e70",
+          "end": "0x23e1311",
+          "bytes_sha256": "29b4a36145d7a8a42b554c555916ce7e74e5ad966bfe48ce1e2f18780f54b9f0",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/23e0e70.c",
+          "raw_export_sha256": "5622a8677e58c26e78959c0d547f31e623e15a426753c4ac0928a832c5dc9e7e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0b68cca903e304c267044335ac2517ad5846f7d547abc76ff100bc15ffd36df8"
+    },
+    {
+      "name": "volraths_dungeon_legacy",
+      "source": "cards/exodus.c",
+      "native_ranges": [
+        {
+          "address": "0x2642650",
+          "end": "0x2642860",
+          "bytes_sha256": "dff437cfe2015c119346c83367bcb948db2e82d8599c44d94405958076f8171c",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/2642650.c",
+          "raw_export_sha256": "79c88b5111cd155a2ec67841c22d292429e0d5cbc09bf53dafab0952b89736bd"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "4fe08a2a6f146f65c2787be3c7f3e3ec8495b03520989333239eeedd190bce84"
+    },
+    {
+      "name": "generic_type_recycler_creature",
+      "source": "cards/exodus.c",
+      "native_ranges": [
+        {
+          "address": "0x2642980",
+          "end": "0x2642acd",
+          "bytes_sha256": "203aa9b89b833927f01c600a3cc859471766dae7c185f3e67d0a583490447f9a",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection/2642980.c",
+          "raw_export_sha256": "3a60060598c3b8fd89e809fd98b93e2f4cbf7f06305574a39a2fb83089d40ece"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1a10f6fade91216ddaf28b30fef6927f5e537fdec36586adcc6e975b2c287997"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_martyrs_bond",
+      "source": "cards/commander.c",
+      "native_ranges": [
+        {
+          "address": "0x23e37b0",
+          "end": "0x23e3b57",
+          "bytes_sha256": "36fbba69cb0c25635ff024f9c615d98d748bd2147a806aee06fd4754272e7480",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/23e37b0.c",
+          "raw_export_sha256": "bf12db9c0696cb8f5c5909577b33aaf3426cb954608d474eddcb25c372ca70e3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a0b8eeefefb227573486a2df19dd0fb933870d8de738046fb0366084c14d2813"
+    },
+    {
+      "name": "card_grixis_slavedriver",
+      "source": "cards/conflux.c",
+      "native_ranges": [
+        {
+          "address": "0x21e5370",
+          "end": "0x21e540e",
+          "bytes_sha256": "71ebbf64a3c51f7daae6910fd4979030a15529fb573080e60ce63675b8742209",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/21e5370.c",
+          "raw_export_sha256": "7f406cf7cfb075cd3339e88127bd7f2717aeeb3bb08bd67ceeb34bf1ea41e32d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "fccfd9b769086f783e4e63e562a6caad47d4843271b72a249ee6701e491739aa"
+    },
+    {
+      "name": "card_anarchist",
+      "source": "cards/exodus.c",
+      "native_ranges": [
+        {
+          "address": "0x2642de0",
+          "end": "0x2642e20",
+          "bytes_sha256": "23419db339173478d0ed091f5b9eed0a325730d72d853f0db61e6e669ae3d5fe",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2642de0.c",
+          "raw_export_sha256": "000d37307cb4ca84a577eb3cacb9a817e49e251de9e2e7b026ce7f4cdb79c9a3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "0cc22f0a0677891759e29d6a2702d19758f33e8c3d404920eea6145c36045b39"
+    },
+    {
+      "name": "card_cartographer",
+      "source": "cards/exodus.c",
+      "native_ranges": [
+        {
+          "address": "0x2642ef0",
+          "end": "0x2642f2a",
+          "bytes_sha256": "cf85ac6ae9dfeaaf53fdfcbdc017ff0b5c0d5393945c7fa440d9bda04da7f60c",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2642ef0.c",
+          "raw_export_sha256": "87eba892ccee8534143d0ba6beb48f0302bc0adef080e4ade66bd3484f671c64"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1727f3540ff9f6a9fcccba0852219964c973ad5415678c3d7a8376dcfa553116"
+    },
+    {
+      "name": "card_srivener",
+      "source": "cards/exodus.c",
+      "native_ranges": [
+        {
+          "address": "0x2648540",
+          "end": "0x2648580",
+          "bytes_sha256": "3963b169c5b5c5aa54b754ede5248a47cd17e3f3f988c18030229dbe9b097e21",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2648540.c",
+          "raw_export_sha256": "b0e24494cb88738a32cf56e56f72ccdd5a4cc7196521a32b661dd9f2f7b85473"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "64d6ec5204c81d67c3221ab9797e99ffb881204bce7abe20bf700a9a13b3e6fa"
+    },
+    {
+      "name": "card_treasure_hunter",
+      "source": "cards/exodus.c",
+      "native_ranges": [
+        {
+          "address": "0x264afa0",
+          "end": "0x264afda",
+          "bytes_sha256": "d38fc93dad74f4b2c2b4a3128ed7253016c34619b3c133814491be3aaadba620",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/264afa0.c",
+          "raw_export_sha256": "2088843d755fbe98418768f9323ff9ed54eca6385c41a575139054ee92cd966d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "87b562354ed28360946daabc8da17683714b8ed76ccbbefd43acff896a4dfe3b"
+    },
+    {
+      "name": "card_volraths_dungeon",
+      "source": "cards/exodus.c",
+      "native_ranges": [
+        {
+          "address": "0x264ba20",
+          "end": "0x264c102",
+          "bytes_sha256": "df6a9e3fcb31d1b9d2c19a821c9850b1d51d8511c944f9e449b07bbe0cc31d0c",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/264ba20.c",
+          "raw_export_sha256": "b8d84d05d8a30ee40eea8b385372c6eea36cbdf8062bba7c22e53290a451fafb"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "124003a23630f093d0f6fe2a7f83baf4c70615a1181613a6fa8298f87d693cf1"
+    },
+    {
+      "name": "card_order_of_leitbur",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x241eb40",
+          "end": "0x241ec0a",
+          "bytes_sha256": "934e040b16c6926ebe1401cf0f6ddea65eefb65de15f77c1765d26f44f3830d5",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/241eb40.c",
+          "raw_export_sha256": "1b0bb14e7e87aca968891e377d9bd86a6319efdfec80cc432dab9d36f408712d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1c73c2e753d0be2750e11b50f1325d4b1ec746085d1921494101c6b8449a056a"
+    },
+    {
+      "name": "card_vodalian_war_machine",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x2420220",
+          "end": "0x242066f",
+          "bytes_sha256": "5f54f24bd11154fd3dcff029cb40e808105b1893da357c064d96f823f297b210",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2420220.c",
+          "raw_export_sha256": "d93bd95c246642a2d22e3e00898ba049ed897dedc8afe1563e29bd7e0b80c4a1"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "025190155aa8618c677a4b7e13489e946f6b920ce98ec9c46e4ebc083634f716"
+    },
+    {
+      "name": "card_order_of_the_ebon_hand",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x2421200",
+          "end": "0x24212ca",
+          "bytes_sha256": "5a872edb363465f838b9e07f012cf7148158acb0d89a5270424f376140fc2363",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2421200.c",
+          "raw_export_sha256": "0ae95259e4eeadadb8dc466f20c18787d555c88a677d7ba436f00346c66b8b27"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "48079025970050bed1666fd9f1df80368d3c0c520672e83b55ee1b84f6d5199b"
+    },
+    {
+      "name": "card_tourachs_chant",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x2421c50",
+          "end": "0x2421c79",
+          "bytes_sha256": "a04332593b4228f2b5179d2eadf488d4af59fdb0c3403e88cc29bc84f4a12fef",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2421c50.c",
+          "raw_export_sha256": "3efc21f415ee210a6598f8283a7b0faee1cb92fbe1addb6e212a82da4195953b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "177df11aa76c287f2b0002c649e5090d1ef941f2a6248ac88c16078baf6bbc9f"
+    },
+    {
+      "name": "card_thelons_chant",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x2425d30",
+          "end": "0x2425d59",
+          "bytes_sha256": "cf8c2cc3963218b13ab6506b74abb21f341aede26e2c1e4a2c226ff8f38ca146",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2425d30.c",
+          "raw_export_sha256": "a5b85322ef96ea6225c4fca026bcc0f760007abd1318c1f8a95851b409662a39"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "54a3198a6c408e71936b3c92e90589ee6188ce9c33409731ac4505df72054eac"
+    },
+    {
+      "name": "card_bottomless_vault",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x2426670",
+          "end": "0x2426689",
+          "bytes_sha256": "4d00e98eb11e54800cab13997128449883cd4d8ac211543d157136b1fc802de1",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2426670.c",
+          "raw_export_sha256": "0bbb1991da9d6238da5fc11ca1e16fa482536f0cd4ec805589b8ee81017a142b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3012290fd42e75a0ce96854826c88f0551dd9ae705b3b01629ff7e96c0737bf2"
+    },
+    {
+      "name": "card_delifs_cone",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x24267d0",
+          "end": "0x2426937",
+          "bytes_sha256": "3fd014f5e0a34601ade82cfdb76f76ee50f436699950f04088715f9c4bc4daa3",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24267d0.c",
+          "raw_export_sha256": "1d77904cab5d0e30f5acbcaa0bd9a3fa2dcba209828ac9c88b44cde41835f261"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "84186e5b83bb39b1503a645cff9691a38222f2571c54e59d212c3d87a74b1932"
+    },
+    {
+      "name": "card_dwarven_hold",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x2427060",
+          "end": "0x2427079",
+          "bytes_sha256": "b5539eead5ec0c95f72075d775c6335fa2ae8bf81a0db3221334bfb666a372d5",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2427060.c",
+          "raw_export_sha256": "74a6661678b1aec5c273495ec403dfb2e30bef382637f87b8108bd0b287d48ce"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cba8700f1bfd7802d359bcb9dcf298b66f27b115eddbb8c39a19a7f1c9b8c16c"
+    },
+    {
+      "name": "card_hollow_trees",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x24272a0",
+          "end": "0x24272b9",
+          "bytes_sha256": "f288ed79c2c09dc58f25c6cb6232a5088de313acdd45fecf18a6195d3702c62f",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24272a0.c",
+          "raw_export_sha256": "9e49498d7861d61126a0b5706b95a4939612d7d6d66776f2427af3690e1fae8b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "22b5c5fd86438d0743f6acfe2dbbcbfcaf7aa781f8b82b64c94bc165d54997a6"
+    },
+    {
+      "name": "card_icatian_store",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x24272c0",
+          "end": "0x24272d9",
+          "bytes_sha256": "255189b966f760c865f78413bb62985688302e5e159ba074a606cd8d14e43fe6",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24272c0.c",
+          "raw_export_sha256": "a618b9a3d2e03edd761e6fa1275e88d35c185b1f1412a4823e1efce39308f026"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "baeefc8e3c6c4b977d12f4d575c881f3343b24add26c36843e14e77ef901bd7d"
+    },
+    {
+      "name": "card_sand_silos",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x2427630",
+          "end": "0x2427649",
+          "bytes_sha256": "c9075bc99661e0bfa4743b9d1ec21fa305db301d67f6d2bb2b4db7aee5bbd56d",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2427630.c",
+          "raw_export_sha256": "f689e73e4cb5c1a04283f43af028864151bfb04390e7aea2cf118c784d9edd01"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7b5a789e93b64f550ae4813672117bf11a1d1ed7bdf8ff8f32c58f3d619d6656"
+    },
+    {
+      "name": "card_spirit_shield",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x2427650",
+          "end": "0x2427677",
+          "bytes_sha256": "7aa303c301d6626382ea5d932d91cedd12d54dc7f47a5794c8f65559ba601427",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2427650.c",
+          "raw_export_sha256": "f079376c4c890394fc51eabdce3a25ea5834f67525e587b968a15ce464c199ec"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3c234172250037e9951da0d55214707eb51054737f7b90fedc9867c3740a5866"
+    },
+    {
+      "name": "card_zelyon_sword",
+      "source": "cards/fallen_empires.c",
+      "native_ranges": [
+        {
+          "address": "0x24276c0",
+          "end": "0x24276e7",
+          "bytes_sha256": "53bc307ed66ca47308adb31c8d735d6fd8bf6e58fe291013e89328424c27baa7",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24276c0.c",
+          "raw_export_sha256": "9b2637163b096caa96c3d3fe1c354d6ee47c32b2639063eeb882548cd5bd2852"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0f964b2eb478fe5a22e3e72a6f15482c59cfdca59bff666e7482044bc7c49ca8"
+    },
+    {
+      "name": "card_an_havva_township",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2121af0",
+          "end": "0x2121b10",
+          "bytes_sha256": "158134a699e92e5cf3592ce410149bdceaa0a694139873cedc5c0f76b3b563be",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2121af0.c",
+          "raw_export_sha256": "3d0dd44cb7f78b675fdb5d47fe6551787fd10db4badd5fd2e47fa64a45347221"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "02096c055ff20807286e858377b7d5cf88540857399e5c83b1fd32833153db02"
+    },
+    {
+      "name": "card_aysen_abbey",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2122550",
+          "end": "0x2122570",
+          "bytes_sha256": "215780392fa437375675d79fd19620b49cf7020b03d981560d09ab419ed05847",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2122550.c",
+          "raw_export_sha256": "c813668c4ebaf5cdabd7f048dbc09f2ad3cd180ff5a3a463a803322949080012"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d0cfad903d87d9fae79fc9cf3e8ca2a6cff1c5abede93092e26c922df097a2bc"
+    },
+    {
+      "name": "card_castle_sengir",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x21233a0",
+          "end": "0x21233c0",
+          "bytes_sha256": "f21efe210d9fcd266f17b6a9215cb86ac2ee41c21cfb94427f87176265c80029",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/21233a0.c",
+          "raw_export_sha256": "6464811310123187bf2ae0732f53e8eaa69248532be57767f5f43ca0d910b7ec"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "742d9b5d45ea72ce66ea46f52172e41b794c433f63f8bff31c7ed4831a382e6d"
+    },
+    {
+      "name": "card_clockwork_steed",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2123980",
+          "end": "0x2123a0e",
+          "bytes_sha256": "aef23dca458269b847d88ef1f2a73d6a109142fc7127a57bce824520e3ad1480",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2123980.c",
+          "raw_export_sha256": "22b0a18429e7fa25010a3a4d58bda9716cf06cf1e3284d435771ef4044991415"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "be14cda4b9dcd5b617bbe1dbea8f70b11db341fff0aca0bf3170f36f69ea1025"
+    },
+    {
+      "name": "card_clockwork_swarm",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2123a10",
+          "end": "0x2123a9e",
+          "bytes_sha256": "c0b691fe2d34762dfac17accc0e0ab1323cbeaa7d815362afc7b2052e7b4de69",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2123a10.c",
+          "raw_export_sha256": "f60923cf5b2b7ca4038b35bec8ba223228fd57e3523891eff3f858cd2813fe98"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "017ff97e67c1ed15bbfb64a50712d1cb855d606c1b5fb4aef564f620fe2c69da"
+    },
+    {
+      "name": "card_giant_albatross",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2125430",
+          "end": "0x2125625",
+          "bytes_sha256": "e4d008bc2baea87021a9b6f0a5943f029bb5368d272bda50f4c5760d6800ffa1",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2125430.c",
+          "raw_export_sha256": "3cf0ba30ae03252d458a593265c0b09d1eaf0ee6522049ad98ce4a423ba64ae8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "99f6ce5f98f8801d75255014df5d6403803bdf864d4fa8fcff1697578e18b2fb"
+    },
+    {
+      "name": "card_giant_oyster",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2125630",
+          "end": "0x21257f9",
+          "bytes_sha256": "2537ca20086904e5fcd17b0d1e8975fa1ce609534fa1ffa1716c918b8a862170",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2125630.c",
+          "raw_export_sha256": "64835dcb8e15ab602e301e0b376a1d120648f0ea1779ee0303a4c09225073c6c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "241031f92e0c72b72634be6f39de5e344846fcd23e91351cef60bcbcce603120"
+    },
+    {
+      "name": "card_jovens_tools",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2126970",
+          "end": "0x2126ac9",
+          "bytes_sha256": "2800c411f2bef2a1c19b8caaf19cf21523cf16c9ecab48421d7d0c11cffceeab",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2126970.c",
+          "raw_export_sha256": "9f3976667d4fd0b8ab610fb9a2c5dfd4d5055abb9bc7a24bd011c3ab23a6d4e2"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7ac6a36c524befc96013ac501e60743b39d5ef22008de6d1b0b7b2b29fb9c592"
+    },
+    {
+      "name": "card_koskun_keep",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2126bc0",
+          "end": "0x2126be0",
+          "bytes_sha256": "29c2966b5e8aedd3561dc8e2a5412fb0ca6c37e75efe771dac37fdb7d5eebd39",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2126bc0.c",
+          "raw_export_sha256": "43b873c17c46a6ce9c302acf65f8cbb5e9f900c2d1f7388313c093bb6110cc50"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d45aef830dfbc70b0ff8cd413bf1ab31c83c918ad0321e660eac31206541448e"
+    },
+    {
+      "name": "card_mammoth_harness",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x2126de0",
+          "end": "0x2126f71",
+          "bytes_sha256": "82579f0840308b5133a65957e0ca656346ff9292008c7084a56a7f01a526f6c8",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2126de0.c",
+          "raw_export_sha256": "3247b947bc44ec021576e35bf1a62f6765593845aeea180de25c89f55e0524e0"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "14927a0c0d33b3be5084a5223326c5df175343735110430a1ea91a49d69f5cc5"
+    },
+    {
+      "name": "card_wizards_school",
+      "source": "cards/homelands.c",
+      "native_ranges": [
+        {
+          "address": "0x212a640",
+          "end": "0x212a660",
+          "bytes_sha256": "1fb86d15d4485d62c29b9df3693b481ce933600cd7ec50cbbb9df3560c3ef7e7",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/212a640.c",
+          "raw_export_sha256": "5a0c7331f36574ec5c1d81ffeff530609324f400155862fd2c98e3b6f8e121c6"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "acbe5f19b84b4209caf812fcbb696581ea198fdc8d7ae03d7b0d93703893c2aa"
+    },
+    {
+      "name": "card_brontotherium",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a6b50",
+          "end": "0x24a6b62",
+          "bytes_sha256": "e0617b3cce911b3bb3c58a79506fe0c930bc107580c84059a4256cba9233f038",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24a6b50.c",
+          "raw_export_sha256": "d7c8e4fbe82c6cc90376c861c4416044ca74d81e0365b15aa5984bbc8225101e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cb0ea4dab8ac92510309d9f33260faf328490c794f9c83e87a8e919ee3cbc832"
+    },
+    {
+      "name": "card_crypt_sliver",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a7500",
+          "end": "0x24a7684",
+          "bytes_sha256": "7245b42e5b9040534e4a20f19ee0c04dc117bdc52e309d6ba2fbdd183637c55a",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24a7500.c",
+          "raw_export_sha256": "2a2bfb9cd43c4062a920631d0d833fcc4eddd423541b174b5e169ff1375dfd71"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "23b253f09ddcc4b3b0c565294a659f3f31ee82454e2f04ee05facb58eee1d402"
+    },
+    {
+      "name": "card_deftblade_elite",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a7bc0",
+          "end": "0x24a7d21",
+          "bytes_sha256": "8105bd218f92ac622b5414004cc4fd49fc4c1b710a5dfff2b5a72f6b30851812",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24a7bc0.c",
+          "raw_export_sha256": "2d82c670528d190285f3018463c6447f1385c9b32177010f854f05db8f12259c"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "d50d31692ad8d7ffb1a6facf2474c80251061cd3d4c87eadfc81ae3842eb9cf3"
+    },
+    {
+      "name": "card_feral_throwback",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a8170",
+          "end": "0x24a81ac",
+          "bytes_sha256": "222dc637a6341770337e498fb011e3916555aa0c0854694c32dcccb35da43dfa",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24a8170.c",
+          "raw_export_sha256": "e5c9d6009df925a557276db81c779adf67d5ce0d0cf47f29ccc51a8444b871be"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "e2a84de2f74259ea5b178f6a11eeabf9befa7831499d4914e370a5a82f0837e0"
+    },
+    {
+      "name": "card_hunter_sliver",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a8d80",
+          "end": "0x24a8eee",
+          "bytes_sha256": "8f60417428a021bbed408dc9dce96a80dc67700f2751bd0a115b84d6fb5be527",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24a8d80.c",
+          "raw_export_sha256": "992aab192eae10659b768591ae789e4070ab6d04022b9e5631996879bf028d91"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "91740aade3b5e77e7aa1f47911dc6c885d209d75f343939c79f8adce39bb2aec"
+    },
+    {
+      "name": "card_magma_sliver",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a9750",
+          "end": "0x24a981f",
+          "bytes_sha256": "7aa25a230ef616a5ca7ba9cd3869059940437222030977bb96f9db8ea9e5abb3",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24a9750.c",
+          "raw_export_sha256": "f14d6feb89da3037442979e96b71e4ac9764eab2c28f1d3559b982720aac9253"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "42666ea2eba9285d120bca390d4c4e1c1752b039c29d748a74bcfe84b19ee8bb"
+    },
+    {
+      "name": "card_crested_craghorn",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a74c0",
+          "end": "0x24a74f7",
+          "bytes_sha256": "6b18caa6809c9d7aa042d94b1ee06c4ee5b98d34673ec2162de820a0d4d72cb7",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24a74c0.c",
+          "raw_export_sha256": "4ab4d428e7fd957cc0e1161aa9f645b05bb8f8542c7e66c2b3dd7075cd0f50d7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "83af321838ccea89d6125d305254d977be6d31167046d5dad3dd8c97f2afa8f4"
+    },
+    {
+      "name": "card_krosan_vorine",
+      "source": "cards/legions.c",
+      "native_ranges": [
+        {
+          "address": "0x24a9610",
+          "end": "0x24a9647",
+          "bytes_sha256": "967fc70af65be9a49a8aa4bc307d39f6645c95ddc82bf1e16ea5c7b8453cb0d4",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24a9610.c",
+          "raw_export_sha256": "3067d8650daa6969b639b6f7d802e65fa9b7fa381e67ec981967afcf442fa176"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f34589bd2134eb958dd00bb74fdeced07b934b1e56946cbc839c4c3a267b8556"
+    },
+    {
+      "name": "card_chartooth_cougar",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24f8430",
+          "end": "0x24f84de",
+          "bytes_sha256": "35d75ab69fd3c272dbba5dd0eea2828bc8314c2ae23d14e74da6b48c8158a11c",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24f8430.c",
+          "raw_export_sha256": "7d105c15f69dd3a7ef12e712d4eb2af7b63a48e3106fa572e99631679eca3d91"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "30af62f2fd88375207d962d68d769bc4225695031d2183c0ce051143d975d8ce"
+    },
+    {
+      "name": "card_elvish_aberration",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24fa340",
+          "end": "0x24fa3be",
+          "bytes_sha256": "96ca2cb081b04d5a22cca4da36b149a201fda45fcccea3bba30121de2a53f0d8",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24fa340.c",
+          "raw_export_sha256": "c3969602991333602a6ad13026836e047ca3236a78d37de3becd41916da42827"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b2f92d8569254a1b35a1c4f4f33ed65e374d736019d2e01ac941ef138a405295"
+    },
+    {
+      "name": "card_eternal_dragon",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24fa3c0",
+          "end": "0x24fa4f7",
+          "bytes_sha256": "4e7d06a3c167ee835949dcd8b31917b82c62daad1c6b4a56281921b92684b9e9",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24fa3c0.c",
+          "raw_export_sha256": "35fc957a6829d004a9eb0d3c051ef55d304a6f63e30b1af691c1f607bb5ba27e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "28a7e74aaf51be4d1c6d15977e0714b30240d5af180f45eb1d8b1c802fa8234d"
+    },
+    {
+      "name": "card_gilded_light",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24faaf0",
+          "end": "0x24fab9d",
+          "bytes_sha256": "16c409d1b5fe726d8f0308e9935c393cc2141b366425926de42634c94d74973b",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24faaf0.c",
+          "raw_export_sha256": "b56632fca182440f5e2d87b3942bd605bd3d128dc94632c303df842ce9296914"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0ae6e9e450fe20713c36c6f074f1ced03d6d56237b89721a877ef680b3aaf2d6"
+    },
+    {
+      "name": "card_lethal_vapors",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24fb710",
+          "end": "0x24fbc34",
+          "bytes_sha256": "ee2bf3e117694d3871242306ba49e4985be9bff886d70edd055c41cdd34676c3",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24fb710.c",
+          "raw_export_sha256": "bf4ce70ad6f9768c99b266fb3b90032556e1b220eb55aa329dcfc034abf34232"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "523e291a84c5adc3b10d0d8a762502a6239c93de7c00182bc842761855bd3ddd"
+    },
+    {
+      "name": "card_noble_templar",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24fc490",
+          "end": "0x24fc4e2",
+          "bytes_sha256": "002fd904bc297a47eff27803dbf8ebe77dfddb71fead4e7781c49a2a3a45ff99",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24fc490.c",
+          "raw_export_sha256": "667e5d53258d0a95055308497b97f4f642dc9946cf1f7e8365cf588c1d32e342"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ca8b6aa9617f14538f8c4b4dc63578bc174bd027d3d31c1acf7a9ed5c2d95e78"
+    },
+    {
+      "name": "card_shoreline_ranger",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24fcd20",
+          "end": "0x24fcd59",
+          "bytes_sha256": "2b857de71b2a4c1133f04359bad26b2395784f1c26c4c34e8e2ba4350de3738a",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24fcd20.c",
+          "raw_export_sha256": "20246629cd1029a360bb8b3a78ce1cceb9c001f067fdcd3de5aaa54e82651501"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ade85449a1eba382bc9ee8bacf42d65ca9e74078df5131661d5c40e11550f44a"
+    },
+    {
+      "name": "card_twisted_abomination",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24fde60",
+          "end": "0x24fdef6",
+          "bytes_sha256": "8298fd95eb7503b3c09a8df9109c8d44c9991777f9cd92b8ea23c98f688a23f2",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24fde60.c",
+          "raw_export_sha256": "c5dc62dcef591579665f0efb2d534c04fd93e50304bf927998fad10649c57de8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "db61e008f9bc8830a572b18f33dada1eb48f42a5e0e6b674cb63c85a69982a79"
+    },
+    {
+      "name": "card_vengeful_dead",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24fe300",
+          "end": "0x24fe516",
+          "bytes_sha256": "484fb318f14d49dfb3e1dadaaa26db99baa034d9bf911b70a1d3a3690ac1cf63",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24fe300.c",
+          "raw_export_sha256": "b153b55e78dc3ad8b28345511330b73a295b454f9e9731437be6b24233ece9e4"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "15a973026b535e1a7695d05fa68c4a13e85fc86bb13c7bf3466e087e4bdfa616"
+    },
+    {
+      "name": "card_wirewood_guardian",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24fe6f0",
+          "end": "0x24fe729",
+          "bytes_sha256": "3bb23538eb9fadce2bb3ed2dec1d25051f91c4e66d4af94def4d4f4f4a40ba54",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/24fe6f0.c",
+          "raw_export_sha256": "5dc725ca5f7eeacd74dd81d22933091e0ca2bc1d8d5e7db6d1097a45553c4fb8"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "b8afce73421b317384d558549532faca69a0fd7491a87d80f5378dd6fa4fdafa"
+    },
+    {
+      "name": "card_coral_atoll",
+      "source": "cards/visions.c",
+      "native_ranges": [
+        {
+          "address": "0x2015dc0",
+          "end": "0x2015de0",
+          "bytes_sha256": "0fdf73d170ff72fb193d93bc16b47383993b250d047877d6b45b680513a6bc89",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2015dc0.c",
+          "raw_export_sha256": "0eb1dfb2df07abf2949176d38302c1907a0f4879ae11b47460da3957b7efe900"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3c0d30b9fd8fb7fc530975b4d0e737c363339affe0b77fe2ff1fef8ea0b2c5e8"
+    },
+    {
+      "name": "card_dormant_volcano",
+      "source": "cards/visions.c",
+      "native_ranges": [
+        {
+          "address": "0x2016a70",
+          "end": "0x2016a90",
+          "bytes_sha256": "7e2caad7b9a5de4b2f024d9ee1f890a06efd4b215c9e1256235506f288ba3f8f",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2016a70.c",
+          "raw_export_sha256": "f1d3f64872a9ab104ab3a37e72f387550c0349cded00e0e6cec402778073d58b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1d8062a428d23ee2bbe1bfe3c1e6ae3705bffe6a360be1adb2bf01632a382cfe"
+    },
+    {
+      "name": "card_everglades",
+      "source": "cards/visions.c",
+      "native_ranges": [
+        {
+          "address": "0x20178f0",
+          "end": "0x2017910",
+          "bytes_sha256": "5f19a95b76c022a911b42db878b5f4dfbad23c659ed54bd2345f743db9894cc1",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/20178f0.c",
+          "raw_export_sha256": "c55ce4607820a713e3832a66922ef60cbee175a5c8b3d7c335961056e2683232"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "7384c5daf37918892c96cb0cc3b2a747d70e9742c6a7520610b4b9111a976d38"
+    },
+    {
+      "name": "card_femeref_enchantress",
+      "source": "cards/visions.c",
+      "native_ranges": [
+        {
+          "address": "0x2017cb0",
+          "end": "0x2017e56",
+          "bytes_sha256": "e4a83176ff44b2cf0bddd61510bab430f4858c1c6883d826c6c7c5bb2caa8ad5",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/2017cb0.c",
+          "raw_export_sha256": "5b2500c9fadf56128bc296c99bbe08a517737afb8f7d84510930095ee218a645"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "544fcbc1de8df2e5ac2f48a1893dbef4fede69417e8a1d4fb2d55e0de4708dcc"
+    },
+    {
+      "name": "card_jungle_basin",
+      "source": "cards/visions.c",
+      "native_ranges": [
+        {
+          "address": "0x201ae80",
+          "end": "0x201aea0",
+          "bytes_sha256": "b48f8ea576e74b06530c9f9e430fb669e7df7158130632885b4b55f63bcf8452",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/201ae80.c",
+          "raw_export_sha256": "dcb6968688dc2262356208f66bdedf3b353edd2e1c719311a9b49f7703f27478"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0e70a305d87f9d5689df00bd526595dc2f1aeef95dc3e40ea60ff05f7351294b"
+    },
+    {
+      "name": "card_karoo",
+      "source": "cards/visions.c",
+      "native_ranges": [
+        {
+          "address": "0x201b140",
+          "end": "0x201b160",
+          "bytes_sha256": "465096553dd2ad5253812a9a7e0ba7d2bd67003eda335f535978376dde247847",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/201b140.c",
+          "raw_export_sha256": "fe7084d957e2d132e91b4c7ddf070e7ed7e112e0d851e3089d0af311f2956cc9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "61c3a22e8f7b886c2179be84035d7393b960c36e11785e28d083bfde982b1457"
+    },
+    {
+      "name": "card_teferis_puzzle_box",
+      "source": "cards/visions.c",
+      "native_ranges": [
+        {
+          "address": "0x201eec0",
+          "end": "0x201ef21",
+          "bytes_sha256": "49c4543636abadb666e40decbb6cbdf3f76731d65c37aba7729d233bf6dd1ebd",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/201eec0.c",
+          "raw_export_sha256": "740d20e2feeabf4c5ceb72c418a8a4f8cdf7b47ea683121bd0068230dfb10fcf"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3ce77fb613e0a5e9d338c2ccbcfb2f270cfbb9d551d3fe1da93d531ab530d5a9"
+    },
+    {
+      "name": "card_inner_sanctum",
+      "source": "cards/weatherlight.c",
+      "native_ranges": [
+        {
+          "address": "0x22f0fb0",
+          "end": "0x22f1049",
+          "bytes_sha256": "3d224198d8bbbf8c4a9ef3bd3296d28efb487593d0c9cfbe550c536c41bb04d6",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/22f0fb0.c",
+          "raw_export_sha256": "3b47181b032bdbead6eaf898c9ffc49334ccb4b12b4f0f0d0dd7d8901518dbe9"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0e1278aa0866a893a891caa0d59e93242dc78dd8e6c4fdb8f3c1bb7030060898"
+    },
+    {
+      "name": "card_lotus_vale",
+      "source": "cards/weatherlight.c",
+      "native_ranges": [
+        {
+          "address": "0x22f1700",
+          "end": "0x22f195b",
+          "bytes_sha256": "238d639bfd4ed9b8f4a6c9762c01266cfcfb90c8dd00054a75effd35f6caa97a",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/22f1700.c",
+          "raw_export_sha256": "5e1575af10c49b9ce7a321a6f2dea49ff54c25ae45a040030744318f506ade3a"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "7d6c6df469e23dcc0ac4369875ca4383a4f03b1dcd2959682eafcee01722b0e3"
+    },
+    {
+      "name": "card_scorched_ruins",
+      "source": "cards/weatherlight.c",
+      "native_ranges": [
+        {
+          "address": "0x22f35f0",
+          "end": "0x22f374f",
+          "bytes_sha256": "2b41d98d95b238596d9258a6e07ad0ae91a1fc9c094c0ed552a19db4fbae2020",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/22f35f0.c",
+          "raw_export_sha256": "220bd34d9c9c371f666c9e0aafb8797d2ed7152b6161372cac92f01e6575405e"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b55ac20a5d0d7bf951878a09588292185dc9bf95e92654f94b07d1ed4e7daa7e"
+    },
+    {
+      "name": "card_winding_canyons",
+      "source": "cards/weatherlight.c",
+      "native_ranges": [
+        {
+          "address": "0x22f6320",
+          "end": "0x22f6391",
+          "bytes_sha256": "d3342cb26ce1be31f2418173160ed371d4b2c19c029a07e7e929d4a26c433e2c",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-support/22f6320.c",
+          "raw_export_sha256": "8863a347be868cd184efe58f334d6c10d6d919a1a8577108a3d1d65fd8cd324b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "400b0ede0a2023d9cc0d468bd495d500e64c4df4388aa8220d26e5d9e97b2063"
+    },
+    {
+      "name": "card_minds_desire",
+      "source": "cards/scourge.c",
+      "native_ranges": [
+        {
+          "address": "0x24fbd70",
+          "end": "0x24fbe72",
+          "bytes_sha256": "6432e6a5666022eea7d0d8e775720e259b90e9d123ab1584bffc7bdf7a3a7fdb",
+          "raw_export": ".recovery/decompiled-classic-sliver-protection-extra/24fbd70.c",
+          "raw_export_sha256": "09eddfbfbd126e845e5d2809ba6e24b74d96cd8a95be9ff3a3f2554b6e69af9d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b6ec0f72ac875b950fe700145d0a4d7e31f2bb0d327cd08d590a5d0873fd09e4"
+    }
+  ],
+  "helper_definitions": 32,
+  "native_helper_ranges": 32,
+  "changed_helper_definitions": 14,
+  "changed_card_callers": 18,
+  "source_dependencies": [
+    {
+      "source": "cards/scourge.c",
+      "name": "create_minds_desire_legacy",
+      "definition_sha256": "abe5529e852a27a74b0cee06805518ed393ba5bcee2daa8be6a4ad19113e6251",
+      "standalone_native_range": null,
+      "inline_owner": "0x24fbd70",
+      "scope": "Existing source creation body read against concrete DWARF inline owner and complete card decompilation. Stores iid only to targets0.card and name flag; native targets0.player omission retained. No additional standalone helper credit."
+    }
+  ],
+  "native_contracts": {
+    "homelands_triple_land": "CHANGED: new mana_colors_added in CHANGE_TYPE, manual COUNT_MANA with CAN_TAP_FOR_MANA/reentrancy marker, COLOR_ANY availability thresholds1/2 vs displayed COLORLESS thresholds2/3. ACT clears tapped_for_mana[0..6], handles CONTAMINATION black and DEEP_WATER blue (land guards), no early marker return until override checks. Choose_mana_all_one_color includes added colors and free colorless, defaultCOLORLESS; additional colors pay1(primary)/2(secondary), marker66 wraps charge. Native calls color_to_color_test(choice) before cost test even after override setschoice0; normal produce only if no override flags AND TYPE_LAND, then state|TAPPED directly. Override/nonland quirks preserved.",
+    "effect_cant_be_blocked_except_by_walls": "RETAIN: matched attacking attachment coords, blockers needWall; cleanup and SHOULD_AI_PLAY exile.",
+    "give_first_strike": "RETAIN: pump_ability_until_eot original source p/c, targetp/c,0,0,FIRST_STRIKE,0.",
+    "giant_albatross_legacy": "CHANGED: add death-trigger-removal suppression to dying tracked targets0. Native choice/life priorities use life[player], not attached controller, preserve malformed-looking original DIALOG argument list; cleanup and resolved legacy exile retained.",
+    "giant_oyster_effect": "RETAIN complete already native source, including leaves_play dispatch, M1_M1 removal on Oyster untap/leave, own draw counter, does_not_untap. Canonical aliases match raw old names.",
+    "hom_clockwork": "RETAIN complete already native body. P1_P0 counters, combat marker66, end_of_combat removal; capped replenishment/AI bonuses, GET_SELECTED_CARD displayedX division, EXE_DWORD0x736808|3, AI charge branch and native arithmetic quirks unchanged.",
+    "fe_knights": "CHANGED: native generic mana slot always0, c[mana_color] arrays6. First-strike resolution source uses activation player/card and alternate_legacy_text(2,player,legacy); pump uses pump_until_eot_merge_previous_alt(player,card,parentp/c,1,0,1). Modal priorities, target1 firststrike marker, cleanup retained.",
+    "effect_vodalian_war_machine": "CHANGED: dying linked target0 only sets resultbit2 if !check_for_death_trigger_removal. Marker1 still set for any tracked departure; ifbit2 destroy attached damage target; cleanup retained.",
+    "storage_land": "RETAIN complete native worker, including new mana override/quantity/transmutation/ManaReflection0x2579 handling, basic-land activation path, storage removal and optional untap threshold>2. No extra ABI changes.",
+    "effect_delifs_cone": "RETAIN complete native body, unblocked dialog, gain power andpreventcombat marker3, cleanup.",
+    "sword_and_shield": "CHANGED: choose_to_untap must run before IS_GAA_EVENT early return. Existing permanent pump flagsEND_IF_SOURCE_UNTAP, indexed target1 storage andGAA cost retained.",
+    "fe_chant": "CHANGED: dialog controller is trigger_cause_controller p (first DIALOG arg), target definition still original sourceplayer/card; priorities still source life, twootheroptions native. Existing upkeep cost, global ETB dispatch and M1_M1/damage3 retained.",
+    "crypt_sliver_shared_ability": "RETAIN complete already native body, leave-play handler hides source departure then cleanup; humiliation and Sliver regeneration td2 with targets2 and canonical shared Sliver API.",
+    "magma_sliver_shared_ability": "RETAIN complete already native body, same source lifetime; pump Sliver target2 by totalSliversANYBODY using activated Sliver target0 as source.",
+    "provoke_impl": "RETAIN complete source after raw body review: prompt200, speculative blankprompt, target storage, target_must_block_me, sourceimage override, untap. Native EAX after void untap is not meaningful source return; callers ignore return. Optimized unused event formal and prompt frame are pinned in the evidence.",
+    "provoke": "CHANGED: dat_ability with RESOLVE_TRIGGER_AI(player) and0, EVENT_DAT_ABILITY then !is_humiliated AL_TRIG before provoke_impl. Native optimized unused impl event makes Ghidra show phantomcard argument; keep logical canonical source signature.",
+    "gilded_light_legacy": "CHANGED: guard give_shroud_to_player with in_play; cleanup retained.",
+    "effect_lethal_vapors": "RETAIN complete native body, source id/in_play cleanup, any-player cost adjustment/payment and skip_next_turn+destroy.",
+    "minds_desire_legacy": "RETAIN complete source: can_legally_play_iid retval99/current instant timing path matches native; normal sorcery gating, name51, buffer500, direct free cast then exile/cant_respond, cancellation andEOT removal.",
+    "vengeful_dead_effect": "CHANGED: resolver before visibility/no END_TRIGGERreset, separate lose_life(opponent,1) perBYTE0 packet. Existing BYTE1 own-source marker/count, zombie tests, no immediate removal after resolve; cleanup only retained.",
+    "landcycling": "RETAIN native hardcodes cost2 despite colorless formal; two-subtype prompts/tutor, spell_fizzled guard match. Formal calling/storage evidence is pinned.",
+    "vis_karoo": "CHANGED: etb_ability mandatory +EVENT_ETB instead of comes_into_play expression; same untapped hacked-basic-land bounce/sacrifice, two_mana_land dispatch.",
+    "femeref_enchantress_effect": "CHANGED: resolver before visibility/no END_TRIGGERreset, BYTE1 marker and ANYBODY enchantment counting/drawBYTE0/exile retained.",
+    "teferis_puzzle_box_effect": "RETAIN complete native body: snapshot amount, AI reverse-hand automatic route, human auto/manual choice, manual bottom loop then draw snapshot, returnsamount.",
+    "lose_2_life_thunk": "RETAIN complete native/source exact behavior: lose_life(player,2*age),return1.",
+    "can_pay_2_life_thunk": "RETAIN complete native/source exact behavior: can_pay_life(player,2*age).",
+    "if_would_enter_bf_sac_two_untapped_lands_instead": "RETAIN complete native body: AI cast penalty count, resolve sacrifice2untapped selfexclude all-or-none no-cancel, failure state-based kill, return1 prevents double sound.",
+    "enable_flash_land": "RETAIN complete native body: three activation events only, mana/flash modal paths and priority, canonical effect_enable_flash_land legacy stores type/illegal/prompt/literal, allow_response when stacknonempty. Other events delegate mana producer.",
+    "grixis_slavedriver_death_effect": "CHANGED: shared other_leaves_play call and EVENT_LEAVES_PLAY_ABILITY instead manual trigger. Native HAS WRONG ARGUMENT ORDER (player,card,event,p,c,1,1), assembly at0x21e272c..0x21e2761 confirms event to [esp+8],p to+0xc,c to+0x10; target0x26a3630 canonical other_leaves_play expects p,c,event. Preserve native bug explicitly, no inferred correction. GenerateZombie with attached p/c then exile legacy.",
+    "martyrs_bond_effect": "CHANGED: BYTE2 detach init, death-trigger-removal suppression on counted nonland death, full counter pointer<=10 permits slot10; addcard_counts[player][5] extra records if creature. Full counter (notBYTE0) pointer plus BYTE2 marker can suppress own-source storage; preserve. Resolver before visibility/no END_TRIGGERreset, BYTE0 count capped11, no immediate remove, cleanup retained.",
+    "volraths_dungeon_legacy": "RETAIN complete already native C body: sourcevalidation, ownturn activation, adjusted cost+5life payment, destroy source.",
+    "generic_type_recycler_creature": "CHANGED: etb_ability RESOLVE_TRIGGER_AI, message always constructed onEVENT_ETB before gravechecks, native checks new_special_count_grave>0 then graveyard_has_shroud then tutor. Original type text formatting limits retained.",
+    "card_martyrs_bond": "CHANGED: death-removal suppression, pointer<=10/slots0..10, record additional creature occurrences card_counts[player][5] times cappedcapacity11. Resolver LIVE uses full signed amount rather than BYTE0, bounded i<11; unchanged global-enchantment dispatch and source-effect registration.",
+    "card_grixis_slavedriver": "CHANGED: leaves_play(player,card,event,1,1) then creates targeted death-effect on EVENT_LEAVES_PLAY_ABILITY rather than RESOLVE_SPELL. Unearth3B unchanged. This combines with native misordered effect helper; do not correct this inferred bug.",
+    "card_anarchist": "CHANGED: always construct sorcery/F1_NO_CREATURE test and call generic_type_recycler_creature; remove old trigger-only gate. Native generic helper now needs receive EVENT_ETB.",
+    "card_cartographer": "CHANGED: always construct TYPE_LAND test and delegate, remove trigger-only gate.",
+    "card_srivener": "CHANGED: always construct INSTANT|INTERRUPT test, F1_NO_CREATURE, delegate; remove trigger-only gate.",
+    "card_treasure_hunter": "CHANGED: always construct TYPE_ARTIFACT test and delegate; remove trigger-only gate.",
+    "card_volraths_dungeon": "CHANGED: STATIC scans both players inclusive CYCLE_ALL_CARDS bounds, kills EVERY matching own activation effect, tracks opponent match (p0 keeps scanning; p1 jumps to global_enchantment return), creates missing opponent effect with add_card_to_hand(opponent,instance->internal_card_id), create_legacy_activate, get_card_instance(opponent,legacy), canonical source targets0, obliteratefake. Existing found[2]={-1} source is wrong. Activation dialog first eligibility explicit can_sorcery_be_played(event) && generic GAA_DISCARD|CAN_TARGET (0x24), not GAA0x34 directly; CAN_ACTIVATE main route and ACTIVATE payment still0x34. Store modes1/2 when !fizzle, tutor on validplayerhand andselfdestroy source. STATIC returns global_enchantment; all other IS_GAA paths return0 asnative.",
+    "card_order_of_leitbur": "CHANGED: EVENT_CHECK_ABILITIES &&affectme && generic GAA_CAN_ACTIVATE with WHITE1 sets EXE_DWORD0x78fef0 |= FIRST_STRIKE; then fe_knightsWHITE. Native EXE operand and matching canonical macro are pinned.",
+    "card_order_of_the_ebon_hand": "CHANGED: same CHECK_ABILITIES AI first-strike advertised with BLACK1, same EXE global; fe_knightsBLACK retained.",
+    "card_vodalian_war_machine": "CHANGED: alternate_legacy_text(3,player,created sacrifice legacy) before linking targets0. Resolve mode1 correctly create effect_defender_can_attack_until_eot using ACTIVATION player/card source andparenttarget, alternate_legacy_text1. Mode2 pump_until_eot_merge_previous_alt(player,card,parentp/c,2,1,2). Current old source has modes reversed. Rest fullbody retained.",
+    "card_mammoth_harness": "CHANGED: vanilla_aura dispatch gated IS_AURA_EVENT(player,card,event) || STATIC_EFFECTS rather than unconditional. Flying removal and give_first_strike blocking callbacks native/source agree.",
+    "card_deftblade_elite": "CHANGED: EVENT_CHECK_ABILITIES &&affectme invokes self CAN_ACTIVATE; if true and opponent turn, EXE check_abilities_power -= get_power; EXE check_abilities_toughness +=0x3fff on both turns. Then Provoke and1W maze_of_ith self ability retained. Native EXE operands and canonical macros are pinned. Assembly confirms power0x739b50/toughness0x7a371c; current manalink.h already defines canonical check_abilities_power/toughness macros, use those.",
+    "card_hunter_sliver": "CHANGED: DECLARE_ATTACKERS constructs default creature/Sliver test and store_attackers(DAT_TRACK,ANYBODY,-1,&test); dat_ability mandatory1 always; EVENT_DAT_ABILITY uses getinstance->info_slot amount (assembly confirms canonical offset0x38, not targets1), reverse unsigned byte target2 attackers, read current_turn per iteration, skips humiliated attacked Slivers AL_TRIG then provoke_impl source hunter and currentturn/attacker. trigger_mode formal unused; preserve logical signature. slivercycling retained.",
+    "card_support_retained_through_index38": "Read complete native+source of all first39support cards. Retain Tourach/Thelon Chants, all5 storage land callers, DelifCone, SpiritShield/ZelyonSword, all5Homelands land callers, ClockworkSteed/Swarm, GiantAlbatross/Oyster/JovensTools, Brontotherium,CryptSliver,FeralThrowback,MagmaSliver,CrestedCraghorn,KrosanVorine. All deviations separately listed; no card credit beyond complete read.",
+    "card_lethal_vapors": "CHANGED: native global ETB helper new_specific_cip_global(ANYBODY,event,MANDATORY,TYPE_CREATURE,NULL,player,card), retains unused default_test_definition creature initialization. STATIC found[2]={-1,-1}; APNAP player loops with fresh current_turn second iteration, cards scan DESCENDING count-1..0, get_card_instance(p,c) corrected, record matching effectlowestslot, remove ownfoundonly, create missing opponent effect with create_legacy_activate (not normal legacy), link proper opponentinstance then obliterate fake. Remaining cast/activation AI modifiers and skipturn/destroy branches retained.",
+    "card_vengeful_dead": "CHANGED: native separate lose_life(opponent,1) per BYTE0 result instead aggregated amount. Own-source TYPE_PERMANENT/otherZombie ANYBODY filters, kill_code check retained.",
+    "card_lotus_vale": "CHANGED: if replacementhelper returns1, return early only if !is_humiliated AL_TRIG. Current delegate card_gilded_lotus->artifact_mana_all_one_color DOES NOT match native inline producer; read both dependency bodies and must replace with direct native logic: instance; CHANGE_TYPE affectme+targets12.card!=-1+parent_card<0 sets event_result; CASTaffectme ai_modifier+100; ACT can_produce elsefizzle then produce_mana_tapped_all_one_color(ANY_COLORED,3); RESOLVEplayslandsound andtargets13.player=get_id; CAN_ACT CAN_TAP_FOR_MANA; COUNTMANA affectmeCAN_TAP => CONTAMINATION&&TYPE_LAND declareBLACK1 else declare_hex0x3e,3. No new helper wrapper/ABI alias.",
+    "card_scorched_ruins": "CHANGED: same replacementhelper/AL_TRIG humiliation exception; restnativeSOURCE complete match CAN_TAP_FOR_MANA/producecolorless4/declaration.",
+    "card_minds_desire": "CHANGED additionalcard: after is_unlocked28, EVENT_QUERY && attacking_card==4 return1; CASTaffectme only storm_count*12 AI modifier, REMOVE old SF_NOT_CAST/while precreating storm legacies. RESOLVE uses existing create_minds_desire_legacy thenkills. Inline creation helper has NO standalone range (DWARF abstract only), readits fullCbody and nativeinlinedowner: deck0iid/exile/create_legacy_activate, stores targets0.card ONLY plus nameevent256; retain name targets0.player initialization bug, no emptydeck guard introduced. Pin inline source dependency without inventing a callable address.",
+    "card_hunter_sliver_assembly_confirmation": "Confirmed native get_card_instance call0x24a8e85, load EBX [EAX+0x38] at0x24a8e8a (canonical info_slot), dec/js; DAT_TRACK store_attackers actually uses default targets1, so preserve raw info_slot mismatch native quirk. Opcode block is pinned. Do not change to targets1 based on intended behavior.",
+    "card_support_retained_final": "All remaining support bodies fully read: ChartoothCougar,ElvishAberration,EternalDragon,GildedLight,NobleTemplar,ShorelineRanger,TwistedAbomination,WirewoodGuardian; all5VisKaroo wrappers; FemerefEnchantress,TeferisPuzzleBox,InnerSanctum,WindingCanyons. Retain complete bodies unchanged; all deviations explicitly listed above."
+  },
+  "dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "optimized_parameter_evidence": {
+    "0x211ff90": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "primary": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "secondary": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      }
+    },
+    "0x241b160": {
+      "player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "mana_color": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      }
+    },
+    "0x24a61c0": {
+      "src_player": {
+        "first_location": [
+          80
+        ],
+        "constant": null
+      },
+      "src_card": {
+        "first_location": [
+          82
+        ],
+        "constant": null
+      },
+      "player": {
+        "first_location": [
+          81
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": null,
+        "constant": null
+      }
+    },
+    "0x24f6cc0": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "colorless": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "land_subtype1": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      },
+      "land_subtype2": {
+        "first_location": [
+          145,
+          20
+        ],
+        "constant": null
+      }
+    },
+    "0x26a3630": {
+      "triggering_player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "triggering_card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "t_player": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "t_card": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          16
+        ],
+        "constant": null
+      },
+      "can_be_suppressed": {
+        "first_location": [
+          145,
+          20
+        ],
+        "constant": null
+      },
+      "can_be_duplicated": {
+        "first_location": [
+          145,
+          24
+        ],
+        "constant": null
+      }
+    },
+    "0x24a8d80": {
+      "player": {
+        "first_location": [
+          145,
+          0
+        ],
+        "constant": null
+      },
+      "card": {
+        "first_location": [
+          145,
+          4
+        ],
+        "constant": null
+      },
+      "event": {
+        "first_location": [
+          145,
+          8
+        ],
+        "constant": null
+      },
+      "trigger_mode": {
+        "first_location": [
+          145,
+          12
+        ],
+        "constant": null
+      }
+    }
+  },
+  "native_arrays": {
+    "0x241b160::c": {
+      "dimensions": [
+        6
+      ],
+      "element_bytes": 4
+    },
+    "0x241b160::abils": {
+      "dimensions": [
+        3
+      ],
+      "element_bytes": 4
+    },
+    "0x241b160::priorities": {
+      "dimensions": [
+        3
+      ],
+      "element_bytes": 4
+    },
+    "0x24a61c0::prompt": {
+      "dimensions": [
+        200
+      ],
+      "element_bytes": 1
+    },
+    "0x24f6420::buffer": {
+      "dimensions": [
+        500
+      ],
+      "element_bytes": 1
+    },
+    "0x24fb710::found": {
+      "dimensions": [
+        2
+      ],
+      "element_bytes": 4
+    }
+  },
+  "native_instruction_blocks": {
+    "grixis_native_argument_order": {
+      "owner": "0x21e26f0",
+      "address": "0x21e272c",
+      "end": "0x21e2761",
+      "bytes_sha256": "275293c5b4aab42e97d4673b280b3bd91bd0746cb48dc2df49dcc4c47fc622e5",
+      "instructions": [
+        [
+          "0x21e272c",
+          "movsx",
+          "edi, byte ptr [eax + 0x50]"
+        ],
+        [
+          "0x21e2730",
+          "mov",
+          "edx, dword ptr [eax + 4]"
+        ],
+        [
+          "0x21e2733",
+          "mov",
+          "eax, dword ptr [ebp + 0x10]"
+        ],
+        [
+          "0x21e2736",
+          "mov",
+          "dword ptr [esp + 0x10], edx"
+        ],
+        [
+          "0x21e273a",
+          "mov",
+          "dword ptr [esp + 0x18], 1"
+        ],
+        [
+          "0x21e2742",
+          "mov",
+          "dword ptr [esp + 0x14], 1"
+        ],
+        [
+          "0x21e274a",
+          "mov",
+          "dword ptr [esp + 0xc], edi"
+        ],
+        [
+          "0x21e274e",
+          "mov",
+          "dword ptr [esp + 8], eax"
+        ],
+        [
+          "0x21e2752",
+          "mov",
+          "dword ptr [esp + 4], esi"
+        ],
+        [
+          "0x21e2756",
+          "mov",
+          "dword ptr [esp], ebx"
+        ],
+        [
+          "0x21e2759",
+          "mov",
+          "dword ptr [ebp - 0x10], edx"
+        ],
+        [
+          "0x21e275c",
+          "call",
+          "0x26a3630"
+        ]
+      ]
+    },
+    "hunter_native_info_slot": {
+      "owner": "0x24a8d80",
+      "address": "0x24a8e85",
+      "end": "0x24a8e94",
+      "bytes_sha256": "5856b68277bf9cb4f62af91ce0dfde92b8276910b12f46fcc0279b525ebcb38e",
+      "instructions": [
+        [
+          "0x24a8e85",
+          "call",
+          "0x26b2ab0"
+        ],
+        [
+          "0x24a8e8a",
+          "mov",
+          "ebx, dword ptr [eax + 0x38]"
+        ],
+        [
+          "0x24a8e8d",
+          "dec",
+          "ebx"
+        ],
+        [
+          "0x24a8e8e",
+          "js",
+          "0x24a8dc8"
+        ]
+      ]
+    },
+    "leitbur_keywords": {
+      "owner": "0x241eb40",
+      "address": "0x241ebf8",
+      "end": "0x241ec05",
+      "bytes_sha256": "ea11ba5f67bcae809972033c2db838e51d708c071d840f4f09d1c3f124ed38ee",
+      "instructions": [
+        [
+          "0x241ebf8",
+          "mov",
+          "eax, dword ptr [0x78fef0]"
+        ],
+        [
+          "0x241ebfd",
+          "or",
+          "ah, 1"
+        ],
+        [
+          "0x241ec00",
+          "mov",
+          "dword ptr [0x78fef0], eax"
+        ]
+      ]
+    },
+    "ebon_hand_keywords": {
+      "owner": "0x2421200",
+      "address": "0x24212b8",
+      "end": "0x24212c5",
+      "bytes_sha256": "ea11ba5f67bcae809972033c2db838e51d708c071d840f4f09d1c3f124ed38ee",
+      "instructions": [
+        [
+          "0x24212b8",
+          "mov",
+          "eax, dword ptr [0x78fef0]"
+        ],
+        [
+          "0x24212bd",
+          "or",
+          "ah, 1"
+        ],
+        [
+          "0x24212c0",
+          "mov",
+          "dword ptr [0x78fef0], eax"
+        ]
+      ]
+    },
+    "deftblade_toughness": {
+      "owner": "0x24a7bc0",
+      "address": "0x24a7cdf",
+      "end": "0x24a7cee",
+      "bytes_sha256": "af4ff0754c5667143e2169a2742398a94b4860615b5c6960711ea13ec359daef",
+      "instructions": [
+        [
+          "0x24a7cdf",
+          "mov",
+          "eax, dword ptr [0x7a371c]"
+        ],
+        [
+          "0x24a7ce4",
+          "add",
+          "eax, 0x3fff"
+        ],
+        [
+          "0x24a7ce9",
+          "mov",
+          "dword ptr [0x7a371c], eax"
+        ]
+      ]
+    },
+    "deftblade_power_toughness": {
+      "owner": "0x24a7bc0",
+      "address": "0x24a7cfc",
+      "end": "0x24a7d1c",
+      "bytes_sha256": "c07c43e4bbd2b1c593c044f8b0449ee2a08d8cd449ac3784d8ebd91f2f1388da",
+      "instructions": [
+        [
+          "0x24a7cfc",
+          "mov",
+          "edx, dword ptr [0x739b50]"
+        ],
+        [
+          "0x24a7d02",
+          "mov",
+          "ecx, dword ptr [0x7a371c]"
+        ],
+        [
+          "0x24a7d08",
+          "sub",
+          "edx, eax"
+        ],
+        [
+          "0x24a7d0a",
+          "add",
+          "ecx, 0x3fff"
+        ],
+        [
+          "0x24a7d10",
+          "mov",
+          "dword ptr [0x739b50], edx"
+        ],
+        [
+          "0x24a7d16",
+          "mov",
+          "dword ptr [0x7a371c], ecx"
+        ]
+      ]
+    }
+  },
+  "native_absolute_symbols": {},
+  "native_exe_references": {
+    "check_abilities_keywords": "0x78fef0",
+    "check_abilities_power": "0x739b50",
+    "check_abilities_toughness": "0x7a371c"
+  },
+  "native_inlined_creation": {
+    "owner": "0x24fbd70",
+    "name": "create_minds_desire_legacy",
+    "instances": [
+      {
+        "die_offset": "0x48c4052",
+        "low_pc": 38780397,
+        "high_pc": 65,
+        "high_pc_form": "DW_FORM_data4",
+        "ranges": null,
+        "abstract_origin": 743640
+      }
+    ]
+  },
+  "scope": "32 initial helper ranges and61 card handlers;93 complete native ranges reviewed.14 helpers and18 cards changed. Original files and canonical APIs, no ABI aliases/duplicate types. Full native ABI/frame/global/inline and key quirk instruction evidence included. Gameplay tests and built-in dialog backends remain deferred."
+}

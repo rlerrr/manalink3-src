@@ -1,133 +1,176 @@
 #include "manalink.h"
 
 // ------------ General functions
-int miracle(int player, int card, event_t event){
+int miracle(int player, int card, event_t event)
+{
 
-	if( trigger_condition == TRIGGER_CARD_DRAWN && affect_me(player, card) && !suppress_draw ){
-		if( reason_for_trigger_controller == player ){
-			if( cards_drawn_this_turn[player] == 1 ){
-				int result = -1;
-				int i;
-				for(i=0; i<active_cards_count[player]; i++){
-					if( in_hand(player, i) && check_state(player, i, STATE_DRAWN_THIS_TURN) ){
-						result = i;
-						break;
-					}
-				}
-				if( result == -1 ){
-					return 0;
-				}
-				int trig = 0;
-				int cost[6] = {0, 0, 0, 0, 0, 0};
-				int ai_priority = 2;
-				int iid = get_original_internal_card_id(player, result);
-				int csvid = cards_data[iid].id;
-				if( cards_data[iid].cc[2] == 15 && can_legally_play_iid(player, iid) ){
-					if( csvid == CARD_ID_BANISHING_STROKE ){
-						if( player == AI ){
-							target_definition_t td;
-							default_target_definition(player, card, &td, TYPE_ARTIFACT | TYPE_ENCHANTMENT | TYPE_CREATURE);
-							td.allowed_controller = 1-player;
-							td.illegal_abilities = KEYWORD_PROT_WHITE;
-							ai_priority = can_target(&td) ? 2 : 0;
-						}
-						cost[5] = 1;
-					}
-					if( csvid == CARD_ID_TEMPORAL_MASTERY ){
-						cost[0] = 1;
-						cost[2] = 1;
-					}
-					if( csvid == CARD_ID_THUNDEROUS_WRATH ){
-						if( player == AI ){
-							target_definition_t td;
-							default_target_definition(player, card, &td, TYPE_CREATURE);
-							td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-							ai_priority = can_target(&td) ? 2 : 0;
-						}
-						cost[4] = 1;
-					}
-					if( csvid == CARD_ID_BONFIRE_OF_THE_DAMNED ){
-						if( player == AI ){
-							target_definition_t td;
-							default_target_definition(player, card, &td, TYPE_CREATURE);
-							td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-							ai_priority = can_target(&td) ? 2 : 0;
-						}
-						cost[4] = 1;
-					}
-					if( csvid == CARD_ID_REFORGE_THE_SOUL ){
-						ai_priority = (7-hand_count[1-player]) < (7-hand_count[player]) ? 2 : 0;
-						cost[0] = 1;
-						cost[4] = 1;
-					}
-					if( csvid == CARD_ID_REVENGE_OF_THE_HUNTED || csvid == CARD_ID_BLESSINGS_OF_NATURE){
-						if( player == AI ){
-							target_definition_t td;
-							default_target_definition(player, card, &td, TYPE_CREATURE);
-							td.preferred_controller = player;
-							ai_priority = can_target(&td) ? 2 : 0;
-						}
-						cost[3] = 1;
-					}
-					if( csvid == CARD_ID_ENTREAT_THE_ANGELS ){
-						ai_priority = has_mana_multi(player, MANACOST_XW(2, 2)) ? 2 : 0;
-						cost[5] = 2;
-					}
-					if( csvid == CARD_ID_TERMINUS ){
-						if( player == AI ){
-							ai_priority = count_subtype(1-player, TYPE_CREATURE, -1)-count_subtype(player, TYPE_CREATURE, -1) > 1 ? 2 : 0;
-						}
-						cost[5] = 1;
-					}
-					if( csvid == CARD_ID_DEVASTATION_TIDE ){
-						if( player == AI ){
-							test_definition_t this_test;
-							default_test_definition(&this_test, TYPE_LAND);
-							this_test.type_flag = DOESNT_MATCH;
-							ai_priority = 	check_battlefield_for_special_card(player, card, 1-player, CBFSC_GET_COUNT, &this_test)-
-											check_battlefield_for_special_card(player, card, player, CBFSC_GET_COUNT, &this_test) > 2 ? 2 : 0;
-						}
-						cost[0] = 1;
-						cost[2] = 1;
-					}
-					if( csvid == CARD_ID_VANISHMENT ){
-						if( player == AI ){
-							target_definition_t td;
-							default_target_definition(player, card, &td, TYPE_PERMANENT);
-							td.illegal_type = TYPE_LAND;
-							ai_priority = can_target(&td) ? 2 : 0;
-						}
-						cost[2] = 1;
-					}
-					int cless = get_updated_casting_cost(player, result, -1, event, cost[0]);
-					if( has_mana_multi(player, cless, cost[1], cost[2], cost[3], cost[4], cost[5]) ){
-						trig = 1;
-					}
-				}
-				if( trig == 1){
-					if(event == EVENT_TRIGGER){
-						event_result |= 2u;
-					}
-					else if(event == EVENT_RESOLVE_TRIGGER){
-							int cless = get_updated_casting_cost(player, -1, iid, event, cost[0]);
-							int choice = DIALOG(player, result, EVENT_ACTIVATE,
-												DLG_FULLCARD_ID(iid), DLG_NO_STORAGE, DLG_NO_CANCEL,
-												"Cast", 1, ai_priority,
-												"Pass", 1, 1);
-							if( choice == 1 ){
-								charge_mana_multi_while_resolving(player, i, EVENT_RESOLVE_SPELL, player,
-															cless, cost[1], cost[2], cost[3], cost[4], cost[5]);
-								if( spell_fizzled != 1 ){
-									play_card_in_hand_for_free_miracle(player, result);
-								}
-							}
-					}
-				}
-			}
-
-		}
-	}
-	return 0;
+  if (trigger_condition == TRIGGER_CARD_DRAWN && affect_me(player, card) && !suppress_draw)
+  {
+    if (reason_for_trigger_controller == player)
+    {
+      if (cards_drawn_this_turn[player] == 1)
+      {
+        int result = -1;
+        int i;
+        for (i = 0; i < active_cards_count[player]; i++)
+        {
+          if (in_hand(player, i) && check_state(player, i, STATE_DRAWN_THIS_TURN))
+          {
+            result = i;
+            break;
+          }
+        }
+        if (result == -1)
+        {
+          return 0;
+        }
+        int trig = 0;
+        int cost[6] = {0, 0, 0, 0, 0, 0};
+        int ai_priority = 2;
+        int iid = get_original_internal_card_id(player, result);
+        int csvid = cards_data[iid].id;
+        if (cards_data[iid].cc[2] == 15 && can_legally_play_iid(player, iid))
+        {
+          if (csvid == CARD_ID_BANISHING_STROKE)
+          {
+            if (player == AI)
+            {
+              target_definition_t td;
+              default_target_definition(player, card, &td,
+                                        TYPE_ARTIFACT | TYPE_ENCHANTMENT | TYPE_CREATURE);
+              td.allowed_controller = 1 - player;
+              td.illegal_abilities |= KEYWORD_PROT_WHITE;
+              ai_priority = can_target(&td) ? 2 : 0;
+            }
+            cost[5] = 1;
+          }
+          if (csvid == CARD_ID_TEMPORAL_MASTERY)
+          {
+            cost[0] = 1;
+            cost[2] = 1;
+          }
+          if (csvid == CARD_ID_THUNDEROUS_WRATH)
+          {
+            if (player == AI)
+            {
+              target_definition_t td;
+              default_target_definition(player, card, &td, TYPE_CREATURE);
+              td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+              ai_priority = can_target(&td) ? 2 : 0;
+            }
+            cost[4] = 1;
+          }
+          if (csvid == CARD_ID_BONFIRE_OF_THE_DAMNED)
+          {
+            if (player == AI)
+            {
+              target_definition_t td;
+              default_target_definition(player, card, &td, TYPE_CREATURE);
+              td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+              ai_priority = can_target(&td) ? 2 : 0;
+            }
+            cost[4] = 1;
+          }
+          if (csvid == CARD_ID_REFORGE_THE_SOUL)
+          {
+            ai_priority = (7 - hand_count[1 - player]) < (7 - hand_count[player]) ? 2 : 0;
+            cost[0] = 1;
+            cost[4] = 1;
+          }
+          if (csvid == CARD_ID_REVENGE_OF_THE_HUNTED || csvid == CARD_ID_BLESSINGS_OF_NATURE)
+          {
+            if (player == AI)
+            {
+              target_definition_t td;
+              default_target_definition(player, card, &td, TYPE_CREATURE);
+              td.preferred_controller = player;
+              ai_priority = can_target(&td) ? 2 : 0;
+            }
+            cost[3] = 1;
+          }
+          if (csvid == CARD_ID_ENTREAT_THE_ANGELS)
+          {
+            ai_priority = has_mana_multi(player, MANACOST_XW(2, 2)) ? 2 : 0;
+            cost[5] = 2;
+          }
+          if (csvid == CARD_ID_ENTREAT_THE_DEAD)
+          {
+            ai_priority = has_mana_multi(player, MANACOST_XB(2, 2)) ? 2 : 0;
+            cost[1] = 2;
+          }
+          if (csvid == CARD_ID_TERMINUS)
+          {
+            if (player == AI)
+            {
+              ai_priority = count_subtype(1 - player, TYPE_CREATURE, -1) -
+                                        count_subtype(player, TYPE_CREATURE, -1) >
+                                    1
+                                ? 2
+                                : 0;
+            }
+            cost[5] = 1;
+          }
+          if (csvid == CARD_ID_DEVASTATION_TIDE)
+          {
+            if (player == AI)
+            {
+              test_definition_t this_test;
+              default_test_definition(&this_test, TYPE_LAND);
+              ai_priority = check_battlefield_for_special_card(player, card, 1 - player,
+                                                               CBFSC_GET_COUNT, &this_test) -
+                                        check_battlefield_for_special_card(
+                                            player, card, player, CBFSC_GET_COUNT, &this_test) >
+                                    2
+                                ? 2
+                                : 0;
+            }
+            cost[0] = 1;
+            cost[2] = 1;
+          }
+          if (csvid == CARD_ID_VANISHMENT)
+          {
+            if (player == AI)
+            {
+              target_definition_t td;
+              default_target_definition(player, card, &td, TYPE_PERMANENT);
+              td.illegal_type = TYPE_LAND;
+              ai_priority = can_target(&td) ? 2 : 0;
+            }
+            cost[2] = 1;
+          }
+          int cless = get_updated_casting_cost(player, result, -1, event, cost[0]);
+          if (has_mana_multi(player, cless, cost[1], cost[2], cost[3], cost[4], cost[5]))
+          {
+            trig = 1;
+          }
+        }
+        if (trig == 1)
+        {
+          if (event == EVENT_TRIGGER)
+          {
+            event_result |= 2u;
+          }
+          else if (event == EVENT_RESOLVE_TRIGGER)
+          {
+            int cless = get_updated_casting_cost(player, -1, iid, event, cost[0]);
+            int choice =
+                DIALOG(player, result, EVENT_ACTIVATE, DLG_FULLCARD_ID(iid), DLG_NO_STORAGE,
+                       DLG_NO_CANCEL, "Cast", 1, ai_priority, "Pass", 1, 1);
+            if (choice == 1)
+            {
+              charge_mana_multi_while_resolving(player, i, EVENT_RESOLVE_SPELL, player, cless,
+                                                cost[1], cost[2], cost[3], cost[4], cost[5]);
+              if (spell_fizzled != 1)
+              {
+                play_card_in_hand_for_free_miracle(player, result);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return 0;
 }
 
 static int is_paired(int player, int card){
@@ -2669,67 +2712,80 @@ Target opponent reveals his or her hand. You choose a card from it with converte
 	return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, NULL, 1, NULL);
 }
 
-static int blood_artist_effect(int player, int card, event_t event){
+static int blood_artist_effect(int player, int card, event_t event)
+{
 
-	//In case something is copying Pawn of Ulamog and then reverts to its original form.
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_BLOOD_ARTIST ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  // In case something is copying Pawn of Ulamog and then reverts to its original form.
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_BLOOD_ARTIST)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						//Will trigger also if this is not a creature when it goes into the graveyard;
-						if( ! is_what(p, c, TYPE_CREATURE) ){
-							count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
-						}
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            // Will trigger also if this is not a creature when it goes into the graveyard;
+            if (!is_what(p, c, TYPE_CREATURE))
+            {
+              count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
+            }
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+          }
+        }
+        count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			life_sucking(player, card, amount);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (!check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    int amount = BYTE0(result);
+    while (amount > 0)
+    {
+      life_sucking(player, card, 1);
+      --amount;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 int card_blood_artist(int player, int card, event_t event){
@@ -3192,68 +3248,69 @@ Pay 7 life: Draw seven cards. */
 	return generic_activated_ability(player, card, event, 0, MANACOST0, 7, NULL, NULL);
 }
 
-static int harvester_of_souls_legacy(int player, int card, event_t event){
+static int harvester_of_souls_legacy(int player, int card, event_t event)
+{
 
-	//In case something is copying Demon of Dark Schemes and then reverts to its original form.
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_HARVESTER_OF_SOULS ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  // In case something is copying Demon of Dark Schemes and then reverts to its original form.
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_HARVESTER_OF_SOULS)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-						return 0;
-					}
-				}
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_CREATURE);
-				this_test.type_flag = F1_NO_TOKEN;
-				this_test.not_me = 1;
-				count_for_gfp_ability(player, card, event, ANYBODY, 0, &this_test);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        test_definition_t this_test;
+        default_test_definition(&this_test, TYPE_CREATURE);
+        this_test.type_flag = F1_NO_TOKEN;
+        this_test.not_me = 1;
+        count_for_gfp_ability(player, card, event, ANYBODY, 0, &this_test);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			draw_some_cards_if_you_want(player, card, player, amount);
-		}
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
-
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    draw_some_cards_if_you_want(player, card, player, BYTE0(result));
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
 int card_harvester_of_souls(int player, int card, event_t event){

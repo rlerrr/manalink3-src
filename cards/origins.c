@@ -544,86 +544,92 @@ static int fx_indestructible_until_your_next_turn(int player, int card, event_t 
 }
 int card_gideon_battle_forged(int player, int card, event_t event)
 {
+  check_legend_rule(player, card, event);
   /* Gideon, Battle-Forged	""	0x200e1e3
    * Planeswalker - Gideon (3)
-   * +2: Up to one target creature an opponent controls attacks ~ during its controller's next turn if able.
-   * +1: Until your next turn, target creature gains indestructible. Untap that creature.
-   * 0: Until end of turn, ~ becomes a 4/4 Human Soldier creature with indestructible that's still a planeswalker. Prevent all damage that would be dealt to him this turn. */
+   * +2: Up to one target creature an opponent controls attacks ~ during its controller's next turn
+   * if able. +1: Until your next turn, target creature gains indestructible. Untap that creature.
+   * 0: Until end of turn, ~ becomes a 4/4 Human Soldier creature with indestructible that's still a
+   * planeswalker. Prevent all damage that would be dealt to him this turn. */
 
   if (IS_ACTIVATING(event))
-	{
-	  target_definition_t td_opponent_creature;
-	  default_target_definition(player, card, &td_opponent_creature, TYPE_CREATURE);
-	  td_opponent_creature.allowed_controller = 1-player;
-	  td_opponent_creature.allow_cancel = 3;	// can cancel, can pick done
+  {
+    target_definition_t td_opponent_creature;
+    default_target_definition(player, card, &td_opponent_creature, TYPE_CREATURE);
+    td_opponent_creature.allowed_controller = 1 - player;
+    td_opponent_creature.allow_cancel = 3; // can cancel, can pick done
 
-	  target_definition_t td_creature;
-	  default_target_definition(player, card, &td_creature, TYPE_CREATURE);
-	  td_creature.preferred_controller = player;
+    target_definition_t td_creature;
+    default_target_definition(player, card, &td_creature, TYPE_CREATURE);
+    td_creature.preferred_controller = player;
 
-	  card_instance_t* inst = get_card_instance(player, card);
+    card_instance_t *inst = get_card_instance(player, card);
 
-	  enum
-	  {
-		CHOICE_NETTLE = 1,
-		CHOICE_INDESTRUCTIBLE,
-		CHOICE_ANIMATE,
-	  } choice = DIALOG(player, card, event,
-						DLG_RANDOM, DLG_PLANESWALKER,
-						"Creature attacks",	1,							3,	+2,
-						"Indestructible",	can_target(&td_creature),	2,	+1,
-						"Become creature",	1,							1,	0);
-	  if (event == EVENT_CAN_ACTIVATE && !choice)
-		return 0;
-	  if (event == EVENT_ACTIVATE)
-		switch (choice)
-		  {
-			case CHOICE_NETTLE:
-			  inst->number_of_targets = 0;
-			  if (can_target(&td_opponent_creature) && !pick_target(&td_opponent_creature, "TARGET_CREATURE_OPPONENT_CONTROLS"))
-				cancel = inst->targets[0].card == -1;
-			  break;
+    enum
+    {
+      CHOICE_NETTLE = 1,
+      CHOICE_INDESTRUCTIBLE,
+      CHOICE_ANIMATE,
+    } choice =
+        DIALOG(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Creature attacks", 1, 3, +2,
+               "Indestructible", can_target(&td_creature), 2, +1, "Become creature", 1, 1, 0);
+    if (event == EVENT_CAN_ACTIVATE && !choice)
+      return 0;
+    if (event == EVENT_ACTIVATE)
+      switch (choice)
+      {
+      case CHOICE_NETTLE:
+        inst->number_of_targets = 0;
+        if (can_target(&td_opponent_creature) &&
+            !pick_target(&td_opponent_creature, "TARGET_CREATURE_OPPONENT_CONTROLS"))
+          cancel = inst->targets[0].card == -1;
+        break;
 
-			case CHOICE_INDESTRUCTIBLE:
-			  inst->number_of_targets = 0;
-			  if (can_target(&td_creature))
-				pick_target(&td_creature, "TARGET_CREATURE");
+      case CHOICE_INDESTRUCTIBLE:
+        inst->number_of_targets = 0;
+        if (can_target(&td_creature))
+          pick_target(&td_creature, "TARGET_CREATURE");
 
-			case CHOICE_ANIMATE:
-			  break;
-		  }
-	  if (event == EVENT_RESOLVE_ACTIVATION)
-		switch (choice)
-		  {
-			case CHOICE_NETTLE:
-			  if (inst->number_of_targets > 0 && valid_target(&td_opponent_creature))
-				{
-				  int p = inst->parent_controller, c = inst->parent_card;
-				  if (in_play(p, c))
-					alternate_legacy_text(1, p, create_targetted_legacy_effect(p, c, fx_attack_gideon_battle_forged,
-																			   inst->targets[0].player, inst->targets[0].card));
-				}
-			  break;
+      case CHOICE_ANIMATE:
+        break;
+      }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+      switch (choice)
+      {
+      case CHOICE_NETTLE:
+        if (inst->number_of_targets > 0 && valid_target(&td_opponent_creature))
+        {
+          int p = inst->parent_controller, c = inst->parent_card;
+          if (in_play(p, c))
+            alternate_legacy_text(
+                1, p,
+                create_targetted_legacy_effect(p, c, fx_attack_gideon_battle_forged,
+                                               inst->targets[0].player, inst->targets[0].card));
+        }
+        break;
 
-			case CHOICE_INDESTRUCTIBLE:
-			  if (valid_target(&td_creature))
-				{
-				  alternate_legacy_text(2, player, create_targetted_legacy_effect(player, card, fx_indestructible_until_your_next_turn,
-																				  inst->targets[0].player, inst->targets[0].card));
-				  untap_card(inst->targets[0].player, inst->targets[0].card);
-				}
-			  break;
+      case CHOICE_INDESTRUCTIBLE:
+        if (valid_target(&td_creature))
+        {
+          alternate_legacy_text(
+              2, player,
+              create_targetted_legacy_effect(player, card, fx_indestructible_until_your_next_turn,
+                                             inst->targets[0].player, inst->targets[0].card));
+          untap_card(inst->targets[0].player, inst->targets[0].card);
+        }
+        break;
 
-			case CHOICE_ANIMATE:
-			  ;int p = inst->parent_controller, c = inst->parent_card;
-			  if (in_play(p, c))
-				{
-				  get_card_instance(p, prevent_all_damage_to_target(p, c, p, c, 1))->token_status |= STATUS_INVISIBLE_FX;
-				  alternate_legacy_text(3, p, animate_self(p, c, 4,4, 0,SP_KEYWORD_INDESTRUCTIBLE, 0, 0));
-				}
-			  break;
-		  }
-	}
+      case CHOICE_ANIMATE:;
+        int p = inst->parent_controller, c = inst->parent_card;
+        if (in_play(p, c))
+        {
+          get_card_instance(p, prevent_all_damage_to_target(p, c, p, c, 1))->token_status |=
+              STATUS_INVISIBLE_FX;
+          alternate_legacy_text(3, p, animate_self(p, c, 4, 4, 0, SP_KEYWORD_INDESTRUCTIBLE, 0, 0));
+        }
+        break;
+      }
+  }
 
   has_subtype_if_animated_self(player, card, event, SUBTYPE_HUMAN);
   has_subtype_if_animated_self(player, card, event, SUBTYPE_SOLDIER);
@@ -2617,22 +2623,31 @@ int card_liliana_defiant_necromancer_emblem(int player, int card, event_t event)
 {
   /* Liliana, Defiant Necromancer Emblem	""	0x200e260
    * Emblem
-   * Whenever a creature dies, return it to the battlefield under your control at the beginning of the next end step. */
+   * Whenever a creature dies, return it to the battlefield under your control at the beginning of
+   * the next end step. */
 
-  card_instance_t* aff;
-  if (event == EVENT_GRAVEYARD_FROM_PLAY
-	  && is_what(affected_card_controller, affected_card, TYPE_CREATURE)
-	  && !is_token(affected_card_controller, affected_card)
-	  && (aff = get_card_instance(affected_card_controller, affected_card))->kill_code != KILL_EXILE
-	  // You'd think with data space in card_instance_t at such a premium, you wouldn't need a *fourth* way of making the below effect
-	  && !check_special_flags2(affected_card_controller, affected_card, SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE))
-	{
-	  card_instance_t* legacy = get_card_instance(player, create_targetted_legacy_effect(player, card, fx_liliana_defiant_necromancer_emblem, player, card));
-	  legacy->targets[0].player = affected_card_controller;
-	  legacy->targets[0].card = affected_card;
-	  legacy->targets[1].player = cards_data[get_card_instance(affected_card_controller, affected_card)->original_internal_card_id].id;
-	  legacy->eot_toughness = EVENT_SET_LEGACY_EFFECT_NAME;
-	}
+  card_instance_t *aff;
+  if (event == EVENT_GRAVEYARD_FROM_PLAY &&
+      is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
+      !is_token(affected_card_controller, affected_card) &&
+      (aff = get_card_instance(affected_card_controller, affected_card))->kill_code != KILL_EXILE
+      // You'd think with data space in card_instance_t at such a premium, you wouldn't need a
+      // *fourth* way of making the below effect
+      && !check_special_flags2(affected_card_controller, affected_card,
+                               SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE) &&
+      !check_for_death_trigger_removal(affected_card_controller, affected_card))
+  {
+    card_instance_t *legacy = get_card_instance(
+        player, create_targetted_legacy_effect(player, card, fx_liliana_defiant_necromancer_emblem,
+                                               player, card));
+    legacy->targets[0].player = affected_card_controller;
+    legacy->targets[0].card = affected_card;
+    legacy->targets[1].player =
+        cards_data[get_card_instance(affected_card_controller, affected_card)
+                       ->original_internal_card_id]
+            .id;
+    legacy->eot_toughness = EVENT_SET_LEGACY_EFFECT_NAME;
+  }
 
   return 0;
 }
@@ -2867,33 +2882,41 @@ int card_thornbow_archer(int player, int card, event_t event)
  * As an additional cost to cast ~, sacrifice a creature.
  * Target player discards a number of cards equal to the sacrificed creature's power. */
 
-static int touch_of_moonglove_legacy(int player, int card, event_t event){
-// Whenever this creature dies this turn, its controller loses 2 life.
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance( player, card);
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
+static int touch_of_moonglove_legacy(int player, int card, event_t event)
+{
+  // Whenever this creature dies this turn, its controller loses 2 life.
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
 
-		if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c) ){
-			int kill_code = get_card_instance(p, c)->kill_code;
-			if( kill_code > 0 && kill_code < KILL_EXILE && ! check_special_flags2(p,c, SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE) ){
-				instance->damage_target_player = instance->damage_target_card = -1;
-				instance->targets[11].player = 66;
-			}
-		}
-	}
+    if (event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c) &&
+        !check_for_death_trigger_removal(p, c))
+    {
+      int kill_code = get_card_instance(p, c)->kill_code;
+      if (kill_code > 0 && kill_code < KILL_EXILE &&
+          !check_special_flags2(p, c, SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE))
+      {
+        instance->damage_target_player = instance->damage_target_card = -1;
+        instance->targets[11].player = 66;
+      }
+    }
+  }
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		card_instance_t *instance = get_card_instance( player, card);
-		lose_life(instance->targets[0].player, 2);
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    lose_life(instance->targets[0].player, 2);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 static int touch_of_moonglove_effect(int player, int card, event_t event){
@@ -4909,7 +4932,7 @@ int card_helm_of_the_gods(int player, int card, event_t event)
   if (event == EVENT_POWER || event == EVENT_TOUGHNESS)
 	{
 	  card_instance_t* inst = get_card_instance(player, card);
-	  if (affect_me(inst->targets[8].player, inst->targets[8].card))
+	  if (affect_me(inst->damage_target_player, inst->damage_target_card))
 		ench = count_subtype(player, TYPE_ENCHANTMENT, -1);
 	}
 
@@ -5041,13 +5064,13 @@ int card_sigil_of_valor(int player, int card, event_t event)
    * Equip |1 */
 
   card_instance_t* inst = get_card_instance(player, card);
-  if (inst->targets[8].card >= 0
-	  && declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY|DAT_ATTACKS_ALONE, inst->targets[8].player, inst->targets[8].card))
+  if (inst->damage_target_card >= 0
+	  && declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY|DAT_ATTACKS_ALONE, inst->damage_target_player, inst->damage_target_card))
 	{
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_CREATURE, "");
 	  test.not_me = 1;
-	  int p = inst->targets[8].player, c = inst->targets[8].card;
+	  int p = inst->damage_target_player, c = inst->damage_target_card;
 	  int others = check_battlefield_for_special_card(p, c, player, CBFSC_GET_COUNT, &test);
 	  if (others > 0)
 		pump_until_eot(player, card, p, c, others,others);
@@ -5067,8 +5090,8 @@ int card_sword_of_the_animist(int player, int card, event_t event)
   check_legend_rule(player, card, event);
 
   card_instance_t* inst = get_card_instance(player, card);
-  if (inst->targets[8].card >= 0
-	  && declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), inst->targets[8].player, inst->targets[8].card))
+  if (inst->damage_target_card >= 0
+	  && declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), inst->damage_target_player, inst->damage_target_card))
 	tutor_basic_lands(player, TUTOR_PLAY_TAPPED, 1);
 
   return vanilla_equipment(player, card, event, 2, 1,1, 0,0);
@@ -5082,8 +5105,8 @@ int card_throwing_knife(int player, int card, event_t event)
    * Whenever equipped creature attacks, you may sacrifice ~. If you do, ~ deals 2 damage to any target.
    * Equip |2 */
   card_instance_t* inst = get_card_instance(player, card);
-  if (inst->targets[8].card >= 0
-	  && declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), inst->targets[8].player, inst->targets[8].card)
+  if (inst->damage_target_card >= 0
+	  && declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), inst->damage_target_player, inst->damage_target_card)
 	  && can_sacrifice_this_as_cost(player, card))
 	{
 	  target_definition_t td;

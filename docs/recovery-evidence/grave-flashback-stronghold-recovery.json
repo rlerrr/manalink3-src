@@ -1,0 +1,928 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "helpers": [
+    {
+      "name": "is_damaging_me",
+      "source": "cards/stronghold.c",
+      "native_source": "cards/stronghold.c",
+      "native_ranges": [
+        {
+          "address": "0x212a660",
+          "end": "0x212a6af",
+          "bytes_sha256": "ca2d9c4e9c4f5ac383b5df34bce037c78d22d23c2598d5ceea60f8cd17e40f9b",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/212a660.c",
+          "raw_export_sha256": "6a0ec6ccb71be329a629761b332a5e4654c3ab756218578bba4f75e14d578fdb"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "9d3e1100ba0178dee21f08e60e04cd2556ea3598ebbd034bb29c882619155b74"
+    },
+    {
+      "name": "acidic_sliver_shared_ability",
+      "source": "cards/stronghold.c",
+      "native_source": "cards/stronghold.c",
+      "native_ranges": [
+        {
+          "address": "0x212a6b0",
+          "end": "0x212a907",
+          "bytes_sha256": "79e59d0a0ef236c1eb080c045091cf7e51d6f04f629b633ea9dff0f884a7d97b",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/212a6b0.c",
+          "raw_export_sha256": "a181efeeac4b7fbf58456bf49e4c0fe602434a6effcbb5cdedc639476416efc7"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "89045af1c8b80ec0949a698442dae8255dfc18c8e3d9e7decf4315650c9b8202"
+    },
+    {
+      "name": "victual_sliver_shared_ability",
+      "source": "cards/stronghold.c",
+      "native_source": "cards/stronghold.c",
+      "native_ranges": [
+        {
+          "address": "0x212a910",
+          "end": "0x212aaad",
+          "bytes_sha256": "b868232a990940ee3dd10707487f38f5f738a7c0fae63600e9eb208aeb7d4047",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/212a910.c",
+          "raw_export_sha256": "a3eeeebe4546e83a6ffbde68ab3ee54ec149d96e0c7045dc3bf869808192097f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "98932e4fa526932eac5b5b521b1ab131c53c95632bdd79180ad1e6ebd211fc7a"
+    },
+    {
+      "name": "hybernating_sliver_shared_ability",
+      "source": "cards/stronghold.c",
+      "native_source": "cards/stronghold.c",
+      "native_ranges": [
+        {
+          "address": "0x212aab0",
+          "end": "0x212aca9",
+          "bytes_sha256": "0986dfdc98962d38c2cdba22599d5ed470bc2fdc29569782c93abbfc62dba607",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/212aab0.c",
+          "raw_export_sha256": "d7d313e5ba4664c037fb7a184607377d89f648aaec01a105c21f5964ec6fc237"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "48dc3a4c1d7a3cb54c7b5e7189ef821cb945321e9a77b2fdbd470cfa0fd39f94"
+    },
+    {
+      "name": "jinxed_ring_effect",
+      "source": "cards/stronghold.c",
+      "native_source": "cards/stronghold.c",
+      "native_ranges": [
+        {
+          "address": "0x212b090",
+          "end": "0x212b37a",
+          "bytes_sha256": "dd366b1ce0a8ac2f9d4effc643538d69dd198b4813a9145196c0e265bff8d815",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/212b090.c",
+          "raw_export_sha256": "f62fa5931f3a42a7449925ca3652ab705db324e870cb43ea2c3c72c113897754"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a20f05ea2f103028121c4ffd80d8d507ea8ee0d56272db4a80f35de7292a1cdf"
+    },
+    {
+      "name": "mortuary_effect",
+      "source": "cards/stronghold.c",
+      "native_source": "cards/stronghold.c",
+      "native_ranges": [
+        {
+          "address": "0x212b410",
+          "end": "0x212b7d6",
+          "bytes_sha256": "686b55f4d8e030edeaaf2ac4e00a5723b9062fc1bbc44c2042589301a33454c3",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/212b410.c",
+          "raw_export_sha256": "e610f0e63af0d7051e3bdd2b908d6015f8176d9c8fefa691f69e8b08b88bbb45"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "bf74274cbfb58126cd212393388590222c226df247153f7dc1e340d57747f397"
+    },
+    {
+      "name": "vs_legacy_ability",
+      "source": "cards/stronghold.c",
+      "native_source": "cards/stronghold.c",
+      "native_ranges": [
+        {
+          "address": "0x212b7e0",
+          "end": "0x212ba42",
+          "bytes_sha256": "7da978091950a0bdcb8e21f73e27434a2ca8558d163dbd7dd99e86b75bbb6a7a",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/212b7e0.c",
+          "raw_export_sha256": "dcebbfdb27f883a0ca8aea5f02e260ded29637ec76590b71a362031fbb7aed37"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0d5e253b0ced211e30e51e0cfb14dc1f90e47ca518a3c3fedfb4b1ef144a2e63"
+    },
+    {
+      "name": "dream_halls_effect",
+      "source": "cards/stronghold.c",
+      "native_source": "cards/stronghold.c",
+      "native_ranges": [
+        {
+          "address": "0x212ba50",
+          "end": "0x212bfb3",
+          "bytes_sha256": "2d191544736e9ab8cd2925b044f305a7563df693b1cc4a9a0b06c027cddeee99",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/212ba50.c",
+          "raw_export_sha256": "5e98c05f6d2af1f2a44ffc09d326e09a41d9e809897ee9ce129531c604d8e905"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "804d8a9470989ecd06183226bc33f003b9e720e26573eee635344a64032d606b"
+    },
+    {
+      "name": "dream_halls_legacy",
+      "source": "cards/stronghold.c",
+      "native_source": "cards/stronghold.c",
+      "native_ranges": [
+        {
+          "address": "0x212bfc0",
+          "end": "0x212c076",
+          "bytes_sha256": "550b8ef3c423b00c1fd96596c29051d892e52ddb781eb1aec5c489f3af8b23f7",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/212bfc0.c",
+          "raw_export_sha256": "6c310dfe8a2fb1164c86a84028544a9626e5c1f89da1d12be56916613d32694d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "bed441df1f5bf4c6ed44d37955ba4ec2d2e6561f3acc198e8e88ac4859321cbc"
+    },
+    {
+      "name": "en_kor_damage_prevention_ability",
+      "source": "cards/stronghold.c",
+      "native_source": "cards/stronghold.c",
+      "native_ranges": [
+        {
+          "address": "0x21308f0",
+          "end": "0x2130bb1",
+          "bytes_sha256": "c64d993462500869d5088b6d97681ffadcf5ffdb93f07ca072a81eb05eded5d9",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/21308f0.c",
+          "raw_export_sha256": "6f1a4faab10b78fad9b121c7fdd8a41853bae57d367bfd0e950b958db3138cbf"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "8902aac73ec096e1443161a0d22f79737b579eb99ae04a1bf6d97c8875cec22e"
+    },
+    {
+      "name": "turn_into_black_nightmare",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x2310420",
+          "end": "0x2310480",
+          "bytes_sha256": "df19205bc584951610b37cf52ccdf80f4fbf8805f194463520b31fe6318f8178",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2310420.c",
+          "raw_export_sha256": "0c8a42ac2b869823043a10e33aca9e575377d3210a96cce5a97d7d615eb587bf"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "2dee88c19898e6cc9fce0e7c386c47c002cb750cda20b7676b180bfe8e567594"
+    },
+    {
+      "name": "last_laugh_effect",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x23107b0",
+          "end": "0x2310a93",
+          "bytes_sha256": "a32e41188d7198efc9729127424285e701d97b05dd87394844c9740886970583",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/23107b0.c",
+          "raw_export_sha256": "309d74967e6efa66d5e80992170b5b52f96ae8d0a304df9d0622c12f91512ff7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "19cb2636910de1a312b63901e630a05e2fdb1f69ab0d07a128cef083cf99f54c"
+    },
+    {
+      "name": "grave_recycler",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x2310cb0",
+          "end": "0x2310db2",
+          "bytes_sha256": "fe6a4d6a0eb623e4b7a106753a8bb2c8f0de2efe71dc034f5deb31d5aef23c5e",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2310cb0.c",
+          "raw_export_sha256": "84d16bb14444a00040bed2fd582d225cbd455a0ad824f5a7544e553523d26ea0"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "ed45396352833bff19b1427abe458cb030930a0be91b4465ab0b4fcf7792c3b6"
+    },
+    {
+      "name": "grave_eater",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x2310dc0",
+          "end": "0x2310ee8",
+          "bytes_sha256": "c05b807497908f582a99b83eca2798bf0e546edd16b3635cf99a9e7981bcdfa8",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2310dc0.c",
+          "raw_export_sha256": "3e7b93eb168c749447b5a2ebf4fb287afae3997be3d47f2ffc650dadf720625f"
+        },
+        {
+          "address": "0x2310ef0",
+          "end": "0x2310f76",
+          "bytes_sha256": "39433187f2217ab432c5f952e30eb29884b7389c1c347d638735e8fdcc3ec4a3",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2310ef0.c",
+          "raw_export_sha256": "08d704e451a7f2947e51804f567de66ea7712d13e4f570af44a621f1ec4a812d"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "1758c70aca6c381f7ba7b04464ca7207195fb4c57d5973cc19fcde3c0bbbeb5a"
+    },
+    {
+      "name": "false_memories_legacy",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x2310f80",
+          "end": "0x231104d",
+          "bytes_sha256": "47ec69f917383ce7f9705e1a353e1aeaf9f31f1a2110c3c2e02e77097baa85c3",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2310f80.c",
+          "raw_export_sha256": "33e2cf6a3b2dba9c5120d70ec3bd3cdc2e33479cc3ac589ac6df2ccbaebe3921"
+        },
+        {
+          "address": "0x2311050",
+          "end": "0x2311087",
+          "bytes_sha256": "f4ecddfe14252a7dd3a3d8d433411592eb0774494368343ccd469c1634da27a7",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2311050.c",
+          "raw_export_sha256": "0e14c94cee6eba7837a76d7d975a3fbba87c961a3292035537f6cb530bbfdac6"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "48597808a8995f4bc2f44c3894ce670f28f8fc70bccfb9ad0244cb9990ce7951"
+    },
+    {
+      "name": "remove_counters_at_eot",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x2311090",
+          "end": "0x2311113",
+          "bytes_sha256": "3331d567289f275539b0d57d3a5a0eafd3e16b2a57ceccd284c3e884eddc28ff",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2311090.c",
+          "raw_export_sha256": "192ffa6347000649f9cb301bd06de6c20fb42166a68a8e3f782c513d5ed5f539"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "ab8f7bb8cb156c62c63399af4ba611ac6274f1568211bbb7dda8fa5c83fb8566"
+    },
+    {
+      "name": "possessed",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x23111d0",
+          "end": "0x23114b9",
+          "bytes_sha256": "7325f4f0137ac3d70344d901a548be94f9a32be2b799b38ddcafbffe9fbd83a3",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/23111d0.c",
+          "raw_export_sha256": "e89d25f28c5ec2d1c65d3f6731ac94cf685d17f36d5833d2dbcb82cdddf93246"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cc0344582092199a4ce8647b388f5278737ebbae952e0b102613b47e06ec79f3"
+    },
+    {
+      "name": "do_flashback_with_life",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x23114c0",
+          "end": "0x23115ba",
+          "bytes_sha256": "bbdac54d29eddf15a287ac4659e14f4f8e3b695132e5a7ab2f57b63ecc1c7137",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/23114c0.c",
+          "raw_export_sha256": "c895108b1ce6fdad1a296b6b7225bc1ad443e677fdee95231733ff408cc78c67"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "d2f5260c4a4815f6472907778cf827517c751c36d40bccbd3d2b17aca0f339ff"
+    },
+    {
+      "name": "instant_or_sorcery_is_damaging_me",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x25014c0",
+          "end": "0x2501516",
+          "bytes_sha256": "7bb98d7fd81279db2ceb57611f27dab873fa9de7721fce6ac4c74f9827ca19b8",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/25014c0.c",
+          "raw_export_sha256": "27822a459d68e3d24f75b21b81d74feb2038286f530fdb763a48f3cdf0c40f1b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3912b9df44366f87220dd8dda0e23be3e4915565672da619f395f6fa6d84e82f"
+    },
+    {
+      "name": "burning_sands_effect",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2501520",
+          "end": "0x250188f",
+          "bytes_sha256": "52f0f92294ff32a263e2b6c130033628a7ef4490326415fb9f32f31e853ef019",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2501520.c",
+          "raw_export_sha256": "9b96be48bbdee6e62c7eabad75b08b75fa8c2cc9174face91011c20106985dbb"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "bd25950108b557f26999edd483c39aa1f673fe42dbb0dbb3a75da9d706e7f629"
+    },
+    {
+      "name": "od_land",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2501890",
+          "end": "0x2501cd5",
+          "bytes_sha256": "db42ad18ba0d8a5e6cd3ccbbde0871fc4a68f87cb28e09917eee21929918f071",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2501890.c",
+          "raw_export_sha256": "bdeac478ccc2035f08f5c65706f6e13d495132bf92df7000ff9412327734b8f9"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "84b7078d45369a9064e0c6d535b2adacc4a0b09f1817cd8ea7cbd5575e1fb9e5"
+    },
+    {
+      "name": "od_egg",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2501ce0",
+          "end": "0x2501eab",
+          "bytes_sha256": "3e279c9fd2e367de24f6510cf639dc241a36d6ea5842e370b34eb8aeb9319778",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2501ce0.c",
+          "raw_export_sha256": "be96e14bc3a34c5d515c0567a1cdf129d29d82d123400d2a3b75cdda0c8dcaed"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "bb8daf8ce6d0b167d6e870b7692b1b87d5d619754262b82de43e6aadb1a3cea4"
+    },
+    {
+      "name": "od_shrine",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2502360",
+          "end": "0x2502427",
+          "bytes_sha256": "3356a94ef19266995b97dd848a7b0bca7fd905c4494c1c81f888f523571ed97c",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2502360.c",
+          "raw_export_sha256": "ebf5e62763baa8b659abc5cd06ca2e39f2b270c23e10e6d57c4b69abda703f83"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "c095ca94c8777f013238de6da75d587edccf2b90c86e2493a53cf8bdcbbc4986"
+    },
+    {
+      "name": "engulfing_flames_legacy",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2502430",
+          "end": "0x250248b",
+          "bytes_sha256": "b1f63c251fdab0b5a35a9065cfb074b85b95fdb38aa64931c21145d29c5e1854",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2502430.c",
+          "raw_export_sha256": "7eda7dd8502d6331819d5fe60568a105a4cedd883b99fceaa515134a65ec412c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "cc3c12ff99d1e9b33f2958ccbe1adadcf8e78ad58180804755253dfd8078babf"
+    },
+    {
+      "name": "goyf",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2502490",
+          "end": "0x25024f1",
+          "bytes_sha256": "07be84c3daaba5fc2e7f2d6b4614d0eac235d35a483eba26db571684aa5d8b63",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2502490.c",
+          "raw_export_sha256": "8e9acb74ef13258300b6c380032e600359904fa3e7fb3eb3240fd261101c6a8f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "da06ebda3206bbb067d1445b6e0fd74fb34893e1d581172705ee73dc758e282e"
+    },
+    {
+      "name": "threshold_mod_for_pt_and_abilitie",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2502500",
+          "end": "0x25025d2",
+          "bytes_sha256": "4a1594457230fd408322a88d96623ca786c7bab7bc3afe1454d9eae7cada5817",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2502500.c",
+          "raw_export_sha256": "9a2dda415fed4313a83ab17031d655623dd4b3113b5ec38216cb46caa56f5842"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5ed510e7f233a3f0aca8d83bd8f65a02745a5e8ed38017cf017b788417c64ed3"
+    },
+    {
+      "name": "shifty_doppelganger_legacy",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x25025e0",
+          "end": "0x250285f",
+          "bytes_sha256": "8590c3dbf76751d3031eaf06696f108b9f03cf0f27a288f39b4c1b5dbfcd8268",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/25025e0.c",
+          "raw_export_sha256": "427441ed6ccb199f4e2b5ae30d1496f18e04636c6cccfdcafa41fc95e2a942ac"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "cdf0e132421b76fb5543515fce8ec95fe0515dbcd4d995f9743bafc4c46a1b1e"
+    },
+    {
+      "name": "can_pay_flashback",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2502860",
+          "end": "0x250290a",
+          "bytes_sha256": "7b36b3e11dfc03c8a7373a0b940a728df9435e03ffcd521281d8f205ce9e3e3c",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2502860.c",
+          "raw_export_sha256": "96f71a040586716210de0fa5fb67c4eafe80537cbd82052b7773b8be9cda1140"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "de9e8c31df6231832cc39710524075bbcb41e4ea9b82b2ecad001974c3d34c30"
+    },
+    {
+      "name": "pay_flashback",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2502910",
+          "end": "0x25029e2",
+          "bytes_sha256": "beffe1aed7bd7b7124c3f2b2ac2e42b517f6e834c05931d5cd23560a2f18ad91",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2502910.c",
+          "raw_export_sha256": "0e7853bf4ec7531766b2c82d86781c2a33281e1a799ed66fed30d1e9b974faaf"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "90fa06412387fe94505cf3061f424e6e7bc0cc714ded86c09df78c245c4dfd55"
+    },
+    {
+      "name": "do_flashback",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x25029f0",
+          "end": "0x2502b9c",
+          "bytes_sha256": "d2b0dbb45d7eb6965f57eafa18a19f52c8e0ac6198f31fec590ab1810e293211",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/25029f0.c",
+          "raw_export_sha256": "023a3fdec07bd96a5a27894a16d65739ba890d9ea787b6c013b94751abd30e5b"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "67b546745e7c30f7f74aec049fa6f6b62425352c3d5ab8b8ac8ebbc6fea47ecd"
+    },
+    {
+      "name": "ability_decompose",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2508440",
+          "end": "0x2508598",
+          "bytes_sha256": "8c22267429e02253cee6e578e231bb9a93e407cc70aa68d547b7e4f8e8605368",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold/2508440.c",
+          "raw_export_sha256": "ec3821c08db7efcc5d97244397dd670fae008f848e2320d606ebd4b4c5158823"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "25b4ea44fc32cc25cc85bc204368d9b693df6d5010c58dd08a4612fcc3e1837d"
+    },
+    {
+      "name": "threshold_boost",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x2311120",
+          "end": "0x23111ce",
+          "bytes_sha256": "fd9f0ab879b6bdecd3cfb9925ab6d0fb351e0b3a5b66f61611f2a99a9cf82ec4",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/2311120.c",
+          "raw_export_sha256": "7f9b8a2d0f85a6a18f25f43f11bc186178ba599544b1b48480905d855faaf451"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "1f53abb86ee41c54f7b2a7faac714b347ffb3489408278428b264d5342c9ea22"
+    }
+  ],
+  "card_callers": [
+    {
+      "name": "card_aven_shrine",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2503c90",
+          "end": "0x2503d09",
+          "bytes_sha256": "6b497760873e329ba5754b6108a610d63f1bedd3e16654143f8356248c23b15f",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/2503c90.c",
+          "raw_export_sha256": "0e561ea91174e60b10ee8abd3e24c34d3e01cc44d1451d55db20d3a9c27c2327"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "cd0b8c49f796c5a02ad9dddb0ce452b2d48b040fafc490a942c10260dbfee361"
+    },
+    {
+      "name": "card_cabal_shrine",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x25059b0",
+          "end": "0x2505a35",
+          "bytes_sha256": "d7b6edae7f149db7e5853ac915b58850a1ed5633e2aae915a6e8df990fe9f218",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/25059b0.c",
+          "raw_export_sha256": "e1330f35e61a6575f458bb38607190ed415956e8546658ed315b7d1ffe2e0fc3"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "b2f4ecc318f19bccf8931c9ab0bd8ce09370c81ce127d362ebf29d0931b08cd8"
+    },
+    {
+      "name": "card_cephalid_shrine",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2506cc0",
+          "end": "0x2506d9d",
+          "bytes_sha256": "3717b9d60383a324a56bc6f1f392cca04a2452dadc27bd990e2a083136ed0596",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/2506cc0.c",
+          "raw_export_sha256": "4d5410de62eb52dc4ea1c633bb0a81f37887c7dddda9c032a56be31ba2e579ab"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "a193bff38c67e6c69a7bed5b1c015899a6fdb00b43069a6745c2e18032aa2861"
+    },
+    {
+      "name": "card_dwarven_shrine",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x2509680",
+          "end": "0x2509703",
+          "bytes_sha256": "a9c405b35a40d081a2041aeba36d6afb33318d221396b16901a08b81ca06dcff",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/2509680.c",
+          "raw_export_sha256": "3c48ddfa216931f855c988b702ef1ebd5103782a89247f8b907efdd3705586f7"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "16259aafa892655db0501e24c4577f0a194d8b067600b8db2d5b591762d376f8"
+    },
+    {
+      "name": "card_nantuko_shrine",
+      "source": "cards/odissey.c",
+      "native_source": "cards/odyssey.c",
+      "native_ranges": [
+        {
+          "address": "0x250e2d0",
+          "end": "0x250e370",
+          "bytes_sha256": "4247e898875475e1a9cc5bb9a94e292a822629e86cf113a2933dade43d4da218",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/250e2d0.c",
+          "raw_export_sha256": "43c9c750299989cf6598a1f466688927ec493939b8e44221b9b555de49d31ff0"
+        }
+      ],
+      "method": "decompiled_native_body",
+      "source_changed": true,
+      "definition_sha256": "6f1e771594c2157cfb5d3511bd19fc4a61d9e87cb6838aa39dce31118b967b12"
+    },
+    {
+      "name": "card_acorn_harvest",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x23115c0",
+          "end": "0x2311689",
+          "bytes_sha256": "345f73bd3ee7fc33e42a7d28aac9b1e9f531dfb00cdf79492f92a71be8f9ec44",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/23115c0.c",
+          "raw_export_sha256": "dcc79ca8cfa1240987472b79863dd79d8f1a81726a6d5ae756be61c58c0d0efc"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "3d18304bbdf03f3d14bec019cc5cf3f51f4772a2fbc45d0ab166398d0ce2c715"
+    },
+    {
+      "name": "card_anurid_scavenger",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x23117f0",
+          "end": "0x2311809",
+          "bytes_sha256": "9ff245e36c15e525cff0a6904139572205710afdf3a6ab6d61bd0ea560412b1c",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/23117f0.c",
+          "raw_export_sha256": "6460e600a39c75855a89ef355681fcff641f5f5f8fb632676341f426153b6f4b"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "f6aa4aef14cdb7dd1eb5cf46d552f38e9f9431ccad84467a36ac7e92b570624f"
+    },
+    {
+      "name": "card_carrion_rats",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x2312390",
+          "end": "0x23123a9",
+          "bytes_sha256": "89eddf95398c59da3ac28fa00b10d4f48c3ad7a852b75572c6db8d32d7d1c87a",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/2312390.c",
+          "raw_export_sha256": "80a2f43a93c4a55cb6884f87bde6469b9e8ad9766761d947b56034d604bac1c5"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "45485154985f1e00a0ef288712f0a54f1e13834f50208d2194a1e9dc80b0e172"
+    },
+    {
+      "name": "card_carrion_wurm",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x23123b0",
+          "end": "0x23123c9",
+          "bytes_sha256": "9dc3c245109db50a83c30de0f678c633d2c6d84d3fb907454c8d6543c4031f82",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/23123b0.c",
+          "raw_export_sha256": "73df49e32559bdff1f344caf0cc3c7f579747aaf68cb7bb70103e873423a9b8c"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "5b2b9f6b6a7ef63bc9bb97435a2935d8274907fe379a998c3cde3f4f43d8e1e6"
+    },
+    {
+      "name": "card_crippling_fatigue",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x23133f0",
+          "end": "0x23135d6",
+          "bytes_sha256": "428b542bf4516d1f53621e88cf07ef29a56b2c1aabfd55f811b51f424e0cb677",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/23133f0.c",
+          "raw_export_sha256": "20f2b0bf1b9bb18683ad9fae144d7143d48759c9eeab84842d0db814460891f3"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "65119c5171dff34dab428fc07831c8b5d0ec4b5ebe7e9eb1e85eea977e38115d"
+    },
+    {
+      "name": "card_deep_analysis",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x23136e0",
+          "end": "0x2313883",
+          "bytes_sha256": "6db2fe421a6489333d64e61a1c892b48254faa3550d869e18bcede1419fc5661",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/23136e0.c",
+          "raw_export_sha256": "c0df5784a45b294fb17e89c505331198b904b281b2a272752a8d9b3102d0ed3f"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "2704bd9bf913b0b5dd76ebcf87275498754efda26f6b172bd8d0fa78b7ab7a68"
+    },
+    {
+      "name": "card_gurzigost",
+      "source": "cards/torment.c",
+      "native_source": "cards/torment.c",
+      "native_ranges": [
+        {
+          "address": "0x2314720",
+          "end": "0x23148c4",
+          "bytes_sha256": "b6e722fd9273d278128b27a0aca59b1f120f71ec3f2492f17baa2f946d2fd7a6",
+          "raw_export": ".recovery/decompiled-grave-flashback-stronghold-support/2314720.c",
+          "raw_export_sha256": "427dd864f467038034459ce940404ac65aa855121a7f09bfbee79f5af214ac6e"
+        }
+      ],
+      "method": "retained_source_reviewed_against_complete_native_body",
+      "source_changed": false,
+      "definition_sha256": "0fe900894b6a311ced968d6e242cbe30624dd6d6641882fe4fc9a0a67d649ae8"
+    }
+  ],
+  "helper_definitions": 32,
+  "native_helper_ranges": 34,
+  "changed_helper_definitions": 13,
+  "changed_card_callers": 5,
+  "source_unit_mapping": {
+    "native": "cards/odyssey.c",
+    "physical": "cards/odissey.c",
+    "definitions": 18,
+    "scope": "Explicit whole-body receipts only. The unrelated recovered card overlay remains in cards/odyssey.c; no global name alias or relaxed automatic retention."
+  },
+  "native_contracts": {
+    "death_legacies": {
+      "resolve_before_visibility": true,
+      "old_end_trigger_resets_removed": true,
+      "detach_bytes": {
+        "jinxed_ring_effect": 1,
+        "mortuary_effect": 1,
+        "last_laugh_effect": 1,
+        "burning_sands_effect": 2
+      },
+      "damage_packets": "one per dead permanent",
+      "mortuary_filters": 112,
+      "mortuary_storage_start": 1,
+      "mortuary_legacy_removed_after_resolution": true
+    },
+    "dream_halls": {
+      "register_parameters": {
+        "player": "eax",
+        "event": "edx"
+      },
+      "eliminated_parameters": [
+        "card"
+      ],
+      "source_arrays": [
+        "int pwdh[2][hand_count[player]]",
+        "int ctsc[2][hand_count[player]]"
+      ],
+      "legacy_completion": "EVENT_LEAVES_PLAY_ABILITY"
+    },
+    "grave_eater": {
+      "worker_register_parameters": {
+        "player": "eax",
+        "card": "edx",
+        "crds": "ecx"
+      },
+      "eliminated_parameters": [
+        "event"
+      ],
+      "dispatch": "dat_ability",
+      "mode": "DAT_RESOLVE_TRIGGER_MANDATORY",
+      "argument": 0,
+      "completion": "EVENT_DAT_ABILITY",
+      "failure": "any negative tutor result"
+    },
+    "grave_recycler": {
+      "current_callers": {
+        "card_anurid_scavenger": 1,
+        "card_gurzigost": 2
+      },
+      "native_unrolled_for_these_values": true,
+      "insufficient_graveyard_sacrifices": true,
+      "tutor_success": ">=0"
+    },
+    "false_memories": {
+      "worker_register_parameters": {
+        "player": "eax",
+        "card": "edx"
+      },
+      "eliminated_parameters": [
+        "event"
+      ],
+      "tutor_success": ">=0",
+      "eot_wrapper": true
+    },
+    "threshold": {
+      "constants": {
+        "pow": 1,
+        "tou": 1,
+        "key": 0
+      },
+      "stack": {
+        "s_key": [
+          145,
+          0
+        ]
+      },
+      "original_source_parameters_preserved": true
+    },
+    "flashback_life": {
+      "constants": {
+        "colorless": 1,
+        "red": 0,
+        "white": 0,
+        "lif": 3
+      },
+      "stack": {
+        "black": [
+          145,
+          0
+        ],
+        "blue": [
+          145,
+          4
+        ],
+        "green": [
+          145,
+          8
+        ]
+      },
+      "original_source_parameters_preserved": true
+    },
+    "nightmare": {
+      "color": "CHANGE_COLOR_SET|CHANGE_COLOR_NO_SOUND",
+      "subtype": "add_a_subtype_permanently"
+    },
+    "shrine": {
+      "return_type": "void",
+      "gate": "TRIGGER_SPELL_CAST and affect_me",
+      "dispatch_order": [
+        "dat_ability(...DAT_RESOLVE_TRIGGER_MANDATORY,0)",
+        "if amount: sp_ability_trigger(...player,card)"
+      ],
+      "completion": "EVENT_SPA",
+      "live_callers": 5,
+      "recompute_count_on_resolution": true
+    },
+    "flashback": {
+      "iid": "get_internal_card_id_from_csv_id(get_id(player,card))",
+      "interrupt_flag": "GA_INTERRUPT_ABILITY",
+      "interrupt_target": "card_on_stack_controller/card_on_stack",
+      "interrupt_target_count": 1,
+      "catalyst_stone_costs_retained": true
+    },
+    "filter_land": {
+      "basic_added_color_option": true,
+      "production": "produce_mana_tapped2_impl(...mca=0)",
+      "mana_reflection_and_contamination_queries": true,
+      "negative_generic_input": -1,
+      "contamination_second_amount_initial": 0
+    },
+    "shifty_doppelganger": {
+      "unmeld_ids": [
+        16046,
+        16116,
+        16123
+      ],
+      "returned_cards": 2,
+      "sacrifice_after_return": true
+    },
+    "preserved_quirks": [
+      "Mortuary second target cell lookup uses already-cleared player iid",
+      "Native detach bytes differ among the four death legacies",
+      "Shrine helper keeps native dat_ability call and player-controller spell trigger",
+      "False Memories keeps its retry loop on unsuccessful selection",
+      "Filter land contamination second amount stays0 unless both override quantities are negative",
+      "Dream Halls query checks instant type while activation also accepts interrupts"
+    ]
+  },
+  "scope": "32 complete helper definitions/34 native ranges including one already automatically retained threshold helper, and12 complete paired card callers. Thirteen helper bodies and five card callers changed. Built-in dialog backends and gameplay tests remain downstream."
+}

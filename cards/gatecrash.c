@@ -4,20 +4,26 @@
 void evolve(int player, int card, event_t event);
 
 // Functions
-void extort(int player, int card, event_t event){
+void extort(int player, int card, event_t event)
+{
 
-	if(	new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), NULL) ){
-		if( has_mana_hybrid(player, COLOR_BLACK, COLOR_WHITE, 1, 0) && charge_mana_hybrid(player, card, COLOR_BLACK, COLOR_WHITE, 1, 0) ){
-			int result = lose_life(1-player, 1);
-			gain_life(player, result);
-		}
-	}
-
+  sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    if (has_mana_hybrid(player, COLOR_BLACK, COLOR_WHITE, 1, 0) &&
+        charge_mana_hybrid(player, card, COLOR_BLACK, COLOR_WHITE, 1, 0))
+    {
+      int result = lose_life(1 - player, 1);
+      gain_life(player, result);
+    }
+  }
 }
 
-int battalion(int player, int card, event_t event){
-	// Battalion - Whenever ~ and at least two other creatures attack, [...]
-	return declare_attackers_trigger(player, card, event, 0, player, card) && count_attackers(player) >= 3 ? 1 : 0;
+void battalion(int player, int card, event_t event)
+{
+  // Battalion - Whenever this and at least two other creatures attack, [...]
+  store_attackers(player, card, event, DAT_BATTALION, player, card, NULL);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
 }
 
 void evolve(int player, int card, event_t event)
@@ -92,23 +98,27 @@ LAB_02516bb5:
   return;
 }
 
-static int cipher_legacy(int player, int card, event_t event){
-
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-
-		int result = whenever_i_deal_damage_to_a_player(instance->damage_target_player, instance->damage_target_card, event,
-														DDBM_TRIGGER_OPTIONAL | DDBM_MUST_BE_COMBAT_DAMAGE);
-		if( result ){
-			int amount = BYTE0(result) + BYTE1(result);
-			int i;
-			for(i=0; i<amount; i++){
-				copy_spell(player, instance->targets[1].card );
-			}
-		}
-	}
-
-	return 0;
+static int cipher_legacy(int player, int card, event_t event)
+{
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      (event == EVENT_DEAL_DAMAGE || event == EVENT_GRAVEYARD_FROM_PLAY ||
+       trigger_condition == TRIGGER_DEAL_DAMAGE || event == EVENT_CHANGE_TYPE))
+  {
+    card_instance_t *instance = in_play(player, card);
+    if (instance)
+    {
+      int packets = attached_creature_deals_damage(
+          player, card, event,
+          DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_TRIGGER_OPTIONAL);
+      if (packets)
+      {
+        int p = get_card_instance(player, card)->damage_target_player;
+        for (; packets > 0; --packets)
+          copy_spell(p, instance->targets[1].card);
+      }
+    }
+  }
+  return 0;
 }
 
 void cipher(int player, int card){
@@ -253,16 +263,20 @@ int card_blind_obedience(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
-int card_boros_elite(int player, int card, event_t event){
-/* CARD_ID_BOROS_ELITE	12899
-Boros Elite	|W
-Creature - Human Soldier 1/1
-Battalion - Whenever ~ and at least two other creatures attack, ~ gets +2/+2 until end of turn. */
+int card_boros_elite(int player, int card, event_t event)
+{
+  /* CARD_ID_BOROS_ELITE	12899
+  Boros Elite	|W
+  Creature - Human Soldier 1/1
+  Battalion - Whenever ~ and at least two other creatures attack, ~ gets +2/+2 until end of turn. */
 
-	if( battalion(player, card, event) ){
-		pump_until_eot(player, card, player, card, 2, 2);
-	}
-	return 0;
+  battalion(player, card, event);
+
+  if (event == EVENT_DAT_ABILITY)
+  {
+    pump_until_eot(player, card, player, card, 2, 2);
+  }
+  return 0;
 }
 
 int card_court_street_denizen(int player, int card, event_t event){
@@ -297,16 +311,21 @@ Whenever another |Swhite creature enters the battlefield under your control, tap
 	return 0;
 }
 
-int card_daring_skyjak(int player, int card, event_t event){
-/* CARD_ID_DARING_SKYJEK	12918
-Daring Skyjek	|1|W
-Creature - Human Knight 3/1
-Battalion - Whenever ~ and at least two other creatures attack, ~ gains flying until end of turn. */
+int card_daring_skyjak(int player, int card, event_t event)
+{
+  /* CARD_ID_DARING_SKYJEK	12918
+  Daring Skyjek	|1|W
+  Creature - Human Knight 3/1
+  Battalion - Whenever ~ and at least two other creatures attack, ~ gains flying until end of turn.
+*/
 
-	if( battalion(player, card, event) ){
-		pump_ability_until_eot(player, card, player, card, 0, 0, KEYWORD_FLYING, 0);
-	}
-	return 0;
+  battalion(player, card, event);
+
+  if (event == EVENT_DAT_ABILITY)
+  {
+    pump_ability_until_eot(player, card, player, card, 0, 0, KEYWORD_FLYING, 0);
+  }
+  return 0;
 }
 
 int card_debtors_pulpit(int player, int card, event_t event){
@@ -351,37 +370,47 @@ Creature - Thrull 1/1
 	return regeneration(player, card, event, 0, 1, 0, 0, 0, 0);
 }
 
-int card_frontline_medic(int player, int card, event_t event){
+int card_frontline_medic(int player, int card, event_t event)
+{
 
-	/* Frontline Medic	|2|W
-	 * Creature - Human Cleric 3/3
-	 * Battalion - Whenever ~ and at least two other creatures attack, creatures you control gain indestructible until end of turn.
-	 * Sacrifice ~: Counter target spell with |X in its mana cost unless its controller pays |3. */
+  /* Frontline Medic	|2|W
+   * Creature - Human Cleric 3/3
+   * Battalion - Whenever ~ and at least two other creatures attack, creatures you control gain
+   * indestructible until end of turn. Sacrifice ~: Counter target spell with |X in its mana cost
+   * unless its controller pays |3. */
 
-	if( battalion(player, card, event) ){
-		pump_creatures_until_eot(player, card, player, 0, 0,0, 0,SP_KEYWORD_INDESTRUCTIBLE, NULL);
-	}
+  battalion(player, card, event);
 
-	if( event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, GAA_SPELL_ON_STACK | GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL) &&
-			is_x_spell(card_on_stack_controller, card_on_stack)
-		  ){
-			return 99;
-		}
-	}
+  if (event == EVENT_DAT_ABILITY)
+  {
+    pump_creatures_until_eot(player, card, player, 0, 0, 0, 0, SP_KEYWORD_INDESTRUCTIBLE, NULL);
+  }
 
-	if(event == EVENT_ACTIVATE ){
-		if( charge_mana_for_activated_ability(player, card, MANACOST0) ){
-			counterspell(player, card, event, NULL, 0);
-			kill_card(player, card, KILL_SACRIFICE);
-		}
-	}
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (generic_activated_ability(player, card, event, GAA_SPELL_ON_STACK | GAA_SACRIFICE_ME,
+                                  MANACOST0, 0, NULL, NULL) &&
+        is_x_spell(card_on_stack_controller, card_on_stack))
+    {
+      return 99;
+    }
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		counterspell_resolve_unless_pay_x(player, card, NULL, 0, 3);
-	}
+  if (event == EVENT_ACTIVATE)
+  {
+    if (charge_mana_for_activated_ability(player, card, MANACOST0))
+    {
+      counterspell(player, card, event, NULL, 0);
+      kill_card(player, card, KILL_SACRIFICE);
+    }
+  }
 
-	return 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    counterspell_resolve_unless_pay_x(player, card, NULL, 0, 3);
+  }
+
+  return 0;
 }
 
 int card_gideon_champion_of_justice(int player, int card, event_t event)
@@ -626,16 +655,19 @@ int card_murder_investigation(int player, int card, event_t event){
 
 int card_nav_squad_commandos(int player, int card, event_t event)
 {
-/* CARD_ID_NAV_SQUAD_COMMANDOS	13016
-Nav Squad Commandos	|4|W
-Creature - Human Soldier 3/5
-Battalion - Whenever ~ and at least two other creatures attack, ~ gets +1/+1 until end of turn. Untap it. */
+  /* CARD_ID_NAV_SQUAD_COMMANDOS	13016
+  Nav Squad Commandos	|4|W
+  Creature - Human Soldier 3/5
+  Battalion - Whenever ~ and at least two other creatures attack, ~ gets +1/+1 until end of turn.
+  Untap it. */
 
-  if (battalion(player, card, event))
-	{
-	  pump_until_eot(player, card, player, card, 1, 1);
-	  untap_card(player, card);
-	}
+  battalion(player, card, event);
+
+  if (event == EVENT_DAT_ABILITY)
+  {
+    pump_until_eot(player, card, player, card, 1, 1);
+    untap_card(player, card);
+  }
 
   return 0;
 }
@@ -1918,68 +1950,70 @@ its controller may cast a copy of the encoded card without paying its mana cost.
 	return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &test);
 }
 
-static int ogre_slumlord_effect(int player, int card, event_t event){
+static int ogre_slumlord_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_OGRE_SLUMLORD ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_OGRE_SLUMLORD)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						//Will trigger also if this is not a creature when it goes into the graveyard;
-						if( ! is_what(p, c, TYPE_CREATURE) ){
-							count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
-						}
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				if( ! is_token(affected_card_controller, affected_card) ){
-					count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
-				}
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			generate_tokens_by_id(player, card, CARD_ID_RAT, amount);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+            return 0;
+          }
+        }
+        if (!is_token(affected_card_controller, affected_card))
+        {
+          count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
+        }
+      }
+    }
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
-
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) && event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    generate_tokens_by_id(player, card, CARD_ID_RAT, BYTE0(result));
+    kill_card(player, card, KILL_EXILE);
+  }
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+    kill_card(player, card, KILL_EXILE);
+  return 0;
 }
 
 int card_ogre_slumlord(int player, int card, event_t event){
@@ -2287,24 +2321,30 @@ Creature - Zombie 1/1
 
 // Red
 
-int card_bomber_corps(int player, int card, event_t event){
-	/* Bomber Corps	|1|R	0x200991d
-	 * Creature - Human Soldier 1/2
-	 * Battalion - Whenever ~ and at least two other creatures attack, ~ deals 1 damage to any target. */
-	if( battalion(player, card, event) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
-		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-		td.allow_cancel = 0;
+int card_bomber_corps(int player, int card, event_t event)
+{
+  /* Bomber Corps	|1|R	0x200991d
+   * Creature - Human Soldier 1/2
+   * Battalion - Whenever ~ and at least two other creatures attack, ~ deals 1 damage to any target.
+   */
+  battalion(player, card, event);
 
-		card_instance_t *instance = get_card_instance( player, card );
+  if (event == EVENT_DAT_ABILITY)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+    td.allow_cancel = 0;
 
-		if( can_target(&td) && pick_target(&td, "TARGET_ANY") ){
-			damage_target0(player, card, 1);
-		}
-		instance->number_of_targets = 0;
-	}
-	return 0;
+    card_instance_t *instance = get_card_instance(player, card);
+
+    if (can_target(&td) && pick_target(&td, "TARGET_ANY"))
+    {
+      damage_target0(player, card, 1);
+    }
+    instance->number_of_targets = 0;
+  }
+  return 0;
 }
 
 int card_crackling_perimeter(int player, int card, event_t event){
@@ -2349,25 +2389,32 @@ Tap an untapped Gate you control: ~ deals 1 damage to each opponent. */
 
 // ember beast --> mogg flunkies
 
-int card_firefist_striker(int player, int card, event_t event){
-/* CARD_ID_FIREFIST_STRIKER	12942
-Firefist Striker	|1|R
-Creature - Human Soldier 2/1
-Battalion - Whenever ~ and at least two other creatures attack, target creature can't block this turn. */
+int card_firefist_striker(int player, int card, event_t event)
+{
+  /* CARD_ID_FIREFIST_STRIKER	12942
+  Firefist Striker	|1|R
+  Creature - Human Soldier 2/1
+  Battalion - Whenever ~ and at least two other creatures attack, target creature can't block this
+  turn. */
 
-	if( battalion(player, card, event) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.allow_cancel = 0;
+  battalion(player, card, event);
 
-		card_instance_t *instance = get_card_instance( player, card );
+  if (event == EVENT_DAT_ABILITY)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.allow_cancel = 0;
 
-		if( can_target(&td) && pick_target(&td, "TARGET_CREATURE") ){
-			pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
-		}
-		instance->number_of_targets = 0;
-	}
-	return 0;
+    card_instance_t *instance = get_card_instance(player, card);
+
+    if (can_target(&td) && pick_target(&td, "TARGET_CREATURE"))
+    {
+      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                             0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
+    }
+    instance->number_of_targets = 0;
+  }
+  return 0;
 }
 
 int card_five_alarm_fire(int player, int card, event_t event)
@@ -2561,21 +2608,25 @@ static int legion_loyalist_effect(int player, int card, event_t event){
 	return 0;
 }
 
-int card_legion_loyalist(int player, int card, event_t event){
-/* CARD_ID_LEGION_LOYALIST	12993
-Legion Loyalist	|R
-Creature - Goblin Soldier 1/1
-Haste
-Battalion - Whenever ~ and at least two other creatures attack, creatures you control gain first strike and trample until end of turn
-and can't be blocked by creature tokens this turn. */
+int card_legion_loyalist(int player, int card, event_t event)
+{
+  /* CARD_ID_LEGION_LOYALIST	12993
+  Legion Loyalist	|R
+  Creature - Goblin Soldier 1/1
+  Haste
+  Battalion - Whenever ~ and at least two other creatures attack, creatures you control gain first
+  strike and trample until end of turn and can't be blocked by creature tokens this turn. */
 
-	haste(player, card, event);
-	if( battalion(player, card, event) ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		add_legacy_effect_to_all(player, card, &legion_loyalist_effect, player, &this_test);
-	}
-	return 0;
+  haste(player, card, event);
+  battalion(player, card, event);
+
+  if (event == EVENT_DAT_ABILITY)
+  {
+    test_definition_t this_test;
+    default_test_definition(&this_test, TYPE_CREATURE);
+    add_legacy_effect_to_all(player, card, &legion_loyalist_effect, player, &this_test);
+  }
+  return 0;
 }
 
 int card_madcap_skills(int player, int card, event_t event){
@@ -2863,16 +2914,20 @@ Bloodrush - |2|R, Discard ~: Target attacking creature gets +3/+1 and gains firs
 	return bloodrush(player, card, event, MANACOST_XR(2, 1), 3, 1, KEYWORD_FIRST_STRIKE, 0);
 }
 
-int card_warmind_infantry(int player, int card, event_t event){
-/* CARD_ID_WARMIND_INFANTRY	13098
-Warmind Infantry	|2|R
-Creature - Elemental Soldier 2/3
-Battalion - Whenever ~ and at least two other creatures attack, ~ gets +2/+0 until end of turn. */
+int card_warmind_infantry(int player, int card, event_t event)
+{
+  /* CARD_ID_WARMIND_INFANTRY	13098
+  Warmind Infantry	|2|R
+  Creature - Elemental Soldier 2/3
+  Battalion - Whenever ~ and at least two other creatures attack, ~ gets +2/+0 until end of turn. */
 
-	if( battalion(player, card, event) ){
-		pump_until_eot(player, card, player, card, 2, 0);
-	}
-	return 0;
+  battalion(player, card, event);
+
+  if (event == EVENT_DAT_ABILITY)
+  {
+    pump_until_eot(player, card, player, card, 2, 0);
+  }
+  return 0;
 }
 
 int card_wrecking_ogre(int player, int card, event_t event){
@@ -4453,27 +4508,33 @@ int card_fathom_mage(int player, int card, event_t event)
   return 0;
 }
 
-int card_firemane_avenger(int player, int card, event_t event){
-	/* Firemane Avenger	|2|R|W	0x2009a8a
-	 * Creature - Angel 3/3
-	 * Flying
-	 * Battalion - Whenever ~ and at least two other creatures attack, ~ deals 3 damage to any target and you gain 3 life. */
-	if( battalion(player, card, event) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
-		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-		td.allow_cancel = 0;
+int card_firemane_avenger(int player, int card, event_t event)
+{
+  /* Firemane Avenger	|2|R|W	0x2009a8a
+   * Creature - Angel 3/3
+   * Flying
+   * Battalion - Whenever ~ and at least two other creatures attack, ~ deals 3 damage to any target
+   * and you gain 3 life. */
+  battalion(player, card, event);
 
-		card_instance_t *instance = get_card_instance( player, card );
+  if (event == EVENT_DAT_ABILITY)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+    td.allow_cancel = 0;
 
-		if( can_target(&td) && pick_target(&td, "TARGET_ANY") ){
-			damage_creature_or_player(player, card, event, 3);
-			gain_life(player, 3);
-		}
-		instance->number_of_targets = 0;
-	}
+    card_instance_t *instance = get_card_instance(player, card);
 
-	return 0;
+    if (can_target(&td) && pick_target(&td, "TARGET_ANY"))
+    {
+      damage_target0(player, card, 3);
+      gain_life(player, 3);
+    }
+    instance->number_of_targets = 0;
+  }
+
+  return 0;
 }
 
 int card_fortress_cyclops(int player, int card, event_t event){
@@ -4768,20 +4829,20 @@ int card_hydroform(int player, int card, event_t event){
 static int effect_lazav_dimir_mastermind(int player, int card, event_t event);
 static void lazav_mastermind_impl(int player, int card, event_t event, int is_effect)
 {
-  card_instance_t* instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
   int p, c;
   if (is_effect)
-	{
-	  p = instance->damage_target_player;
-	  c = instance->damage_target_card;
-	  if (!in_play(p, c))
-		return;
-	}
+  {
+    p = instance->damage_target_player;
+    c = instance->damage_target_card;
+    if (!in_play(p, c))
+      return;
+  }
   else
-	{
-	  p = player;
-	  c = card;
-	}
+  {
+    p = player;
+    c = card;
+  }
 
   check_legend_rule(p, c, event);
 
@@ -4792,72 +4853,79 @@ static void lazav_mastermind_impl(int player, int card, event_t event, int is_ef
 
   // From library
   enable_xtrigger_flags |= ENABLE_XTRIGGER_MILLED;
-  if (xtrigger_condition() == XTRIGGER_MILLED && affect_me(player, card) && reason_for_trigger_controller == player
-	  && trigger_cause_controller == 1-player && !is_humiliated(p, c, AL_TRIG))
-	{
-	  if (event != EVENT_TRIGGER && event != EVENT_RESOLVE_TRIGGER)
-		return;
+  if (xtrigger_condition() == XTRIGGER_MILLED && affect_me(player, card) &&
+      reason_for_trigger_controller == player && trigger_cause_controller == 1 - player &&
+      !is_humiliated(p, c, AL_TRIG))
+  {
+    if (event != EVENT_TRIGGER && event != EVENT_RESOLVE_TRIGGER)
+      return;
 
-	  int i;
-	  for (i = 0; i < num_cards_milled; ++i)
-		if (is_what(-1, cards_milled[i].internal_card_id, TYPE_CREATURE))
-		  {
-			if (event == EVENT_TRIGGER)
-			  {
-				event_result |= RESOLVE_TRIGGER_AI(player);
-				return;
-			  }
+    int i;
+    for (i = 0; i < num_cards_milled; ++i)
+      if (is_what(-1, cards_milled[i].internal_card_id, TYPE_CREATURE))
+      {
+        if (event == EVENT_TRIGGER)
+        {
+          event_result |= RESOLVE_TRIGGER_AI(player);
+          return;
+        }
 
-			if (event == EVENT_RESOLVE_TRIGGER)
-			  {
-				iids[num_creatures] = cards_milled[i].internal_card_id;
-				++num_creatures;
-			  }
-		  }
-	}
+        if (event == EVENT_RESOLVE_TRIGGER)
+        {
+          iids[num_creatures] = cards_milled[i].internal_card_id;
+          ++num_creatures;
+        }
+      }
+  }
 
   // From anywhere else
   enable_xtrigger_flags |= ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY;
   if (xtrigger_condition() == XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY)
-	{
-	  test_definition_t test;
-	  new_default_test_definition(&test, TYPE_CREATURE, "");
-	  if (when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(player, card, event, 1-player, RESOLVE_TRIGGER_OPTIONAL, &test))
-		{
-		  iids[0] = trigger_cause;
-		  num_creatures = 1;
-		}
-	}
+  {
+    test_definition_t test;
+    new_default_test_definition(&test, TYPE_CREATURE, "");
+    if (when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(
+            player, card, event, 1 - player, RESOLVE_TRIGGER_OPTIONAL, &test))
+    {
+      iids[0] = trigger_cause;
+      num_creatures = 1;
+    }
+  }
 
-  if (num_creatures > 0)	// Only possible when resolving an XTRIGGER_MILLED or XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY
-	{
-	  int chosen;
-	  if (IS_AI(player))
-		chosen = recorded_rand(player, num_creatures + 1);	// +1 so ai can choose to stay put
-	  else
-		chosen = show_deck(player, iids, num_creatures, "Lazav, Dimir Mastermind: become creature", 0, 0x7281a4);	// DIALOGBUTTONS[1] = "Cancel"
+  if (num_creatures > 0) // Only possible when resolving an XTRIGGER_MILLED or
+                         // XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY
+  {
+    int chosen;
+    if (IS_AI(player))
+      chosen = recorded_rand(player, num_creatures + 1); // +1 so ai can choose to stay put
+    else
+      chosen = show_deck(player, iids, num_creatures, "Lazav, Dimir Mastermind: become creature", 0,
+                         0x7281a4); // DIALOGBUTTONS[1] = "Cancel"
 
-	  if (chosen >= 0 && chosen < num_creatures)
-		{
-		  if (!is_effect)
-			{
-			  add_a_subtype(p, c, SUBTYPE_LEGEND);
-			  int leg = create_targetted_legacy_effect(p, c, effect_lazav_dimir_mastermind, p, c);
-			  if (leg != -1)
-				{
-				  card_instance_t* legacy = get_card_instance(p, leg);
-				  legacy->state |= STATE_PROCESSING;	// Since it was created during a trigger that it would try to respond to itself
-				}
-			}
+    if (chosen >= 0 && chosen < num_creatures)
+    {
+      if (!is_effect)
+      {
+        int leg = create_targetted_legacy_effect(p, c, effect_lazav_dimir_mastermind, p, c);
+        if (leg != -1)
+        {
+          card_instance_t *legacy = get_card_instance(p, leg);
+          legacy->state |= STATE_PROCESSING; // Since it was created during a trigger that it would
+                                             // try to respond to itself
+        }
+      }
 
-		  cloning(p, c, -1, iids[chosen]);	// no need to verify legend, since he still has only his old name
-		}
-	}
+      cloning(p, c, -1,
+              iids[chosen]); // no need to verify legend, since he still has only his old name
+    }
+  }
 }
 static int effect_lazav_dimir_mastermind(int player, int card, event_t event)
 {
   if (effect_follows_control_of_attachment(player, card, event))
-	return 0;
+    return 0;
+
+  attached_is_additional_subtype(player, card, event, SUBTYPE_LEGEND);
 
   lazav_mastermind_impl(player, card, event, 1);
 
@@ -5040,42 +5108,70 @@ int card_mystic_genesis(int player, int card, event_t event){
 
 // nimbus swimmer --> krakilin
 
-static int ozbedat_legacy(int player, int card, event_t event){
-	if( current_turn == player && upkeep_trigger(player, card, event) ){
-		if( check_rfg(player, CARD_ID_OBZEDAT_GHOST_COUNCIL) ){
-			int card_added = add_card_to_hand(player, get_internal_card_id_from_csv_id(CARD_ID_OBZEDAT_GHOST_COUNCIL));
-			remove_card_from_rfg(player, CARD_ID_OBZEDAT_GHOST_COUNCIL);
-			put_into_play(player, card_added);
-			give_haste(player, card_added);
-		}
-		kill_card(player, card, KILL_EXILE);
-	}
-	return 0;
+static int ozbedat_legacy(int player, int card, event_t event)
+{
+  if (current_turn == player && upkeep_trigger(player, card, event))
+  {
+    int iid = get_card_instance(player, card)->targets[1].card;
+    int csvid = cards_data[iid].id;
+    int csvids[2];
+    int melded = csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || csvid == CARD_ID_CHITTERING_HOST ||
+                 csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP;
+    if (melded)
+    {
+      unmeld(csvid, &csvids[0], &csvids[1]);
+      iid = get_internal_card_id_from_csv_id(csvids[0]);
+      csvid = cards_data[iid].id;
+    }
+    for (;;)
+    {
+      if (check_rfg(player, csvid))
+      {
+        int card_added = add_card_to_hand(player, iid);
+        remove_card_from_rfg(player, csvid);
+        put_into_play(player, card_added);
+        give_haste(player, card_added);
+      }
+      if (!melded)
+        break;
+      melded = 0;
+      iid = get_internal_card_id_from_csv_id(csvids[1]);
+      csvid = cards_data[iid].id;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
-int card_ozbedat_ghost_council(int player, int card, event_t event){
+int card_ozbedat_ghost_council(int player, int card, event_t event)
+{
 
-	check_legend_rule(player, card, event);
+  check_legend_rule(player, card, event);
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.zone = TARGET_ZONE_PLAYERS;
+  if (event == EVENT_ETB_ABILITY)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.zone = TARGET_ZONE_PLAYERS;
 
-		if( would_validate_arbitrary_target(&td, 1-player, -1) ){
-			lose_life(1-player, 2);
-			gain_life(player, 2);
-		}
-	}
+    if (would_validate_arbitrary_target(&td, 1 - player, -1))
+    {
+      lose_life(1 - player, 2);
+      gain_life(player, 2);
+    }
+  }
 
-	if( eot_trigger_mode(player, card, event, player, RESOLVE_TRIGGER_AI(player)) ){
-		create_legacy_effect(player, card, &ozbedat_legacy);
-		kill_card(player, card, KILL_EXILE);
-	}
+  if (eot_trigger_mode(player, card, event, player, RESOLVE_TRIGGER_AI(player)))
+  {
+    int legacy = create_legacy_effect(player, card, &ozbedat_legacy);
+    get_card_instance(player, legacy)->targets[1].card =
+        get_original_internal_card_id(player, card);
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	return 0;
+  return 0;
 }
 
 int card_one_thousand_lashes(int player, int card, event_t event){
@@ -5093,11 +5189,15 @@ int card_one_thousand_lashes(int player, int card, event_t event){
 	return card_arrest(player, card, event);
 }
 
-int card_ordruun_veteran(int player, int card, event_t event){
-	if( battalion(player, card, event) ){
-		pump_ability_until_eot(player, card, player, card, 0, 0, KEYWORD_DOUBLE_STRIKE, 0);
-	}
-	return 0;
+int card_ordruun_veteran(int player, int card, event_t event)
+{
+  battalion(player, card, event);
+
+  if (event == EVENT_DAT_ABILITY)
+  {
+    pump_ability_until_eot(player, card, player, card, 0, 0, KEYWORD_DOUBLE_STRIKE, 0);
+  }
+  return 0;
 }
 
 int card_orzhov_charm(int player, int card, event_t event){
@@ -6041,11 +6141,15 @@ int card_whispering_madness(int player, int card, event_t event){
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
-int card_wojek_halberdier(int player, int card, event_t event){
-	if( battalion(player, card, event) ){
-		pump_ability_until_eot(player, card, player, card, 0, 0, KEYWORD_FIRST_STRIKE, 0);
-	}
-	return 0;
+int card_wojek_halberdier(int player, int card, event_t event)
+{
+  battalion(player, card, event);
+
+  if (event == EVENT_DAT_ABILITY)
+  {
+    pump_ability_until_eot(player, card, player, card, 0, 0, KEYWORD_FIRST_STRIKE, 0);
+  }
+  return 0;
 }
 
 static int zameck_guildmage_legacy(int player, int card, event_t event){

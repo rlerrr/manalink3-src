@@ -7,29 +7,33 @@ int pay_overload(int player, int card, int colorless, int black, int blue, int g
                       int white);
 
 // Functions
-static int detain_legacy(int player, int card, event_t event){
+static int detain_legacy(int player, int card, event_t event)
+{
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
+    int p = instance->damage_target_player;
+    int c = instance->damage_target_card;
 
-		cannot_attack(p, c, event);
-		cannot_block(p, c, event);
+    cannot_attack(p, c, event);
+    cannot_block(p, c, event);
+    disable_all_activated_abilities(p, c, 1);
 
-		if (event == EVENT_BEGIN_TURN && current_turn == player){
-			disable_all_activated_abilities(instance->targets[0].player, instance->targets[0].card, 0);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+    if (event == EVENT_BEGIN_TURN && current_turn == player)
+    {
+      disable_all_activated_abilities(p, c, 0);
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
-int detain(int player, int card, int t_player, int t_card){
-	disable_all_activated_abilities(t_player, t_card, 1);
-	return create_targetted_legacy_effect(player, card, &detain_legacy, t_player, t_card);
+int detain(int player, int card, int t_player, int t_card)
+{
+  return create_targetted_legacy_effect(player, card, &detain_legacy, t_player, t_card);
 }
 
 static void ai_modifier_for_detain(int player, int card, int target_pos){
@@ -165,24 +169,29 @@ int pay_overload(int player, int card, int colorless, int black, int blue, int g
   return iVar3;
 }
 
-int unleash(int player, int card, event_t event){
-/*
-Unleash (You may have this creature enter the battlefield with a +1/+1 counter on it.
-		It can't block as long as it has a +1/+1 counter on it.)
-*/
+int unleash(int player, int card, event_t event)
+{
+  /*
+  Unleash (You may have this creature enter the battlefield with a +1/+1 counter on it.
+                  It can't block as long as it has a +1/+1 counter on it.)
+  */
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		int choice = do_dialog(player, player, card, -1, -1, " Give a +1/+1 counter\n Decline", 0);
-		if( choice == 0 ){
-			enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 1);
-		}
-	}
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    int choice = do_dialog(player, player, card, -1, -1, " Give a +1/+1 counter\n Decline", 0);
+    if (choice == 0)
+    {
+      enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 1);
+    }
+  }
 
-	if( event == EVENT_BLOCK_LEGALITY && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) && count_1_1_counters(player, card) ){
-		cannot_block(player, card, event);
-	}
+  if (event == EVENT_ABILITIES && affect_me(player, card) &&
+      !is_humiliated(player, card, AL_STATIC) && count_1_1_counters(player, card))
+  {
+    cannot_block(player, card, event);
+  }
 
-	return 0;
+  return 0;
 }
 
 int scavenge(int player, int card, event_t event, int colorless, int black, int blue, int green,
@@ -227,65 +236,83 @@ int scavenge(int player, int card, event_t event, int colorless, int black, int 
   return 0;
 }
 
-int keyrune(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white,
-			int pow, int tou, int key, int s_key, int clr, int subtype){
+int keyrune(int player, int card, event_t event, int cless, int black, int blue, int green, int red,
+            int white, int pow, int tou, int key, int s_key, int clr, int subtype)
+{
 
-	if( event == EVENT_CLEANUP ){
-		get_card_instance(player, card)->targets[1].player = 0;
-	}
+  if (event == EVENT_CLEANUP)
+  {
+    get_card_instance(player, card)->targets[1].player = 0;
+  }
 
-	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE ){
-		return mana_producer(player, card, event);
-	}
+  if (!IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE)
+  {
+    if (mana_producer(player, card, event))
+      return 1;
+    return generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, cless, black, blue,
+                                     green, red, white, 0, NULL, NULL) != 0;
+  }
 
-	card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
 
-	enum{
-		CHOICE_MANA = 1,
-		CHOICE_ANIMATE
-	};
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_ANIMATE
+  };
 
-	if(event == EVENT_ACTIVATE ){
-		int choice = CHOICE_MANA;
-		if( ! paying_mana() &&
-			generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_TYPE_CHANGE, cless, black, blue, green, red, white, 0, 0, 0) )
-		{
-			choice = CHOICE_ANIMATE;
-		}
-		instance->info_slot = choice;
-		if( ! IS_AI(player) && choice == CHOICE_ANIMATE ){
-			choice = DIALOG(player, card, event, DLG_RANDOM,
-							"Get mana", 1, 1,
-							"Animate", 	1, 1);
-			if( ! choice ){
-				spell_fizzled = 1;
-				return 0;
-			}
-		}
-		if( instance->info_slot == CHOICE_MANA ){
-			return mana_producer(player, card, event);
-		}
-		if( instance->info_slot == CHOICE_ANIMATE ){
-			generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, cless, black, blue, green, red, white, 0, NULL, NULL);
-			if( is_tapped(player, card) ){
-				ai_modifier -= 96;
-			}
-		}
-	}
+  if (event == EVENT_ACTIVATE)
+  {
+    int choice = CHOICE_MANA;
+    if (!paying_mana() &&
+        generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_TYPE_CHANGE, cless, black,
+                                  blue, green, red, white, 0, 0, 0))
+    {
+      choice = CHOICE_ANIMATE;
+    }
+    instance->info_slot = choice;
+    if (!IS_AI(player) && choice == CHOICE_ANIMATE)
+    {
+      choice = DIALOG(player, card, event, DLG_RANDOM, "Get mana",
+                      mana_producer(player, card, EVENT_CAN_ACTIVATE), 1, "Animate", 1, 1);
+      if (!choice)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+    }
+    if (instance->info_slot == CHOICE_MANA)
+    {
+      return mana_producer(player, card, event);
+    }
+    if (instance->info_slot == CHOICE_ANIMATE)
+    {
+      generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, cless, black, blue, green,
+                                red, white, 0, NULL, NULL);
+      if (is_tapped(player, card))
+      {
+        ai_modifier -= 96;
+      }
+    }
+  }
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot == 2 ){
-			card_instance_t *parent = get_card_instance(instance->parent_controller, instance->parent_card);
-			add_a_subtype(instance->parent_controller, instance->parent_card, subtype);
-			int legacy = artifact_animation(instance->parent_controller, instance->parent_card,
-											instance->parent_controller, instance->parent_card, 1, pow, tou, key, s_key);
-			card_instance_t *leg = get_card_instance(instance->parent_controller, legacy);
-			leg->targets[6].player = clr;
-			parent->targets[1].player = 66;
-		}
-	}
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (instance->info_slot == 2)
+    {
+      card_instance_t *parent =
+          get_card_instance(instance->parent_controller, instance->parent_card);
+      int legacy = artifact_animation(instance->parent_controller, instance->parent_card,
+                                      instance->parent_controller, instance->parent_card, 1, pow,
+                                      tou, key, s_key);
+      card_instance_t *leg = get_card_instance(instance->parent_controller, legacy);
+      leg->targets[6].player = clr;
+      leg->targets[9].card = subtype;
+      parent->targets[1].player = 66;
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 // Cards
@@ -1275,97 +1302,115 @@ int card_inaction_injunction(int player, int card, event_t event){
 }
 
 // isperia skywatch --> azorius arrester
-static int jace_weaken_attackers(int player, int card, event_t event){
-	if( current_turn != player ){
-	  int amt;
-	  if ((amt = declare_attackers_trigger(player, card, event, DAT_TRACK, 1-player, -1)))
-		{
-		  card_instance_t* instance = get_card_instance(player, card);
-		  unsigned char* attackers = (unsigned char*)(&instance->targets[2].player);
-		  for (--amt; amt >= 0; --amt)
-			if (in_play(current_turn, attackers[amt]))
-			  pump_until_eot(player, card, current_turn, attackers[amt], -1, 0);
-		}
-	}
-	if (event == EVENT_BEGIN_TURN && current_turn == player){
-		kill_card(player, card, KILL_EXILE);
-	}
-	return 0;
+static int jace_weaken_attackers(int player, int card, event_t event)
+{
+  if (current_turn != player)
+  {
+    store_attackers(player, card, event, DAT_TRACK, 1 - player, -1, NULL);
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    if (event == EVENT_DAT_ABILITY)
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      unsigned char *attackers = (unsigned char *)&instance->targets[2].player;
+      for (int amt = instance->targets[1].player - 1; amt >= 0; --amt)
+        if (in_play(current_turn, attackers[amt]))
+          pump_until_eot(player, card, current_turn, attackers[amt], -1, 0);
+    }
+  }
+  if (event == EVENT_BEGIN_TURN && current_turn == player)
+    kill_card(player, card, KILL_EXILE);
+  return 0;
 }
 
 
-int card_jace_architect_of_thought(int player, int card, event_t event){
+int card_jace_architect_of_thought(int player, int card, event_t event)
+{
 
-	/* Jace, Architect of Thought	|2|U|U
-	 * Planeswalker - Jace (4)
-	 * +1: Until your next turn, whenever a creature an opponent controls attacks, it gets -1/-0 until end of turn.
-	 * -2: Reveal the top three cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other on the bottom of your library in any order.
-	 * -8: For each player, search that player's library for a nonland card and exile it, then that player shuffles his or her library. You may cast those cards without paying their mana costs. */
+  /* Jace, Architect of Thought	|2|U|U
+   * Planeswalker - Jace (4)
+   * +1: Until your next turn, whenever a creature an opponent controls attacks, it gets -1/-0 until
+   * end of turn. -2: Reveal the top three cards of your library. An opponent separates those cards
+   * into two piles. Put one pile into your hand and the other on the bottom of your library in any
+   * order. -8: For each player, search that player's library for a nonland card and exile it, then
+   * that player shuffles his or her library. You may cast those cards without paying their mana
+   * costs. */
 
-	if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE || event == EVENT_RESOLVE_ACTIVATION)
-	{
-		card_instance_t *instance = get_card_instance(player, card);
+  check_legend_rule(player, card, event);
 
-		enum {
-			CHOICE_WEAKEN = 1,
-			CHOICE_LFOF,
-			CHOICE_SSPELL
-		}
+  if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE || event == EVENT_RESOLVE_ACTIVATION)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
 
-		choice = DIALOG(player, card, event,
-						DLG_RANDOM, DLG_PLANESWALKER,
-						"Weaken attackers", 1, count_subtype(1-player, TYPE_CREATURE, -1)*5, 1,
-						"Little FoF", 1, 15, -2,
-						"Steal a Spell", 1, 25, -8);
+    enum
+    {
+      CHOICE_WEAKEN = 1,
+      CHOICE_LFOF,
+      CHOICE_SSPELL
+    }
 
-		if (event == EVENT_CAN_ACTIVATE){
-			if (!choice)
-				return 0;	// else fall through to planeswalker()
-		}
-		else if (event == EVENT_RESOLVE_ACTIVATION){// event == EVENT_RESOLVE_ACTIVATION
+    choice = DIALOG(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Weaken attackers", 1,
+                    count_subtype(1 - player, TYPE_CREATURE, -1) * 5, 1, "Little FoF", 1, 15, -2,
+                    "Steal a Spell", 1, 25, -8);
 
-			if( choice == CHOICE_WEAKEN )
-				create_legacy_effect(instance->parent_controller, instance->parent_card, &jace_weaken_attackers);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (!choice)
+        return 0; // else fall through to planeswalker()
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    { // event == EVENT_RESOLVE_ACTIVATION
 
-			else if( choice == CHOICE_LFOF )
-				effect_fof(player, player, 3, TUTOR_BOTTOM_OF_DECK);
+      if (choice == CHOICE_WEAKEN)
+        create_legacy_effect(instance->parent_controller, instance->parent_card,
+                             &jace_weaken_attackers);
 
-			else{
-				test_definition_t this_test;
-				new_default_test_definition(&this_test, TYPE_INTERRUPT | TYPE_LAND, "Select a nonland (non-interrupt) card to exile.");
-				this_test.type_flag = DOESNT_MATCH;
+      else if (choice == CHOICE_LFOF)
+        effect_fof(player, player, 3, TUTOR_BOTTOM_OF_DECK);
 
-				int i, selected[2];
-				for (i = 0; i <= 1; i++){
-					selected[i] = new_global_tutor(player, i, TUTOR_FROM_DECK, TUTOR_RFG, AI_MAX_CMC, -1, &this_test);
-				}
-				while( selected[0] != -1 || selected[1] != -1 ){
-						int can_play_exiled_spell[2] = {	(selected[0] != -1 && can_legally_play_csvid(player, selected[0])),
-															(selected[1] != -1 && can_legally_play_csvid(player, selected[1]))
-						};
-						int spell_to_play = DIALOG(player, card, event,	DLG_RANDOM, DLG_OMIT_ILLEGAL, DLG_NO_CANCEL, DLG_NO_STORAGE,
-											selected[0] == -1 ? "" : get_card_name_by_id(selected[0]), can_play_exiled_spell[0], 3,
-											selected[1] == -1 ? "" : get_card_name_by_id(selected[1]), can_play_exiled_spell[1], 3,
-											"Done", (event != EVENT_CAN_CAST), 1);
-						if( spell_to_play == 3 ){
-							break;
-						}
-						else{
-							int csvid = selected[spell_to_play- 1];
-							selected[spell_to_play - 1] = -1;
-							play_card_in_exile_for_free(player, spell_to_play - 1, csvid);
-						}
-				}
+      else
+      {
+        test_definition_t this_test;
+        new_default_test_definition(&this_test, TYPE_INTERRUPT | TYPE_LAND,
+                                    "Select a nonland (non-interrupt) card to exile.");
+        this_test.type_flag = DOESNT_MATCH;
 
-			}
-		}
-	}
+        int i, selected[2];
+        for (i = 0; i <= 1; i++)
+        {
+          selected[i] =
+              new_global_tutor(player, i, TUTOR_FROM_DECK, TUTOR_RFG, AI_MAX_CMC, -1, &this_test);
+        }
+        while (selected[0] >= 0 || selected[1] >= 0)
+        {
+          int can_play_exiled_spell[2] = {
+              (selected[0] >= 0 && can_legally_play_csvid(player, selected[0])),
+              (selected[1] >= 0 && can_legally_play_csvid(player, selected[1]))};
+          int spell_to_play = DIALOG(
+              player, card, event, DLG_RANDOM, DLG_OMIT_ILLEGAL, DLG_NO_CANCEL, DLG_NO_STORAGE,
+              selected[0] < 0 ? "" : get_card_name_by_id(selected[0]), can_play_exiled_spell[0], 3,
+              selected[1] < 0 ? "" : get_card_name_by_id(selected[1]), can_play_exiled_spell[1], 3,
+              "Done", (event != EVENT_CAN_CAST), 1);
+          if (spell_to_play == 3)
+          {
+            break;
+          }
+          else
+          {
+            int csvid = selected[spell_to_play - 1];
+            selected[spell_to_play - 1] = -1;
+            play_card_in_exile_for_free(player, spell_to_play - 1, csvid);
+          }
+        }
+      }
+    }
+  }
 
-	if( event == EVENT_BEGIN_TURN && current_turn == player ){
-		get_card_instance(player, card)->targets[1].player = 0;
-	}
+  if (event == EVENT_BEGIN_TURN && current_turn == player)
+  {
+    get_card_instance(player, card)->targets[1].player = 0;
+  }
 
-	return planeswalker(player, card, event, 4);
+  return planeswalker(player, card, event, 4);
 }
 
 int card_mizzium_skin(int player, int card, event_t event){
@@ -1924,131 +1969,154 @@ static int grave_betrayal_reanimation_legacy(int player, int card, event_t event
 	return 0;
 }
 
-static int grave_betrayal_effect(int player, int card, event_t event){
+static int grave_betrayal_effect(int player, int card, event_t event)
+{
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player > -1 ){
-			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_GRAVE_BETRAYAL ){
-				kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (get_id(instance->damage_target_player, instance->damage_target_card) !=
+          CARD_ID_GRAVE_BETRAYAL)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
-		return 0;
-	}
+  if (get_card_instance(player, card)->damage_target_player > -1 &&
+      effect_follows_control_of_attachment(player, card, event))
+  {
+    return 0;
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) ){
-			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
-			if( kill_code ){
-				if( instance->damage_target_player > -1 ){
-					int p = instance->damage_target_player;
-					int c = instance->damage_target_card;
-					if( affect_me(p, c) ){
-						instance->damage_target_player = instance->damage_target_card = -1;
-						remove_status(player, card, STATUS_INVISIBLE_FX);
-						if( instance->targets[11].player < 0 ){
-							instance->targets[11].player = 0;
-						}
-						SET_BYTE1(instance->targets[11].player) = 1;
-					}
-				}
-				count_for_gfp_ability_and_store_values(player, card, event, 1-player, TYPE_CREATURE, NULL, GFPC_TRACK_DEAD_CREATURES, 0);
-			}
-		}
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (in_play(affected_card_controller, affected_card))
+    {
+      int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+      if (kill_code)
+      {
+        if (instance->damage_target_player > -1)
+        {
+          int p = instance->damage_target_player;
+          int c = instance->damage_target_card;
+          if (affect_me(p, c))
+          {
+            instance->damage_target_player = instance->damage_target_card = -1;
+            remove_status(player, card, STATUS_INVISIBLE_FX);
+            if (instance->targets[11].player < 0)
+            {
+              instance->targets[11].player = 0;
+            }
+            SET_BYTE2(instance->targets[11].player) = 1;
+          }
+        }
+        count_for_gfp_ability_and_store_values(player, card, event, 1 - player, TYPE_CREATURE, NULL,
+                                               GFPC_TRACK_DEAD_CREATURES | GFPC_STORE_OWNER, 0);
+      }
+    }
+  }
 
-	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			card_instance_t *instance = get_card_instance(player, card);
-			int amount = BYTE0(result);
-			int i;
-			for(i=0; i<amount; i++){
-				int owner = instance->targets[0].player;
-				int iid = instance->targets[0].card;
-				instance->targets[0].player = instance->targets[0].card = -1;
-				int legacy = create_legacy_effect(player, card, &grave_betrayal_reanimation_legacy);
-				card_instance_t *leg = get_card_instance(player, legacy);
-				leg->targets[0].player = owner;
-				leg->targets[0].card = iid;
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int amount = player == 0 ? BYTE1(result) : BYTE0(result);
+    int i;
+    for (i = 0; i < amount; i++)
+    {
+      int owner = instance->targets[i].player;
+      int iid = instance->targets[i].card;
+      instance->targets[i].player = instance->targets[i].card = -1;
+      int legacy = create_legacy_effect(player, card, &grave_betrayal_reanimation_legacy);
+      card_instance_t *leg = get_card_instance(player, legacy);
+      leg->targets[0].player = owner;
+      leg->targets[0].card = iid;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	//Reset counts if the legacy is still invisible
-	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
-		get_card_instance(player, card)->targets[11].player = 0;
-	}
+  if (event == EVENT_CLEANUP && !check_status(player, card, STATUS_INVISIBLE_FX))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
 
-	if( event == EVENT_CLEANUP && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+  return 0;
 }
 
 
-int card_grave_betrayal(int player, int card, event_t event){
-/*
-Grave Betrayal |5|B|B
-Enchantment
-Whenever a creature you don't control dies, return it to the battlefield under your control with an additional +1/+1 counter on it
-	at the beginning of the next end step. That creature is a black Zombie in addition to its other colors and types.
-*/
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		int found = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
-				card_instance_t *inst = get_card_instance(player, c);
-				if( inst->info_slot == (int)grave_betrayal_effect ){
-					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
-						(inst->targets[0].player == player && inst->targets[0].card == card) )
-					{
-						found = 1;
-						break;
-					}
-				}
-			}
-		}
-		if( ! found ){
-			int legacy = create_targetted_legacy_effect(player, card, &grave_betrayal_effect, player, card);
-			card_instance_t *inst = get_card_instance(player, legacy);
-			inst->targets[0].player = player;
-			inst->targets[0].card = card;
-			inst->number_of_targets = 1;
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-	}
+int card_grave_betrayal(int player, int card, event_t event)
+{
+  /*
+  Grave Betrayal |5|B|B
+  Enchantment
+  Whenever a creature you don't control dies, return it to the battlefield under your control with
+  an additional +1/+1 counter on it at the beginning of the next end step. That creature is a black
+  Zombie in addition to its other colors and types.
+  */
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    int c;
+    for (c = 0; c < active_cards_count[player]; c++)
+    {
+      if (in_play(player, c) && is_what(player, c, TYPE_EFFECT))
+      {
+        card_instance_t *inst = get_card_instance(player, c);
+        if (inst->info_slot == (int)grave_betrayal_effect)
+        {
+          if ((inst->damage_target_player == player && inst->damage_target_card == card) ||
+              (inst->targets[0].player == player && inst->targets[0].card == card))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy =
+          create_targetted_legacy_effect(player, card, &grave_betrayal_effect, player, card);
+      card_instance_t *inst = get_card_instance(player, legacy);
+      inst->targets[0].player = player;
+      inst->targets[0].card = card;
+      inst->number_of_targets = 1;
+      add_status(player, legacy, STATUS_INVISIBLE_FX);
+    }
+  }
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		count_for_gfp_ability_and_store_values(player, card, event, 1-player, TYPE_CREATURE, NULL, GFPC_TRACK_DEAD_CREATURES, 0);
-	}
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    count_for_gfp_ability_and_store_values(player, card, event, 1 - player, TYPE_CREATURE, NULL,
+                                           GFPC_TRACK_DEAD_CREATURES | GFPC_STORE_OWNER, 0);
+  }
 
-	if( get_card_instance(player, card)->kill_code <= 0 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( result ){
-			int amount = BYTE0(result);
-			int i;
-			for(i=0; i<amount; i++){
-				int owner = instance->targets[0].player;
-				int iid = instance->targets[0].card;
-				instance->targets[0].player = instance->targets[0].card = -1;
-				int legacy = create_legacy_effect(player, card, &grave_betrayal_reanimation_legacy);
-				card_instance_t *leg = get_card_instance(player, legacy);
-				leg->targets[0].player = owner;
-				leg->targets[0].card = iid;
-			}
-		}
-	}
+  if (get_card_instance(player, card)->kill_code <= 0)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result)
+    {
+      int amount = player == 0 ? BYTE1(result) : BYTE0(result);
+      int i;
+      for (i = 0; i < amount; i++)
+      {
+        int owner = instance->targets[i].player;
+        int iid = instance->targets[i].card;
+        instance->targets[i].player = instance->targets[i].card = -1;
+        int legacy = create_legacy_effect(player, card, &grave_betrayal_reanimation_legacy);
+        card_instance_t *leg = get_card_instance(player, legacy);
+        leg->targets[0].player = owner;
+        leg->targets[0].card = iid;
+      }
+    }
+  }
 
-	return global_enchantment(player, card, event);
+  return global_enchantment(player, card, event);
 }
 
 int card_launch_party(int player, int card, event_t event){
