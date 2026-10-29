@@ -163,8 +163,12 @@ def verify(proof,image,root=ROOT):
         assert integer(found[1],{})==row['value']
     assert len(record['native_restored_enums'])==7
     deferred=record['deferred_boundaries'];assert len(deferred)==2
+    from verify_cpp_chooser_recovery import resolved_stub_addresses
+    resolved=resolved_stub_addresses(proof,root)
     for row in deferred:
-        assert not row['counted_as_recovered'] and sha(body(row).encode())==row['definition_sha256']
+        assert not row['counted_as_recovered']  # Historical batch credited neither stub.
+        if int(row['native_address'],16) not in resolved:
+            assert sha(body(row).encode())==row['definition_sha256']
         registration={k:row[k] for k in ['source','name','native_address','return_value']}
         assert registration in proof['additional_source_stubs']
         assert abi('0x'+row['native_address'])==record['deferred_chooser_abi']['0x'+row['native_address']]

@@ -49,6 +49,17 @@ try {
     Pop-Location
     $env:PATH = $previousPath
 }
+if ($buildExitCode -eq 0 -and (Test-Path -LiteralPath (Join-Path $buildRoot 'docs/recovery-evidence/native-jump-table-recovery.json'))) {
+    # Fixed DLL entry addresses are consumed by Magic.exe and Cards.dat.
+    # A link can succeed with a stale/truncated veneer object; reject it here.
+    Push-Location $buildRoot
+    try {
+        & python (Join-Path $buildRoot 'tools/recovery/verify_native_jump_table.py') '--binary-only'
+        if ($LASTEXITCODE -ne 0) { $buildExitCode = $LASTEXITCODE }
+    } finally {
+        Pop-Location
+    }
+}
 Write-Host "Build log: $log"
 Get-Content -LiteralPath $log -Tail 25 | ForEach-Object {
     if ($_.Length -gt 280) { $_.Substring(0, 280) + ' ...' } else { $_ }

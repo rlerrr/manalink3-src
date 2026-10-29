@@ -2317,7 +2317,7 @@ address,type,name,size,native_name,source,mapping
 0x20e7750,function,card_foundry_of_the_consuls,589,card_foundry_of_the_consuls,cards/origins.c,same native name
 0x20e79a0,function,card_mage_ring_network,1220,card_mage_ring_network,cards/origins.c,same native name
 0x20e7e70,function,is_instant_or_has_flash,34,is_instant_or_has_flash,cards/time_spiral.c,same native name
-0x20e7ea0,function,target_must_be_permanent_or_suspend,106,target_must_be_permanent_or_suspend,cards/time_spiral.c,public COFF entry 0x2570b70
+0x20e7ea0,function,target_must_be_permanent_or_suspend,106,target_must_be_permanent_or_suspend,cards/time_spiral.c,public COFF entry 0x2574cf0
 0x20e7f10,function,generic_suspend_legacy,1965,generic_suspend_legacy,cards/time_spiral.c,same native name
 0x20e86c0,function,angels_grace_legacy,118,angels_grace_legacy,cards/time_spiral.c,same native name
 0x20e8740,function,can_make_saproling_from_fungus,108,can_make_saproling_from_fungus,cards/time_spiral.c,same native name
@@ -4852,7 +4852,7 @@ address,type,name,size,native_name,source,mapping
 0x21d4080,function,card_planewide_celebration,1748,card_planewide_celebration,cards/war_of_the_spark.c,recovery ledger
 0x21d4760,function,card_prismite,628,card_prismite,cards/war_of_the_spark.c,recovery ledger
 0x21d49e0,function,card_prison_realm,300,card_prison_realm,cards/war_of_the_spark.c,recovery ledger
-0x21d4b10,function,count_type_in_hand,93,count_type_in_hand,cards/war_of_the_spark.c,public COFF entry 0x2600560
+0x21d4b10,function,count_type_in_hand,93,count_type_in_hand,cards/war_of_the_spark.c,public COFF entry 0x26046e0
 0x21d4b70,function,card_ral_storm_conduit,549,card_ral_storm_conduit,cards/war_of_the_spark.c,recovery ledger
 0x21d4da0,function,card_return_to_nature,1509,card_return_to_nature,cards/war_of_the_spark.c,recovery ledger
 0x21d5390,function,card_roalesk_apex_hybrid,310,card_roalesk_apex_hybrid,cards/war_of_the_spark.c,recovery ledger
@@ -7335,7 +7335,7 @@ address,type,name,size,native_name,source,mapping
 0x22c63c0,function,general_has_partner,73,general_has_partner,cards/vanguard.c,recovery ledger
 0x22c6410,function,get_partner_with_id,30,get_partner_with_id,cards/vanguard.c,recovery ledger
 0x22c6430,function,commander_enters_the_battlefield,178,commander_enters_the_battlefield,cards/vanguard.c,same native name
-0x22c64f0,function,locate_edh_card,80,locate_edh_card,cards/vanguard.c,public COFF entry 0x25dddd0
+0x22c64f0,function,locate_edh_card,80,locate_edh_card,cards/vanguard.c,public COFF entry 0x25e1f50
 0x22c6540,function,is_commander_in_command_zone,69,is_commander_in_command_zone,cards/vanguard.c,recovery ledger
 0x22c6590,function,put_commander_from_command_zone_to_impl,937,put_commander_from_command_zone_to_impl,cards/vanguard.c,recovery ledger
 0x22c6940,function,get_commander_storm_count,77,get_commander_storm_count,cards/vanguard.c,recovery ledger
@@ -8963,7 +8963,7 @@ address,type,name,size,native_name,source,mapping
 0x23597f0,function,sacrifice_eot,237,sacrifice_eot,cards/theros_beyond_death.c,recovery ledger
 0x23598e0,function,akroan_war_legacy,94,akroan_war_legacy,cards/theros_beyond_death.c,recovery ledger
 0x2359940,function,escape_part,610,escape,cards/theros_beyond_death.c,recovery ledger
-0x2359bb0,function,breach_effect,1607,breach_effect,cards/theros_beyond_death.c,public COFF entry 0x25589d0
+0x2359bb0,function,breach_effect,1607,breach_effect,cards/theros_beyond_death.c,public COFF entry 0x255cb50
 0x235a200,function,escape_with_counters_impl,210,escape_with_counters,cards/theros_beyond_death.c,recovery ledger
 0x235a2e0,function,escape,125,escape,cards/theros_beyond_death.c,recovery ledger
 0x235a360,function,card_agonizing_remorse,678,card_agonizing_remorse,cards/theros_beyond_death.c,recovery ledger
@@ -8971,7 +8971,7 @@ address,type,name,size,native_name,source,mapping
 0x235a7d0,function,card_anax_hardened_in_the_forge,794,card_anax_hardened_in_the_forge,cards/theros_beyond_death.c,recovery ledger
 0x235aaf0,function,card_ashiok_nightmare_muse,1215,card_ashiok_nightmare_muse,cards/theros_beyond_death.c,recovery ledger
 0x235afb0,function,card_athreos_shroud_veiled,1141,card_athreos_shroud_veiled,cards/theros_beyond_death.c,recovery ledger
-0x235b430,function,find_attached_legacy_effect_not_full,132,find_attached_legacy_effect_not_full,cards/theros_beyond_death.c,public COFF entry 0x255c180
+0x235b430,function,find_attached_legacy_effect_not_full,132,find_attached_legacy_effect_not_full,cards/theros_beyond_death.c,public COFF entry 0x2560300
 0x235b4c0,function,card_calix_destinys_hand,1612,card_calix_destinys_hand,cards/theros_beyond_death.c,recovery ledger
 0x235bb10,function,card_cling_to_dust,572,card_cling_to_dust,cards/theros_beyond_death.c,recovery ledger
 0x235bd50,function,card_daxos_blessed_by_the_sun,696,card_daxos_blessed_by_the_sun,cards/theros_beyond_death.c,recovery ledger
@@ -11026,7 +11026,7 @@ address,type,name,size,native_name,source,mapping
 0x24382d0,function,metalcraft,81,metalcraft,cards/scars_of_mirrodin.c,same native name
 0x2438330,function,minus_proliferate_auto_single_permanent_or_player,161,minus_proliferate_auto_single_permanent_or_player,cards/scars_of_mirrodin.c,recovery ledger
 0x24383e0,function,proliferate_auto_single_permanent_or_player,322,proliferate_auto_single_permanent_or_player,cards/scars_of_mirrodin.c,recovery ledger
-0x2438530,function,proliferate_manual_single_permanent_or_player,463,proliferate_manual_single_permanent_or_player,cards/scars_of_mirrodin.c,public COFF entry 0x24a3620
+0x2438530,function,proliferate_manual_single_permanent_or_player,463,proliferate_manual_single_permanent_or_player,cards/scars_of_mirrodin.c,public COFF entry 0x24a77a0
 0x2438700,function,proliferate,849,proliferate,cards/scars_of_mirrodin.c,recovery ledger
 0x2438a60,function,generic_artifact_with_proliferate,210,generic_artifact_with_proliferate,cards/scars_of_mirrodin.c,same native name
 0x2438b40,function,card_wurmcoil_engine,180,card_wurmcoil_engine,cards/scars_of_mirrodin.c,same native name
@@ -16997,7 +16997,7 @@ address,type,name,size,native_name,source,mapping
 0x2650b80,function,side_effects_to_tutor_deck_from_permanents,191,side_effects_to_tutor_deck_from_permanents,functions/tutors.c,recovery ledger
 0x2650c40,function,show_deck,90,show_deck,functions/tutors.c,recovery ledger
 0x2650ca0,function,show_deck_force_expansion,77,show_deck_force_expansion,functions/tutors.c,recovery ledger
-0x2650cf0,function,get_average_value_from_zone,234,get_average_value_from_zone,functions/tutors.c,public COFF entry 0x26c6c80
+0x2650cf0,function,get_average_value_from_zone,234,get_average_value_from_zone,functions/tutors.c,public COFF entry 0x26cae00
 0x2650de0,function,select_card_from_zone,864,select_card_from_zone,functions/tutors.c,recovery ledger
 0x2651140,function,get_tutoring_denial,436,get_tutoring_denial,functions/tutors.c,recovery ledger
 0x2651300,function,new_select_a_card,701,new_select_a_card,functions/tutors.c,recovery ledger
@@ -17054,7 +17054,7 @@ address,type,name,size,native_name,source,mapping
 0x2656c30,function,draw_abilities,827,draw_abilities,functions/windows.c,same native name
 0x2656f70,function,draw_smallcard_normal,1511,draw_smallcard_normal,functions/windows.c,same native name
 0x2657560,function,initialize_ability_tooltip_names,290,initialize_ability_tooltip_names,functions/windows.c,same native name
-0x2657690,function,memcpy_displayed_inst_and_ext,273,memcpy_displayed_inst_and_ext,functions/windows.c,public COFF entry 0x26cee00
+0x2657690,function,memcpy_displayed_inst_and_ext,273,memcpy_displayed_inst_and_ext,functions/windows.c,public COFF entry 0x26d3270
 0x26577b0,function,wndproc_ShowListCard_hook,845,wndproc_ShowListCard_hook,functions/windows.c,recovery ledger
 0x2657e30,function,wndproc_MainClass_hook,420,wndproc_MainClass_hook,functions/windows.c,same native name
 0x2657fe0,function,paint_player_counters,630,paint_player_counters,functions/windows.c,same native name
@@ -17190,7 +17190,7 @@ address,type,name,size,native_name,source,mapping
 0x2665990,function,get_special_infos,57,get_special_infos,functions/token_generation.c,same native name
 0x26659d0,function,generate_token,2983,generate_token,functions/token_generation.c,recovery ledger
 0x2666580,function,generate_token_by_id_impl,179,generate_token_by_id_impl,functions/token_generation.c,recovery ledger
-0x2666680,function,copy_token,43,copy_token,functions/token_generation.c,public COFF entry 0x26c5800
+0x2666680,function,copy_token,43,copy_token,functions/token_generation.c,public COFF entry 0x26c9980
 0x26666b0,function,generate_token_by_id,103,generate_token_by_id,functions/token_generation.c,recovery ledger
 0x2666720,function,generate_tokens_by_id,111,generate_tokens_by_id,functions/token_generation.c,recovery ledger
 0x2666790,function,generate_reserved_token_by_id,88,generate_reserved_token_by_id,functions/token_generation.c,recovery ledger
@@ -17204,7 +17204,7 @@ address,type,name,size,native_name,source,mapping
 0x26675a0,function,manipulate_all,148,manipulate_all,functions/manipulate_and_damage_all.c,recovery ledger
 0x2667640,function,manipulate_type,84,manipulate_type,functions/manipulate_and_damage_all.c,same native name
 0x26676a0,function,manipulate_auras_enchanting_target,333,manipulate_auras_enchanting_target,functions/manipulate_and_damage_all.c,same native name
-0x26677f0,function,new_damage_all,634,new_damage_all,functions/manipulate_and_damage_all.c,public COFF entry 0x26a56a0
+0x26677f0,function,new_damage_all,634,new_damage_all,functions/manipulate_and_damage_all.c,public COFF entry 0x26a9820
 0x2667a70,function,damage_all,155,damage_all,functions/manipulate_and_damage_all.c,same native name
 0x2667b10,function,has_no_mana_cost,278,has_no_mana_cost,functions/play_spell_for_free.c,recovery ledger
 0x2667c30,function,played_for_free,49,played_for_free,functions/play_spell_for_free.c,same native name
@@ -17264,7 +17264,7 @@ address,type,name,size,native_name,source,mapping
 0x266bc20,function,all_lands_are_basiclandtype,826,all_lands_are_basiclandtype,functions/produce_mana.c,recovery ledger
 0x266bf60,function,minimize_nondraining_mana,100,minimize_nondraining_mana,functions/produce_mana.c,recovery ledger
 0x266bfd0,function,mana_doesnt_drain_until_eot,101,mana_doesnt_drain_until_eot,functions/produce_mana.c,recovery ledger
-0x266c040,function,mana_doublers,210,mana_doublers,functions/produce_mana.c,public COFF entry 0x26ac870
+0x266c040,function,mana_doublers,210,mana_doublers,functions/produce_mana.c,public COFF entry 0x26b09f0
 0x266c120,function,produce_mana_tapped_all_one_color_with_default_impl,983,produce_mana_tapped_all_one_color_with_default_impl,functions/produce_mana.c,recovery ledger
 0x266c500,function,produce_mana_tapped_all_one_color_with_default,63,produce_mana_tapped_all_one_color_with_default,functions/produce_mana.c,recovery ledger
 0x266c540,function,produce_mana_tapped_all_one_color_impl,63,produce_mana_tapped_all_one_color_impl,functions/produce_mana.c,recovery ledger
@@ -17996,7 +17996,7 @@ address,type,name,size,native_name,source,mapping
 0x26a4c00,function,generic_activated_ability_with_target_in_grave,1496,generic_activated_ability_with_target_in_grave,functions/functions.c,recovery ledger
 0x26a51e0,function,whenever_i_deal_damage_to_a_player,109,whenever_i_deal_damage_to_a_player,functions/functions.c,same native name
 0x26a5250,function,ai_name_a_random_csvid,284,ai_name_a_random_csvid,functions/functions.c,recovery ledger
-0x26a5370,function,etb_ability,515,etb_ability,functions/functions.c,public COFF entry 0x2682f00
+0x26a5370,function,etb_ability,515,etb_ability,functions/functions.c,public COFF entry 0x2687080
 0x26a5580,function,cip_damage_creature,387,cip_damage_creature,functions/functions.c,same native name
 0x26a5710,function,cip_lifegain,77,cip_lifegain,functions/functions.c,same native name
 0x26a5760,function,karoo,767,karoo,functions/functions.c,same native name
@@ -18524,8 +18524,8 @@ address,type,name,size,native_name,source,mapping
 0x26e3c90,function,new_can_sacrifice,332,new_can_sacrifice,functions/sacrifices.c,recovery ledger
 0x26e3de0,function,can_sacrifice,91,can_sacrifice,functions/sacrifices.c,recovery ledger
 0x26e3e40,function,is_nice_creature_to_sacrifice,125,is_nice_creature_to_sacrifice,functions/sacrifices.c,recovery ledger
-0x26e3ec0,function,get_best_permanent_for_sacrifice,165,get_best_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26bd590
-0x26e3f70,function,new_get_special_permanent_for_sacrifice,403,new_get_special_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26bd5c0
+0x26e3ec0,function,get_best_permanent_for_sacrifice,165,get_best_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26c1710
+0x26e3f70,function,new_get_special_permanent_for_sacrifice,403,new_get_special_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26c1740
 0x26e4110,function,new_sacrifice_impl,2354,new_sacrifice_impl,functions/sacrifices.c,recovery ledger
 0x26e4a50,function,pick_creature_for_sacrifice,213,pick_creature_for_sacrifice,functions/sacrifices.c,recovery ledger
 0x26e4b30,function,pick_permanent_for_sacrifice,278,pick_permanent_for_sacrifice,functions/sacrifices.c,recovery ledger
@@ -18653,12 +18653,25 @@ address,type,name,size,native_name,source,mapping
 0x26eec30,function,UnorderedMapIntInt_delete,199,UnorderedMapIntInt_delete,functions/utility.cpp,same native name
 0x26eed00,function,UnorderedMapIntInt_set,585,UnorderedMapIntInt_set,functions/utility.cpp,same native name
 0x26eef50,function,sort_ArrayConstCharPtr,204,sort_ArrayConstCharPtr,functions/utility.cpp,same native name
-0x26ef760,stub,choose_a_card_allow_cancel_with_defaults,49,choose_a_card_allow_cancel_with_defaults,functions/choose_a_card.cpp,recovery ledger
-0x26ef7a0,stub,choose_a_card_iid,62,choose_a_card_iid,functions/choose_a_card.cpp,recovery ledger
-0x26ef820,stub,choose_a_card_test_ct,52,choose_a_card_test_ct,functions/choose_a_card.cpp,recovery ledger
-0x26ef8a0,stub,choose_a_card_get_last_options,167,choose_a_card_get_last_options,functions/choose_a_card.cpp,recovery ledger
+0x26ef040,function,"__adjust_heap<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, int, std::pair<char const*, csvid_t>, __gnu_cxx::__ops::_Iter_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",388,"__adjust_heap<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, int, std::pair<char const*, csvid_t>, __gnu_cxx::__ops::_Iter_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",functions/choose_a_card.cpp,same native name
+0x26ef1d0,function,"__unguarded_linear_insert<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, __gnu_cxx::__ops::_Val_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",76,"__unguarded_linear_insert<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, __gnu_cxx::__ops::_Val_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",functions/choose_a_card.cpp,same native name
+0x26ef220,function,"__insertion_sort<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, __gnu_cxx::__ops::_Iter_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",147,"__insertion_sort<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, __gnu_cxx::__ops::_Iter_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",functions/choose_a_card.cpp,same native name
+0x26ef2c0,function,choose_a_card_impl,475,choose_a_card_impl,functions/choose_a_card.cpp,same native name
+0x26ef4a0,function,sprintf,34,sprintf,functions/choose_a_card.cpp,same native name
+0x26ef4d0,function,"__introsort_loop<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, int, __gnu_cxx::__ops::_Iter_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",583,"__introsort_loop<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, int, __gnu_cxx::__ops::_Iter_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",functions/choose_a_card.cpp,same native name
+0x26ef720,function,choose_a_card,51,choose_a_card,functions/choose_a_card.cpp,same native name
+0x26ef760,function,choose_a_card_allow_cancel_with_defaults,49,choose_a_card_allow_cancel_with_defaults,functions/choose_a_card.cpp,same native name
+0x26ef7a0,function,choose_a_card_iid,62,choose_a_card_iid,functions/choose_a_card.cpp,same native name
+0x26ef7e0,function,choose_a_card_test,55,choose_a_card_test,functions/choose_a_card.cpp,same native name
+0x26ef820,function,choose_a_card_test_ct,52,choose_a_card_test_ct,functions/choose_a_card.cpp,same native name
+0x26ef860,function,choose_a_card_test_ct_allow_cancel,52,choose_a_card_test_ct_allow_cancel,functions/choose_a_card.cpp,same native name
+0x26ef8a0,function,choose_a_card_get_last_options,167,choose_a_card_get_last_options,functions/choose_a_card.cpp,same native name
+0x26ef950,function,dlgproc_choose_a_card_helper,606,dlgproc_choose_a_card_helper,functions/choose_a_card.cpp,same native name
+0x26efbb0,function,dlgproc_choose_a_card,4914,dlgproc_choose_a_card,functions/choose_a_card.cpp,same native name
 0x27096c0,function,_M_rehash,530,_M_rehash,functions/utility.cpp,same native name
+0x270a880,function,"_M_realloc_insert<std::pair<char const*, csvid_t> >",373,"_M_realloc_insert<std::pair<char const*, csvid_t> >",functions/choose_a_card.cpp,same native name
 0x270d580,function,"__adjust_heap<char const**, int, char const*, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",295,"__adjust_heap<char const**, int, char const*, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",functions/utility.cpp,same native name
 0x270d6b0,function,"__heap_select<char const**, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",222,"__heap_select<char const**, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",functions/utility.cpp,same native name
 0x270d810,function,"__insertion_sort<char const**, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",170,"__insertion_sort<char const**, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",functions/utility.cpp,same native name
 0x270d8c0,function,"__introsort_loop<char const**, int, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",539,"__introsort_loop<char const**, int, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",functions/utility.cpp,same native name
+0x2711000,function,_GLOBAL__sub_I_choose_a_card,48,_GLOBAL__sub_I_choose_a_card,functions/choose_a_card.cpp,same native name

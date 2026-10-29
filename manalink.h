@@ -3245,6 +3245,7 @@ void replace_all_instances_of_one_basic_land_type_word_with_another(int player, 
 
 /* October 2022 filter-aware Wish APIs and out-of-scope dialog boundaries. */
 #ifndef SHANDALAR
+int choose_a_card_test(char *prompt, test_definition_t *constraints);
 int choose_a_card_iid(char *prompt, color_test_t colors, type_t types);
 int choose_a_card_allow_cancel_with_defaults(char *prompt, color_test_t allowable_colors, type_t allowable_types, color_test_t initial_color, type_t initial_type);
 void choose_a_card_get_last_options(color_test_t *cols, type_t *typs);

@@ -160,8 +160,10 @@ def verify(proof,image,root=ROOT):
     assert expected in proof['additional_source_stubs']
     assert abi('0x26ef7a0')==record['deferred_chooser_abi']
     assert {n:r['first_location'] for n,r in record['deferred_chooser_abi'].items()}==dict(prompt=[145,0],colors=[145,4],types=[145,8])
-    assert sha(body(stub).encode())==stub['definition_sha256']
-    assert re.search(r'return\s+-1\s*;',body(stub)) and 'TODO(recovery-ui)' in read(root/stub['source'])
+    from verify_cpp_chooser_recovery import resolved_stub_addresses
+    if int(stub['native_address'],16) not in resolved_stub_addresses(proof,root):
+        assert sha(body(stub).encode())==stub['definition_sha256']
+        assert re.search(r'return\s+-1\s*;',body(stub)) and 'TODO(recovery-ui)' in read(root/stub['source'])
     accepted=json.loads((root/'docs/recovery-evidence/recovered-functions.json').read_text())['accepted_functions']
     assert not any(int(r['address'],16)==int(stub['native_address'],16) for r in accepted)
     assert not any(int(p['address'],16)==int(stub['native_address'],16) for r in record['helpers']+record['support_helpers'] for p in r['native_ranges'])

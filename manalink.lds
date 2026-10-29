@@ -167,7 +167,6 @@ _real_bounce_permanent = 0x4A65F0;
 _cannot_block_exe = 0x0040B5E0;
 _check_hand_for_type = 0x4E77DD;
 _check_mana_multi = 0x402BE0;
-_choose_a_card = 0x4a9750;
 _choose_a_color_exe = 0x4721c0;
 _choose_a_number = 0x472120;
 _cop2 = 0x4bdc80;

@@ -215,6 +215,11 @@ def main():
     reconstructed=reconstructed_sources(canonical_data or {},native)
     from verify_compiler_cpp_recovery import coverage as compiler_cpp_coverage
     compiler_cpp=compiler_cpp_coverage(canonical_data or {},ROOT)
+    from verify_cpp_chooser_recovery import coverage as chooser_coverage,resolved_stub_addresses
+    chooser_cpp=chooser_coverage(canonical_data or {},ROOT)
+    assert not (set(compiler_cpp)&set(chooser_cpp))
+    compiler_cpp.update(chooser_cpp)
+    unsafe.difference_update(resolved_stub_addresses(canonical_data or {},ROOT))
     assert not (set(compiler_cpp)&unsafe),'Deferred UI cannot receive compiler/C++ review credit'
     reviewed_bodies=set(accepted)|set(reconstructed)|covered_native_helpers|set(compiler_cpp)
     for e in native_equivalences:
@@ -439,13 +444,20 @@ def main():
             result['inputs'][str(ROOT/path)]=sha((ROOT/path).read_bytes())
         for row in list(reviewed['header_fragments'].values())+reviewed['header_dependencies']:
             result['inputs'][row['path']]=sha(Path(row['path']).read_bytes())
+    if chooser_cpp:
+        from verify_cpp_chooser_recovery import evidence as chooser_evidence
+        reviewed_chooser=chooser_evidence(canonical_data,ROOT)
+        for path in [canonical_data['native_cpp_chooser_recovery'],'tools/recovery/verify_cpp_chooser_recovery.py']:
+            result['inputs'][str(ROOT/path)]=sha((ROOT/path).read_bytes())
+        for row in reviewed_chooser['header_dependencies']:
+            result['inputs'][row['path']]=sha(Path(row['path']).read_bytes())
     args.output.parent.mkdir(parents=True,exist_ok=True);args.summary.parent.mkdir(parents=True,exist_ok=True)
     save_json(args.output,result)
     lines=['# Helper recovery triage','',f'Remaining manual review: **{pending_count:,} native helper ranges**. Separately tracked: **{counts["reconstructed_source"]:,} explicitly reviewed/reconstructed ranges** and **{counts["verified_retained_source"]:,} verified retained ranges**. The classifier does not edit C source or recovery records. Narrow argument/interface edits do not close whole-body review.','',
            '| Review queue | Ranges |','| --- | ---: |']
     lines += [f'| `{k}` | {counts[k]:,} |' for k in CATEGORIES]
     if compiler_cpp:
-        lines += ['',f"Separately reviewed: **{counts['reviewed_cpp_source']} C++ utility bodies** (one restored member, six retained definitions) and **{counts['reviewed_compiler_source']} compiler-header ranges**. Complete native bodies, specialized parameters and corresponding source were reviewed. Header copies are supplied by GCC and are excluded from authored/reconstructed-function totals; their review does not assert byte identity or CRT/caller equivalence."]
+        lines += ['',f"Separately reviewed: **{counts['reviewed_cpp_source']} C++ utility/picker bodies** and **{counts['reviewed_compiler_source']} compiler-generated/header ranges**. Complete native bodies, specialized parameters and corresponding source were reviewed. Header copies are supplied by GCC and are excluded from authored/reconstructed-function totals; their review does not assert byte identity or CRT/caller equivalence."]
     if unification and 'canonical_functions' in unification:
         accepted_names=unification.get('accepted_function_names',unification['canonical_functions'])
         auxiliary=unification['canonical_functions']-accepted_names

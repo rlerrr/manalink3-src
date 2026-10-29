@@ -322,6 +322,8 @@ def verify_interface_evidence(proof,root=ROOT):
     from verify_rules_challenge_recovery import verify as verify_rules_challenge_recovery
     from verify_windows_general_recovery import verify as verify_windows_general_recovery
     from verify_compiler_cpp_recovery import verify as verify_compiler_cpp_recovery
+    from verify_cpp_chooser_recovery import verify as verify_cpp_chooser_recovery
+    from verify_native_jump_table import verify as verify_native_jump_table
     return dict(native_domains=domains,caller_ranges=len(ranges),argument_edits=verify_argument_edits(proof,image,root),
                 constant_argument_edits=verify_constant_edits(proof,image,root),
                 inline_counter_arguments=verify_inline_counters(proof,image,root),
@@ -363,6 +365,8 @@ def verify_interface_evidence(proof,root=ROOT):
                 rules_challenge=verify_rules_challenge_recovery(proof,image,root),
                 windows_general=verify_windows_general_recovery(proof,image,root),
                 compiler_cpp=verify_compiler_cpp_recovery(proof,image,root),
+                cpp_chooser=verify_cpp_chooser_recovery(proof,image,root),
+                native_jump_table=verify_native_jump_table(proof,image,root),
                 scope='Reviewed interface edits only; retained custom callers explicitly distinguished from native caller ranges.')
 
 def predecessor_bytes(row,archive,root=ROOT):

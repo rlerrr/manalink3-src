@@ -1113,6 +1113,59 @@ LRESULT __stdcall wndproc_MainClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPA
   return EXE_STDCALL_FN(LRESULT, 0x4933c0, HWND, UINT, WPARAM, LPARAM)(hwnd, msg, wparam, lparam);
 }
 
+/* October 2022 deck-dialog hook: disjoint DWARF body, 0x2657b00/0x2710000. */
+INT_PTR __stdcall dlgproc_show_deck_hook(HWND hdlg, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+  DLGPROC original = (DLGPROC)0x46c8f0;
+  if (msg == WM_INITDIALOG)
+  {
+    INT_PTR result = original(hdlg, msg, wparam, lparam);
+    SetWindowPos(hdlg, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+    return result;
+  }
+  if (msg == WM_KEYDOWN && (wparam == VK_END || wparam == VK_HOME))
+  {
+    SendMessageA(hdlg, WM_VSCROLL, wparam == VK_END ? SB_BOTTOM : SB_TOP, 0);
+    return TRUE;
+  }
+  if (msg == WM_LBUTTONDOWN)
+    return FALSE;
+  if (msg == WM_VSCROLL || msg == WM_MOUSEWHEEL)
+  {
+    int pos = GetScrollPos(hdlg, SB_VERT);
+    int minpos, maxpos;
+    RECT r;
+    GetScrollRange(hdlg, SB_VERT, &minpos, &maxpos);
+    GetClientRect(hdlg, &r);
+    int hgt_per_card = EXE_DWORD(0x56bf40) + EXE_DWORD(0x56bdf8);
+    int newpos = pos;
+    if (msg == WM_MOUSEWHEEL)
+      newpos -= hgt_per_card * ((short)HIWORD(wparam) / WHEEL_DELTA);
+    else
+    {
+      switch (LOWORD(wparam))
+      {
+        case SB_LINEUP: newpos -= hgt_per_card; break;
+        case SB_LINEDOWN: newpos += hgt_per_card; break;
+        case SB_PAGEUP: newpos -= r.bottom - EXE_DWORD(0x56bdf8); break;
+        case SB_PAGEDOWN: newpos += r.bottom - EXE_DWORD(0x56bdf8); break;
+        case SB_THUMBPOSITION:
+        case SB_THUMBTRACK: newpos = HIWORD(wparam); break;
+        case SB_TOP: newpos = minpos; break;
+        case SB_BOTTOM: newpos = maxpos; break;
+      }
+    }
+    if (newpos < minpos)
+      newpos = minpos;
+    if (newpos > maxpos)
+      newpos = maxpos;
+    ScrollWindow(hdlg, 0, pos - newpos, NULL, NULL);
+    SetScrollPos(hdlg, SB_VERT, newpos, TRUE);
+    return TRUE;
+  }
+  return original(hdlg, msg, wparam, lparam);
+}
+
 //[[[ display experience counters
 #define bmp_poison_pic						EXE_TYP(HBITMAP, 0x5b9a64)
 #define copy_opponent_name_until_dash		EXE_FN(void, 0x4391f0, char*)

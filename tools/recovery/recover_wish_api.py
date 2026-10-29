@@ -68,8 +68,15 @@ def audit_stubs(component,manifest,root):
     require(component['scope_reason']==STUB_REASON and component['counted_as_recovered_implementations'] is False,'Wish dialog stub accounting mismatch')
     require(set(component['functions'])==set(STUBS),'Wish dialog stub membership mismatch')
     require(not set(STUBS)&{f['address'] for f in manifest['accepted_functions']},'Wish dialog stubs were counted as recovered native functions')
+    from canonicalize_helpers import load
+    from verify_cpp_chooser_recovery import resolved_stub_addresses
+    resolved=resolved_stub_addresses(load(root) or {},root)
     for a,name in STUBS.items():
         detail=component['functions'][a];body=function_body(source,name)
+        if int(a,16) in resolved:
+            require(detail['name']==name,'Historical Wish stub identity mismatch')
+            require([p['name'] for p in component['parameters'][a]]==['prompt','constraints','colors','types'],'Historical Wish stub ABI mismatch')
+            continue  # Replacement source/native evidence is verified by the resumed chooser audit.
         require(detail['name']==name and sha(body.encode())==detail['stub_body_sha256'],'Wish dialog stub source hash mismatch')
         require(body==function_body(format_c(STUB_BODY.format(name=name)),name),'Wish dialog stub must only ignore arguments and return no selection')
         require([p['name'] for p in component['parameters'][a]]==['prompt','constraints','colors','types'],'Wish dialog boundary parameter order mismatch')

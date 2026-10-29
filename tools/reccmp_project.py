@@ -148,6 +148,9 @@ def setup(args):
     equivalent_addresses={int(e['duplicate_address'],16) for e in equivalent_helpers}
     stubs = {int(row["native_address"], 16): row for row in
              manifest["source_stubs"] + (canonical_data or {}).get("additional_source_stubs", [])}
+    from verify_cpp_chooser_recovery import resolved_stub_addresses
+    for address in resolved_stub_addresses(canonical_data or {},ROOT):
+        stubs.pop(address,None)
     current_names = defaultdict(set)
     current_ranges = defaultdict(list)
     for row in current:

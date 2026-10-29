@@ -1,6 +1,6 @@
 # Helper recovery triage
 
-Remaining manual review: **18 native helper ranges**. Separately tracked: **1,241 explicitly reviewed/reconstructed ranges** and **952 verified retained ranges**. The classifier does not edit C source or recovery records. Narrow argument/interface edits do not close whole-body review.
+Remaining manual review: **0 native helper ranges**. Separately tracked: **1,241 explicitly reviewed/reconstructed ranges** and **952 verified retained ranges**. The classifier does not edit C source or recovery records. Narrow argument/interface edits do not close whole-body review.
 
 | Review queue | Ranges |
 | --- | ---: |
@@ -11,13 +11,13 @@ Remaining manual review: **18 native helper ranges**. Separately tracked: **1,24
 | `small_diff_review` | 0 |
 | `full_review` | 0 |
 | `mapping_first` | 0 |
-| `deferred_chooser` | 18 |
+| `deferred_chooser` | 0 |
 | `cpp_review` | 0 |
-| `reviewed_cpp_source` | 7 |
-| `reviewed_compiler_source` | 26 |
+| `reviewed_cpp_source` | 17 |
+| `reviewed_compiler_source` | 34 |
 | `reconstructed_source` | 1,241 |
 
-Separately reviewed: **7 C++ utility bodies** (one restored member, six retained definitions) and **26 compiler-header ranges**. Complete native bodies, specialized parameters and corresponding source were reviewed. Header copies are supplied by GCC and are excluded from authored/reconstructed-function totals; their review does not assert byte identity or CRT/caller equivalence.
+Separately reviewed: **17 C++ utility/picker bodies** and **34 compiler-generated/header ranges**. Complete native bodies, specialized parameters and corresponding source were reviewed. Header copies are supplied by GCC and are excluded from authored/reconstructed-function totals; their review does not assert byte identity or CRT/caller equivalence.
 
 **735 accepted canonical function names plus 3 auxiliary helper identities** are checked against physical source and compiler output. Initial consolidation removed 425 compatibility aliases/adapters. Historical recovery names remain metadata identities.
 
