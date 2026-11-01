@@ -1428,13 +1428,9 @@ int card_the_mimeoplasm(int player, int card, event_t event)
   int iVar3;
   int32_t grave_id;
   int iVar4;
-  const char *pcVar5;
-  test_definition_t *ptVar6;
   int grave_id_00;
-  unsigned char bVar7;
   test_definition_t test;
 
-  bVar7 = 0;
   if (event == EVENT_CAST_SPELL)
   {
     if ((card == affected_card) && (player == affected_card_controller))
@@ -1480,15 +1476,7 @@ int card_the_mimeoplasm(int player, int card, event_t event)
     {
       iVar4 =
           turn_card_in_grave_face_down(instance->targets[0].player, instance->targets[1].player);
-      pcVar5 = "Select a creature card for counters.";
-      ptVar6 = &test;
-      for (iVar3 = 9; iVar3 != 0; iVar3 = iVar3 + -1)
-      {
-        *(uint32_t *)ptVar6->message = *(uint32_t *)pcVar5;
-        pcVar5 = pcVar5 + ((unsigned int)bVar7 * -2 + 1) * 4;
-        ptVar6 = (test_definition_t *)((int)ptVar6 + (unsigned int)bVar7 * -8 + 4);
-      }
-      ptVar6->message[0] = *pcVar5;
+      strcpy(test.message, "Select a creature card for counters.");
       iVar3 = select_target_from_either_grave(player, card, SFG_NOTARGET, 1, 1, &test, 2, 3);
       turn_card_in_grave_face_up(instance->targets[0].player, instance->targets[1].player, iVar4);
       if (iVar3 == -1)

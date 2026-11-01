@@ -363,6 +363,30 @@ def verify_interface_evidence(proof,root=ROOT):
     from verify_native_header_enums import verify as verify_native_header_enums
     from verify_header_name_recovery import verify as verify_header_name_recovery
     from verify_header_inline_recovery import verify as verify_header_inline_recovery
+    from verify_inline_predicate_recovery import verify as verify_inline_predicate_recovery
+    from verify_inline_wrapper_recovery import verify as verify_inline_wrapper_recovery
+    from verify_inline_mechanics_recovery import verify as verify_inline_mechanics_recovery
+    from verify_inline_card_mechanics_recovery import verify as verify_inline_card_mechanics_recovery
+    from verify_shared_stack_test_recovery import verify as verify_shared_stack_test_recovery
+    from verify_wide_stack_test_recovery import verify as verify_wide_stack_test_recovery
+    from verify_inline_final_definitions_recovery import verify as verify_inline_final_definitions_recovery
+    from verify_header_type_recovery import verify as verify_header_type_recovery
+    from verify_other_stack_record_recovery import verify as verify_other_stack_record_recovery
+    from verify_target_storage_recovery import verify as verify_target_storage_recovery
+    from verify_local_enum_values_recovery import verify as verify_local_enum_values_recovery
+    from verify_plain_test_parameter_recovery import verify as verify_plain_test_parameter_recovery
+    from verify_cast_stack_storage_recovery import verify as verify_cast_stack_storage_recovery
+    from verify_array_role_recovery import verify as verify_array_role_recovery
+    from verify_target_role_recovery import verify as verify_target_role_recovery
+    from verify_ability_storage_recovery import verify as verify_ability_storage_recovery
+    from verify_selection_storage_recovery import verify as verify_selection_storage_recovery
+    from verify_global_index_recovery import verify as verify_global_index_recovery
+    from verify_reverse_array_recovery import verify as verify_reverse_array_recovery
+    from verify_array_census_recovery import verify as verify_array_census_recovery
+    from verify_scoped_array_recovery import verify as verify_scoped_array_recovery
+    from verify_card_array_locals_recovery import verify as verify_card_array_locals_recovery
+    from verify_token_scope_recovery import verify as verify_token_scope_recovery
+    from verify_token_callback_recovery import verify as verify_token_callback_recovery
     from verify_aura_animation_cards_recovery import verify as verify_aura_animation_cards_recovery
     from verify_spell_death_cards_recovery import verify as verify_spell_death_cards_recovery
     from verify_aura_activation_cards_recovery import verify as verify_aura_activation_cards_recovery
@@ -456,6 +480,30 @@ def verify_interface_evidence(proof,root=ROOT):
                 native_header_enums=verify_native_header_enums(proof,image,root),
                 native_header_names=verify_header_name_recovery(proof,image,root),
                 native_header_inline=verify_header_inline_recovery(proof,image,root),
+                native_inline_predicates=verify_inline_predicate_recovery(proof,image,root),
+                native_inline_wrappers=verify_inline_wrapper_recovery(proof,image,root),
+                native_inline_mechanics=verify_inline_mechanics_recovery(proof,image,root),
+                native_inline_card_mechanics=verify_inline_card_mechanics_recovery(proof,image,root),
+                native_shared_stack_tests=verify_shared_stack_test_recovery(proof,image,root),
+                native_wide_stack_tests=verify_wide_stack_test_recovery(proof,image,root),
+                native_inline_final_definitions=verify_inline_final_definitions_recovery(proof,image,root),
+                native_header_types=verify_header_type_recovery(proof,image,root),
+                native_other_stack_records=verify_other_stack_record_recovery(proof,image,root),
+                native_target_storage=verify_target_storage_recovery(proof,image,root),
+                native_local_enum_values=verify_local_enum_values_recovery(proof,image,root),
+                native_plain_test_parameters=verify_plain_test_parameter_recovery(proof,image,root),
+                native_cast_stack_storage=verify_cast_stack_storage_recovery(proof,image,root),
+                native_array_roles=verify_array_role_recovery(proof,image,root),
+                native_target_roles=verify_target_role_recovery(proof,image,root),
+                native_ability_storage=verify_ability_storage_recovery(proof,image,root),
+                native_selection_storage=verify_selection_storage_recovery(proof,image,root),
+                native_global_indexing=verify_global_index_recovery(proof,image,root),
+                native_reverse_arrays=verify_reverse_array_recovery(proof,image,root),
+                native_array_census=verify_array_census_recovery(proof,image,root),
+                native_scoped_arrays=verify_scoped_array_recovery(proof,image,root),
+                native_card_array_locals=verify_card_array_locals_recovery(proof,image,root),
+                native_token_scopes=verify_token_scope_recovery(proof,image,root),
+                native_token_callbacks=verify_token_callback_recovery(proof,image,root),
                 aura_animation_cards=verify_aura_animation_cards_recovery(proof,image,root),
                 spell_death_cards=verify_spell_death_cards_recovery(proof,image,root),
                 aura_activation_cards=verify_aura_activation_cards_recovery(proof,image,root),

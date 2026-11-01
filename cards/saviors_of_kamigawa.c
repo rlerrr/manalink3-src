@@ -3770,3 +3770,26 @@ LAB_020b3097:
   result = vanilla_aura(player, card, event, 2);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int reveal_top_library_type_cards_put_in_hand_rest_bottom_library_any_order(int player, int card,
+                                                                                     int type, int cards_to_look)
+{
+  int *deck = deck_ptr[player];
+  show_deck(current_turn, deck, cards_to_look, "Here's the revealed cards", 0, ENGINE_DONE_LABEL);
+  show_deck(current_turn ^ 1, deck, cards_to_look, "Here's the revealed cards", 0, ENGINE_DONE_LABEL);
+  int amount = MIN(cards_to_look, count_deck(player));
+  for (int pos = amount - 1; pos >= 0; --pos)
+    if (is_what(-1, deck[pos], type))
+    {
+      add_card_to_hand(player, deck[pos]);
+      remove_card_from_deck(player, pos);
+      --amount;
+    }
+  if (amount > 0)
+    put_top_x_on_bottom(player, player, amount);
+  return 0;
+}
+#endif

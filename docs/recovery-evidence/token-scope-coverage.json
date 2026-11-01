@@ -1,0 +1,59 @@
+{
+  "recovery": {
+    "restored_source_functions": 4,
+    "card_handlers": 3,
+    "helpers": 1,
+    "restored_scoped_tokens": 7,
+    "restored_scoped_tests": 2,
+    "removed_source_unions": 2,
+    "typed_vigilance_writes": 2,
+    "repaired_comparison_bindings": 1,
+    "changed_linker_objects": 4,
+    "unchanged_linker_objects": 162,
+    "scope": "Restore four original token scope paths in Amass, Rite of Belzenlok, Shark Typhoon and Circle of Loyalty. Seven actual76-byte token locals and two216-byte test locals replace reused function-wide declarations/two source unions. Native/rebuilt scoped scalar byte-event multisets, initializer IDs, initializer/generator pointers and disjoint lifetimes of overlapping frame allocations are checked. Circle replaces two four-byte vigilance writes through test.message with the original typed token s_key_plus value8. Exact source replay preserves every other byte and all costs, conditions, dynamic operands and native quirks. Correct one reccmp native-address binding: the verified auxiliary callback at2073940 belongs to innistrad_exile_at_end_of_combat_legacy; global matching by its old spelling selected another source unit. The project now consumes explicit auxiliary native/source/name bindings and rejects conflicting addresses or sources. A separate broad token-write screen is discovery only; literal event equality is not proof of arbitrary aliases, dynamic values, complete constructor effects or gameplay."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 71851,
+    "exit_code": 0,
+    "terminal_chunk_id": "97efa0",
+    "build_exit_code": 0,
+    "build_chunk_id": "002bc0",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "1e2dd2",
+    "prior_checks_session_id": 7731,
+    "prior_checks_exit_code": 0,
+    "prior_checks_terminal_chunk_id": "222965",
+    "setup_log": ".recovery/token-scopes-setup-c67.log",
+    "setup_log_sha256": "9b5714303acf2ea8b76acec26f8e5d85e00ebd0b33d3d2f38424309279b4e043"
+  },
+  "token_write_discovery": {
+    "path": ".recovery/token-write-screen-c68.json",
+    "sha256": "cda14694c49f86b111dbbb84ed803f80547ac71371e65c7ae3a816ccd34eddda",
+    "counts": {
+      "aggregate_contains_native_events": 18,
+      "exact_scoped_byte_events": 669,
+      "requires_value_or_scope_review": 3,
+      "same_events_different_multiplicity": 1,
+      "unsupported_or_unbound": 1
+    },
+    "scope": "Read-only discovery screen of fixed native token locals. Collects direct scalar EBP writes within declared token scopes, with basic-block constant tracking and call-clobbered caller-save registers; complete callback words at60/64 are normalized by COFF/CSV identity. Unknown dynamic stores stay unknown. Union views can include other reused locals; multiple current scopes are candidate-matched by byte events rather than claimed semantic identity. Indexed/indirect stores, REP copies, nonfixed/split/nonstandard frames and other-helper inline scopes are not complete here. Equal event sets do not prove full token contents, initializer equivalence, value provenance or gameplay. Different events are review candidates, not automatically missing code."
+  },
+  "next_confirmed_repair": {
+    "source": "cards/commander_2015.c",
+    "name": "card_mirror_match",
+    "native_callback_address": "0x2073940",
+    "expected": "innistrad_exile_at_end_of_combat_legacy",
+    "current": "exile_at_end_of_combat",
+    "status": "Prepared; not yet applied at this checkpoint"
+  },
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "6bfde812f2323fcd0624be59475ee6319daa3153e2b5bba926d6d703adb33cff",
+    "docs/recovery-evidence/token-scope-recovery.json": "8fd68eb3e36e2b1ccaf11260228beb88e4152328bd497a202bde71c26fb73769",
+    "tools/reccmp_project.py": "92497bed00ca3d12f1e0c598a42b58cdf2b16012a5b6b206d72614b60ff6c720",
+    "tools/recovery/token_scope_analysis.py": "b85e2b6226925e0be23dbc756754d21d3540f0ef3704eb10695ea8054e91bcd6",
+    "tools/recovery/verify_token_scope_recovery.py": "eb5373fc34247ca5bdcca69f9f25b2f0b4e80e2af69e255f5a422f7ab19d4b97",
+    "ManalinkEh.dll": "b94463ddde7743116cf83f0f1fa3df4edeab853c163567bc49ed055b1972777e",
+    "ManalinkEh.dbg": "931c44951541146cd6c470e342fe2c3ffe06e5743b1774189d890bdc7f407e10"
+  }
+}

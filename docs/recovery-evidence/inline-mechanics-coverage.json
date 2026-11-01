@@ -1,0 +1,95 @@
+{
+  "restored_inline_helpers": [
+    {
+      "name": "add_force_a_subtype_not_in_play",
+      "source": "functions/has_creature_type.c"
+    },
+    {
+      "name": "can_cast_caf",
+      "source": "cards/m20.c"
+    },
+    {
+      "name": "create_encore_granted_legacy",
+      "source": "cards/commander_legends.c"
+    },
+    {
+      "name": "create_livio_legacy",
+      "source": "cards/commander_legends.c"
+    },
+    {
+      "name": "create_spell_has_flashback_legacy_for_hl",
+      "source": "cards/dark_ascension.c"
+    },
+    {
+      "name": "info_outofline",
+      "source": "functions/deck.c"
+    },
+    {
+      "name": "modify_casting_cost_for_colorless_only_mana",
+      "source": "cards/oath_of_the_gatewatch.c"
+    },
+    {
+      "name": "pay_aftermath",
+      "source": "cards/amonkhet.c"
+    },
+    {
+      "name": "play_card_in_exile_for_free_and_exile_it",
+      "source": "functions/play_spell_for_free.c"
+    },
+    {
+      "name": "prevent_all_damage_of_a_source_until_eot",
+      "source": "cards/torment.c"
+    },
+    {
+      "name": "put_into_play_a_card_from_deck_tapped_and_attacking",
+      "source": "cards/commander_legends.c"
+    },
+    {
+      "name": "sac_at_beginning_of_next_end_step",
+      "source": "cards/theros_beyond_death.c"
+    },
+    {
+      "name": "select_a_card_from_deck_automatic",
+      "source": "functions/tutors.c"
+    },
+    {
+      "name": "special_null_casting_cost",
+      "source": "cards/zendikar_rising.c"
+    }
+  ],
+  "restored_cpp_operator_overloads": 8,
+  "restored_cpp_operator_names": 4,
+  "accounted_implicit_cpp_members": 3,
+  "source_units": 13,
+  "c_helper_inline_instances": 17,
+  "c_helper_inline_fragments": 49,
+  "c_helper_callers": 15,
+  "cpp_operator_inline_instances": 82,
+  "cpp_operator_inline_fragments": 42,
+  "cpp_operator_callers": 2,
+  "implicit_member_inline_instances": 3,
+  "implicit_member_inline_fragments": 5,
+  "implicit_member_callers": 3,
+  "unchanged_runtime_sections": 26,
+  "verified_fixed_slots": 15169,
+  "remaining_inline_review_names": 39,
+  "remaining_ordinary_binding_followups": 0,
+  "source_provenance_setup": {
+    "session_id": 98513,
+    "exit_code": 0,
+    "build_exit_code": 0,
+    "build_chunk_id": "d2a8ef",
+    "setup_log": ".recovery/inline-mechanics-setup.log",
+    "setup_log_sha256": "852ba05595b60b6f8dec77660c94c469be8092a84f3a3623e7b72e9df33751d8",
+    "build_log": ".recovery/inline-mechanics-build.log",
+    "build_log_sha256": "e53a15329a309bb60151b64145ff24eca3a800e17a9bd9eb717714ffde83daf0"
+  },
+  "inputs": {
+    "ManalinkEh.dll": "ce01d543589d09ca670cb3f05f58502fa0ca7ec8270b380dea71f2ebe173dbf4",
+    "ManalinkEh.dbg": "2427f524861e0cc5f8a1e21d849aeae2d7eae4462eec902afbed62412bfc061a",
+    "docs/recovery-evidence/helper-canonicalization.json": "3304904bbf9bbf52a5c6ae94d7248b0811437a62199a51c3f707ccf5414ecb7c",
+    "docs/recovery-evidence/inline-mechanics-recovery.json": "5c012c01e90770ed3ba64bb2eac76d5305b918237e3e6d8afa23d7ed2c2f2aa6",
+    ".recovery/inline-helper-reconciliation-after-mechanics.json": "824c96f13a26185b49b19e63e566c1f756c0f8c5849e9e8add6885c4ebc45fb8"
+  },
+  "scope": "Restore14 original static inline mechanics, two chooser bitwise macro instantiations with8 evidenced C++ overloads (4 names), and account for3 artificial C++ special members already generated from existing source classes. Complete native caller ranges and unchanged existing source caller definitions supplement inline attribution. Per-helper notes describe specialization limits and inferred dead results. The implicit classes match native/rebuilt member types, offsets and sizes; no authored constructor bodies are invented. This is source/API recovery, not new runtime entry coverage or gameplay verification."
+}

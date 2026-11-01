@@ -2241,8 +2241,8 @@ int card_overwhelming_splendor(int player, int card, event_t event)
             (affected_card_controller == player)) &&
            (-1 < result))
   {
-    *(unsigned int *)(&player_bits + result * 4) =
-        *(unsigned int *)(&player_bits + result * 4) | 0x3000000;
+    player_bits[result] =
+        player_bits[result] | 0x3000000;
   }
 LAB_020ce031:
   result = curse(player, card, event);
@@ -2593,6 +2593,8 @@ int card_doomfall(int player, int card, event_t event)
         default_test_definition(&recovered_stack_td1.test, 0xff);
         default_ec_definition(instance->targets[0].player, player, &this_definition);
         this_definition.effect = 2;
+        recovered_stack_td1.test.type = TYPE_LAND;
+        recovered_stack_td1.test.type_flag = DOESNT_MATCH;
         new_effect_coercion(&this_definition, &recovered_stack_td1.test);
       }
       kill_card(player, card, KILL_DESTROY);
@@ -5476,7 +5478,7 @@ int card_nimble_obstructionist(int player, int card, event_t event)
                                                       stack_cards[stack_size + -1].card),
          iVar5 == 0)) ||
        ((char)stack_data[stack_size - 1].generating_event == '~')) ||
-      ((cards_data[*(short *)(&stack_data + (stack_size + -1) * 4)].id == 0x388 ||
+      ((cards_data[stack_data[(stack_size + -1)].internal_card_id].id == 0x388 ||
         (iVar3 != stack_cards[stack_size + -1].player))))
   {
     if (stack_size < 2)
@@ -5948,4 +5950,136 @@ int card_nicol_bolas_god_pharaoh(int player, int card, event_t event)
   return planeswalker(player, card, event, 7);
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int counter_activated_or_triggered_ability_cycling(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white)
+{
+  int32_t iVar1;
+    int32_t iVar2;
+    int iVar3;
+    card_instance_t *instance;
+    int iVar5;
+    int iVar6;
+    unsigned int uVar7;
+    target_definition_t td1;
+    target_definition_t td2;
+    if (2U < (unsigned int)event - (unsigned int)EVENT_CAN_ACTIVATE_FROM_HAND)
+    {
+      return 0;
+    }
+    counter_activated_target_definition(player, card, &td1, 0xff);
+    iVar3 = 1 - player;
+    td1.allowed_controller = iVar3;
+    counter_triggered_target_definition(player, card, &td2, 0xff);
+    td2.allowed_controller = iVar3;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE_FROM_HAND)
+    {
+      iVar3 = count_cards_by_id(player, 0xebb);
+      iVar5 = count_cards_by_id(player, 0x1f27);
+      uVar7 = colorless - 2 * iVar3 + 2 * iVar5;
+      uVar7 = uVar7 & (int)(uVar7 ^ 0xffffffff) >> 0x1f;
+      iVar3 = can_counter_activated_ability(player, card, EVENT_CAN_ACTIVATE_FROM_HAND, &td1);
+      if (((iVar3 == 0) || (iVar3 = has_mana_multi(player, uVar7, black, blue, green, red, white), iVar3 == 0)) &&
+          ((iVar3 =
+                can_counter_triggered_ability(player, card, EVENT_CAN_ACTIVATE_FROM_HAND, &td2),
+            iVar3 == 0 || (iVar3 = has_mana_multi(player, uVar7, black, blue, green, red, white), iVar3 == 0))))
+      {
+        iVar3 = has_mana_multi(player, uVar7, black, blue, green, red, white);
+        return (unsigned int)(iVar3 != 0);
+      }
+      return 99;
+    }
+    if (event != EVENT_ACTIVATE_FROM_HAND)
+    {
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      if ((player_bits[player] & PB_GY_ABILITIES_DISABLED) != 0)
+      {
+        return 0;
+      }
+      iVar3 = instance->info_slot;
+      if (iVar3 == 1)
+      {
+        resolve_counter_activated_ability(player, card, NULL, 0);
+        iVar3 = instance->info_slot;
+      }
+      if (iVar3 == 2)
+      {
+        resolve_counter_triggered_ability(player, card, NULL, 0);
+      }
+      draw_a_card(player);
+      return 0;
+    }
+    iVar5 = count_cards_by_id(player, 0xebb);
+    iVar6 = count_cards_by_id(player, 0x1f27);
+    uVar7 = colorless - 2 * iVar5 + 2 * iVar6;
+    if ((((stack_size < 1) ||
+          (iVar5 = would_validate_arbitrary_target(&td1, stack_cards[stack_size + -1].player,
+                                                        stack_cards[stack_size + -1].card),
+           iVar5 == 0)) ||
+         ((char)stack_data[stack_size - 1].generating_event == '~')) ||
+        ((cards_data[stack_data[(stack_size + -1)].internal_card_id].id == 0x388 ||
+          (iVar3 != stack_cards[stack_size + -1].player))))
+    {
+      if (stack_size < 2)
+        goto LAB_020ced51;
+      iVar5 = would_validate_arbitrary_target(&td1, stack_cards[stack_size + -2].player,
+                                                   stack_cards[stack_size + -2].card);
+      if (((iVar5 == 0) ||
+           (1 < (unsigned char)((char)stack_data[stack_size - 2].generating_event + 0x94U))) ||
+          (iVar3 != stack_cards[stack_size + -2].player))
+      {
+        if ((((1 < stack_size) &&
+              (iVar5 = would_validate_arbitrary_target(&td2, player, card), iVar5 != 0)) &&
+             ((char)stack_data[stack_size - 2].generating_event == '~')) &&
+            ((iVar3 == stack_cards[stack_size + -2].player &&
+              (iVar3 =
+                   do_dialog(player, player, card, -1, -1, " Counter triggered ability\n Pass", 0),
+               iVar3 == 0))))
+        {
+          if (1 < stack_size)
+          {
+            iVar1 = stack_cards[stack_size - 2].player;
+            iVar2 = stack_cards[stack_size - 2].card;
+            ai_modifier = ai_modifier + 100;
+            instance->number_of_targets = instance->number_of_targets + '\x01';
+            instance->targets[0].player = iVar1;
+            instance->targets[0].card = iVar2;
+          }
+          instance->info_slot = 2;
+        }
+        goto LAB_020ced51;
+      }
+    }
+    iVar3 = do_dialog(player, player, card, -1, -1, " Counter activated ability\n Pass", 0);
+    if (iVar3 == 0)
+    {
+      if (1 < stack_size)
+      {
+        iVar1 = stack_cards[stack_size - 2].player;
+        iVar2 = stack_cards[stack_size - 2].card;
+        ai_modifier = ai_modifier + 100;
+        instance->number_of_targets = instance->number_of_targets + '\x01';
+        instance->targets[0].player = iVar1;
+        instance->targets[0].card = iVar2;
+      }
+      instance->info_slot = 1;
+    }
+  LAB_020ced51:
+    charge_mana_multi(player, uVar7 & (int)(uVar7 ^ 0xffffffff) >> 0x1f, black, blue, green, red, white);
+    if (spell_fizzled != 1)
+    {
+      card_is_being_cycled = 1;
+      discard_card(player, card);
+      card_is_being_cycled = 0;
+      return 2;
+    }
+    return 0;
+}
 #endif

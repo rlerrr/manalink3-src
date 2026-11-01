@@ -2015,3 +2015,25 @@ int this_effect_doesnt_remove_this(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int generic_aura_impl(int player, int card, event_t event, target_definition_t *td,
+                               char *prompt, int p_plus, int t_plus, int k_plus, int k_special,
+                               int subtype, int clr, int flags)
+{
+  pump_ability_t ability;
+  default_pump_ability_definition(player, card, &ability, p_plus, t_plus, k_plus, k_special);
+  ability.subtype = subtype;
+  ability.color = clr;
+  if (flags & 8) ability.paue_flags |= 0x80000;
+  if (flags & 16) ability.paue_flags |= 0x40000;
+  if (flags & 32) ability.paue_flags |= 0x20000;
+  if (flags & 1) ability.disabling_mode |= 0x28;
+  if (flags & 2) ability.disabling_mode |= 0x7e;
+  if (flags & 4) ability.disabling_mode |= 0x38;
+  pump_attached(player, card, event, &ability);
+  return aura(player, card, event, td, prompt);
+}
+#endif

@@ -998,8 +998,8 @@ int vos_legacy(int player, int card, event_t event)
 LAB_02394697:
   if (event == EVENT_STATIC_EFFECTS)
   {
-    *(unsigned int *)(&player_bits + player * 4) =
-        *(unsigned int *)(&player_bits + player * 4) | 0x4000000;
+    player_bits[player] =
+        player_bits[player] | 0x4000000;
   }
   else if (event == EVENT_PROT_MISC)
   {
@@ -1971,6 +1971,8 @@ int card_kykar_winds_fury(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
       default_test_definition(&recovered_stack_token.test, 0x47);
+      recovered_stack_token.test.subtype = SUBTYPE_SPIRIT;
+      recovered_stack_token.test.qty = 1;
       result = can_produce_mana(player, card);
       if ((result != 0) &&
           (result = new_can_sacrifice_as_cost(player, card, &recovered_stack_token.test),
@@ -1984,6 +1986,8 @@ int card_kykar_winds_fury(int player, int card, event_t event)
   else if (event == EVENT_CAN_ACTIVATE)
   {
     default_test_definition(&recovered_stack_token.test, 0x47);
+    recovered_stack_token.test.subtype = SUBTYPE_SPIRIT;
+    recovered_stack_token.test.qty = 1;
     result = can_produce_mana(player, card);
     if ((result != 0) &&
         (result = new_can_sacrifice_as_cost(player, card, &recovered_stack_token.test),
@@ -1995,6 +1999,7 @@ int card_kykar_winds_fury(int player, int card, event_t event)
   else if (event == EVENT_ACTIVATE)
   {
     new_default_test_definition(&recovered_stack_token.test, 0x47, "Select a spirit to sacrifice.");
+    recovered_stack_token.test.subtype = SUBTYPE_SPIRIT;
     result = new_sacrifice(player, card, player, SAC_AS_COST, &recovered_stack_token.test);
     if (result == 0)
     {
@@ -3115,4 +3120,19 @@ int card_cavalier_of_gales(int player, int card, event_t event)
   return 0;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static int can_cast_caf(int player, int card)
+{
+  int count = count_graveyard(player);
+  const int *grave = get_grave(player);
+  for (int pos = count; pos >= 0; --pos)
+    if (is_what(-1, grave[pos], TYPE_SPELL) && get_cmc_by_internal_id(grave[pos]) <= 3 &&
+        has_mana_to_cast_id(player, EVENT_CAN_CAST, cards_data[grave[pos]].id))
+      return 1;
+  return 0;
+}
 #endif

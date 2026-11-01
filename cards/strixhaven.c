@@ -10263,6 +10263,8 @@ int card_tenured_inkcaster(int player, int card, event_t event)
     return 0;
   }
   new_default_test_definition(&recovered_stack_td.test, 2, "");
+  recovered_stack_td.test.power = 0;
+  recovered_stack_td.test.power_flag = F5_POWER_1_1_COUNTERS_GREATER_THAN_VALUE;
   store_attackers(player, card, EVENT_DECLARE_ATTACKERS, 0, player, -1, &recovered_stack_td.test);
   dat_ability(player, card, EVENT_DECLARE_ATTACKERS, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
   return 0;
@@ -12299,4 +12301,29 @@ LAB_023d854e:
   } while (true);
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static void exile_and_give_elemental(int player, int card, int t_player, int t_card)
+{
+  kill_card(t_player, t_card, KILL_EXILE);
+  token_generation_t token;
+  default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
+  token.tou = 4;
+  token.pow = 4;
+  token.color_forced = 0x14;
+  token.t_player = t_player;
+  generate_token(&token);
+}
+
+static void create_hofri_token(int player, int card, int iid, int owner, int original_iid)
+{
+  token_generation_t token;
+  default_token_definition(player, card, cards_data[iid].id, &token);
+  token.action_argument = (int32_t)(((uint32_t)original_iid << 4) | (uint32_t)owner);
+  token.special_code_on_generation = add_hofry_legacy;
+  generate_token(&token);
+}
 #endif

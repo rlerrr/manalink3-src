@@ -3925,11 +3925,6 @@ int card_mana_cache(int player, int card, event_t event)
   int iVar3;
   int card_00;
   int iStack_ec;
-  union
-  {
-    int found[2];
-    test_definition_t this_test;
-  } storage;
 
   iVar1 = current_turn;
   if (event == EVENT_STATIC_EFFECTS)
@@ -3937,8 +3932,9 @@ int card_mana_cache(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
-      storage.found[0] = -1;
-      storage.found[1] = -1;
+      int found[2];
+      found[0] = -1;
+      found[1] = -1;
       iStack_ec = active_cards_count[current_turn] + -1;
       if (-1 < iStack_ec)
       {
@@ -3951,7 +3947,7 @@ int card_mana_cache(int player, int card, event_t event)
                 instance->info_slot_fn == mana_cache_legacy)) &&
               ((instance->targets[0].player == player && (instance->targets[0].card == card))))
           {
-            storage.found[iVar1] = iStack_ec;
+            found[iVar1] = iStack_ec;
           }
           iStack_ec = iStack_ec + -1;
         } while (iStack_ec != -1);
@@ -3970,17 +3966,17 @@ int card_mana_cache(int player, int card, event_t event)
                     ((instance->targets[0].player == player &&
                       (instance->targets[0].card == card))))))
           {
-            storage.found[iVar1] = iStack_ec;
+            found[iVar1] = iStack_ec;
           }
           iStack_ec = iStack_ec + -1;
         } while (iStack_ec != -1);
       }
-      if (-1 < storage.found[player])
+      if (-1 < found[player])
       {
-        kill_card(player, storage.found[player], KILL_EXILE);
+        kill_card(player, found[player], KILL_EXILE);
       }
       iVar1 = 1 - player;
-      if (storage.found[iVar1] == -1)
+      if (found[iVar1] == -1)
       {
 
         instance = get_card_instance(player, card);
@@ -3997,11 +3993,15 @@ int card_mana_cache(int player, int card, event_t event)
     if (iVar1 == 0)
       goto LAB_0209aa68;
   LAB_0209aaac:
-
-    new_default_test_definition(&storage.this_test, 1, "");
+    {
+    test_definition_t this_test;
+    new_default_test_definition(&this_test, 1, "");
+    this_test.state = STATE_TAPPED;
+    this_test.state_flag = DOESNT_MATCH;
     iVar1 = check_battlefield_for_special_card(player, card, current_turn, 4,
-                                               &storage.this_test);
+                                               &this_test);
     add_counters(player, card, player, card, COUNTER_CHARGE, iVar1);
+    }
   }
   else
   {

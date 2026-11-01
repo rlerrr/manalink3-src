@@ -1685,6 +1685,7 @@ When ~ leaves the battlefield, it deals 1 damage to each Goblin creature. */
 	if (event == EVENT_LEAVES_PLAY_ABILITY){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
+		this_test.subtype = SUBTYPE_GOBLIN;
 		new_damage_all(player, card, ANYBODY, 1, 0, &this_test);
 	}
 
@@ -4177,9 +4178,9 @@ int card_worms_of_the_earth(int player, int card, event_t event)
       goto LAB_024367b4;
     }
   LAB_02436756:
-    *(unsigned int *)(&player_bits + player * 4) = *(unsigned int *)(&player_bits + player * 4) | 8;
-    *(unsigned int *)(&player_bits + (1 - player) * 4) =
-        *(unsigned int *)(&player_bits + (1 - player) * 4) | 8;
+    player_bits[player] = player_bits[player] | 8;
+    player_bits[(1 - player)] =
+        player_bits[(1 - player)] | 8;
     if ((land_can_be_played & 1U) == 0)
     {
       land_can_be_played = land_can_be_played | 1;
@@ -4198,10 +4199,10 @@ int card_worms_of_the_earth(int player, int card, event_t event)
     if (lands_played < iVar2)
     {
       land_can_be_played = land_can_be_played & 0xfffffffe;
-      *(unsigned int *)(&player_bits + player * 4) =
-          *(unsigned int *)(&player_bits + player * 4) & 0xfffffff7;
-      *(unsigned int *)(&player_bits + (1 - player) * 4) =
-          *(unsigned int *)(&player_bits + (1 - player) * 4) & 0xfffffff7;
+      player_bits[player] =
+          player_bits[player] & 0xfffffff7;
+      player_bits[(1 - player)] =
+          player_bits[(1 - player)] & 0xfffffff7;
     }
   }
 LAB_024367b4:

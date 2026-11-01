@@ -2677,3 +2677,21 @@ int show_deck_force_expansion(int player, const int *deck, int num_cards, const 
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static int select_a_card_from_deck_automatic(int player, int targ_player, int test_type,
+                                              test_definition_t *this_test)
+{
+  if (get_tutoring_denial(player))
+    return -1;
+  int pos = 0;
+  if (check_battlefield_for_id(1 - targ_player, CARD_ID_AVEN_MINDCENSOR) && count_deck(targ_player) > 3)
+    pos = count_deck(targ_player) - 4;
+  for (; pos < count_deck(player); ++pos)
+    if (new_make_test(targ_player, deck_ptr[targ_player][pos], test_type, this_test))
+      return pos;
+  return -1;
+}
+#endif

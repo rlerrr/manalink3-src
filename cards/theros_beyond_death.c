@@ -451,6 +451,7 @@ int card_ashiok_nightmare_muse(int player, int card, event_t event)
 
         new_default_test_definition(&recovered_stack_token.test, 1,
                                     "Select a card to cast for free.");
+        recovered_stack_token.test.type_flag = DOESNT_MATCH;
 
         iVar4 = special_count_zone(player, rfg_ptr[iVar3], &recovered_stack_token.test);
         iStack_144 = iVar4;
@@ -1831,6 +1832,7 @@ int card_elspeths_nightmare(int player, int card, event_t event)
       default_ec_definition(1 - player, player, &ec);
       new_default_test_definition(&recovered_stack_td.test, 3,
                                   "Select a nonland, noncreature card.");
+      recovered_stack_td.test.type_flag = DOESNT_MATCH;
       new_effect_coercion(&ec, &recovered_stack_td.test);
     }
   }
@@ -4751,4 +4753,17 @@ LAB_02361fec:
   return iVar1;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static int sac_at_beginning_of_next_end_step(int player, int card, int t_player, int t_card)
+{
+  int legacy = create_targetted_legacy_effect(player, card, sacrifice_eot, t_player, t_card);
+  get_card_instance(player, legacy)->number_of_targets = 0;
+  if (current_phase == 0x1f && legacy >= 0)
+    get_card_instance(player, legacy)->targets[1].player = 1;
+  return legacy;
+}
 #endif

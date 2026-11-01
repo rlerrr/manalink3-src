@@ -583,6 +583,7 @@ int card_deathbringer_thoctar(int player, int card, event_t event){
 	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
+		this_test.not_me = 1;
 		count_for_gfp_ability(player, card, event, ANYBODY, 0, &this_test);
 	}
 
@@ -3104,8 +3105,8 @@ static int sen_triplets_effect(int player, int card, event_t event)
 
   if (event == EVENT_STATIC_EFFECTS)
   {
-    *(unsigned int *)(&player_bits + (1 - player) * 4) =
-        *(unsigned int *)(&player_bits + (1 - player) * 4) | 0x200;
+    player_bits[(1 - player)] =
+        player_bits[(1 - player)] | 0x200;
   }
   else if (event == EVENT_CLEANUP)
   {
@@ -3245,7 +3246,6 @@ void do_multicascade(int player, int card, int override, int amount)
   int iStack_bd4;
   int iStack_bd0;
   int iStack_bcc;
-  test_definition_t test;
   int exiled[500];
 
   iStack_bd0 = get_cmc(player, card);
@@ -3345,6 +3345,7 @@ void do_multicascade(int player, int card, int override, int amount)
       iStack_bcc = iStack_bcc - iVar9;
       while (true)
       {
+        test_definition_t test;
 
         new_default_test_definition(&test, 1, "Select a Land card to put into play tapped.");
         iVar5 = select_card_from_zone(player, player, exiled, iVar9, 0, 1, -1, &test);
@@ -3371,11 +3372,12 @@ void do_multicascade(int player, int card, int override, int amount)
       }
       if ((-1 < iVar4) && (iVar5 = can_legally_play_iid(player, iVar4), iVar5 != 0))
       {
+        char buffer[1000];
       LAB_022faa64:
 
         uVar1 = cards_data[iVar4].id;
-        scnprintf(test.message, 1000, " Play %s\n Do not play", cards_ptr[uVar1]->name);
-        iVar4 = do_dialog(player, player, card, -1, -1, test.message, 0);
+        scnprintf(buffer, 1000, " Play %s\n Do not play", cards_ptr[uVar1]->name);
+        iVar4 = do_dialog(player, player, card, -1, -1, buffer, 0);
         if (iVar4 == 0)
         {
           iVar9 = iVar9 + -1;

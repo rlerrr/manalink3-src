@@ -384,3 +384,18 @@ LAB_02676615:
   }
   return num_lines;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static char *destr_read_a_line(char **raw_file)
+{
+  char *line = *raw_file;
+  char *newline = strchr(line, '\n');
+  if (!newline)
+    return NULL;
+  *newline = '\0';
+  *raw_file = newline + 1;
+  return line;
+}
+#endif

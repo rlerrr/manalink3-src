@@ -1,0 +1,2951 @@
+{
+  "rows": [
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_multani_yavimayas_avatar",
+      "before_definition": "int card_multani_yavimayas_avatar(int player, int card, event_t event)\n{\n  target_t *ptVar1;\n  target_t *ptVar2;\n  card_instance_t *instance;\n  int iVar4;\n  int iVar5;\n  int iVar6;\n  bool bVar7;\n  int to_bounce[2];\n  char msg[50];\n  target_definition_t td;\n\n  check_legend_rule(player, card, event);\n  if (event - EVENT_POWER < 2)\n  {\n    if (((card == affected_card) && (player == affected_card_controller)) &&\n        ((player == -1 ||\n          (((-1 < player && (instance = in_play(player, card), instance != NULL)) &&\n            (iVar6 = is_humiliated(player, card, AL_STATIC), iVar6 == 0))))))\n    {\n      iVar6 = count_graveyard_by_type(player, 1);\n      event_result = event_result + iVar6 + landsofcolor_controlled[player][7];\n    }\n    default_target_definition(player, card, &td, 1);\n    td.allowed_controller = player;\n    td.preferred_controller = player;\n    td.illegal_abilities = 0;\n    get_card_instance(player, card);\n  }\n  else\n  {\n    default_target_definition(player, card, &td, 1);\n    td.allowed_controller = player;\n    td.preferred_controller = player;\n    td.illegal_abilities = 0;\n    instance = get_card_instance(player, card);\n    if (event == EVENT_GRAVEYARD_ABILITY)\n    {\n      iVar6 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 1, 0, 0, 0,\n                                        NULL, NULL);\n      if ((iVar6 != 0) && (iVar6 = target_available(player, card, &td), 1 < iVar6))\n      {\n        return 4;\n      }\n    }\n    else if (event == EVENT_PAY_FLASHBACK_COSTS)\n    {\n\n      charge_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0);\n      iVar6 = 0;\n      do\n      {\n        iVar5 = iVar6 + 1;\n        scnprintf(msg, 0x32, \" Select a land you control (%d of 2)\", iVar5);\n        iVar4 = new_pick_target(&td, msg, iVar6, 0x80);\n        if (iVar4 == 0)\n          break;\n        iVar4 = instance->targets[iVar6].card;\n        *(int *)(msg + iVar5 * 4 + -0xe) = iVar4;\n        state_untargettable(instance->targets[iVar6].player, iVar4, 1);\n        iVar6 = iVar5;\n      } while (iVar5 != 2);\n      if (instance->number_of_targets != '\\0')\n      {\n        iVar6 = 0;\n        do\n        {\n          ptVar2 = instance->targets + iVar6;\n          ptVar1 = instance->targets + iVar6;\n          iVar6 = iVar6 + 1;\n          state_untargettable(ptVar1->player, ptVar2->card, 0);\n        } while (iVar6 < (int)(unsigned int)instance->number_of_targets);\n        if (1 < instance->number_of_targets)\n        {\n          bVar7 = spell_fizzled == 1;\n          instance->number_of_targets = '\\0';\n          if (bVar7)\n          {\n            return 0;\n          }\n          bounce_permanent(player, to_bounce[0]);\n          bounce_permanent(player, to_bounce[1]);\n          return 1;\n        }\n      }\n      spell_fizzled = 1;\n      return 0;\n    }\n  }\n  return 0;\n}",
+      "before_sha256": "fdbd21e3f79f04f97782d31115d55f2279fc74f5f0db9c132e1fc820ac039b13",
+      "changes": [
+        {
+          "before": "*(int *)(msg + iVar5 * 4 + -0xe) = iVar4;",
+          "after": "to_bounce[iVar6] = iVar4;",
+          "occurrences": 1
+        }
+      ],
+      "after_definition": "int card_multani_yavimayas_avatar(int player, int card, event_t event)\n{\n  target_t *ptVar1;\n  target_t *ptVar2;\n  card_instance_t *instance;\n  int iVar4;\n  int iVar5;\n  int iVar6;\n  bool bVar7;\n  int to_bounce[2];\n  char msg[50];\n  target_definition_t td;\n\n  check_legend_rule(player, card, event);\n  if (event - EVENT_POWER < 2)\n  {\n    if (((card == affected_card) && (player == affected_card_controller)) &&\n        ((player == -1 ||\n          (((-1 < player && (instance = in_play(player, card), instance != NULL)) &&\n            (iVar6 = is_humiliated(player, card, AL_STATIC), iVar6 == 0))))))\n    {\n      iVar6 = count_graveyard_by_type(player, 1);\n      event_result = event_result + iVar6 + landsofcolor_controlled[player][7];\n    }\n    default_target_definition(player, card, &td, 1);\n    td.allowed_controller = player;\n    td.preferred_controller = player;\n    td.illegal_abilities = 0;\n    get_card_instance(player, card);\n  }\n  else\n  {\n    default_target_definition(player, card, &td, 1);\n    td.allowed_controller = player;\n    td.preferred_controller = player;\n    td.illegal_abilities = 0;\n    instance = get_card_instance(player, card);\n    if (event == EVENT_GRAVEYARD_ABILITY)\n    {\n      iVar6 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 1, 0, 0, 0,\n                                        NULL, NULL);\n      if ((iVar6 != 0) && (iVar6 = target_available(player, card, &td), 1 < iVar6))\n      {\n        return 4;\n      }\n    }\n    else if (event == EVENT_PAY_FLASHBACK_COSTS)\n    {\n\n      charge_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0);\n      iVar6 = 0;\n      do\n      {\n        iVar5 = iVar6 + 1;\n        scnprintf(msg, 0x32, \" Select a land you control (%d of 2)\", iVar5);\n        iVar4 = new_pick_target(&td, msg, iVar6, 0x80);\n        if (iVar4 == 0)\n          break;\n        iVar4 = instance->targets[iVar6].card;\n        to_bounce[iVar6] = iVar4;\n        state_untargettable(instance->targets[iVar6].player, iVar4, 1);\n        iVar6 = iVar5;\n      } while (iVar5 != 2);\n      if (instance->number_of_targets != '\\0')\n      {\n        iVar6 = 0;\n        do\n        {\n          ptVar2 = instance->targets + iVar6;\n          ptVar1 = instance->targets + iVar6;\n          iVar6 = iVar6 + 1;\n          state_untargettable(ptVar1->player, ptVar2->card, 0);\n        } while (iVar6 < (int)(unsigned int)instance->number_of_targets);\n        if (1 < instance->number_of_targets)\n        {\n          bVar7 = spell_fizzled == 1;\n          instance->number_of_targets = '\\0';\n          if (bVar7)\n          {\n            return 0;\n          }\n          bounce_permanent(player, to_bounce[0]);\n          bounce_permanent(player, to_bounce[1]);\n          return 1;\n        }\n      }\n      spell_fizzled = 1;\n      return 0;\n    }\n  }\n  return 0;\n}",
+      "after_sha256": "f618e92221781797c5a602fea276889dfca1718bcd1c8260e5e9b8438e0dd913",
+      "native_snapshot": {
+        "die_offset": "0x294c4e9",
+        "view": {
+          "address": "0x22d1350",
+          "end": "0x22d1681",
+          "bytes_sha256": "67edd9ce0198f333a0cb6b4d57051290f4b2b1c0a3c266b439a26df35760ccef"
+        },
+        "variables": [
+          {
+            "name": "td",
+            "die_offset": "0x294c553",
+            "frame_offset": -104,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                36508496,
+                36509313
+              ]
+            ]
+          },
+          {
+            "name": "to_bounce",
+            "die_offset": "0x294c594",
+            "frame_offset": -164,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                36508856,
+                36509168
+              ],
+              [
+                36509296,
+                36509313
+              ]
+            ]
+          },
+          {
+            "name": "msg",
+            "die_offset": "0x294c5ab",
+            "frame_offset": -154,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 50,
+              "dimensions": [
+                50
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                36508856,
+                36509168
+              ],
+              [
+                36509296,
+                36509313
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "to_bounce",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "msg",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 50,
+              "dimensions": [
+                50
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ],
+        "target_geometry": {
+          "targets_offset": 116,
+          "target_bytes": 8,
+          "card_field_offset": 120
+        },
+        "instance_frame_locations": [],
+        "selection_flow": {
+          "selected_card_stores": [
+            {
+              "address": "0x22d1553",
+              "selected_load": "0x22d1543",
+              "load_index": "esi",
+              "target_slot_bias": -8,
+              "store_index": "esi",
+              "array_bias": -4,
+              "element_bytes": 4
+            }
+          ],
+          "bounce_calls": [
+            {
+              "address": "0x22d15ce",
+              "card_argument": [
+                "array_word",
+                0
+              ]
+            },
+            {
+              "address": "0x22d15e0",
+              "card_argument": [
+                "array_word",
+                4
+              ]
+            }
+          ],
+          "dwarf_instance_spill_reads": []
+        }
+      },
+      "before_compiled": {
+        "die_offset": "0x14a4e41",
+        "view": {
+          "address": "0x2152ea0",
+          "end": "0x2153259",
+          "bytes_sha256": "63d38141a737bc1c780c1781c3f6d1ce8af71c1d0625f797cf8043fdf77a9926"
+        },
+        "variables": [
+          {
+            "name": "msg",
+            "die_offset": "0x14a4f4e",
+            "frame_offset": -154,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 50,
+              "dimensions": [
+                50
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                34942624,
+                34943577
+              ]
+            ]
+          },
+          {
+            "name": "td",
+            "die_offset": "0x14a4f5f",
+            "frame_offset": -104,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                34942624,
+                34943577
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "to_bounce",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "msg",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 50,
+              "dimensions": [
+                50
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ],
+        "target_geometry": {
+          "targets_offset": 116,
+          "target_bytes": 8,
+          "card_field_offset": 120
+        },
+        "instance_frame_locations": [
+          {
+            "start": 34943047,
+            "end": 34943250,
+            "frame_offset": -160
+          }
+        ],
+        "selection_flow": null
+      },
+      "native_validation": {
+        "selected_card_stores": 1,
+        "bounce_array_offsets": [
+          0,
+          4
+        ],
+        "array_bytes": 8,
+        "prompt_bytes": 50
+      },
+      "after_compiled": {
+        "die_offset": "0x14a4e41",
+        "view": {
+          "address": "0x2152ea0",
+          "end": "0x21531f1",
+          "bytes_sha256": "9acd85f870a1d3f77b477a60b14a65b99ccffd20b4416eec9f3b9a25bb975b39"
+        },
+        "variables": [
+          {
+            "name": "to_bounce",
+            "die_offset": "0x14a4f40",
+            "frame_offset": -164,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                34942624,
+                34943473
+              ]
+            ]
+          },
+          {
+            "name": "msg",
+            "die_offset": "0x14a4f57",
+            "frame_offset": -154,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 50,
+              "dimensions": [
+                50
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                34942624,
+                34943473
+              ]
+            ]
+          },
+          {
+            "name": "td",
+            "die_offset": "0x14a4f68",
+            "frame_offset": -104,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                34942624,
+                34943473
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "to_bounce",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "msg",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 50,
+              "dimensions": [
+                50
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ],
+        "target_geometry": {
+          "targets_offset": 116,
+          "target_bytes": 8,
+          "card_field_offset": 120
+        },
+        "instance_frame_locations": [
+          {
+            "start": 34943041,
+            "end": 34943181,
+            "frame_offset": -168
+          },
+          {
+            "start": 34943328,
+            "end": 34943473,
+            "frame_offset": -168
+          }
+        ],
+        "selection_flow": {
+          "selected_card_stores": [
+            {
+              "address": "0x21530ad",
+              "selected_load": "0x215309d",
+              "load_index": "esi",
+              "target_slot_bias": -8,
+              "store_index": "esi",
+              "array_bias": -4,
+              "element_bytes": 4
+            }
+          ],
+          "bounce_calls": [
+            {
+              "address": "0x21531ba",
+              "card_argument": [
+                "array_word",
+                0
+              ]
+            },
+            {
+              "address": "0x21531cc",
+              "card_argument": [
+                "array_word",
+                4
+              ]
+            }
+          ],
+          "dwarf_instance_spill_reads": [
+            {
+              "address": "0x2153042",
+              "frame_offset": -168
+            }
+          ]
+        }
+      },
+      "compiled_validation": {
+        "selected_card_stores": 1,
+        "bounce_array_offsets": [
+          0,
+          4
+        ],
+        "array_bytes": 8,
+        "prompt_bytes": 50
+      }
+    },
+    {
+      "source": "cards/promo.c",
+      "name": "card_faerie_dragon",
+      "before_definition": "int card_faerie_dragon(int player, int card, event_t event)\n{\n  // 0x4735C0\n\n  /* Faerie Dragon\t|2|G|G\n   * Creature - Faerie Dragon 1/3\n   * Flying\n   * |1|G|G: Play a random effect. */\n\n  target_t tgts[300]; // [sp+Ch] [bp-960h]@14\n\n  if (event == EVENT_CAN_ACTIVATE)\n\treturn can_use_activated_abilities(player, card) && has_mana_for_activated_ability(player, card, MANACOST_XG(1,2));\n\n  if (event == EVENT_GET_SELECTED_CARD)\n\tEXE_FN(void, 0x498FD0, int)(0);\n\n  if (event == EVENT_ACTIVATE && charge_mana_for_activated_ability(player, card, MANACOST_XG(1,2)))\n\t{\n\t  int abil = network_rand(player, 20);\t// 0x44E070 either picks a random number and sends it over the network, or awaits a number of the network\n\n\t  card_instance_t* instance = get_card_instance(player, card);\n\n\t  instance->info_slot = abil;\n\n\t  int numtgts = EXE_FN(int, 0x473370, int, int, target_t*)(player, card, tgts);\t// picks random targets, sends/receives over network\n\n\t  int chosen = network_rand(player, numtgts);\n\n\t  instance->targets[0].player = tgts[chosen].player;\n\t  instance->targets[0].card = tgts[chosen].card;\n\t  instance->number_of_targets = 1;\n\t}\n\n  if (event == EVENT_RESOLVE_ACTIVATION)\n\t{\n\t  card_instance_t* instance = get_card_instance(player, card);\n\t  if (!instance->number_of_targets)\n\t\treturn 0;\n\n\t  // 0x473720\n\n\t  int abil = instance->info_slot;\n\n\t  target_definition_t td;\n\t  default_target_definition(player, card, &td, TYPE_CREATURE);\n\t  td.preferred_controller = ANYBODY;\n\n\t  if (!valid_target(&td))\n\t\t{\n\t\t  cancel = 1;\n\t\t  get_card_instance(instance->parent_controller, instance->parent_card)->number_of_targets = 0;\n\t\t  return 0;\n\t\t}\n\n\t  int tgt_player = instance->targets[0].player;\n\t  int tgt_card = instance->targets[0].card;\n\n\t  card_instance_t* tgt_inst = get_card_instance(tgt_player, tgt_card);\n\n\t  int effect_card = -1;\n\n\t  char buf[300];\n\n\t  if (abil >= 0 && abil < 20 && abil != 13 && abil != 1)\n\t\t{\n\t\t  load_text(0, \"FAERIEDRAGON_MESSAGES\");\n\t\t  scnprintf(buf, 300, \"\\n%s\", text_lines[abil]);\n\t\t  do_dialog(player, player, card, tgt_player, tgt_card, buf, 0);\n\t\t  play_sound_effect(WAV_FAERDRAG);\n\t\t}\n\n\t  switch (abil)\n\t\t{\n\t\t  case 0:\n\t\t\teffect_card = create_legacy_effect_exe(player, card, LEGACY_EFFECT_GENERIC, tgt_player, tgt_card);\n\t\t\tif (effect_card != -1)\n\t\t\t  {\n\t\t\t\tcard_instance_t* legacy = get_card_instance(player, effect_card);\n\t\t\t\tlegacy->info_slot = KEYWORD_TRAMPLE;\n\t\t\t\tlegacy->counter_power = tgt_inst->power;\n\t\t\t\tlegacy->token_status |= STATUS_BERSERK;\n\t\t\t  }\n\t\t\tbreak;\n\n\t\t  case 1:\n\t\t\tif (tgt_inst->power >= 3)\n\t\t\t  {\n\t\t\t\tcancel = 1;\n\t\t\t\tload_text(0, \"FAERIEDRAGON_TAWNOSWAND\");\n\t\t\t\tsprintf(buf, \"\\n%s\", text_lines[1]);\n\t\t\t\tdo_dialog(player, player, card, tgt_player, tgt_card, buf, 0);\n\t\t\t  }\n\t\t\telse\n\t\t\t  {\n\t\t\t\tload_text(0, \"FAERIEDRAGON_TAWNOSWAND\");\n\t\t\t\tsprintf(buf, \"\\n%s\", text_lines[0]);\n\t\t\t\tdo_dialog(player, player, card, tgt_player, tgt_card, buf, 0);\n\t\t\t\teffect_card = pump_ability_until_eot(player, card, tgt_player, tgt_card, 0,0, 0,SP_KEYWORD_UNBLOCKABLE);\n\t\t\t\tplay_sound_effect(WAV_FAERDRAG);\n\t\t\t  }\n\t\t\tbreak;\n\n\t\t  case 2:\n\t\t\t;int tgh = get_toughness(tgt_player, tgt_card);\n\n\t\t\tif (tgh >= 5)\n\t\t\t  tgh = 4;\n\t\t\telse\n\t\t\t  tgh = tgh - 1;\n\n\t\t\teffect_card = pump_until_eot(player, card, tgt_player, tgt_card, 4, -tgh);\n\t\t\tbreak;\n\n\t\t  case 3:\n\t\t\t// change_color_and_kill_other_change_color_effects\n\t\t\tEXE_FN(int, 0x401730, int, int, int, int, int)(tgt_player, tgt_card, get_sleighted_color_test(player, card, COLOR_TEST_GREEN), player, card);\n\t\t\tbreak;\n\n\t\t  case 4:\n\t\t\t// change_color_and_kill_other_change_color_effects\n\t\t\tEXE_FN(int, 0x401730, int, int, int, int, int)(tgt_player, tgt_card, get_sleighted_color_test(player, card, COLOR_TEST_WHITE), player, card);\n\t\t\tbreak;\n\n\t\t  case 5:\n\t\t\t// change_color_and_kill_other_change_color_effects\n\t\t\tEXE_FN(int, 0x401730, int, int, int, int, int)(tgt_player, tgt_card, get_sleighted_color_test(player, card, COLOR_TEST_RED), player, card);\n\t\t\tbreak;\n\n\t\t  case 6:\n\t\t\tdamage_creature(tgt_player, tgt_card, 3, instance->parent_controller, instance->parent_card);\n\t\t\tbreak;\n\n\t\t  case 7:\n\t\t\teffect_card = pump_ability_until_eot(player, card, tgt_player, tgt_card, 0,0, KEYWORD_FLYING,0);\n\t\t\tbreak;\n\n\t\t  case 8:\n\t\t\teffect_card = pump_until_eot(player, card, tgt_player, tgt_card, 3,3);\n\t\t\tbreak;\n\n\t\t  case 9:\n\t\t\teffect_card = pump_ability_until_eot(player, card, tgt_player, tgt_card, 0,0, KEYWORD_BANDING,0);\n\t\t\tbreak;\n\n\t\t  case 10:\n\t\t\t// change_color_and_kill_other_change_color_effects\n\t\t\tEXE_FN(int, 0x401730, int, int, int, int, int)(tgt_player, tgt_card, get_sleighted_color_test(player, card, COLOR_TEST_BLACK), player, card);\n\t\t\tbreak;\n\n\t\t  case 11:\n\t\t\t// change_color_and_kill_other_change_color_effects\n\t\t\tEXE_FN(int, 0x401730, int, int, int, int, int)(tgt_player, tgt_card, get_sleighted_color_test(player, card, COLOR_TEST_BLUE), player, card);\n\t\t\tbreak;\n\n\t\t  case 12:\n\t\t\teffect_card = cannot_regenerate_until_eot(player, card, tgt_player, tgt_card);\n\t\t\tbreak;\n\n\t\t  case 13:\n\t\t\tload_text(0, \"FAERIEDRAGON_TWIDDLE\");\n\t\t\tscnprintf(buf, 300, \"\\n%s\\n %s\\n %s\", text_lines, text_lines[1], text_lines[2]);\n\t\t\tif (do_dialog(player, player, card, tgt_player, tgt_card, buf, (tgt_inst->state & STATE_TAPPED) ? 0 : 1))\n\t\t\t  untap_card(tgt_player, tgt_card);\n\t\t\telse\n\t\t\t  tap_card(tgt_player, tgt_card);\n\n\t\t\tplay_sound_effect(WAV_FAERDRAG);\n\t\t\tbreak;\n\n\t\t  case 14:\n\t\t\teffect_card = pump_until_eot(player, card, tgt_player, tgt_card, -2,0);\n\t\t\tbreak;\n\n\t\t  case 15:\n\t\t\tbounce_permanent(tgt_player, tgt_card);\n\t\t\tbreak;\n\n\t\t  case 16:\n\t\t\tdamage_creature(tgt_player, tgt_card, 1, instance->parent_controller, instance->parent_card);\n\t\t\tbreak;\n\n\t\t  case 17:\n\t\t\tset_pt_and_abilities_until_eot(instance->parent_controller, instance->parent_card, tgt_player, tgt_card, 0, 2, 0, 0, 0);\n\t\t\tbreak;\n\n\t\t  case 18:\n\t\t\tgain_life(tgt_player, get_power(tgt_player, tgt_card));\n\t\t\tkill_card(tgt_player, tgt_card, KILL_EXILE);\n\t\t\tbreak;\n\n\t\t  case 19:\n\t\t\tif (ai_is_speculating != 1)\n\t\t\t  {\n\t\t\t\tplay_sound_effect(WAV_ORCART);\n\t\t\t\tEXE_STDCALL_FN(void, 0x4D5D32, int)(3000);\t// Sleep(3000);\n\t\t\t  }\n\t\t\t++hack_silent_counters;\n\t\t\tadd_counters(player, card, tgt_player, tgt_card, COUNTER_M0_M1, 1);\n\t\t\t--hack_silent_counters;\n\t\t\tplay_sound_effect(WAV_CATATAP);\n\t\t\tbreak;\n\n\t\t  default:\n\t\t\tload_text(0, \"FAERIEDRAGON_ERROR\");\n\t\t\tscnprintf(buf, 300, \"\\n%s\", text_lines[0]);\n\t\t\tdo_dialog(player, player, card, tgt_player, tgt_card, buf, 0);\n\t\t\tbreak;\n\t\t}\n\n\t  if (effect_card != -1)\n\t\t{\n\t\t  card_instance_t* legacy = get_card_instance(player, effect_card);\n\t\t  legacy->display_pic_csv_id = EXE_DWORD_PTR(0x4EC234)[abil];\t// The csvids of the mimicked effects\n\t\t  legacy->display_pic_num = get_card_image_number(legacy->display_pic_csv_id, player, card);\n\t\t}\n\n\t  get_card_instance(instance->parent_controller, instance->parent_card)->number_of_targets = 0;\n\t}\n\n  return 0;\n}",
+      "before_sha256": "e0e406626e21fcbad98bb1fbed27ef6af448aaad3f291a93b4530fc17b98ce57",
+      "changes": [
+        {
+          "before": "char buf[300];",
+          "after": "char buf[301];",
+          "occurrences": 1
+        }
+      ],
+      "after_definition": "int card_faerie_dragon(int player, int card, event_t event)\n{\n  // 0x4735C0\n\n  /* Faerie Dragon\t|2|G|G\n   * Creature - Faerie Dragon 1/3\n   * Flying\n   * |1|G|G: Play a random effect. */\n\n  target_t tgts[300]; // [sp+Ch] [bp-960h]@14\n\n  if (event == EVENT_CAN_ACTIVATE)\n\treturn can_use_activated_abilities(player, card) && has_mana_for_activated_ability(player, card, MANACOST_XG(1,2));\n\n  if (event == EVENT_GET_SELECTED_CARD)\n\tEXE_FN(void, 0x498FD0, int)(0);\n\n  if (event == EVENT_ACTIVATE && charge_mana_for_activated_ability(player, card, MANACOST_XG(1,2)))\n\t{\n\t  int abil = network_rand(player, 20);\t// 0x44E070 either picks a random number and sends it over the network, or awaits a number of the network\n\n\t  card_instance_t* instance = get_card_instance(player, card);\n\n\t  instance->info_slot = abil;\n\n\t  int numtgts = EXE_FN(int, 0x473370, int, int, target_t*)(player, card, tgts);\t// picks random targets, sends/receives over network\n\n\t  int chosen = network_rand(player, numtgts);\n\n\t  instance->targets[0].player = tgts[chosen].player;\n\t  instance->targets[0].card = tgts[chosen].card;\n\t  instance->number_of_targets = 1;\n\t}\n\n  if (event == EVENT_RESOLVE_ACTIVATION)\n\t{\n\t  card_instance_t* instance = get_card_instance(player, card);\n\t  if (!instance->number_of_targets)\n\t\treturn 0;\n\n\t  // 0x473720\n\n\t  int abil = instance->info_slot;\n\n\t  target_definition_t td;\n\t  default_target_definition(player, card, &td, TYPE_CREATURE);\n\t  td.preferred_controller = ANYBODY;\n\n\t  if (!valid_target(&td))\n\t\t{\n\t\t  cancel = 1;\n\t\t  get_card_instance(instance->parent_controller, instance->parent_card)->number_of_targets = 0;\n\t\t  return 0;\n\t\t}\n\n\t  int tgt_player = instance->targets[0].player;\n\t  int tgt_card = instance->targets[0].card;\n\n\t  card_instance_t* tgt_inst = get_card_instance(tgt_player, tgt_card);\n\n\t  int effect_card = -1;\n\n\t  char buf[301];\n\n\t  if (abil >= 0 && abil < 20 && abil != 13 && abil != 1)\n\t\t{\n\t\t  load_text(0, \"FAERIEDRAGON_MESSAGES\");\n\t\t  scnprintf(buf, 300, \"\\n%s\", text_lines[abil]);\n\t\t  do_dialog(player, player, card, tgt_player, tgt_card, buf, 0);\n\t\t  play_sound_effect(WAV_FAERDRAG);\n\t\t}\n\n\t  switch (abil)\n\t\t{\n\t\t  case 0:\n\t\t\teffect_card = create_legacy_effect_exe(player, card, LEGACY_EFFECT_GENERIC, tgt_player, tgt_card);\n\t\t\tif (effect_card != -1)\n\t\t\t  {\n\t\t\t\tcard_instance_t* legacy = get_card_instance(player, effect_card);\n\t\t\t\tlegacy->info_slot = KEYWORD_TRAMPLE;\n\t\t\t\tlegacy->counter_power = tgt_inst->power;\n\t\t\t\tlegacy->token_status |= STATUS_BERSERK;\n\t\t\t  }\n\t\t\tbreak;\n\n\t\t  case 1:\n\t\t\tif (tgt_inst->power >= 3)\n\t\t\t  {\n\t\t\t\tcancel = 1;\n\t\t\t\tload_text(0, \"FAERIEDRAGON_TAWNOSWAND\");\n\t\t\t\tsprintf(buf, \"\\n%s\", text_lines[1]);\n\t\t\t\tdo_dialog(player, player, card, tgt_player, tgt_card, buf, 0);\n\t\t\t  }\n\t\t\telse\n\t\t\t  {\n\t\t\t\tload_text(0, \"FAERIEDRAGON_TAWNOSWAND\");\n\t\t\t\tsprintf(buf, \"\\n%s\", text_lines[0]);\n\t\t\t\tdo_dialog(player, player, card, tgt_player, tgt_card, buf, 0);\n\t\t\t\teffect_card = pump_ability_until_eot(player, card, tgt_player, tgt_card, 0,0, 0,SP_KEYWORD_UNBLOCKABLE);\n\t\t\t\tplay_sound_effect(WAV_FAERDRAG);\n\t\t\t  }\n\t\t\tbreak;\n\n\t\t  case 2:\n\t\t\t;int tgh = get_toughness(tgt_player, tgt_card);\n\n\t\t\tif (tgh >= 5)\n\t\t\t  tgh = 4;\n\t\t\telse\n\t\t\t  tgh = tgh - 1;\n\n\t\t\teffect_card = pump_until_eot(player, card, tgt_player, tgt_card, 4, -tgh);\n\t\t\tbreak;\n\n\t\t  case 3:\n\t\t\t// change_color_and_kill_other_change_color_effects\n\t\t\tEXE_FN(int, 0x401730, int, int, int, int, int)(tgt_player, tgt_card, get_sleighted_color_test(player, card, COLOR_TEST_GREEN), player, card);\n\t\t\tbreak;\n\n\t\t  case 4:\n\t\t\t// change_color_and_kill_other_change_color_effects\n\t\t\tEXE_FN(int, 0x401730, int, int, int, int, int)(tgt_player, tgt_card, get_sleighted_color_test(player, card, COLOR_TEST_WHITE), player, card);\n\t\t\tbreak;\n\n\t\t  case 5:\n\t\t\t// change_color_and_kill_other_change_color_effects\n\t\t\tEXE_FN(int, 0x401730, int, int, int, int, int)(tgt_player, tgt_card, get_sleighted_color_test(player, card, COLOR_TEST_RED), player, card);\n\t\t\tbreak;\n\n\t\t  case 6:\n\t\t\tdamage_creature(tgt_player, tgt_card, 3, instance->parent_controller, instance->parent_card);\n\t\t\tbreak;\n\n\t\t  case 7:\n\t\t\teffect_card = pump_ability_until_eot(player, card, tgt_player, tgt_card, 0,0, KEYWORD_FLYING,0);\n\t\t\tbreak;\n\n\t\t  case 8:\n\t\t\teffect_card = pump_until_eot(player, card, tgt_player, tgt_card, 3,3);\n\t\t\tbreak;\n\n\t\t  case 9:\n\t\t\teffect_card = pump_ability_until_eot(player, card, tgt_player, tgt_card, 0,0, KEYWORD_BANDING,0);\n\t\t\tbreak;\n\n\t\t  case 10:\n\t\t\t// change_color_and_kill_other_change_color_effects\n\t\t\tEXE_FN(int, 0x401730, int, int, int, int, int)(tgt_player, tgt_card, get_sleighted_color_test(player, card, COLOR_TEST_BLACK), player, card);\n\t\t\tbreak;\n\n\t\t  case 11:\n\t\t\t// change_color_and_kill_other_change_color_effects\n\t\t\tEXE_FN(int, 0x401730, int, int, int, int, int)(tgt_player, tgt_card, get_sleighted_color_test(player, card, COLOR_TEST_BLUE), player, card);\n\t\t\tbreak;\n\n\t\t  case 12:\n\t\t\teffect_card = cannot_regenerate_until_eot(player, card, tgt_player, tgt_card);\n\t\t\tbreak;\n\n\t\t  case 13:\n\t\t\tload_text(0, \"FAERIEDRAGON_TWIDDLE\");\n\t\t\tscnprintf(buf, 300, \"\\n%s\\n %s\\n %s\", text_lines, text_lines[1], text_lines[2]);\n\t\t\tif (do_dialog(player, player, card, tgt_player, tgt_card, buf, (tgt_inst->state & STATE_TAPPED) ? 0 : 1))\n\t\t\t  untap_card(tgt_player, tgt_card);\n\t\t\telse\n\t\t\t  tap_card(tgt_player, tgt_card);\n\n\t\t\tplay_sound_effect(WAV_FAERDRAG);\n\t\t\tbreak;\n\n\t\t  case 14:\n\t\t\teffect_card = pump_until_eot(player, card, tgt_player, tgt_card, -2,0);\n\t\t\tbreak;\n\n\t\t  case 15:\n\t\t\tbounce_permanent(tgt_player, tgt_card);\n\t\t\tbreak;\n\n\t\t  case 16:\n\t\t\tdamage_creature(tgt_player, tgt_card, 1, instance->parent_controller, instance->parent_card);\n\t\t\tbreak;\n\n\t\t  case 17:\n\t\t\tset_pt_and_abilities_until_eot(instance->parent_controller, instance->parent_card, tgt_player, tgt_card, 0, 2, 0, 0, 0);\n\t\t\tbreak;\n\n\t\t  case 18:\n\t\t\tgain_life(tgt_player, get_power(tgt_player, tgt_card));\n\t\t\tkill_card(tgt_player, tgt_card, KILL_EXILE);\n\t\t\tbreak;\n\n\t\t  case 19:\n\t\t\tif (ai_is_speculating != 1)\n\t\t\t  {\n\t\t\t\tplay_sound_effect(WAV_ORCART);\n\t\t\t\tEXE_STDCALL_FN(void, 0x4D5D32, int)(3000);\t// Sleep(3000);\n\t\t\t  }\n\t\t\t++hack_silent_counters;\n\t\t\tadd_counters(player, card, tgt_player, tgt_card, COUNTER_M0_M1, 1);\n\t\t\t--hack_silent_counters;\n\t\t\tplay_sound_effect(WAV_CATATAP);\n\t\t\tbreak;\n\n\t\t  default:\n\t\t\tload_text(0, \"FAERIEDRAGON_ERROR\");\n\t\t\tscnprintf(buf, 300, \"\\n%s\", text_lines[0]);\n\t\t\tdo_dialog(player, player, card, tgt_player, tgt_card, buf, 0);\n\t\t\tbreak;\n\t\t}\n\n\t  if (effect_card != -1)\n\t\t{\n\t\t  card_instance_t* legacy = get_card_instance(player, effect_card);\n\t\t  legacy->display_pic_csv_id = EXE_DWORD_PTR(0x4EC234)[abil];\t// The csvids of the mimicked effects\n\t\t  legacy->display_pic_num = get_card_image_number(legacy->display_pic_csv_id, player, card);\n\t\t}\n\n\t  get_card_instance(instance->parent_controller, instance->parent_card)->number_of_targets = 0;\n\t}\n\n  return 0;\n}",
+      "after_sha256": "efc368408a68be09a432ac38b26b2c5fdd7fa22ab16efcf8874ac64fa830d6c8",
+      "native_snapshot": {
+        "die_offset": "0x3c65e26",
+        "view": {
+          "address": "0x240e370",
+          "end": "0x240ec5d",
+          "bytes_sha256": "4655b79608b4f3452e5ce32956744f4acb47cf4ab5362dac8e10b3cd0cb3b2e5"
+        },
+        "variables": [
+          {
+            "name": "tgts",
+            "die_offset": "0x3c65e8f",
+            "frame_offset": -2420,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 2400,
+              "dimensions": [
+                300
+              ],
+              "element_size": 8,
+              "element_encoding": null
+            },
+            "scope_ranges": [
+              [
+                37806960,
+                37809245
+              ]
+            ]
+          },
+          {
+            "name": "td",
+            "die_offset": "0x3c65fb3",
+            "frame_offset": -2504,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                37807032,
+                37807316
+              ],
+              [
+                37807318,
+                37807328
+              ],
+              [
+                37807632,
+                37809245
+              ]
+            ]
+          },
+          {
+            "name": "buf",
+            "die_offset": "0x3c66030",
+            "frame_offset": -2420,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 301,
+              "dimensions": [
+                301
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                37807032,
+                37807316
+              ],
+              [
+                37807318,
+                37807328
+              ],
+              [
+                37807632,
+                37809245
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "tgts",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 2400,
+              "dimensions": [
+                300
+              ],
+              "element_size": 8,
+              "element_encoding": null
+            },
+            "element_kind": "DW_TAG_structure_type"
+          },
+          {
+            "name": "buf",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 301,
+              "dimensions": [
+                301
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ]
+      },
+      "before_compiled": {
+        "die_offset": "0x384dfa2",
+        "view": {
+          "address": "0x2448b20",
+          "end": "0x2449415",
+          "bytes_sha256": "349c3fb2b6afbc371acdb74b5b0264401b26ac10f5cdbcf99f9a311ed05c85f3"
+        },
+        "variables": [
+          {
+            "name": "tgts",
+            "die_offset": "0x384e00b",
+            "frame_offset": -2420,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 2400,
+              "dimensions": [
+                300
+              ],
+              "element_size": 8,
+              "element_encoding": null
+            },
+            "scope_ranges": [
+              [
+                38046496,
+                38048789
+              ]
+            ]
+          },
+          {
+            "name": "td",
+            "die_offset": "0x384e12f",
+            "frame_offset": -2504,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                38046568,
+                38046852
+              ],
+              [
+                38046854,
+                38046864
+              ],
+              [
+                38047168,
+                38048789
+              ]
+            ]
+          },
+          {
+            "name": "buf",
+            "die_offset": "0x384e1ac",
+            "frame_offset": -2420,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                38046568,
+                38046852
+              ],
+              [
+                38046854,
+                38046864
+              ],
+              [
+                38047168,
+                38048789
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "tgts",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 2400,
+              "dimensions": [
+                300
+              ],
+              "element_size": 8,
+              "element_encoding": null
+            },
+            "element_kind": "DW_TAG_structure_type"
+          },
+          {
+            "name": "buf",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ]
+      },
+      "native_validation": {
+        "prompt_bytes": 301,
+        "target_array_bytes": 2400
+      },
+      "after_compiled": {
+        "die_offset": "0x384df48",
+        "view": {
+          "address": "0x2448ac0",
+          "end": "0x24493b5",
+          "bytes_sha256": "d70c6466a94f73bd8f3cdbd64eae9714961164d242bbeb2457fcaeba2218593e"
+        },
+        "variables": [
+          {
+            "name": "tgts",
+            "die_offset": "0x384dfb1",
+            "frame_offset": -2420,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 2400,
+              "dimensions": [
+                300
+              ],
+              "element_size": 8,
+              "element_encoding": null
+            },
+            "scope_ranges": [
+              [
+                38046400,
+                38048693
+              ]
+            ]
+          },
+          {
+            "name": "td",
+            "die_offset": "0x384e0d5",
+            "frame_offset": -2504,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                38046472,
+                38046756
+              ],
+              [
+                38046758,
+                38046768
+              ],
+              [
+                38047072,
+                38048693
+              ]
+            ]
+          },
+          {
+            "name": "buf",
+            "die_offset": "0x384e152",
+            "frame_offset": -2420,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 301,
+              "dimensions": [
+                301
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                38046472,
+                38046756
+              ],
+              [
+                38046758,
+                38046768
+              ],
+              [
+                38047072,
+                38048693
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "tgts",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 2400,
+              "dimensions": [
+                300
+              ],
+              "element_size": 8,
+              "element_encoding": null
+            },
+            "element_kind": "DW_TAG_structure_type"
+          },
+          {
+            "name": "buf",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 301,
+              "dimensions": [
+                301
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ]
+      },
+      "compiled_validation": {
+        "prompt_bytes": 301,
+        "target_array_bytes": 2400
+      }
+    },
+    {
+      "source": "functions/engine.c",
+      "name": "put_card_on_stack",
+      "before_definition": "int put_card_on_stack(int player, int card, int second_call)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  int iid = instance->internal_card_id;\n  if (iid < 0)\n    return 0;\n  char str[500];\n  int old_iid, old_controller, old_card;\n  if (!second_call)\n  {\n    if (trace_mode & 2)\n    {\n      char trace[300];\n      int count = EXE_DWORD(0x60ec40)++;\n      sprintf(trace, \"%d: Player %d is playing %s(%d).\\n\", count, player, cards_data[iid].name,\n              card);\n      EXE_FN(void, 0x4a7d80, const char *)(trace);\n    }\n    if (!compute_and_check_casting_cost(player, player, card))\n      return 0;\n    engine_selected_card = -1;\n    EXE_DWORD(0x78676c) = 0;\n    max_x_value = -1;\n    if ((cards_data[iid].type & 0x3c) &&\n        !dispatch_event_to_single_card(player, card, EVENT_CAN_CAST, 1 - player, -1))\n      return 0;\n    spell_fizzled = -1;\n    old_iid = EXE_DWORD(0x4ef19c);\n    old_controller = card_on_stack_controller;\n    old_card = card_on_stack;\n    EXE_DWORD(0x4ef19c) = iid;\n    card_on_stack_controller = player;\n    card_on_stack = card;\n    if (stack_size < 32)\n      put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_SPELL, player, 0);\n    EXE_FN(void, 0x430150, void)();\n    if (!EXE_DWORD(0x78676c))\n      charge_spell_cost(&cards_data[iid], player, card);\n    max_x_value = -1;\n    if (!(instance->token_status & 8))\n    {\n      --hand_count[player];\n      if (player != -1)\n      {\n        uint8_t type = cards_data[iid].type;\n        if (type & 2)\n          ++creature_count[player];\n        if (type & 0x40)\n          ++artifact_count[player];\n        if (type & 4)\n          ++enchantment_count[player];\n        types_of_cards_on_bf[player] |= type;\n      }\n    }\n    redraw_libraries();\n    instance->state |= 0x30020;\n    land_can_be_played |= 0x20;\n    EXE_DWORD(0x4ef19c) = old_iid;\n    card_on_stack_controller = old_controller;\n    card_on_stack = old_card;\n    if (spell_fizzled != 1)\n    {\n      if (dispatch_event(player, card, (event_t)0x6c))\n        spell_fizzled = 1;\n      if (spell_fizzled == 1)\n        EXE_FN(void, 0x430200, int)(player);\n      EXE_FN(void, 0x4301e0, void)();\n      if (spell_fizzled == 1)\n        goto failed;\n      if (player == 1 && !(trace_mode & 2) && ai_is_speculating == 1 &&\n          cards_data[iid].cc[1] == 0xff)\n        ai_modifier -= 12 * EXE_FN(int, 0x435940, int)(1);\n      if (instance->internal_card_id == -1)\n      {\n        obliterate_top_card_of_stack();\n        land_can_be_played &= ~0x20;\n        call_sub_437E20_unless_ai_is_speculating();\n      }\n      return 1;\n    }\n    EXE_FN(void, 0x4301e0, void)();\n  }\n  else\n  {\n    old_iid = EXE_DWORD(0x4ef19c);\n    old_controller = card_on_stack_controller;\n    old_card = card_on_stack;\n    EXE_DWORD(0x4ef19c) = iid;\n    card_on_stack_controller = player;\n    card_on_stack = card;\n    if (!(cards_data[iid].type & 1))\n    {\n      recopy_card_onto_stack(1);\n      if (!(cards_data[iid].type & 1))\n      {\n        if (EXE_DWORD(0x628c7c))\n          EXE_DWORD(0x628c7c) |= 2;\n        const char *name =\n            EXE_FN(const char *, 0x439690, int, int)(card_on_stack_controller, card_on_stack);\n        sprintf((char *)0x60a690, EXE_STR(0x6288d8), name);\n        EXE_FN(int, 0x436a20, int, int, const char *, int)(-2, current_phase, EXE_STR(0x60a690),\n                                                           0xd3);\n        if (EXE_DWORD(0x628c7c) & 2)\n        {\n          call_sub_437E20_unless_ai_is_speculating();\n          EXE_STDCALL_FN(void, 0x4d5d32, int)(3000);\n        }\n      }\n    }\n    EXE_DWORD(0x4ef19c) = old_iid;\n    card_on_stack_controller = old_controller;\n    card_on_stack = old_card;\n    if (instance->internal_card_id == -1)\n      spell_fizzled = 1;\n    land_can_be_played &= ~0x20;\n    instance->state |= player == 0 ? 0x80 : 0x400080;\n    if (ai_is_speculating != 1)\n      EXE_FN(void, 0x436700, void)();\n    if (spell_fizzled == 1)\n      goto failed;\n    if (player == 1 && ai_is_speculating != 1 && !EXE_DWORD(0x628c7c) &&\n        !(cards_data[iid].type & 1))\n    {\n      load_text(NULL, \"PROMPT_CAST1\");\n      sprintf(str, text_lines[0], opponent_name);\n      if (cards_data[iid].cc[1] == 0xff)\n        sprintf(str, EXE_STR(0x715dd8), opponent_name, x_value);\n      target_t target = {-1, -1};\n      if (instance->number_of_targets == 1)\n        target = instance->targets[0];\n      EXE_FN(int, 0x471b60, int, int, int, int, const char *, int)(1, card, target.player,\n                                                                   target.card, str, 0);\n    }\n  }\n  call_sub_437E20_unless_ai_is_speculating();\n  if (spell_fizzled != 1)\n  {\n    EXE_FN(void, 0x4373b0, int, int)(player, card);\n    return 1;\n  }\nfailed:;\n  int p = player;\n  if (instance->token_status & 8)\n    p = EXE_FN(int, 0x4779f0, int, int, int)(player, card, 1);\n  else if (instance->internal_card_id != -1)\n    ++hand_count[player];\n  uint8_t type = cards_data[iid].type;\n  if (type & 2)\n    --creature_count[p];\n  if (type & 0x40)\n    --artifact_count[p];\n  if (type & 4)\n    --enchantment_count[p];\n  redraw_libraries();\n  instance->state &= 0xfffcff5d;\n  if (player == 1 && !(trace_mode & 2))\n    EXE_DWORD(0x7a372c) = 1;\n  spell_fizzled = 0;\n  obliterate_top_card_of_stack();\n  land_can_be_played &= ~0x20;\n  return 0;\n}",
+      "before_sha256": "2cf73ef19e3757f7b01d1b1f37ff4a740c923a91f41dd6343a58b98a92a1ec16",
+      "changes": [
+        {
+          "before": "  char str[500];\n",
+          "after": "",
+          "occurrences": 1
+        },
+        {
+          "before": "      char trace[300];",
+          "after": "      char str[500];",
+          "occurrences": 1
+        },
+        {
+          "before": "sprintf(trace,",
+          "after": "sprintf(str,",
+          "occurrences": 1
+        },
+        {
+          "before": "const char *)(trace);",
+          "after": "const char *)(str);",
+          "occurrences": 1
+        },
+        {
+          "before": "      load_text(NULL, \"PROMPT_CAST1\");",
+          "after": "      char str[300];\n      load_text(NULL, \"PROMPT_CAST1\");",
+          "occurrences": 1
+        }
+      ],
+      "after_definition": "int put_card_on_stack(int player, int card, int second_call)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  int iid = instance->internal_card_id;\n  if (iid < 0)\n    return 0;\n  int old_iid, old_controller, old_card;\n  if (!second_call)\n  {\n    if (trace_mode & 2)\n    {\n      char str[500];\n      int count = EXE_DWORD(0x60ec40)++;\n      sprintf(str, \"%d: Player %d is playing %s(%d).\\n\", count, player, cards_data[iid].name,\n              card);\n      EXE_FN(void, 0x4a7d80, const char *)(str);\n    }\n    if (!compute_and_check_casting_cost(player, player, card))\n      return 0;\n    engine_selected_card = -1;\n    EXE_DWORD(0x78676c) = 0;\n    max_x_value = -1;\n    if ((cards_data[iid].type & 0x3c) &&\n        !dispatch_event_to_single_card(player, card, EVENT_CAN_CAST, 1 - player, -1))\n      return 0;\n    spell_fizzled = -1;\n    old_iid = EXE_DWORD(0x4ef19c);\n    old_controller = card_on_stack_controller;\n    old_card = card_on_stack;\n    EXE_DWORD(0x4ef19c) = iid;\n    card_on_stack_controller = player;\n    card_on_stack = card;\n    if (stack_size < 32)\n      put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_SPELL, player, 0);\n    EXE_FN(void, 0x430150, void)();\n    if (!EXE_DWORD(0x78676c))\n      charge_spell_cost(&cards_data[iid], player, card);\n    max_x_value = -1;\n    if (!(instance->token_status & 8))\n    {\n      --hand_count[player];\n      if (player != -1)\n      {\n        uint8_t type = cards_data[iid].type;\n        if (type & 2)\n          ++creature_count[player];\n        if (type & 0x40)\n          ++artifact_count[player];\n        if (type & 4)\n          ++enchantment_count[player];\n        types_of_cards_on_bf[player] |= type;\n      }\n    }\n    redraw_libraries();\n    instance->state |= 0x30020;\n    land_can_be_played |= 0x20;\n    EXE_DWORD(0x4ef19c) = old_iid;\n    card_on_stack_controller = old_controller;\n    card_on_stack = old_card;\n    if (spell_fizzled != 1)\n    {\n      if (dispatch_event(player, card, (event_t)0x6c))\n        spell_fizzled = 1;\n      if (spell_fizzled == 1)\n        EXE_FN(void, 0x430200, int)(player);\n      EXE_FN(void, 0x4301e0, void)();\n      if (spell_fizzled == 1)\n        goto failed;\n      if (player == 1 && !(trace_mode & 2) && ai_is_speculating == 1 &&\n          cards_data[iid].cc[1] == 0xff)\n        ai_modifier -= 12 * EXE_FN(int, 0x435940, int)(1);\n      if (instance->internal_card_id == -1)\n      {\n        obliterate_top_card_of_stack();\n        land_can_be_played &= ~0x20;\n        call_sub_437E20_unless_ai_is_speculating();\n      }\n      return 1;\n    }\n    EXE_FN(void, 0x4301e0, void)();\n  }\n  else\n  {\n    old_iid = EXE_DWORD(0x4ef19c);\n    old_controller = card_on_stack_controller;\n    old_card = card_on_stack;\n    EXE_DWORD(0x4ef19c) = iid;\n    card_on_stack_controller = player;\n    card_on_stack = card;\n    if (!(cards_data[iid].type & 1))\n    {\n      recopy_card_onto_stack(1);\n      if (!(cards_data[iid].type & 1))\n      {\n        if (EXE_DWORD(0x628c7c))\n          EXE_DWORD(0x628c7c) |= 2;\n        const char *name =\n            EXE_FN(const char *, 0x439690, int, int)(card_on_stack_controller, card_on_stack);\n        sprintf((char *)0x60a690, EXE_STR(0x6288d8), name);\n        EXE_FN(int, 0x436a20, int, int, const char *, int)(-2, current_phase, EXE_STR(0x60a690),\n                                                           0xd3);\n        if (EXE_DWORD(0x628c7c) & 2)\n        {\n          call_sub_437E20_unless_ai_is_speculating();\n          EXE_STDCALL_FN(void, 0x4d5d32, int)(3000);\n        }\n      }\n    }\n    EXE_DWORD(0x4ef19c) = old_iid;\n    card_on_stack_controller = old_controller;\n    card_on_stack = old_card;\n    if (instance->internal_card_id == -1)\n      spell_fizzled = 1;\n    land_can_be_played &= ~0x20;\n    instance->state |= player == 0 ? 0x80 : 0x400080;\n    if (ai_is_speculating != 1)\n      EXE_FN(void, 0x436700, void)();\n    if (spell_fizzled == 1)\n      goto failed;\n    if (player == 1 && ai_is_speculating != 1 && !EXE_DWORD(0x628c7c) &&\n        !(cards_data[iid].type & 1))\n    {\n      char str[300];\n      load_text(NULL, \"PROMPT_CAST1\");\n      sprintf(str, text_lines[0], opponent_name);\n      if (cards_data[iid].cc[1] == 0xff)\n        sprintf(str, EXE_STR(0x715dd8), opponent_name, x_value);\n      target_t target = {-1, -1};\n      if (instance->number_of_targets == 1)\n        target = instance->targets[0];\n      EXE_FN(int, 0x471b60, int, int, int, int, const char *, int)(1, card, target.player,\n                                                                   target.card, str, 0);\n    }\n  }\n  call_sub_437E20_unless_ai_is_speculating();\n  if (spell_fizzled != 1)\n  {\n    EXE_FN(void, 0x4373b0, int, int)(player, card);\n    return 1;\n  }\nfailed:;\n  int p = player;\n  if (instance->token_status & 8)\n    p = EXE_FN(int, 0x4779f0, int, int, int)(player, card, 1);\n  else if (instance->internal_card_id != -1)\n    ++hand_count[player];\n  uint8_t type = cards_data[iid].type;\n  if (type & 2)\n    --creature_count[p];\n  if (type & 0x40)\n    --artifact_count[p];\n  if (type & 4)\n    --enchantment_count[p];\n  redraw_libraries();\n  instance->state &= 0xfffcff5d;\n  if (player == 1 && !(trace_mode & 2))\n    EXE_DWORD(0x7a372c) = 1;\n  spell_fizzled = 0;\n  obliterate_top_card_of_stack();\n  land_can_be_played &= ~0x20;\n  return 0;\n}",
+      "after_sha256": "db51725c53a0a8726a6a0a8cea4a17c1b6d9ab21ac0537188a6007323b2289e1",
+      "native_snapshot": {
+        "die_offset": "0x666e208",
+        "view": {
+          "address": "0x26afd30",
+          "end": "0x26b0476",
+          "bytes_sha256": "bc9124c778ae7e66398ef986540c089c26982e0486831c19f745bb3fbeb43e86"
+        },
+        "variables": [
+          {
+            "name": "str",
+            "die_offset": "0x666e350",
+            "frame_offset": -520,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                40567472,
+                40567560
+              ]
+            ]
+          },
+          {
+            "name": "str",
+            "die_offset": "0x666e488",
+            "frame_offset": -520,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                40567050,
+                40567192
+              ],
+              [
+                40567871,
+                40567926
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "str",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "str",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ],
+        "buffer_calls": [
+          {
+            "address": "0x26b013d",
+            "name": "_sprintf",
+            "array_name": "str",
+            "array_bytes": 300,
+            "frame_offset": -520
+          },
+          {
+            "address": "0x26b018a",
+            "name": "_raw_do_dialog",
+            "array_name": "str",
+            "array_bytes": 300,
+            "frame_offset": -520
+          },
+          {
+            "address": "0x26b02ee",
+            "name": "_sprintf",
+            "array_name": "str",
+            "array_bytes": 500,
+            "frame_offset": -520,
+            "literal_format": "%d: Player %d is playing %s(%d).\n"
+          },
+          {
+            "address": "0x26b0466",
+            "name": "_sprintf",
+            "array_name": "str",
+            "array_bytes": 300,
+            "frame_offset": -520
+          }
+        ]
+      },
+      "before_compiled": {
+        "die_offset": "0x549ef36",
+        "view": {
+          "address": "0x267e720",
+          "end": "0x267ee51",
+          "bytes_sha256": "02a0b7320a951263b88313ed581c8948e3c2e22136fd51e9fcd995ccd2a0e77a"
+        },
+        "variables": [
+          {
+            "name": "str",
+            "die_offset": "0x549efd0",
+            "frame_offset": -520,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                40363808,
+                40365649
+              ]
+            ]
+          },
+          {
+            "name": "trace",
+            "die_offset": "0x549f07a",
+            "frame_offset": -520,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                40365160,
+                40365248
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "str",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "trace",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ],
+        "buffer_calls": [
+          {
+            "address": "0x267eae1",
+            "name": "_sprintf",
+            "array_name": "str",
+            "array_bytes": 500,
+            "frame_offset": -520
+          },
+          {
+            "address": "0x267eb33",
+            "name": "_raw_do_dialog",
+            "array_name": "str",
+            "array_bytes": 500,
+            "frame_offset": -520
+          },
+          {
+            "address": "0x267eca4",
+            "name": "_sprintf",
+            "array_name": "trace",
+            "array_bytes": 300,
+            "frame_offset": -520,
+            "literal_format": "%d: Player %d is playing %s(%d).\n"
+          },
+          {
+            "address": "0x267ee41",
+            "name": "_sprintf",
+            "array_name": "str",
+            "array_bytes": 500,
+            "frame_offset": -520
+          }
+        ]
+      },
+      "native_validation": {
+        "trace_bytes": 500,
+        "prompt_bytes": 300,
+        "checked_formatters": 3,
+        "checked_prompt_consumers": 1
+      },
+      "after_compiled": {
+        "die_offset": "0x549eedc",
+        "view": {
+          "address": "0x267e6c0",
+          "end": "0x267edf1",
+          "bytes_sha256": "bf01b1b390a5b89831812850a485fe0b35fd481e70e153a8c058f00caf4bb1e0"
+        },
+        "variables": [
+          {
+            "name": "str",
+            "die_offset": "0x549f00f",
+            "frame_offset": -520,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                40365064,
+                40365152
+              ]
+            ]
+          },
+          {
+            "name": "str",
+            "die_offset": "0x549f142",
+            "frame_offset": -520,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                40364622,
+                40364768
+              ],
+              [
+                40365498,
+                40365553
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "str",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "str",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ],
+        "buffer_calls": [
+          {
+            "address": "0x267ea81",
+            "name": "_sprintf",
+            "array_name": "str",
+            "array_bytes": 300,
+            "frame_offset": -520
+          },
+          {
+            "address": "0x267ead3",
+            "name": "_raw_do_dialog",
+            "array_name": "str",
+            "array_bytes": 300,
+            "frame_offset": -520
+          },
+          {
+            "address": "0x267ec44",
+            "name": "_sprintf",
+            "array_name": "str",
+            "array_bytes": 500,
+            "frame_offset": -520,
+            "literal_format": "%d: Player %d is playing %s(%d).\n"
+          },
+          {
+            "address": "0x267ede1",
+            "name": "_sprintf",
+            "array_name": "str",
+            "array_bytes": 300,
+            "frame_offset": -520
+          }
+        ]
+      },
+      "compiled_validation": {
+        "trace_bytes": 500,
+        "prompt_bytes": 300,
+        "checked_formatters": 3,
+        "checked_prompt_consumers": 1
+      }
+    },
+    {
+      "source": "functions/events.c",
+      "name": "resolve_trigger",
+      "before_definition": "void resolve_trigger(int player, int card, int TENTATIVE_reason_for_trigger_controller)\n{\n  uint16_t uVar1;\n  uint32_t uVar2;\n  unsigned int uVar3;\n  xtrigger_t xVar4;\n  card_instance_t *pcVar5;\n  int iVar6;\n  int iVar7;\n  uint32_t uVar8;\n  card_instance_t *pcVar9;\n  unsigned int uVar10;\n  int iVar11;\n  bool bVar12;\n  card_instance_t *pcStack_218;\n  int iStack_214;\n  int iStack_208;\n  char buf[500];\n\n  if (((uint8_t)trace_mode & 2) != 0)\n  {\n    pcVar5 = get_card_instance(player, card);\n    iVar11 = EXE_DWORD(0x60ec40);\n    EXE_DWORD(0x60ec40) = EXE_DWORD(0x60ec40) + 1;\n    sprintf(buf, \"%d: Player #%d is processing %s(%d).\\n\", iVar11, player,\n            cards_data[pcVar5->internal_card_id].name, card);\n    EXE_FN(void, 0x4a7d80, const char *)(buf);\n  }\n  EXE_DWORD(0x60e9f8) = 0;\n  put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_TRIGGER,\n                                    TENTATIVE_reason_for_trigger_controller, 0);\n  if (spell_fizzled == 1)\n  {\n    obliterate_top_card_of_stack();\n    EXE_DWORD(0x60e9f8) = 0;\n    return;\n  }\n\n  if (ai_is_speculating != 1)\n  {\n    EXE_FN(void, 0x436700, void)();\n    if (reason_for_trigger_controller != 0)\n    {\n      load_text((char *)0x0, \"PROMPT_PROC1\");\n      sprintf(buf, text_lines[0], opponent_name);\n      EXE_FN(int, 0x471b60, int, int, int, int, const char *, int)(player, card, -1, -1, buf, 0);\n    }\n    iVar11 = 0;\n    if (0 < active_cards_count[0])\n    {\n      do\n      {\n        pcVar5 = get_card_instance(0, iVar11);\n        iVar6 = active_cards_count[0];\n        iVar11 = iVar11 + 1;\n        pcVar5->state = pcVar5->state & 0xefffffff;\n      } while (iVar11 < iVar6);\n    }\n    iVar11 = 0;\n    if (0 < active_cards_count[1])\n    {\n      do\n      {\n        pcVar5 = get_card_instance(1, iVar11);\n        iVar6 = active_cards_count[1];\n        iVar11 = iVar11 + 1;\n        pcVar5->state = pcVar5->state & 0xefffffff;\n      } while (iVar11 < iVar6);\n    }\n  }\n  pcVar5 = get_card_instance(player, card);\n  uVar3 = trigger_condition;\n  pcVar5->state = pcVar5->state | 0x10000100;\n  xVar4 = xtrigger_impl_value_dont_use_directly;\n  iVar6 = trigger_cause;\n  iVar11 = trigger_cause_controller;\n  iStack_208 = trigger_cause;\n  if ((((pcVar5->token_status & 0x80) == 0) && (pcVar5->kill_code == '\\0')) &&\n      (-1 < (int)pcVar5->token_status))\n  {\n    pcVar9 = in_play(player, card);\n    uVar10 = trigger_condition;\n    if (pcVar9 == (card_instance_t *)0x0)\n    {\n      bVar12 = true;\n      iStack_214 = -1;\n      pcStack_218 = (card_instance_t *)0x0;\n    }\n    else\n    {\n      iVar7 = pcVar5->internal_card_id;\n      if (((((cards_data[iVar7].cc[2] == '\\x03') ||\n             (uVar1 = cards_data[iVar7].id, (uint16_t)(uVar1 - 0x385) < 8)) ||\n            (((uint16_t)(uVar1 - 0x38f) < 0x13 ||\n              (((trigger_condition & 0xfffffffb) == 0xd8 ||\n                ((unsigned int)trigger_condition - 0xd4 < 2)))))) ||\n           (cards_data[iVar7].type == 0x80)) ||\n          (((ai_is_speculating == 1 || (player == -1)) || (card == -1))))\n      {\n        bVar12 = true;\n        pcStack_218 = (card_instance_t *)0x0;\n        iStack_214 = -1;\n      }\n      else\n      {\n        iStack_214 = create_legacy_effect(player, card, empty);\n        if (iStack_214 == -1)\n        {\n          backtrace_and_abort(\"functions/events.c:633\\nstack_card != -1\");\n        }\n        pcStack_218 = get_card_instance(player, iStack_214);\n        pcStack_218->state = 0x800022;\n        pcStack_218->token_status = 0x80010000;\n        pcStack_218->damage_source_player = (int8_t)player;\n        pcStack_218->damage_source_card = card;\n        uVar8 = pcStack_218->timestamp;\n        memcpy(pcStack_218, pcVar5, 300);\n        pcStack_218->kill_code = '\\0';\n        pcStack_218->state = 0x800022;\n        uVar2 = pcVar5->internal_card_id;\n        pcStack_218->token_status = 0x80010000;\n        pcStack_218->original_internal_card_id = uVar2;\n        pcStack_218->unknown0x14 = 0;\n        if (uVar2 == 0xffffffff)\n        {\n          pcStack_218->original_internal_card_id = (unsigned int)pcVar5->backup_internal_card_id;\n        }\n        iVar7 = get_card_image_number((unsigned int)pcStack_218->display_pic_csv_id, player, card);\n        pcStack_218->parent_controller = player;\n        bVar12 = false;\n        pcStack_218->display_pic_num = (uint16_t)iVar7;\n        pcStack_218->parent_card = card;\n        pcStack_218->timestamp = uVar8;\n        uVar10 = trigger_condition;\n      }\n    }\n  }\n  else\n  {\n    bVar12 = true;\n    pcStack_218 = (card_instance_t *)0x0;\n    iStack_214 = -1;\n    uVar10 = uVar3;\n  }\n  cant_be_responded_to = (unsigned int)(uVar10 == 0xcd) | cant_be_responded_to;\n  if (cant_be_responded_to == 0)\n  {\n    allow_response_to_trigger(player, card);\n  }\n  trigger_cause_controller = iVar11;\n  trigger_cause = iVar6;\n  trigger_condition = uVar3;\n  xtrigger_impl_value_dont_use_directly = xVar4;\n  if ((pcVar5->kill_code == '\\0') &&\n      (pcVar9 = in_play(player, card), pcVar9 != (card_instance_t *)0x0))\n  {\n    uVar8 = pcVar5->state;\n    if ((uVar8 & 0x40000000) == 0)\n    {\n    LAB_026cc4fb:\n      if (bVar12)\n      {\n        EXE_FN(void, 0x436740, void)();\n        goto LAB_026cc50a;\n      }\n      bVar12 = iStack_214 != -1;\n      if ((pcStack_218->state & 0x40000000) == 0)\n      {\n        EXE_FN(void, 0x436740, void)();\n        if (iStack_214 == -1)\n          goto LAB_026cc50a;\n        goto LAB_026cc727;\n      }\n    }\n    else\n    {\n      bVar12 = !bVar12 && iStack_214 != -1;\n    }\n    if (!bVar12)\n      goto LAB_026cc2f2;\n  }\n  else\n  {\n    uVar8 = pcVar5->state;\n    if ((bVar12) || (iStack_214 == -1))\n    {\n      if ((uVar8 & 0x40000000) != 0)\n        goto LAB_026cc2f2;\n      goto LAB_026cc4fb;\n    }\n    pcVar5->state = uVar8 & 0xeffffeff;\n    pcStack_218->state = pcStack_218->state & 0xff7fffdd;\n    pcStack_218->token_status = pcStack_218->token_status & 0xfffeffff;\n    dispatch_event_to_single_card(player, iStack_214, EVENT_TRIGGER, player, iStack_214);\n    iVar6 = stack_size;\n    stack_data[stack_size].internal_card_id = (short)pcStack_218->internal_card_id;\n    stack_data[iVar6].generating_event = 0x7e;\n    stack_data[iVar6].unknown_sdt = (uint8_t)TENTATIVE_reason_for_trigger_controller;\n    stack_cards[iVar6].player = player;\n    stack_cards[iVar6].card = iStack_214;\n    stack_damage_targets[iVar6].player = (int)pcVar5->damage_target_player;\n    stack_damage_targets[iVar6].card = pcVar5->damage_target_card;\n    uVar10 = trigger_condition;\n    if (trigger_condition == 0xffffffff)\n    {\n      uVar10 = current_phase;\n    }\n    bVar12 = ai_is_speculating != 1;\n    stack_phase[iVar6] = uVar10;\n    if (bVar12)\n    {\n      EXE_DWORD_PTR(0x628674)[iVar6] = 0;\n      iVar6 = stack_size;\n    }\n    stack_size = iVar6 + 1;\n    stack_cards[stack_size].player = -1;\n    if (affected_card == card)\n    {\n      affected_card = iStack_214;\n    }\n    if (trigger_cause == card)\n    {\n      trigger_cause = iStack_214;\n      iStack_208 = trigger_cause;\n    }\n    bVar12 = cant_be_responded_to == 0;\n    pcStack_218->state = pcStack_218->state | 0x10000100;\n    if (bVar12)\n    {\n      allow_response_to_trigger(player, iStack_214);\n    }\n    trigger_cause = iStack_208;\n    trigger_cause_controller = iVar11;\n    trigger_condition = uVar3;\n    xtrigger_impl_value_dont_use_directly = xVar4;\n    if (((pcVar5->state & 0x40000000) == 0) && ((pcStack_218->state & 0x40000000) == 0))\n    {\n      EXE_FN(void, 0x436740, void)();\n    LAB_026cc727:\n      obliterate_card_and_recycle(player, iStack_214);\n    LAB_026cc50a:\n      xtrigger_impl_value_dont_use_directly = xVar4;\n      pcVar5->state = pcVar5->state & 0xefffffff;\n      trigger_cause = iStack_208;\n      EXE_DWORD(0x60e9f8) = 0;\n      trigger_cause_controller = iVar11;\n      trigger_condition = uVar3;\n      dispatch_event(player, card, EVENT_TRIGGER_RESOLVED);\n      trigger_condition = uVar3;\n      xtrigger_impl_value_dont_use_directly = xVar4;\n      trigger_cause = iStack_208;\n      trigger_cause_controller = iVar11;\n      return;\n    }\n  }\n  obliterate_card_and_recycle(player, iStack_214);\n  uVar8 = pcVar5->state;\nLAB_026cc2f2:\n  trigger_cause = iStack_208;\n  xtrigger_impl_value_dont_use_directly = xVar4;\n  pcVar5->state = uVar8 & 0xafffffff;\n  trigger_condition = uVar3;\n  trigger_cause_controller = iVar11;\n  return;\n}",
+      "before_sha256": "0e9a5149322b6d518bd3312debb684ebe59bd753301fe5d385bd3739557f188e",
+      "changes": [
+        {
+          "before": "  char buf[500];\n",
+          "after": "",
+          "occurrences": 1
+        },
+        {
+          "before": "  if (((uint8_t)trace_mode & 2) != 0)\n  {",
+          "after": "  if (((uint8_t)trace_mode & 2) != 0)\n  {\n    char buf[500];",
+          "occurrences": 1
+        },
+        {
+          "before": "      load_text((char *)0x0, \"PROMPT_PROC1\");",
+          "after": "      char buf[300];\n      load_text((char *)0x0, \"PROMPT_PROC1\");",
+          "occurrences": 1
+        }
+      ],
+      "after_definition": "void resolve_trigger(int player, int card, int TENTATIVE_reason_for_trigger_controller)\n{\n  uint16_t uVar1;\n  uint32_t uVar2;\n  unsigned int uVar3;\n  xtrigger_t xVar4;\n  card_instance_t *pcVar5;\n  int iVar6;\n  int iVar7;\n  uint32_t uVar8;\n  card_instance_t *pcVar9;\n  unsigned int uVar10;\n  int iVar11;\n  bool bVar12;\n  card_instance_t *pcStack_218;\n  int iStack_214;\n  int iStack_208;\n\n  if (((uint8_t)trace_mode & 2) != 0)\n  {\n    char buf[500];\n    pcVar5 = get_card_instance(player, card);\n    iVar11 = EXE_DWORD(0x60ec40);\n    EXE_DWORD(0x60ec40) = EXE_DWORD(0x60ec40) + 1;\n    sprintf(buf, \"%d: Player #%d is processing %s(%d).\\n\", iVar11, player,\n            cards_data[pcVar5->internal_card_id].name, card);\n    EXE_FN(void, 0x4a7d80, const char *)(buf);\n  }\n  EXE_DWORD(0x60e9f8) = 0;\n  put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_TRIGGER,\n                                    TENTATIVE_reason_for_trigger_controller, 0);\n  if (spell_fizzled == 1)\n  {\n    obliterate_top_card_of_stack();\n    EXE_DWORD(0x60e9f8) = 0;\n    return;\n  }\n\n  if (ai_is_speculating != 1)\n  {\n    EXE_FN(void, 0x436700, void)();\n    if (reason_for_trigger_controller != 0)\n    {\n      char buf[300];\n      load_text((char *)0x0, \"PROMPT_PROC1\");\n      sprintf(buf, text_lines[0], opponent_name);\n      EXE_FN(int, 0x471b60, int, int, int, int, const char *, int)(player, card, -1, -1, buf, 0);\n    }\n    iVar11 = 0;\n    if (0 < active_cards_count[0])\n    {\n      do\n      {\n        pcVar5 = get_card_instance(0, iVar11);\n        iVar6 = active_cards_count[0];\n        iVar11 = iVar11 + 1;\n        pcVar5->state = pcVar5->state & 0xefffffff;\n      } while (iVar11 < iVar6);\n    }\n    iVar11 = 0;\n    if (0 < active_cards_count[1])\n    {\n      do\n      {\n        pcVar5 = get_card_instance(1, iVar11);\n        iVar6 = active_cards_count[1];\n        iVar11 = iVar11 + 1;\n        pcVar5->state = pcVar5->state & 0xefffffff;\n      } while (iVar11 < iVar6);\n    }\n  }\n  pcVar5 = get_card_instance(player, card);\n  uVar3 = trigger_condition;\n  pcVar5->state = pcVar5->state | 0x10000100;\n  xVar4 = xtrigger_impl_value_dont_use_directly;\n  iVar6 = trigger_cause;\n  iVar11 = trigger_cause_controller;\n  iStack_208 = trigger_cause;\n  if ((((pcVar5->token_status & 0x80) == 0) && (pcVar5->kill_code == '\\0')) &&\n      (-1 < (int)pcVar5->token_status))\n  {\n    pcVar9 = in_play(player, card);\n    uVar10 = trigger_condition;\n    if (pcVar9 == (card_instance_t *)0x0)\n    {\n      bVar12 = true;\n      iStack_214 = -1;\n      pcStack_218 = (card_instance_t *)0x0;\n    }\n    else\n    {\n      iVar7 = pcVar5->internal_card_id;\n      if (((((cards_data[iVar7].cc[2] == '\\x03') ||\n             (uVar1 = cards_data[iVar7].id, (uint16_t)(uVar1 - 0x385) < 8)) ||\n            (((uint16_t)(uVar1 - 0x38f) < 0x13 ||\n              (((trigger_condition & 0xfffffffb) == 0xd8 ||\n                ((unsigned int)trigger_condition - 0xd4 < 2)))))) ||\n           (cards_data[iVar7].type == 0x80)) ||\n          (((ai_is_speculating == 1 || (player == -1)) || (card == -1))))\n      {\n        bVar12 = true;\n        pcStack_218 = (card_instance_t *)0x0;\n        iStack_214 = -1;\n      }\n      else\n      {\n        iStack_214 = create_legacy_effect(player, card, empty);\n        if (iStack_214 == -1)\n        {\n          backtrace_and_abort(\"functions/events.c:633\\nstack_card != -1\");\n        }\n        pcStack_218 = get_card_instance(player, iStack_214);\n        pcStack_218->state = 0x800022;\n        pcStack_218->token_status = 0x80010000;\n        pcStack_218->damage_source_player = (int8_t)player;\n        pcStack_218->damage_source_card = card;\n        uVar8 = pcStack_218->timestamp;\n        memcpy(pcStack_218, pcVar5, 300);\n        pcStack_218->kill_code = '\\0';\n        pcStack_218->state = 0x800022;\n        uVar2 = pcVar5->internal_card_id;\n        pcStack_218->token_status = 0x80010000;\n        pcStack_218->original_internal_card_id = uVar2;\n        pcStack_218->unknown0x14 = 0;\n        if (uVar2 == 0xffffffff)\n        {\n          pcStack_218->original_internal_card_id = (unsigned int)pcVar5->backup_internal_card_id;\n        }\n        iVar7 = get_card_image_number((unsigned int)pcStack_218->display_pic_csv_id, player, card);\n        pcStack_218->parent_controller = player;\n        bVar12 = false;\n        pcStack_218->display_pic_num = (uint16_t)iVar7;\n        pcStack_218->parent_card = card;\n        pcStack_218->timestamp = uVar8;\n        uVar10 = trigger_condition;\n      }\n    }\n  }\n  else\n  {\n    bVar12 = true;\n    pcStack_218 = (card_instance_t *)0x0;\n    iStack_214 = -1;\n    uVar10 = uVar3;\n  }\n  cant_be_responded_to = (unsigned int)(uVar10 == 0xcd) | cant_be_responded_to;\n  if (cant_be_responded_to == 0)\n  {\n    allow_response_to_trigger(player, card);\n  }\n  trigger_cause_controller = iVar11;\n  trigger_cause = iVar6;\n  trigger_condition = uVar3;\n  xtrigger_impl_value_dont_use_directly = xVar4;\n  if ((pcVar5->kill_code == '\\0') &&\n      (pcVar9 = in_play(player, card), pcVar9 != (card_instance_t *)0x0))\n  {\n    uVar8 = pcVar5->state;\n    if ((uVar8 & 0x40000000) == 0)\n    {\n    LAB_026cc4fb:\n      if (bVar12)\n      {\n        EXE_FN(void, 0x436740, void)();\n        goto LAB_026cc50a;\n      }\n      bVar12 = iStack_214 != -1;\n      if ((pcStack_218->state & 0x40000000) == 0)\n      {\n        EXE_FN(void, 0x436740, void)();\n        if (iStack_214 == -1)\n          goto LAB_026cc50a;\n        goto LAB_026cc727;\n      }\n    }\n    else\n    {\n      bVar12 = !bVar12 && iStack_214 != -1;\n    }\n    if (!bVar12)\n      goto LAB_026cc2f2;\n  }\n  else\n  {\n    uVar8 = pcVar5->state;\n    if ((bVar12) || (iStack_214 == -1))\n    {\n      if ((uVar8 & 0x40000000) != 0)\n        goto LAB_026cc2f2;\n      goto LAB_026cc4fb;\n    }\n    pcVar5->state = uVar8 & 0xeffffeff;\n    pcStack_218->state = pcStack_218->state & 0xff7fffdd;\n    pcStack_218->token_status = pcStack_218->token_status & 0xfffeffff;\n    dispatch_event_to_single_card(player, iStack_214, EVENT_TRIGGER, player, iStack_214);\n    iVar6 = stack_size;\n    stack_data[stack_size].internal_card_id = (short)pcStack_218->internal_card_id;\n    stack_data[iVar6].generating_event = 0x7e;\n    stack_data[iVar6].unknown_sdt = (uint8_t)TENTATIVE_reason_for_trigger_controller;\n    stack_cards[iVar6].player = player;\n    stack_cards[iVar6].card = iStack_214;\n    stack_damage_targets[iVar6].player = (int)pcVar5->damage_target_player;\n    stack_damage_targets[iVar6].card = pcVar5->damage_target_card;\n    uVar10 = trigger_condition;\n    if (trigger_condition == 0xffffffff)\n    {\n      uVar10 = current_phase;\n    }\n    bVar12 = ai_is_speculating != 1;\n    stack_phase[iVar6] = uVar10;\n    if (bVar12)\n    {\n      EXE_DWORD_PTR(0x628674)[iVar6] = 0;\n      iVar6 = stack_size;\n    }\n    stack_size = iVar6 + 1;\n    stack_cards[stack_size].player = -1;\n    if (affected_card == card)\n    {\n      affected_card = iStack_214;\n    }\n    if (trigger_cause == card)\n    {\n      trigger_cause = iStack_214;\n      iStack_208 = trigger_cause;\n    }\n    bVar12 = cant_be_responded_to == 0;\n    pcStack_218->state = pcStack_218->state | 0x10000100;\n    if (bVar12)\n    {\n      allow_response_to_trigger(player, iStack_214);\n    }\n    trigger_cause = iStack_208;\n    trigger_cause_controller = iVar11;\n    trigger_condition = uVar3;\n    xtrigger_impl_value_dont_use_directly = xVar4;\n    if (((pcVar5->state & 0x40000000) == 0) && ((pcStack_218->state & 0x40000000) == 0))\n    {\n      EXE_FN(void, 0x436740, void)();\n    LAB_026cc727:\n      obliterate_card_and_recycle(player, iStack_214);\n    LAB_026cc50a:\n      xtrigger_impl_value_dont_use_directly = xVar4;\n      pcVar5->state = pcVar5->state & 0xefffffff;\n      trigger_cause = iStack_208;\n      EXE_DWORD(0x60e9f8) = 0;\n      trigger_cause_controller = iVar11;\n      trigger_condition = uVar3;\n      dispatch_event(player, card, EVENT_TRIGGER_RESOLVED);\n      trigger_condition = uVar3;\n      xtrigger_impl_value_dont_use_directly = xVar4;\n      trigger_cause = iStack_208;\n      trigger_cause_controller = iVar11;\n      return;\n    }\n  }\n  obliterate_card_and_recycle(player, iStack_214);\n  uVar8 = pcVar5->state;\nLAB_026cc2f2:\n  trigger_cause = iStack_208;\n  xtrigger_impl_value_dont_use_directly = xVar4;\n  pcVar5->state = uVar8 & 0xafffffff;\n  trigger_condition = uVar3;\n  trigger_cause_controller = iVar11;\n  return;\n}",
+      "after_sha256": "95055d0ecaff273df033ddaa44cbd02e2ac158c824bb9710c4df0357656a777f",
+      "native_snapshot": {
+        "die_offset": "0x697a96c",
+        "view": {
+          "address": "0x26cbfe0",
+          "end": "0x26cc801",
+          "bytes_sha256": "df8bea8f4edd1fc9c0cd7e8e6d1e8f279d63973c9ecb6d0ce4e5118374f1519c"
+        },
+        "variables": [
+          {
+            "name": "buf",
+            "die_offset": "0x697a9ff",
+            "frame_offset": -520,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                40682904,
+                40683008
+              ]
+            ]
+          },
+          {
+            "name": "buf",
+            "die_offset": "0x697ab76",
+            "frame_offset": -520,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                40683160,
+                40683253
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "buf",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "buf",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ],
+        "buffer_calls": [
+          {
+            "address": "0x26cc5e6",
+            "name": "_sprintf",
+            "array_name": "buf",
+            "array_bytes": 500,
+            "frame_offset": -520,
+            "literal_format": "%d: Player #%d is processing %s(%d).\n"
+          },
+          {
+            "address": "0x26cc6c5",
+            "name": "_sprintf",
+            "array_name": "buf",
+            "array_bytes": 300,
+            "frame_offset": -520
+          },
+          {
+            "address": "0x26cc6f0",
+            "name": "_raw_do_dialog",
+            "array_name": "buf",
+            "array_bytes": 300,
+            "frame_offset": -520
+          }
+        ]
+      },
+      "before_compiled": {
+        "die_offset": "0x555bf66",
+        "view": {
+          "address": "0x2685130",
+          "end": "0x268596d",
+          "bytes_sha256": "96bba96a1c009786386f69e9feb00bf65abdf74843fdc378d83cdb6ae59e9b94"
+        },
+        "variables": [
+          {
+            "name": "buf",
+            "die_offset": "0x555c158",
+            "frame_offset": -520,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                40390960,
+                40393069
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "buf",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ],
+        "buffer_calls": [
+          {
+            "address": "0x2685500",
+            "name": "_sprintf",
+            "array_name": "buf",
+            "array_bytes": 500,
+            "frame_offset": -520,
+            "literal_format": "%d: Player #%d is processing %s(%d).\n"
+          },
+          {
+            "address": "0x26855c5",
+            "name": "_sprintf",
+            "array_name": "buf",
+            "array_bytes": 500,
+            "frame_offset": -520
+          },
+          {
+            "address": "0x26855f7",
+            "name": "_raw_do_dialog",
+            "array_name": "buf",
+            "array_bytes": 500,
+            "frame_offset": -520
+          }
+        ]
+      },
+      "native_validation": {
+        "trace_bytes": 500,
+        "prompt_bytes": 300,
+        "checked_formatters": 2,
+        "checked_prompt_consumers": 1
+      },
+      "after_compiled": {
+        "die_offset": "0x555bf0a",
+        "view": {
+          "address": "0x26850d0",
+          "end": "0x268590d",
+          "bytes_sha256": "bb0c3676e45238f6ae42f2ba480cd1ef4e8ea5221daa6d177356ae24a1dee5f5"
+        },
+        "variables": [
+          {
+            "name": "buf",
+            "die_offset": "0x555c161",
+            "frame_offset": -520,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                40391760,
+                40391864
+              ]
+            ]
+          },
+          {
+            "name": "buf",
+            "die_offset": "0x555c1da",
+            "frame_offset": -520,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "scope_ranges": [
+              [
+                40391992,
+                40392085
+              ],
+              [
+                40392087,
+                40392089
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "buf",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 500,
+              "dimensions": [
+                500
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "buf",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 300,
+              "dimensions": [
+                300
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ],
+        "buffer_calls": [
+          {
+            "address": "0x26854a0",
+            "name": "_sprintf",
+            "array_name": "buf",
+            "array_bytes": 500,
+            "frame_offset": -520,
+            "literal_format": "%d: Player #%d is processing %s(%d).\n"
+          },
+          {
+            "address": "0x2685565",
+            "name": "_sprintf",
+            "array_name": "buf",
+            "array_bytes": 300,
+            "frame_offset": -520
+          },
+          {
+            "address": "0x2685597",
+            "name": "_raw_do_dialog",
+            "array_name": "buf",
+            "array_bytes": 300,
+            "frame_offset": -520
+          }
+        ]
+      },
+      "compiled_validation": {
+        "trace_bytes": 500,
+        "prompt_bytes": 300,
+        "checked_formatters": 2,
+        "checked_prompt_consumers": 1
+      }
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "new_reanimate_all_impl",
+      "before_definition": "static int new_reanimate_all_impl(int player, int card, int targ_player,\n                                test_definition_t *this_test, reanimate_mode_t action)\n{\n  int iVar1;\n  reanimate_mode_t rVar2;\n  int iVar3;\n  card_instance_t *instance;\n  int iVar5;\n  int *piVar6;\n  int *piVar7;\n  int iVar8;\n  unsigned int uVar9;\n  int *piVar10;\n  int iVar11;\n  unsigned int player_00;\n  int iStack_2060;\n  int iStack_205c;\n  int *piStack_2058;\n  int iStack_2054;\n  int iStack_2050;\n  int iStack_204c;\n  int iStack_2048;\n  unsigned int uStack_2044;\n  unsigned int uStack_2040;\n  int trc[2];\n  int ac[2];\n  test_definition_t this_test2;\n  int to_reanimate[1000];\n  int auras[1000];\n\n  iStack_2054 = -1;\n  if (card != -1)\n  {\n    iStack_2054 = get_id(player, card);\n  }\n  iVar1 = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_GRAVE);\n  rVar2 = action & REANIMATE_SPECIAL_LIVING_DEAD;\n  trc[0] = 0;\n  trc[1] = 0;\n  ac[0] = 0;\n  ac[1] = 0;\n  iStack_205c = 0;\n  iStack_2060 = -1;\n  iVar11 = 0;\n  do\n  {\n    if ((targ_player == iVar11) || (targ_player == 2))\n    {\n      if ((iStack_2054 == 0x16a1) && (targ_player == iVar11))\n      {\n        instance = get_card_instance(player, card);\n        uStack_2040 = instance->info_slot;\n      }\n      else\n      {\n        uStack_2040 = -1;\n      }\n      piVar10 = graveyard_ptr_mutable[iVar11];\n      iVar3 = count_graveyard(iVar11);\n      iVar3 = iVar3 + -1;\n      if ((int)uStack_2040 < iVar3)\n      {\n        do\n        {\n          iVar5 = is_what(-1, piVar10[iVar3], 0x47);\n          if ((iVar5 != 0) &&\n              (iVar5 = new_make_test(iVar11, piVar10[iVar3], -1, this_test), iVar5 != 0))\n          {\n            iVar5 = piVar10[iVar3];\n            if (targ_player != 2)\n            {\n              iVar5 = is_what(-1, iVar5, 2);\n              if (iVar5 != 0)\n              {\n                iStack_2060 = 1 - iVar11;\n              }\n              iVar5 = piVar10[iVar3];\n            }\n            iVar5 = is_what(-1, iVar5, 2);\n            if ((iVar5 == 0) ||\n                ((iVar5 = is_what(-1, piVar10[iVar3], 2), iVar1 == 0 && (iVar5 != 0))))\n            {\n              iVar5 = has_subtype_by_id(player, (unsigned int)cards_data[piVar10[iVar3]].id,\n                                             SUBTYPE_AURA);\n              if (iVar5 == 0)\n              {\n                iVar5 = trc[iVar11];\n                if (iVar5 < 500)\n                {\n                  to_reanimate[(iVar11) * 500 + (iVar5)] = piVar10[iVar3];\n                  trc[iVar11] = iVar5 + 1;\n                joined_r0x0269c7ff:\n                  if (rVar2 == REANIMATE_DEFAULT)\n                  {\n                    remove_card_from_grave(iVar11, iVar3);\n                  }\n                  else\n                  {\n                    rfg_card_from_grave(iVar11, iVar3);\n                  }\n                  iStack_205c = iStack_205c + 1;\n                }\n              }\n              else\n              {\n                iVar5 = add_card_to_hand(player, piVar10[iVar3]);\n                instance = get_card_instance(player, iVar5);\n                instance->state = instance->state | 0x20;\n                hand_count[player] = hand_count[player] + -1;\n                iVar8 = call_card_function_i(instance, player, iVar5, EVENT_CAN_CAST);\n                obliterate_card_and_recycle(player, iVar5);\n                if (iVar8 != 0)\n                {\n                  iVar5 = ac[iVar11];\n                  if (iVar5 < 500)\n                  {\n                    auras[(iVar11) * 500 + (iVar5)] = piVar10[iVar3];\n                    ac[iVar11] = iVar5 + 1;\n                    goto joined_r0x0269c7ff;\n                  }\n                }\n              }\n            }\n          }\n          iVar3 = iVar3 + -1;\n        } while (iVar3 != uStack_2040);\n      }\n    }\n    iVar11 = iVar11 + 1;\n  } while (iVar11 != 2);\n  if (rVar2 != REANIMATE_DEFAULT)\n  {\n    default_test_definition(&this_test2, 2);\n    new_manipulate_all(player, card, 2, &this_test2, ACT_KILL_SACRIFICE);\n    piStack_2058 = ac;\n    iStack_2050 = 0;\n    do\n    {\n      iVar1 = *piStack_2058;\n      if (0 < iVar1)\n      {\n        piVar10 = (auras + (0) * 500) + iStack_2050;\n        iStack_2054 = iVar1;\n        if (500 < iVar1)\n        {\n          iStack_2054 = 500;\n        }\n        iVar11 = 0;\n      LAB_0269c5e0:\n        do\n        {\n          iVar3 = add_card_to_hand(player, *piVar10);\n          if (-1 < iVar3)\n          {\n            instance = get_card_instance(player, iVar3);\n            uVar9 = instance->state;\n            hand_count[player] = hand_count[player] + -1;\n            instance->state = uVar9 | 0x20;\n            iVar5 = call_card_function_i(instance, player, iVar3, EVENT_CAN_CAST);\n            obliterate_card_and_recycle(player, iVar3);\n            if ((iVar5 == 0) && (piVar6 = piVar10, iVar11 < iStack_2054))\n            {\n              do\n              {\n                piVar7 = piVar6 + 1;\n                *piVar6 = piVar6[1];\n                piVar6 = piVar7;\n              } while (piVar7 != (auras + (0) * 500) + iStack_2054 + iStack_2050);\n              iVar11 = iVar11 + 1;\n              piVar10 = piVar10 + 1;\n              if (iVar11 == iVar1)\n                break;\n              goto LAB_0269c5e0;\n            }\n          }\n          iVar11 = iVar11 + 1;\n          piVar10 = piVar10 + 1;\n        } while (iVar11 != iVar1);\n      }\n      piStack_2058 = piStack_2058 + 1;\n      iStack_2050 = iStack_2050 + 500;\n    } while (iStack_2050 != 1000);\n  }\n  if ((action & REANIMATE_ALL_UNDER_CASTERS_CONTROL) == REANIMATE_DEFAULT)\n  {\n    iVar1 = 0;\n    iStack_204c = 0;\n    do\n    {\n      iVar11 = ac[iVar1];\n      if (0 < iVar11)\n      {\n        piVar10 = (auras + (0) * 500) + iStack_204c;\n        do\n        {\n          iVar3 = *piVar10;\n          if (rVar2 == REANIMATE_DEFAULT)\n          {\n          LAB_0269be48:\n            iVar3 = add_card_to_hand_invisible(iVar1, iVar3);\n            *piVar10 = iVar3;\n          }\n          else\n          {\n            iVar5 = check_rfg(iVar1, (unsigned int)cards_data[iVar3].id);\n            if (iVar5 != 0)\n            {\n              remove_card_from_rfg(iVar1, (unsigned int)cards_data[iVar3].id);\n              goto LAB_0269be48;\n            }\n          }\n          piVar10 = piVar10 + 1;\n        } while (piVar10 != (auras + (0) * 500) + iVar11 + iStack_204c);\n      }\n      iVar11 = trc[iVar1];\n      if (0 < iVar11)\n      {\n        piVar10 = (to_reanimate + (0) * 500) + iStack_204c;\n        do\n        {\n          iVar3 = *piVar10;\n          if (rVar2 == REANIMATE_DEFAULT)\n          {\n          LAB_0269bef0:\n            iVar3 = add_card_to_hand_invisible(iVar1, iVar3);\n            *piVar10 = iVar3;\n          }\n          else\n          {\n            iVar5 = check_rfg(iVar1, (unsigned int)cards_data[iVar3].id);\n            if (iVar5 != 0)\n            {\n              remove_card_from_rfg(iVar1, (unsigned int)cards_data[iVar3].id);\n              goto LAB_0269bef0;\n            }\n          }\n          piVar10 = piVar10 + 1;\n        } while (piVar10 != (to_reanimate + (0) * 500) + iVar11 + iStack_204c);\n      }\n      iVar1 = iVar1 + 1;\n      iStack_204c = iStack_204c + 500;\n    } while (iVar1 != 2);\n    uStack_2044 = 0;\n    uVar9 = current_turn;\n    do\n    {\n      player_00 = uStack_2044 ^ uVar9;\n      iVar1 = ac[player_00];\n      if (0 < iVar1)\n      {\n        piVar10 = (auras + (player_00) * 500);\n        do\n        {\n          iVar11 = *piVar10;\n          piVar10 = piVar10 + 1;\n          reanimate_permanent_impl(player_00, -1, player_00, iVar11,\n                                        action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,\n                                        (CardFunction)0x0, (ReanimationBeforeEtb)0x0);\n          uVar9 = current_turn;\n        } while (piVar10 != (auras + (player_00) * 500) + iVar1);\n      }\n      uStack_2044 = uStack_2044 + 1;\n    } while (uStack_2044 != 2);\n    uStack_2040 = 0;\n    do\n    {\n      uVar9 = uVar9 ^ uStack_2040;\n      iVar1 = trc[uVar9];\n      if (0 < iVar1)\n      {\n        piVar10 = (to_reanimate + (uVar9) * 500);\n        do\n        {\n          iVar11 = *piVar10;\n          piVar10 = piVar10 + 1;\n          reanimate_permanent_impl(uVar9, -1, uVar9, iVar11,\n                                        action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,\n                                        (CardFunction)0x0, (ReanimationBeforeEtb)0x0);\n        } while ((to_reanimate + (uVar9) * 500) + iVar1 != piVar10);\n      }\n      uStack_2040 = uStack_2040 + 1;\n      uVar9 = current_turn;\n    } while (uStack_2040 != 2);\n  }\n  else\n  {\n    iStack_2048 = ac[player];\n    if (0 < iStack_2048)\n    {\n      piVar10 = (auras + (player) * 500);\n      do\n      {\n        iVar1 = *piVar10;\n        if (rVar2 == REANIMATE_DEFAULT)\n        {\n        LAB_0269bbc8:\n          iVar1 = add_card_to_hand(player, iVar1);\n          *piVar10 = iVar1;\n        }\n        else\n        {\n          iVar11 = check_rfg(player, (unsigned int)cards_data[iVar1].id);\n          if (iVar11 != 0)\n          {\n            remove_card_from_rfg(player, (unsigned int)cards_data[iVar1].id);\n            goto LAB_0269bbc8;\n          }\n        }\n        piVar10 = piVar10 + 1;\n      } while ((auras + (player) * 500) + iStack_2048 != piVar10);\n    }\n    uStack_2040 = trc[player];\n    if (0 < (int)uStack_2040)\n    {\n      piVar10 = (to_reanimate + (player) * 500);\n      do\n      {\n        iVar1 = *piVar10;\n        if (rVar2 == REANIMATE_DEFAULT)\n        {\n        LAB_0269c118:\n          iVar1 = add_card_to_hand(player, iVar1);\n          *piVar10 = iVar1;\n        }\n        else\n        {\n          iVar11 = check_rfg(player, (unsigned int)cards_data[iVar1].id);\n          if (iVar11 != 0)\n          {\n            remove_card_from_rfg(player, (unsigned int)cards_data[iVar1].id);\n            goto LAB_0269c118;\n          }\n        }\n        piVar10 = piVar10 + 1;\n      } while ((to_reanimate + (player) * 500) + uStack_2040 != piVar10);\n    }\n    iVar11 = 1 - player;\n    iVar1 = ac[iVar11];\n    if (0 < iVar1)\n    {\n      piVar10 = (auras + (iVar11) * 500);\n      do\n      {\n        iVar3 = *piVar10;\n        if (rVar2 == REANIMATE_DEFAULT)\n        {\n        LAB_0269c368:\n          iVar3 = add_card_to_hand_invisible(player, iVar3);\n          instance = get_card_instance(player, iVar3);\n          iStack_2048 = iStack_2048 + 1;\n          instance->state = instance->state ^ 0x1000;\n          auras[(player) * 500 + (uStack_2040)] = iVar3;\n        }\n        else\n        {\n          iVar5 = check_rfg(iVar11, (unsigned int)cards_data[iVar3].id);\n          if (iVar5 != 0)\n          {\n            remove_card_from_rfg(player, (unsigned int)cards_data[iVar3].id);\n            goto LAB_0269c368;\n          }\n        }\n        piVar10 = piVar10 + 1;\n      } while ((auras + (iVar11) * 500) + iVar1 != piVar10);\n    }\n    iVar1 = trc[iVar11];\n    if (0 < iVar1)\n    {\n      piVar10 = (to_reanimate + (iVar11) * 500);\n      do\n      {\n        iVar3 = *piVar10;\n        if (rVar2 == REANIMATE_DEFAULT)\n        {\n        LAB_0269c468:\n          iVar3 = add_card_to_hand_invisible(player, iVar3);\n          instance = get_card_instance(player, iVar3);\n          instance->state = instance->state ^ 0x1000;\n          to_reanimate[(player) * 500 + (uStack_2040)] = iVar3;\n          uStack_2040 = uStack_2040 + 1;\n        }\n        else\n        {\n          iVar5 = check_rfg(iVar11, (unsigned int)cards_data[iVar3].id);\n          if (iVar5 != 0)\n          {\n            remove_card_from_rfg(player, (unsigned int)cards_data[iVar3].id);\n            goto LAB_0269c468;\n          }\n        }\n        piVar10 = piVar10 + 1;\n      } while ((to_reanimate + (iVar11) * 500) + iVar1 != piVar10);\n    }\n    ac[player] = iStack_2048;\n    trc[player] = uStack_2040;\n    ac[iVar11] = 0;\n    trc[iVar11] = 0;\n    iVar1 = ac[player];\n    if (0 < iVar1)\n    {\n      piVar10 = (auras + (player) * 500);\n      do\n      {\n        iVar11 = *piVar10;\n        piVar10 = piVar10 + 1;\n        instance = get_card_instance(player, iVar11);\n        instance->state = instance->state & 0xffffffdf;\n        reanimate_permanent_impl(player, card, player, iVar11,\n                                      action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,\n                                      (CardFunction)0x0, (ReanimationBeforeEtb)0x0);\n      } while (piVar10 != (auras + (player) * 500) + iVar1);\n    }\n    iVar1 = trc[player];\n    if (0 < iVar1)\n    {\n      iVar11 = player * 2000;\n      do\n      {\n        instance = get_card_instance(player, *(int *)((int)(auras + (0) * 500) + iVar11));\n        instance->state = instance->state & 0xffffffdf;\n        piVar10 = (int *)((int)(to_reanimate + (0) * 500) + iVar11);\n        iVar11 = iVar11 + 4;\n        reanimate_permanent_impl(player, card, player, *piVar10,\n                                      action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,\n                                      (CardFunction)0x0, (ReanimationBeforeEtb)0x0);\n      } while ((iVar1 + player * 500) * 4 != iVar11);\n    }\n  }\n  if (-1 < iStack_2060)\n  {\n    ereboss_titan_effect(iStack_2060);\n  }\n  return iStack_205c;\n}",
+      "before_sha256": "c3e32f50be1da07c80bb82db1560b27c6ed09bdba422c4f8327721422509b62a",
+      "changes": [
+        {
+          "before": "int to_reanimate[1000];",
+          "after": "int to_reanimate[2][500];",
+          "occurrences": 1
+        },
+        {
+          "before": "to_reanimate[(iVar11) * 500 + (iVar5)]",
+          "after": "to_reanimate[iVar11][iVar5]",
+          "occurrences": 1
+        },
+        {
+          "before": "to_reanimate[(player) * 500 + (uStack_2040)]",
+          "after": "to_reanimate[player][uStack_2040]",
+          "occurrences": 1
+        },
+        {
+          "before": "(to_reanimate + (0) * 500)",
+          "after": "to_reanimate[0]",
+          "occurrences": 3
+        },
+        {
+          "before": "(to_reanimate + (uVar9) * 500)",
+          "after": "to_reanimate[uVar9]",
+          "occurrences": 2
+        },
+        {
+          "before": "(to_reanimate + (player) * 500)",
+          "after": "to_reanimate[player]",
+          "occurrences": 2
+        },
+        {
+          "before": "(to_reanimate + (iVar11) * 500)",
+          "after": "to_reanimate[iVar11]",
+          "occurrences": 2
+        },
+        {
+          "before": "int auras[1000];",
+          "after": "int auras[2][500];",
+          "occurrences": 1
+        },
+        {
+          "before": "auras[(iVar11) * 500 + (iVar5)]",
+          "after": "auras[iVar11][iVar5]",
+          "occurrences": 1
+        },
+        {
+          "before": "auras[(player) * 500 + (uStack_2040)]",
+          "after": "auras[player][uStack_2040]",
+          "occurrences": 1
+        },
+        {
+          "before": "(auras + (0) * 500)",
+          "after": "auras[0]",
+          "occurrences": 5
+        },
+        {
+          "before": "(auras + (player_00) * 500)",
+          "after": "auras[player_00]",
+          "occurrences": 2
+        },
+        {
+          "before": "(auras + (player) * 500)",
+          "after": "auras[player]",
+          "occurrences": 4
+        },
+        {
+          "before": "(auras + (iVar11) * 500)",
+          "after": "auras[iVar11]",
+          "occurrences": 2
+        }
+      ],
+      "after_definition": "static int new_reanimate_all_impl(int player, int card, int targ_player,\n                                test_definition_t *this_test, reanimate_mode_t action)\n{\n  int iVar1;\n  reanimate_mode_t rVar2;\n  int iVar3;\n  card_instance_t *instance;\n  int iVar5;\n  int *piVar6;\n  int *piVar7;\n  int iVar8;\n  unsigned int uVar9;\n  int *piVar10;\n  int iVar11;\n  unsigned int player_00;\n  int iStack_2060;\n  int iStack_205c;\n  int *piStack_2058;\n  int iStack_2054;\n  int iStack_2050;\n  int iStack_204c;\n  int iStack_2048;\n  unsigned int uStack_2044;\n  unsigned int uStack_2040;\n  int trc[2];\n  int ac[2];\n  test_definition_t this_test2;\n  int to_reanimate[2][500];\n  int auras[2][500];\n\n  iStack_2054 = -1;\n  if (card != -1)\n  {\n    iStack_2054 = get_id(player, card);\n  }\n  iVar1 = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_GRAVE);\n  rVar2 = action & REANIMATE_SPECIAL_LIVING_DEAD;\n  trc[0] = 0;\n  trc[1] = 0;\n  ac[0] = 0;\n  ac[1] = 0;\n  iStack_205c = 0;\n  iStack_2060 = -1;\n  iVar11 = 0;\n  do\n  {\n    if ((targ_player == iVar11) || (targ_player == 2))\n    {\n      if ((iStack_2054 == 0x16a1) && (targ_player == iVar11))\n      {\n        instance = get_card_instance(player, card);\n        uStack_2040 = instance->info_slot;\n      }\n      else\n      {\n        uStack_2040 = -1;\n      }\n      piVar10 = graveyard_ptr_mutable[iVar11];\n      iVar3 = count_graveyard(iVar11);\n      iVar3 = iVar3 + -1;\n      if ((int)uStack_2040 < iVar3)\n      {\n        do\n        {\n          iVar5 = is_what(-1, piVar10[iVar3], 0x47);\n          if ((iVar5 != 0) &&\n              (iVar5 = new_make_test(iVar11, piVar10[iVar3], -1, this_test), iVar5 != 0))\n          {\n            iVar5 = piVar10[iVar3];\n            if (targ_player != 2)\n            {\n              iVar5 = is_what(-1, iVar5, 2);\n              if (iVar5 != 0)\n              {\n                iStack_2060 = 1 - iVar11;\n              }\n              iVar5 = piVar10[iVar3];\n            }\n            iVar5 = is_what(-1, iVar5, 2);\n            if ((iVar5 == 0) ||\n                ((iVar5 = is_what(-1, piVar10[iVar3], 2), iVar1 == 0 && (iVar5 != 0))))\n            {\n              iVar5 = has_subtype_by_id(player, (unsigned int)cards_data[piVar10[iVar3]].id,\n                                             SUBTYPE_AURA);\n              if (iVar5 == 0)\n              {\n                iVar5 = trc[iVar11];\n                if (iVar5 < 500)\n                {\n                  to_reanimate[iVar11][iVar5] = piVar10[iVar3];\n                  trc[iVar11] = iVar5 + 1;\n                joined_r0x0269c7ff:\n                  if (rVar2 == REANIMATE_DEFAULT)\n                  {\n                    remove_card_from_grave(iVar11, iVar3);\n                  }\n                  else\n                  {\n                    rfg_card_from_grave(iVar11, iVar3);\n                  }\n                  iStack_205c = iStack_205c + 1;\n                }\n              }\n              else\n              {\n                iVar5 = add_card_to_hand(player, piVar10[iVar3]);\n                instance = get_card_instance(player, iVar5);\n                instance->state = instance->state | 0x20;\n                hand_count[player] = hand_count[player] + -1;\n                iVar8 = call_card_function_i(instance, player, iVar5, EVENT_CAN_CAST);\n                obliterate_card_and_recycle(player, iVar5);\n                if (iVar8 != 0)\n                {\n                  iVar5 = ac[iVar11];\n                  if (iVar5 < 500)\n                  {\n                    auras[iVar11][iVar5] = piVar10[iVar3];\n                    ac[iVar11] = iVar5 + 1;\n                    goto joined_r0x0269c7ff;\n                  }\n                }\n              }\n            }\n          }\n          iVar3 = iVar3 + -1;\n        } while (iVar3 != uStack_2040);\n      }\n    }\n    iVar11 = iVar11 + 1;\n  } while (iVar11 != 2);\n  if (rVar2 != REANIMATE_DEFAULT)\n  {\n    default_test_definition(&this_test2, 2);\n    new_manipulate_all(player, card, 2, &this_test2, ACT_KILL_SACRIFICE);\n    piStack_2058 = ac;\n    iStack_2050 = 0;\n    do\n    {\n      iVar1 = *piStack_2058;\n      if (0 < iVar1)\n      {\n        piVar10 = auras[0] + iStack_2050;\n        iStack_2054 = iVar1;\n        if (500 < iVar1)\n        {\n          iStack_2054 = 500;\n        }\n        iVar11 = 0;\n      LAB_0269c5e0:\n        do\n        {\n          iVar3 = add_card_to_hand(player, *piVar10);\n          if (-1 < iVar3)\n          {\n            instance = get_card_instance(player, iVar3);\n            uVar9 = instance->state;\n            hand_count[player] = hand_count[player] + -1;\n            instance->state = uVar9 | 0x20;\n            iVar5 = call_card_function_i(instance, player, iVar3, EVENT_CAN_CAST);\n            obliterate_card_and_recycle(player, iVar3);\n            if ((iVar5 == 0) && (piVar6 = piVar10, iVar11 < iStack_2054))\n            {\n              do\n              {\n                piVar7 = piVar6 + 1;\n                *piVar6 = piVar6[1];\n                piVar6 = piVar7;\n              } while (piVar7 != auras[0] + iStack_2054 + iStack_2050);\n              iVar11 = iVar11 + 1;\n              piVar10 = piVar10 + 1;\n              if (iVar11 == iVar1)\n                break;\n              goto LAB_0269c5e0;\n            }\n          }\n          iVar11 = iVar11 + 1;\n          piVar10 = piVar10 + 1;\n        } while (iVar11 != iVar1);\n      }\n      piStack_2058 = piStack_2058 + 1;\n      iStack_2050 = iStack_2050 + 500;\n    } while (iStack_2050 != 1000);\n  }\n  if ((action & REANIMATE_ALL_UNDER_CASTERS_CONTROL) == REANIMATE_DEFAULT)\n  {\n    iVar1 = 0;\n    iStack_204c = 0;\n    do\n    {\n      iVar11 = ac[iVar1];\n      if (0 < iVar11)\n      {\n        piVar10 = auras[0] + iStack_204c;\n        do\n        {\n          iVar3 = *piVar10;\n          if (rVar2 == REANIMATE_DEFAULT)\n          {\n          LAB_0269be48:\n            iVar3 = add_card_to_hand_invisible(iVar1, iVar3);\n            *piVar10 = iVar3;\n          }\n          else\n          {\n            iVar5 = check_rfg(iVar1, (unsigned int)cards_data[iVar3].id);\n            if (iVar5 != 0)\n            {\n              remove_card_from_rfg(iVar1, (unsigned int)cards_data[iVar3].id);\n              goto LAB_0269be48;\n            }\n          }\n          piVar10 = piVar10 + 1;\n        } while (piVar10 != auras[0] + iVar11 + iStack_204c);\n      }\n      iVar11 = trc[iVar1];\n      if (0 < iVar11)\n      {\n        piVar10 = to_reanimate[0] + iStack_204c;\n        do\n        {\n          iVar3 = *piVar10;\n          if (rVar2 == REANIMATE_DEFAULT)\n          {\n          LAB_0269bef0:\n            iVar3 = add_card_to_hand_invisible(iVar1, iVar3);\n            *piVar10 = iVar3;\n          }\n          else\n          {\n            iVar5 = check_rfg(iVar1, (unsigned int)cards_data[iVar3].id);\n            if (iVar5 != 0)\n            {\n              remove_card_from_rfg(iVar1, (unsigned int)cards_data[iVar3].id);\n              goto LAB_0269bef0;\n            }\n          }\n          piVar10 = piVar10 + 1;\n        } while (piVar10 != to_reanimate[0] + iVar11 + iStack_204c);\n      }\n      iVar1 = iVar1 + 1;\n      iStack_204c = iStack_204c + 500;\n    } while (iVar1 != 2);\n    uStack_2044 = 0;\n    uVar9 = current_turn;\n    do\n    {\n      player_00 = uStack_2044 ^ uVar9;\n      iVar1 = ac[player_00];\n      if (0 < iVar1)\n      {\n        piVar10 = auras[player_00];\n        do\n        {\n          iVar11 = *piVar10;\n          piVar10 = piVar10 + 1;\n          reanimate_permanent_impl(player_00, -1, player_00, iVar11,\n                                        action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,\n                                        (CardFunction)0x0, (ReanimationBeforeEtb)0x0);\n          uVar9 = current_turn;\n        } while (piVar10 != auras[player_00] + iVar1);\n      }\n      uStack_2044 = uStack_2044 + 1;\n    } while (uStack_2044 != 2);\n    uStack_2040 = 0;\n    do\n    {\n      uVar9 = uVar9 ^ uStack_2040;\n      iVar1 = trc[uVar9];\n      if (0 < iVar1)\n      {\n        piVar10 = to_reanimate[uVar9];\n        do\n        {\n          iVar11 = *piVar10;\n          piVar10 = piVar10 + 1;\n          reanimate_permanent_impl(uVar9, -1, uVar9, iVar11,\n                                        action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,\n                                        (CardFunction)0x0, (ReanimationBeforeEtb)0x0);\n        } while (to_reanimate[uVar9] + iVar1 != piVar10);\n      }\n      uStack_2040 = uStack_2040 + 1;\n      uVar9 = current_turn;\n    } while (uStack_2040 != 2);\n  }\n  else\n  {\n    iStack_2048 = ac[player];\n    if (0 < iStack_2048)\n    {\n      piVar10 = auras[player];\n      do\n      {\n        iVar1 = *piVar10;\n        if (rVar2 == REANIMATE_DEFAULT)\n        {\n        LAB_0269bbc8:\n          iVar1 = add_card_to_hand(player, iVar1);\n          *piVar10 = iVar1;\n        }\n        else\n        {\n          iVar11 = check_rfg(player, (unsigned int)cards_data[iVar1].id);\n          if (iVar11 != 0)\n          {\n            remove_card_from_rfg(player, (unsigned int)cards_data[iVar1].id);\n            goto LAB_0269bbc8;\n          }\n        }\n        piVar10 = piVar10 + 1;\n      } while (auras[player] + iStack_2048 != piVar10);\n    }\n    uStack_2040 = trc[player];\n    if (0 < (int)uStack_2040)\n    {\n      piVar10 = to_reanimate[player];\n      do\n      {\n        iVar1 = *piVar10;\n        if (rVar2 == REANIMATE_DEFAULT)\n        {\n        LAB_0269c118:\n          iVar1 = add_card_to_hand(player, iVar1);\n          *piVar10 = iVar1;\n        }\n        else\n        {\n          iVar11 = check_rfg(player, (unsigned int)cards_data[iVar1].id);\n          if (iVar11 != 0)\n          {\n            remove_card_from_rfg(player, (unsigned int)cards_data[iVar1].id);\n            goto LAB_0269c118;\n          }\n        }\n        piVar10 = piVar10 + 1;\n      } while (to_reanimate[player] + uStack_2040 != piVar10);\n    }\n    iVar11 = 1 - player;\n    iVar1 = ac[iVar11];\n    if (0 < iVar1)\n    {\n      piVar10 = auras[iVar11];\n      do\n      {\n        iVar3 = *piVar10;\n        if (rVar2 == REANIMATE_DEFAULT)\n        {\n        LAB_0269c368:\n          iVar3 = add_card_to_hand_invisible(player, iVar3);\n          instance = get_card_instance(player, iVar3);\n          iStack_2048 = iStack_2048 + 1;\n          instance->state = instance->state ^ 0x1000;\n          auras[player][uStack_2040] = iVar3;\n        }\n        else\n        {\n          iVar5 = check_rfg(iVar11, (unsigned int)cards_data[iVar3].id);\n          if (iVar5 != 0)\n          {\n            remove_card_from_rfg(player, (unsigned int)cards_data[iVar3].id);\n            goto LAB_0269c368;\n          }\n        }\n        piVar10 = piVar10 + 1;\n      } while (auras[iVar11] + iVar1 != piVar10);\n    }\n    iVar1 = trc[iVar11];\n    if (0 < iVar1)\n    {\n      piVar10 = to_reanimate[iVar11];\n      do\n      {\n        iVar3 = *piVar10;\n        if (rVar2 == REANIMATE_DEFAULT)\n        {\n        LAB_0269c468:\n          iVar3 = add_card_to_hand_invisible(player, iVar3);\n          instance = get_card_instance(player, iVar3);\n          instance->state = instance->state ^ 0x1000;\n          to_reanimate[player][uStack_2040] = iVar3;\n          uStack_2040 = uStack_2040 + 1;\n        }\n        else\n        {\n          iVar5 = check_rfg(iVar11, (unsigned int)cards_data[iVar3].id);\n          if (iVar5 != 0)\n          {\n            remove_card_from_rfg(player, (unsigned int)cards_data[iVar3].id);\n            goto LAB_0269c468;\n          }\n        }\n        piVar10 = piVar10 + 1;\n      } while (to_reanimate[iVar11] + iVar1 != piVar10);\n    }\n    ac[player] = iStack_2048;\n    trc[player] = uStack_2040;\n    ac[iVar11] = 0;\n    trc[iVar11] = 0;\n    iVar1 = ac[player];\n    if (0 < iVar1)\n    {\n      piVar10 = auras[player];\n      do\n      {\n        iVar11 = *piVar10;\n        piVar10 = piVar10 + 1;\n        instance = get_card_instance(player, iVar11);\n        instance->state = instance->state & 0xffffffdf;\n        reanimate_permanent_impl(player, card, player, iVar11,\n                                      action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,\n                                      (CardFunction)0x0, (ReanimationBeforeEtb)0x0);\n      } while (piVar10 != auras[player] + iVar1);\n    }\n    iVar1 = trc[player];\n    if (0 < iVar1)\n    {\n      iVar11 = player * 2000;\n      do\n      {\n        instance = get_card_instance(player, *(int *)((int)auras[0] + iVar11));\n        instance->state = instance->state & 0xffffffdf;\n        piVar10 = (int *)((int)to_reanimate[0] + iVar11);\n        iVar11 = iVar11 + 4;\n        reanimate_permanent_impl(player, card, player, *piVar10,\n                                      action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,\n                                      (CardFunction)0x0, (ReanimationBeforeEtb)0x0);\n      } while ((iVar1 + player * 500) * 4 != iVar11);\n    }\n  }\n  if (-1 < iStack_2060)\n  {\n    ereboss_titan_effect(iStack_2060);\n  }\n  return iStack_205c;\n}",
+      "after_sha256": "f5eb68f6d9c19f3446e3cc14fe7beae973babf36440012178bc5cb8583b286a8",
+      "native_snapshot": {
+        "die_offset": "0x65b9b8b",
+        "view": {
+          "address": "0x269ba70",
+          "end": "0x269c80f",
+          "bytes_sha256": "7b995896eba11cb88a900dc74acaedc9ca0a3871373486036b5355c475b06b94"
+        },
+        "variables": [
+          {
+            "name": "to_reanimate",
+            "die_offset": "0x65b9c35",
+            "frame_offset": -8020,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                2,
+                500
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40483440,
+                40486927
+              ]
+            ]
+          },
+          {
+            "name": "auras",
+            "die_offset": "0x65b9c3e",
+            "frame_offset": -4020,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                2,
+                500
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40483440,
+                40486927
+              ]
+            ]
+          },
+          {
+            "name": "trc",
+            "die_offset": "0x65b9c47",
+            "frame_offset": -8252,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40483440,
+                40486927
+              ]
+            ]
+          },
+          {
+            "name": "ac",
+            "die_offset": "0x65b9c51",
+            "frame_offset": -8244,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40483440,
+                40486927
+              ]
+            ]
+          },
+          {
+            "name": "this_test2",
+            "die_offset": "0x65ba378",
+            "frame_offset": -8236,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 216,
+              "message": {
+                "offset": 0,
+                "size": 100
+              }
+            },
+            "scope_ranges": [
+              [
+                40486168,
+                40486616
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "to_reanimate",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                2,
+                500
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "auras",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                2,
+                500
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "trc",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "ac",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ]
+      },
+      "before_compiled": {
+        "die_offset": "0x56d7b85",
+        "view": {
+          "address": "0x26b1a60",
+          "end": "0x26b2902",
+          "bytes_sha256": "b146fcfce4364a5ce00be069b79a6c946d4048142baa554899ea76ec0c7b5fd4"
+        },
+        "variables": [
+          {
+            "name": "trc",
+            "die_offset": "0x56d7e2a",
+            "frame_offset": -8252,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40573536,
+                40577282
+              ]
+            ]
+          },
+          {
+            "name": "ac",
+            "die_offset": "0x56d7e3c",
+            "frame_offset": -8244,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40573536,
+                40577282
+              ]
+            ]
+          },
+          {
+            "name": "this_test2",
+            "die_offset": "0x56d7e4d",
+            "frame_offset": -8236,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 216,
+              "message": {
+                "offset": 0,
+                "size": 100
+              }
+            },
+            "scope_ranges": [
+              [
+                40573536,
+                40577282
+              ]
+            ]
+          },
+          {
+            "name": "to_reanimate",
+            "die_offset": "0x56d7e5f",
+            "frame_offset": -8020,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                1000
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40573536,
+                40577282
+              ]
+            ]
+          },
+          {
+            "name": "auras",
+            "die_offset": "0x56d7e79",
+            "frame_offset": -4020,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                1000
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40573536,
+                40577282
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "trc",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "ac",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "to_reanimate",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                1000
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "auras",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                1000
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ]
+      },
+      "native_validation": {
+        "array_dimensions": [
+          2,
+          500
+        ],
+        "array_bytes": 4000,
+        "arrays": 2,
+        "counter_dimensions": [
+          2
+        ]
+      },
+      "after_compiled": {
+        "die_offset": "0x56d7b5b",
+        "view": {
+          "address": "0x26b1a00",
+          "end": "0x26b2862",
+          "bytes_sha256": "2ca629ecf390dca28ad30131b56c9b9f61a1891362534f033ecafa281a0b32bb"
+        },
+        "variables": [
+          {
+            "name": "trc",
+            "die_offset": "0x56d7dfb",
+            "frame_offset": -8252,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40573440,
+                40577122
+              ]
+            ]
+          },
+          {
+            "name": "ac",
+            "die_offset": "0x56d7e0d",
+            "frame_offset": -8244,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40573440,
+                40577122
+              ]
+            ]
+          },
+          {
+            "name": "this_test2",
+            "die_offset": "0x56d7e1e",
+            "frame_offset": -8236,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 216,
+              "message": {
+                "offset": 0,
+                "size": 100
+              }
+            },
+            "scope_ranges": [
+              [
+                40573440,
+                40577122
+              ]
+            ]
+          },
+          {
+            "name": "to_reanimate",
+            "die_offset": "0x56d7e30",
+            "frame_offset": -8020,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                2,
+                500
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40573440,
+                40577122
+              ]
+            ]
+          },
+          {
+            "name": "auras",
+            "die_offset": "0x56d7e4a",
+            "frame_offset": -4020,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                2,
+                500
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                40573440,
+                40577122
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "trc",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "ac",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "to_reanimate",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                2,
+                500
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "auras",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 4000,
+              "dimensions": [
+                2,
+                500
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ]
+      },
+      "compiled_validation": {
+        "array_dimensions": [
+          2,
+          500
+        ],
+        "array_bytes": 4000,
+        "arrays": 2,
+        "counter_dimensions": [
+          2
+        ]
+      }
+    },
+    {
+      "source": "cards/dragons_of_tarkir.c",
+      "name": "card_dromokas_command",
+      "before_definition": "int card_dromokas_command(int player, int card, event_t event)\n{\n  if (!IS_GS_EVENT(player, card, event))\n    return 0;\n\n  enum { CHOICE_PREVENT = 1, CHOICE_SAC, CHOICE_COUNTER, CHOICE_FIGHT };\n  target_definition_t td_spell, td_player, td_creature, td_control, td_dont_control;\n  base_target_definition(player, card, &td_spell, TYPE_INSTANT | TYPE_SORCERY);\n  td_spell.zone = TARGET_ZONE_ON_STACK;\n  default_target_definition(player, card, &td_player, 0);\n  td_player.zone = TARGET_ZONE_PLAYERS;\n  default_target_definition(player, card, &td_creature, TYPE_CREATURE);\n  td_control = td_creature;\n  td_dont_control = td_creature;\n  td_creature.preferred_controller = player;\n  td_control.allowed_controller = td_control.preferred_controller = player;\n  td_dont_control.allowed_controller = td_dont_control.preferred_controller = 1-player;\n\n  int available[5] = {0, 1, 1, 1, 1};\n  int priority[5] = {0, 1, 1, 1, 1};\n  if (event != EVENT_RESOLVE_SPELL)\n    {\n      available[1] = can_target(&td_spell);\n      available[2] = can_target(&td_player);\n      available[3] = can_target(&td_creature);\n      int can_target_own = can_target(&td_control);\n      available[4] = can_target_own && can_target(&td_dont_control);\n      if (IS_AI(player))\n        {\n          priority[1] = available[1] ? 3 : -100;\n          priority[2] = available[2] ? 0 : -100;\n          if (available[2])\n            for (int c = 0; c < active_cards_count[1-player]; ++c)\n              if (in_play(1-player, c) && is_what(1-player, c, TYPE_ENCHANTMENT))\n                {\n                  priority[2] = 6;\n                  break;\n                }\n          priority[3] = available[3] ? (can_target_own ? 5 : -2) : -100;\n          priority[4] = available[4] ? 4 : -100;\n          raise_command_singleton_ai_priorities(event, priority);\n        }\n    }\n\n  card_instance_t *instance = get_card_instance(player, card);\n  int choices[2];\n  choices[0] = DIALOG(player, card, event, DLG_CHOOSE_TWO(&choices[1]), DLG_SORT_RESULTS, DLG_RANDOM,\n                      \"Prevent damage\", available[1], priority[1],\n                      \"Sacrifice enchantment\", available[2], priority[2],\n                      \"+1/+1 counter\", available[3], priority[3],\n                      \"Fight\", available[4], priority[4]);\n  if (event == EVENT_CAN_CAST)\n    return choices[0];\n\n  if (event == EVENT_CAST_SPELL && affect_me(player, card))\n    {\n      instance->number_of_targets = 0;\n      for (int i = 0; i < 2; ++i)\n        {\n          switch (choices[i])\n            {\n              case CHOICE_PREVENT:\n                if (!pick_next_target_noload(&td_spell, \"Select target instant or sorcery spell.\"))\n                  return 0;\n                break;\n              case CHOICE_SAC:\n                if (!new_pick_target(&td_player, \"TARGET_PLAYER\", -1, 1))\n                  return 0;\n                break;\n              case CHOICE_COUNTER:\n                if (!new_pick_target(&td_creature, \"TARGET_CREATURE\", -1, 1))\n                  return 0;\n                break;\n              case CHOICE_FIGHT:\n                if (!new_pick_target(&td_control, \"ASHNODS_BATTLEGEAR\", -1, 1)\n                    || !pick_next_target_noload(&td_dont_control, \"Select target creature you don't control.\"))\n                  return 0;\n                break;\n            }\n        }\n    }\n  if (event == EVENT_RESOLVE_SPELL)\n    {\n      int target = -1;\n      for (int i = 0; i < 2; ++i)\n        {\n          switch (choices[i])\n            {\n              case CHOICE_PREVENT:\n                if (validate_target(player, card, &td_spell, ++target))\n                  negate_damage_this_turn(player, card, instance->targets[target].player, instance->targets[target].card, 0);\n                break;\n              case CHOICE_SAC:\n                if (validate_target(player, card, &td_player, ++target))\n                  player_sacrifices_a_permanent(player, card, instance->targets[target].player, TYPE_ENCHANTMENT, SAC_CAUSED | SAC_NO_CANCEL);\n                break;\n              case CHOICE_COUNTER:\n                if (validate_target(player, card, &td_creature, ++target))\n                  add_counters(player, card, instance->targets[target].player, instance->targets[target].card, COUNTER_P1_P1, 1);\n                break;\n              case CHOICE_FIGHT:\n                if (validate_target(player, card, &td_control, ++target))\n                  {\n                    int own = target;\n                    if (validate_target(player, card, &td_dont_control, ++target))\n                      fight(instance->targets[own].player, instance->targets[own].card,\n                            instance->targets[target].player, instance->targets[target].card);\n                  }\n                break;\n            }\n        }\n      kill_card(player, card, KILL_DESTROY);\n    }\n  return 0;\n}",
+      "before_sha256": "f07027f2c946484bbfc603f33fbae2ad8c1967b9293ef2ff598ca4666095db50",
+      "changes": [
+        {
+          "before": "enum { CHOICE_PREVENT = 1, CHOICE_SAC, CHOICE_COUNTER, CHOICE_FIGHT };",
+          "after": "enum { CHOICE_PREVENT = 1, CHOICE_SAC, CHOICE_COUNTER, CHOICE_FIGHT } choices[2];",
+          "occurrences": 1
+        },
+        {
+          "before": "  int choices[2];\n",
+          "after": "",
+          "occurrences": 1
+        }
+      ],
+      "after_definition": "int card_dromokas_command(int player, int card, event_t event)\n{\n  if (!IS_GS_EVENT(player, card, event))\n    return 0;\n\n  enum { CHOICE_PREVENT = 1, CHOICE_SAC, CHOICE_COUNTER, CHOICE_FIGHT } choices[2];\n  target_definition_t td_spell, td_player, td_creature, td_control, td_dont_control;\n  base_target_definition(player, card, &td_spell, TYPE_INSTANT | TYPE_SORCERY);\n  td_spell.zone = TARGET_ZONE_ON_STACK;\n  default_target_definition(player, card, &td_player, 0);\n  td_player.zone = TARGET_ZONE_PLAYERS;\n  default_target_definition(player, card, &td_creature, TYPE_CREATURE);\n  td_control = td_creature;\n  td_dont_control = td_creature;\n  td_creature.preferred_controller = player;\n  td_control.allowed_controller = td_control.preferred_controller = player;\n  td_dont_control.allowed_controller = td_dont_control.preferred_controller = 1-player;\n\n  int available[5] = {0, 1, 1, 1, 1};\n  int priority[5] = {0, 1, 1, 1, 1};\n  if (event != EVENT_RESOLVE_SPELL)\n    {\n      available[1] = can_target(&td_spell);\n      available[2] = can_target(&td_player);\n      available[3] = can_target(&td_creature);\n      int can_target_own = can_target(&td_control);\n      available[4] = can_target_own && can_target(&td_dont_control);\n      if (IS_AI(player))\n        {\n          priority[1] = available[1] ? 3 : -100;\n          priority[2] = available[2] ? 0 : -100;\n          if (available[2])\n            for (int c = 0; c < active_cards_count[1-player]; ++c)\n              if (in_play(1-player, c) && is_what(1-player, c, TYPE_ENCHANTMENT))\n                {\n                  priority[2] = 6;\n                  break;\n                }\n          priority[3] = available[3] ? (can_target_own ? 5 : -2) : -100;\n          priority[4] = available[4] ? 4 : -100;\n          raise_command_singleton_ai_priorities(event, priority);\n        }\n    }\n\n  card_instance_t *instance = get_card_instance(player, card);\n  choices[0] = DIALOG(player, card, event, DLG_CHOOSE_TWO(&choices[1]), DLG_SORT_RESULTS, DLG_RANDOM,\n                      \"Prevent damage\", available[1], priority[1],\n                      \"Sacrifice enchantment\", available[2], priority[2],\n                      \"+1/+1 counter\", available[3], priority[3],\n                      \"Fight\", available[4], priority[4]);\n  if (event == EVENT_CAN_CAST)\n    return choices[0];\n\n  if (event == EVENT_CAST_SPELL && affect_me(player, card))\n    {\n      instance->number_of_targets = 0;\n      for (int i = 0; i < 2; ++i)\n        {\n          switch (choices[i])\n            {\n              case CHOICE_PREVENT:\n                if (!pick_next_target_noload(&td_spell, \"Select target instant or sorcery spell.\"))\n                  return 0;\n                break;\n              case CHOICE_SAC:\n                if (!new_pick_target(&td_player, \"TARGET_PLAYER\", -1, 1))\n                  return 0;\n                break;\n              case CHOICE_COUNTER:\n                if (!new_pick_target(&td_creature, \"TARGET_CREATURE\", -1, 1))\n                  return 0;\n                break;\n              case CHOICE_FIGHT:\n                if (!new_pick_target(&td_control, \"ASHNODS_BATTLEGEAR\", -1, 1)\n                    || !pick_next_target_noload(&td_dont_control, \"Select target creature you don't control.\"))\n                  return 0;\n                break;\n            }\n        }\n    }\n  if (event == EVENT_RESOLVE_SPELL)\n    {\n      int target = -1;\n      for (int i = 0; i < 2; ++i)\n        {\n          switch (choices[i])\n            {\n              case CHOICE_PREVENT:\n                if (validate_target(player, card, &td_spell, ++target))\n                  negate_damage_this_turn(player, card, instance->targets[target].player, instance->targets[target].card, 0);\n                break;\n              case CHOICE_SAC:\n                if (validate_target(player, card, &td_player, ++target))\n                  player_sacrifices_a_permanent(player, card, instance->targets[target].player, TYPE_ENCHANTMENT, SAC_CAUSED | SAC_NO_CANCEL);\n                break;\n              case CHOICE_COUNTER:\n                if (validate_target(player, card, &td_creature, ++target))\n                  add_counters(player, card, instance->targets[target].player, instance->targets[target].card, COUNTER_P1_P1, 1);\n                break;\n              case CHOICE_FIGHT:\n                if (validate_target(player, card, &td_control, ++target))\n                  {\n                    int own = target;\n                    if (validate_target(player, card, &td_dont_control, ++target))\n                      fight(instance->targets[own].player, instance->targets[own].card,\n                            instance->targets[target].player, instance->targets[target].card);\n                  }\n                break;\n            }\n        }\n      kill_card(player, card, KILL_DESTROY);\n    }\n  return 0;\n}",
+      "after_sha256": "338863fb68c2ce05653790ce3e471850425da012db627ccb114a78ea9af83c7d",
+      "native_snapshot": {
+        "die_offset": "0x2e9618c",
+        "view": {
+          "address": "0x2326ff0",
+          "end": "0x2327983",
+          "bytes_sha256": "958229bd29a80cd044d679373c775e12fa24f99d0b600879ab9f25ef87d4ee2a"
+        },
+        "variables": [
+          {
+            "name": "td_spell",
+            "die_offset": "0x2e96239",
+            "frame_offset": -440,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                36859888,
+                36862339
+              ]
+            ]
+          },
+          {
+            "name": "td_player",
+            "die_offset": "0x2e9624a",
+            "frame_offset": -356,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                36859888,
+                36862339
+              ]
+            ]
+          },
+          {
+            "name": "td_creature",
+            "die_offset": "0x2e9625b",
+            "frame_offset": -272,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                36859888,
+                36862339
+              ]
+            ]
+          },
+          {
+            "name": "td_control",
+            "die_offset": "0x2e9626c",
+            "frame_offset": -188,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                36859888,
+                36862339
+              ]
+            ]
+          },
+          {
+            "name": "td_dont_control",
+            "die_offset": "0x2e9627d",
+            "frame_offset": -104,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                36859888,
+                36862339
+              ]
+            ]
+          },
+          {
+            "name": "priority",
+            "die_offset": "0x2e962a3",
+            "frame_offset": -460,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 20,
+              "dimensions": [
+                5
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                36859888,
+                36862339
+              ]
+            ]
+          },
+          {
+            "name": "choices",
+            "die_offset": "0x2e962ee",
+            "frame_offset": -468,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 7
+            },
+            "scope_ranges": [
+              [
+                36859888,
+                36862339
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "can",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 20,
+              "dimensions": [
+                5
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "priority",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 20,
+              "dimensions": [
+                5
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "choices",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 7
+            },
+            "element_kind": "DW_TAG_enumeration_type",
+            "values": {
+              "CHOICE_PREVENT": 1,
+              "CHOICE_SAC": 2,
+              "CHOICE_COUNTER": 3,
+              "CHOICE_FIGHT": 4
+            }
+          }
+        ]
+      },
+      "before_compiled": {
+        "die_offset": "0x162bf1c",
+        "view": {
+          "address": "0x21759a0",
+          "end": "0x217620b",
+          "bytes_sha256": "89ea0bdb6a2aadfc292d2694b5024f41f1ef28f0372f05291a9ed8fa64ac9538"
+        },
+        "variables": [
+          {
+            "name": "td_spell",
+            "die_offset": "0x162bfbc",
+            "frame_offset": -440,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                35084704,
+                35086859
+              ]
+            ]
+          },
+          {
+            "name": "td_player",
+            "die_offset": "0x162bfcd",
+            "frame_offset": -356,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                35084704,
+                35086859
+              ]
+            ]
+          },
+          {
+            "name": "td_creature",
+            "die_offset": "0x162bfde",
+            "frame_offset": -272,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                35084704,
+                35086859
+              ]
+            ]
+          },
+          {
+            "name": "td_control",
+            "die_offset": "0x162bfef",
+            "frame_offset": -188,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                35084704,
+                35086859
+              ]
+            ]
+          },
+          {
+            "name": "td_dont_control",
+            "die_offset": "0x162c000",
+            "frame_offset": -104,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                35084704,
+                35086859
+              ]
+            ]
+          },
+          {
+            "name": "priority",
+            "die_offset": "0x162c02c",
+            "frame_offset": -460,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 20,
+              "dimensions": [
+                5
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                35084704,
+                35086859
+              ]
+            ]
+          },
+          {
+            "name": "choices",
+            "die_offset": "0x162c052",
+            "frame_offset": -468,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                35084704,
+                35086859
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "available",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 20,
+              "dimensions": [
+                5
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "priority",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 20,
+              "dimensions": [
+                5
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "choices",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ]
+      },
+      "native_validation": {
+        "choice_array_bytes": 8,
+        "choice_element_bytes": 4,
+        "native_choice_values": {
+          "CHOICE_PREVENT": 1,
+          "CHOICE_SAC": 2,
+          "CHOICE_COUNTER": 3,
+          "CHOICE_FIGHT": 4
+        }
+      },
+      "after_compiled": {
+        "die_offset": "0x162beb2",
+        "view": {
+          "address": "0x2175940",
+          "end": "0x21761ab",
+          "bytes_sha256": "81190669a3238314717220aa8dc4e8eb087880f4898e968a2ee0194f0fac97df"
+        },
+        "variables": [
+          {
+            "name": "choices",
+            "die_offset": "0x162bf52",
+            "frame_offset": -468,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 7
+            },
+            "scope_ranges": [
+              [
+                35084608,
+                35086763
+              ]
+            ]
+          },
+          {
+            "name": "td_spell",
+            "die_offset": "0x162bf63",
+            "frame_offset": -440,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                35084608,
+                35086763
+              ]
+            ]
+          },
+          {
+            "name": "td_player",
+            "die_offset": "0x162bf74",
+            "frame_offset": -356,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                35084608,
+                35086763
+              ]
+            ]
+          },
+          {
+            "name": "td_creature",
+            "die_offset": "0x162bf85",
+            "frame_offset": -272,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                35084608,
+                35086763
+              ]
+            ]
+          },
+          {
+            "name": "td_control",
+            "die_offset": "0x162bf96",
+            "frame_offset": -188,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                35084608,
+                35086763
+              ]
+            ]
+          },
+          {
+            "name": "td_dont_control",
+            "die_offset": "0x162bfa7",
+            "frame_offset": -104,
+            "shape": {
+              "kind": "DW_TAG_structure_type",
+              "size": 84
+            },
+            "scope_ranges": [
+              [
+                35084608,
+                35086763
+              ]
+            ]
+          },
+          {
+            "name": "priority",
+            "die_offset": "0x162bfd3",
+            "frame_offset": -460,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 20,
+              "dimensions": [
+                5
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                35084608,
+                35086763
+              ]
+            ]
+          }
+        ],
+        "array_declarations": [
+          {
+            "name": "choices",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 8,
+              "dimensions": [
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 7
+            },
+            "element_kind": "DW_TAG_enumeration_type",
+            "values": {
+              "CHOICE_PREVENT": 1,
+              "CHOICE_SAC": 2,
+              "CHOICE_COUNTER": 3,
+              "CHOICE_FIGHT": 4
+            }
+          },
+          {
+            "name": "available",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 20,
+              "dimensions": [
+                5
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          },
+          {
+            "name": "priority",
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 20,
+              "dimensions": [
+                5
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "element_kind": "DW_TAG_base_type"
+          }
+        ]
+      },
+      "compiled_validation": {
+        "choice_array_bytes": 8,
+        "choice_element_bytes": 4,
+        "native_choice_values": {
+          "CHOICE_PREVENT": 1,
+          "CHOICE_SAC": 2,
+          "CHOICE_COUNTER": 3,
+          "CHOICE_FIGHT": 4
+        }
+      }
+    }
+  ],
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "scope": "Six native-backed original-source repairs from the fixed-array census. Multani stores selected target card IDs in its actual two-int to_bounce array instead of writing relative to msg; definite direct-CFG instance/card tags verify the load/store uses the same unchanged index with corresponding eight/four-byte slot biases, and both bounce calls read array words0/4. Faerie Dragon restores buf301 while every formatter bound/argument stays unchanged. Engine put_card_on_stack and event resolve_trigger restore separate scoped logging500/prompt300 arrays; actual DWARF scopes and conservative direct-CFG frame operands verify five formatters and two prompt consumers, including constant-register indirect EXE call targets. Trace-consumer operands are not separately credited. Reanimation restores two native int[2][500] matrices from equivalent flat1000 storage; exact source replay changes only declarations and all fixed500-stride row/index expressions, preserving four-byte-element address arithmetic and other control flow. Dromoka Command attaches choices[2] to its existing anonymous enum, restoring unsigned32 elements and values1..4 without duplicate types. Literal DWARF bounds and emitted fixed-frame extents are checked. Exact source replay preserves every other source byte and original native quirks. Missing before locations do not imply absent physical storage. Array bounds, chosen values, complete matrix contents, arbitrary aliases, full function equivalence and gameplay remain outside these bounded checks. The rebuilt Multani pointer has one compiler spill across a call: the analyzer binds its reload to the actual typed instance local using the fixed-frame DWARF location valid at that instruction, then follows registers to the selected-card load. This location evidence does not prove arbitrary memory alias behavior; generic calls still kill tracked memory.",
+  "runtime_before": {
+    "dll_path": ".recovery/reverse-arrays-after.dll",
+    "dll_sha256": "8363537963c7db95bdf61504576b826e96fb786d0ef91967d0cba2951b479ea9",
+    "dbg_path": ".recovery/reverse-arrays-after.dbg",
+    "dbg_sha256": "931b51615c9117565892c96b55b4ff35e2ee7b8e3278667097c3ca36dfb7a739"
+  },
+  "runtime_after": {
+    "dll_path": ".recovery/array-census-after.dll",
+    "dll_sha256": "515f9f8cd38d433cc767caee8197a4730e806a00a1f7b61fcadf3616f44895bf",
+    "dbg_path": ".recovery/array-census-after.dbg",
+    "dbg_sha256": "d5a07ca770c345e5e5f15360f1fa65460ae1b1b0fab407b9baee2f9695c75da1"
+  },
+  "before_link_inputs": {
+    ".recovery/build-gcc93/obj/cards/aether_revolt.o": "f368126f5da00a6a5d5dc8ad9d1c0d108c8af2d4c144cd033ef0e88b64d3de3e",
+    ".recovery/build-gcc93/obj/cards/alara_reborn.o": "cafdfae1b8c5a22e993815fbbccc9a8ff39b36a64a732be2f48bacfeba3a2184",
+    ".recovery/build-gcc93/obj/cards/alliances.o": "96b1072446d1b4f3f7978e350f0669fda35be48d9e87fec3dc2fab8e1201c1ec",
+    ".recovery/build-gcc93/obj/cards/amonkhet.o": "78b4bd1d28a1bf27e2ce0d448c0eaf3ec59902946bfe98774475382268767471",
+    ".recovery/build-gcc93/obj/cards/antiquities.o": "ad74f8c2d90d81d7a5b59924af5fcd05bc50987e9992359eede4bf1dbd5320b7",
+    ".recovery/build-gcc93/obj/cards/apocalypse.o": "24fdddc48acf4463cb48b8f01614b5205466f177d4e4c92cd58706a0fa60073e",
+    ".recovery/build-gcc93/obj/cards/arabian_nights.o": "e5277bbf9d4769fe836b68b909018bb6a043df337cfb661375af02274b25f7cd",
+    ".recovery/build-gcc93/obj/cards/archenemy.o": "60afaa61b4a68c96ac275379a8245178bbe94be9982e1090532319268f67627b",
+    ".recovery/build-gcc93/obj/cards/archenemy_nicol_bolas.o": "f696df1d7831001d3ff64988f2fd34b6b2e5dd022b1459a333becf1ea4be3423",
+    ".recovery/build-gcc93/obj/cards/artifact_creatures.o": "e06702d3247122e13e4ec9c47a7f7bb102f75e7aa741aca32906f6b9ceb2ed7e",
+    ".recovery/build-gcc93/obj/cards/avacyn_restored.o": "f7e32d5b674768ea02e829977ea258e6f882375926905325ebfe5554949fa5f6",
+    ".recovery/build-gcc93/obj/cards/battle_for_zendikar.o": "f485c57f48b0c3e39aa89b6b07ebb0c1391e1c04eb7381c09d27bdc845411fb3",
+    ".recovery/build-gcc93/obj/cards/battlebond.o": "e78c5ecc157268979c79ae561cc213594a26b9479ba1ed55e466614abb38aed8",
+    ".recovery/build-gcc93/obj/cards/betrayers_of_kamigawa.o": "ee958e1aa3184ba10856056561a1c6e793b419f45734d8c94922c1c29014e9d0",
+    ".recovery/build-gcc93/obj/cards/born_of_the_gods.o": "3a7bc44310bd2953f08e63bc285a24235e21386591e8822453a520aa0d0f4e25",
+    ".recovery/build-gcc93/obj/cards/champions_of_kamigawa.o": "43464b40046c0d83711f28f757874c3f38c04a0fbb13e90e2c000e68fd6f5407",
+    ".recovery/build-gcc93/obj/cards/coldsnap.o": "30ceeeab883efd7ff4563a38e13584196f39bdb6708601cefbc5041d9f5b3e95",
+    ".recovery/build-gcc93/obj/cards/commander.o": "4bc73373d6a30105bf3bc8d66682119c23d2f51c0af949277944c934f3426545",
+    ".recovery/build-gcc93/obj/cards/commander_2013.o": "b4ad882383d9e00a8c7acf1ad44191fe5f0f418cdc247f1042df691dfccbdc5a",
+    ".recovery/build-gcc93/obj/cards/commander_2014.o": "a9ca2687d11e1b1950d6cc977e982bf287c31d84b93d8754c4ed623684704602",
+    ".recovery/build-gcc93/obj/cards/commander_2015.o": "587f82e8b04e8f3cadecb038fdd8d9821d2cfd4bc750f5efcf8ab369c1acf9e6",
+    ".recovery/build-gcc93/obj/cards/commander_2016.o": "e24e693184b5389616a56922e39828dedbf04b5540ddb7365e20e3e8b5527b34",
+    ".recovery/build-gcc93/obj/cards/commander_2017.o": "2c9a936589a22c740df10df22703c3744aad1b6f39a1f7d352e9910706e34d28",
+    ".recovery/build-gcc93/obj/cards/commander_2018.o": "c2f19f79f880a8ae16ff242a6af7c2e06dbb9a67f8a2c52b45a108b94cb82db5",
+    ".recovery/build-gcc93/obj/cards/commander_2019.o": "7c5fe182eef275722b20c4a82be2fe672d77f173b2e8933c66710401b4bc7e6c",
+    ".recovery/build-gcc93/obj/cards/commander_2020.o": "657b3ffcaa7ddf90ad188aa7ce6988a9e7c46cebee94f0cec558d666752603a6",
+    ".recovery/build-gcc93/obj/cards/commander_legends.o": "23c2f89beb97b46b1162f6edb21fddedfb19d61e34b15148c9a3738cc49ac97a",
+    ".recovery/build-gcc93/obj/cards/conflux.o": "83b3d611e872d407b467d00bc57ab24a107a17866b215cb0d472cdfc277c0fce",
+    ".recovery/build-gcc93/obj/cards/conspiracy-take-the-crown.o": "fc789a4fa96dd122b033bf667cd729c58003857b51fb54caabe9b0bf10048ac7",
+    ".recovery/build-gcc93/obj/cards/conspiracy.o": "d89c8cbebaed8cc9e24bb16d2c5c4c6d98744ec47e08f99ca38851fb75dbad76",
+    ".recovery/build-gcc93/obj/cards/dark_ascension.o": "abb0095f872fcd9cbad2d7c0dc79a2f49eab7608b0e81491f06ed4db585573e7",
+    ".recovery/build-gcc93/obj/cards/darksteel.o": "3295baaa52b86cfde6e7937b9a879ccd4fec81d165d7630bc9bfff8ad0b5c6c9",
+    ".recovery/build-gcc93/obj/cards/dissension.o": "c8a1b91c1be39b37605e77556e5a38ef3ca92f8936de718dbfe52d479ab4028f",
+    ".recovery/build-gcc93/obj/cards/dominaria.o": "607451799439a4aaa7d095f90346476b8f94f2b03152af92e5e27adfbd3579f2",
+    ".recovery/build-gcc93/obj/cards/draft.o": "cb219ad59f3e8dafb4d2afbe9984789843b411a6afd40f107616dd4887cff379",
+    ".recovery/build-gcc93/obj/cards/dragons_maze.o": "1cf409bc1c3e0ffe906e82f49e0eb34c78433dcccea736dcaecbe920f7cb744e",
+    ".recovery/build-gcc93/obj/cards/dragons_of_tarkir.o": "e08f6efd4feb4cdacf68f7a81b5fb031ab6f24508bc4ee687dc85c7b96f2eb68",
+    ".recovery/build-gcc93/obj/cards/eldritch_moon.o": "efc5f07af3ab3aba5fbf7b765280040439aa4560c1be1e83d4b57651e9505f38",
+    ".recovery/build-gcc93/obj/cards/equipment.o": "89a5e3fab8e75d3ba6ca1a78ba7b3cf0f97fb182e2de69b4b30cf148f984e2c8",
+    ".recovery/build-gcc93/obj/cards/eventide.o": "d18f7188292f1ddefcaa43085b41d758ffe3877915adb3670157730ae3693104",
+    ".recovery/build-gcc93/obj/cards/exodus.o": "a7ba8ca2f3e6bdf4f4fb90cc214fd8cf24427961561495a6345efc5258d43292",
+    ".recovery/build-gcc93/obj/cards/fallen_empires.o": "8d6b67a5f8cb92fb79e1a2d001c7bf7af72e7db0f8242a870baa3543fec087c6",
+    ".recovery/build-gcc93/obj/cards/fate_reforged.o": "7a21c579ee627f90969fa703707039407dc44863ed3744395bd51cec048002cf",
+    ".recovery/build-gcc93/obj/cards/fifth_dawn.o": "31a63d46929f1b1c9958abf3388f1a23ff3e56811b19ddca95d78ead2e831bd7",
+    ".recovery/build-gcc93/obj/cards/future_sight.o": "6cbf5654cc4629d74bf4cd94a9c8db84627802927ee0f602f5965d25913b7d30",
+    ".recovery/build-gcc93/obj/cards/gargaroz.o": "d1d334ddadef46f82ed8862507d3dbddf24ff481a1370a683d3f148c0c4ca15c",
+    ".recovery/build-gcc93/obj/cards/gatecrash.o": "270bda0cc9d05b8035671313328ec8fb62744ca664fc1366d041cee74dec7e1d",
+    ".recovery/build-gcc93/obj/cards/global_series_jiang_yanggu_and_mu_yanling.o": "7e3280dc139e670bfdf54e259d9332b84cf9973a24bfc0b17202f8dc559cdc86",
+    ".recovery/build-gcc93/obj/cards/guildpact.o": "30759cebba6066c322f80c6b1ebd7263c17fa487803e521462504e7ec7f7b7b9",
+    ".recovery/build-gcc93/obj/cards/guilds_of_ravnica.o": "a247f3b38f8a5dcab2a7f17c915b86f7bb24906cb26f0cab1cf95d078fa6bb0f",
+    ".recovery/build-gcc93/obj/cards/homelands.o": "2e2fcc8944cf24b222f8e4df45263f27f36cdb856678161ac460d6322f348f37",
+    ".recovery/build-gcc93/obj/cards/hour_of_devastation.o": "b6893a9213658527fda8756fbaea6241594f63f8e202c2fbe3f25ef505ae19c4",
+    ".recovery/build-gcc93/obj/cards/ice_age.o": "11869c85a2372dda232851ddf04eaf6f4068473a7ff4a36c4076994c8c722dc3",
+    ".recovery/build-gcc93/obj/cards/ikoria.o": "27076e324890639ccf1a93a2594509847717bc6f7605c6fe941321a9c1f27f0a",
+    ".recovery/build-gcc93/obj/cards/innistrad.o": "9b805748c135dea0be3f7d4e18ddd8e9b9fc88ac8bfd64436405e7a6e5e0f97d",
+    ".recovery/build-gcc93/obj/cards/invasion.o": "11c2e98c4a3a09f3015d7cdca08968979a8f6339897b46ab04e8be5283b8014b",
+    ".recovery/build-gcc93/obj/cards/ixalan.o": "094382bffd917cb93b331015abce6e0085c40e791b48cd4bc6ec37f6832c0966",
+    ".recovery/build-gcc93/obj/cards/journey_into_nyx.o": "0e797947d72b297c56b40a5fcfbb13e2a04221b199b3f9b4d4ef37cd4d0fd267",
+    ".recovery/build-gcc93/obj/cards/judgement.o": "9408f085e34eb8b277abbfd5845d1de3e89613d7a3e06d6274b73a9eaa534dfd",
+    ".recovery/build-gcc93/obj/cards/jumpstart.o": "042702434f7a131d759701d12ad6b8675219c64a526d7ac7133f39f61f7ee042",
+    ".recovery/build-gcc93/obj/cards/kaladesh.o": "7540f04fdaa989c3c9b6a7bdfab2a2f6d15a6fdf61e7bfece0f432ba00f8f66b",
+    ".recovery/build-gcc93/obj/cards/khans_of_tarkir.o": "7fa0ef36a2eec632dc2c8407f049fd8b1f73c672367a14ce7ed7d5578f278367",
+    ".recovery/build-gcc93/obj/cards/legends.o": "62e1cedbf005076bfceab73a0942962403137954117ee685c671082fd4b4eac8",
+    ".recovery/build-gcc93/obj/cards/legions.o": "e7e207a36f65aa1edcf8ceeb7c11df1102ccfefeaeda7e58339c6083b4c6f12c",
+    ".recovery/build-gcc93/obj/cards/lorwyn.o": "03a2376ef06b698d32a2b9b06cab92b7833d02aa01dc6c00b21c999d8f3fd27f",
+    ".recovery/build-gcc93/obj/cards/m10.o": "9e8dd346ee8db2b1d86a71450924844d9e007d275da42388a0610cda79a6906b",
+    ".recovery/build-gcc93/obj/cards/m11.o": "3049dcfa308ab5193d12fba4c22976c30fdfe6c3991ce8afd3d6bad77d6e9cb0",
+    ".recovery/build-gcc93/obj/cards/m12.o": "bd4b3303f8e2b7c147fb7392fb43e6387fa89540e6b8a35cdf11fa9e6c4598c6",
+    ".recovery/build-gcc93/obj/cards/m13.o": "858d2e01a782c0ff9eee3e079e1cead3bc309b64bf0e61f3058a50320a338d33",
+    ".recovery/build-gcc93/obj/cards/m14.o": "aa44214336726647a70b6a5f81e53b226a9a8a5751b489af4590e73a4d3c0800",
+    ".recovery/build-gcc93/obj/cards/m15.o": "c9368b5f6c023127d1d5162438cc9f39dbac60e7dc438907863aedefe758b57c",
+    ".recovery/build-gcc93/obj/cards/m19.o": "d75f1a0604d54ed6b8e7673d7810d6b7a6b1642a138e97a9c13f599e83fb4e55",
+    ".recovery/build-gcc93/obj/cards/m20.o": "e5384982892a3c3274281f39fe60b457299a4058dea6d6dd96883a401acc254b",
+    ".recovery/build-gcc93/obj/cards/mercadian_masques.o": "45be414daaf39b0d53a88ccb4ee11a40d9b5f7f3b8c169ee678870dc548d8c57",
+    ".recovery/build-gcc93/obj/cards/mirage.o": "1e06d395dcf938fb62323826970db52620370590a8d2e82dfff861bfef1eeac9",
+    ".recovery/build-gcc93/obj/cards/mirrodin.o": "94b5ffe224400ae5c19f60721fcf3b6f02b914defe5c248ec36d1efcc7ef63b4",
+    ".recovery/build-gcc93/obj/cards/mirrodin_besieged.o": "b68159f13a1c06b7ff223010df16c73f29394064b48a5afbd9c10decbe20c819",
+    ".recovery/build-gcc93/obj/cards/modern_horizons.o": "9124f03739d3c41291a8094ce8a7b947447bdcab1a52bcb5b4a45e2e5b7cea0a",
+    ".recovery/build-gcc93/obj/cards/modern_horizons_2.o": "76f4d4fd3a432b3d92d351215d7441322a6935e6c3576cf8b9e2b54224842ada",
+    ".recovery/build-gcc93/obj/cards/morningtide.o": "d8ab0b8f6937b2f588845bd398963fff0fc04fa7b031ed28dbda6fbe43ab2783",
+    ".recovery/build-gcc93/obj/cards/nemesis.o": "68e161d54969e8049b2a92195014d7e34f2a42477a6d227aa8a0c167123d2125",
+    ".recovery/build-gcc93/obj/cards/new_phyrexia.o": "29138e4929b41920d5e1a2b03cb4026a8697eac2f5c8f3bc8f4d787079c0dbba",
+    ".recovery/build-gcc93/obj/cards/oath_of_the_gatewatch.o": "9cbee7d6e1fefe5ec5bf8e9e2791cda4e60567edbda0a4552aeb68440b1b9e48",
+    ".recovery/build-gcc93/obj/cards/odissey.o": "d3d2be7635d4f86797a454fec0e299fc2710defdab514aa573f9c19ea38916b4",
+    ".recovery/build-gcc93/obj/cards/odyssey.o": "e241d7c899623e2d7c0475f8a42ec034534621476d695d8137d495829a278022",
+    ".recovery/build-gcc93/obj/cards/onslaught.o": "50652b0c4ff495c734a6972f12cac374ee7d981b8a0eb5d6562ddb5bf10f271e",
+    ".recovery/build-gcc93/obj/cards/origins.o": "9977e34ef38c6dfb36b3238387d4c64a64b81bd27a09abe26f7b72e1b0b670f3",
+    ".recovery/build-gcc93/obj/cards/planar_chaos.o": "62ed68598317736a6b6daa0f3497efcb85fddd26addcf13176e3a2e2cc9a5b7f",
+    ".recovery/build-gcc93/obj/cards/planechase.o": "bec10f2aead488e801603c9f4f6d9b74cd0a2635c894a9d5bad2f622e6350c84",
+    ".recovery/build-gcc93/obj/cards/planeshift.o": "63fe83228ab721f7ff373b70039bceda90b0c1a75d3c186c0086db9cdab0f031",
+    ".recovery/build-gcc93/obj/cards/planeswalker.o": "94b02c2eef7c9275f8bd742ae3f1a8e87eb5929fd6ad4eae4d4152a95bb2727e",
+    ".recovery/build-gcc93/obj/cards/portal_1_2_3k.o": "abfb3ac8072d29685ac64282b9c668a8affddfc8a375013449e578306f74d6b2",
+    ".recovery/build-gcc93/obj/cards/promo.o": "43224354f5e0cd6b55cc7a17b02f4167ea1f548b92556900a0c2bc5d23e01d4c",
+    ".recovery/build-gcc93/obj/cards/prophecy.o": "33fbedd9f18989bd3aa593650122de9a5f2914fefab4fc278d14a526a038fc82",
+    ".recovery/build-gcc93/obj/cards/ravnica.o": "01cc327f4891cb4df6adff64ed63e27b1b3097f24866adb2e31960c275cd79e4",
+    ".recovery/build-gcc93/obj/cards/ravnica_allegiance.o": "6d8787a53c666f02ef1b5c05d824174b311bd857ecf5a656ee2d09d94522345f",
+    ".recovery/build-gcc93/obj/cards/return_to_ravnica.o": "09cd69c72c96a51e06f8ac7af9b1b30593de6b708641ae7113e10095dfbd5b19",
+    ".recovery/build-gcc93/obj/cards/rise_of_the_eldrazi.o": "537fcbf7e1824a5e13996911af602cf99131f4b67aba71d6ae17dab8d6072720",
+    ".recovery/build-gcc93/obj/cards/rivals_of_ixalan.o": "0de925e51bfebbadcad30ec9957e0b928d407b41f45845627b9bf9b22dd336d3",
+    ".recovery/build-gcc93/obj/cards/saviors_of_kamigawa.o": "4fca14948c960b0fcf04353a1a7ebffbc27b81ffbd636bedba4135649f08d1fd",
+    ".recovery/build-gcc93/obj/cards/scars_of_mirrodin.o": "234ceacde37ae1988d66f3601bba432e143924a4ca5b7657058fcd3436a0b1a7",
+    ".recovery/build-gcc93/obj/cards/scourge.o": "f199fc18ad04d66ea30f7f661da355bf8f6376912fb57325b375fb4c0879102d",
+    ".recovery/build-gcc93/obj/cards/shadowmoor.o": "31663932c239a605208343d03897de532d50498992ff7f50b222bdc3733680b3",
+    ".recovery/build-gcc93/obj/cards/shadows_over_innistrad.o": "3c89e20385fcacaf2b74999581e84914ce9b17b540bcf1cd8406727254f28ca5",
+    ".recovery/build-gcc93/obj/cards/shards_of_alara.o": "1292c8c9e4feefa2b72e1306182bc7dee6018a1ab7190e01a38dcff069b54809",
+    ".recovery/build-gcc93/obj/cards/strixhaven.o": "0c66703db8329c0989d70cee88d3a3188c23347b197dbd1c0d667f0fefdca3d0",
+    ".recovery/build-gcc93/obj/cards/stronghold.o": "c854e454da7d43c81de3483c050d196f3d0f59c5c28321834c465e5891cc8c0a",
+    ".recovery/build-gcc93/obj/cards/stubs.o": "e651ae9282c8f33a6cac34cd7a158af430ef01d4158a0fd0898939b05aa36dff",
+    ".recovery/build-gcc93/obj/cards/tempest.o": "fc7999cc6e757c489730d4932043568915662a70c8a6fd70977893b85e90ef59",
+    ".recovery/build-gcc93/obj/cards/the_dark.o": "201071e9b25c8ae44a661b385cbf838d6a22edcf9f4281495f895fce4d0d474d",
+    ".recovery/build-gcc93/obj/cards/theros.o": "4951ec08ca518e6207735e6ee9a24d0a6cbc6fadb828b125db15a3413042a4de",
+    ".recovery/build-gcc93/obj/cards/theros_beyond_death.o": "ea0ce68e682290fb50fb41a783f4502a74b1b8a9deaf7ddeab0be0f1d5062762",
+    ".recovery/build-gcc93/obj/cards/throne_of_eldraine.o": "04fdcbb6af711ccfd92472160e1f710fa22bb317f48a2e8f5c9c18967c2b9835",
+    ".recovery/build-gcc93/obj/cards/time_spiral.o": "269ae0f5aaf715a905abf54e08b8f38505c7d64aa254ea7a728851307d155626",
+    ".recovery/build-gcc93/obj/cards/tokens.o": "0a88f489b574927b9b9a70680f61f82854fe3c71b187d4e2ea94a4936cca082b",
+    ".recovery/build-gcc93/obj/cards/torment.o": "774dde325f0221155fc948a46a8e366daf63fdf1b66dc7b5eb1f20fae72ce18b",
+    ".recovery/build-gcc93/obj/cards/unglued_unhinged.o": "001abfffde9d2b50c803a4497d377bd5f23b206f431a63aa4a6ceb85df9881ee",
+    ".recovery/build-gcc93/obj/cards/unlimited.o": "2935c3e7fdf64723c6bddf7e914fcef6734734f3a138a5de0b596e35281fa4fd",
+    ".recovery/build-gcc93/obj/cards/unstable.o": "30ae062c4f476c47d9962f8c19a974c7ed2ef42fc9205faa3d436f92cd4bb2ca",
+    ".recovery/build-gcc93/obj/cards/urza_destiny.o": "cac3a589a12a334763cb3251635c82efa3d8a4ee28eaac15a01c009ff862a721",
+    ".recovery/build-gcc93/obj/cards/urza_legacy.o": "43a1d53d195adf5e08b686082b241cc81ed58065fcb1952d52d2a04cc2574b5c",
+    ".recovery/build-gcc93/obj/cards/urza_saga.o": "60145fc238b24ea1fb136421767a73195e2b8700875d103fa2ee6152da0466e0",
+    ".recovery/build-gcc93/obj/cards/vanguard.o": "65c419abde65a20fd64ccb8e1f60a918ce39a01fab0595c2a578c605329d7838",
+    ".recovery/build-gcc93/obj/cards/visions.o": "cbf9e3169afe06359f96e5f29e08a073d066d2593238d8e06e182685c0217913",
+    ".recovery/build-gcc93/obj/cards/war_of_the_spark.o": "273ba46ca595941f73dc651e589776387a967fa6bd1d7627425f2832bad8c396",
+    ".recovery/build-gcc93/obj/cards/weatherlight.o": "90aa378a7cfa6d59ee494d41e30edb07c90159c5fa02c92de3ba3cd0feafab07",
+    ".recovery/build-gcc93/obj/cards/worldwake.o": "4755ad0314da4de54bbc1a49e2e22fec75c792910125f9c2434ce220bd49773d",
+    ".recovery/build-gcc93/obj/cards/zendikar.o": "ab191a0ff59f41e674d9ac7b4517f14d18a8d36c8fa0e9a0d7613d666c9a74e6",
+    ".recovery/build-gcc93/obj/cards/zendikar_rising.o": "50439708f07a0a48a67450c714cf322402e11d1ee20c2a01594402872f8ae718",
+    ".recovery/build-gcc93/obj/functions/abilities.o": "20ba8038706c01684f4f654c4a5caeb15f071eed71f1ba24c238cbc915379df8",
+    ".recovery/build-gcc93/obj/functions/ai.o": "cbc401ccc5bd74c991043fddfa3e39601692a0eae7c6219f9d8bb5294535e00b",
+    ".recovery/build-gcc93/obj/functions/auras.o": "c4b0dda11be04c1079393476b98b89b47cad3e316dea153bda458bf3673c3030",
+    ".recovery/build-gcc93/obj/functions/boost_creature_type.o": "b0e8074ca4e4c554ed0670518a556d14358f7837e038869501ed2585083560fc",
+    ".recovery/build-gcc93/obj/functions/challenge_mode.o": "54e64b2fffa7aa393e3636676764ab3e9b88dc882a5a0b11221825a4f7a54249",
+    ".recovery/build-gcc93/obj/functions/count_graveyard.o": "a917abf489b330d638b77890714d7d63225e17e7c15c7bbfd29bab77da410625",
+    ".recovery/build-gcc93/obj/functions/counters.o": "4d742c45c007c230fdac48d2218f4f9fdcb5bea7c5416b09be7c96f81b2e1af5",
+    ".recovery/build-gcc93/obj/functions/damage_effects.o": "0927693efab3f9ffeb6a6fc8e48ed4e4ba902d65f6e41c37c273efc8e9d0d985",
+    ".recovery/build-gcc93/obj/functions/deadbox.o": "f36407331a0bad0edbcd57745dc7b5ec4a532ab5060bca5ef0926724868c0a3d",
+    ".recovery/build-gcc93/obj/functions/deck.o": "c352dd40d422fb926d818fbd094d8fc428bd30cbd740b04e3247a577c3a20165",
+    ".recovery/build-gcc93/obj/functions/dialog.o": "cb49c1420085a5f33e9603256e9a88b6ab7f786b87957e86db43f7aab79e85e5",
+    ".recovery/build-gcc93/obj/functions/dice.o": "c47c476f886d28ef4f866d6faec33a6678d0c3da3dcfdc8477f6730481621872",
+    ".recovery/build-gcc93/obj/functions/draft.o": "57ae899ea6ceb072f3d5343e8b0f0572efe52dfd63048c2fc88f0d779fb9b013",
+    ".recovery/build-gcc93/obj/functions/engine.o": "444d5081b082ffbdde980c9524d6003c1b64a2615ec8d7697dfe4d96008a33a1",
+    ".recovery/build-gcc93/obj/functions/equipments.o": "e138f240a4fe197d95a69c90e601bf9a4f958254c260a603317000e029fca35d",
+    ".recovery/build-gcc93/obj/functions/events.o": "35ac5f18c540e87eacd8e7f4d93e39f8de3b96aa263644f6296ca8759f8e7820",
+    ".recovery/build-gcc93/obj/functions/exiledby.o": "e8bc29423bcd4f6bf7a9a079b9b85641f30566d66ee745800a8eca29297a416f",
+    ".recovery/build-gcc93/obj/functions/functions.o": "48178515b0d1b3516704dd450d90060c327bfd519344077a1991dac47011daf7",
+    ".recovery/build-gcc93/obj/functions/gain_control_and_legend_rule.o": "fd77d49518923296dc3cb4f52466de831fc8a67a04ffff23f788794a3763708c",
+    ".recovery/build-gcc93/obj/functions/global_checking.o": "e0bd743fa7117c01264965356cc07391079fc50f2191ded8af02d905d7c9ec87",
+    ".recovery/build-gcc93/obj/functions/has_creature_type.o": "aa1b3633ca9afaf17b7267ff7e73cfc3b7721af3a61314e8759d5f372d82990a",
+    ".recovery/build-gcc93/obj/functions/has_threshold.o": "1801874a2392bffd14fd695cdef0b010efdd329ec91a38f4317fea2e79f3b622",
+    ".recovery/build-gcc93/obj/functions/helper_functions.o": "801466ab83cd9d8777c95b1fea6ba81e9a9913af4ec43d61294ecd5734c045be",
+    ".recovery/build-gcc93/obj/functions/load_text.o": "a16ec0ee1f45e4ac0a71630191accff3cbda582d15369f3b66fc7b53568dc112",
+    ".recovery/build-gcc93/obj/functions/manipulate_and_damage_all.o": "23e48ec021f3cb8141a8e7d2dbbf1c5419b9311b66a70a5766d58cbc5696b1cb",
+    ".recovery/build-gcc93/obj/functions/multiblock.o": "d65152c3fae6f6a0a645981024fc0890be79467f92beb67f88441ea8d64d07fe",
+    ".recovery/build-gcc93/obj/functions/packs.o": "7eb7d027e27236ea9ea95dce26d1f4ff80999e411a119926dc7d47d814b73a63",
+    ".recovery/build-gcc93/obj/functions/play_spell_for_free.o": "969b3b2284add33b7c4bf2f59d76787edaf60418351b3d35554f1a245c637b1a",
+    ".recovery/build-gcc93/obj/functions/produce_mana.o": "f02f92fff8bbd1d07d3568f768d53a7fda7eb64ff99905a49d276cece6c92a99",
+    ".recovery/build-gcc93/obj/functions/rules_engine.o": "de9c1ab07e51f7a7b1c3bdef89cb05a829ef52ea4460661d5559a602317cdbcc",
+    ".recovery/build-gcc93/obj/functions/sacrifices.o": "faafebba695e8dd2f7bf48d2f3247f9a9f94bf5f77d96c6d015901edf70d42fd",
+    ".recovery/build-gcc93/obj/functions/show_backtrace.o": "009b3bc0dbf46260103baab677de9929b33f34886740e326342313b3f4db022f",
+    ".recovery/build-gcc93/obj/functions/targets.o": "74ebf4a9944dda68624f9742b6ea52cc1f80d4fd92dd38906de99a9830d5a456",
+    ".recovery/build-gcc93/obj/functions/token_generation.o": "053a6965d293b1e6a55609b5762f6d8c64e47a67555aab8f5a96118e1dcd5518",
+    ".recovery/build-gcc93/obj/functions/tutors.o": "c152afd9fc36c77ecda85a5aaf90a5057a41c9caec5b3a03096604ebe5893f19",
+    ".recovery/build-gcc93/obj/functions/upkeep.o": "687f695563d9ea746cfb578ba1cff61eabd471029b10c2dc619999343b5d3f70",
+    ".recovery/build-gcc93/obj/functions/windows.o": "9e8f3553213dc29054a7dc8c03db4d8b6e2b57edd9296e93accf921a76d07769"
+  },
+  "after_link_inputs": {
+    ".recovery/build-gcc93/obj/cards/aether_revolt.o": "f368126f5da00a6a5d5dc8ad9d1c0d108c8af2d4c144cd033ef0e88b64d3de3e",
+    ".recovery/build-gcc93/obj/cards/alara_reborn.o": "cafdfae1b8c5a22e993815fbbccc9a8ff39b36a64a732be2f48bacfeba3a2184",
+    ".recovery/build-gcc93/obj/cards/alliances.o": "96b1072446d1b4f3f7978e350f0669fda35be48d9e87fec3dc2fab8e1201c1ec",
+    ".recovery/build-gcc93/obj/cards/amonkhet.o": "78b4bd1d28a1bf27e2ce0d448c0eaf3ec59902946bfe98774475382268767471",
+    ".recovery/build-gcc93/obj/cards/antiquities.o": "ad74f8c2d90d81d7a5b59924af5fcd05bc50987e9992359eede4bf1dbd5320b7",
+    ".recovery/build-gcc93/obj/cards/apocalypse.o": "24fdddc48acf4463cb48b8f01614b5205466f177d4e4c92cd58706a0fa60073e",
+    ".recovery/build-gcc93/obj/cards/arabian_nights.o": "e5277bbf9d4769fe836b68b909018bb6a043df337cfb661375af02274b25f7cd",
+    ".recovery/build-gcc93/obj/cards/archenemy.o": "60afaa61b4a68c96ac275379a8245178bbe94be9982e1090532319268f67627b",
+    ".recovery/build-gcc93/obj/cards/archenemy_nicol_bolas.o": "f696df1d7831001d3ff64988f2fd34b6b2e5dd022b1459a333becf1ea4be3423",
+    ".recovery/build-gcc93/obj/cards/artifact_creatures.o": "e06702d3247122e13e4ec9c47a7f7bb102f75e7aa741aca32906f6b9ceb2ed7e",
+    ".recovery/build-gcc93/obj/cards/avacyn_restored.o": "f7e32d5b674768ea02e829977ea258e6f882375926905325ebfe5554949fa5f6",
+    ".recovery/build-gcc93/obj/cards/battle_for_zendikar.o": "f485c57f48b0c3e39aa89b6b07ebb0c1391e1c04eb7381c09d27bdc845411fb3",
+    ".recovery/build-gcc93/obj/cards/battlebond.o": "e78c5ecc157268979c79ae561cc213594a26b9479ba1ed55e466614abb38aed8",
+    ".recovery/build-gcc93/obj/cards/betrayers_of_kamigawa.o": "ee958e1aa3184ba10856056561a1c6e793b419f45734d8c94922c1c29014e9d0",
+    ".recovery/build-gcc93/obj/cards/born_of_the_gods.o": "3a7bc44310bd2953f08e63bc285a24235e21386591e8822453a520aa0d0f4e25",
+    ".recovery/build-gcc93/obj/cards/champions_of_kamigawa.o": "43464b40046c0d83711f28f757874c3f38c04a0fbb13e90e2c000e68fd6f5407",
+    ".recovery/build-gcc93/obj/cards/coldsnap.o": "30ceeeab883efd7ff4563a38e13584196f39bdb6708601cefbc5041d9f5b3e95",
+    ".recovery/build-gcc93/obj/cards/commander.o": "4bc73373d6a30105bf3bc8d66682119c23d2f51c0af949277944c934f3426545",
+    ".recovery/build-gcc93/obj/cards/commander_2013.o": "b4ad882383d9e00a8c7acf1ad44191fe5f0f418cdc247f1042df691dfccbdc5a",
+    ".recovery/build-gcc93/obj/cards/commander_2014.o": "a9ca2687d11e1b1950d6cc977e982bf287c31d84b93d8754c4ed623684704602",
+    ".recovery/build-gcc93/obj/cards/commander_2015.o": "587f82e8b04e8f3cadecb038fdd8d9821d2cfd4bc750f5efcf8ab369c1acf9e6",
+    ".recovery/build-gcc93/obj/cards/commander_2016.o": "e24e693184b5389616a56922e39828dedbf04b5540ddb7365e20e3e8b5527b34",
+    ".recovery/build-gcc93/obj/cards/commander_2017.o": "2c9a936589a22c740df10df22703c3744aad1b6f39a1f7d352e9910706e34d28",
+    ".recovery/build-gcc93/obj/cards/commander_2018.o": "c2f19f79f880a8ae16ff242a6af7c2e06dbb9a67f8a2c52b45a108b94cb82db5",
+    ".recovery/build-gcc93/obj/cards/commander_2019.o": "7c5fe182eef275722b20c4a82be2fe672d77f173b2e8933c66710401b4bc7e6c",
+    ".recovery/build-gcc93/obj/cards/commander_2020.o": "657b3ffcaa7ddf90ad188aa7ce6988a9e7c46cebee94f0cec558d666752603a6",
+    ".recovery/build-gcc93/obj/cards/commander_legends.o": "23c2f89beb97b46b1162f6edb21fddedfb19d61e34b15148c9a3738cc49ac97a",
+    ".recovery/build-gcc93/obj/cards/conflux.o": "83b3d611e872d407b467d00bc57ab24a107a17866b215cb0d472cdfc277c0fce",
+    ".recovery/build-gcc93/obj/cards/conspiracy-take-the-crown.o": "fc789a4fa96dd122b033bf667cd729c58003857b51fb54caabe9b0bf10048ac7",
+    ".recovery/build-gcc93/obj/cards/conspiracy.o": "d89c8cbebaed8cc9e24bb16d2c5c4c6d98744ec47e08f99ca38851fb75dbad76",
+    ".recovery/build-gcc93/obj/cards/dark_ascension.o": "abb0095f872fcd9cbad2d7c0dc79a2f49eab7608b0e81491f06ed4db585573e7",
+    ".recovery/build-gcc93/obj/cards/darksteel.o": "3295baaa52b86cfde6e7937b9a879ccd4fec81d165d7630bc9bfff8ad0b5c6c9",
+    ".recovery/build-gcc93/obj/cards/dissension.o": "c8a1b91c1be39b37605e77556e5a38ef3ca92f8936de718dbfe52d479ab4028f",
+    ".recovery/build-gcc93/obj/cards/dominaria.o": "bffb9e0143b980780c463affa9469f1f3e497f0aeaa0381fa9cc8608f83da3de",
+    ".recovery/build-gcc93/obj/cards/draft.o": "cb219ad59f3e8dafb4d2afbe9984789843b411a6afd40f107616dd4887cff379",
+    ".recovery/build-gcc93/obj/cards/dragons_maze.o": "1cf409bc1c3e0ffe906e82f49e0eb34c78433dcccea736dcaecbe920f7cb744e",
+    ".recovery/build-gcc93/obj/cards/dragons_of_tarkir.o": "53d23bf9690df0787370f124f74e3c4fec16e9f3f4d91419cd07637834b9533b",
+    ".recovery/build-gcc93/obj/cards/eldritch_moon.o": "efc5f07af3ab3aba5fbf7b765280040439aa4560c1be1e83d4b57651e9505f38",
+    ".recovery/build-gcc93/obj/cards/equipment.o": "89a5e3fab8e75d3ba6ca1a78ba7b3cf0f97fb182e2de69b4b30cf148f984e2c8",
+    ".recovery/build-gcc93/obj/cards/eventide.o": "d18f7188292f1ddefcaa43085b41d758ffe3877915adb3670157730ae3693104",
+    ".recovery/build-gcc93/obj/cards/exodus.o": "a7ba8ca2f3e6bdf4f4fb90cc214fd8cf24427961561495a6345efc5258d43292",
+    ".recovery/build-gcc93/obj/cards/fallen_empires.o": "8d6b67a5f8cb92fb79e1a2d001c7bf7af72e7db0f8242a870baa3543fec087c6",
+    ".recovery/build-gcc93/obj/cards/fate_reforged.o": "7a21c579ee627f90969fa703707039407dc44863ed3744395bd51cec048002cf",
+    ".recovery/build-gcc93/obj/cards/fifth_dawn.o": "31a63d46929f1b1c9958abf3388f1a23ff3e56811b19ddca95d78ead2e831bd7",
+    ".recovery/build-gcc93/obj/cards/future_sight.o": "6cbf5654cc4629d74bf4cd94a9c8db84627802927ee0f602f5965d25913b7d30",
+    ".recovery/build-gcc93/obj/cards/gargaroz.o": "d1d334ddadef46f82ed8862507d3dbddf24ff481a1370a683d3f148c0c4ca15c",
+    ".recovery/build-gcc93/obj/cards/gatecrash.o": "270bda0cc9d05b8035671313328ec8fb62744ca664fc1366d041cee74dec7e1d",
+    ".recovery/build-gcc93/obj/cards/global_series_jiang_yanggu_and_mu_yanling.o": "7e3280dc139e670bfdf54e259d9332b84cf9973a24bfc0b17202f8dc559cdc86",
+    ".recovery/build-gcc93/obj/cards/guildpact.o": "30759cebba6066c322f80c6b1ebd7263c17fa487803e521462504e7ec7f7b7b9",
+    ".recovery/build-gcc93/obj/cards/guilds_of_ravnica.o": "a247f3b38f8a5dcab2a7f17c915b86f7bb24906cb26f0cab1cf95d078fa6bb0f",
+    ".recovery/build-gcc93/obj/cards/homelands.o": "2e2fcc8944cf24b222f8e4df45263f27f36cdb856678161ac460d6322f348f37",
+    ".recovery/build-gcc93/obj/cards/hour_of_devastation.o": "b6893a9213658527fda8756fbaea6241594f63f8e202c2fbe3f25ef505ae19c4",
+    ".recovery/build-gcc93/obj/cards/ice_age.o": "11869c85a2372dda232851ddf04eaf6f4068473a7ff4a36c4076994c8c722dc3",
+    ".recovery/build-gcc93/obj/cards/ikoria.o": "27076e324890639ccf1a93a2594509847717bc6f7605c6fe941321a9c1f27f0a",
+    ".recovery/build-gcc93/obj/cards/innistrad.o": "9b805748c135dea0be3f7d4e18ddd8e9b9fc88ac8bfd64436405e7a6e5e0f97d",
+    ".recovery/build-gcc93/obj/cards/invasion.o": "11c2e98c4a3a09f3015d7cdca08968979a8f6339897b46ab04e8be5283b8014b",
+    ".recovery/build-gcc93/obj/cards/ixalan.o": "094382bffd917cb93b331015abce6e0085c40e791b48cd4bc6ec37f6832c0966",
+    ".recovery/build-gcc93/obj/cards/journey_into_nyx.o": "0e797947d72b297c56b40a5fcfbb13e2a04221b199b3f9b4d4ef37cd4d0fd267",
+    ".recovery/build-gcc93/obj/cards/judgement.o": "9408f085e34eb8b277abbfd5845d1de3e89613d7a3e06d6274b73a9eaa534dfd",
+    ".recovery/build-gcc93/obj/cards/jumpstart.o": "042702434f7a131d759701d12ad6b8675219c64a526d7ac7133f39f61f7ee042",
+    ".recovery/build-gcc93/obj/cards/kaladesh.o": "7540f04fdaa989c3c9b6a7bdfab2a2f6d15a6fdf61e7bfece0f432ba00f8f66b",
+    ".recovery/build-gcc93/obj/cards/khans_of_tarkir.o": "7fa0ef36a2eec632dc2c8407f049fd8b1f73c672367a14ce7ed7d5578f278367",
+    ".recovery/build-gcc93/obj/cards/legends.o": "62e1cedbf005076bfceab73a0942962403137954117ee685c671082fd4b4eac8",
+    ".recovery/build-gcc93/obj/cards/legions.o": "e7e207a36f65aa1edcf8ceeb7c11df1102ccfefeaeda7e58339c6083b4c6f12c",
+    ".recovery/build-gcc93/obj/cards/lorwyn.o": "03a2376ef06b698d32a2b9b06cab92b7833d02aa01dc6c00b21c999d8f3fd27f",
+    ".recovery/build-gcc93/obj/cards/m10.o": "9e8dd346ee8db2b1d86a71450924844d9e007d275da42388a0610cda79a6906b",
+    ".recovery/build-gcc93/obj/cards/m11.o": "3049dcfa308ab5193d12fba4c22976c30fdfe6c3991ce8afd3d6bad77d6e9cb0",
+    ".recovery/build-gcc93/obj/cards/m12.o": "bd4b3303f8e2b7c147fb7392fb43e6387fa89540e6b8a35cdf11fa9e6c4598c6",
+    ".recovery/build-gcc93/obj/cards/m13.o": "858d2e01a782c0ff9eee3e079e1cead3bc309b64bf0e61f3058a50320a338d33",
+    ".recovery/build-gcc93/obj/cards/m14.o": "aa44214336726647a70b6a5f81e53b226a9a8a5751b489af4590e73a4d3c0800",
+    ".recovery/build-gcc93/obj/cards/m15.o": "c9368b5f6c023127d1d5162438cc9f39dbac60e7dc438907863aedefe758b57c",
+    ".recovery/build-gcc93/obj/cards/m19.o": "d75f1a0604d54ed6b8e7673d7810d6b7a6b1642a138e97a9c13f599e83fb4e55",
+    ".recovery/build-gcc93/obj/cards/m20.o": "e5384982892a3c3274281f39fe60b457299a4058dea6d6dd96883a401acc254b",
+    ".recovery/build-gcc93/obj/cards/mercadian_masques.o": "45be414daaf39b0d53a88ccb4ee11a40d9b5f7f3b8c169ee678870dc548d8c57",
+    ".recovery/build-gcc93/obj/cards/mirage.o": "1e06d395dcf938fb62323826970db52620370590a8d2e82dfff861bfef1eeac9",
+    ".recovery/build-gcc93/obj/cards/mirrodin.o": "94b5ffe224400ae5c19f60721fcf3b6f02b914defe5c248ec36d1efcc7ef63b4",
+    ".recovery/build-gcc93/obj/cards/mirrodin_besieged.o": "b68159f13a1c06b7ff223010df16c73f29394064b48a5afbd9c10decbe20c819",
+    ".recovery/build-gcc93/obj/cards/modern_horizons.o": "9124f03739d3c41291a8094ce8a7b947447bdcab1a52bcb5b4a45e2e5b7cea0a",
+    ".recovery/build-gcc93/obj/cards/modern_horizons_2.o": "76f4d4fd3a432b3d92d351215d7441322a6935e6c3576cf8b9e2b54224842ada",
+    ".recovery/build-gcc93/obj/cards/morningtide.o": "d8ab0b8f6937b2f588845bd398963fff0fc04fa7b031ed28dbda6fbe43ab2783",
+    ".recovery/build-gcc93/obj/cards/nemesis.o": "68e161d54969e8049b2a92195014d7e34f2a42477a6d227aa8a0c167123d2125",
+    ".recovery/build-gcc93/obj/cards/new_phyrexia.o": "29138e4929b41920d5e1a2b03cb4026a8697eac2f5c8f3bc8f4d787079c0dbba",
+    ".recovery/build-gcc93/obj/cards/oath_of_the_gatewatch.o": "9cbee7d6e1fefe5ec5bf8e9e2791cda4e60567edbda0a4552aeb68440b1b9e48",
+    ".recovery/build-gcc93/obj/cards/odissey.o": "d3d2be7635d4f86797a454fec0e299fc2710defdab514aa573f9c19ea38916b4",
+    ".recovery/build-gcc93/obj/cards/odyssey.o": "e241d7c899623e2d7c0475f8a42ec034534621476d695d8137d495829a278022",
+    ".recovery/build-gcc93/obj/cards/onslaught.o": "50652b0c4ff495c734a6972f12cac374ee7d981b8a0eb5d6562ddb5bf10f271e",
+    ".recovery/build-gcc93/obj/cards/origins.o": "9977e34ef38c6dfb36b3238387d4c64a64b81bd27a09abe26f7b72e1b0b670f3",
+    ".recovery/build-gcc93/obj/cards/planar_chaos.o": "62ed68598317736a6b6daa0f3497efcb85fddd26addcf13176e3a2e2cc9a5b7f",
+    ".recovery/build-gcc93/obj/cards/planechase.o": "bec10f2aead488e801603c9f4f6d9b74cd0a2635c894a9d5bad2f622e6350c84",
+    ".recovery/build-gcc93/obj/cards/planeshift.o": "63fe83228ab721f7ff373b70039bceda90b0c1a75d3c186c0086db9cdab0f031",
+    ".recovery/build-gcc93/obj/cards/planeswalker.o": "94b02c2eef7c9275f8bd742ae3f1a8e87eb5929fd6ad4eae4d4152a95bb2727e",
+    ".recovery/build-gcc93/obj/cards/portal_1_2_3k.o": "abfb3ac8072d29685ac64282b9c668a8affddfc8a375013449e578306f74d6b2",
+    ".recovery/build-gcc93/obj/cards/promo.o": "3c7560ef55629ced67d3ee75e9ce9a35668ad3296814520e54435d249fbb7403",
+    ".recovery/build-gcc93/obj/cards/prophecy.o": "33fbedd9f18989bd3aa593650122de9a5f2914fefab4fc278d14a526a038fc82",
+    ".recovery/build-gcc93/obj/cards/ravnica.o": "01cc327f4891cb4df6adff64ed63e27b1b3097f24866adb2e31960c275cd79e4",
+    ".recovery/build-gcc93/obj/cards/ravnica_allegiance.o": "6d8787a53c666f02ef1b5c05d824174b311bd857ecf5a656ee2d09d94522345f",
+    ".recovery/build-gcc93/obj/cards/return_to_ravnica.o": "09cd69c72c96a51e06f8ac7af9b1b30593de6b708641ae7113e10095dfbd5b19",
+    ".recovery/build-gcc93/obj/cards/rise_of_the_eldrazi.o": "537fcbf7e1824a5e13996911af602cf99131f4b67aba71d6ae17dab8d6072720",
+    ".recovery/build-gcc93/obj/cards/rivals_of_ixalan.o": "0de925e51bfebbadcad30ec9957e0b928d407b41f45845627b9bf9b22dd336d3",
+    ".recovery/build-gcc93/obj/cards/saviors_of_kamigawa.o": "4fca14948c960b0fcf04353a1a7ebffbc27b81ffbd636bedba4135649f08d1fd",
+    ".recovery/build-gcc93/obj/cards/scars_of_mirrodin.o": "234ceacde37ae1988d66f3601bba432e143924a4ca5b7657058fcd3436a0b1a7",
+    ".recovery/build-gcc93/obj/cards/scourge.o": "f199fc18ad04d66ea30f7f661da355bf8f6376912fb57325b375fb4c0879102d",
+    ".recovery/build-gcc93/obj/cards/shadowmoor.o": "31663932c239a605208343d03897de532d50498992ff7f50b222bdc3733680b3",
+    ".recovery/build-gcc93/obj/cards/shadows_over_innistrad.o": "3c89e20385fcacaf2b74999581e84914ce9b17b540bcf1cd8406727254f28ca5",
+    ".recovery/build-gcc93/obj/cards/shards_of_alara.o": "1292c8c9e4feefa2b72e1306182bc7dee6018a1ab7190e01a38dcff069b54809",
+    ".recovery/build-gcc93/obj/cards/strixhaven.o": "0c66703db8329c0989d70cee88d3a3188c23347b197dbd1c0d667f0fefdca3d0",
+    ".recovery/build-gcc93/obj/cards/stronghold.o": "c854e454da7d43c81de3483c050d196f3d0f59c5c28321834c465e5891cc8c0a",
+    ".recovery/build-gcc93/obj/cards/stubs.o": "e651ae9282c8f33a6cac34cd7a158af430ef01d4158a0fd0898939b05aa36dff",
+    ".recovery/build-gcc93/obj/cards/tempest.o": "fc7999cc6e757c489730d4932043568915662a70c8a6fd70977893b85e90ef59",
+    ".recovery/build-gcc93/obj/cards/the_dark.o": "201071e9b25c8ae44a661b385cbf838d6a22edcf9f4281495f895fce4d0d474d",
+    ".recovery/build-gcc93/obj/cards/theros.o": "4951ec08ca518e6207735e6ee9a24d0a6cbc6fadb828b125db15a3413042a4de",
+    ".recovery/build-gcc93/obj/cards/theros_beyond_death.o": "ea0ce68e682290fb50fb41a783f4502a74b1b8a9deaf7ddeab0be0f1d5062762",
+    ".recovery/build-gcc93/obj/cards/throne_of_eldraine.o": "04fdcbb6af711ccfd92472160e1f710fa22bb317f48a2e8f5c9c18967c2b9835",
+    ".recovery/build-gcc93/obj/cards/time_spiral.o": "269ae0f5aaf715a905abf54e08b8f38505c7d64aa254ea7a728851307d155626",
+    ".recovery/build-gcc93/obj/cards/tokens.o": "0a88f489b574927b9b9a70680f61f82854fe3c71b187d4e2ea94a4936cca082b",
+    ".recovery/build-gcc93/obj/cards/torment.o": "774dde325f0221155fc948a46a8e366daf63fdf1b66dc7b5eb1f20fae72ce18b",
+    ".recovery/build-gcc93/obj/cards/unglued_unhinged.o": "001abfffde9d2b50c803a4497d377bd5f23b206f431a63aa4a6ceb85df9881ee",
+    ".recovery/build-gcc93/obj/cards/unlimited.o": "2935c3e7fdf64723c6bddf7e914fcef6734734f3a138a5de0b596e35281fa4fd",
+    ".recovery/build-gcc93/obj/cards/unstable.o": "30ae062c4f476c47d9962f8c19a974c7ed2ef42fc9205faa3d436f92cd4bb2ca",
+    ".recovery/build-gcc93/obj/cards/urza_destiny.o": "cac3a589a12a334763cb3251635c82efa3d8a4ee28eaac15a01c009ff862a721",
+    ".recovery/build-gcc93/obj/cards/urza_legacy.o": "43a1d53d195adf5e08b686082b241cc81ed58065fcb1952d52d2a04cc2574b5c",
+    ".recovery/build-gcc93/obj/cards/urza_saga.o": "60145fc238b24ea1fb136421767a73195e2b8700875d103fa2ee6152da0466e0",
+    ".recovery/build-gcc93/obj/cards/vanguard.o": "65c419abde65a20fd64ccb8e1f60a918ce39a01fab0595c2a578c605329d7838",
+    ".recovery/build-gcc93/obj/cards/visions.o": "cbf9e3169afe06359f96e5f29e08a073d066d2593238d8e06e182685c0217913",
+    ".recovery/build-gcc93/obj/cards/war_of_the_spark.o": "273ba46ca595941f73dc651e589776387a967fa6bd1d7627425f2832bad8c396",
+    ".recovery/build-gcc93/obj/cards/weatherlight.o": "90aa378a7cfa6d59ee494d41e30edb07c90159c5fa02c92de3ba3cd0feafab07",
+    ".recovery/build-gcc93/obj/cards/worldwake.o": "4755ad0314da4de54bbc1a49e2e22fec75c792910125f9c2434ce220bd49773d",
+    ".recovery/build-gcc93/obj/cards/zendikar.o": "ab191a0ff59f41e674d9ac7b4517f14d18a8d36c8fa0e9a0d7613d666c9a74e6",
+    ".recovery/build-gcc93/obj/cards/zendikar_rising.o": "50439708f07a0a48a67450c714cf322402e11d1ee20c2a01594402872f8ae718",
+    ".recovery/build-gcc93/obj/functions/abilities.o": "20ba8038706c01684f4f654c4a5caeb15f071eed71f1ba24c238cbc915379df8",
+    ".recovery/build-gcc93/obj/functions/ai.o": "cbc401ccc5bd74c991043fddfa3e39601692a0eae7c6219f9d8bb5294535e00b",
+    ".recovery/build-gcc93/obj/functions/auras.o": "c4b0dda11be04c1079393476b98b89b47cad3e316dea153bda458bf3673c3030",
+    ".recovery/build-gcc93/obj/functions/boost_creature_type.o": "b0e8074ca4e4c554ed0670518a556d14358f7837e038869501ed2585083560fc",
+    ".recovery/build-gcc93/obj/functions/challenge_mode.o": "54e64b2fffa7aa393e3636676764ab3e9b88dc882a5a0b11221825a4f7a54249",
+    ".recovery/build-gcc93/obj/functions/count_graveyard.o": "a917abf489b330d638b77890714d7d63225e17e7c15c7bbfd29bab77da410625",
+    ".recovery/build-gcc93/obj/functions/counters.o": "4d742c45c007c230fdac48d2218f4f9fdcb5bea7c5416b09be7c96f81b2e1af5",
+    ".recovery/build-gcc93/obj/functions/damage_effects.o": "0927693efab3f9ffeb6a6fc8e48ed4e4ba902d65f6e41c37c273efc8e9d0d985",
+    ".recovery/build-gcc93/obj/functions/deadbox.o": "f36407331a0bad0edbcd57745dc7b5ec4a532ab5060bca5ef0926724868c0a3d",
+    ".recovery/build-gcc93/obj/functions/deck.o": "c352dd40d422fb926d818fbd094d8fc428bd30cbd740b04e3247a577c3a20165",
+    ".recovery/build-gcc93/obj/functions/dialog.o": "cb49c1420085a5f33e9603256e9a88b6ab7f786b87957e86db43f7aab79e85e5",
+    ".recovery/build-gcc93/obj/functions/dice.o": "c47c476f886d28ef4f866d6faec33a6678d0c3da3dcfdc8477f6730481621872",
+    ".recovery/build-gcc93/obj/functions/draft.o": "57ae899ea6ceb072f3d5343e8b0f0572efe52dfd63048c2fc88f0d779fb9b013",
+    ".recovery/build-gcc93/obj/functions/engine.o": "672d96eadd65851caf1e2b3c3f29d3b5ba29479adc2d5dbd309548319f52dcfb",
+    ".recovery/build-gcc93/obj/functions/equipments.o": "e138f240a4fe197d95a69c90e601bf9a4f958254c260a603317000e029fca35d",
+    ".recovery/build-gcc93/obj/functions/events.o": "f6b0e8bf9ba0a36fff9d0ebd45dddb6c38468bffd934c84893b1a0fcb00c2781",
+    ".recovery/build-gcc93/obj/functions/exiledby.o": "e8bc29423bcd4f6bf7a9a079b9b85641f30566d66ee745800a8eca29297a416f",
+    ".recovery/build-gcc93/obj/functions/functions.o": "ca1bbabdddc87f9065f1aba8d2584fd37c37681ca7f93ca951faa5239c7cd0f2",
+    ".recovery/build-gcc93/obj/functions/gain_control_and_legend_rule.o": "fd77d49518923296dc3cb4f52466de831fc8a67a04ffff23f788794a3763708c",
+    ".recovery/build-gcc93/obj/functions/global_checking.o": "e0bd743fa7117c01264965356cc07391079fc50f2191ded8af02d905d7c9ec87",
+    ".recovery/build-gcc93/obj/functions/has_creature_type.o": "aa1b3633ca9afaf17b7267ff7e73cfc3b7721af3a61314e8759d5f372d82990a",
+    ".recovery/build-gcc93/obj/functions/has_threshold.o": "1801874a2392bffd14fd695cdef0b010efdd329ec91a38f4317fea2e79f3b622",
+    ".recovery/build-gcc93/obj/functions/helper_functions.o": "801466ab83cd9d8777c95b1fea6ba81e9a9913af4ec43d61294ecd5734c045be",
+    ".recovery/build-gcc93/obj/functions/load_text.o": "a16ec0ee1f45e4ac0a71630191accff3cbda582d15369f3b66fc7b53568dc112",
+    ".recovery/build-gcc93/obj/functions/manipulate_and_damage_all.o": "23e48ec021f3cb8141a8e7d2dbbf1c5419b9311b66a70a5766d58cbc5696b1cb",
+    ".recovery/build-gcc93/obj/functions/multiblock.o": "d65152c3fae6f6a0a645981024fc0890be79467f92beb67f88441ea8d64d07fe",
+    ".recovery/build-gcc93/obj/functions/packs.o": "7eb7d027e27236ea9ea95dce26d1f4ff80999e411a119926dc7d47d814b73a63",
+    ".recovery/build-gcc93/obj/functions/play_spell_for_free.o": "969b3b2284add33b7c4bf2f59d76787edaf60418351b3d35554f1a245c637b1a",
+    ".recovery/build-gcc93/obj/functions/produce_mana.o": "f02f92fff8bbd1d07d3568f768d53a7fda7eb64ff99905a49d276cece6c92a99",
+    ".recovery/build-gcc93/obj/functions/rules_engine.o": "de9c1ab07e51f7a7b1c3bdef89cb05a829ef52ea4460661d5559a602317cdbcc",
+    ".recovery/build-gcc93/obj/functions/sacrifices.o": "faafebba695e8dd2f7bf48d2f3247f9a9f94bf5f77d96c6d015901edf70d42fd",
+    ".recovery/build-gcc93/obj/functions/show_backtrace.o": "009b3bc0dbf46260103baab677de9929b33f34886740e326342313b3f4db022f",
+    ".recovery/build-gcc93/obj/functions/targets.o": "74ebf4a9944dda68624f9742b6ea52cc1f80d4fd92dd38906de99a9830d5a456",
+    ".recovery/build-gcc93/obj/functions/token_generation.o": "053a6965d293b1e6a55609b5762f6d8c64e47a67555aab8f5a96118e1dcd5518",
+    ".recovery/build-gcc93/obj/functions/tutors.o": "c152afd9fc36c77ecda85a5aaf90a5057a41c9caec5b3a03096604ebe5893f19",
+    ".recovery/build-gcc93/obj/functions/upkeep.o": "687f695563d9ea746cfb578ba1cff61eabd471029b10c2dc619999343b5d3f70",
+    ".recovery/build-gcc93/obj/functions/windows.o": "9e8f3553213dc29054a7dc8c03db4d8b6e2b57edd9296e93accf921a76d07769"
+  }
+}

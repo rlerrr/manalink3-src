@@ -1,0 +1,125 @@
+{
+  "restored_inline_helpers": [
+    {
+      "name": "InitNumberBitsSet",
+      "source": "cards/zendikar_rising.c"
+    },
+    {
+      "name": "activate_deflect",
+      "source": "cards/gargaroz.c"
+    },
+    {
+      "name": "check_for_equipment_targets_impl",
+      "source": "functions/equipments.c"
+    },
+    {
+      "name": "goad",
+      "source": "cards/commander_2019.c"
+    },
+    {
+      "name": "find_imprint_legacy",
+      "source": "cards/scars_of_mirrodin.c"
+    },
+    {
+      "name": "disable_legend_rule_impl",
+      "source": "functions/functions.c"
+    },
+    {
+      "name": "phyrexians",
+      "source": "cards/apocalypse.c"
+    },
+    {
+      "name": "is_this_dying_or_being_exiled",
+      "source": "cards/war_of_the_spark.c"
+    },
+    {
+      "name": "generate_encore_token",
+      "source": "cards/commander_legends.c"
+    },
+    {
+      "name": "get_updated_casting_cost_with_cost_mod",
+      "source": "functions/functions.c"
+    },
+    {
+      "name": "add_force_a_subtype_permanently",
+      "source": "functions/has_creature_type.c"
+    },
+    {
+      "name": "add_force_a_subtype_until_eot_impl",
+      "source": "functions/has_creature_type.c"
+    },
+    {
+      "name": "destr_read_a_line",
+      "source": "functions/load_text.c"
+    },
+    {
+      "name": "can_legally_play_iid_now_lite",
+      "source": "cards/zendikar_rising.c"
+    },
+    {
+      "name": "retrieve_stored_iids_and_tou",
+      "source": "cards/commander_legends.c"
+    },
+    {
+      "name": "clear_stored_iids_and_tou",
+      "source": "cards/commander_legends.c"
+    },
+    {
+      "name": "can_pay_aftermath",
+      "source": "cards/amonkhet.c"
+    },
+    {
+      "name": "exile_and_give_elemental",
+      "source": "cards/strixhaven.c"
+    },
+    {
+      "name": "create_hofri_token",
+      "source": "cards/strixhaven.c"
+    },
+    {
+      "name": "create_targetted_legacy_effect_replace",
+      "source": "functions/functions.c"
+    },
+    {
+      "name": "find_any_attached_legacy_effect",
+      "source": "cards/tokens.c"
+    },
+    {
+      "name": "validate_imprinted_card",
+      "source": "cards/scars_of_mirrodin.c"
+    },
+    {
+      "name": "archon_of_cruelty_effect",
+      "source": "cards/modern_horizons_2.c"
+    }
+  ],
+  "source_units": 15,
+  "native_inline_instances": 55,
+  "native_inline_fragments": 91,
+  "native_callers": 35,
+  "unchanged_runtime_sections": 26,
+  "verified_fixed_slots": 15169,
+  "remaining_inline_review_names": 60,
+  "remaining_ordinary_binding_followups": 0,
+  "source_provenance_setup": {
+    "session_id": 43579,
+    "exit_code": 0,
+    "build_session_id": 79759,
+    "build_exit_code": 0,
+    "setup_log": ".recovery/inline-wrappers-setup-retry.log",
+    "setup_log_sha256": "9dd5ebbe27b9abe7c7856b667fe51602036bd926ccacd0a749db89fc674016fd",
+    "build_log": ".recovery/inline-wrappers-build.log",
+    "build_log_sha256": "7f5b08cffc4d2b6335bebf317e1d39b11b561c43babeaca0af145b8c1d76050b",
+    "initial_setup_session_id": 41117,
+    "initial_setup_exit_code": 1,
+    "initial_setup_resolution": "The historical short-card verifier required the retired2020 phyrexians name to remain absent. It now accepts only the separately verified native inline restoration with the two original card callers; focused verifier and full setup retry passed."
+  },
+  "inputs": {
+    "ManalinkEh.dll": "e4ebc62d0c89a7fa5487f63735805959ba0f859fd89daa22885dbd0e3e95aef7",
+    "ManalinkEh.dbg": "bab88de06fc7bc066af64fd0d269b14f6e3fd3881c22318f9176351c43889296",
+    "docs/recovery-evidence/helper-canonicalization.json": "936a199f1c4b3d0e4d334e6c6d5df925eaf236e8d30de18e847981d8655fefbf",
+    "docs/recovery-evidence/inline-wrapper-recovery.json": "704351bc2ae81e36e4b6dd92f4dcfdcb22d45b7aa3e7190da1a75e212f9cc5fb",
+    ".recovery/inline-helper-reconciliation-after-wrappers.json": "12ce4ca5ca10a0dd84177acf545d325a41b7b6825694054ba19ff27495e2a6a5"
+  },
+  "scope": "Restore23 original static helper definitions in their original source units. Native inline fragments, abstract/instance contracts, complete caller ranges and unchanged existing source caller definitions are pinned. General parameter forwarding and dead result/cursor behavior cannot always be uniquely determined from specialized native instances: per-helper notes explicitly record these reconstruction limits. The caller code remains expanded, so these source APIs do not introduce new native entries or change runtime behavior. No gameplay-equivalence claim is made."
+}

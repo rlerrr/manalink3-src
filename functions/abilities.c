@@ -7737,3 +7737,27 @@ void protection_from_multicolored(int player, int card, event_t event)
   }
   return;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static int has_sp_key_by_iid(int iid, int sp_key)
+{
+  return has_sp_key_by_csvid_impl(cards_data[iid].id, sp_key);
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static void disable_all_but_sp_keywords(int player, int card, int mode)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->targets[17].card < 0)
+    instance->targets[17].card = 0;
+  if (mode == 1)
+    instance->targets[17].card |= 0x3e;
+  else if (mode == 0)
+    instance->targets[17].card &= ~0x3e;
+}
+#endif

@@ -1,0 +1,70 @@
+{
+  "recovery": {
+    "corrected_card_handlers": 1,
+    "native_callback_address": "0x2073940",
+    "callback_field_offset": 60,
+    "callback_pointer_bytes": 4,
+    "callback_name": "innistrad_exile_at_end_of_combat_legacy",
+    "noncallback_byte_events_preserved": true,
+    "changed_linker_objects": 1,
+    "unchanged_linker_objects": 165,
+    "scope": "Mirror Match previously retained its2020 local callback, which used KILL_DESTROY. The2022 DLL stores the shared native helper2073940 in token.special_code_for_legacy at offset60. Bind that verified auxiliary source identity to innistrad_exile_at_end_of_combat_legacy, which performs the recovered native exile/legacy cleanup behavior. Exact source replay changes one callback expression in the original commander_2015.c function. Native/rebuilt token76-byte geometry, four-byte int(int,int,event-enum) callback pointer shape, callback COFF identity and store are checked. Every other direct scalar byte-event multiset is retained; this does not prove all dynamic token values, transitive helper behavior or gameplay. The old local helper is left as historical source and may be eliminated as unused by the compiler. Native addresses and canonical identities remain separate provenance facts."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 1245,
+    "exit_code": 0,
+    "terminal_chunk_id": "e591d6",
+    "build_exit_code": 0,
+    "build_chunk_id": "a19fe6",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "26bb92",
+    "setup_log": ".recovery/token-callback-setup-c68.log",
+    "setup_log_sha256": "20b7d80e8e872933cdcdff763b0a342ffaf0a08ac314379d2667a96e518caabb"
+  },
+  "token_write_discovery": {
+    "path": ".recovery/token-write-screen-c69.json",
+    "sha256": "39b314be1e52465b2bb21c20c8915736cc7919ac79315f78a3a935685d14f922",
+    "counts": {
+      "aggregate_contains_native_events": 18,
+      "exact_scoped_byte_events": 670,
+      "requires_value_or_scope_review": 2,
+      "same_events_different_multiplicity": 1,
+      "unsupported_or_unbound": 1
+    },
+    "scope": "Read-only discovery screen of fixed native token locals. Collects direct scalar EBP writes within declared token scopes, with basic-block constant tracking and call-clobbered caller-save registers; complete callback words at60/64 are normalized by COFF/CSV identity. Unknown dynamic stores stay unknown. Union views can include other reused locals; multiple current scopes are candidate-matched by byte events rather than claimed semantic identity. Indexed/indirect stores, REP copies, nonfixed/split/nonstandard frames and other-helper inline scopes are not complete here. Equal event sets do not prove full token contents, initializer equivalence, value provenance or gameplay. Different events are review candidates, not automatically missing code."
+  },
+  "independent_read_only_reviews": {
+    "packed_arguments": {
+      "path": "docs/recovery-evidence/token-packed-value-review.json",
+      "sha256": "e373d81975486fd1b1502a34441cbe4169f46ef0640b857d5ca3a821442ae67f",
+      "tool": "tools/recovery/token_packed_value_proof.py",
+      "tool_sha256": "80e23efc763ea2326bbd8c10f5650b3dffd882c176dcc41571b1d0b9c331ae9b",
+      "scope": "Read-only targeted bit-vector equivalence for two differing direct store sequences. Tracks each bit of32-bit values through actual MOV,AND,OR,SHL and partial writes; unsupported definitions become unknown, calls kill caller-save registers and token memory. Native/current generation sees identical action_argument bits for all32-bit input words. Vivien binds the indexed four-int table, constants0/154/152/153 and the selector spill to a direct dialog_impl result; chosen index/bounds and dialog control semantics are not proven. Fractal binds formal parameter3 to ECX at each function entry. This checks the packed field and its generator operand, not all token contents, arbitrary aliasing or gameplay."
+    },
+    "quantity_clone": {
+      "path": "docs/recovery-evidence/token-quantity-clone-review.json",
+      "sha256": "b93e217f95f82a5eb3083e6f9d480368f468bb123aafbe675a3a96af82cc500a",
+      "tool": "tools/recovery/token_quantity_clone_proof.py",
+      "tool_sha256": "f4e70b5a00e3f577760dbece3fb4caf67514263207ff7756b5c0495e4bb8dfd9",
+      "scope": "Read-only complete direct-CFG quantity-store comparison for generate_custom_token_from_subtype. Both native stores and the one rebuilt store write the low8 bits of immutable formal amount7 at EBP+32 into token.qty offset43. Every direct path reaching the generator passes a quantity store; native store sites are mutually unreachable and no site repeats. Caller-save register definitions and unknown operations are conservative. This proves the duplicated byte-store value/path behavior, not arbitrary aliases, all token fields or gameplay."
+    },
+    "inline_owner": {
+      "path": "docs/recovery-evidence/token-inline-owner-review.json",
+      "sha256": "6c2e1c67b889d5a9476767e6bf26dc44daacf736671561c4d041a9d7e251fa46",
+      "tool": "tools/recovery/token_inline_owner_proof.py",
+      "tool_sha256": "cc7f7f88560dc1af5376eb033fecf45e3cfc9b5efbfabb10f0665eb3c4517ab0",
+      "scope": "The native private copy_token.part.0 token is implemented in the current copy_token.part.0 concrete range by an actual DW_TAG_inlined_subroutine for source copy_token_part. Its76-byte token, fixed CFA-88 location and initializer/generator pointer operands are verified inside that inline scope. Neither scope has direct scalar token writes. The broad inventory deliberately excluded other-helper inline scopes; this explains its one unbound instance. The public wrapper and private register-argument clone remain distinct ranges/ABIs. This checks declaration, owner and API operands, not copied token contents, transitive helper semantics or gameplay."
+    }
+  },
+  "remaining_scope": "The two packed-field differences, quantity multiplicity and one unbound inline owner in the discovery screen are explained by the targeted independent reviews. These reviews ran after the unchanged-source build/audit; they are not additional registered master-audit interfaces. Eighteen aggregate token views still need closer scope review. Exact scalar events do not establish arbitrary dynamic values, indirect/indexed writes, nonfixed locals, transitive helper behavior or gameplay. No fresh whole-DLL reccmp score is claimed.",
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "a2ade46ce81c80d8efbcd72c0a4180e0a318d8e094f124575d298c74333dffe5",
+    "docs/recovery-evidence/token-callback-recovery.json": "201f2835925acb10198ea03f70c410d31e4d9a52b737aea1b8f57ec86afbc18f",
+    "tools/reccmp_project.py": "92497bed00ca3d12f1e0c598a42b58cdf2b16012a5b6b206d72614b60ff6c720",
+    "tools/recovery/token_callback_analysis.py": "fe874715d0b0d7464a2f6bc09f5a9fe55955b2db9a37bf4ac7ceb203d20ae881",
+    "tools/recovery/verify_token_callback_recovery.py": "14254def03cfd6b4ca88ee85d0d198c575cef4db9407c3098c79c8d5a2a3e694",
+    "ManalinkEh.dll": "ed075c0e38a6fd39ff273e3edcab9889a83e85cf7bd11d58b2b8023087203455",
+    "ManalinkEh.dbg": "908430b7db63bd6de509473d5b020fdff40938973cdfab500ed23a5cf9db83d2"
+  }
+}

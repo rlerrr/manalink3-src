@@ -7785,6 +7785,7 @@ int card_serras_hymn(int player, int card, event_t event)
   int iVar6;
   target_t *ptVar7;
   card_instance_t *pcStack_134;
+  int prev;
   int iStack_130;
   target_definition_t td;
   char prompt[200];
@@ -7883,7 +7884,7 @@ int card_serras_hymn(int player, int card, event_t event)
           }
           if (iVar2 < iStack_130)
           {
-            pcStack_134 = (card_instance_t *)0x1;
+            prev = 1;
             ptVar5 = ptVar7;
             do
             {
@@ -7894,7 +7895,7 @@ int card_serras_hymn(int player, int card, event_t event)
                   goto LAB_020574d0;
               }
               ptVar5->player = -1;
-              pcStack_134 = (card_instance_t *)((int)pcStack_134 + 1);
+              prev = prev + 1;
               ptVar5 = ptVar5 + 1;
               card_00 = ptVar7[-1].card;
               player_00 = ptVar7[-1].player;
@@ -7902,10 +7903,10 @@ int card_serras_hymn(int player, int card, event_t event)
           }
           else
           {
-            pcStack_134 = (card_instance_t *)0x1;
+            prev = 1;
           }
         LAB_020574d0:
-          prevent_the_next_n_damage(player, card, player_00, card_00, (int)pcStack_134, 0, -1, -1);
+          prevent_the_next_n_damage(player, card, player_00, card_00, prev, 0, -1, -1);
         }
       } while (iVar2 != iStack_130);
     }
@@ -8478,4 +8479,15 @@ int card_endoskeleton(int player, int card, event_t event)
   return result;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static void counters_on_upkeep(int player, int card, event_t event, int counter_type)
+{
+  upkeep_trigger_ability_mode(player, card, event, player, RESOLVE_TRIGGER_DUH);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+    add_counter(player, card, player, card, (counter_t)counter_type);
+}
 #endif

@@ -1484,7 +1484,7 @@ int card_kira_great_glass_spinner(int player, int card, event_t event)
     LAB_0256c05d:
       iVar1 = stack_size + -1;
       if ((((char)stack_data[stack_size - 1].generating_event != '~') &&
-           (cards_data[*(short *)(&stack_data + iVar1 * 4)].id != 0x388)) &&
+           (cards_data[stack_data[iVar1].internal_card_id].id != 0x388)) &&
           (instance = get_card_instance(stack_cards[iVar1].player, stack_cards[iVar1].card),
            instance->number_of_targets != '\0'))
       {
@@ -4095,4 +4095,29 @@ int card_toshiro_umezawa(int player, int card, event_t event)
   return bushido(player, card, event, 1);
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int eot_flipper(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  double_faced_card(player, card, event);
+  arcane_spirit_spell_trigger(player, card, event, duh_mode(player) ? 2 : 1);
+  if (event == EVENT_SPA)
+    add_counters(player, card, player, card, COUNTER_KI, 1);
+  if (count_counters(player, card, COUNTER_KI) > 1 && trigger_condition == TRIGGER_EOT &&
+      card == affected_card && player == affected_card_controller && player == reason_for_trigger_controller)
+  {
+    if (event == EVENT_TRIGGER)
+      event_result |= player + 1;
+    else if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      true_transform(player, card);
+      verify_legend_rule(player, card, instance->targets[13].card);
+    }
+  }
+  return 0;
+}
 #endif

@@ -1079,6 +1079,7 @@ int card_ghired_conclave_exile(int player, int card, event_t event)
     if ((player == 1) || (ai_is_speculating == 1))
     {
       default_test_definition(&recovered_stack_token.test, 2);
+      recovered_stack_token.test.type_flag = F1_IS_TOKEN;
       tgt.card =
           check_battlefield_for_special_card(player, card, player, 1, &recovered_stack_token.test);
       tgt.player = player;
@@ -1323,4 +1324,48 @@ LAB_023b2726:
   return result;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static int goad(int player, int card, int t_player, int t_card)
+{
+  return create_targetted_legacy_effect(player, card, goad_effect, t_player, t_card);
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static void ghireds_special_populate(int player, int card)
+{
+  target_t target;
+  if (player == AI || ai_is_speculating == 1)
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    test.type_flag = F1_IS_TOKEN;
+    target.card = check_battlefield_for_special_card(player, card, player, 1, &test);
+    target.player = player;
+    if (target.card < 0)
+      return;
+  }
+  else
+  {
+    target_definition_t td;
+    base_target_definition(player, card, &td, TYPE_CREATURE);
+    td.allowed_controller = td.preferred_controller = player;
+    td.allow_cancel = 0;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+    td.extra = (int32_t)target_is_token_too;
+    if (!can_target(&td) || !select_target(player, card - 1000, &td,
+                                          "Select a creature token you control.", &target))
+      return;
+  }
+  token_generation_t token;
+  copy_token_definition(player, card, &token, target.player, target.card);
+  token.action = TOKEN_ACTION_ATTACKING;
+  generate_token(&token);
+}
 #endif

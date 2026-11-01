@@ -2210,11 +2210,14 @@ static void static_graveyard_abilities(int player, int card, event_t event)
               {
                 iVar14 = add_card_to_hand(player, iVar14);
                 add_state(player, iVar14, 0x20);
-                default_test_definition((test_definition_t *)buffer, 2);
+                test_definition_t this_test;
+                default_test_definition(&this_test, TYPE_CREATURE);
+                this_test.toughness = 6;
+                this_test.toughness_flag = F5_TOUGHNESS_LESSER_THAN_VALUE;
                 iVar20 = check_battlefield_for_special_card(player, iVar11, player, 4,
-                                                            (test_definition_t *)buffer);
+                                                            &this_test);
                 iVar16 = check_battlefield_for_special_card(player, iVar11, 1 - player, 4,
-                                                            (test_definition_t *)buffer);
+                                                            &this_test);
                 iVar20 =
                     do_dialog(player, player, iVar11, -1, -1, " Exile Kozilek\'s Return\n Decline",
                               (unsigned int)(iVar16 < iVar20));
@@ -2655,9 +2658,10 @@ joined_r0x026c3be5:
   if ((xVar7 == XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY) &&
       (uVar12 = get_graveyard_counts(player), (uVar12 & 0x400000) != 0))
   {
-    default_test_definition((test_definition_t *)buffer, 1);
+    test_definition_t test;
+    default_test_definition(&test, TYPE_LAND);
     iVar11 = when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(
-        player, card, event, player, RESOLVE_TRIGGER_MANDATORY, (test_definition_t *)buffer);
+        player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test);
     if (iVar11 != 0)
     {
       parse_grave_for_centaur_vinecrasher(player, card);

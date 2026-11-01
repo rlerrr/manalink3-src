@@ -315,3 +315,174 @@ int card_draft(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static int any_left_in_packs(int **packs, int num_opponents)
+{
+  for (int i = 0; i <= num_opponents; ++i)
+    if (packs[i][0] >= 0)
+      return 1;
+  return 0;
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int isvowel(char c)
+{
+  switch (c)
+  {
+    case 'A': case 'E': case 'I': case 'O': case 'U':
+    case 'a': case 'e': case 'i': case 'o': case 'u': return 1;
+    default: return 0;
+  }
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static void pick_human_card(int *picks, int *pack, EXPANSION_t expansion)
+{
+  int selected;
+  for (;;)
+  {
+    if (picks[0] >= 0)
+    {
+      selected = show_deck_force_expansion(HUMAN, pack, 500, "Draft a card", 0,
+                                                "View prev", expansion);
+      if (selected >= 0)
+        break;
+      show_deck(HUMAN, picks, 500, "Drafted so far", 0,
+                     (int)(uintptr_t)EXE_STR(0x78f0a8));
+    }
+    else
+    {
+      selected = show_deck_force_expansion(HUMAN, pack, 500, "Draft a card", 1, "",
+                                                expansion);
+      if (selected >= 0)
+        break;
+    }
+  }
+  pick_card(picks, pack, selected);
+}
+
+static void pick_ai_card(int *picks, int *pack, color_test_t *drafted_colors, int oppnum)
+{
+  (void)oppnum;
+  int num_drafted_colors = num_bits_set(*drafted_colors);
+  int max_score = -1, best_card = -1, max_score_backup = -1, best_card_backup = 0;
+  for (int i = 0; pack[i] >= 0; ++i)
+  {
+    int iid = pack[i];
+    card_data_t *cd = &cards_data[iid];
+    int score = cards_ptr[cd->id]->ai_base_value + internal_rand(10);
+    if (score > max_score_backup)
+    {
+      max_score_backup = score;
+      best_card_backup = i;
+    }
+    if (score <= max_score)
+      continue;
+    color_test_t color = cd->color & COLOR_TEST_ANY_COLORED;
+    int num_card_colors = num_bits_set(color);
+    if (num_card_colors > 1 && num_drafted_colors < 2)
+      continue;
+    int candidate = i, reject = 0, restrict_color = 1;
+    if (cd->type & (TYPE_LAND | TYPE_ARTIFACT))
+      if (num_card_colors == 0 || num_card_colors == 5 || !(color & ~(*drafted_colors)))
+        restrict_color = DRAFT_IS_BASIC(cd->id);
+    if (restrict_color)
+    {
+      if (num_drafted_colors >= 2)
+        reject = (color & ~(*drafted_colors)) != 0;
+      else if (num_drafted_colors == 1)
+        reject = num_bits_set(color | *drafted_colors) > 2;
+    }
+    if (reject)
+    {
+      candidate = best_card;
+      if (i != best_card)
+        continue;
+    }
+    best_card = candidate;
+    max_score = score;
+  }
+  if (best_card == -1)
+    best_card = best_card_backup;
+  card_data_t *cd = &cards_data[pack[best_card]];
+  color_test_t color = cd->color & COLOR_TEST_ANY_COLORED;
+  if (num_bits_set(color | *drafted_colors) < 3 && !DRAFT_IS_BASIC(cd->id))
+    *drafted_colors |= color;
+  pick_card(picks, pack, best_card);
+}
+
+static void make_ai_deck(int *iids, int iids_size, color_test_t drafted_colors, int oppnum)
+{
+  (void)oppnum;
+  int num_in_iids;
+  {
+    target_t deck[iids_size];
+    memset(deck, 255, sizeof(deck));
+    int num_in_deck = 0;
+    for (int i = 0; iids[i] >= 0; ++i)
+    {
+      card_data_t *cd = &cards_data[iids[i]];
+      int score = cards_ptr[cd->id]->ai_base_value;
+      if (DRAFT_IS_BASIC(cd->id))
+        score -= 100;
+      color_test_t color = cd->color & COLOR_TEST_ANY_COLORED;
+      if ((cd->type & (TYPE_LAND | TYPE_ARTIFACT)) && (cd->extra_ability & EA_MANA_SOURCE))
+      {
+        int matching_colors = num_bits_set(cd->color & drafted_colors);
+        score += (matching_colors * 3 + 2) * (matching_colors * 3 + 2);
+      }
+      else if (!(cd->type & TYPE_LAND) || (cd->type & TYPE_ARTIFACT))
+      {
+        if (color & ~drafted_colors)
+          score -= 50;
+        else if ((color & drafted_colors) == drafted_colors)
+          score += 10;
+      }
+      deck[num_in_deck].player = score;
+      deck[num_in_deck++].card = iids[i];
+    }
+    descending_qsort_on_player(num_in_deck, deck);
+    memset(iids, 255, iids_size * sizeof(int));
+    num_in_iids = 0;
+    int num_nonland_in_iids = 0;
+    for (int i = 0; i < num_in_deck && num_nonland_in_iids < 23; ++i)
+    {
+      if (num_in_iids >= iids_size - 1)
+        backtrace_and_abort("functions/draft.c:207\nnum_in_iids < iids_size - 1");
+      iids[num_in_iids++] = deck[i].card;
+      num_nonland_in_iids += (cards_data[deck[i].card].type & TYPE_LAND) == 0;
+    }
+  }
+  {
+    int basics[5], num_basics = 0;
+    if (drafted_colors & COLOR_TEST_BLACK)
+      basics[num_basics++] = get_internal_card_id_from_csv_id(CARD_ID_SWAMP);
+    if (drafted_colors & COLOR_TEST_BLUE)
+      basics[num_basics++] = get_internal_card_id_from_csv_id(CARD_ID_ISLAND);
+    if (drafted_colors & COLOR_TEST_RED)
+      basics[num_basics++] = get_internal_card_id_from_csv_id(CARD_ID_MOUNTAIN);
+    if (drafted_colors & COLOR_TEST_GREEN)
+      basics[num_basics++] = get_internal_card_id_from_csv_id(CARD_ID_FOREST);
+    if ((drafted_colors & COLOR_TEST_WHITE) || !num_basics)
+      basics[num_basics++] = get_internal_card_id_from_csv_id(CARD_ID_PLAINS);
+    int basicidx = 0;
+    while (num_in_iids < 40)
+    {
+      iids[num_in_iids++] = basics[basicidx];
+      basicidx = (basicidx + 1) % num_basics;
+    }
+  }
+  if (num_in_iids >= iids_size - 1)
+    backtrace_and_abort("functions/draft.c:233\nnum_in_iids < iids_size - 1");
+  iids[num_in_iids] = -1;
+}
+#endif

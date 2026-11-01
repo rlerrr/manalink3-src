@@ -1201,3 +1201,28 @@ int has_no_mana_cost(int player, int card)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static int play_card_in_exile_for_free_and_exile_it(int player, int t_player, int csvid)
+{
+  int iid = get_internal_card_id_from_csv_id(csvid);
+  if (!can_legally_play_iid(player, iid))
+    return 0;
+  remove_card_from_rfg(t_player, csvid);
+  int card = add_card_to_hand(player, iid);
+  set_special_flags(player, card, SF_EXILE_ON_RESOLUTION);
+  if (player != t_player)
+  {
+    if (player == 0 && t_player == 1)
+      add_state(player, card, STATE_OWNED_BY_OPPONENT);
+    else
+      remove_state(player, card, STATE_OWNED_BY_OPPONENT);
+  }
+  int result = real_play_spell_for_free(player, card, (int)0x80000000U);
+  if (!result)
+    obliterate_card(player, card);
+  return result;
+}
+#endif

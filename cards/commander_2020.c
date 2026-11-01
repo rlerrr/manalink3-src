@@ -125,16 +125,12 @@ int card_nesting_grounds(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   counter_t cVar3;
-  target_definition_t *ptVar4;
-  target_definition_t *ptVar5;
   bool bVar6;
-  unsigned char bVar7;
   target_definition_t *ptStack_c4;
   target_definition_t *ptStack_c0;
   target_definition_t td_from;
   target_definition_t td_to;
 
-  bVar7 = 0;
   if (event == EVENT_CAN_ACTIVATE)
   {
   LAB_025e6f0e:
@@ -147,14 +143,7 @@ int card_nesting_grounds(int player, int card, event_t event)
     {
       instance = get_card_instance(player, card);
       default_target_definition(player, card, &td_from, 0x47);
-      ptVar4 = &td_from;
-      ptVar5 = &td_to;
-      for (result = 0x15; result != 0; result = result + -1)
-      {
-        ptVar5->who_chooses = ptVar4->who_chooses;
-        ptVar4 = (target_definition_t *)((int)ptVar4 + (unsigned int)bVar7 * -8 + 4);
-        ptVar5 = (target_definition_t *)((int)ptVar5 + (unsigned int)bVar7 * -8 + 4);
-      }
+      td_to = td_from;
       ptStack_c0 = &td_from;
       ptStack_c4 = &td_to;
       td_from.special = 0x40000;
@@ -186,14 +175,7 @@ int card_nesting_grounds(int player, int card, event_t event)
   }
   instance = get_card_instance(player, card);
   default_target_definition(player, card, &td_from, 0x47);
-  ptVar4 = &td_from;
-  ptVar5 = &td_to;
-  for (result = 0x15; result != 0; result = result + -1)
-  {
-    ptVar5->who_chooses = ptVar4->who_chooses;
-    ptVar4 = (target_definition_t *)((int)ptVar4 + (unsigned int)bVar7 * -8 + 4);
-    ptVar5 = (target_definition_t *)((int)ptVar5 + (unsigned int)bVar7 * -8 + 4);
-  }
+  td_to = td_from;
   td_from.allowed_controller = player;
   td_from.special = 0x40000;
 

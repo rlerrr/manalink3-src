@@ -1,0 +1,597 @@
+{
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "current_dll_sha256": "ed075c0e38a6fd39ff273e3edcab9889a83e85cf7bd11d58b2b8023087203455",
+  "current_dbg_sha256": "908430b7db63bd6de509473d5b020fdff40938973cdfab500ed23a5cf9db83d2",
+  "tool_sha256": "80e23efc763ea2326bbd8c10f5650b3dffd882c176dcc41571b1d0b9c331ae9b",
+  "rows": [
+    {
+      "source": "cards/ikoria.c",
+      "native_name": "card_vivien_monsters_advocate",
+      "current_name": "card_vivien_monsters_advocate",
+      "kind": "counter_choice",
+      "native": {
+        "view": {
+          "address": "0x228c7f0",
+          "end": "0x228cb2d",
+          "bytes_sha256": "b203a33b4bfd0486450192e1f2d392029ddba0cf012bf4eebbf4e83db3bb6cef"
+        },
+        "die_offset": "0x240fc31",
+        "origin": {
+          "kind": "same_dialog_result_indexed_int_table",
+          "table_values": [
+            0,
+            154,
+            152,
+            153
+          ],
+          "table_bytes": 16,
+          "selector_slot_relative_to_table": -4,
+          "dialog_call": "0x228cac2",
+          "selector_store": "0x228caca"
+        },
+        "token_frame": -96,
+        "action_argument_offset": 52,
+        "target_bits": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          "X0",
+          "X1",
+          "X2",
+          "X3",
+          "X4",
+          "X5",
+          "X6",
+          "X7",
+          "X8",
+          "X9",
+          "X10",
+          "X11",
+          "X12",
+          "X13",
+          "X14",
+          "X15"
+        ],
+        "store_sites": [
+          {
+            "address": "0x228cb0d",
+            "offset": 0,
+            "bytes": 4,
+            "instruction": [
+              "mov",
+              "dword ptr [ebp - 0x24], 1"
+            ]
+          },
+          {
+            "address": "0x228cb1f",
+            "offset": 2,
+            "bytes": 2,
+            "instruction": [
+              "mov",
+              "word ptr [ebp - 0x22], ax"
+            ]
+          }
+        ],
+        "seed_loads": [
+          "0x228cb14"
+        ],
+        "generator": "0x228cb23",
+        "instruction_window": [
+          [
+            "0x228cb04",
+            "mov",
+            "eax, dword ptr [ebp - 0x6c]"
+          ],
+          [
+            "0x228cb07",
+            "lea",
+            "edx, [ebp - 0x58]"
+          ],
+          [
+            "0x228cb0a",
+            "mov",
+            "dword ptr [esp], edx"
+          ],
+          [
+            "0x228cb0d",
+            "mov",
+            "dword ptr [ebp - 0x24], 1"
+          ],
+          [
+            "0x228cb14",
+            "mov",
+            "eax, dword ptr [ebp + eax*4 - 0x68]"
+          ],
+          [
+            "0x228cb18",
+            "mov",
+            "dword ptr [ebp - 0x28], 0x100000"
+          ],
+          [
+            "0x228cb1f",
+            "mov",
+            "word ptr [ebp - 0x22], ax"
+          ],
+          [
+            "0x228cb23",
+            "call",
+            "0x26659d0"
+          ]
+        ]
+      },
+      "current": {
+        "view": {
+          "address": "0x22450b0",
+          "end": "0x22453e5",
+          "bytes_sha256": "88139c89fdf1f002e72c5bdfb923ebb4ce727bfc6d224251643d86c1d97bdb26"
+        },
+        "die_offset": "0x1fc4158",
+        "origin": {
+          "kind": "same_dialog_result_indexed_int_table",
+          "table_values": [
+            0,
+            154,
+            152,
+            153
+          ],
+          "table_bytes": 16,
+          "selector_slot_relative_to_table": -4,
+          "dialog_call": "0x224537f",
+          "selector_store": "0x224539a"
+        },
+        "token_frame": -96,
+        "action_argument_offset": 52,
+        "target_bits": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          "X0",
+          "X1",
+          "X2",
+          "X3",
+          "X4",
+          "X5",
+          "X6",
+          "X7",
+          "X8",
+          "X9",
+          "X10",
+          "X11",
+          "X12",
+          "X13",
+          "X14",
+          "X15"
+        ],
+        "store_sites": [
+          {
+            "address": "0x22453d8",
+            "offset": 0,
+            "bytes": 4,
+            "instruction": [
+              "mov",
+              "dword ptr [ebp - 0x24], eax"
+            ]
+          }
+        ],
+        "seed_loads": [
+          "0x22453ce"
+        ],
+        "generator": "0x22453db",
+        "instruction_window": [
+          [
+            "0x22453be",
+            "mov",
+            "eax, dword ptr [ebp - 0x6c]"
+          ],
+          [
+            "0x22453c1",
+            "lea",
+            "edx, [ebp - 0x58]"
+          ],
+          [
+            "0x22453c4",
+            "mov",
+            "dword ptr [esp], edx"
+          ],
+          [
+            "0x22453c7",
+            "mov",
+            "dword ptr [ebp - 0x28], 0x100000"
+          ],
+          [
+            "0x22453ce",
+            "mov",
+            "eax, dword ptr [ebp + eax*4 - 0x68]"
+          ],
+          [
+            "0x22453d2",
+            "shl",
+            "eax, 0x10"
+          ],
+          [
+            "0x22453d5",
+            "or",
+            "eax, 1"
+          ],
+          [
+            "0x22453d8",
+            "mov",
+            "dword ptr [ebp - 0x24], eax"
+          ],
+          [
+            "0x22453db",
+            "call",
+            "0x26e0da0"
+          ]
+        ]
+      },
+      "source_definition_sha256": "eca250cf679ec8925f78c63b1badd95b329b08299b76b51eaf2f20be7647d1d0"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "native_name": "make_fractal",
+      "current_name": "make_one_fractal",
+      "kind": "counter_number",
+      "native": {
+        "view": {
+          "address": "0x23c8b60",
+          "end": "0x23c8bac",
+          "bytes_sha256": "a5c7b3c35899ab2645dce22a12da8bd011d0153f41008681f50667c01ff3f846"
+        },
+        "die_offset": "0x396063d",
+        "origin": {
+          "kind": "third_physical_int_parameter_in_ecx",
+          "parameter": 2,
+          "bits": 32,
+          "folded_parameters": {
+            "amount": 1
+          }
+        },
+        "token_frame": -92,
+        "action_argument_offset": 52,
+        "target_bits": [
+          "X0",
+          "X1",
+          "X2",
+          "X3",
+          "X4",
+          "X5",
+          "X6",
+          "X7",
+          "X8",
+          "X9",
+          "X10",
+          "X11",
+          "X12",
+          "X13",
+          "X14",
+          "X15",
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "store_sites": [
+          {
+            "address": "0x23c8b88",
+            "offset": 0,
+            "bytes": 4,
+            "instruction": [
+              "mov",
+              "dword ptr [ebp - 0x20], ebx"
+            ]
+          },
+          {
+            "address": "0x23c8b9a",
+            "offset": 2,
+            "bytes": 2,
+            "instruction": [
+              "mov",
+              "word ptr [ebp - 0x1e], 0"
+            ]
+          }
+        ],
+        "seed_loads": [],
+        "generator": "0x23c8ba0",
+        "instruction_window": [
+          [
+            "0x23c8b60",
+            "push",
+            "ebp"
+          ],
+          [
+            "0x23c8b61",
+            "mov",
+            "ebp, esp"
+          ],
+          [
+            "0x23c8b63",
+            "push",
+            "esi"
+          ],
+          [
+            "0x23c8b64",
+            "push",
+            "ebx"
+          ],
+          [
+            "0x23c8b65",
+            "mov",
+            "ebx, ecx"
+          ],
+          [
+            "0x23c8b67",
+            "sub",
+            "esp, 0x5c"
+          ],
+          [
+            "0x23c8b6a",
+            "lea",
+            "esi, [ebp - 0x54]"
+          ],
+          [
+            "0x23c8b6d",
+            "mov",
+            "dword ptr [esp + 0xc], esi"
+          ],
+          [
+            "0x23c8b71",
+            "mov",
+            "dword ptr [esp + 4], edx"
+          ],
+          [
+            "0x23c8b75",
+            "mov",
+            "dword ptr [esp], eax"
+          ],
+          [
+            "0x23c8b78",
+            "mov",
+            "dword ptr [esp + 8], 0x588e"
+          ],
+          [
+            "0x23c8b80",
+            "call",
+            "0x2665470"
+          ],
+          [
+            "0x23c8b85",
+            "mov",
+            "dword ptr [esp], esi"
+          ],
+          [
+            "0x23c8b88",
+            "mov",
+            "dword ptr [ebp - 0x20], ebx"
+          ],
+          [
+            "0x23c8b8b",
+            "mov",
+            "byte ptr [ebp - 0x2c], 0xc"
+          ],
+          [
+            "0x23c8b8f",
+            "mov",
+            "byte ptr [ebp - 0x29], 1"
+          ],
+          [
+            "0x23c8b93",
+            "mov",
+            "dword ptr [ebp - 0x24], 0x100000"
+          ],
+          [
+            "0x23c8b9a",
+            "mov",
+            "word ptr [ebp - 0x1e], 0"
+          ],
+          [
+            "0x23c8ba0",
+            "call",
+            "0x26659d0"
+          ]
+        ]
+      },
+      "current": {
+        "view": {
+          "address": "0x2510660",
+          "end": "0x25106ac",
+          "bytes_sha256": "c4ea4e8d618ea92ca35bd08badb8494c5fcc985fc1cd6e7aba35b05f556793b2"
+        },
+        "die_offset": "0x406f796",
+        "origin": {
+          "kind": "third_physical_int_parameter_in_ecx",
+          "parameter": 2,
+          "bits": 32,
+          "folded_parameters": {}
+        },
+        "token_frame": -92,
+        "action_argument_offset": 52,
+        "target_bits": [
+          "X0",
+          "X1",
+          "X2",
+          "X3",
+          "X4",
+          "X5",
+          "X6",
+          "X7",
+          "X8",
+          "X9",
+          "X10",
+          "X11",
+          "X12",
+          "X13",
+          "X14",
+          "X15",
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "store_sites": [
+          {
+            "address": "0x251068e",
+            "offset": 0,
+            "bytes": 4,
+            "instruction": [
+              "mov",
+              "dword ptr [ebp - 0x20], ebx"
+            ]
+          }
+        ],
+        "seed_loads": [],
+        "generator": "0x25106a0",
+        "instruction_window": [
+          [
+            "0x2510660",
+            "push",
+            "ebp"
+          ],
+          [
+            "0x2510661",
+            "mov",
+            "ebp, esp"
+          ],
+          [
+            "0x2510663",
+            "push",
+            "esi"
+          ],
+          [
+            "0x2510664",
+            "push",
+            "ebx"
+          ],
+          [
+            "0x2510665",
+            "mov",
+            "ebx, ecx"
+          ],
+          [
+            "0x2510667",
+            "sub",
+            "esp, 0x5c"
+          ],
+          [
+            "0x251066a",
+            "lea",
+            "esi, [ebp - 0x54]"
+          ],
+          [
+            "0x251066d",
+            "and",
+            "ebx, 0xffff"
+          ],
+          [
+            "0x2510673",
+            "mov",
+            "dword ptr [esp + 0xc], esi"
+          ],
+          [
+            "0x2510677",
+            "mov",
+            "dword ptr [esp + 4], edx"
+          ],
+          [
+            "0x251067b",
+            "mov",
+            "dword ptr [esp], eax"
+          ],
+          [
+            "0x251067e",
+            "mov",
+            "dword ptr [esp + 8], 0x588e"
+          ],
+          [
+            "0x2510686",
+            "call",
+            "0x26e0c80"
+          ],
+          [
+            "0x251068b",
+            "mov",
+            "dword ptr [esp], esi"
+          ],
+          [
+            "0x251068e",
+            "mov",
+            "dword ptr [ebp - 0x20], ebx"
+          ],
+          [
+            "0x2510691",
+            "mov",
+            "byte ptr [ebp - 0x2c], 0xc"
+          ],
+          [
+            "0x2510695",
+            "mov",
+            "byte ptr [ebp - 0x29], 1"
+          ],
+          [
+            "0x2510699",
+            "mov",
+            "dword ptr [ebp - 0x24], 0x100000"
+          ],
+          [
+            "0x25106a0",
+            "call",
+            "0x26e0da0"
+          ]
+        ]
+      },
+      "source_definition_sha256": "c0bcf6b3a384a76073ec1d0dadd8e27d340eba5effa20b843b8336d3c0a2eb62"
+    }
+  ],
+  "scope": "Read-only targeted bit-vector equivalence for two differing direct store sequences. Tracks each bit of32-bit values through actual MOV,AND,OR,SHL and partial writes; unsupported definitions become unknown, calls kill caller-save registers and token memory. Native/current generation sees identical action_argument bits for all32-bit input words. Vivien binds the indexed four-int table, constants0/154/152/153 and the selector spill to a direct dialog_impl result; chosen index/bounds and dialog control semantics are not proven. Fractal binds formal parameter3 to ECX at each function entry. This checks the packed field and its generator operand, not all token contents, arbitrary aliasing or gameplay."
+}

@@ -3718,6 +3718,9 @@ int card_pure_simple(int player, int card, event_t event)
       if (((card == affected_card) && (affected_card_controller == player)) && (player == 1))
       {
         default_test_definition(&recovered_stack_td_1.test, 0x47);
+        recovered_stack_td_1.test.subtype = SUBTYPE_AURA;
+        recovered_stack_td_1.test.sub2 = SUBTYPE_EQUIPMENT;
+        recovered_stack_td_1.test.subtype_flag = F2_MULTISUBTYPE;
         iVar4 = check_battlefield_for_special_card(1, card, 1, 4, &recovered_stack_td_1.test);
         iVar2 = check_battlefield_for_special_card(1, card, 0, 4, &recovered_stack_td_1.test);
         iVar4 = (iVar2 - iVar4) * 3 + 5;
@@ -3752,6 +3755,9 @@ int card_pure_simple(int player, int card, event_t event)
         if ((uVar3 & 2) != 0)
         {
           default_test_definition(&recovered_stack_td_1.test, 0x47);
+          recovered_stack_td_1.test.subtype = SUBTYPE_AURA;
+          recovered_stack_td_1.test.sub2 = SUBTYPE_EQUIPMENT;
+          recovered_stack_td_1.test.subtype_flag = F2_MULTISUBTYPE;
           new_manipulate_all(player, card, 2, &recovered_stack_td_1.test, ACT_KILL_DESTROY);
         }
         kill_card(player, card, KILL_DESTROY);
@@ -5801,6 +5807,7 @@ int card_rise_fall(int player, int card, event_t event)
     if (((uVar3 & 2) != 0) && (result = validate_target(player, card, ptStack_1b4, 1), result != 0))
     {
       default_test_definition(&recovered_stack_td2_1.test, 1);
+      recovered_stack_td2_1.test.type_flag = DOESNT_MATCH;
       default_ec_definition(instance->targets[0].player, player, &this_definition);
       this_definition.cards_to_reveal = 2;
       this_definition.effect = 0x81;

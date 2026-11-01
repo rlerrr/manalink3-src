@@ -1,0 +1,55 @@
+{
+  "repair": {
+    "corrected_definitions": 6,
+    "corrected_card_handlers": 5,
+    "corrected_helpers": 1,
+    "restored_native_test_settings": 7,
+    "exact_parameter_store_comparisons": 6,
+    "saheeli_storage_card_argument_proved": true,
+    "changed_linker_objects": 6,
+    "unchanged_linker_objects": 160,
+    "scope": "Restore seven omitted direct scalar test settings in five original card handlers and the Miracle helper. Native/current fixed-frame216-byte records, complete field geometry and entire native bodies are pinned. Compare all direct scalar parameter stores at offsets100..215 after exact callback relocation. Prove Saheeli storage receives the unchanged card formal on every direct-CFG path. Historical source receipts remain immutable with six explicit hash-checked supersession chains. Broader screen differences, indirect/string/SSE stores, full function behavior and gameplay remain separate."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 78480,
+    "exit_code": 0,
+    "completion_chunk_id": "6bccd8",
+    "build_exit_code": 0,
+    "build_chunk_id": "b399a0",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "8fdfe3",
+    "setup_log": ".recovery/plain-test-setup-c56.log",
+    "setup_log_sha256": "ff05c7219c0a7d0dc8d35b3e1c25cf4158f1a143d94bb484e624ef24c85b5059"
+  },
+  "initial_discovery": {
+    "single_record_pairs": 3299,
+    "identical_scalar_byte_event_multisets": 3189,
+    "exact_callback_relocation_cases": 85,
+    "differences_after_callback_relocation": 25,
+    "repaired_definitions": 6,
+    "remaining_differences_to_classify": 19,
+    "multiple_frame_cases_to_pair": 121,
+    "initial_no_current_typed_frame_cases": 47,
+    "source_spelling_aliases_among_missing_frame_cases": 41,
+    "other_missing_frame_cases": 6,
+    "native_entries_without_csv_binding_excluded": 130,
+    "nonstandard_frame_records": 5,
+    "scope": "Initial screen only. Equal unknown-value events do not prove equal dynamic values, and counts of different compiler store sites are not counts of behavior defects. Remaining cases include previously checked compiler clones. Unsupported/multiple-frame and location cases remain separate.",
+    "artifacts": {
+      ".recovery/all-test-parameter-screen-c56.json": "41edf731d21a8c91fd095c596ca1626b304ee6fca640357355dc179532a0d61b",
+      ".recovery/all-test-delta-classification-c56.json": "bdf7e86bdc1588e10464a3b67bfa8c2dcc14e4c5b54e3f060eeb5912f81cae16",
+      ".recovery/screen-all-test-parameters-c56.py": "1d3321e5a3e8bd42d539ad232f5f341178e7a70a08fcd1cf40bbe661de3dc123",
+      ".recovery/classify-all-test-deltas-c56.py": "bd9f869535facdde311a13efe48d92b680ba8095cfd094c2558c6301fbb3fced",
+      ".recovery/no-current-test-frame-owner-followup-c56.json": "015b5eda8df6c78c246b0a880c2eeb47199990f5e809e207d738621120815e22"
+    }
+  },
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "ddd30cce823ea11eeb1cb3ce42230210f24621a147ea82e36fad792a25db1926",
+    "docs/recovery-evidence/plain-test-parameter-recovery.json": "8363927657e4bbafa8c705edf9fcb9049e87f495dc963284d100ef4c9154b7f2",
+    "tools/recovery/test_parameter_repair_analysis.py": "0b40106bdd380977f7487fbb25585b696c9a734c169449d01be0e69614364bb6",
+    "tools/recovery/verify_plain_test_parameter_recovery.py": "5e43e6ba1403e16fe6b0475ac264c86807bc48f5cb08bdbc63f796563b74f5e2",
+    "ManalinkEh.dll": "75e14f3b91232a877344ece3607658561a2c038f51d468daab8ca8c128923b1c",
+    "ManalinkEh.dbg": "939be7c8d2b0c0763401f0a96fdde6f7317390e920bcc34a2caeeda28af37291"
+  }
+}

@@ -1,0 +1,698 @@
+{
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "repair": {
+    "source": "cards/commander_2015.c",
+    "name": "card_mirror_match",
+    "before_definition": "int card_mirror_match(int player, int card, event_t event)\n{\n\t/* Mirror Match\t|4|U|U\t0x200e346\n\t * Instant\n\t * Cast ~ only during the declare blockers step.\n\t * For each creature attacking you or a planeswalker you control, put a token that's a copy of that creature onto\n\t *\tthe battlefield blocking that creature. Exile those tokens at end of combat. */\n\n\tif( event == EVENT_CAN_CAST && basic_spell(player, card, event) ){\n\t\treturn current_phase == PHASE_AFTER_BLOCKING ? 1 : 0;\n\t}\n\n\tif( event == EVENT_RESOLVE_SPELL ){\n\t\tint c;\n\t\tfor (c = 0; c < active_cards_count[1-player]; ++c){\n\t\t\tif (in_play(1-player, c) && is_what(1-player, c, TYPE_CREATURE) && (get_card_instance(1-player, c)->state & STATE_ATTACKING))\n\t\t\t{\n\t\t\t\tint csvid = get_id(1-player, c);\n\t\t\t\tint block_ = 1;\n\t\t\t\tif( check_status(1-player, c, STATUS_ANIMATED) ){\n\t\t\t\t\tif( !(cards_data[get_original_internal_card_id(1-player, c)].type & TYPE_CREATURE) ){\n\t\t\t\t\t\t//We're dealing with an noncreature animated permanent, so the token won't be animated and won't be able to block;\n\t\t\t\t\t\tcsvid = cards_data[get_original_internal_card_id(1-player, c)].id;\n\t\t\t\t\t\tblock_ = 0;\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\ttoken_generation_t token;\n\t\t\t\tdefault_token_definition(player, card, csvid, &token);\n\t\t\t\tif( block_ ){\n\t\t\t\t\ttoken.action = TOKEN_ACTION_BLOCKING;\n\t\t\t\t\ttoken.action_argument = c;\n\t\t\t\t}\n\t\t\t\ttoken.legacy = 1;\n\t\t\t\ttoken.special_code_for_legacy = &exile_at_end_of_combat;\n\t\t\t\tgenerate_token(&token);\n\t\t\t}\n\t\t}\n\t\tkill_card(player, card, KILL_DESTROY);\n\t}\n\n\treturn 0;\n}",
+    "before_sha256": "9e24189bd48b3983bc6c3d4cf0c30fa89d235e1555d9431556d9fdcea78e6baa",
+    "after_definition": "int card_mirror_match(int player, int card, event_t event)\n{\n\t/* Mirror Match\t|4|U|U\t0x200e346\n\t * Instant\n\t * Cast ~ only during the declare blockers step.\n\t * For each creature attacking you or a planeswalker you control, put a token that's a copy of that creature onto\n\t *\tthe battlefield blocking that creature. Exile those tokens at end of combat. */\n\n\tif( event == EVENT_CAN_CAST && basic_spell(player, card, event) ){\n\t\treturn current_phase == PHASE_AFTER_BLOCKING ? 1 : 0;\n\t}\n\n\tif( event == EVENT_RESOLVE_SPELL ){\n\t\tint c;\n\t\tfor (c = 0; c < active_cards_count[1-player]; ++c){\n\t\t\tif (in_play(1-player, c) && is_what(1-player, c, TYPE_CREATURE) && (get_card_instance(1-player, c)->state & STATE_ATTACKING))\n\t\t\t{\n\t\t\t\tint csvid = get_id(1-player, c);\n\t\t\t\tint block_ = 1;\n\t\t\t\tif( check_status(1-player, c, STATUS_ANIMATED) ){\n\t\t\t\t\tif( !(cards_data[get_original_internal_card_id(1-player, c)].type & TYPE_CREATURE) ){\n\t\t\t\t\t\t//We're dealing with an noncreature animated permanent, so the token won't be animated and won't be able to block;\n\t\t\t\t\t\tcsvid = cards_data[get_original_internal_card_id(1-player, c)].id;\n\t\t\t\t\t\tblock_ = 0;\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\ttoken_generation_t token;\n\t\t\t\tdefault_token_definition(player, card, csvid, &token);\n\t\t\t\tif( block_ ){\n\t\t\t\t\ttoken.action = TOKEN_ACTION_BLOCKING;\n\t\t\t\t\ttoken.action_argument = c;\n\t\t\t\t}\n\t\t\t\ttoken.legacy = 1;\n\t\t\t\ttoken.special_code_for_legacy = &innistrad_exile_at_end_of_combat_legacy;\n\t\t\t\tgenerate_token(&token);\n\t\t\t}\n\t\t}\n\t\tkill_card(player, card, KILL_DESTROY);\n\t}\n\n\treturn 0;\n}",
+    "after_sha256": "a574c1ce40bb1171ee141490fecbdfd9779e2dca1e52e90e6c70593b3d1abfdf",
+    "changes": [
+      {
+        "before": "token.special_code_for_legacy = &exile_at_end_of_combat;",
+        "after": "token.special_code_for_legacy = &innistrad_exile_at_end_of_combat_legacy;",
+        "occurrences": 1
+      }
+    ]
+  },
+  "native_snapshot": {
+    "die_offset": "0x31b5253",
+    "view": {
+      "address": "0x23535b0",
+      "end": "0x2353767",
+      "bytes_sha256": "0ce47fff3069ab75717ab44451591601e0aa4b5c89321263fa5ca9fffc931b9f"
+    },
+    "variables": [
+      {
+        "name": "token",
+        "die_offset": "0x31b5300",
+        "frame_offset": -96,
+        "shape": {
+          "kind": "DW_TAG_structure_type",
+          "size": 76
+        },
+        "scope_ranges": [
+          [
+            37041651,
+            37041656
+          ],
+          [
+            37041728,
+            37041813
+          ],
+          [
+            37041814,
+            37041830
+          ],
+          [
+            37041936,
+            37042023
+          ]
+        ]
+      }
+    ],
+    "callback_signature": {
+      "return_bytes": 4,
+      "return_encoding": 5,
+      "argument_kinds": [
+        "DW_TAG_base_type",
+        "DW_TAG_base_type",
+        "DW_TAG_enumeration_type"
+      ],
+      "argument_bytes": [
+        4,
+        4,
+        4
+      ]
+    },
+    "token_frame": -96,
+    "callback_store": {
+      "address": "0x235369a",
+      "offset": 60,
+      "size": 4,
+      "value": 34027840,
+      "instruction": [
+        "mov",
+        "dword ptr [ebp - 0x1c], 0x2073940"
+      ]
+    },
+    "callback_symbol": "_exile_at_end_of_combat",
+    "noncallback_byte_events": [
+      [
+        42,
+        1,
+        1
+      ],
+      [
+        48,
+        0,
+        1
+      ],
+      [
+        49,
+        0,
+        1
+      ],
+      [
+        50,
+        1,
+        1
+      ],
+      [
+        51,
+        0,
+        1
+      ],
+      [
+        52,
+        null,
+        1
+      ],
+      [
+        53,
+        null,
+        1
+      ],
+      [
+        54,
+        null,
+        1
+      ],
+      [
+        55,
+        null,
+        1
+      ]
+    ]
+  },
+  "before_compiled": {
+    "die_offset": "0xe536fe",
+    "view": {
+      "address": "0x20e4420",
+      "end": "0x20e45d7",
+      "bytes_sha256": "0017eaa97fe3b7888845bc0105f25ab760e2b7959a6d457b7e8553d4507e2c80"
+    },
+    "variables": [
+      {
+        "name": "token",
+        "die_offset": "0xe537ab",
+        "frame_offset": -96,
+        "shape": {
+          "kind": "DW_TAG_structure_type",
+          "size": 76
+        },
+        "scope_ranges": [
+          [
+            34489443,
+            34489448
+          ],
+          [
+            34489520,
+            34489605
+          ],
+          [
+            34489606,
+            34489622
+          ],
+          [
+            34489728,
+            34489815
+          ]
+        ]
+      }
+    ],
+    "callback_signature": {
+      "return_bytes": 4,
+      "return_encoding": 5,
+      "argument_kinds": [
+        "DW_TAG_base_type",
+        "DW_TAG_base_type",
+        "DW_TAG_enumeration_type"
+      ],
+      "argument_bytes": [
+        4,
+        4,
+        4
+      ]
+    },
+    "token_frame": -96,
+    "callback_store": {
+      "address": "0x20e450a",
+      "offset": 60,
+      "size": 4,
+      "value": 34485120,
+      "instruction": [
+        "mov",
+        "dword ptr [ebp - 0x1c], 0x20e3380"
+      ]
+    },
+    "callback_symbol": "_exile_at_end_of_combat",
+    "noncallback_byte_events": [
+      [
+        42,
+        1,
+        1
+      ],
+      [
+        48,
+        0,
+        1
+      ],
+      [
+        49,
+        0,
+        1
+      ],
+      [
+        50,
+        1,
+        1
+      ],
+      [
+        51,
+        0,
+        1
+      ],
+      [
+        52,
+        null,
+        1
+      ],
+      [
+        53,
+        null,
+        1
+      ],
+      [
+        54,
+        null,
+        1
+      ],
+      [
+        55,
+        null,
+        1
+      ]
+    ]
+  },
+  "runtime_before": {
+    "dll_path": ".recovery/token-scopes-after.dll",
+    "dll_sha256": "b94463ddde7743116cf83f0f1fa3df4edeab853c163567bc49ed055b1972777e",
+    "dbg_path": ".recovery/token-scopes-after.dbg",
+    "dbg_sha256": "931c44951541146cd6c470e342fe2c3ffe06e5743b1774189d890bdc7f407e10"
+  },
+  "runtime_after": {
+    "dll_path": ".recovery/token-callback-after.dll",
+    "dll_sha256": "ed075c0e38a6fd39ff273e3edcab9889a83e85cf7bd11d58b2b8023087203455",
+    "dbg_path": ".recovery/token-callback-after.dbg",
+    "dbg_sha256": "908430b7db63bd6de509473d5b020fdff40938973cdfab500ed23a5cf9db83d2"
+  },
+  "before_link_inputs": {
+    ".recovery/build-gcc93/obj/cards/aether_revolt.o": "f368126f5da00a6a5d5dc8ad9d1c0d108c8af2d4c144cd033ef0e88b64d3de3e",
+    ".recovery/build-gcc93/obj/cards/alara_reborn.o": "460b880bd45f6544fa7b45bdd0d5b6766fbe573b149f16bf9e2e12c40a75d596",
+    ".recovery/build-gcc93/obj/cards/alliances.o": "9362989ecfaf0abe8654fa67af318afd016e97c894664937fe39ee5005046f08",
+    ".recovery/build-gcc93/obj/cards/amonkhet.o": "78b4bd1d28a1bf27e2ce0d448c0eaf3ec59902946bfe98774475382268767471",
+    ".recovery/build-gcc93/obj/cards/antiquities.o": "ad74f8c2d90d81d7a5b59924af5fcd05bc50987e9992359eede4bf1dbd5320b7",
+    ".recovery/build-gcc93/obj/cards/apocalypse.o": "24fdddc48acf4463cb48b8f01614b5205466f177d4e4c92cd58706a0fa60073e",
+    ".recovery/build-gcc93/obj/cards/arabian_nights.o": "e5277bbf9d4769fe836b68b909018bb6a043df337cfb661375af02274b25f7cd",
+    ".recovery/build-gcc93/obj/cards/archenemy.o": "60afaa61b4a68c96ac275379a8245178bbe94be9982e1090532319268f67627b",
+    ".recovery/build-gcc93/obj/cards/archenemy_nicol_bolas.o": "f696df1d7831001d3ff64988f2fd34b6b2e5dd022b1459a333becf1ea4be3423",
+    ".recovery/build-gcc93/obj/cards/artifact_creatures.o": "e06702d3247122e13e4ec9c47a7f7bb102f75e7aa741aca32906f6b9ceb2ed7e",
+    ".recovery/build-gcc93/obj/cards/avacyn_restored.o": "f7e32d5b674768ea02e829977ea258e6f882375926905325ebfe5554949fa5f6",
+    ".recovery/build-gcc93/obj/cards/battle_for_zendikar.o": "f485c57f48b0c3e39aa89b6b07ebb0c1391e1c04eb7381c09d27bdc845411fb3",
+    ".recovery/build-gcc93/obj/cards/battlebond.o": "e78c5ecc157268979c79ae561cc213594a26b9479ba1ed55e466614abb38aed8",
+    ".recovery/build-gcc93/obj/cards/betrayers_of_kamigawa.o": "ee958e1aa3184ba10856056561a1c6e793b419f45734d8c94922c1c29014e9d0",
+    ".recovery/build-gcc93/obj/cards/born_of_the_gods.o": "3a7bc44310bd2953f08e63bc285a24235e21386591e8822453a520aa0d0f4e25",
+    ".recovery/build-gcc93/obj/cards/champions_of_kamigawa.o": "43464b40046c0d83711f28f757874c3f38c04a0fbb13e90e2c000e68fd6f5407",
+    ".recovery/build-gcc93/obj/cards/coldsnap.o": "30ceeeab883efd7ff4563a38e13584196f39bdb6708601cefbc5041d9f5b3e95",
+    ".recovery/build-gcc93/obj/cards/commander.o": "4bc73373d6a30105bf3bc8d66682119c23d2f51c0af949277944c934f3426545",
+    ".recovery/build-gcc93/obj/cards/commander_2013.o": "b4ad882383d9e00a8c7acf1ad44191fe5f0f418cdc247f1042df691dfccbdc5a",
+    ".recovery/build-gcc93/obj/cards/commander_2014.o": "a9ca2687d11e1b1950d6cc977e982bf287c31d84b93d8754c4ed623684704602",
+    ".recovery/build-gcc93/obj/cards/commander_2015.o": "587f82e8b04e8f3cadecb038fdd8d9821d2cfd4bc750f5efcf8ab369c1acf9e6",
+    ".recovery/build-gcc93/obj/cards/commander_2016.o": "e24e693184b5389616a56922e39828dedbf04b5540ddb7365e20e3e8b5527b34",
+    ".recovery/build-gcc93/obj/cards/commander_2017.o": "2c9a936589a22c740df10df22703c3744aad1b6f39a1f7d352e9910706e34d28",
+    ".recovery/build-gcc93/obj/cards/commander_2018.o": "d36c148c1e490d3ce09bafc8dea6e614828875b970de0ee41736c9aaa91140fe",
+    ".recovery/build-gcc93/obj/cards/commander_2019.o": "7c5fe182eef275722b20c4a82be2fe672d77f173b2e8933c66710401b4bc7e6c",
+    ".recovery/build-gcc93/obj/cards/commander_2020.o": "657b3ffcaa7ddf90ad188aa7ce6988a9e7c46cebee94f0cec558d666752603a6",
+    ".recovery/build-gcc93/obj/cards/commander_legends.o": "5bc64f52beea6d954fb75ae19d7aa12a50196b7973423f354c69a461c973a39c",
+    ".recovery/build-gcc93/obj/cards/conflux.o": "83b3d611e872d407b467d00bc57ab24a107a17866b215cb0d472cdfc277c0fce",
+    ".recovery/build-gcc93/obj/cards/conspiracy-take-the-crown.o": "fc789a4fa96dd122b033bf667cd729c58003857b51fb54caabe9b0bf10048ac7",
+    ".recovery/build-gcc93/obj/cards/conspiracy.o": "d89c8cbebaed8cc9e24bb16d2c5c4c6d98744ec47e08f99ca38851fb75dbad76",
+    ".recovery/build-gcc93/obj/cards/dark_ascension.o": "abb0095f872fcd9cbad2d7c0dc79a2f49eab7608b0e81491f06ed4db585573e7",
+    ".recovery/build-gcc93/obj/cards/darksteel.o": "3295baaa52b86cfde6e7937b9a879ccd4fec81d165d7630bc9bfff8ad0b5c6c9",
+    ".recovery/build-gcc93/obj/cards/dissension.o": "c8a1b91c1be39b37605e77556e5a38ef3ca92f8936de718dbfe52d479ab4028f",
+    ".recovery/build-gcc93/obj/cards/dominaria.o": "02067f326b3724db284d890ba9d2c535514b7a906725e8263f7a5351af8b1c65",
+    ".recovery/build-gcc93/obj/cards/draft.o": "cb219ad59f3e8dafb4d2afbe9984789843b411a6afd40f107616dd4887cff379",
+    ".recovery/build-gcc93/obj/cards/dragons_maze.o": "1cf409bc1c3e0ffe906e82f49e0eb34c78433dcccea736dcaecbe920f7cb744e",
+    ".recovery/build-gcc93/obj/cards/dragons_of_tarkir.o": "53d23bf9690df0787370f124f74e3c4fec16e9f3f4d91419cd07637834b9533b",
+    ".recovery/build-gcc93/obj/cards/eldritch_moon.o": "efc5f07af3ab3aba5fbf7b765280040439aa4560c1be1e83d4b57651e9505f38",
+    ".recovery/build-gcc93/obj/cards/equipment.o": "89a5e3fab8e75d3ba6ca1a78ba7b3cf0f97fb182e2de69b4b30cf148f984e2c8",
+    ".recovery/build-gcc93/obj/cards/eventide.o": "204d5f373988ab936485129c2c16884e66ba23668aa35103274f76018da1ce17",
+    ".recovery/build-gcc93/obj/cards/exodus.o": "a7ba8ca2f3e6bdf4f4fb90cc214fd8cf24427961561495a6345efc5258d43292",
+    ".recovery/build-gcc93/obj/cards/fallen_empires.o": "8d6b67a5f8cb92fb79e1a2d001c7bf7af72e7db0f8242a870baa3543fec087c6",
+    ".recovery/build-gcc93/obj/cards/fate_reforged.o": "7a21c579ee627f90969fa703707039407dc44863ed3744395bd51cec048002cf",
+    ".recovery/build-gcc93/obj/cards/fifth_dawn.o": "31a63d46929f1b1c9958abf3388f1a23ff3e56811b19ddca95d78ead2e831bd7",
+    ".recovery/build-gcc93/obj/cards/future_sight.o": "6cbf5654cc4629d74bf4cd94a9c8db84627802927ee0f602f5965d25913b7d30",
+    ".recovery/build-gcc93/obj/cards/gargaroz.o": "d1d334ddadef46f82ed8862507d3dbddf24ff481a1370a683d3f148c0c4ca15c",
+    ".recovery/build-gcc93/obj/cards/gatecrash.o": "270bda0cc9d05b8035671313328ec8fb62744ca664fc1366d041cee74dec7e1d",
+    ".recovery/build-gcc93/obj/cards/global_series_jiang_yanggu_and_mu_yanling.o": "7e3280dc139e670bfdf54e259d9332b84cf9973a24bfc0b17202f8dc559cdc86",
+    ".recovery/build-gcc93/obj/cards/guildpact.o": "30759cebba6066c322f80c6b1ebd7263c17fa487803e521462504e7ec7f7b7b9",
+    ".recovery/build-gcc93/obj/cards/guilds_of_ravnica.o": "a247f3b38f8a5dcab2a7f17c915b86f7bb24906cb26f0cab1cf95d078fa6bb0f",
+    ".recovery/build-gcc93/obj/cards/homelands.o": "2e2fcc8944cf24b222f8e4df45263f27f36cdb856678161ac460d6322f348f37",
+    ".recovery/build-gcc93/obj/cards/hour_of_devastation.o": "b6893a9213658527fda8756fbaea6241594f63f8e202c2fbe3f25ef505ae19c4",
+    ".recovery/build-gcc93/obj/cards/ice_age.o": "11869c85a2372dda232851ddf04eaf6f4068473a7ff4a36c4076994c8c722dc3",
+    ".recovery/build-gcc93/obj/cards/ikoria.o": "b5a81f2406df331f939a87a6d1b56cecbe419a46cf65947618b5d78bebfda010",
+    ".recovery/build-gcc93/obj/cards/innistrad.o": "9b805748c135dea0be3f7d4e18ddd8e9b9fc88ac8bfd64436405e7a6e5e0f97d",
+    ".recovery/build-gcc93/obj/cards/invasion.o": "11c2e98c4a3a09f3015d7cdca08968979a8f6339897b46ab04e8be5283b8014b",
+    ".recovery/build-gcc93/obj/cards/ixalan.o": "7291518d35140dc0fa0c1857a4f67b1f0601e6de3954fbf506b5b28ec734a9f5",
+    ".recovery/build-gcc93/obj/cards/journey_into_nyx.o": "0e797947d72b297c56b40a5fcfbb13e2a04221b199b3f9b4d4ef37cd4d0fd267",
+    ".recovery/build-gcc93/obj/cards/judgement.o": "9408f085e34eb8b277abbfd5845d1de3e89613d7a3e06d6274b73a9eaa534dfd",
+    ".recovery/build-gcc93/obj/cards/jumpstart.o": "3e3f016590029f65581a64fa72f025e8c97b2112fcc45840695be7f08928fa2a",
+    ".recovery/build-gcc93/obj/cards/kaladesh.o": "7540f04fdaa989c3c9b6a7bdfab2a2f6d15a6fdf61e7bfece0f432ba00f8f66b",
+    ".recovery/build-gcc93/obj/cards/khans_of_tarkir.o": "7fa0ef36a2eec632dc2c8407f049fd8b1f73c672367a14ce7ed7d5578f278367",
+    ".recovery/build-gcc93/obj/cards/legends.o": "62e1cedbf005076bfceab73a0942962403137954117ee685c671082fd4b4eac8",
+    ".recovery/build-gcc93/obj/cards/legions.o": "e7e207a36f65aa1edcf8ceeb7c11df1102ccfefeaeda7e58339c6083b4c6f12c",
+    ".recovery/build-gcc93/obj/cards/lorwyn.o": "03a2376ef06b698d32a2b9b06cab92b7833d02aa01dc6c00b21c999d8f3fd27f",
+    ".recovery/build-gcc93/obj/cards/m10.o": "9e8dd346ee8db2b1d86a71450924844d9e007d275da42388a0610cda79a6906b",
+    ".recovery/build-gcc93/obj/cards/m11.o": "3049dcfa308ab5193d12fba4c22976c30fdfe6c3991ce8afd3d6bad77d6e9cb0",
+    ".recovery/build-gcc93/obj/cards/m12.o": "bd4b3303f8e2b7c147fb7392fb43e6387fa89540e6b8a35cdf11fa9e6c4598c6",
+    ".recovery/build-gcc93/obj/cards/m13.o": "858d2e01a782c0ff9eee3e079e1cead3bc309b64bf0e61f3058a50320a338d33",
+    ".recovery/build-gcc93/obj/cards/m14.o": "aa44214336726647a70b6a5f81e53b226a9a8a5751b489af4590e73a4d3c0800",
+    ".recovery/build-gcc93/obj/cards/m15.o": "c9368b5f6c023127d1d5162438cc9f39dbac60e7dc438907863aedefe758b57c",
+    ".recovery/build-gcc93/obj/cards/m19.o": "d75f1a0604d54ed6b8e7673d7810d6b7a6b1642a138e97a9c13f599e83fb4e55",
+    ".recovery/build-gcc93/obj/cards/m20.o": "e5384982892a3c3274281f39fe60b457299a4058dea6d6dd96883a401acc254b",
+    ".recovery/build-gcc93/obj/cards/mercadian_masques.o": "45be414daaf39b0d53a88ccb4ee11a40d9b5f7f3b8c169ee678870dc548d8c57",
+    ".recovery/build-gcc93/obj/cards/mirage.o": "9693517f8e7ef5873f2a5e2306bf296332dc83a1fce635c91e6c2d7c474b499f",
+    ".recovery/build-gcc93/obj/cards/mirrodin.o": "94b5ffe224400ae5c19f60721fcf3b6f02b914defe5c248ec36d1efcc7ef63b4",
+    ".recovery/build-gcc93/obj/cards/mirrodin_besieged.o": "b68159f13a1c06b7ff223010df16c73f29394064b48a5afbd9c10decbe20c819",
+    ".recovery/build-gcc93/obj/cards/modern_horizons.o": "a249161e909a3aa716354d43e0e9c52208b765ddd74f53992c63d7cd1ff329fb",
+    ".recovery/build-gcc93/obj/cards/modern_horizons_2.o": "4978d6072d79e37aa5bd4d61ba0ae2f1f3395f83b1697c5475b46a74c07fa4b5",
+    ".recovery/build-gcc93/obj/cards/morningtide.o": "d8ab0b8f6937b2f588845bd398963fff0fc04fa7b031ed28dbda6fbe43ab2783",
+    ".recovery/build-gcc93/obj/cards/nemesis.o": "c73e6dff92d28db8d571408edd602ce0eb483f985ad29e54e9b9185a8921b2a5",
+    ".recovery/build-gcc93/obj/cards/new_phyrexia.o": "29138e4929b41920d5e1a2b03cb4026a8697eac2f5c8f3bc8f4d787079c0dbba",
+    ".recovery/build-gcc93/obj/cards/oath_of_the_gatewatch.o": "9cbee7d6e1fefe5ec5bf8e9e2791cda4e60567edbda0a4552aeb68440b1b9e48",
+    ".recovery/build-gcc93/obj/cards/odissey.o": "d3d2be7635d4f86797a454fec0e299fc2710defdab514aa573f9c19ea38916b4",
+    ".recovery/build-gcc93/obj/cards/odyssey.o": "e241d7c899623e2d7c0475f8a42ec034534621476d695d8137d495829a278022",
+    ".recovery/build-gcc93/obj/cards/onslaught.o": "50652b0c4ff495c734a6972f12cac374ee7d981b8a0eb5d6562ddb5bf10f271e",
+    ".recovery/build-gcc93/obj/cards/origins.o": "9977e34ef38c6dfb36b3238387d4c64a64b81bd27a09abe26f7b72e1b0b670f3",
+    ".recovery/build-gcc93/obj/cards/planar_chaos.o": "62ed68598317736a6b6daa0f3497efcb85fddd26addcf13176e3a2e2cc9a5b7f",
+    ".recovery/build-gcc93/obj/cards/planechase.o": "bec10f2aead488e801603c9f4f6d9b74cd0a2635c894a9d5bad2f622e6350c84",
+    ".recovery/build-gcc93/obj/cards/planeshift.o": "63fe83228ab721f7ff373b70039bceda90b0c1a75d3c186c0086db9cdab0f031",
+    ".recovery/build-gcc93/obj/cards/planeswalker.o": "94b02c2eef7c9275f8bd742ae3f1a8e87eb5929fd6ad4eae4d4152a95bb2727e",
+    ".recovery/build-gcc93/obj/cards/portal_1_2_3k.o": "abfb3ac8072d29685ac64282b9c668a8affddfc8a375013449e578306f74d6b2",
+    ".recovery/build-gcc93/obj/cards/promo.o": "3c7560ef55629ced67d3ee75e9ce9a35668ad3296814520e54435d249fbb7403",
+    ".recovery/build-gcc93/obj/cards/prophecy.o": "33fbedd9f18989bd3aa593650122de9a5f2914fefab4fc278d14a526a038fc82",
+    ".recovery/build-gcc93/obj/cards/ravnica.o": "01cc327f4891cb4df6adff64ed63e27b1b3097f24866adb2e31960c275cd79e4",
+    ".recovery/build-gcc93/obj/cards/ravnica_allegiance.o": "6d8787a53c666f02ef1b5c05d824174b311bd857ecf5a656ee2d09d94522345f",
+    ".recovery/build-gcc93/obj/cards/return_to_ravnica.o": "09cd69c72c96a51e06f8ac7af9b1b30593de6b708641ae7113e10095dfbd5b19",
+    ".recovery/build-gcc93/obj/cards/rise_of_the_eldrazi.o": "537fcbf7e1824a5e13996911af602cf99131f4b67aba71d6ae17dab8d6072720",
+    ".recovery/build-gcc93/obj/cards/rivals_of_ixalan.o": "3a7097fa8db9bf8e3d4095bad2f835b076a84c9d11c4265d7c753d49991b607c",
+    ".recovery/build-gcc93/obj/cards/saviors_of_kamigawa.o": "4fca14948c960b0fcf04353a1a7ebffbc27b81ffbd636bedba4135649f08d1fd",
+    ".recovery/build-gcc93/obj/cards/scars_of_mirrodin.o": "ca20b6ad6fc34d537b03a2a4a252fed5f355e00d80b2723c41c388533c63c4d4",
+    ".recovery/build-gcc93/obj/cards/scourge.o": "f199fc18ad04d66ea30f7f661da355bf8f6376912fb57325b375fb4c0879102d",
+    ".recovery/build-gcc93/obj/cards/shadowmoor.o": "31663932c239a605208343d03897de532d50498992ff7f50b222bdc3733680b3",
+    ".recovery/build-gcc93/obj/cards/shadows_over_innistrad.o": "3c89e20385fcacaf2b74999581e84914ce9b17b540bcf1cd8406727254f28ca5",
+    ".recovery/build-gcc93/obj/cards/shards_of_alara.o": "f026043cb987b91227ee95f5887dd4d5a3a94c63b61e8e50ee2d76fab61e1f1f",
+    ".recovery/build-gcc93/obj/cards/strixhaven.o": "0c66703db8329c0989d70cee88d3a3188c23347b197dbd1c0d667f0fefdca3d0",
+    ".recovery/build-gcc93/obj/cards/stronghold.o": "c854e454da7d43c81de3483c050d196f3d0f59c5c28321834c465e5891cc8c0a",
+    ".recovery/build-gcc93/obj/cards/stubs.o": "e651ae9282c8f33a6cac34cd7a158af430ef01d4158a0fd0898939b05aa36dff",
+    ".recovery/build-gcc93/obj/cards/tempest.o": "fc7999cc6e757c489730d4932043568915662a70c8a6fd70977893b85e90ef59",
+    ".recovery/build-gcc93/obj/cards/the_dark.o": "201071e9b25c8ae44a661b385cbf838d6a22edcf9f4281495f895fce4d0d474d",
+    ".recovery/build-gcc93/obj/cards/theros.o": "4951ec08ca518e6207735e6ee9a24d0a6cbc6fadb828b125db15a3413042a4de",
+    ".recovery/build-gcc93/obj/cards/theros_beyond_death.o": "ea0ce68e682290fb50fb41a783f4502a74b1b8a9deaf7ddeab0be0f1d5062762",
+    ".recovery/build-gcc93/obj/cards/throne_of_eldraine.o": "cc3c3809ca0f62e02ea84073ee93fd2e4b0dd57a83ba2b473a191df545535a03",
+    ".recovery/build-gcc93/obj/cards/time_spiral.o": "269ae0f5aaf715a905abf54e08b8f38505c7d64aa254ea7a728851307d155626",
+    ".recovery/build-gcc93/obj/cards/tokens.o": "0a88f489b574927b9b9a70680f61f82854fe3c71b187d4e2ea94a4936cca082b",
+    ".recovery/build-gcc93/obj/cards/torment.o": "774dde325f0221155fc948a46a8e366daf63fdf1b66dc7b5eb1f20fae72ce18b",
+    ".recovery/build-gcc93/obj/cards/unglued_unhinged.o": "001abfffde9d2b50c803a4497d377bd5f23b206f431a63aa4a6ceb85df9881ee",
+    ".recovery/build-gcc93/obj/cards/unlimited.o": "2935c3e7fdf64723c6bddf7e914fcef6734734f3a138a5de0b596e35281fa4fd",
+    ".recovery/build-gcc93/obj/cards/unstable.o": "6abd3f68afec23e086c2c4e378a88a16081420d5fecd1d41e1092e2d970f2e78",
+    ".recovery/build-gcc93/obj/cards/urza_destiny.o": "cac3a589a12a334763cb3251635c82efa3d8a4ee28eaac15a01c009ff862a721",
+    ".recovery/build-gcc93/obj/cards/urza_legacy.o": "43a1d53d195adf5e08b686082b241cc81ed58065fcb1952d52d2a04cc2574b5c",
+    ".recovery/build-gcc93/obj/cards/urza_saga.o": "60145fc238b24ea1fb136421767a73195e2b8700875d103fa2ee6152da0466e0",
+    ".recovery/build-gcc93/obj/cards/vanguard.o": "65c419abde65a20fd64ccb8e1f60a918ce39a01fab0595c2a578c605329d7838",
+    ".recovery/build-gcc93/obj/cards/visions.o": "cbf9e3169afe06359f96e5f29e08a073d066d2593238d8e06e182685c0217913",
+    ".recovery/build-gcc93/obj/cards/war_of_the_spark.o": "1c5efbdfee6a670c0c75a49ff7ea60392dfe4c34a188726627760b3a5a529eaa",
+    ".recovery/build-gcc93/obj/cards/weatherlight.o": "90aa378a7cfa6d59ee494d41e30edb07c90159c5fa02c92de3ba3cd0feafab07",
+    ".recovery/build-gcc93/obj/cards/worldwake.o": "4755ad0314da4de54bbc1a49e2e22fec75c792910125f9c2434ce220bd49773d",
+    ".recovery/build-gcc93/obj/cards/zendikar.o": "ab191a0ff59f41e674d9ac7b4517f14d18a8d36c8fa0e9a0d7613d666c9a74e6",
+    ".recovery/build-gcc93/obj/cards/zendikar_rising.o": "50439708f07a0a48a67450c714cf322402e11d1ee20c2a01594402872f8ae718",
+    ".recovery/build-gcc93/obj/functions/abilities.o": "20ba8038706c01684f4f654c4a5caeb15f071eed71f1ba24c238cbc915379df8",
+    ".recovery/build-gcc93/obj/functions/ai.o": "cbc401ccc5bd74c991043fddfa3e39601692a0eae7c6219f9d8bb5294535e00b",
+    ".recovery/build-gcc93/obj/functions/auras.o": "c4b0dda11be04c1079393476b98b89b47cad3e316dea153bda458bf3673c3030",
+    ".recovery/build-gcc93/obj/functions/boost_creature_type.o": "b0e8074ca4e4c554ed0670518a556d14358f7837e038869501ed2585083560fc",
+    ".recovery/build-gcc93/obj/functions/challenge_mode.o": "54e64b2fffa7aa393e3636676764ab3e9b88dc882a5a0b11221825a4f7a54249",
+    ".recovery/build-gcc93/obj/functions/count_graveyard.o": "a917abf489b330d638b77890714d7d63225e17e7c15c7bbfd29bab77da410625",
+    ".recovery/build-gcc93/obj/functions/counters.o": "4d742c45c007c230fdac48d2218f4f9fdcb5bea7c5416b09be7c96f81b2e1af5",
+    ".recovery/build-gcc93/obj/functions/damage_effects.o": "0927693efab3f9ffeb6a6fc8e48ed4e4ba902d65f6e41c37c273efc8e9d0d985",
+    ".recovery/build-gcc93/obj/functions/deadbox.o": "f36407331a0bad0edbcd57745dc7b5ec4a532ab5060bca5ef0926724868c0a3d",
+    ".recovery/build-gcc93/obj/functions/deck.o": "c352dd40d422fb926d818fbd094d8fc428bd30cbd740b04e3247a577c3a20165",
+    ".recovery/build-gcc93/obj/functions/dialog.o": "cb49c1420085a5f33e9603256e9a88b6ab7f786b87957e86db43f7aab79e85e5",
+    ".recovery/build-gcc93/obj/functions/dice.o": "c47c476f886d28ef4f866d6faec33a6678d0c3da3dcfdc8477f6730481621872",
+    ".recovery/build-gcc93/obj/functions/draft.o": "57ae899ea6ceb072f3d5343e8b0f0572efe52dfd63048c2fc88f0d779fb9b013",
+    ".recovery/build-gcc93/obj/functions/engine.o": "672d96eadd65851caf1e2b3c3f29d3b5ba29479adc2d5dbd309548319f52dcfb",
+    ".recovery/build-gcc93/obj/functions/equipments.o": "e138f240a4fe197d95a69c90e601bf9a4f958254c260a603317000e029fca35d",
+    ".recovery/build-gcc93/obj/functions/events.o": "f6b0e8bf9ba0a36fff9d0ebd45dddb6c38468bffd934c84893b1a0fcb00c2781",
+    ".recovery/build-gcc93/obj/functions/exiledby.o": "e8bc29423bcd4f6bf7a9a079b9b85641f30566d66ee745800a8eca29297a416f",
+    ".recovery/build-gcc93/obj/functions/functions.o": "ca1bbabdddc87f9065f1aba8d2584fd37c37681ca7f93ca951faa5239c7cd0f2",
+    ".recovery/build-gcc93/obj/functions/gain_control_and_legend_rule.o": "fd77d49518923296dc3cb4f52466de831fc8a67a04ffff23f788794a3763708c",
+    ".recovery/build-gcc93/obj/functions/global_checking.o": "e0bd743fa7117c01264965356cc07391079fc50f2191ded8af02d905d7c9ec87",
+    ".recovery/build-gcc93/obj/functions/has_creature_type.o": "aa1b3633ca9afaf17b7267ff7e73cfc3b7721af3a61314e8759d5f372d82990a",
+    ".recovery/build-gcc93/obj/functions/has_threshold.o": "1801874a2392bffd14fd695cdef0b010efdd329ec91a38f4317fea2e79f3b622",
+    ".recovery/build-gcc93/obj/functions/helper_functions.o": "801466ab83cd9d8777c95b1fea6ba81e9a9913af4ec43d61294ecd5734c045be",
+    ".recovery/build-gcc93/obj/functions/load_text.o": "a16ec0ee1f45e4ac0a71630191accff3cbda582d15369f3b66fc7b53568dc112",
+    ".recovery/build-gcc93/obj/functions/manipulate_and_damage_all.o": "23e48ec021f3cb8141a8e7d2dbbf1c5419b9311b66a70a5766d58cbc5696b1cb",
+    ".recovery/build-gcc93/obj/functions/multiblock.o": "d65152c3fae6f6a0a645981024fc0890be79467f92beb67f88441ea8d64d07fe",
+    ".recovery/build-gcc93/obj/functions/packs.o": "7eb7d027e27236ea9ea95dce26d1f4ff80999e411a119926dc7d47d814b73a63",
+    ".recovery/build-gcc93/obj/functions/play_spell_for_free.o": "969b3b2284add33b7c4bf2f59d76787edaf60418351b3d35554f1a245c637b1a",
+    ".recovery/build-gcc93/obj/functions/produce_mana.o": "f02f92fff8bbd1d07d3568f768d53a7fda7eb64ff99905a49d276cece6c92a99",
+    ".recovery/build-gcc93/obj/functions/rules_engine.o": "de9c1ab07e51f7a7b1c3bdef89cb05a829ef52ea4460661d5559a602317cdbcc",
+    ".recovery/build-gcc93/obj/functions/sacrifices.o": "faafebba695e8dd2f7bf48d2f3247f9a9f94bf5f77d96c6d015901edf70d42fd",
+    ".recovery/build-gcc93/obj/functions/show_backtrace.o": "009b3bc0dbf46260103baab677de9929b33f34886740e326342313b3f4db022f",
+    ".recovery/build-gcc93/obj/functions/targets.o": "74ebf4a9944dda68624f9742b6ea52cc1f80d4fd92dd38906de99a9830d5a456",
+    ".recovery/build-gcc93/obj/functions/token_generation.o": "053a6965d293b1e6a55609b5762f6d8c64e47a67555aab8f5a96118e1dcd5518",
+    ".recovery/build-gcc93/obj/functions/tutors.o": "c152afd9fc36c77ecda85a5aaf90a5057a41c9caec5b3a03096604ebe5893f19",
+    ".recovery/build-gcc93/obj/functions/upkeep.o": "687f695563d9ea746cfb578ba1cff61eabd471029b10c2dc619999343b5d3f70",
+    ".recovery/build-gcc93/obj/functions/windows.o": "9e8f3553213dc29054a7dc8c03db4d8b6e2b57edd9296e93accf921a76d07769"
+  },
+  "after_link_inputs": {
+    ".recovery/build-gcc93/obj/cards/aether_revolt.o": "f368126f5da00a6a5d5dc8ad9d1c0d108c8af2d4c144cd033ef0e88b64d3de3e",
+    ".recovery/build-gcc93/obj/cards/alara_reborn.o": "460b880bd45f6544fa7b45bdd0d5b6766fbe573b149f16bf9e2e12c40a75d596",
+    ".recovery/build-gcc93/obj/cards/alliances.o": "9362989ecfaf0abe8654fa67af318afd016e97c894664937fe39ee5005046f08",
+    ".recovery/build-gcc93/obj/cards/amonkhet.o": "78b4bd1d28a1bf27e2ce0d448c0eaf3ec59902946bfe98774475382268767471",
+    ".recovery/build-gcc93/obj/cards/antiquities.o": "ad74f8c2d90d81d7a5b59924af5fcd05bc50987e9992359eede4bf1dbd5320b7",
+    ".recovery/build-gcc93/obj/cards/apocalypse.o": "24fdddc48acf4463cb48b8f01614b5205466f177d4e4c92cd58706a0fa60073e",
+    ".recovery/build-gcc93/obj/cards/arabian_nights.o": "e5277bbf9d4769fe836b68b909018bb6a043df337cfb661375af02274b25f7cd",
+    ".recovery/build-gcc93/obj/cards/archenemy.o": "60afaa61b4a68c96ac275379a8245178bbe94be9982e1090532319268f67627b",
+    ".recovery/build-gcc93/obj/cards/archenemy_nicol_bolas.o": "f696df1d7831001d3ff64988f2fd34b6b2e5dd022b1459a333becf1ea4be3423",
+    ".recovery/build-gcc93/obj/cards/artifact_creatures.o": "e06702d3247122e13e4ec9c47a7f7bb102f75e7aa741aca32906f6b9ceb2ed7e",
+    ".recovery/build-gcc93/obj/cards/avacyn_restored.o": "f7e32d5b674768ea02e829977ea258e6f882375926905325ebfe5554949fa5f6",
+    ".recovery/build-gcc93/obj/cards/battle_for_zendikar.o": "f485c57f48b0c3e39aa89b6b07ebb0c1391e1c04eb7381c09d27bdc845411fb3",
+    ".recovery/build-gcc93/obj/cards/battlebond.o": "e78c5ecc157268979c79ae561cc213594a26b9479ba1ed55e466614abb38aed8",
+    ".recovery/build-gcc93/obj/cards/betrayers_of_kamigawa.o": "ee958e1aa3184ba10856056561a1c6e793b419f45734d8c94922c1c29014e9d0",
+    ".recovery/build-gcc93/obj/cards/born_of_the_gods.o": "3a7bc44310bd2953f08e63bc285a24235e21386591e8822453a520aa0d0f4e25",
+    ".recovery/build-gcc93/obj/cards/champions_of_kamigawa.o": "43464b40046c0d83711f28f757874c3f38c04a0fbb13e90e2c000e68fd6f5407",
+    ".recovery/build-gcc93/obj/cards/coldsnap.o": "30ceeeab883efd7ff4563a38e13584196f39bdb6708601cefbc5041d9f5b3e95",
+    ".recovery/build-gcc93/obj/cards/commander.o": "4bc73373d6a30105bf3bc8d66682119c23d2f51c0af949277944c934f3426545",
+    ".recovery/build-gcc93/obj/cards/commander_2013.o": "b4ad882383d9e00a8c7acf1ad44191fe5f0f418cdc247f1042df691dfccbdc5a",
+    ".recovery/build-gcc93/obj/cards/commander_2014.o": "a9ca2687d11e1b1950d6cc977e982bf287c31d84b93d8754c4ed623684704602",
+    ".recovery/build-gcc93/obj/cards/commander_2015.o": "e317d4bbf819626778892f0b88b1ed5f3b03801bc7bccefd19d6d7049a340a99",
+    ".recovery/build-gcc93/obj/cards/commander_2016.o": "e24e693184b5389616a56922e39828dedbf04b5540ddb7365e20e3e8b5527b34",
+    ".recovery/build-gcc93/obj/cards/commander_2017.o": "2c9a936589a22c740df10df22703c3744aad1b6f39a1f7d352e9910706e34d28",
+    ".recovery/build-gcc93/obj/cards/commander_2018.o": "d36c148c1e490d3ce09bafc8dea6e614828875b970de0ee41736c9aaa91140fe",
+    ".recovery/build-gcc93/obj/cards/commander_2019.o": "7c5fe182eef275722b20c4a82be2fe672d77f173b2e8933c66710401b4bc7e6c",
+    ".recovery/build-gcc93/obj/cards/commander_2020.o": "657b3ffcaa7ddf90ad188aa7ce6988a9e7c46cebee94f0cec558d666752603a6",
+    ".recovery/build-gcc93/obj/cards/commander_legends.o": "5bc64f52beea6d954fb75ae19d7aa12a50196b7973423f354c69a461c973a39c",
+    ".recovery/build-gcc93/obj/cards/conflux.o": "83b3d611e872d407b467d00bc57ab24a107a17866b215cb0d472cdfc277c0fce",
+    ".recovery/build-gcc93/obj/cards/conspiracy-take-the-crown.o": "fc789a4fa96dd122b033bf667cd729c58003857b51fb54caabe9b0bf10048ac7",
+    ".recovery/build-gcc93/obj/cards/conspiracy.o": "d89c8cbebaed8cc9e24bb16d2c5c4c6d98744ec47e08f99ca38851fb75dbad76",
+    ".recovery/build-gcc93/obj/cards/dark_ascension.o": "abb0095f872fcd9cbad2d7c0dc79a2f49eab7608b0e81491f06ed4db585573e7",
+    ".recovery/build-gcc93/obj/cards/darksteel.o": "3295baaa52b86cfde6e7937b9a879ccd4fec81d165d7630bc9bfff8ad0b5c6c9",
+    ".recovery/build-gcc93/obj/cards/dissension.o": "c8a1b91c1be39b37605e77556e5a38ef3ca92f8936de718dbfe52d479ab4028f",
+    ".recovery/build-gcc93/obj/cards/dominaria.o": "02067f326b3724db284d890ba9d2c535514b7a906725e8263f7a5351af8b1c65",
+    ".recovery/build-gcc93/obj/cards/draft.o": "cb219ad59f3e8dafb4d2afbe9984789843b411a6afd40f107616dd4887cff379",
+    ".recovery/build-gcc93/obj/cards/dragons_maze.o": "1cf409bc1c3e0ffe906e82f49e0eb34c78433dcccea736dcaecbe920f7cb744e",
+    ".recovery/build-gcc93/obj/cards/dragons_of_tarkir.o": "53d23bf9690df0787370f124f74e3c4fec16e9f3f4d91419cd07637834b9533b",
+    ".recovery/build-gcc93/obj/cards/eldritch_moon.o": "efc5f07af3ab3aba5fbf7b765280040439aa4560c1be1e83d4b57651e9505f38",
+    ".recovery/build-gcc93/obj/cards/equipment.o": "89a5e3fab8e75d3ba6ca1a78ba7b3cf0f97fb182e2de69b4b30cf148f984e2c8",
+    ".recovery/build-gcc93/obj/cards/eventide.o": "204d5f373988ab936485129c2c16884e66ba23668aa35103274f76018da1ce17",
+    ".recovery/build-gcc93/obj/cards/exodus.o": "a7ba8ca2f3e6bdf4f4fb90cc214fd8cf24427961561495a6345efc5258d43292",
+    ".recovery/build-gcc93/obj/cards/fallen_empires.o": "8d6b67a5f8cb92fb79e1a2d001c7bf7af72e7db0f8242a870baa3543fec087c6",
+    ".recovery/build-gcc93/obj/cards/fate_reforged.o": "7a21c579ee627f90969fa703707039407dc44863ed3744395bd51cec048002cf",
+    ".recovery/build-gcc93/obj/cards/fifth_dawn.o": "31a63d46929f1b1c9958abf3388f1a23ff3e56811b19ddca95d78ead2e831bd7",
+    ".recovery/build-gcc93/obj/cards/future_sight.o": "6cbf5654cc4629d74bf4cd94a9c8db84627802927ee0f602f5965d25913b7d30",
+    ".recovery/build-gcc93/obj/cards/gargaroz.o": "d1d334ddadef46f82ed8862507d3dbddf24ff481a1370a683d3f148c0c4ca15c",
+    ".recovery/build-gcc93/obj/cards/gatecrash.o": "270bda0cc9d05b8035671313328ec8fb62744ca664fc1366d041cee74dec7e1d",
+    ".recovery/build-gcc93/obj/cards/global_series_jiang_yanggu_and_mu_yanling.o": "7e3280dc139e670bfdf54e259d9332b84cf9973a24bfc0b17202f8dc559cdc86",
+    ".recovery/build-gcc93/obj/cards/guildpact.o": "30759cebba6066c322f80c6b1ebd7263c17fa487803e521462504e7ec7f7b7b9",
+    ".recovery/build-gcc93/obj/cards/guilds_of_ravnica.o": "a247f3b38f8a5dcab2a7f17c915b86f7bb24906cb26f0cab1cf95d078fa6bb0f",
+    ".recovery/build-gcc93/obj/cards/homelands.o": "2e2fcc8944cf24b222f8e4df45263f27f36cdb856678161ac460d6322f348f37",
+    ".recovery/build-gcc93/obj/cards/hour_of_devastation.o": "b6893a9213658527fda8756fbaea6241594f63f8e202c2fbe3f25ef505ae19c4",
+    ".recovery/build-gcc93/obj/cards/ice_age.o": "11869c85a2372dda232851ddf04eaf6f4068473a7ff4a36c4076994c8c722dc3",
+    ".recovery/build-gcc93/obj/cards/ikoria.o": "b5a81f2406df331f939a87a6d1b56cecbe419a46cf65947618b5d78bebfda010",
+    ".recovery/build-gcc93/obj/cards/innistrad.o": "9b805748c135dea0be3f7d4e18ddd8e9b9fc88ac8bfd64436405e7a6e5e0f97d",
+    ".recovery/build-gcc93/obj/cards/invasion.o": "11c2e98c4a3a09f3015d7cdca08968979a8f6339897b46ab04e8be5283b8014b",
+    ".recovery/build-gcc93/obj/cards/ixalan.o": "7291518d35140dc0fa0c1857a4f67b1f0601e6de3954fbf506b5b28ec734a9f5",
+    ".recovery/build-gcc93/obj/cards/journey_into_nyx.o": "0e797947d72b297c56b40a5fcfbb13e2a04221b199b3f9b4d4ef37cd4d0fd267",
+    ".recovery/build-gcc93/obj/cards/judgement.o": "9408f085e34eb8b277abbfd5845d1de3e89613d7a3e06d6274b73a9eaa534dfd",
+    ".recovery/build-gcc93/obj/cards/jumpstart.o": "3e3f016590029f65581a64fa72f025e8c97b2112fcc45840695be7f08928fa2a",
+    ".recovery/build-gcc93/obj/cards/kaladesh.o": "7540f04fdaa989c3c9b6a7bdfab2a2f6d15a6fdf61e7bfece0f432ba00f8f66b",
+    ".recovery/build-gcc93/obj/cards/khans_of_tarkir.o": "7fa0ef36a2eec632dc2c8407f049fd8b1f73c672367a14ce7ed7d5578f278367",
+    ".recovery/build-gcc93/obj/cards/legends.o": "62e1cedbf005076bfceab73a0942962403137954117ee685c671082fd4b4eac8",
+    ".recovery/build-gcc93/obj/cards/legions.o": "e7e207a36f65aa1edcf8ceeb7c11df1102ccfefeaeda7e58339c6083b4c6f12c",
+    ".recovery/build-gcc93/obj/cards/lorwyn.o": "03a2376ef06b698d32a2b9b06cab92b7833d02aa01dc6c00b21c999d8f3fd27f",
+    ".recovery/build-gcc93/obj/cards/m10.o": "9e8dd346ee8db2b1d86a71450924844d9e007d275da42388a0610cda79a6906b",
+    ".recovery/build-gcc93/obj/cards/m11.o": "3049dcfa308ab5193d12fba4c22976c30fdfe6c3991ce8afd3d6bad77d6e9cb0",
+    ".recovery/build-gcc93/obj/cards/m12.o": "bd4b3303f8e2b7c147fb7392fb43e6387fa89540e6b8a35cdf11fa9e6c4598c6",
+    ".recovery/build-gcc93/obj/cards/m13.o": "858d2e01a782c0ff9eee3e079e1cead3bc309b64bf0e61f3058a50320a338d33",
+    ".recovery/build-gcc93/obj/cards/m14.o": "aa44214336726647a70b6a5f81e53b226a9a8a5751b489af4590e73a4d3c0800",
+    ".recovery/build-gcc93/obj/cards/m15.o": "c9368b5f6c023127d1d5162438cc9f39dbac60e7dc438907863aedefe758b57c",
+    ".recovery/build-gcc93/obj/cards/m19.o": "d75f1a0604d54ed6b8e7673d7810d6b7a6b1642a138e97a9c13f599e83fb4e55",
+    ".recovery/build-gcc93/obj/cards/m20.o": "e5384982892a3c3274281f39fe60b457299a4058dea6d6dd96883a401acc254b",
+    ".recovery/build-gcc93/obj/cards/mercadian_masques.o": "45be414daaf39b0d53a88ccb4ee11a40d9b5f7f3b8c169ee678870dc548d8c57",
+    ".recovery/build-gcc93/obj/cards/mirage.o": "9693517f8e7ef5873f2a5e2306bf296332dc83a1fce635c91e6c2d7c474b499f",
+    ".recovery/build-gcc93/obj/cards/mirrodin.o": "94b5ffe224400ae5c19f60721fcf3b6f02b914defe5c248ec36d1efcc7ef63b4",
+    ".recovery/build-gcc93/obj/cards/mirrodin_besieged.o": "b68159f13a1c06b7ff223010df16c73f29394064b48a5afbd9c10decbe20c819",
+    ".recovery/build-gcc93/obj/cards/modern_horizons.o": "a249161e909a3aa716354d43e0e9c52208b765ddd74f53992c63d7cd1ff329fb",
+    ".recovery/build-gcc93/obj/cards/modern_horizons_2.o": "4978d6072d79e37aa5bd4d61ba0ae2f1f3395f83b1697c5475b46a74c07fa4b5",
+    ".recovery/build-gcc93/obj/cards/morningtide.o": "d8ab0b8f6937b2f588845bd398963fff0fc04fa7b031ed28dbda6fbe43ab2783",
+    ".recovery/build-gcc93/obj/cards/nemesis.o": "c73e6dff92d28db8d571408edd602ce0eb483f985ad29e54e9b9185a8921b2a5",
+    ".recovery/build-gcc93/obj/cards/new_phyrexia.o": "29138e4929b41920d5e1a2b03cb4026a8697eac2f5c8f3bc8f4d787079c0dbba",
+    ".recovery/build-gcc93/obj/cards/oath_of_the_gatewatch.o": "9cbee7d6e1fefe5ec5bf8e9e2791cda4e60567edbda0a4552aeb68440b1b9e48",
+    ".recovery/build-gcc93/obj/cards/odissey.o": "d3d2be7635d4f86797a454fec0e299fc2710defdab514aa573f9c19ea38916b4",
+    ".recovery/build-gcc93/obj/cards/odyssey.o": "e241d7c899623e2d7c0475f8a42ec034534621476d695d8137d495829a278022",
+    ".recovery/build-gcc93/obj/cards/onslaught.o": "50652b0c4ff495c734a6972f12cac374ee7d981b8a0eb5d6562ddb5bf10f271e",
+    ".recovery/build-gcc93/obj/cards/origins.o": "9977e34ef38c6dfb36b3238387d4c64a64b81bd27a09abe26f7b72e1b0b670f3",
+    ".recovery/build-gcc93/obj/cards/planar_chaos.o": "62ed68598317736a6b6daa0f3497efcb85fddd26addcf13176e3a2e2cc9a5b7f",
+    ".recovery/build-gcc93/obj/cards/planechase.o": "bec10f2aead488e801603c9f4f6d9b74cd0a2635c894a9d5bad2f622e6350c84",
+    ".recovery/build-gcc93/obj/cards/planeshift.o": "63fe83228ab721f7ff373b70039bceda90b0c1a75d3c186c0086db9cdab0f031",
+    ".recovery/build-gcc93/obj/cards/planeswalker.o": "94b02c2eef7c9275f8bd742ae3f1a8e87eb5929fd6ad4eae4d4152a95bb2727e",
+    ".recovery/build-gcc93/obj/cards/portal_1_2_3k.o": "abfb3ac8072d29685ac64282b9c668a8affddfc8a375013449e578306f74d6b2",
+    ".recovery/build-gcc93/obj/cards/promo.o": "3c7560ef55629ced67d3ee75e9ce9a35668ad3296814520e54435d249fbb7403",
+    ".recovery/build-gcc93/obj/cards/prophecy.o": "33fbedd9f18989bd3aa593650122de9a5f2914fefab4fc278d14a526a038fc82",
+    ".recovery/build-gcc93/obj/cards/ravnica.o": "01cc327f4891cb4df6adff64ed63e27b1b3097f24866adb2e31960c275cd79e4",
+    ".recovery/build-gcc93/obj/cards/ravnica_allegiance.o": "6d8787a53c666f02ef1b5c05d824174b311bd857ecf5a656ee2d09d94522345f",
+    ".recovery/build-gcc93/obj/cards/return_to_ravnica.o": "09cd69c72c96a51e06f8ac7af9b1b30593de6b708641ae7113e10095dfbd5b19",
+    ".recovery/build-gcc93/obj/cards/rise_of_the_eldrazi.o": "537fcbf7e1824a5e13996911af602cf99131f4b67aba71d6ae17dab8d6072720",
+    ".recovery/build-gcc93/obj/cards/rivals_of_ixalan.o": "3a7097fa8db9bf8e3d4095bad2f835b076a84c9d11c4265d7c753d49991b607c",
+    ".recovery/build-gcc93/obj/cards/saviors_of_kamigawa.o": "4fca14948c960b0fcf04353a1a7ebffbc27b81ffbd636bedba4135649f08d1fd",
+    ".recovery/build-gcc93/obj/cards/scars_of_mirrodin.o": "ca20b6ad6fc34d537b03a2a4a252fed5f355e00d80b2723c41c388533c63c4d4",
+    ".recovery/build-gcc93/obj/cards/scourge.o": "f199fc18ad04d66ea30f7f661da355bf8f6376912fb57325b375fb4c0879102d",
+    ".recovery/build-gcc93/obj/cards/shadowmoor.o": "31663932c239a605208343d03897de532d50498992ff7f50b222bdc3733680b3",
+    ".recovery/build-gcc93/obj/cards/shadows_over_innistrad.o": "3c89e20385fcacaf2b74999581e84914ce9b17b540bcf1cd8406727254f28ca5",
+    ".recovery/build-gcc93/obj/cards/shards_of_alara.o": "f026043cb987b91227ee95f5887dd4d5a3a94c63b61e8e50ee2d76fab61e1f1f",
+    ".recovery/build-gcc93/obj/cards/strixhaven.o": "0c66703db8329c0989d70cee88d3a3188c23347b197dbd1c0d667f0fefdca3d0",
+    ".recovery/build-gcc93/obj/cards/stronghold.o": "c854e454da7d43c81de3483c050d196f3d0f59c5c28321834c465e5891cc8c0a",
+    ".recovery/build-gcc93/obj/cards/stubs.o": "e651ae9282c8f33a6cac34cd7a158af430ef01d4158a0fd0898939b05aa36dff",
+    ".recovery/build-gcc93/obj/cards/tempest.o": "fc7999cc6e757c489730d4932043568915662a70c8a6fd70977893b85e90ef59",
+    ".recovery/build-gcc93/obj/cards/the_dark.o": "201071e9b25c8ae44a661b385cbf838d6a22edcf9f4281495f895fce4d0d474d",
+    ".recovery/build-gcc93/obj/cards/theros.o": "4951ec08ca518e6207735e6ee9a24d0a6cbc6fadb828b125db15a3413042a4de",
+    ".recovery/build-gcc93/obj/cards/theros_beyond_death.o": "ea0ce68e682290fb50fb41a783f4502a74b1b8a9deaf7ddeab0be0f1d5062762",
+    ".recovery/build-gcc93/obj/cards/throne_of_eldraine.o": "cc3c3809ca0f62e02ea84073ee93fd2e4b0dd57a83ba2b473a191df545535a03",
+    ".recovery/build-gcc93/obj/cards/time_spiral.o": "269ae0f5aaf715a905abf54e08b8f38505c7d64aa254ea7a728851307d155626",
+    ".recovery/build-gcc93/obj/cards/tokens.o": "0a88f489b574927b9b9a70680f61f82854fe3c71b187d4e2ea94a4936cca082b",
+    ".recovery/build-gcc93/obj/cards/torment.o": "774dde325f0221155fc948a46a8e366daf63fdf1b66dc7b5eb1f20fae72ce18b",
+    ".recovery/build-gcc93/obj/cards/unglued_unhinged.o": "001abfffde9d2b50c803a4497d377bd5f23b206f431a63aa4a6ceb85df9881ee",
+    ".recovery/build-gcc93/obj/cards/unlimited.o": "2935c3e7fdf64723c6bddf7e914fcef6734734f3a138a5de0b596e35281fa4fd",
+    ".recovery/build-gcc93/obj/cards/unstable.o": "6abd3f68afec23e086c2c4e378a88a16081420d5fecd1d41e1092e2d970f2e78",
+    ".recovery/build-gcc93/obj/cards/urza_destiny.o": "cac3a589a12a334763cb3251635c82efa3d8a4ee28eaac15a01c009ff862a721",
+    ".recovery/build-gcc93/obj/cards/urza_legacy.o": "43a1d53d195adf5e08b686082b241cc81ed58065fcb1952d52d2a04cc2574b5c",
+    ".recovery/build-gcc93/obj/cards/urza_saga.o": "60145fc238b24ea1fb136421767a73195e2b8700875d103fa2ee6152da0466e0",
+    ".recovery/build-gcc93/obj/cards/vanguard.o": "65c419abde65a20fd64ccb8e1f60a918ce39a01fab0595c2a578c605329d7838",
+    ".recovery/build-gcc93/obj/cards/visions.o": "cbf9e3169afe06359f96e5f29e08a073d066d2593238d8e06e182685c0217913",
+    ".recovery/build-gcc93/obj/cards/war_of_the_spark.o": "1c5efbdfee6a670c0c75a49ff7ea60392dfe4c34a188726627760b3a5a529eaa",
+    ".recovery/build-gcc93/obj/cards/weatherlight.o": "90aa378a7cfa6d59ee494d41e30edb07c90159c5fa02c92de3ba3cd0feafab07",
+    ".recovery/build-gcc93/obj/cards/worldwake.o": "4755ad0314da4de54bbc1a49e2e22fec75c792910125f9c2434ce220bd49773d",
+    ".recovery/build-gcc93/obj/cards/zendikar.o": "ab191a0ff59f41e674d9ac7b4517f14d18a8d36c8fa0e9a0d7613d666c9a74e6",
+    ".recovery/build-gcc93/obj/cards/zendikar_rising.o": "50439708f07a0a48a67450c714cf322402e11d1ee20c2a01594402872f8ae718",
+    ".recovery/build-gcc93/obj/functions/abilities.o": "20ba8038706c01684f4f654c4a5caeb15f071eed71f1ba24c238cbc915379df8",
+    ".recovery/build-gcc93/obj/functions/ai.o": "cbc401ccc5bd74c991043fddfa3e39601692a0eae7c6219f9d8bb5294535e00b",
+    ".recovery/build-gcc93/obj/functions/auras.o": "c4b0dda11be04c1079393476b98b89b47cad3e316dea153bda458bf3673c3030",
+    ".recovery/build-gcc93/obj/functions/boost_creature_type.o": "b0e8074ca4e4c554ed0670518a556d14358f7837e038869501ed2585083560fc",
+    ".recovery/build-gcc93/obj/functions/challenge_mode.o": "54e64b2fffa7aa393e3636676764ab3e9b88dc882a5a0b11221825a4f7a54249",
+    ".recovery/build-gcc93/obj/functions/count_graveyard.o": "a917abf489b330d638b77890714d7d63225e17e7c15c7bbfd29bab77da410625",
+    ".recovery/build-gcc93/obj/functions/counters.o": "4d742c45c007c230fdac48d2218f4f9fdcb5bea7c5416b09be7c96f81b2e1af5",
+    ".recovery/build-gcc93/obj/functions/damage_effects.o": "0927693efab3f9ffeb6a6fc8e48ed4e4ba902d65f6e41c37c273efc8e9d0d985",
+    ".recovery/build-gcc93/obj/functions/deadbox.o": "f36407331a0bad0edbcd57745dc7b5ec4a532ab5060bca5ef0926724868c0a3d",
+    ".recovery/build-gcc93/obj/functions/deck.o": "c352dd40d422fb926d818fbd094d8fc428bd30cbd740b04e3247a577c3a20165",
+    ".recovery/build-gcc93/obj/functions/dialog.o": "cb49c1420085a5f33e9603256e9a88b6ab7f786b87957e86db43f7aab79e85e5",
+    ".recovery/build-gcc93/obj/functions/dice.o": "c47c476f886d28ef4f866d6faec33a6678d0c3da3dcfdc8477f6730481621872",
+    ".recovery/build-gcc93/obj/functions/draft.o": "57ae899ea6ceb072f3d5343e8b0f0572efe52dfd63048c2fc88f0d779fb9b013",
+    ".recovery/build-gcc93/obj/functions/engine.o": "672d96eadd65851caf1e2b3c3f29d3b5ba29479adc2d5dbd309548319f52dcfb",
+    ".recovery/build-gcc93/obj/functions/equipments.o": "e138f240a4fe197d95a69c90e601bf9a4f958254c260a603317000e029fca35d",
+    ".recovery/build-gcc93/obj/functions/events.o": "f6b0e8bf9ba0a36fff9d0ebd45dddb6c38468bffd934c84893b1a0fcb00c2781",
+    ".recovery/build-gcc93/obj/functions/exiledby.o": "e8bc29423bcd4f6bf7a9a079b9b85641f30566d66ee745800a8eca29297a416f",
+    ".recovery/build-gcc93/obj/functions/functions.o": "ca1bbabdddc87f9065f1aba8d2584fd37c37681ca7f93ca951faa5239c7cd0f2",
+    ".recovery/build-gcc93/obj/functions/gain_control_and_legend_rule.o": "fd77d49518923296dc3cb4f52466de831fc8a67a04ffff23f788794a3763708c",
+    ".recovery/build-gcc93/obj/functions/global_checking.o": "e0bd743fa7117c01264965356cc07391079fc50f2191ded8af02d905d7c9ec87",
+    ".recovery/build-gcc93/obj/functions/has_creature_type.o": "aa1b3633ca9afaf17b7267ff7e73cfc3b7721af3a61314e8759d5f372d82990a",
+    ".recovery/build-gcc93/obj/functions/has_threshold.o": "1801874a2392bffd14fd695cdef0b010efdd329ec91a38f4317fea2e79f3b622",
+    ".recovery/build-gcc93/obj/functions/helper_functions.o": "801466ab83cd9d8777c95b1fea6ba81e9a9913af4ec43d61294ecd5734c045be",
+    ".recovery/build-gcc93/obj/functions/load_text.o": "a16ec0ee1f45e4ac0a71630191accff3cbda582d15369f3b66fc7b53568dc112",
+    ".recovery/build-gcc93/obj/functions/manipulate_and_damage_all.o": "23e48ec021f3cb8141a8e7d2dbbf1c5419b9311b66a70a5766d58cbc5696b1cb",
+    ".recovery/build-gcc93/obj/functions/multiblock.o": "d65152c3fae6f6a0a645981024fc0890be79467f92beb67f88441ea8d64d07fe",
+    ".recovery/build-gcc93/obj/functions/packs.o": "7eb7d027e27236ea9ea95dce26d1f4ff80999e411a119926dc7d47d814b73a63",
+    ".recovery/build-gcc93/obj/functions/play_spell_for_free.o": "969b3b2284add33b7c4bf2f59d76787edaf60418351b3d35554f1a245c637b1a",
+    ".recovery/build-gcc93/obj/functions/produce_mana.o": "f02f92fff8bbd1d07d3568f768d53a7fda7eb64ff99905a49d276cece6c92a99",
+    ".recovery/build-gcc93/obj/functions/rules_engine.o": "de9c1ab07e51f7a7b1c3bdef89cb05a829ef52ea4460661d5559a602317cdbcc",
+    ".recovery/build-gcc93/obj/functions/sacrifices.o": "faafebba695e8dd2f7bf48d2f3247f9a9f94bf5f77d96c6d015901edf70d42fd",
+    ".recovery/build-gcc93/obj/functions/show_backtrace.o": "009b3bc0dbf46260103baab677de9929b33f34886740e326342313b3f4db022f",
+    ".recovery/build-gcc93/obj/functions/targets.o": "74ebf4a9944dda68624f9742b6ea52cc1f80d4fd92dd38906de99a9830d5a456",
+    ".recovery/build-gcc93/obj/functions/token_generation.o": "053a6965d293b1e6a55609b5762f6d8c64e47a67555aab8f5a96118e1dcd5518",
+    ".recovery/build-gcc93/obj/functions/tutors.o": "c152afd9fc36c77ecda85a5aaf90a5057a41c9caec5b3a03096604ebe5893f19",
+    ".recovery/build-gcc93/obj/functions/upkeep.o": "687f695563d9ea746cfb578ba1cff61eabd471029b10c2dc619999343b5d3f70",
+    ".recovery/build-gcc93/obj/functions/windows.o": "9e8f3553213dc29054a7dc8c03db4d8b6e2b57edd9296e93accf921a76d07769"
+  },
+  "scope": "Mirror Match previously retained its2020 local callback, which used KILL_DESTROY. The2022 DLL stores the shared native helper2073940 in token.special_code_for_legacy at offset60. Bind that verified auxiliary source identity to innistrad_exile_at_end_of_combat_legacy, which performs the recovered native exile/legacy cleanup behavior. Exact source replay changes one callback expression in the original commander_2015.c function. Native/rebuilt token76-byte geometry, four-byte int(int,int,event-enum) callback pointer shape, callback COFF identity and store are checked. Every other direct scalar byte-event multiset is retained; this does not prove all dynamic token values, transitive helper behavior or gameplay. The old local helper is left as historical source and may be eliminated as unused by the compiler. Native addresses and canonical identities remain separate provenance facts.",
+  "after_compiled": {
+    "die_offset": "0xe536fe",
+    "view": {
+      "address": "0x20e43b0",
+      "end": "0x20e4567",
+      "bytes_sha256": "b1933c6497f259a6ddbb6bae82ac143c9811220a2336095fc1d665383a915b5c"
+    },
+    "variables": [
+      {
+        "name": "token",
+        "die_offset": "0xe537ab",
+        "frame_offset": -96,
+        "shape": {
+          "kind": "DW_TAG_structure_type",
+          "size": 76
+        },
+        "scope_ranges": [
+          [
+            34489331,
+            34489336
+          ],
+          [
+            34489408,
+            34489493
+          ],
+          [
+            34489494,
+            34489510
+          ],
+          [
+            34489616,
+            34489703
+          ]
+        ]
+      }
+    ],
+    "callback_signature": {
+      "return_bytes": 4,
+      "return_encoding": 5,
+      "argument_kinds": [
+        "DW_TAG_base_type",
+        "DW_TAG_base_type",
+        "DW_TAG_enumeration_type"
+      ],
+      "argument_bytes": [
+        4,
+        4,
+        4
+      ]
+    },
+    "token_frame": -96,
+    "callback_store": {
+      "address": "0x20e449a",
+      "offset": 60,
+      "size": 4,
+      "value": 35944528,
+      "instruction": [
+        "mov",
+        "dword ptr [ebp - 0x1c], 0x2247850"
+      ]
+    },
+    "callback_symbol": "_innistrad_exile_at_end_of_combat_legacy",
+    "noncallback_byte_events": [
+      [
+        42,
+        1,
+        1
+      ],
+      [
+        48,
+        0,
+        1
+      ],
+      [
+        49,
+        0,
+        1
+      ],
+      [
+        50,
+        1,
+        1
+      ],
+      [
+        51,
+        0,
+        1
+      ],
+      [
+        52,
+        null,
+        1
+      ],
+      [
+        53,
+        null,
+        1
+      ],
+      [
+        54,
+        null,
+        1
+      ],
+      [
+        55,
+        null,
+        1
+      ]
+    ]
+  }
+}

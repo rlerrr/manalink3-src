@@ -6004,12 +6004,13 @@ int card_spell_queller(int player, int card, event_t event)
             iVar1 = check_rfg(instance->targets[1].player, (unsigned int)cards_data[iVar1].id);
             if (iVar1 != 0)
             {
-              scnprintf((char *)&td, 100, " Cast %s",
+              char prompt[100];
+              scnprintf(prompt, 100, " Cast %s",
                         cards_ptr[cards_data[instance->targets[1].card].id]->name);
               iVar1 = can_legally_play_iid(instance->targets[1].player, instance->targets[1].card);
               iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\010",
                                   instance->targets[1].player, "\001\014", "\001\003", "\001\016",
-                                  "\001\021", instance->targets[1].card, &td, iVar1, 10, "Pass", 1,
+                                  "\001\021", instance->targets[1].card, prompt, iVar1, 10, "Pass", 1,
                                   0xffffffe7, 0, 0, 0, 0);
               if (iVar1 == 1)
               {

@@ -2869,8 +2869,8 @@ int card_aggressive_mining(int player, int card, event_t event)
     LAB_021b2ae7:
       result = is_humiliated(player, card, AL_STATIC);
       if (((result == 0) && (bVar3 = current_turn == player,
-                             *(unsigned int *)(&player_bits + player * 4) =
-                                 *(unsigned int *)(&player_bits + player * 4) | 8,
+                             player_bits[player] =
+                                 player_bits[player] | 8,
                              bVar3)) &&
           ((land_can_be_played & 1U) == 0))
       {
@@ -2884,8 +2884,8 @@ int card_aggressive_mining(int player, int card, event_t event)
       if (lands_played < result)
       {
         land_can_be_played = land_can_be_played & 0xfffffffe;
-        *(unsigned int *)(&player_bits + player * 4) =
-            *(unsigned int *)(&player_bits + player * 4) & 0xfffffff7;
+        player_bits[player] =
+            player_bits[player] & 0xfffffff7;
       }
       goto LAB_021b2d7e;
     }
@@ -3277,6 +3277,9 @@ int card_goblin_rabblemaster(int player, int card, event_t event)
     return 0;
   }
   default_test_definition(&recovered_stack_token.test, 2);
+  recovered_stack_token.test.subtype = SUBTYPE_GOBLIN;
+  recovered_stack_token.test.state = STATE_ATTACKING;
+  recovered_stack_token.test.not_me = 1;
   iVar1 = check_battlefield_for_special_card(player, card, player, 4, &recovered_stack_token.test);
   pump_until_eot(player, card, player, card, iVar1, 0);
   return 0;

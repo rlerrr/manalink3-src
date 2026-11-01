@@ -824,8 +824,8 @@ static int teferis_protection_legacy(int player, int card, event_t event)
   if ((instance != NULL) &&
       (result = is_humiliated(player, card, AL_STATIC), result == 0))
   {
-    *(unsigned int *)(&player_bits + player * 4) =
-        *(unsigned int *)(&player_bits + player * 4) | 0x4200000;
+    player_bits[player] =
+        player_bits[player] | 0x4200000;
   }
   if (event == EVENT_PROT_MISC)
   {
@@ -1127,6 +1127,9 @@ int card_inalla_archmage_ritualist(int player, int card, event_t event)
       (reason_for_trigger_controller == player))
   {
     default_test_definition(&recovered_stack_td2.test, 2);
+    recovered_stack_td2.test.subtype = SUBTYPE_WIZARD;
+    recovered_stack_td2.test.not_me = 1;
+    recovered_stack_td2.test.type_flag = F1_NO_TOKEN;
     result = duh_mode(player);
     etb_ability_global(player, event, (result != 0) + 1, TYPE_NONE, &recovered_stack_td2.test,
                        player, card);
@@ -1421,6 +1424,8 @@ int card_arahbo_roar_of_the_world(int player, int card, event_t event)
            (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))
   {
     default_test_definition(&recovered_stack_td.test, 2);
+    recovered_stack_td.test.subtype = SUBTYPE_CAT;
+    recovered_stack_td.test.not_me = 1;
     iVar2 = duh_mode(player);
     store_attackers(player, card, EVENT_DECLARE_ATTACKERS,
                          (iVar2 != 0) +

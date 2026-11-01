@@ -506,6 +506,7 @@ int card_ajani_unyielding(int player, int card, event_t event)
   int iVar3;
   int iStack_6c;
   card_instance_t *pcStack_68;
+  int qty;
   target_definition_t td;
 
   check_legend_rule(player, card, event);
@@ -548,16 +549,16 @@ int card_ajani_unyielding(int player, int card, event_t event)
       iVar1 = count_deck(player);
       if (iVar1 != 0)
       {
-        pcStack_68 = (card_instance_t *)iVar1;
+        qty = iVar1;
         if (3 < iVar1)
         {
-          pcStack_68 = (card_instance_t *)0x3;
+          qty = 3;
         }
-        show_deck(current_turn, deck_ptr[player], (int)pcStack_68,
+        show_deck(current_turn, deck_ptr[player], qty,
                   "Cards revealed by Ajani Unyielding", 0, ENGINE_DONE_LABEL);
-        show_deck(current_turn ^ 1, deck_ptr[player], (int)pcStack_68,
+        show_deck(current_turn ^ 1, deck_ptr[player], qty,
                   "Cards revealed by Ajani Unyielding", 0, ENGINE_DONE_LABEL);
-        iStack_6c = (int)pcStack_68;
+        iStack_6c = qty;
         if (0 < iVar1)
         {
           iVar1 = 0;
@@ -571,7 +572,7 @@ int card_ajani_unyielding(int player, int card, event_t event)
               iStack_6c = iStack_6c + -1;
             }
             iVar1 = iVar1 + 1;
-          } while (iVar1 < (int)pcStack_68);
+          } while (iVar1 < qty);
         }
         if (iStack_6c != 0)
         {
@@ -6618,7 +6619,7 @@ static int pias_revolution_effect(int player, int card, event_t event)
   if (0 < result)
   {
     player_00 = 1 - player;
-    ptVar7 = (target_t *)(&owner + result * 2);
+    ptVar7 = dead_array + result - 1;
     do
     {
       result = find_in_owners_graveyard(ptVar7->player, ptVar7->card, &owner, &position);
@@ -6651,7 +6652,8 @@ static int pias_revolution_effect(int player, int card, event_t event)
       }
     LAB_020bb6fa:
       bVar8 = ptVar7 != dead_array;
-      ptVar7 = ptVar7 + -1;
+      if (bVar8)
+        ptVar7 = ptVar7 + -1;
     } while (bVar8);
   }
 LAB_020bb5a1:
@@ -6782,7 +6784,7 @@ LAB_020c6c92:
     if (0 < iVar4)
     {
       iVar7 = 1 - player;
-      ptVar8 = (target_t *)(&owner + iVar4 * 2);
+      ptVar8 = dead_array + iVar4 - 1;
       do
       {
         iVar4 = find_in_owners_graveyard(ptVar8->player, ptVar8->card, &owner, &position);
@@ -6815,7 +6817,8 @@ LAB_020c6c92:
         }
       LAB_020c6f7a:
         bVar9 = ptVar8 != dead_array;
-        ptVar8 = ptVar8 + -1;
+        if (bVar9)
+          ptVar8 = ptVar8 + -1;
       } while (bVar9);
     }
   }

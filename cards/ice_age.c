@@ -9326,12 +9326,9 @@ int card_krovikan_sorcerer(int player, int card, event_t event)
   int iVar5;
   unsigned int uVar6;
   test_definition_t *ptVar7;
-  unsigned char bVar8;
   test_definition_t this_test;
   test_definition_t this_test2;
-  int aiStack_1a0[100];
 
-  bVar8 = 0;
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
     instance = get_card_instance(player, card);
@@ -9422,16 +9419,8 @@ int card_krovikan_sorcerer(int player, int card, event_t event)
     return 0;
   }
   uVar6 = 0xffffffff;
-  ptVar7 = &this_test2;
-
-  for (iVar5 = 200; iVar5 != 0; iVar5 = iVar5 + -1)
-  {
-    ptVar7->message[0] = '\0';
-    ptVar7->message[1] = '\0';
-    ptVar7->message[2] = '\0';
-    ptVar7->message[3] = '\0';
-    ptVar7 = (test_definition_t *)((int)ptVar7 + (unsigned int)bVar8 * -8 + 4);
-  }
+  int dtt[2][100];
+  memset(dtt, 0, sizeof(dtt));
   iVar5 = 2;
   do
   {
@@ -9442,8 +9431,8 @@ int card_krovikan_sorcerer(int player, int card, event_t event)
       uVar6 = uVar6 & (int)(uVar6 ^ 0xffffffff) >> 0x1f;
       instance = get_card_instance(player, iVar3);
       iVar1 = instance->internal_card_id;
-      aiStack_1a0[uVar6] = iVar3;
-      *(int32_t *)(this_test2.message + uVar6 * 4) = iVar1;
+      dtt[1][uVar6] = iVar3;
+      dtt[0][uVar6] = iVar1;
       uVar6 = uVar6 + 1;
     }
     iVar5 = iVar5 + -1;
@@ -9454,12 +9443,12 @@ int card_krovikan_sorcerer(int player, int card, event_t event)
     return 0;
   }
 
-  iVar5 = select_card_from_zone(player, player, (int *)&this_test2, uVar6, 1, 3, -1, &this_test);
+  iVar5 = select_card_from_zone(player, player, dtt[0], uVar6, 1, 3, -1, &this_test);
   if (iVar5 == -1)
   {
     return 0;
   }
-  iVar5 = aiStack_1a0[iVar5];
+  iVar5 = dtt[1][iVar5];
 LAB_023ffafb:
   discard_card(player, iVar5);
   return 0;
@@ -12988,4 +12977,82 @@ LAB_023fd580:
   return iVar1;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static void effect_breath_dream(int player, int card, event_t event, kill_t kill_mode)
+{
+  int iVar1, iVar2, iVar3;
+  card_instance_t *instance;
+  unsigned int uVar5;
+  char *pcVar6;
+  bool bVar7;
+  unsigned char bVar8 = 0;
+  char marked[151];
+  test_definition_t this_test;
+  iVar3 = current_turn;
+  pcVar6 = marked + 5;
+  marked[0] = '\0';
+  marked[1] = '\0';
+  marked[2] = '\0';
+  marked[3] = '\0';
+  marked[4] = '\0';
+  uVar5 = 0x92;
+  bVar7 = ((unsigned int)pcVar6 & 2) != 0;
+  if (bVar7)
+  {
+    marked[5] = '\0';
+    marked[6] = '\0';
+    uVar5 = 0x90;
+    pcVar6 = marked + 7;
+  }
+  for (uVar5 = uVar5 >> 2; uVar5 != 0; uVar5 = uVar5 - 1)
+  {
+    pcVar6[0] = '\0';
+    pcVar6[1] = '\0';
+    pcVar6[2] = '\0';
+    pcVar6[3] = '\0';
+    pcVar6 = pcVar6 + (unsigned int)bVar8 * -8 + 4;
+  }
+  if (!bVar7)
+  {
+    pcVar6[0] = '\0';
+    pcVar6[1] = '\0';
+  }
+  iVar1 = 0;
+  if (0 < active_cards_count[current_turn])
+  {
+    do
+    {
+      instance = in_play(iVar3, iVar1);
+      if ((instance != NULL) && (iVar2 = is_what(iVar3, iVar1, 2), iVar2 != 0))
+      {
+        marked[iVar1] = '\x01';
+      }
+      iVar1 = iVar1 + 1;
+    } while (iVar1 < active_cards_count[iVar3]);
+  }
+  default_test_definition(&this_test, 2);
+  iVar1 = 0;
+  this_test.color = get_sleighted_color_test(player, card, 8);
+  if (0 < active_cards_count[iVar3])
+  {
+    do
+    {
+      if ((((marked[iVar1] != '\0') && (instance = in_play(iVar3, iVar1), instance != NULL)) &&
+           ((instance->token_status & 0x80) == 0)) &&
+          ((iVar2 = new_make_test_in_play(iVar3, iVar1, -1, &this_test),
+            iVar2 != 0 &&
+                (iVar2 = cumulative_upkeep_arbitrary(
+                     player, card, iVar3, iVar1, event, 1, 0, 0, 0, 0, 0),
+                 iVar2 != 0))))
+      {
+        kill_card(iVar3, iVar1, kill_mode);
+      }
+      iVar1 = iVar1 + 1;
+    } while (iVar1 < active_cards_count[iVar3]);
+  }
+}
 #endif

@@ -1787,6 +1787,7 @@ int card_ignition_team(int player, int card, event_t event){
 	if( (event == EVENT_CAST_SPELL || event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE) && affect_me(player, card) ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_LAND);
+		this_test.state = STATE_TAPPED;
 		enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, check_battlefield_for_special_card(player, card, ANYBODY, CBFSC_GET_COUNT, &this_test));
 	}
 

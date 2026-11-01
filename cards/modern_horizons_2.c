@@ -110,8 +110,8 @@ int blossoming_calm_effect(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      *(unsigned int *)(&player_bits + player * 4) =
-          *(unsigned int *)(&player_bits + player * 4) | 0x20000;
+      player_bits[player] =
+          player_bits[player] | 0x20000;
     }
   }
   else if ((event == EVENT_CAN_SKIP_TURN) && (player == current_turn))
@@ -7347,11 +7347,6 @@ int card_fast_furious(int player, int card, event_t event)
   int iVar4;
   int priority_first_half;
   int iVar5;
-  union
-  {
-    int totals[2];
-    test_definition_t this_test;
-  } storage;
 
   instance = get_card_instance(player, card);
   iVar4 = current_turn;
@@ -7372,8 +7367,9 @@ int card_fast_furious(int player, int card, event_t event)
       {
         return 0;
       }
-      storage.totals[0] = 0;
-      storage.totals[1] = 0;
+      int totals[2];
+      totals[0] = 0;
+      totals[1] = 0;
 
       priority_first_half = hand_count[player] * -10 + 0x46;
       iVar5 = active_cards_count[current_turn] + -1;
@@ -7387,7 +7383,7 @@ int card_fast_furious(int player, int card, event_t event)
               ((iVar2 = check_for_ability(iVar4, iVar5, 0x4000),
                 iVar2 == 0 && (iVar2 = check_for_ability(iVar4, iVar5, 0x20), iVar2 == 0))))
           {
-            storage.totals[iVar4] = storage.totals[iVar4] + 1;
+            totals[iVar4] = totals[iVar4] + 1;
           }
           iVar5 = iVar5 + -1;
         } while (iVar5 != -1);
@@ -7405,12 +7401,12 @@ int card_fast_furious(int player, int card, event_t event)
                     ((iVar2 = check_for_ability(iVar4, iVar5, 0x4000),
                       iVar2 == 0 && (iVar2 = check_for_ability(iVar4, iVar5, 0x20), iVar2 == 0))))))
           {
-            storage.totals[iVar4] = storage.totals[iVar4] + 1;
+            totals[iVar4] = totals[iVar4] + 1;
           }
           iVar5 = iVar5 + -1;
         } while (iVar5 != -1);
       }
-      iVar4 = storage.totals[player] * -10 + 0x14 + storage.totals[1 - player] * 10;
+      iVar4 = totals[player] * -10 + 0x14 + totals[1 - player] * 10;
       goto LAB_0223431a;
     }
     if (event != EVENT_CAN_CHANGE_TARGET)
@@ -7426,8 +7422,11 @@ int card_fast_furious(int player, int card, event_t event)
         }
         if ((uVar3 & 2) != 0)
         {
-          default_test_definition(&storage.this_test, 2);
-          new_damage_all(player, card, 2, 3, 0, &storage.this_test);
+          test_definition_t this_test;
+          default_test_definition(&this_test, 2);
+          this_test.keyword = KEYWORD_FLYING;
+          this_test.keyword_flag = DOESNT_MATCH;
+          new_damage_all(player, card, 2, 3, 0, &this_test);
         }
         kill_card(player, card, KILL_DESTROY);
       }
@@ -8382,22 +8381,14 @@ int card_geyadrone_dihada(int player, int card, event_t event)
   int iVar2;
   int iVar3;
   int iVar4;
-  int *piVar5;
-  bool bVar6;
+  int marked_index;
   int iStack_574;
   target_definition_t td;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    int value;
-    target_definition_t target;
-    uint8_t bytes[84];
-  } recovered_stack_p;
-
-  int aiStack_4d0[2];
+  target_definition_t td2;
+  int p;
   int c;
-  int aiStack_4c4[301];
+  int marked[151][2];
   check_legend_rule(player, card, event);
   misc_protection(player, card, event);
   if (event == EVENT_PROT_MISC)
@@ -8409,10 +8400,10 @@ int card_geyadrone_dihada(int player, int card, event_t event)
         event_result = event_result | 1;
         return 0;
       }
-      get_protection_source('\0', &recovered_stack_p.value, &c);
-      if ((((-1 < recovered_stack_p.value) && (-1 < c)) &&
-           (iVar2 = is_what(recovered_stack_p.value, c, 0x47), iVar2 != 0)) &&
-          (iVar2 = count_counters(recovered_stack_p.value, c, COUNTER_CORRUPTION), iVar2 != 0))
+      get_protection_source('\0', &p, &c);
+      if ((((-1 < p) && (-1 < c)) &&
+           (iVar2 = is_what(p, c, 0x47), iVar2 != 0)) &&
+          (iVar2 = count_counters(p, c, COUNTER_CORRUPTION), iVar2 != 0))
       {
         event_result = event_result | 1;
       }
@@ -8423,8 +8414,8 @@ int card_geyadrone_dihada(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     default_target_definition(player, card, &td, 0x102);
     td.special = 0x4000;
-    default_target_definition(player, card, &recovered_stack_p.target, 0x102);
-    iVar2 = can_target(&recovered_stack_p.target);
+    default_target_definition(player, card, &td2, 0x102);
+    iVar2 = can_target(&td2);
     iVar2 = dialog_impl(player, card, event, "\001\002", "\001\017", "\001\033",
                         "Drain 2 and corrupt", 1, 0x14 - life[player], 1, "Borrow target", iVar2,
                         10, 0xfffffffd, "Steal all corrupted", 1, 0x1e, 0xfffffff9, 0, 0, 0, 0);
@@ -8445,7 +8436,7 @@ int card_geyadrone_dihada(int player, int card, event_t event)
       }
       else if (iVar2 == 2)
       {
-        new_pick_target(&recovered_stack_p.target, "Select target creature or planeswalker.", 0,
+        new_pick_target(&td2, "Select target creature or planeswalker.", 0,
                         0x81);
       }
     }
@@ -8455,8 +8446,8 @@ int card_geyadrone_dihada(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     default_target_definition(player, card, &td, 0x102);
     td.special = 0x4000;
-    default_target_definition(player, card, &recovered_stack_p.target, 0x102);
-    iVar2 = can_target(&recovered_stack_p.target);
+    default_target_definition(player, card, &td2, 0x102);
+    iVar2 = can_target(&td2);
     iVar3 = dialog_impl(player, card, event, "\001\002", "\001\017", "\001\033",
                         "Drain 2 and corrupt", 1, 0x14 - life[player], 1, "Borrow target", iVar2,
                         10, 0xfffffffd, "Steal all corrupted", 1, 0x1e, 0xfffffff9, 0, 0, 0, 0);
@@ -8474,7 +8465,7 @@ int card_geyadrone_dihada(int player, int card, event_t event)
     }
     else if (iVar3 == 2)
     {
-      iVar2 = validate_target(player, card, &recovered_stack_p.target, 0);
+      iVar2 = validate_target(player, card, &td2, 0);
       if (iVar2 != 0)
       {
         add_counters(player, card, instance->targets[0].player,
@@ -8502,8 +8493,8 @@ int card_geyadrone_dihada(int player, int card, event_t event)
           if (((instance != NULL) && (iVar4 = is_what(iVar2, iVar3, 0x47), iVar4 != 0)) &&
               (iVar4 = count_counters(iVar2, iVar3, COUNTER_CORRUPTION), iVar4 != 0))
           {
-            aiStack_4c4[iStack_574 * 2 + -1] = iVar2;
-            aiStack_4c4[iStack_574 * 2] = iVar3;
+            marked[iStack_574][0] = iVar2;
+            marked[iStack_574][1] = iVar3;
             iStack_574 = iStack_574 + 1;
           }
           iVar3 = iVar3 + -1;
@@ -8517,20 +8508,19 @@ int card_geyadrone_dihada(int player, int card, event_t event)
           if (((instance != NULL) && (iVar4 = is_what(iVar3, iVar2, 0x47), iVar4 != 0)) &&
               (iVar4 = count_counters(iVar3, iVar2, COUNTER_CORRUPTION), iVar4 != 0))
           {
-            aiStack_4c4[iStack_574 * 2 + -1] = iVar3;
-            aiStack_4c4[iStack_574 * 2] = iVar2;
+            marked[iStack_574][0] = iVar3;
+            marked[iStack_574][1] = iVar2;
             iStack_574 = iStack_574 + 1;
           }
         }
         if (0 < iStack_574)
         {
-          piVar5 = aiStack_4d0 + iStack_574 * 2;
+          marked_index = iStack_574 - 1;
           do
           {
-            gain_control_permanently(player, *piVar5, piVar5[1]);
-            bVar6 = &c != piVar5;
-            piVar5 = piVar5 + -2;
-          } while (bVar6);
+            gain_control_permanently(player, marked[marked_index][0], marked[marked_index][1]);
+            marked_index = marked_index - 1;
+          } while (marked_index >= 0);
         }
       }
     }
@@ -10442,7 +10432,7 @@ int card_out_of_time(int player, int card, event_t event)
   LAB_0223b065:
     if (iVar4 < 1)
       goto LAB_0223b1f0;
-    paiVar5 = (int (*)[2])(&iStack_4d0 + iVar4 * 2);
+    paiVar5 = marked + iVar4 - 1;
     iStack_4d0 = iVar4;
     do
     {
@@ -10451,7 +10441,8 @@ int card_out_of_time(int player, int card, event_t event)
       paiStack_4cc = paiVar5;
       untap_card(iVar6, iVar3);
       phase_out_target_until_source_leaves_play(player, card, iVar6, iVar3);
-      paiVar5 = paiVar5 + -1;
+      if (paiStack_4cc != marked)
+        paiVar5 = paiVar5 + -1;
       iVar3 = iStack_4d0;
     } while (paiStack_4cc != marked);
   }
@@ -11189,4 +11180,94 @@ int card_dauthi_voidwalker(int player, int card, event_t event)
   return generic_activated_ability(player, card, event, 9, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static int can_produce_colorless(int player, int card)
+{
+  return get_card_instance(player, card)->card_color & 0x41;
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static void archon_of_cruelty_effect(int player, int card)
+{
+  if (opponent_is_valid_target(player, card))
+  {
+    int opponent = 1 - player;
+    player_sacrifices_a_permanent(player, card, opponent, 0x102, SAC_CAUSED);
+    new_multidiscard(opponent, 1, player, 2);
+    lose_life(opponent, 3);
+    draw_cards(player, 1);
+    gain_life(player, 3);
+  }
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int check_targets_for_ward(int player, int card, int ctc_player, int ctc_card, int t_player, int t_card, type_t type, subtype_t subtype, int flags)
+{
+  card_instance_t *instance = get_card_instance(ctc_player, ctc_card);
+  for (int i = 0; i < (int)(unsigned int)instance->number_of_targets; ++i)
+  {
+    int p = instance->targets[i].player;
+    int c = instance->targets[i].card;
+    if (p == t_player && c != -1 && (t_card == c || t_card == -1) &&
+        (player != p || card != c || !(flags & 2)) &&
+        (type == TYPE_NONE || is_what(p, c, type)) &&
+        (subtype == SUBTYPE_INVALID || has_subtype(p, c, subtype)))
+      return 2;
+  }
+  return 0;
+}
+
+static void ward_action(int player, int card, event_t event, int tcp, int tcc, int mode, int flags, int cless, int black, int blue, int green, int red, int white, int life_to_pay)
+{
+  int result;
+  unsigned int must_counter;
+  int saved_fizzle = spell_fizzled;
+  char buffer[100];
+  (void)mode;
+  must_counter = flags & 1;
+  if (must_counter == 0)
+  {
+    must_counter = 1;
+  }
+  else if (-1 < hand_count[trigger_cause_controller])
+  {
+
+    discard(trigger_cause_controller, 6, player);
+    must_counter = (unsigned int)(spell_fizzled == 1);
+  }
+  spell_fizzled = saved_fizzle;
+  if ((life_to_pay != 0) && (result = can_pay_life(tcp, life_to_pay), result != 0))
+  {
+
+    scnprintf(buffer, 100, "Pay %d life", life_to_pay);
+    result = dialog_impl(player, card, event, "\001\002", "\001\003", "\001\014",
+                        "\001\010", tcp, buffer, 1,
+                        ((5 < life[tcp] - life_to_pay) - 1 & 0xfffffff1) + 0x14, "Decline", 1,
+                        10, 0, 0, 0, 0);
+    if (result == 1)
+    {
+      must_counter = 0;
+      lose_life(tcp, life_to_pay);
+    }
+  }
+  if (((((((cless < 1) && (black < 1)) && (blue < 1)) && ((green < 1 && (red < 1)))) &&
+        (white < 1)) ||
+       ((result = has_mana_multi(tcp, cless, black, blue, green, red, white),
+         result == 0 || (result = charge_mana_multi(tcp, cless, black, blue, green, red, white),
+                        result == 0)))) &&
+      (must_counter != 0))
+  {
+    real_counter_a_spell(player, card, tcp, tcc);
+  }
+}
 #endif

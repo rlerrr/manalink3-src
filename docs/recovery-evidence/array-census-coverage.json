@@ -1,0 +1,165 @@
+{
+  "recovery": {
+    "reviewed_definitions": 6,
+    "card_handlers": 3,
+    "helpers": 3,
+    "multani_selected_card_store": 1,
+    "multani_bounce_array_reads": 2,
+    "scoped_trace_prompt_pairs": 2,
+    "checked_formatters": 5,
+    "checked_prompt_consumers": 2,
+    "reanimation_matrices": 2,
+    "reanimation_matrix_dimensions": [
+      2,
+      500
+    ],
+    "faerie_prompt_bytes": 301,
+    "enum_choice_elements": 2,
+    "changed_linker_objects": 6,
+    "unchanged_linker_objects": 160,
+    "scope": "Six native-backed original-source repairs from the fixed-array census. Multani stores selected target card IDs in its actual two-int to_bounce array instead of writing relative to msg; definite direct-CFG instance/card tags verify the load/store uses the same unchanged index with corresponding eight/four-byte slot biases, and both bounce calls read array words0/4. Faerie Dragon restores buf301 while every formatter bound/argument stays unchanged. Engine put_card_on_stack and event resolve_trigger restore separate scoped logging500/prompt300 arrays; actual DWARF scopes and conservative direct-CFG frame operands verify five formatters and two prompt consumers, including constant-register indirect EXE call targets. Trace-consumer operands are not separately credited. Reanimation restores two native int[2][500] matrices from equivalent flat1000 storage; exact source replay changes only declarations and all fixed500-stride row/index expressions, preserving four-byte-element address arithmetic and other control flow. Dromoka Command attaches choices[2] to its existing anonymous enum, restoring unsigned32 elements and values1..4 without duplicate types. Literal DWARF bounds and emitted fixed-frame extents are checked. Exact source replay preserves every other source byte and original native quirks. Missing before locations do not imply absent physical storage. Array bounds, chosen values, complete matrix contents, arbitrary aliases, full function equivalence and gameplay remain outside these bounded checks. The rebuilt Multani pointer has one compiler spill across a call: the analyzer binds its reload to the actual typed instance local using the fixed-frame DWARF location valid at that instruction, then follows registers to the selected-card load. This location evidence does not prove arbitrary memory alias behavior; generic calls still kill tracked memory."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 81977,
+    "exit_code": 0,
+    "terminal_chunk_id": "83f063",
+    "build_session_id": 87725,
+    "build_exit_code": 0,
+    "build_terminal_chunk_id": "ef22be",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "e85db7",
+    "setup_log": ".recovery/array-census-setup-c64.log",
+    "setup_log_sha256": "56ee0586ce0c6f1ed7898515913927d2c83b0bb7a607fc51415ae5b7570e2bb4",
+    "build_log": ".recovery/array-census-build-c64.log",
+    "build_log_sha256": "7f5b08cffc4d2b6335bebf317e1d39b11b561c43babeaca0af145b8c1d76050b",
+    "focused_log": ".recovery/array-census-focused-c64.log",
+    "focused_log_sha256": "09fcde65bb57556c606d6287a2938966dcaf88402ca9ecf34ca4f3589a783fb8"
+  },
+  "native_compiled_validations": [
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_multani_yavimayas_avatar",
+      "native": {
+        "selected_card_stores": 1,
+        "bounce_array_offsets": [
+          0,
+          4
+        ],
+        "array_bytes": 8,
+        "prompt_bytes": 50
+      },
+      "compiled": {
+        "selected_card_stores": 1,
+        "bounce_array_offsets": [
+          0,
+          4
+        ],
+        "array_bytes": 8,
+        "prompt_bytes": 50
+      }
+    },
+    {
+      "source": "cards/promo.c",
+      "name": "card_faerie_dragon",
+      "native": {
+        "prompt_bytes": 301,
+        "target_array_bytes": 2400
+      },
+      "compiled": {
+        "prompt_bytes": 301,
+        "target_array_bytes": 2400
+      }
+    },
+    {
+      "source": "functions/engine.c",
+      "name": "put_card_on_stack",
+      "native": {
+        "trace_bytes": 500,
+        "prompt_bytes": 300,
+        "checked_formatters": 3,
+        "checked_prompt_consumers": 1
+      },
+      "compiled": {
+        "trace_bytes": 500,
+        "prompt_bytes": 300,
+        "checked_formatters": 3,
+        "checked_prompt_consumers": 1
+      }
+    },
+    {
+      "source": "functions/events.c",
+      "name": "resolve_trigger",
+      "native": {
+        "trace_bytes": 500,
+        "prompt_bytes": 300,
+        "checked_formatters": 2,
+        "checked_prompt_consumers": 1
+      },
+      "compiled": {
+        "trace_bytes": 500,
+        "prompt_bytes": 300,
+        "checked_formatters": 2,
+        "checked_prompt_consumers": 1
+      }
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "new_reanimate_all_impl",
+      "native": {
+        "array_dimensions": [
+          2,
+          500
+        ],
+        "array_bytes": 4000,
+        "arrays": 2,
+        "counter_dimensions": [
+          2
+        ]
+      },
+      "compiled": {
+        "array_dimensions": [
+          2,
+          500
+        ],
+        "array_bytes": 4000,
+        "arrays": 2,
+        "counter_dimensions": [
+          2
+        ]
+      }
+    },
+    {
+      "source": "cards/dragons_of_tarkir.c",
+      "name": "card_dromokas_command",
+      "native": {
+        "choice_array_bytes": 8,
+        "choice_element_bytes": 4,
+        "native_choice_values": {
+          "CHOICE_PREVENT": 1,
+          "CHOICE_SAC": 2,
+          "CHOICE_COUNTER": 3,
+          "CHOICE_FIGHT": 4
+        }
+      },
+      "compiled": {
+        "choice_array_bytes": 8,
+        "choice_element_bytes": 4,
+        "native_choice_values": {
+          "CHOICE_PREVENT": 1,
+          "CHOICE_SAC": 2,
+          "CHOICE_COUNTER": 3,
+          "CHOICE_FIGHT": 4
+        }
+      }
+    }
+  ],
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "bad49181d798dd3ef2abfecede56436d50cd5e3d144f7e310f509d31d1fd2705",
+    "docs/recovery-evidence/array-census-recovery.json": "12399098fbffe9ff74abdb6de7a95decfbc791e9783af0606cfb62f551128b32",
+    "tools/recovery/array_census_analysis.py": "9fcacbfcbbceda61f42badce4140ffc27887cc543606cd3fbd6b0162a0b60a4b",
+    "tools/recovery/verify_array_census_recovery.py": "00065b10bd18b6fd42179e77ece85c2b3e84607fe6b33aa66014588f2fbff8bd",
+    "ManalinkEh.dll": "515f9f8cd38d433cc767caee8197a4730e806a00a1f7b61fcadf3616f44895bf",
+    "ManalinkEh.dbg": "d5a07ca770c345e5e5f15360f1fa65460ae1b1b0fab407b9baee2f9695c75da1"
+  }
+}

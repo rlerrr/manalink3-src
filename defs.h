@@ -1427,7 +1427,7 @@ typedef int (*CardFunction)(int, int, event_t);
 typedef int (*CardPairFunction)(int, int);
 
 #ifndef SHANDALAR
-typedef struct card_ext_struct card_ext_t;
+typedef struct card_ext_t card_ext_t;
 #endif
 
 /* Info struct */
@@ -1665,8 +1665,7 @@ typedef struct card_instance_struct
 typedef struct
 {
   uint8_t	secret;
-  char		name[18];       /* 0x01 */
-  uint8_t	reserved1[17];
+  char		name[35];       /* October 2022 DWARF: full name field at 0x01. */
   PRIVATE_IN_SHANDALAR(uint16_t	id;)	/* 0x24 */
   uint16_t	reserved2;
 #ifdef SHANDALAR
@@ -4008,7 +4007,7 @@ typedef struct
   int16_t stored_iid;
 } inst_stored_iid_t;
 
-struct card_ext_struct
+struct card_ext_t
 {
   uint32_t sp_keywords;
   uint32_t sp_keywords2;

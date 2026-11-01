@@ -6349,7 +6349,8 @@ int card_glissa_sunseeker(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
       default_test_definition(&recovered_stack_td.test, 0x40);
-      has_mana(player, 7, -1);
+      recovered_stack_td.test.cmc = has_mana(player, 7, -1) + 1;
+      recovered_stack_td.test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
       iVar1 =
           check_battlefield_for_special_card(player, card, 1 - player, 0, &recovered_stack_td.test);
       if (iVar1 != 0)

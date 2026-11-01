@@ -1381,3 +1381,241 @@ int copy_token_characteristics_for_clone(int player, int card, int t_player, int
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static void release_dynamic_card_type(iid_t dynamic_iid)
+{
+  if (dynamic_iid >= engine_dynamic_iid_start &&
+      dynamic_iid <= engine_dynamic_iid_start + 15)
+    cards_data[dynamic_iid].id = 0xffff;
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int compare_iid_token(iid_t int_id, token_generation_t *token)
+{
+  if (token->id != cards_data[int_id].id ||
+      (token->pow >= 0 && token->pow != cards_data[int_id].power) ||
+      (token->tou >= 0 && token->tou != cards_data[int_id].toughness) ||
+      !(cards_data[int_id].static_ability & token->key_plus))
+    return 0;
+  int artifact_matches = !(token->action & TOKEN_ACTION_CONVERT_INTO_ARTIFACT) ||
+                          (cards_data[int_id].type & TYPE_ARTIFACT);
+  unsigned int color = token->color_forced ? token->color_forced : cards_data[int_id].color;
+  if (token->s_player >= 0 && token->s_card >= 0 && !token->no_sleight)
+    color = get_sleighted_color_test(token->s_player, token->s_card, color & COLOR_TEST_ANY_COLORED);
+  return cards_data[int_id].color == color && artifact_matches;
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int generate_tokens_impl(token_generation_t *token, int int_id, int cycle_number)
+{
+  uint16_t uVar1;
+  int32_t iVar3, iVar4;
+  bool bVar6;
+  uint8_t uVar7;
+  card_instance_t *pcVar9, *pcVar12, *pcStack_98;
+  token_action_t tVar10;
+  int iVar11, iVar13, card, iVar14, iStack_9c;
+  unsigned int uVar15;
+  target_definition_t td;
+  if (token->eff_card == -1)
+  {
+    if (((token->keep_track_of_tokens_generated != 0) || (token->legacy == '\x01')) ||
+        ((token->action & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER |
+                           TOKEN_ACTION_HASTE | TOKEN_ACTION_EQUIP)) != 0))
+    {
+      backtrace_and_abort("functions/token_generation.c:392\ntoken->eff_card != -1 || "
+                          "!(token->keep_track_of_tokens_generated > 0 || token->legacy == "
+                          "1 || (token->action & (TOKEN_ACTION_EQUIP | TOKEN_ACTION_HASTE "
+                          "| TOKEN_ACTION_PUMP_POWER | TOKEN_ACTION_PUMP_TOUGHNESS)))");
+    }
+  LAB_02665cab:
+    pcStack_98 = NULL;
+  }
+  else
+  {
+    if (token->keep_track_of_tokens_generated == 0)
+      goto LAB_02665cab;
+    pcStack_98 = get_card_instance(token->eff_player, token->eff_card);
+  }
+  iVar14 = token->t_player;
+  iVar13 = add_card_to_hand(iVar14, int_id);
+  set_token(iVar14, iVar13, token);
+  pcVar9 = get_card_instance(iVar14, iVar13);
+  pcVar9->state = pcVar9->state | 0x20;
+  hand_count[iVar14] = hand_count[iVar14] + -1;
+  pcVar9 = get_card_instance(token->t_player, iVar13);
+  if (token->legacy == '\x01')
+  {
+    iVar14 = create_targetted_legacy_effect(token->eff_player, token->eff_card,
+                                            token->special_code_for_legacy, token->t_player,
+                                            iVar13);
+    pcVar12 = get_card_instance(token->eff_player, iVar14);
+    pcVar12->eot_toughness = 0x300;
+    uVar1 = cards_data[int_id].id;
+    pcVar12->display_pic_csv_id = uVar1;
+  }
+  tVar10 = token->action;
+  if ((tVar10 & TOKEN_ACTION_TAPPED) != 0)
+  {
+    pcVar9->state = pcVar9->state | 0x10;
+  }
+  if (((tVar10 & TOKEN_ACTION_ATTACKING_UNTAPPED) != 0) &&
+      (pcVar9->state = pcVar9->state | 4,
+       (tVar10 & TOKEN_ACTION_SKIP_ATTACK_CHECK) == 0))
+  {
+    choose_who_attack(token->t_player, iVar13);
+    tVar10 = token->action;
+  }
+  if ((tVar10 & TOKEN_ACTION_BLOCKING) != 0)
+  {
+    pcVar12 = get_card_instance(1 - token->t_player, token->action_argument);
+    uVar7 = pcVar12->blocking;
+    if (uVar7 == 0xff)
+    {
+      uVar7 = (uint8_t)token->action_argument;
+    }
+    pcVar9->blocking = uVar7;
+    tVar10 = token->action;
+    pcVar9->state = pcVar9->state | 0x8008;
+  }
+  if (((tVar10 & TOKEN_ACTION_EQUIP) != 0) && (cycle_number == 0))
+  {
+    equip_target_creature(token->eff_player, token->eff_card, token->t_player, iVar13);
+    tVar10 = token->action;
+  }
+  if (((tVar10 & TOKEN_ACTION_EQUIP_ANY) != 0) && (cycle_number == 0))
+  {
+    default_target_definition(token->eff_player, token->eff_card, &td, 0xff);
+    td.required_subtype = 0x3001;
+    td.illegal_abilities = 0;
+    pcVar12 = get_card_instance(token->eff_player, token->eff_card);
+    iVar3 = pcVar12->targets[0].player;
+    iVar4 = pcVar12->targets[0].card;
+    iVar14 = can_target(&td);
+    if ((iVar14 != 0) &&
+        (iVar14 = new_pick_target(&td, "Select an equipment you control", 0, 0x80),
+         iVar14 != 0))
+    {
+      equip_target_creature(pcVar12->targets[0].player, pcVar12->targets[0].card,
+                            token->t_player, iVar13);
+    }
+    pcVar12->targets[0].player = iVar3;
+    pcVar12->targets[0].card = iVar4;
+    tVar10 = token->action;
+  }
+  if ((tVar10 & TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE) != 0)
+  {
+    set_special_flags(token->t_player, iVar13, 0x40000000);
+    tVar10 = token->action;
+  }
+  if ((tVar10 & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER |
+                 TOKEN_ACTION_HASTE)) != 0)
+  {
+    iStack_9c = 0;
+    if ((tVar10 & TOKEN_ACTION_PUMP_TOUGHNESS) != 0)
+    {
+      iStack_9c = token->action_argument;
+    }
+    iVar14 = 0;
+    if ((tVar10 & TOKEN_ACTION_PUMP_POWER) != 0)
+    {
+      iVar14 = token->action_argument;
+    }
+    pump_ability_until_eot(token->eff_player, token->eff_card, token->t_player, iVar13,
+                           iVar14, iStack_9c, 0, tVar10 >> 2 & 4);
+    tVar10 = token->action;
+  }
+  if ((tVar10 & TOKEN_ACTION_ADD_SUBTYPE) != 0)
+  {
+    add_a_subtype_permanently(token->eff_player, token->eff_card, token->t_player, iVar13,
+                              token->action_argument);
+    tVar10 = token->action;
+  }
+  if ((tVar10 & TOKEN_ACTION_RECORD_SOURCE_ID) != 0)
+  {
+    iVar14 = get_id(token->s_player, token->s_card);
+    pcVar9->damage_source_card = iVar14;
+  }
+  if (token->special_code_on_generation != NULL)
+  {
+    (*token->special_code_on_generation)(token, iVar13, cycle_number);
+  }
+  iVar14 = token->t_player;
+  if (cycle_number < (int)token->keep_track_of_tokens_generated)
+  {
+    pcStack_98->targets[cycle_number].player = iVar14;
+    pcStack_98->targets[cycle_number].card = iVar13;
+  }
+  put_into_play(iVar14, iVar13);
+  tVar10 = token->action;
+  if ((tVar10 & TOKEN_ACTION_ADD_COUNTERS) != 0)
+  {
+    hack_silent_counters = hack_silent_counters + 1;
+    add_counters(token->s_player, token->s_card, token->t_player, iVar13,
+                             (unsigned int)token->action_argument >> 0x10,
+                             token->action_argument & 0xffff);
+    hack_silent_counters = hack_silent_counters + -1;
+    tVar10 = token->action;
+  }
+  if ((((tVar10 & TOKEN_ACTION_BLOCKING) == 0) ||
+       (pcVar9 = in_play(token->t_player, iVar13), pcVar9 == NULL)) ||
+      (play_sound_effect(WAV_BLOCK2),
+       (((unsigned int)event_flags >> 16 & 0xff) & 0x10) == 0))
+  {
+    uVar15 = token->special_infos;
+  }
+  else
+  {
+    dispatch_trigger2(current_turn, TRIGGER_BLOCKER_CHOSEN, EXE_STR(0x790074), 0,
+                      token->t_player, iVar13);
+    uVar15 = token->special_infos;
+  }
+  if (uVar15 == 99)
+  {
+    uVar15 = 0;
+    iVar14 = get_id(token->t_player, iVar13);
+    bVar6 = false;
+    do
+    {
+      card = active_cards_count[uVar15] + -1;
+      if (-1 < card)
+      {
+        do
+        {
+          pcVar9 = in_play(uVar15, card);
+          if ((((pcVar9 != NULL) && ((token->t_player != uVar15 || (iVar13 != card)))) &&
+               (iVar11 = get_id(uVar15, card), iVar14 == iVar11)) &&
+              (((int)(uVar15 ^ 0xffffffff) < 0 && (pcVar9 = get_card_instance(uVar15, card),
+                                                   pcVar9->targets[0xe].player == 99))))
+          {
+            kill_card(uVar15, card, KILL_SACRIFICE);
+            bVar6 = true;
+          }
+          card = card + -1;
+        } while (card != -1);
+      }
+      uVar15 = uVar15 + 1;
+    } while (uVar15 != 2);
+    if (bVar6)
+    {
+      kill_card(token->t_player, iVar13, KILL_SACRIFICE);
+    }
+  }
+  if (cycle_number < (int)token->keep_track_of_tokens_generated)
+  {
+    pcVar9 = get_card_instance(token->eff_player, token->eff_card);
+    pcVar9->targets[cycle_number].player = token->t_player;
+    pcVar9->targets[cycle_number].card = iVar13;
+  }
+  return iVar13;
+}
+#endif

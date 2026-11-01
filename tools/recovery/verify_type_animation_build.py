@@ -59,15 +59,11 @@ def verify(debug,pe,interfaces):
                 t=unqual(type_of(d));assert t.tag=='DW_TAG_pointer_type';t=unqual(type_of(t));assert t.tag=='DW_TAG_subroutine_type'
                 callback=dict(result=type_name(type_of(t)),parameters=[type_name(type_of(c)) for c in t.iter_children() if c.tag=='DW_TAG_formal_parameter'])
     assert objects==native['local_objects'] and enums==ENUMS
-    # The retained database view divides the unused 35-byte native name field
-    # into an 18-byte name plus seventeen reserved bytes. Every accessed field
-    # has the exact native offset/width; verify that sole partition explicitly.
-    import copy
-    expected_records=copy.deepcopy(native['records'])
-    expected_records['card_data_t']['members']['name']=dict(offset=1,bounds=[17],element_bytes=1)
-    expected_records['card_data_t']['members']['reserved1']=dict(offset=19,bounds=[16],element_bytes=1)
-    assert records==expected_records,records
-    name_view=dict(native_name_bytes=35,source_name_bytes=18,source_reserved_bytes=17,byte_range=[1,36],accessed_by_this_batch=False)
+    # The source now has the original35-byte name, so compare the native
+    # declaration directly instead of accepting the former18+17 partition.
+    assert records==native['records'],records
+    name_view=dict(native_name_bytes=35,source_name_bytes=35,exact_native_declaration=True,
+                   byte_range=[1,36],accessed_by_this_batch=False)
     assert callback==native['animated_land_callback']
     assert death_worker and death_worker['length']>0
     # Check the complete emitted range and outgoing calls for the actual
@@ -139,4 +135,4 @@ def verify(debug,pe,interfaces):
         assert all(writes.get(off)==val for off,val in {20:0x80000000,48:0,52:0,56:0}.items()),writes
         frames.append(dict(call=hex(i.address),stack_words=15,constant_words={str(off):writes[off] for off in [20,48,52,56]}))
     assert len(frames)==3
-    return dict(public_symbols={NAMES[a]:hex(symbols[NAMES[a]]) for a in PUBLIC_FUNCTIONS},public_helpers=len(PUBLIC_HELPERS),card_callback=NAMES[CARD],private_symbols={NAMES[a]:hex(symbols[NAMES[a]]) for a in PRIVATE},folded_thunks=folded,local_objects=objects,records=records,card_name_layout_projection=name_view,enum_values=enums,resolved_dependencies=resolved,callbacks=callbacks,animated_land_callback=dict(**callback,indirect_branch=hex(indirect[0].address)),manland_activation_frames=frames,death_trigger_worker=death_worker,global_filter_slots=native['global_filter_slots'],old_subtype_reset_absent=True,typed_exe_boundaries=[hex(x) for x in EXE_TARGETS])
+    return dict(public_symbols={NAMES[a]:hex(symbols[NAMES[a]]) for a in PUBLIC_FUNCTIONS},public_helpers=len(PUBLIC_HELPERS),card_callback=NAMES[CARD],private_symbols={NAMES[a]:hex(symbols[NAMES[a]]) for a in PRIVATE},folded_thunks=folded,local_objects=objects,records=records,card_name_layout=name_view,enum_values=enums,resolved_dependencies=resolved,callbacks=callbacks,animated_land_callback=dict(**callback,indirect_branch=hex(indirect[0].address)),manland_activation_frames=frames,death_trigger_worker=death_worker,global_filter_slots=native['global_filter_slots'],old_subtype_reset_absent=True,typed_exe_boundaries=[hex(x) for x in EXE_TARGETS])

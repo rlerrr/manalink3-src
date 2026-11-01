@@ -1,0 +1,50 @@
+{
+  "target_storage": {
+    "native_fixed_frame_target_functions": 5357,
+    "reviewed_target_flag_functions": 8,
+    "native_flag_store_sites": 8,
+    "sealed_compiled_flag_store_sites": 9,
+    "optimized_away_target_declarations": 57,
+    "additional_shared_test_typedef_cases": 1,
+    "sacrifice_parameter_stores": 9,
+    "retained_function_definitions": 9,
+    "flag_expression_bits_per_store": 32,
+    "sacrifice_parameter_bits": 208,
+    "scope": "Bounded review of direct EBP-relative writes to target_definition_t.flags in contiguous project functions. Census5357 functions with fixed-frame target variables,8 flag writers and57 declarations with no emitted location. Check all32 stored bits against exact constant5, prior-flags OR3/5 or the named flags formal. Prove the two rebuilt basic_equipment sites mutually unreachable. Also pair the native200-byte prompt/216-byte test at the same frame base with the existing216-byte union and trace all208 bits of9 test-field stores to their named formal parameters. All9 definitions are retained. This is not indirect/string/SSE-store, complete CFG-predicate, whole-function or gameplay equivalence."
+  },
+  "local_enums": {
+    "native_local_enum_declarations": 777,
+    "retained_exact_native_declarations": 486,
+    "retained_enumerator_values": 1233,
+    "existing_name_aliases": 1,
+    "baseline_missing_enum_declarations": 290,
+    "baseline_missing_enumerators": 730,
+    "current_source_counts": {
+      "missing_local_enum": 290,
+      "existing_native_names": 486,
+      "existing_name_alias": 1
+    },
+    "scope": "Source-file function-local anonymous4-byte enums from the777-entry native DWARF census. All486 existing native declarations have exact emitted names, ordering and values. One source alias CHOICE_TOKEN_ONLY retains native CHOICE_UNPRINTED value4 and is explicitly pending a naming correction. Eight Odyssey owners are resolved to odissey.c and one abstract Memorial owner to the existing canonical worker. The290 missing declarations are a source-restoration queue, not290 discovered behavior defects. Existing values are checked from actual GCC9.3 DWARF; no C expression evaluation or algorithm changes are used, and this is not whole-function equivalence."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 96875,
+    "exit_code": 0,
+    "completion_chunk_id": "4cc765",
+    "setup_log": ".recovery/target-storage-enum-setup-c55.log",
+    "setup_log_sha256": "c6681d56a0a0ce8be413f3137bb48428db8bbf848369d06c0e26a2722f53a81b"
+  },
+  "no_c_cpp_source_changes": true,
+  "runtime_artifact": "Existing last successful C54 build; both current DLL and DBG hashes unchanged. No rebuild needed for evidence/tool-only additions.",
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "056e72fb348e963b61102e0b9c5afe96130c419f5019b064953ba411957cc30d",
+    "docs/recovery-evidence/target-storage-review.json": "50fce4a76327c1a7945a0958c2281ea530e5acd3b57a0711b5cd213938599bd4",
+    "docs/recovery-evidence/local-enum-value-review.json": "120059745087b393294c5f1d06e28301e9493dc6159143082034d68f564fe357",
+    "tools/recovery/target_storage_analysis.py": "64b740726be9aba656e88d4009eecd2601b484b26e61bca82c39e9e8a77e6e9c",
+    "tools/recovery/verify_target_storage_recovery.py": "02dd3161e23fe130a5e720776dffb066126c3184944b1112d26b37f9c0dc5b2b",
+    "tools/recovery/local_enum_analysis.py": "a1923b44cdb5bc5e38965a83f35e2115282d7bf86ebf7efaa7699679c30c7034",
+    "tools/recovery/verify_local_enum_values_recovery.py": "5173b4f13d1bd63bb0cc586e28cd3687e97a631d85d53a57fd62203cd9b753ba",
+    "ManalinkEh.dll": "352ae9b2779c19486901e4d7ec5cce8e336877e5b12832e04221f464607e2f5a",
+    "ManalinkEh.dbg": "c3f03b16e18b45e2a6e7832e04782f677ef0efc994a3d3fca2b39bd54e71abee"
+  }
+}

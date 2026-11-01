@@ -2587,9 +2587,10 @@ Whenever you cast a |Sblack spell, you may untap ~. */
 	td.zone = TARGET_ZONE_PLAYERS;
 	card_instance_t* instance = get_card_instance(player, card);
 	if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td) && count_graveyard(instance->targets[0].player)){
-	    test_definition_t test;
-	    new_default_test_definition(&test, TYPE_ANY, "Select a card to exile.");
-	    new_global_tutor(instance->targets[0].player, instance->targets[0].player, TUTOR_FROM_GRAVE, TUTOR_RFG, 1, AI_MIN_VALUE, &test);
+	    test_definition_t this_test;
+	    char msg[100] = "Select a card to exile.";
+	    new_default_test_definition(&this_test, TYPE_ANY, msg);
+	    new_global_tutor(instance->targets[0].player, instance->targets[0].player, TUTOR_FROM_GRAVE, TUTOR_RFG, 1, AI_MIN_VALUE, &this_test);
 	}
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_PLAYER");
 }

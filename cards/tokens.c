@@ -746,3 +746,20 @@ LAB_0258326b:
   result = generic_token(player, card, event);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static int find_any_attached_legacy_effect(CardFunction func_ptr, int target_player_id, int target_card)
+{
+  for (int card = 0; card < active_cards_count[target_player_id]; ++card)
+  {
+    card_instance_t *instance = in_play(target_player_id, card);
+    if (instance && instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
+        instance->info_slot_fn == func_ptr && instance->damage_target_player == target_player_id &&
+        instance->damage_target_card == target_card)
+      return card;
+  }
+  return -1;
+}
+#endif

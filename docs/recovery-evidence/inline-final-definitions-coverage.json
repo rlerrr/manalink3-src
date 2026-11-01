@@ -1,0 +1,1416 @@
+{
+  "restored_inline_definitions": 22,
+  "source_units": 17,
+  "native_inline_instances": 23,
+  "native_inline_fragments": 79,
+  "complete_native_callers": 20,
+  "unused_definition_control_runtime_sections_unchanged": 26,
+  "corrected_native_caller": "card_prototype_portal",
+  "only_changed_link_object": "cards/scars_of_mirrodin.o",
+  "verified_fixed_slots": 15169,
+  "remaining_missing_inline_definitions": 0,
+  "unresolved_semantic_limits": [
+    {
+      "name": "disable_all_but_sp_keywords",
+      "scope": "mode0 follows sibling native mask helpers; only mode1 is directly observed"
+    },
+    {
+      "name": "ward_action",
+      "scope": "only mode1 is observed; other mode behavior is not uniquely recoverable"
+    },
+    {
+      "name": "store_iid_and_tou",
+      "scope": "int return is dead in both callers; success/failure choice is not unique"
+    },
+    {
+      "name": "resolve_an_adventure",
+      "scope": "int return is dead; zero return is not unique"
+    },
+    {
+      "name": "assist",
+      "scope": "int return is dead; zero return is not unique"
+    },
+    {
+      "name": "generate_tokens_impl",
+      "scope": "int return is dead; generated-card index return is not unique"
+    }
+  ],
+  "source_name_reconciliation": {
+    "original_name_candidates": 142,
+    "categories": {
+      "restored_original_private_inline": 90,
+      "existing_implicit_cpp_member": 3,
+      "restored_original_private_inline_with_limited_semantics": 6,
+      "existing_accepted_source_name": 7,
+      "existing_macro_generated_definition": 19,
+      "existing_accepted_source_binding": 8,
+      "restored_original_header_inline": 5,
+      "restored_original_cpp_operator": 4
+    },
+    "candidates": [
+      {
+        "name": "InitNumberBitsSet",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/zendikar_rising.c",
+          "definition_sha256": "3d0ed67056169abb6ef3114c5aee7a9c1b6b39176bf2268b04a029fe9d91581e"
+        }
+      },
+      {
+        "name": "SetVoidptr_t",
+        "category": "existing_implicit_cpp_member",
+        "evidence": {
+          "source": "functions/utility.cpp",
+          "receipt": "docs/recovery-evidence/inline-mechanics-recovery.json"
+        }
+      },
+      {
+        "name": "UnorderedMapIntInt_t",
+        "category": "existing_implicit_cpp_member",
+        "evidence": {
+          "source": "functions/utility.cpp",
+          "receipt": "docs/recovery-evidence/inline-mechanics-recovery.json"
+        }
+      },
+      {
+        "name": "activate_deflect",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/gargaroz.c",
+          "definition_sha256": "b8b2f45763b36df72f1e40784c265b9fd081f9fbc351eb3c7c17df1ef816a48b"
+        }
+      },
+      {
+        "name": "activate_ruins_of_oran_rief",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/oath_of_the_gatewatch.c",
+          "definition_sha256": "cf1ede648727d52288e2e11c6951f5beee27b1ab89988a03cc18503ed271c4f1"
+        }
+      },
+      {
+        "name": "add_force_a_subtype_not_in_play",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/has_creature_type.c",
+          "definition_sha256": "3eb82df2331fbe312a890701a8564d0624b20f08ad8dbfe5bde924bed55e4cd5"
+        }
+      },
+      {
+        "name": "add_force_a_subtype_permanently",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/has_creature_type.c",
+          "definition_sha256": "46cb98f57bd4da9414de5d9a409dcb3e2984f274fa7c50df316b89bf1979810c"
+        }
+      },
+      {
+        "name": "add_force_a_subtype_until_eot_impl",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/has_creature_type.c",
+          "definition_sha256": "a61b3ddf4d5a28d5cb861ed92f24d6683c30ebc608b9b1ef738f933ef9d06e2c"
+        }
+      },
+      {
+        "name": "ai_blockers_guts",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/engine.c",
+          "definition_sha256": "4d3897e454e6e1cef7123d48ef74162d7f74400b80a3c38a9b2731cab16189b4",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "allow_duplicates",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/packs.c",
+          "definition_sha256": "cefc84a68fa30f2bc520db442a27411cd3996ea2199f117aa403b59e542f0131"
+        }
+      },
+      {
+        "name": "any_can_block",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/engine.c",
+          "definition_sha256": "e53d12d7a11ee763dee76c25b71a05f48faa473c0953ab739062068a5c859abe",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "any_left_in_packs",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/draft.c",
+          "definition_sha256": "80f130b6f6fa14108403cc364db94804ca320a396523f9cdba35de8a9949e6fc"
+        }
+      },
+      {
+        "name": "archon_of_cruelty_effect",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/modern_horizons_2.c",
+          "definition_sha256": "269c9a409b7c1dfec5184eba958150cd2b04e11a30920903aeae692bc98d8356"
+        }
+      },
+      {
+        "name": "assist",
+        "category": "restored_original_private_inline_with_limited_semantics",
+        "evidence": {
+          "source": "cards/battlebond.c",
+          "definition_sha256": "db08c93cd0d5d32f3c1e1e3931539bf06e62d675d11ab4aba13c79c46afe5832",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json",
+          "unresolved_semantic_limit": "int return is dead; zero return is not unique"
+        }
+      },
+      {
+        "name": "basic_subtype_to_color",
+        "category": "existing_accepted_source_name",
+        "evidence": [
+          {
+            "source": "cards/ice_age.c",
+            "name": "basic_subtype_to_color_part",
+            "definition_sha256": "ceb3868e718339dbefc0d07894d3051df4450f8a9f91f93bb0b61e5d778b0142",
+            "native_address": "23ed750"
+          }
+        ]
+      },
+      {
+        "name": "can_activate_basic_equipment_impl",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/equipments.c",
+          "definition_sha256": "47172d9ae6b37f2bf3f18b2530c7db881069def9d9f77fc4b17223ffe2765c1f"
+        }
+      },
+      {
+        "name": "can_adapt",
+        "category": "existing_accepted_source_name",
+        "evidence": [
+          {
+            "source": "cards/ravnica_allegiance.c",
+            "name": "can_adapt_without_fx",
+            "definition_sha256": "1a7cbcebfb34e91e213e4a2e786e7eca282049efa06737ee6f11d43ccd79cdf5",
+            "native_address": "25bbcd0"
+          }
+        ]
+      },
+      {
+        "name": "can_cast_caf",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/m20.c",
+          "definition_sha256": "a755589569e8a5affc7b795381bc969b4caae296a9c34982551df4704aadbc3d"
+        }
+      },
+      {
+        "name": "can_legally_play_iid_now_lite",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/zendikar_rising.c",
+          "definition_sha256": "092af0c58470c69554aebae249486bd1f93cc6a03a6b12d0f6bc71d7e464e628"
+        }
+      },
+      {
+        "name": "can_pay_aftermath",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/amonkhet.c",
+          "definition_sha256": "b9d9174a0cc47a3a5af5071f1964dedb1fcdd23c10d431486bdd04740c2665f1"
+        }
+      },
+      {
+        "name": "can_produce_colorless",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/modern_horizons_2.c",
+          "definition_sha256": "bf50b190164aa0ce6a212668adcca8e77bc3fb1286c2465b31e8b3ba57989131"
+        }
+      },
+      {
+        "name": "card_blessed_breath_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/champions_of_kamigawa.c",
+            "expanded_definition_sha256": "8eafc1d185be1b72eae237cc9d2c5e7d26899de83390bd81d52ccacab41df3e6",
+            "physical_source_sha256": "668d09040862d64cf5569a46633c6665f105fff539c4250aba243e962c67ed0c"
+          }
+        ]
+      },
+      {
+        "name": "card_candles_glow_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/champions_of_kamigawa.c",
+            "expanded_definition_sha256": "b80377415525fde11c1d7b63e54fc971976f171225932fcee2190d97955e3f86",
+            "physical_source_sha256": "668d09040862d64cf5569a46633c6665f105fff539c4250aba243e962c67ed0c"
+          }
+        ]
+      },
+      {
+        "name": "card_consuming_vortex_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/champions_of_kamigawa.c",
+            "expanded_definition_sha256": "7bef4a0e087d4cf787d1db2ad2e527ba5a3af282b3f0c51579dbd6658ed7eef4",
+            "physical_source_sha256": "668d09040862d64cf5569a46633c6665f105fff539c4250aba243e962c67ed0c"
+          }
+        ]
+      },
+      {
+        "name": "card_crack_the_earth_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/betrayers_of_kamigawa.c",
+            "expanded_definition_sha256": "f0485d0b6ce1d6a2d97dfa467bda62f70f8a4018f715df0604d3c53becb7fe10",
+            "physical_source_sha256": "fa0d653c88cf0500f439c61768a4f2acd37d4a6c6211fc44931dc5045a43efb4"
+          }
+        ]
+      },
+      {
+        "name": "card_dampen_thought_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/champions_of_kamigawa.c",
+            "expanded_definition_sha256": "5ed0f56cbf662efa17eaa3eb237b6d0d90b15743b0db193b266f4f7583c6ea32",
+            "physical_source_sha256": "668d09040862d64cf5569a46633c6665f105fff539c4250aba243e962c67ed0c"
+          }
+        ]
+      },
+      {
+        "name": "card_death_of_a_thousand_stings_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/saviors_of_kamigawa.c",
+            "expanded_definition_sha256": "4118a3099b9b80c44bcb4473ebf35b568c29038ef4cd2afce337a972c43fb627",
+            "physical_source_sha256": "6cf07edaa4322aee26bafce06e6e82ddcf00e8ac01fa4f557e8401c54e9814c8"
+          }
+        ]
+      },
+      {
+        "name": "card_desperate_ritual_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/champions_of_kamigawa.c",
+            "expanded_definition_sha256": "799bb8d6edf4bdd19dfe282163790926221cf5f91cb530ff0561adae0030eafd",
+            "physical_source_sha256": "668d09040862d64cf5569a46633c6665f105fff539c4250aba243e962c67ed0c"
+          }
+        ]
+      },
+      {
+        "name": "card_eerie_procession_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/champions_of_kamigawa.c",
+            "expanded_definition_sha256": "0f1d938b8cbd0128f7b286d6d7e6935cd18c931cfd92f41f4f42acc9c8188cb9",
+            "physical_source_sha256": "668d09040862d64cf5569a46633c6665f105fff539c4250aba243e962c67ed0c"
+          }
+        ]
+      },
+      {
+        "name": "card_ethereal_haze_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/champions_of_kamigawa.c",
+            "expanded_definition_sha256": "4f8a7552d8c887048c56ca5b1ec81a22716c8f4b2542acb343adfea94074fb26",
+            "physical_source_sha256": "668d09040862d64cf5569a46633c6665f105fff539c4250aba243e962c67ed0c"
+          }
+        ]
+      },
+      {
+        "name": "card_exile_into_darkness_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/saviors_of_kamigawa.c",
+            "expanded_definition_sha256": "03d38f520d8dda725b47409421b0c96d2c3e8c3d9dec208d6fc2af7f3c137e21",
+            "physical_source_sha256": "6cf07edaa4322aee26bafce06e6e82ddcf00e8ac01fa4f557e8401c54e9814c8"
+          }
+        ]
+      },
+      {
+        "name": "card_first_volley_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/betrayers_of_kamigawa.c",
+            "expanded_definition_sha256": "51ce1d007fc6ff4dc7ee98b3f54cdb39c2a54a86eadefced57c7ea5b083fcb01",
+            "physical_source_sha256": "fa0d653c88cf0500f439c61768a4f2acd37d4a6c6211fc44931dc5045a43efb4"
+          }
+        ]
+      },
+      {
+        "name": "card_hideous_laughter_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/champions_of_kamigawa.c",
+            "expanded_definition_sha256": "43010aa34105926c364a78640c57601cf73b5df502d824c974c7fc39949f2642",
+            "physical_source_sha256": "668d09040862d64cf5569a46633c6665f105fff539c4250aba243e962c67ed0c"
+          }
+        ]
+      },
+      {
+        "name": "card_ire_of_kaminari_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/betrayers_of_kamigawa.c",
+            "expanded_definition_sha256": "acb5e0c371811f20a602232f75904e8af410f64ccd67920fb20294ac17ebf26e",
+            "physical_source_sha256": "fa0d653c88cf0500f439c61768a4f2acd37d4a6c6211fc44931dc5045a43efb4"
+          }
+        ]
+      },
+      {
+        "name": "card_part_the_veil_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/champions_of_kamigawa.c",
+            "expanded_definition_sha256": "773f40052c799bbf977c047564d4734bd9af6dc8bae7f7914237d773b67b6b8e",
+            "physical_source_sha256": "668d09040862d64cf5569a46633c6665f105fff539c4250aba243e962c67ed0c"
+          }
+        ]
+      },
+      {
+        "name": "card_peer_through_depths_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/champions_of_kamigawa.c",
+            "expanded_definition_sha256": "911f53d2d83481109a873473d6ba4a80d16675cc8fc459a76e399bd0d421322e",
+            "physical_source_sha256": "668d09040862d64cf5569a46633c6665f105fff539c4250aba243e962c67ed0c"
+          }
+        ]
+      },
+      {
+        "name": "card_terashis_grasp_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/betrayers_of_kamigawa.c",
+            "expanded_definition_sha256": "669c7fe42b23986fc3fa80dfbb5a6f9f1808d2b87a67c1d8dfc8a1e1f988c36e",
+            "physical_source_sha256": "fa0d653c88cf0500f439c61768a4f2acd37d4a6c6211fc44931dc5045a43efb4"
+          }
+        ]
+      },
+      {
+        "name": "card_three_tragedies_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/betrayers_of_kamigawa.c",
+            "expanded_definition_sha256": "35abb411284d75cc8da17a918911d856b4b6e57c412013b50502e7d999278860",
+            "physical_source_sha256": "fa0d653c88cf0500f439c61768a4f2acd37d4a6c6211fc44931dc5045a43efb4"
+          }
+        ]
+      },
+      {
+        "name": "card_through_the_breach_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/champions_of_kamigawa.c",
+            "expanded_definition_sha256": "d3b04857da773ff905cd6b5ba7b374405fb75a57794546ecdd4299488184d4e9",
+            "physical_source_sha256": "668d09040862d64cf5569a46633c6665f105fff539c4250aba243e962c67ed0c"
+          }
+        ]
+      },
+      {
+        "name": "card_unchecked_growth_impl",
+        "category": "existing_macro_generated_definition",
+        "evidence": [
+          {
+            "source": "cards/betrayers_of_kamigawa.c",
+            "expanded_definition_sha256": "10ceca2e096a7ec14afb5f8bc18d7c6746d9e75506612e46f0e6ced55e9e5200",
+            "physical_source_sha256": "fa0d653c88cf0500f439c61768a4f2acd37d4a6c6211fc44931dc5045a43efb4"
+          }
+        ]
+      },
+      {
+        "name": "cast_spell_with_improvise",
+        "category": "existing_accepted_source_binding",
+        "evidence": {
+          "native_name": "cast_spell_with_improvise",
+          "address": "0x20bbea0",
+          "end": "0x20bc4e5",
+          "native_bytes_sha256": "9a4b14c7fba5ce1a2bd91e0c8c31c1b48435a6493a1dc1a55f7425c08f84c8b7",
+          "source": "cards/aether_revolt.c",
+          "canonical_name": "cast_spell_with_improvise_impl",
+          "source_definition_sha256": "5458f7d02b55bcd941bce8d4c182cc6f80e93e0095ae24d8227e08f607792247",
+          "accepted_name": "cast_spell_with_improvise_2022_impl",
+          "accepted_record_sha256": "309c3f9e42ce82dc0393a4afc73290fbe573e14ab53d65da6e5b59dbfab4ac61",
+          "compiled_entries": [
+            "_cast_spell_with_improvise_impl.constprop.0"
+          ]
+        }
+      },
+      {
+        "name": "check_for_equipment_targets_impl",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/equipments.c",
+          "definition_sha256": "54d68fc1a630f65a7eff2e9fd8544d5155786656c446758e67a37c0fd8350bf7"
+        }
+      },
+      {
+        "name": "check_multisubtype_all_by_csvid",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/global_checking.c",
+          "definition_sha256": "47027b8f388fda0ef106afe9a472c0dd7428189c07bcbb61e51f7be32d57cb2a"
+        }
+      },
+      {
+        "name": "check_multisubtype_by_csvid",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/global_checking.c",
+          "definition_sha256": "53be11af7fa16143f24cf0e92e90b75fd977271e02c89f8681887d6940d3613f"
+        }
+      },
+      {
+        "name": "check_pow_tgh_boost",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/engine.c",
+          "definition_sha256": "267d6b54be86f7231b3f9ce2887ec23f0c6d9bf7f3c133e1f5e2f1af8cbe5937",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "check_targets_for_ward",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/modern_horizons_2.c",
+          "definition_sha256": "cb71ad9a39fd519e0842b17a46e9bb52be6371735219421b6e821d17a0c9782b",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "clear_stored_iids_and_tou",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/commander_legends.c",
+          "definition_sha256": "1ca25279a92c5bc402490209e106191845a5df6f299e635235b3634e4c5d9fc4"
+        }
+      },
+      {
+        "name": "cmc_mod_for_spectacle",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/ravnica_allegiance.c",
+          "definition_sha256": "c1110fa36710b7cde6d80acce8f7797e9626fd75a6d3fbfb48abe468235576d3"
+        }
+      },
+      {
+        "name": "color_test_to_ctl",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/choose_a_card.cpp",
+          "definition_sha256": "31ef0f0bd66e13c216a6fc0b2c417e71f15eea49be9f449bef20cb9818b17c02"
+        }
+      },
+      {
+        "name": "compare_iid_token",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/token_generation.c",
+          "definition_sha256": "a8202eb07d76b8335b16b021309b0979ccc4cda5d68f657cfd81141e7540be63"
+        }
+      },
+      {
+        "name": "count_party_classes",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/zendikar_rising.c",
+          "definition_sha256": "90ab48c293b2bd81296a9f954fff02844c389cd4c0a1da188c3a2612b02566a4"
+        }
+      },
+      {
+        "name": "count_party_guts",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/zendikar_rising.c",
+          "definition_sha256": "838e13afbc98691f6c2cf6e52e027faba14abd188a81a1e1b0e07da1ebad1be8"
+        }
+      },
+      {
+        "name": "counter_activated_or_triggered_ability_cycling",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/hour_of_devastation.c",
+          "definition_sha256": "1dc56d81418df9bf24de17e92600ff7580fb573260c9d4490d00aba23c053103",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "counters_on_upkeep",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/urza_saga.c",
+          "definition_sha256": "86a8c301e30929ff650853d61a896c62735287212edee657edf91d03992475e0"
+        }
+      },
+      {
+        "name": "counterspell_cycling",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/scourge.c",
+          "definition_sha256": "6ec78d291809e9d486d29d59ac0a12a4939c666299cd7926f431ded6e220f947",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "create_encore_granted_legacy",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/commander_legends.c",
+          "definition_sha256": "60e0eb72e9fe9fa78460a8a1f8f1bc2f5f6d968466c41dae7ee18598418111fa"
+        }
+      },
+      {
+        "name": "create_hofri_token",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/strixhaven.c",
+          "definition_sha256": "b3f66df3a3050f00a3ce4fbb76954c75f1e72eef7245920dd330844c5d4d5b7f"
+        }
+      },
+      {
+        "name": "create_livio_legacy",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/commander_legends.c",
+          "definition_sha256": "9a971a294a2030f66f575c7efbc3a9eedc7f6265b3e47c2145d537b45c4826d5"
+        }
+      },
+      {
+        "name": "create_spell_has_flashback_legacy_for_hl",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/dark_ascension.c",
+          "definition_sha256": "03fffa264eb5e12bc417c0ef525d32219cc1842d990c7cdc75fa54eeaea0b245"
+        }
+      },
+      {
+        "name": "create_targetted_legacy_effect_replace",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/functions.c",
+          "definition_sha256": "80ce2c69e935c131c7a43d2cb8e2394899d5e0bec8a488dabd4dad06b8d73df7"
+        }
+      },
+      {
+        "name": "ctl_to_color_test",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/choose_a_card.cpp",
+          "definition_sha256": "49601ece97c4e24e60e68fc0f99102b1fe86db4aef6f77ea8534810f4e900021"
+        }
+      },
+      {
+        "name": "ctl_to_type",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/choose_a_card.cpp",
+          "definition_sha256": "1075d4f03914dc049e9a211158c614b93ca21e1b8b78091d168bd9ad0ab57abc"
+        }
+      },
+      {
+        "name": "destr_read_a_line",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/load_text.c",
+          "definition_sha256": "6e91e9c577e808a625334445bd53f5dceb3ebfb11c8623c2fa76f61bae68e8b7"
+        }
+      },
+      {
+        "name": "disable_all_but_sp_keywords",
+        "category": "restored_original_private_inline_with_limited_semantics",
+        "evidence": {
+          "source": "functions/abilities.c",
+          "definition_sha256": "6c2eeab32d6e5583a5c819e49298ed8fa667e4e92f48a188298245652f1e2021",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json",
+          "unresolved_semantic_limit": "mode0 follows sibling native mask helpers; only mode1 is directly observed"
+        }
+      },
+      {
+        "name": "disable_legend_rule_impl",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/functions.c",
+          "definition_sha256": "66ddd911a32dfc55a7a72a510a88daa725ff0b001594b47e040f34a2a4bf82de"
+        }
+      },
+      {
+        "name": "dominaria_memorial",
+        "category": "existing_accepted_source_binding",
+        "evidence": {
+          "native_name": "dominaria_memorial",
+          "address": "0x22ca5c0",
+          "end": "0x22ca999",
+          "native_bytes_sha256": "f9c25dfcf157af75f66fca64f0fd25c10d60fbdeccb3f5fcfb7620117a3b354e",
+          "source": "cards/dominaria.c",
+          "canonical_name": "dominaria_memorial_impl",
+          "source_definition_sha256": "14ff60a9e8eb4c997eeff403b771c1d6bfb456564bf29d03f43b6b8caee52cae",
+          "accepted_name": "dominaria_memorial_2022_impl",
+          "accepted_record_sha256": "e4bc27babdce15b95b095361a7ddbc9b510b5582c11d35e09ce3215530b57dc8",
+          "compiled_entries": [
+            "_dominaria_memorial_impl"
+          ]
+        }
+      },
+      {
+        "name": "each_player_reveal_top_library_type_cards_put_in_play_exile_rest",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/mercadian_masques.c",
+          "definition_sha256": "ceffbb462c6cf32ef6d5749dbc6e09b27345c5e86beef69e7f3047495be41135"
+        }
+      },
+      {
+        "name": "effect_breath_dream",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/ice_age.c",
+          "definition_sha256": "c13478086fd49cfb48e3ffbf7798234ca9eb5973c7fbfd6cae7f76e12301e7cb",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "eot_flipper",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/betrayers_of_kamigawa.c",
+          "definition_sha256": "eca4c66cfdf8902d0642ca7808f376d20f3492fa69b50640c895ae369dda3737"
+        }
+      },
+      {
+        "name": "escape_with_counters",
+        "category": "existing_accepted_source_binding",
+        "evidence": {
+          "native_name": "escape_with_counters",
+          "address": "0x235a200",
+          "end": "0x235a2d2",
+          "native_bytes_sha256": "b42ca6e99825ec41d84c6408953e046b0bf31a1f98d90c8c7de1f29f518cc4c3",
+          "source": "cards/theros_beyond_death.c",
+          "canonical_name": "escape_with_counters_impl",
+          "source_definition_sha256": "1442b17020053210b081dec4bddffe3b858cf1fa66287417c85efe78a4d9af97",
+          "accepted_name": "escape_with_counters_2022_impl",
+          "accepted_record_sha256": "4a8a2a4d52ccebb9e2264b0fe160e7478da2c19b90ca15f6ee8c570fc17a7219",
+          "compiled_entries": [
+            "_escape_with_counters_impl"
+          ]
+        }
+      },
+      {
+        "name": "exile_and_give_elemental",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/strixhaven.c",
+          "definition_sha256": "a19319d13644cd7b30d22b679c2ab68db3e0e4291d2f6bb5fd9e2d869113a9fb"
+        }
+      },
+      {
+        "name": "fabricate",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/kaladesh.c",
+          "definition_sha256": "893f260efb83ce575d4b6446582ca3c0baa4d8436d720b44a6cac7733a089b4b"
+        }
+      },
+      {
+        "name": "find_any_attached_legacy_effect",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/tokens.c",
+          "definition_sha256": "2e8fcef7632009f2535fce23642911069d6a538e8d45306189c02ae291c920df"
+        }
+      },
+      {
+        "name": "find_attached_legacy_effect",
+        "category": "existing_accepted_source_binding",
+        "evidence": {
+          "native_name": "find_attached_legacy_effect",
+          "address": "0x210b2a0",
+          "end": "0x210b31d",
+          "native_bytes_sha256": "6e89917a5569cfea58cb534c7a774a355c72fe2981b33cb46f44bbe2ee95633c",
+          "source": "cards/dark_ascension.c",
+          "canonical_name": "find_attached_havengul_legacy",
+          "source_definition_sha256": "a08ae42f6fa1c3adf5ef2ef558767a5312d5352d7b4a7dd8f35871b3d2f334e2",
+          "accepted_name": "find_attached_havengul_legacy_2022",
+          "accepted_record_sha256": "8c8710aa7bd3bdd190d47a82f412c0dc16ecb7c16eb5996cf53ba400140d09ed",
+          "compiled_entries": [
+            "_find_attached_havengul_legacy"
+          ]
+        }
+      },
+      {
+        "name": "find_imprint_legacy",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/scars_of_mirrodin.c",
+          "definition_sha256": "b57678c3cc874268598e9f252b227d3abbd96d6aa172255a760688ff6745b99a"
+        }
+      },
+      {
+        "name": "generate_encore_token",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/commander_legends.c",
+          "definition_sha256": "97165a296aed56a9814b716704b43c6d5ba2f7b6096c93d696a9d1bcd28b40e6"
+        }
+      },
+      {
+        "name": "generate_tokens_impl",
+        "category": "restored_original_private_inline_with_limited_semantics",
+        "evidence": {
+          "source": "functions/token_generation.c",
+          "definition_sha256": "f4f66423704ddc7a01b2718d1c7071504133fd3315280f958ad6680190e68055",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json",
+          "unresolved_semantic_limit": "int return is dead; generated-card index return is not unique"
+        }
+      },
+      {
+        "name": "generic_aura_impl",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/auras.c",
+          "definition_sha256": "25f00deb223d56edf5f66399f13531a6befdc25aed915d7c37416aadc3f4311f"
+        }
+      },
+      {
+        "name": "get_color_identity_of_commander",
+        "category": "existing_accepted_source_binding",
+        "evidence": {
+          "native_name": "get_color_identity_of_commander",
+          "address": "0x25a2780",
+          "end": "0x25a281d",
+          "native_bytes_sha256": "fa7fba9613a05fa633e6f27b5f0ad0d3f5d95365391550b5f471973298f03ced",
+          "source": "cards/commander_legends.c",
+          "canonical_name": "get_color_identity_of_all_commanders",
+          "source_definition_sha256": "aeca18736b5aae3d8c90b59bba8389fa3ace5a0aebb3c33163edd3a54ec5bc33",
+          "accepted_name": "get_color_identity_of_all_commanders_2022",
+          "accepted_record_sha256": "8c1524f051429bfa770ed3bacb71bdfe15510595c2f8830685e94497c4b4cbf1",
+          "compiled_entries": [
+            "_get_color_identity_of_all_commanders"
+          ]
+        }
+      },
+      {
+        "name": "get_csvid_choices",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/packs.c",
+          "definition_sha256": "1f3f18ec30590bb308468e97c6d63411d1891347cad49760ab4ae142cb92abfb",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "get_updated_casting_cost_with_cost_mod",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/functions.c",
+          "definition_sha256": "35c5df348c5c16827d041c04216d7185c84b7002450b8647754990158eee72ca"
+        }
+      },
+      {
+        "name": "get_watermark",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/unstable.c",
+          "definition_sha256": "24f7499266b83984e35d8ee92396221ab0fb3684a122a23da3e43dd7af7a9046"
+        }
+      },
+      {
+        "name": "ghireds_special_populate",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/commander_2019.c",
+          "definition_sha256": "378beb969ac9457c6ff6dfcd7ab0b3c59916c75ec6460007a56792cae85d8163"
+        }
+      },
+      {
+        "name": "goad",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/commander_2019.c",
+          "definition_sha256": "c5c82b858b135d0b57f2942a26aad8e4381d5aeff4750ccc1b4f740a28b6d938"
+        }
+      },
+      {
+        "name": "has_ability_counters",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/events.c",
+          "definition_sha256": "11c03c6f07765500ed35d50edcc37bb31fb440345b5f4f56b810f4f9a4164d90"
+        }
+      },
+      {
+        "name": "has_convoked_mana_for_hogaak",
+        "category": "existing_accepted_source_binding",
+        "evidence": {
+          "native_name": "has_convoked_mana_for_hogaak",
+          "address": "0x2335930",
+          "end": "0x2335b75",
+          "native_bytes_sha256": "34b6b32ab4a4d3284e8ae944c22e0327902e4a0bf2051716df395b748139b969",
+          "source": "cards/modern_horizons.c",
+          "canonical_name": "has_convoked_mana_for_hogaak_impl",
+          "source_definition_sha256": "388f28ef125331308bc8d926c8e25af4f7e1f05f1dc897c1f051c370a68d3fcb",
+          "accepted_name": "has_convoked_mana_for_hogaak_impl",
+          "accepted_record_sha256": "fde267de6ae2d10040819d2b152d1fb6f6d41f5f21d0520daa67764fdf414276",
+          "compiled_entries": [
+            "_has_convoked_mana_for_hogaak_impl"
+          ]
+        }
+      },
+      {
+        "name": "has_mana_to_cast_iid_minus_two",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/war_of_the_spark.c",
+          "definition_sha256": "83e9b70850e9ab6c6610b612e40b61886a758f4c02803533be94286a3ec99c6c",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "has_misc_protection_from",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/targets.c",
+          "definition_sha256": "f7dd81690c0360acbfbf9b377d50899ba12761e349db152cda67800d663d71c0"
+        }
+      },
+      {
+        "name": "has_sp_key_by_iid",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/abilities.c",
+          "definition_sha256": "33867ab6fe04a431b452defad3619efc273b23240f8cc638afb5989dbd836a8b"
+        }
+      },
+      {
+        "name": "hogaak_convoke",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/modern_horizons.c",
+          "definition_sha256": "63a711e3b2482e966acd1a7333a156e28b79cec7bf533b6ec6686cf298ac1305",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "how_much_life_can_i_pay_impl",
+        "category": "existing_accepted_source_binding",
+        "evidence": {
+          "native_name": "how_much_life_can_i_pay_impl",
+          "address": "0x268fdf0",
+          "end": "0x268fe2e",
+          "native_bytes_sha256": "7e8b6a0a9fce3b85455d15d9b083aa9dfde5b0cf8d42c39431edcab00781f7c2",
+          "source": "functions/functions.c",
+          "canonical_name": "how_much_life_can_i_pay_for_mana",
+          "source_definition_sha256": "ea933b852a53c88922c2badbe611165127160de633af85b73febad01baf5d8d8",
+          "accepted_name": "how_much_life_can_i_pay_for_mana_2022",
+          "accepted_record_sha256": "353338201e90dcc21193f449aacedb39167fe8ffc0239243487e0592330fa609",
+          "compiled_entries": [
+            "_how_much_life_can_i_pay_for_mana"
+          ]
+        }
+      },
+      {
+        "name": "imprint_legacymatches",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/scars_of_mirrodin.c",
+          "definition_sha256": "d77b39e87b655c54328aa3c84440b9ec653f3c4141a7696f437fec1d9d469653"
+        }
+      },
+      {
+        "name": "info_outofline",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/deck.c",
+          "definition_sha256": "983531fbf1695126e9f1ea8c682ead23f276f3234eb06673875e3c6b9d392a93"
+        }
+      },
+      {
+        "name": "is_dark_outdoors",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/unstable.c",
+          "definition_sha256": "ad7db60471c1e2562d202a1ca8e9c74b6d880c8f8f8b228a111fb07f06c117ac"
+        }
+      },
+      {
+        "name": "is_split_card",
+        "category": "restored_original_header_inline",
+        "evidence": {
+          "source": "manalink.h",
+          "definition_sha256": "af1490238d67bd15819a5cb2847bd98754496662ef505d1700870b12ebdeeb35"
+        }
+      },
+      {
+        "name": "is_this_dying_or_being_exiled",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/war_of_the_spark.c",
+          "definition_sha256": "6ec06ce0e2e98ab6238a3e3f585e82b6a9e9ff53646228c4dc5c20bedbc25439"
+        }
+      },
+      {
+        "name": "is_tribal_by_id",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/has_creature_type.c",
+          "definition_sha256": "81b8adbe1aa0df5a00f4cccfb03d9f2e6a03a2ac9cc611e6089c5fc37a8c0f93"
+        }
+      },
+      {
+        "name": "is_vehicle_or_dwarf",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/kaladesh.c",
+          "definition_sha256": "6de13eee3ee81833c644f137ecfd7c3e9f44b3a9d6060dfca3d6f864dec3fd92"
+        }
+      },
+      {
+        "name": "isvowel",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/draft.c",
+          "definition_sha256": "625150121d29a93d9d8d91e710c4bcf074753b0f0f4de5756eb1deb45492ce23"
+        }
+      },
+      {
+        "name": "make_ai_deck",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/draft.c",
+          "definition_sha256": "c66292d1864ff2d124cfa8724e62f5e029bf7ec230ee74f86566ab5b1607a93a",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "make_elemental",
+        "category": "existing_accepted_source_name",
+        "evidence": [
+          {
+            "source": "cards/strixhaven.c",
+            "name": "make_one_elemental_strixhaven",
+            "definition_sha256": "c551fedf727f4d545b198d6c4bd8df0c6c3f3b4c9480e2407b79bb0f61328428",
+            "native_address": "23c89e0"
+          }
+        ]
+      },
+      {
+        "name": "make_fractal",
+        "category": "existing_accepted_source_name",
+        "evidence": [
+          {
+            "source": "cards/strixhaven.c",
+            "name": "make_one_fractal",
+            "definition_sha256": "c0bcf6b3a384a76073ec1d0dadd8e27d340eba5effa20b843b8336d3c0a2eb62",
+            "native_address": "23c8b60"
+          }
+        ]
+      },
+      {
+        "name": "make_spirit_strixhaven",
+        "category": "existing_accepted_source_name",
+        "evidence": [
+          {
+            "source": "cards/strixhaven.c",
+            "name": "make_one_spirit_strixhaven",
+            "definition_sha256": "6cb48b97bd9ea8597a17b6317f4fe062360e571de3bf5adedbd21ebd6feb9ff7",
+            "native_address": "23c8990"
+          }
+        ]
+      },
+      {
+        "name": "modify_casting_cost_for_colorless_only_mana",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/oath_of_the_gatewatch.c",
+          "definition_sha256": "6a2b77ebdcf5ba76d9264b2af4035054add35c5c52cc397e97d7281e69e4a2ab"
+        }
+      },
+      {
+        "name": "most_common_color",
+        "category": "existing_accepted_source_name",
+        "evidence": [
+          {
+            "source": "cards/invasion.c",
+            "name": "most_common_color_all_permanents",
+            "definition_sha256": "f195383aa21421aa57bb5ca10ab3d8dc963fa75b8680868e6db07209e1b810ea",
+            "native_address": "2488800"
+          }
+        ]
+      },
+      {
+        "name": "operator&",
+        "category": "restored_original_cpp_operator",
+        "evidence": {
+          "source": "functions/choose_a_card.cpp",
+          "receipt": "docs/recovery-evidence/inline-mechanics-recovery.json",
+          "native_overloads": 2
+        }
+      },
+      {
+        "name": "operator&=",
+        "category": "restored_original_cpp_operator",
+        "evidence": {
+          "source": "functions/choose_a_card.cpp",
+          "receipt": "docs/recovery-evidence/inline-mechanics-recovery.json",
+          "native_overloads": 2
+        }
+      },
+      {
+        "name": "operator|",
+        "category": "restored_original_cpp_operator",
+        "evidence": {
+          "source": "functions/choose_a_card.cpp",
+          "receipt": "docs/recovery-evidence/inline-mechanics-recovery.json",
+          "native_overloads": 2
+        }
+      },
+      {
+        "name": "operator|=",
+        "category": "restored_original_cpp_operator",
+        "evidence": {
+          "source": "functions/choose_a_card.cpp",
+          "receipt": "docs/recovery-evidence/inline-mechanics-recovery.json",
+          "native_overloads": 2
+        }
+      },
+      {
+        "name": "party_bits",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/zendikar_rising.c",
+          "definition_sha256": "8b448233516c4e7e2f01cbc38cf7915b42a206e19c29989ee053be8ab2e9f7b1"
+        }
+      },
+      {
+        "name": "pay_aftermath",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/amonkhet.c",
+          "definition_sha256": "1035d7a59fb569d0779c082ad80e381e940c0d580b8181d8277501a4c5364b48"
+        }
+      },
+      {
+        "name": "pay_spectacle",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/ravnica_allegiance.c",
+          "definition_sha256": "9618ad8f056e43b2552722729ad5936a7d0aebe766e649aeb929acbf0f430620",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "phyrexians",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/apocalypse.c",
+          "definition_sha256": "11d8a79f4d424a374d48072c6e87c15bfc5f08675a9632bbbd72a264bc481aec"
+        }
+      },
+      {
+        "name": "pick_ai_card",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/draft.c",
+          "definition_sha256": "8787bba2e1623a42a7094379da8dcbdc6477c5353eb006ccb9157ce2026b67d1",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "pick_human_card",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/draft.c",
+          "definition_sha256": "8d8c4101e20ad220391bb6f92b696ee7714493d12727464d0482cfbe3549851f",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "play_card_in_exile_for_free_and_exile_it",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/play_spell_for_free.c",
+          "definition_sha256": "5f91d5002840e1279673b4967dc2ab7a70ed42c1c9f237ebd2edfa6a98338c48"
+        }
+      },
+      {
+        "name": "prevent_all_damage_of_a_source_until_eot",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/torment.c",
+          "definition_sha256": "971ccd97e0985c32db300bfb42bba60e10fe3a7893a5e938eea8c90108486422"
+        }
+      },
+      {
+        "name": "prototype_portal_impl",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/scars_of_mirrodin.c",
+          "definition_sha256": "0bccbec125216f06a84009a7ab6b5251287da8fd494ad0e60f096fad43a25d3e",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "put_into_play_a_card_from_deck_tapped_and_attacking",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/commander_legends.c",
+          "definition_sha256": "4aff2bfbf882241324fc7659906515aea219c957fa0a4b0ad67c806ffe1cda99"
+        }
+      },
+      {
+        "name": "raw_has_subtype",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/packs.c",
+          "definition_sha256": "571638a12333fed48daccb96f1df583ee9b9603afed55af88def35bc0b8d8ef1"
+        }
+      },
+      {
+        "name": "release_dynamic_card_type",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/token_generation.c",
+          "definition_sha256": "d71ae61b818c01f7afafecc38b7661a29dc86c12faa6bcacfcd4cd0f7cd63306"
+        }
+      },
+      {
+        "name": "resolve_an_adventure",
+        "category": "restored_original_private_inline_with_limited_semantics",
+        "evidence": {
+          "source": "cards/throne_of_eldraine.c",
+          "definition_sha256": "caee199f4d43d84421d16b6cd2676b625e58d02decd33d6f989b3c094158ee51",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json",
+          "unresolved_semantic_limit": "int return is dead; zero return is not unique"
+        }
+      },
+      {
+        "name": "resolve_iid",
+        "category": "existing_accepted_source_name",
+        "evidence": [
+          {
+            "source": "functions/token_generation.c",
+            "name": "resolve_token_iid",
+            "definition_sha256": "86029a2383182f602e2a1bf64d0ea3aa413c8ee4e32ea0bca39e3bec996f1d55",
+            "native_address": "2664f30"
+          }
+        ]
+      },
+      {
+        "name": "retrieve_stored_iids_and_tou",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/commander_legends.c",
+          "definition_sha256": "451f89a5fdae1cd2d38b7c3631552b5f6165df69ea82a0eadea1c9754f006b28"
+        }
+      },
+      {
+        "name": "reveal_top_library_type_cards_put_in_hand_rest_bottom_library_any_order",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/saviors_of_kamigawa.c",
+          "definition_sha256": "5337540ebc446f5125ca8ca9087bc788a81138d07a155875b4b72b2f2fcd3b2d"
+        }
+      },
+      {
+        "name": "roll_2d6",
+        "category": "restored_original_header_inline",
+        "evidence": {
+          "source": "manalink.h",
+          "definition_sha256": "eb9949618c111a4be262451a3dbec59c7643f66d257048329152186f2e38c32f"
+        }
+      },
+      {
+        "name": "roll_2d6_difference",
+        "category": "restored_original_header_inline",
+        "evidence": {
+          "source": "manalink.h",
+          "definition_sha256": "162a76e321796f1e638aadef70b59655e5f174ef5129f4ad0534eb70de93f5c5"
+        }
+      },
+      {
+        "name": "roll_d6",
+        "category": "restored_original_header_inline",
+        "evidence": {
+          "source": "manalink.h",
+          "definition_sha256": "1d0fd9ebceac6fb9bad0b40546efa7283f3b4ac89f8dca3c2879fb149cf61d94"
+        }
+      },
+      {
+        "name": "roll_xd6",
+        "category": "restored_original_header_inline",
+        "evidence": {
+          "source": "manalink.h",
+          "definition_sha256": "1203b120cc47d0d3eea5be3a23d6bc5c73b6f51a359970bbefbe3c89fc340732"
+        }
+      },
+      {
+        "name": "sac_at_beginning_of_next_end_step",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/theros_beyond_death.c",
+          "definition_sha256": "1fd27d69db1f313b4c178a75a25b3513cf03a5bb59fa9abb2d48c3acc9702325"
+        }
+      },
+      {
+        "name": "select_a_card_from_deck_automatic",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/tutors.c",
+          "definition_sha256": "fdae7190da9d5aab73150997f9ca4f8c07ccaa4b90bdddac3a4adcf07753737f"
+        }
+      },
+      {
+        "name": "special_null_casting_cost",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/zendikar_rising.c",
+          "definition_sha256": "1367440814ac6f63fb9c7f1e8ff06460450cf1a08072960bef2583a145747b65"
+        }
+      },
+      {
+        "name": "spectacle",
+        "category": "existing_accepted_source_binding",
+        "evidence": {
+          "native_name": "spectacle",
+          "address": "0x25bbda0",
+          "end": "0x25bc02f",
+          "native_bytes_sha256": "e40023290f077bdca25f4f2ff66e84380c0a89ab5dc07190ddf10d6c6d4d5403",
+          "source": "cards/ravnica_allegiance.c",
+          "canonical_name": "spectacle_impl",
+          "source_definition_sha256": "2011521b5b2bc49bfaf06742944b268aa9b76745201036ded783cd6407dd8d8c",
+          "accepted_name": "spectacle_2022_impl",
+          "accepted_record_sha256": "619a0857a3e3c2aca0dbae8aa4e10a2c2de9fac47f2bb02f1f839bd86b7ad479",
+          "compiled_entries": [
+            "_spectacle_impl"
+          ]
+        }
+      },
+      {
+        "name": "spectacle_paid",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/ravnica_allegiance.c",
+          "definition_sha256": "ba4b0555ae7ff6d59ac3fa4e1b7f0d3d2d79bee2300d2863790a56832fed6574"
+        }
+      },
+      {
+        "name": "store_iid_and_tou",
+        "category": "restored_original_private_inline_with_limited_semantics",
+        "evidence": {
+          "source": "cards/commander_legends.c",
+          "definition_sha256": "3d6026b8703c4bbcb2bdf13a12a412e48acaf5b088da1604cb90bbfeaf8bdf06",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json",
+          "unresolved_semantic_limit": "int return is dead in both callers; success/failure choice is not unique"
+        }
+      },
+      {
+        "name": "three_nonland_permanents_start_with_same_letter",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/unglued_unhinged.c",
+          "definition_sha256": "cd7f84102853a7339f1b2134357e1b19197fb7195f94d204825709d586b7edb0"
+        }
+      },
+      {
+        "name": "totem_armor_any",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/commander_2018.c",
+          "definition_sha256": "c7f9ecdccce9bf890476cdc061c686f2dafc40b9c9f71c63896f416232619186",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json"
+        }
+      },
+      {
+        "name": "type_to_ctl",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "functions/choose_a_card.cpp",
+          "definition_sha256": "13802a2c8901b8bc54865550e3e5a2df245cc953de8b23836c3ea96adb48a97b"
+        }
+      },
+      {
+        "name": "validate_imprinted_card",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/scars_of_mirrodin.c",
+          "definition_sha256": "a17ee826ed3f579afa572d7264a88158c12ac452a66a466eae77207ccd1ae648"
+        }
+      },
+      {
+        "name": "ward_action",
+        "category": "restored_original_private_inline_with_limited_semantics",
+        "evidence": {
+          "source": "cards/modern_horizons_2.c",
+          "definition_sha256": "1ba4f38fef538c8537b7c6f6d721731a7e361d93501bb320a2a0cf2542140d46",
+          "receipt": "docs/recovery-evidence/inline-final-definitions-recovery.json",
+          "unresolved_semantic_limit": "only mode1 is observed; other mode behavior is not uniquely recoverable"
+        }
+      },
+      {
+        "name": "whenever_a_treasure_is_sacrificed",
+        "category": "restored_original_private_inline",
+        "evidence": {
+          "source": "cards/ixalan.c",
+          "definition_sha256": "4a60cbac372edf7bf56207ef6dff64e0076dcab55d07fefb9a9f6e158833e33a"
+        }
+      },
+      {
+        "name": "~UnorderedMapIntInt_t",
+        "category": "existing_implicit_cpp_member",
+        "evidence": {
+          "source": "functions/utility.cpp",
+          "receipt": "docs/recovery-evidence/inline-mechanics-recovery.json"
+        }
+      }
+    ],
+    "inputs": {
+      ".recovery/inline-only-helper-inventory.json": "2f5d22f84f2d1238e520a4eed3edcfe08f66a48ee7d09c79f902be78fdece6ad",
+      "docs/recovery-evidence/helper-canonicalization.json": "f34a5a8908b90652050b74545e4921d0c6af543e0f8dcbb85dfa6cbea8d88d09",
+      "docs/recovery-evidence/recovered-functions.json": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+      "manalink.h": "a3547d1c0f82a005ac65cfb10b06ea030edcd975c25fbbb6ba363e7cb02012e8"
+    },
+    "scope": "Source-name inventory reconciled. Six new definitions retain explicit optimized-away mode/return uncertainty, in addition to per-helper specialized-input limits. Zero missing names does not establish whole-program semantic equivalence.",
+    "ordinary_binding_evidence": "docs/recovery-evidence/inline-concrete-bindings.json"
+  },
+  "source_provenance_setup": {
+    "session_id": 62233,
+    "exit_code": 0,
+    "control_build_session_id": 25143,
+    "control_build_exit_code": 0,
+    "corrected_build_chunk_id": "516dd2",
+    "corrected_build_exit_code": 0,
+    "setup_log": ".recovery/inline-final-setup.log",
+    "control_build_log": ".recovery/inline-final-control-build.log",
+    "corrected_build_log": ".recovery/inline-final-corrected-build.log",
+    "setup_log_sha256": "3aa9f7abb8e68c9a323001794bd268c3958e6f84f22b012b906832f0504966a1",
+    "control_build_log_sha256": "ae060b1aeff93e16b202c675518f6820c5ed8fe4252b0df34c6d4e5bb3fc8449",
+    "corrected_build_log_sha256": "bcc0eee1017063d3be33f8bea5d20156a7660394dece2d8c048bedf97594e297"
+  },
+  "inputs": {
+    "ManalinkEh.dll": "275b82213624e5a2d024437cd46a50139650cb4da1b9bc4c97a2ba21dc6ecd90",
+    "ManalinkEh.dbg": "762bb9ff54149b0ef8d746c17ff311f52a15cd66f9715972c0098d255b41e76a",
+    "docs/recovery-evidence/helper-canonicalization.json": "b1d6a79860832cddaa79b4933537fefe2d6b241574628cb224775b8d4dbce45d",
+    "docs/recovery-evidence/inline-final-definitions-recovery.json": "5f3d7b1e8f1ae66204bef16e9c55f7f5c50c3e446b4a72edfa0a3c87988e9df0",
+    "tools/recovery/verify_inline_final_definitions_recovery.py": "04577ab47177b3e8733a75e4f5cf443640e6ad6cbbd56f21b483e77d4287116d"
+  },
+  "scope": "Restore22 remaining private inline source definitions in original source units from23 native inline instances and complete caller evidence. Source-definition accounting reaches zero missing names, while six optimized-away return/mode limits remain explicit; specialization does not prove arbitrary-input semantics. Existing expansions remain, except the independently evidenced Prototype Portal chooser-identity repair after an unused-definition control build. No native callable addresses are invented for inline-only helpers. This is not whole-DLL or gameplay completion."
+}

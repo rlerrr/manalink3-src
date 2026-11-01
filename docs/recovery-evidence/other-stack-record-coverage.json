@@ -1,0 +1,48 @@
+{
+  "reviewed_shared_storage_cases": 22,
+  "flat_target_token_unions": 20,
+  "additional_shared_typedef_uses": 2,
+  "corrected_card_handlers": 1,
+  "restored_native_token_writes": 2,
+  "retained_definitions": 21,
+  "corrected_handler": "card_lord_windgrace",
+  "token_fields": {
+    "qty": 6,
+    "color_forced": 8
+  },
+  "comparison_counts": {
+    "equivalent_controller_values": 1,
+    "exact_scalar_byte_events": 18,
+    "relocated_callback_identity": 2,
+    "equivalent_packed_sacrifice_choice": 1
+  },
+  "changed_linker_objects": 1,
+  "unchanged_linker_objects": 165,
+  "verified_fixed_slots": 15169,
+  "old37_case_default_collector_replay": {
+    "chunk_id": "e296d6",
+    "exit_code": 0
+  },
+  "source_provenance_setup": {
+    "session_id": 84440,
+    "exit_code": 0,
+    "build_exit_code": 0,
+    "build_chunk_id": "066494",
+    "focused_session_id": 79746,
+    "focused_exit_code": 0,
+    "setup_log": ".recovery/other-stack-setup.log",
+    "build_log": ".recovery/other-stack-build.log",
+    "setup_log_sha256": "9c2a429c6ab190d3ea17d1419528685adb19a50ea1bc838228174aa5f95bf66e",
+    "build_log_sha256": "61a3a0d22f5b384dadb6451948d7fa1dda85d4bdfc42716618daf204f5b68f50"
+  },
+  "inputs": {
+    "ManalinkEh.dll": "352ae9b2779c19486901e4d7ec5cce8e336877e5b12832e04221f464607e2f5a",
+    "ManalinkEh.dbg": "c3f03b16e18b45e2a6e7832e04782f677ef0efc994a3d3fca2b39bd54e71abee",
+    "docs/recovery-evidence/helper-canonicalization.json": "d1b712d3f7414245aa3541ba5e86bdf442cba383fc8f77463e6a61ea3784c86d",
+    "docs/recovery-evidence/other-stack-record-recovery.json": "f0bc88474dd6845d2921c08128344fd8877429861f192468336a68f4c9694389",
+    "tools/recovery/shared_stack_record_analysis.py": "9dbce18d58e895f11b6cb5490bbcf02d722e5bdefbed2de28cd7366d8ebca3a2",
+    "tools/recovery/other_stack_value_proofs.py": "a61e7d6aafa6dbdccd2ee75d1698e4399b027ad6e84bcd125a271b83c206a913",
+    "tools/recovery/verify_other_stack_record_recovery.py": "be87f4b9e4d3c8f215b9c738774285493954d83f27b1f49eff1040ff41c83d4d"
+  },
+  "scope": "Review all20 additional flat targeting/token unions without test_definition_t plus2 shared-storage typedef uses. Pair native/rebuilt frame offsets and record field geometry, compare direct scalar writes across the shared storage, normalize2 exact callback identities, prove Mechanized controller values at every target consumer and prove32 sacrifice-result bit lanes plus its flag-off temporary lifetime. Restore two missing byte writes in Lord Windgrace, beyond its original40-byte first view. Twenty-one definitions are retained. This covers direct EBP-relative scalar stores and these explicit value-flow differences, not every indirect/string/SSE write, whole-function semantics, every possible stack shape or gameplay."
+}

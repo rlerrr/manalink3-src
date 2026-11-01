@@ -9724,17 +9724,13 @@ int card_reign_of_terror(int player, int card, event_t event)
   int iVar3;
   const char *pcVar4;
   int iVar5;
-  union
-  {
-    char buffer[100];
-    test_definition_t this_test;
-  } storage;
 
   if (event == EVENT_CAST_SPELL)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
+      char buffer[100];
       instance = get_card_instance(player, card);
       iVar1 = get_sleighted_color_test(player, card, 8);
       count_permanents_by_color(1 - player, 2, iVar1);
@@ -9745,10 +9741,10 @@ int card_reign_of_terror(int player, int card, event_t event)
       iVar3 = get_sleighted_color_test(player, card, 0x20);
       iVar3 = count_permanents_by_color(player, 2, iVar3);
       pcVar4 = get_sleighted_color_text(player, card, " Destroy %s creatures\n", 3);
-      iVar5 = scnprintf(storage.buffer, 100, "%s", pcVar4);
+      iVar5 = scnprintf(buffer, 100, "%s", pcVar4);
       pcVar4 = get_sleighted_color_text(player, card, "Destroy %s creatures", 5);
-      scnprintf(storage.buffer + iVar5, 100 - iVar5, "%s", pcVar4);
-      iVar1 = do_dialog(player, player, card, -1, -1, storage.buffer, (iVar1 <= iVar3) + 1);
+      scnprintf(buffer + iVar5, 100 - iVar5, "%s", pcVar4);
+      iVar1 = do_dialog(player, player, card, -1, -1, buffer, (iVar1 <= iVar3) + 1);
       instance->info_slot = iVar1;
       if (iVar1 == 2)
       {
@@ -9761,7 +9757,9 @@ int card_reign_of_terror(int player, int card, event_t event)
   if (event != EVENT_RESOLVE_SPELL)
     goto LAB_0239062e;
 
-  default_test_definition(&storage.this_test, 2);
+  {
+  test_definition_t this_test;
+  default_test_definition(&this_test, 2);
   instance = get_card_instance(player, card);
   if (instance->info_slot == 0)
   {
@@ -9769,8 +9767,8 @@ int card_reign_of_terror(int player, int card, event_t event)
     iVar1 = 8;
   LAB_02390860:
 
-    get_sleighted_color_test(player, card, iVar1);
-    iVar1 = new_manipulate_all(player, card, 2, &storage.this_test, ACT_KILL_BURY);
+    this_test.color = get_sleighted_color_test(player, card, iVar1);
+    iVar1 = new_manipulate_all(player, card, 2, &this_test, ACT_KILL_BURY);
     lose_life(player, iVar1);
   }
   else if (instance->info_slot == 1)
@@ -9779,6 +9777,7 @@ int card_reign_of_terror(int player, int card, event_t event)
     goto LAB_02390860;
   }
   kill_card(player, card, KILL_DESTROY);
+  }
 LAB_0239062e:
   iVar1 = basic_spell(player, card, event);
   return iVar1;

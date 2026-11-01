@@ -2749,21 +2749,22 @@ int card_clone_shell(int player, int card, event_t event){
 	    int amount = count_deck(player);
 	    if (amount > 0){
 	        if (amount > 4){ amount = 4; }
-	        test_definition_t test;
-	        new_default_test_definition(&test, TYPE_ANY, "Select a card.");
-	        test.create_minideck = amount;
-	        test.no_shuffle = 1;
+	        char msg[100] = "Select a card.";
+	        test_definition_t this_test;
+	        new_default_test_definition(&this_test, TYPE_ANY, msg);
+	        this_test.create_minideck = amount;
+	        this_test.no_shuffle = 1;
 	        int *deck = deck_ptr[player];
 	        int selected;
 	        if (player == AI){
-	            new_default_test_definition(&test, TYPE_CREATURE, "Select a card.");
-	            selected = new_select_a_card(player, player, TUTOR_FROM_DECK, 1, AI_MAX_CMC, -1, &test);
+	            new_default_test_definition(&this_test, TYPE_CREATURE, msg);
+	            selected = new_select_a_card(player, player, TUTOR_FROM_DECK, 1, AI_MAX_CMC, -1, &this_test);
 	            if (selected == -1){
-	                new_default_test_definition(&test, TYPE_ANY, "Select a card.");
-	                selected = new_select_a_card(player, player, TUTOR_FROM_DECK, 1, AI_MAX_CMC, -1, &test);
+	                new_default_test_definition(&this_test, TYPE_ANY, msg);
+	                selected = new_select_a_card(player, player, TUTOR_FROM_DECK, 1, AI_MAX_CMC, -1, &this_test);
 	            }
 	        }else{
-	            selected = new_select_a_card(player, player, TUTOR_FROM_DECK, 1, AI_MAX_CMC, -1, &test);
+	            selected = new_select_a_card(player, player, TUTOR_FROM_DECK, 1, AI_MAX_CMC, -1, &this_test);
 	        }
 	        imprint(player, card, player, deck[selected]);
 	        rfg_card_in_deck(player, selected);
@@ -2773,19 +2774,19 @@ int card_clone_shell(int player, int card, event_t event){
 	int index = 0;
 	int legacy = find_imprint_legacy_next(player, card, &index);
 	if (legacy >= 0 && this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY)){
-	    int iid = get_card_instance(player, legacy)->targets[0].card;
-	    show_deck(player, &iid, 1, "Cards exiled by Clone Shell", 0, ENGINE_DONE_LABEL);
-	    if (check_rfg(player, cards_data[iid].id) && is_what(-1, iid, TYPE_CREATURE)){
-	        int added = add_card_to_hand(player, iid);
-	        remove_card_from_rfg(player, cards_data[iid].id);
+	    int stored_iid[1] = {get_card_instance(player, legacy)->targets[0].card};
+	    show_deck(player, stored_iid, 1, "Cards exiled by Clone Shell", 0, ENGINE_DONE_LABEL);
+	    if (check_rfg(player, cards_data[stored_iid[0]].id) && is_what(-1, stored_iid[0], TYPE_CREATURE)){
+	        int added = add_card_to_hand(player, stored_iid[0]);
+	        remove_card_from_rfg(player, cards_data[stored_iid[0]].id);
 	        put_into_play(player, added);
 	    }
 	}
 	if (event == EVENT_CAN_ACTIVATE){ return !IS_AI(player) && legacy >= 0; }
 	if (event == EVENT_ACTIVATE){
 	    if (legacy >= 0){
-	        int iid = get_card_instance(player, legacy)->targets[0].card;
-	        show_deck(player, &iid, 1, "Cards exiled by Clone Shell", 0, ENGINE_DONE_LABEL);
+	        int stored_iid[1] = {get_card_instance(player, legacy)->targets[0].card};
+	        show_deck(player, stored_iid, 1, "Cards exiled by Clone Shell", 0, ENGINE_DONE_LABEL);
 	    }
 	    spell_fizzled = 1;
 	}
@@ -5146,6 +5147,106 @@ etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   return 0;
 }
 
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int prototype_portal_impl(int player, int card, event_t event)
+{
+  if (!IS_GAA_EVENT(event))
+  {
+    return 0;
+  }
+
+  card_instance_t *instance = get_card_instance(player, card);
+
+  enum
+  {
+    CHOICE_CREATE_TOKEN = 1,
+    CHOICE_SHOW_EXILED
+  };
+
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL))
+    {
+      int result = exiledby_choose(
+          player, card, CARD_ID_PROTOTYPE_PORTAL,
+          EXBY_CAN_CAST | EXBY_TEST_CAN_CAST | EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC, 0, "", 1);
+      return result;
+    }
+    if (!IS_AI(player))
+    {
+      if (exiledby_count(player, card, ANYBODY))
+      {
+        return 1;
+      }
+    }
+  }
+
+  if (event == EVENT_ACTIVATE)
+  {
+    int choice = CHOICE_CREATE_TOKEN;
+    instance->info_slot = choice;
+    instance->targets[1].card = -1;
+    if (!IS_AI(player))
+    {
+      int abils[3] = {0, 0, 1};
+      if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST0, 0,
+                                    NULL, NULL))
+      {
+        abils[1] = exiledby_choose(player, card, CARD_ID_PROTOTYPE_PORTAL,
+                                   EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC, event, "", 1);
+      }
+      choice = DIALOG(player, card, event, DLG_RANDOM, "Create a token", abils[1], 1,
+                      "Show exiled card", abils[2], 1);
+    }
+    if (!choice)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == CHOICE_SHOW_EXILED)
+    {
+      exiledby_choose(player, card, CARD_ID_PROTOTYPE_PORTAL, EXBY_CHOOSE, 0, "Creature", 0);
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == CHOICE_CREATE_TOKEN)
+    {
+      int rval = exiledby_choose(player, card, CARD_ID_PROTOTYPE_PORTAL,
+                                 EXBY_CHOOSE | EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC, event, "", 1);
+      if (rval)
+      {
+        int *loc = (int *)rval;
+        if (loc)
+        {
+          int *loc2 = exiledby_find(player, card, *loc, NULL, NULL);
+          int iid = *loc2 & ~0x80000000;
+          instance->targets[1].card = iid;
+          return generic_activated_ability(player, card, event, GAA_UNTAPPED,
+                                           MANACOST_X(get_cmc_by_internal_id(iid)), 0, NULL, NULL);
+        }
+        else
+        {
+          spell_fizzled = 1;
+        }
+      }
+      else
+      {
+        spell_fizzled = 1;
+      }
+    }
+  }
+
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    generate_token_by_id(instance->parent_controller, instance->parent_card,
+                         cards_data[instance->targets[1].card].id);
+  }
+
+  return 0;
+}
+#endif
+
 int card_prototype_portal(int player, int card, event_t event){
 	/* Prototype Portal	|4
 	 * Artifact
@@ -5167,7 +5268,7 @@ int card_prototype_portal(int player, int card, event_t event){
 		}
 	}
 
-	return soul_foundry_impl(player, card, event);
+	return prototype_portal_impl(player, card, event);
 }
 
 int card_psychic_miasma(int player, int card, event_t event){
@@ -6778,4 +6879,36 @@ void minus_proliferate_auto_single_permanent_or_player(int player, int card, int
 /* ManalinkEh 2022: 0x2438700; original cards/scars_of_mirrodin.c:171. */
 
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static int imprint_legacymatches(card_instance_t *instance, int player, int card)
+{
+  return instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
+         instance->info_slot_fn == imprint_legacy && in_play(player, card) &&
+         instance->damage_source_player == player && instance->damage_source_card == card;
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static int find_imprint_legacy(int player, int card)
+{
+  int index = 0;
+  return find_imprint_legacy_next(player, card, &index);
+}
+
+static void validate_imprinted_card(int player, int card)
+{
+  int legacy = find_imprint_legacy(player, card);
+  if (legacy >= 0)
+  {
+    card_instance_t *instance = get_card_instance(player, legacy);
+    if (find_iid_in_rfg(instance->targets[0].player, instance->targets[0].card) == -1)
+      kill_card(player, legacy, KILL_EXILE);
+  }
+}
 #endif

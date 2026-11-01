@@ -1647,6 +1647,7 @@ int adventure(int player, int card, event_t event, int csvid_creature)
   int iVar1;
   int iVar2;
   card_instance_t *instance;
+  target_t *slot;
 
   if (event == EVENT_COUNTERSPELL)
   {
@@ -1703,18 +1704,19 @@ int adventure(int player, int card, event_t event, int csvid_creature)
   instance = get_card_instance(player, iVar1);
   instance->display_pic_csv_id = 0x616c;
   instance->display_pic_num = 0;
+  slot = instance->targets;
   iVar1 = get_owner(player, card);
 LAB_025ca40b:
-  instance->targets[0].player = iVar1;
+  slot->player = iVar1;
   iVar1 = get_original_internal_card_id(player, card);
-  instance->targets[0].card = iVar1;
+  slot->card = iVar1;
   goto LAB_025ca420;
   while (iVar1 = iVar1 + 1, iVar1 != 0x10)
   {
   LAB_025ca35a:
     if ((instance->targets[iVar1].player == -1) && (instance->targets[iVar1].card == -1))
     {
-      instance = (card_instance_t *)(instance->color_id + iVar1 * 8 + -0x40);
+      slot = &instance->targets[iVar1];
       iVar1 = get_owner(player, card);
       goto LAB_025ca40b;
     }
@@ -5207,13 +5209,6 @@ int card_the_circle_of_loyalty(int player, int card, event_t event)
 {
   int result;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    test_definition_t test;
-    token_generation_t token;
-    uint8_t bytes[216];
-  } recovered_stack_test;
 
   check_legend_rule(player, card, event);
   if (event == EVENT_MODIFY_COST)
@@ -5242,19 +5237,18 @@ int card_the_circle_of_loyalty(int player, int card, event_t event)
     LAB_025d5700:
       if ((card == affected_card) && (player == affected_card_controller))
       {
-        default_test_definition(&recovered_stack_test.test, 0xff);
-        recovered_stack_test.test.subtype = 0x2001;
-        sp_ability_trigger(player, event, 2, TYPE_NONE, &recovered_stack_test.test, player, card);
+        test_definition_t test;
+        default_test_definition(&test, 0xff);
+        test.subtype = 0x2001;
+        sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
       }
     }
     if (event == EVENT_SPA)
     {
-      default_token_definition(player, card, 0x4958, &recovered_stack_test.token);
-      recovered_stack_test.test.message[0x24] = '\b';
-      recovered_stack_test.test.message[0x25] = '\0';
-      recovered_stack_test.test.message[0x26] = '\0';
-      recovered_stack_test.test.message[0x27] = '\0';
-      generate_token(&recovered_stack_test.token);
+      token_generation_t token;
+      default_token_definition(player, card, 0x4958, &token);
+      token.s_key_plus = SP_KEYWORD_VIGILANCE;
+      generate_token(&token);
       return 0;
     }
     if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
@@ -5263,12 +5257,12 @@ int card_the_circle_of_loyalty(int player, int card, event_t event)
     if (event != EVENT_RESOLVE_ACTIVATION)
       goto LAB_025d55dc;
   }
-  default_token_definition(player, card, 0x4958, &recovered_stack_test.token);
-  recovered_stack_test.test.message[0x24] = '\b';
-  recovered_stack_test.test.message[0x25] = '\0';
-  recovered_stack_test.test.message[0x26] = '\0';
-  recovered_stack_test.test.message[0x27] = '\0';
-  generate_token(&recovered_stack_test.token);
+  {
+  token_generation_t token;
+  default_token_definition(player, card, 0x4958, &token);
+  token.s_key_plus = SP_KEYWORD_VIGILANCE;
+  generate_token(&token);
+  }
 LAB_025d55dc:
   result = generic_activated_ability(player, card, event, 1, 3, 0, 0, 0, 0, 1, 0, NULL, NULL);
   return result;
@@ -6270,4 +6264,64 @@ int card_fires_of_invention(int player, int card, event_t event)
   return global_enchantment(player, card, event);
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int resolve_an_adventure(int player, int card, int csvid_creature)
+{
+  int iVar1, iVar2;
+  card_instance_t *instance;
+  target_t *slot;
+    iVar1 = 0;
+    if (0 < active_cards_count[player])
+    {
+      do
+      {
+        instance = in_play(player, iVar1);
+        if ((((instance != NULL) && (iVar2 = is_what(player, iVar1, 0x80), iVar2 != 0)) &&
+             (instance->info_slot_fn == adventure_effect)) &&
+            ((instance->targets[0xf].player == -1 && (instance->targets[0xf].card == -1))))
+        {
+          if (iVar1 != -1)
+          {
+
+            instance = get_card_instance(player, iVar1);
+            iVar1 = 1;
+            goto LAB_025ca35a;
+          }
+          break;
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 < active_cards_count[player]);
+    }
+
+    iVar1 = create_legacy_activate(player, card, adventure_effect);
+    instance = get_card_instance(player, iVar1);
+    instance->display_pic_csv_id = 0x616c;
+    instance->display_pic_num = 0;
+    slot = instance->targets;
+    iVar1 = get_owner(player, card);
+  LAB_025ca40b:
+    slot->player = iVar1;
+    iVar1 = get_original_internal_card_id(player, card);
+    slot->card = iVar1;
+    goto LAB_025ca420;
+    while (iVar1 = iVar1 + 1, iVar1 != 0x10)
+    {
+    LAB_025ca35a:
+      if ((instance->targets[iVar1].player == -1) && (instance->targets[iVar1].card == -1))
+      {
+        slot = &instance->targets[iVar1];
+        iVar1 = get_owner(player, card);
+        goto LAB_025ca40b;
+      }
+    }
+  LAB_025ca420:
+    obliterate_card(player, card);
+    iVar1 = get_owner(player, card);
+    add_csvid_to_rfg(iVar1, csvid_creature);
+  return 0;
+}
 #endif

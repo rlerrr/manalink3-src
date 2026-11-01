@@ -4851,15 +4851,11 @@ int card_soldevi_sage(int player, int card, event_t event)
   card_instance_t *instance;
   int iVar4;
   int iVar5;
-  test_definition_t *ptVar6;
   unsigned int uVar7;
-  unsigned char bVar8;
   test_definition_t test;
   test_definition_t this_test;
   test_definition_t sac_test;
-  int aiStack_1a0[100];
 
-  bVar8 = 0;
   if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
   {
     if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
@@ -4872,16 +4868,8 @@ int card_soldevi_sage(int player, int card, event_t event)
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
       iVar5 = 3;
-      ptVar6 = &sac_test;
-
-      for (iVar4 = 200; iVar4 != 0; iVar4 = iVar4 + -1)
-      {
-        ptVar6->message[0] = '\0';
-        ptVar6->message[1] = '\0';
-        ptVar6->message[2] = '\0';
-        ptVar6->message[3] = '\0';
-        ptVar6 = (test_definition_t *)((int)ptVar6 + (unsigned int)bVar8 * -8 + 4);
-      }
+      int dtt[2][100];
+      memset(dtt, 0, sizeof(dtt));
       uVar7 = 0xffffffff;
       do
       {
@@ -4892,19 +4880,19 @@ int card_soldevi_sage(int player, int card, event_t event)
           uVar7 = uVar7 & (int)(uVar7 ^ 0xffffffff) >> 0x1f;
           instance = get_card_instance(player, iVar4);
           iVar1 = instance->internal_card_id;
-          aiStack_1a0[uVar7] = iVar4;
-          *(int32_t *)(sac_test.message + uVar7 * 4) = iVar1;
+          dtt[1][uVar7] = iVar4;
+          dtt[0][uVar7] = iVar1;
           uVar7 = uVar7 + 1;
         }
         iVar5 = iVar5 + -1;
       } while (iVar5 != 0);
       new_default_test_definition(&this_test, 0xff, "Select a card to discard.");
 
-      if ((-1 < (int)uVar7) && (iVar4 = select_card_from_zone(player, player, (int *)&sac_test,
+      if ((-1 < (int)uVar7) && (iVar4 = select_card_from_zone(player, player, dtt[0],
                                                               uVar7, 1, 3, -1, &this_test),
                                 iVar4 != -1))
       {
-        discard_card(player, aiStack_1a0[iVar4]);
+        discard_card(player, dtt[1][iVar4]);
       }
     }
     return 0;
@@ -5686,8 +5674,8 @@ int card_stromgald_spy(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       if (instance->targets[0].player == 1)
       {
-        *(unsigned int *)(&player_bits + (1 - player) * 4) =
-            *(unsigned int *)(&player_bits + (1 - player) * 4) | 0x200;
+        player_bits[(1 - player)] =
+            player_bits[(1 - player)] | 0x200;
       }
     }
   }
@@ -5951,37 +5939,22 @@ int card_gusthas_scepter(int player, int card, event_t event)
   int *piVar5;
   int32_t *piVar6;
   unsigned int uVar7;
-  int leg_1;
-  int idx_1;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    char buffer[100];
-    int value;
-    uint8_t bytes[100];
-  } recovered_stack_leg;
-
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    int value;
-    test_definition_t test;
-    uint8_t bytes[216];
-  } recovered_stack_idx;
 
   instance = get_card_instance(player, card);
   leaves_play(player, card, event, 1, 0);
   if (event == EVENT_CARDCONTROLLED)
   {
+    int leg;
+    int idx;
     if ((card != affected_card) || (affected_card_controller != 2))
       goto LAB_020a1c48;
   LAB_020a1b18:
 
-    recovered_stack_leg.value = 0;
-    recovered_stack_idx.value = 0;
-    while (puVar4 = (unsigned int *)exiledby_find_any(player, card, &recovered_stack_leg.value,
-                                                      &recovered_stack_idx.value),
+    leg = 0;
+    idx = 0;
+    while (puVar4 = (unsigned int *)exiledby_find_any(player, card, &leg,
+                                                      &idx),
            puVar4 != NULL)
     {
 
@@ -6063,14 +6036,18 @@ LAB_020a1c48:
   {
     if (0 < hand_count[player])
     {
+      int leg;
+      int idx;
+      char buffer[100];
+      test_definition_t this_test;
 
-      leg_1 = 0;
-      idx_1 = 0;
-      scnprintf(recovered_stack_leg.buffer, 100, "Select a card to exile");
-      new_default_test_definition(&recovered_stack_idx.test, 0xff, recovered_stack_leg.buffer);
-      iVar2 = new_select_a_card(player, player, 4, 1, 3, -1, &recovered_stack_idx.test);
+      leg = 0;
+      idx = 0;
+      scnprintf(buffer, 100, "Select a card to exile");
+      new_default_test_definition(&this_test, 0xff, buffer);
+      iVar2 = new_select_a_card(player, player, 4, 1, 3, -1, &this_test);
       iVar3 = get_original_internal_card_id(player, iVar2);
-      exiledby_remember(player, instance->parent_card, player, iVar3, &leg_1, &idx_1);
+      exiledby_remember(player, instance->parent_card, player, iVar3, &leg, &idx);
       play_sound_effect(WAV_DESTROY);
       obliterate_card(player, iVar2);
       return 0;

@@ -3591,3 +3591,26 @@ LAB_026b60d0:
 
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static inst_info_t info_outofline(card_instance_t *inst, int cid)
+{
+  inst_info_t *entries = inst->ext->inst_info_data;
+  int slot;
+  for (slot = 0; slot < 6; ++slot)
+  {
+    if ((uint32_t)entries[slot].id == (uint32_t)cid)
+      return entries[slot];
+    if (entries[slot].id == 0)
+      break;
+  }
+  if (slot == 6)
+    slot = 5;
+  entries[slot].id = (uint16_t)cid;
+  entries[slot].data2 = 0;
+  entries[slot].data = 0;
+  return entries[slot];
+}
+#endif

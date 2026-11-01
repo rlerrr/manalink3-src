@@ -5096,3 +5096,26 @@ int card_havengul_lich(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static void create_spell_has_flashback_legacy_for_hl(int player, int card, int graveyard_pos,
+                                                    flashback_legacy_t mode)
+{
+  if (graveyard_pos < 0)
+    return;
+  int legacy = create_legacy_activate(player, card, spell_has_flashback_legacy_for_hl);
+  card_instance_t *instance = get_card_instance(player, legacy);
+  int graveyard_player = get_card_instance(player, card)->targets[0].player;
+  const int *grave = get_grave(graveyard_player);
+  instance->targets[0].card = grave[graveyard_pos];
+  instance->targets[1].player = graveyard_source[graveyard_player][graveyard_pos];
+  instance->targets[1].card = graveyard_pos;
+  instance->targets[2].player = mode;
+  instance->targets[2].card = graveyard_player;
+  instance->targets[3].player = player;
+  instance->targets[3].card = card;
+  create_card_name_legacy(player, legacy, cards_data[grave[graveyard_pos]].id);
+}
+#endif

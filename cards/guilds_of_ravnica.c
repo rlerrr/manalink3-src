@@ -326,6 +326,7 @@ int card_guild_summit(int player, int card, event_t event)
     if (player == affected_card_controller)
     {
       default_test_definition(&recovered_stack_td.test, 0x47);
+      recovered_stack_td.test.subtype = SUBTYPE_GATE;
       etb_ability_global(player, event, 2, TYPE_NONE, &recovered_stack_td.test, player, card);
     }
     if (event != EVENT_ETB)

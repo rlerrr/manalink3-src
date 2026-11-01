@@ -3218,3 +3218,24 @@ int card_cephalid_illusionist(int player, int card, event_t event)
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static int prevent_all_damage_of_a_source_until_eot(int player, int card, int t_player, int t_card)
+{
+  int legacy = in_play(t_player, t_card)
+      ? create_targetted_legacy_effect(player, card, prevent_all_damage_of_a_source_until_eot_legacy,
+                                        t_player, t_card)
+      : create_legacy_effect(player, card, prevent_all_damage_of_a_source_until_eot_legacy);
+  if (legacy != -1)
+  {
+    card_instance_t *instance = get_card_instance(player, legacy);
+    instance->targets[0].player = t_player;
+    instance->targets[0].card = t_card;
+    if (instance->damage_target_player == -1)
+      create_card_name_legacy(player, legacy, get_id(t_player, t_card));
+  }
+  return legacy;
+}
+#endif

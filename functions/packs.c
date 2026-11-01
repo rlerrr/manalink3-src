@@ -3104,3 +3104,570 @@ int choose_packs(int num_packs, pack_flags_t flags, EXPANSION_t *expansions, int
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static int raw_has_subtype(csvid_t csvid, subtype_t subt)
+{
+  const card_ptr_t *cp = cards_ptr[csvid];
+  for (int i = 0; i < 7; ++i)
+    if (cp->types[i] == subt)
+      return 1;
+  return 0;
+}
+
+static int allow_duplicates(EXPANSION_t expansion, csvid_t csvid)
+{
+  switch (csvid)
+  {
+    case CARD_ID_FOREST:
+    case CARD_ID_ISLAND:
+    case CARD_ID_MOUNTAIN:
+    case CARD_ID_PLAINS:
+    case CARD_ID_SWAMP:
+      return 1;
+    default:
+      return (unsigned int)(csvid - CARD_ID_SNOW_COVERED_FOREST) <= 4U &&
+             expansion == EXPANSION_ICE_AGE;
+  }
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices)
+{
+  const count_and_card_t *pcVar1;
+  varying_copies_entry_t *paVar2;
+  static const int contraption_copies[3] = {16, 7, 2};
+  uint8_t uVar3;
+  short sVar4;
+  bool bVar5;
+  unsigned char bVar6;
+  csvid_choices_t *pcVar7;
+  int16_t *piVar8;
+  draftrarity_t dVar9;
+  const Rarities *pRVar12;
+  int iVar14;
+  unsigned int uVar18;
+  unsigned int uVar19;
+  int **ppcVar22;
+  unsigned int uVar23;
+  varying_copies_entry_t *paVar24;
+  const count_and_card_t *pcVar25;
+  int *choice_num;
+  _Static_assert(sizeof(Rarities) == 5 && offsetof(Rarities, rarity_in_expansion) == 5,
+                 "native rarity byte tail");
+  _Static_assert(offsetof(card_ptr_t, types) == 132 &&
+                     offsetof(card_ptr_t, mana_source_colors) == 146,
+                 "native seven subtypes");
+  unsigned int uStack_220;
+  unsigned int uStack_21c;
+  varying_copies_entry_t varying_copies[19] = {
+      {7, copies_common_arabian_nights},
+      {8, copies_uncommon_arabian_nights},
+      {9, copies_common_antiquities},
+      {10, copies_uncommon_antiquities},
+      {13, copies_common_the_dark},
+      {14, copies_uncommon_the_dark},
+      {15, copies_common_fallen_empires},
+      {16, copies_uncommon_fallen_empires},
+      {17, copies_common_chronicles},
+      {18, copies_uncommon_chronicles},
+      {19, copies_common_homelands},
+      {20, copies_uncommon_homelands},
+      {21, copies_common_alliances},
+      {22, copies_uncommon_alliances},
+      {23, copies_rare_alliances},
+      {35, copies_guildgate_or_shockland},
+      {41, copies_mystical_archive},
+      {42, copies_neo_land},
+      {0, NULL},
+  };
+    if (((((expansion & ~EXPANSION_FUTURE_SIGHT) == EXPANSION_VINTAGE_MASTERS) ||
+          (expansion == EXPANSION_LEGENDS)) ||
+         (expansion == EXPANSION_PLANAR_CHAOS)) ||
+        (expansion == EXPANSION_UNSTABLE))
+    {
+      uStack_21c = 1;
+    }
+    else
+    {
+      uStack_21c = 1;
+      if (((expansion - EXPANSION_INNISTRAD & 0xfffffffd) != 0) &&
+          ((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) != EXPANSION_SHADOWS_OVER_INNISTRAD))
+      {
+        uStack_21c =
+            (unsigned int)((expansion - EXPANSION_INNISTRAD_MIDNIGHT_HUNT & 0xfffffffb) == 0);
+      }
+    }
+
+    uVar19 = 0;
+    if (1 < available_slots)
+    {
+      do
+      {
+        while (true)
+        {
+          pRVar12 = get_rarity(uVar19);
+          uStack_220 = (unsigned int)pRVar12->rarity_in_expansion[expansion];
+          if (((uStack_220 != 0) && (iVar14 = is_valid_card(uVar19), iVar14 != 0)) &&
+              ((bVar6 = pRVar12->dfc_symbol, bVar6 == 0xff || ((bVar6 & 1) == 0))))
+            break;
+        LAB_026eba48:
+          uVar19 = uVar19 + 1;
+          if (available_slots + -1 <= (int)uVar19)
+            goto LAB_026ec0a8;
+        }
+        if (uStack_21c == 0)
+          goto LAB_026ebaf0;
+        if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
+        {
+        LAB_026ec676:
+          if (bVar6 != 0xff)
+          {
+            if (uStack_220 - 1 < 2)
+            {
+            LAB_026ebbb8:
+              uStack_220 = 0x1c;
+            }
+            else if (uStack_220 - 3 < 2)
+            {
+              uStack_220 = 0x1d;
+            }
+          }
+          goto LAB_026ebaf0;
+        }
+        if (EXPANSION_SHADOWS_OVER_INNISTRAD < expansion)
+        {
+          if (expansion == EXPANSION_INNISTRAD_MIDNIGHT_HUNT)
+          {
+          LAB_026ec6c2:
+            if ((uStack_220 == 1) && (bVar6 != 0xff))
+            {
+              uStack_220 = 0x1e;
+            }
+          }
+          else if (expansion < EXPANSION_INNISTRAD_MIDNIGHT_HUNT_COMMANDER)
+          {
+            if (expansion == EXPANSION_ELDRITCH_MOON)
+              goto LAB_026ec676;
+            if (expansion == EXPANSION_UNSTABLE)
+            {
+              piVar8 = cards_ptr[uVar19]->types;
+              do
+              {
+                if (*piVar8 == 0x3000)
+                {
+                  uStack_220 = 0x1f;
+                  break;
+                }
+                piVar8 = piVar8 + 1;
+              } while (cards_ptr[uVar19]->types + 7 != piVar8);
+            }
+          }
+          else
+          {
+            if (expansion == EXPANSION_INNISTRAD_CRIMSON_VOW)
+              goto LAB_026ec6c2;
+            if (((expansion == EXPANSION_KAMIGAWA_NEON_DYNASTY) && (bVar6 != 0xff)) &&
+                (uStack_220 - 1 < 2))
+              goto LAB_026ebbb8;
+          }
+          goto LAB_026ebaf0;
+        }
+        if (expansion != EXPANSION_INNISTRAD)
+        {
+          if (EXPANSION_INNISTRAD < expansion)
+          {
+            if (expansion == EXPANSION_DARK_ASCENSION)
+              goto LAB_026ec6ab;
+            if ((expansion == EXPANSION_VINTAGE_MASTERS) && (uStack_220 == 4))
+            {
+              if ((int)uVar19 < 0xaa)
+              {
+                if ((0xa4 < (int)uVar19) || ((uVar19 & 0xffffffef) == 1))
+                {
+                LAB_026ec7c9:
+                  uStack_220 = 6;
+                }
+              }
+              else if (uVar19 - 0xf9 < 2)
+                goto LAB_026ec7c9;
+            }
+            goto LAB_026ebaf0;
+          }
+          if (expansion != EXPANSION_LEGENDS)
+          {
+            if (((expansion == EXPANSION_PLANAR_CHAOS) && (uStack_220 - 1 < 3)) &&
+                ((pRVar12->flags & 1) != 0))
+            {
+              uStack_220 = uStack_220 + 0x17;
+            }
+            goto LAB_026ebaf0;
+          }
+          if (1 < uStack_220 - 1)
+            goto LAB_026ebaf0;
+          uVar18 = uStack_21c;
+          switch (uVar19)
+          {
+          case 0x22d:
+          case 0x236:
+          case 0x23a:
+          case 0x240:
+          case 0x261:
+          case 0x270:
+          case 0x271:
+          case 0x273:
+          case 0x279:
+          case 0x285:
+          case 0x28b:
+          case 0x28f:
+          case 0x29b:
+          case 0x29d:
+          case 0x2a0:
+          case 0x2a7:
+          case 0x2e0:
+          case 0x2ee:
+          case 0x2f5:
+          case 0x301:
+          case 0x311:
+          case 0x31b:
+          case 800:
+          case 0x32d:
+          case 0x337:
+          case 0x344:
+          case 0x347:
+          case 0x348:
+          case 0x34b:
+            uVar18 = 0;
+            break;
+          default:
+            if (uStack_220 == 1)
+            {
+              iVar14 = 0x58;
+            }
+            else
+            {
+              iVar14 = 0x60;
+              uVar18 = 0;
+            }
+            goto LAB_026ec74e;
+          case 0x299:
+          case 0x2b6:
+          case 0x2c9:
+          case 0x2e4:
+          case 0x2ff:
+          case 0x30c:
+          case 0x333:
+          case 0x33e:
+          case 0x341:;
+          }
+          iVar14 = (unsigned int)(uStack_220 != 1) * 8 + 0x58;
+        LAB_026ec74e:
+          choice_num = (int *)((int)&choices[0].num + iVar14);
+          if ((*choice_num < 0) || (-1 < choices[uStack_220].num))
+          {
+            backtrace_and_abort(
+                "functions/packs.c:2636\nchoices[munged].num >= 0 && choices[rar].num < 0");
+          }
+          do
+          {
+            uVar18 = uVar18 - 1;
+            add_to_csvid_choices(choice_num, (int **)((int)&choices[0].csvids + iVar14), uVar19);
+          } while (uVar18 != 0xffffffff);
+          goto LAB_026eba48;
+        }
+      LAB_026ec6ab:
+        if (bVar6 != 0xff)
+        {
+          uStack_220 = 0x1b;
+        }
+      LAB_026ebaf0:
+        uVar18 = 1;
+      LAB_026ebb08:
+        do
+        {
+          uVar23 = uVar18;
+          pcVar7 = choices + uVar23;
+          uVar18 = uVar23 + 1;
+          if (choices[uVar23].num < 0)
+            goto LAB_026ebc75;
+          switch (uVar23)
+          {
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+          case 6:
+          case 0x18:
+          case 0x19:
+          case 0x1a:
+          case 0x1e:
+            if (uStack_220 == uVar23)
+            {
+            code_r0x026ebc5e:
+              add_to_csvid_choices(&pcVar7->num, (int **)&choices[uVar23].csvids, uVar19);
+              break;
+            }
+            goto joined_r0x026ebf77;
+          case 0x1b:
+            if (uStack_220 == 0x1b)
+            {
+              uVar23 = (unsigned int)pRVar12->rarity_in_expansion[expansion];
+              if (expansion == EXPANSION_INNISTRAD)
+              {
+                iVar14 = 0;
+                if (1 < uVar23 - 3)
+                {
+                  iVar14 = (unsigned int)(uVar23 != 2) * 9 + 2;
+                }
+              }
+              else if (uVar23 == 4)
+              {
+                iVar14 = 2;
+              }
+              else if (uVar23 == 3)
+              {
+                iVar14 = 0xd;
+              }
+              else
+              {
+                iVar14 = ((uVar23 != 2) - 1 & 0xffffffac) + 0x77;
+              }
+              do
+              {
+                iVar14 = iVar14 + -1;
+                add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1b].csvids, uVar19);
+              } while (iVar14 != -1);
+            }
+            goto LAB_026ebb08;
+          case 0x1c:
+            if (uStack_220 == 0x1c)
+            {
+              if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
+              {
+                uVar23 = (pRVar12->rarity_in_expansion[expansion] != '\x01') - 1 & 0xe;
+              }
+              else
+              {
+                uVar23 = (unsigned int)(pRVar12->rarity_in_expansion[expansion] == '\x01');
+                if (expansion == EXPANSION_ELDRITCH_MOON)
+                {
+                  uVar23 = (uVar23 - 1 & 0xfffffff3) + 0xe;
+                }
+                else
+                {
+                  uVar23 = uVar23 * 3;
+                }
+              }
+              do
+              {
+                uVar23 = uVar23 - 1;
+                add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1c].csvids, uVar19);
+              } while (uVar23 != 0xffffffff);
+            }
+            goto LAB_026ebb08;
+          case 0x1d:
+            if (uStack_220 == 0x1d)
+            {
+              if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
+              {
+                iVar14 = (unsigned int)(pRVar12->rarity_in_expansion[expansion] == '\x03') * 5 + 1;
+              }
+              else
+              {
+                iVar14 = (unsigned int)(pRVar12->rarity_in_expansion[expansion] == '\x01') * 9 + 4;
+              }
+              do
+              {
+                iVar14 = iVar14 + -1;
+                add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1d].csvids, uVar19);
+              } while (iVar14 != -1);
+            }
+            goto LAB_026ebb08;
+          case 0x1f:
+            if (uStack_220 == 0x1f)
+            {
+              bVar6 = pRVar12->rarity_in_expansion[expansion] - 2;
+              if (bVar6 < 3)
+              {
+                if (contraption_copies[(unsigned int)bVar6] < 1)
+                  goto LAB_026ebb08;
+                iVar14 = contraption_copies[(unsigned int)bVar6] + -1;
+              }
+              else
+              {
+                iVar14 = 0x2a;
+              }
+              do
+              {
+                add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1f].csvids, uVar19);
+                bVar5 = 0 < iVar14;
+                iVar14 = iVar14 + -1;
+              } while (bVar5);
+            }
+            goto LAB_026ebb08;
+          case 0x20:
+            if (uVar19 == 0x7e)
+            {
+              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x20].csvids, 0x7e);
+            }
+            goto LAB_026ebb08;
+          case 0x21:
+            if (uStack_220 == 5)
+            {
+              ppcVar22 = &choices[0x21].csvids;
+              add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
+              piVar8 = cards_ptr[uVar19]->types;
+              do
+              {
+                if (*piVar8 == 0x2003)
+                  goto LAB_026ebb08;
+                piVar8 = piVar8 + 1;
+              } while (cards_ptr[uVar19]->types + 7 != piVar8);
+              add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
+              add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
+            }
+            goto LAB_026ebb08;
+          case 0x22:
+            add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x22].csvids, uVar19);
+            goto LAB_026ebb08;
+          case 0x24:
+            piVar8 = cards_ptr[uVar19]->types;
+            sVar4 = *piVar8;
+            while (sVar4 != 0x500c)
+            {
+              piVar8 = piVar8 + 1;
+              if (cards_ptr[uVar19]->types + 7 == piVar8)
+                goto LAB_026ebb08;
+              sVar4 = *piVar8;
+            }
+            if (uVar19 != 0x4bac)
+            {
+              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x24].csvids, uVar19);
+            }
+            goto LAB_026ebb08;
+          case 0x25:
+            iVar14 = get_internal_card_id_from_csv_id(uVar19);
+            if ((cards_data[iVar14].type & 6) != 0)
+            {
+              piVar8 = cards_ptr[uVar19]->types;
+              sVar4 = *piVar8;
+              while (sVar4 != 0x2001)
+              {
+                piVar8 = piVar8 + 1;
+                if (cards_ptr[uVar19]->types + 7 == piVar8)
+                  goto LAB_026ebb08;
+                sVar4 = *piVar8;
+              }
+              uVar3 = pRVar12->rarity_in_expansion[expansion];
+              iVar14 = 0;
+              if (uVar3 != '\x04')
+              {
+                if (uVar3 == '\x03')
+                {
+                  iVar14 = 7;
+                }
+                else
+                {
+                  if (uVar3 == '\x06')
+                    goto LAB_026ebb08;
+                  iVar14 = 0x13;
+                }
+              }
+              do
+              {
+                iVar14 = iVar14 + -1;
+                add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x25].csvids, uVar19);
+              } while (iVar14 != -1);
+            }
+            goto LAB_026ebb08;
+          case 0x26:
+          case 0x27:
+            if (uVar23 == 0x26)
+            {
+              if (uStack_220 != 3)
+                goto LAB_026ebb08;
+            }
+            else if (uStack_220 != 4)
+              goto joined_r0x026ebf77;
+            piVar8 = cards_ptr[uVar19]->types;
+            do
+            {
+              if (*piVar8 == 0x2001)
+                goto LAB_026ebc75;
+              piVar8 = piVar8 + 1;
+            } while (cards_ptr[uVar19]->types + 7 != piVar8);
+            iVar14 = get_internal_card_id_from_csv_id(uVar19);
+            if ((cards_data[iVar14].type & 6) == 0)
+              goto code_r0x026ebc5e;
+            break;
+          case 0x28:
+            piVar8 = cards_ptr[uVar19]->types;
+            sVar4 = *piVar8;
+            while (sVar4 != 0x6003)
+            {
+              piVar8 = piVar8 + 1;
+              if (cards_ptr[uVar19]->types + 7 == piVar8)
+                goto LAB_026ebb08;
+              sVar4 = *piVar8;
+            }
+            add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x28].csvids, uVar19);
+            goto LAB_026ebb08;
+          }
+        LAB_026ebc75:
+        joined_r0x026ebf77:;
+        } while (uVar18 < 0x2b);
+        uVar19 = uVar19 + 1;
+      } while ((int)uVar19 < available_slots + -1);
+    }
+  LAB_026ec0a8:
+    paVar2 = varying_copies;
+    pcVar25 = paVar2->counts_and_cards;
+    while (pcVar25 != NULL)
+    {
+      dVar9 = paVar2->rarity;
+      if ((-1 < choices[dVar9].num) && (0 < pcVar25->count))
+      {
+        do
+        {
+          iVar14 = is_valid_card(pcVar25->csvid);
+          if ((iVar14 != 0) && (0 < pcVar25->count))
+          {
+            iVar14 = 0;
+            do
+            {
+              iVar14 = iVar14 + 1;
+              add_to_csvid_choices(&choices[dVar9].num, (int **)&choices[dVar9].csvids,
+                                        pcVar25->csvid);
+            } while (iVar14 < pcVar25->count);
+          }
+          pcVar1 = pcVar25 + 1;
+          pcVar25 = pcVar25 + 1;
+        } while (0 < pcVar1->count);
+      }
+      paVar24 = paVar2 + 1;
+      paVar2 = paVar2 + 1;
+      pcVar25 = paVar24->counts_and_cards;
+    }
+    if ((choices[5].num == 0) &&
+        ((((((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) == EXPANSION_CONFLUX ||
+             (expansion == EXPANSION_WORLDWAKE)) ||
+            (expansion == EXPANSION_DARK_ASCENSION)) ||
+           (((expansion - EXPANSION_BORN_OF_THE_GODS & 0xfffffffd) == 0 ||
+             (expansion == EXPANSION_GATECRASH)))) ||
+          (((expansion - EXPANSION_OATH_OF_THE_GATEWATCH & 0xfffffffb) == 0 ||
+            (expansion == EXPANSION_AETHER_REVOLT))))))
+    {
+      add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xbc);
+      add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0x7e);
+      add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xef);
+      add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xa4);
+      add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0x5b);
+    }
+}
+#endif

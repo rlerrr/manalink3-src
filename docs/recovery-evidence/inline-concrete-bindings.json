@@ -1,0 +1,125 @@
+{
+  "resolved_ordinary_bindings": 8,
+  "bindings": [
+    {
+      "native_name": "cast_spell_with_improvise",
+      "address": "0x20bbea0",
+      "end": "0x20bc4e5",
+      "native_bytes_sha256": "9a4b14c7fba5ce1a2bd91e0c8c31c1b48435a6493a1dc1a55f7425c08f84c8b7",
+      "source": "cards/aether_revolt.c",
+      "canonical_name": "cast_spell_with_improvise_impl",
+      "source_definition_sha256": "5458f7d02b55bcd941bce8d4c182cc6f80e93e0095ae24d8227e08f607792247",
+      "accepted_name": "cast_spell_with_improvise_2022_impl",
+      "accepted_record_sha256": "309c3f9e42ce82dc0393a4afc73290fbe573e14ab53d65da6e5b59dbfab4ac61",
+      "compiled_entries": [
+        "_cast_spell_with_improvise_impl.constprop.0"
+      ]
+    },
+    {
+      "native_name": "dominaria_memorial",
+      "address": "0x22ca5c0",
+      "end": "0x22ca999",
+      "native_bytes_sha256": "f9c25dfcf157af75f66fca64f0fd25c10d60fbdeccb3f5fcfb7620117a3b354e",
+      "source": "cards/dominaria.c",
+      "canonical_name": "dominaria_memorial_impl",
+      "source_definition_sha256": "14ff60a9e8eb4c997eeff403b771c1d6bfb456564bf29d03f43b6b8caee52cae",
+      "accepted_name": "dominaria_memorial_2022_impl",
+      "accepted_record_sha256": "e4bc27babdce15b95b095361a7ddbc9b510b5582c11d35e09ce3215530b57dc8",
+      "compiled_entries": [
+        "_dominaria_memorial_impl"
+      ]
+    },
+    {
+      "native_name": "escape_with_counters",
+      "address": "0x235a200",
+      "end": "0x235a2d2",
+      "native_bytes_sha256": "b42ca6e99825ec41d84c6408953e046b0bf31a1f98d90c8c7de1f29f518cc4c3",
+      "source": "cards/theros_beyond_death.c",
+      "canonical_name": "escape_with_counters_impl",
+      "source_definition_sha256": "1442b17020053210b081dec4bddffe3b858cf1fa66287417c85efe78a4d9af97",
+      "accepted_name": "escape_with_counters_2022_impl",
+      "accepted_record_sha256": "4a8a2a4d52ccebb9e2264b0fe160e7478da2c19b90ca15f6ee8c570fc17a7219",
+      "compiled_entries": [
+        "_escape_with_counters_impl"
+      ]
+    },
+    {
+      "native_name": "find_attached_legacy_effect",
+      "address": "0x210b2a0",
+      "end": "0x210b31d",
+      "native_bytes_sha256": "6e89917a5569cfea58cb534c7a774a355c72fe2981b33cb46f44bbe2ee95633c",
+      "source": "cards/dark_ascension.c",
+      "canonical_name": "find_attached_havengul_legacy",
+      "source_definition_sha256": "a08ae42f6fa1c3adf5ef2ef558767a5312d5352d7b4a7dd8f35871b3d2f334e2",
+      "accepted_name": "find_attached_havengul_legacy_2022",
+      "accepted_record_sha256": "8c8710aa7bd3bdd190d47a82f412c0dc16ecb7c16eb5996cf53ba400140d09ed",
+      "compiled_entries": [
+        "_find_attached_havengul_legacy"
+      ]
+    },
+    {
+      "native_name": "get_color_identity_of_commander",
+      "address": "0x25a2780",
+      "end": "0x25a281d",
+      "native_bytes_sha256": "fa7fba9613a05fa633e6f27b5f0ad0d3f5d95365391550b5f471973298f03ced",
+      "source": "cards/commander_legends.c",
+      "canonical_name": "get_color_identity_of_all_commanders",
+      "source_definition_sha256": "aeca18736b5aae3d8c90b59bba8389fa3ace5a0aebb3c33163edd3a54ec5bc33",
+      "accepted_name": "get_color_identity_of_all_commanders_2022",
+      "accepted_record_sha256": "8c1524f051429bfa770ed3bacb71bdfe15510595c2f8830685e94497c4b4cbf1",
+      "compiled_entries": [
+        "_get_color_identity_of_all_commanders"
+      ]
+    },
+    {
+      "native_name": "has_convoked_mana_for_hogaak",
+      "address": "0x2335930",
+      "end": "0x2335b75",
+      "native_bytes_sha256": "34b6b32ab4a4d3284e8ae944c22e0327902e4a0bf2051716df395b748139b969",
+      "source": "cards/modern_horizons.c",
+      "canonical_name": "has_convoked_mana_for_hogaak_impl",
+      "source_definition_sha256": "388f28ef125331308bc8d926c8e25af4f7e1f05f1dc897c1f051c370a68d3fcb",
+      "accepted_name": "has_convoked_mana_for_hogaak_impl",
+      "accepted_record_sha256": "fde267de6ae2d10040819d2b152d1fb6f6d41f5f21d0520daa67764fdf414276",
+      "compiled_entries": [
+        "_has_convoked_mana_for_hogaak_impl"
+      ]
+    },
+    {
+      "native_name": "how_much_life_can_i_pay_impl",
+      "address": "0x268fdf0",
+      "end": "0x268fe2e",
+      "native_bytes_sha256": "7e8b6a0a9fce3b85455d15d9b083aa9dfde5b0cf8d42c39431edcab00781f7c2",
+      "source": "functions/functions.c",
+      "canonical_name": "how_much_life_can_i_pay_for_mana",
+      "source_definition_sha256": "ea933b852a53c88922c2badbe611165127160de633af85b73febad01baf5d8d8",
+      "accepted_name": "how_much_life_can_i_pay_for_mana_2022",
+      "accepted_record_sha256": "353338201e90dcc21193f449aacedb39167fe8ffc0239243487e0592330fa609",
+      "compiled_entries": [
+        "_how_much_life_can_i_pay_for_mana"
+      ]
+    },
+    {
+      "native_name": "spectacle",
+      "address": "0x25bbda0",
+      "end": "0x25bc02f",
+      "native_bytes_sha256": "e40023290f077bdca25f4f2ff66e84380c0a89ab5dc07190ddf10d6c6d4d5403",
+      "source": "cards/ravnica_allegiance.c",
+      "canonical_name": "spectacle_impl",
+      "source_definition_sha256": "2011521b5b2bc49bfaf06742944b268aa9b76745201036ded783cd6407dd8d8c",
+      "accepted_name": "spectacle_2022_impl",
+      "accepted_record_sha256": "619a0857a3e3c2aca0dbae8aa4e10a2c2de9fac47f2bb02f1f839bd86b7ad479",
+      "compiled_entries": [
+        "_spectacle_impl"
+      ]
+    }
+  ],
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "f34a5a8908b90652050b74545e4921d0c6af543e0f8dcbb85dfa6cbea8d88d09",
+    "docs/recovery-evidence/recovered-functions.json": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "config/reccmp/functions.csv": "a7697ed63e35d1f867f7ae134d05b60519e560a19ce7eaaf0f050da3ca00f79b",
+    ".recovery/2022-functions.csv": "cd5a8d856379ef3d5f536437de59d94174ad4abfdd0089adde0e9cb5bc09e1d6",
+    "ManalinkEh.dbg": "93b59faa9eab1f13b80231b19a248f7b463011a568c8595569cbb94e7ebbf011"
+  },
+  "scope": "Name/binding reconciliation for native ordinary code already accepted in the recovery ledger. Native address, complete range bytes, accepted-to-canonical name projection and current source definitions are checked. Compiler inlining/clone names remain recorded; no new decompilation or source body is credited."
+}

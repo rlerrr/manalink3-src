@@ -3234,3 +3234,17 @@ int card_raka_disciple(int player, int card, event_t event)
   return ap_disciples(player, card, event, COLOR_TEST_WHITE | COLOR_TEST_BLUE);
 }
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static void phyrexians(int player, int card, event_t event, int amount)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    lose_life(player, amount);
+    draw_cards(player, amount);
+  }
+}
+#endif

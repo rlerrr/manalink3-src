@@ -1017,13 +1017,6 @@ int card_shark_typhoon(int player, int card, event_t event)
   int iVar2;
   card_instance_t *instance;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    test_definition_t test;
-    token_generation_t token;
-    uint8_t bytes[216];
-  } recovered_stack_token;
 
   if (event == EVENT_CAN_ACTIVATE_FROM_HAND)
   {
@@ -1050,11 +1043,12 @@ int card_shark_typhoon(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       iVar1 = instance->info_slot;
-      default_token_definition(player, card, 0x5394, &recovered_stack_token.token);
-      recovered_stack_token.token.key_plus = 0x20;
-      recovered_stack_token.token.pow = iVar1;
-      recovered_stack_token.token.tou = iVar1;
-      generate_token(&recovered_stack_token.token);
+      token_generation_t token;
+      default_token_definition(player, card, 0x5394, &token);
+      token.key_plus = 0x20;
+      token.pow = iVar1;
+      token.tou = iVar1;
+      generate_token(&token);
       iVar2 = cycling(player, card, EVENT_RESOLVE_ACTIVATION_FROM_HAND, 1, 0, 1, 0, 0, 0);
       return iVar2;
     }
@@ -1063,8 +1057,10 @@ int card_shark_typhoon(int player, int card, event_t event)
   LAB_0228c068:
     if (player == affected_card_controller)
     {
-      default_test_definition(&recovered_stack_token.test, 2);
-      sp_ability_trigger(player, event, 2, TYPE_NONE, &recovered_stack_token.test, player, card);
+      test_definition_t test;
+      default_test_definition(&test, 2);
+      test.type_flag = DOESNT_MATCH;
+      sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
     }
   }
   else if ((trigger_condition == 0xd3) && (card == affected_card))
@@ -1072,12 +1068,13 @@ int card_shark_typhoon(int player, int card, event_t event)
   if (event == EVENT_SPA)
   {
 
+    token_generation_t token;
     iVar2 = get_cmc(trigger_cause_controller, trigger_cause);
-    default_token_definition(player, card, 0x5394, &recovered_stack_token.token);
-    recovered_stack_token.token.key_plus = 0x20;
-    recovered_stack_token.token.pow = iVar2;
-    recovered_stack_token.token.tou = iVar2;
-    generate_token(&recovered_stack_token.token);
+    default_token_definition(player, card, 0x5394, &token);
+    token.key_plus = 0x20;
+    token.pow = iVar2;
+    token.tou = iVar2;
+    generate_token(&token);
   }
 LAB_0228c00d:
   iVar2 = global_enchantment(player, card, event);
@@ -1343,7 +1340,7 @@ int card_lukka_coppercoat_outcast(int player, int card, event_t event)
 
   card_instance_t *instance;
   int result;
-  target_definition_t *ptStack_140;
+  int creature_index;
   target_definition_t td;
   test_definition_t test;
 
@@ -1382,7 +1379,6 @@ int card_lukka_coppercoat_outcast(int player, int card, event_t event)
     td.allowed_controller = player;
     instance = get_card_instance(player, card);
   }
-  ptStack_140 = &td;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
     result = instance->info_slot;
@@ -1394,7 +1390,7 @@ int card_lukka_coppercoat_outcast(int player, int card, event_t event)
     }
     else if (result == 2)
     {
-      result = valid_target(ptStack_140);
+      result = valid_target(&td);
       if (result != 0)
       {
 
@@ -1409,19 +1405,19 @@ int card_lukka_coppercoat_outcast(int player, int card, event_t event)
     else
     {
 
-      if ((result == 3) && (ptStack_140 = (target_definition_t *)(active_cards_count[player] + -1),
-                            -1 < (int)ptStack_140))
+      if ((result == 3) && (creature_index = (active_cards_count[player] + -1),
+                            -1 < creature_index))
       {
         do
         {
-          instance = in_play(player, (int)ptStack_140);
-          if ((instance != NULL) && (result = is_what(player, (int)ptStack_140, 2), result != 0))
+          instance = in_play(player, creature_index);
+          if ((instance != NULL) && (result = is_what(player, creature_index, 2), result != 0))
           {
-            result = get_power(player, (int)ptStack_140);
-            damage_player(1 - player, result, player, (int)ptStack_140);
+            result = get_power(player, creature_index);
+            damage_player(1 - player, result, player, creature_index);
           }
-          ptStack_140 = (target_definition_t *)((int)ptStack_140 + -1);
-        } while (ptStack_140 != (target_definition_t *)0xffffffff);
+          creature_index = creature_index - 1;
+        } while (creature_index != -1);
       }
     }
   }

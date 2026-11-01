@@ -1,0 +1,55 @@
+{
+  "reviewed_common_cu_types": 99,
+  "comparison_counts": {
+    "exact_definition": 74,
+    "compatible_with_explicit_views": 22,
+    "external_sdk_alias_not_emitted_in_this_cu": 3
+  },
+  "restored_name_field": {
+    "record": "card_data_t",
+    "offset": 1,
+    "native_and_source_bytes": 35,
+    "record_bytes": 72
+  },
+  "restored_extension_tag": {
+    "name": "card_ext_t",
+    "record_bytes": 192
+  },
+  "runtime_sections_unchanged": 26,
+  "verified_fixed_slots": 15169,
+  "compiler_probe_languages": [
+    "C",
+    "C++"
+  ],
+  "removed_compiled_verifier_exception": "card_data_t.name18 plus reserved1[17] partition; exact native fields required now",
+  "source_provenance_setup": {
+    "session_id": 4275,
+    "exit_code": 0,
+    "build_session_id": 97865,
+    "build_exit_code": 0,
+    "setup_log": ".recovery/header-types-setup.log",
+    "build_log": ".recovery/header-types-build.log",
+    "filesystem_recovery": {
+      "method": "NTFS compression of20 recovery proof backups",
+      "uncompressed_file_bytes": 1837321991,
+      "compressed_storage_bytes": 621600768,
+      "all20_content_sha256_unchanged": true,
+      "compression_session_id": 89998,
+      "final_root_registration_chunk_id": "ea50ab",
+      "scope": "No backup file contents removed or rewritten; incomplete zero-byte pending manifest regenerated, then atomically replaced. Recovery/evidence directories inherit compression for future files."
+    },
+    "setup_log_sha256": "00180ec63bf669f69cb6b8f1215994c64e60a4c4ec8644ff7961a843028345e4",
+    "build_log_sha256": "f39cbc5f1c2d0ceb8f3adf9934df14ef870af85e8bb09fb08c271dcab15329dd"
+  },
+  "inputs": {
+    "ManalinkEh.dll": "a2eefdcef7d51cb52d09670255df754b091f13a3bad0334fdea327b2917896a4",
+    "ManalinkEh.dbg": "9998268177a288b090edcfaedfe81098db578b8c212ba366bf876949428b726b",
+    "defs.h": "07eb14eb7647de418baac49f317ceafa6a3048cf99eb829e94047b6fd0c7e80c",
+    "docs/recovery-evidence/helper-canonicalization.json": "c2e75ae5d8a71cd932ffd83efe2fb6d283289ed28596155d181a6076573d6bca",
+    "docs/recovery-evidence/header-type-recovery.json": "469f529fc2496758c693d635cd11141da12f292521445221d27495a0042520f3",
+    "tools/recovery/header_type_analysis.py": "b45052fb149ed50ba656a08ce0900099e7e615d06f402f172507b8e0a906142f",
+    "tools/recovery/verify_header_type_recovery.py": "d877d4afc3ff40ef7317b61a904c925b05d9f8dcc84c1bf7ddb035d868ff5a5e",
+    "tools/recovery/verify_type_animation_build.py": "3801e7746d26655c81e9ec3449d9c87dcb45e2dd2a48b767e066b45d516db979"
+  },
+  "scope": "Restore the original native35-byte card_data_t.name and struct card_ext_t tag in the existing header. Compare all99 named type definitions emitted by the functions/functions.c CU, including native member offsets, widths, array extents, pointer target identities and enum names/values. Anonymous source unions and three explicitly bounded raw-word/byte views are recorded rather than mistaken for moved fields. Three SDK aliases not emitted in this CU are checked separately by C/C++ compiler probes. This does not audit every CU, full function-pointer signatures, all global declarations, constructors or dynamic locations. Runtime-section identity checks declaration-only effects; no whole-function or gameplay equivalence is claimed."
+}

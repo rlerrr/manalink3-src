@@ -2798,11 +2798,6 @@ int card_vraska_relic_seeker(int player, int card, event_t event)
   int iVar2;
   int iVar3;
   target_definition_t *ptStack_b4;
-  union
-  {
-    char buffer[50];
-    token_generation_t token;
-  } storage;
   target_definition_t td;
 
   check_legend_rule(player, card, event);
@@ -2827,8 +2822,9 @@ int card_vraska_relic_seeker(int player, int card, event_t event)
       }
       if (iVar2 == 2)
       {
-        scnprintf(storage.buffer, 0x32, "Select target artifact, creature, or enchantment");
-        new_pick_target(&td, storage.buffer, 0, 0x81);
+        char buffer[50];
+        scnprintf(buffer, 0x32, "Select target artifact, creature, or enchantment");
+        new_pick_target(&td, buffer, 0, 0x81);
       }
       else if (iVar2 == 3)
       {
@@ -2852,9 +2848,10 @@ int card_vraska_relic_seeker(int player, int card, event_t event)
     iVar2 = instance->info_slot;
     if (iVar2 == 1)
     {
-      default_token_definition(player, card, 0x4972, &storage.token);
-      storage.token.s_key_plus = 0x10000;
-      generate_token(&storage.token);
+      token_generation_t token;
+      default_token_definition(player, card, 0x4972, &token);
+      token.s_key_plus = 0x10000;
+      generate_token(&token);
     }
     else if (iVar2 == 2)
     {
@@ -2862,8 +2859,9 @@ int card_vraska_relic_seeker(int player, int card, event_t event)
       if (iVar2 != 0)
       {
         kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-        default_token_definition(player, card, 0x4998, &storage.token);
-        generate_token(&storage.token);
+        token_generation_t token;
+        default_token_definition(player, card, 0x4998, &token);
+        generate_token(&token);
       }
     }
     else if (iVar2 == 3)
@@ -4778,4 +4776,19 @@ int card_gishath_suns_avatar(int player, int card, event_t event)
   return 0;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int whenever_a_treasure_is_sacrificed(int player, int card, event_t event,
+                                               int t_player, int trig_mode)
+{
+  if (event == EVENT_GRAVEYARD_FROM_PLAY && in_play(affected_card_controller, affected_card) &&
+      get_card_instance(affected_card_controller, affected_card)->kill_code == KILL_SACRIFICE &&
+      get_id(affected_card_controller, affected_card) == CARD_ID_TREASURE &&
+      !check_special_flags(affected_card_controller, affected_card, 0x800))
+    count_for_gfp_ability(player, card, event, t_player, 0x47, NULL);
+  return resolve_gfp_ability(player, card, event, trig_mode);
+}
 #endif

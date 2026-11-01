@@ -389,7 +389,7 @@ int card_faerie_dragon(int player, int card, event_t event)
 
 	  int effect_card = -1;
 
-	  char buf[300];
+	  char buf[301];
 
 	  if (abil >= 0 && abil < 20 && abil != 13 && abil != 1)
 		{

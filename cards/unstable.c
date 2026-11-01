@@ -2266,12 +2266,12 @@ int card_go_to_jail(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_t td;
 
   return_from_oblivion(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
+    target_definition_t td;
 
     default_target_definition(player, card, &td, 2);
     td.allowed_controller = 1 - player;
@@ -2295,8 +2295,9 @@ int card_go_to_jail(int player, int card, event_t event)
   }
   else if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    roll_2d6t(current_turn, player, card, -1, -1, &td.who_chooses, &td.allowed_controller);
-    if (td.who_chooses == td.allowed_controller)
+    int r[2];
+    roll_2d6t(current_turn, player, card, -1, -1, &r[0], &r[1]);
+    if (r[0] == r[1])
     {
       kill_card(player, card, KILL_SACRIFICE);
     }
@@ -3530,4 +3531,27 @@ receive_result:
   goto check_shuffle;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static watermark_t get_watermark(card_instance_t *inst)
+{
+  return get_watermark_by_iid(inst->internal_card_id < 0
+                                  ? inst->original_internal_card_id
+                                  : inst->internal_card_id);
+}
+
+static int is_dark_outdoors(void)
+{
+  unsigned int now = (unsigned int)localtime_hour_minute();
+  unsigned int hour = now >> 16;
+  unsigned int minute = now & 0xffffU;
+  if (hour == 5)
+    return minute <= 29;
+  if (hour == 18)
+    return minute > 29;
+  return hour < 5 || hour > 18;
+}
 #endif

@@ -3397,10 +3397,10 @@ int card_limited_resources(int player, int card, event_t event)
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      *(unsigned int *)(&player_bits + player * 4) =
-          *(unsigned int *)(&player_bits + player * 4) | 8;
-      *(unsigned int *)(&player_bits + (1 - player) * 4) =
-          *(unsigned int *)(&player_bits + (1 - player) * 4) | 8;
+      player_bits[player] =
+          player_bits[player] | 8;
+      player_bits[(1 - player)] =
+          player_bits[(1 - player)] | 8;
       if (((land_can_be_played & 1U) == 0) &&
           (9 < landsofcolor_controlled[1][7] + landsofcolor_controlled[0][7]))
       {
@@ -3419,10 +3419,10 @@ int card_limited_resources(int player, int card, event_t event)
       if (lands_played < result)
       {
         land_can_be_played = land_can_be_played & 0xfffffffe;
-        *(unsigned int *)(&player_bits + player * 4) =
-            *(unsigned int *)(&player_bits + player * 4) & 0xfffffff7;
-        *(unsigned int *)(&player_bits + (1 - player) * 4) =
-            *(unsigned int *)(&player_bits + (1 - player) * 4) & 0xfffffff7;
+        player_bits[player] =
+            player_bits[player] & 0xfffffff7;
+        player_bits[(1 - player)] =
+            player_bits[(1 - player)] & 0xfffffff7;
       }
       etb_ability(player, card, EVENT_LEAVES_PLAY_ABILITY, RESOLVE_TRIGGER_MANDATORY);
     }

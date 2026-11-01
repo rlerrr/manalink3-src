@@ -740,17 +740,16 @@ int put_card_on_stack(int player, int card, int second_call)
   int iid = instance->internal_card_id;
   if (iid < 0)
     return 0;
-  char str[500];
   int old_iid, old_controller, old_card;
   if (!second_call)
   {
     if (trace_mode & 2)
     {
-      char trace[300];
+      char str[500];
       int count = EXE_DWORD(0x60ec40)++;
-      sprintf(trace, "%d: Player %d is playing %s(%d).\n", count, player, cards_data[iid].name,
+      sprintf(str, "%d: Player %d is playing %s(%d).\n", count, player, cards_data[iid].name,
               card);
-      EXE_FN(void, 0x4a7d80, const char *)(trace);
+      EXE_FN(void, 0x4a7d80, const char *)(str);
     }
     if (!compute_and_check_casting_cost(player, player, card))
       return 0;
@@ -857,6 +856,7 @@ int put_card_on_stack(int player, int card, int second_call)
     if (player == 1 && ai_is_speculating != 1 && !EXE_DWORD(0x628c7c) &&
         !(cards_data[iid].type & 1))
     {
+      char str[300];
       load_text(NULL, "PROMPT_CAST1");
       sprintf(str, text_lines[0], opponent_name);
       if (cards_data[iid].cc[1] == 0xff)
@@ -4020,4 +4020,274 @@ int sub_495BE0(int plr)
   return highest_idx;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int any_can_block(int player)
+{
+  int defender = 1 - player;
+  for (int attacker = 0; attacker < active_cards_count[player]; ++attacker)
+  {
+    if (!(get_card_instance(player, attacker)->state & STATE_ATTACKING))
+      continue;
+    for (int blocker = 0; blocker < active_cards_count[defender]; ++blocker)
+    {
+      card_instance_t *inst = get_card_instance(defender, blocker);
+      uint32_t mask = 10 | ((card_flags[defender] & 1) ? 0 : 0x10);
+      if ((inst->state & mask) == 2 && is_legal_block(defender, blocker, player, attacker))
+        return 1;
+    }
+  }
+  return 0;
+}
+
+static int ai_blockers_guts(void)
+{
+  int *assignment = EXE_DWORD_PTR(0x607ae4);
+  int *attack_cards = EXE_DWORD_PTR(0x607698);
+  int *num_blocks = EXE_DWORD_PTR(0x607d78);
+  int *blocker_cards = EXE_DWORD_PTR(0x608304);
+  ai_defensive_modifier = 0;
+  int life_if_unblocked = life[ai_combat_defending_player];
+  int cop_times = EXE_DWORD(0x60a42c);
+  int outflanked[EXE_DWORD(0x607d54) + 1];
+  memset(outflanked, 0, (EXE_DWORD(0x607d54) + 1) * sizeof(int));
+  int cop_benefit[16], blockers_that_will_be_destroyed[16];
+  int num_cop_benefit = 0, rating = 0, rampage = 0;
+  for (int a = 0; a < EXE_DWORD(0x607ccc); ++a)
+  {
+    int attack_power = EXE_DWORD_PTR(0x6081fc)[a];
+    int attack_toughness = EXE_DWORD_PTR(0x6077a0)[a];
+    int attacker = attack_cards[a];
+    ai_defensive_modifier += EXE_DWORD_PTR(0x607cd0)[a];
+    int attacker_flanking =
+        check_for_special_ability(1 - ai_combat_defending_player, attacker, 0x2000);
+    int num_destroyed = 0, any_blockers_have_banding = 0, any_destroyed = 0;
+    int total_pow = 0, total_tgh = 0, num_blocking = 0;
+    uint32_t attacker_bit = 1u << (a & 31);
+    for (int b = 0; b < EXE_DWORD(0x607d54); ++b)
+    {
+      if (assignment[b] != attacker)
+        continue;
+      ++num_blocking;
+      if (num_blocking == 2 &&
+          check_for_special_ability(1 - ai_combat_defending_player, attacker, 0x40))
+        rampage = dispatch_event_with_attacker(1 - ai_combat_defending_player, attacker,
+                                               (event_t)0x5e00, -1, 0x40);
+      ai_defensive_modifier += EXE_DWORD_PTR(0x607c70)[b];
+      int original_tgh = EXE_DWORD_PTR(0x6077e0)[b];
+      int tgh = original_tgh, flanked = 0;
+      if (attacker_flanking && !check_for_special_ability(ai_combat_defending_player,
+                                                               blocker_cards[b], 0x2000))
+      {
+        if (original_tgh < 2)
+        {
+          outflanked[b] = 1;
+          any_destroyed = 1;
+          blockers_that_will_be_destroyed[num_destroyed++] = b;
+          continue;
+        }
+        --tgh;
+        flanked = 1;
+      }
+      outflanked[b] = 0;
+      int pow = EXE_DWORD_PTR(0x6082c0)[b] - flanked;
+      total_pow += pow > 0 ? pow : 0;
+      total_tgh += tgh > 0 ? tgh : 0;
+      if (EXE_DWORD_PTR(0x607618)[b] & 0x40)
+        any_blockers_have_banding = 1;
+      if ((uint32_t)EXE_DWORD_PTR(0x607d58)[b] & attacker_bit)
+        total_pow += 99;
+      int destroys_this = ((uint32_t)EXE_DWORD_PTR(0x607cb0)[a] >> (b & 31)) & 1;
+      if (destroys_this)
+        any_destroyed = destroys_this;
+      else if (!any_destroyed && attack_power < original_tgh)
+      {
+        any_destroyed = 0;
+        continue;
+      }
+      if (!(EXE_DWORD_PTR(0x607618)[b] & 0x200))
+        blockers_that_will_be_destroyed[num_destroyed++] = b;
+    }
+    int32_t combinations = 1u << (num_destroyed & 31);
+    if (rampage > 0)
+    {
+      rampage *= num_blocking - 1;
+      attack_power += rampage;
+      attack_toughness += rampage;
+    }
+    uint32_t attack_abils = EXE_DWORD_PTR(0x6075d8)[a];
+    int new_life = life_if_unblocked, evaluate_damage = 0;
+    if (num_blocking < minimum_blockers(1 - ai_combat_defending_player, attacker))
+    {
+      if (!EXE_DWORD(0x60a424) || EXE_DWORD(0x60a424) <= EXE_DWORD_PTR(0x607820)[a])
+      {
+        if (player_bits[1 - ai_combat_defending_player] & 0x80000)
+        {
+          int commander_damage =
+              check_special_flags2(1 - ai_combat_defending_player, attacker, 0x1000000);
+          if (!commander_damage)
+          {
+            int commander = get_commander_id(1 - ai_combat_defending_player, 1);
+            if (commander == get_id(1 - ai_combat_defending_player, attacker))
+              commander_damage = 1;
+            else
+            {
+              commander = get_commander_id(1 - ai_combat_defending_player, 2);
+              if (commander == get_id(1 - ai_combat_defending_player, attacker))
+                commander_damage = 1;
+            }
+          }
+          if (commander_damage)
+          {
+            int edh = locate_edh_card(1 - ai_combat_defending_player);
+            if (count_counters(1 - ai_combat_defending_player, edh, (counter_t)0x1c) +
+                    attack_power >=
+                21)
+              new_life -= 9999;
+          }
+        }
+        new_life -= mod_pow_unblocked(attack_power, 1 - ai_combat_defending_player, attacker);
+        evaluate_damage = 1;
+      }
+    }
+    else if ((attack_abils & 0x80) && total_tgh < attack_power)
+    {
+      new_life -= attack_power - total_tgh;
+      evaluate_damage = 1;
+    }
+    if (evaluate_damage)
+    {
+      if (EXE_DWORD(0x60a428) && new_life < life_if_unblocked &&
+          (EXE_DWORD(0x60a428) & get_color(1 - ai_combat_defending_player, attacker)))
+        cop_benefit[num_cop_benefit++] = life_if_unblocked - new_life;
+      life_if_unblocked = new_life;
+    }
+    if (num_blocking > 0 &&
+        ((attack_toughness <= total_pow && (!(attack_abils & 0x300) || num_destroyed < 1)) ||
+         (EXE_DWORD(0x60a424) && EXE_DWORD_PTR(0x607820)[a] < EXE_DWORD(0x60a424))))
+    {
+      int64_t convert_64 = (int64_t)EXE_DWORD_PTR(0x60823c)[a] *
+                           EXE_DWORD_PTR(0x628c14)[3 - ai_combat_defending_player];
+      rating += (int)(convert_64 / 8);
+    }
+    int best_opinion = -1;
+    int effective_attack_power = any_destroyed ? 99 : attack_power;
+    total_pow -= num_blocking;
+    for (int32_t combo = 0; combo < combinations; ++combo)
+    {
+      int remaining = effective_attack_power, attack_rating = 0;
+      if (!any_destroyed && any_blockers_have_banding)
+      {
+        if (total_pow < effective_attack_power)
+        {
+          attack_rating = combo ? 9999 : 0;
+          for (int k = 0; k < num_destroyed; ++k)
+          {
+            if (!(combo & (1u << (k & 31))))
+              continue;
+            int n = blockers_that_will_be_destroyed[k];
+            if (EXE_DWORD_PTR(0x6077e0)[n] <= effective_attack_power)
+            {
+              int value = EXE_DWORD_PTR(0x60834c)[n];
+              remaining = is_protected_from(ai_combat_defending_player, blocker_cards[n],
+                                                 1 - ai_combat_defending_player, attacker,
+                                                 IPF_DAMAGE);
+              if (!remaining)
+              {
+                if (value < attack_rating)
+                  attack_rating = value;
+                break;
+              }
+            }
+            attack_rating = 0;
+            remaining = effective_attack_power;
+          }
+        }
+      }
+      else
+      {
+        for (int l = 0; l < num_destroyed; ++l)
+        {
+          if (!(combo & (1u << (l & 31))))
+            continue;
+          int n = blockers_that_will_be_destroyed[l];
+          if (!(EXE_DWORD_PTR(0x607618)[n] & 0x100) ||
+              EXE_DWORD_PTR(0x6082c0)[n] < attack_toughness)
+          {
+            if (outflanked[n] || !is_protected_from(
+                                     ai_combat_defending_player, blocker_cards[n],
+                                     1 - ai_combat_defending_player, attacker, IPF_DAMAGE))
+              attack_rating += EXE_DWORD_PTR(0x60834c)[n];
+          }
+          remaining -= EXE_DWORD_PTR(0x6077e0)[n];
+          if (remaining < 0)
+            break;
+        }
+      }
+      if (remaining >= 0 && best_opinion < attack_rating)
+        best_opinion = attack_rating;
+    }
+    rating -= best_opinion;
+  }
+  rating += ai_defensive_modifier;
+  while (cop_times != 0 && num_cop_benefit > 0)
+  {
+    int best = 0, best_idx = 0;
+    for (int i = 0; i < num_cop_benefit; ++i)
+    {
+      if (best < cop_benefit[i])
+      {
+        best = cop_benefit[i];
+        best_idx = i;
+      }
+    }
+    if (!best)
+      break;
+    --cop_times;
+    life_if_unblocked += cop_benefit[best_idx];
+    cop_benefit[best_idx] = 0;
+  }
+  int penalty;
+  if (life_if_unblocked < 1)
+    penalty = life_if_unblocked * -96 + 999;
+  else
+  {
+    int64_t rating_64 = (int64_t)(life[ai_combat_defending_player] - life_if_unblocked) *
+                        EXE_DWORD_PTR(0x628c14)[ai_combat_defending_player];
+    penalty = (int)((rating_64 * 6) / life_if_unblocked);
+  }
+  return rating - penalty;
+}
+
+static void check_pow_tgh_boost(iid_t iid, int player, int card, int *pow_loc, int *tgh_loc)
+{
+  uint32_t ea = cards_data[iid].extra_ability;
+  CardFunction fn = cards_data[iid].code_pointer;
+  card_instance_t *inst = get_card_instance(player, card);
+  int base_power = *pow_loc, base_toughness = *tgh_loc;
+  if (ea & 0x18)
+  {
+    int8_t old_activating_player = EXE_DWORD(0x7a3610);
+    EXE_DWORD(0x7a3610) = player;
+    int swapped = check_special_flags3(player, card, 0x100000);
+    if (!swapped)
+    {
+      if (ea & 8)
+        *pow_loc = base_power + call_card_fn(fn, inst, player, card, EVENT_POW_BOOST);
+      if (ea & 0x10)
+        *tgh_loc = base_toughness + call_card_fn(fn, inst, player, card, EVENT_TOU_BOOST);
+    }
+    else
+    {
+      if (ea & 8)
+        *tgh_loc = base_toughness + call_card_fn(fn, inst, player, card, EVENT_POW_BOOST);
+      if (ea & 0x10)
+        *pow_loc = base_power + call_card_fn(fn, inst, player, card, EVENT_TOU_BOOST);
+    }
+    EXE_DWORD(0x7a3610) = old_activating_player;
+  }
+}
 #endif

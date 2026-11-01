@@ -1,0 +1,137 @@
+{
+  "recovery": {
+    "recovered_card_definitions": 2,
+    "recovered_private_helpers": 1,
+    "fixed_array_locations": 3,
+    "native_array_bytes": [
+      160,
+      176,
+      1208
+    ],
+    "native_array_rows": [
+      20,
+      22,
+      151
+    ],
+    "row_bytes": 8,
+    "paired_consumer_calls": 4,
+    "guarded_final_cursor_steps": 3,
+    "changed_linker_objects": 2,
+    "unchanged_linker_objects": 164,
+    "scope": "Recover three reverse-array cursor paths in two original card units: Pia Revolution helper/card arrays of20/22 target_t entries and Out of Time marked[151][2] int matrix. Use the actual array plus count minus one instead of address arithmetic from unrelated scalar locals; keep all native capacities, collection code, ordering, flags, dialog/ownership logic and counter counts. Skip the final unused cursor decrement so the C pointer remains within its array; exact source replay verifies that no later source operation uses that cursor. Native/rebuilt DWARF checks160/176/1208-byte extents and element layout. Conservative direct-CFG row tags verify eight-byte indexed origins/reverse steps, correct0/4-byte field identities, and four consumer argument pairs from the same row with unchanged pointer registers between paired loads. Calls kill caller-save registers and all tracked memory. Row indices/bounds, arbitrary aliases, array contents and full gameplay equivalence are outside this bounded model. Before DWARF emits no location for these three already-declared arrays; this observation is not a claim that no physical memory existed."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 86243,
+    "exit_code": 0,
+    "completion_chunk_id": "7553cd",
+    "build_exit_code": 0,
+    "build_chunk_id": "7da758",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "23ec9c",
+    "setup_log": ".recovery/reverse-array-setup-c63.log",
+    "setup_log_sha256": "c4dbe2007862b55eee5a082619be31c19db96c7ba4c26e419be4a1f89b762a59"
+  },
+  "restored_array_locations": [
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "pias_revolution_effect",
+      "before": {
+        "name": "dead_array",
+        "bytes": 160,
+        "has_emitted_location": false
+      },
+      "after": {
+        "name": "dead_array",
+        "bytes": 160,
+        "has_emitted_location": true
+      },
+      "consumers": [
+        {
+          "consumer": "0x2014b42",
+          "player_load": "0x2014b3d",
+          "card_load": "0x2014b36",
+          "same_row_operand": {
+            "base": "esi",
+            "index": null,
+            "scale": 1,
+            "displacement": 0
+          }
+        }
+      ]
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_pias_revolution",
+      "before": {
+        "name": "dead_array",
+        "bytes": 176,
+        "has_emitted_location": false
+      },
+      "after": {
+        "name": "dead_array",
+        "bytes": 176,
+        "has_emitted_location": true
+      },
+      "consumers": [
+        {
+          "consumer": "0x20204a2",
+          "player_load": "0x202049d",
+          "card_load": "0x2020496",
+          "same_row_operand": {
+            "base": "esi",
+            "index": null,
+            "scale": 1,
+            "displacement": 0
+          }
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_out_of_time",
+      "before": {
+        "name": "marked",
+        "bytes": 1208,
+        "has_emitted_location": false
+      },
+      "after": {
+        "name": "marked",
+        "bytes": 1208,
+        "has_emitted_location": true
+      },
+      "consumers": [
+        {
+          "consumer": "0x23a88d4",
+          "player_load": "0x23a88cb",
+          "card_load": "0x23a88c8",
+          "same_row_operand": {
+            "base": "ebx",
+            "index": null,
+            "scale": 1,
+            "displacement": 0
+          }
+        },
+        {
+          "consumer": "0x23a88ee",
+          "player_load": "0x23a88cb",
+          "card_load": "0x23a88c8",
+          "same_row_operand": {
+            "base": "ebx",
+            "index": null,
+            "scale": 1,
+            "displacement": 0
+          }
+        }
+      ]
+    }
+  ],
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "c32470ababdb25bc5bcf4c087c73be174f316043647fae1ffe6f0a1983e3da18",
+    "docs/recovery-evidence/reverse-array-recovery.json": "bb92aabe04ca8a34a17ef1c8b31387ab5610a4af4f78f81ca5014c8fb9725fd1",
+    "tools/recovery/reverse_array_analysis.py": "eaed18b45ab07a68862e54df38da890de53f947a5b77d3e67b3ac668427dcd72",
+    "tools/recovery/verify_reverse_array_recovery.py": "467ac61e20a44bb57255cc7061db483ca16be70d1d329da5204a5bc3fc8bf12d",
+    "ManalinkEh.dll": "8363537963c7db95bdf61504576b826e96fb786d0ef91967d0cba2951b479ea9",
+    "ManalinkEh.dbg": "931b51615c9117565892c96b55b4ff35e2ee7b8e3278667097c3ca36dfb7a739"
+  }
+}

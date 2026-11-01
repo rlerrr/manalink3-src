@@ -1,0 +1,585 @@
+{
+  "recovery": {
+    "repaired_source_functions": 6,
+    "card_handlers": 5,
+    "helpers": 1,
+    "restored_prompt_arrays": 3,
+    "prompt_capacities": [
+      500,
+      1000,
+      150
+    ],
+    "checked_formatters": 4,
+    "checked_prompt_consumers": 3,
+    "restored_scoped_tests": 7,
+    "restored_scoped_tokens": 2,
+    "commander_output_elements": 3,
+    "commander_array_consumers": 2,
+    "count_cmc_matrix_dimensions": [
+      2,
+      2
+    ],
+    "verified_matrix_updates": 4,
+    "dice_output_elements": 2,
+    "dice_array_comparisons": 1,
+    "native_reused_storage_pairs": 12,
+    "changed_linker_objects": 5,
+    "unchanged_linker_objects": 161,
+    "scope": "Six original-source reconstructions in five units restore native locals with disjoint lexical lifetimes instead of merged test-message/struct-field views. Tezzeret500, multicascade1000 and Inniaz150 prompt arrays retain their original formatter bounds and arguments; four formatter destinations and three prompt consumers are bound to actual fixed-frame arrays. Seven scoped216-byte tests preserve native scalar parameter byte-event multisets and layouts; two scoped76-byte token records preserve definite constant writes and API pointers. Tevesh rv[3] initializes12 bytes to minus1, passes the actual output array and supplies offsets4/8 to two gain_control consumers. Nevinyrral totals[2][2] clears16 bytes; direct-CFG tagged read-modify-write analysis verifies two count-plus-one and two get_cmc-result sum updates at0/4-byte columns with eight-byte row strides and unchanged selector registers between paired loads/stores. Go to Jail passes actual r[2] words0/4 to roll_2d6t and compares those words. Literal native shapes, emitted fixed-frame extents and disjoint scopes for overlapping allocations are checked. Exact source replay changes only declarations and corresponding typed operands, preserving all event paths, native quirks, thresholds, helper arguments and other source bytes. Chosen indices/bounds, opaque dynamic values, arbitrary aliasing, complete array contents, full-function equivalence and gameplay are outside these bounded checks. Historical receipts and historical compiled-union artifacts remain immutable; their current test audit binds actual scoped test locals via exact source supersession."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 84067,
+    "exit_code": 0,
+    "terminal_chunk_id": "08cacc",
+    "build_exit_code": 0,
+    "build_chunk_id": "bc1d5e",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "5e45c3",
+    "prior_checks_exit_code": 0,
+    "prior_checks_chunk_id": "ec373e",
+    "setup_log": ".recovery/scoped-arrays-setup-c65.log",
+    "setup_log_sha256": "02bb4c11e021a7c5a073facadc9471b4a39e90c2f6b55365644a0c52eeddae50",
+    "build_log": ".recovery/scoped-arrays-build-c65.log",
+    "build_log_sha256": "ae82f5d5a862cd55604b4bcc9aa1c05e84c7543746b75d7ed7b4b6da35fd9530",
+    "focused_log": ".recovery/scoped-arrays-focused-c65.log",
+    "focused_log_sha256": "7591dbd6394ef7cdc5fef1dc539026648eae9968f58d4fa69c476bdb78c703ef",
+    "prior_checks_path": ".recovery/scoped-arrays-prior-checks-c65.json",
+    "prior_checks_sha256": "4d1f2ffc2c59437bf85114cd702ec01e7155c01c9b5205a05db3a4be4ab73feb"
+  },
+  "native_compiled_validations": [
+    {
+      "source": "cards/shards_of_alara.c",
+      "name": "card_tezzeret_the_seeker",
+      "native": {
+        "scoped_tests": 2,
+        "test_parameter_events": {
+          "_default_test_definition": [
+            {
+              "field": "type_flag",
+              "byte": 0,
+              "value": 2,
+              "count": 1
+            },
+            {
+              "field": "type_flag",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            }
+          ],
+          "_new_default_test_definition": [
+            {
+              "field": "cmc",
+              "byte": 0,
+              "value": null,
+              "count": 1
+            },
+            {
+              "field": "cmc",
+              "byte": 1,
+              "value": null,
+              "count": 1
+            },
+            {
+              "field": "cmc",
+              "byte": 2,
+              "value": null,
+              "count": 1
+            },
+            {
+              "field": "cmc",
+              "byte": 3,
+              "value": null,
+              "count": 1
+            },
+            {
+              "field": "cmc_flag",
+              "byte": 0,
+              "value": 3,
+              "count": 1
+            },
+            {
+              "field": "cmc_flag",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            }
+          ]
+        },
+        "prompt_bytes": 500,
+        "formatters": 1,
+        "prompt_consumers": 1
+      },
+      "compiled": {
+        "scoped_tests": 2,
+        "test_parameter_events": {
+          "_default_test_definition": [
+            {
+              "field": "type_flag",
+              "byte": 0,
+              "value": 2,
+              "count": 1
+            },
+            {
+              "field": "type_flag",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            }
+          ],
+          "_new_default_test_definition": [
+            {
+              "field": "cmc",
+              "byte": 0,
+              "value": null,
+              "count": 1
+            },
+            {
+              "field": "cmc",
+              "byte": 1,
+              "value": null,
+              "count": 1
+            },
+            {
+              "field": "cmc",
+              "byte": 2,
+              "value": null,
+              "count": 1
+            },
+            {
+              "field": "cmc",
+              "byte": 3,
+              "value": null,
+              "count": 1
+            },
+            {
+              "field": "cmc_flag",
+              "byte": 0,
+              "value": 3,
+              "count": 1
+            },
+            {
+              "field": "cmc_flag",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            }
+          ]
+        },
+        "prompt_bytes": 500,
+        "formatters": 1,
+        "prompt_consumers": 1
+      }
+    },
+    {
+      "source": "cards/alara_reborn.c",
+      "name": "do_multicascade",
+      "native": {
+        "scoped_tests": 1,
+        "test_parameter_events": {
+          "_new_default_test_definition": []
+        },
+        "prompt_bytes": 1000,
+        "formatters": 1,
+        "prompt_consumers": 1
+      },
+      "compiled": {
+        "scoped_tests": 1,
+        "test_parameter_events": {
+          "_new_default_test_definition": []
+        },
+        "prompt_bytes": 1000,
+        "formatters": 1,
+        "prompt_consumers": 1
+      }
+    },
+    {
+      "source": "cards/jumpstart.c",
+      "name": "card_inniaz_the_gale_force",
+      "native": {
+        "scoped_tests": 2,
+        "test_parameter_events": {
+          "_default_test_definition": [
+            {
+              "field": "keyword",
+              "byte": 0,
+              "value": 32,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 2,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 3,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "qty",
+              "byte": 0,
+              "value": 3,
+              "count": 1
+            },
+            {
+              "field": "qty",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            }
+          ],
+          "_new_default_test_definition": [
+            {
+              "field": "keyword",
+              "byte": 0,
+              "value": 32,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 2,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 3,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "state",
+              "byte": 0,
+              "value": 4,
+              "count": 1
+            },
+            {
+              "field": "state",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "state",
+              "byte": 2,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "state",
+              "byte": 3,
+              "value": 0,
+              "count": 1
+            }
+          ]
+        },
+        "prompt_bytes": 150,
+        "formatters": 2,
+        "prompt_consumers": 1
+      },
+      "compiled": {
+        "scoped_tests": 2,
+        "test_parameter_events": {
+          "_default_test_definition": [
+            {
+              "field": "keyword",
+              "byte": 0,
+              "value": 32,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 2,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 3,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "qty",
+              "byte": 0,
+              "value": 3,
+              "count": 1
+            },
+            {
+              "field": "qty",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            }
+          ],
+          "_new_default_test_definition": [
+            {
+              "field": "keyword",
+              "byte": 0,
+              "value": 32,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 2,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "keyword",
+              "byte": 3,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "state",
+              "byte": 0,
+              "value": 4,
+              "count": 1
+            },
+            {
+              "field": "state",
+              "byte": 1,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "state",
+              "byte": 2,
+              "value": 0,
+              "count": 1
+            },
+            {
+              "field": "state",
+              "byte": 3,
+              "value": 0,
+              "count": 1
+            }
+          ]
+        },
+        "prompt_bytes": 150,
+        "formatters": 2,
+        "prompt_consumers": 1
+      }
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_tevesh_szat_doom_of_fools",
+      "native": {
+        "scoped_tests": 1,
+        "test_parameter_events": {
+          "_new_default_test_definition": []
+        },
+        "output_elements": 3,
+        "initialized_bytes": 12,
+        "gain_control_array_offsets": [
+          4,
+          8
+        ],
+        "scoped_token_bytes": 76,
+        "token_constant_writes": [
+          {
+            "offset": 24,
+            "size": 4,
+            "bytes": "00000000"
+          },
+          {
+            "offset": 28,
+            "size": 4,
+            "bytes": "01000000"
+          },
+          {
+            "offset": 40,
+            "size": 1,
+            "bytes": "02"
+          },
+          {
+            "offset": 43,
+            "size": 1,
+            "bytes": "02"
+          }
+        ]
+      },
+      "compiled": {
+        "scoped_tests": 1,
+        "test_parameter_events": {
+          "_new_default_test_definition": []
+        },
+        "output_elements": 3,
+        "initialized_bytes": 12,
+        "gain_control_array_offsets": [
+          4,
+          8
+        ],
+        "scoped_token_bytes": 76,
+        "token_constant_writes": [
+          {
+            "offset": 24,
+            "size": 4,
+            "bytes": "00000000"
+          },
+          {
+            "offset": 28,
+            "size": 4,
+            "bytes": "01000000"
+          },
+          {
+            "offset": 40,
+            "size": 1,
+            "bytes": "02"
+          },
+          {
+            "offset": 43,
+            "size": 1,
+            "bytes": "02"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_nevinyrral_urborg_tyrant",
+      "native": {
+        "scoped_tests": 1,
+        "test_parameter_events": {
+          "_default_test_definition": []
+        },
+        "matrix_dimensions": [
+          2,
+          2
+        ],
+        "matrix_bytes": 16,
+        "verified_count_updates": 2,
+        "verified_cmc_sums": 2,
+        "scoped_token_bytes": 76,
+        "token_constant_writes": [
+          {
+            "offset": 24,
+            "size": 4,
+            "bytes": "02000000"
+          },
+          {
+            "offset": 28,
+            "size": 4,
+            "bytes": "02000000"
+          },
+          {
+            "offset": 40,
+            "size": 1,
+            "bytes": "02"
+          },
+          {
+            "offset": 48,
+            "size": 4,
+            "bytes": "01000000"
+          }
+        ]
+      },
+      "compiled": {
+        "scoped_tests": 1,
+        "test_parameter_events": {
+          "_default_test_definition": []
+        },
+        "matrix_dimensions": [
+          2,
+          2
+        ],
+        "matrix_bytes": 16,
+        "verified_count_updates": 2,
+        "verified_cmc_sums": 2,
+        "scoped_token_bytes": 76,
+        "token_constant_writes": [
+          {
+            "offset": 24,
+            "size": 4,
+            "bytes": "02000000"
+          },
+          {
+            "offset": 28,
+            "size": 4,
+            "bytes": "02000000"
+          },
+          {
+            "offset": 40,
+            "size": 1,
+            "bytes": "02"
+          },
+          {
+            "offset": 48,
+            "size": 4,
+            "bytes": "01000000"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/unstable.c",
+      "name": "card_go_to_jail",
+      "native": {
+        "scoped_tests": 0,
+        "test_parameter_events": {},
+        "dice_elements": 2,
+        "compared_array_offsets": [
+          0,
+          4
+        ]
+      },
+      "compiled": {
+        "scoped_tests": 0,
+        "test_parameter_events": {},
+        "dice_elements": 2,
+        "compared_array_offsets": [
+          0,
+          4
+        ]
+      }
+    }
+  ],
+  "next_array_discovery": {
+    "path": ".recovery/array-name-classification-c66.json",
+    "sha256": "ca33cdef4e553ff446cdf33f8d1a9225c1426488a6d8aaa794b5b9f0ca986010",
+    "counts": {
+      "requires_aggregate_or_owner_review": 30,
+      "array_present_in_canonical_owner": 14,
+      "array_restored_by_c65": 6,
+      "same_geometry_with_other_local_name": 9
+    },
+    "scope": "Read-only geometry/name follow-up on59 old array flags. Explicit source-verified canonical helper names account for renamed functions and outlined helper bodies. Literal dimensions, element widths/kinds and emitted fixed-frame locations are compared. These are declaration/geometry classifications, not full-function or array-content equivalence proofs; unmatched aggregates, compiler inline scopes and spelling aliases still require review."
+  },
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "30c194afe0c0fb2c23438c572192022f2de63cd21a5557c848cbbdc2b328eb78",
+    "docs/recovery-evidence/scoped-array-recovery.json": "b9984e9edf99ddbd66a2cdcc679122eb3ec4e581cf40f64e3b51e0940cdebaa9",
+    "tools/recovery/scoped_array_analysis.py": "dff63b2e13b85f5e4c58a7f064f6cfe367aa46c3f3660350925d476c12156815",
+    "tools/recovery/verify_scoped_array_recovery.py": "80bc20e3da386f7909129d812df222899e9dcb1148731a6f870a1ee05d7d89db",
+    "ManalinkEh.dll": "355fb0c966d49f575c9e3f0194c7c4c6ab3743b23dc12cf13babeb9ab8b22686",
+    "ManalinkEh.dbg": "b4f9e8e13b3a152d067d3de0f8b4e9ac944d1523bde5bd30906fc5fe5f51e7a3"
+  }
+}

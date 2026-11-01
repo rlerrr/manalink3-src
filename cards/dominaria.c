@@ -3311,7 +3311,7 @@ int card_multani_yavimayas_avatar(int player, int card, event_t event)
         if (iVar4 == 0)
           break;
         iVar4 = instance->targets[iVar6].card;
-        *(int *)(msg + iVar5 * 4 + -0xe) = iVar4;
+        to_bounce[iVar6] = iVar4;
         state_untargettable(instance->targets[iVar6].player, iVar4, 1);
         iVar6 = iVar5;
       } while (iVar5 != 2);
@@ -3799,10 +3799,11 @@ int card_torgaar_famine_incarnate(int player, int card, event_t event)
       if (iVar1 == 1)
       {
 
-        round_up_value(uVar3);
+        int max_required = round_up_value(uVar3);
         new_default_test_definition(&recovered_stack_td.test, 2, "Select a creature to sacrifice.");
 
-        max_can_sacrifice_as_cost(player, card, &recovered_stack_td.test);
+        int available = max_can_sacrifice_as_cost(player, card, &recovered_stack_td.test);
+        recovered_stack_td.test.qty = (uint16_t)MIN(max_required, available);
         iVar1 = mark_sacrifice(player, card, player, SAC_AS_COST | SAC_JUST_MARK,
                                &recovered_stack_td.test, sac);
         if (spell_fizzled != 1)
@@ -4469,6 +4470,7 @@ int card_phyrexian_scriptures(int player, int card, event_t event)
   else if (event == EVENT_CHAPTER2)
   {
     default_test_definition(&recovered_stack_td.test, 2);
+    recovered_stack_td.test.type_flag = F1_NONARTIFACT_CREATURE;
     new_manipulate_all(player, card, 2, &recovered_stack_td.test, ACT_KILL_DESTROY);
   }
   else if (event == EVENT_CHAPTER3)
@@ -4597,10 +4599,10 @@ LAB_022d1e49:
 int card_rite_of_belzenlok(int player, int card, event_t event)
 {
   int result;
-  token_generation_t token;
 
   if ((event & ~EVENT_SET_LEGACY_EFFECT_NAME) == EVENT_CHAPTER1)
   {
+    token_generation_t token;
     default_token_definition(player, card, 0x4916, &token);
     token.pow = 0;
     token.color_forced = '\x02';
@@ -4609,6 +4611,7 @@ int card_rite_of_belzenlok(int player, int card, event_t event)
   }
   else if (event == EVENT_CHAPTER3)
   {
+    token_generation_t token;
     default_token_definition(player, card, 0x491a, &token);
     token.tou = 6;
     token.pow = 6;
@@ -4927,6 +4930,7 @@ int card_time_of_ice(int player, int card, event_t event)
   else if (event == EVENT_CHAPTER3)
   {
     default_test_definition(&recovered_stack_td.test, 2);
+    recovered_stack_td.test.state = STATE_TAPPED;
     new_manipulate_all(player, card, 2, &recovered_stack_td.test, ACT_BOUNCE);
   }
   result = saga(player, card, event, 3);

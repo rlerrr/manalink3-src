@@ -1029,3 +1029,12 @@ int card_mizzium_meddler(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static int activate_deflect(int player, int card, int event, target_definition_t *td)
+{
+  return deflect_one_target(player, card, event, td);
+}
+#endif

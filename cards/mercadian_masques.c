@@ -10889,3 +10889,37 @@ LAB_0217f9c1:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int each_player_reveal_top_library_type_cards_put_in_play_exile_rest(int player, int card,
+                                                                            int type, int cards_to_look)
+{
+  for (int phase = 0; phase < 2; ++phase)
+  {
+    int p = phase ^ current_turn;
+    if (deck_ptr[p][0] == -1)
+      continue;
+    show_deck(p, deck_ptr[p], cards_to_look, "Here are the revealed cards from controller's deck.", 0, ENGINE_DONE_LABEL);
+    show_deck(1 - p, deck_ptr[p], cards_to_look, "Here are the revealed cards from controller's opponent's deck.", 0, ENGINE_DONE_LABEL);
+    int count = count_deck(p);
+    int amount = MIN(cards_to_look, count);
+    if (count < 1)
+      break;
+    int *deck = deck_ptr[p];
+    for (int pos = amount - 1; pos >= 0; --pos)
+      if (is_what(-1, deck[pos], type))
+      {
+        int added = add_card_to_hand(p, deck[pos]);
+        put_into_play(p, added);
+        add_state(p, added, STATE_TAPPED);
+        remove_card_from_deck(p, pos);
+        --amount;
+      }
+    if (amount > 0)
+      rfg_top_n_cards_of_deck(p, amount);
+  }
+  return 0;
+}
+#endif

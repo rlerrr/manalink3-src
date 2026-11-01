@@ -1716,10 +1716,7 @@ int card_eye_of_doom(int player, int card, event_t event)
   int iVar4;
   unsigned int uVar5;
   int iVar6;
-  target_definition_t *ptVar7;
-  unsigned char bVar8;
   target_definition_t td;
-  bVar8 = 0;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   iVar1 = current_turn;
   if (event == EVENT_ETB)
@@ -1748,15 +1745,11 @@ int card_eye_of_doom(int player, int card, event_t event)
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
     iVar6 = active_cards_count[current_turn] + -1;
-    ptVar7 = &td;
-    for (iVar4 = 0x12e; iVar4 != 0; iVar4 = iVar4 + -1)
-    {
-      ptVar7->who_chooses = 0;
-      ptVar7 = (target_definition_t *)((int)ptVar7 + (unsigned int)bVar8 * -8 + 4);
-    }
+    int marked[2][151];
+    memset(marked, 0, sizeof(marked));
     if (-1 < iVar6)
     {
-      iVar4 = current_turn * 0x25c;
+      iVar4 = current_turn;
       do
       {
         while (((instance = in_play(iVar1, iVar6),
@@ -1767,7 +1760,7 @@ int card_eye_of_doom(int player, int card, event_t event)
           if (iVar6 == -1)
             goto LAB_023c5d79;
         }
-        *(uint32_t *)((int)&td + iVar6 * 4 + iVar4) = 1;
+        marked[iVar4][iVar6] = 1;
         iVar6 = iVar6 + -1;
       } while (iVar6 != -1);
     }
@@ -1786,17 +1779,17 @@ int card_eye_of_doom(int player, int card, event_t event)
           if (iVar1 == -1)
             goto LAB_023c5df9;
         }
-        *(uint32_t *)((int)&td + iVar1 * 4 + iVar4 * 0x25c) = 1;
+        marked[iVar4][iVar1] = 1;
         iVar1 = iVar1 + -1;
       } while (iVar1 != -1);
     }
   LAB_023c5df9:
     iVar4 = current_turn;
-    iVar1 = current_turn * 0x25c;
+    iVar1 = current_turn;
     iVar6 = 0x96;
     do
     {
-      while (*(int *)((int)&td + iVar6 * 4 + iVar1) == 0)
+      while (marked[iVar1][iVar6] == 0)
       {
         iVar6 = iVar6 + -1;
         if (iVar6 == -1)
@@ -1811,7 +1804,7 @@ int card_eye_of_doom(int player, int card, event_t event)
     iVar1 = 0x96;
     do
     {
-      if (*(int *)((int)&td + iVar1 * 4 + uVar5 * 0x25c) != 0)
+      if (marked[uVar5][iVar1] != 0)
       {
         kill_card(uVar5, iVar1, KILL_DESTROY);
       }

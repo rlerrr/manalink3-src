@@ -490,6 +490,7 @@ int card_dual_nature(int player, int card, event_t event)
   int iVar1;
   card_instance_t *instance;
   int iVar3;
+  int leaving_csvid;
   int player_00;
   int iStack_1c4;
   test_definition_t this_test1;
@@ -521,7 +522,7 @@ int card_dual_nature(int player, int card, event_t event)
   if ((((trigger_condition == 0xd4) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (((reason_for_trigger_controller == player &&
-         (iVar3 = get_card_name(trigger_cause_controller, trigger_cause), iVar3 != -1)) &&
+         (leaving_csvid = get_card_name(trigger_cause_controller, trigger_cause), leaving_csvid != -1)) &&
         ((iVar3 = is_what(trigger_cause_controller, trigger_cause, 2),
           iVar3 != 0 && (iVar3 = is_token(trigger_cause_controller, trigger_cause), iVar3 == 0))))))
   {
@@ -534,6 +535,8 @@ int card_dual_nature(int player, int card, event_t event)
       if (event != EVENT_RESOLVE_TRIGGER)
         goto LAB_025fcbfe;
       default_test_definition(&recovered_stack_token.test, 2);
+      recovered_stack_token.test.type_flag = F1_IS_TOKEN;
+      recovered_stack_token.test.id = leaving_csvid;
       new_manipulate_all(player, card, 2, &recovered_stack_token.test, ACT_KILL_REMOVE);
     }
     leaves_play(iVar1, card, event, 1, 0);

@@ -4377,11 +4377,12 @@ int card_ovinomancer(int player, int card, event_t event)
   iVar5 = target_available(player, card, &recovered_stack_td.target);
   if (2 < iVar5)
   {
-    scnprintf((char *)&td2, 100, "Select a basic land return it to it\'s owner\'s hand");
+    char msg[100];
+    scnprintf(msg, 100, "Select a basic land return it to it\'s owner\'s hand");
     iVar5 = 0;
     do
     {
-      iVar4 = new_pick_target(&recovered_stack_td.target, (char *)&td2, iVar5, 0x80);
+      iVar4 = new_pick_target(&recovered_stack_td.target, msg, iVar5, 0x80);
       if (iVar4 == 0)
         break;
       ptVar2 = instance->targets + iVar5;
@@ -5919,8 +5920,8 @@ static int not_playable_lands_legacy(int player, int card, event_t event)
     {
       instance = get_card_instance(player, card);
       result = instance->targets[1].player;
-      *(unsigned int *)(&player_bits + result * 4) =
-          *(unsigned int *)(&player_bits + result * 4) | 8;
+      player_bits[result] =
+          player_bits[result] | 8;
       instance = get_card_instance(player, card);
       if ((instance->targets[1].player == current_turn) && ((land_can_be_played & 1U) == 0))
       {
@@ -5944,8 +5945,8 @@ static int not_playable_lands_legacy(int player, int card, event_t event)
       land_can_be_played = land_can_be_played & 0xfffffffe;
       instance = get_card_instance(player, card);
       result = instance->targets[1].player;
-      *(unsigned int *)(&player_bits + result * 4) =
-          *(unsigned int *)(&player_bits + result * 4) & 0xfffffff7;
+      player_bits[result] =
+          player_bits[result] & 0xfffffff7;
     }
   }
 LAB_02014833:

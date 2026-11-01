@@ -1,0 +1,59 @@
+{
+  "recovery": {
+    "recovered_card_definitions": 1,
+    "recovered_helper_definitions": 2,
+    "marker_rows": 151,
+    "marker_columns": 2,
+    "marker_bytes": 1208,
+    "typed_adventure_source_paths": 2,
+    "compiled_adventure_field_stores": 2,
+    "target_stride": 8,
+    "retained_inline_semantic_limits": 6,
+    "changed_linker_objects": 2,
+    "unchanged_linker_objects": 164,
+    "scope": "Recover Dihada native marked[151][2]1208-byte selection matrix, paired field collection and reverse row traversal. Restore separate p/c scalar locals and td2 target local instead of a source union. Old84-byte target field proof is replayed against the actual typed td2 local with an exact source supersession guard. Restore typed target_t slot pointers in adventure and its inline resolve helper, retaining slot0/new legacy and indexed1..15 search, full-table behavior and the prior dead-return semantic limit. A conservative direct-CFG tag model verifies native/rebuilt instance pointer provenance, eight-byte slot advances and owner/IID result field identities116/120; it abstracts the chosen slot index and does not prove arbitrary aliases, dynamic matrix values or complete gameplay equivalence. Historical inline/helper/target receipts remain immutable."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 22272,
+    "exit_code": 0,
+    "completion_chunk_id": "2c43d5",
+    "build_exit_code": 0,
+    "build_chunk_id": "ab7cf8",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "8ee517",
+    "setup_log": ".recovery/selection-storage-setup-c61.log",
+    "setup_log_sha256": "661ba4905bbc54e33e177fc19c3c6460c6f1a0386283b5f6717df9d964541974",
+    "prior_checks": [
+      {
+        "completion_chunk_id": "a275d2",
+        "exit_code": 0,
+        "log": ".recovery/selection-storage-prior-target-c61.log",
+        "log_sha256": "a4fab366a32394ad627c2a54d1fff8c725e0133e3a6908dd5d4566a0fd9a880c"
+      },
+      {
+        "completion_chunk_id": "876faf",
+        "exit_code": 0,
+        "log": ".recovery/selection-storage-prior-inline-c61.log",
+        "log_sha256": "6059c5c253ac92bb15eb59c24bc7180d116f36ca2668b213d6aa001616788feb"
+      }
+    ]
+  },
+  "original_target_field_comparison": {
+    "equivalent_controller_values": 1,
+    "exact_scalar_byte_events": 18,
+    "relocated_callback_identity": 2,
+    "equivalent_packed_sacrifice_choice": 1
+  },
+  "actual_current_target_storage": "Dihada td2 is an actual84-byte target_definition_t, checked with the original native field-store proof; no synthetic union is required.",
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "6a419e705fb128b1d3dc8dab00885e926b8394d3fe103cf907a58ecea4ce9646",
+    "docs/recovery-evidence/selection-storage-recovery.json": "06fd8b60feb27fc07043c8d90d36445509fecad896cdc5168900dccc0c7aefb5",
+    "tools/recovery/selection_storage_analysis.py": "4c7a422b606fd59f0707a1aed075d8aed6baddbdf3c3459357f6f3dc8443f36e",
+    "tools/recovery/verify_selection_storage_recovery.py": "dfc702c3047bdcb13f96f14fc01b68a6658ea791a6955daa0c2de204d5fd0509",
+    "tools/recovery/verify_other_stack_record_recovery.py": "2b05b50be9f30df7af9832b8f2418a972295253c9b14cc5cb8f0f603b940b1f5",
+    "tools/recovery/verify_inline_wrapper_recovery.py": "a7ab6c9503fde7f718a1525d16913f3dae2d1f8feb13d84aee390f97c1ba8982",
+    "ManalinkEh.dll": "2e14769d135c0cd2f3a35405e0887ea05f0b4b17e5026c1380e9ef89c15dbee2",
+    "ManalinkEh.dbg": "b9dd13d770981ae865757ef276f3025266b4029f49a159854c7798558a1aede8"
+  }
+}

@@ -2479,12 +2479,13 @@ int card_grand_ossuary(int player, int card, event_t event)
     do
     {
       iVar3 = current_turn;
-      default_test_definition((test_definition_t *)msg, 2);
+      test_definition_t this_test;
+      default_test_definition(&this_test, TYPE_CREATURE);
       t_player = iVar3 ^ uVar2;
       iVar3 = check_battlefield_for_special_card(player, card, t_player, 0x40,
-                                                 (test_definition_t *)msg);
+                                                 &this_test);
       uVar2 = uVar2 + 1;
-      new_manipulate_all(player, card, t_player, (test_definition_t *)msg, ACT_KILL_REMOVE);
+      new_manipulate_all(player, card, t_player, &this_test, ACT_KILL_REMOVE);
       recovered_stack_td.token.qty = (uint8_t)iVar3;
       recovered_stack_td.target.illegal_type = t_player;
       generate_token(&recovered_stack_td.token);

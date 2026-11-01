@@ -5232,7 +5232,7 @@ int card_verdurous_gearhulk(int player, int card, event_t event)
         }
         puVar3 = puVar3 + 1;
         instance->number_of_targets = '\0';
-      } while ((target_definition_t *)puVar3 != &td);
+      } while (puVar3 != (unsigned int *)(marked + 4));
       do
       {
         t_card = *puVar4 >> 8 & 0xff;
@@ -5240,7 +5240,7 @@ int card_verdurous_gearhulk(int player, int card, event_t event)
         add_counters(player, card, t_player, t_card, COUNTER_P1_P1, 1);
         puVar4 = puVar4 + 1;
         remove_state(t_player, t_card, 0x200000);
-      } while ((target_definition_t *)puVar4 != &td);
+      } while (puVar4 != (unsigned int *)(marked + 4));
     }
     instance->number_of_targets = '\0';
     return 0;
@@ -5795,6 +5795,7 @@ Planeswalker - Saheeli
 
 			test_definition_t test;
 			default_test_definition(&test, TYPE_ARTIFACT);
+			test.storage = card;
 			test.value_for_special_selection_function = (int)chosen;
 			test.special_selection_function = test_not_in_array3;
 			test.qty = 1;
@@ -7816,3 +7817,30 @@ int card_panharmonicon(int player, int card, event_t event)
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static int is_vehicle_or_dwarf(int player, int iid)
+{
+  return has_subtype_by_id(player, cards_data[iid].id, SUBTYPE_DWARF) ||
+         has_subtype_by_id(player, cards_data[iid].id, SUBTYPE_VEHICLE);
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static void fabricate(int player, int card, int amount, int priority_counters, int priority_servo)
+{
+  char counters[100], servo[100];
+  scnprintf(counters, 100, "Add %d +1/+1 counters", amount);
+  scnprintf(servo, 100, "Create %d Servo", amount);
+  int choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\003",
+                           counters, 1, priority_counters, servo, 1, priority_servo, 0, 0, 0, 0);
+  if (choice == 1)
+    add_counters(player, card, player, card, COUNTER_P1_P1, amount);
+  else if (choice == 2)
+    generate_tokens_by_id(player, card, CARD_ID_SERVO, amount);
+}
+#endif

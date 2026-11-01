@@ -1934,6 +1934,7 @@ int card_tourachs_gate(int player, int card, event_t event)
             if ((iVar2 == 2) && (current_turn == player))
             {
               default_test_definition(&recovered_stack_td.test, 2);
+              recovered_stack_td.test.state = STATE_ATTACKING;
               pump_creatures_until_eot(instance->parent_controller, instance->parent_card,
                                        current_turn, 0, 2, -1, 0, 0, &recovered_stack_td.test);
             }

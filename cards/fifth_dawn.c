@@ -1753,8 +1753,11 @@ int card_engineered_explosives(int player, int card, event_t event)
     }
     else if (event == EVENT_RESOLVE_ACTIVATION)
     {
-      default_test_definition((test_definition_t *)paid, 1);
-      new_manipulate_all(player, card, 2, (test_definition_t *)paid, ACT_KILL_DESTROY);
+      test_definition_t this_test;
+      default_test_definition(&this_test, TYPE_LAND);
+      this_test.cmc = instance->info_slot;
+      this_test.type_flag = DOESNT_MATCH;
+      new_manipulate_all(player, card, 2, &this_test, ACT_KILL_DESTROY);
       return 0;
     }
   }

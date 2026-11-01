@@ -1,0 +1,75 @@
+{
+  "recovery": {
+    "repaired_source_functions": 3,
+    "restored_scoped_test_locals": 4,
+    "restored_native_parameter_stores": 4,
+    "removed_undersized_api_buffers": [
+      28,
+      100,
+      100
+    ],
+    "original_prompt_payment_arrays_retained": true,
+    "native_disjoint_scope_frame_reuse_verified": true,
+    "engineered_explosives_cmc_flow_verified": true,
+    "changed_linker_objects": 3,
+    "unchanged_linker_objects": 163,
+    "scope": "Recover four original216-byte test locals in three original functions, retaining the28/100/100-byte payment/prompt arrays for their original uses. Native DWARF proves disjoint lexical lifetimes sharing CFA-236. Remove casts passing small arrays to full test APIs and restore four omitted parameter stores. Check every selected test field layout and scoped direct scalar parameter event, including the graveyard helper inlined into the rebuilt rules engine. Prove Engineered Explosives CMC is get_card_instance(player,card)->info_slot through the complete direct CFG. Preserve old source receipts through exact supersession chains. This is bounded storage/parameter/value-flow verification, not every indirect/message/SSE store, complete function/gameplay behavior or all remaining cast/array-iteration cases."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 21200,
+    "exit_code": 0,
+    "completion_chunk_id": "b63e37",
+    "build_exit_code": 0,
+    "build_chunk_id": "514525",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "9f24f3",
+    "setup_log": ".recovery/cast-stack-setup-c57.log",
+    "setup_log_sha256": "04897528effe5af6895ef6d88ec5fcbf53026b83c2f46af2edf5022455a8e819"
+  },
+  "actual_compiler_placement": {
+    "card_engineered_explosives": {
+      "before_owner": "card_engineered_explosives",
+      "before_scope": "DW_TAG_subprogram",
+      "after_owner": "card_engineered_explosives",
+      "after_scope": "DW_TAG_subprogram"
+    },
+    "card_grand_ossuary": {
+      "before_owner": "card_grand_ossuary",
+      "before_scope": "DW_TAG_subprogram",
+      "after_owner": "card_grand_ossuary",
+      "after_scope": "DW_TAG_subprogram"
+    },
+    "static_graveyard_abilities": {
+      "before_owner": "card_rules_engine",
+      "before_scope": "DW_TAG_inlined_subroutine",
+      "after_owner": "static_graveyard_abilities",
+      "after_scope": "DW_TAG_subprogram"
+    }
+  },
+  "placement_note": "The before build inlines the graveyard helper into card_rules_engine. The repaired build outlines its original static definition, as native did. Checks follow actual DWARF ownership in both snapshots; no synthetic callable address is assigned.",
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "f57ec949fc29de6e739f7a239abb1082aea523ffb7cc8dc3a436e315f40cdb35",
+    "docs/recovery-evidence/cast-stack-storage-recovery.json": "26831d618639b4297bc6d2d9d986ea0d463549fcfaa9434581cfbaf4f7f8fa06",
+    "tools/recovery/cast_stack_storage_analysis.py": "302cb046a9c10b2c7931c4f608f0ecf3be2a18a325320d3b021f92126d707249",
+    "tools/recovery/verify_cast_stack_storage_recovery.py": "13a25a09f702629584796bd3cfb965662a4f05495d6c27f3f4c7839574e0c6f7",
+    "tools/recovery/verify_planes_schemes_monarch_recovery.py": "b05d7bbe769bd2e01655ddb0c91af246410818c8ced7e2e6b117b65752d17b16",
+    "tools/recovery/verify_other_stack_record_recovery.py": "292f2b4568f46db419c42046af83fa0d96ce3bdede17c3631b8a7778dc9b8241",
+    "ManalinkEh.dll": "7eae505113852ec2ce7b4f2c8b9df98603ac551a365ddee3ba9a8c6a27e6c69b",
+    "ManalinkEh.dbg": "966effcee55594721341b519af73986bd6a443e13711085785b30bea0b3b94f3"
+  },
+  "lossless_backup_compression": {
+    "path": ".recovery/recovery-progress-before-encoding-repair.md",
+    "logical_bytes": 1699370017,
+    "before_sha256": "be3eb30c08df705354f64ca465d0e4fc863849b2b9db64e37f52c1530b2e23e5",
+    "after_sha256": "be3eb30c08df705354f64ca465d0e4fc863849b2b9db64e37f52c1530b2e23e5",
+    "compact_exit_code": 0,
+    "attributes": "Archive, Compressed",
+    "free_bytes": 2260635648
+  },
+  "followup_inventory": {
+    "path": ".recovery/remaining-test-casts-c58.json",
+    "sha256": "f9585d3a3c9e05b4efa8cd6ca5e13657891ef03086bf7b49430c83e393d8b81d",
+    "scope": "Remaining casts include null arguments, word clearing, chooser storage and sacrifice-array iteration. They are discovery cases, not additional confirmed undersized test API buffers."
+  }
+}

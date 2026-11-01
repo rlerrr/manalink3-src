@@ -1,0 +1,160 @@
+{
+  "corrected_card_handlers": [
+    {
+      "name": "card_trial_of_zeal",
+      "source": "cards/amonkhet.c",
+      "reason": "Only Cartouche entries return the Trial."
+    },
+    {
+      "name": "card_trial_of_strength",
+      "source": "cards/amonkhet.c",
+      "reason": "Only Cartouche entries return the Trial."
+    },
+    {
+      "name": "card_merchant_raiders",
+      "source": "cards/commander_legends.c",
+      "reason": "Other Pirate entries trigger the effect."
+    },
+    {
+      "name": "card_guild_summit",
+      "source": "cards/guilds_of_ravnica.c",
+      "reason": "Gate entries trigger the draw."
+    },
+    {
+      "name": "card_mouth_feed",
+      "source": "cards/amonkhet.c",
+      "reason": "Feed counts creatures with power greater than2."
+    },
+    {
+      "name": "card_rhonas_the_indomitable",
+      "source": "cards/amonkhet.c",
+      "reason": "Both attack and block restrictions require another creature with power greater than3."
+    },
+    {
+      "name": "card_coercive_recruiter",
+      "source": "cards/commander_legends.c",
+      "reason": "Other Pirate entries trigger the effect."
+    },
+    {
+      "name": "card_kiora_behemoth_beckoner",
+      "source": "cards/war_of_the_spark.c",
+      "reason": "Only entering creatures with power greater than3 trigger the draw."
+    },
+    {
+      "name": "card_plague_belcher",
+      "source": "cards/amonkhet.c",
+      "reason": "The death-counting test retains the other-Zombie filter."
+    },
+    {
+      "name": "card_phyrexian_scriptures",
+      "source": "cards/dominaria.c",
+      "reason": "Chapter2 destroys nonartifact creatures."
+    },
+    {
+      "name": "card_time_of_ice",
+      "source": "cards/dominaria.c",
+      "reason": "Chapter3 returns only tapped creatures."
+    },
+    {
+      "name": "card_emiel_the_blessed",
+      "source": "cards/jumpstart.c",
+      "reason": "Emiel entry does not trigger its own creature-entry ability."
+    },
+    {
+      "name": "card_inalla_archmage_ritualist",
+      "source": "cards/commander_2017.c",
+      "reason": "The Eminence test requires another nontoken Wizard."
+    },
+    {
+      "name": "card_shark_typhoon",
+      "source": "cards/ikoria.c",
+      "reason": "The spell trigger excludes creatures."
+    },
+    {
+      "name": "card_cindervines",
+      "source": "cards/ravnica_allegiance.c",
+      "reason": "The opponent spell trigger excludes creatures."
+    },
+    {
+      "name": "card_rise_fall",
+      "source": "cards/dissension.c",
+      "reason": "Fall discards nonland cards among the revealed cards."
+    },
+    {
+      "name": "card_varchild_betrayer_of_kjeldor",
+      "source": "cards/commander_2018.c",
+      "reason": "The leaves-play effect gains control of Survivors."
+    },
+    {
+      "name": "card_doomfall",
+      "source": "cards/hour_of_devastation.c",
+      "reason": "The hand-exile mode selects a nonland card."
+    },
+    {
+      "name": "card_ashiok_nightmare_muse",
+      "source": "cards/theros_beyond_death.c",
+      "reason": "The ultimate free-cast test excludes lands."
+    },
+    {
+      "name": "card_elspeths_nightmare",
+      "source": "cards/theros_beyond_death.c",
+      "reason": "Chapter2 coerces a nonland, noncreature card."
+    },
+    {
+      "name": "card_kykar_winds_fury",
+      "source": "cards/m20.c",
+      "reason": "All three sacrifice/mana-probe tests require Spirits; the two native explicit quantity1 writes are retained."
+    },
+    {
+      "name": "card_tenured_inkcaster",
+      "source": "cards/strixhaven.c",
+      "reason": "The attacker storage test requires more than zero +1/+1 counters."
+    },
+    {
+      "name": "card_torgaar_famine_incarnate",
+      "source": "cards/dominaria.c",
+      "reason": "Preserve the min(round_up_value(generic cost), available sacrifices) result in the16-bit quantity before mark_sacrifice."
+    },
+    {
+      "name": "card_glissa_sunseeker",
+      "source": "cards/mirrodin.c",
+      "reason": "The can-waste-mana test checks artifacts with CMC below available total mana plus1."
+    }
+  ],
+  "reviewed_shared_stack_handlers": 37,
+  "corrected_handlers": 24,
+  "restored_native_scalar_stores": 43,
+  "source_units": 16,
+  "retained_matching_handlers": 13,
+  "exact_scalar_byte_write_matches": 36,
+  "mutually_exclusive_compiler_clone": "card_guild_summit",
+  "dynamic_value_flows_restored": 2,
+  "changed_linker_objects": 16,
+  "unchanged_linker_objects": 150,
+  "verified_fixed_slots": 15169,
+  "remaining_inline_review_names": 22,
+  "remaining_ordinary_binding_followups": 0,
+  "further_source_inventory": {
+    "flat_test_bearing_unions": 105,
+    "outside_this_metadata_driven_audit": 68,
+    "scope": "Classification queue only. Includes manually recovered functions and full-sized first views; it is not an additional-bug count."
+  },
+  "source_provenance_setup": {
+    "session_id": 25907,
+    "exit_code": 0,
+    "build_session_id": 53410,
+    "build_exit_code": 0,
+    "setup_log": ".recovery/shared-stack-tests-setup.log",
+    "setup_log_sha256": "63e238792d9df2997a82bc69e1f952b09fff003659db60bc80cf06461a020c89",
+    "build_log": ".recovery/shared-stack-tests-build.log",
+    "build_log_sha256": "a00afa8946526e80a667229186957dedb7c244d04e5d652fd5ddb7a6dc623aa5"
+  },
+  "inputs": {
+    "ManalinkEh.dll": "9e63ea998f1ddb3673a520611ffa576885cfb13b281dafd3d4912ff41395f486",
+    "ManalinkEh.dbg": "e48fbca98236fd7071d3f5a6346f8eb5ce12c74379a2662d2988d112db79cb85",
+    "docs/recovery-evidence/helper-canonicalization.json": "8d4c06dd39a8ff4349c1913d76ac150526b973b1c9f571998faf21217f02721d",
+    "docs/recovery-evidence/shared-stack-test-recovery.json": "a95314cbc0c94798d9a614ebee53d4e15f54da829d7a70460b8595fb68db5faa",
+    ".recovery/all-source-test-union-inventory.json": "e892d1eb1386c45a9def2e3e2d6516f5de84ec104939126ab22d48b849219068"
+  },
+  "scope": "Review37 accepted handlers sharing a216-byte test definition with a smaller initial stack view. Restore43 missing direct scalar native writes in24 existing handlers;13 already match this parameter-region check. Native/compiled DWARF confirms frame bases and full field geometry. Complete native code, before/after source, sealed builds and field-byte write multisets are preserved. The check covers named test parameter fields at offsets100..215, including two dynamic value flows and native redundant quantity1 writes; it does not establish whole-function or gameplay equivalence, nor exhaust every possible indirect or message-buffer store. The22-name inline source-definition queue is unchanged."
+}

@@ -4672,6 +4672,8 @@ int card_spirit_mirror(int player, int card, event_t event){
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_PERMANENT);
+		this_test.type_flag = F1_IS_TOKEN;
+		this_test.subtype = SUBTYPE_REFLECTION;
 
 		if( ! check_battlefield_for_special_card(player, card, ANYBODY, 0, &this_test) ){
 			token_generation_t token;

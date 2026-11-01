@@ -502,3 +502,74 @@ extern "C" void choose_a_card_get_last_options(color_test_t *cols, type_t *typs)
   }
 }
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static int color_test_to_ctl(color_test_t col)
+{
+  switch (col)
+  {
+    case COLOR_TEST_COLORLESS: return CTL_COLORLESS;
+    case COLOR_TEST_BLACK: return CTL_BLACK;
+    case COLOR_TEST_BLUE: return CTL_BLUE;
+    case COLOR_TEST_GREEN: return CTL_GREEN;
+    case COLOR_TEST_RED: return CTL_RED;
+    case COLOR_TEST_WHITE: return CTL_WHITE;
+    case COLOR_TEST_ANY_COLORED: return CTL_MULTICOLOR;
+    default: return CTL_ALL_COLORS;
+  }
+}
+
+static color_test_t ctl_to_color_test(int ctl)
+{
+  switch (ctl)
+  {
+    case CTL_COLORLESS: return COLOR_TEST_COLORLESS;
+    case CTL_BLACK: return COLOR_TEST_BLACK;
+    case CTL_BLUE: return COLOR_TEST_BLUE;
+    case CTL_GREEN: return COLOR_TEST_GREEN;
+    case CTL_RED: return COLOR_TEST_RED;
+    case CTL_WHITE: return COLOR_TEST_WHITE;
+    case CTL_MULTICOLOR: return COLOR_TEST_ANY_COLORED;
+    default: return COLOR_TEST_ANY;
+  }
+}
+
+static int type_to_ctl(type_t typ)
+{
+  switch (typ)
+  {
+    case TYPE_LAND: return CTL_LANDS;
+    case TYPE_CREATURE: return CTL_CREATURES;
+    case TYPE_ENCHANTMENT: return CTL_ENCHANTMENTS;
+    case TYPE_SORCERY: return CTL_SORCERIES;
+    case TYPE_INSTANT: return CTL_INSTANTS;
+    case TYPE_ARTIFACT: return CTL_ARTIFACTS;
+    case TARGET_TYPE_PLANESWALKER: return CTL_PLANESWALKERS;
+    default: return CTL_ALL_TYPES;
+  }
+}
+
+static type_t ctl_to_type(int ctl)
+{
+  switch (ctl)
+  {
+    case CTL_LANDS: return TYPE_LAND;
+    case CTL_CREATURES: return TYPE_CREATURE;
+    case CTL_ENCHANTMENTS: return TYPE_ENCHANTMENT;
+    case CTL_SORCERIES: return TYPE_SORCERY;
+    case CTL_INSTANTS: return TYPE_INSTANT;
+    case CTL_ARTIFACTS: return TYPE_ARTIFACT;
+    case CTL_PLANESWALKERS: return TARGET_TYPE_PLANESWALKER;
+    default: return TYPE_ANY;
+  }
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Original chooser enum operators, recovered from native inline instances. */
+OP_BITWISE(color_test_t)
+OP_BITWISE(type_t)
+#endif

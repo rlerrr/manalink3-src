@@ -510,10 +510,10 @@ void resolve_trigger(int player, int card, int TENTATIVE_reason_for_trigger_cont
   card_instance_t *pcStack_218;
   int iStack_214;
   int iStack_208;
-  char buf[500];
 
   if (((uint8_t)trace_mode & 2) != 0)
   {
+    char buf[500];
     pcVar5 = get_card_instance(player, card);
     iVar11 = EXE_DWORD(0x60ec40);
     EXE_DWORD(0x60ec40) = EXE_DWORD(0x60ec40) + 1;
@@ -536,6 +536,7 @@ void resolve_trigger(int player, int card, int TENTATIVE_reason_for_trigger_cont
     EXE_FN(void, 0x436700, void)();
     if (reason_for_trigger_controller != 0)
     {
+      char buf[300];
       load_text((char *)0x0, "PROMPT_PROC1");
       sprintf(buf, text_lines[0], opponent_name);
       EXE_FN(int, 0x471b60, int, int, int, int, const char *, int)(player, card, -1, -1, buf, 0);
@@ -1612,4 +1613,21 @@ void allow_response_to_trigger(int player, int card)
                                                      EVENT_RESOLVE_TRIGGER);
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static int has_ability_counters(int player, int card)
+{
+  /* Extra counter slots share the final target entry in the native layout. */
+  const unsigned char *p = (const unsigned char *)get_card_instance(player, card);
+  return (p[0x51] >= COUNTER_DEATHTOUCH && p[0x51] <= COUNTER_VIGILANCE && p[0]) ||
+         (p[0x104] >= COUNTER_DEATHTOUCH && p[0x104] <= COUNTER_VIGILANCE && p[1]) ||
+         (p[0x105] >= COUNTER_DEATHTOUCH && p[0x105] <= COUNTER_VIGILANCE && p[2]) ||
+         (p[0x106] >= COUNTER_DEATHTOUCH && p[0x106] <= COUNTER_VIGILANCE && p[3]) ||
+         (p[0x107] >= COUNTER_DEATHTOUCH && p[0x107] <= COUNTER_VIGILANCE && p[0x121]) ||
+         (p[0x10a] >= COUNTER_DEATHTOUCH && p[0x10a] <= COUNTER_VIGILANCE && p[0x108]) ||
+         (p[0x10b] >= COUNTER_DEATHTOUCH && p[0x10b] <= COUNTER_VIGILANCE && p[0x109]);
+}
 #endif

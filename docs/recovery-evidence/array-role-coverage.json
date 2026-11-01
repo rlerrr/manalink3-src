@@ -1,0 +1,97 @@
+{
+  "recovery": {
+    "recovered_card_definitions": 7,
+    "restored_large_arrays": 4,
+    "restored_matrix_bytes": [
+      800,
+      800,
+      800,
+      302
+    ],
+    "fixed_clear_footprints": [
+      800,
+      800,
+      302,
+      40
+    ],
+    "prompt_copy_bytes": 37,
+    "native_sacrifice_capacities": [
+      2,
+      10
+    ],
+    "changed_linker_objects": 6,
+    "unchanged_linker_objects": 160,
+    "scope": "Recover three native int[2][100] matrices and one char[2][151] matrix hidden behind216-byte test objects, while retaining genuine test definitions in their own roles. Check native/rebuilt DWARF extents and fixed frame allocation, concrete800/800/302/40-byte clearing effects and37-byte prompt copy. Verify draw-list row0/row400 indexed access geometry and selection input; verify Liliana passes the302-byte matrix to the exact not_marked callback. Retain native2/10-entry sacrifice capacities with four bounded typed loops, including existing cancellation/flag quirks. The100-entry native matrix capacity is retained. Constant/frame analysis covers supported operations and definite effects, not every dynamic indexed value, all pointer aliasing, complete callback/loop semantics or gameplay. Exact source replay preserves all unreplaced code; no whole-function equivalence score is claimed."
+  },
+  "verified_fixed_slots": 15169,
+  "restored_storage": [
+    {
+      "name": "card_soldevi_sage",
+      "prior_misused_variable": "sac_test",
+      "prior_variable_bytes": 216,
+      "native_array": "dtt",
+      "restored_array_bytes": 800,
+      "dimensions": [
+        2,
+        100
+      ]
+    },
+    {
+      "name": "card_liliana_dreadhorde_general",
+      "prior_misused_variable": "test",
+      "prior_variable_bytes": 216,
+      "native_array": "marked",
+      "restored_array_bytes": 302,
+      "dimensions": [
+        2,
+        151
+      ]
+    },
+    {
+      "name": "card_krovikan_sorcerer",
+      "prior_misused_variable": "this_test2",
+      "prior_variable_bytes": 216,
+      "native_array": "dtt",
+      "restored_array_bytes": 800,
+      "dimensions": [
+        2,
+        100
+      ]
+    },
+    {
+      "name": "card_aminatou_the_fateshifter",
+      "prior_misused_variable": "test",
+      "prior_variable_bytes": 216,
+      "native_array": "marked",
+      "restored_array_bytes": 800,
+      "dimensions": [
+        2,
+        100
+      ]
+    }
+  ],
+  "source_provenance_setup": {
+    "session_id": 34659,
+    "exit_code": 0,
+    "completion_chunk_id": "f86460",
+    "build_exit_code": 0,
+    "build_chunk_id": "afaa35",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "5bccc2",
+    "setup_log": ".recovery/array-role-setup-c58.log",
+    "setup_log_sha256": "c158aa170918755847b0cfb18b8f331d09ed2c428af1aa5c49dd4c1872555efd"
+  },
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "b8fd86848fad79ed3be9bf802056ef8f93a0a23b4f01dc3b80f65f0f97391def",
+    "docs/recovery-evidence/array-role-recovery.json": "07de508b7dc624f3c776fa2ac3f2f6ea0fcde69d6f8eda7a904ec77b8df16158",
+    "tools/recovery/array_role_analysis.py": "516a4dd574fbec9ede5735562602da0d2146b4d655bd6e85deb1318c92ab8636",
+    "tools/recovery/verify_array_role_recovery.py": "1e8450f56e13603a25757faf7c06f7a725e1cc64ce6c013e76c85b9932f68179",
+    "ManalinkEh.dll": "4cbe8aa725713071a1326b5ed7c8af2dcf4366f0a4b6ed76fee58380d15f2ed2",
+    "ManalinkEh.dbg": "083acf45b2c7cd8eb697d991e743ffe293c0fbe0c03eccdbd6af7a2b5b95cc05"
+  },
+  "next_discovery": {
+    "path": ".recovery/target-role-native-c59.json",
+    "sha256": "68471e5626da2baca6ce46bf25875a829b4c9b8051fd84d33649d1448762247d",
+    "scope": "Native layouts only: Eye of Doom marked int[2][151], three100-byte prompt arrays, struct-copy operations, sentinels and scalar roles. No C59 source fixes applied."
+  }
+}

@@ -366,8 +366,8 @@ static int lazotep_plating_effect(int player, int card, event_t event)
   int result;
   if (event == EVENT_STATIC_EFFECTS)
   {
-    *(unsigned int *)(&player_bits + player * 4) =
-        *(unsigned int *)(&player_bits + player * 4) | 0x20000;
+    player_bits[player] =
+        player_bits[player] | 0x20000;
   }
   result = eot_trigger(player, card, event);
   if (result == 0)
@@ -2096,6 +2096,8 @@ int card_kiora_behemoth_beckoner(int player, int card, event_t event)
       (reason_for_trigger_controller == player))
   {
     default_test_definition(&recovered_stack_td.test, 2);
+    recovered_stack_td.test.power = 3;
+    recovered_stack_td.test.power_flag = F5_POWER_GREATER_THAN_VALUE;
     etb_ability_global(player, event, 2, TYPE_NONE, &recovered_stack_td.test, player, card);
   }
   if (event == EVENT_ETB)
@@ -2826,8 +2828,8 @@ int card_tibalt_rakish_instigator(int player, int card, event_t event)
   check_legend_rule(player, card, event);
   if (event == EVENT_STATIC_EFFECTS)
   {
-    *(unsigned int *)(&player_bits + (1 - player) * 4) =
-        *(unsigned int *)(&player_bits + (1 - player) * 4) | 0x200000;
+    player_bits[(1 - player)] =
+        player_bits[(1 - player)] | 0x200000;
   }
   else
   {
@@ -3241,16 +3243,13 @@ int card_liliana_dreadhorde_general(int player, int card, event_t event)
   int iVar3;
   card_instance_t *pcVar4;
   unsigned int uVar5;
-  test_definition_t *ptVar6;
   int iVar7;
-  unsigned char bVar8;
   type_t types[5];
   char *prompts[5];
   target_definition_t td;
   test_definition_t this_test;
   test_definition_t test;
 
-  bVar8 = 0;
   check_legend_rule(player, card, event);
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -3350,18 +3349,8 @@ int card_liliana_dreadhorde_general(int player, int card, event_t event)
     }
     else if (iVar2 == 3)
     {
-      ptVar6 = &test;
-
-      for (iVar2 = 0x4b; iVar2 != 0; iVar2 = iVar2 + -1)
-      {
-        ptVar6->message[0] = '\0';
-        ptVar6->message[1] = '\0';
-        ptVar6->message[2] = '\0';
-        ptVar6->message[3] = '\0';
-        ptVar6 = (test_definition_t *)((int)ptVar6 + (unsigned int)bVar8 * -8 + 4);
-      }
-      ptVar6->message[0] = '\0';
-      ptVar6->message[1] = '\0';
+      char marked[2][151];
+      memset(marked, 0, sizeof(marked));
       iVar7 = 0;
       default_target_definition(player, card, &td, 0);
       iVar2 = 1 - player;
@@ -3387,7 +3376,7 @@ int card_liliana_dreadhorde_general(int player, int card, event_t event)
         if ((iVar3 != 0) && (iVar3 = new_pick_target(&td, prompts[iVar7], 0, 0), iVar3 != 0))
         {
           iVar3 = pcVar1->targets[0].card;
-          *(uint8_t *)((int)&test + iVar3 + iVar2 * 0x97) = 1;
+          marked[iVar2][iVar3] = 1;
           pcVar4 = get_card_instance(iVar2, iVar3);
           uVar5 = pcVar4->state;
           pcVar4->state = uVar5 | 0x200000;
@@ -3409,7 +3398,7 @@ int card_liliana_dreadhorde_general(int player, int card, event_t event)
       {
 
         iVar7 = pcVar1->targets[0].card;
-        *(uint8_t *)((int)&test + iVar7 + iVar2 * 0x97) = 1;
+        marked[iVar2][iVar7] = 1;
         pcVar1 = get_card_instance(iVar2, iVar7);
         uVar5 = pcVar1->state;
         pcVar1->state = uVar5 | 0x200000;
@@ -3423,7 +3412,7 @@ int card_liliana_dreadhorde_general(int player, int card, event_t event)
         iVar7 = 0;
         do
         {
-          if (*(char *)((int)&test + iVar7 + iVar2 * 0x97) != '\0')
+          if (marked[iVar2][iVar7] != '\0')
           {
             pcVar1 = get_card_instance(iVar2, iVar7);
             pcVar1->state = pcVar1->state & 0xffcfffff;
@@ -3435,7 +3424,7 @@ int card_liliana_dreadhorde_general(int player, int card, event_t event)
       if (iVar7 != 0)
       {
         default_test_definition(&this_test, 0x47);
-        this_test.value_for_special_selection_function = (int)&test;
+        this_test.value_for_special_selection_function = (int)marked;
         this_test.special_selection_function = not_marked;
         new_manipulate_all(player, card, iVar2, &this_test, ACT_KILL_SACRIFICE);
       }
@@ -3758,22 +3747,15 @@ LAB_021c8f28:
 int card_bolass_citadel(int player, int card, event_t event)
 {
   bool bVar1;
-  const char *pcVar2;
   int iVar3;
   card_instance_t *instance;
   int iVar5;
   unsigned int uVar6;
-  test_definition_t *ptVar7;
-  test_definition_t *ptVar8;
-  int *piVar9;
-  test_definition_t *ptVar10;
-  unsigned char bVar11;
   unsigned int uStack_118;
   uint32_t uStack_114;
   int sac[10];
   test_definition_t test;
 
-  bVar11 = 0;
   if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
   {
     if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
@@ -3916,20 +3898,12 @@ LAB_021c9830:
   }
 
   test.qty = 1;
-  piVar9 = sac;
-  for (iVar5 = 10; iVar5 != 0; iVar5 = iVar5 + -1)
-  {
-    *piVar9 = 0;
-    piVar9 = piVar9 + (unsigned int)bVar11 * -2 + 1;
-  }
-  ptVar10 = (test_definition_t *)sac;
-  ptVar7 = ptVar10;
-  do
+  memset(sac, 0, sizeof(sac));
+  for (int i = 0; i < 10; ++i)
   {
     iVar5 =
         new_sacrifice(player, card, player, SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK, &test);
-    *(int *)ptVar7->message = iVar5;
-    ptVar8 = ptVar10;
+    sac[i] = iVar5;
     if (iVar5 == 0)
     {
       remove_state(player, card, 0x10);
@@ -3937,34 +3911,30 @@ LAB_021c9830:
       bVar1 = false;
       goto LAB_021c9a33;
     }
-    ptVar7 = (test_definition_t *)(ptVar7->message + 4);
-  } while (ptVar7 != &test);
+  }
   bVar1 = true;
 LAB_021c9a33:
-  do
+  for (int i = 0; i < 10; ++i)
   {
-    uVar6 = *(unsigned int *)ptVar8->message;
+    uVar6 = (unsigned int)sac[i];
     if (uVar6 != 0)
     {
       spell_fizzled = 1;
       state_untargettable((int)uVar6 >> 0x10 & 0xff, uVar6 >> 0x18, 0);
     }
-    pcVar2 = ptVar8->message;
-    ptVar8 = (test_definition_t *)(pcVar2 + 4);
-  } while ((test_definition_t *)(pcVar2 + 4) != &test);
+  }
   if (!bVar1)
   {
     return 0;
   }
-  do
+  for (int i = 0; i < 10; ++i)
   {
-    uVar6 = *(unsigned int *)ptVar10->message;
+    uVar6 = (unsigned int)sac[i];
     if (uVar6 != 0)
     {
       kill_card((int)uVar6 >> 0x10 & 0xff, uVar6 >> 0x18, KILL_SACRIFICE);
     }
-    ptVar10 = (test_definition_t *)(ptVar10->message + 4);
-  } while (ptVar10 != &test);
+  }
   return 0;
 }
 
@@ -5480,8 +5450,6 @@ void amass(int player, int card, int amount)
   int iVar1;
   int iVar2;
   card_instance_t *instance;
-  target_definition_t td;
-  token_generation_t token;
 
   iVar1 = count_subtype(player, -1, 0xfe);
   if (iVar1 == 1)
@@ -5505,12 +5473,15 @@ void amass(int player, int card, int amount)
   {
     if (iVar1 < 2)
     {
+      token_generation_t token;
       default_token_definition(player, card, 0x4e58, &token);
       token.action = TOKEN_ACTION_ADD_COUNTERS;
       token.action_argument = amount;
       generate_token(&token);
       return;
     }
+    {
+    target_definition_t td;
     default_target_definition(player, card, &td, 2);
     td.required_subtype = 0xfe;
     td.preferred_controller = player;
@@ -5525,6 +5496,7 @@ void amass(int player, int card, int amount)
       instance = get_card_instance(player, card);
       add_counters(player, card, instance->targets[0].player, iVar1, COUNTER_P1_P1,
                                amount);
+    }
     }
   }
   return;
@@ -6569,7 +6541,7 @@ int card_sorin_vengeful_bloodlord(int player, int card, event_t event)
   int iVar3;
   int iVar4;
   unsigned int uVar5;
-  target_definition_t *ptStack_140;
+  int loyalty_to_remove;
   target_definition_t td;
   test_definition_t test_resurrect;
 
@@ -6633,7 +6605,7 @@ int card_sorin_vengeful_bloodlord(int player, int card, event_t event)
       if (player == 1)
       {
 
-        ptStack_140 = NULL;
+        loyalty_to_remove = 0;
         iVar1 = 0;
         for (iVar3 = 0; iVar4 = count_counters(1, card, COUNTER_LOYALTY), iVar3 <= iVar4;
              iVar3 = iVar3 + 1)
@@ -6644,12 +6616,12 @@ int card_sorin_vengeful_bloodlord(int player, int card, event_t event)
           if (iVar1 < iVar4)
           {
             iVar1 = iVar4;
-            ptStack_140 = (target_definition_t *)iVar3;
+            loyalty_to_remove = iVar3;
           }
         }
       LAB_021d6674:
-        iVar1 = (int)ptStack_140 + 1;
-        if (-1 < (int)ptStack_140)
+        iVar1 = loyalty_to_remove + 1;
+        if (-1 < loyalty_to_remove)
           goto LAB_021d63cb;
       LAB_021d63fd:
         spell_fizzled = 1;
@@ -6659,18 +6631,18 @@ int card_sorin_vengeful_bloodlord(int player, int card, event_t event)
         if (player == 0)
         {
           iVar1 = count_counters(0, card, COUNTER_LOYALTY);
-          ptStack_140 =
-              (target_definition_t *)choose_a_number(0, "Remove how much Loyalty?", iVar1);
+          loyalty_to_remove =
+              choose_a_number(0, "Remove how much Loyalty?", iVar1);
           goto LAB_021d6674;
         }
         iVar1 = 1;
-        ptStack_140 = NULL;
+        loyalty_to_remove = 0;
       LAB_021d63cb:
         iVar3 = count_counters(player, card, COUNTER_LOYALTY);
-        if (iVar3 < (int)ptStack_140)
+        if (iVar3 < loyalty_to_remove)
           goto LAB_021d63fd;
-        remove_counters(player, card, player, card, COUNTER_LOYALTY, (int)ptStack_140);
-        instance->targets[1].player = (int32_t)ptStack_140;
+        remove_counters(player, card, player, card, COUNTER_LOYALTY, loyalty_to_remove);
+        instance->targets[1].player = (int32_t)loyalty_to_remove;
       }
       test_resurrect.cmc = iVar1;
       select_target_from_grave_source(player, card, player, SFG_0, 1, &test_resurrect, 0);
@@ -6689,13 +6661,12 @@ int card_sorin_vengeful_bloodlord(int player, int card, event_t event)
     test_resurrect.cmc_flag = 3;
     instance = get_card_instance(player, card);
   }
-  ptStack_140 = &td;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
 
     if (instance->info_slot == 1)
     {
-      iVar1 = valid_target(ptStack_140);
+      iVar1 = valid_target(&td);
       if (iVar1 != 0)
       {
         damage_target0(player, card, 1);
@@ -8914,4 +8885,67 @@ int card_god_eternal_kefnet(int player, int card, event_t event)
   return war_god_eternal(player, card, event);
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static int is_this_dying_or_being_exiled(int player, int card)
+{
+  return in_play(player, card) &&
+         (unsigned char)(get_card_instance(player, card)->kill_code - 1) <= 3;
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int has_mana_to_cast_iid_minus_two(int player, event_t event, int iid)
+{
+  uint32_t id = (uint16_t)cards_data[iid].id;
+  int available;
+  if (id == 0x25ad)
+    available = can_cast_reaper_king(player, -1, event);
+  else
+  {
+    card_ptr_t *cp = cards_ptr[id];
+    uint32_t original_cless = cp->req_colorless;
+    if (original_cless == 0x28)
+      original_cless = 0;
+    int cless =
+        get_updated_casting_cost(player, -1, iid, event, original_cless) - 2;
+    if (cless < 0)
+      cless = 0;
+    if (id == 0x2ded)
+    {
+      cless -= count_graveyard_by_type(player, 2);
+      if (cless < 0)
+        cless = 0;
+    }
+    uint32_t artifact = cards_data[iid].type & 0x40;
+    if (is_phyrexian(id))
+      available = has_phyrexian_mana(player, cless, cp->req_black, cp->req_blue,
+                                          cp->req_green, cp->req_red, cp->req_white, artifact);
+    else if (is_normal_hybrid(cp))
+    {
+      int c1 = get_colors_for_hybrid(-1, iid, 0, 0);
+      int c2 = get_colors_for_hybrid(-1, iid, c1, 0);
+      int number = get_number_of_hybrid_mana(-1, iid, 0, 0);
+      available = has_mana_hybrid(player, number, c1, c2, cless);
+    }
+    else if (is_monocolor_hybrid(cp))
+    {
+      int c1 = get_color_for_monocolored_hybrid(-1, iid);
+      int number = get_number_of_monocolored_hybrid_mana(-1, iid, 0);
+      available = has_mana_for_monocolor_hybrid(player, number, c1, 0);
+    }
+    else if (artifact)
+      available = has_mana_multi_a(player, cless, cp->req_black, cp->req_blue, cp->req_green,
+                                   cp->req_red, cp->req_white);
+    else
+      available = has_mana_multi(player, cless, cp->req_black, cp->req_blue, cp->req_green,
+                                 cp->req_red, cp->req_white);
+  }
+  return available;
+}
 #endif

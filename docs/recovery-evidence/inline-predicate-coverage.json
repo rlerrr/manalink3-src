@@ -1,0 +1,113 @@
+{
+  "restored_inline_helpers": [
+    {
+      "name": "can_produce_colorless",
+      "source": "cards/modern_horizons_2.c"
+    },
+    {
+      "name": "spectacle_paid",
+      "source": "cards/ravnica_allegiance.c"
+    },
+    {
+      "name": "get_watermark",
+      "source": "cards/unstable.c"
+    },
+    {
+      "name": "is_dark_outdoors",
+      "source": "cards/unstable.c"
+    },
+    {
+      "name": "has_sp_key_by_iid",
+      "source": "functions/abilities.c"
+    },
+    {
+      "name": "release_dynamic_card_type",
+      "source": "functions/token_generation.c"
+    },
+    {
+      "name": "is_tribal_by_id",
+      "source": "functions/has_creature_type.c"
+    },
+    {
+      "name": "is_vehicle_or_dwarf",
+      "source": "cards/kaladesh.c"
+    },
+    {
+      "name": "any_left_in_packs",
+      "source": "functions/draft.c"
+    },
+    {
+      "name": "raw_has_subtype",
+      "source": "functions/packs.c"
+    },
+    {
+      "name": "allow_duplicates",
+      "source": "functions/packs.c"
+    },
+    {
+      "name": "party_bits",
+      "source": "cards/zendikar_rising.c"
+    },
+    {
+      "name": "count_party_classes",
+      "source": "cards/zendikar_rising.c"
+    },
+    {
+      "name": "has_ability_counters",
+      "source": "functions/events.c"
+    },
+    {
+      "name": "imprint_legacymatches",
+      "source": "cards/scars_of_mirrodin.c"
+    },
+    {
+      "name": "counters_on_upkeep",
+      "source": "cards/urza_saga.c"
+    },
+    {
+      "name": "color_test_to_ctl",
+      "source": "functions/choose_a_card.cpp"
+    },
+    {
+      "name": "ctl_to_color_test",
+      "source": "functions/choose_a_card.cpp"
+    },
+    {
+      "name": "type_to_ctl",
+      "source": "functions/choose_a_card.cpp"
+    },
+    {
+      "name": "ctl_to_type",
+      "source": "functions/choose_a_card.cpp"
+    }
+  ],
+  "source_units": 14,
+  "native_inline_instances": 35,
+  "native_inline_fragments": 63,
+  "native_callers": 24,
+  "native_selector_inputs_checked": 8224,
+  "unchanged_runtime_sections": 26,
+  "verified_fixed_slots": 15169,
+  "ordinary_binding_followups_resolved": 8,
+  "remaining_inline_review_names": 83,
+  "remaining_ordinary_binding_followups": 0,
+  "checkpoint_before_pass": "395f05a",
+  "source_provenance_setup": {
+    "session_id": 99891,
+    "exit_code": 0,
+    "build_session_id": 31324,
+    "build_exit_code": 0,
+    "observed_passes": [
+      "INLINE_PREDICATES_SETUP_PASS"
+    ]
+  },
+  "inputs": {
+    "ManalinkEh.dll": "ec5ccbe5061922c20942ad92890102b855b96a97ac7d55d157c65bb390cf575d",
+    "ManalinkEh.dbg": "93b59faa9eab1f13b80231b19a248f7b463011a568c8595569cbb94e7ebbf011",
+    "docs/recovery-evidence/helper-canonicalization.json": "f34a5a8908b90652050b74545e4921d0c6af543e0f8dcbb85dfa6cbea8d88d09",
+    "docs/recovery-evidence/inline-predicate-recovery.json": "2f6b667fb05f8c8acee7228dcb89cd5e425a2f8c74c7407e7319af6b09080dd3",
+    "docs/recovery-evidence/inline-concrete-bindings.json": "fdd226b93b2311d4056c03c401b2dca69e6063c02bc399b5e78ee204bd5bc796",
+    ".recovery/inline-helper-reconciliation-after-bindings.json": "bcc83ec5a31d53266c32f3dea49515c5af5f133ded717bca569d1954602bcd78"
+  },
+  "scope": "Original inline source APIs restored from abstract signatures and concrete caller evidence. Existing caller definitions and runtime sections remain unchanged. Optimized inline attribution is supplemented with complete native owners and lookup tables; no standalone entry addresses or fresh whole-function comparison scores are invented. Gameplay testing remains deferred."
+}

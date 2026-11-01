@@ -3090,7 +3090,6 @@ int card_ib_halfheart_goblin_tactician(int player, int card, event_t event)
   unsigned int uVar3;
   int iVar4;
   card_instance_t *instance;
-  test_definition_t *ptVar6;
   unsigned int player_00;
   int sacs[2];
   test_definition_t test;
@@ -3159,9 +3158,9 @@ int card_ib_halfheart_goblin_tactician(int player, int card, event_t event)
         }
         spell_fizzled = 1;
       LAB_020f3024:
-        ptVar6 = (test_definition_t *)sacs;
-        while (true)
+        for (int i = 0; i < 2; ++i)
         {
+          uVar3 = (unsigned int)sacs[i];
           if (uVar3 != 0)
           {
             player_00 = (int)uVar3 >> 0x10 & 0xff;
@@ -3171,10 +3170,6 @@ int card_ib_halfheart_goblin_tactician(int player, int card, event_t event)
               kill_card(player_00, uVar3 >> 0x18, KILL_SACRIFICE);
             }
           }
-          ptVar6 = (test_definition_t *)(ptVar6->message + 4);
-          if (&test == ptVar6)
-            break;
-          uVar3 = *(unsigned int *)ptVar6->message;
         }
         return 0;
       }

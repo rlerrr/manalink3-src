@@ -2265,3 +2265,61 @@ void reset_subtypes_from_instance(card_instance_t *inst, iid_t iid)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static int is_tribal_by_id(int player, int csvid)
+{
+  return has_subtype_by_id(player, csvid, SUBTYPE_TRIBAL);
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static int add_force_a_subtype_permanently(int player, int card, int t_player, int t_card,
+                                            subtype_t subtype, int mode)
+{
+  int legacy = create_targetted_legacy_effect(player, card, add_force_a_subtype_permanently_legacy,
+                                             t_player, t_card);
+  card_instance_t *instance = get_card_instance(player, legacy);
+  instance->targets[1].player = mode;
+  instance->targets[1].card = subtype;
+  instance->token_status = 0x10000;
+  return legacy;
+}
+
+static int add_force_a_subtype_until_eot_impl(int player, int card, int t_player, int t_card,
+                                             subtype_t subtype, int mode)
+{
+  int legacy = create_targetted_legacy_effect(player, card, add_force_a_subtype_until_eot_legacy,
+                                             t_player, t_card);
+  get_card_instance(player, legacy)->targets[1].player = mode;
+  get_card_instance(player, legacy)->targets[1].card = subtype;
+  return legacy;
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static int add_force_a_subtype_not_in_play(int player, event_t event, subtype_t subtype, int mode)
+{
+  if (event != EVENT_CHANGE_TYPE)
+    return 0;
+  if (!(land_can_be_played & 0x20000))
+  {
+    land_can_be_played |= 0x10000;
+    return 0;
+  }
+  for (int slot = 0; slot < 15; ++slot)
+    if (added_subtypes_not_in_play[player][slot].subtype == SUBTYPE_INVALID)
+    {
+      added_subtypes_not_in_play[player][slot].subtype = subtype;
+      added_subtypes_not_in_play[player][slot].added_forced = (unsigned char)mode;
+      return 1;
+    }
+  return 0;
+}
+#endif

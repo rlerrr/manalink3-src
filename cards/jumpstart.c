@@ -426,11 +426,11 @@ int card_inniaz_the_gale_force(int player, int card, event_t event)
   unsigned int ret_location;
   unsigned int uVar3;
   target_definition_t td;
-  test_definition_t test;
 
   check_legend_rule(player, card, event);
   if (event == EVENT_DECLARE_ATTACKERS)
   {
+    test_definition_t test;
     default_test_definition(&test, 2);
     test.keyword = 0x20;
     test.qty = 3;
@@ -443,6 +443,7 @@ int card_inniaz_the_gale_force(int player, int card, event_t event)
     dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
     if (event == EVENT_DAT_ABILITY)
     {
+      char buffer[150];
 
       uVar3 = 0;
       default_target_definition(player, card, &td, 0x47);
@@ -456,21 +457,21 @@ int card_inniaz_the_gale_force(int player, int card, event_t event)
         td.allowed_controller = ret_location;
         if (ai_is_speculating == 1)
         {
-          test.message[0] = '\0';
+          buffer[0] = '\0';
         }
         else if (player == ret_location)
         {
-          scnprintf(test.message, 0x96, "Select a nonland permanent you control");
+          scnprintf(buffer, 0x96, "Select a nonland permanent you control");
         }
         else
         {
-          scnprintf(test.message, 0x96, "Select a nonland permanent controlled by %s",
+          scnprintf(buffer, 0x96, "Select a nonland permanent controlled by %s",
                     opponent_name);
         }
         result = can_target(&td);
         if (result != 0)
         {
-          new_pick_target(&td, test.message, ret_location, 0x80);
+          new_pick_target(&td, buffer, ret_location, 0x80);
         }
         uVar3 = uVar3 + 1;
       } while (uVar3 != 2);
@@ -520,6 +521,7 @@ int card_inniaz_the_gale_force(int player, int card, event_t event)
   }
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
+    test_definition_t test;
     new_default_test_definition(&test, 2, "");
     test.keyword = 0x20;
     test.state = 4;
@@ -1019,6 +1021,7 @@ int card_emiel_the_blessed(int player, int card, event_t event)
       (reason_for_trigger_controller == player))
   {
     default_test_definition(&recovered_stack_td.test, 2);
+    recovered_stack_td.test.not_me = 1;
     result = duh_mode(player);
     etb_ability_global(player, event, (result != 0) + 1, TYPE_NONE, &recovered_stack_td.test,
                        player, card);

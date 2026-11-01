@@ -1,0 +1,42 @@
+{
+  "recovery": {
+    "recovered_card_definitions": 13,
+    "retained_typed_helpers": 1,
+    "restored_marker_bytes": 1208,
+    "restored_prompt_buffers": 3,
+    "prompt_bytes_each": 100,
+    "exact_target_record_copies": 4,
+    "target_record_bytes": 84,
+    "typed_array_capacities": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "integer_roles_restored": 4,
+    "changed_linker_objects": 12,
+    "unchanged_linker_objects": 154,
+    "scope": "Recover13 original card bodies with one1208-byte marker matrix, three100-byte prompt arrays, four84-byte target assignments, four typed array capacities2/3/4/5 and four integer roles. Native/rebuilt DWARF validates exact extents and frame capacity; definite effects verify the1208-byte clear, formatter bounds/destinations and four record copies. Ovinomancer chooser pointer-spill provenance remains unknown to the conservative machine model; its typed source operand is retained. Old source receipts remain immutable through explicit supersession checks. Strive already has a typed target parameter and is retained. Loop endpoint provenance and source replay do not establish all dynamic values, arbitrary pointer aliasing or whole-function/gameplay equivalence."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 38888,
+    "exit_code": 0,
+    "completion_chunk_id": "6a27bf",
+    "build_exit_code": 0,
+    "build_chunk_id": "4beec0",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "ff3eab",
+    "setup_log": ".recovery/target-role-setup-c59.log",
+    "setup_log_sha256": "33c37210e160b2c703dd3f2b2ee4afe1e98edc72e5efadebd06be33a9ddb8fe3"
+  },
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "9cb2f568fa7bb2fa10b5023f405dd57d43a40e198dcbd4ee250c6414b6dbf9ef",
+    "docs/recovery-evidence/target-role-recovery.json": "b83a3c46d2d7eb47a1802622ec40acca569f6b6d19f4b7ea7cca87bb2b35be21",
+    "tools/recovery/target_role_analysis.py": "7e8b5fc548352a527b00cd7fc8babb9c36e4e61bfb9989bb5ed77a881373cff8",
+    "tools/recovery/verify_target_role_recovery.py": "36c6b31c89f17d4e7a487bb88b56badc966d6e731aa3065fe03f6c2f8abd0763",
+    "tools/recovery/array_role_analysis.py": "8635db36503bf78fdeabb01ee35f6c2e63f6293f481823261f8b1ddc464aad95",
+    "ManalinkEh.dll": "83e7d8f9cd575e404adc6b95cfced86ae4755b9643a57eeba020919db4a37f87",
+    "ManalinkEh.dbg": "28cf260380d1e3e837c28c1b0379776c2f6ad5a8dc583040704c3c8be1b0e7fa"
+  }
+}

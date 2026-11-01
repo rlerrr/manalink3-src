@@ -396,7 +396,7 @@ int card_mirror_match(int player, int card, event_t event)
 					token.action_argument = c;
 				}
 				token.legacy = 1;
-				token.special_code_for_legacy = &exile_at_end_of_combat;
+				token.special_code_for_legacy = &innistrad_exile_at_end_of_combat_legacy;
 				generate_token(&token);
 			}
 		}
@@ -1539,7 +1539,8 @@ int card_verdant_confluence(int player, int card, event_t event)
   int *piVar4;
   int iVar5;
   int *piStack_154;
-  int *piStack_14c;
+  int *choice_cursor;
+  int ret_location;
   int choices[3];
   target_definition_t td;
   test_definition_t test;
@@ -1571,7 +1572,7 @@ int card_verdant_confluence(int player, int card, event_t event)
           iVar5 = 0;
         LAB_02356768:
           piStack_154 = choices;
-          piStack_14c = NULL;
+          ret_location = 0;
           if (iVar5 == 1)
             goto LAB_023567a7;
           do
@@ -1579,19 +1580,19 @@ int card_verdant_confluence(int player, int card, event_t event)
             if (iVar5 == 2)
             {
               iVar5 = select_target_from_grave_source(player, card, player, SFG_0, 1, &test,
-                                                      (int)piStack_14c);
+                                                      ret_location);
               if (iVar5 == -1)
               {
                 spell_fizzled = 1;
                 return 0;
               }
-              piStack_14c = (int *)((int)piStack_14c + 1);
+              ret_location = ret_location + 1;
               instance->number_of_targets = instance->number_of_targets + '\x01';
             }
             while (true)
             {
               piStack_154 = piStack_154 + 1;
-              if ((target_definition_t *)piStack_154 == &td)
+              if (piStack_154 == choices + 3)
               {
                 return 0;
               }
@@ -1599,19 +1600,19 @@ int card_verdant_confluence(int player, int card, event_t event)
               if (iVar5 != 1)
                 break;
             LAB_023567a7:
-              iVar5 = new_pick_target(&td, "TARGET_CREATURE", (int)piStack_14c, 0);
+              iVar5 = new_pick_target(&td, "TARGET_CREATURE", ret_location, 0);
               if (iVar5 == 0)
               {
                 spell_fizzled = 1;
                 return 0;
               }
-              piStack_14c = (int *)((int)piStack_14c + 1);
+              ret_location = ret_location + 1;
             }
           } while (true);
         }
         instance->info_slot = 0;
         iVar5 = generic_spell(player, card, EVENT_CAN_CAST, 8, NULL, NULL, 1, &test);
-        piStack_14c = choices;
+        choice_cursor = choices;
         do
         {
           uVar2 = (choices[1] == 2) - 1 & 0xf;
@@ -1633,9 +1634,9 @@ int card_verdant_confluence(int player, int card, event_t event)
               instance->targets[2].player = -1;
               return 0;
             }
-            piVar4 = piStack_14c + 1;
-            *piStack_14c = iVar3;
-            if (&td == (target_definition_t *)piVar4)
+            piVar4 = choice_cursor + 1;
+            *choice_cursor = iVar3;
+            if (piVar4 == choices + 3)
             {
               *(char *)((int)&instance->info_slot + 1) = (char)choices[1];
               *(char *)&instance->info_slot = (char)choices[0];
@@ -1643,7 +1644,7 @@ int card_verdant_confluence(int player, int card, event_t event)
               iVar5 = choices[0];
               goto LAB_02356768;
             }
-            piStack_14c = piVar4;
+            choice_cursor = piVar4;
             if (choices[0] != 2)
               break;
             uVar2 = 0;
@@ -1660,7 +1661,7 @@ int card_verdant_confluence(int player, int card, event_t event)
     if (event == EVENT_RESOLVE_SPELL)
     {
       iVar5 = 0;
-      piStack_14c = NULL;
+      ret_location = 0;
       do
       {
         uVar2 = instance->info_slot;
@@ -1672,7 +1673,7 @@ int card_verdant_confluence(int player, int card, event_t event)
         LAB_023565e7:
           if (uVar2 == 2)
           {
-            iVar3 = validate_target_from_grave_source(player, card, player, (int)piStack_14c);
+            iVar3 = validate_target_from_grave_source(player, card, player, ret_location);
             if (iVar3 != -1)
             {
               from_grave_to_hand(player, iVar3, 1);
@@ -1694,14 +1695,14 @@ int card_verdant_confluence(int player, int card, event_t event)
           if (uVar2 != 1)
             goto LAB_023565e7;
         LAB_023567fc:
-          iVar3 = validate_target(player, card, &td, (int)piStack_14c);
+          iVar3 = validate_target(player, card, &td, ret_location);
           if (iVar3 != 0)
           {
-            add_counters(player, card, instance->targets[(int)piStack_14c].player,
-                                     instance->targets[(int)piStack_14c].card, COUNTER_P1_P1, 2);
+            add_counters(player, card, instance->targets[ret_location].player,
+                                     instance->targets[ret_location].card, COUNTER_P1_P1, 2);
           }
         LAB_02356896:
-          piStack_14c = (int *)((int)piStack_14c + 1);
+          ret_location = ret_location + 1;
         }
         iVar5 = iVar5 + 1;
         if (iVar5 == 3)

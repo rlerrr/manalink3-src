@@ -3319,7 +3319,6 @@ int card_catch_release(int player, int card, event_t event)
   int result;
   type_t type;
   type_t *ptVar4;
-  target_definition_t *ptStack_80;
   type_t typs[5];
   target_definition_t td;
 
@@ -3383,11 +3382,10 @@ int card_catch_release(int player, int card, event_t event)
             type = TYPE_ARTIFACT;
             while (true)
             {
-              ptStack_80 = &td;
               impose_sacrifice(player, card, player, 1, type, 0, 0, 0, 0, 0, 0, 0, -1, 0);
               ptVar4 = ptVar4 + 1;
               impose_sacrifice(player, card, 1 - player, 1, type, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-              if ((target_definition_t *)ptVar4 == ptStack_80)
+              if (ptVar4 == typs + 5)
                 break;
               type = *ptVar4;
             }
@@ -3665,10 +3663,7 @@ int card_flesh_blood(int player, int card, event_t event)
   unsigned int uVar2;
   int iVar3;
   int iVar4;
-  target_definition_t *ptVar5;
-  target_definition_t *ptVar6;
   unsigned int uVar7;
-  unsigned char bVar8;
   int iStack_19c;
   target_definition_t td;
   target_definition_t td2;
@@ -3681,20 +3676,12 @@ int card_flesh_blood(int player, int card, event_t event)
     uint8_t bytes[216];
   } recovered_stack_td3;
 
-  bVar8 = 0;
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
-    ptVar5 = &td;
-    ptVar6 = &td2;
-    for (iVar4 = 0x15; iVar4 != 0; iVar4 = iVar4 + -1)
-    {
-      ptVar6->who_chooses = ptVar5->who_chooses;
-      ptVar5 = (target_definition_t *)((int)ptVar5 + (unsigned int)bVar8 * -8 + 4);
-      ptVar6 = (target_definition_t *)((int)ptVar6 + (unsigned int)bVar8 * -8 + 4);
-    }
+    td2 = td;
     td2.allowed_controller = player;
     default_target_definition(player, card, &recovered_stack_td3.target, 0x102);
     recovered_stack_td3.target.zone = 0x1200;
@@ -3786,14 +3773,7 @@ int card_flesh_blood(int player, int card, event_t event)
   }
   default_target_definition(player, card, &td, 2);
   td.preferred_controller = player;
-  ptVar5 = &td;
-  ptVar6 = &td2;
-  for (iVar4 = 0x15; iVar4 != 0; iVar4 = iVar4 + -1)
-  {
-    ptVar6->who_chooses = ptVar5->who_chooses;
-    ptVar5 = (target_definition_t *)((int)ptVar5 + (unsigned int)bVar8 * -8 + 4);
-    ptVar6 = (target_definition_t *)((int)ptVar6 + (unsigned int)bVar8 * -8 + 4);
-  }
+  td2 = td;
   td2.allowed_controller = player;
   default_target_definition(player, card, &recovered_stack_td3.target, 0x102);
   recovered_stack_td3.target.zone = 0x1200;
@@ -4398,7 +4378,10 @@ int card_turn_burn(int player, int card, event_t event)
           else
           {
             default_test_definition(&recovered_stack_td2_1.test, 0);
-            get_sleighted_color_test(player, card, 0x10);
+            recovered_stack_td2_1.test.power = 0;
+            recovered_stack_td2_1.test.toughness = 1;
+            recovered_stack_td2_1.test.subtype = SUBTYPE_WEIRD;
+            recovered_stack_td2_1.test.color = get_sleighted_color_test(player, card, 0x10);
             humiliate_and_set_pt_abilities(player, card, instance->targets[0].player,
                                            instance->targets[0].card, 4,
                                            &recovered_stack_td2_1.test);

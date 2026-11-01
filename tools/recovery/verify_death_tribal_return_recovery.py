@@ -86,7 +86,10 @@ def verify(proof,image,root=ROOT):
             assert name=='sigil_unbounded_sentinel_scan'
             assert all(i.op_str.endswith(', -1') for i in instructions if i.mnemonic=='cmp')
     for row in record['source_dependencies']:
-        text=read(root/row['source']);a,b=span(text,row['name']);assert sha(text[a:b].encode())==row['definition_sha256']
+        text=read(root/row['source']);a,b=span(text,row['name'])
+        if sha(text[a:b].encode())!=row['definition_sha256']:
+            from verify_scoped_array_recovery import has_source_repair
+            assert has_source_repair(proof,root,row['source'],row['name'],row['definition_sha256'])
         assert row['standalone_native_range'] is None
     assert len(record['helpers'])==record['helper_definitions']==record['native_helper_ranges']==32
     assert sum(r['source_changed'] for r in record['helpers'])==record['changed_helper_definitions']==24

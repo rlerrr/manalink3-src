@@ -28,12 +28,29 @@ def verify(proof,image,root=ROOT):
             assert [[hex(i.address),i.mnemonic,i.op_str] for i in ins]==part['instructions']
     for row in record['source_dependencies']:
         t=read(root/row['source']);a,b=span(t,row['name']);assert sha(t[a:b].encode())==row['definition_sha256'],row['name']
+    restored_inline=[]
     for row in record['retired_predecessors']:
-        assert not re.search(r'\b'+row['name']+r'\s*\(',read(root/row['source']))
+        if not re.search(r'\b'+row['name']+r'\s*\(',read(root/row['source'])):
+            continue
+        # The old source implementation was retired when these cards were
+        # reconstructed. Later inline recovery can restore the original API,
+        # but only with its own checked source and complete native witnesses.
+        assert row==dict(source='cards/apocalypse.c',name='phyrexians')
+        wrapper_path=proof.get('native_inline_wrapper_recovery');assert wrapper_path
+        wrapper=json.loads((root/wrapper_path).read_bytes())
+        helpers=[h for h in wrapper['helpers'] if h['source']==row['source'] and h['name']==row['name']]
+        assert len(helpers)==1
+        owners={i['owner'] for o in helpers[0]['native_origins'] for i in o['instances']}
+        assert owners=={'card_phyrexian_gargantua','card_phyrexian_rager'}
+        assert owners<={c['name'] for c in record['cards'] if c['source']==row['source']}
+        from verify_inline_wrapper_recovery import verify as verify_inline_wrappers
+        assert verify_inline_wrappers(proof,image,root)['restored_inline_helper_definitions']==23
+        restored_inline.append(row['name'])
     assert len(record['cards'])==60
     return dict(card_handlers=60,changed_definitions=sum(r['source_changed'] for r in record['cards']),
                 retained_after_full_review=sum(not r['source_changed'] for r in record['cards']),
-                dependency_bodies=len(record['source_dependencies']),retired_predecessors=len(record['retired_predecessors']),scope=record['scope'])
+                dependency_bodies=len(record['source_dependencies']),retired_predecessors=len(record['retired_predecessors']),
+                subsequently_restored_native_inline_helpers=restored_inline,scope=record['scope'])
 
 
 if __name__=='__main__':

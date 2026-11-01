@@ -3450,8 +3450,8 @@ int card_island_sanctuary(int player, int card, event_t event)
       }
       if (event == EVENT_RESOLVE_TRIGGER)
       {
-        *(unsigned int *)(&player_bits + player * 4) =
-            *(unsigned int *)(&player_bits + player * 4) | 1;
+        player_bits[player] =
+            player_bits[player] | 1;
         pcVar1->info_slot = pcVar1->info_slot & 0xfffffffe;
         iVar2 = create_legacy_effect_exe(player, card, LEGACY_EFFECT_TIME_WALK, -1, -1);
         if (iVar2 != -1)

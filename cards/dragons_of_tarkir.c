@@ -4553,7 +4553,7 @@ int card_dromokas_command(int player, int card, event_t event)
   if (!IS_GS_EVENT(player, card, event))
     return 0;
 
-  enum { CHOICE_PREVENT = 1, CHOICE_SAC, CHOICE_COUNTER, CHOICE_FIGHT };
+  enum { CHOICE_PREVENT = 1, CHOICE_SAC, CHOICE_COUNTER, CHOICE_FIGHT } choices[2];
   target_definition_t td_spell, td_player, td_creature, td_control, td_dont_control;
   base_target_definition(player, card, &td_spell, TYPE_INSTANT | TYPE_SORCERY);
   td_spell.zone = TARGET_ZONE_ON_STACK;
@@ -4593,7 +4593,6 @@ int card_dromokas_command(int player, int card, event_t event)
     }
 
   card_instance_t *instance = get_card_instance(player, card);
-  int choices[2];
   choices[0] = DIALOG(player, card, event, DLG_CHOOSE_TWO(&choices[1]), DLG_SORT_RESULTS, DLG_RANDOM,
                       "Prevent damage", available[1], priority[1],
                       "Sacrifice enchantment", available[2], priority[2],

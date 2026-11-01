@@ -116,6 +116,7 @@ int miracle(int player, int card, event_t event)
             {
               test_definition_t this_test;
               default_test_definition(&this_test, TYPE_LAND);
+              this_test.type_flag = DOESNT_MATCH;
               ai_priority = check_battlefield_for_special_card(player, card, 1 - player,
                                                                CBFSC_GET_COUNT, &this_test) -
                                         check_battlefield_for_special_card(
@@ -6405,26 +6406,11 @@ int card_dark_impostor(int player, int card, event_t event)
   unsigned int uStack_564;
   unsigned int uStack_560;
   unsigned int uStack_55c;
-  int16_t *piStack_558;
   target_definition_t *ptStack_554;
   unsigned int uStack_550;
   card_instance_t *pcStack_54c;
   unsigned int uStack_548;
-  int16_t iids_1[12];
-  int16_t stolen_abilities[12];
   target_definition_t td;
-  int16_t iids[12];
-  uint8_t auStack_45c[100];
-  uint8_t auStack_3f8[100];
-  uint8_t auStack_394[100];
-  uint8_t auStack_330[100];
-  uint8_t auStack_2cc[100];
-  uint8_t auStack_268[100];
-  uint8_t auStack_204[100];
-  uint8_t auStack_1a0[100];
-  uint8_t auStack_13c[100];
-  uint8_t auStack_d8[100];
-  uint8_t auStack_74[100];
 
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
@@ -6432,6 +6418,8 @@ int card_dark_impostor(int player, int card, event_t event)
     pcVar6 = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
+      int can_activate;
+      int16_t iids[12];
       iVar5 = can_use_activated_abilities(player, card);
       if (iVar5 == 0)
       {
@@ -6439,7 +6427,7 @@ int card_dark_impostor(int player, int card, event_t event)
       }
 
       piVar8 = iids;
-      pcStack_54c = (card_instance_t *)generic_activated_ability(player, card, EVENT_CAN_ACTIVATE,
+      can_activate = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE,
                                                                  4, 4, 2, 0, 0, 0, 0, 0, &td, NULL);
       iVar5 = retrieve_stored_iids(pcVar6, 0x3032, piVar8);
       if (0 < iVar5)
@@ -6456,19 +6444,22 @@ int card_dark_impostor(int player, int card, event_t event)
             {
               return 99;
             }
-            pcStack_54c = (card_instance_t *)0x1;
+            can_activate = 1;
           }
           piVar8 = piVar8 + 1;
         } while (piVar1 != piVar8);
-        return (int)pcStack_54c;
+        return can_activate;
       }
-      return (int)pcStack_54c;
+      return can_activate;
     }
     pcStack_54c = pcVar6;
     if (event == EVENT_ACTIVATE)
     {
+      int16_t iids[12];
+      int16_t stolen_abilities[12];
+      char stolen_abilities_name[12][100];
 
-      piVar8 = iids_1;
+      piVar8 = iids;
       pcVar6->number_of_targets = '\0';
       iVar5 = retrieve_stored_iids(pcVar6, 0x3032, piVar8);
       if (iVar5 < 1)
@@ -6504,7 +6495,7 @@ int card_dark_impostor(int player, int card, event_t event)
             uVar3 = cards_data[sVar2].id;
             iVar5 = uStack_550 + 1;
             stolen_abilities[uStack_550] = sVar2;
-            strcpy((char *)(iids + uStack_550 * 0x32), cards_ptr[uVar3]->name);
+            strcpy(stolen_abilities_name[uStack_550], cards_ptr[uVar3]->name);
             uStack_550 = iVar5;
             if (piVar1 == piVar8)
               goto LAB_02347da6;
@@ -6525,15 +6516,14 @@ int card_dark_impostor(int player, int card, event_t event)
         uVar4 = (unsigned int)(0 < (int)uStack_550);
         uStack_550 = (unsigned int)(9 < (int)uStack_550);
       }
-      piStack_558 = iids;
       iVar5 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 4, 2, 0, 0, 0, 0, 0,
                                         &td, NULL);
       iVar5 = dialog_impl(
           player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\004", "Kill & steal ability",
-          iVar5, 5, piStack_558, uVar4, 1, auStack_45c, uStack_578, 1, auStack_3f8, uStack_574, 1,
-          auStack_394, uStack_570, 1, auStack_330, uStack_56c, 1, auStack_2cc, uStack_568, 1,
-          auStack_268, uStack_564, 1, auStack_204, uStack_560, 1, auStack_1a0, uStack_55c, 1,
-          auStack_13c, uStack_550, 1, auStack_d8, uStack_548, 1, auStack_74, uVar9, 1, 0, 0, 0, 0);
+          iVar5, 5, stolen_abilities_name[0], uVar4, 1, stolen_abilities_name[1], uStack_578, 1, stolen_abilities_name[2], uStack_574, 1,
+          stolen_abilities_name[3], uStack_570, 1, stolen_abilities_name[4], uStack_56c, 1, stolen_abilities_name[5], uStack_568, 1,
+          stolen_abilities_name[6], uStack_564, 1, stolen_abilities_name[7], uStack_560, 1, stolen_abilities_name[8], uStack_55c, 1,
+          stolen_abilities_name[9], uStack_550, 1, stolen_abilities_name[10], uStack_548, 1, stolen_abilities_name[11], uVar9, 1, 0, 0, 0, 0);
       if (iVar5 == 0)
       {
         spell_fizzled = 1;
@@ -6542,7 +6532,7 @@ int card_dark_impostor(int player, int card, event_t event)
       if (iVar5 != 1)
       {
 
-        sVar2 = iids_1[iVar5 + 10];
+        sVar2 = stolen_abilities[iVar5 - 2];
         dispatch_event_to_single_card_overriding_function(player, card, EVENT_ACTIVATE, (int)sVar2);
         if (spell_fizzled == 1)
         {

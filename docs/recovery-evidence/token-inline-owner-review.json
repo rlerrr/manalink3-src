@@ -1,0 +1,140 @@
+{
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "current_dll_sha256": "ed075c0e38a6fd39ff273e3edcab9889a83e85cf7bd11d58b2b8023087203455",
+  "current_dbg_sha256": "908430b7db63bd6de509473d5b020fdff40938973cdfab500ed23a5cf9db83d2",
+  "tool_sha256": "cc7f7f88560dc1af5376eb033fecf45e3cfc9b5efbfabb10f0665eb3c4517ab0",
+  "native": {
+    "owner_die": "0x61cc49e",
+    "owner_symbol": "_copy_token.part.0",
+    "owner_view": {
+      "address": "0x2666640",
+      "end": "0x2666673",
+      "bytes_sha256": "b9cdfaa3fc352aa4ba5be4966f43cc30febc5327fcaa186ae4018b396d207142"
+    },
+    "variable_die": "0x61cc4e0",
+    "variable_type": "0x61c78cb",
+    "variable_bytes": 76,
+    "frame_offset": -88,
+    "scope_tag": "DW_TAG_subprogram",
+    "scope_name": "copy_token",
+    "scope_ranges": [
+      [
+        40265280,
+        40265331
+      ]
+    ],
+    "token_api_operands": [
+      {
+        "call": {
+          "address": "0x2666660",
+          "name": "_copy_token_definition",
+          "arguments": [
+            null,
+            null,
+            [
+              "frame",
+              -80
+            ],
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "token_argument_index": 2
+      },
+      {
+        "call": {
+          "address": "0x2666668",
+          "name": "_generate_token",
+          "arguments": [
+            [
+              "frame",
+              -80
+            ],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "token_argument_index": 0
+      }
+    ],
+    "direct_scalar_stores": []
+  },
+  "current": {
+    "owner_die": "0x5c6324f",
+    "owner_symbol": "_copy_token.part.0",
+    "owner_view": {
+      "address": "0x26e1c80",
+      "end": "0x26e1cb3",
+      "bytes_sha256": "453c13952f97b70f852de08c59f3bec8ada2b6d243b05b8f6712f3527c8f3478"
+    },
+    "variable_die": "0x5c632dd",
+    "variable_type": "0x5c5e4da",
+    "variable_bytes": 76,
+    "frame_offset": -88,
+    "scope_tag": "DW_TAG_inlined_subroutine",
+    "scope_name": "copy_token_part",
+    "scope_ranges": [
+      [
+        40770695,
+        40770733
+      ]
+    ],
+    "token_api_operands": [
+      {
+        "call": {
+          "address": "0x26e1ca0",
+          "name": "_copy_token_definition",
+          "arguments": [
+            null,
+            null,
+            [
+              "frame",
+              -80
+            ],
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "token_argument_index": 2
+      },
+      {
+        "call": {
+          "address": "0x26e1ca8",
+          "name": "_generate_token",
+          "arguments": [
+            [
+              "frame",
+              -80
+            ],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "token_argument_index": 0
+      }
+    ],
+    "direct_scalar_stores": []
+  },
+  "source_definition_sha256": {
+    "copy_token_part": "9dc9fe7569e95227c8959d6ac7603b0e5b0be901c90d0377d5b6e6aff260a8fa",
+    "copy_token": "87f65a02e273131c414344ab5cb3333347ac0a994b691ca75ded3d95e811c0ff"
+  },
+  "scope": "The native private copy_token.part.0 token is implemented in the current copy_token.part.0 concrete range by an actual DW_TAG_inlined_subroutine for source copy_token_part. Its76-byte token, fixed CFA-88 location and initializer/generator pointer operands are verified inside that inline scope. Neither scope has direct scalar token writes. The broad inventory deliberately excluded other-helper inline scopes; this explains its one unbound instance. The public wrapper and private register-argument clone remain distinct ranges/ABIs. This checks declaration, owner and API operands, not copied token contents, transitive helper semantics or gameplay."
+}

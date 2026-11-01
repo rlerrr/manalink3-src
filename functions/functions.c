@@ -21801,8 +21801,8 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
   int trc[2];
   int ac[2];
   test_definition_t this_test2;
-  int to_reanimate[1000];
-  int auras[1000];
+  int to_reanimate[2][500];
+  int auras[2][500];
 
   iStack_2054 = -1;
   if (card != -1)
@@ -21863,7 +21863,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
                 iVar5 = trc[iVar11];
                 if (iVar5 < 500)
                 {
-                  to_reanimate[(iVar11) * 500 + (iVar5)] = piVar10[iVar3];
+                  to_reanimate[iVar11][iVar5] = piVar10[iVar3];
                   trc[iVar11] = iVar5 + 1;
                 joined_r0x0269c7ff:
                   if (rVar2 == REANIMATE_DEFAULT)
@@ -21890,7 +21890,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
                   iVar5 = ac[iVar11];
                   if (iVar5 < 500)
                   {
-                    auras[(iVar11) * 500 + (iVar5)] = piVar10[iVar3];
+                    auras[iVar11][iVar5] = piVar10[iVar3];
                     ac[iVar11] = iVar5 + 1;
                     goto joined_r0x0269c7ff;
                   }
@@ -21915,7 +21915,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
       iVar1 = *piStack_2058;
       if (0 < iVar1)
       {
-        piVar10 = (auras + (0) * 500) + iStack_2050;
+        piVar10 = auras[0] + iStack_2050;
         iStack_2054 = iVar1;
         if (500 < iVar1)
         {
@@ -21941,7 +21941,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
                 piVar7 = piVar6 + 1;
                 *piVar6 = piVar6[1];
                 piVar6 = piVar7;
-              } while (piVar7 != (auras + (0) * 500) + iStack_2054 + iStack_2050);
+              } while (piVar7 != auras[0] + iStack_2054 + iStack_2050);
               iVar11 = iVar11 + 1;
               piVar10 = piVar10 + 1;
               if (iVar11 == iVar1)
@@ -21966,7 +21966,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
       iVar11 = ac[iVar1];
       if (0 < iVar11)
       {
-        piVar10 = (auras + (0) * 500) + iStack_204c;
+        piVar10 = auras[0] + iStack_204c;
         do
         {
           iVar3 = *piVar10;
@@ -21986,12 +21986,12 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
             }
           }
           piVar10 = piVar10 + 1;
-        } while (piVar10 != (auras + (0) * 500) + iVar11 + iStack_204c);
+        } while (piVar10 != auras[0] + iVar11 + iStack_204c);
       }
       iVar11 = trc[iVar1];
       if (0 < iVar11)
       {
-        piVar10 = (to_reanimate + (0) * 500) + iStack_204c;
+        piVar10 = to_reanimate[0] + iStack_204c;
         do
         {
           iVar3 = *piVar10;
@@ -22011,7 +22011,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
             }
           }
           piVar10 = piVar10 + 1;
-        } while (piVar10 != (to_reanimate + (0) * 500) + iVar11 + iStack_204c);
+        } while (piVar10 != to_reanimate[0] + iVar11 + iStack_204c);
       }
       iVar1 = iVar1 + 1;
       iStack_204c = iStack_204c + 500;
@@ -22024,7 +22024,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
       iVar1 = ac[player_00];
       if (0 < iVar1)
       {
-        piVar10 = (auras + (player_00) * 500);
+        piVar10 = auras[player_00];
         do
         {
           iVar11 = *piVar10;
@@ -22033,7 +22033,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
                                         action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,
                                         (CardFunction)0x0, (ReanimationBeforeEtb)0x0);
           uVar9 = current_turn;
-        } while (piVar10 != (auras + (player_00) * 500) + iVar1);
+        } while (piVar10 != auras[player_00] + iVar1);
       }
       uStack_2044 = uStack_2044 + 1;
     } while (uStack_2044 != 2);
@@ -22044,7 +22044,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
       iVar1 = trc[uVar9];
       if (0 < iVar1)
       {
-        piVar10 = (to_reanimate + (uVar9) * 500);
+        piVar10 = to_reanimate[uVar9];
         do
         {
           iVar11 = *piVar10;
@@ -22052,7 +22052,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
           reanimate_permanent_impl(uVar9, -1, uVar9, iVar11,
                                         action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,
                                         (CardFunction)0x0, (ReanimationBeforeEtb)0x0);
-        } while ((to_reanimate + (uVar9) * 500) + iVar1 != piVar10);
+        } while (to_reanimate[uVar9] + iVar1 != piVar10);
       }
       uStack_2040 = uStack_2040 + 1;
       uVar9 = current_turn;
@@ -22063,7 +22063,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
     iStack_2048 = ac[player];
     if (0 < iStack_2048)
     {
-      piVar10 = (auras + (player) * 500);
+      piVar10 = auras[player];
       do
       {
         iVar1 = *piVar10;
@@ -22083,12 +22083,12 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
           }
         }
         piVar10 = piVar10 + 1;
-      } while ((auras + (player) * 500) + iStack_2048 != piVar10);
+      } while (auras[player] + iStack_2048 != piVar10);
     }
     uStack_2040 = trc[player];
     if (0 < (int)uStack_2040)
     {
-      piVar10 = (to_reanimate + (player) * 500);
+      piVar10 = to_reanimate[player];
       do
       {
         iVar1 = *piVar10;
@@ -22108,13 +22108,13 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
           }
         }
         piVar10 = piVar10 + 1;
-      } while ((to_reanimate + (player) * 500) + uStack_2040 != piVar10);
+      } while (to_reanimate[player] + uStack_2040 != piVar10);
     }
     iVar11 = 1 - player;
     iVar1 = ac[iVar11];
     if (0 < iVar1)
     {
-      piVar10 = (auras + (iVar11) * 500);
+      piVar10 = auras[iVar11];
       do
       {
         iVar3 = *piVar10;
@@ -22125,7 +22125,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
           instance = get_card_instance(player, iVar3);
           iStack_2048 = iStack_2048 + 1;
           instance->state = instance->state ^ 0x1000;
-          auras[(player) * 500 + (uStack_2040)] = iVar3;
+          auras[player][uStack_2040] = iVar3;
         }
         else
         {
@@ -22137,12 +22137,12 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
           }
         }
         piVar10 = piVar10 + 1;
-      } while ((auras + (iVar11) * 500) + iVar1 != piVar10);
+      } while (auras[iVar11] + iVar1 != piVar10);
     }
     iVar1 = trc[iVar11];
     if (0 < iVar1)
     {
-      piVar10 = (to_reanimate + (iVar11) * 500);
+      piVar10 = to_reanimate[iVar11];
       do
       {
         iVar3 = *piVar10;
@@ -22152,7 +22152,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
           iVar3 = add_card_to_hand_invisible(player, iVar3);
           instance = get_card_instance(player, iVar3);
           instance->state = instance->state ^ 0x1000;
-          to_reanimate[(player) * 500 + (uStack_2040)] = iVar3;
+          to_reanimate[player][uStack_2040] = iVar3;
           uStack_2040 = uStack_2040 + 1;
         }
         else
@@ -22165,7 +22165,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
           }
         }
         piVar10 = piVar10 + 1;
-      } while ((to_reanimate + (iVar11) * 500) + iVar1 != piVar10);
+      } while (to_reanimate[iVar11] + iVar1 != piVar10);
     }
     ac[player] = iStack_2048;
     trc[player] = uStack_2040;
@@ -22174,7 +22174,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
     iVar1 = ac[player];
     if (0 < iVar1)
     {
-      piVar10 = (auras + (player) * 500);
+      piVar10 = auras[player];
       do
       {
         iVar11 = *piVar10;
@@ -22184,7 +22184,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
         reanimate_permanent_impl(player, card, player, iVar11,
                                       action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,
                                       (CardFunction)0x0, (ReanimationBeforeEtb)0x0);
-      } while (piVar10 != (auras + (player) * 500) + iVar1);
+      } while (piVar10 != auras[player] + iVar1);
     }
     iVar1 = trc[player];
     if (0 < iVar1)
@@ -22192,9 +22192,9 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
       iVar11 = player * 2000;
       do
       {
-        instance = get_card_instance(player, *(int *)((int)(auras + (0) * 500) + iVar11));
+        instance = get_card_instance(player, *(int *)((int)auras[0] + iVar11));
         instance->state = instance->state & 0xffffffdf;
-        piVar10 = (int *)((int)(to_reanimate + (0) * 500) + iVar11);
+        piVar10 = (int *)((int)to_reanimate[0] + iVar11);
         iVar11 = iVar11 + 4;
         reanimate_permanent_impl(player, card, player, *piVar10,
                                       action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,
@@ -29100,4 +29100,33 @@ int prevent_damage_until_eot(int player, int card, int t_player, int t_card, int
   return legacy;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static void disable_legend_rule_impl(int t_player)
+{
+  if (((unsigned int)t_player & 0xfffffffdU) == 0)
+    player_bits[0] = (player_bits_t)((uint32_t)player_bits[0] | PB_LEGEND_RULE_DISABLED);
+  if ((unsigned int)t_player - 1U < 2)
+    player_bits[1] = (player_bits_t)((uint32_t)player_bits[1] | PB_LEGEND_RULE_DISABLED);
+}
+
+static int get_updated_casting_cost_with_cost_mod(int player, int card, int iid,
+                                                   event_t event, int cless, int cost_mod)
+{
+  int cost = true_get_updated_casting_cost(player, card, iid, event, cless - cost_mod);
+  return cost < 0 ? 0 : cost;
+}
+
+static int create_targetted_legacy_effect_replace(int player, int card, CardFunction func_ptr,
+                                                  int target_player_id, int target_card)
+{
+  target_t previous = find_repeat_legacy_effect_alt(player, card, func_ptr,
+                                                   target_player_id, target_card, -1, player);
+  if (previous.card != -1)
+    kill_card(player, previous.card, KILL_EXILE);
+  return create_targetted_legacy_effect(player, card, func_ptr, target_player_id, target_card);
+}
 #endif

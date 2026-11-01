@@ -6925,9 +6925,7 @@ int card_brain_in_a_jar(int player, int card, event_t event)
   int iStack_2ec;
   unsigned int uStack_2e8;
   card_instance_t *pcStack_2e0;
-  test_definition_t this_test;
   int cmc[16];
-  int aiStack_1c4[109];
   if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
   {
     if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
@@ -6957,7 +6955,7 @@ int card_brain_in_a_jar(int player, int card, event_t event)
   {
     *piVar1 = 0;
     piVar1 = piVar1 + 1;
-  } while (aiStack_1c4 != piVar1);
+  } while (cmc + 16 != piVar1);
   iVar7 = 0;
   if (0 < active_cards_count[player])
   {
@@ -7070,12 +7068,14 @@ LAB_022b1bbd:
     iVar7 = pcStack_2e0->info_slot;
     if (iVar7 == 1)
     {
+      char buffer[500];
+      test_definition_t this_test;
       iVar7 = pcStack_2e0->parent_controller;
       iVar5 = pcStack_2e0->parent_card;
       add_counters(player, card, iVar7, iVar5, COUNTER_CHARGE, 1);
       iVar6 = count_counters(iVar7, iVar5, COUNTER_CHARGE);
-      scnprintf((char *)cmc, 500, "Select a instant and sorcery card with CMC %d.", iVar6);
-      new_default_test_definition(&this_test, 0x38, (char *)cmc);
+      scnprintf(buffer, 500, "Select a instant and sorcery card with CMC %d.", iVar6);
+      new_default_test_definition(&this_test, 0x38, buffer);
       this_test.cmc = count_counters(iVar7, iVar5, COUNTER_CHARGE);
       iVar7 = new_select_a_card(player, player, 4, 0, 1, -1, &this_test);
       if (iVar7 != -1)

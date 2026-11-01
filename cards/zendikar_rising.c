@@ -4947,3 +4947,122 @@ int card_inscription_of_abundance(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+typedef enum
+{
+  PARTY_NONE = 0,
+  PARTY_CLERIC = 1,
+  PARTY_WIZARD = 2,
+  PARTY_ROGUE = 4,
+  PARTY_WARRIOR = 8,
+} PartyBit_t;
+_Static_assert(sizeof(PartyBit_t) == 4, "native Party bit width");
+
+static PartyBit_t party_bits(int player, int card)
+{
+  if (get_card_instance(player, card)->internal_card_id < 0 ||
+      !is_what(player, card, TYPE_CREATURE))
+    return PARTY_NONE;
+  unsigned int bits = PARTY_NONE;
+  if (has_subtype(player, card, SUBTYPE_CLERIC))
+    bits |= PARTY_CLERIC;
+  if (has_subtype(player, card, SUBTYPE_ROGUE))
+    bits |= PARTY_ROGUE;
+  if (has_subtype(player, card, SUBTYPE_WARRIOR))
+    bits |= PARTY_WARRIOR;
+  if (has_subtype(player, card, SUBTYPE_WIZARD))
+    bits |= PARTY_WIZARD;
+  return (PartyBit_t)bits;
+}
+
+static void count_party_classes(int player, int *num_candidates,
+                                int *candidates_by_class)
+{
+  for (int i = 0; i < 16; ++i)
+    candidates_by_class[i] = 0;
+  *num_candidates = 0;
+  for (int card = 0; card < active_cards_count[player]; ++card)
+  {
+    if (!in_play(player, card))
+      continue;
+    PartyBit_t bits = party_bits(player, card);
+    if (bits != PARTY_NONE)
+    {
+      ++candidates_by_class[bits];
+      ++*num_candidates;
+    }
+  }
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static void InitNumberBitsSet(void)
+{
+  for (unsigned int i = 0; i < 16; ++i)
+    number_bits_set[i] = num_bits_set(i);
+}
+
+static int can_legally_play_iid_now_lite(int player, int internal_card_id, event_t event)
+{
+  if (!(cards_data[internal_card_id].type & (TYPE_INSTANT | TYPE_INTERRUPT)) &&
+      !can_sorcery_be_played(player, event))
+    return 0;
+  return !(cards_data[internal_card_id].type & TYPE_LAND) ||
+         (!(land_can_be_played & 1) && player == current_turn);
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static void special_null_casting_cost(int player, int card)
+{
+  card_ptr_t *cp = cards_ptr[get_id(player, card)];
+  int cost = get_updated_casting_cost(player, card, -1, EVENT_MODIFY_COST, -1);
+  COST_COLORLESS -= cost;
+  int extra = get_id(player, card) == CARD_ID_HAGRA_MAULING && count_basic_lands(1 - player, -1) == 0;
+  COST_COLORLESS -= extra;
+  COST_BLACK -= cp->req_black;
+  COST_BLUE -= cp->req_blue;
+  COST_GREEN -= cp->req_green;
+  COST_RED -= cp->req_red;
+  COST_WHITE -= cp->req_white;
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int count_party_guts(int num_candidates, int *candidates_by_class)
+{
+  InitNumberBitsSet();
+  for (int bits = 0; bits < 16; ++bits)
+    if (candidates_by_class[bits] > number_bits_set[bits])
+    {
+      num_candidates -= candidates_by_class[bits] - number_bits_set[bits];
+      candidates_by_class[bits] = number_bits_set[bits];
+    }
+  for (int first = 1; first <= 4; first *= 2)
+    for (int second = first * 2; second <= 8; second *= 2)
+      if (candidates_by_class[first] && candidates_by_class[second])
+      {
+        num_candidates -= candidates_by_class[first | second];
+        candidates_by_class[first | second] = 0;
+      }
+      else if (candidates_by_class[first | second] >= 2)
+      {
+        num_candidates -= candidates_by_class[first] + candidates_by_class[second];
+        candidates_by_class[first] = candidates_by_class[second] = 0;
+      }
+  int available = 0;
+  for (int bits = 0; bits < 16; ++bits)
+    if (candidates_by_class[bits])
+      available |= bits;
+  return MIN(num_candidates, number_bits_set[available]);
+}
+#endif

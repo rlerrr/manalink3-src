@@ -1,0 +1,46 @@
+{
+  "recovery": {
+    "recovered_card_definitions": 4,
+    "ability_name_matrix_bytes": 1200,
+    "ability_name_rows": 12,
+    "ability_name_row_bytes": 100,
+    "selected_iid_array_entries": 12,
+    "selected_iid_entry_bytes": 2,
+    "restored_prompt_bytes": 500,
+    "integer_roles_restored": 3,
+    "retained_native_quirk_cards": 1,
+    "changed_linker_objects": 4,
+    "unchanged_linker_objects": 162,
+    "scope": "Recover four original card definitions: Dark Impostor native char[12][100] ability names, two scoped int16_t[12] IID arrays and int16_t[12] stolen abilities; all twelve dialog labels use proper rows. A conservative affine direct-CFG proof checks the selected signed16-bit IID address as stolen_abilities[dialog_result-2]. Brain in a Jar regains a separate500-byte prompt and retains genuine16-entry CMC storage. Ajani qty, Serra prev and Dark can_activate are signed32-bit integers rather than pointer aliases. Native/rebuilt exact layouts and direct call operands are checked. The native first-label pointer spill and dynamically indexed strcpy destination remain unknown to the conservative effect model; typed row-zero/strcpy source expressions are restored without asserting arbitrary alias or full gameplay equivalence. Etali native adjacent prompt read is documented and retained unchanged."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 77424,
+    "exit_code": 0,
+    "completion_chunk_id": "df4373",
+    "build_exit_code": 0,
+    "build_chunk_id": "bc6781",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "deb18f",
+    "setup_log": ".recovery/ability-storage-setup-c60.log",
+    "setup_log_sha256": "64f7d0bfe1f8716f4fa92ef0100a1a812812d96c14decc44607eeb6659e1c9db",
+    "initial_build_failure": {
+      "chunk_id": "0c9e5f",
+      "log": ".recovery/ability-storage-build-c60.log",
+      "reason": "Removed old buffer was also used as CMC clear sentinel; restored typed cmc + 16 endpoint before successful build."
+    }
+  },
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "549432204f5c8840b5fc9252c5546564b814e7530f20e139ecd7f3414af00ece",
+    "docs/recovery-evidence/ability-storage-recovery.json": "d9c0923b00b52d76a4af1eef7daf8963c861af0803d712d61db42db37f3fc6b5",
+    "tools/recovery/ability_storage_analysis.py": "a7e764edb0b4bdd451c13b44c0f7a5879da2b5044c1c354aff8f78385fe3207c",
+    "tools/recovery/verify_ability_storage_recovery.py": "dfd8b42c3cc37b91929e38e33870b687194af71731f06df109152e327cd8adb7",
+    "ManalinkEh.dll": "1dbdbb2e323d1b2c35c50973ffd20b6d9fb42a1201ba485a50e74f842a24c576",
+    "ManalinkEh.dbg": "c5292ef44adb8a76b24664f3590227a4e06c031a7a3496079c56542accd847a9"
+  },
+  "next_discovery": {
+    "path": ".recovery/raw-array-discovery-c61.json",
+    "sha256": "c317006efd9526b7dc38f975721dc6887ae0ef462a3014edef0c06109a87fe7a",
+    "scope": "Read-only remaining generated-array inventory. Native Dihada marked[151][2] is split across unrelated source locals and is not yet repaired. Other raw arrays need separate classification."
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "restored_inline_helpers": [
+    {
+      "name": "isvowel",
+      "source": "functions/draft.c"
+    },
+    {
+      "name": "can_activate_basic_equipment_impl",
+      "source": "functions/equipments.c"
+    },
+    {
+      "name": "check_multisubtype_by_csvid",
+      "source": "functions/global_checking.c"
+    },
+    {
+      "name": "check_multisubtype_all_by_csvid",
+      "source": "functions/global_checking.c"
+    },
+    {
+      "name": "fabricate",
+      "source": "cards/kaladesh.c"
+    },
+    {
+      "name": "eot_flipper",
+      "source": "cards/betrayers_of_kamigawa.c"
+    },
+    {
+      "name": "activate_ruins_of_oran_rief",
+      "source": "cards/oath_of_the_gatewatch.c"
+    },
+    {
+      "name": "ghireds_special_populate",
+      "source": "cards/commander_2019.c"
+    },
+    {
+      "name": "whenever_a_treasure_is_sacrificed",
+      "source": "cards/ixalan.c"
+    },
+    {
+      "name": "reveal_top_library_type_cards_put_in_hand_rest_bottom_library_any_order",
+      "source": "cards/saviors_of_kamigawa.c"
+    },
+    {
+      "name": "each_player_reveal_top_library_type_cards_put_in_play_exile_rest",
+      "source": "cards/mercadian_masques.c"
+    },
+    {
+      "name": "generic_aura_impl",
+      "source": "functions/auras.c"
+    },
+    {
+      "name": "compare_iid_token",
+      "source": "functions/token_generation.c"
+    },
+    {
+      "name": "count_party_guts",
+      "source": "cards/zendikar_rising.c"
+    },
+    {
+      "name": "cmc_mod_for_spectacle",
+      "source": "cards/ravnica_allegiance.c"
+    },
+    {
+      "name": "has_misc_protection_from",
+      "source": "functions/targets.c"
+    },
+    {
+      "name": "three_nonland_permanents_start_with_same_letter",
+      "source": "cards/unglued_unhinged.c"
+    }
+  ],
+  "source_units": 16,
+  "native_inline_instances": 17,
+  "native_inline_fragments": 43,
+  "native_callers": 16,
+  "native_vowel_inputs": 256,
+  "native_name_fold_entries": 256,
+  "corrected_callers": [
+    "card_ghired_conclave_exile"
+  ],
+  "control_runtime_sections_unchanged": 26,
+  "unchanged_control_vs_corrected_linker_objects": 165,
+  "changed_linker_object": "cards/commander_2019.o",
+  "corrected_runtime_section_delta": {
+    "changed_sections": [
+      ".text",
+      ".text.startup",
+      ".rdata",
+      ".reloc"
+    ],
+    "explanation": "The single missing type_flag word store changes Ghired code and linker layout/relocations. Control and corrected builds differ in exactly one linker object; every other observed linker-object hash is identical."
+  },
+  "verified_fixed_slots": 15169,
+  "remaining_inline_review_names": 22,
+  "remaining_ordinary_binding_followups": 0,
+  "shared_stack_followup": {
+    "functions_using_smaller_initial_test_view": 37,
+    "nonzero_scalar_store_review_candidates": 32,
+    "candidate_functions": 21,
+    "scope": "Independent follow-up review queue. Ghired establishes that raw Ghidra output can omit stores beyond a smaller initial local view. The32-store screen is a review aid with possible aliases/frame assumptions, not a proven missing-write count."
+  },
+  "source_provenance_setup": {
+    "session_id": 8819,
+    "exit_code": 0,
+    "control_build_exit_code": 0,
+    "control_build_chunk_id": "e58ce9",
+    "corrected_build_exit_code": 0,
+    "corrected_build_chunk_id": "d96554",
+    "setup_log": ".recovery/inline-card-mechanics-setup.log",
+    "setup_log_sha256": "24770cbd035b0be7afbf2067aed33a5386583e356dff0c902935a88d5ea338dc",
+    "control_build_log": ".recovery/inline-card-mechanics-control-build.log",
+    "corrected_build_log": ".recovery/inline-card-mechanics-corrected-build.log",
+    "control_build_log_sha256": "a60792809e150a7378df0e9fd40e3c89066aa9052b9484d84b4e2c716188cef3",
+    "corrected_build_log_sha256": "fc5dae7eaffbcda88dfa9e3e754b7db7dc7fc1401e958bfc6a3d9ab12550188b"
+  },
+  "inputs": {
+    "ManalinkEh.dll": "8cb10b17bfea95cd6ca7a88d3aec6912dc9d28cd9abdaf8816472cdffdba3f2e",
+    "ManalinkEh.dbg": "83cdd2eabcf7964a58f079a067c4b886a43d4378b37928a3438f6632e981d1e3",
+    "docs/recovery-evidence/helper-canonicalization.json": "e91c383bf0372e7d0c4b7a6bd088c95bb02a92fa5462c6b42186badba8050aaf",
+    "docs/recovery-evidence/inline-card-mechanics-recovery.json": "919544072c8d78744a08b014baae0a0d081c3fd802972f3f4f8e854cb92a13ac",
+    ".recovery/inline-helper-reconciliation-after-card-mechanics.json": "decf854b3ff7b8c7c468c36a1b8a0e5092bc6af41a4db88959b173b99a5685da",
+    ".recovery/shared-stack-test-view-audit-candidates.json": "24956fe43707c8d66b4bf0ae2e8390f7d3de7f37e70c1f78795d096435249e3d",
+    ".recovery/shared-stack-constant-store-review.json": "a6d3bac8e84d315bc18ef3c9d63120ce2a933bac58b41a156835c099ead46c38"
+  },
+  "scope": "Restore17 original inline helper definitions in16 original units, including complete native vowel/name tables and17 native interfaces. Existing expanded callers remain except the independently evidenced Ghired AI token-filter fix. A control build with only restored unused APIs must preserve all runtime sections; then exactly one source field assignment and one linker object change produce the corrected build. All native caller witnesses and reconstructed source definitions are checked. Specialized-input/dead-result ambiguities are explicit per helper. No gameplay or new whole-function comparison score is claimed."
+}

@@ -6056,8 +6056,9 @@ int card_shivan_emissary(int player, int card, event_t event)
       if (result != 0)
       {
         pcVar3 = get_sleighted_color_text(player, card, "Select target non-%s creature.", 1);
-        scnprintf((char *)&td, 100, "%s", pcVar3);
-        result = new_pick_target(&td_1, (char *)&td, 0, 0x81);
+        char msg[100];
+        scnprintf(msg, 100, "%s", pcVar3);
+        result = new_pick_target(&td_1, msg, 0, 0x81);
         if (result != 0)
         {
           kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
@@ -7421,8 +7422,8 @@ int card_seers_vision(int player, int card, event_t event)
     result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
-      *(unsigned int *)(&player_bits + (1 - player) * 4) =
-          *(unsigned int *)(&player_bits + (1 - player) * 4) | 0x200;
+      player_bits[(1 - player)] =
+          player_bits[(1 - player)] | 0x200;
     }
   }
   else if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||

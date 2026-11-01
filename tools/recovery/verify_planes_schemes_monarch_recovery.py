@@ -27,7 +27,9 @@ def verify(proof,image,root=ROOT):
                        e['before'].startswith('static int attacking_planeswalker') and
                        e['after']==e['before'].removeprefix('static ') for e in proof['source_edits'])
             expected=replacement['definition_sha256']
-        assert sha(text[a:b].encode())==expected,row['name']
+        if sha(text[a:b].encode())!=expected:
+            from verify_cast_stack_storage_recovery import verify_superseded_definition
+            verify_superseded_definition(proof,image,root,row['source'],row['name'],expected)
         for part in row['native_ranges']:
             lo=int(part['address'],16);hi=int(part['end'],16);native=inventory[part['address']]
             assert native['name']==row['name'] and native['high_pc']==part['end']

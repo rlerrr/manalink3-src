@@ -1751,8 +1751,8 @@ int card_gruul_spellbreaker(int player, int card, event_t event)
     return 0;
   }
   hexproof(player, card, event);
-  *(unsigned int *)(&player_bits + player * 4) =
-      *(unsigned int *)(&player_bits + player * 4) | 0x20000;
+  player_bits[player] =
+      player_bits[player] | 0x20000;
   return 0;
 }
 
@@ -2326,6 +2326,7 @@ int card_cindervines(int player, int card, event_t event)
       (player == affected_card_controller))
   {
     default_test_definition(&recovered_stack_td.test, 2);
+    recovered_stack_td.test.type_flag = DOESNT_MATCH;
     sp_ability_trigger(1 - player, event, 2, TYPE_NONE, &recovered_stack_td.test, player, card);
   }
   if (event == EVENT_SPA)
@@ -4574,4 +4575,79 @@ LAB_025c0dd0:
   return 0;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+static int spectacle_paid(int player, int card)
+{
+  return get_card_instance(player, card)->info_slot & 2;
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static void cmc_mod_for_spectacle(int player, int card, event_t event, int colorless,
+                                  int black, int blue, int green, int red, int white)
+{
+  if (event == EVENT_MODIFY_COST)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int cost = get_updated_casting_cost(player, card, -1, EVENT_MODIFY_COST, colorless);
+    if (has_mana_multi(player, cost, black, blue, green, red, white) &&
+        get_trap_condition(1 - player, TRAP_LIFE_LOST))
+    {
+      instance->info_slot = 1;
+      null_casting_cost(player, card);
+    }
+    else
+      instance->info_slot = 0;
+  }
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int pay_spectacle(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white)
+{
+  card_instance_t *instance;
+  int iVar2, iVar3;
+  instance = get_card_instance(player, card);
+  iVar2 = played_for_free(player, card);
+  if (((iVar2 == 0) && (iVar2 = is_token(player, card), iVar2 == 0)) &&
+      (instance->info_slot == 1))
+  {
+    iVar2 = get_updated_casting_cost(player, card, -1, event, colorless);
+    iVar3 = has_mana_multi(player, iVar2, black, blue, green, red, white);
+    if (iVar3 != 0)
+    {
+      iVar3 = has_mana_to_cast_iid(player, event, instance->internal_card_id);
+      if ((iVar3 == 0) ||
+          (iVar3 = do_dialog(player, player, card, -1, -1,
+                             " Pay Spectacle cost\n Play the spell normally\n Cancel", 0),
+           iVar3 == 0))
+      {
+        charge_mana_multi(player, iVar2, black, blue, green, red, white);
+        if (spell_fizzled == 1)
+        {
+          return 0;
+        }
+        instance->info_slot = instance->info_slot | 2;
+        return 2;
+      }
+      if (iVar3 != 1)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+    }
+    iVar2 = get_id(player, card);
+    charge_mana_from_id(player, card, event, iVar2);
+    return 1;
+  }
+  return 0;
+}
 #endif

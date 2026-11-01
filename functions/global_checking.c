@@ -1899,3 +1899,25 @@ int test_not_in_array(int iid, int arrptr, int player, int card)
 
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int check_multisubtype_by_csvid(int csvid, int sub1, int sub2, int sub3, int sub4, int sub5)
+{
+  return (sub1 > 0 && has_subtype_by_id(-1, csvid, sub1)) ||
+         (sub2 > 0 && has_subtype_by_id(-1, csvid, sub2)) ||
+         (sub3 > 0 && has_subtype_by_id(-1, csvid, sub3)) ||
+         (sub4 > 0 && has_subtype_by_id(-1, csvid, sub4)) ||
+         (sub5 > 0 && has_subtype_by_id(-1, csvid, sub5));
+}
+
+static int check_multisubtype_all_by_csvid(int csvid, int sub1, int sub2, int sub3, int sub4, int sub5)
+{
+  return (sub1 <= 0 || has_subtype_by_id(-1, csvid, sub1)) &&
+         (sub2 <= 0 || has_subtype_by_id(-1, csvid, sub2)) &&
+         (sub3 <= 0 || has_subtype_by_id(-1, csvid, sub3)) &&
+         (sub4 <= 0 || has_subtype_by_id(-1, csvid, sub4)) &&
+         (sub5 <= 0 || has_subtype_by_id(-1, csvid, sub5));
+}
+#endif

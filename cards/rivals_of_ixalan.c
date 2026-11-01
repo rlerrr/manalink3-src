@@ -4184,11 +4184,6 @@ int card_slaughter_the_strong(int player, int card, event_t event)
   unsigned char bVar9;
   unsigned int uStack_270;
   target_definition_t td;
-  union
-  {
-    char msg[100];
-    test_definition_t this_test;
-  } storage;
   char marked[2][151];
 
   bVar9 = 0;
@@ -4241,6 +4236,7 @@ int card_slaughter_the_strong(int player, int card, event_t event)
         uVar5 = 4;
         do
         {
+          char msg[100];
           default_target_definition(player, card, &td, 2);
           td.power_requirement = uVar5 | 0x2000;
           td.allow_cancel = 2;
@@ -4248,9 +4244,9 @@ int card_slaughter_the_strong(int player, int card, event_t event)
           td.who_chooses = uVar7;
           td.allowed_controller = uVar7;
           td.preferred_controller = uVar7;
-          scnprintf(storage.msg, 100, "Select a creature card with pow %d or less.", uVar5);
+          scnprintf(msg, 100, "Select a creature card with pow %d or less.", uVar5);
           iVar2 = can_target(&td);
-          if ((iVar2 == 0) || (iVar2 = new_pick_target(&td, storage.msg, 0, 0x80), iVar2 == 0))
+          if ((iVar2 == 0) || (iVar2 = new_pick_target(&td, msg, 0, 0x80), iVar2 == 0))
             break;
 
           marked[pcVar3->targets[0].player][pcVar3->targets[0].card] = '\x01';
@@ -4287,8 +4283,11 @@ int card_slaughter_the_strong(int player, int card, event_t event)
         iVar2 = can_sacrifice(player, uVar7, 1, TYPE_CREATURE, SUBTYPE_INVALID);
         if (iVar2 != 0)
         {
-          default_test_definition(&storage.this_test, 2);
-          new_manipulate_all(player, card, uVar7, &storage.this_test, ACT_KILL_SACRIFICE);
+          test_definition_t this_test;
+          default_test_definition(&this_test, 2);
+          this_test.value_for_special_selection_function = (int32_t)(intptr_t)marked;
+          this_test.special_selection_function = not_marked;
+          new_manipulate_all(player, card, uVar7, &this_test, ACT_KILL_SACRIFICE);
         }
         uVar5 = uVar5 + 1;
       } while (uVar5 != 2);

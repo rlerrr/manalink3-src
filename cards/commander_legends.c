@@ -289,6 +289,8 @@ int card_merchant_raiders(int player, int card, event_t event)
   if ((trigger_condition == 0xdb) && (trigger_cause_controller == player))
   {
     default_test_definition(&recovered_stack_td1.test, 0x47);
+    recovered_stack_td1.test.not_me = 1;
+    recovered_stack_td1.test.subtype = SUBTYPE_PIRATE;
     etb_ability_global(player, event, 2, TYPE_NONE, &recovered_stack_td1.test, player, card);
   }
   return 0;
@@ -1397,7 +1399,7 @@ int card_blim_comedic_genius(int player, int card, event_t event)
         *piStack_70 = iVar2;
       }
       piStack_70 = piStack_70 + 1;
-    } while ((target_definition_t *)piStack_70 != &td);
+    } while (piStack_70 != times_damaged + 2);
 
     iVar2 = count_permanents_you_control_but_you_dont_own(0, 0x47);
     lose_life(0, iVar2);
@@ -1472,6 +1474,8 @@ int card_coercive_recruiter(int player, int card, event_t event)
   if ((trigger_condition == 0xdb) && (trigger_cause_controller == player))
   {
     default_test_definition(&recovered_stack_td1.test, 0x47);
+    recovered_stack_td1.test.not_me = 1;
+    recovered_stack_td1.test.subtype = SUBTYPE_PIRATE;
     etb_ability_global(player, event, 2, TYPE_NONE, &recovered_stack_td1.test, player, card);
   }
   return 0;
@@ -5026,13 +5030,6 @@ int card_tevesh_szat_doom_of_fools(int player, int card, event_t event)
   int iVar6;
   target_definition_t td;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    test_definition_t test;
-    token_generation_t token;
-    uint8_t bytes[216];
-  } recovered_stack_token;
 
   check_legend_rule(player, card, event);
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -5077,11 +5074,12 @@ int card_tevesh_szat_doom_of_fools(int player, int card, event_t event)
     uVar1 = instance->mode;
     if (uVar1 == '\x02')
     {
+      test_definition_t test;
 
-      new_default_test_definition(&recovered_stack_token.test, 0x102,
+      new_default_test_definition(&test, 0x102,
                                   "Select a creature or a planeswalker to sacrifice.");
       uVar5 = new_sacrifice(player, card, player, SAC_RETURN_CHOICE | SAC_JUST_MARK,
-                            &recovered_stack_token.test);
+                            &test);
       if (uVar5 != 0)
       {
 
@@ -5093,11 +5091,12 @@ int card_tevesh_szat_doom_of_fools(int player, int card, event_t event)
     }
     else if (uVar1 == '\x03')
     {
+      int rv[3];
 
-      recovered_stack_token.token.id = -1;
+      rv[0] = -1;
       iVar2 = 1 - player;
-      recovered_stack_token.token.s_player = -1;
-      recovered_stack_token.token.s_card = -1;
+      rv[1] = -1;
+      rv[2] = -1;
       if (0 < active_cards_count[iVar2])
       {
         iVar6 = 0;
@@ -5116,16 +5115,16 @@ int card_tevesh_szat_doom_of_fools(int player, int card, event_t event)
       do
       {
 
-        iVar4 = put_all_commanders_from_command_zone_to(iVar6, 4, &recovered_stack_token.token.id);
+        iVar4 = put_all_commanders_from_command_zone_to(iVar6, 4, rv);
         if ((iVar2 == iVar6) && (-1 < iVar4))
         {
-          if (-1 < recovered_stack_token.token.s_player)
+          if (-1 < rv[1])
           {
-            gain_control(player, card, iVar2, recovered_stack_token.token.s_player);
+            gain_control(player, card, iVar2, rv[1]);
           }
-          if (-1 < recovered_stack_token.token.s_card)
+          if (-1 < rv[2])
           {
-            gain_control(player, card, iVar2, recovered_stack_token.token.s_card);
+            gain_control(player, card, iVar2, rv[2]);
           }
         }
         iVar6 = iVar6 + 1;
@@ -5133,12 +5132,13 @@ int card_tevesh_szat_doom_of_fools(int player, int card, event_t event)
     }
     else if (uVar1 == '\x01')
     {
-      default_token_definition(player, card, 0x4996, &recovered_stack_token.token);
-      recovered_stack_token.token.pow = 0;
-      recovered_stack_token.token.tou = 1;
-      recovered_stack_token.token.color_forced = '\x02';
-      recovered_stack_token.token.qty = '\x02';
-      generate_token(&recovered_stack_token.token);
+      token_generation_t token;
+      default_token_definition(player, card, 0x4996, &token);
+      token.pow = 0;
+      token.tou = 1;
+      token.color_forced = '\x02';
+      token.qty = '\x02';
+      generate_token(&token);
     }
   }
 LAB_025b0a21:
@@ -7201,8 +7201,8 @@ int card_gor_muldrak_amphinologist(int player, int card, event_t event)
   {
     if (event == EVENT_STATIC_EFFECTS)
     {
-      *(unsigned int *)(&player_bits + player * 4) =
-          *(unsigned int *)(&player_bits + player * 4) | 0x4000000;
+      player_bits[player] =
+          player_bits[player] | 0x4000000;
     }
     else if (event == EVENT_PROT_MISC)
     {
@@ -7259,25 +7259,19 @@ int card_nevinyrral_urborg_tyrant(int player, int card, event_t event)
   int iVar4;
   bool bVar5;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    test_definition_t test;
-    token_generation_t token;
-    uint8_t bytes[216];
-  } recovered_stack_token;
 
   check_legend_rule(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    default_token_definition(player, card, 0x49ac, &recovered_stack_token.token);
-    recovered_stack_token.token.tou = 2;
-    recovered_stack_token.token.pow = 2;
-    recovered_stack_token.token.color_forced = '\x02';
-    recovered_stack_token.token.qty = (unsigned char)creatures_dead_this_turn;
-    recovered_stack_token.token.action = TOKEN_ACTION_TAPPED;
-    generate_token(&recovered_stack_token.token);
+    token_generation_t token;
+    default_token_definition(player, card, 0x49ac, &token);
+    token.tou = 2;
+    token.pow = 2;
+    token.color_forced = '\x02';
+    token.qty = (unsigned char)creatures_dead_this_turn;
+    token.action = TOKEN_ACTION_TAPPED;
+    generate_token(&token);
     misc_hexproof(player, card, EVENT_ETB);
   }
   else
@@ -7296,10 +7290,11 @@ int card_nevinyrral_urborg_tyrant(int player, int card, event_t event)
   {
     if (player == 1)
     {
-      recovered_stack_token.token.id = 0;
-      recovered_stack_token.token.s_player = 0;
-      recovered_stack_token.token.s_card = 0;
-      recovered_stack_token.token.eff_player = 0;
+      int totals[2][2];
+      totals[0][0] = 0;
+      totals[0][1] = 0;
+      totals[1][0] = 0;
+      totals[1][1] = 0;
       iVar2 = active_cards_count[current_turn] + -1;
       if (-1 < iVar2)
       {
@@ -7310,11 +7305,11 @@ int card_nevinyrral_urborg_tyrant(int player, int card, event_t event)
               ((instance = in_play(iVar1, iVar2),
                 instance != NULL && (iVar4 = is_what(iVar1, iVar2, 0x46), iVar4 != 0))))
           {
-            (&recovered_stack_token.token.id)[iVar1 * 2] =
-                (&recovered_stack_token.token.id)[iVar1 * 2] + 1;
+            totals[iVar1][0] =
+                totals[iVar1][0] + 1;
             iVar4 = get_cmc(iVar1, iVar2);
-            (&recovered_stack_token.token.s_player)[iVar1 * 2] =
-                (&recovered_stack_token.token.s_player)[iVar1 * 2] + iVar4;
+            totals[iVar1][1] =
+                totals[iVar1][1] + iVar4;
           }
           iVar2 = iVar2 + -1;
         } while (iVar2 != -1);
@@ -7329,20 +7324,20 @@ int card_nevinyrral_urborg_tyrant(int player, int card, event_t event)
                (instance = in_play(iVar1, iVar2), instance != NULL)) &&
               (iVar4 = is_what(iVar1, iVar2, 0x46), iVar4 != 0))
           {
-            *(int *)((int)&recovered_stack_token.token + iVar1 * 8) =
-                *(int *)((int)&recovered_stack_token.token + iVar1 * 8) + 1;
+            totals[iVar1][0] =
+                totals[iVar1][0] + 1;
             iVar4 = get_cmc(iVar1, iVar2);
-            *(int *)((int)&recovered_stack_token.token + iVar1 * 8 + 4) =
-                *(int *)((int)&recovered_stack_token.token + iVar1 * 8 + 4) + iVar4;
+            totals[iVar1][1] =
+                totals[iVar1][1] + iVar4;
           }
           iVar2 = iVar2 + -1;
         } while (iVar2 != -1);
       }
-      if (recovered_stack_token.token.id - recovered_stack_token.token.s_card < 2)
+      if (totals[0][0] - totals[1][0] < 2)
       {
         return 0;
       }
-      if (recovered_stack_token.token.s_player - recovered_stack_token.token.eff_player < 5)
+      if (totals[0][1] - totals[1][1] < 5)
       {
         return 0;
       }
@@ -7350,8 +7345,9 @@ int card_nevinyrral_urborg_tyrant(int player, int card, event_t event)
     iVar1 = charge_mana(player, COLOR_COLORLESS, 1);
     if (iVar1 != 0)
     {
-      default_test_definition(&recovered_stack_token.test, 0x46);
-      new_manipulate_all(player, card, 2, &recovered_stack_token.test, ACT_KILL_DESTROY);
+      test_definition_t this_test;
+      default_test_definition(&this_test, 0x46);
+      new_manipulate_all(player, card, 2, &this_test, ACT_KILL_DESTROY);
     }
   }
   return 0;
@@ -8441,6 +8437,7 @@ int card_plague_reaver(int player, int card, event_t event)
   if ((iVar2 != 0) && (current_turn == player))
   {
     default_test_definition(&recovered_stack_td.test, 2);
+    recovered_stack_td.test.not_me = 1;
     new_manipulate_all(player, card, player, &recovered_stack_td.test, ACT_KILL_SACRIFICE);
   }
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -8951,4 +8948,112 @@ int card_livio_oathsworn_sentinel(int player, int card, event_t event)
   return 0;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static void generate_encore_token(int player, int card, int csvid)
+{
+  token_generation_t token;
+  default_token_definition(player, card, csvid, &token);
+  token.legacy = 1;
+  token.special_code_for_legacy = encore_legacy;
+  generate_token(&token);
+}
+
+static int retrieve_stored_iids_and_tou(card_instance_t *inst, int16_t *iids, int16_t *tou, int pos)
+{
+  int count = 0;
+  for (; pos < 10; ++pos)
+    if (inst->targets[pos].player != -1)
+    {
+      iids[count] = (int16_t)inst->targets[pos].player;
+      tou[count] = (int16_t)inst->targets[pos].card;
+      ++count;
+    }
+  return count;
+}
+
+static void clear_stored_iids_and_tou(card_instance_t *inst, int pos)
+{
+  for (; pos < 10; ++pos)
+  {
+    inst->targets[pos].card = -1;
+    inst->targets[pos].player = -1;
+  }
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static void create_encore_granted_legacy(int player, int card, int graveyard_pos)
+{
+  if (graveyard_pos < 0)
+    backtrace_and_abort("cards/commander_legends.c:539\ngraveyard_pos >= 0");
+  int legacy = create_legacy_activate(player, card, encore_granted_legacy);
+  card_instance_t *instance = get_card_instance(player, legacy);
+  const int *grave = get_grave(player);
+  instance->targets[0].card = grave[graveyard_pos];
+  instance->targets[1].player = graveyard_source[player][graveyard_pos];
+  instance->targets[1].card = graveyard_pos;
+  instance->targets[2].card = player;
+  instance->targets[3].player = player;
+  instance->targets[3].card = card;
+  create_card_name_legacy(player, legacy, cards_data[grave[graveyard_pos]].id);
+}
+
+static int create_livio_legacy(int player, int card, int t_player, int t_card)
+{
+  int iid = get_original_internal_card_id(t_player, t_card);
+  int owner = get_owner(t_player, t_card);
+  int legacy = owner == player ? create_legacy_effect(player, card, card_exiled_with_aegis_counter)
+      : create_legacy_effect_for_opponent(player, card, card_exiled_with_aegis_counter, -1, -1);
+  if (legacy != -1)
+  {
+    add_counters(player, card, owner, legacy, COUNTER_AEGIS, 1);
+    card_instance_t *instance = get_card_instance(owner, legacy);
+    unsigned int csvid = (uint16_t)cards_data[iid].id;
+    instance->targets[0].card = iid;
+    instance->display_pic_csv_id = csvid;
+    instance->targets[0].player = owner;
+    instance->eot_toughness = 0x300;
+    instance->display_pic_num = (uint16_t)get_card_image_number(csvid, t_player, t_card);
+  }
+  kill_card(t_player, t_card, KILL_EXILE);
+  return legacy;
+}
+
+static int put_into_play_a_card_from_deck_tapped_and_attacking(int player, int t_player, int deck_position)
+{
+  const int *deck = deck_ptr[t_player];
+  if (is_what(-1, deck[deck_position], TYPE_CREATURE) &&
+      grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_DECK))
+    return -1;
+  int card = add_card_to_hand(player, deck[deck_position]);
+  remove_card_from_deck(t_player, deck_position);
+  add_state(player, card, 0x14);
+  set_special_flags(player, card, 0x50000);
+  put_into_play(player, card);
+  return card;
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int store_iid_and_tou(card_instance_t *inst, int16_t stored_iid, int16_t tou, int pos)
+{
+  for (; pos < 10; ++pos)
+  {
+    if (inst->targets[pos].player == -1)
+    {
+      inst->targets[pos].player = stored_iid;
+      inst->targets[pos].card = tou;
+      return 1;
+    }
+  }
+  return 0;
+}
 #endif

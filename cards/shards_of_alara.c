@@ -4968,8 +4968,6 @@ int card_tezzeret_the_seeker(int player, int card, event_t event)
   int iVar4;
   int iStack_338;
   target_definition_t td;
-  test_definition_t this_test_1;
-  test_definition_t this_test;
   iVar1 = is_unlocked(player, card, event, 0x17);
   if (iVar1 == 0)
   {
@@ -4983,6 +4981,7 @@ int card_tezzeret_the_seeker(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_ACTIVATE)
     {
+      test_definition_t this_test;
       iVar3 = count_counters(player, card, COUNTER_LOYALTY);
       iVar1 = *deck_ptr[player];
       if (iVar1 == -1)
@@ -5077,12 +5076,14 @@ int card_tezzeret_the_seeker(int player, int card, event_t event)
       }
       else if (iVar1 == 2)
       {
-        scnprintf(this_test.message, 500, " Select an artifact with CMC %d or less.",
+        char buffer[500];
+        test_definition_t this_test;
+        scnprintf(buffer, 500, " Select an artifact with CMC %d or less.",
                   instance->targets[1].player);
-        new_default_test_definition(&this_test_1, 0x40, this_test.message);
-        this_test_1.cmc = instance->targets[1].player + 1;
-        this_test_1.cmc_flag = 3;
-        new_global_tutor(player, player, 1, 4, 0, 1, &this_test_1);
+        new_default_test_definition(&this_test, 0x40, buffer);
+        this_test.cmc = instance->targets[1].player + 1;
+        this_test.cmc_flag = 3;
+        new_global_tutor(player, player, 1, 4, 0, 1, &this_test);
       }
       else if (iVar1 == 3)
       {

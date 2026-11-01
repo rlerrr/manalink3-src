@@ -1,0 +1,1281 @@
+{
+  "rows": [
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "pias_revolution_effect",
+      "before_definition": "static int pias_revolution_effect(int player, int card, event_t event)\n{\n  int32_t *piVar1;\n  unsigned int uVar2;\n  int *piVar3;\n  card_instance_t *pcVar4;\n  int result;\n  int player_00;\n  card_instance_t *pcVar6;\n  target_t *ptVar7;\n  bool bVar8;\n  event_t event_00;\n  int owner;\n  int position;\n  target_t dead_array[20];\n\n  if (event == EVENT_STATIC_EFFECTS)\n  {\n    if ((card == affected_card) && (player == affected_card_controller))\n    {\n\n      pcVar4 = get_card_instance(player, card);\n      if ((-1 < pcVar4->damage_target_player) &&\n          (result = get_id((int)pcVar4->damage_target_player, pcVar4->damage_target_card),\n           result != 0xd49))\n      {\n        kill_card(player, card, KILL_EXILE);\n      }\n    }\n    pcVar4 = get_card_instance(player, card);\n    if (-1 < pcVar4->damage_target_player)\n    {\n      result = effect_follows_control_of_attachment(player, card, 0x4700);\n      if (result != 0)\n      {\n        return 0;\n      }\n      goto LAB_020bb57b;\n    }\n    event_00 = EVENT_STATIC_EFFECTS;\n  LAB_020bb616:\n    result = resolve_gfp_ability(player, card, event_00, RESOLVE_TRIGGER_MANDATORY);\n    if (result == 0)\n    {\n      return 0;\n    }\n  }\n  else\n  {\n    pcVar4 = get_card_instance(player, card);\n    if ((-1 < pcVar4->damage_target_player) &&\n        (result = effect_follows_control_of_attachment(player, card, event), result != 0))\n    {\n      return 0;\n    }\n    if (event == EVENT_GRAVEYARD_FROM_PLAY)\n    {\n      pcVar4 = in_play(player, card);\n      if ((pcVar4 != NULL) &&\n          (result = is_humiliated(player, card, AL_TRIG), result == 0))\n      {\n\n        pcVar4 = get_card_instance(player, card);\n        result = get_owner(affected_card_controller, affected_card);\n        if (((result == player) &&\n             (result = is_token(affected_card_controller, affected_card), result == 0)) &&\n            (((((card != affected_card || (player != affected_card_controller)) &&\n                (result = is_what(affected_card_controller, affected_card, 0x40), result != 0)) &&\n               ((pcVar6 = in_play(affected_card_controller, affected_card),\n                 pcVar6 != NULL && (result = is_this_dying(affected_card_controller, affected_card),\n                                    result != 0)))) &&\n              (result = check_for_death_trigger_removal(affected_card_controller, affected_card),\n               result == 0))))\n        {\n\n          result = 1;\n          do\n          {\n            if (pcVar4->targets[result].player == -1)\n            {\n              *(char *)((int)&pcVar4->targets[result].player + 1) = (char)affected_card_controller;\n              *(char *)&pcVar4->targets[result].player = (char)affected_card;\n              break;\n            }\n            if (pcVar4->targets[result].card == -1)\n            {\n              piVar1 = &pcVar4->targets[result].card;\n              *(char *)((int)piVar1 + 1) = (char)affected_card_controller;\n              *(char *)piVar1 = (char)affected_card;\n              break;\n            }\n            result = result + 1;\n          } while (result != 0xb);\n          pcVar4->targets[0xb].player = 0x42;\n        }\n      }\n      event_00 = EVENT_GRAVEYARD_FROM_PLAY;\n      goto LAB_020bb616;\n    }\n  LAB_020bb57b:\n    result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);\n    if (result == 0)\n      goto LAB_020bb5a1;\n  }\n\n  pcVar4 = get_card_instance(player, card);\n  pcVar4->targets[0xb].player = 0;\n  ptVar7 = pcVar4->targets + 1;\n  result = 0;\n  do\n  {\n    uVar2 = ptVar7->player;\n    if (uVar2 != 0xffffffff)\n    {\n      dead_array[result].player = uVar2 >> 8 & 0xff;\n      dead_array[result].card = uVar2 & 0xff;\n      ptVar7->player = -1;\n      result = result + 1;\n    }\n    uVar2 = ptVar7->card;\n    if (uVar2 != 0xffffffff)\n    {\n      dead_array[result].player = uVar2 >> 8 & 0xff;\n      dead_array[result].card = uVar2 & 0xff;\n      ptVar7->card = -1;\n      result = result + 1;\n    }\n    ptVar7 = ptVar7 + 1;\n  } while (ptVar7 != pcVar4->targets + 0xb);\n  piVar3 = graveyard_ptr_mutable[player];\n  if (0 < result)\n  {\n    player_00 = 1 - player;\n    ptVar7 = (target_t *)(&owner + result * 2);\n    do\n    {\n      result = find_in_owners_graveyard(ptVar7->player, ptVar7->card, &owner, &position);\n      if (result != 0)\n      {\n        if (owner != player)\n        {\n          backtrace_and_abort(\"cards/aether_revolt.c:3736\\nowner == player\");\n        }\n        result = can_pay_life(player_00, 3);\n        if ((result != 0) && (result = opponent_is_valid_target(player, card), result != 0))\n        {\n          result = my_base_value(player, position);\n          result = dialog_impl(player, card, EVENT_ACTIVATE, \"\\001\\002\", \"\\001\\010\", player_00,\n                               \"\\001\\021\", piVar3[position], \"\\001\\014\", \"\\001\\003\",\n                               \"Return to opponent's hand\", 1, life[player_00] * -5 + 0x32,\n                               \"Pia's Revolution deals 3 damage to me\", 1, result, 0, 0, 0, 0);\n          if (result == 2)\n          {\n            damage_player(player_00, 3, player, card);\n            goto LAB_020bb6fa;\n          }\n        }\n        if (player == 0)\n        {\n          result = my_base_value(0, position);\n          ai_modifier = ai_modifier - ((int)((result >> 0x1f & 3U) + result) >> 2);\n        }\n        from_grave_to_hand(player, position, 1);\n      }\n    LAB_020bb6fa:\n      bVar8 = ptVar7 != dead_array;\n      ptVar7 = ptVar7 + -1;\n    } while (bVar8);\n  }\nLAB_020bb5a1:\n  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))\n  {\n    kill_card(player, card, KILL_EXILE);\n  }\n  return 0;\n}",
+      "after_definition": "static int pias_revolution_effect(int player, int card, event_t event)\n{\n  int32_t *piVar1;\n  unsigned int uVar2;\n  int *piVar3;\n  card_instance_t *pcVar4;\n  int result;\n  int player_00;\n  card_instance_t *pcVar6;\n  target_t *ptVar7;\n  bool bVar8;\n  event_t event_00;\n  int owner;\n  int position;\n  target_t dead_array[20];\n\n  if (event == EVENT_STATIC_EFFECTS)\n  {\n    if ((card == affected_card) && (player == affected_card_controller))\n    {\n\n      pcVar4 = get_card_instance(player, card);\n      if ((-1 < pcVar4->damage_target_player) &&\n          (result = get_id((int)pcVar4->damage_target_player, pcVar4->damage_target_card),\n           result != 0xd49))\n      {\n        kill_card(player, card, KILL_EXILE);\n      }\n    }\n    pcVar4 = get_card_instance(player, card);\n    if (-1 < pcVar4->damage_target_player)\n    {\n      result = effect_follows_control_of_attachment(player, card, 0x4700);\n      if (result != 0)\n      {\n        return 0;\n      }\n      goto LAB_020bb57b;\n    }\n    event_00 = EVENT_STATIC_EFFECTS;\n  LAB_020bb616:\n    result = resolve_gfp_ability(player, card, event_00, RESOLVE_TRIGGER_MANDATORY);\n    if (result == 0)\n    {\n      return 0;\n    }\n  }\n  else\n  {\n    pcVar4 = get_card_instance(player, card);\n    if ((-1 < pcVar4->damage_target_player) &&\n        (result = effect_follows_control_of_attachment(player, card, event), result != 0))\n    {\n      return 0;\n    }\n    if (event == EVENT_GRAVEYARD_FROM_PLAY)\n    {\n      pcVar4 = in_play(player, card);\n      if ((pcVar4 != NULL) &&\n          (result = is_humiliated(player, card, AL_TRIG), result == 0))\n      {\n\n        pcVar4 = get_card_instance(player, card);\n        result = get_owner(affected_card_controller, affected_card);\n        if (((result == player) &&\n             (result = is_token(affected_card_controller, affected_card), result == 0)) &&\n            (((((card != affected_card || (player != affected_card_controller)) &&\n                (result = is_what(affected_card_controller, affected_card, 0x40), result != 0)) &&\n               ((pcVar6 = in_play(affected_card_controller, affected_card),\n                 pcVar6 != NULL && (result = is_this_dying(affected_card_controller, affected_card),\n                                    result != 0)))) &&\n              (result = check_for_death_trigger_removal(affected_card_controller, affected_card),\n               result == 0))))\n        {\n\n          result = 1;\n          do\n          {\n            if (pcVar4->targets[result].player == -1)\n            {\n              *(char *)((int)&pcVar4->targets[result].player + 1) = (char)affected_card_controller;\n              *(char *)&pcVar4->targets[result].player = (char)affected_card;\n              break;\n            }\n            if (pcVar4->targets[result].card == -1)\n            {\n              piVar1 = &pcVar4->targets[result].card;\n              *(char *)((int)piVar1 + 1) = (char)affected_card_controller;\n              *(char *)piVar1 = (char)affected_card;\n              break;\n            }\n            result = result + 1;\n          } while (result != 0xb);\n          pcVar4->targets[0xb].player = 0x42;\n        }\n      }\n      event_00 = EVENT_GRAVEYARD_FROM_PLAY;\n      goto LAB_020bb616;\n    }\n  LAB_020bb57b:\n    result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);\n    if (result == 0)\n      goto LAB_020bb5a1;\n  }\n\n  pcVar4 = get_card_instance(player, card);\n  pcVar4->targets[0xb].player = 0;\n  ptVar7 = pcVar4->targets + 1;\n  result = 0;\n  do\n  {\n    uVar2 = ptVar7->player;\n    if (uVar2 != 0xffffffff)\n    {\n      dead_array[result].player = uVar2 >> 8 & 0xff;\n      dead_array[result].card = uVar2 & 0xff;\n      ptVar7->player = -1;\n      result = result + 1;\n    }\n    uVar2 = ptVar7->card;\n    if (uVar2 != 0xffffffff)\n    {\n      dead_array[result].player = uVar2 >> 8 & 0xff;\n      dead_array[result].card = uVar2 & 0xff;\n      ptVar7->card = -1;\n      result = result + 1;\n    }\n    ptVar7 = ptVar7 + 1;\n  } while (ptVar7 != pcVar4->targets + 0xb);\n  piVar3 = graveyard_ptr_mutable[player];\n  if (0 < result)\n  {\n    player_00 = 1 - player;\n    ptVar7 = dead_array + result - 1;\n    do\n    {\n      result = find_in_owners_graveyard(ptVar7->player, ptVar7->card, &owner, &position);\n      if (result != 0)\n      {\n        if (owner != player)\n        {\n          backtrace_and_abort(\"cards/aether_revolt.c:3736\\nowner == player\");\n        }\n        result = can_pay_life(player_00, 3);\n        if ((result != 0) && (result = opponent_is_valid_target(player, card), result != 0))\n        {\n          result = my_base_value(player, position);\n          result = dialog_impl(player, card, EVENT_ACTIVATE, \"\\001\\002\", \"\\001\\010\", player_00,\n                               \"\\001\\021\", piVar3[position], \"\\001\\014\", \"\\001\\003\",\n                               \"Return to opponent's hand\", 1, life[player_00] * -5 + 0x32,\n                               \"Pia's Revolution deals 3 damage to me\", 1, result, 0, 0, 0, 0);\n          if (result == 2)\n          {\n            damage_player(player_00, 3, player, card);\n            goto LAB_020bb6fa;\n          }\n        }\n        if (player == 0)\n        {\n          result = my_base_value(0, position);\n          ai_modifier = ai_modifier - ((int)((result >> 0x1f & 3U) + result) >> 2);\n        }\n        from_grave_to_hand(player, position, 1);\n      }\n    LAB_020bb6fa:\n      bVar8 = ptVar7 != dead_array;\n      if (bVar8)\n        ptVar7 = ptVar7 + -1;\n    } while (bVar8);\n  }\nLAB_020bb5a1:\n  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))\n  {\n    kill_card(player, card, KILL_EXILE);\n  }\n  return 0;\n}",
+      "before_sha256": "4a55ee42f541fa0c0d48e3465edc2e958ff5d6b874a9b0f745d0ab7e39588f61",
+      "after_sha256": "2043d2d8bcb84a46d0618a51dc79f440d5872cef3882a21abc2faa5f46a4f2ea",
+      "changes": [
+        {
+          "before": "ptVar7 = (target_t *)(&owner + result * 2);",
+          "after": "ptVar7 = dead_array + result - 1;",
+          "occurrences": 1
+        },
+        {
+          "before": "      ptVar7 = ptVar7 + -1;",
+          "after": "      if (bVar8)\n        ptVar7 = ptVar7 + -1;",
+          "occurrences": 1
+        }
+      ],
+      "native_snapshot": {
+        "die_offset": "0xaaba20",
+        "view": {
+          "address": "0x20bb540",
+          "end": "0x20bbaf3",
+          "bytes_sha256": "e6eafc80522b4a274157f201cb262c7ed0cabf0b80b3b4e86250b24965450284"
+        },
+        "variables": [
+          {
+            "name": "dead_array",
+            "die_offset": "0xaabbfd",
+            "frame_offset": -180,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 160,
+              "dimensions": [
+                20
+              ],
+              "element_size": 8,
+              "element_encoding": null
+            },
+            "scope_ranges": [
+              [
+                34321961,
+                34322600
+              ]
+            ]
+          }
+        ],
+        "array_declaration": {
+          "name": "dead_array",
+          "bytes": 160,
+          "has_emitted_location": true
+        },
+        "element_layout": {
+          "kind": "DW_TAG_structure_type",
+          "size": 8,
+          "encoding": null,
+          "fields": [
+            {
+              "name": "player",
+              "offset": 0,
+              "size": 4,
+              "encoding": 5
+            },
+            {
+              "name": "card",
+              "offset": 4,
+              "size": 4,
+              "encoding": 5
+            }
+          ]
+        },
+        "row_flow": {
+          "consumer_calls": [
+            {
+              "address": "0x20bb727",
+              "name": "_find_in_owners_graveyard",
+              "arguments": [
+                [
+                  "column",
+                  0,
+                  "0x20bb722"
+                ],
+                [
+                  "column",
+                  4,
+                  "0x20bb71b"
+                ],
+                null,
+                null
+              ]
+            }
+          ],
+          "same_row_pairs": [
+            {
+              "consumer": "0x20bb727",
+              "player_load": "0x20bb722",
+              "card_load": "0x20bb71b",
+              "same_row_operand": {
+                "base": "esi",
+                "index": null,
+                "scale": 1,
+                "displacement": 0
+              }
+            }
+          ],
+          "indexed_row_origins": [
+            {
+              "address": "0x20bb6b8",
+              "row_bytes": 8,
+              "relative_frame_bias": -8
+            }
+          ],
+          "reverse_row_steps": [
+            {
+              "address": "0x20bb700",
+              "bytes": -8
+            }
+          ]
+        }
+      },
+      "before_compiled": {
+        "die_offset": "0xb85a6",
+        "view": {
+          "address": "0x2014a10",
+          "end": "0x2014f22",
+          "bytes_sha256": "ee45d715565eacfd30a221e3998cf3abb3d848f0375529694e6301ab3c25bad0"
+        },
+        "variables": [],
+        "array_declaration": {
+          "name": "dead_array",
+          "bytes": 160,
+          "has_emitted_location": false
+        },
+        "element_layout": {
+          "kind": "DW_TAG_structure_type",
+          "size": 8,
+          "encoding": null,
+          "fields": [
+            {
+              "name": "player",
+              "offset": 0,
+              "size": 4,
+              "encoding": 5
+            },
+            {
+              "name": "card",
+              "offset": 4,
+              "size": 4,
+              "encoding": 5
+            }
+          ]
+        },
+        "row_flow": null
+      },
+      "native_validation": {
+        "array": "dead_array",
+        "bytes": 160,
+        "dimensions": [
+          20
+        ],
+        "row_bytes": 8,
+        "consumer_names": [
+          "_find_in_owners_graveyard"
+        ],
+        "paired_consumer_calls": 1,
+        "row_origin": {
+          "address": "0x20bb6b8",
+          "row_bytes": 8,
+          "relative_frame_bias": -8
+        },
+        "reverse_step": {
+          "address": "0x20bb700",
+          "bytes": -8
+        }
+      },
+      "after_compiled": {
+        "die_offset": "0xb85ba",
+        "view": {
+          "address": "0x2014a10",
+          "end": "0x2014fbc",
+          "bytes_sha256": "430e85e10fe276ba20013a5300313b66f65860ab6569cd394991fac1df4cd39d"
+        },
+        "variables": [
+          {
+            "name": "dead_array",
+            "die_offset": "0xb8723",
+            "frame_offset": -180,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 160,
+              "dimensions": [
+                20
+              ],
+              "element_size": 8,
+              "element_encoding": null
+            },
+            "scope_ranges": [
+              [
+                33638928,
+                33640380
+              ]
+            ]
+          }
+        ],
+        "array_declaration": {
+          "name": "dead_array",
+          "bytes": 160,
+          "has_emitted_location": true
+        },
+        "element_layout": {
+          "kind": "DW_TAG_structure_type",
+          "size": 8,
+          "encoding": null,
+          "fields": [
+            {
+              "name": "player",
+              "offset": 0,
+              "size": 4,
+              "encoding": 5
+            },
+            {
+              "name": "card",
+              "offset": 4,
+              "size": 4,
+              "encoding": 5
+            }
+          ]
+        },
+        "row_flow": {
+          "consumer_calls": [
+            {
+              "address": "0x2014b42",
+              "name": "_find_in_owners_graveyard",
+              "arguments": [
+                [
+                  "column",
+                  0,
+                  "0x2014b3d"
+                ],
+                [
+                  "column",
+                  4,
+                  "0x2014b36"
+                ],
+                null,
+                null
+              ]
+            }
+          ],
+          "same_row_pairs": [
+            {
+              "consumer": "0x2014b42",
+              "player_load": "0x2014b3d",
+              "card_load": "0x2014b36",
+              "same_row_operand": {
+                "base": "esi",
+                "index": null,
+                "scale": 1,
+                "displacement": 0
+              }
+            }
+          ],
+          "indexed_row_origins": [
+            {
+              "address": "0x2014b15",
+              "row_bytes": 8,
+              "relative_frame_bias": -8
+            }
+          ],
+          "reverse_row_steps": [
+            {
+              "address": "0x2014bad",
+              "bytes": -8
+            }
+          ]
+        }
+      },
+      "compiled_validation": {
+        "array": "dead_array",
+        "bytes": 160,
+        "dimensions": [
+          20
+        ],
+        "row_bytes": 8,
+        "consumer_names": [
+          "_find_in_owners_graveyard"
+        ],
+        "paired_consumer_calls": 1,
+        "row_origin": {
+          "address": "0x2014b15",
+          "row_bytes": 8,
+          "relative_frame_bias": -8
+        },
+        "reverse_step": {
+          "address": "0x2014bad",
+          "bytes": -8
+        }
+      }
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_pias_revolution",
+      "before_definition": "int card_pias_revolution(int player, int card, event_t event)\n{\n  int32_t *piVar1;\n  unsigned int uVar2;\n  int *piVar3;\n  int iVar4;\n  card_instance_t *pcVar5;\n  card_instance_t *pcVar6;\n  int iVar7;\n  target_t *ptVar8;\n  bool bVar9;\n  int owner;\n  int position;\n  target_t dead_array[22];\n\n  if (event == EVENT_STATIC_EFFECTS)\n  {\n    if ((card == affected_card) && (player == affected_card_controller))\n    {\n\n      iVar4 = 0;\n      if (0 < active_cards_count[player])\n      {\n        do\n        {\n          pcVar6 = in_play(player, iVar4);\n\n          if ((((pcVar6 != NULL) && (iVar7 = is_what(player, iVar4, 0x80), iVar7 != 0)) &&\n               (pcVar6 = get_card_instance(player, iVar4),\n                pcVar6->info_slot_fn == pias_revolution_effect)) &&\n              (((pcVar6->damage_target_player == player && (pcVar6->damage_target_card == card)) ||\n                ((pcVar6->targets[0].player == player && (pcVar6->targets[0].card == card))))))\n            goto LAB_020c6c92;\n          iVar4 = iVar4 + 1;\n        } while (iVar4 < active_cards_count[player]);\n      }\n\n      iVar4 = create_targetted_legacy_effect(player, card, pias_revolution_effect, player, card);\n      pcVar6 = get_card_instance(player, iVar4);\n      pcVar6->targets[0].player = player;\n      pcVar6->targets[0].card = card;\n      pcVar6->number_of_targets = '\\x01';\n      add_status(player, iVar4, 0x10000);\n    }\n  }\n  else if (((event == EVENT_GRAVEYARD_FROM_PLAY) &&\n            (pcVar6 = in_play(player, card), pcVar6 != NULL)) &&\n           (iVar4 = is_humiliated(player, card, AL_TRIG), iVar4 == 0))\n  {\n\n    pcVar6 = get_card_instance(player, card);\n    iVar4 = get_owner(affected_card_controller, affected_card);\n    if ((((iVar4 == player) &&\n          (iVar4 = is_token(affected_card_controller, affected_card), iVar4 == 0)) &&\n         ((card != affected_card || (player != affected_card_controller)))) &&\n        (((iVar4 = is_what(affected_card_controller, affected_card, 0x40),\n           iVar4 != 0 &&\n               (pcVar5 = in_play(affected_card_controller, affected_card), pcVar5 != NULL)) &&\n          (iVar4 = is_this_dying(affected_card_controller, affected_card), iVar4 != 0))))\n    {\n      iVar7 = check_for_death_trigger_removal(affected_card_controller, affected_card);\n      iVar4 = 0;\n      if (iVar7 == 0)\n      {\n        do\n        {\n\n          if (pcVar6->targets[iVar4].player == -1)\n          {\n            *(char *)((int)&pcVar6->targets[iVar4].player + 1) = (char)affected_card_controller;\n            *(char *)&pcVar6->targets[iVar4].player = (char)affected_card;\n            break;\n          }\n          if (pcVar6->targets[iVar4].card == -1)\n          {\n            piVar1 = &pcVar6->targets[iVar4].card;\n            *(char *)((int)piVar1 + 1) = (char)affected_card_controller;\n            *(char *)piVar1 = (char)affected_card;\n            break;\n          }\n          iVar4 = iVar4 + 1;\n        } while (iVar4 != 0xb);\n        pcVar6->targets[0xb].player = 0x42;\n      }\n    }\n  }\nLAB_020c6c92:\n  iVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);\n  if (iVar4 != 0)\n  {\n\n    pcVar6 = get_card_instance(player, card);\n    pcVar6->targets[0xb].player = 0;\n    ptVar8 = pcVar6->targets;\n    iVar4 = 0;\n    do\n    {\n      uVar2 = ptVar8->player;\n      if (uVar2 != 0xffffffff)\n      {\n        dead_array[iVar4].player = uVar2 >> 8 & 0xff;\n        dead_array[iVar4].card = uVar2 & 0xff;\n        ptVar8->player = -1;\n        iVar4 = iVar4 + 1;\n      }\n      uVar2 = ptVar8->card;\n      if (uVar2 != 0xffffffff)\n      {\n        dead_array[iVar4].player = uVar2 >> 8 & 0xff;\n        dead_array[iVar4].card = uVar2 & 0xff;\n        ptVar8->card = -1;\n        iVar4 = iVar4 + 1;\n      }\n      ptVar8 = ptVar8 + 1;\n    } while (ptVar8 != pcVar6->targets + 0xb);\n    piVar3 = graveyard_ptr_mutable[player];\n    if (0 < iVar4)\n    {\n      iVar7 = 1 - player;\n      ptVar8 = (target_t *)(&owner + iVar4 * 2);\n      do\n      {\n        iVar4 = find_in_owners_graveyard(ptVar8->player, ptVar8->card, &owner, &position);\n        if (iVar4 != 0)\n        {\n          if (owner != player)\n          {\n            backtrace_and_abort(\"cards/aether_revolt.c:3850\\nowner == player\");\n          }\n          iVar4 = can_pay_life(iVar7, 3);\n          if ((iVar4 != 0) && (iVar4 = opponent_is_valid_target(player, card), iVar4 != 0))\n          {\n            iVar4 = my_base_value(player, position);\n            iVar4 = dialog_impl(player, card, EVENT_ACTIVATE, \"\\001\\002\", \"\\001\\010\", iVar7,\n                                \"\\001\\021\", piVar3[position], \"\\001\\014\", \"\\001\\003\",\n                                \"Return to opponent's hand\", 1, life[iVar7] * -5 + 0x32,\n                                \"Pia's Revolution deals 3 damage to me\", 1, iVar4, 0, 0, 0, 0);\n            if (iVar4 == 2)\n            {\n              damage_player(iVar7, 3, player, card);\n              goto LAB_020c6f7a;\n            }\n          }\n          if (player == 0)\n          {\n            iVar4 = my_base_value(0, position);\n            ai_modifier = ai_modifier - ((int)((iVar4 >> 0x1f & 3U) + iVar4) >> 2);\n          }\n          from_grave_to_hand(player, position, 1);\n        }\n      LAB_020c6f7a:\n        bVar9 = ptVar8 != dead_array;\n        ptVar8 = ptVar8 + -1;\n      } while (bVar9);\n    }\n  }\n  iVar4 = global_enchantment(player, card, event);\n  return iVar4;\n}",
+      "after_definition": "int card_pias_revolution(int player, int card, event_t event)\n{\n  int32_t *piVar1;\n  unsigned int uVar2;\n  int *piVar3;\n  int iVar4;\n  card_instance_t *pcVar5;\n  card_instance_t *pcVar6;\n  int iVar7;\n  target_t *ptVar8;\n  bool bVar9;\n  int owner;\n  int position;\n  target_t dead_array[22];\n\n  if (event == EVENT_STATIC_EFFECTS)\n  {\n    if ((card == affected_card) && (player == affected_card_controller))\n    {\n\n      iVar4 = 0;\n      if (0 < active_cards_count[player])\n      {\n        do\n        {\n          pcVar6 = in_play(player, iVar4);\n\n          if ((((pcVar6 != NULL) && (iVar7 = is_what(player, iVar4, 0x80), iVar7 != 0)) &&\n               (pcVar6 = get_card_instance(player, iVar4),\n                pcVar6->info_slot_fn == pias_revolution_effect)) &&\n              (((pcVar6->damage_target_player == player && (pcVar6->damage_target_card == card)) ||\n                ((pcVar6->targets[0].player == player && (pcVar6->targets[0].card == card))))))\n            goto LAB_020c6c92;\n          iVar4 = iVar4 + 1;\n        } while (iVar4 < active_cards_count[player]);\n      }\n\n      iVar4 = create_targetted_legacy_effect(player, card, pias_revolution_effect, player, card);\n      pcVar6 = get_card_instance(player, iVar4);\n      pcVar6->targets[0].player = player;\n      pcVar6->targets[0].card = card;\n      pcVar6->number_of_targets = '\\x01';\n      add_status(player, iVar4, 0x10000);\n    }\n  }\n  else if (((event == EVENT_GRAVEYARD_FROM_PLAY) &&\n            (pcVar6 = in_play(player, card), pcVar6 != NULL)) &&\n           (iVar4 = is_humiliated(player, card, AL_TRIG), iVar4 == 0))\n  {\n\n    pcVar6 = get_card_instance(player, card);\n    iVar4 = get_owner(affected_card_controller, affected_card);\n    if ((((iVar4 == player) &&\n          (iVar4 = is_token(affected_card_controller, affected_card), iVar4 == 0)) &&\n         ((card != affected_card || (player != affected_card_controller)))) &&\n        (((iVar4 = is_what(affected_card_controller, affected_card, 0x40),\n           iVar4 != 0 &&\n               (pcVar5 = in_play(affected_card_controller, affected_card), pcVar5 != NULL)) &&\n          (iVar4 = is_this_dying(affected_card_controller, affected_card), iVar4 != 0))))\n    {\n      iVar7 = check_for_death_trigger_removal(affected_card_controller, affected_card);\n      iVar4 = 0;\n      if (iVar7 == 0)\n      {\n        do\n        {\n\n          if (pcVar6->targets[iVar4].player == -1)\n          {\n            *(char *)((int)&pcVar6->targets[iVar4].player + 1) = (char)affected_card_controller;\n            *(char *)&pcVar6->targets[iVar4].player = (char)affected_card;\n            break;\n          }\n          if (pcVar6->targets[iVar4].card == -1)\n          {\n            piVar1 = &pcVar6->targets[iVar4].card;\n            *(char *)((int)piVar1 + 1) = (char)affected_card_controller;\n            *(char *)piVar1 = (char)affected_card;\n            break;\n          }\n          iVar4 = iVar4 + 1;\n        } while (iVar4 != 0xb);\n        pcVar6->targets[0xb].player = 0x42;\n      }\n    }\n  }\nLAB_020c6c92:\n  iVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);\n  if (iVar4 != 0)\n  {\n\n    pcVar6 = get_card_instance(player, card);\n    pcVar6->targets[0xb].player = 0;\n    ptVar8 = pcVar6->targets;\n    iVar4 = 0;\n    do\n    {\n      uVar2 = ptVar8->player;\n      if (uVar2 != 0xffffffff)\n      {\n        dead_array[iVar4].player = uVar2 >> 8 & 0xff;\n        dead_array[iVar4].card = uVar2 & 0xff;\n        ptVar8->player = -1;\n        iVar4 = iVar4 + 1;\n      }\n      uVar2 = ptVar8->card;\n      if (uVar2 != 0xffffffff)\n      {\n        dead_array[iVar4].player = uVar2 >> 8 & 0xff;\n        dead_array[iVar4].card = uVar2 & 0xff;\n        ptVar8->card = -1;\n        iVar4 = iVar4 + 1;\n      }\n      ptVar8 = ptVar8 + 1;\n    } while (ptVar8 != pcVar6->targets + 0xb);\n    piVar3 = graveyard_ptr_mutable[player];\n    if (0 < iVar4)\n    {\n      iVar7 = 1 - player;\n      ptVar8 = dead_array + iVar4 - 1;\n      do\n      {\n        iVar4 = find_in_owners_graveyard(ptVar8->player, ptVar8->card, &owner, &position);\n        if (iVar4 != 0)\n        {\n          if (owner != player)\n          {\n            backtrace_and_abort(\"cards/aether_revolt.c:3850\\nowner == player\");\n          }\n          iVar4 = can_pay_life(iVar7, 3);\n          if ((iVar4 != 0) && (iVar4 = opponent_is_valid_target(player, card), iVar4 != 0))\n          {\n            iVar4 = my_base_value(player, position);\n            iVar4 = dialog_impl(player, card, EVENT_ACTIVATE, \"\\001\\002\", \"\\001\\010\", iVar7,\n                                \"\\001\\021\", piVar3[position], \"\\001\\014\", \"\\001\\003\",\n                                \"Return to opponent's hand\", 1, life[iVar7] * -5 + 0x32,\n                                \"Pia's Revolution deals 3 damage to me\", 1, iVar4, 0, 0, 0, 0);\n            if (iVar4 == 2)\n            {\n              damage_player(iVar7, 3, player, card);\n              goto LAB_020c6f7a;\n            }\n          }\n          if (player == 0)\n          {\n            iVar4 = my_base_value(0, position);\n            ai_modifier = ai_modifier - ((int)((iVar4 >> 0x1f & 3U) + iVar4) >> 2);\n          }\n          from_grave_to_hand(player, position, 1);\n        }\n      LAB_020c6f7a:\n        bVar9 = ptVar8 != dead_array;\n        if (bVar9)\n          ptVar8 = ptVar8 + -1;\n      } while (bVar9);\n    }\n  }\n  iVar4 = global_enchantment(player, card, event);\n  return iVar4;\n}",
+      "before_sha256": "33dd419d77f2782c8a186d6c762cd5cd7a1185e28fc8083d3e0d233a6bcf370e",
+      "after_sha256": "2ff7ffdc310cce7d20e7696103452e887a9233a1e173c763156fcabb0a20a767",
+      "changes": [
+        {
+          "before": "ptVar8 = (target_t *)(&owner + iVar4 * 2);",
+          "after": "ptVar8 = dead_array + iVar4 - 1;",
+          "occurrences": 1
+        },
+        {
+          "before": "        ptVar8 = ptVar8 + -1;",
+          "after": "        if (bVar9)\n          ptVar8 = ptVar8 + -1;",
+          "occurrences": 1
+        }
+      ],
+      "native_snapshot": {
+        "die_offset": "0xaab480",
+        "view": {
+          "address": "0x20c6c70",
+          "end": "0x20c71d2",
+          "bytes_sha256": "c6b5baf246b2182fe26ef4421aee940e91fbf5ee7bd5c96f54e01816053ddbdd"
+        },
+        "variables": [
+          {
+            "name": "dead_array",
+            "die_offset": "0xaab735",
+            "frame_offset": -196,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 176,
+              "dimensions": [
+                22
+              ],
+              "element_size": 8,
+              "element_encoding": null
+            },
+            "scope_ranges": [
+              [
+                34369192,
+                34369830
+              ]
+            ]
+          }
+        ],
+        "array_declaration": {
+          "name": "dead_array",
+          "bytes": 176,
+          "has_emitted_location": true
+        },
+        "element_layout": {
+          "kind": "DW_TAG_structure_type",
+          "size": 8,
+          "encoding": null,
+          "fields": [
+            {
+              "name": "player",
+              "offset": 0,
+              "size": 4,
+              "encoding": 5
+            },
+            {
+              "name": "card",
+              "offset": 4,
+              "size": 4,
+              "encoding": 5
+            }
+          ]
+        },
+        "row_flow": {
+          "consumer_calls": [
+            {
+              "address": "0x20c6fa7",
+              "name": "_find_in_owners_graveyard",
+              "arguments": [
+                [
+                  "column",
+                  0,
+                  "0x20c6fa2"
+                ],
+                [
+                  "column",
+                  4,
+                  "0x20c6f9b"
+                ],
+                null,
+                null
+              ]
+            }
+          ],
+          "same_row_pairs": [
+            {
+              "consumer": "0x20c6fa7",
+              "player_load": "0x20c6fa2",
+              "card_load": "0x20c6f9b",
+              "same_row_operand": {
+                "base": "esi",
+                "index": null,
+                "scale": 1,
+                "displacement": 0
+              }
+            }
+          ],
+          "indexed_row_origins": [
+            {
+              "address": "0x20c6f38",
+              "row_bytes": 8,
+              "relative_frame_bias": -8
+            }
+          ],
+          "reverse_row_steps": [
+            {
+              "address": "0x20c6f80",
+              "bytes": -8
+            }
+          ]
+        }
+      },
+      "before_compiled": {
+        "die_offset": "0xb80c7",
+        "view": {
+          "address": "0x2020240",
+          "end": "0x2020720",
+          "bytes_sha256": "d6d012ef70428b97280d2c53927a6abc80b16ef36cbf12eb2a17711215698af0"
+        },
+        "variables": [],
+        "array_declaration": {
+          "name": "dead_array",
+          "bytes": 176,
+          "has_emitted_location": false
+        },
+        "element_layout": {
+          "kind": "DW_TAG_structure_type",
+          "size": 8,
+          "encoding": null,
+          "fields": [
+            {
+              "name": "player",
+              "offset": 0,
+              "size": 4,
+              "encoding": 5
+            },
+            {
+              "name": "card",
+              "offset": 4,
+              "size": 4,
+              "encoding": 5
+            }
+          ]
+        },
+        "row_flow": null
+      },
+      "native_validation": {
+        "array": "dead_array",
+        "bytes": 176,
+        "dimensions": [
+          22
+        ],
+        "row_bytes": 8,
+        "consumer_names": [
+          "_find_in_owners_graveyard"
+        ],
+        "paired_consumer_calls": 1,
+        "row_origin": {
+          "address": "0x20c6f38",
+          "row_bytes": 8,
+          "relative_frame_bias": -8
+        },
+        "reverse_step": {
+          "address": "0x20c6f80",
+          "bytes": -8
+        }
+      },
+      "after_compiled": {
+        "die_offset": "0xb80c7",
+        "view": {
+          "address": "0x20202d0",
+          "end": "0x2020828",
+          "bytes_sha256": "375999e4b571f94a1ab027471e9376b86d242cc6247700293247e6e645e2a83e"
+        },
+        "variables": [
+          {
+            "name": "dead_array",
+            "die_offset": "0xb8219",
+            "frame_offset": -196,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 176,
+              "dimensions": [
+                22
+              ],
+              "element_size": 8,
+              "element_encoding": null
+            },
+            "scope_ranges": [
+              [
+                33686224,
+                33687592
+              ]
+            ]
+          }
+        ],
+        "array_declaration": {
+          "name": "dead_array",
+          "bytes": 176,
+          "has_emitted_location": true
+        },
+        "element_layout": {
+          "kind": "DW_TAG_structure_type",
+          "size": 8,
+          "encoding": null,
+          "fields": [
+            {
+              "name": "player",
+              "offset": 0,
+              "size": 4,
+              "encoding": 5
+            },
+            {
+              "name": "card",
+              "offset": 4,
+              "size": 4,
+              "encoding": 5
+            }
+          ]
+        },
+        "row_flow": {
+          "consumer_calls": [
+            {
+              "address": "0x20204a2",
+              "name": "_find_in_owners_graveyard",
+              "arguments": [
+                [
+                  "column",
+                  0,
+                  "0x202049d"
+                ],
+                [
+                  "column",
+                  4,
+                  "0x2020496"
+                ],
+                null,
+                null
+              ]
+            }
+          ],
+          "same_row_pairs": [
+            {
+              "consumer": "0x20204a2",
+              "player_load": "0x202049d",
+              "card_load": "0x2020496",
+              "same_row_operand": {
+                "base": "esi",
+                "index": null,
+                "scale": 1,
+                "displacement": 0
+              }
+            }
+          ],
+          "indexed_row_origins": [
+            {
+              "address": "0x2020475",
+              "row_bytes": 8,
+              "relative_frame_bias": -8
+            }
+          ],
+          "reverse_row_steps": [
+            {
+              "address": "0x2020509",
+              "bytes": -8
+            }
+          ]
+        }
+      },
+      "compiled_validation": {
+        "array": "dead_array",
+        "bytes": 176,
+        "dimensions": [
+          22
+        ],
+        "row_bytes": 8,
+        "consumer_names": [
+          "_find_in_owners_graveyard"
+        ],
+        "paired_consumer_calls": 1,
+        "row_origin": {
+          "address": "0x2020475",
+          "row_bytes": 8,
+          "relative_frame_bias": -8
+        },
+        "reverse_step": {
+          "address": "0x2020509",
+          "bytes": -8
+        }
+      }
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_out_of_time",
+      "before_definition": "int card_out_of_time(int player, int card, event_t event)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  int iVar4;\n  int (*paiVar5)[2];\n  int iVar6;\n  int iStack_4d0;\n  int (*paiStack_4cc)[2];\n  int marked[151][2];\n\n  if (event == EVENT_CAN_CAST)\n  {\n    return 1;\n  }\n  if (event == EVENT_CAST_SPELL)\n  {\n    if ((card == affected_card) && (player == affected_card_controller))\n    {\n      iVar3 = count_subtype(1 - player, 2, -1);\n      ai_modifier = ai_modifier + iVar3 * 5;\n      iVar3 = count_subtype(player, 2, -1);\n      ai_modifier = ai_modifier + iVar3 * -5;\n    }\n    etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);\n    goto LAB_0223b0f4;\n  }\n  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);\n  iVar3 = current_turn;\n  if (event != EVENT_ETB)\n    goto LAB_0223b0f4;\n\n  iVar6 = active_cards_count[current_turn] + -1;\n  if (iVar6 < 0)\n  {\n    iVar4 = 0;\n    iVar6 = 1 - current_turn;\n    iVar3 = active_cards_count[iVar6] + -1;\n    if (-1 < iVar3)\n      goto LAB_0223b02b;\n  LAB_0223b1f0:\n    iVar3 = 0;\n  }\n  else\n  {\n    iVar4 = 0;\n    do\n    {\n      instance = in_play(iVar3, iVar6);\n      if ((instance != NULL) && (iVar2 = is_what(iVar3, iVar6, 2), iVar2 != 0))\n      {\n        marked[iVar4][0] = iVar3;\n        marked[iVar4][1] = iVar6;\n        iVar4 = iVar4 + 1;\n      }\n      iVar6 = iVar6 + -1;\n    } while (iVar6 != -1);\n    iVar6 = 1 - current_turn;\n    iVar3 = active_cards_count[iVar6];\n    while (iVar3 = iVar3 + -1, -1 < iVar3)\n    {\n    LAB_0223b02b:\n      while ((instance = in_play(iVar6, iVar3),\n              instance != NULL && (iVar2 = is_what(iVar6, iVar3, 2), iVar2 != 0)))\n      {\n        marked[iVar4][1] = iVar3;\n        marked[iVar4][0] = iVar6;\n        iVar4 = iVar4 + 1;\n        iVar3 = iVar3 + -1;\n        if (iVar3 < 0)\n          goto LAB_0223b065;\n      }\n    }\n  LAB_0223b065:\n    if (iVar4 < 1)\n      goto LAB_0223b1f0;\n    paiVar5 = (int (*)[2])(&iStack_4d0 + iVar4 * 2);\n    iStack_4d0 = iVar4;\n    do\n    {\n      iVar3 = (*paiVar5)[1];\n      iVar6 = (*paiVar5)[0];\n      paiStack_4cc = paiVar5;\n      untap_card(iVar6, iVar3);\n      phase_out_target_until_source_leaves_play(player, card, iVar6, iVar3);\n      paiVar5 = paiVar5 + -1;\n      iVar3 = iStack_4d0;\n    } while (paiStack_4cc != marked);\n  }\n  add_counters(player, card, player, card, COUNTER_TIME, iVar3);\nLAB_0223b0f4:\n  vanishing(player, card, event, 0);\n  return 0;\n}",
+      "after_definition": "int card_out_of_time(int player, int card, event_t event)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  int iVar4;\n  int (*paiVar5)[2];\n  int iVar6;\n  int iStack_4d0;\n  int (*paiStack_4cc)[2];\n  int marked[151][2];\n\n  if (event == EVENT_CAN_CAST)\n  {\n    return 1;\n  }\n  if (event == EVENT_CAST_SPELL)\n  {\n    if ((card == affected_card) && (player == affected_card_controller))\n    {\n      iVar3 = count_subtype(1 - player, 2, -1);\n      ai_modifier = ai_modifier + iVar3 * 5;\n      iVar3 = count_subtype(player, 2, -1);\n      ai_modifier = ai_modifier + iVar3 * -5;\n    }\n    etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);\n    goto LAB_0223b0f4;\n  }\n  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);\n  iVar3 = current_turn;\n  if (event != EVENT_ETB)\n    goto LAB_0223b0f4;\n\n  iVar6 = active_cards_count[current_turn] + -1;\n  if (iVar6 < 0)\n  {\n    iVar4 = 0;\n    iVar6 = 1 - current_turn;\n    iVar3 = active_cards_count[iVar6] + -1;\n    if (-1 < iVar3)\n      goto LAB_0223b02b;\n  LAB_0223b1f0:\n    iVar3 = 0;\n  }\n  else\n  {\n    iVar4 = 0;\n    do\n    {\n      instance = in_play(iVar3, iVar6);\n      if ((instance != NULL) && (iVar2 = is_what(iVar3, iVar6, 2), iVar2 != 0))\n      {\n        marked[iVar4][0] = iVar3;\n        marked[iVar4][1] = iVar6;\n        iVar4 = iVar4 + 1;\n      }\n      iVar6 = iVar6 + -1;\n    } while (iVar6 != -1);\n    iVar6 = 1 - current_turn;\n    iVar3 = active_cards_count[iVar6];\n    while (iVar3 = iVar3 + -1, -1 < iVar3)\n    {\n    LAB_0223b02b:\n      while ((instance = in_play(iVar6, iVar3),\n              instance != NULL && (iVar2 = is_what(iVar6, iVar3, 2), iVar2 != 0)))\n      {\n        marked[iVar4][1] = iVar3;\n        marked[iVar4][0] = iVar6;\n        iVar4 = iVar4 + 1;\n        iVar3 = iVar3 + -1;\n        if (iVar3 < 0)\n          goto LAB_0223b065;\n      }\n    }\n  LAB_0223b065:\n    if (iVar4 < 1)\n      goto LAB_0223b1f0;\n    paiVar5 = marked + iVar4 - 1;\n    iStack_4d0 = iVar4;\n    do\n    {\n      iVar3 = (*paiVar5)[1];\n      iVar6 = (*paiVar5)[0];\n      paiStack_4cc = paiVar5;\n      untap_card(iVar6, iVar3);\n      phase_out_target_until_source_leaves_play(player, card, iVar6, iVar3);\n      if (paiStack_4cc != marked)\n        paiVar5 = paiVar5 + -1;\n      iVar3 = iStack_4d0;\n    } while (paiStack_4cc != marked);\n  }\n  add_counters(player, card, player, card, COUNTER_TIME, iVar3);\nLAB_0223b0f4:\n  vanishing(player, card, event, 0);\n  return 0;\n}",
+      "before_sha256": "32ee39565c7584fadbc1c3550fd992e978f7ead5a7eecc334503a369af741cff",
+      "after_sha256": "953a0b7638a9d24301b2c009079a4161818c723d0e52d0d426faf7f913626dcf",
+      "changes": [
+        {
+          "before": "paiVar5 = (int (*)[2])(&iStack_4d0 + iVar4 * 2);",
+          "after": "paiVar5 = marked + iVar4 - 1;",
+          "occurrences": 1
+        },
+        {
+          "before": "      paiVar5 = paiVar5 + -1;",
+          "after": "      if (paiStack_4cc != marked)\n        paiVar5 = paiVar5 + -1;",
+          "occurrences": 1
+        }
+      ],
+      "native_snapshot": {
+        "die_offset": "0x1f6c8d9",
+        "view": {
+          "address": "0x223af70",
+          "end": "0x223b1f7",
+          "bytes_sha256": "62a054e21f97a3524cf68e767b8deddcd417d41695a3aaeab4bc50b6406abfd0"
+        },
+        "variables": [
+          {
+            "name": "marked",
+            "die_offset": "0x1f6c93a",
+            "frame_offset": -1228,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 1208,
+              "dimensions": [
+                151,
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                35893182,
+                35893492
+              ],
+              [
+                35893720,
+                35893751
+              ]
+            ]
+          }
+        ],
+        "array_declaration": {
+          "name": "marked",
+          "bytes": 1208,
+          "has_emitted_location": true
+        },
+        "element_layout": {
+          "kind": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        "row_flow": {
+          "consumer_calls": [
+            {
+              "address": "0x223b092",
+              "name": "_untap_card",
+              "arguments": [
+                [
+                  "column",
+                  0,
+                  "0x223b083"
+                ],
+                [
+                  "column",
+                  4,
+                  "0x223b080"
+                ],
+                null,
+                null
+              ]
+            },
+            {
+              "address": "0x223b0ac",
+              "name": "_phase_out_target_until_source_leaves_play",
+              "arguments": [
+                null,
+                null,
+                [
+                  "column",
+                  0,
+                  "0x223b083"
+                ],
+                [
+                  "column",
+                  4,
+                  "0x223b080"
+                ]
+              ]
+            }
+          ],
+          "same_row_pairs": [
+            {
+              "consumer": "0x223b092",
+              "player_load": "0x223b083",
+              "card_load": "0x223b080",
+              "same_row_operand": {
+                "base": "esi",
+                "index": null,
+                "scale": 1,
+                "displacement": 0
+              }
+            },
+            {
+              "consumer": "0x223b0ac",
+              "player_load": "0x223b083",
+              "card_load": "0x223b080",
+              "same_row_operand": {
+                "base": "esi",
+                "index": null,
+                "scale": 1,
+                "displacement": 0
+              }
+            }
+          ],
+          "indexed_row_origins": [
+            {
+              "address": "0x223b06d",
+              "row_bytes": 8,
+              "relative_frame_bias": -8
+            }
+          ],
+          "reverse_row_steps": [
+            {
+              "address": "0x223b0b7",
+              "bytes": -8
+            }
+          ]
+        }
+      },
+      "before_compiled": {
+        "die_offset": "0x2ef7ac8",
+        "view": {
+          "address": "0x23a8550",
+          "end": "0x23a87a8",
+          "bytes_sha256": "bdccd2253dbfd78c22bc8fcb4ac572125a676f2fabbce7a3c2894ce8c327a400"
+        },
+        "variables": [],
+        "array_declaration": {
+          "name": "marked",
+          "bytes": 1208,
+          "has_emitted_location": false
+        },
+        "element_layout": {
+          "kind": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        "row_flow": null
+      },
+      "native_validation": {
+        "array": "marked",
+        "bytes": 1208,
+        "dimensions": [
+          151,
+          2
+        ],
+        "row_bytes": 8,
+        "consumer_names": [
+          "_phase_out_target_until_source_leaves_play",
+          "_untap_card"
+        ],
+        "paired_consumer_calls": 2,
+        "row_origin": {
+          "address": "0x223b06d",
+          "row_bytes": 8,
+          "relative_frame_bias": -8
+        },
+        "reverse_step": {
+          "address": "0x223b0b7",
+          "bytes": -8
+        }
+      },
+      "after_compiled": {
+        "die_offset": "0x2ef7af0",
+        "view": {
+          "address": "0x23a8660",
+          "end": "0x23a8913",
+          "bytes_sha256": "560c869000642799e68c0e6edbe2275a08621edc99ecb3e7024ec14cd7a29bde"
+        },
+        "variables": [
+          {
+            "name": "marked",
+            "die_offset": "0x2ef7c04",
+            "frame_offset": -1228,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 1208,
+              "dimensions": [
+                151,
+                2
+              ],
+              "element_size": 4,
+              "element_encoding": 5
+            },
+            "scope_ranges": [
+              [
+                37389920,
+                37390611
+              ]
+            ]
+          }
+        ],
+        "array_declaration": {
+          "name": "marked",
+          "bytes": 1208,
+          "has_emitted_location": true
+        },
+        "element_layout": {
+          "kind": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        "row_flow": {
+          "consumer_calls": [
+            {
+              "address": "0x23a88d4",
+              "name": "_untap_card",
+              "arguments": [
+                [
+                  "column",
+                  0,
+                  "0x23a88cb"
+                ],
+                [
+                  "column",
+                  4,
+                  "0x23a88c8"
+                ],
+                null,
+                null
+              ]
+            },
+            {
+              "address": "0x23a88ee",
+              "name": "_phase_out_target_until_source_leaves_play",
+              "arguments": [
+                null,
+                null,
+                [
+                  "column",
+                  0,
+                  "0x23a88cb"
+                ],
+                [
+                  "column",
+                  4,
+                  "0x23a88c8"
+                ]
+              ]
+            }
+          ],
+          "same_row_pairs": [
+            {
+              "consumer": "0x23a88d4",
+              "player_load": "0x23a88cb",
+              "card_load": "0x23a88c8",
+              "same_row_operand": {
+                "base": "ebx",
+                "index": null,
+                "scale": 1,
+                "displacement": 0
+              }
+            },
+            {
+              "consumer": "0x23a88ee",
+              "player_load": "0x23a88cb",
+              "card_load": "0x23a88c8",
+              "same_row_operand": {
+                "base": "ebx",
+                "index": null,
+                "scale": 1,
+                "displacement": 0
+              }
+            }
+          ],
+          "indexed_row_origins": [
+            {
+              "address": "0x23a88b8",
+              "row_bytes": 8,
+              "relative_frame_bias": -8
+            }
+          ],
+          "reverse_row_steps": [
+            {
+              "address": "0x23a88fd",
+              "bytes": -8
+            }
+          ]
+        }
+      },
+      "compiled_validation": {
+        "array": "marked",
+        "bytes": 1208,
+        "dimensions": [
+          151,
+          2
+        ],
+        "row_bytes": 8,
+        "consumer_names": [
+          "_phase_out_target_until_source_leaves_play",
+          "_untap_card"
+        ],
+        "paired_consumer_calls": 2,
+        "row_origin": {
+          "address": "0x23a88b8",
+          "row_bytes": 8,
+          "relative_frame_bias": -8
+        },
+        "reverse_step": {
+          "address": "0x23a88fd",
+          "bytes": -8
+        }
+      }
+    }
+  ],
+  "scope": "Recover three reverse-array cursor paths in two original card units: Pia Revolution helper/card arrays of20/22 target_t entries and Out of Time marked[151][2] int matrix. Use the actual array plus count minus one instead of address arithmetic from unrelated scalar locals; keep all native capacities, collection code, ordering, flags, dialog/ownership logic and counter counts. Skip the final unused cursor decrement so the C pointer remains within its array; exact source replay verifies that no later source operation uses that cursor. Native/rebuilt DWARF checks160/176/1208-byte extents and element layout. Conservative direct-CFG row tags verify eight-byte indexed origins/reverse steps, correct0/4-byte field identities, and four consumer argument pairs from the same row with unchanged pointer registers between paired loads. Calls kill caller-save registers and all tracked memory. Row indices/bounds, arbitrary aliases, array contents and full gameplay equivalence are outside this bounded model. Before DWARF emits no location for these three already-declared arrays; this observation is not a claim that no physical memory existed.",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "runtime_before": {
+    "dll_path": ".recovery/global-index-after.dll",
+    "dll_sha256": "abbb3d4d1b9ef301adf19f42e199ed384d1ceb586ad23cf6a0c3ae7f712a944e",
+    "dbg_path": ".recovery/global-index-after.dbg",
+    "dbg_sha256": "e6f9f4027816727679431b2398747b7c41e24e9301b995157cb3fd1f8b1cf7bd"
+  },
+  "runtime_after": {
+    "dll_path": ".recovery/reverse-arrays-after.dll",
+    "dll_sha256": "8363537963c7db95bdf61504576b826e96fb786d0ef91967d0cba2951b479ea9",
+    "dbg_path": ".recovery/reverse-arrays-after.dbg",
+    "dbg_sha256": "931b51615c9117565892c96b55b4ff35e2ee7b8e3278667097c3ca36dfb7a739"
+  },
+  "before_link_inputs": {
+    ".recovery/build-gcc93/obj/cards/aether_revolt.o": "76a16b660011bd1dc40b0e676aaf8eaa8fa2be345537fc2c6869f69d2eeb229b",
+    ".recovery/build-gcc93/obj/cards/alara_reborn.o": "cafdfae1b8c5a22e993815fbbccc9a8ff39b36a64a732be2f48bacfeba3a2184",
+    ".recovery/build-gcc93/obj/cards/alliances.o": "96b1072446d1b4f3f7978e350f0669fda35be48d9e87fec3dc2fab8e1201c1ec",
+    ".recovery/build-gcc93/obj/cards/amonkhet.o": "78b4bd1d28a1bf27e2ce0d448c0eaf3ec59902946bfe98774475382268767471",
+    ".recovery/build-gcc93/obj/cards/antiquities.o": "ad74f8c2d90d81d7a5b59924af5fcd05bc50987e9992359eede4bf1dbd5320b7",
+    ".recovery/build-gcc93/obj/cards/apocalypse.o": "24fdddc48acf4463cb48b8f01614b5205466f177d4e4c92cd58706a0fa60073e",
+    ".recovery/build-gcc93/obj/cards/arabian_nights.o": "e5277bbf9d4769fe836b68b909018bb6a043df337cfb661375af02274b25f7cd",
+    ".recovery/build-gcc93/obj/cards/archenemy.o": "60afaa61b4a68c96ac275379a8245178bbe94be9982e1090532319268f67627b",
+    ".recovery/build-gcc93/obj/cards/archenemy_nicol_bolas.o": "f696df1d7831001d3ff64988f2fd34b6b2e5dd022b1459a333becf1ea4be3423",
+    ".recovery/build-gcc93/obj/cards/artifact_creatures.o": "e06702d3247122e13e4ec9c47a7f7bb102f75e7aa741aca32906f6b9ceb2ed7e",
+    ".recovery/build-gcc93/obj/cards/avacyn_restored.o": "f7e32d5b674768ea02e829977ea258e6f882375926905325ebfe5554949fa5f6",
+    ".recovery/build-gcc93/obj/cards/battle_for_zendikar.o": "f485c57f48b0c3e39aa89b6b07ebb0c1391e1c04eb7381c09d27bdc845411fb3",
+    ".recovery/build-gcc93/obj/cards/battlebond.o": "e78c5ecc157268979c79ae561cc213594a26b9479ba1ed55e466614abb38aed8",
+    ".recovery/build-gcc93/obj/cards/betrayers_of_kamigawa.o": "ee958e1aa3184ba10856056561a1c6e793b419f45734d8c94922c1c29014e9d0",
+    ".recovery/build-gcc93/obj/cards/born_of_the_gods.o": "3a7bc44310bd2953f08e63bc285a24235e21386591e8822453a520aa0d0f4e25",
+    ".recovery/build-gcc93/obj/cards/champions_of_kamigawa.o": "43464b40046c0d83711f28f757874c3f38c04a0fbb13e90e2c000e68fd6f5407",
+    ".recovery/build-gcc93/obj/cards/coldsnap.o": "30ceeeab883efd7ff4563a38e13584196f39bdb6708601cefbc5041d9f5b3e95",
+    ".recovery/build-gcc93/obj/cards/commander.o": "4bc73373d6a30105bf3bc8d66682119c23d2f51c0af949277944c934f3426545",
+    ".recovery/build-gcc93/obj/cards/commander_2013.o": "b4ad882383d9e00a8c7acf1ad44191fe5f0f418cdc247f1042df691dfccbdc5a",
+    ".recovery/build-gcc93/obj/cards/commander_2014.o": "a9ca2687d11e1b1950d6cc977e982bf287c31d84b93d8754c4ed623684704602",
+    ".recovery/build-gcc93/obj/cards/commander_2015.o": "587f82e8b04e8f3cadecb038fdd8d9821d2cfd4bc750f5efcf8ab369c1acf9e6",
+    ".recovery/build-gcc93/obj/cards/commander_2016.o": "e24e693184b5389616a56922e39828dedbf04b5540ddb7365e20e3e8b5527b34",
+    ".recovery/build-gcc93/obj/cards/commander_2017.o": "2c9a936589a22c740df10df22703c3744aad1b6f39a1f7d352e9910706e34d28",
+    ".recovery/build-gcc93/obj/cards/commander_2018.o": "c2f19f79f880a8ae16ff242a6af7c2e06dbb9a67f8a2c52b45a108b94cb82db5",
+    ".recovery/build-gcc93/obj/cards/commander_2019.o": "7c5fe182eef275722b20c4a82be2fe672d77f173b2e8933c66710401b4bc7e6c",
+    ".recovery/build-gcc93/obj/cards/commander_2020.o": "657b3ffcaa7ddf90ad188aa7ce6988a9e7c46cebee94f0cec558d666752603a6",
+    ".recovery/build-gcc93/obj/cards/commander_legends.o": "23c2f89beb97b46b1162f6edb21fddedfb19d61e34b15148c9a3738cc49ac97a",
+    ".recovery/build-gcc93/obj/cards/conflux.o": "83b3d611e872d407b467d00bc57ab24a107a17866b215cb0d472cdfc277c0fce",
+    ".recovery/build-gcc93/obj/cards/conspiracy-take-the-crown.o": "fc789a4fa96dd122b033bf667cd729c58003857b51fb54caabe9b0bf10048ac7",
+    ".recovery/build-gcc93/obj/cards/conspiracy.o": "d89c8cbebaed8cc9e24bb16d2c5c4c6d98744ec47e08f99ca38851fb75dbad76",
+    ".recovery/build-gcc93/obj/cards/dark_ascension.o": "abb0095f872fcd9cbad2d7c0dc79a2f49eab7608b0e81491f06ed4db585573e7",
+    ".recovery/build-gcc93/obj/cards/darksteel.o": "3295baaa52b86cfde6e7937b9a879ccd4fec81d165d7630bc9bfff8ad0b5c6c9",
+    ".recovery/build-gcc93/obj/cards/dissension.o": "c8a1b91c1be39b37605e77556e5a38ef3ca92f8936de718dbfe52d479ab4028f",
+    ".recovery/build-gcc93/obj/cards/dominaria.o": "607451799439a4aaa7d095f90346476b8f94f2b03152af92e5e27adfbd3579f2",
+    ".recovery/build-gcc93/obj/cards/draft.o": "cb219ad59f3e8dafb4d2afbe9984789843b411a6afd40f107616dd4887cff379",
+    ".recovery/build-gcc93/obj/cards/dragons_maze.o": "1cf409bc1c3e0ffe906e82f49e0eb34c78433dcccea736dcaecbe920f7cb744e",
+    ".recovery/build-gcc93/obj/cards/dragons_of_tarkir.o": "e08f6efd4feb4cdacf68f7a81b5fb031ab6f24508bc4ee687dc85c7b96f2eb68",
+    ".recovery/build-gcc93/obj/cards/eldritch_moon.o": "efc5f07af3ab3aba5fbf7b765280040439aa4560c1be1e83d4b57651e9505f38",
+    ".recovery/build-gcc93/obj/cards/equipment.o": "89a5e3fab8e75d3ba6ca1a78ba7b3cf0f97fb182e2de69b4b30cf148f984e2c8",
+    ".recovery/build-gcc93/obj/cards/eventide.o": "d18f7188292f1ddefcaa43085b41d758ffe3877915adb3670157730ae3693104",
+    ".recovery/build-gcc93/obj/cards/exodus.o": "a7ba8ca2f3e6bdf4f4fb90cc214fd8cf24427961561495a6345efc5258d43292",
+    ".recovery/build-gcc93/obj/cards/fallen_empires.o": "8d6b67a5f8cb92fb79e1a2d001c7bf7af72e7db0f8242a870baa3543fec087c6",
+    ".recovery/build-gcc93/obj/cards/fate_reforged.o": "7a21c579ee627f90969fa703707039407dc44863ed3744395bd51cec048002cf",
+    ".recovery/build-gcc93/obj/cards/fifth_dawn.o": "31a63d46929f1b1c9958abf3388f1a23ff3e56811b19ddca95d78ead2e831bd7",
+    ".recovery/build-gcc93/obj/cards/future_sight.o": "6cbf5654cc4629d74bf4cd94a9c8db84627802927ee0f602f5965d25913b7d30",
+    ".recovery/build-gcc93/obj/cards/gargaroz.o": "d1d334ddadef46f82ed8862507d3dbddf24ff481a1370a683d3f148c0c4ca15c",
+    ".recovery/build-gcc93/obj/cards/gatecrash.o": "270bda0cc9d05b8035671313328ec8fb62744ca664fc1366d041cee74dec7e1d",
+    ".recovery/build-gcc93/obj/cards/global_series_jiang_yanggu_and_mu_yanling.o": "7e3280dc139e670bfdf54e259d9332b84cf9973a24bfc0b17202f8dc559cdc86",
+    ".recovery/build-gcc93/obj/cards/guildpact.o": "30759cebba6066c322f80c6b1ebd7263c17fa487803e521462504e7ec7f7b7b9",
+    ".recovery/build-gcc93/obj/cards/guilds_of_ravnica.o": "a247f3b38f8a5dcab2a7f17c915b86f7bb24906cb26f0cab1cf95d078fa6bb0f",
+    ".recovery/build-gcc93/obj/cards/homelands.o": "2e2fcc8944cf24b222f8e4df45263f27f36cdb856678161ac460d6322f348f37",
+    ".recovery/build-gcc93/obj/cards/hour_of_devastation.o": "b6893a9213658527fda8756fbaea6241594f63f8e202c2fbe3f25ef505ae19c4",
+    ".recovery/build-gcc93/obj/cards/ice_age.o": "11869c85a2372dda232851ddf04eaf6f4068473a7ff4a36c4076994c8c722dc3",
+    ".recovery/build-gcc93/obj/cards/ikoria.o": "27076e324890639ccf1a93a2594509847717bc6f7605c6fe941321a9c1f27f0a",
+    ".recovery/build-gcc93/obj/cards/innistrad.o": "9b805748c135dea0be3f7d4e18ddd8e9b9fc88ac8bfd64436405e7a6e5e0f97d",
+    ".recovery/build-gcc93/obj/cards/invasion.o": "11c2e98c4a3a09f3015d7cdca08968979a8f6339897b46ab04e8be5283b8014b",
+    ".recovery/build-gcc93/obj/cards/ixalan.o": "094382bffd917cb93b331015abce6e0085c40e791b48cd4bc6ec37f6832c0966",
+    ".recovery/build-gcc93/obj/cards/journey_into_nyx.o": "0e797947d72b297c56b40a5fcfbb13e2a04221b199b3f9b4d4ef37cd4d0fd267",
+    ".recovery/build-gcc93/obj/cards/judgement.o": "9408f085e34eb8b277abbfd5845d1de3e89613d7a3e06d6274b73a9eaa534dfd",
+    ".recovery/build-gcc93/obj/cards/jumpstart.o": "042702434f7a131d759701d12ad6b8675219c64a526d7ac7133f39f61f7ee042",
+    ".recovery/build-gcc93/obj/cards/kaladesh.o": "7540f04fdaa989c3c9b6a7bdfab2a2f6d15a6fdf61e7bfece0f432ba00f8f66b",
+    ".recovery/build-gcc93/obj/cards/khans_of_tarkir.o": "7fa0ef36a2eec632dc2c8407f049fd8b1f73c672367a14ce7ed7d5578f278367",
+    ".recovery/build-gcc93/obj/cards/legends.o": "62e1cedbf005076bfceab73a0942962403137954117ee685c671082fd4b4eac8",
+    ".recovery/build-gcc93/obj/cards/legions.o": "e7e207a36f65aa1edcf8ceeb7c11df1102ccfefeaeda7e58339c6083b4c6f12c",
+    ".recovery/build-gcc93/obj/cards/lorwyn.o": "03a2376ef06b698d32a2b9b06cab92b7833d02aa01dc6c00b21c999d8f3fd27f",
+    ".recovery/build-gcc93/obj/cards/m10.o": "9e8dd346ee8db2b1d86a71450924844d9e007d275da42388a0610cda79a6906b",
+    ".recovery/build-gcc93/obj/cards/m11.o": "3049dcfa308ab5193d12fba4c22976c30fdfe6c3991ce8afd3d6bad77d6e9cb0",
+    ".recovery/build-gcc93/obj/cards/m12.o": "bd4b3303f8e2b7c147fb7392fb43e6387fa89540e6b8a35cdf11fa9e6c4598c6",
+    ".recovery/build-gcc93/obj/cards/m13.o": "858d2e01a782c0ff9eee3e079e1cead3bc309b64bf0e61f3058a50320a338d33",
+    ".recovery/build-gcc93/obj/cards/m14.o": "aa44214336726647a70b6a5f81e53b226a9a8a5751b489af4590e73a4d3c0800",
+    ".recovery/build-gcc93/obj/cards/m15.o": "c9368b5f6c023127d1d5162438cc9f39dbac60e7dc438907863aedefe758b57c",
+    ".recovery/build-gcc93/obj/cards/m19.o": "d75f1a0604d54ed6b8e7673d7810d6b7a6b1642a138e97a9c13f599e83fb4e55",
+    ".recovery/build-gcc93/obj/cards/m20.o": "e5384982892a3c3274281f39fe60b457299a4058dea6d6dd96883a401acc254b",
+    ".recovery/build-gcc93/obj/cards/mercadian_masques.o": "45be414daaf39b0d53a88ccb4ee11a40d9b5f7f3b8c169ee678870dc548d8c57",
+    ".recovery/build-gcc93/obj/cards/mirage.o": "1e06d395dcf938fb62323826970db52620370590a8d2e82dfff861bfef1eeac9",
+    ".recovery/build-gcc93/obj/cards/mirrodin.o": "94b5ffe224400ae5c19f60721fcf3b6f02b914defe5c248ec36d1efcc7ef63b4",
+    ".recovery/build-gcc93/obj/cards/mirrodin_besieged.o": "b68159f13a1c06b7ff223010df16c73f29394064b48a5afbd9c10decbe20c819",
+    ".recovery/build-gcc93/obj/cards/modern_horizons.o": "9124f03739d3c41291a8094ce8a7b947447bdcab1a52bcb5b4a45e2e5b7cea0a",
+    ".recovery/build-gcc93/obj/cards/modern_horizons_2.o": "ad818038f25e3c0ab38f353bd792989fba9bffe2958b3b24ae0a2129b8b69f35",
+    ".recovery/build-gcc93/obj/cards/morningtide.o": "d8ab0b8f6937b2f588845bd398963fff0fc04fa7b031ed28dbda6fbe43ab2783",
+    ".recovery/build-gcc93/obj/cards/nemesis.o": "68e161d54969e8049b2a92195014d7e34f2a42477a6d227aa8a0c167123d2125",
+    ".recovery/build-gcc93/obj/cards/new_phyrexia.o": "29138e4929b41920d5e1a2b03cb4026a8697eac2f5c8f3bc8f4d787079c0dbba",
+    ".recovery/build-gcc93/obj/cards/oath_of_the_gatewatch.o": "9cbee7d6e1fefe5ec5bf8e9e2791cda4e60567edbda0a4552aeb68440b1b9e48",
+    ".recovery/build-gcc93/obj/cards/odissey.o": "d3d2be7635d4f86797a454fec0e299fc2710defdab514aa573f9c19ea38916b4",
+    ".recovery/build-gcc93/obj/cards/odyssey.o": "e241d7c899623e2d7c0475f8a42ec034534621476d695d8137d495829a278022",
+    ".recovery/build-gcc93/obj/cards/onslaught.o": "50652b0c4ff495c734a6972f12cac374ee7d981b8a0eb5d6562ddb5bf10f271e",
+    ".recovery/build-gcc93/obj/cards/origins.o": "9977e34ef38c6dfb36b3238387d4c64a64b81bd27a09abe26f7b72e1b0b670f3",
+    ".recovery/build-gcc93/obj/cards/planar_chaos.o": "62ed68598317736a6b6daa0f3497efcb85fddd26addcf13176e3a2e2cc9a5b7f",
+    ".recovery/build-gcc93/obj/cards/planechase.o": "bec10f2aead488e801603c9f4f6d9b74cd0a2635c894a9d5bad2f622e6350c84",
+    ".recovery/build-gcc93/obj/cards/planeshift.o": "63fe83228ab721f7ff373b70039bceda90b0c1a75d3c186c0086db9cdab0f031",
+    ".recovery/build-gcc93/obj/cards/planeswalker.o": "94b02c2eef7c9275f8bd742ae3f1a8e87eb5929fd6ad4eae4d4152a95bb2727e",
+    ".recovery/build-gcc93/obj/cards/portal_1_2_3k.o": "abfb3ac8072d29685ac64282b9c668a8affddfc8a375013449e578306f74d6b2",
+    ".recovery/build-gcc93/obj/cards/promo.o": "43224354f5e0cd6b55cc7a17b02f4167ea1f548b92556900a0c2bc5d23e01d4c",
+    ".recovery/build-gcc93/obj/cards/prophecy.o": "33fbedd9f18989bd3aa593650122de9a5f2914fefab4fc278d14a526a038fc82",
+    ".recovery/build-gcc93/obj/cards/ravnica.o": "01cc327f4891cb4df6adff64ed63e27b1b3097f24866adb2e31960c275cd79e4",
+    ".recovery/build-gcc93/obj/cards/ravnica_allegiance.o": "6d8787a53c666f02ef1b5c05d824174b311bd857ecf5a656ee2d09d94522345f",
+    ".recovery/build-gcc93/obj/cards/return_to_ravnica.o": "09cd69c72c96a51e06f8ac7af9b1b30593de6b708641ae7113e10095dfbd5b19",
+    ".recovery/build-gcc93/obj/cards/rise_of_the_eldrazi.o": "537fcbf7e1824a5e13996911af602cf99131f4b67aba71d6ae17dab8d6072720",
+    ".recovery/build-gcc93/obj/cards/rivals_of_ixalan.o": "0de925e51bfebbadcad30ec9957e0b928d407b41f45845627b9bf9b22dd336d3",
+    ".recovery/build-gcc93/obj/cards/saviors_of_kamigawa.o": "4fca14948c960b0fcf04353a1a7ebffbc27b81ffbd636bedba4135649f08d1fd",
+    ".recovery/build-gcc93/obj/cards/scars_of_mirrodin.o": "234ceacde37ae1988d66f3601bba432e143924a4ca5b7657058fcd3436a0b1a7",
+    ".recovery/build-gcc93/obj/cards/scourge.o": "f199fc18ad04d66ea30f7f661da355bf8f6376912fb57325b375fb4c0879102d",
+    ".recovery/build-gcc93/obj/cards/shadowmoor.o": "31663932c239a605208343d03897de532d50498992ff7f50b222bdc3733680b3",
+    ".recovery/build-gcc93/obj/cards/shadows_over_innistrad.o": "3c89e20385fcacaf2b74999581e84914ce9b17b540bcf1cd8406727254f28ca5",
+    ".recovery/build-gcc93/obj/cards/shards_of_alara.o": "1292c8c9e4feefa2b72e1306182bc7dee6018a1ab7190e01a38dcff069b54809",
+    ".recovery/build-gcc93/obj/cards/strixhaven.o": "0c66703db8329c0989d70cee88d3a3188c23347b197dbd1c0d667f0fefdca3d0",
+    ".recovery/build-gcc93/obj/cards/stronghold.o": "c854e454da7d43c81de3483c050d196f3d0f59c5c28321834c465e5891cc8c0a",
+    ".recovery/build-gcc93/obj/cards/stubs.o": "e651ae9282c8f33a6cac34cd7a158af430ef01d4158a0fd0898939b05aa36dff",
+    ".recovery/build-gcc93/obj/cards/tempest.o": "fc7999cc6e757c489730d4932043568915662a70c8a6fd70977893b85e90ef59",
+    ".recovery/build-gcc93/obj/cards/the_dark.o": "201071e9b25c8ae44a661b385cbf838d6a22edcf9f4281495f895fce4d0d474d",
+    ".recovery/build-gcc93/obj/cards/theros.o": "4951ec08ca518e6207735e6ee9a24d0a6cbc6fadb828b125db15a3413042a4de",
+    ".recovery/build-gcc93/obj/cards/theros_beyond_death.o": "ea0ce68e682290fb50fb41a783f4502a74b1b8a9deaf7ddeab0be0f1d5062762",
+    ".recovery/build-gcc93/obj/cards/throne_of_eldraine.o": "04fdcbb6af711ccfd92472160e1f710fa22bb317f48a2e8f5c9c18967c2b9835",
+    ".recovery/build-gcc93/obj/cards/time_spiral.o": "269ae0f5aaf715a905abf54e08b8f38505c7d64aa254ea7a728851307d155626",
+    ".recovery/build-gcc93/obj/cards/tokens.o": "0a88f489b574927b9b9a70680f61f82854fe3c71b187d4e2ea94a4936cca082b",
+    ".recovery/build-gcc93/obj/cards/torment.o": "774dde325f0221155fc948a46a8e366daf63fdf1b66dc7b5eb1f20fae72ce18b",
+    ".recovery/build-gcc93/obj/cards/unglued_unhinged.o": "001abfffde9d2b50c803a4497d377bd5f23b206f431a63aa4a6ceb85df9881ee",
+    ".recovery/build-gcc93/obj/cards/unlimited.o": "2935c3e7fdf64723c6bddf7e914fcef6734734f3a138a5de0b596e35281fa4fd",
+    ".recovery/build-gcc93/obj/cards/unstable.o": "30ae062c4f476c47d9962f8c19a974c7ed2ef42fc9205faa3d436f92cd4bb2ca",
+    ".recovery/build-gcc93/obj/cards/urza_destiny.o": "cac3a589a12a334763cb3251635c82efa3d8a4ee28eaac15a01c009ff862a721",
+    ".recovery/build-gcc93/obj/cards/urza_legacy.o": "43a1d53d195adf5e08b686082b241cc81ed58065fcb1952d52d2a04cc2574b5c",
+    ".recovery/build-gcc93/obj/cards/urza_saga.o": "60145fc238b24ea1fb136421767a73195e2b8700875d103fa2ee6152da0466e0",
+    ".recovery/build-gcc93/obj/cards/vanguard.o": "65c419abde65a20fd64ccb8e1f60a918ce39a01fab0595c2a578c605329d7838",
+    ".recovery/build-gcc93/obj/cards/visions.o": "cbf9e3169afe06359f96e5f29e08a073d066d2593238d8e06e182685c0217913",
+    ".recovery/build-gcc93/obj/cards/war_of_the_spark.o": "273ba46ca595941f73dc651e589776387a967fa6bd1d7627425f2832bad8c396",
+    ".recovery/build-gcc93/obj/cards/weatherlight.o": "90aa378a7cfa6d59ee494d41e30edb07c90159c5fa02c92de3ba3cd0feafab07",
+    ".recovery/build-gcc93/obj/cards/worldwake.o": "4755ad0314da4de54bbc1a49e2e22fec75c792910125f9c2434ce220bd49773d",
+    ".recovery/build-gcc93/obj/cards/zendikar.o": "ab191a0ff59f41e674d9ac7b4517f14d18a8d36c8fa0e9a0d7613d666c9a74e6",
+    ".recovery/build-gcc93/obj/cards/zendikar_rising.o": "50439708f07a0a48a67450c714cf322402e11d1ee20c2a01594402872f8ae718",
+    ".recovery/build-gcc93/obj/functions/abilities.o": "20ba8038706c01684f4f654c4a5caeb15f071eed71f1ba24c238cbc915379df8",
+    ".recovery/build-gcc93/obj/functions/ai.o": "cbc401ccc5bd74c991043fddfa3e39601692a0eae7c6219f9d8bb5294535e00b",
+    ".recovery/build-gcc93/obj/functions/auras.o": "c4b0dda11be04c1079393476b98b89b47cad3e316dea153bda458bf3673c3030",
+    ".recovery/build-gcc93/obj/functions/boost_creature_type.o": "b0e8074ca4e4c554ed0670518a556d14358f7837e038869501ed2585083560fc",
+    ".recovery/build-gcc93/obj/functions/challenge_mode.o": "54e64b2fffa7aa393e3636676764ab3e9b88dc882a5a0b11221825a4f7a54249",
+    ".recovery/build-gcc93/obj/functions/count_graveyard.o": "a917abf489b330d638b77890714d7d63225e17e7c15c7bbfd29bab77da410625",
+    ".recovery/build-gcc93/obj/functions/counters.o": "4d742c45c007c230fdac48d2218f4f9fdcb5bea7c5416b09be7c96f81b2e1af5",
+    ".recovery/build-gcc93/obj/functions/damage_effects.o": "0927693efab3f9ffeb6a6fc8e48ed4e4ba902d65f6e41c37c273efc8e9d0d985",
+    ".recovery/build-gcc93/obj/functions/deadbox.o": "f36407331a0bad0edbcd57745dc7b5ec4a532ab5060bca5ef0926724868c0a3d",
+    ".recovery/build-gcc93/obj/functions/deck.o": "c352dd40d422fb926d818fbd094d8fc428bd30cbd740b04e3247a577c3a20165",
+    ".recovery/build-gcc93/obj/functions/dialog.o": "cb49c1420085a5f33e9603256e9a88b6ab7f786b87957e86db43f7aab79e85e5",
+    ".recovery/build-gcc93/obj/functions/dice.o": "c47c476f886d28ef4f866d6faec33a6678d0c3da3dcfdc8477f6730481621872",
+    ".recovery/build-gcc93/obj/functions/draft.o": "57ae899ea6ceb072f3d5343e8b0f0572efe52dfd63048c2fc88f0d779fb9b013",
+    ".recovery/build-gcc93/obj/functions/engine.o": "444d5081b082ffbdde980c9524d6003c1b64a2615ec8d7697dfe4d96008a33a1",
+    ".recovery/build-gcc93/obj/functions/equipments.o": "e138f240a4fe197d95a69c90e601bf9a4f958254c260a603317000e029fca35d",
+    ".recovery/build-gcc93/obj/functions/events.o": "35ac5f18c540e87eacd8e7f4d93e39f8de3b96aa263644f6296ca8759f8e7820",
+    ".recovery/build-gcc93/obj/functions/exiledby.o": "e8bc29423bcd4f6bf7a9a079b9b85641f30566d66ee745800a8eca29297a416f",
+    ".recovery/build-gcc93/obj/functions/functions.o": "48178515b0d1b3516704dd450d90060c327bfd519344077a1991dac47011daf7",
+    ".recovery/build-gcc93/obj/functions/gain_control_and_legend_rule.o": "fd77d49518923296dc3cb4f52466de831fc8a67a04ffff23f788794a3763708c",
+    ".recovery/build-gcc93/obj/functions/global_checking.o": "e0bd743fa7117c01264965356cc07391079fc50f2191ded8af02d905d7c9ec87",
+    ".recovery/build-gcc93/obj/functions/has_creature_type.o": "aa1b3633ca9afaf17b7267ff7e73cfc3b7721af3a61314e8759d5f372d82990a",
+    ".recovery/build-gcc93/obj/functions/has_threshold.o": "1801874a2392bffd14fd695cdef0b010efdd329ec91a38f4317fea2e79f3b622",
+    ".recovery/build-gcc93/obj/functions/helper_functions.o": "801466ab83cd9d8777c95b1fea6ba81e9a9913af4ec43d61294ecd5734c045be",
+    ".recovery/build-gcc93/obj/functions/load_text.o": "a16ec0ee1f45e4ac0a71630191accff3cbda582d15369f3b66fc7b53568dc112",
+    ".recovery/build-gcc93/obj/functions/manipulate_and_damage_all.o": "23e48ec021f3cb8141a8e7d2dbbf1c5419b9311b66a70a5766d58cbc5696b1cb",
+    ".recovery/build-gcc93/obj/functions/multiblock.o": "d65152c3fae6f6a0a645981024fc0890be79467f92beb67f88441ea8d64d07fe",
+    ".recovery/build-gcc93/obj/functions/packs.o": "7eb7d027e27236ea9ea95dce26d1f4ff80999e411a119926dc7d47d814b73a63",
+    ".recovery/build-gcc93/obj/functions/play_spell_for_free.o": "969b3b2284add33b7c4bf2f59d76787edaf60418351b3d35554f1a245c637b1a",
+    ".recovery/build-gcc93/obj/functions/produce_mana.o": "f02f92fff8bbd1d07d3568f768d53a7fda7eb64ff99905a49d276cece6c92a99",
+    ".recovery/build-gcc93/obj/functions/rules_engine.o": "de9c1ab07e51f7a7b1c3bdef89cb05a829ef52ea4460661d5559a602317cdbcc",
+    ".recovery/build-gcc93/obj/functions/sacrifices.o": "faafebba695e8dd2f7bf48d2f3247f9a9f94bf5f77d96c6d015901edf70d42fd",
+    ".recovery/build-gcc93/obj/functions/show_backtrace.o": "009b3bc0dbf46260103baab677de9929b33f34886740e326342313b3f4db022f",
+    ".recovery/build-gcc93/obj/functions/targets.o": "74ebf4a9944dda68624f9742b6ea52cc1f80d4fd92dd38906de99a9830d5a456",
+    ".recovery/build-gcc93/obj/functions/token_generation.o": "053a6965d293b1e6a55609b5762f6d8c64e47a67555aab8f5a96118e1dcd5518",
+    ".recovery/build-gcc93/obj/functions/tutors.o": "c152afd9fc36c77ecda85a5aaf90a5057a41c9caec5b3a03096604ebe5893f19",
+    ".recovery/build-gcc93/obj/functions/upkeep.o": "687f695563d9ea746cfb578ba1cff61eabd471029b10c2dc619999343b5d3f70",
+    ".recovery/build-gcc93/obj/functions/windows.o": "9e8f3553213dc29054a7dc8c03db4d8b6e2b57edd9296e93accf921a76d07769"
+  },
+  "after_link_inputs": {
+    ".recovery/build-gcc93/obj/cards/aether_revolt.o": "f368126f5da00a6a5d5dc8ad9d1c0d108c8af2d4c144cd033ef0e88b64d3de3e",
+    ".recovery/build-gcc93/obj/cards/alara_reborn.o": "cafdfae1b8c5a22e993815fbbccc9a8ff39b36a64a732be2f48bacfeba3a2184",
+    ".recovery/build-gcc93/obj/cards/alliances.o": "96b1072446d1b4f3f7978e350f0669fda35be48d9e87fec3dc2fab8e1201c1ec",
+    ".recovery/build-gcc93/obj/cards/amonkhet.o": "78b4bd1d28a1bf27e2ce0d448c0eaf3ec59902946bfe98774475382268767471",
+    ".recovery/build-gcc93/obj/cards/antiquities.o": "ad74f8c2d90d81d7a5b59924af5fcd05bc50987e9992359eede4bf1dbd5320b7",
+    ".recovery/build-gcc93/obj/cards/apocalypse.o": "24fdddc48acf4463cb48b8f01614b5205466f177d4e4c92cd58706a0fa60073e",
+    ".recovery/build-gcc93/obj/cards/arabian_nights.o": "e5277bbf9d4769fe836b68b909018bb6a043df337cfb661375af02274b25f7cd",
+    ".recovery/build-gcc93/obj/cards/archenemy.o": "60afaa61b4a68c96ac275379a8245178bbe94be9982e1090532319268f67627b",
+    ".recovery/build-gcc93/obj/cards/archenemy_nicol_bolas.o": "f696df1d7831001d3ff64988f2fd34b6b2e5dd022b1459a333becf1ea4be3423",
+    ".recovery/build-gcc93/obj/cards/artifact_creatures.o": "e06702d3247122e13e4ec9c47a7f7bb102f75e7aa741aca32906f6b9ceb2ed7e",
+    ".recovery/build-gcc93/obj/cards/avacyn_restored.o": "f7e32d5b674768ea02e829977ea258e6f882375926905325ebfe5554949fa5f6",
+    ".recovery/build-gcc93/obj/cards/battle_for_zendikar.o": "f485c57f48b0c3e39aa89b6b07ebb0c1391e1c04eb7381c09d27bdc845411fb3",
+    ".recovery/build-gcc93/obj/cards/battlebond.o": "e78c5ecc157268979c79ae561cc213594a26b9479ba1ed55e466614abb38aed8",
+    ".recovery/build-gcc93/obj/cards/betrayers_of_kamigawa.o": "ee958e1aa3184ba10856056561a1c6e793b419f45734d8c94922c1c29014e9d0",
+    ".recovery/build-gcc93/obj/cards/born_of_the_gods.o": "3a7bc44310bd2953f08e63bc285a24235e21386591e8822453a520aa0d0f4e25",
+    ".recovery/build-gcc93/obj/cards/champions_of_kamigawa.o": "43464b40046c0d83711f28f757874c3f38c04a0fbb13e90e2c000e68fd6f5407",
+    ".recovery/build-gcc93/obj/cards/coldsnap.o": "30ceeeab883efd7ff4563a38e13584196f39bdb6708601cefbc5041d9f5b3e95",
+    ".recovery/build-gcc93/obj/cards/commander.o": "4bc73373d6a30105bf3bc8d66682119c23d2f51c0af949277944c934f3426545",
+    ".recovery/build-gcc93/obj/cards/commander_2013.o": "b4ad882383d9e00a8c7acf1ad44191fe5f0f418cdc247f1042df691dfccbdc5a",
+    ".recovery/build-gcc93/obj/cards/commander_2014.o": "a9ca2687d11e1b1950d6cc977e982bf287c31d84b93d8754c4ed623684704602",
+    ".recovery/build-gcc93/obj/cards/commander_2015.o": "587f82e8b04e8f3cadecb038fdd8d9821d2cfd4bc750f5efcf8ab369c1acf9e6",
+    ".recovery/build-gcc93/obj/cards/commander_2016.o": "e24e693184b5389616a56922e39828dedbf04b5540ddb7365e20e3e8b5527b34",
+    ".recovery/build-gcc93/obj/cards/commander_2017.o": "2c9a936589a22c740df10df22703c3744aad1b6f39a1f7d352e9910706e34d28",
+    ".recovery/build-gcc93/obj/cards/commander_2018.o": "c2f19f79f880a8ae16ff242a6af7c2e06dbb9a67f8a2c52b45a108b94cb82db5",
+    ".recovery/build-gcc93/obj/cards/commander_2019.o": "7c5fe182eef275722b20c4a82be2fe672d77f173b2e8933c66710401b4bc7e6c",
+    ".recovery/build-gcc93/obj/cards/commander_2020.o": "657b3ffcaa7ddf90ad188aa7ce6988a9e7c46cebee94f0cec558d666752603a6",
+    ".recovery/build-gcc93/obj/cards/commander_legends.o": "23c2f89beb97b46b1162f6edb21fddedfb19d61e34b15148c9a3738cc49ac97a",
+    ".recovery/build-gcc93/obj/cards/conflux.o": "83b3d611e872d407b467d00bc57ab24a107a17866b215cb0d472cdfc277c0fce",
+    ".recovery/build-gcc93/obj/cards/conspiracy-take-the-crown.o": "fc789a4fa96dd122b033bf667cd729c58003857b51fb54caabe9b0bf10048ac7",
+    ".recovery/build-gcc93/obj/cards/conspiracy.o": "d89c8cbebaed8cc9e24bb16d2c5c4c6d98744ec47e08f99ca38851fb75dbad76",
+    ".recovery/build-gcc93/obj/cards/dark_ascension.o": "abb0095f872fcd9cbad2d7c0dc79a2f49eab7608b0e81491f06ed4db585573e7",
+    ".recovery/build-gcc93/obj/cards/darksteel.o": "3295baaa52b86cfde6e7937b9a879ccd4fec81d165d7630bc9bfff8ad0b5c6c9",
+    ".recovery/build-gcc93/obj/cards/dissension.o": "c8a1b91c1be39b37605e77556e5a38ef3ca92f8936de718dbfe52d479ab4028f",
+    ".recovery/build-gcc93/obj/cards/dominaria.o": "607451799439a4aaa7d095f90346476b8f94f2b03152af92e5e27adfbd3579f2",
+    ".recovery/build-gcc93/obj/cards/draft.o": "cb219ad59f3e8dafb4d2afbe9984789843b411a6afd40f107616dd4887cff379",
+    ".recovery/build-gcc93/obj/cards/dragons_maze.o": "1cf409bc1c3e0ffe906e82f49e0eb34c78433dcccea736dcaecbe920f7cb744e",
+    ".recovery/build-gcc93/obj/cards/dragons_of_tarkir.o": "e08f6efd4feb4cdacf68f7a81b5fb031ab6f24508bc4ee687dc85c7b96f2eb68",
+    ".recovery/build-gcc93/obj/cards/eldritch_moon.o": "efc5f07af3ab3aba5fbf7b765280040439aa4560c1be1e83d4b57651e9505f38",
+    ".recovery/build-gcc93/obj/cards/equipment.o": "89a5e3fab8e75d3ba6ca1a78ba7b3cf0f97fb182e2de69b4b30cf148f984e2c8",
+    ".recovery/build-gcc93/obj/cards/eventide.o": "d18f7188292f1ddefcaa43085b41d758ffe3877915adb3670157730ae3693104",
+    ".recovery/build-gcc93/obj/cards/exodus.o": "a7ba8ca2f3e6bdf4f4fb90cc214fd8cf24427961561495a6345efc5258d43292",
+    ".recovery/build-gcc93/obj/cards/fallen_empires.o": "8d6b67a5f8cb92fb79e1a2d001c7bf7af72e7db0f8242a870baa3543fec087c6",
+    ".recovery/build-gcc93/obj/cards/fate_reforged.o": "7a21c579ee627f90969fa703707039407dc44863ed3744395bd51cec048002cf",
+    ".recovery/build-gcc93/obj/cards/fifth_dawn.o": "31a63d46929f1b1c9958abf3388f1a23ff3e56811b19ddca95d78ead2e831bd7",
+    ".recovery/build-gcc93/obj/cards/future_sight.o": "6cbf5654cc4629d74bf4cd94a9c8db84627802927ee0f602f5965d25913b7d30",
+    ".recovery/build-gcc93/obj/cards/gargaroz.o": "d1d334ddadef46f82ed8862507d3dbddf24ff481a1370a683d3f148c0c4ca15c",
+    ".recovery/build-gcc93/obj/cards/gatecrash.o": "270bda0cc9d05b8035671313328ec8fb62744ca664fc1366d041cee74dec7e1d",
+    ".recovery/build-gcc93/obj/cards/global_series_jiang_yanggu_and_mu_yanling.o": "7e3280dc139e670bfdf54e259d9332b84cf9973a24bfc0b17202f8dc559cdc86",
+    ".recovery/build-gcc93/obj/cards/guildpact.o": "30759cebba6066c322f80c6b1ebd7263c17fa487803e521462504e7ec7f7b7b9",
+    ".recovery/build-gcc93/obj/cards/guilds_of_ravnica.o": "a247f3b38f8a5dcab2a7f17c915b86f7bb24906cb26f0cab1cf95d078fa6bb0f",
+    ".recovery/build-gcc93/obj/cards/homelands.o": "2e2fcc8944cf24b222f8e4df45263f27f36cdb856678161ac460d6322f348f37",
+    ".recovery/build-gcc93/obj/cards/hour_of_devastation.o": "b6893a9213658527fda8756fbaea6241594f63f8e202c2fbe3f25ef505ae19c4",
+    ".recovery/build-gcc93/obj/cards/ice_age.o": "11869c85a2372dda232851ddf04eaf6f4068473a7ff4a36c4076994c8c722dc3",
+    ".recovery/build-gcc93/obj/cards/ikoria.o": "27076e324890639ccf1a93a2594509847717bc6f7605c6fe941321a9c1f27f0a",
+    ".recovery/build-gcc93/obj/cards/innistrad.o": "9b805748c135dea0be3f7d4e18ddd8e9b9fc88ac8bfd64436405e7a6e5e0f97d",
+    ".recovery/build-gcc93/obj/cards/invasion.o": "11c2e98c4a3a09f3015d7cdca08968979a8f6339897b46ab04e8be5283b8014b",
+    ".recovery/build-gcc93/obj/cards/ixalan.o": "094382bffd917cb93b331015abce6e0085c40e791b48cd4bc6ec37f6832c0966",
+    ".recovery/build-gcc93/obj/cards/journey_into_nyx.o": "0e797947d72b297c56b40a5fcfbb13e2a04221b199b3f9b4d4ef37cd4d0fd267",
+    ".recovery/build-gcc93/obj/cards/judgement.o": "9408f085e34eb8b277abbfd5845d1de3e89613d7a3e06d6274b73a9eaa534dfd",
+    ".recovery/build-gcc93/obj/cards/jumpstart.o": "042702434f7a131d759701d12ad6b8675219c64a526d7ac7133f39f61f7ee042",
+    ".recovery/build-gcc93/obj/cards/kaladesh.o": "7540f04fdaa989c3c9b6a7bdfab2a2f6d15a6fdf61e7bfece0f432ba00f8f66b",
+    ".recovery/build-gcc93/obj/cards/khans_of_tarkir.o": "7fa0ef36a2eec632dc2c8407f049fd8b1f73c672367a14ce7ed7d5578f278367",
+    ".recovery/build-gcc93/obj/cards/legends.o": "62e1cedbf005076bfceab73a0942962403137954117ee685c671082fd4b4eac8",
+    ".recovery/build-gcc93/obj/cards/legions.o": "e7e207a36f65aa1edcf8ceeb7c11df1102ccfefeaeda7e58339c6083b4c6f12c",
+    ".recovery/build-gcc93/obj/cards/lorwyn.o": "03a2376ef06b698d32a2b9b06cab92b7833d02aa01dc6c00b21c999d8f3fd27f",
+    ".recovery/build-gcc93/obj/cards/m10.o": "9e8dd346ee8db2b1d86a71450924844d9e007d275da42388a0610cda79a6906b",
+    ".recovery/build-gcc93/obj/cards/m11.o": "3049dcfa308ab5193d12fba4c22976c30fdfe6c3991ce8afd3d6bad77d6e9cb0",
+    ".recovery/build-gcc93/obj/cards/m12.o": "bd4b3303f8e2b7c147fb7392fb43e6387fa89540e6b8a35cdf11fa9e6c4598c6",
+    ".recovery/build-gcc93/obj/cards/m13.o": "858d2e01a782c0ff9eee3e079e1cead3bc309b64bf0e61f3058a50320a338d33",
+    ".recovery/build-gcc93/obj/cards/m14.o": "aa44214336726647a70b6a5f81e53b226a9a8a5751b489af4590e73a4d3c0800",
+    ".recovery/build-gcc93/obj/cards/m15.o": "c9368b5f6c023127d1d5162438cc9f39dbac60e7dc438907863aedefe758b57c",
+    ".recovery/build-gcc93/obj/cards/m19.o": "d75f1a0604d54ed6b8e7673d7810d6b7a6b1642a138e97a9c13f599e83fb4e55",
+    ".recovery/build-gcc93/obj/cards/m20.o": "e5384982892a3c3274281f39fe60b457299a4058dea6d6dd96883a401acc254b",
+    ".recovery/build-gcc93/obj/cards/mercadian_masques.o": "45be414daaf39b0d53a88ccb4ee11a40d9b5f7f3b8c169ee678870dc548d8c57",
+    ".recovery/build-gcc93/obj/cards/mirage.o": "1e06d395dcf938fb62323826970db52620370590a8d2e82dfff861bfef1eeac9",
+    ".recovery/build-gcc93/obj/cards/mirrodin.o": "94b5ffe224400ae5c19f60721fcf3b6f02b914defe5c248ec36d1efcc7ef63b4",
+    ".recovery/build-gcc93/obj/cards/mirrodin_besieged.o": "b68159f13a1c06b7ff223010df16c73f29394064b48a5afbd9c10decbe20c819",
+    ".recovery/build-gcc93/obj/cards/modern_horizons.o": "9124f03739d3c41291a8094ce8a7b947447bdcab1a52bcb5b4a45e2e5b7cea0a",
+    ".recovery/build-gcc93/obj/cards/modern_horizons_2.o": "76f4d4fd3a432b3d92d351215d7441322a6935e6c3576cf8b9e2b54224842ada",
+    ".recovery/build-gcc93/obj/cards/morningtide.o": "d8ab0b8f6937b2f588845bd398963fff0fc04fa7b031ed28dbda6fbe43ab2783",
+    ".recovery/build-gcc93/obj/cards/nemesis.o": "68e161d54969e8049b2a92195014d7e34f2a42477a6d227aa8a0c167123d2125",
+    ".recovery/build-gcc93/obj/cards/new_phyrexia.o": "29138e4929b41920d5e1a2b03cb4026a8697eac2f5c8f3bc8f4d787079c0dbba",
+    ".recovery/build-gcc93/obj/cards/oath_of_the_gatewatch.o": "9cbee7d6e1fefe5ec5bf8e9e2791cda4e60567edbda0a4552aeb68440b1b9e48",
+    ".recovery/build-gcc93/obj/cards/odissey.o": "d3d2be7635d4f86797a454fec0e299fc2710defdab514aa573f9c19ea38916b4",
+    ".recovery/build-gcc93/obj/cards/odyssey.o": "e241d7c899623e2d7c0475f8a42ec034534621476d695d8137d495829a278022",
+    ".recovery/build-gcc93/obj/cards/onslaught.o": "50652b0c4ff495c734a6972f12cac374ee7d981b8a0eb5d6562ddb5bf10f271e",
+    ".recovery/build-gcc93/obj/cards/origins.o": "9977e34ef38c6dfb36b3238387d4c64a64b81bd27a09abe26f7b72e1b0b670f3",
+    ".recovery/build-gcc93/obj/cards/planar_chaos.o": "62ed68598317736a6b6daa0f3497efcb85fddd26addcf13176e3a2e2cc9a5b7f",
+    ".recovery/build-gcc93/obj/cards/planechase.o": "bec10f2aead488e801603c9f4f6d9b74cd0a2635c894a9d5bad2f622e6350c84",
+    ".recovery/build-gcc93/obj/cards/planeshift.o": "63fe83228ab721f7ff373b70039bceda90b0c1a75d3c186c0086db9cdab0f031",
+    ".recovery/build-gcc93/obj/cards/planeswalker.o": "94b02c2eef7c9275f8bd742ae3f1a8e87eb5929fd6ad4eae4d4152a95bb2727e",
+    ".recovery/build-gcc93/obj/cards/portal_1_2_3k.o": "abfb3ac8072d29685ac64282b9c668a8affddfc8a375013449e578306f74d6b2",
+    ".recovery/build-gcc93/obj/cards/promo.o": "43224354f5e0cd6b55cc7a17b02f4167ea1f548b92556900a0c2bc5d23e01d4c",
+    ".recovery/build-gcc93/obj/cards/prophecy.o": "33fbedd9f18989bd3aa593650122de9a5f2914fefab4fc278d14a526a038fc82",
+    ".recovery/build-gcc93/obj/cards/ravnica.o": "01cc327f4891cb4df6adff64ed63e27b1b3097f24866adb2e31960c275cd79e4",
+    ".recovery/build-gcc93/obj/cards/ravnica_allegiance.o": "6d8787a53c666f02ef1b5c05d824174b311bd857ecf5a656ee2d09d94522345f",
+    ".recovery/build-gcc93/obj/cards/return_to_ravnica.o": "09cd69c72c96a51e06f8ac7af9b1b30593de6b708641ae7113e10095dfbd5b19",
+    ".recovery/build-gcc93/obj/cards/rise_of_the_eldrazi.o": "537fcbf7e1824a5e13996911af602cf99131f4b67aba71d6ae17dab8d6072720",
+    ".recovery/build-gcc93/obj/cards/rivals_of_ixalan.o": "0de925e51bfebbadcad30ec9957e0b928d407b41f45845627b9bf9b22dd336d3",
+    ".recovery/build-gcc93/obj/cards/saviors_of_kamigawa.o": "4fca14948c960b0fcf04353a1a7ebffbc27b81ffbd636bedba4135649f08d1fd",
+    ".recovery/build-gcc93/obj/cards/scars_of_mirrodin.o": "234ceacde37ae1988d66f3601bba432e143924a4ca5b7657058fcd3436a0b1a7",
+    ".recovery/build-gcc93/obj/cards/scourge.o": "f199fc18ad04d66ea30f7f661da355bf8f6376912fb57325b375fb4c0879102d",
+    ".recovery/build-gcc93/obj/cards/shadowmoor.o": "31663932c239a605208343d03897de532d50498992ff7f50b222bdc3733680b3",
+    ".recovery/build-gcc93/obj/cards/shadows_over_innistrad.o": "3c89e20385fcacaf2b74999581e84914ce9b17b540bcf1cd8406727254f28ca5",
+    ".recovery/build-gcc93/obj/cards/shards_of_alara.o": "1292c8c9e4feefa2b72e1306182bc7dee6018a1ab7190e01a38dcff069b54809",
+    ".recovery/build-gcc93/obj/cards/strixhaven.o": "0c66703db8329c0989d70cee88d3a3188c23347b197dbd1c0d667f0fefdca3d0",
+    ".recovery/build-gcc93/obj/cards/stronghold.o": "c854e454da7d43c81de3483c050d196f3d0f59c5c28321834c465e5891cc8c0a",
+    ".recovery/build-gcc93/obj/cards/stubs.o": "e651ae9282c8f33a6cac34cd7a158af430ef01d4158a0fd0898939b05aa36dff",
+    ".recovery/build-gcc93/obj/cards/tempest.o": "fc7999cc6e757c489730d4932043568915662a70c8a6fd70977893b85e90ef59",
+    ".recovery/build-gcc93/obj/cards/the_dark.o": "201071e9b25c8ae44a661b385cbf838d6a22edcf9f4281495f895fce4d0d474d",
+    ".recovery/build-gcc93/obj/cards/theros.o": "4951ec08ca518e6207735e6ee9a24d0a6cbc6fadb828b125db15a3413042a4de",
+    ".recovery/build-gcc93/obj/cards/theros_beyond_death.o": "ea0ce68e682290fb50fb41a783f4502a74b1b8a9deaf7ddeab0be0f1d5062762",
+    ".recovery/build-gcc93/obj/cards/throne_of_eldraine.o": "04fdcbb6af711ccfd92472160e1f710fa22bb317f48a2e8f5c9c18967c2b9835",
+    ".recovery/build-gcc93/obj/cards/time_spiral.o": "269ae0f5aaf715a905abf54e08b8f38505c7d64aa254ea7a728851307d155626",
+    ".recovery/build-gcc93/obj/cards/tokens.o": "0a88f489b574927b9b9a70680f61f82854fe3c71b187d4e2ea94a4936cca082b",
+    ".recovery/build-gcc93/obj/cards/torment.o": "774dde325f0221155fc948a46a8e366daf63fdf1b66dc7b5eb1f20fae72ce18b",
+    ".recovery/build-gcc93/obj/cards/unglued_unhinged.o": "001abfffde9d2b50c803a4497d377bd5f23b206f431a63aa4a6ceb85df9881ee",
+    ".recovery/build-gcc93/obj/cards/unlimited.o": "2935c3e7fdf64723c6bddf7e914fcef6734734f3a138a5de0b596e35281fa4fd",
+    ".recovery/build-gcc93/obj/cards/unstable.o": "30ae062c4f476c47d9962f8c19a974c7ed2ef42fc9205faa3d436f92cd4bb2ca",
+    ".recovery/build-gcc93/obj/cards/urza_destiny.o": "cac3a589a12a334763cb3251635c82efa3d8a4ee28eaac15a01c009ff862a721",
+    ".recovery/build-gcc93/obj/cards/urza_legacy.o": "43a1d53d195adf5e08b686082b241cc81ed58065fcb1952d52d2a04cc2574b5c",
+    ".recovery/build-gcc93/obj/cards/urza_saga.o": "60145fc238b24ea1fb136421767a73195e2b8700875d103fa2ee6152da0466e0",
+    ".recovery/build-gcc93/obj/cards/vanguard.o": "65c419abde65a20fd64ccb8e1f60a918ce39a01fab0595c2a578c605329d7838",
+    ".recovery/build-gcc93/obj/cards/visions.o": "cbf9e3169afe06359f96e5f29e08a073d066d2593238d8e06e182685c0217913",
+    ".recovery/build-gcc93/obj/cards/war_of_the_spark.o": "273ba46ca595941f73dc651e589776387a967fa6bd1d7627425f2832bad8c396",
+    ".recovery/build-gcc93/obj/cards/weatherlight.o": "90aa378a7cfa6d59ee494d41e30edb07c90159c5fa02c92de3ba3cd0feafab07",
+    ".recovery/build-gcc93/obj/cards/worldwake.o": "4755ad0314da4de54bbc1a49e2e22fec75c792910125f9c2434ce220bd49773d",
+    ".recovery/build-gcc93/obj/cards/zendikar.o": "ab191a0ff59f41e674d9ac7b4517f14d18a8d36c8fa0e9a0d7613d666c9a74e6",
+    ".recovery/build-gcc93/obj/cards/zendikar_rising.o": "50439708f07a0a48a67450c714cf322402e11d1ee20c2a01594402872f8ae718",
+    ".recovery/build-gcc93/obj/functions/abilities.o": "20ba8038706c01684f4f654c4a5caeb15f071eed71f1ba24c238cbc915379df8",
+    ".recovery/build-gcc93/obj/functions/ai.o": "cbc401ccc5bd74c991043fddfa3e39601692a0eae7c6219f9d8bb5294535e00b",
+    ".recovery/build-gcc93/obj/functions/auras.o": "c4b0dda11be04c1079393476b98b89b47cad3e316dea153bda458bf3673c3030",
+    ".recovery/build-gcc93/obj/functions/boost_creature_type.o": "b0e8074ca4e4c554ed0670518a556d14358f7837e038869501ed2585083560fc",
+    ".recovery/build-gcc93/obj/functions/challenge_mode.o": "54e64b2fffa7aa393e3636676764ab3e9b88dc882a5a0b11221825a4f7a54249",
+    ".recovery/build-gcc93/obj/functions/count_graveyard.o": "a917abf489b330d638b77890714d7d63225e17e7c15c7bbfd29bab77da410625",
+    ".recovery/build-gcc93/obj/functions/counters.o": "4d742c45c007c230fdac48d2218f4f9fdcb5bea7c5416b09be7c96f81b2e1af5",
+    ".recovery/build-gcc93/obj/functions/damage_effects.o": "0927693efab3f9ffeb6a6fc8e48ed4e4ba902d65f6e41c37c273efc8e9d0d985",
+    ".recovery/build-gcc93/obj/functions/deadbox.o": "f36407331a0bad0edbcd57745dc7b5ec4a532ab5060bca5ef0926724868c0a3d",
+    ".recovery/build-gcc93/obj/functions/deck.o": "c352dd40d422fb926d818fbd094d8fc428bd30cbd740b04e3247a577c3a20165",
+    ".recovery/build-gcc93/obj/functions/dialog.o": "cb49c1420085a5f33e9603256e9a88b6ab7f786b87957e86db43f7aab79e85e5",
+    ".recovery/build-gcc93/obj/functions/dice.o": "c47c476f886d28ef4f866d6faec33a6678d0c3da3dcfdc8477f6730481621872",
+    ".recovery/build-gcc93/obj/functions/draft.o": "57ae899ea6ceb072f3d5343e8b0f0572efe52dfd63048c2fc88f0d779fb9b013",
+    ".recovery/build-gcc93/obj/functions/engine.o": "444d5081b082ffbdde980c9524d6003c1b64a2615ec8d7697dfe4d96008a33a1",
+    ".recovery/build-gcc93/obj/functions/equipments.o": "e138f240a4fe197d95a69c90e601bf9a4f958254c260a603317000e029fca35d",
+    ".recovery/build-gcc93/obj/functions/events.o": "35ac5f18c540e87eacd8e7f4d93e39f8de3b96aa263644f6296ca8759f8e7820",
+    ".recovery/build-gcc93/obj/functions/exiledby.o": "e8bc29423bcd4f6bf7a9a079b9b85641f30566d66ee745800a8eca29297a416f",
+    ".recovery/build-gcc93/obj/functions/functions.o": "48178515b0d1b3516704dd450d90060c327bfd519344077a1991dac47011daf7",
+    ".recovery/build-gcc93/obj/functions/gain_control_and_legend_rule.o": "fd77d49518923296dc3cb4f52466de831fc8a67a04ffff23f788794a3763708c",
+    ".recovery/build-gcc93/obj/functions/global_checking.o": "e0bd743fa7117c01264965356cc07391079fc50f2191ded8af02d905d7c9ec87",
+    ".recovery/build-gcc93/obj/functions/has_creature_type.o": "aa1b3633ca9afaf17b7267ff7e73cfc3b7721af3a61314e8759d5f372d82990a",
+    ".recovery/build-gcc93/obj/functions/has_threshold.o": "1801874a2392bffd14fd695cdef0b010efdd329ec91a38f4317fea2e79f3b622",
+    ".recovery/build-gcc93/obj/functions/helper_functions.o": "801466ab83cd9d8777c95b1fea6ba81e9a9913af4ec43d61294ecd5734c045be",
+    ".recovery/build-gcc93/obj/functions/load_text.o": "a16ec0ee1f45e4ac0a71630191accff3cbda582d15369f3b66fc7b53568dc112",
+    ".recovery/build-gcc93/obj/functions/manipulate_and_damage_all.o": "23e48ec021f3cb8141a8e7d2dbbf1c5419b9311b66a70a5766d58cbc5696b1cb",
+    ".recovery/build-gcc93/obj/functions/multiblock.o": "d65152c3fae6f6a0a645981024fc0890be79467f92beb67f88441ea8d64d07fe",
+    ".recovery/build-gcc93/obj/functions/packs.o": "7eb7d027e27236ea9ea95dce26d1f4ff80999e411a119926dc7d47d814b73a63",
+    ".recovery/build-gcc93/obj/functions/play_spell_for_free.o": "969b3b2284add33b7c4bf2f59d76787edaf60418351b3d35554f1a245c637b1a",
+    ".recovery/build-gcc93/obj/functions/produce_mana.o": "f02f92fff8bbd1d07d3568f768d53a7fda7eb64ff99905a49d276cece6c92a99",
+    ".recovery/build-gcc93/obj/functions/rules_engine.o": "de9c1ab07e51f7a7b1c3bdef89cb05a829ef52ea4460661d5559a602317cdbcc",
+    ".recovery/build-gcc93/obj/functions/sacrifices.o": "faafebba695e8dd2f7bf48d2f3247f9a9f94bf5f77d96c6d015901edf70d42fd",
+    ".recovery/build-gcc93/obj/functions/show_backtrace.o": "009b3bc0dbf46260103baab677de9929b33f34886740e326342313b3f4db022f",
+    ".recovery/build-gcc93/obj/functions/targets.o": "74ebf4a9944dda68624f9742b6ea52cc1f80d4fd92dd38906de99a9830d5a456",
+    ".recovery/build-gcc93/obj/functions/token_generation.o": "053a6965d293b1e6a55609b5762f6d8c64e47a67555aab8f5a96118e1dcd5518",
+    ".recovery/build-gcc93/obj/functions/tutors.o": "c152afd9fc36c77ecda85a5aaf90a5057a41c9caec5b3a03096604ebe5893f19",
+    ".recovery/build-gcc93/obj/functions/upkeep.o": "687f695563d9ea746cfb578ba1cff61eabd471029b10c2dc619999343b5d3f70",
+    ".recovery/build-gcc93/obj/functions/windows.o": "9e8f3553213dc29054a7dc8c03db4d8b6e2b57edd9296e93accf921a76d07769"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "reviewed_handlers": 68,
+  "corrected_handlers": 12,
+  "retained_handlers": 56,
+  "restored_native_scalar_stores": 27,
+  "restored_value_flows": 4,
+  "source_units": 12,
+  "comparison_kinds": {
+    "exact_scalar_byte_events": 63,
+    "relocated_callback_identity": 4,
+    "mutually_exclusive_sai_quantity_clone": 1
+  },
+  "changed_linker_objects": 12,
+  "unchanged_linker_objects": 154,
+  "verified_fixed_slots": 15169,
+  "combined_flat_test_union_inventory_reviewed": 105,
+  "remaining_in_that_inventory": 0,
+  "remaining_inline_source_definition_names": 22,
+  "repairs": [
+    {
+      "name": "card_arahbo_roar_of_the_world",
+      "source": "cards/commander_2017.c",
+      "reason": "The attacker filter selects other Cats."
+    },
+    {
+      "name": "card_plague_reaver",
+      "source": "cards/commander_legends.c",
+      "reason": "The end-step sacrifice excludes Plague Reaver itself."
+    },
+    {
+      "name": "card_pure_simple",
+      "source": "cards/dissension.c",
+      "reason": "Both the AI count and Simple resolution select Auras or Equipment."
+    },
+    {
+      "name": "card_turn_burn",
+      "source": "cards/dragons_maze.c",
+      "reason": "Turn sets zero/one, Weird subtype and the sleighted red color returned by the helper."
+    },
+    {
+      "name": "card_tourachs_gate",
+      "source": "cards/fallen_empires.c",
+      "reason": "The pump affects attacking creatures."
+    },
+    {
+      "name": "card_goblin_rabblemaster",
+      "source": "cards/m15.c",
+      "reason": "The power bonus counts other attacking Goblins."
+    },
+    {
+      "name": "card_reign_of_terror",
+      "source": "cards/mirage.c",
+      "reason": "Resolution retains the selected sleighted color; the native discarded green AI counts are preserved."
+    },
+    {
+      "name": "card_fast_furious",
+      "source": "cards/modern_horizons_2.c",
+      "reason": "Furious damages creatures without flying."
+    },
+    {
+      "name": "card_mana_cache",
+      "source": "cards/nemesis.c",
+      "reason": "The end-step charge count includes untapped lands."
+    },
+    {
+      "name": "card_dual_nature",
+      "source": "cards/prophecy.c",
+      "reason": "Keep the leaving creature name across predicate calls and remove only tokens with that name."
+    },
+    {
+      "name": "card_slaughter_the_strong",
+      "source": "cards/rivals_of_ixalan.c",
+      "reason": "Pass the original two-by-151 survivor matrix to not_marked so chosen creatures are excluded."
+    },
+    {
+      "name": "card_day_of_the_dragons",
+      "source": "cards/scourge.c",
+      "reason": "The leaves-play removal selects Dragons; native type and bury action are preserved."
+    }
+  ],
+  "source_provenance_setup": {
+    "session_id": 43057,
+    "exit_code": 0,
+    "build_exit_code": 0,
+    "build_chunk_id": "80ba29",
+    "setup_log": ".recovery/wide-stack-tests-setup.log",
+    "build_log": ".recovery/wide-stack-tests-build.log",
+    "setup_log_sha256": "c9164855a8f8d3f011b37a7be375271c86091e64633bff4c2a7e198927cc9f66",
+    "build_log_sha256": "d48c1d4dd76d0fc317f0d707310b5f8117385a83d9664e040594536d8460ffd4"
+  },
+  "inputs": {
+    "ManalinkEh.dll": "21833fe81a505ec8b287ec25e64b5426325bd350f09c9beed3c63e45d24068d9",
+    "ManalinkEh.dbg": "31ef2a6dc4ed4c81c8cff4d40fb54e0d4757683aaa0c55ddb32a71e814be3562",
+    "docs/recovery-evidence/helper-canonicalization.json": "1ae63dd8d29a8ed3e06e2d736b8ce0d8e87dff01bbc523f45fdff310f4a92b8c",
+    "docs/recovery-evidence/wide-stack-test-recovery.json": "8a4d962954602fc5c2f6ef5067ddd63e7536fc9bf483f546c09d3f4ff0f718a3",
+    "tools/recovery/verify_wide_stack_test_recovery.py": "dabb3a2b163a3ed8baf98e0465fc8806c3320df15b2c9ba45df65f6833e3b64c"
+  },
+  "scope": "Classify the additional68 flat source unions containing a test definition. Restore27 missing native scalar stores in12 existing handlers, including two discarded color returns, a creature-name cache and the Slaughter survivor-matrix callback. Inspect named direct EBP-relative parameter stores at offsets100..215, not complete function semantics, indirect writes, or every possible local storage shape. Callback comparisons use exact native/rebuilt COFF function identities; compiler duplication requires explicit CFG evidence. Original source receipts remain immutable."
+}

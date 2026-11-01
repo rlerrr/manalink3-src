@@ -1,0 +1,640 @@
+{
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "current_dll_sha256": "ed075c0e38a6fd39ff273e3edcab9889a83e85cf7bd11d58b2b8023087203455",
+  "current_dbg_sha256": "908430b7db63bd6de509473d5b020fdff40938973cdfab500ed23a5cf9db83d2",
+  "tool_sha256": "f4e70b5a00e3f577760dbece3fb4caf67514263207ff7756b5c0495e4bb8dfd9",
+  "native": {
+    "view": {
+      "address": "0x2666af0",
+      "end": "0x2666bb9",
+      "bytes_sha256": "8228f8f435625feb4c3b1a3628d73259d0f7b567584914c95481b44417875acc"
+    },
+    "argument_number": 6,
+    "amount_ebp_displacement": 32,
+    "token_frame": -96,
+    "qty_field_offset": 43,
+    "stores": [
+      {
+        "address": "0x2666b36",
+        "instruction": [
+          "mov",
+          "byte ptr [ebp - 0x2d], al"
+        ],
+        "value": "low8(formal amount)"
+      },
+      {
+        "address": "0x2666bb4",
+        "instruction": [
+          "mov",
+          "byte ptr [ebp - 0x2d], al"
+        ],
+        "value": "low8(formal amount)"
+      }
+    ],
+    "generator": "0x2666b63",
+    "every_generator_path_has_qty_store": true,
+    "stores_mutually_unreachable": true,
+    "no_store_site_repeats": true,
+    "instructions": [
+      [
+        "0x2666af0",
+        "push",
+        "ebp"
+      ],
+      [
+        "0x2666af1",
+        "mov",
+        "ebp, esp"
+      ],
+      [
+        "0x2666af3",
+        "push",
+        "edi"
+      ],
+      [
+        "0x2666af4",
+        "push",
+        "esi"
+      ],
+      [
+        "0x2666af5",
+        "push",
+        "ebx"
+      ],
+      [
+        "0x2666af6",
+        "sub",
+        "esp, 0x5c"
+      ],
+      [
+        "0x2666af9",
+        "mov",
+        "esi, dword ptr [ebp + 0x10]"
+      ],
+      [
+        "0x2666afc",
+        "mov",
+        "edx, dword ptr [ebp + 8]"
+      ],
+      [
+        "0x2666aff",
+        "mov",
+        "ecx, dword ptr [ebp + 0xc]"
+      ],
+      [
+        "0x2666b02",
+        "lea",
+        "eax, [esi - 2]"
+      ],
+      [
+        "0x2666b05",
+        "cmp",
+        "eax, 0xdc"
+      ],
+      [
+        "0x2666b0a",
+        "ja",
+        "0x2666b70"
+      ],
+      [
+        "0x2666b0c",
+        "movsx",
+        "edi, word ptr [eax + eax + 0x275e480]"
+      ],
+      [
+        "0x2666b14",
+        "lea",
+        "ebx, [ebp - 0x58]"
+      ],
+      [
+        "0x2666b17",
+        "test",
+        "edi, edi"
+      ],
+      [
+        "0x2666b19",
+        "mov",
+        "dword ptr [esp + 0xc], ebx"
+      ],
+      [
+        "0x2666b1d",
+        "jne",
+        "0x2666b80"
+      ],
+      [
+        "0x2666b1f",
+        "mov",
+        "dword ptr [esp + 8], 0x4979"
+      ],
+      [
+        "0x2666b27",
+        "mov",
+        "dword ptr [esp + 4], ecx"
+      ],
+      [
+        "0x2666b2b",
+        "mov",
+        "dword ptr [esp], edx"
+      ],
+      [
+        "0x2666b2e",
+        "call",
+        "0x2665470"
+      ],
+      [
+        "0x2666b33",
+        "mov",
+        "al, byte ptr [ebp + 0x20]"
+      ],
+      [
+        "0x2666b36",
+        "mov",
+        "byte ptr [ebp - 0x2d], al"
+      ],
+      [
+        "0x2666b39",
+        "mov",
+        "dword ptr [ebp - 0x28], 0x80000"
+      ],
+      [
+        "0x2666b40",
+        "mov",
+        "dword ptr [ebp - 0x18], 0x2664e00"
+      ],
+      [
+        "0x2666b47",
+        "mov",
+        "dword ptr [ebp - 0x24], esi"
+      ],
+      [
+        "0x2666b4a",
+        "mov",
+        "eax, dword ptr [ebp + 0x14]"
+      ],
+      [
+        "0x2666b4d",
+        "mov",
+        "dword ptr [esp], ebx"
+      ],
+      [
+        "0x2666b50",
+        "mov",
+        "byte ptr [ebp - 0x30], al"
+      ],
+      [
+        "0x2666b53",
+        "mov",
+        "eax, dword ptr [ebp + 0x18]"
+      ],
+      [
+        "0x2666b56",
+        "mov",
+        "dword ptr [ebp - 0x40], eax"
+      ],
+      [
+        "0x2666b59",
+        "mov",
+        "eax, dword ptr [ebp + 0x1c]"
+      ],
+      [
+        "0x2666b5c",
+        "mov",
+        "byte ptr [ebp - 0x2f], 1"
+      ],
+      [
+        "0x2666b60",
+        "mov",
+        "dword ptr [ebp - 0x3c], eax"
+      ],
+      [
+        "0x2666b63",
+        "call",
+        "0x26659d0"
+      ],
+      [
+        "0x2666b68",
+        "add",
+        "esp, 0x5c"
+      ],
+      [
+        "0x2666b6b",
+        "pop",
+        "ebx"
+      ],
+      [
+        "0x2666b6c",
+        "pop",
+        "esi"
+      ],
+      [
+        "0x2666b6d",
+        "pop",
+        "edi"
+      ],
+      [
+        "0x2666b6e",
+        "pop",
+        "ebp"
+      ],
+      [
+        "0x2666b6f",
+        "ret",
+        ""
+      ],
+      [
+        "0x2666b70",
+        "lea",
+        "ebx, [ebp - 0x58]"
+      ],
+      [
+        "0x2666b73",
+        "mov",
+        "dword ptr [esp + 0xc], ebx"
+      ],
+      [
+        "0x2666b77",
+        "jmp",
+        "0x2666b1f"
+      ],
+      [
+        "0x2666b79",
+        "lea",
+        "esi, [esi]"
+      ],
+      [
+        "0x2666b80",
+        "mov",
+        "dword ptr [esp + 4], ecx"
+      ],
+      [
+        "0x2666b84",
+        "mov",
+        "dword ptr [esp], edx"
+      ],
+      [
+        "0x2666b87",
+        "mov",
+        "dword ptr [esp + 8], edi"
+      ],
+      [
+        "0x2666b8b",
+        "call",
+        "0x2665470"
+      ],
+      [
+        "0x2666b90",
+        "mov",
+        "dword ptr [esp], edi"
+      ],
+      [
+        "0x2666b93",
+        "call",
+        "0x26b3410"
+      ],
+      [
+        "0x2666b98",
+        "lea",
+        "eax, [eax + eax*8]"
+      ],
+      [
+        "0x2666b9b",
+        "mov",
+        "eax, dword ptr [eax*8 + 0x7e7048]"
+      ],
+      [
+        "0x2666ba2",
+        "test",
+        "eax, eax"
+      ],
+      [
+        "0x2666ba4",
+        "je",
+        "0x2666bb1"
+      ],
+      [
+        "0x2666ba6",
+        "mov",
+        "byte ptr [ebp - 0x2e], 1"
+      ],
+      [
+        "0x2666baa",
+        "mov",
+        "dword ptr [ebp - 0x1c], 0x2664e30"
+      ],
+      [
+        "0x2666bb1",
+        "mov",
+        "al, byte ptr [ebp + 0x20]"
+      ],
+      [
+        "0x2666bb4",
+        "mov",
+        "byte ptr [ebp - 0x2d], al"
+      ],
+      [
+        "0x2666bb7",
+        "jmp",
+        "0x2666b4a"
+      ]
+    ]
+  },
+  "current": {
+    "view": {
+      "address": "0x26e1a00",
+      "end": "0x26e1ab3",
+      "bytes_sha256": "a6b0bff8efb12b6eff85bb532b4224579e850f986153e6713bd21e4815cd70aa"
+    },
+    "argument_number": 6,
+    "amount_ebp_displacement": 32,
+    "token_frame": -96,
+    "qty_field_offset": 43,
+    "stores": [
+      {
+        "address": "0x26e1a5a",
+        "instruction": [
+          "mov",
+          "byte ptr [ebp - 0x2d], al"
+        ],
+        "value": "low8(formal amount)"
+      }
+    ],
+    "generator": "0x26e1a73",
+    "every_generator_path_has_qty_store": true,
+    "stores_mutually_unreachable": true,
+    "no_store_site_repeats": true,
+    "instructions": [
+      [
+        "0x26e1a00",
+        "push",
+        "ebp"
+      ],
+      [
+        "0x26e1a01",
+        "mov",
+        "ebp, esp"
+      ],
+      [
+        "0x26e1a03",
+        "push",
+        "edi"
+      ],
+      [
+        "0x26e1a04",
+        "push",
+        "esi"
+      ],
+      [
+        "0x26e1a05",
+        "push",
+        "ebx"
+      ],
+      [
+        "0x26e1a06",
+        "lea",
+        "ebx, [ebp - 0x58]"
+      ],
+      [
+        "0x26e1a09",
+        "sub",
+        "esp, 0x5c"
+      ],
+      [
+        "0x26e1a0c",
+        "mov",
+        "esi, dword ptr [ebp + 0x10]"
+      ],
+      [
+        "0x26e1a0f",
+        "mov",
+        "edx, dword ptr [ebp + 8]"
+      ],
+      [
+        "0x26e1a12",
+        "mov",
+        "ecx, dword ptr [ebp + 0xc]"
+      ],
+      [
+        "0x26e1a15",
+        "mov",
+        "dword ptr [esp + 0xc], ebx"
+      ],
+      [
+        "0x26e1a19",
+        "lea",
+        "eax, [esi - 2]"
+      ],
+      [
+        "0x26e1a1c",
+        "cmp",
+        "eax, 0xdc"
+      ],
+      [
+        "0x26e1a21",
+        "ja",
+        "0x26e1a2f"
+      ],
+      [
+        "0x26e1a23",
+        "movsx",
+        "edi, word ptr [eax + eax + 0x2772360]"
+      ],
+      [
+        "0x26e1a2b",
+        "test",
+        "edi, edi"
+      ],
+      [
+        "0x26e1a2d",
+        "jne",
+        "0x26e1a80"
+      ],
+      [
+        "0x26e1a2f",
+        "mov",
+        "dword ptr [esp + 8], 0x4979"
+      ],
+      [
+        "0x26e1a37",
+        "mov",
+        "dword ptr [esp + 4], ecx"
+      ],
+      [
+        "0x26e1a3b",
+        "mov",
+        "dword ptr [esp], edx"
+      ],
+      [
+        "0x26e1a3e",
+        "call",
+        "0x26e0c80"
+      ],
+      [
+        "0x26e1a43",
+        "mov",
+        "dword ptr [ebp - 0x28], 0x80000"
+      ],
+      [
+        "0x26e1a4a",
+        "mov",
+        "dword ptr [ebp - 0x18], 0x26e0500"
+      ],
+      [
+        "0x26e1a51",
+        "mov",
+        "dword ptr [ebp - 0x24], esi"
+      ],
+      [
+        "0x26e1a54",
+        "mov",
+        "eax, dword ptr [ebp + 0x20]"
+      ],
+      [
+        "0x26e1a57",
+        "mov",
+        "dword ptr [esp], ebx"
+      ],
+      [
+        "0x26e1a5a",
+        "mov",
+        "byte ptr [ebp - 0x2d], al"
+      ],
+      [
+        "0x26e1a5d",
+        "mov",
+        "eax, dword ptr [ebp + 0x14]"
+      ],
+      [
+        "0x26e1a60",
+        "mov",
+        "byte ptr [ebp - 0x30], al"
+      ],
+      [
+        "0x26e1a63",
+        "mov",
+        "eax, dword ptr [ebp + 0x18]"
+      ],
+      [
+        "0x26e1a66",
+        "mov",
+        "dword ptr [ebp - 0x40], eax"
+      ],
+      [
+        "0x26e1a69",
+        "mov",
+        "eax, dword ptr [ebp + 0x1c]"
+      ],
+      [
+        "0x26e1a6c",
+        "mov",
+        "dword ptr [ebp - 0x3c], eax"
+      ],
+      [
+        "0x26e1a6f",
+        "mov",
+        "byte ptr [ebp - 0x2f], 1"
+      ],
+      [
+        "0x26e1a73",
+        "call",
+        "0x26e0da0"
+      ],
+      [
+        "0x26e1a78",
+        "add",
+        "esp, 0x5c"
+      ],
+      [
+        "0x26e1a7b",
+        "pop",
+        "ebx"
+      ],
+      [
+        "0x26e1a7c",
+        "pop",
+        "esi"
+      ],
+      [
+        "0x26e1a7d",
+        "pop",
+        "edi"
+      ],
+      [
+        "0x26e1a7e",
+        "pop",
+        "ebp"
+      ],
+      [
+        "0x26e1a7f",
+        "ret",
+        ""
+      ],
+      [
+        "0x26e1a80",
+        "mov",
+        "dword ptr [esp + 4], ecx"
+      ],
+      [
+        "0x26e1a84",
+        "mov",
+        "dword ptr [esp], edx"
+      ],
+      [
+        "0x26e1a87",
+        "mov",
+        "dword ptr [esp + 8], edi"
+      ],
+      [
+        "0x26e1a8b",
+        "call",
+        "0x26e0c80"
+      ],
+      [
+        "0x26e1a90",
+        "mov",
+        "dword ptr [esp], edi"
+      ],
+      [
+        "0x26e1a93",
+        "call",
+        "0x266eb00"
+      ],
+      [
+        "0x26e1a98",
+        "lea",
+        "eax, [eax + eax*8]"
+      ],
+      [
+        "0x26e1a9b",
+        "mov",
+        "eax, dword ptr [eax*8 + 0x7e7048]"
+      ],
+      [
+        "0x26e1aa2",
+        "test",
+        "eax, eax"
+      ],
+      [
+        "0x26e1aa4",
+        "je",
+        "0x26e1a54"
+      ],
+      [
+        "0x26e1aa6",
+        "mov",
+        "byte ptr [ebp - 0x2e], 1"
+      ],
+      [
+        "0x26e1aaa",
+        "mov",
+        "dword ptr [ebp - 0x1c], 0x26e0b60"
+      ],
+      [
+        "0x26e1ab1",
+        "jmp",
+        "0x26e1a54"
+      ]
+    ]
+  },
+  "scope": "Read-only complete direct-CFG quantity-store comparison for generate_custom_token_from_subtype. Both native stores and the one rebuilt store write the low8 bits of immutable formal amount7 at EBP+32 into token.qty offset43. Every direct path reaching the generator passes a quantity store; native store sites are mutually unreachable and no site repeats. Caller-save register definitions and unknown operations are conservative. This proves the duplicated byte-store value/path behavior, not arbitrary aliases, all token fields or gameplay."
+}

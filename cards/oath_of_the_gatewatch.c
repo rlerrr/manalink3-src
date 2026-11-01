@@ -6225,7 +6225,7 @@ int card_ruins_of_oran_rief(int player, int card, event_t event)
   unsigned int uVar5;
   int card_00;
   int player_00;
-  target_definition_t *ptStack_68;
+  int mana_result;
   target_definition_t td;
 
   pcVar1 = get_card_instance(player, card);
@@ -6237,7 +6237,7 @@ int card_ruins_of_oran_rief(int player, int card, event_t event)
   if (event == EVENT_CAN_ACTIVATE)
   {
   LAB_0226c1fc:
-    ptStack_68 = (target_definition_t *)mana_producer(player, card, event);
+    mana_result = mana_producer(player, card, event);
   }
   else
   {
@@ -6278,11 +6278,10 @@ int card_ruins_of_oran_rief(int player, int card, event_t event)
       if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
         goto LAB_0226c1fc;
       default_target_definition(player, card, &td, 2);
-      ptStack_68 = &td;
       td.illegal_color = 0x3e;
       td.preferred_controller = player;
       if ((event == EVENT_RESOLVE_ACTIVATION) &&
-          ((pcVar1->info_slot == 1 && (iVar2 = valid_target(ptStack_68), iVar2 != 0))))
+          ((pcVar1->info_slot == 1 && (iVar2 = valid_target(&td), iVar2 != 0))))
       {
         iVar2 = pcVar1->parent_card;
         player_00 = 0;
@@ -6310,22 +6309,22 @@ int card_ruins_of_oran_rief(int player, int card, event_t event)
         } while (player_00 != 2);
       }
     }
-    ptStack_68 = NULL;
+    mana_result = 0;
     if (((trigger_condition == 0xcd) && (card == affected_card)) &&
         (player == affected_card_controller))
     {
       if ((reason_for_trigger_controller == player) && (event == EVENT_TRIGGER))
       {
-        ptStack_68 = NULL;
+        mana_result = 0;
         remove_special_flags(2, -1, 0x1000);
       }
       else
       {
-        ptStack_68 = NULL;
+        mana_result = 0;
       }
     }
   }
-  return (int)ptStack_68;
+  return mana_result;
 }
 
 int card_sea_gate_wreckage(int player, int card, event_t event){
@@ -6528,4 +6527,42 @@ static int effect_flaying_tendrils(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x225a8c0; original cards/oath_of_the_gatewatch.c:84. */
 
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static void modify_casting_cost_for_colorless_only_mana(int player, int card, event_t event,
+                                                        int generic, int number_of_colorless_only_mana)
+{
+  if (event == EVENT_MODIFY_COST)
+  {
+    int cost = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL,
+                                       generic + number_of_colorless_only_mana);
+    if (player_has_generic_and_colorless_available(player, cost - number_of_colorless_only_mana,
+                                                   number_of_colorless_only_mana))
+      null_casting_cost(player, card);
+    else
+      infinite_casting_cost();
+  }
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static void activate_ruins_of_oran_rief(int player, int card, int color)
+{
+  for (int p = 0; p < 2; ++p)
+    for (int c = active_cards_count[p] - 1; c >= 0; --c)
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      if (in_play(p, c) && is_what(p, c, TYPE_CREATURE) && check_special_flags(p, c, 0x1000))
+      {
+        unsigned int target_color = get_color(instance->targets[0].player, instance->targets[0].card);
+        if (color == COLOR_TEST_COLORLESS ? !(target_color & COLOR_TEST_ANY_COLORED) : (target_color & color) != 0)
+          add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 1);
+      }
+    }
+}
 #endif

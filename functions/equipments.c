@@ -379,3 +379,32 @@ int is_equipped(int player, int card){
 }
 
 
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static int check_for_equipment_targets_impl(int player, int card, target_definition_t *td)
+{
+  td->flags |= 5;
+  return can_target(td);
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int can_activate_basic_equipment_impl(int player, int card, event_t event,
+                                              int equip_cost, target_definition_t *td)
+{
+  int cl[6] = {0};
+  cl[((unsigned int)equip_cost >> 8) & 0xff] = ((unsigned int)equip_cost >> 16) & 0xff;
+  if (can_sorcery_be_played(player, event) && !is_what(player, card, TYPE_CREATURE) &&
+      can_use_activated_abilities(player, card))
+  {
+    int cost = get_updated_equip_cost(player, card, equip_cost & 0xff);
+    if (has_mana_for_activated_ability(player, card, cost, cl[1], cl[2], cl[3], cl[4], cl[5]))
+      return check_for_equipment_targets_impl(player, card, td);
+  }
+  return 0;
+}
+#endif

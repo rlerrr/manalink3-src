@@ -627,8 +627,8 @@ int card_archfiend_of_despair(int player, int card, event_t event)
     result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
-      *(unsigned int *)(&player_bits + (1 - player) * 4) =
-          *(unsigned int *)(&player_bits + (1 - player) * 4) | 0x200000;
+      player_bits[(1 - player)] =
+          player_bits[(1 - player)] | 0x200000;
     }
   }
   return 0;
@@ -1749,4 +1749,73 @@ int card_thrilling_encore(int player, int card, event_t event)
   return result;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int assist(int player, int card, event_t event)
+{
+  card_ptr_t *pcVar1;
+  int iVar2, iVar3, iVar4, iVar5, iVar7;
+  card_instance_t *instance;
+  char buffer[50];
+  iVar2 = get_updated_casting_cost(player, card, -1, event, -1);
+  iVar3 = 1 - player;
+  iVar4 = has_mana(iVar3, 7, 1);
+  iVar5 = get_updated_casting_cost(player, card, -1, event, -1);
+  instance = get_card_instance(player, card);
+  if (event == EVENT_MODIFY_COST)
+  {
+
+    if ((player != 1) || (ai_is_speculating != 1))
+    {
+      iVar2 = get_id(player, card);
+      pcVar1 = cards_ptr[iVar2];
+      iVar2 = has_mana(iVar3, 7, 1);
+      iVar2 = has_mana_multi(player, iVar5 - iVar2 & (int)(iVar5 - iVar2 ^ 0xffffffffU) >> 0x1f,
+                             (unsigned int)pcVar1->req_black, (unsigned int)pcVar1->req_blue,
+                             (unsigned int)pcVar1->req_green, (unsigned int)pcVar1->req_red,
+                             (unsigned int)pcVar1->req_white);
+      if (iVar2 != 0)
+      {
+        instance->eot_toughness = 1;
+        null_casting_cost(player, card);
+      }
+    }
+  }
+  else
+  {
+    if (event != EVENT_CAST_SPELL)
+    {
+      return 0;
+    }
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      iVar7 = played_for_free(player, card);
+      if (iVar7 == 0)
+      {
+        iVar7 = is_token(player, card);
+        if ((iVar7 == 0) && (instance->eot_toughness == 1))
+        {
+
+          iVar7 = get_card_name(player, card);
+          scnprintf(buffer, 0x32, "Pay how much for %c?", iVar7);
+          if (iVar2 < iVar4)
+          {
+            iVar2 = iVar4;
+          }
+          iVar2 = choose_a_number(iVar3, buffer, iVar2);
+          charge_mana(iVar3, COLOR_ANY, iVar2);
+          iVar3 = get_id(player, card);
+          pcVar1 = cards_ptr[iVar3];
+          charge_mana_multi(player, iVar5 - iVar2, (unsigned int)pcVar1->req_black,
+                            (unsigned int)pcVar1->req_blue, (unsigned int)pcVar1->req_green,
+                            (unsigned int)pcVar1->req_red, (unsigned int)pcVar1->req_white);
+        }
+      }
+    }
+  }
+  return 0;
+}
 #endif

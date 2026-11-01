@@ -2265,6 +2265,7 @@ int card_trial_of_zeal(int player, int card, event_t event)
       (player == affected_card_controller))
   {
     default_test_definition(&recovered_stack_td.test, 4);
+    recovered_stack_td.test.subtype = SUBTYPE_CARTOUCHE;
     result = new_specific_cip(player, card, event, player, 2, &recovered_stack_td.test);
     if (result != 0)
     {
@@ -2662,6 +2663,7 @@ int card_trial_of_strength(int player, int card, event_t event)
       (player == affected_card_controller))
   {
     default_test_definition(&recovered_stack_token.test, 4);
+    recovered_stack_token.test.subtype = SUBTYPE_CARTOUCHE;
     result = new_specific_cip(player, card, event, player, 2, &recovered_stack_token.test);
     if (result != 0)
     {
@@ -3442,6 +3444,8 @@ int card_mouth_feed(int player, int card, event_t event)
     if (result != 0)
     {
       default_test_definition(&recovered_stack_token.test, 2);
+      recovered_stack_token.test.power = 2;
+      recovered_stack_token.test.power_flag = F5_POWER_GREATER_THAN_VALUE;
       result =
           check_battlefield_for_special_card(player, card, player, 4, &recovered_stack_token.test);
       draw_cards(player, result);
@@ -4819,6 +4823,9 @@ int card_rhonas_the_indomitable(int player, int card, event_t event)
         (result = is_humiliated(player, card, AL_STATIC), result == 0))
     {
       default_test_definition(&recovered_stack_td.test, 2);
+      recovered_stack_td.test.power = 3;
+      recovered_stack_td.test.power_flag = F5_POWER_GREATER_THAN_VALUE;
+      recovered_stack_td.test.not_me = 1;
       result =
           check_battlefield_for_special_card(player, card, player, 0, &recovered_stack_td.test);
       if (result == 0)
@@ -4845,6 +4852,9 @@ int card_rhonas_the_indomitable(int player, int card, event_t event)
         return 0;
       }
       default_test_definition(&recovered_stack_td.test, 2);
+      recovered_stack_td.test.power = 3;
+      recovered_stack_td.test.power_flag = F5_POWER_GREATER_THAN_VALUE;
+      recovered_stack_td.test.not_me = 1;
       result =
           check_battlefield_for_special_card(player, card, player, 0, &recovered_stack_td.test);
       if (result != 0)
@@ -5592,6 +5602,8 @@ int card_plague_belcher(int player, int card, event_t event)
            ((card != affected_card || (player != affected_card_controller))))
   {
     default_test_definition(&recovered_stack_td.test, 0x47);
+    recovered_stack_td.test.subtype = SUBTYPE_ZOMBIE;
+    recovered_stack_td.test.not_me = 1;
     count_for_gfp_ability(player, card, 0x77, player, 0, &recovered_stack_td.test);
   }
 LAB_022dcd49:
@@ -9328,4 +9340,37 @@ int card_dispossess(int player, int card, event_t event)
   return generic_spell(player, card, event, 0x40, &td, "TARGET_OPPONENT", 1, NULL);
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
+static int can_pay_aftermath(int player, int iid, event_t event, int colorless,
+                             int black, int blue, int green, int red, int white)
+{
+  int cost = get_updated_casting_cost(player, -1, iid, event, colorless);
+  return has_mana_multi(player, cost, black, blue, green, red, white);
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
+static int pay_aftermath(int player, int card, int iid, event_t event, int colorless,
+                         int black, int blue, int green, int red, int white)
+{
+  int cost = get_updated_casting_cost(player, -1, iid, event, colorless);
+  if (colorless == -1 && cost == 0)
+    charge_mana_multi(player, -1, black, blue, green, red, white);
+  else
+  {
+    charge_mana_multi(player, cost, black, blue, green, red, white);
+    if (colorless == -1 && cost != 0)
+      charge_mana(player, COLOR_COLORLESS, -1);
+  }
+  card_instance_t *instance = get_card_instance(player, card);
+  int success = spell_fizzled != 1;
+  instance->targets[1].card = x_value;
+  return success;
+}
 #endif

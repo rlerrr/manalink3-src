@@ -90,6 +90,38 @@ def read_functions(path, all_functions=False):
     return list({(r["address"], r["name"]): r for r in rows}.values())
 
 
+def bind_native_function_names(native, accepted, stubs, canonical_names, auxiliary):
+    """Honor address-bound retained helpers as well as recovered entries.
+
+    A retained helper can have a new C name because another source unit still
+    owns its old spelling. A global spelling match would select that other
+    function even though its source and native address are unrelated.
+    """
+    bindings = {}
+    for entry in auxiliary:
+        if not entry.get('native_address'):
+            continue
+        address = int(str(entry['native_address']), 16)
+        if address in bindings:
+            raise ValueError(f'Duplicate auxiliary native binding: {hex(address)}')
+        bindings[address] = entry
+    for row in native:
+        mapped = accepted.get(row['address']) or stubs.get(row['address'])
+        logical_name = mapped['name'] if mapped else row['name']
+        match_name = canonical_names.get(logical_name, logical_name)
+        auxiliary = bindings.get(row['address'])
+        if auxiliary:
+            if auxiliary['source'] != row['source']:
+                raise ValueError(f'Auxiliary source disagrees at {hex(row["address"])}')
+            if mapped and match_name != auxiliary['canonical_name']:
+                raise ValueError(f'Recovery/auxiliary names disagree at {hex(row["address"])}')
+            row['match_name'] = auxiliary['canonical_name']
+            row['mapping'] = 'verified auxiliary native binding'
+        else:
+            row['match_name'] = match_name
+            row['mapping'] = 'recovery ledger' if mapped else 'same native name'
+
+
 def setup(args):
     from reccmp.project.config import ProjectFile, UserFile, BuildFile
 
@@ -198,12 +230,10 @@ def setup(args):
                     target_sha256=hashlib.sha256(rebuilt_image.pe.get_data(
                         target-rebuilt_image.pe.OPTIONAL_HEADER.ImageBase,length)).hexdigest())
 
-    # Use explicit recovery mappings first; retained 2020 helpers keep their names.
-    for row in native:
-        mapped = accepted.get(row["address"]) or stubs.get(row["address"])
-        logical_name=mapped["name"] if mapped else row["name"]
-        row["match_name"] = canonical_names.get(logical_name,logical_name)
-        row["mapping"] = "recovery ledger" if mapped else "same native name"
+    # Explicit address bindings also cover retained helpers whose C spelling
+    # changed to avoid a collision with a helper in another source unit.
+    bind_native_function_names(native, accepted, stubs, canonical_names,
+                               (canonical_data or {}).get('auxiliary_functions', []))
     native_names = defaultdict(set)
     for row in native:
         if row['address'] in equivalent_addresses:continue

@@ -1,0 +1,168 @@
+{
+  "recovery": {
+    "recovered_card_definitions": 13,
+    "recovered_helper_definitions": 7,
+    "source_units": 17,
+    "corrected_array_expressions": 53,
+    "active_compiled_functions": 19,
+    "inline_only_source_helpers": 1,
+    "player_bits_old_stride": 32,
+    "stack_data_old_stride": 512,
+    "native_and_rebuilt_stride": 4,
+    "exact_address_event_comparisons": 18,
+    "exclusive_flag_clone_comparisons": 1,
+    "changed_linker_objects": 17,
+    "unchanged_linker_objects": 149,
+    "scope": "Recover53 typed global-array expressions in20 original source functions across17 units: player_bits[2] element4 bytes and stack_data[32] element4 bytes with signed16-bit internal_card_id at offset0. Original selectors, masks and all other source bytes are retained. Native and rebuilt global layouts/absolute bindings match; nineteen active bodies have native affine address read/write multisets equal to the before artifact after removing the erroneous8/128 factors, and rebuilt code uses native4-byte scales/biases. Eighteen exact address read/write multisets match; Worms of the Earth has one bounded flag-effect proof showing identical OR8/AND-not8 effects and mutually unreachable duplicated OR stores, without repeated effect sites on a direct CFG path. Opaque loaded selector roots and piecewise CFG selectors are not asserted equal to source parameters or to each other; the proof covers relative address scales, fixed biases, widths and read/write counts, not complete value/alias/gameplay equivalence. The twentieth source function is inline-only in the native Nimble Obstructionist body and currently unused as a source definition; its exact original inline origins/ranges and source-repair recipe are retained. Old helper/caller receipts remain immutable through exact supersession guards."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 92952,
+    "exit_code": 0,
+    "completion_chunk_id": "db3126",
+    "build_exit_code": 0,
+    "build_chunk_id": "a69ab0",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "fa952e",
+    "prior_inline_exit_code": 0,
+    "prior_inline_chunk_id": "6fb4fc",
+    "setup_log": ".recovery/global-index-setup-c62.log",
+    "setup_log_sha256": "19d254b2a07f98456705aa500209105169dd3cfd8eef1423bedb4c7be8b908fe",
+    "build_log": ".recovery/global-index-build-c62.log",
+    "build_log_sha256": "1a5a1191dceb0b6fb38763acdbcceb22f8dec67e3532b7ea767e3f0bffa31e3e",
+    "focused_log": ".recovery/global-index-focused-c62.log",
+    "focused_log_sha256": "67c40082e99b2fb680fa20bef0e387a5805b3cd2dd967434c922eece5aa7b8da",
+    "prior_inline_log": ".recovery/global-index-prior-inline-c62.log",
+    "prior_inline_log_sha256": "6059c5c253ac92bb15eb59c24bc7180d116f36ca2668b213d6aa001616788feb"
+  },
+  "restored_global_geometry": {
+    "stack_data": {
+      "count": 32,
+      "element_bytes": 4,
+      "bytes": 128,
+      "internal_card_id": {
+        "offset": 0,
+        "bytes": 2,
+        "encoding": 5
+      },
+      "address": "0x509630"
+    },
+    "player_bits": {
+      "count": 2,
+      "element_bytes": 4,
+      "bytes": 8,
+      "address": "0x4ef1a4"
+    }
+  },
+  "source_functions": [
+    {
+      "source": "cards/alara_reborn.c",
+      "name": "sen_triplets_effect",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/alliances.c",
+      "name": "card_stromgald_spy",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/battlebond.c",
+      "name": "card_archfiend_of_despair",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/betrayers_of_kamigawa.c",
+      "name": "card_kira_great_glass_spinner",
+      "changed_expressions": 1
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "name": "teferis_protection_legacy",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_gor_muldrak_amphinologist",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_limited_resources",
+      "changed_expressions": 8
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "card_overwhelming_splendor",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "card_nimble_obstructionist",
+      "changed_expressions": 1
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "counter_activated_or_triggered_ability_cycling",
+      "changed_expressions": 1
+    },
+    {
+      "source": "cards/invasion.c",
+      "name": "card_seers_vision",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/m15.c",
+      "name": "card_aggressive_mining",
+      "changed_expressions": 4
+    },
+    {
+      "source": "cards/m20.c",
+      "name": "vos_legacy",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "blossoming_calm_effect",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "card_gruul_spellbreaker",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/the_dark.c",
+      "name": "card_worms_of_the_earth",
+      "changed_expressions": 8
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_island_sanctuary",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/visions.c",
+      "name": "not_playable_lands_legacy",
+      "changed_expressions": 4
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "lazotep_plating_effect",
+      "changed_expressions": 2
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_tibalt_rakish_instigator",
+      "changed_expressions": 2
+    }
+  ],
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "c35e5f671651b16172c0b520629df35d5bb2e064dbfb39e6a1cfa374ce9769f0",
+    "docs/recovery-evidence/global-index-recovery.json": "7eef41654635102022d39adb346a192ebd68b0fbda8a17028962ad6ed24772d8",
+    "tools/recovery/global_index_analysis.py": "788e7b193c704da1fdb933731fbaeee902131c15d6eefe1ff00cbd293add733e",
+    "tools/recovery/verify_global_index_recovery.py": "eef4fcb674ec95197bf5166273a0794b73f522c6da5910803f6f7a40ce05227f",
+    "tools/recovery/verify_inline_wrapper_recovery.py": "734b19ff7e45ef845c34e71998b1e13532ef3205f92381dfe84db35935ded632",
+    "ManalinkEh.dll": "abbb3d4d1b9ef301adf19f42e199ed384d1ceb586ad23cf6a0c3ae7f712a944e",
+    "ManalinkEh.dbg": "e6f9f4027816727679431b2398747b7c41e24e9301b995157cb3fd1f8b1cf7bd"
+  }
+}

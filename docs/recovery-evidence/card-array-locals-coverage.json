@@ -1,0 +1,5545 @@
+{
+  "recovery": {
+    "restored_card_definitions": 10,
+    "restored_primary_arrays": 10,
+    "restored_scoped_tests": 11,
+    "restored_scoped_tokens": 4,
+    "initialized_message_arrays": 2,
+    "initialized_message_bytes": 200,
+    "restored_single_iid_arrays": 2,
+    "restored_integer_cursor_api_pairs": 2,
+    "removed_source_unions": 9,
+    "optimized_source_arrays": [],
+    "changed_linker_objects": 10,
+    "unchanged_linker_objects": 156,
+    "restored_kaya_token_field_writes": 2,
+    "scope": "Restore original scoped arrays, test/token records and cursor integers in ten card handlers, removing nine merged source unions. Native literal array geometry, emitted extents, disjoint code lifetimes for overlapping frame storage, eleven test parameter event sets with exact callback relocation identities, four token constant-store sets/initializer IDs and consumer pointers are checked. Merrow and Clone Shell restore100-byte literal-initialized message arrays including their complete zero padding; Clone Shell also restores two one-IID display arrays. Gustha Scepter cursor pointer pairs bind actual signed32 leg/idx locals. Source replay preserves every other byte, including counts, callback/matrix operands, costs, original native quirks, labels and branches. Kaya retains its original priority[6] declaration and write expressions even if the rebuilt compiler removes that now-dead source array; no volatile allocation is invented. Scalar copies feeding dialog weights are unchanged. Only fixed literal bounds are credited. Dynamic append-format values, actual selected indices, arbitrary aliases, full function behavior and gameplay remain outside these bounded checks. Historical receipts and historical compiled-union artifacts stay immutable; current legacy tests bind the actual scoped records through exact source supersession. Unknown REP STOSD counts remain unknown in the effect tool. Native Kaya Guile additionally proves two omitted token writes: key_plus32 (flying) and color_forced34 (black/white), both now restored. Rebuilt Windgrace initializer/generator and Reign dialog pointer spills remain unknown to the conservative call-memory model; exact typed source operands, actual local geometry and native/source scalar-store evidence are retained, and those unknown binary operands are not credited as definite frame pointers."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 83315,
+    "exit_code": 0,
+    "terminal_chunk_id": "9c77b5",
+    "build_exit_code": 0,
+    "build_chunk_id": "e54d0c",
+    "initial_build_exit_code": 0,
+    "initial_build_chunk_id": "a01224",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "ce8ec6",
+    "prior_checks_exit_code": 0,
+    "prior_checks_session_id": 43324,
+    "prior_checks_terminal_chunk_id": "9eda9a",
+    "setup_log": ".recovery/card-array-locals-setup-c66.log",
+    "setup_log_sha256": "3f6bbfe9b6e1368bd5ebd6e254bb70413e29191527694c1a1803801833b040ad",
+    "build_log": ".recovery/card-array-locals-build-final-c66.log",
+    "build_log_sha256": "dc2586d058f06035d0542943424369edd5c2d8cc5d81ff75bf9a8531d09606a3",
+    "focused_log": ".recovery/card-array-locals-focused-c66.log",
+    "focused_log_sha256": "63ab6c8fb99b4a7e04d2eb6b0d2626aa57f9ad0883bdf88fdf3688011dd46f92",
+    "prior_checks_path": ".recovery/card-array-locals-prior-checks-c66.json",
+    "prior_checks_sha256": "e1a6dc263e898cec3031c52f3139fba40e6d045723fcd57e28c958e996e257d4"
+  },
+  "native_compiled_validations": [
+    {
+      "source": "cards/nemesis.c",
+      "name": "card_mana_cache",
+      "native": {
+        "array": "found",
+        "dimensions": [
+          2
+        ],
+        "bytes": 8,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "state",
+                "byte": 0,
+                "value": 16,
+                "count": 1
+              },
+              {
+                "field": "state",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "state",
+                "byte": 2,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "state",
+                "byte": 3,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "state_flag",
+                "byte": 0,
+                "value": 1,
+                "count": 1
+              },
+              {
+                "field": "state_flag",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "tokens": []
+      },
+      "compiled": {
+        "array": "found",
+        "dimensions": [
+          2
+        ],
+        "bytes": 8,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "state",
+                "byte": 0,
+                "value": 16,
+                "count": 1
+              },
+              {
+                "field": "state",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "state",
+                "byte": 2,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "state",
+                "byte": 3,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "state_flag",
+                "byte": 0,
+                "value": 1,
+                "count": 1
+              },
+              {
+                "field": "state_flag",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "tokens": []
+      }
+    },
+    {
+      "source": "cards/alliances.c",
+      "name": "card_gusthas_scepter",
+      "native": {
+        "array": "buffer",
+        "dimensions": [
+          100
+        ],
+        "bytes": 100,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": []
+          }
+        ],
+        "tokens": [],
+        "prompt": {
+          "bytes": 100,
+          "formatter_sites": 1,
+          "fixed_base_formatters": 1,
+          "consumer_sites": 1,
+          "pointer_evidence": "Definite native/rebuilt frame operand."
+        },
+        "integer_cursor_api_pairs": 2
+      },
+      "compiled": {
+        "array": "buffer",
+        "dimensions": [
+          100
+        ],
+        "bytes": 100,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": []
+          }
+        ],
+        "tokens": [],
+        "prompt": {
+          "bytes": 100,
+          "formatter_sites": 1,
+          "fixed_base_formatters": 1,
+          "consumer_sites": 1,
+          "pointer_evidence": "Definite native/rebuilt frame operand."
+        },
+        "integer_cursor_api_pairs": 2
+      }
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_slaughter_the_strong",
+      "native": {
+        "array": "msg",
+        "dimensions": [
+          100
+        ],
+        "bytes": 100,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "special_selection_function",
+                "byte": 0,
+                "value": "callback:_not_marked:byte0",
+                "count": 1
+              },
+              {
+                "field": "special_selection_function",
+                "byte": 1,
+                "value": "callback:_not_marked:byte1",
+                "count": 1
+              },
+              {
+                "field": "special_selection_function",
+                "byte": 2,
+                "value": "callback:_not_marked:byte2",
+                "count": 1
+              },
+              {
+                "field": "special_selection_function",
+                "byte": 3,
+                "value": "callback:_not_marked:byte3",
+                "count": 1
+              },
+              {
+                "field": "value_for_special_selection_function",
+                "byte": 0,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "value_for_special_selection_function",
+                "byte": 1,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "value_for_special_selection_function",
+                "byte": 2,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "value_for_special_selection_function",
+                "byte": 3,
+                "value": null,
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "tokens": [],
+        "prompt": {
+          "bytes": 100,
+          "formatter_sites": 1,
+          "fixed_base_formatters": 1,
+          "consumer_sites": 1,
+          "pointer_evidence": "Definite native/rebuilt frame operand."
+        }
+      },
+      "compiled": {
+        "array": "msg",
+        "dimensions": [
+          100
+        ],
+        "bytes": 100,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "special_selection_function",
+                "byte": 0,
+                "value": "callback:_not_marked:byte0",
+                "count": 1
+              },
+              {
+                "field": "special_selection_function",
+                "byte": 1,
+                "value": "callback:_not_marked:byte1",
+                "count": 1
+              },
+              {
+                "field": "special_selection_function",
+                "byte": 2,
+                "value": "callback:_not_marked:byte2",
+                "count": 1
+              },
+              {
+                "field": "special_selection_function",
+                "byte": 3,
+                "value": "callback:_not_marked:byte3",
+                "count": 1
+              },
+              {
+                "field": "value_for_special_selection_function",
+                "byte": 0,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "value_for_special_selection_function",
+                "byte": 1,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "value_for_special_selection_function",
+                "byte": 2,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "value_for_special_selection_function",
+                "byte": 3,
+                "value": null,
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "tokens": [],
+        "prompt": {
+          "bytes": 100,
+          "formatter_sites": 1,
+          "fixed_base_formatters": 1,
+          "consumer_sites": 1,
+          "pointer_evidence": "Definite native/rebuilt frame operand."
+        }
+      }
+    },
+    {
+      "source": "cards/ixalan.c",
+      "name": "card_vraska_relic_seeker",
+      "native": {
+        "array": "buffer",
+        "dimensions": [
+          50
+        ],
+        "bytes": 50,
+        "tests": [],
+        "tokens": [
+          {
+            "csvid": 18802,
+            "constant_bytes": [
+              [
+                36,
+                0,
+                1
+              ],
+              [
+                37,
+                0,
+                1
+              ],
+              [
+                38,
+                1,
+                1
+              ],
+              [
+                39,
+                0,
+                1
+              ]
+            ]
+          },
+          {
+            "csvid": 18840,
+            "constant_bytes": []
+          }
+        ],
+        "prompt": {
+          "bytes": 50,
+          "formatter_sites": 1,
+          "fixed_base_formatters": 1,
+          "consumer_sites": 1,
+          "pointer_evidence": "Definite native/rebuilt frame operand."
+        }
+      },
+      "compiled": {
+        "array": "buffer",
+        "dimensions": [
+          50
+        ],
+        "bytes": 50,
+        "tests": [],
+        "tokens": [
+          {
+            "csvid": 18802,
+            "constant_bytes": [
+              [
+                36,
+                0,
+                1
+              ],
+              [
+                37,
+                0,
+                1
+              ],
+              [
+                38,
+                1,
+                1
+              ],
+              [
+                39,
+                0,
+                1
+              ]
+            ]
+          },
+          {
+            "csvid": 18840,
+            "constant_bytes": []
+          }
+        ],
+        "prompt": {
+          "bytes": 50,
+          "formatter_sites": 1,
+          "fixed_base_formatters": 1,
+          "consumer_sites": 1,
+          "pointer_evidence": "Definite native/rebuilt frame operand."
+        }
+      }
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_fast_furious",
+      "native": {
+        "array": "totals",
+        "dimensions": [
+          2
+        ],
+        "bytes": 8,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "keyword",
+                "byte": 0,
+                "value": 32,
+                "count": 1
+              },
+              {
+                "field": "keyword",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "keyword",
+                "byte": 2,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "keyword",
+                "byte": 3,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "keyword_flag",
+                "byte": 0,
+                "value": 1,
+                "count": 1
+              },
+              {
+                "field": "keyword_flag",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "tokens": []
+      },
+      "compiled": {
+        "array": "totals",
+        "dimensions": [
+          2
+        ],
+        "bytes": 8,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "keyword",
+                "byte": 0,
+                "value": 32,
+                "count": 1
+              },
+              {
+                "field": "keyword",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "keyword",
+                "byte": 2,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "keyword",
+                "byte": 3,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "keyword_flag",
+                "byte": 0,
+                "value": 1,
+                "count": 1
+              },
+              {
+                "field": "keyword_flag",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "tokens": []
+      }
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_kayas_guile",
+      "native": {
+        "array": "priority",
+        "dimensions": [
+          6
+        ],
+        "bytes": 24,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": []
+          }
+        ],
+        "tokens": [
+          {
+            "csvid": 18829,
+            "constant_bytes": [
+              [
+                32,
+                32,
+                1
+              ],
+              [
+                33,
+                0,
+                1
+              ],
+              [
+                34,
+                0,
+                1
+              ],
+              [
+                35,
+                0,
+                1
+              ],
+              [
+                40,
+                34,
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      "compiled": {
+        "array": "priority",
+        "dimensions": [
+          6
+        ],
+        "bytes": 24,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": []
+          }
+        ],
+        "tokens": [
+          {
+            "csvid": 18829,
+            "constant_bytes": [
+              [
+                32,
+                32,
+                1
+              ],
+              [
+                33,
+                0,
+                1
+              ],
+              [
+                34,
+                0,
+                1
+              ],
+              [
+                35,
+                0,
+                1
+              ],
+              [
+                40,
+                34,
+                1
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/eventide.c",
+      "name": "card_merrow_bonegnawer",
+      "native": {
+        "array": "msg",
+        "dimensions": [
+          100
+        ],
+        "bytes": 100,
+        "tests": [
+          {
+            "name": "test",
+            "initializers": [
+              "_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "color",
+                "byte": 0,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 1,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 2,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 3,
+                "value": null,
+                "count": 1
+              }
+            ]
+          },
+          {
+            "name": "this_test",
+            "initializers": [
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": []
+          }
+        ],
+        "tokens": [],
+        "initialized_message": {
+          "bytes": 100,
+          "prefix": "53656c6563742061206361726420746f206578696c652e00",
+          "consumers": 1
+        }
+      },
+      "compiled": {
+        "array": "msg",
+        "dimensions": [
+          100
+        ],
+        "bytes": 100,
+        "tests": [
+          {
+            "name": "test",
+            "initializers": [
+              "_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "color",
+                "byte": 0,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 1,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 2,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 3,
+                "value": null,
+                "count": 1
+              }
+            ]
+          },
+          {
+            "name": "this_test",
+            "initializers": [
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": []
+          }
+        ],
+        "tokens": [],
+        "initialized_message": {
+          "bytes": 100,
+          "prefix": "53656c6563742061206361726420746f206578696c652e00",
+          "consumers": 1
+        }
+      }
+    },
+    {
+      "source": "cards/mirage.c",
+      "name": "card_reign_of_terror",
+      "native": {
+        "array": "buffer",
+        "dimensions": [
+          100
+        ],
+        "bytes": 100,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "color",
+                "byte": 0,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 1,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 2,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 3,
+                "value": null,
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "tokens": [],
+        "prompt": {
+          "bytes": 100,
+          "formatter_sites": 2,
+          "fixed_base_formatters": 1,
+          "consumer_sites": 1,
+          "pointer_evidence": "Typed source operand; rebuilt pointer-spill value may be unknown."
+        }
+      },
+      "compiled": {
+        "array": "buffer",
+        "dimensions": [
+          100
+        ],
+        "bytes": 100,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "color",
+                "byte": 0,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 1,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 2,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "color",
+                "byte": 3,
+                "value": null,
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "tokens": [],
+        "prompt": {
+          "bytes": 100,
+          "formatter_sites": 2,
+          "fixed_base_formatters": 1,
+          "consumer_sites": 1,
+          "pointer_evidence": "Typed source operand; rebuilt pointer-spill value may be unknown."
+        }
+      }
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_clone_shell",
+      "native": {
+        "array": "msg",
+        "dimensions": [
+          100
+        ],
+        "bytes": 100,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_new_default_test_definition",
+              "_new_default_test_definition",
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "create_minideck",
+                "byte": 0,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "create_minideck",
+                "byte": 1,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "no_shuffle",
+                "byte": 0,
+                "value": 1,
+                "count": 1
+              },
+              {
+                "field": "no_shuffle",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "tokens": [],
+        "initialized_message": {
+          "bytes": 100,
+          "prefix": "53656c656374206120636172642e00",
+          "consumers": 3
+        },
+        "single_iid_arrays": 2
+      },
+      "compiled": {
+        "array": "msg",
+        "dimensions": [
+          100
+        ],
+        "bytes": 100,
+        "tests": [
+          {
+            "name": "this_test",
+            "initializers": [
+              "_new_default_test_definition",
+              "_new_default_test_definition",
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "create_minideck",
+                "byte": 0,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "create_minideck",
+                "byte": 1,
+                "value": null,
+                "count": 1
+              },
+              {
+                "field": "no_shuffle",
+                "byte": 0,
+                "value": 1,
+                "count": 1
+              },
+              {
+                "field": "no_shuffle",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "tokens": [],
+        "initialized_message": {
+          "bytes": 100,
+          "prefix": "53656c656374206120636172642e00",
+          "consumers": 3
+        },
+        "single_iid_arrays": 2
+      }
+    },
+    {
+      "source": "cards/commander_2018.c",
+      "name": "card_lord_windgrace",
+      "native": {
+        "array": "dead",
+        "dimensions": [
+          10
+        ],
+        "bytes": 40,
+        "tests": [
+          {
+            "name": "land_test",
+            "initializers": [
+              "_new_default_test_definition",
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": []
+          },
+          {
+            "name": "this_test",
+            "initializers": [
+              "_default_test_definition",
+              "_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "type",
+                "byte": 0,
+                "value": 1,
+                "count": 1
+              },
+              {
+                "field": "type",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "type",
+                "byte": 2,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "type",
+                "byte": 3,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "zone",
+                "byte": 0,
+                "value": 0,
+                "count": 2
+              },
+              {
+                "field": "zone",
+                "byte": 1,
+                "value": 1,
+                "count": 2
+              },
+              {
+                "field": "zone",
+                "byte": 2,
+                "value": 0,
+                "count": 2
+              },
+              {
+                "field": "zone",
+                "byte": 3,
+                "value": 0,
+                "count": 2
+              }
+            ]
+          }
+        ],
+        "tokens": [
+          {
+            "csvid": 18704,
+            "constant_bytes": [
+              [
+                40,
+                8,
+                1
+              ],
+              [
+                43,
+                6,
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      "compiled": {
+        "array": "dead",
+        "dimensions": [
+          10
+        ],
+        "bytes": 40,
+        "tests": [
+          {
+            "name": "land_test",
+            "initializers": [
+              "_new_default_test_definition",
+              "_new_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": []
+          },
+          {
+            "name": "this_test",
+            "initializers": [
+              "_default_test_definition",
+              "_default_test_definition"
+            ],
+            "layout": [
+              {
+                "name": "message",
+                "offset": 0,
+                "size": 100
+              },
+              {
+                "name": "type",
+                "offset": 100,
+                "size": 4
+              },
+              {
+                "name": "subtype",
+                "offset": 104,
+                "size": 4
+              },
+              {
+                "name": "type_flag",
+                "offset": 108,
+                "size": 2
+              },
+              {
+                "name": "subtype_flag",
+                "offset": 110,
+                "size": 2
+              },
+              {
+                "name": "color",
+                "offset": 112,
+                "size": 4
+              },
+              {
+                "name": "id",
+                "offset": 116,
+                "size": 4
+              },
+              {
+                "name": "id2",
+                "offset": 120,
+                "size": 4
+              },
+              {
+                "name": "color_flag",
+                "offset": 124,
+                "size": 2
+              },
+              {
+                "name": "id_flag",
+                "offset": 126,
+                "size": 2
+              },
+              {
+                "name": "cmc",
+                "offset": 128,
+                "size": 4
+              },
+              {
+                "name": "keyword",
+                "offset": 132,
+                "size": 4
+              },
+              {
+                "name": "cmc_flag",
+                "offset": 136,
+                "size": 2
+              },
+              {
+                "name": "keyword_flag",
+                "offset": 138,
+                "size": 2
+              },
+              {
+                "name": "sp_keyword",
+                "offset": 140,
+                "size": 4
+              },
+              {
+                "name": "sp_keyword_flag",
+                "offset": 144,
+                "size": 2
+              },
+              {
+                "name": "power",
+                "offset": 148,
+                "size": 4
+              },
+              {
+                "name": "toughness",
+                "offset": 152,
+                "size": 4
+              },
+              {
+                "name": "power_flag",
+                "offset": 156,
+                "size": 2
+              },
+              {
+                "name": "toughness_flag",
+                "offset": 158,
+                "size": 2
+              },
+              {
+                "name": "state",
+                "offset": 160,
+                "size": 4
+              },
+              {
+                "name": "zone",
+                "offset": 164,
+                "size": 4
+              },
+              {
+                "name": "state_flag",
+                "offset": 168,
+                "size": 2
+              },
+              {
+                "name": "not_me",
+                "offset": 170,
+                "size": 2
+              },
+              {
+                "name": "ai_selection_mode",
+                "offset": 172,
+                "size": 2
+              },
+              {
+                "name": "qty",
+                "offset": 174,
+                "size": 2
+              },
+              {
+                "name": "sub2",
+                "offset": 176,
+                "size": 4
+              },
+              {
+                "name": "sub3",
+                "offset": 180,
+                "size": 4
+              },
+              {
+                "name": "sub4",
+                "offset": 184,
+                "size": 4
+              },
+              {
+                "name": "sub5",
+                "offset": 188,
+                "size": 4
+              },
+              {
+                "name": "no_shuffle",
+                "offset": 192,
+                "size": 2
+              },
+              {
+                "name": "create_minideck",
+                "offset": 194,
+                "size": 2
+              },
+              {
+                "name": "special_selection_function",
+                "offset": 196,
+                "size": 4
+              },
+              {
+                "name": "value_for_special_selection_function",
+                "offset": 200,
+                "size": 4
+              },
+              {
+                "name": "painters_servant_hack",
+                "offset": 204,
+                "size": 4
+              },
+              {
+                "name": "has_mana_to_pay_cmc",
+                "offset": 208,
+                "size": 1
+              },
+              {
+                "name": "can_legally_play",
+                "offset": 209,
+                "size": 1
+              },
+              {
+                "name": "owner",
+                "offset": 210,
+                "size": 1
+              },
+              {
+                "name": "storage",
+                "offset": 212,
+                "size": 4
+              }
+            ],
+            "parameters": [
+              {
+                "field": "type",
+                "byte": 0,
+                "value": 1,
+                "count": 1
+              },
+              {
+                "field": "type",
+                "byte": 1,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "type",
+                "byte": 2,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "type",
+                "byte": 3,
+                "value": 0,
+                "count": 1
+              },
+              {
+                "field": "zone",
+                "byte": 0,
+                "value": 0,
+                "count": 2
+              },
+              {
+                "field": "zone",
+                "byte": 1,
+                "value": 1,
+                "count": 2
+              },
+              {
+                "field": "zone",
+                "byte": 2,
+                "value": 0,
+                "count": 2
+              },
+              {
+                "field": "zone",
+                "byte": 3,
+                "value": 0,
+                "count": 2
+              }
+            ]
+          }
+        ],
+        "tokens": [
+          {
+            "csvid": 18704,
+            "constant_bytes": [
+              [
+                40,
+                8,
+                1
+              ],
+              [
+                43,
+                6,
+                1
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "next_discovery": {
+    "arrays": {
+      "path": ".recovery/array-name-classification-c67.json",
+      "sha256": "006612f0b1ad91f0b82d995e38f9eee075f8f4cdbc53ab1723d3d1b732eb186f",
+      "counts": {
+        "array_restored_by_followups": 16,
+        "array_present_in_canonical_owner": 14,
+        "same_geometry_with_other_local_name": 9,
+        "requires_aggregate_or_owner_review": 20
+      },
+      "scope": "Read-only geometry/name follow-up on59 old array flags. Explicit source-verified canonical helper names account for renamed functions and outlined helper bodies. Literal dimensions, element widths/kinds and emitted fixed-frame locations are compared. These are declaration/geometry classifications, not full-function or array-content equivalence proofs; unmatched aggregates, compiler inline scopes and spelling aliases still require review."
+    },
+    "tokens": {
+      "path": ".recovery/token-local-census-c67.json",
+      "sha256": "12c53cd86c2c4647eef5424af6704ba8f8a82678ac53b91bc0704fd05ccb3116",
+      "counts": {
+        "native_fixed_token_instances": 692,
+        "native_fixed_token_functions": 677,
+        "current_fixed_token_instances": 697,
+        "current_kind_counts": {
+          "typed_token_local": 639,
+          "token_union_view": 58
+        },
+        "native_nonfixed_or_unlocated": 1,
+        "current_nonfixed_or_unlocated": 1,
+        "native_instances_with_current_owner": 691,
+        "native_instances_needing_owner_resolution": 1
+      },
+      "scope": "Read-only token-local inventory, not a missing-write or behavior verdict. Recognizes exact76-byte token member geometry and zero-offset token views in current unions. Includes outer C function locals and compiler self-inline copies; other helper-inline scopes and C++ units are excluded. Fixed DW_OP_fbreg declarations are inventoried separately from unlocated/nonfixed variables. Function-owner pairing uses native RVAs and the existing comparison CSV; cloned/split/outlined cases need separate resolution. Next work must compare initializer-to-generation scalar writes and callback identities, with lexical/CFG scope filtering to avoid attributing another reused local to a token."
+    }
+  },
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "848e383a2b123369ec9a8904234a70f2fd4fe4b93fafa8fd4f15bdbfa3184c95",
+    "docs/recovery-evidence/card-array-locals-recovery.json": "88c524bb5912550bc1335df8e30a863a7f299ecd30b23c4bb261e04f8ea81795",
+    "tools/recovery/card_array_locals_analysis.py": "a228bbc0927a485fd4295a497af2067d9f02d47b63297bb76a1d968f5fba9b8b",
+    "tools/recovery/verify_card_array_locals_recovery.py": "969bf236e2469887d527fb3f4f7efb52a48337ae3d2d1a04cae3663e11d49fa5",
+    "tools/recovery/array_role_analysis.py": "17a952cdba5ba854a9a3e434764c7303629d6dcea0b5442d73b5e926fb1c1d86",
+    "ManalinkEh.dll": "ef1a01f6f223b375fba436da81527c7f6a9010634b88ecb00aec410db6a6f6a3",
+    "ManalinkEh.dbg": "ec0ef36cd4ce978d88dc9c0a93836f2380f8a3f634b1b0bdc9b171db9d9430b8"
+  }
+}

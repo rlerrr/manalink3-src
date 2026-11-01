@@ -2570,12 +2570,6 @@ int card_kayas_guile(int player, int card, event_t event)
   uint32_t uStack_f4;
   uint32_t uStack_f0;
   int iStack_ec;
-  union
-  {
-    int priority[6];
-    test_definition_t this_test;
-    token_generation_t token;
-  } storage;
 
   if (event == EVENT_CAN_CAST)
   {
@@ -2586,24 +2580,25 @@ int card_kayas_guile(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
+      int priority[6];
       if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
       {
-        storage.priority[1] = 10;
-        storage.priority[2] = 6;
+        priority[1] = 10;
+        priority[2] = 6;
         iVar4 = count_permanents_by_type(1 - player, TYPE_CREATURE);
         iVar1 = count_permanents_by_type(player, TYPE_CREATURE);
         uVar6 = 0x14;
-        storage.priority[5] = 0x14;
+        priority[5] = 0x14;
         uStack_f4 = 10;
         uStack_f0 = 6;
         iStack_ec = (iVar4 - iVar1) * 3;
         iVar4 = 0xf - life[player];
-        storage.priority[3] = iStack_ec;
-        storage.priority[4] = iVar4;
+        priority[3] = iStack_ec;
+        priority[4] = iVar4;
       }
       else
       {
-        piVar5 = storage.priority;
+        piVar5 = priority;
         for (iVar4 = 6; iVar4 != 0; iVar4 = iVar4 + -1)
         {
           *piVar5 = 0;
@@ -2674,18 +2669,22 @@ LAB_0233a8f2:
       goto LAB_0233a940;
     if (iVar1 != 3)
       break;
-    default_token_definition(player, card, 0x498d, &storage.token);
+    token_generation_t token;
+    default_token_definition(player, card, 0x498d, &token);
+    token.key_plus = KEYWORD_FLYING;
+    token.color_forced = COLOR_TEST_BLACK | COLOR_TEST_WHITE;
     iVar4 = iVar4 + 1;
-    generate_token(&storage.token);
+    generate_token(&token);
   }
   if (iVar1 < 4)
   {
     if (iVar1 == 1)
     {
-      new_default_test_definition(&storage.this_test, 2,
+      test_definition_t this_test;
+      new_default_test_definition(&this_test, 2,
                                   "Select a creature to sacrifice.");
       new_sacrifice(player, card, 1 - player, SAC_CAUSED | SAC_NO_CANCEL,
-                    &storage.this_test);
+                    &this_test);
       iVar4 = iVar4 + 1;
       goto LAB_0233a8f2;
     }
@@ -4841,4 +4840,116 @@ LAB_023387ea:
   return 0;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int hogaak_convoke(int player, int card, int cless, int black, int blue, int green, int red, int white)
+{
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  int size = active_cards_count[player];
+  td.illegal_state = 1;
+  td.illegal_abilities = 0;
+  td.allow_cancel = 1;
+  int tapped[size];
+  memset(tapped, 0xff, sizeof tapped);
+  card_instance_t *instance = get_card_instance(player, card);
+  if (player != 0)
+  {
+    int color_size = active_cards_count[player];
+    int tapped_for_color[color_size][5];
+    memset(tapped_for_color, 0, sizeof tapped_for_color);
+    int attempts_left = 50;
+    int scan_size = color_size;
+    for (;;)
+    {
+      int clrs[6] = {cless, black, blue, green, red, white};
+      int tc = 0;
+      if (scan_size > 0)
+      {
+        int i = 0;
+        do
+        {
+          if (in_play(player, i) && !is_tapped(player, i) && is_what(player, i, TYPE_CREATURE))
+          {
+            unsigned int color = get_color(player, i);
+            for (int k = 1; k != 6; ++k)
+            {
+              if ((color >> k & 1U) && clrs[k] > 0 && tapped_for_color[i][k - 1] != 1)
+              {
+                --clrs[k];
+                tapped_for_color[i][k - 1] = 1;
+                add_state(player, i, STATE_TAPPED);
+                tapped[tc++] = i;
+                goto after_creature;
+              }
+            }
+            if (clrs[0] != 0)
+            {
+              add_state(player, i, STATE_TAPPED);
+              tapped[tc++] = i;
+              --clrs[0];
+            }
+          }
+        after_creature:
+          if (clrs[0] + clrs[1] + clrs[2] + clrs[3] + clrs[4] + clrs[5] == 0)
+          {
+            if (spell_fizzled != 1)
+            {
+              for (int j = 0; j < tc; ++j)
+                tap_card(player, tapped[j]);
+              return (unsigned int)(spell_fizzled != 1);
+            }
+            break;
+          }
+          ++i;
+        } while (i < active_cards_count[player]);
+        for (int j = 0; j < tc; ++j)
+          remove_state(player, tapped[j], STATE_TAPPED);
+      }
+      --attempts_left;
+      if (attempts_left == 0)
+      {
+        spell_fizzled = 1;
+        return (unsigned int)(spell_fizzled != 1);
+      }
+      scan_size = active_cards_count[player];
+    }
+  }
+  int clrs[6] = {cless, black, blue, green, red, white};
+  int tc = 0;
+  do
+  {
+    if (!can_target(&td))
+      break;
+    if (!select_target(0, card, &td, "Select a creature to tap for Convoke.", NULL))
+    {
+      spell_fizzled = 1;
+      goto rollback;
+    }
+    instance->number_of_targets = 0;
+    if (will_tap_permanent_for_convoke(instance->targets[0].player, instance->targets[0].card,
+                                            clrs))
+    {
+      add_state(instance->targets[0].player, instance->targets[0].card, STATE_TAPPED);
+      tapped[tc++] = instance->targets[0].card;
+    }
+  } while (clrs[1] + clrs[0] + clrs[2] + clrs[3] + clrs[4] + clrs[5] != 0);
+  if (spell_fizzled == 1)
+  {
+  rollback:
+    for (int i = 0; i < tc; ++i)
+      remove_state(0, tapped[i], STATE_TAPPED);
+  }
+  else
+  {
+    for (int i = 0; i < tc; ++i)
+      tap_card(0, tapped[i]);
+  }
+  return (unsigned int)(spell_fizzled != 1);
+}
 #endif

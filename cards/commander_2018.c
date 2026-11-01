@@ -474,7 +474,7 @@ int card_aminatou_the_fateshifter(int player, int card, event_t event)
   int card_00;
   int iVar5;
   int iStack_470;
-  test_definition_t *ptStack_468;
+  int permanent_count;
   int mc[2];
   target_definition_t td;
   test_definition_t this_test;
@@ -527,7 +527,6 @@ int card_aminatou_the_fateshifter(int player, int card, event_t event)
     this_test.type_flag = 1;
     this_test.not_me = 1;
   }
-  ptStack_468 = &this_test;
   this_test.not_me = 1;
   this_test.type_flag = 1;
   this_test.type = 1;
@@ -557,6 +556,7 @@ int card_aminatou_the_fateshifter(int player, int card, event_t event)
     }
     else if (iVar2 == 3)
     {
+      int marked[2][100];
 
       mc[0] = 0;
       mc[1] = 0;
@@ -580,13 +580,13 @@ int card_aminatou_the_fateshifter(int player, int card, event_t event)
             if ((((pcVar3 != NULL) &&
                   (iVar2 = check_state(iVar4, card_00, 0x100000), iVar2 == 0)) &&
                  (iVar2 = is_what(iVar4, card_00, 0x47), iVar2 != 0)) &&
-                ((iVar2 = new_make_test_in_play(iVar4, card_00, -1, ptStack_468),
+                ((iVar2 = new_make_test_in_play(iVar4, card_00, -1, &this_test),
                   iVar2 != 0 &&
                       ((pcVar1->parent_controller != iVar4 || (pcVar1->parent_card != card_00))))))
             {
               iVar2 = mc[iVar4];
               mc[iVar4] = iVar2 + 1;
-              *(int *)((int)&test + (iVar2 + iVar4 * 100) * 4) = card_00;
+              marked[iVar4][iVar2] = card_00;
             }
             card_00 = card_00 + -1;
             iVar2 = current_turn;
@@ -609,8 +609,8 @@ int card_aminatou_the_fateshifter(int player, int card, event_t event)
 
         if (iStack_470 == 0)
         {
-          ptStack_468 = (test_definition_t *)mc[iVar2];
-          if ((int)ptStack_468 < 1)
+          permanent_count = mc[iVar2];
+          if (permanent_count < 1)
           {
             iStack_470 = 1;
             goto LAB_02560bf2;
@@ -621,23 +621,23 @@ int card_aminatou_the_fateshifter(int player, int card, event_t event)
           {
             while (true)
             {
-              iVar4 = *(int *)((int)&test + iVar5 * 4 + iVar2 * 400);
+              iVar4 = marked[iVar2][iVar5];
               if (pcVar1->parent_controller != iVar2)
                 break;
               iVar5 = iVar5 + 1;
               give_control(iVar2, pcVar1->parent_card, iVar2, iVar4);
-              if ((int)ptStack_468 <= iVar5)
+              if (permanent_count <= iVar5)
                 goto LAB_02560c87;
             }
             iVar5 = iVar5 + 1;
             gain_control_permanently(pcVar1->parent_controller, iVar2, iVar4);
-          } while (iVar5 < (int)ptStack_468);
+          } while (iVar5 < permanent_count);
         }
         else
         {
           iVar2 = 1 - iVar2;
-          ptStack_468 = (test_definition_t *)mc[iVar2];
-          if (0 < (int)ptStack_468)
+          permanent_count = mc[iVar2];
+          if (0 < permanent_count)
             goto LAB_02560c1a;
         }
       LAB_02560c87:
@@ -2248,6 +2248,7 @@ int card_varchild_betrayer_of_kjeldor(int player, int card, event_t event)
       return 0;
     }
     default_test_definition(&recovered_stack_token.test, 2);
+    recovered_stack_token.test.subtype = SUBTYPE_SURVIVOR;
     new_manipulate_all(player, card, 2, &recovered_stack_token.test, ACT_GAIN_CONTROL);
     return 0;
   }
@@ -2585,11 +2586,6 @@ int card_lord_windgrace(int player, int card, event_t event)
   unsigned char bVar9;
   inst_info_t iVar10;
   char msg[50];
-  union
-  {
-    int dead[10];
-    token_generation_t token;
-  } storage;
   target_definition_t td;
   test_definition_t this_test;
   test_definition_t land_test;
@@ -2739,21 +2735,22 @@ int card_lord_windgrace(int player, int card, event_t event)
           iVar4 = 0;
           if (iVar3 == 0)
           {
+            int dead[10];
             do
             {
               if ((iVar4 < (int)uVar2) &&
                   (iVar3 = validate_target_from_grave(player, card, player, iVar4), iVar3 != -1))
               {
-                storage.dead[iVar4] = graveyard_ptr_mutable[player][iVar3];
+                dead[iVar4] = graveyard_ptr_mutable[player][iVar3];
                 remove_card_from_grave(player, iVar3);
               }
               else
               {
-                storage.dead[iVar4] = -1;
+                dead[iVar4] = -1;
               }
               iVar4 = iVar4 + 1;
             } while (iVar4 != 2);
-            piVar5 = storage.dead;
+            piVar5 = dead;
             do
             {
               if (*piVar5 != -1)
@@ -2764,7 +2761,7 @@ int card_lord_windgrace(int player, int card, event_t event)
                 reanimate_permanent(player, card, player, iVar4, REANIMATE_DEFAULT);
               }
               piVar5 = piVar5 + 1;
-            } while (piVar5 != storage.dead + 2);
+            } while (piVar5 != dead + 2);
             instance->targets[9].card = -1;
             goto LAB_02563488;
           }
@@ -2785,9 +2782,12 @@ int card_lord_windgrace(int player, int card, event_t event)
             kill_card(ptVar6->player, ptVar7->card, KILL_DESTROY);
           } while (iVar4 < (int)(unsigned int)instance->number_of_targets);
         }
-        default_token_definition(player, card, 0x4910, &storage.token);
-        storage.token.key_plus = get_hacked_walk(player, card, 4);
-        generate_token(&storage.token);
+        token_generation_t token;
+        default_token_definition(player, card, 0x4910, &token);
+        token.qty = 6;
+        token.color_forced = COLOR_TEST_GREEN;
+        token.key_plus = get_hacked_walk(player, card, 4);
+        generate_token(&token);
       }
     }
   }
@@ -3711,4 +3711,53 @@ int card_gyrus_waker_of_corpses(int player, int card, event_t event)
   return 0;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int totem_armor_any(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int player_00;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  target_definition_t td;
+
+  pcVar1 = get_card_instance(player, card);
+  player_00 = (int)pcVar1->damage_target_player;
+  iVar4 = pcVar1->damage_target_card;
+  pcVar2 = in_play(player, card);
+  if ((pcVar2 != NULL) && (player_00 != -1))
+  {
+    if (pcVar1->targets[7].player == 1)
+    {
+      return 0;
+    }
+    pcVar1->targets[7].player = 1;
+    iVar3 = is_this_dying(player_00, iVar4);
+    if (iVar3 != 0)
+    {
+
+      pcVar2 = get_card_instance(player_00, iVar4);
+      if ((unsigned char)(pcVar2->kill_code - 1) < 2)
+      {
+
+        iVar3 = is_tapped(player_00, iVar4);
+        regenerate_target_exe(player_00, iVar4);
+        if (iVar3 == 0)
+        {
+          untap_card_no_event(player_00, iVar4);
+        }
+        kill_card(player, card, KILL_SACRIFICE);
+      }
+    }
+    pcVar1->targets[7].player = 0;
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.preferred_controller = player;
+  iVar4 = targeted_aura(player, card, event, &td, "TARGET_PERMANENT");
+  return iVar4;
+}
 #endif

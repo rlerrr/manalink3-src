@@ -583,6 +583,7 @@ int card_day_of_the_dragons(int player, int card, event_t event)
     if (event == EVENT_LEAVES_PLAY_ABILITY)
     {
       default_test_definition(&recovered_stack_token.test, 0x47);
+      recovered_stack_token.test.subtype = SUBTYPE_DRAGON;
       new_manipulate_all(player, card, player, &recovered_stack_token.test, ACT_KILL_BURY);
       leg = 0;
       idx = 0;
@@ -2909,3 +2910,60 @@ static int ageless_sentinels_subtypes_abils(int player, int card, event_t event)
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int counterspell_cycling(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white)
+{
+  target_definition_t td;
+  counterspell_target_definition(player, card, &td, 0);
+  card_instance_t* instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    int cost = MAX(0, colorless - 2*count_cards_by_id(player, CARD_ID_FLUCTUATOR) +
+                         2*count_cards_by_id(player, CARD_ID_SUPPRESSION_FIELD));
+    if (has_mana_multi(player, cost, black, blue, green, red, white))
+    {
+      if (counterspell(player, card, EVENT_CAN_CAST, &td, -1))
+      {
+        instance->info_slot = 1;
+        return 99;
+      }
+      instance->info_slot = 0;
+      return 1;
+    }
+  }
+  else if (event == EVENT_ACTIVATE_FROM_HAND)
+  {
+    int cost = MAX(0, colorless - 2*count_cards_by_id(player, CARD_ID_FLUCTUATOR) +
+                         2*count_cards_by_id(player, CARD_ID_SUPPRESSION_FIELD));
+    if (get_card_instance(player, card)->info_slot == 1)
+    {
+      char buffer[100];
+      scnprintf(buffer, 100, " Counter %s\n Pass", get_card_name_by_id(get_id(card_on_stack_controller, card_on_stack)));
+      if (do_dialog(player, player, card, -1, -1, buffer, 0) == 0)
+        counterspell(player, card, EVENT_CAST_SPELL, NULL, 0);
+      else
+        instance->info_slot = 0;
+    }
+    charge_mana_multi(player, cost, black, blue, green, red, white);
+    if (spell_fizzled != 1)
+    {
+      card_is_being_cycled = 1;
+      discard_card(player, card);
+      card_is_being_cycled = 0;
+      return 2;
+    }
+  }
+  else if (spell_fizzled != 1)
+  {
+    if (!(player_bits[player] & PB_GY_ABILITIES_DISABLED) && instance->info_slot == 1 &&
+        counterspell_validate(player, card, &td, 0))
+      real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+    instance->number_of_targets = 0;
+    draw_a_card(player);
+  }
+  return 0;
+}
+#endif

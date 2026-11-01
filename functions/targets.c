@@ -3126,3 +3126,37 @@ target_t *becomes_target_of_subtype_spell(int player, int card, event_t event, i
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int has_misc_protection_from(int protected_player, int protected_card, int from_player,
+                                    int from_card, is_protected_from_mode_t new_protection_mode,
+                                    int allow_granted_protection)
+{
+  uint32_t initial = (uint32_t)new_protection_mode << 24;
+  if (protected_card < 0)
+  {
+    if (!(player_bits[protected_player] & PB_PROTECTION))
+      return 0;
+  }
+  else
+  {
+    uint32_t flags = get_card_instance(protected_player, protected_card)->ext->sp_keywords2;
+    int granted = allow_granted_protection && (flags & SP_KEYWORD2_GRANTED_PROT_MISC);
+    if (!(flags & SP_KEYWORD2_PROT_MISC) &&
+        (!(flags & 4) || new_protection_mode != IPF_TARGET || from_player == protected_player) && !granted)
+      return 0;
+    if (!granted)
+    {
+      if (is_humiliated(protected_player, protected_card, AL_STATIC))
+        return 0;
+      return dispatch_event_arbitrary_to_one_card_with_initial_event_result(
+          protected_player, protected_card, EVENT_PROT_MISC, protected_player, protected_card,
+          from_player, from_card, (int)initial) & 0xffffff;
+    }
+  }
+  return dispatch_event_with_attacker_and_initial_event_result(
+      protected_player, protected_card, EVENT_PROT_MISC, from_player, from_card, (int)initial) & 0xffffff;
+}
+#endif
