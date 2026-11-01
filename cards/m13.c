@@ -1,5 +1,9 @@
 #include "manalink.h"
 
+static int xathrid_ability_legacy(int player, int card, event_t event);
+
+static int has_mbt_by_iid(int iid, int unused1, int unused2, int unused3);
+
 // ------------ General functions
 void uthden_creature(int player, int card, event_t event, int land_color){
 	if( ! is_humiliated(player, card, AL_STATIC) && (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) &&
@@ -167,6 +171,8 @@ int card_ajani_caller_of_the_pride(int player, int card, event_t event){
 	 * -3: Target creature gains flying and double strike until end of turn.
 	 * -8: Put X 2/2 |Swhite Cat creature tokens onto the battlefield, where X is your life total. */
 
+	check_legend_rule(player, card, event);
+
 	if (IS_ACTIVATING(event)){
 
 		card_instance_t *instance = get_card_instance(player, card);
@@ -305,7 +311,7 @@ int card_attended_knight(int player, int card, event_t event){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_SOLDIER, &token);
 		token.pow = token.tou = 1;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
+		token.color_forced = COLOR_TEST_WHITE;
 		generate_token(&token);
 	}
 
@@ -329,7 +335,7 @@ Put the rest on the bottom of your library in any order. */
 			this_test.type_flag = F1_NO_CREATURE;
 			this_test.create_minideck = to_reveal;
 			this_test.no_shuffle = 1;
-			if( new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test) != -1){
+			if( new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test) >= 0){
 				to_reveal--;
 			}
 			if( to_reveal > 0 ){
@@ -369,14 +375,15 @@ When ~ enters the battlefield, target creature gets +2/+2 and gains flying until
 
 int card_blood_reckoning(int player, int card, event_t event)
 {
-/* CARD_ID_BLOOD_RECKONING	12544
+  /* CARD_ID_BLOOD_RECKONING	12544
 Blood Reckoning	|3|B
 Enchantment
 Whenever a creature attacks you or a planeswalker you control, that creature's controller loses 1 life. */
 
-  if (declare_attackers_trigger(player, card, event, DAT_SEPARATE_TRIGGERS, 1-player, -1))
-	lose_life(current_turn, 1);
-
+  store_attackers(player, card, event, DAT_SEPARATE_TRIGGERS, 1-player, -1, NULL);
+  dat_ability(player, card, event, DAT_SEPARATE_TRIGGERS | DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  if (event == EVENT_DAT_ABILITY)
+    lose_life(current_turn, 1);
   return global_enchantment(player, card, event);
 }
 
@@ -438,7 +445,7 @@ int card_captains_call(int player, int card, event_t event){
 		default_token_definition(player, card, CARD_ID_SOLDIER, &token);
 		token.pow = token.tou = 1;
 		token.qty = 3;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
+		token.color_forced = COLOR_TEST_WHITE;
 		generate_token(&token);
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -454,11 +461,9 @@ Land
 Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)
 |T: Add |C to your mana pool. */
 
-	comes_into_play_tapped(player, card, event);
-
 	exalted(player, card, event, 0, 0);
 
-	return mana_producer(player, card, event);
+	return plain_mana_producer_tapped(player, card, event);
 }
 
 
@@ -622,7 +627,6 @@ Search your library for up to X cards and put those cards into your hand. Then s
 			default_test_definition(&this_test, TYPE_ANY);
 			this_test.qty = instance->info_slot;
 			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, 1, &this_test);
-			shuffle(player);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -749,19 +753,20 @@ Enchanted permanent doesn't untap during its controller's untap step and its act
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
 		does_not_untap(instance->damage_target_player, instance->damage_target_card, event);
-		if( leaves_play(player, card, event, 0, 0) ){
+		leaves_play(player, card, event, 0, 0);
+		if (event == EVENT_LEAVES_PLAY_ABILITY){
 			disable_all_activated_abilities(instance->damage_target_player, instance->damage_target_card, 0);
 		}
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
 	target_definition_t td1;
 	default_target_definition(player, card, &td1, TYPE_CREATURE | TYPE_ARTIFACT);
 
-	return disabling_targeted_aura(player, card, event, &td1, "PUTREFY", 2);
+	return disabling_targeted_aura(player, card, event, &td1, "Select target artifact or creature.", 2);
 }
 
 int card_faerie_invaders(int player, int card, event_t event){
@@ -885,25 +890,22 @@ int card_gem_of_becoming(int player, int card, event_t event)
 
 int card_goblin_battle_jester(int player, int card, event_t event){
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_ANY);
 		test.color = get_sleighted_color_test(player, card, COLOR_TEST_RED);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test)  ){
-			target_definition_t td;
-			default_target_definition(player, card, &td, TYPE_CREATURE );
-			td.allow_cancel = 0;
-
-			card_instance_t *instance = get_card_instance(player, card);
-
-			if( can_target(&td) && pick_target(&td, "TARGET_CREATURE") ){
-				pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
-										0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
-			}
-			instance->number_of_targets = 0;
-		}
+		sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
 	}
-
+	if (event == EVENT_SPA){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.allow_cancel = 0;
+		card_instance_t* instance = get_card_instance(player, card);
+		if (can_target(&td) && pick_target(&td, "TARGET_CREATURE")){
+			pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
+		}
+		instance->number_of_targets = 0;
+	}
 	return 0;
 }
 
@@ -1105,6 +1107,8 @@ int card_liliana_of_the_dark_realms(int player, int card, event_t event){
 	 * -3: Target creature gets +X/+X or -X/-X until end of turn, where X is the number of |H1Swamps you control.
 	 * -6: You get an emblem with "|H1Swamps you control have '|T: Add |B|B|B|B to your mana pool.'" */
 
+	check_legend_rule(player, card, event);
+
 	if (IS_ACTIVATING(event)){
 		card_instance_t *instance = get_card_instance(player, card);
 
@@ -1296,7 +1300,7 @@ int card_mindclaw_shaman(int player, int card, event_t event){
 		new_default_test_definition(&this_test, TYPE_SPELL, "Select an instant or sorcery card.");
 
 		int selected = new_select_a_card(player, 1-player, TUTOR_FROM_HAND, 0, AI_MAX_CMC, -1, &this_test);
-		if( selected != -1 ){
+		if (selected != -1 && can_legally_play_iid(player, get_original_internal_card_id(1-player, selected))){
 			opponent_plays_card_in_your_hand_for_free(1-player, selected);
 		}
 	}
@@ -1336,11 +1340,11 @@ Creature - Human Scout 2/1
 When ~ enters the battlefield, search your library for a creature card with deathtouch, hexproof, reach, or trample and reveal it.
 Shuffle your library and put that card on top of it. */
 
-	if( comes_into_play(player, card, event) ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if (event == EVENT_ETB_ABILITY){
 		test_definition_t this_test;
 		new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature card with deathtouch, hexproof, reach, or trample.");
-#pragma message "We have no way to know if a creature outside play has Deathtouch or Hexproof among its static abilities, so this will only fecth permanents with Reach or Teample"
-		this_test.keyword = KEYWORD_REACH | KEYWORD_TRAMPLE;
+		this_test.special_selection_function = has_mbt_by_iid;
 		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_DECK, 0, AI_MAX_VALUE, &this_test);
 	}
 	return 0;
@@ -1415,10 +1419,11 @@ You may cast spells from your hand without paying their mana costs. */
 			if( in_hand(player, i) && ! is_what(player, i, TYPE_LAND) ){
 				int tr = can_legally_play_card_in_hand(player, i);
 				if( tr ){
-					if( tr == 99 && is_what(player, i, TYPE_INTERRUPT) ){
+					if( tr == 99 && (is_what(player, i, TYPE_INTERRUPT) || is_what(player, i, TYPE_INTERRUPT | TYPE_CREATURE)) ){
 						return 99;
 					}
-					if( tr == 1 && (is_what(player, i, TYPE_INSTANT) || can_sorcery_be_played(player, event)) ){
+					if( tr == 1 && (is_what(player, i, TYPE_INSTANT) || can_sorcery_be_played(player, event) ||
+                      can_sorcery_be_played(player, event) || flash(player, i, event)) ){
 						return 1;
 					}
 				}
@@ -1435,12 +1440,13 @@ You may cast spells from your hand without paying their mana costs. */
 			if( in_hand(player, i) && ! is_what(player, i, TYPE_LAND) ){
 				int tr = can_legally_play_card_in_hand(player, i);
 				if( tr ){
-					if( tr == 99 && is_what(player, i, TYPE_INTERRUPT) ){
+					if( tr == 99 && (is_what(player, i, TYPE_INTERRUPT) || is_what(player, i, TYPE_INTERRUPT | TYPE_CREATURE)) ){
 						playable[0][pc] = get_card_instance(player, i)->internal_card_id;
 						playable[1][pc] = i;
 						pc++;
 					}
-					if( tr == 1 && (is_what(player, i, TYPE_INSTANT) || can_sorcery_be_played(player, event)) ){
+					if( tr == 1 && (is_what(player, i, TYPE_INSTANT) || can_sorcery_be_played(player, event) ||
+                      can_sorcery_be_played(player, event) || flash(player, i, event)) ){
 						playable[0][pc] = get_card_instance(player, i)->internal_card_id;
 						playable[1][pc] = i;
 						pc++;
@@ -1673,7 +1679,7 @@ int card_serpents_gift(int player, int card, event_t event){
 	/* Serpent's Gift	|2|G
 	 * Instant
 	 * Target creature gains deathtouch until end of turn. */
-	if (!IS_CASTING(player, card, event)){
+	if (!IS_GS_EVENT(player, card, event)){
 		return 0;
 	}
 	target_definition_t td;
@@ -1698,7 +1704,9 @@ int card_slumbering_dragon(int player, int card, event_t event)
 		event_result = 1;
 
   // Whenever a creature attacks you or a planeswalker you control, put a +1/+1 counter on ~.
-  if (declare_attackers_trigger(player, card, event, DAT_SEPARATE_TRIGGERS, 1-player, -1))
+  store_attackers(player, card, event, DAT_SEPARATE_TRIGGERS, 1-player, -1, NULL);
+  dat_ability(player, card, event, DAT_SEPARATE_TRIGGERS | DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
 	add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 
   return 0;
@@ -1793,7 +1801,9 @@ int card_sublime_archangel(int player, int card, event_t event)
 {
   // Exalted
   // Other creatures you control have exalted.
-  if (declare_attackers_trigger(player, card, event, DAT_ATTACKS_ALONE|DAT_TRACK, player, -1))
+  store_attackers(player, card, event, DAT_ATTACKS_ALONE | DAT_TRACK, player, -1, NULL);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  card_instance_t* instance = get_card_instance(player, card);
 	  int attacker = BYTE0(instance->targets[2].player);
@@ -1876,7 +1886,7 @@ int card_talrands_invocation(int player, int card, event_t event){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_DRAKE, &token);
 		token.pow = token.tou = 2;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_BLUE);
+		token.color_forced = COLOR_TEST_BLUE;
 		token.qty = 2;
 		generate_token(&token);
 		kill_card(player, card, KILL_DESTROY);
@@ -1892,15 +1902,14 @@ int card_talrand_sky_summoner(int player, int card, event_t event){
 	 * Whenever you cast an instant or sorcery spell, put a 2/2 |Sblue Drake creature token with flying onto the battlefield. */
 
 	check_legend_rule(player, card, event);
-
-	if( specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, TYPE_SPELL, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_SPELL, NULL, player, card);
+	if (event == EVENT_SPA){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_DRAKE, &token);
 		token.pow = token.tou = 2;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_BLUE);
+		token.color_forced = COLOR_TEST_BLUE;
 		generate_token(&token);
 	}
-
 	return 0;
 }
 
@@ -1955,7 +1964,7 @@ int card_timberpack_wolf(int player, int card, event_t event){
 	if( (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		int amount = 0;
 		CYCLE_ALL_CARDS(p, c, 	{
-									if( p == player && in_play(p, c) && has_same_name(player, card, p, c) ){
+									if( p == player && c != card && in_play(p, c) && has_same_name(player, card, p, c) ){
 										amount++;
 									}
 								};
@@ -2252,7 +2261,7 @@ int card_worldfire(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_PERMANENT);
-		APNAP(p, {new_manipulate_all(player, card, p, &this_test, KILL_EXILE);};);
+		new_manipulate_all(player, card, ANYBODY, &this_test, KILL_EXILE);
 
 		APNAP(p, {
 					int count = count_graveyard(p)-1;
@@ -2346,8 +2355,7 @@ int card_xathrid_gorgon(int player, int card, event_t event){
 		if( valid_target(&td) ){
 			add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_PETRIFICATION, 1);	// does nothing, per rulings
 
-			int leg = pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
-											 0, 0, KEYWORD_DEFENDER, SP_KEYWORD_DOES_NOT_END_AT_EOT);
+			int leg = create_targetted_legacy_effect(player, card, xathrid_ability_legacy, instance->targets[0].player, instance->targets[0].card);
 			if (leg != -1){
 				get_card_instance(instance->parent_controller, leg)->token_status |= STATUS_INVISIBLE_FX;
 			}
@@ -2362,7 +2370,11 @@ int card_xathrid_gorgon(int player, int card, event_t event){
 			// The only effect left visible
 			change_color(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card, 0, CHANGE_COLOR_SET|CHANGE_COLOR_NO_SLEIGHT);
 
-			disable_all_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
+			if (ai_is_speculating == 1
+                && check_for_ability(instance->targets[0].player, instance->targets[0].card, KEYWORD_DEFENDER)
+                && (get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[17].card & 0x38)){
+                ai_modifier -= 99;
+            }
 		}
 	}
 
@@ -2426,7 +2438,6 @@ static int has_mbt_by_iid(int iid, int unused1, int unused2, int unused3)
 
 #ifndef SHANDALAR
 /* Recovered October 2022 native scalar-word handlers. */
-static int xathrid_ability_legacy(int player, int card, event_t event);
 
 /* ManalinkEh 2022: 0x22b48c0; original cards/m13.c:2422. */
 static int xathrid_ability_legacy(int player, int card, event_t event)

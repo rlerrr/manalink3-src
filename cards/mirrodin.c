@@ -153,7 +153,7 @@ int card_altar_of_shadows(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
 			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-			add_counters(player, card, player, card, COUNTER_CHARGE, 1);
+			add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_CHARGE, 1);
 		}
 	}
 
@@ -302,7 +302,7 @@ Creature - Human Soldier 1/1
 Equip costs you pay cost |1 less.
 As long as ~ is equipped, each creature you control that's a Soldier or a Knight gets +1/+1. */
 
-	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && in_play(player, card) &&
+	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && in_play(player, card) &&
 		! is_humiliated(player, card, AL_STATIC) )
 	{
 		if( equipments_attached_to_me(player, card, EATM_CHECK) ){
@@ -410,7 +410,7 @@ Each player sacrifices two creatures. */
 		test_definition_t test;
 		new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice.");
 		test.qty = 2;
-		APNAP(p, { new_sacrifice(player, card, p, SAC_CAUSED, &test); };);
+		APNAP(p, { new_sacrifice(player, card, p, SAC_CAUSED | SAC_NO_CANCEL, &test); };);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -467,7 +467,7 @@ Entwine—Sacrifice three lands. (Choose both if you pay the entwine cost.)
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		instance->number_of_targets = 0;
-		int sacced[3] = {-1};
+		char marked_for_sacrifice[151];
 		if( ! check_special_flags2(player, card, SF2_COPIED_FROM_STACK) ){
 			instance->info_slot = 0;
 			test_definition_t test2;
@@ -477,70 +477,58 @@ Entwine—Sacrifice three lands. (Choose both if you pay the entwine cost.)
 							0,
 							generic_spell(player, card, EVENT_CAN_CAST, GS_CAN_TARGET, &td, NULL, 1, NULL),
 							generic_spell(player, card, EVENT_CAN_CAST, GS_GRAVE_RECYCLER, NULL, NULL, 1, &test),
-							new_can_sacrifice_as_cost(player, card, &test)
+							new_can_sacrifice_as_cost(player, card, &test2)
 			};
 			int choice = DIALOG(player, card, event, DLG_RANDOM,
 								"Kill a creature", abils[1], 10,
 								"Reanimate a creature", abils[2], 5,
-								"Entwine", abils[1] && abils[2] && abils[3], count_subtype(player, TYPE_LAND, -1) > 6 ? 15 : 1);
+								"Entwine", abils[1] && abils[2] && abils[3], count_subtype(player, TYPE_LAND, -1) * 2);
 			if( ! choice ){
 				spell_fizzled = 1;
 				return 0;
 			}
-			if( instance->info_slot & CHOICE_ENTWINE ){
-				int i;
-				for(i=0; i<3; i++){
-					int sac = new_sacrifice(player, card, player, SAC_JUST_MARK | SAC_AS_COST | SAC_RETURN_CHOICE, &test);
-					if( sac ){
-						sacced[i] = sac;
-					}
-					else{
-						spell_fizzled = 1;
-						break;
-					}
-				}
-				for(i=0; i<3; i++){
-					if( sacced[i] != -1 ){
-						state_untargettable(BYTE2(sacced[i]), BYTE3(sacced[i]), 0);
-					}
-				}
-				if( spell_fizzled == 1 ){
-					return 0;
-				}
-			}
+			if (choice == CHOICE_ENTWINE){
+                scnprintf(test2.message, 100, "Select land to sacrifice.");
+                if (mark_sacrifice(player, card, player, SAC_AS_COST | SAC_ALL_OR_NONE | SAC_JUST_MARK, &test2, marked_for_sacrifice) < 3){
+                    spell_fizzled = 1;
+                    return 0;
+                }
+            }
 		}
 		instance->number_of_targets = 0;
 		int base_target = 0;
-		if( instance->info_slot & CHOICE_KILL ){
-			if( pick_target(&td, "TARGET_CREATURE") ){
+		if( instance->info_slot == CHOICE_KILL || instance->info_slot == CHOICE_ENTWINE ){
+			if( new_pick_target(&td, "TARGET_CREATURE", 0, 1) ){
 				base_target++;
 			}
 			else{
 				return 0;
 			}
 		}
-		if( instance->info_slot & CHOICE_REANIMATE ){
+		if( instance->info_slot == CHOICE_REANIMATE || instance->info_slot == CHOICE_ENTWINE ){
 			if( ! select_target_from_grave_source(player, card, player, 0, AI_MAX_CMC, &test, base_target) ){
 				return 0;
 			}
 		}
-		if( ! check_special_flags2(player, card, SF2_COPIED_FROM_STACK) ){
-			int i;
-			for(i=0; i<3; i++){
-				kill_card(BYTE2(sacced[i]), BYTE3(sacced[i]), KILL_SACRIFICE);
-			}
-		}
+        if (!check_special_flags2(player, card, SF2_COPIED_FROM_STACK) && instance->info_slot == CHOICE_ENTWINE){
+            for (int i = 0; i < active_cards_count[player]; ++i){
+                if (marked_for_sacrifice[i]){
+                    get_card_instance(player, i)->state &= ~STATE_CANNOT_TARGET;
+                    if (spell_fizzled != 1 && in_play(player, i)){ kill_card(player, i, KILL_SACRIFICE); }
+                }
+            }
+        }
 	}
 
 	if(event == EVENT_RESOLVE_SPELL ){
 		int base_target = 0;
-		if( instance->info_slot & CHOICE_KILL ){
+		if( instance->info_slot == CHOICE_KILL || instance->info_slot == CHOICE_ENTWINE ){
 			if( valid_target(&td) ){
 				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
 			}
 			base_target++;
 		}
-		if( instance->info_slot & CHOICE_REANIMATE ){
+		if( instance->info_slot == CHOICE_REANIMATE || instance->info_slot == CHOICE_ENTWINE ){
 			int selected = validate_target_from_grave_source(player, card, player, base_target);
 			if( selected != -1 ){
 				reanimate_permanent(player, card, player, selected, REANIMATE_DEFAULT);
@@ -765,7 +753,7 @@ int card_bloodscent(int player, int card, event_t event)
    * Instant
    * All creatures able to block target creature this turn do so. */
 
-  if (!IS_CASTING(player, card, event))
+  if (!IS_GS_EVENT(player, card, event))
 	return 0;
 
   target_definition_t td;
@@ -899,7 +887,7 @@ Imprint - When ~ enters the battlefield, you may exile a nonartifact, nonland ca
 		}
 	}
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+	etb_ability(player, card, event, RESOLVE_TRIGGER_DUH);
 
 	if( event == EVENT_ETB_ABILITY ){
 		test_definition_t this_test;
@@ -935,7 +923,9 @@ Imprint - When ~ enters the battlefield, you may exile a nonartifact, nonland ca
 			rfg_card_in_hand(player, selected);
 		}
 	}
-	return mana_producer(player, card, event);
+	if ((event == EVENT_CAN_ACTIVATE || (event == EVENT_COUNT_MANA && affect_me(player, card)))
+        && get_card_instance(player, card)->info_slot < 1){ return 0; }
+    return plain_mana_producer(player, card, event);
 }
 
 int card_clockwork_beetle(int player, int card, event_t event){
@@ -974,7 +964,9 @@ Land - Locus
 ~ enters the battlefield tapped.
 |T: Add |C to your mana pool for each Locus on the battlefield. */
 
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG)){
+		comes_into_play_tapped(player, card, event);
+	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		play_land_sound_effect(player, card);
@@ -1002,12 +994,11 @@ Enchantment
 Whenever an artifact, creature, or enchantment enters the battlefield, its controller chooses target permanent another player controls
 that shares a card type with it. Exchange control of those permanents.
 */
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(affected_card_controller, affected_card) &&
-		reason_for_trigger_controller == player )
+	if( trigger_condition == TRIGGER_COMES_INTO_PLAY )
 	{
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_ARTIFACT | TYPE_CREATURE | TYPE_ENCHANTMENT);
-		if( new_specific_cip(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, &this_test) ){
+		if( new_specific_cip_global(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, 0, &this_test, player, card) ){
 			card_instance_t *instance = get_card_instance( player, card );
 			if( instance->targets[2].player == 66 ){  //If you exchange this at his ETB with another enchantment, strange things happens.
 				instance->targets[2].player = 0;
@@ -1138,6 +1129,7 @@ Artifact
 			int x = choice == 1 ? 3 : 0;
 			if( charge_mana_for_activated_ability(player, card, MANACOST_XU(x,u)) && pick_target(&td, "TARGET_CREATURE") ){
 				add_state(player, card, STATE_TAPPED);
+				tapped_for_mana_color = -1;
 			}
 		}
 	}
@@ -1418,7 +1410,7 @@ Whenever an artifact is put into a graveyard from the battlefield, you may have 
 			td.zone = TARGET_ZONE_PLAYERS;
 			if( would_validate_arbitrary_target(&td, 1-player, -1) ){
 				int amount = BYTE0(result);
-				lose_life(1-player, amount);
+				while (amount > 0){ lose_life(1-player, 1); --amount; }
 			}
 		}
 	}
@@ -1626,7 +1618,7 @@ Whenever a creature dies, you gain 2 life. */
 		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 		if( result ){
 			int amount = BYTE0(result);
-			gain_life(player, amount);
+			while (amount > 0){ gain_life(player, 2); --amount; }
 		}
 	}
 
@@ -1753,10 +1745,6 @@ Whenever Dross Scorpion or another artifact creature dies, you may untap target 
 	}
 
 	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		if( affect_me(player, card) ){
-			count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
-			return 0;
-		}
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE | TYPE_ARTIFACT);
 		test.type_flag = F1_MATCH_ALL;
@@ -1773,9 +1761,8 @@ Whenever Dross Scorpion or another artifact creature dies, you may untap target 
 			int amount = BYTE0(result);
 			int i;
 			for(i=0; i<amount; i++){
-				if( can_target(&td) && new_pick_target(&td, "Select target artifact to untap.", 0, GS_LITERAL_PROMPT) ){
-					untap_card(instance->targets[0].player, instance->targets[0].card);
-				}
+				if (!can_target(&td) || !new_pick_target(&td, "Select target artifact to untap.", 0, GS_LITERAL_PROMPT)){ return 0; }
+				untap_card(instance->targets[0].player, instance->targets[0].card);
 				instance->number_of_targets = 0;
 			}
 		}
@@ -2173,6 +2160,7 @@ If it's an artifact, creature, enchantment, or land card, the player may put it 
 			if( choice == 0 ){
 				int card_added = add_card_to_hand(current_turn, deck[0]);
 				remove_card_from_deck(current_turn, 0);
+				set_special_flags(current_turn, card_added, SF_PLAYED_FROM_DECK);
 				put_into_play(current_turn, card_added);
 			}
 		}
@@ -2200,10 +2188,10 @@ int card_glimmervoid(int player, int card, event_t event)
    * |T: Add one mana of any color to your mana pool. */
 
   if (trigger_condition == TRIGGER_EOT && affect_me(player, card) && reason_for_trigger_controller == player
-	  && count_permanents_by_type(player, TYPE_ARTIFACT) <= 0 && eot_trigger(player, card, event))
+	  && count_permanents_by_type(player, TYPE_ARTIFACT) <= 0 && eot_trigger(player, card, event) && !is_humiliated(player, card, AL_TRIG))
 	kill_card(player, card, KILL_SACRIFICE);
 
-  return mana_producer(player, card, event);
+  return plain_mana_producer(player, card, event);
 }
 
 int card_goblin_charbelcher(int player, int card, event_t event)
@@ -2352,16 +2340,17 @@ int card_grab_the_reins(int player, int card, event_t event){
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		instance->number_of_targets = 0;
 		if( ! check_special_flags2(player, card, SF2_COPIED_FROM_STACK) ){
-			int can_entwine = can_target(&td) && can_target(&td2) && has_mana_multi(player, MANACOST_XR(2, 1)) ? 1 : 0;
+			instance->info_slot = 0;
+            int can_entwine = can_target(&td) && can_target(&td2) && has_mana_multi(player, MANACOST_XR(2, 1)) ? 1 : 0;
 			int choice = DIALOG(player, card, event, DLG_RANDOM,
-								"Act of Treson", can_target(&td), 10,
+								"Act of Treason", can_target(&td), 10,
 								"Sac & damage", can_target(&td2), (can_target(&td) || new_can_sacrifice(player, card, player, &test) ? 5 : 1),
 								"Entwine", can_entwine,  15);
 			if( ! choice ){
 				spell_fizzled = 1;
 				return 0;
 			}
-			if( instance->info_slot & CHOICE_ENTWINE ){
+			if( choice == CHOICE_ENTWINE ){
 				charge_mana_multi(player, MANACOST_XR(2, 1));
 				if( spell_fizzled == 1){
 					return 0;
@@ -2382,30 +2371,38 @@ int card_grab_the_reins(int player, int card, event_t event){
 			}
 		}
 		if( instance->info_slot & CHOICE_SAC_DAMAGE ){
-			new_pick_target(&td, "TARGET_ANY", base_target, 1);
+			new_pick_target(&td2, "TARGET_ANY", base_target, 1);
 		}
 	}
 
-	if(event == EVENT_RESOLVE_SPELL ){
-		int base_target = 0;
-		if( instance->info_slot & CHOICE_AOT ){
-			if( validate_target(player, card, &td, 0) ){
-				effect_act_of_treason(player, card, instance->targets[1].player, instance->targets[1].card);
-			}
-			base_target++;
-		}
-		if( instance->info_slot & CHOICE_SAC_DAMAGE ){
-			if( validate_target(player, card, &td2, base_target) ){
-				int sac = new_sacrifice(player, card, player, SAC_JUST_MARK | SAC_RETURN_CHOICE | SAC_NO_CANCEL, &test);
-				if( sac ){
-					int pow = get_power(BYTE2(sac), BYTE3(sac));
-					kill_card(BYTE2(sac), BYTE3(sac), KILL_SACRIFICE);
-					damage_creature(instance->targets[base_target].player, instance->targets[base_target].card, pow, player, card);
-				}
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
+	if (event == EVENT_RESOLVE_SPELL){
+        if (instance->info_slot == CHOICE_ENTWINE){
+            if (validate_target(player, card, &td, 0)){
+                effect_act_of_treason(player, card, instance->targets[0].player, instance->targets[0].card);
+            }
+            if (validate_target(player, card, &td2, 1)){
+                int sac = new_sacrifice(player, card, player, SAC_JUST_MARK | SAC_RETURN_CHOICE | SAC_NO_CANCEL, &test);
+                if (sac){
+                    int power = get_power(BYTE2(sac), BYTE3(sac));
+                    kill_card(BYTE2(sac), BYTE3(sac), KILL_SACRIFICE);
+                    damage_creature(instance->targets[1].player, instance->targets[1].card, power, player, card);
+                }
+            }
+        } else {
+            if ((instance->info_slot & CHOICE_AOT) && validate_target(player, card, &td, 0)){
+                effect_act_of_treason(player, card, instance->targets[0].player, instance->targets[0].card);
+            }
+            if ((instance->info_slot & CHOICE_SAC_DAMAGE) && validate_target(player, card, &td2, 1)){
+                int sac = new_sacrifice(player, card, player, SAC_JUST_MARK | SAC_RETURN_CHOICE | SAC_NO_CANCEL, &test);
+                if (sac){
+                    int power = get_power(BYTE2(sac), BYTE3(sac));
+                    kill_card(BYTE2(sac), BYTE3(sac), KILL_SACRIFICE);
+                    damage_target0(player, card, power);
+                }
+            }
+        }
+        kill_card(player, card, KILL_DESTROY);
+    }
 
 	return 0;
 }
@@ -2450,6 +2447,7 @@ int card_granite_shard(int player, int card, event_t event){
 		if( charge_mana_for_activated_ability(player, card, MANACOST_XR(cless, red)) ){
 			if( pick_target(&td, "TARGET_ANY") ){
 				add_state(player, card, STATE_TAPPED);
+				tapped_for_mana_color = -1;
 			}
 		}
 	}
@@ -2520,6 +2518,7 @@ Artifact
 		if( charge_mana_for_activated_ability(player, card, MANACOST_XG(cless, green)) ){
 			if( pick_target(&td, "TARGET_CREATURE") ){
 				add_state(player, card, STATE_TAPPED);
+				tapped_for_mana_color = -1;
 			}
 		}
 	}
@@ -3120,7 +3119,7 @@ int card_luminous_angel(int player, int card, event_t event){
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_SPIRIT, &token);
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
+		token.color_forced = COLOR_TEST_WHITE;
 		token.key_plus = KEYWORD_FLYING;
 		generate_token(&token);
 	}
@@ -3138,6 +3137,7 @@ Each noncreature artifact is an artifact creature with power and toughness each 
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_ARTIFACT);
+		test.type_flag = F1_NO_CREATURE;
 		global_type_change(player, card, event, ANYBODY, TYPE_CREATURE, &test, 16384, 16384, 0, 0, 0);
 	}
 
@@ -3281,8 +3281,9 @@ int card_myr_incubator(int player, int card, event_t event){
 		if( choice == 1){
 			test_definition_t this_test;
 			new_default_test_definition(&this_test, TYPE_ARTIFACT, "Select an artifact card.");
+			this_test.no_shuffle = 1;
 			while( deck[0] != -1 ){
-					if( new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_RFG, 0, AI_MIN_VALUE, &this_test) != -1 ){
+					if( new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_RFG, 0, AI_MIN_VALUE, &this_test) >= 0 ){
 						myr++;
 					}
 					else{
@@ -3495,6 +3496,7 @@ int card_nightmare_lash(int player, int card, event_t event){
 		if( choice == CHOICE_USE_PA_ABILITY ){
 			charge_mana_for_activated_ability(player, card, MANACOST0);
 		}
+		if (spell_fizzled != 1){ return basic_equipment(player, card, event, 0); }
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
@@ -3612,8 +3614,10 @@ int card_nuisance_engine(int player, int card, event_t event){
 	// original code : 004DAC3A
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *instance = get_card_instance(player, card);
-		generate_token_by_id(instance->parent_controller, instance->parent_card, CARD_ID_PEST);
+		token_generation_t token;
+		default_token_definition(player, card, CARD_ID_PEST, &token);
+		token.action = TOKEN_ACTION_CONVERT_INTO_ARTIFACT;
+		generate_token(&token);
 	}
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(2), 0, NULL, NULL);
@@ -3962,6 +3966,7 @@ int card_pearl_shard(int player, int card, event_t event){
 		if( charge_mana_for_activated_ability(player, card, MANACOST_XW(cless, white)) ){
 			if( pick_target(&td, "TARGET_DAMAGE") ){
 				add_state(player, card, STATE_TAPPED);
+				tapped_for_mana_color = -1;
 			}
 		}
 	}
@@ -4084,7 +4089,7 @@ Artifact
 
 			test_definition_t this_test;
 			default_test_definition(&this_test, TYPE_CREATURE);
-			reveal_card_until_you_reveal_test(player, instance->targets[0].player, &this_test,
+			reveal_card_until_you_reveal_test(instance->targets[0].player, instance->targets[0].player, &this_test,
 												RCUYRT_PUT_TEST_INTO_PLAY | RCUYRT_PUT_REST_ON_BOTTOM);
 		}
 	}
@@ -4101,25 +4106,11 @@ Defender (This creature can't attack.)
 Whenever Psychic Membrane blocks, you may draw a card.
 */
 
-	if( event == EVENT_CAN_ACTIVATE && get_card_instance( player, card )->targets[1].player != 66 ){
-		if( current_turn == 1-player && current_phase == PHASE_AFTER_BLOCKING && get_card_instance( player, card )->blocking < 255 )
-		{
-			return 1;
+	if (event == EVENT_DECLARE_BLOCKERS && blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG)){
+		if (player == AI || do_dialog(player, player, card, -1, -1, " Draw a card\n Pass", 0) == 0){
+			draw_cards(player, 1);
 		}
 	}
-
-	if(event == EVENT_ACTIVATE ){
-		get_card_instance( player, card )->targets[1].player = 66;
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		draw_cards(player, 1);
-	}
-
-	if( event == EVENT_CLEANUP ){
-		get_card_instance( player, card )->targets[1].player = 0;
-	}
-
 	return 0;
 }
 
@@ -4384,7 +4375,7 @@ int card_razor_barrier(int player, int card, event_t event){
 	 * Instant
 	 * Target permanent you control gains protection from artifacts or from the color of your choice until end of turn. */
 
-	if (!IS_CASTING(player, card, event)){
+	if (!IS_GS_EVENT(player, card, event)){
 		return 0;
 	}
 
@@ -4427,8 +4418,8 @@ When ~ enters the battlefield, if you cast it from your hand, destroy all nonart
 			default_test_definition(&test, TYPE_CREATURE);
 			test.type_flag = F1_NONARTIFACT_CREATURE;
 			test.color = get_sleighted_color_test(player, card,  COLOR_TEST_BLACK);
-			test.color = DOESNT_MATCH;
-			APNAP(p, { new_manipulate_all(player, card, p, &test, KILL_BURY); };);
+			test.color_flag = DOESNT_MATCH;
+			new_manipulate_all(player, card, ANYBODY, &test, KILL_BURY);
 		}
 	}
 
@@ -4610,6 +4601,7 @@ Equip {4}
 
 		if( event == EVENT_GRAVEYARD_FROM_PLAY ){
 			if( in_play(affected_card_controller, affected_card) &&
+				!check_for_death_trigger_removal(affected_card_controller, affected_card) &&
 				is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
 				! is_token(affected_card_controller, affected_card) && instance->info_slot > 1 )
 			{
@@ -4820,6 +4812,7 @@ Artifact
 		if( charge_mana_for_activated_ability(player, card, MANACOST_XB(cless, black)) ){
 			if( select_target_from_grave_source(player, card, player, 0, AI_MAX_VALUE, &test, 0) ){
 				add_state(player, card, STATE_TAPPED);
+				tapped_for_mana_color = -1;
 			}
 			else{
 				spell_fizzled = 1;
@@ -4987,7 +4980,7 @@ Entwine—Sacrifice two lands. (Choose both if you pay the entwine cost.)
 				test.power_flag = F5_POWER_GREATER_THAN_VALUE;
 			}
 		}
-		APNAP(p, { new_manipulate_all(player, card, p, &test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &test, KILL_DESTROY);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -5208,19 +5201,18 @@ you may copy the other. If you do, you may cast the copy without paying its mana
 				const int *grave = get_grave(trg);
 				test_definition_t test;
 				new_default_test_definition(&test, TYPE_SORCERY, "Select a sorcery card to imprint.");
-				int count = 0, leg = 0, idx = 0;
-				while( count < 2 ){
-						int must_select = count < 1 ? 0 : 1;
-						int selected = new_select_a_card(player, player, TUTOR_FROM_GRAVE, must_select, AI_MAX_CMC, -1, &test);
-						if( selected == -1 ){
-							break;
-						}
-						else{
-							exiledby_remember(player, card, trg, grave[selected], &leg, &idx);
-							rfg_card_from_grave(trg, selected);
-							count++;
-						}
-				}
+				int leg = 0, idx = 0;
+                select_multiple_cards_from_graveyard(player, trg, -1, 1, &test, 2, instance->targets);
+                if (spell_fizzled != 1){
+                    for (int i = 0; i < 2; ++i){
+                        int selected = instance->targets[i].player;
+                        exiledby_remember(player, card, trg, grave[selected], &leg, &idx);
+                        int iid = grave[selected];
+                        if (instance->targets[9].player == -1){ instance->targets[9].player = iid; }
+                        else{ instance->targets[9].card = iid; }
+                        rfg_card_from_grave(trg, selected);
+                    }
+                }
 			}
 		}
 	}
@@ -5229,20 +5221,24 @@ you may copy the other. If you do, you may cast the copy without paying its mana
 		player == reason_for_trigger_controller && ! is_humiliated(player, card, AL_TRIG) &&
 		! check_special_flags(trigger_cause_controller, trigger_cause, SF_NOT_CAST) )
 	{
-		int id = get_id(trigger_cause_controller, trigger_cause);
+		int iid = get_original_internal_card_id(trigger_cause_controller, trigger_cause);
 		if( exiledby_count(player, card, player) >=2 || exiledby_count(player, card, 1-player) >= 2 ){
-			int rval = exiledby_choose(player, card, CARD_ID_SPELLWEAVER_HELIX, EXBY_FIRST_FOUND | EXBY_TEST_IID, id, "", 1);
+            card_instance_t *instance = get_card_instance(player, card);
+            if (instance->targets[9].player == iid){ iid = instance->targets[9].card; }
+            else if (instance->targets[9].card == iid){ iid = instance->targets[9].player; }
+            else{ return 0; }
+			int rval = exiledby_choose(player, card, CARD_ID_SPELLWEAVER_HELIX, EXBY_FIRST_FOUND | EXBY_TEST_IID, iid, "", 1);
 			if( rval ){
 				int* loc = (int*)rval;
 				if( loc ){
 					int *loc2 = exiledby_find(player, card, *loc, NULL, NULL);
 					int t_player = *loc2 & 0x80000000 ? 1 : 0;
-					if( check_rfg(t_player, id) ){
+					if( check_rfg(t_player, cards_data[iid].id) ){
 						if(event == EVENT_TRIGGER){
 							event_result |= RESOLVE_TRIGGER_AI(player);
 						}
 						else if(event == EVENT_RESOLVE_TRIGGER){
-								copy_spell(player, id);
+								copy_spell(player, cards_data[iid].id);
 						}
 					}
 				}
@@ -5297,13 +5293,16 @@ Exile all other cards revealed this way, and you lose 1 life for each of the exi
 			csvid = ai_name_a_random_csvid(player, card, player, TYPE_ANY, NULL);
 		}
 		else{
-			csvid = card_from_list(player, 3, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+			test_definition_t test;
+			new_default_test_definition(&test, TYPE_ANY, "Choose a card name.");
+			csvid = new_card_from_list(player, 3, &test);
 		}
 		test_definition_t test;
 		default_test_definition(&test, TYPE_ANY);
 		test.id = csvid;
-		reveal_card_until_you_reveal_test(player, player, &test, RCUYRT_ADD_TEST_TO_HAND | RCUYRT_EXILE_REST |
+		int revealed = reveal_card_until_you_reveal_test(player, player, &test, RCUYRT_ADD_TEST_TO_HAND | RCUYRT_EXILE_REST |
 											RCUYRT_RETURN_REVEALED_CARDS);
+		lose_life(player, revealed-1);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -5488,14 +5487,10 @@ Tangleroot	|3
 Artifact
 Whenever a player casts a creature spell, that player adds |G to his or her mana pool. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_CREATURE);
-		if( new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			produce_mana(trigger_cause_controller, COLOR_GREEN, 1);
-		}
+	sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_CREATURE, NULL, player, card);
+	if (event == EVENT_SPA){
+		produce_mana(trigger_cause_controller, COLOR_GREEN, 1);
 	}
-
 	return 0;
 }
 
@@ -5610,7 +5605,7 @@ Whenever a player casts a spell that shares a color or converted mana cost with 
 		}
 	}
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+	etb_ability(player, card, event, duh_mode(player) ? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL);
 
 	if( event == EVENT_ETB_ABILITY ){
 		target_definition_t td;
@@ -5652,9 +5647,13 @@ Whenever a player casts a spell that shares a color or converted mana cost with 
 				dmg = 1;
 			}
 		}
-		if( dmg && new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-			damage_player(trigger_cause_controller, 2, player, card);
+		if (dmg){
+			new_specific_spell_played(player, card, event, TYPE_ANY, RESOLVE_TRIGGER_MANDATORY, NULL);
 		}
+	}
+
+	if (event == EVENT_SP_ABILITY){
+			damage_player(trigger_cause_controller, 2, player, card);
 	}
 
 	return 0;
@@ -5742,7 +5741,7 @@ Entwine |2 (Choose both if you pay the entwine cost.) */
 			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_CMC, &this_test);
 		}
 		if( instance->info_slot & CHOICE_PUT_CREATURES_INTO_PLAY ){
-			new_global_tutor(player, player, TUTOR_FROM_HAND, TUTOR_PLAY, 0, AI_MAX_CMC, &this_test);
+			tutor_multiple_card_from_hand(player, player, player, TUTOR_PLAY, 0, AI_MAX_CMC, &this_test);
 		}
 		kill_card(player, card, KILL_SACRIFICE);
 	}
@@ -5974,14 +5973,10 @@ Vedalken Archmage	|2|U|U
 Creature - Vedalken Wizard 0/2
 Whenever you cast an artifact spell, draw a card. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_ARTIFACT);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			draw_cards(player, 1);
-		}
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ARTIFACT, NULL, player, card);
+	if (event == EVENT_SPA){
+		draw_cards(player, 1);
 	}
-
 	return 0;
 }
 
@@ -6135,7 +6130,7 @@ Entwine {B} (Choose both if you pay the entwine cost.)
 			}
 		}
 		if( instance->info_slot & CHOICE_DAMAGE_ALL ){
-			APNAP(p, { new_damage_all(player, card, p, 1, NDA_ALL_CREATURES | NDA_PLAYER_TOO, NULL); };);
+			new_damage_all(player, card, ANYBODY, 1, NDA_ALL_CREATURES | NDA_PLAYER_TOO, NULL);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}

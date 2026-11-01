@@ -20,10 +20,12 @@ int card_balan_wandering_knight(int player, int card, event_t event)
 	event_result |= KEYWORD_DOUBLE_STRIKE;
 
   int c;
-  if (event == EVENT_RESOLVE_ACTIVATION)
+  if (event == EVENT_RESOLVE_ACTIVATION){
+	card_instance_t* instance = get_card_instance(player, card);
 	for (c = 0; c < active_cards_count[player]; ++c)
 	  if (in_play(player, c) && is_what(player, c, TYPE_ARTIFACT) && has_subtype(player, c, SUBTYPE_EQUIPMENT))
-		equip_target_creature(player, c, player, card);
+		equip_target_creature(player, c, instance->parent_controller, instance->parent_card);
+  }
 
   return generic_activated_ability(player, card, event, GAA_NONE, MANACOST_XW(1, 1), 0, NULL, NULL);
 }

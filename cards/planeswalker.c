@@ -52,7 +52,7 @@ int check_for_alternate_identities(int player, int card){
 	return 0;
 }
 
-static int attacking_planeswalker(int player, int card, event_t event)
+int attacking_planeswalker(int player, int card, event_t event)
 {
   card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_SET_LEGACY_EFFECT_NAME)

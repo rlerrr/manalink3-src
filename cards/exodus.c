@@ -185,7 +185,7 @@ int card_cataclysm(int player, int card, event_t event){
 					td.required_type = types[i];
 					if (can_target(&td) && pick_target(&td, prompts[i])){
 						marked[instance->targets[0].player][instance->targets[0].card] = 1;
-						card_instance_t* aff = get_card_instance(player, card);
+						card_instance_t* aff = get_card_instance(instance->targets[0].player, instance->targets[0].card);
 
 						// It's legal to choose the same permanent for more than one type, but don't let the AI
 						aff->state |= STATE_TARGETTED;
@@ -281,7 +281,9 @@ int card_curiosity(int player, int card, event_t event)
   if ((packets = attached_creature_deals_damage(player, card, event, DDBM_MUST_DAMAGE_OPPONENT|DDBM_TRIGGER_OPTIONAL)))
 	draw_cards(player, packets);
 
-  return vanilla_aura(player, card, event, player);
+  if (IS_AURA_EVENT(player, card, event) || event == EVENT_STATIC_EFFECTS)
+    return vanilla_aura(player, card, event, player);
+  return 0;
 }
 
 int card_dauthi_jackal(int player, int card, event_t event){
@@ -559,27 +561,16 @@ int card_ephemeron(int player, int card, event_t event){
 
 int card_equilibrium(int player, int card, event_t event){
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && player == reason_for_trigger_controller ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_CREATURE);
-
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_CREATURE, NULL, player, card);
+	if (event == EVENT_SPA){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
-
-		card_instance_t *instance = get_card_instance(player, card);
-
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test) ){
-			if( has_mana(player, COLOR_ANY, 1) && can_target(&td) ){
-				if( charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 1) ){
-					if( pick_target(&td, "TARGET_CREATURE") ){
-						bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-					}
-				}
-			}
+		card_instance_t* instance = get_card_instance(player, card);
+		if (has_mana(player, COLOR_ANY, 1) && can_target(&td) && charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 1) && pick_target(&td, "TARGET_CREATURE")){
+			bounce_permanent(instance->targets[0].player, instance->targets[0].card);
 		}
 		instance->number_of_targets = 0;
 	}
-
 	return global_enchantment(player, card, event);
 }
 
@@ -792,13 +783,12 @@ int card_high_ground(int player, int card, event_t event)
   return global_enchantment(player, card, event);
 }
 
-int card_jackalope_herd(int player, int card, event_t event){
-
-	if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-		bounce_permanent(player, card);
-	}
-
-	return 0;
+int card_jackalope_herd(int player, int card, event_t event)
+{
+  sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+    bounce_permanent(player, card);
+  return 0;
 }
 
 int card_keeper_of_the_beasts(int player, int card, event_t event){
@@ -998,25 +988,19 @@ int card_keeper_of_the_mind(int player, int card, event_t event){
 
 int card_mana_breach(int player, int card, event_t event){
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && reason_for_trigger_controller == player ){
+	sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+	if (event == EVENT_SPA){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_LAND);
 		td.illegal_abilities = 0;
 		td.allow_cancel = 0;
-
-		card_instance_t *instance = get_card_instance(player, card);
-
-		if( new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-			td.allowed_controller = trigger_cause_controller;
-			td.preferred_controller = trigger_cause_controller;
-			td.who_chooses = trigger_cause_controller;
-			if( can_target(&td) && new_pick_target(&td, "Select a land you control to return to your hand.", 0, GS_LITERAL_PROMPT) ){
-				bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-			}
+		td.allowed_controller = td.preferred_controller = td.who_chooses = trigger_cause_controller;
+		card_instance_t* instance = get_card_instance(player, card);
+		if (can_target(&td) && new_pick_target(&td, "Select a land you control to return to your hand.", 0, GS_LITERAL_PROMPT)){
+			bounce_permanent(instance->targets[0].player, instance->targets[0].card);
 		}
 		instance->number_of_targets = 0;
 	}
-
 	return global_enchantment(player, card, event);
 }
 
@@ -1307,9 +1291,9 @@ If he or she does, that player puts that card onto the battlefield and all other
 				trig = 0;
 			}
 			if( trig ){
-				int choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_NO_CANCEL, DLG_NO_STORAGE,
+				int choice = DIALOG(current_turn, card, EVENT_ACTIVATE, DLG_NO_CANCEL, DLG_NO_STORAGE,
 									"Activate Oath of Druids", 1, count_subtype(current_turn, TYPE_CREATURE, -1) == 0 ? 10 : 1,
-									"Decline", 1, 1);
+									"Decline", 1, count_deck_by_type(current_turn, TYPE_CREATURE) > 0 ? 1 : 100);
 				if( choice == 1 ){
 					test_definition_t test;
 					default_test_definition(&test, TYPE_CREATURE);
@@ -1370,7 +1354,7 @@ The first player may search his or her library for a basic land card, put that c
 			if( trig ){
 				int prev_found = get_card_instance(player, card)->targets[1].card;
 				int choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_NO_CANCEL, DLG_NO_STORAGE,
-									"Activate Oath of Lieges", 1, prev_found ? 10 : 1,
+									"Activate Oath of Lieges", 1, prev_found >= 0 ? 10 : 1,
 									"Decline", 1, 5);
 				if( choice == 1 ){
 					test_definition_t this_test;
@@ -1425,25 +1409,11 @@ At the beginning of each player's upkeep, that player chooses target player who 
 The first player may have ~ deal 1 damage to the second player. */
 
 	upkeep_trigger_ability(player, card, event, ANYBODY);
-
-	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		if( life[current_turn] < life[1-current_turn] ){
-			int trig = 1;
-			if( player_bits[1-current_turn] & (PB_PLAYER_HAS_SHROUD | PB_PLAYER_HAS_HEXPROOF) ){
-				trig = 0;
-			}
-			if( trig ){
-				int priority_draw = hand_count[player] < 3 && count_deck(player) >= 20 ? 10 : 1;
-				int choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_NO_CANCEL, DLG_NO_STORAGE,
-									"Activate Oath of Mages", 1, priority_draw,
-									"Decline", 1, 5);
-				if( choice == 1 ){
-					damage_player(1-current_turn, 1, player, card);
-				}
-			}
+	if (event == EVENT_UPKEEP_TRIGGER_ABILITY && life[current_turn] < life[1-current_turn] && !(player_bits[1-current_turn] & (PB_PLAYER_HAS_SHROUD | PB_PLAYER_HAS_HEXPROOF))){
+		if (DIALOG(player, card, EVENT_ACTIVATE, DLG_NO_CANCEL, DLG_NO_STORAGE, DLG_WHO_CHOOSES(current_turn), "Activate Oath of Mages", 1, 50, "Decline", 1, 2) == 1){
+			damage_player(1-current_turn, 1, player, card);
 		}
 	}
-
 	return global_enchantment(player, card, event);
 }
 
@@ -1487,11 +1457,14 @@ Onslaught	|R
 Enchantment
 Whenever you cast a creature spell, tap target creature. */
 
-	if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_CREATURE, NULL, player, card);
+	if (event == EVENT_SPA){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.allow_cancel = 0;
 
 		card_instance_t *instance = get_card_instance(player, card);
+		instance->number_of_targets = 0;
 
 		if( can_target(&td) && new_pick_target(&td, "Select target creature to tap.", 0, GS_LITERAL_PROMPT) ){
 			action_on_target(player, card, 0, ACT_TAP);
@@ -1871,7 +1844,7 @@ int card_recurring_nightmare(int player, int card, event_t event){
 	new_default_test_definition(&test, TYPE_CREATURE, "Select target creature card.");
 
 	if(event == EVENT_RESOLVE_ACTIVATION ){
-		int selected = validate_target_from_grave_source(player, card, player, 1);
+		int selected = validate_target_from_grave_source(player, card, player, 0);
 		if( selected != -1 ){
 			reanimate_permanent(player, card, player, selected, REANIMATE_DEFAULT);
 		}
@@ -1914,7 +1887,8 @@ Scalding Salamander	|2|R
 Creature - Salamander 2/1
 Whenever ~ attacks, you may have it deal 1 damage to each creature without flying defending player controls. */
 
-  if (declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), player, card))
+  dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_CREATURE, "");
@@ -2035,7 +2009,7 @@ Enchanted creature doesn't untap during its controller's untap step.
 		}
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -2304,17 +2278,17 @@ int card_spellbook(int player, int card, event_t event){
 }
 
 
-int card_spellshock(int player, int card, event_t event){
-/* CARD_ID_SPELLSHOCK	3565
+int card_spellshock(int player, int card, event_t event)
+{
+  /* CARD_ID_SPELLSHOCK	3565
 Spellshock	|2|R
 Enchantment
 Whenever a player casts a spell, ~ deals 2 damage to that player. */
 
-	if( new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-		damage_player(trigger_cause_controller, 2, player, card);
-	}
-
-	return global_enchantment(player, card, event);
+  sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+    damage_player(trigger_cause_controller, 2, player, card);
+  return global_enchantment(player, card, event);
 }
 
 int card_sphere_of_resistance(int player, int card, event_t event){
@@ -3311,12 +3285,13 @@ When Wall of Nets leaves the battlefield, return all cards exiled with Wall of N
 		if( trigger_cause_controller == player && trigger_cause == card ){
 			card_instance_t *instance = get_card_instance(player, card);
 			instance->targets[1].card = exiledby_detach(player, card);
-			if( leaves_play(player, card, event, 1, 0) ){
-				get_back_cards_stored_in_exiledby(player, player-2, instance->targets[1].card, GBC_PUT_PERMANENTS_INTO_BF);
-			}
+			leaves_play(player, card, event, 1, 0);
 		}
 	}
 
+	if (event == EVENT_LEAVES_PLAY_ABILITY){
+		get_back_cards_stored_in_exiledby(player, player-2, get_card_instance(player, card)->targets[1].card, GBC_PUT_PERMANENTS_INTO_BF);
+	}
 	if( trigger_condition == TRIGGER_END_COMBAT && affect_me(player, card) && reason_for_trigger_controller == player ){
 		int trig = 0;
 		card_instance_t *instance = get_card_instance(player, card);
@@ -3344,15 +3319,20 @@ Creature - Bird 1/1
 Flying
 When ~ dies, you may search your library for a card named ~, reveal that card, put it into your hand, then shuffle your library. */
 
-	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		char msg[100] = "Select a Wekin Hawk card.";
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_ANY, msg);
-		this_test.id = get_id(player, card);
-
-	   new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &this_test);
+	if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_AI(player))){
+		int id = get_card_instance(player, card)->display_pic_csv_id;
+		char prompt[100];
+		if (ai_is_speculating == 1){
+			prompt[0] = 0;
+		}
+		else{
+			sprintf(prompt, "Select a card named %s.", cards_ptr[id]->full_name);
+		}
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_ANY, prompt);
+		test.id = id;
+		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &test);
 	}
-
 	return 0;
 }
 
@@ -3369,13 +3349,14 @@ Remove a +1/+1 counter from ~: Add |C to your mana pool. */
 	   return can_produce_mana(player, card);
 	}
 
-	if( event == EVENT_COUNT_MANA && affect_me(player, card) && count_1_1_counters(player, card) > 0 && can_produce_mana(player, card)){
-		declare_mana_available(player, COLOR_COLORLESS, 1);
+	if( event == EVENT_COUNT_MANA && affect_me(player, card) && count_1_1_counters(player, card) != 0 && can_produce_mana(player, card)){
+		declare_mana_available(player, COLOR_COLORLESS, count_1_1_counters(player, card));
 	}
 
 	if( event == EVENT_ACTIVATE){
 		remove_counters(player, card, player, card, COUNTER_P1_P1, 1);
 		produce_mana(player, COLOR_COLORLESS, 1);
+		tapped_for_mana_color = -2;
 	}
 
 	return 0;
@@ -3387,20 +3368,19 @@ Zealots en-Dal |3|W	0x200f516
 Creature — Human Soldier 2/4
 At the beginning of your upkeep, if all nonland permanents you control are white, you gain 1 life.
 */
-	upkeep_trigger_ability(player, card, event, player);
 
-	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		CYCLE_ALL_CARDS(p, c, 	{
-									if( p == player && in_play(p, c) && ! is_what(p, c, TYPE_LAND) ){
-										if( !(get_color(p, c) && get_sleighted_color_test(player, card, COLOR_TEST_WHITE)) ){
-											return 0;
-										}
-									}
-								}
-		);
+	test_definition_t test, test2;
+	default_test_definition(&test, TYPE_LAND);
+	test.type_flag = DOESNT_MATCH;
+	default_test_definition(&test2, TYPE_PERMANENT);
+	test2.color = get_sleighted_color_test(player, card, COLOR_TEST_BLACK | COLOR_TEST_BLUE | COLOR_TEST_GREEN | COLOR_TEST_RED);
+	upkeep_trigger_ability(player, card, event, player);
+	if (event == EVENT_UPKEEP_TRIGGER_ABILITY){
+		if (check_battlefield_for_special_card(player, card, player, 0, &test) && check_battlefield_for_special_card(player, card, player, 0, &test2)){
+			return 0;
+		}
 		gain_life(player, 1);
 	}
-
 	return 0;
 }
 

@@ -1,0 +1,58 @@
+{
+  "status": "Every normalized runtime-section difference is an established crew-event immediate.",
+  "before_dll_sha256": "e54936d1282cdf947c2a7a74bdd806db7fbb4dba9683ab3817805e75d85bfbd8",
+  "after_dll_sha256": "5c85f675250f6da4db82e3f566a7c8a96384eec84391d64734d0733d34d1b88f",
+  "after_dbg_sha256": "50d2ecb04ebc6fba4f21d49008ac73cbb602b530af81e72fd16012413f3a2cdc",
+  "runtime_sections": 26,
+  "crew_consumers": 3,
+  "event_sites": [
+    {
+      "function": "card_revoke_privileges",
+      "address": "0x2295df0",
+      "bytes": "81ff001d0000",
+      "mnemonic": "cmp",
+      "operands": "edi, 0x1d00",
+      "before_bytes": "81ff004f0000"
+    },
+    {
+      "function": "vehicle",
+      "address": "0x2294582",
+      "bytes": "c7442408001d0000",
+      "mnemonic": "mov",
+      "operands": "dword ptr [esp + 8], 0x1d00",
+      "before_bytes": "c7442408004f0000"
+    },
+    {
+      "function": "this_creature_can_crew_a_vehicle",
+      "address": "0x2293629",
+      "bytes": "c7442408001d0000",
+      "mnemonic": "mov",
+      "operands": "dword ptr [esp + 8], 0x1d00",
+      "before_bytes": "c7442408004f0000"
+    }
+  ],
+  "changed_runtime_bytes": [
+    {
+      "address": "0x229362e",
+      "before": 79,
+      "after": 29
+    },
+    {
+      "address": "0x2294587",
+      "before": 79,
+      "after": 29
+    },
+    {
+      "address": "0x2295df3",
+      "before": 79,
+      "after": 29
+    }
+  ],
+  "inputs": {
+    "docs/recovery-evidence/native-absolute-bindings-recovery.json": "451487a4d85ac2425f1954511f7101136d1722bfe9e63a81157f33edcde7f1a5",
+    "docs/recovery-evidence/native-header-enums-recovery.json": "3b6eb131c42191ca2b4699125d4918a38432e8b30e977487c249aa53a659a225",
+    "defs.h": "661b437c181d8e72486d852b381b6fe6a78f8da6c6b5414799e05da9710d2545",
+    "tools/recovery/audit_header_enum_runtime_delta.py": "0f10b5291c52750631e697971b7fd99b829846c21c8aeff40b98ca1ebcec5545"
+  },
+  "scope": "The sealed linker-only build and current build have identical runtime-section layouts. Every changed payload byte belongs to a decoded immediate changing0x4f00 to0x1d00 in the3 reviewed crew consumers. Export timestamp is normalized; debug sections and debuglink are excluded. This is a batch delta check, not a whole-game equivalence claim."
+}

@@ -588,7 +588,7 @@ int card_citadel_siege(int player, int card, event_t event){
 
 			instance->number_of_targets = 0;
 
-			if( can_target(&td) && new_pick_target(&td, "Select target creature your opponent controls.", 0, GS_LITERAL_PROMPT) ){
+			if( can_target(&td) && new_pick_target(&td, "Citadel Siege: Select target creature your opponent control, tap it.", 0, GS_LITERAL_PROMPT) ){
 				tap_card(instance->targets[0].player, instance->targets[0].card);
 			}
 		}
@@ -733,12 +733,15 @@ int card_elite_scaleguard(int player, int card, event_t event){
 		bolster(player, card, 2);
 	}
 
-	test_definition_t this_test;
-	default_test_definition(&this_test, TYPE_CREATURE);
-	this_test.special_selection_function = &has_1_1_counter;
-
-	int amt;
-	if ((amt = declare_attackers_trigger_test(player, card, event, DAT_TRACK, player, -1, &this_test))){
+	if (event == EVENT_DECLARE_ATTACKERS && affect_me(player, card)){
+		test_definition_t this_test;
+		default_test_definition(&this_test, TYPE_CREATURE);
+		this_test.special_selection_function = &has_1_1_counter;
+		store_attackers(player, card, event, DAT_TRACK, player, -1, &this_test);
+	}
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+	if (event == EVENT_DAT_ABILITY){
+		int amt = get_card_instance(player, card)->info_slot;
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.preferred_controller = 1-player;
@@ -846,6 +849,7 @@ int card_mardu_woe_reaper(int player, int card, event_t event){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_PERMANENT);
 		test.subtype = SUBTYPE_WARRIOR;
+		test.not_me = 1;
 
 		etb_ability_global(player, event, RESOLVE_TRIGGER_MANDATORY, 0, &test, player, card);
 	}
@@ -997,7 +1001,7 @@ int card_sages_reverie(int player, int card, event_t event){
 		draw_cards(player, count_aura_attached_to_creatures(player));
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -1717,7 +1721,8 @@ int card_sage_eye_avengers(int player, int card, event_t event){
 	  4/5
 	*/
 	prowess(player, card, event);
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+	if (event == EVENT_DAT_ABILITY){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 
@@ -1927,8 +1932,9 @@ int card_temporal_trespass(int player, int card, event_t event){
 	return 0;
 }
 
-int card_torrent_elemental(int player, int card, event_t event){
-	/*
+int card_torrent_elemental(int player, int card, event_t event)
+{
+  /*
 	  Torrent Elemental |4|U
 	  Creature - Elemental
 	  Flying
@@ -1936,14 +1942,16 @@ int card_torrent_elemental(int player, int card, event_t event){
 	  3(B/G)(B/G): Put Torrent Elemental from exile onto the battlefield tapped. Activate this ability only any time you could cast a sorcery.
 	  3/5
 	*/
-	//The rest of the code is in "activate_cards_in_hand" in "rules_engine.c"
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		new_manipulate_all(player, card, 1-player, &this_test, ACT_TAP);
-	}
 
-	return 0;
+
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    new_manipulate_all(player, card, 1-player, &test, ACT_TAP);
+  }
+  return 0;
 }
 
 int card_whisk_away(int player, int card, event_t event){
@@ -2188,12 +2196,9 @@ int card_brutal_hordechief(int player, int card, event_t event){
 	*/
 	card_instance_t *instance = get_card_instance( player, card);
 
-	int result = declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, -1);
-	if( result ){
-		lose_life(1-player, result);
-		gain_life(player, result);
-	}
-
+	store_attackers(player, card, event, DAT_SEPARATE_TRIGGERS, player, -1, NULL);
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+	if (event == EVENT_DAT_ABILITY){ lose_life(1-player, 1); gain_life(player, 1); }
 	if( event == EVENT_CAN_ACTIVATE ){
 		if( generic_activated_ability(player, card, event, 0, MANACOST0, 0, NULL, NULL) ){
 			int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_XR(3, 2));
@@ -2480,21 +2485,22 @@ int card_hooded_assasin(int player, int card, event_t event){
 	return 0;
 }
 
-int card_mardu_shadowspear(int player, int card, event_t event){
-	/*
+int card_mardu_shadowspear(int player, int card, event_t event)
+{
+  /*
 	  Mardu Shadowspear |B
 	  Creature - Human Warrior
 	  Whenever Mardu Shadowspear attacks, each opponent loses 1 life.
 	  Dash 1B (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)
 	  1/1
 	*/
-	dash(player, card, event, MANACOST_XB(1, 1));
 
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
-		lose_life(1-player, 1);
-	}
-
-	return 0;
+  if (card != -1)
+    dash(player, card, event, MANACOST_XB(1, 1));
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+    lose_life(1-player, 1);
+  return 0;
 }
 
 int card_mardu_strike_leader(int player, int card, event_t event){
@@ -2505,9 +2511,12 @@ int card_mardu_strike_leader(int player, int card, event_t event){
 	  Dash 3B (You may cast this spell for its dash cost. If you do, it gains haste, and it is returned from the battlefield to your hand at the beginning of the next end step.)
 	  3/2
 	*/
-	dash(player, card, event, MANACOST_XB(3, 1));
+	if (card != -1){
+		dash(player, card, event, MANACOST_XB(3, 1));
+	}
 
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_WARRIOR, &token);
 		token.pow = 2;
@@ -2834,23 +2843,19 @@ int card_alesha_who_smileas_at_death(int player, int card, event_t event){
 	  Whenever Alesha, Who Smiles at Death attacks, you may pay (W/B)(W/B). If you do, return target creature card with power 2 or less from your graveyard to the battlefield tapped and attacking.
 	  3/2
 	*/
+
 	check_legend_rule(player, card, event);
-
-	store_attackers(player, card, event, 0, player, card, NULL);
-
-	if (xtrigger_condition() == XTRIGGER_ATTACKING && affect_me(player, card) && reason_for_trigger_controller == player){
-		int active = check_for_alesha_reanimation(player) && has_mana_hybrid(player, 2, COLOR_BLACK, COLOR_WHITE, 0) ? 1 : 0;
-		if( active && declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), player, card) ){
-			if( charge_mana_hybrid(player, card, 2, COLOR_BLACK, COLOR_WHITE, 0) ){
-				test_definition_t this_test;
-				new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creture with Power 2 or less.");
-				this_test.power = 3;
-				this_test.power_flag = F5_POWER_LESSER_THAN_VALUE;
-				new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_PLAY_ATTACKING, 1, AI_MAX_CMC, &this_test);
-			}
+	store_attackers(player, card, event, 0, player, -1, NULL);
+	dat_ability(player, card, event, RESOLVE_TRIGGER_AI(player), 1);
+	if (event == EVENT_DAT_ABILITY && check_for_alesha_reanimation(player) && has_mana_hybrid(player, 2, COLOR_BLACK, COLOR_WHITE, 0)){
+		if (charge_mana_hybrid(player, card, 2, COLOR_BLACK, COLOR_WHITE, 0)){
+			test_definition_t test;
+			new_default_test_definition(&test, TYPE_CREATURE, "Select a creture with Power 2 or less.");
+			test.power = 3;
+			test.power_flag = F5_POWER_LESSER_THAN_VALUE;
+			new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_PLAY_ATTACKING, 1, AI_MAX_CMC, &test);
 		}
 	}
-
 	return 0;
 }
 
@@ -3136,9 +3141,10 @@ int card_flamerush_rider(int player, int card, event_t event){
 	  Dash 2RR (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)
 	  3/3
 	*/
-	dash(player, card, event, MANACOST_XR(2, 2));
+	if (card != -1){ dash(player, card, event, MANACOST_XR(2, 2)); }
 
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.allowed_controller = current_turn;
@@ -3216,9 +3222,10 @@ int card_goblin_heelcutter(int player, int card, event_t event){
 	  Dash 2R (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)
 	  3/2
 	*/
-	dash(player, card, event, MANACOST_XR(2, 1));
+	if (card != -1){ dash(player, card, event, MANACOST_XR(2, 1)); }
 
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.preferred_controller = 1-current_turn;
@@ -3371,51 +3378,27 @@ int card_outpost_siege(int player, int card, event_t event){
 	 * As ~ enters the battlefield, choose Khans or Dragons.
 	 * * Khans - At the beginning of your upkeep, exile the top card of your library. Until end of turn, you may play that card.
 	 * * Dragons - Whenever a creature you control leaves the battlefield, ~ deals 1 damage to any target. */
-	if( event == EVENT_RESOLVE_SPELL ){
-		choose_khans_or_dragons(player, card, 4*count_subtype(player, TYPE_CREATURE, -1), 20 );
+
+	if (event == EVENT_RESOLVE_SPELL){ choose_khans_or_dragons(player, card, 4*count_subtype(player, TYPE_CREATURE, -1), 20); }
+	if (is_humiliated(player, card, AL_TRIG)){ return 0; }
+	if (get_khans_or_dragons(player, card) == KHANS){ upkeep_trigger_ability(player, card, event, player); }
+	if (event == EVENT_UPKEEP_TRIGGER_ABILITY && deck_ptr[player][0] != -1){
+	    create_may_play_card_from_exile_effect(player, card, player, cards_data[deck_ptr[player][0]].id, MPCFE_UNTIL_EOT);
+	    rfg_top_card_of_deck(player);
 	}
-
-	if( is_humiliated(player, card, AL_TRIG) ){
-		return 0;
+	if (trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card) && reason_for_trigger_controller == player && get_khans_or_dragons(player, card) == DRAGONS){
+	    test_definition_t test;
+	    default_test_definition(&test, TYPE_CREATURE);
+	    test_leaves_play(player, card, event, player, &test, 1, 1);
 	}
-
-	if( get_khans_or_dragons(player, card) == KHANS ){
-		upkeep_trigger_ability(player, card, event, player);
+	if (event == EVENT_LEAVES_PLAY_ABILITY){
+	    target_definition_t td;
+	    default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
+	    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+	    td.allow_cancel = 0;
+	    get_card_instance(player, card)->number_of_targets = 0;
+	    if (can_target(&td) && pick_target(&td, "TARGET_ANY")){ damage_target0(player, card, 1); }
 	}
-
-	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		if( deck_ptr[player][0] != -1 ){
-			create_may_play_card_from_exile_effect(player, card, player, cards_data[deck_ptr[player][0]].id, MPCFE_UNTIL_EOT);
-			rfg_top_card_of_deck(player);
-		}
-	}
-
-	if( trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card) && reason_for_trigger_controller == player ){
-		if( trigger_cause_controller == player && is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) &&
-			get_khans_or_dragons(player, card) == DRAGONS
-		  ){
-			target_definition_t td;
-			default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
-			td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-			td.allow_cancel = 0;
-
-			card_instance_t *instance = get_card_instance(player, card);
-
-			instance->number_of_targets = 0;
-
-			if( can_target(&td) ){
-				if(event == EVENT_TRIGGER){
-					event_result |= RESOLVE_TRIGGER_MANDATORY;
-				}
-				else if(event == EVENT_RESOLVE_TRIGGER){
-						if( pick_target(&td, "TARGET_ANY") ){
-							damage_target0(player, card, 1);
-						}
-				}
-			}
-		}
-	}
-
 	return global_enchantment(player, card, event);
 }
 
@@ -3530,9 +3513,10 @@ int card_vaultbreaker(int player, int card, event_t event){
 	  Dash 2R
 	  4/2
 	*/
-	dash(player, card, event, MANACOST_XR(2, 1));
+	if (card != -1){ dash(player, card, event, MANACOST_XR(2, 1)); }
 
-	if( declare_attackers_trigger(player, card, event, hand_count[player] ? RESOLVE_TRIGGER_AI(player) : 0, player, card) ){
+	dat_ability(player, card, event, hand_count[player] ? (duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL) : 0, 0);
+	if (event == EVENT_DAT_ABILITY){
 		test_definition_t this_test;
 		new_default_test_definition(&this_test, TYPE_ANY, "Select a card to discard.");
 		int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &this_test);
@@ -3727,11 +3711,10 @@ int card_battlefront_krushok(int player, int card, event_t event){
 	  3/4
 	*/
 
-	if( event == EVENT_BLOCK_LEGALITY && attacking_card_controller == player && ! is_humiliated(player, card, AL_STATIC) ){
-		if( attacking_card == card || count_1_1_counters(attacking_card_controller, attacking_card) > 0 ){
-			if( count_my_blockers(attacking_card_controller, attacking_card) > 1 ){
-				event_result = 1;
-			}
+	maxblockers_1(player, card, event);
+	if (event == EVENT_ABILITIES && !is_humiliated(player, card, AL_STATIC) && affected_card_controller == player){
+		if (count_counters(player, affected_card, COUNTER_P1_P1) != 0){
+			maxblockers_1(affected_card_controller, affected_card, EVENT_ABILITIES);
 		}
 	}
 	return 0;

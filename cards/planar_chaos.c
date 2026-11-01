@@ -257,25 +257,25 @@ Enchanted creature gets +2/+2 for each Aura attached to it and has vigilance. */
 		}
 	}
 
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
+
 	return vanilla_aura(player, card, event, player);
 }
 
-int card_aven_riftwatcher(int player, int card, event_t event){
-	/* Aven Riftwatcher	|2|W
+int card_aven_riftwatcher(int player, int card, event_t event)
+{
+  /* Aven Riftwatcher	|2|W
 	 * Creature - Bird Rebel Soldier 2/3
 	 * Flying
 	 * Vanishing 3
 	 * When ~ enters the battlefield or leaves the battlefield, you gain 2 life. */
 
-	vanishing(player, card, event, 3);
-
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-
-	if( event == EVENT_ETB_ABILITY || leaves_play(player, card, event, 1, 1) ){
-		gain_life(player, 2);
-	}
-
-	return 0;
+  vanishing(player, card, event, 3);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  leaves_play(player, card, event, 1, 1);
+  if (event == EVENT_ETB || event == EVENT_LEAVES_PLAY_ABILITY)
+    gain_life(player, 2);
+  return 0;
 }
 
 int card_benalish_commander(int player, int card, event_t event)
@@ -360,7 +360,7 @@ Creature — Human Rebel Cleric 1/1, 1B (2)
 						generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0, &td, NULL),
 						generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_X(4), 0, NULL, NULL)
 		};
-		if( abils[2] && IS_AI(player) && instance->targets[1].card == -1 ){
+		if( abils[2] && IS_AI(player) && instance->targets[1].card < 0 ){
 			abils[2] = 0;
 		}
 		int choice = DIALOG(player, card, event, DLG_RANDOM,
@@ -409,6 +409,8 @@ int card_body_double(int player, int card, event_t event)
   int iid = -1;
   if (event == EVENT_RESOLVE_SPELL)
 	{
+	  card_instance_t* instance = get_card_instance(player, card);
+	  instance->state |= STATE_OUBLIETTED;
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card.");
 	  if (IS_AI(player))	// Prevent AI from looping if the only creature in a graveyard is another Body Double.
@@ -418,6 +420,8 @@ int card_body_double(int player, int card, event_t event)
 		}
 
 	  iid = select_target_from_either_grave(player, card, SFG_NOTARGET, AI_MAX_VALUE, AI_MAX_VALUE, &test, 0, 1);
+	  if (iid == -1){ return 0; }
+	  instance->state &= ~STATE_OUBLIETTED;
 	}
 
   enters_the_battlefield_as_copy_of(player, card, event, -1, iid);	// enters_the_battlefield_as_copy_of() only examines iid during EVENT_RESOLVE_SPELL
@@ -871,7 +875,7 @@ Pay 2 life: Return ~ to its owner's hand. */
 		if( event == EVENT_RESOLVE_ACTIVATION ){
 			bounce_permanent(instance->parent_controller, instance->parent_card);
 		}
-		return generic_activated_ability(player, card, event, 0, MANACOST0, 3, NULL, NULL);
+		return generic_activated_ability(player, card, event, 0, MANACOST0, 2, NULL, NULL);
 	}
 
 	return evincars(player, card, event, COLOR_TEST_WHITE);
@@ -1644,7 +1648,7 @@ Creature - Goblin Spellshaper 1/1
 		}
 	}
 
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_DISCARD, MANACOST_XR(1, 1), 0, &td, "TARGET_CREATURE");
+	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_DISCARD, MANACOST_XR(1, 1), 0, &td, "TARGET_CREATURE");
 }
 
 int frenetic_sliver_shared_ability(int player, int card, event_t event)
@@ -2071,7 +2075,8 @@ Whenever ~ attacks or blocks, create a 2/2 |Sgreen Cat Warrior creature token wi
   check_legend_rule(player, card, event);
 
   // Whenever ~ attacks or blocks, put a 2/2 |Sgreen Cat Warrior creature token with |H2forestwalk onto the battlefield.
-  if (declare_attackers_trigger(player, card, event, 0, player, card)
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY
 	  || (blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG)))
 	{
 	  token_generation_t token;
@@ -2143,7 +2148,7 @@ Creature — Shapeshifter 4/4
 				return 0;
 			}
 			int abils[5] = {0, KEYWORD_DOUBLE_STRIKE, get_sleighted_protection(player, card, KEYWORD_PROT_RED), SP_KEYWORD_VIGILANCE,
-							SP_KEYWORD_VIGILANCE};
+							SP_KEYWORD_SHADOW};
 			instance->targets[2].player |= abils[choice];
 		}
 	}
@@ -2161,7 +2166,7 @@ Creature — Shapeshifter 4/4
 			s_key = SP_KEYWORD_VIGILANCE;
 		}
 		if( instance->info_slot == CHOICE_SHADOW ){
-			s_key = SP_KEYWORD_VIGILANCE;
+			s_key = SP_KEYWORD_SHADOW;
 		}
 		pump_ability_until_eot(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card,
 								-1, -1, key, s_key);
@@ -2170,15 +2175,18 @@ Creature — Shapeshifter 4/4
 	return 0;
 }
 
-int card_kavu_predator(int player, int card, event_t event){
-/* CARD_ID_KAVU_PREDATOR	8797
+int card_kavu_predator(int player, int card, event_t event)
+{
+  /* CARD_ID_KAVU_PREDATOR	8797
 Kavu Predator	|1|G
 Creature - Kavu 2/2
 Trample
 Whenever an opponent gains life, put that many +1/+1 counters on ~. */
 
-	// the real code is in "gain_life" functions in the "functions.c"
-	return 0;
+int amount = trigger_gain_life(player, card, event, 1-player, RESOLVE_TRIGGER_MANDATORY);
+  if (amount && in_play(player, card))
+    add_counters(player, card, player, card, COUNTER_P1_P1, amount);
+  return 0;
 }
 
 int card_keldon_marauders(int player, int card, event_t event){
@@ -2190,7 +2198,8 @@ int card_keldon_marauders(int player, int card, event_t event){
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY || leaves_play(player, card, event, 1, 1) ){
+	leaves_play(player, card, event, 1, 1);
+	if (event == EVENT_ETB_ABILITY || event == EVENT_LEAVES_PLAY_ABILITY){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TARGET_TYPE_PLANESWALKER);
 		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
@@ -2280,7 +2289,7 @@ Creature - Human Wizard 5/5
 |3, |T: Tap target creature you control and target creature of an opponent's choice he or she controls. Those creatures fight each other.
 (Each deals damage equal to its power to the other.) */
 
-	if( ! IS_GAA_EVENT(event) ){
+	if( IS_GAA_EVENT(event) ){
 		return card_arena(player, card, event);
 	}
 	return 0;
@@ -2633,7 +2642,7 @@ int card_piracy_charm(int player, int card, event_t event)
    * Instant
    * Choose one - Target creature gains |H2islandwalk until end of turn; or target creature gets +2/-1 until end of turn; or target player discards a card. */
 
-  if (IS_CASTING(player, card, event))
+  if (IS_GS_EVENT(player, card, event))
 	{
 	  target_definition_t td_creature, td_walk_creature, td_weak_creature, td_pump_creature, td_player;
 	  default_target_definition(player, card, &td_creature, TYPE_CREATURE);
@@ -2847,19 +2856,18 @@ At the beginning of the end step, if no creatures are on the battlefield, sacrif
 
 int card_radha_heir_to_keld(int player, int card, event_t event)
 {
-/* CARD_ID_RADHA_HEIR_TO_KELD	8828
+  /* CARD_ID_RADHA_HEIR_TO_KELD	8828
 Radha, Heir to Keld	|R|G
 Legendary Creature - Elf Warrior 2/2
 Whenever ~ attacks, you may add |R|R to your mana pool.
 |T: Add |G to your mana pool. */
 
   check_legend_rule(player, card, event);
-
-  // Whenever ~ attacks, you may add |R|R to your mana pool.
-  if (declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), player, card))
-	produce_mana(player, COLOR_RED, 2);
-
-  // |T: Add |G to your mana pool.
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    produce_mana(player, COLOR_RED, 2);
+  }
   return mana_producing_creature(player, card, event, 0, COLOR_GREEN, 1);
 }
 
@@ -2966,7 +2974,7 @@ Counter target spell that targets a permanent you control. */
 			card_instance_t *instance = get_card_instance(card_on_stack_controller, card_on_stack);
 			int i;
 			for(i=0; i<instance->number_of_targets; i++){
-				if( instance->targets[i].player == player && instance->targets[i].card != -1 ){
+				if( instance->targets[i].player == player && instance->targets[i].card != -1 && in_play(player, instance->targets[i].card) ){
 					if( is_what(instance->targets[i].player, instance->targets[i].card, TYPE_PERMANENT) ){
 						return result;
 					}
@@ -2983,7 +2991,7 @@ Counter target spell that targets a permanent you control. */
 			card_instance_t *spell = get_card_instance(instance->targets[0].player, instance->targets[0].card);
 			int i;
 			for(i=0; i<spell->number_of_targets; i++){
-				if( spell->targets[i].player == player && spell->targets[i].card != -1 ){
+				if( spell->targets[i].player == player && spell->targets[i].card != -1 && in_play(instance->targets[i].player, instance->targets[i].card) ){
 					if( is_what(spell->targets[i].player, spell->targets[i].card, TYPE_PERMANENT) ){
 						valid = 1;
 						break;
@@ -2994,6 +3002,7 @@ Counter target spell that targets a permanent you control. */
 				real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
 			}
 		}
+		kill_card(player, card, KILL_DESTROY);
 		return 0;
 	}
 
@@ -3174,18 +3183,21 @@ int card_serras_boon(int player, int card, event_t event)
 		}
 	}
 
+  if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
+
   return vanilla_aura(player, card, event, ANYBODY);
 }
 
-int card_shade_of_trokair(int player, int card, event_t event){
-	/* Shade of Trokair	|3|W
+int card_shade_of_trokair(int player, int card, event_t event)
+{
+  /* Shade of Trokair	|3|W
 	 * Creature - Shade 1/2
 	 * |W: ~ gets +1/+1 until end of turn.
 	 * Suspend 3-|W */
-	if( IS_GAA_EVENT(event) || event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST ){
-		return generic_shade_merge_pt(player, card, event, 0, MANACOST_W(1), 1, 1);
-	}
-	return suspend(player, card, event, 3, MANACOST_W(1), NULL, NULL);
+
+  if (IS_GAA_EVENT(event) || event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST)
+    generic_shade_merge_pt(player, card, event, 0, MANACOST_W(1), 1, 1);
+  return suspend(player, card, event, 3, MANACOST_W(1), NULL, NULL);
 }
 
 int card_shaper_parasite(int player, int card, event_t event){
@@ -3339,22 +3351,25 @@ Then put the last chosen card into your hand. */
   return shrouded_lore_impl(player, card, event, COLOR_BLACK);
 }
 
-int card_simian_spirit_guide(int player, int card, event_t event){
-	/* Simian Spirit Guide	|2|R
+int card_simian_spirit_guide(int player, int card, event_t event)
+{
+  /* Simian Spirit Guide	|2|R
 	 * Creature - Ape Spirit 2/2
 	 * Exile ~ from your hand: Add |R to your mana pool. */
 
-	if( event == EVENT_CAN_ACTIVATE_FROM_HAND ){
-		return 1;
-	}
-	if( event == EVENT_ACTIVATE_FROM_HAND ){
-		kill_card(player, card, KILL_EXILE);
-		return 1;
-	}
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND ){
-		produce_mana(player, COLOR_RED, 1);
-	}
-	return 0;
+  if ((event == EVENT_CAN_ACTIVATE_FROM_HAND || event == EVENT_COUNT_MANA) && can_produce_mana(player, card))
+  {
+    declare_mana_available(player, COLOR_RED, 1);
+    return 1;
+  }
+  if (event == EVENT_ACTIVATE_FROM_HAND)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 1;
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION_FROM_HAND)
+    produce_mana(player, COLOR_RED, 1);
+  return 0;
 }
 
 int card_skirk_shaman(int player, int card, event_t event){
@@ -3508,7 +3523,7 @@ Take an extra turn after this one. */
 		int choice = 1;
 		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
 			APNAP(p, {
-					if( can_pay_life(p, 1) ){
+					if ((p != player || !duh_mode(player)) && can_pay_life(p, 1)){
 						int ai_choice = 0;
 						if( choice == 0 || life[p] < 12 || check_battlefield_for_id(p, CARD_ID_STRANGLEHOLD) ){
 							ai_choice = 1;
@@ -3549,8 +3564,8 @@ Whenever ~ deals combat damage to a player, you may pay |2|B. If you do, put tar
 	if( result ){
 		int amount = BYTE0(result) + BYTE1(result);
 		while( amount ){
-				if( has_mana_multi(player, MANACOST_XU(2, 1)) &&
-					charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, MANACOST_XU(2,1)) )
+				if( has_mana_multi(player, MANACOST_XB(2, 1)) &&
+					charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, MANACOST_XB(2, 1)) )
 				{
 					test_definition_t test;
 					new_default_test_definition(&test, TYPE_CREATURE, "Select target creature card.");
@@ -3596,7 +3611,6 @@ Creature — Shapeshifter 3/3
 		return generic_shade(player, card, event, 0, MANACOST_X(1), -1, 1, 0, 0);
 	}
 
-
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -3610,12 +3624,15 @@ Creature — Shapeshifter 3/3
 	enum{
 		CHOICE_UNTAP = 1,
 		CHOICE_FORCE_BLOCK,
-		CHOICE_CHANGE_TARGET, //Currently unimplemented
+		CHOICE_CHANGE_TARGET,
 		CHOICE_P1_M1,
 		CHOICE_M1_P1
 	};
 
 	if( event == EVENT_CAN_ACTIVATE ){
+        if (deflect_away_from_me(player, card, event, 0, MANACOST_R(1), 0, NULL, 0)){
+            return 99;
+        }
 		return generic_activated_ability(player, card, event, 0, MANACOST_X(1), 0, NULL, NULL);
 	}
 
@@ -3624,7 +3641,7 @@ Creature — Shapeshifter 3/3
 						0,
 						generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_R(1), 0, NULL, NULL),
 						generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_CAN_TARGET, MANACOST_R(1), 0, &td, NULL),
-						0,
+                        deflect_away_from_me(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_R(1), 0, NULL, 0) == 99,
 						1,
 						1
 		};
@@ -3644,6 +3661,9 @@ Creature — Shapeshifter 3/3
 		if( choice == CHOICE_FORCE_BLOCK ){
 			return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_R(1), 0, &td, "TARGET_CREATURE");
 		}
+        if (choice == CHOICE_CHANGE_TARGET){
+            return deflect_away_from_me(player, card, event, 0, MANACOST_R(1), 0, NULL, 0);
+        }
 		return generic_activated_ability(player, card, event, 0, MANACOST_X(1), 0, NULL, NULL);
 	}
 
@@ -3654,6 +3674,9 @@ Creature — Shapeshifter 3/3
 		if( instance->info_slot == CHOICE_FORCE_BLOCK && valid_target(&td) ){
 			target_must_block_me(player, instance->parent_card, instance->targets[0].player, instance->targets[0].card, 1);
 		}
+        if (instance->info_slot == CHOICE_CHANGE_TARGET){
+            return deflect_away_from_me(player, card, event, 0, MANACOST_R(1), 0, NULL, 0);
+        }
 		if( instance->info_slot == CHOICE_P1_M1 ){
 			return generic_shade(player, card, event, 0, MANACOST_X(1), 1, -1, 0, 0);
 		}
@@ -3724,20 +3747,18 @@ Echo |1|G|G (At the beginning of your upkeep, if this came under your control si
 	return 0;
 }
 
-int card_urborg_tomb_of_yawgmoth(int player, int card, event_t event){
-/* CARD_ID_URBORG_TOMB_OF_YAWGMOTH	8870
+int card_urborg_tomb_of_yawgmoth(int player, int card, event_t event)
+{
+  /* CARD_ID_URBORG_TOMB_OF_YAWGMOTH	8870
 Urborg, Tomb of Yawgmoth	""
 Legendary Land
 Each land is |Ha Swamp in addition to its other land types. */
 
-	// Used externally
-	check_legend_rule(player, card, event);
-
-	if (event == EVENT_RESOLVE_SPELL){
-		play_land_sound_effect(player, card);
-	}
-
-	return all_lands_are_basiclandtype(player, card, event, 2, COLOR_BLACK, SUBTYPE_SWAMP);
+  check_legend_rule(player, card, event);
+  if (event == EVENT_RESOLVE_SPELL)
+    play_land_sound_effect(player, card);
+  all_lands_are_basiclandtype(player, card, event, ANYBODY, COLOR_BLACK, SUBTYPE_SWAMP);
+  return plain_mana_producer(player, card, event);
 }
 
 int card_vitaspore_thallid(int player, int card, event_t event){

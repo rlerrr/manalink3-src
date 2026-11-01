@@ -210,27 +210,18 @@ Enchanted creature has lifelink.
 |1|W: Attach ~ to target creature you control.
 Totem armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.) */
 
-	if( IS_GAA_EVENT(event) ){
+	if (IS_GAA_EVENT(event)){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.preferred_controller = player;
-		return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_XW(1, 1), 0, &td, "TARGET_CREATURE");
-	}
-
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.preferred_controller = player;
-
-		card_instance_t *instance = get_card_instance(player, card);
-
-		if( valid_target(&td) ){
-			attach_aura_to_target(instance->parent_controller, instance->parent_card, event,
-									instance->targets[0].player, instance->targets[0].card);
+		td.allowed_controller = td.preferred_controller = player;
+		if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE){
+			return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST_XW(1, 1), 0, &td, "Select target creature you control to attach this.");
+		}
+		if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td)){
+			card_instance_t* instance = get_card_instance(player, card);
+			attach_aura_to_target(player, instance->parent_card, event, instance->targets[0].player, instance->targets[0].card);
 		}
 	}
-
 	return totem_armor(player, card, event, 0, 0, 0, SP_KEYWORD_LIFELINK);
 }
 
@@ -256,7 +247,7 @@ int card_sakashimas_student(int player, int card, event_t event)
    * You may have ~ enter the battlefield as a copy of any creature on the battlefield, except it's still a Ninja in addition to its other creature types. */
 
   if (enters_the_battlefield_as_copy_of_any_creature(player, card, event))
-	add_a_subtype(player, card, SUBTYPE_NINJA);
+	add_a_subtype_permanently(player, card, player, card, SUBTYPE_NINJA);
 
   return ninjutsu(player, card, event, MANACOST_XU(1,1), CARD_ID_SAKASHIMAS_STUDENT);
 }
@@ -310,7 +301,8 @@ int card_preyseizer_dragon(int player, int card, event_t event)
 	 * Flying
 	 * Devour 2
 	 * Whenever ~ attacks, it deals damage to any target equal to the number of +1/+1 counters on ~. */
-	if (declare_attackers_trigger(player, card, event, 0, player, card)){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
 		int amt = count_1_1_counters(player, card);
 
 		target_definition_t td;
@@ -348,7 +340,7 @@ int card_brindle_shoat(int player, int card, event_t event ){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_BOAR, &token);
 		token.pow = token.tou = 3;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
+		token.color_forced = COLOR_TEST_GREEN;
 		generate_token(&token);
 	}
 
@@ -447,9 +439,11 @@ Whenever ~ attacks, if it's enchanted, exile target permanent. */
   vigilance(player, card, event);
 
   // Whenever ~ attacks, if it's enchanted, exile target permanent.
-  if ((xtrigger_condition() == XTRIGGER_ATTACKING || event == EVENT_DECLARE_ATTACKERS)
-	  && is_enchanted(player, card)
-	  && declare_attackers_trigger(player, card, event, 0, player, card))
+  store_attackers(player, card, event, 0, player, card, NULL);
+  if (xtrigger_condition() == XTRIGGER_ATTACKING && is_enchanted(player, card)){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  }
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_PERMANENT );
@@ -476,10 +470,7 @@ You may cast it without paying its mana cost. Put the exiled cards on the bottom
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) && ! is_token(player, card) && ! check_special_flags(player, card, SF_NOT_CAST) ){
-		do_cascade(player, card, -1);
-		do_cascade(player, card, -1);
-	}
+	multicascade(player, card, event, 2);
 	if( event == EVENT_ABILITIES && is_what(affected_card_controller, affected_card, TYPE_CREATURE) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( affected_card_controller == player && in_play(affected_card_controller, affected_card) ){
 			haste(player, affected_card, event);
@@ -494,6 +485,7 @@ static void silent_blade_oni_ability(int player, int card, int t_player){
 	}
 	test_definition_t test;
 	new_default_test_definition(&test, TYPE_LAND, "Select a nonland card to cast for free.");
+	test.type_flag = DOESNT_MATCH;
 	int selected = -1;
 	if( IS_AI(player) ){
 		int playable[2][hand_count[t_player]];
@@ -1265,7 +1257,7 @@ int card_krosa2(int player, int card, event_t event){
 		produce_mana_multi(player, 0, 1, 1, 1, 1, 1);
 	}
 
-	boost_creature_type(player, card, event, -1, 2, 2, 0, BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
+	boost_creature_type(player, card, event, -1, 2, 2, 0, BCT_INCLUDE_SELF);
 
 	return generic_plane(player, card, event);
 }
@@ -1856,7 +1848,7 @@ int card_sokenzan(int player, int card, event_t event){
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
-	boost_subtype(player, card, event, -1, 1,1, 0,SP_KEYWORD_HASTE, BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
+	boost_subtype(player, card, event, -1, 1,1, 0,SP_KEYWORD_HASTE, BCT_INCLUDE_SELF);
 
 	if( event == EVENT_CHAOS ){
 		int count;
@@ -1887,7 +1879,7 @@ int card_stronghold_furnace(int player, int card, event_t event){
 		card_instance_t *instance = get_card_instance( player, card );
 
 		if( can_target(&td) && new_pick_target(&td, "TARGET_ANY", 0, 0) ){
-			damage_creature_or_player(player, card, event, 1);
+			damage_target0(player, card, 1);
 		}
 		instance->number_of_targets = 0;
 	}
@@ -1991,7 +1983,7 @@ int card_the_fourth_sphere(int player, int card, event_t event){
 		test_definition_t test;
 		new_default_test_definition(&test, TYPE_CREATURE, "Select a nonblack creature to sacrifice.");
 		test.color = COLOR_TEST_BLACK;
-		test.color = DOESNT_MATCH;
+		test.color_flag = DOESNT_MATCH;
 		new_sacrifice(player, card, player, SAC_NO_CANCEL | SAC_CAUSED, &test);
 	}
 
@@ -2037,7 +2029,6 @@ int card_the_hippodrome(int player, int card, event_t event){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.power_requirement = 0;
-		td.allow_cancel = 0;
 
 		card_instance_t *instance = get_card_instance( player, card );
 
@@ -2630,7 +2621,8 @@ int card_kessig2(int player, int card, event_t event){
 		if( can_target(&td) && pick_target(&td, "TARGET_CREATURE") ){
 			pump_ability_t pump;
 			default_pump_ability_definition(player, card, &pump, 2, 2, KEYWORD_TRAMPLE, 0);
-			pump.paue_flags = PAUE_END_AT_EOT | PAUE_RESET_FORCED_SUBTYPES_AT_EOT;
+			pump.subtype = SUBTYPE_WEREWOLF;
+			pump.paue_flags = PAUE_END_AT_EOT | PAUE_ADD_SUBTYPE;
 			pump_ability(player, card, instance->targets[0].player, instance->targets[0].card, &pump);
 		}
 		instance->number_of_targets = 0;
@@ -2720,7 +2712,7 @@ int card_kilnspire_district(int player, int card, event_t event){
 		if( can_target(&td) ){
 			charge_mana(player, COLOR_COLORLESS, -1);
 			if( spell_fizzled != 1 && pick_target(&td, "TARGET_ANY") ){
-				damage_creature_or_player(player, card, event, x_value);
+				damage_target0(player, card, x_value);
 			}
 		}
 		instance->number_of_targets = 0;
@@ -3241,20 +3233,13 @@ int card_takenuma2(int player, int card, event_t event){
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
-	if( trigger_condition == TRIGGER_LEAVE_PLAY ){
-		if( affect_me( player, card) && reason_for_trigger_controller == player && trigger_cause_controller == player ){
-			if( is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) ){
-				if(event == EVENT_TRIGGER){
-					event_result |= RESOLVE_TRIGGER_MANDATORY;
-				}
-				else if(event == EVENT_RESOLVE_TRIGGER){
-						draw_cards(player, 1);
-				}
-			}
-		}
+	if (trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card) && reason_for_trigger_controller == player){
+		test_definition_t test;
+		default_test_definition(&test, TYPE_CREATURE);
+		test_leaves_play(player, card, event, ANYBODY, &test, 1, 1);
 	}
-
-	if( event == EVENT_CHAOS ){
+	if (event == EVENT_LEAVES_PLAY_ABILITY){ draw_cards(trigger_cause_controller, 1); }
+	else if( event == EVENT_CHAOS ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.allow_cancel = 0;

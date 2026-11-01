@@ -31,16 +31,25 @@ int card_balance_of_power(int player, int card, event_t event){
 
 // bee sting --> shock
 
-int card_blaze(int player, int card, event_t event){
-	/* Blaze	|X|R	0x200564c
+int card_blaze(int player, int card, event_t event)
+{
+  /* Blaze	|X|R	0x200564c
 	 * Sorcery
 	 * ~ deals X damage to any target. */
-	/* Volcanic Geyser	|X|R|R	0x200564c
-	 * Instant
-	 * ~ deals X damage to any target. */
-	// Original code : 0x4049B0
 
-	return generic_x_spell(player, card, event, TARGET_ZONE_CREATURE_OR_PLAYER, COLOR_COLORLESS, 1);
+if (!IS_GS_EVENT(player, card, event))
+    return 0;
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+  card_instance_t* instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target(&td))
+      damage_target0(player, card, instance->info_slot);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, GS_CAN_TARGET | GS_X_SPELL, &td, "TARGET_ANY", 1, NULL);
 }
 
 int card_breath_of_life(int player, int card, event_t event){
@@ -95,31 +104,33 @@ int card_charging_paladin(int player, int card, event_t event){
 
 int card_command_of_unsummoning(int player, int card, event_t event){
 
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
-
+	if (!IS_GS_EVENT(player, card, event)){ return 0; }
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.required_state = TARGET_STATE_ATTACKING;
-
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( event == EVENT_CAN_CAST && !(current_turn != player && current_phase == PHASE_BEFORE_BLOCKING) ){
-		return 0;
+	card_instance_t* instance = get_card_instance(player, card);
+	if (event == EVENT_CAN_CAST){
+	    if (current_turn != player && current_phase == PHASE_BEFORE_BLOCKING){ return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL); }
+	    return 0;
 	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		int i;
-		for(i=0; i<instance->info_slot; i++){
-			if( validate_target(player, card, &td, i) ){
-				bounce_permanent(instance->targets[i].player, instance->targets[i].card);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
+	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+	    generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
+	    if (spell_fizzled != 1){
+	        state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
+	        if (can_target(&td)){
+	            td.allow_cancel = 2;
+	            new_pick_target(&td, "TARGET_CREATURE", 1, 0);
+	        }
+	        state_untargettable(instance->targets[0].player, instance->targets[0].card, 0);
+	    }
 	}
-
-	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 2, NULL);
+	if (event == EVENT_RESOLVE_SPELL){
+	    for (int i = 0; i < instance->number_of_targets; ++i){
+	        if (validate_target(player, card, &td, i)){ bounce_permanent(instance->targets[i].player, instance->targets[i].card); }
+	    }
+	    kill_card(player, card, KILL_DESTROY);
+	}
+	return 0;
 }
 
 int card_cruel_fate(int player, int card, event_t event){
@@ -252,7 +263,7 @@ int card_devastation2(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE | TYPE_LAND);
-		APNAP(p, { new_manipulate_all(player, card, p, &this_test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &this_test, KILL_DESTROY);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -408,7 +419,6 @@ If an opponent controls more lands than you, search your library for up to three
 			this_test.subtype = get_hacked_subtype(player, card, SUBTYPE_PLAINS);
 			this_test.qty = 3;
 			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test);
-			shuffle(player);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -874,12 +884,10 @@ int card_temporary_truce(int player, int card, event_t event){
 
 int card_thing_from_the_deep(int player, int card, event_t event)
 {
-	// Whenever ~ attacks, sacrifice it unless you sacrifice |Han Island.
-	if (declare_attackers_trigger(player, card, event, 0, player, card)
-		&& !player_sacrifices_a_hacked_land(player, card, player, SUBTYPE_ISLAND, 0))
-		kill_card(player, card, KILL_SACRIFICE);
-
-	return 0;
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY && !player_sacrifices_a_hacked_land(player, card, player, SUBTYPE_ISLAND, 0))
+    kill_card(player, card, KILL_SACRIFICE);
+  return 0;
 }
 
 int card_wicked_pact(int player, int card, event_t event){
@@ -1131,13 +1139,16 @@ int card_goblin_firestarter(int player, int card, event_t event){
 
 int card_goblin_general(int player, int card, event_t event)
 {
+
 	// Whenever ~ attacks, Goblin creatures you control get +1/+1 until end of turn.
-	if (declare_attackers_trigger(player, card, event, 0, player, card))
-		pump_subtype_until_eot(player, card, player, SUBTYPE_GOBLIN, 1,1, 0,0);
-
-	if ((event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST) && current_turn == player && current_phase <= PHASE_DECLARE_ATTACKERS)
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
+		pump_subtype_until_eot(player, card, player, SUBTYPE_GOBLIN, 1, 1, 0, 0);
+		return 0;
+	}
+	if ((event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST) && current_turn == player && current_phase <= PHASE_DECLARE_ATTACKERS){
 		return 1;
-
+	}
 	return 0;
 }
 
@@ -1200,7 +1211,7 @@ int card_nightstalker_engine(int player, int card, event_t event){
 	 * ~'s power is equal to the number of creature cards in your graveyard. */
 
 	if( event == EVENT_POWER && affect_me(player, card) && player != -1){
-		event_result += count_graveyard_by_type(player, TYPE_CREATURE);
+		set_characteristic_pt(count_graveyard_by_type(player, TYPE_CREATURE));
 	}
 
 	return 0;
@@ -1351,8 +1362,7 @@ int card_righteous_fury(int player, int card, event_t event){
 		default_test_definition(&this_test, TYPE_CREATURE);
 		this_test.state = STATE_TAPPED;
 
-		int life_gain = 0;
-		APNAP(p, { life_gain += new_manipulate_all(player, card, p, &this_test, KILL_DESTROY); };);
+		int life_gain = new_manipulate_all(player, card, ANYBODY, &this_test, KILL_DESTROY);
 		gain_life(player, life_gain * 2);
 
 		kill_card(player, card, KILL_DESTROY);
@@ -1381,7 +1391,7 @@ When Sea Drake enters the battlefield, return two target lands you control to th
 
 		int i;
 		for(i=0; i<2; i++){
-			if( new_pick_target(&td, "TARGET_LAND", i, 0) ){
+			if (can_target(&td) && new_pick_target(&td, "TARGET_LAND", i, 0)){
 				state_untargettable(instance->targets[i].player, instance->targets[i].card, 1);
 			}
 			else{
@@ -1482,6 +1492,7 @@ Then Burning of Xinye deals 4 damage to each creature.
 	target_definition_t td_player;
 	default_target_definition(player, card, &td_player, 0);
 	td_player.zone = TARGET_ZONE_PLAYERS;
+	td_player.allowed_controller = 1-player;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -1491,6 +1502,7 @@ Then Burning of Xinye deals 4 damage to each creature.
 						target_definition_t td;
 						default_target_definition(player, card, &td, TYPE_LAND);
 						td.allowed_controller = p;
+						td.preferred_controller = p;
 						td.who_chooses = p;
 						td.illegal_abilities = 0;
 						td.allow_cancel = 0;
@@ -1503,6 +1515,7 @@ Then Burning of Xinye deals 4 damage to each creature.
 								}
 						}
 
+						remove_untargettable_from_all();
 						int t;
 						for(t=0; t<instance->number_of_targets; t++){
 							action_on_target(player, card, t, KILL_DESTROY);
@@ -1510,7 +1523,7 @@ Then Burning of Xinye deals 4 damage to each creature.
 					}
 			);
 
-			APNAP(p, { new_damage_all(player, card, p, 4, NDA_ALL_CREATURES, NULL); };);
+			new_damage_all(player, card, ANYBODY, 4, NDA_ALL_CREATURES, NULL);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -1656,7 +1669,7 @@ int card_guan_yus_1000_li_march(int player, int card, event_t event){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
 		this_test.state = STATE_TAPPED;
-		APNAP(p, { new_manipulate_all(player, card, p, &this_test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &this_test, KILL_DESTROY);
 
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -1888,11 +1901,7 @@ int card_loyal_retainers(int player, int card, event_t event){
 	new_default_test_definition(&test, TYPE_CREATURE, "Select target Legendary creature card.");
 	test.subtype = SUBTYPE_LEGEND;
 
-	if( event == EVENT_ACTIVATE ){
-		test.cmc = 3;
-		test.cmc_flag = F5_CMC_GREATER_THAN_VALUE;
-		ai_modifier += (new_special_count_grave(player, &test) ? 96 : 0);
-	}
+	test.ai_selection_mode = AI_MAX_VALUE;
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		int selected = validate_target_from_grave_source(player, card, player, 0);
@@ -1960,7 +1969,8 @@ int card_ma_chao_western_warrior(int player, int card, event_t event){
 	horsemanship2(player, card, event);
 
 	// Whenever ~ attacks alone, it's unblockable this combat.
-	if (declare_attackers_trigger(player, card, event, DAT_ATTACKS_ALONE, player, card)){
+	dat_ability(player, card, event, DAT_ATTACKS_ALONE | DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
 		int leg = pump_ability_until_eot(player, card, player, card, 0, 0, 0, SP_KEYWORD_UNBLOCKABLE);
 		if (leg != -1){
 			card_instance_t* legacy = get_card_instance(player, leg);
@@ -2304,7 +2314,8 @@ Whenever ~ attacks, each other creature you control gets +1/+0 until end of turn
 	horsemanship2(player, card, event);
 
 	// Whenever ~ attacks, each other creature you control gets +1/+0 until end of turn.
-	if (declare_attackers_trigger(player, card, event, 0, player, card)){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
 		test_definition_t this_test;
 		new_default_test_definition(&this_test, TYPE_CREATURE, "");
 		this_test.not_me = 1;
@@ -2337,6 +2348,8 @@ Zhuge Jin, Wu Strategist	|1|U|U
 Legendary Creature - Human Advisor 1/1
 |T: Target creature can't be blocked this turn. Activate this ability only during your turn, before attackers are declared.
 	check_legend_rule(player, card, event); */
+
+	check_legend_rule(player, card, event);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;

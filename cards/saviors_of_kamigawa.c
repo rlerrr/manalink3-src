@@ -1,5 +1,7 @@
 #include "manalink.h"
 
+static int card_choice_of_damnation_impl(int player, int card, event_t event);
+
 // Global functions
 static int sweep(int player, int card, int subtype){
 
@@ -55,18 +57,16 @@ int epic_legacy(int player, int card, event_t event)
 
 
 // cards
-int card_adamaro_first_to_desire(int player, int card, event_t event){
-	/* Adamaro, First to Desire	|1|R|R
+int card_adamaro_first_to_desire(int player, int card, event_t event)
+{
+  /* Adamaro, First to Desire	|1|R|R
 	 * Legendary Creature - Spirit 100/100
 	 * ~'s power and toughness are each equal to the number of cards in the hand of the opponent with the most cards in hand. */
 
-	check_legend_rule(player, card, event);
-
-	if (player != -1){
-		modify_pt_and_abilities(player, card, event, hand_count[1-player], hand_count[1-player], 0);
-	}
-
-	return 0;
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && player != -1)
+    set_characteristic_pt(hand_count[1-player]);
+  return 0;
 }
 
 int card_akki_drillmaster(int player, int card, event_t event){
@@ -140,12 +140,12 @@ If you do, return ~ from your graveyard to the battlefield. */
 			new_default_test_definition(&test, TYPE_PERMANENT, "Select a Swamp to sacrifice.");
 			test.subtype = SUBTYPE_SWAMP;
 			if( new_can_sacrifice(player, card, player, &test) ){
-				int ai_mode = ! check_battlefield_for_id(2, CARD_ID_GRAFDIGGERS_CAGE) &&
+				int ai_mode = ! grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_GRAVE) &&
 							count_subtype(player, TYPE_LAND, SUBTYPE_SWAMP) >= 2 ? 0 : 1;
 				int choice = do_dialog(player, player, card, -1, -1," Return Akuta to play\n Decline", ai_mode);
 				if( choice == 0 ){
 					if( new_sacrifice(player, card, player, 0, &test) ){
-						if( ! check_battlefield_for_id(2, CARD_ID_GRAFDIGGERS_CAGE) ){
+						if( ! grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_GRAVE) ){
 							remove_state(player, card, STATE_INVISIBLE);
 							put_into_play(player, card);
 							return -1;
@@ -245,9 +245,10 @@ Choose one -
 
 		default_test_definition(&test, TYPE_PERMANENT);
 		test.subtype = SUBTYPE_SPIRIT;
+		test.type = choice == 0 ? TYPE_PERMANENT : TYPE_CREATURE;
 		test.subtype_flag = choice == 0 ? MATCH : DOESNT_MATCH;
 
-		APNAP(p, { new_manipulate_all(player, card, p, &test, ACT_TAP); };);
+		new_manipulate_all(player, card, ANYBODY, &test, ACT_TAP);
 
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -316,7 +317,6 @@ Sweep - Return any number of |H1Plains you control to their owner's hand. Creatu
 	if( event == EVENT_RESOLVE_SPELL ){
 		int amount = sweep(player, card, SUBTYPE_PLAINS);
 		pump_subtype_until_eot(player, card, player, -1, amount, amount, 0, 0);
-		kill_card(player, card, KILL_DESTROY);
 	}
 
 	return basic_spell(player, card, event);
@@ -330,52 +330,8 @@ Target opponent chooses a number.
 You may have that player lose that much life.
 If you don't, that player sacrifices all but that many permanents.
 */
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.zone = TARGET_ZONE_PLAYERS;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( valid_target(&td) ){
-			int amount = 0;
-			if( instance->targets[0].player != AI ){
-				amount = choose_a_number(instance->targets[0].player, "Choose a number.", life[player]);
-			}
-			else{
-				amount = count_subtype(instance->targets[0].player, TYPE_PERMANENT, -1);
-				while( amount >= life[instance->targets[0].player] && amount > 0){
-						amount--;
-				}
-			}
-			char buffer[100];
-			snprintf(buffer, 100, "Opponent chooses %d.", amount );
-			do_dialog(player, player, card, -1, -1, buffer, 0);
-
-			int ai_choice = 0;
-			int total_permanents_of_opponent = count_subtype(instance->targets[0].player, TYPE_PERMANENT, -1);
-			if( life[instance->targets[0].player] - amount >= 6 && total_permanents_of_opponent-amount < 4 ){
-				ai_choice = 1;
-			}
-			snprintf(buffer, 100, " Opponent loses %d life\n Opponent sacrifices all but %d permanents", amount, amount );
-			int choice = do_dialog(player, player, card, -1, -1, buffer, ai_choice);
-			if( choice == 0 ){
-				lose_life(instance->targets[0].player, amount);
-			}
-			else{
-				test_definition_t test;
-				default_test_definition(&test, TYPE_PERMANENT);
-				test.qty = total_permanents_of_opponent - amount;
-				new_sacrifice(player, card, instance->targets[0].player, SAC_CAUSED | SAC_NO_CANCEL, &test);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-	return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, NULL, 1, NULL);
+	return arcane(player, card, event, card_choice_of_damnation_impl);
 }
 
 int card_cloudhoof_kirin(int player, int card, event_t event)
@@ -768,7 +724,6 @@ Whenever an opponent casts his or her first spell each turn, counter that spell.
 
 	if( new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, NULL) ){
 		if( get_storm_count() == 3 ){
-			get_card_instance(player, card)->targets[2].player = 4;
 			true_transform(player, card);
 		}
 	}
@@ -906,8 +861,7 @@ Create three 3/1 |Sred Elemental creature tokens with haste. Exile them at the b
 		token.qty = 3;
 		token.pow = 3;
 		token.tou = 1;
-		token.special_infos = 66;
-		token.s_key_plus = SP_KEYWORD_HASTE;
+		token.special_code_on_generation = haste_and_remove_token_at_end_of_next_turn;
 		generate_token(&token);
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -1210,7 +1164,14 @@ Creatures you control get +2/+2 and have flying and "|R: This creature gets +1/+
 
 	boost_creature_type(player, card, event, -1, 2, 2, KEYWORD_FLYING, BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
 
-	return card_ghitu_war_cry(player, card, event);
+	if (!IS_GAA_EVENT(event)){ return global_enchantment(player, card, event); }
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.allowed_controller = td.preferred_controller = player;
+	if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td)){
+		pump_until_eot_merge_previous(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card, 1, 0);
+	}
+	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_R(1), 0, &td, "TARGET_CREATURE_YOU_CONTROL");
 }
 
 int card_homura_human_ascendant(int player, int card, event_t event)
@@ -1422,7 +1383,7 @@ int card_jiwari_the_earth_aflame(int player, int card, event_t event){
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.illegal_abilities = KEYWORD_FLYING;
+	td.illegal_abilities |= KEYWORD_FLYING;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -1660,6 +1621,7 @@ int card_kaho_minamo_hystorian(int player, int card, event_t event){
 								SET_BYTE1(instance->info_slot) = cmc;
 								SET_BYTE2(instance->info_slot) = get_owner(player, card);
 								add_state(player, card, STATE_TAPPED);
+								tapped_for_mana_color = -1;
 							}
 						}
 					}
@@ -1673,6 +1635,7 @@ int card_kaho_minamo_hystorian(int player, int card, event_t event){
 						SET_BYTE1(instance->info_slot) = x_value;
 						SET_BYTE2(instance->info_slot) = get_owner(player, card);
 						add_state(player, card, STATE_TAPPED);
+						tapped_for_mana_color = -1;
 					}
 				}
 			}
@@ -1778,17 +1741,18 @@ All artifacts have "At the beginning of your upkeep, sacrifice this artifact unl
 		int i;
 		int p = current_turn;
 		for (i=active_cards_count[p];i>=0;i--){
-			if( is_what(p, i, TYPE_ARTIFACT) && in_play(p, i) && has_mana(p, COLOR_COLORLESS, 1) ){
-				int choice = do_dialog(p, player, card, p, i, " Pay 1\n Sacrifice this artifact", 0);
-				if( choice == 0 ){
-					charge_mana_multi(p, 1, 0, 0, 0, 0, 0);
-					if( spell_fizzled == 1 ){
-						choice = 1;
+			if( is_what(p, i, TYPE_ARTIFACT) && in_play(p, i) ){
+				if( has_mana(p, COLOR_COLORLESS, 1) ){
+					int choice = do_dialog(p, player, card, p, i, " Pay 1\n Sacrifice this artifact", 0);
+					if( choice == 0 ){
+						charge_mana_multi(p, 1, 0, 0, 0, 0, 0);
+						choice = spell_fizzled;
+					}
+					if( choice != 1 ){
+						continue;
 					}
 				}
-				if( choice == 1 ){
-					kill_card( p, i, KILL_SACRIFICE );
-				}
+				kill_card(p, i, KILL_SACRIFICE);
 			}
 		}
 	}
@@ -2045,6 +2009,7 @@ int card_manriki_gusari(int player, int card, event_t event){
 			if( spell_fizzled != 1 ){
 				if( pick_target(&td, "TARGET_EQUIPMENT") ){
 					add_state(p, c, STATE_TAPPED);
+					tapped_for_mana_color = -1;
 				}
 			}
 		}
@@ -2216,6 +2181,7 @@ int card_miren_the_moaning_well(int player, int card, event_t event){
 					untap_card_no_event(player, card);
 					spell_fizzled = 1;
 				}
+				tapped_for_mana_color = -1;
 		}
 		else{
 			spell_fizzled = 1;
@@ -2299,7 +2265,6 @@ Reveal the top three cards of your library. An opponent chooses one of them. Put
 					amount--;
 			}
 		}
-		kill_card(player, card, KILL_DESTROY);
 	}
 
 	return basic_spell(player, card, event);
@@ -2518,7 +2483,7 @@ int card_pains_reward(int player, int card, event_t event){
 			}
 			else{
 				life_bid[player] = life[1-player];
-				if( check_battlefield_for_id(player, CARD_ID_PLATINUM_EMPERION) ){
+				if( !life_total_can_change(player) ){
 					life_bid[player]++;
 				}
 				else{
@@ -2542,7 +2507,7 @@ int card_pains_reward(int player, int card, event_t event){
 							life_bid[bid_turn] = 0;
 						}
 						else{
-							if( check_battlefield_for_id(bid_turn, CARD_ID_PLATINUM_EMPERION) ){
+							if( !life_total_can_change(bid_turn) ){
 								life_bid[bid_turn] = life[1-bid_turn]+1;
 							}
 							else{
@@ -2637,17 +2602,10 @@ int card_promised_kannushi(int player, int card, event_t event){
 int card_raving_oni_slave(int player, int card, event_t event){
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-
-	if( event == EVENT_ETB_ABILITY ){
-		if( ! check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_DEMON) ){
-			lose_life(player, 3);
-		}
-	}
-
-	if( leaves_play(player, card, event, 1, 1) && ! check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_DEMON) ){
+	leaves_play(player, card, event, 1, 1);
+	if ((event == EVENT_ETB_ABILITY || event == EVENT_LEAVES_PLAY_ABILITY) && !check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_DEMON)){
 		lose_life(player, 3);
 	}
-
 	return 0;
 }
 
@@ -2665,16 +2623,15 @@ int card_razorjaw_oni(int player, int card, event_t event){
 int card_reki_the_history_of_kamigawa(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
-
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
 		test_definition_t test;
-		default_test_definition(&test, TYPE_CREATURE);
+		default_test_definition(&test, TYPE_ANY);
 		test.subtype = SUBTYPE_LEGEND;
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			draw_cards(player, 1);
-		}
+		sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
 	}
-
+	if (event == EVENT_SPA){
+		draw_cards(player, 1);
+	}
 	return 0;
 }
 
@@ -2711,7 +2668,7 @@ ARCANE(card_rending_vines){
 		}
 	}
 
-	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "DISENCHANT", 1, NULL);
+	return 0;
 }
 
 int card_reverence(int player, int card, event_t event)
@@ -2793,7 +2750,7 @@ int card_sakashima_the_impostor(int player, int card, event_t event)
 
   if (enters_the_battlefield_as_copy_of_any_creature(player, card, event))
 	{
-	  add_a_subtype(player, card, SUBTYPE_LEGEND);
+	  add_a_subtype_permanently(player, card, player, card, SUBTYPE_LEGEND);
 	  set_legacy_image(player, CARD_ID_SAKASHIMA_THE_IMPOSTOR, create_targetted_legacy_activate(player, card, effect_sakashima_the_impostor, player, card));
 	}
 
@@ -2926,6 +2883,7 @@ Reveal your hand: If you have seven or more land cards in your hand, flip Sasaya
 		if( spell_fizzled != 1 ){
 			test_definition_t test;
 			default_test_definition(&test, TYPE_LAND);
+			test.zone = TARGET_ZONE_HAND;
 			int amount = check_battlefield_for_special_card(player, card, player, CBFSC_GET_COUNT, &test);
 			ai_modifier += (amount >= 7 ? 256 : -256);
 		}
@@ -2936,6 +2894,7 @@ Reveal your hand: If you have seven or more land cards in your hand, flip Sasaya
 
 		test_definition_t test;
 		default_test_definition(&test, TYPE_LAND);
+		test.zone = TARGET_ZONE_HAND;
 		int amount = check_battlefield_for_special_card(player, card, player, CBFSC_GET_COUNT, &test);
 		if( amount >= 7 ){
 			true_transform(instance->parent_controller, instance->parent_card);
@@ -3107,7 +3066,6 @@ Sweep - Return any number of |H1Swamps you control to their owner's hand. Target
 			int amount = sweep(player, card, SUBTYPE_SWAMP);
 			new_multidiscard(instance->targets[0].player, amount, 0, player);
 		}
-		kill_card(player, card, KILL_DESTROY);
 	}
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);

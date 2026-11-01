@@ -1,0 +1,187 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "cards": [
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_professor_of_symbology",
+      "callee": "card_gnarled_professor",
+      "native_address": "0x23d8110",
+      "native_target": "0x23cffc0",
+      "native_bytes": "e9ab7effff",
+      "native_bytes_sha256": "d7d124d3b39d8985853d6dbbb9b88634c9ec2406f761822fecfff98f6e495043",
+      "die_offset": "0x394aa87",
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "5cc7438492ec4cc9abc6e19aceae061685f86af41de1b937b95407179173ecda",
+      "extent_kind": "complete terminal direct JMP; no fabricated DWARF bounds",
+      "registered": true
+    },
+    {
+      "source": "cards/tokens.c",
+      "name": "card_horse_token",
+      "callee": "generic_token",
+      "native_address": "0x2582e90",
+      "native_target": "0x2665900",
+      "native_bytes": "e96b2a0e00",
+      "native_bytes_sha256": "8d93115d19fcaf6d345d385aa8b9c3bff6c7ec7fb29c751474b7907a87edb4c5",
+      "die_offset": "0x5121d98",
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "bca77f7c2bb5506162b619e93657372856d3715ae2dd527c1cf4cf7a0eb7dc21",
+      "extent_kind": "complete terminal direct JMP; no fabricated DWARF bounds",
+      "registered": false
+    },
+    {
+      "source": "cards/tokens.c",
+      "name": "card_cat_dragon_token",
+      "callee": "generic_token",
+      "native_address": "0x2582ea0",
+      "native_target": "0x2665900",
+      "native_bytes": "e95b2a0e00",
+      "native_bytes_sha256": "8c1d90f5b6d56b7c8536f5b09792c218e8817a05efb95d207bf7c80d8c0f92b6",
+      "die_offset": "0x5121d4d",
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "6fefb12d8bff67957cbbd2e5a9d501de322038d5fc3badc50f9290a2148d2303",
+      "extent_kind": "complete terminal direct JMP; no fabricated DWARF bounds",
+      "registered": true
+    },
+    {
+      "source": "cards/tokens.c",
+      "name": "card_pirate_token",
+      "callee": "generic_token",
+      "native_address": "0x2582f20",
+      "native_target": "0x2665900",
+      "native_bytes": "e9db290e00",
+      "native_bytes_sha256": "7a3d32104ae27a11c7e95ad0a6f17724bb1fa81de7a08c9b7d04bcd29602193d",
+      "die_offset": "0x5121c45",
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "fcecb21d3e341c63ad188a2fcaff982a1928d1fdf5cd95e08a23e1e93f4ea4e1",
+      "extent_kind": "complete terminal direct JMP; no fabricated DWARF bounds",
+      "registered": true
+    },
+    {
+      "source": "cards/tokens.c",
+      "name": "card_treasure",
+      "callee": "card_etherium_cell",
+      "native_address": "0x2582f30",
+      "native_target": "0x2582e50",
+      "native_bytes": "e91bffffff",
+      "native_bytes_sha256": "7150bb060a88f7d3147390433b666fa0eaa563542d5607a0de99bf6a471bb467",
+      "die_offset": "0x5121c02",
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "127d67271b347492f3cf66929823ec6da98385b9fab1a265d44b06c490584c68",
+      "extent_kind": "complete terminal direct JMP; no fabricated DWARF bounds",
+      "registered": true
+    }
+  ],
+  "scope": "Five COFF-only card identities with complete native five-byte terminal JMPs, typed native abstract DIE contracts and exact source forwarding bodies. Four registered identities replace the earlier canonical-target bypass; Horse is a native unregistered entry. No decompiler invention, GUI work or gameplay-equivalence claim."
+}

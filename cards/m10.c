@@ -137,16 +137,27 @@ When ~ enters the battlefield, target |H2Forest becomes a 4/5 |Sgreen Treefolk c
 	if( event == EVENT_ETB_ABILITY ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_LAND);
-		td.required_subtype = SUBTYPE_FOREST;
+		td.required_subtype = get_hacked_subtype(player, card, SUBTYPE_FOREST);
 		td.preferred_controller = player;
 
 		card_instance_t *instance = get_card_instance(player, card);
 
-		if( can_target(&td) && new_pick_target(&td, "TARGET_LAND", 0, 0) ){
-			add_a_subtype(instance->targets[0].player, instance->targets[0].card, SUBTYPE_TREEFOLK);
-			land_animation2(player, card, instance->targets[0].player, instance->targets[0].card, 2, 4, 5, 0, 0, 0, 0);
+		char prompt[100];
+		int len = scnprintf(prompt, 100, get_hacked_land_text(player, card, "Select target %s you control it", SUBTYPE_FOREST));
+		scnprintf(prompt + len, 100 - len, get_sleighted_color_text(player, card, " becomes a %s Treefolk creature.", COLOR_GREEN));
+		if (can_target(&td) && new_pick_target(&td, prompt, 0, GS_LITERAL_PROMPT)){
+			int legacy = land_animation2(player, card, instance->targets[0].player, instance->targets[0].card, 2, 4, 5, 0, 0,
+				get_sleighted_color_test(player, card, COLOR_TEST_GREEN), NULL);
+			get_card_instance(player, legacy)->targets[9].card = SUBTYPE_TREEFOLK;
+			instance->targets[9] = instance->targets[0];
 		}
 		instance->number_of_targets = 0;
+	}
+
+	leaves_play(player, card, event, 0, 0);
+	if (event == EVENT_LEAVES_PLAY_ABILITY){
+		card_instance_t* instance = get_card_instance(player, card);
+		purge_add_force_a_subtype_permanently_legacy(instance->targets[9].player, instance->targets[9].card, 1);
 	}
 
 	return 0;
@@ -353,6 +364,7 @@ int card_cemetery_reaper(int player, int card, event_t event){
 				if( selected != -1 ){
 					rfg_card_from_grave(instance->targets[0].player, selected);
 					add_state(player, card, STATE_TAPPED);
+					tapped_for_mana_color = -1;
 				}
 				else{
 					spell_fizzled = 1;
@@ -369,7 +381,7 @@ int card_cemetery_reaper(int player, int card, event_t event){
 		token_generation_t token;
 		default_token_definition(instance->parent_controller, instance->parent_card, CARD_ID_ZOMBIE, &token);
 		token.pow = token.tou = 2;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
+		token.color_forced = COLOR_TEST_BLACK;
 		generate_token(&token);
 	}
 
@@ -562,6 +574,7 @@ Land
 			else{
 				remove_state(player, card, STATE_TAPPED);
 			}
+			tapped_for_mana_color = -1;
 		}
 		if( choice == 2 ){
 			spell_fizzled = 1;
@@ -667,14 +680,10 @@ Hive Mind	|5|U
 Enchantment
 Whenever a player casts an instant or sorcery spell, each other player copies that spell. Each of those players may choose new targets for his or her copy.*/
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_SPELL);
-		if( new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			copy_spell_from_stack(1-trigger_cause_controller, trigger_cause_controller, trigger_cause);
-		}
+	sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_SPELL, NULL, player, card);
+	if (event == EVENT_SPA){
+		copy_spell_from_stack(1-trigger_cause_controller, trigger_cause_controller, trigger_cause);
 	}
-
 	return global_enchantment(player, card, event);
 }
 
@@ -702,10 +711,13 @@ Enchantment
 Whenever an opponent casts a spell, reveal the top card of your library. If it's a creature card, put it onto the battlefield.
 Otherwise, you may put that card on the bottom of your library. */
 
-	if( ai_is_speculating !=1 && new_specific_spell_played(player, card, event, 1-player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
+	if (ai_is_speculating != 1){
+		sp_ability_trigger(1-player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+	}
+	if (event == EVENT_SPA){
 		int *deck = deck_ptr[player];
 		if( deck[0] != -1 ){
-			show_deck( player, deck, 1, "Here's the first card of deck.", 0, 0x7375B0 );
+			show_deck( player, deck, 1, "Here's the first card of deck.", 0, ENGINE_DONE_LABEL );
 			if( is_what(-1, deck[0], TYPE_CREATURE) ){
 				put_into_play_a_card_from_deck(player, player, 0);
 			}
@@ -759,7 +771,7 @@ int card_master_of_the_wild_hunt(int player, int card, event_t event){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_WOLF, &token);
 		token.pow = token.tou = 2;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
+		token.color_forced = COLOR_TEST_GREEN;
 		generate_token(&token);
 	}
 
@@ -900,7 +912,7 @@ Destroy all nonland permanents. */
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_LAND);
 		this_test.type_flag = 1;
-		APNAP(p,{new_manipulate_all(player, card, p, &this_test, KILL_DESTROY);};);
+		new_manipulate_all(player, card, ANYBODY, &this_test, KILL_DESTROY);
 		kill_card(player, card, KILL_DESTROY);
 	}
 

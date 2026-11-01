@@ -4053,6 +4053,44 @@ static void beginning_of_combat_effects(int player, int card, event_t event){
 	}
 }
 
+static void resolve_graveyard_eot_triggers(int player, int card, event_t event)
+{
+  card_instance_t* instance = get_card_instance(player, card);
+  if (player == current_turn && eot_trigger(player, card, event))
+  {
+    int count = count_graveyard(player);
+    const int* grave = get_grave(player);
+    for (int i = 0; i < count; ++i)
+      if (cards_data[grave[i]].cc[2] == 0x1c)
+      {
+        if (event == EVENT_TRIGGER)
+          event_result |= RESOLVE_TRIGGER_MANDATORY;
+        else if (event == EVENT_RESOLVE_TRIGGER)
+          for (int pos = count-1; pos >= 0; --pos)
+            if (cards_data[grave[pos]].cc[2] == 0x1c)
+            {
+              int iid = grave[pos];
+              int temporary = add_card_to_hand(player, iid);
+              instance->number_of_targets = 1;
+              card_instance_t* temporary_instance = get_card_instance(player, temporary);
+              temporary_instance->state |= STATE_INVISIBLE;
+              --hand_count[player];
+              int result = cards_data[iid].code_pointer(player, temporary, EVENT_GRAVEYARD_ABILITY_EOT);
+              if (result == -1)
+                remove_card_from_grave(player, pos);
+              else if (result == -2)
+                obliterate_card_and_recycle(player, temporary);
+              else
+              {
+                obliterate_card_and_recycle(player, temporary);
+                remove_card_from_grave(player, result);
+              }
+            }
+        break;
+      }
+  }
+}
+
 int card_rules_engine(int player, int card, event_t event ){
 	card_instance_t *instance = get_card_instance(player,card);
 
@@ -4062,6 +4100,20 @@ int card_rules_engine(int player, int card, event_t event ){
 			remove_special_flags2(i, -1, SF2_HAS_DAMAGED_PLAYER0);
 			remove_special_flags2(i, -1, SF2_HAS_DAMAGED_PLAYER1);
 		}
+    set_trap_condition(current_turn, TRAP_TURN_IS_EXTRA, 0);
+    int extra_turn = 0;
+    for (int p = 0; p < 2; ++p)
+      for (int c = 0; c < active_cards_count[p]; ++c)
+        if (in_play(p, c))
+        {
+          card_instance_t* legacy = get_card_instance(p, c);
+          if (legacy->internal_card_id == LEGACY_EFFECT_CUSTOM &&
+              (legacy->token_status & STATUS_TIMEWALK) && legacy->targets[0].player == current_turn)
+            extra_turn = 1;
+        }
+    if (time_walk_flag == current_turn || extra_turn)
+      set_trap_condition(current_turn, TRAP_TURN_IS_EXTRA, 1);
+
 	}
 
 	// (I'd think this should be during EVENT_CLEANUP, but it's harmless to preserve the original behavior and delay until EVENT_CAN_SKIP_TURN of next turn)
@@ -4096,7 +4148,8 @@ int card_rules_engine(int player, int card, event_t event ){
 	if( instance->info_slot & REF_BRIDGE_FROM_BELOW ){
 		bridge_from_below(player, card, event);                  // 128
 	}
-	// 1<<8 unused
+	if (instance->info_slot & REF_GAIN_LIFE_TRIGGER)
+    event_flags |= EA_LICH;
 	if( instance->info_slot & REF_KROVIKAN_HORROR ){
 		krovikan_horror(player, card, event);                    // 512
 	}
@@ -4121,6 +4174,8 @@ int card_rules_engine(int player, int card, event_t event ){
 		conspire(player, card, event);
 	}
 	// (1<<20) --> Recover
+  if (instance->info_slot & REF_EOT_ABILITY_IN_GRAVE)
+    resolve_graveyard_eot_triggers(player, card, event);
 	if( instance->info_slot & REF_BEGINNING_OF_COMBAT_EFFECTS ){
 		beginning_of_combat_effects(player, card, event);
 	}

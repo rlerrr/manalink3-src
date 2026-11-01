@@ -21,7 +21,7 @@ include Makefile-targets
 
 # The linker script loads this file first to preserve the veneer layout.
 # Do not also include it in ALLOBJFILES or it is linked twice with OBJDIR set.
-$(OUTPUT): ManalinkEh.ao
+$(OUTPUT): ManalinkEh.ao manalink.lds
 ManalinkEh.ao: ManalinkEh.asm ManalinkEh.mac
 	$(ASM) $(AFLAGS) -o $@ $<
 

@@ -225,39 +225,20 @@ int card_goblin_tutor(int player, int card, event_t event){
 	 * 5 - A creature card
 	 * 6 - An instant or sorcery card */
 
-	if(event == EVENT_RESOLVE_SPELL){
+	if (event == EVENT_RESOLVE_SPELL){
 		test_definition_t test;
-		int roll = internal_rand(6) + 1;
-		if( roll == 1 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 1: no effect", 1);
+		int roll = roll_d6t(player, player, card, -1, -1);
+		switch (roll){
+			case 2:
+				new_default_test_definition(&test, TYPE_ANY, "Select a Goblin Tutor card.");
+				test.id = CARD_ID_GOBLIN_TUTOR;
+				break;
+			case 3: new_default_test_definition(&test, TYPE_ENCHANTMENT, "Select an enchantment card."); break;
+			case 4: new_default_test_definition(&test, TYPE_ARTIFACT, "Select an artifact card."); break;
+			case 5: new_default_test_definition(&test, TYPE_CREATURE, "Select an creature card."); break;
+			case 6: new_default_test_definition(&test, TYPE_SPELL, "Select an instant or sorcery card."); break;
 		}
-		else if( roll == 2 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 2: search for Goblin Tutor", 1);
-			new_default_test_definition(&test, TYPE_ANY, "Select a Goblin Tutor card.");
-			test.id = CARD_ID_GOBLIN_TUTOR;
-
-		}
-		else if( roll == 3 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 3: find an enchantment", 1);
-			new_default_test_definition(&test, TYPE_ENCHANTMENT, "Select an enchantment card.");
-		}
-		else if( roll == 4 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 4: find an artifact", 1);
-			new_default_test_definition(&test, TYPE_ARTIFACT, "Select an artifact card.");
-		}
-		else if( roll == 5 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 5: find a creature", 1);
-			new_default_test_definition(&test, TYPE_CREATURE, "Select an creature card.");
-		}
-		else if( roll == 6 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 6: find an instant or sorcery", 1);
-			new_default_test_definition(&test, TYPE_SPELL, "Select an creature card.");
-		}
-
-		if( roll != 1 ){
-			int ai_mode = roll == 2 ? AI_FIRST_FOUND : AI_MAX_VALUE;
-			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, ai_mode, &test);
-		}
+		if (roll != 1){ new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, roll == 2 ? AI_FIRST_FOUND : AI_MAX_VALUE, &test); }
 		kill_card(player, card, KILL_DESTROY);
 	}
 	return basic_spell(player, card, event);
@@ -406,35 +387,27 @@ int card_jack_in_the_mox(int player, int card, event_t event){
 	 * 5 - Add |R.
 	 * 6 - Add |G. */
 
-	if( event == EVENT_ACTIVATE ){
-		tap_card(player, card);
-		int roll = internal_rand(6);
-		if( roll == 0 ){
-			lose_life(player, 5);
-			kill_card(player, card, KILL_SACRIFICE);
-			spell_fizzled = 1;
-			return 0;
-		}
-		else if( roll == 1 ){
-			produce_mana(player, COLOR_WHITE, 1);
-		}
-		else if( roll == 2 ){
-			produce_mana(player, COLOR_BLUE, 1);
-		}
-		else if( roll == 3 ){
-			produce_mana(player, COLOR_BLACK, 1);
-		}
-		else if( roll == 4 ){
-			produce_mana(player, COLOR_RED, 1);
-		}
-		else if( roll == 5 ){
-			produce_mana(player, COLOR_GREEN, 1);
-		}
-		spell_fizzled = 1;
-		return 0;
+	if (event != EVENT_ACTIVATE){
+		return mana_producer(player, card, event);
 	}
-	int result = mana_producer(player, card, event);
-	return result;
+	get_card_instance(player, card)->state |= STATE_TAPPED;
+	int roll = roll_d6t(player, player, card, -1, -1);
+	int color = -1;
+	switch (roll){
+		case 1: lose_life(player, 5); kill_card(player, card, KILL_SACRIFICE); break;
+		case 2: color = COLOR_WHITE; break;
+		case 3: color = COLOR_BLUE; break;
+		case 4: color = COLOR_BLACK; break;
+		case 5: color = COLOR_RED; break;
+		case 6: color = COLOR_GREEN; break;
+	}
+	if (color != -1 && can_produce_mana(player, card)){
+		produce_mana_tapped(player, card, color, 1);
+	}
+	else{
+		tapped_for_mana_color = -2;
+	}
+	return 0;
 }
 
 /* Jester's Sombrero	|2

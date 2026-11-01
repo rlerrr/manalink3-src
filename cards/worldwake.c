@@ -158,7 +158,7 @@ Creature — Human Shaman Ally 0/2
 	}
 
 	test_definition_t test;
-	new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to reanimate under your control.");
+	new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice.");
 	if( IS_AI(player) ){
 		test.cmc = count_subtype(player, TYPE_PERMANENT, SUBTYPE_ALLY);
 	}
@@ -284,12 +284,14 @@ int card_archon_of_redemption(int player, int card, event_t event){
  * Flying
  * Whenever ~ or another creature with flying enters the battlefield under your control, you may gain life equal to that creature's power. */
 
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+	if (!is_humiliated(player, card, AL_TRIG) && trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card)){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
 		test.keyword = KEYWORD_FLYING;
+		test.not_me = 1;
 
-		etb_ability_global(player, event, RESOLVE_TRIGGER_AI(player), 0, &test, player, card);
+		etb_ability_global(player, event, RESOLVE_TRIGGER_AI(player), TYPE_NONE, &test, player, card);
 	}
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -399,6 +401,7 @@ Creature - Goblin 1/1
 			new_pick_target(&td2, "Select target artifact, creature or land you control.", 1, 1 | GS_LITERAL_PROMPT) )
 		{
 			add_state(player, card, STATE_TAPPED);
+			tapped_for_mana_color = -1;
 		}
 	}
 
@@ -461,11 +464,9 @@ int card_bojuka_bog(int player, int card, event_t event){
 	 * When ~ enters the battlefield, exile all cards from target player's graveyard.
 	 * |T: Add |B to your mana pool. */
 
-	comes_into_play_tapped(player, card, event);
-
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY ){
+	if( event == EVENT_ETB_ABILITY && !is_humiliated(player, card, AL_TRIG) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, 0);
 		td.zone = TARGET_ZONE_PLAYERS;
@@ -479,7 +480,7 @@ int card_bojuka_bog(int player, int card, event_t event){
 		instance->number_of_targets = 0;
 	}
 
-	return mana_producer(player, card, event);
+	return plain_mana_producer_tapped(player, card, event);
 }
 
 static int butcher_of_malakir_effect(int player, int card, event_t event)
@@ -635,7 +636,8 @@ Land
 |T: Add |W or |U to your mana pool.
 |3|W|U: Until end of turn, ~ becomes a 4/4 |Swhite and |Sblue Elemental creature with flying and vigilance. It's still a land. */
 
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG))
+    comes_into_play_tapped(player, card, event);
 	return manland_normal(player, card, event, MANACOST_XUW(3, 1, 1));
 }
 
@@ -806,7 +808,8 @@ Land
 |T: Add |U or |B to your mana pool.
 |1|U|B: ~ becomes a 3/2 |Sblue and |Sblack Elemental creature until end of turn and can't be blocked this turn. It's still a land. */
 
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG))
+    comes_into_play_tapped(player, card, event);
 	return manland_normal(player, card, event, MANACOST_XUB(1, 1, 1));
 }
 
@@ -852,7 +855,7 @@ int card_dragonmaster_outcast( int player, int card, event_t event){
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY && count_permanents_by_type(player, TYPE_LAND) >= 6){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_DRAGON, &token);
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_RED);
+		token.color_forced = COLOR_TEST_RED;
 		token.pow = token.tou = 5;
 		generate_token(&token);
 	}
@@ -1017,20 +1020,19 @@ Whenever ~ or another Ally enters the battlefield under your control, you may pu
 	return 0;
 }
 
-int card_halimar_depths(int player, int card, event_t event){
-	/* Halimar Depths	""
+int card_halimar_depths(int player, int card, event_t event)
+{
+  /* Halimar Depths	""
 	 * Land
 	 * ~ enters the battlefield tapped.
 	 * When ~ enters the battlefield, look at the top three cards of your library, then put them back in any order.
 	 * |T: Add |U to your mana pool. */
 
-	comes_into_play_tapped(player, card, event);
-
-	if( comes_into_play(player, card, event) ){
-		rearrange_top_x(player, player, 3);
-	}
-
-	return mana_producer_fixed(player, card, event, COLOR_BLUE);
+  comes_into_play_tapped(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+    rearrange_top_x(player, player, 3);
+  return mana_producer_fixed(player, card, event, COLOR_BLUE);
 }
 
 int card_halimar_excavator(int player, int card, event_t event){
@@ -1265,8 +1267,9 @@ int card_joraga_warcaller(int player, int card, event_t event)
 
 	enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, multikicked(player, card));
 
-	boost_creature_type(player, card, event, SUBTYPE_ELF, BCT_CONTROLLER_ONLY,
-						count_1_1_counters(player, card), count_1_1_counters(player, card), 0);
+  int toughness = count_counters(player, card, COUNTER_P1_P1);
+  int power = count_counters(player, card, COUNTER_P1_P1);
+  boost_creature_type(player, card, event, SUBTYPE_ELF, power, toughness, 0, BCT_CONTROLLER_ONLY);
   return 0;
 }
 
@@ -1457,32 +1460,31 @@ int card_kazuul_tyrant_of_the_cliffs(int player, int card, event_t event)
 	 * Whenever a creature an opponent controls attacks, if you're the defending player, put a 3/3 |Sred Ogre creature token onto the battlefield unless that creature's controller pays |3. */
 
 	check_legend_rule(player, card, event);
-
-	if (declare_attackers_trigger(player, card, event, DAT_SEPARATE_TRIGGERS, 1-player, -1) &&
-		(!has_mana(1-player, COLOR_ANY, 3) || !charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, 1-player, COLOR_COLORLESS, 3))
-	  ){
+	store_attackers(player, card, event, 0, 1-player, -1, NULL);
+	dat_ability(player, card, event, DAT_SEPARATE_TRIGGERS | DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY && (!has_mana(1-player, COLOR_ANY, 3) || !charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, 1-player, COLOR_COLORLESS, 3))){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_OGRE, &token);
 		token.pow = token.tou = 3;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_RED);
+		token.color_forced = COLOR_TEST_RED;
 		generate_token(&token);
 	}
-
 	return 0;
 }
 
-int card_khalni_garden(int player, int card, event_t event){
-	/* Khalni Garden	""
+int card_khalni_garden(int player, int card, event_t event)
+{
+  /* Khalni Garden	""
 	 * Land
 	 * ~ enters the battlefield tapped.
 	 * When ~ enters the battlefield, put a 0/1 |Sgreen Plant creature token onto the battlefield.
 	 * |T: Add |G to your mana pool. */
 
-	comes_into_play_tapped(player, card, event);
-	if (comes_into_play(player, card, event)){
-		generate_token_by_id(player, card, CARD_ID_PLANT);
-	}
-	return mana_producer(player, card, event);
+  comes_into_play_tapped(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+    generate_token_by_id(player, card, CARD_ID_PLANT);
+  return plain_mana_producer(player, card, event);
 }
 
 int card_kitesail(int player, int card, event_t event){
@@ -1523,15 +1525,15 @@ int card_kor_firewalker(int player, int card, event_t event){
 	 * Protection from |Sred
 	 * Whenever a player casts a |Sred spell, you may gain 1 life. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_ANY);
 		test.color = get_sleighted_color_test(player, card, COLOR_TEST_RED);
-		if( new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_DUH, &test) ){
-			gain_life(player, 1);
-		}
+		sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_AI(player), TYPE_NONE, &test, player, card);
 	}
-
+	if (event == EVENT_SPA){
+		gain_life(player, 1);
+	}
 	return 0;
 }
 
@@ -1543,7 +1545,8 @@ Land
 |T: Add |B or |R to your mana pool.
 |1|B|R: Until end of turn, ~ becomes a 2/2 |Sblack and |Sred Elemental creature with "|X: This creature gets +X/+0 until end of turn." It's still a land. */
 
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG))
+    comes_into_play_tapped(player, card, event);
 	return manland_normal(player, card, event, MANACOST_XBR(1, 1, 1));
 }
 
@@ -1710,6 +1713,8 @@ Flying
 {1}{R}: Mordant Dragon gets +1/+0 until end of turn.
 Whenever Mordant Dragon deals combat damage to a player, you may have it deal that much damage to target creature that player controls.
 */
+	if (event == EVENT_POW_BOOST){ return generic_shade(player, card, event, 0, MANACOST_XR(1, 1), 1, 0, 0, 0); }
+
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_REPORT_DAMAGE_DEALT);
 	if( result ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -1747,7 +1752,7 @@ Whenever Mordant Dragon deals combat damage to a player, you may have it deal th
 		);
 	}
 
-	return generic_shade(player, card, event, 0, MANACOST_XR(1, 1), 1, 0, 0, 0);
+	return generic_shade_merge_pt(player, card, event, 0, MANACOST_XR(1, 1), 1, 0);
 }
 
 int card_natures_claim(int player, int card, event_t event){
@@ -1822,12 +1827,13 @@ Novablast Wurm	|3|G|G|W|W
 Creature - Wurm 7/7
 Whenever ~ attacks, destroy all other creatures. */
 
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_CREATURE, "");
 	  test.not_me = 1;
-	  APNAP(p, { new_manipulate_all(player, card, p, &test, KILL_DESTROY); };);
+	  new_manipulate_all(player, card, ANYBODY, &test, KILL_DESTROY);
 	}
   return 0;
 }
@@ -1970,16 +1976,12 @@ int card_pulse_tracker(int player, int card, event_t event)
   /* Pulse Tracker	|B
    * Creature - Vampire Rogue 1/1
    * Whenever ~ attacks, each opponent loses 1 life. */
-  /* Vicious Conquistador	|B
-   * Creature - Vampire Soldier 1/2
-   * Whenever ~ attacks, each opponent loses 1 life. */
 
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
-	lose_life(1-current_turn, 1);
-
-  if (event == EVENT_ATTACK_RATING && affect_me(player, card))
-	ai_defensive_modifier -= 12;
-
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+    lose_life(1-current_turn, 1);
+  else if (event == EVENT_ATTACK_RATING && affect_me(player, card))
+    ai_defensive_modifier -= 12;
   return 0;
 }
 
@@ -2138,15 +2140,16 @@ Land
 |T: Add |R or |G to your mana pool.
 |2|R|G: Until end of turn, ~ becomes a 3/3 |Sred and |Sgreen Elemental creature with "Whenever this creature attacks, put a +1/+1 counter on it." It's still a land. */
 
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG))
+    comes_into_play_tapped(player, card, event);
 	return manland_normal(player, card, event, MANACOST_XRG(2, 1, 1));
 }
 
 int card_raging_ravine_animated(int player, int card, event_t event)
 {
-  // Whenever this creature attacks, put a +1/+1 counter on it.
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
-	add_counters(player, card, player, card, COUNTER_P1_P1, 1);
+  dat_ability(player, card, event, DAT_DONT_REPORT_VALUE | DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+    add_counters(player, card, player, card, COUNTER_P1_P1, 1);
   return manland_animated(player, card, event, MANACOST_XRG(2, 1, 1));
 }
 
@@ -2346,11 +2349,13 @@ Land
 When ~ enters the battlefield, target creature you control gains protection from the color of your choice until end of turn.
 |T: Add |W to your mana pool. */
 
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG)){
+		comes_into_play_tapped(player, card, event);
+	}
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY ){
+	if (event == EVENT_ETB_ABILITY && !is_humiliated(player, card, AL_TRIG)){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.allowed_controller = td.preferred_controller = player;
@@ -2364,7 +2369,7 @@ When ~ enters the battlefield, target creature you control gains protection from
 		instance->number_of_targets = 0;
 	}
 
-	return mana_producer(player, card, event);
+	return plain_mana_producer(player, card, event);
 }
 
 int card_slavering_nulls(int player, int card, event_t event)
@@ -2373,10 +2378,11 @@ int card_slavering_nulls(int player, int card, event_t event)
    * Creature - Goblin Zombie 2/1
    * Whenever ~ deals combat damage to a player, if you control |Ha Swamp, you may have that player discard a card. */
 
-  if (IS_DDBM_EVENT(event)
-	  && basiclandtypes_controlled[player][get_hacked_color(player, card, COLOR_BLACK)] > 0)
-	whenever_i_deal_damage_to_a_player_he_discards_a_card(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_TRIGGER_OPTIONAL, 0);
-
+  if ((event == EVENT_DEAL_DAMAGE || event == EVENT_GRAVEYARD_FROM_PLAY ||
+       trigger_condition == TRIGGER_DEAL_DAMAGE || event == EVENT_CHANGE_TYPE) &&
+      basiclandtypes_controlled[player][get_hacked_color(player, card, COLOR_BLACK)] > 0)
+    whenever_i_deal_damage_to_a_player_he_discards_a_card(player, card, event,
+        DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_TRIGGER_OPTIONAL, 0);
   return 0;
 }
 
@@ -2388,11 +2394,13 @@ Land
 When ~ enters the battlefield, target creature can't block this turn.
 |T: Add |R to your mana pool. */
 
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG)){
+		comes_into_play_tapped(player, card, event);
+	}
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY ){
+	if (event == EVENT_ETB_ABILITY && !is_humiliated(player, card, AL_TRIG)){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.allow_cancel = 0;
@@ -2413,7 +2421,8 @@ Land
 |T: Add |G or |W to your mana pool.
 |1|G|W: Until end of turn, ~ becomes a 3/4 |Sgreen and |Swhite Elemental creature with reach. It's still a land. */
 
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG))
+    comes_into_play_tapped(player, card, event);
 	return manland_normal(player, card, event, MANACOST_XGW(1, 1, 1));
 }
 
@@ -2624,7 +2633,7 @@ int card_tectonic_edge(int player, int card, event_t event){
 		else if( choice == 1 ){
 				add_state(player, card, STATE_TAPPED);
 				if( charge_mana_for_activated_ability(player, card, MANACOST_X(1)) &&
-					new_pick_target(&td, "Select_target nonbasic land.", 0, 1 | GS_LITERAL_PROMPT)
+					new_pick_target(&td, "Select target nonbasic land.", 0, 1 | GS_LITERAL_PROMPT)
 				  ){
 					instance->info_slot = 1;
 					kill_card(player, card, KILL_SACRIFICE);
@@ -2632,6 +2641,7 @@ int card_tectonic_edge(int player, int card, event_t event){
 				else{
 					remove_state(player, card, STATE_TAPPED);
 				}
+				tapped_for_mana_color = -1;
 		}
 		else{
 			spell_fizzled = 1;
@@ -2665,7 +2675,8 @@ int card_terastodon(int player, int card, event_t event)
    * When ~ enters the battlefield, you may destroy up to three target noncreature permanents. For each permanent put into a graveyard this way, its controller
    * puts a 3/3 |Sgreen Elephant creature token onto the battlefield. */
 
-  if (comes_into_play(player, card, event))
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
 	{
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_PERMANENT);
@@ -2729,7 +2740,7 @@ int card_thada_adel_acquisitor(int player, int card, event_t event)
 							new_default_test_definition(&this_test, TYPE_ARTIFACT, "Select an artifact card.");
 
 							int csvid = new_global_tutor(player, p, TUTOR_FROM_DECK, TUTOR_RFG, 0, AI_MAX_VALUE, &this_test);
-							if (csvid != -1)
+							if (csvid >= 0)
 								create_may_play_card_from_exile_effect(player, card, 1-player, csvid, MPCFE_UNTIL_EOT);
 							times_damaged[p]--;
 					}

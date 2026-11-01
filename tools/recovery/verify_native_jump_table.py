@@ -52,12 +52,24 @@ def verify(proof,image=None,root=ROOT,binary_only=False):
                 data=native.pe.get_data(target-0x2000000,5)
                 assert data.hex()==chain['bytes_hex'] and data[0]==0xe9
                 target=target+5+struct.unpack('<i',data[1:])[0]
-                assert chain['target']==hex(target) and original_symbols[row['binding']]=={target}
+                assert chain['target']==hex(target) and original_symbols[chain.get('binding',row['binding'])]=={target}
+                if row.get('source_forwarder'):
+                    assert row['binding']==row['coff'][0]
             else:assert row['binding']==row['coff'][0]
         raw=current.pe.get_data(at-0x2000000,5)
         assert len(raw)==5 and raw[0]==0xe9,('Missing fixed veneer',hex(at))
         destination=at+5+struct.unpack('<i',raw[1:])[0]
         assert current_symbols[row['binding']]=={destination},('Wrong veneer target',hex(at),row['binding'],hex(destination))
+        if row.get('source_forwarder'):
+            forward=row['source_forwarder'];text=read(root/forward['source']);a,b=span(text,forward['name'])
+            assert sha(text[a:b].encode())==forward['definition_sha256']
+            assert re.fullmatch(r'int\s+'+re.escape(forward['name'])+r'\(int player, int card, event_t event\)\s*\{\s*return '+re.escape(forward['callee'])+r'\(player, card, event\);\s*\}',text[a:b])
+            assert row['native_tail_jump']['binding']=='_'+forward['callee']
+            assert current_symbols[row['native_tail_jump']['binding']]
+            decoder=Cs(CS_ARCH_X86,CS_MODE_32)
+            branch=next(decoder.disasm(current.pe.get_data(destination-0x2000000,5),destination,count=1))
+            expected=current_symbols[row['native_tail_jump']['binding']];assert len(expected)==1
+            assert branch.mnemonic=='jmp' and branch.op_str==hex(next(iter(expected)))
     if not binary_only:assert aliases==4
     assert int(record['end'],16)==0x2001006+15169*5
     hook=record['hook'];text=read(root/hook['source']);a,b=span(text,hook['name'])

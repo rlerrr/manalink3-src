@@ -536,8 +536,7 @@ int card_beckon_apparition(int player, int card, event_t event){
 
 			token_generation_t token;
 			default_token_definition(player, card, CARD_ID_SPIRIT, &token);
-			token.color_forced = (get_sleighted_color_test(player, card, COLOR_TEST_WHITE) |
-								get_sleighted_color_test(player, card, COLOR_TEST_BLACK));
+			token.color_forced = (COLOR_TEST_WHITE | COLOR_TEST_BLACK);
 			token.key_plus = KEYWORD_FLYING;
 			generate_token(&token);
 		}
@@ -646,8 +645,7 @@ int card_card_call_the_skybreaker(int player, int card, event_t event){
 		default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
 		token.pow = 5;
 		token.tou = 5;
-		token.color_forced = (get_sleighted_color_test(player, card, COLOR_TEST_BLUE) |
-							get_sleighted_color_test(player, card, COLOR_TEST_RED));
+		token.color_forced = COLOR_TEST_BLUE | COLOR_TEST_RED;
 		token.key_plus = KEYWORD_FLYING;
 		generate_token(&token);
 
@@ -925,6 +923,7 @@ int card_crackleburr(int player, int card, event_t event){
 		td2.illegal_abilities = 0;
 		td2.required_color = get_sleighted_color_test(player, card, COLOR_TEST_RED);
 		td2.illegal_state = TARGET_STATE_TAPPED;
+        td2.special = TARGET_SPECIAL_NOT_ME;
 
 		target_definition_t td3;
 		default_target_definition(player, card, &td3, TYPE_CREATURE);
@@ -933,6 +932,7 @@ int card_crackleburr(int player, int card, event_t event){
 		td3.illegal_abilities = 0;
 		td3.required_color = get_sleighted_color_test(player, card, COLOR_TEST_BLUE);
 		td3.required_state = TARGET_STATE_TAPPED;
+        td3.special = TARGET_SPECIAL_NOT_ME;
 
 		card_instance_t *instance = get_card_instance(player, card);
 
@@ -943,22 +943,16 @@ int card_crackleburr(int player, int card, event_t event){
 
 		if( event == EVENT_CAN_ACTIVATE ){
 			int result = 0;
-			int c1 = get_cost_mod_for_activated_abilities(player, card, 0, 0, 2, 0, 0, 0);
+			int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST0);
 			if( has_mana_hybrid(player, 2, COLOR_BLUE, COLOR_RED, c1) ){
 				if( ! is_tapped(player, card) ){
-					int req_targets = 3;
-					if( ! (get_color(player, card) & get_sleighted_color_test(player, card, COLOR_TEST_RED)) ){
-						req_targets = 2;
-					}
+					int req_targets = 2;
 					if( target_available(player, card, &td2) >= req_targets ){
 						result = generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, &td, NULL);
 					}
 				}
 				else{
-					int req_targets = 3;
-					if( ! (get_color(player, card) & get_sleighted_color_test(player, card, COLOR_TEST_BLUE)) ){
-						req_targets = 2;
-					}
+					int req_targets = 2;
 					if( target_available(player, card, &td3) >= req_targets ){
 						result |= generic_activated_ability(player, card, event, GAA_TAPPED, MANACOST0, 0, &td1, NULL);
 					}
@@ -969,14 +963,11 @@ int card_crackleburr(int player, int card, event_t event){
 
 		if(event == EVENT_ACTIVATE ){
 			instance->info_slot = instance->number_of_targets = 0;
-			int c1 = get_cost_mod_for_activated_abilities(player, card, 0, 0, 2, 0, 0, 0);
+			int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST0);
 			if( charge_mana_hybrid(player, card, 2, COLOR_BLUE, COLOR_RED, c1)){
 				int choice = CHOICE_DAMAGE;
 				if( is_tapped(player, card) ){
-					int req_targets = 3;
-					if( ! (get_color(player, card) & get_sleighted_color_test(player, card, COLOR_TEST_BLUE)) ){
-						req_targets = 2;
-					}
+					int req_targets = 2;
 					if( target_available(player, card, &td3) >= req_targets ){
 						choice = CHOICE_BOUNCE;
 					}
@@ -990,7 +981,8 @@ int card_crackleburr(int player, int card, event_t event){
 												0, GS_LITERAL_PROMPT) )
 							{
 								tapped[tc] = instance->targets[0].card;
-								state_untargettable(player, tapped[tc], 1);
+                                state_untargettable(player, tapped[tc], 1);
+                                ++tc;
 								instance->number_of_targets = 0;
 							}
 							else{
@@ -999,7 +991,7 @@ int card_crackleburr(int player, int card, event_t event){
 					}
 					int i;
 					for(i=0; i<tc; i++){
-						state_untargettable(player, tapped[tc], 0);
+						state_untargettable(player, tapped[i], 0);
 					}
 					if( tc < 2 ){
 						spell_fizzled = 1;
@@ -1007,7 +999,7 @@ int card_crackleburr(int player, int card, event_t event){
 					}
 					if( pick_target(&td, "TARGET_ANY") ){
 						for(i=0; i<2; i++){
-							tap_card(player, tapped[tc]);
+							tap_card(player, tapped[i]);
 						}
 					}
 				}
@@ -1020,7 +1012,8 @@ int card_crackleburr(int player, int card, event_t event){
 												0, GS_LITERAL_PROMPT) )
 							{
 								tapped[tc] = instance->targets[0].card;
-								state_untargettable(player, tapped[tc], 1);
+                                state_untargettable(player, tapped[tc], 1);
+                                ++tc;
 								instance->number_of_targets = 0;
 							}
 							else{
@@ -1029,7 +1022,7 @@ int card_crackleburr(int player, int card, event_t event){
 					}
 					int i;
 					for(i=0; i<tc; i++){
-						state_untargettable(player, tapped[tc], 0);
+						state_untargettable(player, tapped[i], 0);
 					}
 					if( tc < 2 ){
 						spell_fizzled = 1;
@@ -1037,11 +1030,13 @@ int card_crackleburr(int player, int card, event_t event){
 					}
 					if( pick_target(&td1, "TARGET_CREATURE") ){
 						for(i=0; i<2; i++){
-							untap_card(player, tapped[tc]);
+							untap_card(player, tapped[i]);
 						}
 					}
 				}
 				instance->info_slot = choice;
+                return generic_activated_ability(player, card, event,
+                    choice == CHOICE_DAMAGE ? GAA_UNTAPPED : GAA_TAPPED, MANACOST0, 0, &td, NULL);
 			}
 		}
 
@@ -1099,8 +1094,7 @@ int card_creakwood_liege(int player, int card, event_t event){
 		default_token_definition(player, card, CARD_ID_WORM, &token);
 		token.pow = 1;
 		token.tou = 1;
-		token.color_forced = 	(get_sleighted_color_test(player, card, COLOR_TEST_GREEN) |
-								get_sleighted_color_test(player, card, COLOR_TEST_BLACK));
+		token.color_forced = COLOR_TEST_GREEN | COLOR_TEST_BLACK;
 		generate_token(&token);
 	}
 
@@ -1479,7 +1473,9 @@ As long as enchanted creature is |Sblack, it gets +2/+1. */
 	hybrid(player, card, event);
 	aura_ability_for_color(player, card, event, COLOR_TEST_BLACK, 2, 1, 0, 0);
 	aura_ability_for_color(player, card, event, COLOR_TEST_WHITE, 1, 2, 0, 0);
-	return vanilla_aura(player, card, event, player);
+	if (IS_AURA_EVENT(player, card, event) || event == EVENT_STATIC_EFFECTS)
+    return vanilla_aura(player, card, event, player);
+  return 0;
 }
 
 int card_endless_horizons(int player, int card, event_t event){
@@ -1586,7 +1582,7 @@ int card_evershrike(int player, int card, event_t event){
 			this_test.zone = TARGET_ZONE_HAND;
 			if( check_battlefield_for_special_card(player, card, player, 0, &this_test) ){
 				int result = new_global_tutor(player, player, TUTOR_FROM_HAND, TUTOR_PLAY, 0, AI_MAX_VALUE, &this_test);
-				if( result != -1 ){
+				if( result >= 0 ){
 					put_into_play_aura_attached_to_target(player, result, player, card);
 					exile_me = 0;
 				}
@@ -2190,7 +2186,7 @@ int card_hallowed_burial(int player, int card, event_t event){
 	if(event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
-		APNAP(p, {new_manipulate_all(player, card, p, &this_test, ACT_PUT_ON_BOTTOM);};);
+		new_manipulate_all(player, card, ANYBODY, &this_test, ACT_PUT_ON_BOTTOM);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -2396,7 +2392,7 @@ Draw a card. */
 
 	modify_cost_for_hybrid_spells(player, card, event, 0);
 
-	if( ! IS_GAA_EVENT(event) ){
+	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
 
@@ -2543,9 +2539,12 @@ Equip |2 */
 		ai_modifier+=30;
 	}
 
-	if( is_equipping(player, card) && new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-		card_instance_t *instance = get_card_instance( player, card );
-		pump_until_eot(player, card, instance->damage_target_player, instance->damage_target_card, 2, 2);
+	if (is_equipping(player, card)){
+		sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+		if (event == EVENT_SPA){
+			card_instance_t *instance = get_card_instance( player, card );
+			pump_until_eot(player, card, instance->damage_target_player, instance->damage_target_card, 2, 2);
+		}
 	}
 
 	return basic_equipment(player, card, event, 2);
@@ -2575,34 +2574,23 @@ Creature - Merfolk Rogue 1/1
 |T: Target player exiles a card from his or her graveyard.
 Whenever you cast a |Sblack spell, you may untap ~. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_ANY);
-		test.color = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test) ){
-			untap_card(player, card);
-		}
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
+	    test_definition_t test;
+	    default_test_definition(&test, TYPE_ANY);
+	    test.color = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
+	    sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), 0, &test, player, card);
 	}
-
-	if (!IS_GAA_EVENT(event) ){
-		return 0;
-	}
-
+	if (event == EVENT_SPA){ untap_card(player, card); return 0; }
+	if (!IS_GAA_EVENT(event)){ return 0; }
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.zone = TARGET_ZONE_PLAYERS;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( valid_target(&td) && count_graveyard(instance->targets[0].player) ){
-			char msg[100] = "Select a card to exile.";
-			test_definition_t this_test;
-			new_default_test_definition(&this_test, TYPE_ANY, msg);
-			new_global_tutor(instance->targets[0].player, instance->targets[0].player, TUTOR_FROM_GRAVE, TUTOR_RFG, 1, AI_MIN_VALUE, &this_test);
-		}
+	card_instance_t* instance = get_card_instance(player, card);
+	if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td) && count_graveyard(instance->targets[0].player)){
+	    test_definition_t test;
+	    new_default_test_definition(&test, TYPE_ANY, "Select a card to exile.");
+	    new_global_tutor(instance->targets[0].player, instance->targets[0].player, TUTOR_FROM_GRAVE, TUTOR_RFG, 1, AI_MIN_VALUE, &test);
 	}
-
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_PLAYER");
 }
 
@@ -2613,14 +2601,13 @@ Creature - Merfolk Wizard 2/3
 |T: Target creature gains flying until end of turn.
 Whenever you cast a |Sblue spell, you may untap ~. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_ANY);
 		test.color = get_sleighted_color_test(player, card, COLOR_TEST_BLUE);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test) ){
-			untap_card(player, card);
-		}
+		sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_NONE, &test, player, card);
 	}
+	if (event == EVENT_SPA){ untap_card(player, card); return 0; }
 
 	if (!IS_GAA_EVENT(event) ){
 		return 0;
@@ -2914,17 +2901,13 @@ Whenever Needle Specter deals combat damage to a player, that player discards th
 */
 
 	wither(player, card, event);
-
-	if (damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_BE_COMBAT_DAMAGE |
-							DDBM_REPORT_DAMAGE_DEALT))
-	{
+	if (damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_REPORT_DAMAGE_DEALT)){
 		card_instance_t* instance = get_card_instance(player, card);
-		int times_damaged[2] = { BYTE0(instance->targets[1].player), BYTE1(instance->targets[1].player) };
-		int dmg = instance->targets[16].player;
-		instance->targets[16].player = 0;
+		int times_damaged[2] = {BYTE0(instance->targets[1].player), BYTE1(instance->targets[1].player)};
 		instance->targets[1].player = 0;
-		new_multidiscard(0, dmg*times_damaged[0], 0, player);
-		new_multidiscard(1, dmg*times_damaged[1], 0, player);
+		int damages[2] = {BYTE0(instance->targets[16].player), BYTE1(instance->targets[16].player)};
+		instance->targets[16].player = 0;
+		APNAP(p, { if (times_damaged[p]){ new_multidiscard(p, damages[p], 0, player); } });
 	}
 	return 0;
 }
@@ -2937,16 +2920,15 @@ Creature - Elf Warrior 2/2
 Whenever you cast a |Sgreen spell, you may untap ~. */
 
 	does_not_untap(player, card, event);
-
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_ANY);
 		test.color = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test) ){
-			untap_card(player, card);
-		}
+		sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_NONE, &test, player, card);
 	}
-
+	if (event == EVENT_SPA){
+		untap_card(player, card);
+	}
 	return 0;
 }
 
@@ -3213,9 +3195,7 @@ int card_puncture_blast(int player, int card, event_t event){
 
   // As a non-permanent, this never gets EVENT_ABILITIES, and so wither() won't ever do anything.
   card_instance_t* instance = get_card_instance(player, card);
-  if (instance->targets[16].card == -1)
-	instance->targets[16].card = 0;
-  instance->targets[16].card |= SP_KEYWORD_WITHER;
+  instance->ext->sp_keywords |= SP_KEYWORD_WITHER;
 
   if (event == EVENT_RESOLVE_SPELL)
 	{
@@ -3391,10 +3371,9 @@ int card_rekindle_the_flame(int player, int card, event_t event){
 	default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
 	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
-
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			damage_creature_or_player(player, card, event, 4);
+			damage_target0(player, card, 4);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -3565,7 +3544,8 @@ int card_sapling_of_colfenor(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( declare_attackers_trigger(player, card, event, 0, player, card) ){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
 		int iid = deck_ptr[player][0];
 		if( iid != -1 ){
 			reveal_card_iid(player, card, iid);
@@ -3741,6 +3721,7 @@ As long as enchanted creature is white, it gets +1/+1 and has lifelink. (Damage 
 		}
 	}
 
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 	return vanilla_aura(player, card, event, player);
 }
 
@@ -3881,8 +3862,7 @@ int card_snakeform(int player, int card, event_t event){
 			hc.power = 1;
 			hc.toughness = 1;
 			hc.subtype = SUBTYPE_SNAKE;
-			hc.color = COLOR_TEST_GREEN;
-			force_a_subtype(instance->targets[0].player, instance->targets[0].card, SUBTYPE_SNAKE);
+			hc.color = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
 			humiliate_and_set_pt_abilities(player, card, instance->targets[0].player, instance->targets[0].card, 4, &hc);
 
 			draw_cards(player, 1);
@@ -3900,17 +3880,16 @@ Creature - Imp 1/2
 Flying
 Whenever a player casts a non|Sblack spell, that player loses 1 life. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_ANY);
 		test.color = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
 		test.color_flag = DOESNT_MATCH;
-
-		if( new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			lose_life(trigger_cause_controller, 1);
-		}
+		sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
 	}
-
+	if (event == EVENT_SPA){
+		lose_life(trigger_cause_controller, 1);
+	}
 	return 0;
 }
 
@@ -4146,6 +4125,7 @@ int card_springjack_pasture(int player, int card, event_t event)
 			  add_state(player, card, STATE_TAPPED);
 			  if (!charge_mana_for_activated_ability(player, card, MANACOST_X(4)))
 				remove_state(player, card, STATE_TAPPED);
+			  tapped_for_mana_color = -1;
 			  break;
 
 			case CHOICE_SAC_GOATS:
@@ -4822,8 +4802,7 @@ int card_worm_harvest(int player, int card, event_t event){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_WORM, &token);
 		token.pow = token.tou = 1;
-		token.color_forced = (get_sleighted_color_test(player, card, COLOR_TEST_GREEN) |
-							get_sleighted_color_test(player, card, COLOR_TEST_BLACK));
+		token.color_forced = COLOR_TEST_GREEN | COLOR_TEST_BLACK;
 		token.qty = count_graveyard_by_type(player, TYPE_LAND);
 		generate_token(&token);
 
@@ -4873,7 +4852,10 @@ int card_waves_of_aggression(int player, int card, event_t event){
 	}
 
 	if(event == EVENT_RESOLVE_SPELL){
-		relentless_assault_effect(player, card);
+		test_definition_t test;
+		default_test_definition(&test, TYPE_CREATURE);
+		test.state = STATE_ATTACKING | STATE_ATTACKED;
+		extra_combat_effect(player, card, event, 1, &test, 1);
 		kill_card(player, card, KILL_DESTROY);
 	}
 

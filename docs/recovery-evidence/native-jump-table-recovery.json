@@ -123272,13 +123272,20 @@
       "coff": [
         "_card_cat_dragon_token"
       ],
-      "name": null,
-      "source": null,
-      "binding": "_generic_token",
+      "name": "card_cat_dragon_token",
+      "source": "cards/tokens.c",
+      "binding": "_card_cat_dragon_token",
       "native_tail_jump": {
         "address": "0x2582ea0",
         "target": "0x2665900",
-        "bytes_hex": "e95b2a0e00"
+        "bytes_hex": "e95b2a0e00",
+        "binding": "_generic_token"
+      },
+      "source_forwarder": {
+        "source": "cards/tokens.c",
+        "name": "card_cat_dragon_token",
+        "callee": "generic_token",
+        "definition_sha256": "6fefb12d8bff67957cbbd2e5a9d501de322038d5fc3badc50f9290a2148d2303"
       }
     },
     {
@@ -123907,13 +123914,20 @@
       "coff": [
         "_card_pirate_token"
       ],
-      "name": null,
-      "source": null,
-      "binding": "_generic_token",
+      "name": "card_pirate_token",
+      "source": "cards/tokens.c",
+      "binding": "_card_pirate_token",
       "native_tail_jump": {
         "address": "0x2582f20",
         "target": "0x2665900",
-        "bytes_hex": "e9db290e00"
+        "bytes_hex": "e9db290e00",
+        "binding": "_generic_token"
+      },
+      "source_forwarder": {
+        "source": "cards/tokens.c",
+        "name": "card_pirate_token",
+        "callee": "generic_token",
+        "definition_sha256": "fcecb21d3e341c63ad188a2fcaff982a1928d1fdf5cd95e08a23e1e93f4ea4e1"
       }
     },
     {
@@ -123922,13 +123936,20 @@
       "coff": [
         "_card_treasure"
       ],
-      "name": null,
-      "source": null,
-      "binding": "_card_etherium_cell",
+      "name": "card_treasure",
+      "source": "cards/tokens.c",
+      "binding": "_card_treasure",
       "native_tail_jump": {
         "address": "0x2582f30",
         "target": "0x2582e50",
-        "bytes_hex": "e91bffffff"
+        "bytes_hex": "e91bffffff",
+        "binding": "_card_etherium_cell"
+      },
+      "source_forwarder": {
+        "source": "cards/tokens.c",
+        "name": "card_treasure",
+        "callee": "card_etherium_cell",
+        "definition_sha256": "127d67271b347492f3cf66929823ec6da98385b9fab1a265d44b06c490584c68"
       }
     },
     {
@@ -149097,13 +149118,20 @@
       "coff": [
         "_card_professor_of_symbology"
       ],
-      "name": null,
-      "source": null,
-      "binding": "_card_gnarled_professor",
+      "name": "card_professor_of_symbology",
+      "source": "cards/strixhaven.c",
+      "binding": "_card_professor_of_symbology",
       "native_tail_jump": {
         "address": "0x23d8110",
         "target": "0x23cffc0",
-        "bytes_hex": "e9ab7effff"
+        "bytes_hex": "e9ab7effff",
+        "binding": "_card_gnarled_professor"
+      },
+      "source_forwarder": {
+        "source": "cards/strixhaven.c",
+        "name": "card_professor_of_symbology",
+        "callee": "card_gnarled_professor",
+        "definition_sha256": "5cc7438492ec4cc9abc6e19aceae061685f86af41de1b937b95407179173ecda"
       }
     },
     {
@@ -152900,5 +152928,5 @@
       }
     ]
   },
-  "scope": "Every native fixed-address E9 veneer slot is restored and checked against the rebuilt COFF target. Four exact native JMP aliases share existing canonical bodies; no placeholder handlers. The split-range deck-dialog hook is recovered in its original Windows unit."
+  "scope": "Every native fixed-address E9 veneer slot is restored and checked against the rebuilt COFF target. Four native forwarding identities are now present in original C units and their fixed veneers use the original native symbols. Native alias targets, source forwarding bodies and callee bindings are checked explicitly. The split-range deck-dialog hook retains its prior proof."
 }

@@ -494,7 +494,7 @@ int card_anaba_shaman(int player, int card, event_t event){
 	    ai_defensive_modifier += 48;
 	
 	if (event == EVENT_BLOCK_RATING && affect_me(player, card) && CAN_ACTIVATE(player, card, MANACOST_R(1)))
-        ai_defensive_modifier -= 48;
+        ai_defensive_modifier -= 24;
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -506,7 +506,7 @@ int card_anaba_shaman(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
-			damage_creature_or_player(player, card, event, 1);
+			damage_target0(player, card, 1);
 		}
 	}
 
@@ -816,7 +816,7 @@ int card_broken_visage(int player, int card, event_t event){
 			default_token_definition(player, card, CARD_ID_SPIRIT, &token);
 			token.pow = get_power(instance->targets[0].player, instance->targets[0].card);
 			token.tou = get_toughness(instance->targets[0].player, instance->targets[0].card);
-			token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
+			token.color_forced = COLOR_TEST_BLACK;
 			token.special_infos = 67;
 			generate_token(&token);
 			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
@@ -1158,12 +1158,13 @@ int card_drudge_spell(int player, int card, event_t event){
 		It has "|B: Regenerate this creature."
  * When ~ leaves the battlefield, destroy all Skeleton tokens. They can't be regenerated. */
 
-	if( leaves_play(player, card, event, 1, 1) ){
+	leaves_play(player, card, event, 1, 1);
+	if (event == EVENT_LEAVES_PLAY_ABILITY){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_PERMANENT);
 		test.subtype = SUBTYPE_SKELETON;
 		test.type_flag = F1_IS_TOKEN;
-		APNAP(p, { new_manipulate_all(player, card, p, &test, KILL_BURY); };);
+		new_manipulate_all(player, card, ANYBODY, &test, KILL_BURY);
 	}
 
 	if( ! IS_GAA_EVENT(event) ){
@@ -1182,7 +1183,7 @@ int card_drudge_spell(int player, int card, event_t event){
 		if( charge_mana_for_activated_ability(player, card, MANACOST_B(1)) ){
 			test_definition_t this_test2;
 			new_default_test_definition(&this_test2, TYPE_CREATURE, "Select a creature card to exile.");
-			if( new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_RFG, 0, AI_MIN_VALUE, &this_test2) != -1 ){
+			if( new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_RFG, 0, AI_MIN_VALUE, &this_test2) >= 0 ){
 				new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_RFG, 1, AI_MIN_VALUE, &this_test2);
 			}
 			else{
@@ -1430,21 +1431,20 @@ int card_funeral_march(int player, int card, event_t event)
 
    if( in_play(player, card) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t* inst = get_card_instance(player, card);
-		if (other_leaves_play(player, card, inst->damage_target_player, inst->damage_target_card, event, 1, 1))
+		other_leaves_play(player, card, inst->damage_target_player, inst->damage_target_card, event, 1, 1);
+		if (event == EVENT_LEAVES_PLAY_ABILITY)
 		{
 			card_instance_t* ench = in_play(inst->damage_target_player, inst->damage_target_card);
 			if (ench){
 				ench->state |= STATE_CANNOT_TARGET;	// Since TRIGGER_LEAVE_PLAY is, in most cases, sent with that card still on the battlefield
-			}
-			card_instance_t* corpse = in_play(player, already_dead(player, card));
-			if(corpse){
-				corpse->state |= STATE_CANNOT_TARGET;
 			}
 			test_definition_t test;
 			new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice.");
 			new_sacrifice(player, card, inst->damage_target_player, SAC_NO_CANCEL | SAC_CAUSED, &test);
 		}
 	}
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
+
 	return vanilla_aura(player, card, event, 1-player);
 }
 
@@ -1669,11 +1669,6 @@ int card_grandmother_sengir(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_CHECK_PUMP && CAN_TAP(player, card) && CAN_ACTIVATE(player, card, MANACOST_XB(1, 1)) ){
-		pumpable_toughness[1 - player] -= 1;
-		pumpable_power[1 - player] -= 1;
-	}
-
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1767,6 +1762,13 @@ int card_heart_wolf(int player, int card, event_t event)
 	 * |T: Target Dwarf creature gets +2/+0 and gains first strike until end of turn.
 		When that creature leaves the battlefield this turn, sacrifice ~. Activate this ability only during combat. */
 
+	if (event == EVENT_CHECK_ABILITIES){
+		if (affected_card_controller == player && has_subtype(player, affected_card, SUBTYPE_DWARF) && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL)){
+			check_abilities_keywords |= KEYWORD_FIRST_STRIKE;
+			check_abilities_power += 2;
+		}
+		return 0;
+	}
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1894,12 +1896,13 @@ int card_jinx(int player, int card, event_t event)
 		  card_instance_t* legacy = get_card_instance(player, leg);
 		  legacy->targets[1].player = color;
 		  legacy->eot_toughness = 1;
-		  get_card_instance(player, cantrip(player, card, 1))->eot_toughness = 2;
+		  if (get_id(player, card) == CARD_ID_SHIMMERING_MIRAGE){ draw_a_card(player); }
+		  else{ get_card_instance(player, cantrip(player, card, 1))->eot_toughness = 2; }
 		}
 	  kill_card(player, card, KILL_DESTROY);
 	}
 
-  return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_LAND", 1, NULL);
+  return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select target land it becomes the basic land type of your choice.", 1, NULL);
 }
 
 int card_joven(int player, int card, event_t event){
@@ -1959,11 +1962,12 @@ int card_jovens_ferrets(int player, int card, event_t event)
 	 * At end of combat, tap all creatures that blocked ~ this turn. They don't untap during their controller's next untap step. */
 
   // Whenever ~ attacks, it gets +0/+2 until end of turn.
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
 	alternate_legacy_text(1, player, pump_until_eot(player, card, player, card, 0, 2));
 
 	// At end of combat, tap all creatures that blocked ~ this turn. They don't untap during their controller's next untap step.
-  if (event == EVENT_DECLARE_BLOCKERS && is_attacking(player, card))
+  else if (event == EVENT_DECLARE_BLOCKERS && is_attacking(player, card))
 	{
 	  char marked[2][151] = {{0}};
 	  mark_each_creature_blocking_me(player, card, marked);
@@ -2602,8 +2606,10 @@ int card_root_spider(int player, int card, event_t event)
   /* Root Spider	|3|G	0x200d6d5
    * Creature - Spider 2/2
    * Whenever ~ blocks, it gets +1/+0 and gains first strike until end of turn. */
-  if (event == EVENT_POW_BOOST && current_turn != player && current_phase <= PHASE_DECLARE_BLOCKERS)
-	event_result += 1;
+  if (event == EVENT_CHECK_ABILITIES && affect_me(player, card) && current_turn != player && current_phase <= PHASE_DECLARE_BLOCKERS){
+	check_abilities_keywords |= KEYWORD_FIRST_STRIKE;
+	check_abilities_power += 1;
+  }
   if (blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG))
 	pump_ability_until_eot(player, card, player, card, 1,0, KEYWORD_FIRST_STRIKE,0);
   return 0;
@@ -2617,7 +2623,8 @@ int card_roots(int player, int card, event_t event)
    * When ~ enters the battlefield, tap enchanted creature.
    * Enchanted creature doesn't untap during its controller's untap step. */
 
-	if( comes_into_play(player, card, event) ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if (event == EVENT_ETB_ABILITY){
 		card_instance_t* inst = get_card_instance(player, card);
 		tap_card(inst->damage_target_player, inst->damage_target_card);
 	}
@@ -2630,14 +2637,18 @@ int card_roots(int player, int card, event_t event)
 			kill_card(player, card, KILL_STATE_BASED_ACTION);
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.preferred_controller = 1-player;
-	td.illegal_abilities = KEYWORD_FLYING;
+	td.illegal_abilities |= KEYWORD_FLYING;
+	if (event == EVENT_ABILITIES && affect_me(player, card)){
+		card_instance_t* inst = get_card_instance(player, card);
+		if (get_abilities(inst->damage_target_player, inst->damage_target_card, EVENT_ABILITIES, -1) & KEYWORD_FLYING){ kill_card(player, card, KILL_STATE_BASED_ACTION); }
+	}
 
 	return targeted_aura(player, card, event, &td, "FLOOD");	// Select target creature without flying.
 }
@@ -2676,33 +2687,28 @@ int card_rysorian_badger(int player, int card, event_t event){
 	 * Whenever ~ attacks and isn't blocked, you may exile up to two target creature cards from defending player's graveyard.
 	 * If you do, you gain 1 life for each card exiled this way and ~ assigns no combat damage this turn. */
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_ACTIVATE ){
-		if( instance->targets[1].player != 66 && current_phase == PHASE_AFTER_BLOCKING && is_attacking(player, card) &&
-			is_unblocked(player, card) && count_graveyard_by_type(1-player, TYPE_CREATURE) > 0 && ! graveyard_has_shroud(player) )
-		{
-			return 1;
-		}
+	if (event == EVENT_DECLARE_BLOCKERS){
+	    int total_power = 0;
+	    for (int c = active_cards_count[current_turn] - 1; c >= 0; --c){
+	        if (in_play(current_turn, c) && is_what(current_turn, c, TYPE_CREATURE) && is_attacking(current_turn, c) && is_unblocked(current_turn, c)){
+	            total_power += get_power(current_turn, c);
+	        }
+	    }
+	    if (is_unblocked(player, card) && !is_humiliated(player, card, AL_TRIG) && !graveyard_has_shroud(1-player) && count_graveyard_by_type(1-player, TYPE_CREATURE) > 0){
+	        int choice = 1;
+	        if (IS_AI(player) && current_turn == player){ choice = life[1-player] <= total_power; }
+	        if (do_dialog(player, player, card, -1, -1, " Exile creatures from gy\n Make combat damage", choice) == 0){
+	            test_definition_t test;
+	            new_default_test_definition(&test, TYPE_CREATURE, "Select target creature card.");
+	            test.qty = MIN(count_graveyard(1-current_turn), 2);
+	            if (count_graveyard_by_type(1-current_turn, TYPE_CREATURE) > 0){
+	                int result = new_global_tutor(player, 1-current_turn, TUTOR_FROM_GRAVE, TUTOR_RFG, 0, AI_MAX_VALUE, &test);
+	                if (result > 0){ gain_life(player, result); }
+	            }
+	            negate_combat_damage_this_turn(player, card, player, card, 0);
+	        }
+	    }
 	}
-
-	if(event == EVENT_ACTIVATE ){
-		instance->targets[1].player = 66;
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature card.");
-		int count = MIN(count_graveyard_by_type(1-player, TYPE_CREATURE), 2);
-		if( count ){
-			this_test.qty = count;
-			int result = new_global_tutor(player, 1-player, TUTOR_FROM_GRAVE, TUTOR_RFG, 0, AI_MAX_VALUE, &this_test);
-			gain_life(player, result);
-		}
-		negate_combat_damage_this_turn(instance->parent_controller, instance->parent_card,
-										instance->parent_controller, instance->parent_card, 0);
-	}
-
 	return 0;
 }
 
@@ -2917,19 +2923,16 @@ int card_spectral_bears(int player, int card, event_t event){
 	 * Creature - Bear Spirit 3/3
 	 * Whenever ~ attacks, if defending player controls no |Sblack nontoken permanents, it doesn't untap during your next untap step. */
 
-	if (xtrigger_condition() == XTRIGGER_ATTACKING || event == EVENT_DECLARE_ATTACKERS){
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_PERMANENT, "");
-		this_test.type_flag = F1_NO_TOKEN;
-		this_test.color = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
-
-		if (!check_battlefield_for_special_card(player, card, 1-current_turn, 0, &this_test) &&
-			declare_attackers_trigger(player, card, event, 0, player, card) )
-		{
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_PERMANENT, "");
+		test.type_flag = F1_NO_TOKEN;
+		test.color = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
+		if (!check_battlefield_for_special_card(player, card, 1-current_turn, 0, &test)){
 			does_not_untap_effect(player, card, player, card, EDNT_CHECK_ORIGINAL_CONTROLLER, 1);
 		}
 	}
-
 	return 0;
 }
 
@@ -2955,6 +2958,8 @@ int card_torture(int player, int card, event_t event)
 			return generic_activated_ability(player, card, event, 0, MANACOST_XB(1,1), 0, NULL, NULL);
 		}
 	}
+
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
 	return disabling_aura(player, card, event);
 }

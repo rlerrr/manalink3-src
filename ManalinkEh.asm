@@ -15153,6 +15153,10 @@ extern _fx_activation_906
 extern _gain_control_impl
 extern _garruk_cursed_huntsman_emblem
 extern _generic_token
+extern _card_treasure
+extern _card_pirate_token
+extern _card_cat_dragon_token
+extern _card_professor_of_symbology
 extern _gnr_locket
 extern _hook_helper_for_startduel
 extern _load_text
@@ -27505,7 +27509,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_hammer_of_nazahn     ; 20100b5
   jmp near _card_mirror_of_the_forebears     ; 20100ba
   jmp near _card_ramos_dragon_engine     ; 20100bf
-  jmp near _generic_token     ; 20100c4
+  jmp near _card_cat_dragon_token     ; 20100c4
   jmp near _card_the_ur_dragon     ; 20100c9
   jmp near _card_inalla_archmage_ritualist     ; 20100ce
   jmp near _card_edgar_markov     ; 20100d3
@@ -27568,8 +27572,8 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_vraskas_contempt     ; 20101f0
   jmp near _card_walk_the_plank     ; 20101f5
   jmp near _card_dinosaur_token     ; 20101fa
-  jmp near _generic_token     ; 20101ff
-  jmp near _card_etherium_cell     ; 2010204
+  jmp near _card_pirate_token     ; 20101ff
+  jmp near _card_treasure     ; 2010204
   jmp near _card_nest_of_scarabs     ; 2010209
   jmp near _card_trial_of_ambition     ; 201020e
   jmp near _card_myr_matrix     ; 2010213
@@ -30086,7 +30090,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_prismari_command     ; 201331e
   jmp near _card_prismari_pledgemage     ; 2013323
   jmp near _card_professor_onyx     ; 2013328
-  jmp near _card_gnarled_professor     ; 201332d
+  jmp near _card_professor_of_symbology     ; 201332d
   jmp near _card_professor_of_zoomancy     ; 2013332
   jmp near _card_quandrix_apprentice     ; 2013337
   jmp near _card_quandrix_command     ; 201333c

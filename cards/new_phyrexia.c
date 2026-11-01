@@ -1,5 +1,7 @@
 #include "manalink.h"
 
+static void cathedral_membrane_legacy(int player, int card, int t_player, int t_card);
+
 /* Canonical recovered helper declarations. */
 int has_phyrexian_mana(int player, int cless, int black, int blue, int green, int red,
                             int white, int clred_artifact);
@@ -265,15 +267,11 @@ Artifact Creature — Wall 0/3
 Defender
 When Cathedral Membrane dies during combat, it deals 6 damage to each creature it blocked this combat.
 */
+
 	phyrexian_casting_costs(player, card, event, MANACOST_XW(1, 1), 1);
-
-	if( current_phase > PHASE_MAIN1 && current_phase < PHASE_MAIN2 && this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		card_instance_t* instance = get_card_instance(player, card);
-		if( instance->blocking < 255 && in_play(1-player, instance->blocking) ){
-			damage_creature(1-player, instance->blocking, 6, player, card);
-		}
+	if (event == EVENT_DECLARE_BLOCKERS && !is_humiliated(player, card, AL_TRIG) && 1-current_turn == player && blocking(player, card, event)){
+		for_each_creature_blocked_by_me(player, card, cathedral_membrane_legacy, player, card);
 	}
-
 	return 0;
 }
 
@@ -1373,7 +1371,7 @@ LAB_0226faef:
       if (((int)uVar21 >> (bVar18 & 0x1f) & 1U) != 0)
       {
         bVar18 = bVar18 & 0x1f;
-        pcVar14->targets[7].card = (-2 << bVar18 | 0xfffffffeU >> 0x20 - bVar18) & uVar21;
+        pcVar14->targets[7].card = uVar21 & ~(1u << bVar18);
         goto LAB_0226faf9;
       }
     }
@@ -1384,7 +1382,7 @@ LAB_0226faef:
       if (((int)uVar21 >> (bVar18 & 0x1f) & 1U) != 0)
       {
         bVar18 = bVar18 & 0x1f;
-        pcVar14->targets[7].card = uVar21 & (-2 << bVar18 | 0xfffffffeU >> 0x20 - bVar18);
+        pcVar14->targets[7].card = uVar21 & ~(1u << bVar18);
       }
     }
   }
@@ -1644,7 +1642,7 @@ Whenever a source deals damage to Phyrexian Obliterator, that source's controlle
 		}
 	}
 
-	if( resolve_damage_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	if( resolve_damage_trigger(player, card, event, DDBM_0, player, card) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		APNAP(p,{
 					if( instance->targets[p+1].player > 0 ){
@@ -1829,7 +1827,7 @@ int card_birthing_pod(int player, int card, event_t event){
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		if( has_phyrexian_mana_for_activated_ability(player, card, MANACOST_XG(1,1)) ){
-			return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_SACRIFICE_CREATURE |
+			return generic_activated_ability(player, card, event, GAA_CAN_SORCERY_BE_PLAYED | GAA_UNTAPPED | GAA_SACRIFICE_CREATURE |
 											GAA_DO_NOT_RECALCULATE_ACTIVATION_COST, MANACOST0, 0, NULL, NULL);
 		}
 	}
@@ -1839,6 +1837,7 @@ int card_birthing_pod(int player, int card, event_t event){
 			int sac = new_sacrifice(player, card, player, SAC_AS_COST | SAC_JUST_MARK | SAC_RETURN_CHOICE, &test);
 			if( sac ){
 				add_state(player, card, STATE_TAPPED);
+				tapped_for_mana_color = -1;
 				instance->info_slot = get_cmc(BYTE2(sac), BYTE3(sac));
 				if( instance->info_slot < 6 ){
 					ai_modifier += (instance->info_slot * 8);
@@ -2171,7 +2170,7 @@ int card_vital_splicer(int player, int card, event_t event){
 	 * |1: Regenerate target Golem you control. */
 
 	if( ! IS_GAA_EVENT(event) ){
-		return 0;
+		return generic_splicer(player, card, event, 0, 0, 0, 1);
 	}
 
 	target_definition_t td;
@@ -2191,6 +2190,7 @@ int card_vital_splicer(int player, int card, event_t event){
 				return 99;
 			}
 		}
+		return 0;
 	}
 
 	if( event == EVENT_ACTIVATE ){
@@ -2204,7 +2204,7 @@ int card_vital_splicer(int player, int card, event_t event){
 		}
 	}
 
-	return generic_splicer(player, card, event, 0, 0, 0, 1);
+	return 0;
 }
 
 int card_volt_charge(int player, int card, event_t event ){
@@ -2363,7 +2363,8 @@ int card_apostles_blessing(int player, int card, event_t event){
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td,
+						 "Select target artifact or creature you control", 1, NULL);
 }
 
 static int arm_with_aether_legacy(int player, int card, event_t event)
@@ -2496,7 +2497,7 @@ int card_auriok_survivors(int player, int card, event_t event){
 		test.subtype = SUBTYPE_EQUIPMENT;
 		if( ! graveyard_has_shroud(player) && new_special_count_grave(player, &test) ){
 			int equip = new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_PLAY, 0, AI_MAX_CMC, &test);
-			if( equip == -1 ){
+			if( equip < 0 ){
 				return 0;
 			}
 			int priority_equip = 10;
@@ -3150,7 +3151,7 @@ When Entomber Exarch enters the battlefield, choose one —
 		card_instance_t *instance = get_card_instance(player, card);
 
 		if( can_raise_dead || can_raise_dead ){
-			int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_AUTOCHOOSE_IF_1,
+			int choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_AUTOCHOOSE_IF_1,
 								"Raise dead", can_raise_dead, 5,
 								"Opponent discards", can_target_opponent, hand_count[1-player] > 0 ? 5 : 1);
 			if( choice == 1 ){
@@ -3288,23 +3289,21 @@ int card_fallen_ferromancer(int player, int card, event_t event){
 
 int card_forced_worship(int player, int card, event_t event){
 
-	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player > -1 && ! is_humiliated(player, card, AL_STATIC) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( IS_GAA_EVENT(event) ){
-			return generic_activated_ability(player, card, event, 0, MANACOST_XW(2, 1), 0, NULL, NULL);
-		}
-
-		cannot_attack(instance->damage_target_player, instance->damage_target_card, event);
+	if (IS_GAA_EVENT(event)){
+	    if (event == EVENT_RESOLVE_ACTIVATION){
+	        card_instance_t* instance = get_card_instance(player, card);
+	        if (in_play(instance->parent_controller, instance->parent_card)){ bounce_permanent(instance->parent_controller, instance->parent_card); }
+	    }
+	    return generic_activated_ability(player, card, event, 0, MANACOST_XW(2, 1), 0, NULL, NULL);
 	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( in_play(instance->parent_controller, instance->parent_card) ){
-			bounce_permanent(instance->parent_controller, instance->parent_card);
-		}
+	if (event == EVENT_ABILITIES){
+	    card_instance_t* instance = in_play(player, card);
+	    if (instance && instance->damage_target_player >= 0 && affect_me(instance->damage_target_player, instance->damage_target_card) && !is_humiliated(player, card, AL_STATIC)){
+	        cannot_attack(instance->damage_target_player, instance->damage_target_card, event);
+	    }
 	}
-
-	return disabling_aura(player, card, event);
+	if (IS_AURA_EVENT(player, card, event) || event == EVENT_STATIC_EFFECTS){ return disabling_aura(player, card, event); }
+	return 0;
 }
 
 int card_furnace_scamp(int player, int card, event_t event){
@@ -3719,8 +3718,9 @@ When ~ enters the battlefield, choose one -
 
 	if( event == EVENT_ETB_ABILITY ){
 		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
+		default_target_definition(player, card, &td, TYPE_NONE);
 		td.zone = TARGET_ZONE_PLAYERS;
+		td.allowed_controller = 1-player;
 
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_AUTOCHOOSE_IF_1,
 							"Gain 2 life", 1, life[player] < 6 ? 10 : 1,
@@ -3896,11 +3896,11 @@ Then that player shuffles his or her library. */
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t test;
 		new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card.");
-		APNAP(p, { new_manipulate_all(player, card, p, &test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &test, KILL_DESTROY);
 
 		int i;
 		for(i=0; i<3; i++){
-			if( new_global_tutor(player, 1-player, TUTOR_FROM_DECK, TUTOR_GRAVE, 0, AI_MAX_VALUE, &test) == -1 ){
+			if( new_global_tutor(player, 1-player, TUTOR_FROM_DECK, TUTOR_GRAVE, 0, AI_MAX_VALUE, &test) < 0 ){
 				break;
 			}
 		}
@@ -3921,7 +3921,10 @@ Instant
 	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		new_damage_all(player, card, current_turn, 1, NDA_ALL_CREATURES, NULL);
+		test_definition_t test;
+		default_test_definition(&test, TYPE_CREATURE);
+		test.state = STATE_ATTACKING;
+		new_damage_all(player, card, ANYBODY, 1, 0, &test);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -3980,10 +3983,11 @@ Creature - Hound 2/2
 Whenever ~ attacks, it gets +2/+0 until end of turn.
 When ~ dies, target player loses life equal to its power. */
 
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
 	pump_until_eot(player, card, player, card, 2, 0);
 
-  if (event == EVENT_POW_BOOST && current_turn == player && current_phase <= PHASE_DECLARE_ATTACKERS)
+  else if (event == EVENT_POW_BOOST && current_turn == player && current_phase <= PHASE_DECLARE_ATTACKERS)
 	return 2;
 
   // When ~ dies, target player loses life equal to its power.
@@ -4228,6 +4232,10 @@ int card_parasitic_implant(int player, int card, event_t event){
 		}
 	}
 
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
+		return 0;
+	}
+
 	return disabling_aura(player, card, event);
 }
 
@@ -4289,7 +4297,6 @@ int card_phyrexias_core(int player, int card, event_t event){
 			new_can_sacrifice_as_cost(player, card, &test) )
 		{
 			choice = CHOICE_GAIN_LIFE;
-			choice = do_dialog(player, player, card, -1, -1, " Add 1\n Sac artifact and gain 1 life\n Cancel", 1);
 		}
 
 		if( choice == CHOICE_GAIN_LIFE && ! IS_AI(player) ){
@@ -4461,6 +4468,9 @@ int card_priest_of_urabrask(int player, int card, event_t event){
 
 int card_pristine_talisman(int player, int card, event_t event){
 
+	if (event == EVENT_QUERY && attacking_card == 3){
+		return 2;
+	}
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		gain_life(player, 1);
 	}
@@ -4494,27 +4504,21 @@ int card_rage_extractor(int player, int card, event_t event){
 	/* Rage Extractor	|4|PR	0x200476f
 	 * Artifact
 	 * Whenever you cast a spell with |P in its mana cost, ~ deals damage equal to that spell's converted mana cost to any target. */
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		if( is_phyrexian(get_id(trigger_cause_controller, trigger_cause)) ){
-			test_definition_t test;
-			default_test_definition(&test, TYPE_ANY);
-			if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-				target_definition_t td;
-				default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER );
-				td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-				td.allow_cancel = 0;
-
-				card_instance_t *instance = get_card_instance(player, card);
-
-				if( can_target(&td) && new_pick_target(&td, "TARGET_ANY", 0, 0) ){
-					damage_target0(player, card, get_cmc(trigger_cause_controller, trigger_cause));
-
-				}
-				instance->number_of_targets = 0;
-			}
-		}
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)
+		&& is_phyrexian(get_id(trigger_cause_controller, trigger_cause))){
+		sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
 	}
-
+	if (event == EVENT_SPA){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+		td.allow_cancel = 0;
+		card_instance_t* instance = get_card_instance(player, card);
+		if (can_target(&td) && new_pick_target(&td, "TARGET_ANY", 0, 0)){
+			damage_target0(player, card, get_cmc(trigger_cause_controller, trigger_cause));
+		}
+		instance->number_of_targets = 0;
+	}
 	return phyrexian_casting_costs(player, card, event, MANACOST_XR(4, 1), 1);
 }
 
@@ -4585,7 +4589,7 @@ int card_ruthless_invasion(int player, int card, event_t event){
 		}
 	}
 
-	return phyrexian_casting_costs(player, card, event, MANACOST_XW(3, 1), 0);
+	return phyrexian_casting_costs(player, card, event, MANACOST_XR(3, 1), 0);
 }
 
 int card_scrapyard_salvo(int player, int card, event_t event){
@@ -4834,20 +4838,24 @@ int card_surge_node(int player, int card, event_t event)
 									&td, "TARGET_ARTIFACT");
 }
 
-int card_suture_priest(int player, int card, event_t event ){
-
-	etb_ability_global(ANYBODY, event, RESOLVE_TRIGGER_AI(player), TYPE_CREATURE, NULL, player, card);
-
-	if( event == EVENT_ETB_ABILITY ){
-		if( trigger_cause_controller == player ){
-			gain_life(player, 1);
-		}
-		else{
-			lose_life(1-player, 1);
-		}
-	}
-
-	return 0;
+int card_suture_priest(int player, int card, event_t event)
+{
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    if (trigger_cause_controller == player)
+      test.not_me = 1;
+    etb_ability_global(ANYBODY, event, RESOLVE_TRIGGER_AI(player), TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_ETB)
+  {
+    if (trigger_cause_controller == player)
+      gain_life(player, 1);
+    else
+      lose_life(1-player, 1);
+  }
+  return 0;
 }
 
 int card_thundering_thanadon(int player, int card, event_t event ){
@@ -4871,16 +4879,16 @@ int card_tormentor_exarch(int player, int card, event_t event){
 
 		card_instance_t *instance = get_card_instance(player, card);
 
-		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_AUTOCHOOSE_IF_1,
+		int choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_AUTOCHOOSE_IF_1,
 							"Give +2/+0", can_target(&td), 5,
 							"Give +0/-2", can_target(&td1), 5);
 		if( choice == 1 ){
-			if( new_pick_target(&td, "Select target creature you control.", 0, GS_LITERAL_PROMPT) ){
+			if( new_pick_target(&td, "Select target creature.", 0, GS_LITERAL_PROMPT) ){
 				pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 2, 0);
 			}
 		}
 		if( choice == 2 ){
-			if( new_pick_target(&td1, "Select target creature you opponent controls.", 0, GS_LITERAL_PROMPT) ){
+			if( new_pick_target(&td1, "Select target creature.", 0, GS_LITERAL_PROMPT) ){
 				pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, -2);
 			}
 		}
@@ -5128,7 +5136,7 @@ Infect (This creature deals damage to creatures in the form of -1/-1 counters an
 Whenever Whispering Specter deals combat damage to a player, you may sacrifice it. If you do, that player discards a card for each
 	poison counter he or she has.
 */
-	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE);
+	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_TRIGGER_OPTIONAL);
 	if( result && ! check_special_flags2(player, card, SF2_CANNOT_BE_SACRIFICED) ){
 		int times_damaged[2] = {BYTE0(result), BYTE1(result)};
 		APNAP(p,{
@@ -5144,7 +5152,7 @@ Whenever Whispering Specter deals combat damage to a player, you may sacrifice i
 						else{
 							scnprintf(msg, 100, "Sac and opponent discards");
 						}
-						choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE,
+						choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE,
 										msg, 1, 1,
 										"Decline", 1, 1);
 						if( choice == 1 ){
@@ -5160,20 +5168,28 @@ Whenever Whispering Specter deals combat damage to a player, you may sacrifice i
 	return 0;
 }
 
-int card_xenograft(int player, int card, event_t event){
-/*
+int card_xenograft(int player, int card, event_t event)
+{
+  /*
 Xenograft |4|U
 Enchantment
 As Xenograft enters the battlefield, choose a creature type.
 Each creature you control is the chosen type in addition to its other types.
 */
-// All the true effects are handled in "has_creature_type.c"
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		get_card_instance(player, card)->info_slot = select_a_subtype(player, card);
-	}
-
-	return global_enchantment(player, card, event);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    uint32_t chosen = select_a_subtype(player, card);
+    set_inst_info(get_card_instance(player, card), CARD_ID_XENOGRAFT, chosen, 0);
+  }
+  else if (event == EVENT_CHANGE_TYPE && affected_card_controller == player && in_play(player, affected_card) &&
+           is_what(affected_card_controller, affected_card, TYPE_CREATURE) && !is_humiliated(player, card, AL_STATIC))
+  {
+    card_instance_t* instance = get_card_instance(player, card);
+    if (!has_subtype(affected_card_controller, affected_card, inst_info(instance, CARD_ID_XENOGRAFT).data))
+      add_a_subtype(affected_card_controller, affected_card, inst_info(instance, CARD_ID_XENOGRAFT).data);
+  }
+  return global_enchantment(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */

@@ -26,8 +26,10 @@ Duelist's Heritage |2|W	0x200f593
 Enchantment
 Whenever one or more creatures attack, you may have target attacking creature gain double strike until end of turn.
 */
+	store_attackers(player, card, event, 0, ANYBODY, -1, NULL);
 	int trig_mode = IS_AI(player) ? (current_turn == player ? RESOLVE_TRIGGER_MANDATORY : 0) : RESOLVE_TRIGGER_OPTIONAL;
-	if( declare_attackers_trigger(player, card, event, trig_mode, ANYBODY, -1) ){
+	dat_ability(player, card, event, trig_mode, 0);
+	if (event == EVENT_DAT_ABILITY){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.required_state = TARGET_STATE_ATTACKING;
@@ -172,7 +174,7 @@ Destroy all creatures.
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
-		APNAP(p, { new_manipulate_all(player, card, p, &test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &test, KILL_DESTROY);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -200,7 +202,7 @@ Return all nonland permanents to their owners' hands.
 		test_definition_t test;
 		default_test_definition(&test, TYPE_LAND);
 		test.type_flag = DOESNT_MATCH;
-		APNAP(p, { new_manipulate_all(player, card, p, &test, ACT_BOUNCE); };);
+		new_manipulate_all(player, card, ANYBODY, &test, ACT_BOUNCE);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -277,10 +279,7 @@ Whenever a nontoken creature enters the battlefield under an opponent's control,
 					int c;
 					for(c = 0; c<active_cards_count[p]; c++){
 						if( in_play(p, c) && is_what(p, c, TYPE_PERMANENT) && is_token(p, c) ){
-							card_instance_t *inst = get_card_instance(p, c);
-							if( inst->damage_source_player == p && inst->damage_source_card == c ){
-								marked[p][c] = 1;
-							}
+							marked[p][c] = 1;
 						}
 					}
 				}
@@ -592,12 +591,12 @@ When Frenzied Fugue enters the battlefield or at the beginning of your upkeep, g
 
 	if( event == EVENT_ETB_ABILITY ){
 		card_instance_t *instance = get_card_instance(player, card);
-		untap_card(instance->damage_target_player, instance->parent_card);
-		pump_ability_until_eot(player, card, instance->damage_target_player, instance->parent_card, 0, 0, 0, SP_KEYWORD_HASTE);
+		untap_card(instance->damage_target_player, instance->damage_target_card);
+		pump_ability_until_eot(player, card, instance->damage_target_player, instance->damage_target_card, 0, 0, 0, SP_KEYWORD_HASTE);
 		instance->info_slot = 1;
 	}
 
-	if( get_card_instance(player, card)->info_slot == 1 && eot_trigger(player, card, event) ){
+	if( (get_card_instance(player, card)->info_slot == 1 && eot_trigger(player, card, event)) || eot_trigger(player, card, event) ){
 		get_card_instance(player, card)->info_slot = 0;
 		end_of_stealing_aura_effect(player, card);
 		remove_state(player, card, STATE_POWER_STRUGGLE); //AKA this is no more an active "stealing" effect and won't be taken in account when dealing with other "stealing effects"
@@ -606,6 +605,8 @@ When Frenzied Fugue enters the battlefield or at the beginning of your upkeep, g
 	if( current_turn == player && upkeep_trigger(player, card, event) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		gain_control_permanently(player, instance->damage_target_player, instance->damage_target_card);
+		untap_card(instance->damage_target_player, instance->damage_target_card);
+		pump_ability_until_eot(player, card, instance->damage_target_player, instance->damage_target_card, 0, 0, 0, SP_KEYWORD_HASTE);
 		add_state(player, card, STATE_POWER_STRUGGLE); //AKA reactivating this as "stealing" effect
 	}
 
@@ -698,7 +699,7 @@ Draw a card.
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
-		APNAP(p,{ new_manipulate_all(player, card, p, &test, ACT_UNTAP); };);
+		new_manipulate_all(player, card, ANYBODY, &test, ACT_UNTAP);
 		create_legacy_effect(player, card, &benefactors_draught_legacy);
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -760,7 +761,8 @@ When Primeval Protector enters the battlefield, put a +1/+1 counter on each othe
 	if( event == EVENT_ETB_ABILITY ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
-		new_manipulate_all(player, card, player, &test, ACT_ADD_COUNTERS(COUNTER_P1_P1, 2));
+		test.not_me = 1;
+		new_manipulate_all(player, card, player, &test, ACT_ADD_COUNTERS(COUNTER_P1_P1, 1));
 	}
 
 	return 0;
@@ -917,7 +919,7 @@ int card_breya_etherium_shaper(int player, int card, event_t event){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_THOPTER, &token);
 		token.qty = 2;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_BLUE);
+		token.color_forced = COLOR_TEST_BLUE;
 		generate_token(&token);
 	}
 
@@ -1029,7 +1031,9 @@ Partner (You can have two commanders if both have partner.)
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY || declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+
+	if (event == EVENT_ETB_ABILITY || event == EVENT_DAT_ABILITY){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.preferred_controller = td.allowed_controller = player;
@@ -1161,13 +1165,12 @@ Partner (You can have two commanders if both have partner.)
 
 	check_legend_rule(player, card, event);
 	haste(player, card, event);
-
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && get_specific_storm_count(1-player) == 2 ){
-		if( new_specific_spell_played(player, card, event, 1-player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-			draw_a_card(player);
-		}
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && get_specific_storm_count(1-player) == 2){
+		sp_ability_trigger(1-player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
 	}
-
+	if (event == EVENT_SPA){
+		draw_a_card(player);
+	}
 	return 0;
 }
 
@@ -1214,7 +1217,7 @@ At the beginning of your end step, draw a card. Each player may put a land card 
 						test_definition_t test;
 						new_default_test_definition(&test, TYPE_LAND, "Select a land card.");
 						int result = new_global_tutor(player, player, TUTOR_FROM_HAND, TUTOR_PLAY, 0, AI_MAX_VALUE, &test);
-						if( result == -1 && p != player ){
+						if( result < 0 && p != player ){
 							draw_a_card(p);
 						}
 					}
@@ -1225,22 +1228,19 @@ At the beginning of your end step, draw a card. Each player may put a land card 
 	return 0;
 }
 
-int card_ludevic_necro_alchemist(int player, int card, event_t event){
-/*
+int card_ludevic_necro_alchemist(int player, int card, event_t event)
+{
+  /*
 Ludevic, Necro-Alchemist |1|U|R	0x200f63d
 Legendary Creature - Human Wizard 1/4
 At the beginning of each player's end step, that player may draw a card if a player other than you lost life this turn.
 Partner (You can have two commanders if both have partner.)
 */
-	check_legend_rule(player, card, event);
 
-	if( trigger_condition == TRIGGER_EOT && affect_me(player, card) ){
-		if( get_trap_condition(1-player, TRAP_LIFE_LOST) ){
-			draw_some_cards_if_you_want(player, card, current_turn, 1);
-		}
-	}
-
-	return 0;
+  check_legend_rule(player, card, event);
+  if (eot_trigger(player, card, event) && get_trap_condition(1-player, TRAP_LIFE_LOST))
+    draw_some_cards_if_you_want(player, card, current_turn, 1);
+  return 0;
 }
 
 int card_migratory_route(int player, int card, event_t event)
@@ -1855,19 +1855,25 @@ int card_treacherous_terrain(int player, int card, event_t event)
 }
 
 int card_vial_smasher_the_fierce(int player, int card, event_t event){
-	// !!!DOM: to an opponent chosen at random => choose an opponent at random... to that player or a planeswalker that player controls
 	/* Vial Smasher the Fierce	|1|B|R	0x200f679
 	 * Legendary Creature - Goblin Berserker 2/3
 	 * Whenever you cast your first spell each turn, choose an opponent at random. ~ deals damage equal to that spell's converted mana cost to that player or a planeswalker that player controls.
 	 * Partner */
-	check_legend_rule(player, card, event);
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && get_specific_storm_count(player) == 1 ){
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-			damage_player(1-player, get_cmc(trigger_cause_controller, trigger_cause), player, card);
+	check_legend_rule(player, card, event);
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && get_specific_storm_count(player) == 1){
+		sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+	}
+	if (event == EVENT_SPA){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TARGET_TYPE_PLANESWALKER);
+		td.allowed_controller = 1-player;
+		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+		if (can_target(&td) && pick_target(&td, "TARGET_PLAYER_OR_PLANESWALKER")){
+			damage_target0(player, card, get_cmc(trigger_cause_controller, trigger_cause));
+			get_card_instance(player, card)->number_of_targets = 0;
 		}
 	}
-
 	return 0;
 }
 
@@ -1913,17 +1919,20 @@ Whenever Armory Automation enters the battlefield or attacks, you attach any num
 */
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY ){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+
+	if (event == EVENT_ETB_ABILITY || event == EVENT_DAT_ABILITY){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_PERMANENT);
 		td.required_subtype = SUBTYPE_EQUIPMENT;
 		td.preferred_controller = ANYBODY;
+		td.allow_cancel = 2;
 
 		card_instance_t *instance = get_card_instance(player, card);
 
 		int t = 0;
 		while( can_target(&td) && t < 10 ){
-				if( new_pick_target(&td, "TARGET_EQUIPMENT", t, GS_LITERAL_PROMPT) ){
+				if( new_pick_target(&td, "TARGET_EQUIPMENT", t, 0) ){
 					state_untargettable(instance->targets[t].player, instance->targets[t].card, 1);
 					t++;
 				}
@@ -1952,7 +1961,7 @@ T: Flip a coin. If you win the flip, destroy all nonland permanents.
 			test_definition_t test;
 			default_test_definition(&test, TYPE_LAND);
 			test.type_flag = DOESNT_MATCH;
-			APNAP(p, { new_manipulate_all(player, card, p, &test, KILL_DESTROY); };);
+			new_manipulate_all(player, card, ANYBODY, &test, KILL_DESTROY);
 		}
 	}
 
@@ -2054,6 +2063,7 @@ t: Put a +1/+1 counter on Crystalline Crawler.
 		if( choice == CHOICE_MANA ){
 			remove_counters(player, card, player, card, COUNTER_P1_P1, 1);
 			produce_mana_any_combination_of_colors(player, COLOR_TEST_ANY_COLORED, 1, "");
+			tapped_for_mana_color = -2;
 		}
 		if( choice == CHOICE_COUNTER ){
 			return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL);
@@ -2109,5 +2119,5 @@ Basic landcycling 1 (1, Discard this card: Search your library for a basic land 
 	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND )
 		tutor_basic_land(player, 0, 0);
 
-	return mana_producer(player, card, event);
+	return plain_mana_producer(player, card, event);
 }

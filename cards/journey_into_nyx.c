@@ -172,6 +172,12 @@ int card_armament_of_nyx(int player, int card, event_t event)
    * Enchant creature
    * Enchanted creature has double strike as long as it's an enchantment. Otherwise, prevent all damage that would be dealt by enchanted creature. */
 
+  if (event == EVENT_CHECK_ABILITIES){
+	card_instance_t* instance = get_card_instance(player, card);
+	if (affect_me(instance->damage_target_player, instance->damage_target_card) && in_play(player, card) && !is_what(instance->damage_target_player, instance->damage_target_card, TYPE_ENCHANTMENT)){
+		check_abilities_power -= get_power(instance->damage_target_player, instance->damage_target_card);
+	}
+  }
   if (event == EVENT_SHOULD_AI_PLAY || event == EVENT_ABILITIES || event == EVENT_PREVENT_DAMAGE)
 	{
 	  card_instance_t* instance = in_play(player, card);
@@ -197,6 +203,8 @@ int card_armament_of_nyx(int player, int card, event_t event)
 		  prevent_all_my_damage(p, c, event, 0);
 		}
 	}
+
+  if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
   return vanilla_aura(player, card, event, ANYBODY);
 }
@@ -489,7 +497,7 @@ int card_launch_the_fleet(int player, int card, event_t event){
 	 * Until end of turn, any number of target creatures each gain "Whenever this creature attacks, put a 1/1 white Soldier creature token onto the battlefield
 	 * tapped and attacking." */
 
-	if( ! IS_GAA_EVENT(event) ){
+	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
 
@@ -883,6 +891,13 @@ int card_stonewise_fortifier(int player, int card, event_t event){
 	 * Creature - Human Wizard 2/2
 	 * |4|W: Prevent all damage that would be dealt to ~ by target creature this turn. */
 
+	if (event == EVENT_CHECK_ABILITIES && affect_me(player, card) && card_stonewise_fortifier(player, card, EVENT_CAN_ACTIVATE)){
+		if (current_turn != 1-player){
+			int available = has_mana(player, COLOR_ANY, 1);
+			if (available / 5 < count_subtype(1-player, TYPE_CREATURE, -1) || available < 5){ return 0; }
+		}
+		check_abilities_toughness += 0x3fff;
+	}
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1290,10 +1305,12 @@ int card_hypnotic_siren(int player, int card, event_t event){
 			default_target_definition(player, card, &td, TYPE_CREATURE);
 			return generic_stealing_aura(player, card, event, &td, "TARGET_CREATURE");
 		}
+		leaves_play(player, card, event, 0, 0);
+		if (event == EVENT_LEAVES_PLAY_ABILITY){ end_of_stealing_aura_effect(player, card); }
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
-		return 0;
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
+		return generic_creature_with_bestow(player, card, event, MANACOST_XU(5,2), 1, 1, KEYWORD_FLYING, 0);
 	}
 
 	target_definition_t td;
@@ -1312,7 +1329,7 @@ int card_hypnotic_siren(int player, int card, event_t event){
 			}
 		}
 		else{
-			true_transform(player, card);
+			generic_creature_with_bestow(player, card, event, MANACOST_XU(5,2), 1, 1, KEYWORD_FLYING, 0);
 		}
 		return 0;
 	}
@@ -1527,7 +1544,7 @@ int card_rise_of_eagles(int player, int card, event_t event){
 		default_token_definition(player, card, CARD_ID_BIRD, &token);
 		token.qty = 2;
 		token.pow = token.tou = 2;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_BLUE);
+		token.color_forced = COLOR_TEST_BLUE;
 		token.special_flags2 = SF2_ENCHANTED_EVENING;
 		generate_token(&token);
 
@@ -2208,6 +2225,8 @@ int card_nyx_infusion(int player, int card, event_t event)
 		event_result += ench ? 2 : -2;
 	}
 
+  if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
+
   return vanilla_aura(player, card, event, ANYBODY);
 }
 
@@ -2545,22 +2564,17 @@ int card_eidolon_of_the_great_revel(int player, int card, event_t event){
 	 * Enchantment Creature - Spirit 2/2
 	 * Whenever a player casts a spell with converted mana cost 3 or less, ~ deals 2 damage to that player. */
 
-	if (event == EVENT_CAN_CAST){
-		return basic_spell(player, card, event);
-	}
-
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_ANY);
 		test.cmc = 4;
 		test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
-
-		if( new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			damage_player(trigger_cause_controller, 2, player, card);
-		}
+		sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
 	}
-
-	return 0;
+	if (event == EVENT_SPA){
+		damage_player(trigger_cause_controller, 2, player, card);
+	}
+	return basic_spell(player, card, event);
 }
 
 int card_flamespeakers_will(int player, int card, event_t event)
@@ -2853,10 +2867,11 @@ int card_sigiled_skink(int player, int card, event_t event)
    * Creature - Lizard 2/1
    * Whenever ~ attacks, scry 1. */
 
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
-	scry(player, 1);
-
-  return 0;
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
+		scry(player, 1);
+	}
+	return 0;
 }
 
 int card_spawn_of_thraxes(int player, int card, event_t event)
@@ -3284,7 +3299,7 @@ int card_kruphixs_insight(int player, int card, event_t event)
 		this_test.no_shuffle = 1;
 
 		int chosen = 0;
-		while( amount > 0 && chosen < 3 && new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test) != -1 ){
+		while( amount > 0 && chosen < 3 && new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test) >= 0 ){
 			amount--;
 			chosen++;
 			this_test.create_minideck = amount;
@@ -3791,6 +3806,7 @@ int card_ajani_mentor_of_heroes(int player, int card, event_t event)
 	 * +1: Look at the top four cards of your library. You may reveal an Aura, creature or planeswalker card from among them and put it into your hand. Put the
 	 * rest on the bottom of your library in any order.
 	 * -8: You gain 100 life. */
+	check_legend_rule(player, card, event);
 
   if (IS_ACTIVATING(event))
 	{
@@ -3895,7 +3911,8 @@ int card_athreos_god_of_passage(int player, int card, event_t event)
 		return basic_spell(player, card, event);
 	}
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY && in_play(player, card) && !is_humiliated(player, card, AL_TRIG) ){
+	if( event == EVENT_GRAVEYARD_FROM_PLAY && in_play(player, card) && !is_humiliated(player, card, AL_TRIG) &&
+		!check_for_death_trigger_removal(affected_card_controller, affected_card) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		if( get_owner(affected_card_controller, affected_card) == player &&
 			! is_token(affected_card_controller, affected_card) &&
@@ -4075,10 +4092,10 @@ int card_iroas_god_of_victory(int player, int card, event_t event)
 		return basic_spell(player, card, event);
 	}
 
-	if (event == EVENT_DECLARE_BLOCKERS && current_turn == player){
+	if ((event == EVENT_DECLARE_BLOCKERS || event == EVENT_ABILITIES) && !is_humiliated(player, card, AL_STATIC)){
 		int c;
 		for (c = 0; c < active_cards_count[player]; ++c){
-			if (in_play(player, c) && is_what(player, c, TYPE_CREATURE) && is_attacking(player, c) ){
+			if (in_play(player, c) && is_what(player, c, TYPE_CREATURE) ){
 				menace(player, c, event);
 			}
 		}
@@ -4245,7 +4262,7 @@ int card_pharika_god_of_affliction(int player, int card, event_t event)
 			token_generation_t token;
 			default_token_definition(player, card, CARD_ID_SNAKE, &token);
 			token.t_player = instance->targets[0].player;
-			token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_GREEN | COLOR_TEST_BLACK);
+			token.color_forced = COLOR_TEST_GREEN | COLOR_TEST_BLACK;
 			token.special_flags2 = SF2_ENCHANTED_EVENING;
 			token.s_key_plus = SP_KEYWORD_DEATHTOUCH;
 			generate_token(&token);
@@ -4265,7 +4282,7 @@ int card_revel_of_the_fallen_god(int player, int card, event_t event){
 		default_token_definition(player, card, CARD_ID_SATYR, &token);
 		token.qty = 4;
 		token.pow = token.tou = 2;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_RED | COLOR_TEST_GREEN);
+		token.color_forced = COLOR_TEST_RED | COLOR_TEST_GREEN;
 		token.s_key_plus = SP_KEYWORD_HASTE;
 		generate_token(&token);
 		kill_card(player, card, KILL_DESTROY);
@@ -4331,23 +4348,14 @@ int card_armory_of_iroas(int player, int card, event_t event){
 	 * Whenever equipped creature attacks, put a +1/+1 counter on it.
 	 * Equip |2 */
 
-	if( event == EVENT_ACTIVATE && ! is_equipping(player, card) ){
-		ai_modifier+=10;
+	if (event == EVENT_ACTIVATE && !is_equipping(player, card)){ ai_modifier += 10; }
+	if (is_equipping(player, card)){
+		card_instance_t* instance = get_card_instance(player, card);
+		int p = instance->damage_target_player, c = instance->damage_target_card;
+		store_attackers(player, card, event, 0, p, c, NULL);
+		dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+		if (event == EVENT_DAT_ABILITY){ add_counters(player, card, p, c, COUNTER_P1_P1, 1); }
 	}
-
-	if( is_equipping(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-
-		if( (event == EVENT_DECLARE_ATTACKERS || xtrigger_condition() == XTRIGGER_ATTACKING) &&
-			declare_attackers_trigger(player, card, event, 0, p, c) )
-		{
-			add_counters(player, card, p, c, COUNTER_P1_P1, 1);
-		}
-	}
-
 	return basic_equipment(player, card, event, 2);
 }
 
@@ -4435,7 +4443,7 @@ int card_mana_confluence(int player, int card, event_t event){
 
 		cancel = 0;	// just in case
 		mana_producer(player, card, event);
-		if (cancel != 1){
+		if (cancel != 1 && !(mana_colors_added[player] & color_to_color_test(tapped_for_mana_color))){
 			lose_life(player, 1);
 		}
 		return 0;
@@ -4807,22 +4815,20 @@ int card_ecstatic_piper(int player, int card, event_t event)
   return 0;
 }
 
-int card_wild_maenads(int player, int card, event_t event){
-
-	if( leaves_play(player, card, event, 1, 1) ){
-		gain_life(1-player, 3);
-	}
-
-	return 0;
+int card_wild_maenads(int player, int card, event_t event)
+{
+  leaves_play(player, card, event, 1, 1);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+    gain_life(1-player, 3);
+  return 0;
 }
 
-int card_pheres_band_revelers(int player, int card, event_t event){
-
-	if( leaves_play(player, card, event, 1, 1) ){
-		draw_cards(1-player, 1);
-	}
-
-	return 0;
+int card_pheres_band_revelers(int player, int card, event_t event)
+{
+  leaves_play(player, card, event, 1, 1);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+    draw_cards(1-player, 1);
+  return 0;
 }
 
 // serpent dancers --> pheres band revelers
@@ -4940,15 +4946,15 @@ int card_dance_of_panic(int player, int card, event_t event){
 
 int card_dance_of_flame(int player, int card, event_t event){
 
-	if( xtrigger_condition() == XTRIGGER_ATTACKING || event == EVENT_DECLARE_ATTACKERS ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		this_test.subtype = SUBTYPE_REVELER;
-
-		if(	declare_attackers_trigger_test(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, -1, &this_test) ){
-			damage_player(1-player, 1, player, card);
-		}
+	if (event == EVENT_DECLARE_ATTACKERS){
+		test_definition_t test;
+		default_test_definition(&test, TYPE_CREATURE);
+		test.subtype = SUBTYPE_REVELER;
+		store_attackers(player, card, event, DAT_SEPARATE_TRIGGERS, player, -1, &test);
 	}
-
+	dat_ability(player, card, event, DAT_SEPARATE_TRIGGERS | DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+	if (event == EVENT_DAT_ABILITY){
+		damage_player(1-player, 1, player, card);
+	}
 	return global_enchantment(player, card, event);
 }

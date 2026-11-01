@@ -349,7 +349,7 @@ Any player may have ~ deal 6 damage to him or her. If no one does, destroy all c
 		if( dmg != 1 ){
 			test_definition_t this_test;
 			default_test_definition(&this_test, TYPE_CREATURE);
-			APNAP(p, { new_manipulate_all(player, card, p, &this_test, KILL_BURY); };);
+			new_manipulate_all(player, card, ANYBODY, &this_test, KILL_BURY);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -483,18 +483,17 @@ int card_cephalid_constable(int player, int card, event_t event){
 		instance->targets[1].player = instance->targets[16].player = 0;
 		APNAP(p,{
 					if( times_damaged[p] ){
+						int amount = damages[p];
 						int i;
-						for(i=0; i<damages[p]; i++){
+						for(i=0; i<amount; i++){
 							target_definition_t td;
 							default_target_definition(player, card, &td, TYPE_PERMANENT);
 							td.allowed_controller = p;
 							td.preferred_controller = p;
 
 							if( can_target(&td) ){
-								if( p == player ){
-									if( new_pick_target(&td, "Select target permanent you control.", i, GS_LITERAL_PROMPT) ){
-										state_untargettable(p, instance->targets[i].card, 1);
-									}
+								if (new_pick_target(&td, "Select target permanent damaged player controls.", i, GS_LITERAL_PROMPT)){
+									state_untargettable(instance->targets[i].player, instance->targets[i].card, 1);
 								}
 							}
 							else{
@@ -891,7 +890,7 @@ You can't exile ~ to pay for its own flashback cost.) */
 			new_default_test_definition(&this_test, TYPE_ANY, msg);
 			this_test.color = COLOR_TEST_BLUE;
 			while( new_special_count_grave(player, &this_test) > 0 ){
-					if( new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_RFG, 0, AI_MIN_VALUE, &this_test) != -1 ){
+					if( new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_RFG, 0, AI_MIN_VALUE, &this_test) >= 0 ){
 						instance->info_slot++;
 					}
 					else{
@@ -1037,7 +1036,7 @@ At the beginning of your upkeep, if ~ is in your graveyard, you may pay |2|G. If
 				if( spell_fizzled != 1 ){
 					test_definition_t this_test;
 					new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature card.");
-					if( new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test) == -1 ){
+					if( new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test) < 0 ){
 						spell_fizzled = 1;
 					}
 				}
@@ -1086,13 +1085,13 @@ Instant
 Counter target spell unless its controller exiles all cards from his or her graveyard.
 Draw a card.
 */
-	if( event == EVENT_RESOLVE_SPELL ){
+	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+		ai_modifier += count_graveyard(1-player);
+	}
+	else if( event == EVENT_RESOLVE_SPELL ){
 		if( counterspell_validate(player, card, NULL, 0) ){
 			card_instance_t *instance = get_card_instance(player, card);
-			int choice = 0;
-			if( count_graveyard(instance->targets[0].player) > 0 ){
-				choice = do_dialog(instance->targets[0].player, player, card, -1, -1, " Exile your graveyard\n Pass", 0);
-			}
+			int choice = do_dialog(instance->targets[0].player, player, card, -1, -1, " Exile your graveyard\n Spell gets countered", count_graveyard(instance->targets[0].player) > 5);
 			if( choice == 0 ){
 				rfg_whole_graveyard(instance->targets[0].player);
 			}
@@ -1275,7 +1274,7 @@ Land
 |T: Add |C to your mana pool.
 |2, |T, Sacrifice ~: Search your library for |Ha Forest card and |Ha Plains card and put them onto the battlefield tapped. Then shuffle your library. */
 
-  comes_into_play_tapped(player, card, event);
+  if (!is_humiliated(player, card, AL_TRIG)){ comes_into_play_tapped(player, card, event); }
 
   // |T: Add |1 to your mana pool.
   // |2, |T, Sacrifice ~: Search your library for |Ha Forest card and |Ha Plains card and put them onto the battlefield tapped. Then shuffle your library.
@@ -1308,6 +1307,7 @@ Land
 			kill_card(player, card, KILL_SACRIFICE);
 		  else
 			remove_state(player, card, STATE_TAPPED);
+			tapped_for_mana_color = -1;
 		}
 	  else	// EVENT_RESOLVE_ACTIVATION, CHOICE_TUTOR
 		{
@@ -1407,8 +1407,6 @@ Enchantment
 Creatures you control get +1/+1.
 Whenever you tap a land for mana, add one mana to your mana pool of any type that land produced. */
 
-	if( ! is_unlocked(player, card, event, 9) ){ return 0; }
-
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_TRIG) && affected_card_controller == player ){
 		boost_creature_type(player, card, event, -1, 1, 1, 0, BCT_CONTROLLER_ONLY);
 		return card_mana_flare(player, card, event);
@@ -1469,48 +1467,22 @@ Morality Shift	|5|B|B
 Sorcery
 Exchange your graveyard and library. Then shuffle your library. */
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		// 10/4/2004: You can choose the order of the cards being placed into the graveyard.
-		// Since we can't actually rearrange the graveyard, we arrange our deck first and it will be copied "as is" as your graveyard;
-		rearrange_top_x(player, player, count_deck(player));
-		int new_deck[500] = {-1};
-		int new_grave[500] = {-1};
-
-		// First step : making a copy of both deck (which we've rearranged now) and graveyard
-		int count = 0;
-		while( deck_ptr[player][count] != -1 ){
-				new_grave[count] = deck_ptr[player][count];
-				count++;
+	if (event == EVENT_RESOLVE_SPELL){
+		const int* grave = get_grave(player);
+		int* deck = deck_ptr[player];
+		int pos = count_graveyard(player) - 1;
+		while (deck[0] != -1){
+			mill(player, 1);
 		}
-		count = 0;
-		while( get_grave(player)[count] != -1 ){
-				new_deck[count] = get_grave(player)[count];
-				count++;
-		}
-
-		// Second step : cleaning both grave & deck, hopefully dodging any triggers which should not be generated
-		while( deck_ptr[player][0] != -1 ){
-				remove_card_from_deck(player, 0);
-		}
-		while( get_grave(player)[0] != -1 ){
-				remove_card_from_grave(player, 0);
-		}
-
-		// Final step: reconstructing deck & grave
-		count = 0;
-		while( new_deck[count] != -1 ){
-				deck_ptr[player][count] = new_deck[count];
-				count++;
-		}
-		count = 0;
-		while( new_grave[count] != -1 ){
-				raw_put_iid_on_top_of_graveyard(player, new_grave[count]);
-				count++;
+		while (pos >= 0){
+			*deck = grave[pos];
+			remove_card_from_grave(player, pos);
+			++deck;
+			--pos;
 		}
 		shuffle(player);
 		kill_card(player, card, KILL_DESTROY);
 	}
-
 	return basic_spell(player, card, event);
 }
 
@@ -1639,6 +1611,7 @@ Creature — Insect Druid 2/3
 				select_multiple_cards_from_graveyard(player, 1 - player, -1, AI_MIN_VALUE, &test, 2, &instance->targets[1]) == 2 )
 			{
 				add_state(player, card, STATE_TAPPED);
+				tapped_for_mana_color = -1;
 			}
 		}
 	}
@@ -1808,6 +1781,7 @@ Creature — Human Cleric 1/3
 				test2.qty = 3;
 				if( select_multiple_cards_from_graveyard(player, 1 - player, -1, AI_MIN_VALUE, &test2, 3, &instance->targets[1]) == 3 ){
 					add_state(player, card, STATE_TAPPED);
+					tapped_for_mana_color = -1;
 				}
 			}
 			else{
@@ -1877,7 +1851,8 @@ int card_ray_of_revelation(int player, int card, event_t event){// not enabled
 	 * Destroy target enchantment.
 	 * Flashback |G */
 
-	if( ! IS_GS_EVENT(player, card, event) && event != EVENT_GRAVEYARD_ABILITY && event != EVENT_PAY_FLASHBACK_COSTS ){
+	if (event == EVENT_GRAVEYARD_ABILITY || event == EVENT_PAY_FLASHBACK_COSTS){ return do_flashback(player, card, event, MANACOST_G(1)); }
+	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
 
@@ -1902,7 +1877,7 @@ int card_ray_of_revelation(int player, int card, event_t event){// not enabled
 		}
 	}
 
-	return do_flashback(player, card, event, MANACOST_G(1));
+	return 0;
 }
 
 static void scalpelexis_effect(int player, int t_player){
@@ -1943,8 +1918,8 @@ static void scalpelexis_effect(int player, int t_player){
 				stop = 1;
 			}
 	}
-	show_deck(player, deck_ptr[player], pos, "Scalpelexis will exile these cards.", 0, 0x7375B0 );
-	show_deck(1-player, deck_ptr[player], pos, "Scalpelexis will exile these cards.", 0, 0x7375B0 );
+	show_deck(player, deck_ptr[t_player], pos, "Scalpelexis will exile these cards.", 0, 0x7375B0 );
+	show_deck(1-player, deck_ptr[t_player], pos, "Scalpelexis will exile these cards.", 0, 0x7375B0 );
 	int i;
 	for(i=0; i<pos; i++){
 		rfg_top_card_of_deck(t_player);
@@ -2143,7 +2118,7 @@ int card_spirit_cairn(int player, int card, event_t event)
 	  token_generation_t token;
 	  default_token_definition(player, card, CARD_ID_SPIRIT, &token);
 	  token.key_plus = KEYWORD_FLYING;
-	  token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
+	  token.color_forced = COLOR_TEST_WHITE;
 	  generate_token(&token);
 	}
 
@@ -2184,6 +2159,7 @@ Creature â€” Human Nomad 1/1
 				select_multiple_cards_from_graveyard(player, 1 - player, -1, AI_MIN_VALUE, &test, 2, &instance->targets[1]) == 2 )
 			{
 				add_state(player, card, STATE_TAPPED);
+				tapped_for_mana_color = -1;
 			}
 		}
 	}

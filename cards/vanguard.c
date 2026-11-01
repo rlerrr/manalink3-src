@@ -1433,7 +1433,7 @@ int card_avatar_chaos_orb(int player, int card, event_t event){
 		if( ai_is_speculating != 1 ){
 				int stop = 0;
 				while( stop == 0 ){
-					   int card_id = choose_a_card("Choose a card", -1, -1);
+					   int card_id = choose_a_card_iid("Choose a card.", -1, -1);
 					   if( is_valid_card(cards_data[card_id].id) ){
 							add_card_to_hand(player, card_id);
 							stop = 1;

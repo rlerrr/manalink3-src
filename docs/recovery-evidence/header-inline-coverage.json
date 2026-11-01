@@ -1,0 +1,39 @@
+{
+  "restored_original_header_helpers": [
+    "roll_d6",
+    "roll_2d6",
+    "roll_2d6_difference",
+    "roll_xd6",
+    "is_split_card"
+  ],
+  "native_abstract_definitions": 7,
+  "native_inline_instances": 21,
+  "native_caller_owned_fragments": 27,
+  "verified_fixed_slots": 15169,
+  "unchanged_runtime_sections": 26,
+  "source_provenance_setup": {
+    "session_id": 56729,
+    "exit_code": 0,
+    "build_session_id": 47805,
+    "build_exit_code": 0,
+    "observed_passes": [
+      "HEADER_INLINE_SETUP_PASS"
+    ]
+  },
+  "inline_candidate_reconciliation": {
+    "inline_only_requires_caller_review": 103,
+    "existing_accepted_source_name": 7,
+    "existing_macro_generated_definition": 19,
+    "has_ordinary_native_entry_requires_binding_review": 8,
+    "restored_original_header_inline": 5
+  },
+  "inputs": {
+    "ManalinkEh.dll": "e2d00eabd3f34b5486337e5542ed3a8b4ef2c1bc11934a1e93a67e9822840b4d",
+    "ManalinkEh.dbg": "1396fee0491ef9cc21ec7e208579974c322669cca954d5e6b4566a4bef0702ab",
+    "manalink.h": "a3547d1c0f82a005ac65cfb10b06ea030edcd975c25fbbb6ba363e7cb02012e8",
+    "docs/recovery-evidence/header-inline-recovery.json": "a58a0ccca2c040b7f2babf1ba03be5be1e4f0b1801453ebb388df68a310d6fa2",
+    "docs/recovery-evidence/helper-canonicalization.json": "ee1d6baca810192e7d0348d87be5c16aa8a62a61c7f57fb121ae342a8225feb4",
+    ".recovery/inline-helper-reconciliation.json": "436d2a63d89b0d49e087234c1f437296f72ad12222f59d69b7be4d92884209b6"
+  },
+  "scope": "Restore original helper APIs whose native machine instructions exist only inside callers. New header definitions compile;21 native instances and complete witness fragments are checked. Existing caller definitions and runtime payload are unchanged. No standalone native addresses or fresh whole-function scores are assigned to these inline APIs; downstream gameplay tests remain deferred."
+}

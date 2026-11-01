@@ -1,0 +1,430 @@
+{
+  "restored_card_id_names": 5100,
+  "restored_other_header_names": 10,
+  "verified_compiled_values": 5111,
+  "corrected_dfc_symbol_limit": 11,
+  "verified_fixed_slots": 15169,
+  "unchanged_runtime_sections": 26,
+  "unchanged_runtime_coff_entries": 24381,
+  "compiler_local_uid_renames": [
+    {
+      "before": "_args.96345",
+      "after": "_args.101455",
+      "section": ".bss",
+      "offset": 133524,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_arr.39264",
+      "after": "_arr.44374",
+      "section": ".bss",
+      "offset": 134016,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_basic_land_subtypes.40188",
+      "after": "_basic_land_subtypes.45298",
+      "section": ".rdata",
+      "offset": 223764,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_bmp_energy_pic.96298",
+      "after": "_bmp_energy_pic.101408",
+      "section": ".bss",
+      "offset": 135300,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_bmp_experience_pic.96304",
+      "after": "_bmp_experience_pic.101414",
+      "section": ".bss",
+      "offset": 135304,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_brush.96342",
+      "after": "_brush.101452",
+      "section": ".bss",
+      "offset": 133516,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_buf.105940",
+      "after": "_buf.111050",
+      "section": ".bss",
+      "offset": 130080,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_buf.105995",
+      "after": "_buf.111105",
+      "section": ".bss",
+      "offset": 129568,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_buf.106005",
+      "after": "_buf.111115",
+      "section": ".bss",
+      "offset": 129056,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_buf.38897",
+      "after": "_buf.44007",
+      "section": ".bss",
+      "offset": 128704,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_buf.39059",
+      "after": "_buf.44169",
+      "section": ".bss",
+      "offset": 130624,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_card_name.96663",
+      "after": "_card_name.101773",
+      "section": ".bss",
+      "offset": 135040,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_contraption_copies.38841",
+      "after": "_contraption_copies.43951",
+      "section": ".rdata",
+      "offset": 281236,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_date_buffer.96782",
+      "after": "_date_buffer.101892",
+      "section": ".bss",
+      "offset": 134996,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_depth.38764",
+      "after": "_depth.43874",
+      "section": ".bss",
+      "offset": 131124,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_emptystr.96635",
+      "after": "_emptystr.101745",
+      "section": ".bss",
+      "offset": 135140,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_expansion_names.96341",
+      "after": "_expansion_names.101451",
+      "section": ".bss",
+      "offset": 133504,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_hack_dont_tap_to_pay_for_other_vaults.39855",
+      "after": "_hack_dont_tap_to_pay_for_other_vaults.44965",
+      "section": ".bss",
+      "offset": 252,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_hack_force_expansion.97061",
+      "after": "_hack_force_expansion.102171",
+      "section": ".bss",
+      "offset": 134992,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_idx.96422",
+      "after": "_idx.101532",
+      "section": ".data",
+      "offset": 3224,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_land_subtypes.40187",
+      "after": "_land_subtypes.45297",
+      "section": ".rdata",
+      "offset": 223712,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_more_types.38880",
+      "after": "_more_types.43990",
+      "section": ".rdata",
+      "offset": 276800,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_name.96634",
+      "after": "_name.101744",
+      "section": ".bss",
+      "offset": 135168,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_native_name_fold.38843",
+      "after": "_native_name_fold.43953",
+      "section": ".rdata",
+      "offset": 210720,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_native_name_fold.39141",
+      "after": "_native_name_fold.44251",
+      "section": ".rdata",
+      "offset": 210720,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_native_name_fold.39162",
+      "after": "_native_name_fold.44272",
+      "section": ".rdata",
+      "offset": 213472,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_num_plane_csvids.38636",
+      "after": "_num_plane_csvids.43746",
+      "section": ".bss",
+      "offset": 244,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_once.39024",
+      "after": "_once.44134",
+      "section": ".bss",
+      "offset": 133528,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_once.96088",
+      "after": "_once.101198",
+      "section": ".data",
+      "offset": 3844,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_partner_with_ids.39508",
+      "after": "_partner_with_ids.44618",
+      "section": ".rdata",
+      "offset": 220672,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_pen1.96343",
+      "after": "_pen1.101453",
+      "section": ".bss",
+      "offset": 133512,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_pen2.96344",
+      "after": "_pen2.101454",
+      "section": ".bss",
+      "offset": 133508,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_plane_csvids.38635",
+      "after": "_plane_csvids.43745",
+      "section": ".bss",
+      "offset": 248,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_regeneration_from_shield_in_progress.38958",
+      "after": "_regeneration_from_shield_in_progress.44068",
+      "section": ".bss",
+      "offset": 352,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_rval.39208",
+      "after": "_rval.44318",
+      "section": ".bss",
+      "offset": 134184,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_rval.39218",
+      "after": "_rval.44328",
+      "section": ".bss",
+      "offset": 134176,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_setting_smallcard_size.96473",
+      "after": "_setting_smallcard_size.101583",
+      "section": ".bss",
+      "offset": 135296,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_shimmer_subtypes.41429",
+      "after": "_shimmer_subtypes.46539",
+      "section": ".rdata",
+      "offset": 127872,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_subtypes.105910",
+      "after": "_subtypes.111020",
+      "section": ".rdata",
+      "offset": 275360,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_token_ids.38781",
+      "after": "_token_ids.43891",
+      "section": ".rdata",
+      "offset": 299776,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_unlimited_list.39861",
+      "after": "_unlimited_list.44971",
+      "section": ".rdata",
+      "offset": 298176,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_veteran_keywords.40024",
+      "after": "_veteran_keywords.45134",
+      "section": ".rdata",
+      "offset": 18884,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_veteran_special_keywords.40025",
+      "after": "_veteran_special_keywords.45135",
+      "section": ".rdata",
+      "offset": 18896,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_winbk_questn.96340",
+      "after": "_winbk_questn.101450",
+      "section": ".bss",
+      "offset": 133520,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_words.105941",
+      "after": "_words.111051",
+      "section": ".rdata",
+      "offset": 275264,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_words.105996",
+      "after": "_words.111106",
+      "section": ".rdata",
+      "offset": 275072,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_words.106006",
+      "after": "_words.111116",
+      "section": ".rdata",
+      "offset": 275072,
+      "kind": 0,
+      "storage": 3
+    },
+    {
+      "before": "_zombie_horde_special_cards.38948",
+      "after": "_zombie_horde_special_cards.44058",
+      "section": ".rdata",
+      "offset": 220800,
+      "kind": 0,
+      "storage": 3
+    }
+  ],
+  "runtime_coff_sha256": "9e108dd3877a6cb3cb3cba3b5c3da82f0e9d3c760cf8852257235a82bd680a43",
+  "native_named_header_enums": 65,
+  "remaining_native_enum_names_absent_from_source": 0,
+  "source_reports": {
+    "docs/recovery-evidence/helper-triage.json": {
+      "sha256": "ef0094ebc404db75da0754e80481cfa705d1c4fe9d86c1b2375706ff01c0de46",
+      "dll_sha256": "5c85f675250f6da4db82e3f566a7c8a96384eec84391d64734d0733d34d1b88f",
+      "status": "Historical function audit of the runtime-identical preceding build; not refreshed for the new DBG/header hashes."
+    },
+    "docs/recovery-evidence/card-triage.json": {
+      "sha256": "0b22c7d30abe792f806b50c79ad42e45caa8f26fca67ed796ebbf34339c20109",
+      "dll_sha256": "5c85f675250f6da4db82e3f566a7c8a96384eec84391d64734d0733d34d1b88f",
+      "status": "Historical function audit of the runtime-identical preceding build; not refreshed for the new DBG/header hashes."
+    }
+  },
+  "observed": {
+    "session_id": 24209,
+    "exit_code": 0,
+    "build_session_id": 55884,
+    "build_exit_code": 0,
+    "observed_passes": [
+      "HEADER_NAMES_SETUP_PASS"
+    ]
+  },
+  "inputs": {
+    "ManalinkEh.dll": "22105d470816016191e8df1efbf4e3835a725343cf29bea496ed27c97f99d366",
+    "ManalinkEh.dbg": "b0b5489fa1e6a8444318641748bb3430706c52e7b9c17582cea7c393e70dc74d",
+    "docs/recovery-evidence/header-name-recovery.json": "71a31095101f679e63d5fa08ddb56a64186358d5e6cafa82e541a798c9c564f6",
+    "docs/recovery-evidence/helper-canonicalization.json": "d58c42771aa7973f2d5d1d2059e9417585e53d1634cd713e419693438a723b0b",
+    "defs.h": "8b725549392e7e97a3811e9ca76a7fb6482db37652866bace563f405cde6bd63",
+    "manalink.h": "8e94ab54ef76796aeeccdd860f2099955f2c99d2d4b0af55c08f99525c03418a",
+    "subtypes.h": "3f69f63dc17af16b476b9f4de654c71fda2ea7bb89ebeb8f8e5f1d3284c7c51d",
+    "card_id.h": "3b41032de788e7a7058fee28ffcd15bf3b3a5e55e8402ee1cc6436f3b9ac73a4"
+  },
+  "scope": "Direct native/compiled enum checks and whole runtime-section identity for this header-only batch. All code/absolute symbols are identical;48 static object symbols retain their base names/section offsets/types while compiler UID suffixes increase by5110. Older function/data reports keep their actual original input hashes; no fresh function comparison or gameplay result is asserted."
+}

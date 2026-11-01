@@ -264,7 +264,8 @@ int card_brimaz_king_of_oreskos(int player, int card, event_t event)
 
   vigilance(player, card, event);
 
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  token_generation_t token;
 	  default_token_definition(player, card, CARD_ID_CAT_SOLDIER, &token);
@@ -314,7 +315,7 @@ int card_dawn_to_dusk(int player, int card, event_t event)
 			{
 			  target_definition_t td_opp;
 			  default_target_definition(player, card, &td_opp, TYPE_ENCHANTMENT);
-			  td.allowed_controller = 1-player;
+			  td_opp.allowed_controller = 1-player;
 			  can_destroy_opponents = can_target(&td_opp);
 			}
 		}
@@ -674,7 +675,6 @@ int card_plea_for_guidance(int player, int card, event_t event)
 	  new_default_test_definition(&this_test, TYPE_ENCHANTMENT, "Select an enchantment card.");
 	  this_test.qty = 2;
 	  new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test);
-	  shuffle(player);
 
 	  kill_card(player, card, KILL_DESTROY);
 	}
@@ -693,9 +693,8 @@ int card_silent_sentinel(int player, int card, event_t event)
    * Flying
    * Whenever ~ attacks, you may return target enchantment card from your graveyard to the battlefield. */
 
-  if ((xtrigger_condition() == XTRIGGER_ATTACKING || event == EVENT_DECLARE_ATTACKERS)
-	  && count_graveyard_by_type(player, TYPE_ENCHANTMENT) && !graveyard_has_shroud(player)
-	  && declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), player, card))
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY && count_graveyard_by_type(player, TYPE_ENCHANTMENT) && !graveyard_has_shroud(player))
 	{
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_ENCHANTMENT, "Select target enchantment card.");
@@ -738,6 +737,8 @@ int card_sunbond(int player, int card, event_t event)
 	  // Trigger is placed on this card for clarity in the interface, even though it's really the enchanted creature triggering
 	  && (amt = trigger_gain_life(player, card, event, instance->damage_target_player, RESOLVE_TRIGGER_MANDATORY)))
 	add_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, amt);
+
+  if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
   return vanilla_aura(player, card, event, player);
 }
@@ -914,7 +915,7 @@ int card_evanescent_intellect(int player, int card, event_t event)
    * Enchant creature
    * Enchanted creature has "|1|U, |T: Target player puts the top three cards of his or her library into his or her graveyard." */
 
-   	if( ! IS_GAA_EVENT(event) && ! IS_AURA_EVENT(player, card, event) ){
+   	if( ! IS_GAA_EVENT(event) && ! IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS ){
 		return 0;
 	}
 
@@ -1199,7 +1200,7 @@ int card_retraction_helix(int player, int card, event_t event)
 
   target_definition_t td;
   default_target_definition(player, card, &td, TYPE_CREATURE);
-  td.preferred_controller = player;
+  if (IS_AI(player)){ td.allowed_controller = td.preferred_controller = player; }
 
   if (event == EVENT_RESOLVE_SPELL)
 	{
@@ -1348,7 +1349,7 @@ int card_tromokratis(int player, int card, event_t event)
 	}
 
   // Removing the creature it's blocking from combat doesn't make it stop being a blocking creature, either in Manalink or modern rules.
-  if (event == EVENT_ABILITIES && affect_me(player, card) && !(get_card_instance(player, card)->state & (STATE_ATTACKING|STATE_BLOCKING)))
+  if (event == EVENT_ABILITIES && affect_me(player, card) && !(get_card_instance(player, card)->state & (STATE_ATTACKING|STATE_BLOCKING)) && !is_humiliated(player, card, AL_STATIC))
 	hexproof(player, card, event);
 
   /* Blocking legality.  This is a bit complex due to multiblockers, and because Manalink checks blocking selections as they're made intead of allowing a full
@@ -1369,6 +1370,7 @@ int card_tromokratis(int player, int card, event_t event)
 	  || (trigger_condition == TRIGGER_BLOCKER_CHOSEN && (event == EVENT_TRIGGER || event == EVENT_RESOLVE_TRIGGER) && reason_for_trigger_controller == player
 		  && affect_me(player, card) && current_turn == player && is_blocking(trigger_cause, card)))
 	{
+	  if (is_humiliated(player, card, AL_STATIC)){ return 0; }
 	  card_instance_t* instance = get_card_instance(player, card);
 
 	  if (instance->targets[2].player == 17)	// We're already either checking legality recursively, or forcing everything to block.
@@ -1770,7 +1772,7 @@ int card_claim_of_erebos(int player, int card, event_t event)
    * Enchant creature
    * Enchanted creature has "|1|B, |T: Target player loses 2 life." */
  
-	if( ! IS_GAA_EVENT(event) && ! IS_AURA_EVENT(player, card, event) ){
+	if( ! IS_GAA_EVENT(event) && ! IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS ){
 		return 0;
 	}
 
@@ -1887,7 +1889,6 @@ int card_eye_gouge(int player, int card, event_t event)
 
   target_definition_t td;
   default_target_definition(player, card, &td, TYPE_CREATURE);
-  td.illegal_state = TARGET_STATE_TAPPED;
 
   if (event == EVENT_RESOLVE_SPELL)
 	{
@@ -2236,12 +2237,16 @@ int card_spiteful_returned(int player, int card, event_t event)
    * Whenever ~ or enchanted creature attacks, defending player loses 2 life.
    * Enchanted creature gets +1/+1. */
 
-  card_instance_t* instance = in_play(player, card);
-  if (declare_attackers_trigger(player, card, event, 0, player, card)
-	  || (instance && declare_attackers_trigger(player, card, event, 0, instance->damage_target_player, instance->damage_target_card)))
-	lose_life(1-current_turn, 2);
-
-  return generic_creature_with_bestow(player, card, event, MANACOST_XB(3,1), 1,1, 0, 0);
+	card_instance_t* instance = get_card_instance(player, card);
+	if (instance->damage_target_player >= 0){
+		instance = in_play(player, card);
+		store_attackers(player, card, event, 0, instance->damage_target_player, instance->damage_target_card, NULL);
+	}
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
+		lose_life(1-player, 2);
+	}
+	return generic_creature_with_bestow(player, card, event, MANACOST_XB(3,1), 1, 1, 0, 0);
 }
 
 int card_warchanter_of_mogis(int player, int card, event_t event)
@@ -2505,7 +2510,7 @@ int card_fearsome_temper(int player, int card, event_t event)
 		  event_result += 2;
 	}
 
-	if( ! IS_GAA_EVENT(event) && ! IS_AURA_EVENT(player, card, event) ){
+	if( ! IS_GAA_EVENT(event) && ! IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS ){
 		return 0;
 	}
 
@@ -3044,11 +3049,18 @@ int card_thunderous_might(int player, int card, event_t event)
    * Enchant creature
    * Whenever enchanted creature attacks, it gets +X/+0 until end of turn, where X is your devotion to red. */
 
-  card_instance_t* instance = in_play(player, card);
-  if (instance && declare_attackers_trigger(player, card, event, 0, instance->damage_target_player, instance->damage_target_card))
-	pump_until_eot(player, card, instance->damage_target_player, instance->damage_target_card, devotion(player, card, COLOR_RED, 0), 0);
-
-  return vanilla_aura(player, card, event, player);
+	card_instance_t* instance = get_card_instance(player, card);
+	if (instance->damage_target_player >= 0){
+		instance = in_play(player, card);
+		store_attackers(player, card, event, 0, instance->damage_target_player, instance->damage_target_card, NULL);
+	}
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+	if (event == EVENT_DAT_ABILITY){
+		instance = in_play(player, card);
+		int amount = devotion(player, card, COLOR_RED, 0);
+		pump_until_eot(player, card, instance->damage_target_player, instance->damage_target_card, amount, 0);
+	}
+	return vanilla_aura(player, card, event, player);
 }
 
 int card_whims_of_the_fates(int player, int card, event_t event)
@@ -3292,7 +3304,7 @@ int card_culling_mark(int player, int card, event_t event)
 	}
 
 	if (event == EVENT_CAST_SPELL && affect_me(player, card)
-		&& (current_turn == player || current_phase >= EVENT_DECLARE_BLOCKERS))
+		&& (current_turn == player || current_phase >= PHASE_NORMAL_COMBAT_DAMAGE))
 		ai_modifier -= 96;
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
@@ -3450,12 +3462,16 @@ int card_karametras_favor(int player, int card, event_t event)
 		  if (event == EVENT_CAN_ACTIVATE)
 			return 1;
 
-		  if (event == EVENT_COUNT_MANA)
+		  if (event == EVENT_COUNT_MANA && !is_tapped(instance->damage_target_player, instance->damage_target_card)
+			  && !is_animated_and_sick(instance->damage_target_player, instance->damage_target_card)
+			  && can_produce_mana(instance->damage_target_player, instance->damage_target_card))
 			declare_mana_available_hex(instance->damage_target_player, COLOR_TEST_ANY_COLORED, 1);
 		}
 
 	  return 0;
 	}
+
+  if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
   return vanilla_aura(player, card, event, player);
 }
@@ -3649,6 +3665,8 @@ int card_raised_by_wolves(int player, int card, event_t event)
 	  if (affect_me(instance->damage_target_player, instance->damage_target_card) && in_play(player, card))
 		event_result += count_subtype(player, TYPE_PERMANENT, SUBTYPE_WOLF);
 	}
+
+  if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
   return vanilla_aura(player, card, event, player);
 }
@@ -3916,21 +3934,15 @@ int card_karametra_god_of_harvests(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
 	return basic_spell(player, card, event);
 
-  if (trigger_condition == TRIGGER_SPELL_CAST)
-	{
+  sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_CREATURE, NULL, player, card);
+  if (event == EVENT_SPA){
 	  test_definition_t test;
-	  new_default_test_definition(&test, TYPE_CREATURE, "");
-
-	  if (new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test))
-		{
-		  new_default_test_definition(&test, TYPE_LAND, get_hacked_land_text(player, card, "Select %a or %s card.", SUBTYPE_FOREST, SUBTYPE_PLAINS));
-		  test.subtype = get_hacked_subtype(player, card, SUBTYPE_FOREST);
-		  test.sub2 = get_hacked_subtype(player, card, SUBTYPE_PLAINS);
-		  test.subtype_flag = F2_MULTISUBTYPE;
-
-		  new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY_TAPPED, 0, AI_MAX_VALUE, &test);
-		}
-	}
+	  new_default_test_definition(&test, TYPE_LAND, get_hacked_land_text(player, card, "Select %a or %s card.", SUBTYPE_FOREST, SUBTYPE_PLAINS));
+	  test.subtype = get_hacked_subtype(player, card, SUBTYPE_FOREST);
+	  test.sub2 = get_hacked_subtype(player, card, SUBTYPE_PLAINS);
+	  test.subtype_flag = F2_MULTISUBTYPE;
+	  new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY_TAPPED, 0, AI_MAX_VALUE, &test);
+  }
 
   return 0;
 }
@@ -3959,6 +3971,8 @@ int card_kiora_the_crashing_wave(int player, int card, event_t event)
    * +1: Until your next turn, prevent all damage that would be dealt to and dealt by target permanent an opponent controls.
    * -1: Draw a card. You may play an additional land this turn.
    * -5: You get an emblem with "At the beginning of your end step, put a 9/9 blue Kraken creature token onto the battlefield." */
+
+  check_legend_rule(player, card, event);
 
   if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE || event == EVENT_RESOLVE_ACTIVATION)
 	{
@@ -4780,28 +4794,27 @@ int card_consuming_rage(int player, int card, event_t event){
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
-int card_reckless_minotaur(int player, int card, event_t event){
-	if( ! is_humiliated(player, card, AL_KEY) ){
-		haste(player, card, event);
-		attack_if_able(player, card, event);
-		if( eot_trigger(player, card, event) ){
-			kill_card(player, card, KILL_DESTROY);
-		}
-	}
-	return 0;
+int card_reckless_minotaur(int player, int card, event_t event)
+{
+  haste(player, card, event);
+  if (!is_humiliated(player, card, AL_KEY))
+    attack_if_able(player, card, event);
+  if (eot_trigger(player, card, event))
+    kill_card(player, card, KILL_DESTROY);
+  return 0;
 }
 
 int card_phoberos_reaver(int player, int card, event_t event){
+	haste(player, card, event);
 	if( ! is_humiliated(player, card, AL_KEY) ){
-		haste(player, card, event);
 		attack_if_able(player, card, event);
 	}
 	return 0;
 }
 
 int card_mogis_chosen(int player, int card, event_t event){
+	haste(player, card, event);
 	if( ! is_humiliated(player, card, AL_TRIG) ){
-		haste(player, card, event);
 		comes_into_play_tapped(player, card, event);
 	}
 	return 0;

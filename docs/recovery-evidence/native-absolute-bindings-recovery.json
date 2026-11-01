@@ -1,0 +1,2151 @@
+{
+  "source": "manalink.lds",
+  "prefix_bytes": 16753,
+  "prefix_sha256": "2e044de5580e535d53a234cb1c83b9e5147deddfb8f8363ca6c211166bfd6f92",
+  "prefix_normalized_sha256": "8c82f361f01e9fdab3b3cfd34f82f4041ec82314cfe2c3125a9b2c5d6cd10243",
+  "append": "\n/* Native October 2022 absolute EXE names missing from the retained linker script. */\n_LEGACY_EFFECT_628C64 = 0x628c64;\n_LEGACY_EFFECT_738F30 = 0x738f30;\n_LEGACY_EFFECT_739404 = 0x739404;\n_LEGACY_EFFECT_ADD_ABILITY = 0x715b38;\n_LEGACY_EFFECT_ANIMATE_ARTIFACT_KEEP_ABILITIES = 0x60eea8;\n_LEGACY_EFFECT_ANIMATE_ARTIFACT_LOSE_ABILITIES = 0x62c034;\n_LEGACY_EFFECT_ANIMATE_LAND = 0x7a2fe0;\n_LEGACY_EFFECT_ASWAN_JAGUAR = 0x7afa68;\n_LEGACY_EFFECT_BLAZE_OF_GLORY = 0x728368;\n_LEGACY_EFFECT_COLOR_CHANGE = 0x739b60;\n_LEGACY_EFFECT_CYCLOPEAN_TOMB = 0x620284;\n_LEGACY_EFFECT_DESERT = 0x736810;\n_LEGACY_EFFECT_DOESNT_UNTAP = 0x62879c;\n_LEGACY_EFFECT_DRAIN_LIFE = 0x786228;\n_LEGACY_EFFECT_ERNHAM_DJINN = 0x715b34;\n_LEGACY_EFFECT_FOG = 0x6205fc;\n_LEGACY_EFFECT_GRAVEYARD_CARD = 0x782fec;\n_LEGACY_EFFECT_GUARDIAN_BEAST = 0x739b58;\n_LEGACY_EFFECT_IFH_BIFF_EFREET = 0x62bf04;\n_LEGACY_EFFECT_NETHER_SHADOW = 0x7286fc;\n_LEGACY_EFFECT_NETTLING_IMP = 0x628528;\n_LEGACY_EFFECT_NOATTACK = 0x739400;\n_LEGACY_EFFECT_NO_BLOCKING = 0x739b5c;\n_LEGACY_EFFECT_PHYREXIAN_GREMLINS_FREEZE_ARTIFACT = 0x735f18;\n_LEGACY_EFFECT_POWERUP = 0x728370;\n_LEGACY_EFFECT_RAGING_RIVER = 0x7370bc;\n_LEGACY_EFFECT_SEWERS_OF_ESTARK = 0x7375a8;\n_LEGACY_EFFECT_SIRENS_CALL = 0x620480;\n_LEGACY_EFFECT_TAKE_ABILITY = 0x728700;\n_LEGACY_EFFECT_TIME_ELEMENTAL_EXE = 0x62bdcc;\n_LEGACY_EFFECT_TRANSMOGRANT = 0x7385e4;\n_LEGACY_EFFECT_UNBLOCKABLE = 0x62c368;\n_activating_card = 0x7876e8;\n_activating_player = 0x7a3610;\n_backend_of_control_magic = 0x4585f0;\n_blt_pic = 0x4662f0;\n_critical_section_for_painting = 0x790500;\n_dblbfr_hdc = 0x62047c;\n_dword_628C10 = 0x628c10;\n_event_param1 = 0x73825c;\n_get_path_base = 0x466020;\n_handle_palette_msgs = 0x467fa0;\n_hwnd_MainClass = 0x739d54;\n_main_hinstance = 0x78f0c8;\n_mana_producer_fixed_exe = 0x47b6c0;\n_network_rand_raw = 0x44e070;\n_path_DuelArt = 0x739e30;\n_raw_do_dialog = 0x471b60;\n_read_graphics_file = 0x459fa0;\n_redisplay_all = 0x437ec0;\n_set_palette_and_stretch_mode = 0x466050;\n_str_Cancel = 0x7281a4;\n_str_Done = 0x7375b0;\n_str_OK = 0x78f0a8;\n",
+  "source_sha256": "ec66be05a6fbb20e9fbc960cdcd01c261d75339a1727a0d5cf2fda93b63e5098",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "bindings": [
+    {
+      "name": "_LEGACY_EFFECT_628C64",
+      "address": "0x628c64",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_738F30",
+      "address": "0x738f30",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_739404",
+      "address": "0x739404",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_ADD_ABILITY",
+      "address": "0x715b38",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_ANIMATE_ARTIFACT_KEEP_ABILITIES",
+      "address": "0x60eea8",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_ANIMATE_ARTIFACT_LOSE_ABILITIES",
+      "address": "0x62c034",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_ANIMATE_LAND",
+      "address": "0x7a2fe0",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_ASWAN_JAGUAR",
+      "address": "0x7afa68",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_BLAZE_OF_GLORY",
+      "address": "0x728368",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_COLOR_CHANGE",
+      "address": "0x739b60",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_CYCLOPEAN_TOMB",
+      "address": "0x620284",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_DESERT",
+      "address": "0x736810",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_DOESNT_UNTAP",
+      "address": "0x62879c",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_DRAIN_LIFE",
+      "address": "0x786228",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_ERNHAM_DJINN",
+      "address": "0x715b34",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_FOG",
+      "address": "0x6205fc",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_GRAVEYARD_CARD",
+      "address": "0x782fec",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_GUARDIAN_BEAST",
+      "address": "0x739b58",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_IFH_BIFF_EFREET",
+      "address": "0x62bf04",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_NETHER_SHADOW",
+      "address": "0x7286fc",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_NETTLING_IMP",
+      "address": "0x628528",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_NOATTACK",
+      "address": "0x739400",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_NO_BLOCKING",
+      "address": "0x739b5c",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_PHYREXIAN_GREMLINS_FREEZE_ARTIFACT",
+      "address": "0x735f18",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_POWERUP",
+      "address": "0x728370",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_RAGING_RIVER",
+      "address": "0x7370bc",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_SEWERS_OF_ESTARK",
+      "address": "0x7375a8",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_SIRENS_CALL",
+      "address": "0x620480",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_TAKE_ABILITY",
+      "address": "0x728700",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_TIME_ELEMENTAL_EXE",
+      "address": "0x62bdcc",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_TRANSMOGRANT",
+      "address": "0x7385e4",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_LEGACY_EFFECT_UNBLOCKABLE",
+      "address": "0x62c368",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_activating_card",
+      "address": "0x7876e8",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_activating_player",
+      "address": "0x7a3610",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_backend_of_control_magic",
+      "address": "0x4585f0",
+      "native_kinds": [
+        32
+      ],
+      "current_same_address_names": [
+        "_u4585f0"
+      ]
+    },
+    {
+      "name": "_blt_pic",
+      "address": "0x4662f0",
+      "native_kinds": [
+        32
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_critical_section_for_painting",
+      "address": "0x790500",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_dblbfr_hdc",
+      "address": "0x62047c",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_dword_628C10",
+      "address": "0x628c10",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": [
+        "_dblword_628C10"
+      ]
+    },
+    {
+      "name": "_event_param1",
+      "address": "0x73825c",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_get_path_base",
+      "address": "0x466020",
+      "native_kinds": [
+        32
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_handle_palette_msgs",
+      "address": "0x467fa0",
+      "native_kinds": [
+        32
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_hwnd_MainClass",
+      "address": "0x739d54",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_main_hinstance",
+      "address": "0x78f0c8",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_mana_producer_fixed_exe",
+      "address": "0x47b6c0",
+      "native_kinds": [
+        32
+      ],
+      "current_same_address_names": [
+        "_engine_mana_producer_fixed"
+      ]
+    },
+    {
+      "name": "_network_rand_raw",
+      "address": "0x44e070",
+      "native_kinds": [
+        32
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_path_DuelArt",
+      "address": "0x739e30",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_raw_do_dialog",
+      "address": "0x471b60",
+      "native_kinds": [
+        32
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_read_graphics_file",
+      "address": "0x459fa0",
+      "native_kinds": [
+        32
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_redisplay_all",
+      "address": "0x437ec0",
+      "native_kinds": [
+        32
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_set_palette_and_stretch_mode",
+      "address": "0x466050",
+      "native_kinds": [
+        32
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_str_Cancel",
+      "address": "0x7281a4",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_str_Done",
+      "address": "0x7375b0",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    },
+    {
+      "name": "_str_OK",
+      "address": "0x78f0a8",
+      "native_kinds": [
+        0
+      ],
+      "current_same_address_names": []
+    }
+  ],
+  "excluded_zero_entries": [
+    {
+      "name": "_CreateSemaphoreW@16",
+      "reason": "Native import/linker bookkeeping entry at zero; do not introduce zero-valued API definitions."
+    },
+    {
+      "name": "_TlsFree@4",
+      "reason": "Native import/linker bookkeeping entry at zero; do not introduce zero-valued API definitions."
+    }
+  ],
+  "previous_absolute_symbols": {
+    "@feat.00": [
+      1
+    ],
+    ".absolut": [
+      0
+    ],
+    "_declare_mana_available_hex": [
+      4837952
+    ],
+    "_real_lose_the_game": [
+      4690416
+    ],
+    "_redraw_libraries": [
+      4622160
+    ],
+    "_u4585f0": [
+      4556272
+    ],
+    "_sub_45CEC0": [
+      4574912
+    ],
+    "_sub_47EF10": [
+      4714256
+    ],
+    "_real_put_on_top_of_deck": [
+      4263856
+    ],
+    "_choose_a_color_exe": [
+      4661696
+    ],
+    "_sub_45CF00": [
+      4574976
+    ],
+    "_receive_network_packet": [
+      4878528
+    ],
+    "_dispatch_event": [
+      4413872
+    ],
+    "_sub_499050": [
+      4821072
+    ],
+    "_card_winter_blast_exe": [
+      4265920
+    ],
+    "_card_detonate_exe": [
+      4312768
+    ],
+    "_check_mana_multi": [
+      4205536
+    ],
+    "_damage_player": [
+      4876448
+    ],
+    "_urzatron_parts": [
+      4560432
+    ],
+    "_try_to_pay_for_mana_by_autotapping": [
+      4388000
+    ],
+    "_has_mana": [
+      4838672
+    ],
+    "_send_network_packet": [
+      4877248
+    ],
+    "_produce_mana": [
+      4838544
+    ],
+    "_islandhome": [
+      5016880
+    ],
+    "_create_a_card_type": [
+      4875520
+    ],
+    "_sub_47EF50": [
+      4714320
+    ],
+    "_remove_card_from_deck": [
+      4693264
+    ],
+    "_raw_put_iid_on_top_of_deck": [
+      4693376
+    ],
+    "_sub_47E980": [
+      4712832
+    ],
+    "_coin_flip": [
+      4654736
+    ],
+    "_internal_rand": [
+      4513872
+    ],
+    "_save_or_load_data": [
+      4846848
+    ],
+    "_is_tapped": [
+      5145086
+    ],
+    "_card_whimsy_exe": [
+      4669264
+    ],
+    "_add_card_to_hand_exe": [
+      4691488
+    ],
+    "_pay_mana_maximally_satisfied": [
+      4387120
+    ],
+    "_another_copy_attached": [
+      4959920
+    ],
+    "_should_ai_play": [
+      4421552
+    ],
+    "_card_spell_blast_exe": [
+      4237120
+    ],
+    "_do_dialog": [
+      4660912
+    ],
+    "_dispatch_trigger_twice_once_with_each_player_as_reason": [
+      4420000
+    ],
+    "_call_sub_437E20_unless_ai_is_speculating": [
+      4660576
+    ],
+    "_draw_cards_exe": [
+      4309392
+    ],
+    "_obliterate_top_card_of_stack": [
+      4417840
+    ],
+    "_declare_mana_available": [
+      4838448
+    ],
+    "_damage_creature_or_player": [
+      5016464
+    ],
+    "_get_usertime_of_current_thread_in_ms": [
+      4664464
+    ],
+    "_sub_4378E0": [
+      4421856
+    ],
+    "_show_deck_exe": [
+      4690784
+    ],
+    "_set_centerwindow_txt": [
+      4425456
+    ],
+    "_sub_498F20": [
+      4820768
+    ],
+    "_engine_mana_producer_fixed": [
+      4699840
+    ],
+    "_regenerate_target_exe": [
+      5003712
+    ],
+    "_card_zombie_master_exe": [
+      5120063
+    ],
+    "_choose_a_number": [
+      4661536
+    ],
+    "_card_lich_exe": [
+      4399872
+    ],
+    "_card_fireball_exe": [
+      4237696
+    ],
+    "_check_hand_for_type": [
+      5142493
+    ],
+    "_put_card_in_graveyard": [
+      4685504
+    ],
+    "__size_of_stack_reserve__": [
+      2097152
+    ],
+    "_SetWindowPos@28": [
+      0
+    ],
+    "_CreateEventA@16": [
+      0
+    ],
+    "__file_alignment__": [
+      512
+    ],
+    "_LEGACY_EFFECT_GENERIC": [
+      7568984
+    ],
+    "_COST_GREEN": [
+      5623579
+    ],
+    "_SetUnhandledExceptionFilter@4": [
+      0
+    ],
+    "_card_on_stack": [
+      7573904
+    ],
+    "_TlsGetValue@4": [
+      0
+    ],
+    "_aura_ability": [
+      4964144
+    ],
+    "_target_card": [
+      5074948
+    ],
+    "_charge_mana_addr_of_max_x_value": [
+      5084224
+    ],
+    "_SetEvent@4": [
+      0
+    ],
+    "_get_rarity": [
+      0
+    ],
+    "_isspace": [
+      0
+    ],
+    "_BitBlt@36": [
+      0
+    ],
+    "_discard_card_exe": [
+      4405152
+    ],
+    "_timestamp_player": [
+      5275328
+    ],
+    "_FrameRect@12": [
+      0
+    ],
+    "_num_words_to_sleight": [
+      6425944
+    ],
+    "_charge_mana_addr_of_pre_mana_pool": [
+      5084212
+    ],
+    "__major_subsystem_version__": [
+      4
+    ],
+    "_EndDialog@8": [
+      0
+    ],
+    "_SetBkMode@8": [
+      0
+    ],
+    "_card_coded": [
+      7716864
+    ],
+    "_activation_card": [
+      7888784
+    ],
+    "_Sleep@4": [
+      0
+    ],
+    "_SetProcessAffinityMask@8": [
+      0
+    ],
+    "_SelectObject@8": [
+      0
+    ],
+    "_zombie_regen": [
+      5013040
+    ],
+    "_total_toughness_of_creatures_by_color": [
+      7578160
+    ],
+    "_GetParent@4": [
+      0
+    ],
+    "_active_cards_count": [
+      5174560
+    ],
+    "_IsDlgButtonChecked@8": [
+      0
+    ],
+    "__subsystem__": [
+      3
+    ],
+    "_GetCurrentProcess@0": [
+      0
+    ],
+    "_needed_mana_colors": [
+      8006504
+    ],
+    "_card_power_sink_exe": [
+      4870480
+    ],
+    "_draw_special_counters": [
+      0
+    ],
+    "_max_x_value": [
+      5173656
+    ],
+    "_ante_cards": [
+      5265192
+    ],
+    "_card_magical_hack_exe": [
+      4867504
+    ],
+    "_tolower": [
+      0
+    ],
+    "_strs_hunting_subtypenames": [
+      7931500
+    ],
+    "_get_border_color": [
+      0
+    ],
+    "_byte_786DD4": [
+      7892436
+    ],
+    "_iid_draw_a_card": [
+      7560916
+    ],
+    "_card_on_stack_controller": [
+      7573908
+    ],
+    "_MessageBoxA@16": [
+      0
+    ],
+    "_raw_mana_available_hex": [
+      5173788
+    ],
+    "_CloseHandle@4": [
+      0
+    ],
+    "_LEGACY_EFFECT_SORCERESS_QUEEN": [
+      7583096
+    ],
+    "_option_PhaseStoppers": [
+      6472564
+    ],
+    "_str_Draw_a_card": [
+      7567324
+    ],
+    "_card_assembly_worker_exe": [
+      4697600
+    ],
+    "_cancel": [
+      5173652
+    ],
+    "_GetDlgItem@8": [
+      0
+    ],
+    "_charge_mana_addr_of_x_value": [
+      5084216
+    ],
+    "_hand_count": [
+      5173700
+    ],
+    "_AlphaBlend@44": [
+      0
+    ],
+    "_RestoreDC@8": [
+      0
+    ],
+    "_SetThreadPriority@8": [
+      0
+    ],
+    "_RtlCaptureStackBackTrace@16": [
+      0
+    ],
+    "_get_config_data": [
+      0
+    ],
+    "_engine_dynamic_iid_start": [
+      8016768
+    ],
+    "_ResumeThread@4": [
+      0
+    ],
+    ".weak.__ITM_memcpyRtWn.__Z27_txnal_cow_string_D1_commitPv": [
+      0
+    ],
+    "_charge_mana_addr_of_pay_mana_xbugrw": [
+      5084220
+    ],
+    "_BringWindowToTop@4": [
+      0
+    ],
+    "_suppress_draw": [
+      7892424
+    ],
+    "_stack_size": [
+      5265320
+    ],
+    "_GetScrollRange@16": [
+      0
+    ],
+    "_byte_628C0C": [
+      6458380
+    ],
+    "_LEGACY_EFFECT_STONING": [
+      7562964
+    ],
+    "_GetSysColor@4": [
+      0
+    ],
+    "_RaiseException@16": [
+      0
+    ],
+    "__endthreadex": [
+      0
+    ],
+    "__size_of_heap_reserve__": [
+      1048576
+    ],
+    "_strs_words_hacked": [
+      7895816
+    ],
+    "_GetHandleInformation@8": [
+      0
+    ],
+    "_WideCharToMultiByte@32": [
+      0
+    ],
+    "_trigger_cause_controller": [
+      6472060
+    ],
+    "_life_gained": [
+      7583404
+    ],
+    "_colors_of_lands_in_play": [
+      6333800
+    ],
+    "_GetDoubleClickTime@0": [
+      0
+    ],
+    "_DrawSmallCardTitle": [
+      0
+    ],
+    "_DeleteObject@4": [
+      0
+    ],
+    "_artifact_count": [
+      5173716
+    ],
+    "_MANA_ARTIFACT": [
+      5623574
+    ],
+    ".weak.__ITM_RU1.__Z27_txnal_cow_string_D1_commitPv": [
+      0
+    ],
+    "_card_guardian_angel_exe": [
+      4672912
+    ],
+    "_rearrange_top_3": [
+      5141635
+    ],
+    "_initial_library": [
+      5658972
+    ],
+    "_event_flags": [
+      5173640
+    ],
+    "_stack_phase": [
+      7427840
+    ],
+    "_damage_card": [
+      7931128
+    ],
+    "_RemoveVectoredExceptionHandler@4": [
+      0
+    ],
+    "_SendDlgItemMessageA@20": [
+      0
+    ],
+    "_stack_damage_targets": [
+      5281712
+    ],
+    "_DrawFullCardEx": [
+      0
+    ],
+    "_LeaveCriticalSection@4": [
+      0
+    ],
+    "_MultiByteToWideChar@24": [
+      0
+    ],
+    "_u4b6860": [
+      4941920
+    ],
+    "_DrawSmallCardEx": [
+      0
+    ],
+    "_OutputDebugStringA@4": [
+      0
+    ],
+    ".weak.__ITM_addUserCommitAction.__Z27_txnal_cow_string_D1_commitPv": [
+      0
+    ],
+    "_card_sleight_of_mind_exe": [
+      4868592
+    ],
+    "_do_action_with_type_in_hand": [
+      5142730
+    ],
+    "__dll_characteristics__": [
+      0
+    ],
+    "_LEGACY_EFFECT_CHANNEL": [
+      7504312
+    ],
+    "_SetWindowTextA@8": [
+      0
+    ],
+    "_GetCurrentProcessId@0": [
+      0
+    ],
+    "_GetObjectA@12": [
+      0
+    ],
+    "_hunting_subtypes": [
+      7931575
+    ],
+    "__major_image_version__": [
+      1
+    ],
+    "_GetThreadContext@8": [
+      0
+    ],
+    "_LEGACY_EFFECT_PUMP": [
+      7931268
+    ],
+    "_dblword_628C10": [
+      6458384
+    ],
+    "_SetTextColor@8": [
+      0
+    ],
+    "_cards_at_7c7000": [
+      8155136
+    ],
+    "_SendMessageA@16": [
+      0
+    ],
+    "_stack_cards": [
+      5281456
+    ],
+    "_SaveDC@4": [
+      0
+    ],
+    "_land_can_be_played": [
+      5173648
+    ],
+    "_creature_count": [
+      5173708
+    ],
+    "_aura_pump": [
+      4964832
+    ],
+    "_DrawFocusRect@8": [
+      0
+    ],
+    "_COST_WHITE": [
+      5623581
+    ],
+    "_GetWindow@8": [
+      0
+    ],
+    "_TlsAlloc@0": [
+      0
+    ],
+    "_GetWindowRect@8": [
+      0
+    ],
+    "_TlsSetValue@8": [
+      0
+    ],
+    "_IsDebuggerPresent@0": [
+      0
+    ],
+    "_MANA_BLUE": [
+      5623570
+    ],
+    "_GetScrollPos@8": [
+      0
+    ],
+    "_MANA_UNKNOWN": [
+      5623575
+    ],
+    "_lands_played": [
+      5173756
+    ],
+    "_attacking_card": [
+      7573912
+    ],
+    "_Rectangle@20": [
+      0
+    ],
+    "_MANA_GREEN": [
+      5623571
+    ],
+    "_InvalidateRect@12": [
+      0
+    ],
+    "_GetClientRect@8": [
+      0
+    ],
+    "_player_counters": [
+      5174576
+    ],
+    "_cards_data": [
+      8286224
+    ],
+    "_SuspendThread@4": [
+      0
+    ],
+    "_asp": [
+      4998432
+    ],
+    "_GetFocus@0": [
+      0
+    ],
+    "__dll__": [
+      0
+    ],
+    "_PAY_MANA_BLACK": [
+      5174276
+    ],
+    "_text_lines": [
+      7429292
+    ],
+    "_real_bounce_permanent": [
+      4875760
+    ],
+    "_cannot_block_exe": [
+      4240864
+    ],
+    "_pay_mana_xbugrwaU": [
+      5174272
+    ],
+    "_COST_COLORLESS": [
+      5623576
+    ],
+    "_COST_BLUE": [
+      5623578
+    ],
+    "_game_number": [
+      7576088
+    ],
+    "__major_os_version__": [
+      4
+    ],
+    "_spell_fizzled": [
+      5173652
+    ],
+    "_SetDlgItemTextA@12": [
+      0
+    ],
+    "_LEGACY_EFFECT_ITH": [
+      6472076
+    ],
+    "_raw_mana_available": [
+      5174208
+    ],
+    "_reason_for_trigger_controller": [
+      7568924
+    ],
+    "_end_the_game": [
+      4629024
+    ],
+    "_SetBkColor@8": [
+      0
+    ],
+    "_GetProcAddress@8": [
+      0
+    ],
+    "_GetCurrentThread@0": [
+      0
+    ],
+    "__beginthreadex": [
+      0
+    ],
+    "_ShowWindow@8": [
+      0
+    ],
+    "_GetTickCount@0": [
+      0
+    ],
+    "_InitializeCriticalSection@4": [
+      0
+    ],
+    ".weak.__ITM_memcpyRnWt.__Z27_txnal_cow_string_D1_commitPv": [
+      0
+    ],
+    "_MANA_BLACK": [
+      5623569
+    ],
+    "_GetModuleHandleW@4": [
+      0
+    ],
+    "_MANA_WHITE": [
+      5623573
+    ],
+    "_DrawCardBack": [
+      0
+    ],
+    "_cop2": [
+      4971648
+    ],
+    "_PeekMessageA@20": [
+      0
+    ],
+    "_WaitForSingleObject@8": [
+      0
+    ],
+    "_card_braingeyser_exe": [
+      4307712
+    ],
+    "_LEGACY_EFFECT_ASWAN": [
+      7928424
+    ],
+    "_game_type": [
+      7584468
+    ],
+    "_cards_drawn_this_turn": [
+      5173748
+    ],
+    "_LEGACY_EFFECT_ACTIVATED_PROTECT": [
+      7576924
+    ],
+    "_TENTATIVE_wait_for_network_result": [
+      4878528
+    ],
+    "_COST_RED": [
+      5623580
+    ],
+    "_VirtualProtect@16": [
+      0
+    ],
+    "_types_of_cards_in_graveyard": [
+      5173620
+    ],
+    "_trigger_cause": [
+      7576096
+    ],
+    "_target_controller": [
+      5074944
+    ],
+    "_QueryPerformanceCounter@4": [
+      0
+    ],
+    "_unknown62BCEC": [
+      6470892
+    ],
+    "_stack_data": [
+      5281328
+    ],
+    "_LEGACY_EFFECT_ALADDIN": [
+      7584472
+    ],
+    "_timestamp_card": [
+      5273328
+    ],
+    "_forbid_attack": [
+      6423984
+    ],
+    "_cant_be_responded_to": [
+      6458164
+    ],
+    "_SetFocus@4": [
+      0
+    ],
+    "_rfg_ptr": [
+      5074980
+    ],
+    ".weak.__ITM_RU4.__Z27_txnal_cow_string_D1_commitPv": [
+      0
+    ],
+    "_DeleteCriticalSection@4": [
+      0
+    ],
+    "_PAY_MANA_RED": [
+      5174288
+    ],
+    "_WaitForMultipleObjects@16": [
+      0
+    ],
+    "_toupper": [
+      0
+    ],
+    "_card_alabaster_potion_exe": [
+      4871984
+    ],
+    "_target_player": [
+      5144102
+    ],
+    "_x_value": [
+      5173664
+    ],
+    "_MoveWindow@24": [
+      0
+    ],
+    "_PAY_MANA_BLUE": [
+      5174280
+    ],
+    "_DefWindowProcA@16": [
+      0
+    ],
+    "_GetTextMetricsA@8": [
+      0
+    ],
+    "_VirtualQuery@12": [
+      0
+    ],
+    "_FillRect@12": [
+      0
+    ],
+    "_LEGACY_EFFECT_CUSTOM": [
+      7560912
+    ],
+    "_ResetEvent@4": [
+      0
+    ],
+    "__stricmp": [
+      0
+    ],
+    "_type_tutor": [
+      5134429
+    ],
+    "_TryEnterCriticalSection@4": [
+      0
+    ],
+    "_life": [
+      5174568
+    ],
+    "_regenerate": [
+      5003408
+    ],
+    "_cards_ptr": [
+      7584512
+    ],
+    "_types_that_dont_untap": [
+      7928736
+    ],
+    "_tapped_for_mana_color": [
+      7931068
+    ],
+    ".weak.__ZGTtnaj.__Z27_txnal_cow_string_D1_commitPv": [
+      0
+    ],
+    "_LEGACY_EFFECT_DISINTEGRATE": [
+      7565816
+    ],
+    "_EnableWindow@8": [
+      0
+    ],
+    "_card_disintegrate_exe": [
+      4319312
+    ],
+    "__size_of_heap_commit__": [
+      4096
+    ],
+    "_DuplicateHandle@28": [
+      0
+    ],
+    "_number_of_attackers_declared": [
+      5173774
+    ],
+    "_GetMessageTime@0": [
+      0
+    ],
+    "_ability_tooltip_names_exe": [
+      7570016
+    ],
+    "_blt_expansion_symbol": [
+      0
+    ],
+    "_GetLastError@0": [
+      0
+    ],
+    "_CreatePen@12": [
+      0
+    ],
+    "_card_swords_to_plowshares_exe": [
+      4863824
+    ],
+    "_TerminateProcess@8": [
+      0
+    ],
+    "_GetProcessAffinityMask@12": [
+      0
+    ],
+    "_available_slots": [
+      7566764
+    ],
+    "_CreateSolidBrush@4": [
+      0
+    ],
+    "_ai_is_speculating": [
+      7505268
+    ],
+    "_trace_mode": [
+      7931456
+    ],
+    "_QueryPerformanceFrequency@4": [
+      0
+    ],
+    "__minor_subsystem_version__": [
+      0
+    ],
+    "_event_result": [
+      6423988
+    ],
+    "_types_of_cards_on_bf": [
+      5173628
+    ],
+    "_raw_mana_may_be_spent_as_color": [
+      6333620
+    ],
+    "_ldoubleclicked": [
+      6333504
+    ],
+    "_landsofcolor_controlled": [
+      5174432
+    ],
+    "_card_word_of_binding_exe": [
+      4313424
+    ],
+    "_Deck": [
+      8018060
+    ],
+    "_debug_mode": [
+      6456624
+    ],
+    "_LEGACY_EFFECT_ACTIVATED": [
+      7505652
+    ],
+    "_get_random_creature_type": [
+      4201632
+    ],
+    ".weak.__ZGTtdlPv.__Z27_txnal_cow_string_D1_commitPv": [
+      0
+    ],
+    "_creatures_dead_this_turn": [
+      5173752
+    ],
+    "_current_phase": [
+      5173636
+    ],
+    "_gauntlet_round": [
+      7928428
+    ],
+    "_DrawFullCard": [
+      0
+    ],
+    "_dword_60A4B0": [
+      6333616
+    ],
+    "_displayed_x_value": [
+      6333496
+    ],
+    "_GetCurrentThreadId@0": [
+      0
+    ],
+    "_IsWindowVisible@4": [
+      0
+    ],
+    "_start_usertime_of_current_thread_in_ms": [
+      5685092
+    ],
+    "_ReleaseDC@8": [
+      0
+    ],
+    "__minor_image_version__": [
+      0
+    ],
+    "_strs_words_sleighted": [
+      7508348
+    ],
+    "_PtInRect@12": [
+      0
+    ],
+    "_pro_black": [
+      5022784
+    ],
+    "_LEGACY_EFFECT_ASTERISK": [
+      8009512
+    ],
+    "_dword_4EF1B8": [
+      5173688
+    ],
+    "_discard_exe": [
+      4404544
+    ],
+    "_EnterCriticalSection@4": [
+      0
+    ],
+    "__ultoa": [
+      0
+    ],
+    "_GetLocalTime@4": [
+      0
+    ],
+    "_GetDC@4": [
+      0
+    ],
+    "_singleplayer_mode": [
+      5150120
+    ],
+    "__image_base__": [
+      33554432
+    ],
+    "__strnicmp": [
+      0
+    ],
+    "_ai_defensive_modifier": [
+      7928740
+    ],
+    "_deck_ptr": [
+      5074992
+    ],
+    "_current_turn": [
+      6456944
+    ],
+    "_attacking_card_controller": [
+      8008856
+    ],
+    "_SetRect@20": [
+      0
+    ],
+    "__loader_flags__": [
+      0
+    ],
+    "_mana_pool": [
+      5174496
+    ],
+    "_MANA_RED": [
+      5623572
+    ],
+    "_card_ancestral_recall_exe": [
+      4861008
+    ],
+    "_affected_card": [
+      8010124
+    ],
+    "_num_words_to_hack": [
+      7572608
+    ],
+    "_strs_words_to_hack": [
+      6426012
+    ],
+    "_draw_standard_counters": [
+      0
+    ],
+    "_SetScrollPos@16": [
+      0
+    ],
+    "_graveyard_ptr_mutable": [
+      5074968
+    ],
+    "_GetSysColorBrush@4": [
+      0
+    ],
+    "_ai_modifier": [
+      8008104
+    ],
+    "_get_watermarks": [
+      0
+    ],
+    "_pumpable_toughness": [
+      6458504
+    ],
+    "_regenerate_green": [
+      5003968
+    ],
+    "_mana_doesnt_drain_from_pool": [
+      5173760
+    ],
+    "_card_farmstead_exe": [
+      4396192
+    ],
+    "_UpdateWindow@4": [
+      0
+    ],
+    "_opponent_name": [
+      6458224
+    ],
+    "__size_of_stack_commit__": [
+      4096
+    ],
+    "_raw_displayed_card_instances": [
+      5520400
+    ],
+    "_must_attack": [
+      5173616
+    ],
+    "_strs_words_to_sleight": [
+      6393164
+    ],
+    "_not_dying": [
+      4660528
+    ],
+    "_MANA_COLORLESS": [
+      5623568
+    ],
+    "_affected_card_controller": [
+      7572612
+    ],
+    "_opponent_skill": [
+      6333488
+    ],
+    "_total_power_of_creatures_by_color": [
+      7576928
+    ],
+    "_GetStockObject@4": [
+      0
+    ],
+    "_PAY_MANA_COLORLESS": [
+      5174272
+    ],
+    "_turn_count": [
+      7926368
+    ],
+    "_ante": [
+      7572616
+    ],
+    "_COST_BLACK": [
+      5623577
+    ],
+    "_DialogBoxIndirectParamA@20": [
+      0
+    ],
+    "_CheckDlgButton@12": [
+      0
+    ],
+    "_TENTATIVE_send_network_result": [
+      4877248
+    ],
+    "___ImageBase": [
+      1769734144
+    ],
+    "_oubliette_effect": [
+      4560880
+    ],
+    "_UnhandledExceptionFilter@4": [
+      0
+    ],
+    "_GetSystemTimeAsFileTime@4": [
+      0
+    ],
+    "_SetLastError@4": [
+      0
+    ],
+    "_real_gain_life": [
+      4560560
+    ],
+    "_SetThreadContext@8": [
+      0
+    ],
+    "_fear_exe": [
+      4240704
+    ],
+    "_cards_txt": [
+      7584484
+    ],
+    "_ExtTextOutA@32": [
+      0
+    ],
+    "_PAY_MANA_WHITE": [
+      5174292
+    ],
+    "_PostMessageA@16": [
+      0
+    ],
+    "_CreateSemaphoreA@16": [
+      0
+    ],
+    "_trigger_condition": [
+      8007032
+    ],
+    "_LEGACY_EFFECT_TIME_WALK": [
+      7568984
+    ],
+    "_IsDBCSLeadByteEx@8": [
+      0
+    ],
+    "_life_gain_draw_count": [
+      5174584
+    ],
+    "_enchantment_count": [
+      5173724
+    ],
+    "_GetThreadPriority@4": [
+      0
+    ],
+    "_ReleaseSemaphore@12": [
+      0
+    ],
+    "_time_walk_flag": [
+      5173644
+    ],
+    "_PAY_MANA_GREEN": [
+      5174284
+    ],
+    "_mana_paid": [
+      5623504
+    ],
+    "_EndPaint@8": [
+      0
+    ],
+    "__section_alignment__": [
+      4096
+    ],
+    "_WinExec@8": [
+      0
+    ],
+    "_AddVectoredExceptionHandler@8": [
+      0
+    ],
+    "_SetWindowLongA@12": [
+      0
+    ],
+    "_GetWindowLongA@8": [
+      0
+    ],
+    "__minor_os_version__": [
+      0
+    ],
+    "_basiclandtypes_controlled": [
+      5174368
+    ],
+    "_pumpable_power": [
+      6458496
+    ],
+    "__snprintf": [
+      0
+    ],
+    "_PAY_MANA_ARTIFACT": [
+      5174296
+    ],
+    "_player_bits": [
+      5173668
+    ],
+    "_raw_card_instances": [
+      5174592
+    ],
+    "_add_one_mana_any_color": [
+      5145124
+    ],
+    "_SetActiveWindow@4": [
+      0
+    ],
+    "_BeginPaint@8": [
+      0
+    ],
+    "_ScrollWindow@20": [
+      0
+    ]
+  },
+  "runtime_sections_before": {
+    ".text": {
+      "rva": 4096,
+      "virtual_size": 7418848,
+      "raw_size": 7418880,
+      "characteristics": 1616904288,
+      "normalized_bytes_sha256": "3f62c7c43aba17f2473daed8ead61b802cc6c54043237f0f405792328a5e3d35",
+      "volatile_fields": []
+    },
+    ".text.unlikely": {
+      "rva": 7426048,
+      "virtual_size": 208,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "887e74ac09bc3181c463e44fa62c37dcf70fa6a89e72a785380f5eef1527083c",
+      "volatile_fields": []
+    },
+    ".text.startup": {
+      "rva": 7430144,
+      "virtual_size": 64,
+      "raw_size": 512,
+      "characteristics": 1615855648,
+      "normalized_bytes_sha256": "b2cb9cc7dba207f5969d20d070ed6e1f7b7dff81217825e47beba817ba4d4946",
+      "volatile_fields": []
+    },
+    ".text.startup._GLOBAL__sub_I___cxa_get_globals_fast": {
+      "rva": 7434240,
+      "virtual_size": 64,
+      "raw_size": 512,
+      "characteristics": 1615855648,
+      "normalized_bytes_sha256": "ffbadd7f9ffd1f59a6966c84f96ec7b9628fe8549b38b9fa166808ffa84eda81",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt21__throw_bad_exceptionv": {
+      "rva": 7438336,
+      "virtual_size": 48,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "6352a64f83aa10822383d554199688d6cafa32a5d8d2ebcb169968d570017195",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt17__throw_bad_allocv": {
+      "rva": 7442432,
+      "virtual_size": 48,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "81a35474fd0e4c1f99e598497b032742c36e27aa718b6423710cd7b19cc2118a",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt16__throw_bad_castv": {
+      "rva": 7446528,
+      "virtual_size": 48,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "1fcb7ce88bb1e1044cf30ffdd6f45ab78aa2719fb62dac571b63f6c26d7dcd6e",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt18__throw_bad_typeidv": {
+      "rva": 7450624,
+      "virtual_size": 48,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "601686342f9372ef332ea207ea3f7492170032d8b85649a25db7f187f4dbade2",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt19__throw_logic_errorPKc": {
+      "rva": 7454720,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "674436fdf56f170238cbf2f7a7f999de57576fe80e1916871cdb110f803f6cea",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt20__throw_domain_errorPKc": {
+      "rva": 7458816,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "3896164f32d5dbbb4988941bcb46b87186314aeaede12472795c5d908ca1f05f",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt24__throw_invalid_argumentPKc": {
+      "rva": 7462912,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "e0a4190fa42faa6bc6779d7772ece12161bef15b64a72d6bfb8b96ed47ceef47",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt20__throw_length_errorPKc": {
+      "rva": 7467008,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "7e4bf350aa2cfc5288a73d68dddccea6c323a5fd103f1c0847b5ec575bbd8b8f",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt20__throw_out_of_rangePKc": {
+      "rva": 7471104,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "c57cbf54f64bc6d094053ce7e3254fbb73083cc8e8a4a9ddf2cab40abb31afc4",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt21__throw_runtime_errorPKc": {
+      "rva": 7475200,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "d9f2cdc4ec094c676ba70867521fff8cca41a2933a887d128bfac47dce774de3",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt19__throw_range_errorPKc": {
+      "rva": 7479296,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "82e3b467c4aa301e78e711af33682127423eadd856577e79223668e5a0f7f815",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt22__throw_overflow_errorPKc": {
+      "rva": 7483392,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "5c2ed5ab8bf56b455bad9ce39c3fd38f6060e59b3055c6bad87ffb1cbba139a3",
+      "volatile_fields": []
+    },
+    ".text.unlikely._ZSt23__throw_underflow_errorPKc": {
+      "rva": 7487488,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "characteristics": 1613758496,
+      "normalized_bytes_sha256": "ac3026e0e8431e676bc5a1324716b3aebac0d797350e1b17d1a1fa417dfc6d79",
+      "volatile_fields": []
+    },
+    ".text.startup._GLOBAL__sub_I__ZN9__gnu_cxx9__freeresEv": {
+      "rva": 7491584,
+      "virtual_size": 112,
+      "raw_size": 512,
+      "characteristics": 1615855648,
+      "normalized_bytes_sha256": "c99b07d70901a805ef480298eaf80fde923288b84eb5920df5264dea560902b7",
+      "volatile_fields": []
+    },
+    ".data": {
+      "rva": 7495680,
+      "virtual_size": 4148,
+      "raw_size": 4608,
+      "characteristics": 3227516992,
+      "normalized_bytes_sha256": "2fb7a49087e33929782b86e36d0af069acf3a7a88cd7f380080432a80126b862",
+      "volatile_fields": []
+    },
+    ".rdata": {
+      "rva": 7503872,
+      "virtual_size": 321772,
+      "raw_size": 322048,
+      "characteristics": 1080033344,
+      "normalized_bytes_sha256": "bc215f09c29c7dd340cbf54e6b65c7706b0f85d8896c555be42905e7c1220993",
+      "volatile_fields": []
+    },
+    ".bss": {
+      "rva": 7827456,
+      "virtual_size": 260092,
+      "raw_size": 0,
+      "characteristics": 3227517056,
+      "normalized_bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "volatile_fields": []
+    },
+    ".edata": {
+      "rva": 8089600,
+      "virtual_size": 98,
+      "raw_size": 512,
+      "characteristics": 1076887616,
+      "normalized_bytes_sha256": "110c6af9b81783cd9701ddb196ee204f7f2e84291b9701097752fb6e0b897bf3",
+      "volatile_fields": [
+        {
+          "offset": 4,
+          "size": 4,
+          "reason": "IMAGE_EXPORT_DIRECTORY.TimeDateStamp",
+          "value": "8e65e66a"
+        }
+      ]
+    },
+    ".idata": {
+      "rva": 8093696,
+      "virtual_size": 5596,
+      "raw_size": 5632,
+      "characteristics": 3224371264,
+      "normalized_bytes_sha256": "d3faa9ad259d045a64d72936d9a4c7f284eea4c5561a772900e182c21cc26625",
+      "volatile_fields": []
+    },
+    ".CRT": {
+      "rva": 8101888,
+      "virtual_size": 48,
+      "raw_size": 512,
+      "characteristics": 3224371264,
+      "normalized_bytes_sha256": "35c0c35a1f1682e75d31f35b53ac00463a387911943a164410041115a95cb890",
+      "volatile_fields": []
+    },
+    ".tls": {
+      "rva": 8105984,
+      "virtual_size": 8,
+      "raw_size": 512,
+      "characteristics": 3224371264,
+      "normalized_bytes_sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560",
+      "volatile_fields": []
+    },
+    ".reloc": {
+      "rva": 8110080,
+      "virtual_size": 178852,
+      "raw_size": 179200,
+      "characteristics": 1110442048,
+      "normalized_bytes_sha256": "a07d991a5c3d9061dc245dc7e3266659f25a6bcb26f073d6e2b8a7d6997c4f93",
+      "volatile_fields": []
+    }
+  },
+  "receipt_migrations": [
+    {
+      "path": "docs/recovery-evidence/activation-mana-cards-recovery.json",
+      "before_raw_sha256": "6e0e8316da924d76dbb37c8dc5c6f911ab1a9ed40f9be1c397aa5d8c349d8fb3",
+      "before_canonical_sha256": "73a94955493e17d7be723d345bc95e6273110d6ef786df971cab02abd7486a80",
+      "after_canonical_sha256": "b7524a81b97d4c1bfc3224eef027c5830e918d5ce6d653c4a31ee770a74ae3ff"
+    },
+    {
+      "path": "docs/recovery-evidence/arcane-command-cards-recovery.json",
+      "before_raw_sha256": "c8fdb99de9e60d4b0089af2a0c0241662a3fb91ee7950ce492beebddbbe85138",
+      "before_canonical_sha256": "5f2785556e5252d1d412b3a4b2796d742822d968b04b5ef7cb1c73a264e50edc",
+      "after_canonical_sha256": "ced34ea1fe18212b85322fe32b21d061a62e0a51a40cc191df55dc7eab35f272"
+    },
+    {
+      "path": "docs/recovery-evidence/attack-aura-cards-recovery.json",
+      "before_raw_sha256": "84858639c67c50589af4c7ee6bfb8a2be6bce819f24432b84d1344d9be5eb17b",
+      "before_canonical_sha256": "dc2fd739a092e3e20713659ffb37ed56bd2b9b5f4b743884fa09eda3932786b5",
+      "after_canonical_sha256": "35c6cbc3929ce1a267079629daa0c5d9af1f5a46d3f9ca9efb274eebd2caacac"
+    },
+    {
+      "path": "docs/recovery-evidence/attack-graveyard-cards-recovery.json",
+      "before_raw_sha256": "099e99776d65394d0339d17173deed1e7c91fa96d8877c0f2472096518631c06",
+      "before_canonical_sha256": "e872c36360d158836e25aba4e35b9f38fe2699d950b72868fb8941f82662a703",
+      "after_canonical_sha256": "1f677ff758f44c05e7dee444da33d39a1e3193e4f98f8b53c523eb4747618e7b"
+    },
+    {
+      "path": "docs/recovery-evidence/attack-mana-cards-recovery.json",
+      "before_raw_sha256": "dbed78a033275bcd8107d15f501a8a64058855f2d45fc5ff71ffaa52e7c18432",
+      "before_canonical_sha256": "1167bb650c7615ee9ae3ff55fa1b3b3e9c7095c106c5d0000818d967ab16a680",
+      "after_canonical_sha256": "5572a637488c914979d2801ad372f57ae9d9ce00627c7d122416bfda8c19f5d5"
+    },
+    {
+      "path": "docs/recovery-evidence/attack-token-cards-recovery.json",
+      "before_raw_sha256": "ad9ecf6e6501ef34074e60ee0ab922c50dbda5a3acdd65946acf989679023598",
+      "before_canonical_sha256": "17395b051437d898e59cdd16ab4abc63f3a088ae634431dea98f284f476e5e41",
+      "after_canonical_sha256": "f8ba2c07fabf303e734be859dc5fc37df03be96fe75f25689a04081546ce2ea0"
+    },
+    {
+      "path": "docs/recovery-evidence/aura-activation-cards-recovery.json",
+      "before_raw_sha256": "b4bd63f1ac47110eb750615879ab40e8561f4047b47bf3caec02fa8016eee9f7",
+      "before_canonical_sha256": "3bb1d3c82fe97a438a63605b4f417e7b22b4f6fba4d0617a22e38b9ba12d5dff",
+      "after_canonical_sha256": "93ab3ff6a4d67d074e1091ccfa75a08aa44df8a4193e6204a5cb0f8c0392053b"
+    },
+    {
+      "path": "docs/recovery-evidence/aura-animation-cards-recovery.json",
+      "before_raw_sha256": "8dd88ecd87d2b84f98f50dba725ecbb81a0172f06918801b8db2329fb0ecb4bc",
+      "before_canonical_sha256": "a752eb1b708d81a394bf9723aa8a344778d9e5e3c123d73607bfe440acc6d96a",
+      "after_canonical_sha256": "a695e76e1f0fc1bf7512186ba83f186012ba06f4800f7ce8cc9e3f3b2db704c4"
+    },
+    {
+      "path": "docs/recovery-evidence/combat-ai-cards-recovery.json",
+      "before_raw_sha256": "bb93c4526a7faae4505f6fbd4bad6d4d0f61a096d71e9aa0f110608a8f370598",
+      "before_canonical_sha256": "b5aa2375711f040eac64a5cfcf6d4d22abfa92467e366c389a18dc00e63cd53c",
+      "after_canonical_sha256": "97360870d1459cecc8225b8ed7e8ce8fad2aafd2723d1acafe6b4aa5759cea2b"
+    },
+    {
+      "path": "docs/recovery-evidence/combat-aura-cards-recovery.json",
+      "before_raw_sha256": "397da802bbb51db6e11089cd66f8e8b580ab52ae7516fdae4c98e0fc24bb1e70",
+      "before_canonical_sha256": "e01d899648692f07c118de41a2a118150be8a558e541035189c7dffe1df97e90",
+      "after_canonical_sha256": "bc02902e3dff861edcfe1ea37cb090880eb99ea47526e0cf8a65904e4a2a3d20"
+    },
+    {
+      "path": "docs/recovery-evidence/counterspell-aura-cards-recovery.json",
+      "before_raw_sha256": "875988a1bc758767c1e5246fef4dda14c9e556ee57637fdb290e3741d7e3536f",
+      "before_canonical_sha256": "887e4faf8f77c5925bc5c7238fcda9d31b963633afd80fb217e5a9131baf06c6",
+      "after_canonical_sha256": "04c208f57615739f29d11e66c7e7f9bbb2ce3484948b1a4e8ef075fe50190bdf"
+    },
+    {
+      "path": "docs/recovery-evidence/damage-dispatch-cards-recovery.json",
+      "before_raw_sha256": "6daeb45055855735f88a1c2b818039a57182e0d4f06802dd41b26ed6ee320108",
+      "before_canonical_sha256": "6e4be075da38bdfc33b7deb7a0e08aa3559e7e1dd83477e0511b38010a64e3c6",
+      "after_canonical_sha256": "30bdc6c2b5910da89e637ef8fb3074670dc33d73502faaecc2876c420159a9ac"
+    },
+    {
+      "path": "docs/recovery-evidence/damage-history-cards-recovery.json",
+      "before_raw_sha256": "9aaf00d2f7de6eeaa05fe86caf9f9a8fd46a50fcbbc87c6189378824594a1fb6",
+      "before_canonical_sha256": "1bdb57680473f4ceba32696371f4bce9f889535980fb90a531b1f30219c04f87",
+      "after_canonical_sha256": "5cba26b12c28d2d2f7a7b8ddf89070e10abf11b9065319acc0c1e5f3304cbb4e"
+    },
+    {
+      "path": "docs/recovery-evidence/damage-subtype-cards-recovery.json",
+      "before_raw_sha256": "6866ff0a1fb76e660d3522a813dd972d689c1f388a6e4c10d11bf5244f2b7b5e",
+      "before_canonical_sha256": "41da56e7131e0c146c898d0288332509d13d415704e655977e75f9db1f39c9ef",
+      "after_canonical_sha256": "4754473b2bd53cfaee7d8bc40d0ba317e29fc54b6bfa2ced5acda143d5132f12"
+    },
+    {
+      "path": "docs/recovery-evidence/grave-mana-cards-recovery.json",
+      "before_raw_sha256": "afeaafc4c47bb4eee6d785ac9e966d1298db68ba8557a4147406fab0fcdc368c",
+      "before_canonical_sha256": "fd6288d30973c3d20f53e12162b230b7518bdee2bc30e061f61969157f24d330",
+      "after_canonical_sha256": "b9dd6f029aa5580019b5d4971bd47b0600c50273ee628b8c1fa86aa9dfdeb217"
+    },
+    {
+      "path": "docs/recovery-evidence/grave-trigger-cards-recovery.json",
+      "before_raw_sha256": "c99a94c7958738411f441597fa80727b31d88a4573069653efa5bedd40ce6405",
+      "before_canonical_sha256": "31693a8f7bb2e6ba4be1c6f86437b919e2ed46bccd7daf4d7d7e308c4bcaff0a",
+      "after_canonical_sha256": "1d0da9f92d9ae1f8d165cacf927acd2264907e7cd058aeff0582749f4102dfb6"
+    },
+    {
+      "path": "docs/recovery-evidence/imprint-protection-cards-recovery.json",
+      "before_raw_sha256": "fc4284dc4af3515f1700e3782d4a6f2c5c8f6bb69821aac237e3f78a7fbc7fef",
+      "before_canonical_sha256": "31d084b96f5ef12f2e74e1e95e6d9cf1212343415decf4d035d511f444244a06",
+      "after_canonical_sha256": "7ec09b3d52c9f07dd419c972bcda2b383ebff04f798ae5e721a8fdc5838a6871"
+    },
+    {
+      "path": "docs/recovery-evidence/land-deflection-cards-recovery.json",
+      "before_raw_sha256": "ebde6b69d1353673fcfc0cbcd414054a9f7fad4553ff21b95131e9f12989f51c",
+      "before_canonical_sha256": "8296a6b3ca21e1176b76fde8daf21666e6c60a1c10b462fcb98b3043eadfcc97",
+      "after_canonical_sha256": "4167ffc03b60b98ddddfa89a096e39a31c89476f41f18d6fcff0a22f3e895b47"
+    },
+    {
+      "path": "docs/recovery-evidence/legend-target-cards-recovery.json",
+      "before_raw_sha256": "57fee1da1566a3c695938824c13a2327566cfdd2bcec8bf5e91f6e532009b030",
+      "before_canonical_sha256": "d87fa5c55d91ede780986acf5bffa9a56cd01a1a643d7c100f035bd3c587210a",
+      "after_canonical_sha256": "cd7ec1ad92c9f325aae7f64353d2524c78c2681ff13a0b76d940ea301b7314f8"
+    },
+    {
+      "path": "docs/recovery-evidence/mana-choice-cards-recovery.json",
+      "before_raw_sha256": "56bcb10a256b94f74e376b0d6f824012f7c151c3571f969aff5f8b8c9f341f10",
+      "before_canonical_sha256": "e74beb30ffe360e0c9a157ebde7bf5fde75d88e339eeb5666cc8760a31067eb7",
+      "after_canonical_sha256": "85fb0d967062b20dba673def9ce1704fe7497421704b935860d554fef6cf1f7c"
+    },
+    {
+      "path": "docs/recovery-evidence/mana-combat-cards-recovery.json",
+      "before_raw_sha256": "f05f8aeafdb91f02617bb15f1af3fce63179c03b363d8fc16a8574ce9a1238f2",
+      "before_canonical_sha256": "d99c5e5973baadd9c739a38413d66d29cfa155521be97f079d7ef6ed892f176f",
+      "after_canonical_sha256": "64f65e69f33668aaa658dc5b343c0d07d8f76813e1d8a140c3dd7701f6097024"
+    },
+    {
+      "path": "docs/recovery-evidence/mana-imprint-cards-recovery.json",
+      "before_raw_sha256": "0b052802b9844ba65c4c22c3da0a3f24cf2eda3df3f4a3f0e77f662ab899d8b3",
+      "before_canonical_sha256": "3a64a8b2f0e5b60ae756383d5044dce2873daf90431d22ef6f6906d4365f9321",
+      "after_canonical_sha256": "af427ba7308850dced29f75e2e8d67c02b022dd5991e1ac82dab03773a3e0b95"
+    },
+    {
+      "path": "docs/recovery-evidence/mana-legacy-cards-recovery.json",
+      "before_raw_sha256": "2a7ca0ab11f1e3c45f236639d9d53daa41459734dd4134c997be917660b7a476",
+      "before_canonical_sha256": "6712b81b3474cccc47a733f8f687b160fe2eba55c902c4868114130e222c0840",
+      "after_canonical_sha256": "c8460eff68bce9fb761eff972ad93045c1d215321444e21faf54320aac6c6824"
+    },
+    {
+      "path": "docs/recovery-evidence/mana-retarget-cards-recovery.json",
+      "before_raw_sha256": "f0e5d1e7cef0e06827e7c6422947ac91da43e4c74b4465ef51044d930e280e5e",
+      "before_canonical_sha256": "b1ae7c7b0d58fb7020f9834db34314c84cfb5ae38277f5333610e49d7b3cc25c",
+      "after_canonical_sha256": "672c891558e61b001c65a2a6dc73533fedd2af4523ba635f5d0b5d9da039eadc"
+    },
+    {
+      "path": "docs/recovery-evidence/mass-trigger-cards-recovery.json",
+      "before_raw_sha256": "ff1e9d728aa61eb6b7f03786e941f668cd300d0c0667ceafa6f1dff0c152f23b",
+      "before_canonical_sha256": "4157d76d77d98413d259c98f736cd2a67bb45e686b75316962c459f6c1cb4375",
+      "after_canonical_sha256": "4f700a85831882fd56067100bd25c37165fd3f3f1b42d5a13ae12c79c7da0f6a"
+    },
+    {
+      "path": "docs/recovery-evidence/modal-imprint-cards-recovery.json",
+      "before_raw_sha256": "31f2cea86868cd1fc0f7512bb25cd28f41a5ed26a88da14b43004245bb78f934",
+      "before_canonical_sha256": "6da01ba8b390cf41f03a5f2752f982d890d7a6615f943b343c6bfc78f1865591",
+      "after_canonical_sha256": "eb7771d540f02a2baa04d4d43bf60f0774227df0034ccdbb1d0edab7dbaf4623"
+    },
+    {
+      "path": "docs/recovery-evidence/odyssey-modal-cards-recovery.json",
+      "before_raw_sha256": "82f841947f50ba65077ecc4430ff4a395df76dc8641841189f33f39a283caa1f",
+      "before_canonical_sha256": "cc99b36756e9a34ed99fc060dd75e92aa2470b3cc3b692f6b1ec57d1d2e0461d",
+      "after_canonical_sha256": "810f4f59b41a544fcf81aa9f522858383d86e8428ce3b8d7b10d91d632bda433"
+    },
+    {
+      "path": "docs/recovery-evidence/reference-token-cards-recovery.json",
+      "before_raw_sha256": "e2ac6a19fe05a8af2f1d93e2938e32fb502c24be1f2a0466dddfa5b6b4763d58",
+      "before_canonical_sha256": "d21932cad6165c15610424e9b5a420b855ffb83a7218cbd635c8ab36651c6fd0",
+      "after_canonical_sha256": "2ddb98556a1713e6aba4304d257e813c4982c8f8f9ce945d2a8f93ffc81709f5"
+    },
+    {
+      "path": "docs/recovery-evidence/retained-reference-cards-recovery.json",
+      "before_raw_sha256": "49f4a35fe9055107034cc48ad0ac211c5f7c477db993b38af0f9ad962baed7ed",
+      "before_canonical_sha256": "c2a24fd8e6cb8f30e5fdbc8b4965e7637af0b83f3e9a9866cf28341ec7f10ee0",
+      "after_canonical_sha256": "a48d822f4558d3388c7a2f4347c6f0f7fb8f76cef9eec1c3b610f719c205c668"
+    },
+    {
+      "path": "docs/recovery-evidence/short-wrapper-cards-recovery.json",
+      "before_raw_sha256": "8f996f5a5d9b3e8c9a8e299d13a861ab8bd4b8e2fc0f4b1f7e490a366627f95b",
+      "before_canonical_sha256": "33d8f4549730af2d2ced2f5ead175024c54c73496cfcd5b57eb31181ee235be9",
+      "after_canonical_sha256": "8b8433c093ca6a446085d1faae75dbd647007de0a4be2e9187b8d793f8342d43"
+    },
+    {
+      "path": "docs/recovery-evidence/spell-combat-cards-recovery.json",
+      "before_raw_sha256": "6fa59d299c98b6060809adefa13ce7367059715a844e2f91a01d3f3a47b6a360",
+      "before_canonical_sha256": "29f904952ad6cdd7cba52e2f17ef5d6b4779a49b7b6b2ed90436287942488ecf",
+      "after_canonical_sha256": "229d162c291032056b788790b79750cfb9420df83d9a6b77c5e235037bb8a5ca"
+    },
+    {
+      "path": "docs/recovery-evidence/spell-death-cards-recovery.json",
+      "before_raw_sha256": "c24d8e41ded4c522951f3e9b2a506a01a0471c9816c746537acaeb7c64bacc40",
+      "before_canonical_sha256": "b54338284a9a3694ba1b85ff5ac8c1b47b7c31e1ffb3c9bb177c4ac0f9e1d985",
+      "after_canonical_sha256": "0638391da062e6e88d91d85e062e9193c11e1e12aff7cde15c94e6da18b1ce84"
+    },
+    {
+      "path": "docs/recovery-evidence/storm-protection-cards-recovery.json",
+      "before_raw_sha256": "e578d43ed878d12117847cb56c342ac75961992e83a958a02ac832bece89e609",
+      "before_canonical_sha256": "91e550656a8dc862d82a3fd33d34c03541acaa1b5f1f657900bdb9c32260917b",
+      "after_canonical_sha256": "709d72a7d0b02351541f677b31900e1b209403ea0306df42c6b34b83b46b3e5e"
+    },
+    {
+      "path": "docs/recovery-evidence/storm-token-cards-recovery.json",
+      "before_raw_sha256": "315649732da6b2cea0945e6eff42ca788dd9448e052a31af87810acbcbd11b79",
+      "before_canonical_sha256": "8f364989528a39d7bfcba6b3af3e0a69121ea0d08f5e1e1d4e32de9f09fd28dd",
+      "after_canonical_sha256": "d411434a07562b88045f3d4bdd7dbeb58daf982222808de36a515a4dc280f94b"
+    },
+    {
+      "path": "docs/recovery-evidence/trigger-replacement-cards-recovery.json",
+      "before_raw_sha256": "e8db2a2189caeaa28a27eb38144a242bb6e27a220c2cf316b9f7bdd328ca1ba8",
+      "before_canonical_sha256": "02e6942948f7f6dc0a739c9b940c6f4fcd51bd8fcce2dfd0c85a4c1766fff05e",
+      "after_canonical_sha256": "ac37e8dc46a766a641ac3c682b81bb52414cc4c2f3d9453d726ebcb559e45e36"
+    }
+  ],
+  "scope": "Recover54 exact native nonzero absolute EXE names/values in the original linker script. Existing source bytes/definitions remain an immutable prefix; every previous absolute binding and normalized raw runtime section is checked after linking.54new names are source/linker identities, not recovered function bodies or external-EXE ABI declarations. Excludes2native zero-address import bookkeeping entries. The only permitted runtime-section byte normalization is the export-directory timestamp; debuglink/debug metadata is outside runtime payload coverage. The unchanged runtime payload check is preserved against the sealed linker-only artifact; later recovered C source may legitimately change the current runtime payload.",
+  "linker_only_build": {
+    "path": ".recovery/native-absolute-bindings-linked.dll",
+    "dll_sha256": "e54936d1282cdf947c2a7a74bdd806db7fbb4dba9683ab3817805e75d85bfbd8",
+    "dbg_sha256": "9456e81352de29ce99b8fa58b5344020d7302cb8d7db66f11f50af331c8d55c4"
+  }
+}

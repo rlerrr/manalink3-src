@@ -1,0 +1,234 @@
+{
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "source": "defs.h",
+  "source_before_sha256": "59947e0641d903eadc6a2f616552878aa3bcf470bb15b105d9f4fe10e7045f35",
+  "source_after_sha256": "c9f7b8a3c268ad47ba9ac764e0f6f37c49e73a592530cae197616a61721b5e1b",
+  "enumerators": [
+    {
+      "enum": "event_t",
+      "name": "EVENT_0",
+      "value": 0,
+      "native_die_offset": "0x65676aa",
+      "previous_value": null
+    },
+    {
+      "enum": "event_t",
+      "name": "EVENT_CANT_CREW",
+      "value": 7424,
+      "native_die_offset": "0x65680c5",
+      "previous_value": 20224
+    },
+    {
+      "enum": "kill_t",
+      "name": "KILL_0",
+      "value": 0,
+      "native_die_offset": "0x6568b29",
+      "previous_value": null
+    },
+    {
+      "enum": "mpcfe_mode_t",
+      "name": "MPCFE_0",
+      "value": 0,
+      "native_die_offset": "0x657137d",
+      "previous_value": null
+    },
+    {
+      "enum": "mpcfe_mode_t",
+      "name": "MPCFE_UNTIL_YOUR_NEXT_UPKEEP",
+      "value": 64,
+      "native_die_offset": "0x65713ff",
+      "previous_value": null
+    },
+    {
+      "enum": "mpcfe_mode_t",
+      "name": "MPCFE_EXILE_ON_RESOLUTION",
+      "value": 128,
+      "native_die_offset": "0x657141e",
+      "previous_value": null
+    },
+    {
+      "enum": "mpcfe_mode_t",
+      "name": "MPCFE_ATTACK_WITH_ROGUE",
+      "value": 256,
+      "native_die_offset": "0x657143a",
+      "previous_value": null
+    },
+    {
+      "enum": "mpcfe_mode_t",
+      "name": "MPCFE_LUKKA",
+      "value": 512,
+      "native_die_offset": "0x6571455",
+      "previous_value": null
+    },
+    {
+      "enum": "mpcfe_mode_t",
+      "name": "MPCFE_DURING_YOUR_NEXT_TURN",
+      "value": 1024,
+      "native_die_offset": "0x6571464",
+      "previous_value": null
+    },
+    {
+      "enum": "keyword_t",
+      "name": "KEYWORD_CHANGELING",
+      "value": 524288,
+      "native_die_offset": "0x6569445",
+      "previous_value": null
+    },
+    {
+      "enum": "keyword_t",
+      "name": "KEYWORD_REAL_KEYWORDS",
+      "value": 1626865663,
+      "native_die_offset": "0x65695cd",
+      "previous_value": null
+    },
+    {
+      "enum": "sp_keyword_t",
+      "name": "SP_KEYWORD_RAMPAGE",
+      "value": 64,
+      "native_die_offset": "0x656de2a",
+      "previous_value": null
+    },
+    {
+      "enum": "sp_keyword_t",
+      "name": "SP_KEYWORD_TRAMPLE_OVER_PWS",
+      "value": 262144,
+      "native_die_offset": "0x656df31",
+      "previous_value": null
+    },
+    {
+      "enum": "sp_keyword_t",
+      "name": "SP_KEYWORD_MINBLOCKERS_3",
+      "value": 524288,
+      "native_die_offset": "0x656df52",
+      "previous_value": null
+    },
+    {
+      "enum": "sp_keyword_t",
+      "name": "SP_KEYWORD_MAXBLOCKERS_1",
+      "value": 2097152,
+      "native_die_offset": "0x656df90",
+      "previous_value": null
+    },
+    {
+      "enum": "sp_keyword_t",
+      "name": "SP_KEYWORD_REAL_KEYWORDS",
+      "value": 1652812559,
+      "native_die_offset": "0x656e0cc",
+      "previous_value": null
+    },
+    {
+      "enum": "sp_keyword_t",
+      "name": "SP_KEYWORD_NOT_SIMPLE_BITS",
+      "value": 357809216,
+      "native_die_offset": "0x656e0ea",
+      "previous_value": null
+    },
+    {
+      "enum": "special_flags_t",
+      "name": "SF_0",
+      "value": 0,
+      "native_die_offset": "0x656ce96",
+      "previous_value": null
+    },
+    {
+      "enum": "special_flags2_t",
+      "name": "SF2_0",
+      "value": 0,
+      "native_die_offset": "0x656d1c9",
+      "previous_value": null
+    },
+    {
+      "enum": "special_flags2_t",
+      "name": "SF2_REDIRECT",
+      "value": 1073741824,
+      "native_die_offset": "0x656d4a7",
+      "previous_value": null
+    }
+  ],
+  "source_edits": [
+    {
+      "before": "  EVENT_UNTAP_PHASE\t\t\t= 0x01,",
+      "after": "  EVENT_0 = 0,\n  EVENT_UNTAP_PHASE\t\t\t= 0x01,"
+    },
+    {
+      "before": "  EVENT_CANT_CREW\t\t\t\t\t\t\t= 0x4F00,",
+      "after": "#ifndef SHANDALAR\n  EVENT_CANT_CREW = 0x1D00, /* Native October 2022 crew-query event. */\n#else\n  EVENT_CANT_CREW\t\t\t\t\t\t\t= 0x4F00,\n#endif"
+    },
+    {
+      "before": "#ifdef SHANDALAR\n  KILL_0\t\t = 0,\n#endif",
+      "after": "  KILL_0\t\t = 0,"
+    },
+    {
+      "before": "} mpcfe_mode_t;",
+      "after": "  /* Original October 2022 enumerator names and masks. */\n  MPCFE_0 = 0x0,\n  MPCFE_UNTIL_YOUR_NEXT_UPKEEP = 0x40,\n  MPCFE_EXILE_ON_RESOLUTION = 0x80,\n  MPCFE_ATTACK_WITH_ROGUE = 0x100,\n  MPCFE_LUKKA = 0x200,\n  MPCFE_DURING_YOUR_NEXT_TURN = 0x400,\n} mpcfe_mode_t;"
+    },
+    {
+      "before": "} keyword_t;",
+      "after": "  /* Original October 2022 enumerator names and masks. */\n  KEYWORD_CHANGELING = 0x80000,\n  KEYWORD_REAL_KEYWORDS = 0x60f7ffff,\n} keyword_t;"
+    },
+    {
+      "before": "} sp_keyword_t;",
+      "after": "  /* Original October 2022 enumerator names and masks. */\n  SP_KEYWORD_RAMPAGE = 0x40,\n  SP_KEYWORD_TRAMPLE_OVER_PWS = 0x40000,\n  SP_KEYWORD_MINBLOCKERS_3 = 0x80000,\n  SP_KEYWORD_MAXBLOCKERS_1 = 0x200000,\n  SP_KEYWORD_REAL_KEYWORDS = 0x6283eb0f,\n  SP_KEYWORD_NOT_SIMPLE_BITS = 0x1553bc40,\n} sp_keyword_t;"
+    },
+    {
+      "before": "} special_flags_t;",
+      "after": "  /* Original October 2022 enumerator names and masks. */\n  SF_0 = 0x0,\n} special_flags_t;"
+    },
+    {
+      "before": "} special_flags2_t;",
+      "after": "  /* Original October 2022 enumerator names and masks. */\n  SF2_0 = 0x0,\n  SF2_REDIRECT = 0x40000000,\n} special_flags2_t;"
+    }
+  ],
+  "crew_consumers": [
+    {
+      "name": "vehicle",
+      "source": "cards/kaladesh.c",
+      "native_address": "0x239bf30",
+      "native_end": "0x239c2f0",
+      "native_bytes_sha256": "7caf0649e0f61fd7cd2f1f50ed033e5795b6aa97e37ce23f453c412f143134a1",
+      "native_event_sites": [
+        {
+          "address": "0x239bff2",
+          "bytes": "c7442408001d0000",
+          "mnemonic": "mov",
+          "operands": "dword ptr [esp + 8], 0x1d00"
+        }
+      ],
+      "definition_sha256": "96fb93f7c2014271b44075e880a4c3aa29eb8b0ebd819e39cb08564ff1a389c7"
+    },
+    {
+      "name": "this_creature_can_crew_a_vehicle",
+      "source": "cards/kaladesh.c",
+      "native_address": "0x239afe0",
+      "native_end": "0x239b00f",
+      "native_bytes_sha256": "7b1cfb43025340be2cf34227b9ac4b8c213e1d2bde857ecb7900b7097b624968",
+      "native_event_sites": [
+        {
+          "address": "0x239afe9",
+          "bytes": "c7442408001d0000",
+          "mnemonic": "mov",
+          "operands": "dword ptr [esp + 8], 0x1d00"
+        }
+      ],
+      "definition_sha256": "956e191dc6014e039a736986d797e2a34fd224f93eb84cfeff4d6127d03db2cf"
+    },
+    {
+      "name": "card_revoke_privileges",
+      "source": "cards/kaladesh.c",
+      "native_address": "0x239d820",
+      "native_end": "0x239d8cc",
+      "native_bytes_sha256": "c8403573626745269223425c7366b616c46d1710fce7085ace4a61ddd61c9a57",
+      "native_event_sites": [
+        {
+          "address": "0x239d8a0",
+          "bytes": "81ff001d0000",
+          "mnemonic": "cmp",
+          "operands": "edi, 0x1d00"
+        }
+      ],
+      "definition_sha256": "8e18daf64cf2b90dbaf90bfd9f6ccef5cfa53a1c47d5169d23d91797109e6b9d"
+    }
+  ],
+  "scope": "Restore19 native header enumerator identities and correct the Manalink EVENT_CANT_CREW value from0x4f00 to0x1d00. Native DWARF names/values and complete consumer machine ranges establish the crew event; rebuilt enum definitions and all3 compiled consumers must use0x1d00. Source function definitions are unchanged. Retained Shandalar-only event value is a separate conditional source path; no gameplay equivalence is claimed."
+}

@@ -1,0 +1,4007 @@
+{
+  "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "split_helpers": [
+    {
+      "source": "functions/produce_mana.c",
+      "name": "get_color_of_mana_produced_by_id",
+      "die_offset": "0x633bbcc",
+      "native_ranges": [
+        {
+          "address": "0x266fd90",
+          "end": "0x2670dfc",
+          "bytes_sha256": "9afb8961e6bf3948d859c009cf65398f1b0b5adff5e284940579627e27a54a7c",
+          "raw_export": ".recovery/decompiled-split-helpers/266fd90.c",
+          "raw_export_sha256": "8aefdfc0927b56e1ee56da93296356865f84bdc5a870a7ce6d89c81e1960d2f3"
+        },
+        {
+          "address": "0x2710010",
+          "end": "0x2710018",
+          "bytes_sha256": "fe2f2f5429c85a5be0377fcda079742c5a6727fe851653d1dbf9ad662198dbf4",
+          "raw_export": ".recovery/decompiled-split-helpers/266fd90.c",
+          "raw_export_sha256": "8aefdfc0927b56e1ee56da93296356865f84bdc5a870a7ce6d89c81e1960d2f3"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "csvid",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "info_slot",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                8
+              ],
+              [
+                80
+              ],
+              [
+                145,
+                8
+              ],
+              [
+                80
+              ],
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "878294099c522f4a620df7c8cf4cb49cdc58c5edab39239f7a0a616467e0158b",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "functions/deck.c",
+      "name": "effect_self_mill",
+      "die_offset": "0x673cdd7",
+      "native_ranges": [
+        {
+          "address": "0x26b66a0",
+          "end": "0x26b6c24",
+          "bytes_sha256": "c06a03ed071765635fc40ef4d7fdc0de16d1196761fd502bcc1bba86b30564c8",
+          "raw_export": ".recovery/decompiled-split-helpers/26b66a0.c",
+          "raw_export_sha256": "27583ab4da2ab2705973abd2010abaf09d4d3a8e80fb4bb13456b0c231634224"
+        },
+        {
+          "address": "0x271001d",
+          "end": "0x2710022",
+          "bytes_sha256": "937c73bdbf05cede774b5e401c64a2a83402d8dc02e7d3aa0af3bffb9e7e015c",
+          "raw_export": ".recovery/decompiled-split-helpers/26b66a0.c",
+          "raw_export_sha256": "27583ab4da2ab2705973abd2010abaf09d4d3a8e80fb4bb13456b0c231634224"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "7b637755e8158c08b78fa1432e55cc1072cba616838cf0aea6ab3e76fb4371f8",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "functions/deck.c",
+      "name": "effect_replace_self_mill",
+      "die_offset": "0x673ca74",
+      "native_ranges": [
+        {
+          "address": "0x26b6220",
+          "end": "0x26b646a",
+          "bytes_sha256": "7a6a492f7201bf9d5fa143fd0d113cfd1b5ad3d54321feeee99fd758b895ef88",
+          "raw_export": ".recovery/decompiled-split-helpers/26b6220.c",
+          "raw_export_sha256": "a6ac85ef6dafde6bb414d9c1abab7c12eec9556d63febe3269bfe90727c8227f"
+        },
+        {
+          "address": "0x2710018",
+          "end": "0x271001d",
+          "bytes_sha256": "90955d24634c261c5ba602ee18d65328625797488bf87e50ff2d9148cd3cd8f6",
+          "raw_export": ".recovery/decompiled-split-helpers/26b6220.c",
+          "raw_export_sha256": "a6ac85ef6dafde6bb414d9c1abab7c12eec9556d63febe3269bfe90727c8227f"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "19de8a61733819ec4831ab6979b1cacda4b7a1b0d9f84cb995dd48f63daec447",
+      "source_changed": false,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "functions/windows.c",
+      "name": "dlgproc_show_deck_hook",
+      "die_offset": "0x5ef4d65",
+      "native_ranges": [
+        {
+          "address": "0x2657b00",
+          "end": "0x2657e2f",
+          "bytes_sha256": "190b38f420be625f4edd0dd85c1acfcb782f1283eb59bb0c80eca79633a2a014",
+          "raw_export": ".recovery/decompiled-startup-hook/2657b00.c",
+          "raw_export_sha256": "fd9e1e8b021ecd1563e4123fcc2989c2cd7215d56058bd7192a1d6958b0fea95"
+        },
+        {
+          "address": "0x2710000",
+          "end": "0x2710007",
+          "bytes_sha256": "3bb75bbe57fe5144715e7bf0be1315d462824f3745bbe2a46c5f58a9b83c4239",
+          "raw_export": ".recovery/decompiled-startup-hook/2657b00.c",
+          "raw_export_sha256": "fd9e1e8b021ecd1563e4123fcc2989c2cd7215d56058bd7192a1d6958b0fea95"
+        }
+      ],
+      "contract": {
+        "return_type": "INT_PTR",
+        "parameters": [
+          {
+            "name": "hdlg",
+            "type": "HWND",
+            "locations": [
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "msg",
+            "type": "UINT",
+            "locations": [
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "wparam",
+            "type": "WPARAM",
+            "locations": [
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "lparam",
+            "type": "LPARAM",
+            "locations": [
+              [
+                145,
+                12
+              ],
+              [
+                145,
+                12
+              ],
+              [
+                145,
+                12
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "f6caf5348e886cd096facc9309569aefa2ef8d41e4751da00fe472538ee60f99",
+      "reviewed_in_this_batch": false
+    },
+    {
+      "source": "functions/manipulate_and_damage_all.c",
+      "name": "action_on_card_impl",
+      "die_offset": "0x61d71cd",
+      "native_ranges": [
+        {
+          "address": "0x2666bc0",
+          "end": "0x2666f0f",
+          "bytes_sha256": "07169196dcc377e949ef9a074a4d31c68517c092a32abde4a9ad2c182d44123f",
+          "raw_export": ".recovery/decompiled-action-core/2666bc0.c",
+          "raw_export_sha256": "837ea6f5e7e843f98de911dce6b75284e19f6714744ff59b5b6cfa95e43f1bd0"
+        },
+        {
+          "address": "0x2710008",
+          "end": "0x271000d",
+          "bytes_sha256": "6693b133c17552c6f15eb4d3e1f60197e50a8f6691de73cf56bc401acfb79edc",
+          "raw_export": ".recovery/decompiled-action-core/2666bc0.c",
+          "raw_export_sha256": "837ea6f5e7e843f98de911dce6b75284e19f6714744ff59b5b6cfa95e43f1bd0"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                243,
+                1,
+                80,
+                159
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                243,
+                1,
+                80,
+                159
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ],
+              [
+                80
+              ],
+              [
+                80
+              ],
+              [
+                86
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ],
+              [
+                82
+              ],
+              [
+                145,
+                104
+              ],
+              [
+                82
+              ],
+              [
+                82
+              ],
+              [
+                243,
+                1,
+                82,
+                159
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "p",
+            "type": "int",
+            "locations": [
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                145,
+                108
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                145,
+                108
+              ],
+              [
+                81
+              ],
+              [
+                145,
+                108
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                145,
+                108
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ],
+              [
+                81
+              ],
+              [
+                81
+              ],
+              [
+                243,
+                1,
+                81,
+                159
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "c",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "action",
+            "type": "actions_t",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "counter_type",
+            "type": "counter_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "counter_num",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                12
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "4b613f24e9751d0953134f4a693d33d970c636c6c339fd580e5350f9539e7733",
+      "reviewed_in_this_batch": false
+    }
+  ],
+  "cards": [
+    {
+      "source": "cards/shards_of_alara.c",
+      "name": "card_cradle_of_vitality",
+      "die_offset": "0x11a2330",
+      "native_ranges": [
+        {
+          "address": "0x213af90",
+          "end": "0x213b144",
+          "bytes_sha256": "9d1ff1c67c35848828a1ad72fa0e5faac895fcd5fabd93b120cb66f206dc170a",
+          "raw_export": ".recovery/decompiled-changed-cards/213af90.c",
+          "raw_export_sha256": "94c2c7690472f7aa7b036133457afa9224bc1f7c24b2dd412c733383632fd012"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "b902f91ceb249731737f3f45abdbbdfd3b43e2ec28206b982ecf5a8d2f08af01",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/visions.c",
+      "name": "card_dragon_mask",
+      "die_offset": "0xcb927",
+      "native_ranges": [
+        {
+          "address": "0x2016a90",
+          "end": "0x2016ca7",
+          "bytes_sha256": "94562bc75e3d96089e9f631bbafb71256cde088b3374ff61bcf096ed419df8f6",
+          "raw_export": ".recovery/decompiled-changed-cards/2016a90.c",
+          "raw_export_sha256": "e52c7277702c4dd5fd24a98ff089b77ddb5c1726142209474fdfb71595fe568f"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "b6b283bc77bb682283801465777399fcb9cc73110b301d27a510ef4da693fd58",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_precursor_golem",
+      "die_offset": "0x3f6f920",
+      "native_ranges": [
+        {
+          "address": "0x2446f50",
+          "end": "0x244723e",
+          "bytes_sha256": "d9c80282d30265a611cf11b5220658fe103764ad0b75843c282ea9a09873e9b8",
+          "raw_export": ".recovery/decompiled-changed-cards/2446f50.c",
+          "raw_export_sha256": "fecee8112daaa8bb1acec1583c4be6ab0d7a8190a757a6f29b491297f63c266f"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "8bdcbcf0d465ffa0c08eade19443bfac35e95f2e9035a79fca1245683adb5901",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/weatherlight.c",
+      "name": "card_dense_foliage",
+      "die_offset": "0x2ae4a88",
+      "native_ranges": [
+        {
+          "address": "0x22ede00",
+          "end": "0x22edf09",
+          "bytes_sha256": "32bdb6f8a0d58a619b442466799f77fdea4e1eea9f39af64073dbadecafb37ae",
+          "raw_export": ".recovery/decompiled-changed-cards/22ede00.c",
+          "raw_export_sha256": "defd4e8f4ee44937a19c625c8fdad10145ac75ece4dab50ca1d18aec1f9f1342"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "260292d627dacd8898d35c0189f71aeff1813459ed235bbe1e33a5e17acdb1ae",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/shadowmoor.c",
+      "name": "card_flourishing_defenses",
+      "die_offset": "0x4d6de6b",
+      "native_ranges": [
+        {
+          "address": "0x2550b10",
+          "end": "0x2550bef",
+          "bytes_sha256": "34da460e17a6943b33c6d508bb998653ee8d79163f4aeddd8711618662674abe",
+          "raw_export": ".recovery/decompiled-changed-cards/2550b10.c",
+          "raw_export_sha256": "a9d8d0b18de3872f5e22d04e91789e520ff64efe5a1b3f885d16aa9d9365ae9c"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "92f78fca2b38057153b7a3bc28fb498f14849d1f6eab110827d243199b7d1e5c",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/origins.c",
+      "name": "card_tainted_remedy",
+      "die_offset": "0xc37fba",
+      "native_ranges": [
+        {
+          "address": "0x20e15c0",
+          "end": "0x20e165c",
+          "bytes_sha256": "49d945309469aa202ec2daee2800564054dce0e411b8da886e8dea470329ebf2",
+          "raw_export": ".recovery/decompiled-changed-cards/20e15c0.c",
+          "raw_export_sha256": "36f97fce54ed18372e640def8610bf3b204bbfbcb1d2f087b99ab7ed3c1ece79"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "b04aba390f657f335b63e80e12c155dd8c24017fb490f00cc4e3982a842eea9a",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/apocalypse.c",
+      "name": "card_desolation_giant",
+      "die_offset": "0x551a10",
+      "native_ranges": [
+        {
+          "address": "0x2064420",
+          "end": "0x206460c",
+          "bytes_sha256": "01f6baa27eb7eab83183c6ba191734e826292d0725c720c084a38de9e52d9a08",
+          "raw_export": ".recovery/decompiled-changed-cards/2064420.c",
+          "raw_export_sha256": "b8d4b5f4e6d9b24125ef2a8bfd3160c9898cde335c252646e2afbee7a80d6dc3"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "c69450087ffdcedf23192bebe54b15418951cf55e250e277f125381d5d38ceeb",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/apocalypse.c",
+      "name": "card_desolation_angel",
+      "die_offset": "0x551c5e",
+      "native_ranges": [
+        {
+          "address": "0x2064250",
+          "end": "0x2064418",
+          "bytes_sha256": "453bcdd1d681f70c38d3bb6cd863d78e9a1dfc57086e2354ec324558e825d4c6",
+          "raw_export": ".recovery/decompiled-changed-cards/2064250.c",
+          "raw_export_sha256": "ad6f932f3740bf57b5372f55bdc492a516f691b9f99e69f37b423a907d6a1805"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "994a6514a5009d87377da9564b404f08d050816fff6574d092fd87f83d3abbd1",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_circle_of_protection_black",
+      "die_offset": "0x4672c0e",
+      "native_ranges": [
+        {
+          "address": "0x24c04a0",
+          "end": "0x24c0616",
+          "bytes_sha256": "c1bc7e9f8e989d095e85153f24ba283c1653239a28ec2eb1639d7d2b9ee2594b",
+          "raw_export": ".recovery/decompiled-changed-cards/24c04a0.c",
+          "raw_export_sha256": "1c03dbd884899d6b82c4b4192bef02c154b7cc010b8f22f6bfba8bfa09c8dda7"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "3ed2b25b1e92f9779adff7db53f286008985c20f3051a78bc42932f004228116",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_circle_of_protection_blue",
+      "die_offset": "0x4672a4f",
+      "native_ranges": [
+        {
+          "address": "0x24c0620",
+          "end": "0x24c0796",
+          "bytes_sha256": "d2c4e038600c38b042fce186653dca61daf2a40106c7a39fa5a6b285d0866c4f",
+          "raw_export": ".recovery/decompiled-changed-cards/24c0620.c",
+          "raw_export_sha256": "b8d81382f649c17f1731cfa5c91100a9ae63e7f424f813504c84eb4ccdc9a335"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "fadc667538510a67c326d07f779aa1633d480fa54b8217090a9e3d1643d81af7",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_circle_of_protection_green",
+      "die_offset": "0x467288f",
+      "native_ranges": [
+        {
+          "address": "0x24c07a0",
+          "end": "0x24c0916",
+          "bytes_sha256": "83a2432a55c14cd9cd8d350024ebd433b06128d4760a42d745405fa036d2678a",
+          "raw_export": ".recovery/decompiled-changed-cards/24c07a0.c",
+          "raw_export_sha256": "055c50cbaab22d8c78d55a9eece518cee5258ff4ff789fd8c212a8f945478a46"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "c2935cec3564c38c38e91b4422480bbb7afb671600ba492c44153221d491beb9",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_circle_of_protection_red",
+      "die_offset": "0x46726d1",
+      "native_ranges": [
+        {
+          "address": "0x24c0920",
+          "end": "0x24c0a96",
+          "bytes_sha256": "9ab7620d8589a6036ab027212041c1c9396762293e08859686bd87a76918424f",
+          "raw_export": ".recovery/decompiled-changed-cards/24c0920.c",
+          "raw_export_sha256": "a5d6f8dcfa6d882044e2bbf7ea35fb2ad03621671b8f2a01f60198e66de86aa0"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "eb3cdcfa2cb71e2edbaebf735fdd301edfb044ab663418b1fdefc42b4b753474",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_circle_of_protection_white",
+      "die_offset": "0x4672511",
+      "native_ranges": [
+        {
+          "address": "0x24c0aa0",
+          "end": "0x24c0c16",
+          "bytes_sha256": "790adfeb7c27a638c9132c2146f4813d1640d79a45325067db735b909dc53242",
+          "raw_export": ".recovery/decompiled-changed-cards/24c0aa0.c",
+          "raw_export_sha256": "f06eab05a1e0bd8d5bf8a666db4e7f3e20b2b7814960d473018644af4bf3e9c5"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "770dde11304a211900344114af342a385c324d76beea52172fd48df42f5a2cea",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/m12.c",
+      "name": "card_onyx_mage",
+      "die_offset": "0x44263af",
+      "native_ranges": [
+        {
+          "address": "0x24a1550",
+          "end": "0x24a16a9",
+          "bytes_sha256": "8d65bb89162a07b6a9b81c1edc89f6b7d044ef07bf1792d231e915268fcd68ed",
+          "raw_export": ".recovery/decompiled-changed-cards/24a1550.c",
+          "raw_export_sha256": "c18ef73817ec753d751f7b031fa37ec55df37d56b688e696fc863ba0e0b571fe"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "1a70f91af6661a1322f0497f02b933f3733bd3cad635c1fd42471f148a9d7029",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/m12.c",
+      "name": "card_crimson_mage",
+      "die_offset": "0x442807f",
+      "native_ranges": [
+        {
+          "address": "0x24a00b0",
+          "end": "0x24a0209",
+          "bytes_sha256": "dc76782ffd5136cb213e07b9aa720dfa61294a52a358fa70bc477b5f3221480f",
+          "raw_export": ".recovery/decompiled-changed-cards/24a00b0.c",
+          "raw_export_sha256": "9569a9ad582bfda973b0f36cd772182684e7cae81ef02a5a7c6a03d13904edcf"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "b87aa513092f1b0dad976062440212824197363dca3a92b623d6fc79cad1365f",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/m12.c",
+      "name": "card_alabaster_mage",
+      "die_offset": "0x4429000",
+      "native_ranges": [
+        {
+          "address": "0x249f510",
+          "end": "0x249f669",
+          "bytes_sha256": "70bd89aad6fd95437e5f2acc1270da6ba8bcb58538663e52e7d7b84eafbcd7c2",
+          "raw_export": ".recovery/decompiled-changed-cards/249f510.c",
+          "raw_export_sha256": "1987a08b7f635687084bcc767da487ce82a520fab48c16bff8309ebaa5596354"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "95a9ee1822dad4fc69f817b4e7fc00cbcd1ad4305c0d163ec6f9c62116d31173",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/m12.c",
+      "name": "card_jade_mage",
+      "die_offset": "0x44265f3",
+      "native_ranges": [
+        {
+          "address": "0x24a1450",
+          "end": "0x24a14e6",
+          "bytes_sha256": "a3c1869f259ca1642450f04573976dd9a239df9b00375f627fe0228f9ef40c12",
+          "raw_export": ".recovery/decompiled-changed-cards/24a1450.c",
+          "raw_export_sha256": "2e45c92af99031270c59854304ba6e8f57ebcecc3a1741cc033af5f7d393406d"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "0253bef846f26fa4e77f73cde73bf977c1a71e2f69b3ce716a704aef3d912c3e",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/m12.c",
+      "name": "card_azure_mage",
+      "die_offset": "0x4428a4f",
+      "native_ranges": [
+        {
+          "address": "0x249f9d0",
+          "end": "0x249fa78",
+          "bytes_sha256": "98a7ebb7a5d10b979c4bb9d6dee0e2470e67aa803069fdbec51dec71014f9274",
+          "raw_export": ".recovery/decompiled-changed-cards/249f9d0.c",
+          "raw_export_sha256": "295d4307e9e07376cfbcdc6bd3ba25753ff8bfa692520709fe8980c44703a68d"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "837e4f4792eb90b853afdcc46312f1ebaa39953c77ed4445e9d4501cc18ceb0f",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/darksteel.c",
+      "name": "card_mycosynth_lattice",
+      "die_offset": "0x20f8fdc",
+      "native_ranges": [
+        {
+          "address": "0x22531d0",
+          "end": "0x2253537",
+          "bytes_sha256": "8badabf227e8ece530450c0b21519351e8e449c717b2412cf98ead6bd67b1ef6",
+          "raw_export": ".recovery/decompiled-changed-cards/22531d0.c",
+          "raw_export_sha256": "693ad3c52bb541739352f2001123e9a28f33a8e6043af3d030bf933d5db545bb"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "c9359c2d4ad97ee9b838c7660415634e13c2c30773cd79a0a06103ed9cbcbd55",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/avacyn_restored.c",
+      "name": "card_call_to_serve",
+      "die_offset": "0x30f9f57",
+      "native_ranges": [
+        {
+          "address": "0x2340fe0",
+          "end": "0x234114d",
+          "bytes_sha256": "8741b3ed8e56b143ea0915ea67a5724708c14caca54bc783661ec8533e8b4e87",
+          "raw_export": ".recovery/decompiled-changed-cards/2340fe0.c",
+          "raw_export_sha256": "d40cfe3c3585ad98cfb0172aed76808aacfd5b1be4e3689c73cdc8a4f5a5240b"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "3e17465e7bcdfc2a7508bfa4d8dca3b743ddb549c58e761a9fae1c944dae45be",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/kaladesh.c",
+      "name": "card_larger_than_life",
+      "die_offset": "0x3646ec5",
+      "native_ranges": [
+        {
+          "address": "0x23a8fb0",
+          "end": "0x23a911b",
+          "bytes_sha256": "170b8e21dc8a6f539bdedb5190ae1f29c5ec99a8a33c9b71bf1f81fef63e888f",
+          "raw_export": ".recovery/decompiled-changed-cards/23a8fb0.c",
+          "raw_export_sha256": "ca6ab37e7648380580f80136b9ba97fa69c2381fa5b1643742c219d82a252cdc"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "463bb746e9551ed2fefdb537f73a4d00f0407cec8ea734ee203e7dfe9cc50fc2",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/planar_chaos.c",
+      "name": "card_kavu_predator",
+      "die_offset": "0x37c9d32",
+      "native_ranges": [
+        {
+          "address": "0x23ba760",
+          "end": "0x23ba7e4",
+          "bytes_sha256": "c533c5045e9b9d4767b9dba83e337101d0f27d70b5abcc043039ccf07430048b",
+          "raw_export": ".recovery/decompiled-changed-cards/23ba760.c",
+          "raw_export_sha256": "15d7425ce5b8c2f2b1e26c08faf467bf7dd5fa8d9a6d85b9f80feaab147d1a33"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "7de9a1de55bb069142c143db9a5a29bb5cf043f3abfc7bfeef4e9362943c970e",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_battle_at_the_bridge",
+      "die_offset": "0xab6c99",
+      "native_ranges": [
+        {
+          "address": "0x20be7f0",
+          "end": "0x20bea63",
+          "bytes_sha256": "5ee9a7f190a9e4120f9e87100e50045fa6717461622e484c4a589e7e3aee05c5",
+          "raw_export": ".recovery/decompiled-changed-cards/20be7f0.c",
+          "raw_export_sha256": "1ad9aebe621cfce243cc7413824d35735432d441b0dfc8560e7c6e1e4c26f468"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "d63974c7e0e54f0e4446a527b68c2eb37a07a12d4e795efbabe3dec2560152ed",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/m15.c",
+      "name": "card_spectral_ward",
+      "die_offset": "0x17d022b",
+      "native_ranges": [
+        {
+          "address": "0x21accb0",
+          "end": "0x21acdc9",
+          "bytes_sha256": "d1661063c9b9a242812db28ac4e44c49d4fcc6539639500bf975422d648ab05f",
+          "raw_export": ".recovery/decompiled-changed-cards/21accb0.c",
+          "raw_export_sha256": "cea91ca9a19c05cdd12245ca128a37a1c233fe15c9534f9ba207e155eb81c919"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "47a135cdaa84970a9df00774435daeda02e4f1a7c4ce8ffdcf3fa1f23c95a0b8",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "name": "card_hivestone",
+      "die_offset": "0xd09959",
+      "native_ranges": [
+        {
+          "address": "0x20f2c30",
+          "end": "0x20f2cc2",
+          "bytes_sha256": "1bf7e8840fdd2414a7d96d0218086d38a3fe4bd647bcbac1352dabafa8f6faaa",
+          "raw_export": ".recovery/decompiled-changed-cards/20f2c30.c",
+          "raw_export_sha256": "269cc0a069713735ec9c9f358e619dc69a520f2a099d6bf0b9bf4c0b99aeabfc"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "1764a22b1e34b36b4c3b44e2e96a927cb94d5b54a2543fcec3aeb113b451a7ec",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/ravnica.c",
+      "name": "card_warp_world",
+      "die_offset": "0x47f0583",
+      "native_ranges": [
+        {
+          "address": "0x24f5cd0",
+          "end": "0x24f5da7",
+          "bytes_sha256": "a0e6fedab0a737897ef38e85900142b1d78c6dbf4af505990d7ff58008772467",
+          "raw_export": ".recovery/decompiled-changed-cards/24f5cd0.c",
+          "raw_export_sha256": "857954fd93e2fd4aeb1ee54903a771cf4ce1fdd884439bf41cb03a2d6d7ecbc9"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "25ea88779db5c776cf13b9378335c9e28b5da9636a01b01da9ee47d189fac765",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_blaze",
+      "die_offset": "0x189784f",
+      "native_ranges": [
+        {
+          "address": "0x21b9120",
+          "end": "0x21b926c",
+          "bytes_sha256": "e68a0b69d91619213bfaaa45a1ae6f08ade7019cf6b43e8d90c493d3fb1ca9dd",
+          "raw_export": ".recovery/decompiled-changed-cards/21b9120.c",
+          "raw_export_sha256": "60e81df8c0ffa6a53a04a147a7a921b9d14c42c54426800ae06e051f7502b607"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "b0b6c7bf005d2fdb0a494944f663f7f73360f7d38e6f38e7bfc48e8c7b7ee5eb",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/ravnica.c",
+      "name": "card_eye_of_the_storm",
+      "die_offset": "0x480375e",
+      "native_ranges": [
+        {
+          "address": "0x24e7680",
+          "end": "0x24e77c0",
+          "bytes_sha256": "d38d44cac3ea5d11752d109671e810146b3cdd7b98abd965ec37bc0f2cfe4be2",
+          "raw_export": ".recovery/decompiled-changed-cards/24e7680.c",
+          "raw_export_sha256": "99652fef089f0f4f1dd483a5f736c29d9a0baa971b051df0a0dffdd2c70486f2"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "6b2232447cafebdba5151f9c40fd25b52ded68340cf21f64e3b47d367e724825",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_jump",
+      "die_offset": "0x466986e",
+      "native_ranges": [
+        {
+          "address": "0x24c72e0",
+          "end": "0x24c73c8",
+          "bytes_sha256": "4ffbd61bc0c73bccbf7a76e96ebc6e89f73e3500ac097c51da9edfd46b8f40fe",
+          "raw_export": ".recovery/decompiled-changed-cards/24c72e0.c",
+          "raw_export_sha256": "bae496642233d7efbf589486597a4ddf18fc39c9279f77592dc9a702fdc06020"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "73074d5a24a69617c532cce8cbbbac34540f406d767c0cd601d6e5ee206616bd",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/commander_2013.c",
+      "name": "card_darksteel_mutation",
+      "die_offset": "0x3887a81",
+      "native_ranges": [
+        {
+          "address": "0x23c3540",
+          "end": "0x23c3783",
+          "bytes_sha256": "6eac0ff488413752e5875c1ddb89bf9b16e93606a996c80dec34b0c3c64a247a",
+          "raw_export": ".recovery/decompiled-changed-cards/23c3540.c",
+          "raw_export_sha256": "726ab2c92736e80648b41b4ef71c58aa9605fce20a5ddb653fbe0614ea85bd0e"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "9fc683d68c098aed0131ad5af296253b92a1173528916c7e721cf0e83e9af08a",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/the_dark.c",
+      "name": "card_standing_stones",
+      "die_offset": "0x3ea97f7",
+      "native_ranges": [
+        {
+          "address": "0x2434760",
+          "end": "0x2434a4c",
+          "bytes_sha256": "88073380b2df244d195e64cc1ddd866cb05eb02014d25d3fb9e5585670098e1a",
+          "raw_export": ".recovery/decompiled-changed-cards/2434760.c",
+          "raw_export_sha256": "34d11a89c809958ee2d6fd546b1097c928ae9aae12ec8b413bb6791a55c69ed7"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "426b5daafa71df1ff834d7e53fff02682d2709389d01dc2f19cab7f194c3106c",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_rishadan_port",
+      "die_offset": "0x14afd3b",
+      "native_ranges": [
+        {
+          "address": "0x2179550",
+          "end": "0x21798ce",
+          "bytes_sha256": "0b433d5d8eb3733c7e2bbdaf7e07f34290ac830c33148c64021403a9cb9026d3",
+          "raw_export": ".recovery/decompiled-changed-cards/2179550.c",
+          "raw_export_sha256": "6ad9f38069f9f12f08d4e4c607228b8b517d5899f4c0c071ccb77f434ebfaa83"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "328a909c7598c1cbd963412059a80c0d4d89c57bf6dab693f5f78de4ecb6a9d7",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/scourge.c",
+      "name": "card_decree_of_silence",
+      "die_offset": "0x48c78b9",
+      "native_ranges": [
+        {
+          "address": "0x24f94e0",
+          "end": "0x24f98ea",
+          "bytes_sha256": "4f8e76d7f74b72eb11bbd93f96f64e2964d563631d42e8aa9381a067f0a74f39",
+          "raw_export": ".recovery/decompiled-changed-cards/24f94e0.c",
+          "raw_export_sha256": "3c2fe4834ebbeb0402eed4e3589328e97e8c2300dc2f39d823cfe1ee7f4ecfc2"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "5bfb2d18ad61528227f2d2f68bfbf082d94fcdcc760d8035e2e467af3185c40f",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/m12.c",
+      "name": "card_doubling_chant",
+      "die_offset": "0x4427ca1",
+      "native_ranges": [
+        {
+          "address": "0x24a02b0",
+          "end": "0x24a0502",
+          "bytes_sha256": "fd656bda304dd8181b3e413339641bfc44da68486528a24b891c7b30de8e0c9f",
+          "raw_export": ".recovery/decompiled-changed-cards/24a02b0.c",
+          "raw_export_sha256": "a91f48a668b5347cf68aa2e3066cb5f19b5d459deeb5e198b291d090a24b915d"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "2ff40b8ab225ddccf02bc21b62227e4dd55a01bb96dfc0f2d4152e1ea9dc14b9",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "cards/dragons_of_tarkir.c",
+      "name": "card_sabertooth_outrider",
+      "die_offset": "0x2e9cad0",
+      "native_ranges": [
+        {
+          "address": "0x2322a20",
+          "end": "0x2322b85",
+          "bytes_sha256": "bf9bd8a1db9c3f21ac48501c2ab43e2e71bd7a851e04ec9491ce8bfcef379139",
+          "raw_export": ".recovery/decompiled-changed-cards/2322a20.c",
+          "raw_export_sha256": "eb887e34e33cc90a92bd091ce1d3276db4a969cd1550caa5c08408f4f48502c0"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "87d642b39ed6d3eceb3a5731d55f9c1f6839075e21da9a22867ebc1efa390d1b",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "card_rules_engine",
+      "die_offset": "0x68bcda4",
+      "native_ranges": [
+        {
+          "address": "0x26c9140",
+          "end": "0x26caf37",
+          "bytes_sha256": "dfb2016a8d88cfca3f6e4ea477ae2456e9ec5462191c96772023656e7da76c5d",
+          "raw_export": ".recovery/decompiled-changed-cards/26c9140.c",
+          "raw_export_sha256": "9892f415690e94ef0e09f5b92b7ddbb2d8878efbf188772cf0826eeb7a9dcfbf"
+        }
+      ],
+      "contract": {
+        "return_type": "int",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "event",
+            "type": "event_t",
+            "locations": [
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "56329834593f59c511b7108241f9638536faa40584870d13539d8d46bc30dc3e",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    }
+  ],
+  "support_helpers": [
+    {
+      "source": "functions/deck.c",
+      "name": "special_mill",
+      "die_offset": "0x673411f",
+      "native_ranges": [
+        {
+          "address": "0x26b7900",
+          "end": "0x26b9422",
+          "bytes_sha256": "57f617c31b9b790d943b3da3a171caf519db0019474cf872e50563306cc8cf0d",
+          "raw_export": ".recovery/decompiled-grave-library-target/26b7900.c",
+          "raw_export_sha256": "716d4e66c0e0c3a65f6f5f58d0247ce3c434f446920ca8831c71d88c33e9d7c7"
+        }
+      ],
+      "contract": {
+        "return_type": "void",
+        "parameters": [
+          {
+            "name": "player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ],
+              [
+                145,
+                0
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "card",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ],
+              [
+                145,
+                4
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "source_csvid",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ],
+              [
+                145,
+                8
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "orig_t_player",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                12
+              ],
+              [
+                145,
+                12
+              ],
+              [
+                145,
+                12
+              ],
+              [
+                145,
+                12
+              ]
+            ],
+            "constant": null
+          },
+          {
+            "name": "amount",
+            "type": "int",
+            "locations": [
+              [
+                145,
+                16
+              ],
+              [
+                145,
+                16
+              ],
+              [
+                145,
+                16
+              ],
+              [
+                145,
+                16
+              ]
+            ],
+            "constant": null
+          }
+        ]
+      },
+      "definition_sha256": "322f017bb7f662759f883a497f4fc921e9d36e5258fb70fa1e88f8685193abca",
+      "source_changed": true,
+      "reviewed_in_this_batch": true
+    }
+  ],
+  "source_dependencies": [
+    {
+      "source": "cards/apocalypse.c",
+      "name": "desolation_creature",
+      "owner": "0x2064250",
+      "definition_sha256": "d2e390a25041231f815a546596b8dbf8d7cecbfbef0224b2deb9d656e6a86a15",
+      "inline_instances": [
+        {
+          "die_offset": "0x551cbb",
+          "ranges": [
+            {
+              "address": "0x42b5",
+              "end": "0x431e",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x4330",
+              "end": "0x4400",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x4410",
+              "end": "0x4468",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/ravnica.c",
+      "name": "store_spell_on_eye_of_the_storm",
+      "owner": "0x24e7680",
+      "definition_sha256": "b6e3bb1e3f45562f985d358a5adf682502c8f2cc010d02e3e585c790442fed49",
+      "inline_instances": [
+        {
+          "die_offset": "0x4803801",
+          "ranges": [
+            {
+              "address": "0x9a2f",
+              "end": "0x9a36",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9a39",
+              "end": "0x9a5c",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9ab0",
+              "end": "0x9ae0",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "beginning_of_combat_effects",
+      "owner": "0x26c9140",
+      "definition_sha256": "b0cf46ac15bc3a5346ce272269015d6cde37a37e273d30691039d6f4f4765c6d",
+      "inline_instances": [
+        {
+          "die_offset": "0x68bfa04",
+          "ranges": [
+            {
+              "address": "0x8600",
+              "end": "0x8624",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8d48",
+              "end": "0x8d68",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9402",
+              "end": "0x9450",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x98ad",
+              "end": "0x98c4",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9967",
+              "end": "0x9a68",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "check_trap_conditions",
+      "owner": "0x26c9140",
+      "definition_sha256": "2f8ee517c609e8631afeae9f0841adc7426d0250de98921ab4d2fceb3e2cf4e7",
+      "inline_instances": [
+        {
+          "die_offset": "0x68bd62e",
+          "ranges": [
+            {
+              "address": "0x8097",
+              "end": "0x809a",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x809c",
+              "end": "0x80b0",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8161",
+              "end": "0x81b5",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x89ef",
+              "end": "0x8a5e",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8a5e",
+              "end": "0x8b10",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8b10",
+              "end": "0x8b40",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8d68",
+              "end": "0x8dc0",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8dc0",
+              "end": "0x8e18",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9176",
+              "end": "0x9232",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9232",
+              "end": "0x9252",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9352",
+              "end": "0x9402",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9a68",
+              "end": "0x9a68",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9a68",
+              "end": "0x9a88",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9a88",
+              "end": "0x9ac1",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9ac1",
+              "end": "0x9ae1",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9ae1",
+              "end": "0x9b01",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9b01",
+              "end": "0x9b21",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9b21",
+              "end": "0x9b41",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "clear_temporary_traps",
+      "owner": "0x26c9140",
+      "definition_sha256": "96a052ebfae5a2b6bab51eb019e6d2e21298dd431aea196790163c56c22b5a19",
+      "inline_instances": [
+        {
+          "die_offset": "0x68bf7a5",
+          "ranges": [
+            {
+              "address": "0x26c9668",
+              "end": "0x26c96c8",
+              "bytes_sha256": "51bc3b77cca04911f183ade9ee69be43033348b0373bf44e79224b5ce63b0872"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "debug_settings",
+      "owner": "0x26c9140",
+      "definition_sha256": "332f72bafe4296256f7140d59098d87fe3ad950ee75aa0c4011adf5d1e38f05b",
+      "inline_instances": [
+        {
+          "die_offset": "0x68bd0c0",
+          "ranges": [
+            {
+              "address": "0x7f44",
+              "end": "0x802f",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x802f",
+              "end": "0x8067",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8388",
+              "end": "0x8438",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x88c8",
+              "end": "0x89d0",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8e18",
+              "end": "0x8e38",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "gauntlet_settings",
+      "owner": "0x26c9140",
+      "definition_sha256": "6319510640980926f1fa0e7718a40a1fd78914be47029f5c2c94b6d55f7348d8",
+      "inline_instances": [
+        {
+          "die_offset": "0x68bef2b",
+          "ranges": [
+            {
+              "address": "0x81e8",
+              "end": "0x82fd",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9098",
+              "end": "0x9158",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9252",
+              "end": "0x9352",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9450",
+              "end": "0x9558",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9652",
+              "end": "0x96ff",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9809",
+              "end": "0x9878",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9ba3",
+              "end": "0x9baf",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "keep_storm_count",
+      "owner": "0x26c9140",
+      "definition_sha256": "b422a141184058faede2419e499f6f5e82050edd647d8ff05d3e73208679625e",
+      "inline_instances": [
+        {
+          "die_offset": "0x68be050",
+          "ranges": [
+            {
+              "address": "0x81c0",
+              "end": "0x81dd",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8778",
+              "end": "0x88c8",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8f70",
+              "end": "0x9098",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9558",
+              "end": "0x9558",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9558",
+              "end": "0x956d",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x956d",
+              "end": "0x9582",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9582",
+              "end": "0x9597",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9597",
+              "end": "0x95ac",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x95ac",
+              "end": "0x9652",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x96ff",
+              "end": "0x970e",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x970e",
+              "end": "0x9723",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9723",
+              "end": "0x9738",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9738",
+              "end": "0x974d",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x974d",
+              "end": "0x9762",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9762",
+              "end": "0x9809",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9878",
+              "end": "0x9890",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9bbe",
+              "end": "0x9bbe",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9bbe",
+              "end": "0x9be8",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9c34",
+              "end": "0x9c34",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9c34",
+              "end": "0x9c54",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9c54",
+              "end": "0x9c74",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "keep_turn_count",
+      "owner": "0x26c9140",
+      "definition_sha256": "6417b72b3c3138945c69e15426537b8d947895bfed0ece902da0d7957efaf2bf",
+      "inline_instances": [
+        {
+          "die_offset": "0x68bd528",
+          "ranges": [
+            {
+              "address": "0x8087",
+              "end": "0x8097",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8150",
+              "end": "0x815e",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x89ec",
+              "end": "0x89ec",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9158",
+              "end": "0x9176",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "resolve_graveyard_eot_triggers",
+      "owner": "0x26c9140",
+      "definition_sha256": "fe33cfd208f82f8b6832e55847824bd6d0c7dfb52f7e58904d9c74d537508d8c",
+      "inline_instances": [
+        {
+          "die_offset": "0x68bf7db",
+          "ranges": [
+            {
+              "address": "0x85d0",
+              "end": "0x85f5",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8e38",
+              "end": "0x8f70",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9890",
+              "end": "0x98a2",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9b41",
+              "end": "0x9b52",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9b81",
+              "end": "0x9b92",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "resolve_graveyard_upkeep_triggers",
+      "owner": "0x26c9140",
+      "definition_sha256": "71dac06f7ac1116f20322274fed2d3efea0a7803410fc248562782e4a5a2fc4e",
+      "inline_instances": [
+        {
+          "die_offset": "0x68bf486",
+          "ranges": [
+            {
+              "address": "0x8321",
+              "end": "0x8346",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8b40",
+              "end": "0x8d48",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x98c4",
+              "end": "0x9967",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9b52",
+              "end": "0x9b81",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9b92",
+              "end": "0x9ba3",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9baf",
+              "end": "0x9bbe",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "set_trap_condition",
+      "owner": "0x26c9140",
+      "definition_sha256": "56698d4948360a56fec26ef5ff832cd5c0c6e41b9c8e6eaa26c38a3a8732eeb0",
+      "inline_instances": [
+        {
+          "die_offset": "0x68bcea3",
+          "ranges": [
+            {
+              "address": "0x850a",
+              "end": "0x850a",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x850a",
+              "end": "0x8522",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68bcf55",
+          "ranges": [
+            {
+              "address": "0x26c97de",
+              "end": "0x26c9800",
+              "bytes_sha256": "bac0fd74c9c4e449d379e2a23850b3bc264da999dc1235c44cbdf05c500e829e"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68bd8f7",
+          "ranges": [
+            {
+              "address": "0x8dc0",
+              "end": "0x8dc0",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x8dc0",
+              "end": "0x8ddb",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68bd9a7",
+          "ranges": [
+            {
+              "address": "0x26ca028",
+              "end": "0x26ca048",
+              "bytes_sha256": "d6421d8292863cba148ecf6e5c905971b926763a0095242e9b0ed8766e3bff3d"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68bdb54",
+          "ranges": [
+            {
+              "address": "0x26ca612",
+              "end": "0x26ca632",
+              "bytes_sha256": "46f9fcd99f4a0a95c0e15858d7d3dc6756f91950524da9d5b47fa08c2883c2f1"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68be221",
+          "ranges": [
+            {
+              "address": "0x9558",
+              "end": "0x9558",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9558",
+              "end": "0x956d",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68be2e7",
+          "ranges": [
+            {
+              "address": "0x956d",
+              "end": "0x956d",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x956d",
+              "end": "0x9582",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68be3ad",
+          "ranges": [
+            {
+              "address": "0x9582",
+              "end": "0x9582",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9582",
+              "end": "0x9597",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68be473",
+          "ranges": [
+            {
+              "address": "0x9597",
+              "end": "0x9597",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9597",
+              "end": "0x95ac",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68be539",
+          "ranges": [
+            {
+              "address": "0x95ac",
+              "end": "0x95ac",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x95ac",
+              "end": "0x95c1",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68be784",
+          "ranges": [
+            {
+              "address": "0x970e",
+              "end": "0x970e",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x970e",
+              "end": "0x9723",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68be84a",
+          "ranges": [
+            {
+              "address": "0x9723",
+              "end": "0x9723",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9723",
+              "end": "0x9738",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68be910",
+          "ranges": [
+            {
+              "address": "0x9738",
+              "end": "0x9738",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9738",
+              "end": "0x974d",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68be9d6",
+          "ranges": [
+            {
+              "address": "0x974d",
+              "end": "0x974d",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x974d",
+              "end": "0x9762",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68bea9c",
+          "ranges": [
+            {
+              "address": "0x9762",
+              "end": "0x9762",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9762",
+              "end": "0x9777",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "die_offset": "0x68bf0d3",
+          "ranges": [
+            {
+              "address": "0x26ca506",
+              "end": "0x26ca528",
+              "bytes_sha256": "8299d0efcc18c188ba26a1324b11b674f23cb0244b07e12e5950e9c863f19963"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "name": "vengeful_pharaoh_effect",
+      "owner": "0x26c9140",
+      "definition_sha256": "52cf8f2b624745f14a71f121beaf0e7bab04bab15f673edc80749dad0f317f52",
+      "inline_instances": [
+        {
+          "die_offset": "0x68bfbe6",
+          "ranges": [
+            {
+              "address": "0x8698",
+              "end": "0x8750",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9be8",
+              "end": "0x9c34",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "address": "0x9c74",
+              "end": "0x9d07",
+              "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "enumerators": [
+    {
+      "name": "TRAP_TURN_IS_EXTRA",
+      "value": 1797,
+      "die_offset": "0x68b97cd"
+    },
+    {
+      "name": "REF_GAIN_LIFE_TRIGGER",
+      "value": 256,
+      "die_offset": "0x68b9de5"
+    },
+    {
+      "name": "REF_EOT_ABILITY_IN_GRAVE",
+      "value": 2097152,
+      "die_offset": "0x68b9efb"
+    },
+    {
+      "name": "EVENT_GRAVEYARD_ABILITY_EOT",
+      "value": 1280,
+      "die_offset": "0x68b364d"
+    }
+  ],
+  "retired_predecessors": [
+    {
+      "source": "cards/m12.c",
+      "name": "mages"
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "cop"
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "colored_damage_source"
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "dmg_source_color"
+    }
+  ],
+  "scope": "Complete manual source-body review for 36 changed card/engine handlers, three split helpers and the mill producer. All five split-DWARF functions separately inventoried. Native inline source dependencies and ABI/ranges pinned; no claim of rebuilt byte identity or tested gameplay."
+}

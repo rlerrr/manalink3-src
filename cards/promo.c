@@ -55,8 +55,8 @@ int card_arena(int player, int card, event_t event){
 		return 0;
 	}
 
-	if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION){
-		return 0;
+	if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION && event != EVENT_CLEANUP){
+		return mana_colors_added[player] ? mana_producer(player, card, event) : 0;
 	}
 
 	card_instance_t* instance = get_card_instance(player, card);
@@ -71,18 +71,43 @@ int card_arena(int player, int card, event_t event){
 	td_opp.allow_cancel = 0;
 
 	if (event == EVENT_CAN_ACTIVATE){
+		if( mana_colors_added[player] ){
+			return mana_producer(player, card, event);
+		}
 		return (!is_tapped(player, card) && !is_animated_and_sick(player, card) && !paying_mana()
 				&& can_use_activated_abilities(player, card) && has_mana_for_activated_ability(player, card, MANACOST_X(3))
 				&& can_target(&td_me) && can_target(&td_opp));
 	}
 
 	if (event == EVENT_ACTIVATE){
+		int choice = 2;
+		if( mana_colors_added[player] ){
+			if( paying_mana() || is_tapped(player, card) || is_animated_and_sick(player, card) || paying_mana()
+				|| !can_use_activated_abilities(player, card) || !has_mana_for_activated_ability(player, card, MANACOST_X(4))
+				|| !can_target(&td_me) || !can_target(&td_opp) ){
+				choice = 1;
+			}else if( !IS_AI(player) ){
+				choice = DIALOG(player, card, event, DLG_RANDOM,
+					"Get mana", 1, 1,
+					"Use Ability", 1, 1);
+				if( !choice ){
+					spell_fizzled = 1;
+					return 0;
+				}
+			}
+		}
+		instance->info_slot = choice;
+		if( choice == 1 ){
+			mana_producer(player, card, event);
+			return 0;
+		}
 		if (paying_mana()){
 			cancel = 1;
 			return 0;
 		}
 
 		charge_mana_for_activated_ability(player, card, MANACOST_X(3));
+		tapped_for_mana_color = -1;
 
 		if (cancel != 1){
 			instance->number_of_targets = 0;
@@ -104,7 +129,7 @@ int card_arena(int player, int card, event_t event){
 					}
 					instance->number_of_targets = 2;
 				}
-				do_dialog(player, player, card, instance->targets[1].player, instance->targets[1].card, text_lines[1] /*"Selected for Arena"*/, 0);
+				do_dialog(player, player, card, instance->targets[1].player, instance->targets[1].card, "Selected for Arena", 0);
 			} else {	// player == AI
 				if (trace_mode & 2){
 					cancel = pick_target(&td_me, "ARENA") ? 0 : 1;
@@ -121,7 +146,7 @@ int card_arena(int player, int card, event_t event){
 				if (cancel != 1){
 					instance->state |= STATE_TAPPED;
 
-					do_dialog(player, player, card, instance->targets[0].player, instance->targets[0].card, text_lines[1] /*"Selected for Arena"*/, 0);
+					do_dialog(player, player, card, instance->targets[0].player, instance->targets[0].card, "Selected for Arena", 0);
 					new_pick_target(&td_opp, "ARENA", 1, 0);
 
 					if (trace_mode & 2){
@@ -138,7 +163,7 @@ int card_arena(int player, int card, event_t event){
 		return 0;
 	}
 
-	if (event == EVENT_RESOLVE_ACTIVATION){
+	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == 2){
 		int target_0_valid = validate_target(player, card, &td_me, 0);
 		int target_1_valid = validate_target(player, card, &td_opp, 1);
 
@@ -263,12 +288,13 @@ int card_call_from_the_grave(int player, int card, event_t event){
 		default_test_definition(&test, TYPE_CREATURE);
 		test.cmc = 3;
 		test.cmc_flag = F5_CMC_GREATER_THAN_VALUE;
-		if( new_special_count_grave(player, &test) || new_special_count_grave(player, &test) ){
+		if( new_special_count_grave(player, &test) != -1 || new_special_count_grave(1-player, &test) != -1 ){
 			ai_modifier += 48;
 		}
 	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
+		if (count_graveyard_by_type(ANYBODY, TYPE_CREATURE) < 1){ kill_card(player, card, KILL_DESTROY); return 0; }
 		int corpses[500];
 		int cc = 0;
 		int i;
@@ -293,6 +319,7 @@ int card_call_from_the_grave(int player, int card, event_t event){
 			pos &= ~(1<<31);
 		}
 		int card_added = reanimate_permanent(player, card, t_player, pos, REANIMATE_DEFAULT);
+		if (card_added < 1){ spell_fizzled = 1; return 0; }
 		damage_player(player, get_cmc(player, card_added), player, card);
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -319,7 +346,7 @@ int card_faerie_dragon(int player, int card, event_t event)
 
   if (event == EVENT_ACTIVATE && charge_mana_for_activated_ability(player, card, MANACOST_XG(1,2)))
 	{
-	  int abil = (trace_mode & 2) ? EXE_FN(int, 0x44E070, int, int)(player, 20) : internal_rand(20);	// 0x44E070 either picks a random number and sends it over the network, or awaits a number of the network
+	  int abil = network_rand(player, 20);	// 0x44E070 either picks a random number and sends it over the network, or awaits a number of the network
 
 	  card_instance_t* instance = get_card_instance(player, card);
 
@@ -327,7 +354,7 @@ int card_faerie_dragon(int player, int card, event_t event)
 
 	  int numtgts = EXE_FN(int, 0x473370, int, int, target_t*)(player, card, tgts);	// picks random targets, sends/receives over network
 
-	  int chosen = (trace_mode & 2) ? EXE_FN(int, 0x44E070, int, int)(player, numtgts) : internal_rand(numtgts);
+	  int chosen = network_rand(player, numtgts);
 
 	  instance->targets[0].player = tgts[chosen].player;
 	  instance->targets[0].card = tgts[chosen].card;
@@ -529,9 +556,12 @@ int card_gem_bazaar(int player, int card, event_t event){
 	  When Gem Bazaar comes into play, choose a random color.
 	  |T: Add to your mana pool one mana of the color last chosen. Then choose a random color.
 	*/
-	if( comes_into_play(player, card, event) ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if (event == EVENT_ETB_ABILITY){
 		play_sound_effect(WAV_GEMBAZAR);
-		get_card_instance(player, card)->info_slot = 1<<(1+internal_rand(5));
+		if (!is_humiliated(player, card, AL_TRIG)){
+			get_card_instance(player, card)->info_slot = 1<<(1+internal_rand(5));
+		}
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
@@ -540,7 +570,7 @@ int card_gem_bazaar(int player, int card, event_t event){
 		get_card_instance(instance->parent_controller, instance->parent_card)->info_slot = 1<<(1+internal_rand(5));
 	}
 
-	return mana_producer(player, card, event);
+	return plain_mana_producer(player, card, event);
 }
 
 int card_giant_badger(int player, int card, event_t event){
@@ -623,6 +653,7 @@ int card_goblin_polka_band(int player, int card, event_t event)
 		  max_x_value = old_max_x_value;
 		  if (cancel != 1)
 			{
+			  tapped_for_mana_color = -1;
 			  instance->state |= STATE_TAPPED;
 
 			  if (x_value <= 0)
@@ -1023,15 +1054,17 @@ int card_rainbow_knights(int player, int card, event_t event){
 	*/
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( ! is_humiliated(player, card, AL_STATIC) ){
-		if( comes_into_play(player, card, event) ){
-			instance->targets[1].card = 1<<(11+internal_rand(5));
-		}
-
-		if( event == EVENT_ABILITIES && affect_me(player, card) && instance->targets[1].card > -1 ){
-			event_result |= instance->targets[1].card;
-		}
-	}
+	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+        instance->targets[1].card = 0;
+    }
+    etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (event == EVENT_ETB_ABILITY){
+        instance->targets[1].card |= 1 << (11 + internal_rand(5));
+    }
+    if (event == EVENT_ABILITIES && affect_me(player, card) && (instance->targets[1].card & 0xf800) &&
+        !is_humiliated(player, card, AL_STATIC)){
+        event_result |= instance->targets[1].card & 0xf800;
+    }
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		if( generic_activated_ability(player, card, event, 0, MANACOST_W(2), 0, NULL, NULL) ){

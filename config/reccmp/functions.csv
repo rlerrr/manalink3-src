@@ -1242,6 +1242,7 @@ address,type,name,size,native_name,source,mapping
 0x2080580,function,card_grave_bramble,100,card_grave_bramble,cards/innistrad.c,same native name
 0x20805f0,function,card_graveyard_shovel,558,card_graveyard_shovel,cards/innistrad.c,same native name
 0x2080820,function,card_gruesome_deformity,93,card_gruesome_deformity,cards/innistrad.c,same native name
+0x2080880,function,card_hanweir_watchkeep,60,card_hanweir_watchkeep,cards/innistrad.c,same native name
 0x20808c0,function,card_harvest_pyre,807,card_harvest_pyre,cards/innistrad.c,same native name
 0x2080bf0,function,card_heretics_punishment,462,card_heretics_punishment,cards/innistrad.c,same native name
 0x2080dc0,function,card_hollowhenge_scavenger,98,card_hollowhenge_scavenger,cards/innistrad.c,same native name
@@ -1756,6 +1757,7 @@ address,type,name,size,native_name,source,mapping
 0x20b10d0,function,effect_ideas,105,effect_ideas,cards/saviors_of_kamigawa.c,same native name
 0x20b1140,function,effect_sakashima_the_impostor,331,effect_sakashima_the_impostor,cards/saviors_of_kamigawa.c,same native name
 0x20b1290,function,wine_of_blood_and_iron_legacy,237,wine_of_blood_and_iron_legacy,cards/saviors_of_kamigawa.c,same native name
+0x20b13b0,function,card_choice_of_damnation_impl,849,card_choice_of_damnation_impl,cards/saviors_of_kamigawa.c,recovery ledger
 0x20b1710,function,epic_legacy,143,epic_legacy,cards/saviors_of_kamigawa.c,same native name
 0x20b17a0,function,card_adamaro_first_to_desire,101,card_adamaro_first_to_desire,cards/saviors_of_kamigawa.c,same native name
 0x20b1810,function,card_akki_drillmaster,744,card_akki_drillmaster,cards/saviors_of_kamigawa.c,same native name
@@ -2145,6 +2147,7 @@ address,type,name,size,native_name,source,mapping
 0x20d9420,function,block_deal2dam,48,block_deal2dam,cards/origins.c,same native name
 0x20d9450,function,target_power_toughness_arent_equal,61,target_power_toughness_arent_equal,cards/origins.c,same native name
 0x20d9490,function,touch_of_moonglove_legacy,405,touch_of_moonglove_legacy,cards/origins.c,same native name
+0x20d9630,function,shadows_of_the_past_effect,679,shadows_of_the_past_effect,cards/origins.c,recovery ledger
 0x20d98e0,function,touch_of_moonglove_effect,452,touch_of_moonglove_effect,cards/origins.c,same native name
 0x20d9ab0,function,fx_fog_by_power_le_4,138,fx_fog_by_power_le_4,cards/origins.c,same native name
 0x20d9b40,function,pyromancers_goggles_legacy,384,pyromancers_goggles_legacy,cards/origins.c,recovery ledger
@@ -2317,7 +2320,7 @@ address,type,name,size,native_name,source,mapping
 0x20e7750,function,card_foundry_of_the_consuls,589,card_foundry_of_the_consuls,cards/origins.c,same native name
 0x20e79a0,function,card_mage_ring_network,1220,card_mage_ring_network,cards/origins.c,same native name
 0x20e7e70,function,is_instant_or_has_flash,34,is_instant_or_has_flash,cards/time_spiral.c,same native name
-0x20e7ea0,function,target_must_be_permanent_or_suspend,106,target_must_be_permanent_or_suspend,cards/time_spiral.c,public COFF entry 0x2574cf0
+0x20e7ea0,function,target_must_be_permanent_or_suspend,106,target_must_be_permanent_or_suspend,cards/time_spiral.c,public COFF entry 0x2588d10
 0x20e7f10,function,generic_suspend_legacy,1965,generic_suspend_legacy,cards/time_spiral.c,same native name
 0x20e86c0,function,angels_grace_legacy,118,angels_grace_legacy,cards/time_spiral.c,same native name
 0x20e8740,function,can_make_saproling_from_fungus,108,can_make_saproling_from_fungus,cards/time_spiral.c,same native name
@@ -2683,6 +2686,7 @@ address,type,name,size,native_name,source,mapping
 0x2109f60,function,card_scrying_glass,624,card_scrying_glass,cards/urza_destiny.c,recovery ledger
 0x210a1d0,function,card_storage_matrix,3,card_storage_matrix,cards/urza_destiny.c,recovery ledger
 0x210a1e0,function,faiths_shield_legacy,202,faiths_shield_legacy,cards/dark_ascension.c,same native name
+0x210a2b0,function,you_own,40,you_own,cards/dark_ascension.c,recovery ledger
 0x210a2e0,function,requiem_angel_effect,787,requiem_angel_effect,cards/dark_ascension.c,same native name
 0x210a600,function,havengul_lich_legacy,254,havengul_lich_legacy,cards/dark_ascension.c,recovery ledger
 0x210a700,function,can_cast_this_havengul,28,can_cast_this,cards/dark_ascension.c,recovery ledger
@@ -3060,6 +3064,7 @@ address,type,name,size,native_name,source,mapping
 0x212aab0,function,hybernating_sliver_shared_ability,505,hybernating_sliver_shared_ability,cards/stronghold.c,same native name
 0x212acb0,function,lowland_basilisk_effect,48,lowland_basilisk_effect,cards/stronghold.c,same native name
 0x212ad10,function,destroy_token_at_next_eot,100,destroy_token_at_next_eot,cards/stronghold.c,recovery ledger
+0x212ad80,function,grave_pact_effect,777,grave_pact_effect,cards/stronghold.c,recovery ledger
 0x212b090,function,jinxed_ring_effect,746,jinxed_ring_effect,cards/stronghold.c,same native name
 0x212b380,function,source_type_spell_damage_prevented,129,source_type_spell_damage_prevented,cards/stronghold.c,recovery ledger
 0x212b410,function,mortuary_effect,966,mortuary_effect,cards/stronghold.c,same native name
@@ -3347,6 +3352,7 @@ address,type,name,size,native_name,source,mapping
 0x2148320,function,interdict_legacy,129,interdict_legacy,cards/tempest.c,same native name
 0x21483b0,function,not_effect_from_monotype_planeswalker,136,not_effect_from_monotype_planeswalker,cards/tempest.c,same native name
 0x2148470,function,is_blocking_flowstone_salamander,44,is_blocking_flowstone_salamander,cards/tempest.c,recovery ledger
+0x21484a0,function,sadistic_glee_effect,791,sadistic_glee_effect,cards/tempest.c,recovery ledger
 0x21487c0,function,soltari_guerrillas_effect,270,soltari_guerrillas_effect,cards/tempest.c,same native name
 0x21488d0,function,effect_unstable_shapeshifter,227,effect_unstable_shapeshifter,cards/tempest.c,same native name
 0x21489c0,function,damage_controller_and_you,128,damage_controller_and_you,cards/tempest.c,recovery ledger
@@ -4187,12 +4193,15 @@ address,type,name,size,native_name,source,mapping
 0x2197c20,function,give_trample,72,give_trample,cards/khans_of_tarkir.c,same native name
 0x2197c70,function,singing_bell_strike_ability,487,singing_bell_strike_ability,cards/khans_of_tarkir.c,same native name
 0x2197e60,function,death_frenzy_legacy,174,death_frenzy_legacy,cards/khans_of_tarkir.c,same native name
+0x2197f10,function,grim_haruspex_effect,739,grim_haruspex_effect,cards/khans_of_tarkir.c,recovery ledger
+0x2198200,function,kheru_bloodsucker_effect,857,kheru_bloodsucker_effect,cards/khans_of_tarkir.c,recovery ledger
 0x2198560,function,sultai_flayer_effect,719,sultai_flayer_effect,cards/khans_of_tarkir.c,recovery ledger
 0x2198830,function,molting_snakeskin_ability,388,molting_snakeskin_ability,cards/khans_of_tarkir.c,same native name
 0x21989c0,function,has_tou_lesser_than_available_p1_p1_counters,96,has_tou_lesser_than_available_p1_p1_counters,cards/khans_of_tarkir.c,same native name
 0x2198a20,function,ashcloud_phoenix_legacy,252,ashcloud_phoenix_legacy,cards/khans_of_tarkir.c,same native name
 0x2198b20,function,burn_away_legacy,350,burn_away_legacy,cards/khans_of_tarkir.c,same native name
 0x2198c80,function,meandering_towershell_legacy,428,meandering_towershell_legacy,cards/khans_of_tarkir.c,same native name
+0x2198e30,function,abzan_ascendancy_effect,744,abzan_ascendancy_effect,cards/khans_of_tarkir.c,recovery ledger
 0x2199120,function,kheru_lich_lord_legacy,474,kheru_lich_lord_legacy,cards/khans_of_tarkir.c,same native name
 0x2199300,function,is_colorless_creature,39,is_colorless_creature,cards/khans_of_tarkir.c,same native name
 0x2199330,function,raid_cip,114,raid_cip,cards/khans_of_tarkir.c,same native name
@@ -4393,6 +4402,7 @@ address,type,name,size,native_name,source,mapping
 0x21a9970,function,effect_mercurial_pretender,267,effect_mercurial_pretender,cards/m15.c,same native name
 0x21a9a80,function,get_num_colors_of_permanents,158,get_num_colors_of_permanents,cards/m15.c,same native name
 0x21a9b20,function,eternal_thirst_effect,783,eternal_thirst_effect,cards/m15.c,recovery ledger
+0x21a9e30,function,generator_servant_legacy,494,generator_servant_legacy,cards/m15.c,recovery ledger
 0x21aa020,function,profane_memento_effect,700,profane_memento_effect,cards/m15.c,same native name
 0x21aa2e0,function,constricting_sliver_legacy,402,constricting_sliver_legacy,cards/m15.c,same native name
 0x21aa480,function,phytotitan_legacy,137,phytotitan_legacy,cards/m15.c,same native name
@@ -4852,7 +4862,7 @@ address,type,name,size,native_name,source,mapping
 0x21d4080,function,card_planewide_celebration,1748,card_planewide_celebration,cards/war_of_the_spark.c,recovery ledger
 0x21d4760,function,card_prismite,628,card_prismite,cards/war_of_the_spark.c,recovery ledger
 0x21d49e0,function,card_prison_realm,300,card_prison_realm,cards/war_of_the_spark.c,recovery ledger
-0x21d4b10,function,count_type_in_hand,93,count_type_in_hand,cards/war_of_the_spark.c,public COFF entry 0x26046e0
+0x21d4b10,function,count_type_in_hand,93,count_type_in_hand,cards/war_of_the_spark.c,public COFF entry 0x261a2b0
 0x21d4b70,function,card_ral_storm_conduit,549,card_ral_storm_conduit,cards/war_of_the_spark.c,recovery ledger
 0x21d4da0,function,card_return_to_nature,1509,card_return_to_nature,cards/war_of_the_spark.c,recovery ledger
 0x21d5390,function,card_roalesk_apex_hybrid,310,card_roalesk_apex_hybrid,cards/war_of_the_spark.c,recovery ledger
@@ -4883,6 +4893,7 @@ address,type,name,size,native_name,source,mapping
 0x21d95d0,function,necromantic_selection_legacy,401,necromantic_selection_legacy,cards/commander_2014.c,same native name
 0x21d9770,function,overseer_of_the_damned_effect,732,overseer_of_the_damned_effect,cards/commander_2014.c,same native name
 0x21d9a50,function,siege_behemoth_legacy,153,siege_behemoth_legacy,cards/commander_2014.c,same native name
+0x21d9af0,function,titania_effect,720,titania_effect,cards/commander_2014.c,recovery ledger
 0x21d9dc0,function,fools_demise_legacy,146,fools_demise_legacy,cards/commander_2014.c,same native name
 0x21d9e60,function,liutenant,20,liutenant,cards/commander_2014.c,same native name
 0x21d9e80,function,card_angel_of_the_dire_hour,336,card_angel_of_the_dire_hour,cards/commander_2014.c,same native name
@@ -5731,6 +5742,7 @@ address,type,name,size,native_name,source,mapping
 0x222bc00,function,tide_shaper_effect,211,tide_shaper_effect,cards/modern_horizons_2.c,recovery ledger
 0x222bce0,function,one_or_more_p1_p1_counters_are_putted_on_me,155,one_or_more_p1_p1_counters_are_putted_on_me,cards/modern_horizons_2.c,recovery ledger
 0x222bdd0,function,ward_granted,965,ward_granted,cards/modern_horizons_2.c,recovery ledger
+0x222c1a0,function,ward,113,ward,cards/modern_horizons_2.c,same native name
 0x222c220,function,ward_mana,115,ward_mana,cards/modern_horizons_2.c,recovery ledger
 0x222c2a0,function,ward_life,120,ward_life,cards/modern_horizons_2.c,recovery ledger
 0x222c320,function,ward_discard,121,ward_discard,cards/modern_horizons_2.c,recovery ledger
@@ -6190,10 +6202,12 @@ address,type,name,size,native_name,source,mapping
 0x2259220,function,immobilizer_eldrazi_legacy,190,immobilizer_eldrazi_legacy,cards/oath_of_the_gatewatch.c,same native name
 0x22592e0,function,tap_before_putting_card_in_play,34,tap_before_putting_card_in_play,cards/oath_of_the_gatewatch.c,same native name
 0x2259310,function,dazzling_reflection_legacy,172,dazzling_reflection_legacy,cards/oath_of_the_gatewatch.c,same native name
+0x22593c0,function,is_creature_or_pwalker,74,is_creature_or_pwalker,cards/oath_of_the_gatewatch.c,same native name
 0x2259410,function,stone_haven_outfitter_effect,754,stone_haven_outfitter_effect,cards/oath_of_the_gatewatch.c,same native name
 0x2259710,function,sifter_of_skulls_effect,607,sifter_of_skulls_effect,cards/oath_of_the_gatewatch.c,same native name
 0x2259970,function,has_me_in_all_zones,321,has_me_in_all_zones,cards/oath_of_the_gatewatch.c,same native name
 0x2259af0,function,gladehart_cavalry_effect,714,gladehart_cavalry_effect,cards/oath_of_the_gatewatch.c,same native name
+0x2259dc0,function,effect_flaying_tendrils,165,effect_flaying_tendrils,cards/oath_of_the_gatewatch.c,recovery ledger
 0x2259e70,function,kalitas_traitor_of_ghet_effect,1014,kalitas_traitor_of_ghet_effect,cards/oath_of_the_gatewatch.c,same native name
 0x225a270,function,wandering_fumarole_animated_ability,352,wandering_fumarole_animated_ability,cards/oath_of_the_gatewatch.c,same native name
 0x225a3d0,function,is_land_creature,85,is_land_creature,cards/oath_of_the_gatewatch.c,same native name
@@ -6364,6 +6378,8 @@ address,type,name,size,native_name,source,mapping
 0x226cdd0,function,generic_splicer,141,generic_splicer,cards/new_phyrexia.c,same native name
 0x226ce60,function,cmc_is_1,44,cmc_is_1,cards/new_phyrexia.c,same native name
 0x226ce90,function,bludgeon_brawl_effect,676,bludgeon_brawl_effect,cards/new_phyrexia.c,recovery ledger
+0x226d140,function,cathedral_membrane_legacy,87,cathedral_membrane_legacy,cards/new_phyrexia.c,recovery ledger
+0x226d1a0,function,deal_6_damage_legacy,427,deal_6_damage_legacy,cards/new_phyrexia.c,recovery ledger
 0x226d380,function,np_shrines,295,np_shrines,cards/new_phyrexia.c,same native name
 0x226d4b0,function,due_respect_legacy,110,due_respect_legacy,cards/new_phyrexia.c,same native name
 0x226d520,function,arm_with_aether_legacy,458,arm_with_aether_legacy,cards/new_phyrexia.c,same native name
@@ -6520,6 +6536,7 @@ address,type,name,size,native_name,source,mapping
 0x227d840,function,nevermaker_effect,458,nevermaker_effect,cards/morningtide.c,same native name
 0x227da10,function,offalsnout_effect,639,offalsnout_effect,cards/morningtide.c,same native name
 0x227dc90,function,forbidden_land_sacrifices_for_ai,95,forbidden_land_sacrifices_for_ai,cards/morningtide.c,same native name
+0x227dcf0,function,thornbite_staff_effect,720,thornbite_staff_effect,cards/morningtide.c,recovery ledger
 0x227dfc0,function,banneret,145,banneret,cards/morningtide.c,same native name
 0x227e060,function,auto_attaching_equipment,200,auto_attaching_equipment,cards/morningtide.c,same native name
 0x227e130,function,kinship,190,kinship,cards/morningtide.c,same native name
@@ -6838,18 +6855,22 @@ address,type,name,size,native_name,source,mapping
 0x229e290,function,wayward_disciple_effect,661,wayward_disciple_effect,cards/shadows_over_innistrad.c,same native name
 0x229e530,function,skin_invasion_legacy,280,skin_invasion_legacy,cards/shadows_over_innistrad.c,same native name
 0x229e650,function,p1_p1_if_spirit,91,p1_p1_if_spirit,cards/shadows_over_innistrad.c,same native name
+0x229e6b0,function,lilianas_indignation_legacy,275,lilianas_indignation_legacy,cards/shadows_over_innistrad.c,recovery ledger
 0x229e7d0,function,is_an_attacking_wolf_or_werewolf,105,is_an_attacking_wolf_or_werewolf,cards/shadows_over_innistrad.c,same native name
 0x229e840,function,damage_my_blockers,308,damage_my_blockers,cards/shadows_over_innistrad.c,same native name
 0x229e980,function,haste_and_bounce_eot,166,haste_and_bounce_eot,cards/shadows_over_innistrad.c,same native name
 0x229ea30,function,olivia_mobilized_for_war_legacy,139,olivia_mobilized_for_war_legacy,cards/shadows_over_innistrad.c,same native name
 0x229eac0,function,can_activate,148,can_activate,cards/shadows_over_innistrad.c,same native name
 0x229eb60,function,whenever_a_clue_is_sacrificed,257,whenever_a_clue_is_sacrificed,cards/shadows_over_innistrad.c,same native name
+0x229ec70,function,graf_mole_effect,608,graf_mole_effect,cards/shadows_over_innistrad.c,recovery ledger
+0x229eed0,function,fleeting_memories_effect,783,fleeting_memories_effect,cards/shadows_over_innistrad.c,recovery ledger
 0x229f1e0,function,make_human_soldier,81,make_human_soldier,cards/shadows_over_innistrad.c,same native name
 0x229f240,function,make_wolf,79,make_wolf,cards/shadows_over_innistrad.c,same native name
 0x229f290,function,delirium_upkeep_trigger,107,delirium_upkeep_trigger,cards/shadows_over_innistrad.c,same native name
 0x229f300,function,delirium_boost,237,delirium_boost,cards/shadows_over_innistrad.c,same native name
 0x229f3f0,function,delirium,28,delirium,cards/shadows_over_innistrad.c,same native name
 0x229f410,function,investigate,194,investigate,cards/shadows_over_innistrad.c,same native name
+0x229f4e0,function,ulvenwald_mysteries_effect,985,ulvenwald_mysteries_effect,cards/shadows_over_innistrad.c,recovery ledger
 0x229f8c0,function,make_devil,93,make_devil,cards/shadows_over_innistrad.c,recovery ledger
 0x229f920,function,soi_need_subtype_land,358,soi_need_subtype_land,cards/shadows_over_innistrad.c,same native name
 0x229fa90,function,card_always_watching,281,card_always_watching,cards/shadows_over_innistrad.c,same native name
@@ -7109,8 +7130,10 @@ address,type,name,size,native_name,source,mapping
 0x22b3f70,function,card_ormendahl_profane_prince,76,card_ormendahl_profane_prince,cards/shadows_over_innistrad.c,same native name
 0x22b3fc0,function,card_clue,146,card_clue,cards/shadows_over_innistrad.c,same native name
 0x22b4060,function,card_devil_token,210,card_devil_token,cards/shadows_over_innistrad.c,same native name
+0x22b4140,function,has_mbt_by_iid,83,has_mbt_by_iid,cards/m13.c,recovery ledger
 0x22b41a0,function,m13_ring,1735,m13_ring,cards/m13.c,same native name
 0x22b4870,function,odric_effect,67,odric_effect,cards/m13.c,same native name
+0x22b48c0,function,xathrid_ability_legacy,101,xathrid_ability_legacy,cards/m13.c,recovery ledger
 0x22b4930,function,uthden_creature,118,uthden_creature,cards/m13.c,same native name
 0x22b49b0,function,uthden_m13_creature,143,uthden_m13_creature,cards/m13.c,same native name
 0x22b4a40,function,card_ajani_caller_of_the_pride,1145,card_ajani_caller_of_the_pride,cards/m13.c,same native name
@@ -7335,7 +7358,7 @@ address,type,name,size,native_name,source,mapping
 0x22c63c0,function,general_has_partner,73,general_has_partner,cards/vanguard.c,recovery ledger
 0x22c6410,function,get_partner_with_id,30,get_partner_with_id,cards/vanguard.c,recovery ledger
 0x22c6430,function,commander_enters_the_battlefield,178,commander_enters_the_battlefield,cards/vanguard.c,same native name
-0x22c64f0,function,locate_edh_card,80,locate_edh_card,cards/vanguard.c,public COFF entry 0x25e1f50
+0x22c64f0,function,locate_edh_card,80,locate_edh_card,cards/vanguard.c,public COFF entry 0x25f7490
 0x22c6540,function,is_commander_in_command_zone,69,is_commander_in_command_zone,cards/vanguard.c,recovery ledger
 0x22c6590,function,put_commander_from_command_zone_to_impl,937,put_commander_from_command_zone_to_impl,cards/vanguard.c,recovery ledger
 0x22c6940,function,get_commander_storm_count,77,get_commander_storm_count,cards/vanguard.c,recovery ledger
@@ -7707,6 +7730,7 @@ address,type,name,size,native_name,source,mapping
 0x22e9c80,function,remove_top_creature_card_from_grave,88,remove_top_creature_card_from_grave,cards/weatherlight.c,same native name
 0x22e9ce0,function,tolarian_entrancer_ability,48,tolarian_entrancer_ability,cards/weatherlight.c,same native name
 0x22e9d10,function,damage_blocked_blocking_creature,48,damage_blocked_blocking_creature,cards/weatherlight.c,recovery ledger
+0x22e9d40,function,angelic_renewal_effect,1168,angelic_renewal_effect,cards/weatherlight.c,recovery ledger
 0x22ea1d0,function,bosium_strip_legacy,312,bosium_strip_legacy,cards/weatherlight.c,same native name
 0x22ea310,function,dingus_staff_effect,743,dingus_staff_effect,cards/weatherlight.c,same native name
 0x22ea600,function,lose_1_life_thunk,31,lose_1_life_thunk,cards/weatherlight.c,same native name
@@ -8144,6 +8168,7 @@ address,type,name,size,native_name,source,mapping
 0x23100f0,function,card_zof_consumption,231,card_zof_consumption,cards/zendikar_rising.c,recovery ledger
 0x23101e0,function,plagiarize_legacy,184,plagiarize_legacy,cards/torment.c,same native name
 0x23102a0,function,effect_prevent_combat_damage_to_or_from,170,effect_prevent_combat_damage_to_or_from,cards/torment.c,recovery ledger
+0x2310350,function,prevent_all_damage_of_a_source_until_eot_legacy,203,prevent_all_damage_of_a_source_until_eot_legacy,cards/torment.c,recovery ledger
 0x2310420,function,turn_into_black_nightmare,96,turn_into_black_nightmare,cards/torment.c,same native name
 0x2310480,function,dream,173,dream,cards/torment.c,same native name
 0x2310530,function,insist_effect,444,insist_effect,cards/torment.c,same native name
@@ -8460,6 +8485,7 @@ address,type,name,size,native_name,source,mapping
 0x232a650,function,sangromancer_effect,697,sangromancer_effect,cards/mirrodin_besieged.c,same native name
 0x232a910,function,massacre_wurm_effect,845,massacre_wurm_effect,cards/mirrodin_besieged.c,same native name
 0x232ac60,function,effect_hero_of_oxid_ridge,94,effect_hero_of_oxid_ridge,cards/mirrodin_besieged.c,same native name
+0x232acc0,function,fangren_marauder_effect,703,fangren_marauder_effect,cards/mirrodin_besieged.c,recovery ledger
 0x232af80,function,magnetic_mine_effect,826,magnetic_mine_effect,cards/mirrodin_besieged.c,same native name
 0x232b2c0,function,virulent_wound_legacy,369,virulent_wound_legacy,cards/mirrodin_besieged.c,same native name
 0x232b440,function,is_nonland_permanent_by_iid,88,is_nonland_permanent_by_iid,cards/mirrodin_besieged.c,same native name
@@ -8963,7 +8989,7 @@ address,type,name,size,native_name,source,mapping
 0x23597f0,function,sacrifice_eot,237,sacrifice_eot,cards/theros_beyond_death.c,recovery ledger
 0x23598e0,function,akroan_war_legacy,94,akroan_war_legacy,cards/theros_beyond_death.c,recovery ledger
 0x2359940,function,escape_part,610,escape,cards/theros_beyond_death.c,recovery ledger
-0x2359bb0,function,breach_effect,1607,breach_effect,cards/theros_beyond_death.c,public COFF entry 0x255cb50
+0x2359bb0,function,breach_effect,1607,breach_effect,cards/theros_beyond_death.c,public COFF entry 0x2570b70
 0x235a200,function,escape_with_counters_impl,210,escape_with_counters,cards/theros_beyond_death.c,recovery ledger
 0x235a2e0,function,escape,125,escape,cards/theros_beyond_death.c,recovery ledger
 0x235a360,function,card_agonizing_remorse,678,card_agonizing_remorse,cards/theros_beyond_death.c,recovery ledger
@@ -8971,7 +8997,7 @@ address,type,name,size,native_name,source,mapping
 0x235a7d0,function,card_anax_hardened_in_the_forge,794,card_anax_hardened_in_the_forge,cards/theros_beyond_death.c,recovery ledger
 0x235aaf0,function,card_ashiok_nightmare_muse,1215,card_ashiok_nightmare_muse,cards/theros_beyond_death.c,recovery ledger
 0x235afb0,function,card_athreos_shroud_veiled,1141,card_athreos_shroud_veiled,cards/theros_beyond_death.c,recovery ledger
-0x235b430,function,find_attached_legacy_effect_not_full,132,find_attached_legacy_effect_not_full,cards/theros_beyond_death.c,public COFF entry 0x2560300
+0x235b430,function,find_attached_legacy_effect_not_full,132,find_attached_legacy_effect_not_full,cards/theros_beyond_death.c,public COFF entry 0x2574320
 0x235b4c0,function,card_calix_destinys_hand,1612,card_calix_destinys_hand,cards/theros_beyond_death.c,recovery ledger
 0x235bb10,function,card_cling_to_dust,572,card_cling_to_dust,cards/theros_beyond_death.c,recovery ledger
 0x235bd50,function,card_daxos_blessed_by_the_sun,696,card_daxos_blessed_by_the_sun,cards/theros_beyond_death.c,recovery ledger
@@ -9560,7 +9586,6 @@ address,type,name,size,native_name,source,mapping
 0x239b260,function,ai_helper_function_for_confiscation_coup,55,ai_helper_function_for_confiscation_coup,cards/kaladesh.c,same native name
 0x239b2f0,function,have_no_counter,44,have_no_counter,cards/kaladesh.c,same native name
 0x239b320,function,ai_helper_function_for_die_young,81,ai_helper_function_for_die_young,cards/kaladesh.c,same native name
-0x239b380,function,ai_helper_function_for_harness_lightning,81,ai_helper_function_for_harness_lightning,cards/kaladesh.c,same native name
 0x239b3e0,function,demon_of_dark_schemes_legacy,715,demon_of_dark_schemes_legacy,cards/kaladesh.c,same native name
 0x239b6b0,function,aetherworks_marvel_legacy,736,aetherworks_marvel_legacy,cards/kaladesh.c,same native name
 0x239b990,function,marionette_master_legacy,791,marionette_master_legacy,cards/kaladesh.c,same native name
@@ -9923,6 +9948,7 @@ address,type,name,size,native_name,source,mapping
 0x23c0490,function,card_wild_pair,389,card_wild_pair,cards/planar_chaos.c,same native name
 0x23c0620,function,card_wistful_thinking,553,card_wistful_thinking,cards/planar_chaos.c,same native name
 0x23c0850,function,serene_master_is_blocking_him,44,serene_master_is_blocking_him,cards/commander_2013.c,same native name
+0x23c0880,function,opal_palace_legacy,528,opal_palace_legacy,cards/commander_2013.c,recovery ledger
 0x23c0a90,function,store_mana_paid_to_play_this,135,store_mana_paid_to_play_this,cards/commander_2013.c,same native name
 0x23c0b20,function,card_baleful_force,106,card_baleful_force,cards/commander_2013.c,same native name
 0x23c0b90,function,card_curse_of_shallow_graves,293,card_curse_of_shallow_graves,cards/commander_2013.c,same native name
@@ -10327,6 +10353,7 @@ address,type,name,size,native_name,source,mapping
 0x23ed670,function,effect_touch_of_vitae,220,effect_touch_of_vitae,cards/ice_age.c,recovery ledger
 0x23ed780,function,target_is_activateable_snow_mana_source,116,target_is_activateable_snow_mana_source,cards/ice_age.c,same native name
 0x23ed800,function,effect_basha,193,effect_basha,cards/ice_age.c,recovery ledger
+0x23ed8d0,function,effect_tap_when_lose_control,109,effect_tap_when_lose_control,cards/ice_age.c,recovery ledger
 0x23ed940,function,krovikan_vampire_legacy,200,krovikan_vampire_legacy,cards/ice_age.c,same native name
 0x23eda10,function,effect_dotd,307,effect_dotd,cards/ice_age.c,same native name
 0x23edb50,function,can_pay_1_life_b_thunk,77,can_pay_1_life_b_thunk,cards/ice_age.c,recovery ledger
@@ -11010,10 +11037,13 @@ address,type,name,size,native_name,source,mapping
 0x2436590,function,card_word_of_binding,377,card_word_of_binding,cards/the_dark.c,same native name
 0x2436710,function,card_worms_of_the_earth,894,card_worms_of_the_earth,cards/the_dark.c,same native name
 0x2436a90,function,card_wormwood_treefolk,1016,card_wormwood_treefolk,cards/the_dark.c,same native name
+0x2436e90,function,imprint_legacy,3,imprint_legacy,cards/scars_of_mirrodin.c,recovery ledger
 0x2436ea0,function,ai_mod_for_proliferate,604,ai_mod_for_proliferate,cards/scars_of_mirrodin.c,same native name
+0x2437100,function,find_imprint_legacy_next,141,find_imprint_legacy_next,cards/scars_of_mirrodin.c,recovery ledger
 0x2437190,function,smiths,82,smiths,cards/scars_of_mirrodin.c,same native name
 0x24371f0,function,is_land_or_token,77,is_land_or_token,cards/scars_of_mirrodin.c,same native name
 0x2437240,function,count_land_or_token,124,count_land_or_token,cards/scars_of_mirrodin.c,same native name
+0x24372c0,function,imprint,91,imprint,cards/scars_of_mirrodin.c,recovery ledger
 0x2437320,function,trigon,1000,trigon,cards/scars_of_mirrodin.c,same native name
 0x2437710,function,animate_glint_hawk_idol,107,animate_glint_hawk_idol,cards/scars_of_mirrodin.c,same native name
 0x2437780,function,destroy_creature_and_gain_life,76,destroy_creature_and_gain_life,cards/scars_of_mirrodin.c,same native name
@@ -11026,7 +11056,7 @@ address,type,name,size,native_name,source,mapping
 0x24382d0,function,metalcraft,81,metalcraft,cards/scars_of_mirrodin.c,same native name
 0x2438330,function,minus_proliferate_auto_single_permanent_or_player,161,minus_proliferate_auto_single_permanent_or_player,cards/scars_of_mirrodin.c,recovery ledger
 0x24383e0,function,proliferate_auto_single_permanent_or_player,322,proliferate_auto_single_permanent_or_player,cards/scars_of_mirrodin.c,recovery ledger
-0x2438530,function,proliferate_manual_single_permanent_or_player,463,proliferate_manual_single_permanent_or_player,cards/scars_of_mirrodin.c,public COFF entry 0x24a77a0
+0x2438530,function,proliferate_manual_single_permanent_or_player,463,proliferate_manual_single_permanent_or_player,cards/scars_of_mirrodin.c,public COFF entry 0x24b77f0
 0x2438700,function,proliferate,849,proliferate,cards/scars_of_mirrodin.c,recovery ledger
 0x2438a60,function,generic_artifact_with_proliferate,210,generic_artifact_with_proliferate,cards/scars_of_mirrodin.c,same native name
 0x2438b40,function,card_wurmcoil_engine,180,card_wurmcoil_engine,cards/scars_of_mirrodin.c,same native name
@@ -11240,6 +11270,7 @@ address,type,name,size,native_name,source,mapping
 0x244c5f0,function,card_zulaport_cutthroat,729,card_zulaport_cutthroat,cards/battle_for_zendikar.c,same native name
 0x244c8d0,function,omnath_death_trigger,664,omnath_death_trigger,cards/battle_for_zendikar.c,same native name
 0x244cb70,function,blighted_woodland_impl,23,blighted_woodland_impl,cards/battle_for_zendikar.c,same native name
+0x244cb90,function,catacomb_sifter_effect,703,catacomb_sifter_effect,cards/battle_for_zendikar.c,recovery ledger
 0x244ce50,function,process,211,process,cards/battle_for_zendikar.c,same native name
 0x244cf30,function,test_isnt_land,79,test_isnt_land,cards/battle_for_zendikar.c,same native name
 0x244cf80,function,can_activate_colorless_creature,162,can_activate_colorless_creature,cards/battle_for_zendikar.c,same native name
@@ -12005,6 +12036,7 @@ address,type,name,size,native_name,source,mapping
 0x2493f40,function,card_urborg_emissary,407,card_urborg_emissary,cards/invasion.c,same native name
 0x24940e0,function,card_urzas_filter,143,card_urzas_filter,cards/invasion.c,same native name
 0x2494170,function,card_urzas_rage,659,card_urzas_rage,cards/invasion.c,same native name
+0x2494410,function,card_utopia_tree,5,card_utopia_tree,cards/invasion.c,same native name
 0x2494420,function,card_verdeloth_the_ancient,328,card_verdeloth_the_ancient,cards/invasion.c,same native name
 0x2494570,function,card_verduran_emissary,415,card_verduran_emissary,cards/invasion.c,same native name
 0x2494710,function,card_vicious_kavu,118,card_vicious_kavu,cards/invasion.c,same native name
@@ -12130,6 +12162,7 @@ address,type,name,size,native_name,source,mapping
 0x249e8f0,function,card_winnow,422,card_winnow,cards/invasion.c,recovery ledger
 0x249eaa0,function,card_yavimaya_kavu,146,card_yavimaya_kavu,cards/invasion.c,recovery ledger
 0x249eb40,function,card_zanam_djinn,29,card_zanam_djinn,cards/invasion.c,recovery ledger
+0x249eb60,function,autumns_veil_effect,384,autumns_veil_effect,cards/m12.c,recovery ledger
 0x249ece0,function,chandra_firebrand_legacy,237,chandra_firebrand_legacy,cards/m12.c,same native name
 0x249edd0,function,pingers,334,pingers,cards/m12.c,same native name
 0x249ef20,function,empire_set,164,empire_set,cards/m12.c,same native name
@@ -12504,6 +12537,7 @@ address,type,name,size,native_name,source,mapping
 0x24bc530,function,soul_net_effect,850,soul_net_effect,cards/unlimited.c,same native name
 0x24bc890,function,zombie_master_shared_ability,1033,zombie_master_shared_ability,cards/unlimited.c,same native name
 0x24bcca0,function,protection_from_color,204,protection_from_color,cards/unlimited.c,same native name
+0x24bcd70,function,ward_enchantment,119,ward_enchantment,cards/unlimited.c,recovery ledger
 0x24bcdf0,function,channel_legacy,201,channel_legacy,cards/unlimited.c,same native name
 0x24bcec0,function,gaeas_liege_effect,211,gaeas_liege_effect,cards/unlimited.c,same native name
 0x24bcfa0,function,cyclopean_tomb_legacy,283,cyclopean_tomb_legacy,cards/unlimited.c,same native name
@@ -12922,10 +12956,12 @@ address,type,name,size,native_name,source,mapping
 0x24ddaa0,function,card_dance_of_panic,296,card_dance_of_panic,cards/journey_into_nyx.c,same native name
 0x24ddbd0,function,card_dance_of_flame,260,card_dance_of_flame,cards/journey_into_nyx.c,same native name
 0x24ddd10,function,damage_dealt_to_a_creature_you_control,92,damage_dealt_to_a_creature_you_control,cards/ravnica.c,same native name
+0x24ddd70,function,land_pay_life_or_etb_tapped,782,land_pay_life_or_etb_tapped,cards/ravnica.c,recovery ledger
 0x24de080,function,signet2,406,signet2,cards/ravnica.c,same native name
 0x24de220,function,brightflame_legacy,300,brightflame_legacy,cards/ravnica.c,same native name
 0x24de350,function,flash_conscript_damage_effect,362,flash_conscript_damage_effect,cards/ravnica.c,same native name
 0x24de4c0,function,covg_legacy,200,covg_legacy,cards/ravnica.c,same native name
+0x24de590,function,eye_of_the_storm_trigger,2419,eye_of_the_storm_trigger,cards/ravnica.c,same native name
 0x24def40,function,effect_flame_fusillade,1459,effect_flame_fusillade,cards/ravnica.c,same native name
 0x24df500,function,golgari_germination_effect,754,golgari_germination_effect,cards/ravnica.c,same native name
 0x24df800,function,savra_trigger,856,savra_trigger,cards/ravnica.c,same native name
@@ -13513,6 +13549,7 @@ address,type,name,size,native_name,source,mapping
 0x2515790,function,effect_duskmantle_guildmage,340,effect_duskmantle_guildmage,cards/gatecrash.c,same native name
 0x25158f0,function,lazav_mastermind_impl,1012,lazav_mastermind_impl,cards/gatecrash.c,same native name
 0x2515cf0,function,zameck_guildmage_legacy,143,zameck_guildmage_legacy,cards/gatecrash.c,same native name
+0x2515d80,function,vizkopa_guildmage_legacy,233,vizkopa_guildmage_legacy,cards/gatecrash.c,recovery ledger
 0x2515e70,function,cipher_legacy,183,cipher_legacy,cards/gatecrash.c,same native name
 0x2515f30,function,dying_wish_legacy,213,dying_wish_legacy,cards/gatecrash.c,same native name
 0x2516010,function,murder_investigation_legacy,124,murder_investigation_legacy,cards/gatecrash.c,same native name
@@ -14049,6 +14086,8 @@ address,type,name,size,native_name,source,mapping
 0x254a0e0,function,tower_above_legacy,779,tower_above_legacy,cards/shadowmoor.c,same native name
 0x254a3f0,function,remove_untargettable,157,remove_untargettable,cards/shadowmoor.c,same native name
 0x254a490,function,furystoke_giant_effect,345,furystoke_giant_effect,cards/shadowmoor.c,same native name
+0x254a5f0,function,dire_undercurrents_black_trig,233,dire_undercurrents_black_trig,cards/shadowmoor.c,recovery ledger
+0x254a6e0,function,dire_undercurrents_blue_trig,221,dire_undercurrents_blue_trig,cards/shadowmoor.c,recovery ledger
 0x254a7c0,function,puppeteer_clique_legacy,210,puppeteer_clique_legacy,cards/shadowmoor.c,same native name
 0x254a8d0,function,get_color_for_monocolored_hybrid,100,get_color_for_monocolored_hybrid,cards/shadowmoor.c,same native name
 0x254a940,function,get_number_of_monocolored_hybrid_mana,73,get_number_of_monocolored_hybrid_mana,cards/shadowmoor.c,same native name
@@ -14439,6 +14478,7 @@ address,type,name,size,native_name,source,mapping
 0x2571a10,function,generic_pact_legacy,205,generic_pact_legacy,cards/future_sight.c,same native name
 0x2571ae0,function,target_for_lynessa,432,target_for_lynessa,cards/future_sight.c,same native name
 0x2571c90,function,sehts_tiger_legacy,246,sehts_tiger_legacy,cards/future_sight.c,recovery ledger
+0x2571d90,function,veilstone_amulet_effect,360,veilstone_amulet_effect,cards/future_sight.c,recovery ledger
 0x2571f00,function,spellweaver_volute_name_legacy,135,spellweaver_volute_name_legacy,cards/future_sight.c,same native name
 0x2571f90,function,discard_id_from_hand,101,discard_id_from_hand,cards/future_sight.c,same native name
 0x2572000,function,grandeur,336,grandeur,cards/future_sight.c,same native name
@@ -14654,6 +14694,7 @@ address,type,name,size,native_name,source,mapping
 0x2581e50,function,card_ooze,316,card_ooze,cards/tokens.c,same native name
 0x2581f90,function,card_graveborn_token,114,card_graveborn_token,cards/tokens.c,same native name
 0x2582030,function,card_elemental_token,339,card_elemental_token,cards/tokens.c,same native name
+0x2582190,function,card_demon_token,246,card_demon_token,cards/tokens.c,same native name
 0x25822a0,function,card_human_token,98,card_human_token,cards/tokens.c,same native name
 0x2582310,function,card_dragon_spirit,179,card_dragon_spirit,cards/tokens.c,same native name
 0x2582410,function,card_goblin_token,286,card_goblin_token,cards/tokens.c,same native name
@@ -14782,6 +14823,7 @@ address,type,name,size,native_name,source,mapping
 0x258c520,function,effect_aquitects_will,413,effect_aquitects_will,cards/lorwyn.c,same native name
 0x258c6c0,function,boggart_shenanigans_effect,867,boggart_shenanigans_effect,cards/lorwyn.c,same native name
 0x258ca30,function,prowess_of_the_fair_effect,934,prowess_of_the_fair_effect,cards/lorwyn.c,same native name
+0x258cde0,function,colfenors_urn_effect,1122,colfenors_urn_effect,cards/lorwyn.c,recovery ledger
 0x258d250,function,hideaway,1678,hideaway,cards/lorwyn.c,same native name
 0x258d8e0,function,kithkin_mourncaller_effect,770,kithkin_mourncaller_effect,cards/lorwyn.c,same native name
 0x258dbf0,function,effect_makeshift_mannequin,157,effect_makeshift_mannequin,cards/lorwyn.c,same native name
@@ -15562,6 +15604,7 @@ address,type,name,size,native_name,source,mapping
 0x25d6740,function,blade_of_the_bloodchief_effect,872,blade_of_the_bloodchief_effect,cards/zendikar.c,recovery ledger
 0x25d6ae0,function,doesnt_have_a_blaze_counter,47,doesnt_have_a_blaze_counter,cards/zendikar.c,same native name
 0x25d6b10,function,quest,321,quest,cards/zendikar.c,same native name
+0x25d6c60,function,vov_legacy,174,vov_legacy,cards/zendikar.c,recovery ledger
 0x25d6d10,function,effect_goblin_shortcutter,117,effect_goblin_shortcutter,cards/zendikar.c,same native name
 0x25d6d90,function,elemental_appeal_legacy,277,elemental_appeal_legacy,cards/zendikar.c,same native name
 0x25d6eb0,function,effect_obsidian_fireheart,202,effect_obsidian_fireheart,cards/zendikar.c,same native name
@@ -15773,6 +15816,7 @@ address,type,name,size,native_name,source,mapping
 0x25e6cd0,function,card_fierce_guardianship,243,card_fierce_guardianship,cards/commander_2020.c,recovery ledger
 0x25e6dd0,function,card_jirina_kudro,264,card_jirina_kudro,cards/commander_2020.c,recovery ledger
 0x25e6ee0,function,card_nesting_grounds,1290,card_nesting_grounds,cards/commander_2020.c,recovery ledger
+0x25e7440,function,false_cure_legacy,181,false_cure_legacy,cards/onslaught.c,recovery ledger
 0x25e7500,function,rotlung_reanimator_effect,785,rotlung_reanimator_effect,cards/onslaught.c,same native name
 0x25e7820,function,effect_target_gains_trample_and_regenerate_for_g,410,effect_target_gains_trample_and_regenerate_for_g,cards/onslaught.c,recovery ledger
 0x25e79c0,function,turn_face_down,124,turn_face_down,cards/onslaught.c,same native name
@@ -16133,6 +16177,7 @@ address,type,name,size,native_name,source,mapping
 0x2609990,function,card_reach_through_mists_impl,62,card_reach_through_mists_impl,cards/champions_of_kamigawa.c,same native name
 0x26099d0,function,card_cranial_extraction_impl,568,card_cranial_extraction_impl,cards/champions_of_kamigawa.c,recovery ledger
 0x2609c10,function,card_devouring_greed_impl,551,card_devouring_greed_impl,cards/champions_of_kamigawa.c,same native name
+0x2609e40,function,card_swallowing_plague_impl,280,card_swallowing_plague_impl,cards/champions_of_kamigawa.c,recovery ledger
 0x2609f60,function,damage_to_legendary_creature,111,damage_to_legendary_creature,cards/champions_of_kamigawa.c,same native name
 0x2609fd0,function,card_feast_of_worms_impl,352,card_feast_of_worms_impl,cards/champions_of_kamigawa.c,same native name
 0x260a130,function,effect_glimpse_of_nature,205,effect_glimpse_of_nature,cards/champions_of_kamigawa.c,same native name
@@ -16142,6 +16187,8 @@ address,type,name,size,native_name,source,mapping
 0x260a590,function,card_kodamas_reach_impl,46,card_kodamas_reach_impl,cards/champions_of_kamigawa.c,same native name
 0x260a5c0,function,rfg_when_die_legacy,308,rfg_when_die_legacy,cards/champions_of_kamigawa.c,same native name
 0x260a700,function,myojin,320,myojin,cards/champions_of_kamigawa.c,same native name
+0x260a840,function,card_petals_of_insight_impl,233,card_petals_of_insight_impl,cards/champions_of_kamigawa.c,recovery ledger
+0x260a930,function,card_otherworldly_journey_impl,941,card_otherworldly_journey_impl,cards/champions_of_kamigawa.c,recovery ledger
 0x260ace0,function,card_psychic_puppetry_impl,280,card_psychic_puppetry_impl,cards/champions_of_kamigawa.c,same native name
 0x260ae00,function,card_strange_inversion_impl,296,card_strange_inversion_impl,cards/champions_of_kamigawa.c,same native name
 0x260af30,function,card_blessed_breath_impl,258,card_blessed_breath_impl,cards/champions_of_kamigawa.c,same native name
@@ -16997,7 +17044,7 @@ address,type,name,size,native_name,source,mapping
 0x2650b80,function,side_effects_to_tutor_deck_from_permanents,191,side_effects_to_tutor_deck_from_permanents,functions/tutors.c,recovery ledger
 0x2650c40,function,show_deck,90,show_deck,functions/tutors.c,recovery ledger
 0x2650ca0,function,show_deck_force_expansion,77,show_deck_force_expansion,functions/tutors.c,recovery ledger
-0x2650cf0,function,get_average_value_from_zone,234,get_average_value_from_zone,functions/tutors.c,public COFF entry 0x26cae00
+0x2650cf0,function,get_average_value_from_zone,234,get_average_value_from_zone,functions/tutors.c,public COFF entry 0x26e23c0
 0x2650de0,function,select_card_from_zone,864,select_card_from_zone,functions/tutors.c,recovery ledger
 0x2651140,function,get_tutoring_denial,436,get_tutoring_denial,functions/tutors.c,recovery ledger
 0x2651300,function,new_select_a_card,701,new_select_a_card,functions/tutors.c,recovery ledger
@@ -17054,7 +17101,7 @@ address,type,name,size,native_name,source,mapping
 0x2656c30,function,draw_abilities,827,draw_abilities,functions/windows.c,same native name
 0x2656f70,function,draw_smallcard_normal,1511,draw_smallcard_normal,functions/windows.c,same native name
 0x2657560,function,initialize_ability_tooltip_names,290,initialize_ability_tooltip_names,functions/windows.c,same native name
-0x2657690,function,memcpy_displayed_inst_and_ext,273,memcpy_displayed_inst_and_ext,functions/windows.c,public COFF entry 0x26d3270
+0x2657690,function,memcpy_displayed_inst_and_ext,273,memcpy_displayed_inst_and_ext,functions/windows.c,public COFF entry 0x26ea830
 0x26577b0,function,wndproc_ShowListCard_hook,845,wndproc_ShowListCard_hook,functions/windows.c,recovery ledger
 0x2657e30,function,wndproc_MainClass_hook,420,wndproc_MainClass_hook,functions/windows.c,same native name
 0x2657fe0,function,paint_player_counters,630,paint_player_counters,functions/windows.c,same native name
@@ -17190,7 +17237,7 @@ address,type,name,size,native_name,source,mapping
 0x2665990,function,get_special_infos,57,get_special_infos,functions/token_generation.c,same native name
 0x26659d0,function,generate_token,2983,generate_token,functions/token_generation.c,recovery ledger
 0x2666580,function,generate_token_by_id_impl,179,generate_token_by_id_impl,functions/token_generation.c,recovery ledger
-0x2666680,function,copy_token,43,copy_token,functions/token_generation.c,public COFF entry 0x26c9980
+0x2666680,function,copy_token,43,copy_token,functions/token_generation.c,public COFF entry 0x26e0f40
 0x26666b0,function,generate_token_by_id,103,generate_token_by_id,functions/token_generation.c,recovery ledger
 0x2666720,function,generate_tokens_by_id,111,generate_tokens_by_id,functions/token_generation.c,recovery ledger
 0x2666790,function,generate_reserved_token_by_id,88,generate_reserved_token_by_id,functions/token_generation.c,recovery ledger
@@ -17204,7 +17251,7 @@ address,type,name,size,native_name,source,mapping
 0x26675a0,function,manipulate_all,148,manipulate_all,functions/manipulate_and_damage_all.c,recovery ledger
 0x2667640,function,manipulate_type,84,manipulate_type,functions/manipulate_and_damage_all.c,same native name
 0x26676a0,function,manipulate_auras_enchanting_target,333,manipulate_auras_enchanting_target,functions/manipulate_and_damage_all.c,same native name
-0x26677f0,function,new_damage_all,634,new_damage_all,functions/manipulate_and_damage_all.c,public COFF entry 0x26a9820
+0x26677f0,function,new_damage_all,634,new_damage_all,functions/manipulate_and_damage_all.c,public COFF entry 0x26c04a0
 0x2667a70,function,damage_all,155,damage_all,functions/manipulate_and_damage_all.c,same native name
 0x2667b10,function,has_no_mana_cost,278,has_no_mana_cost,functions/play_spell_for_free.c,recovery ledger
 0x2667c30,function,played_for_free,49,played_for_free,functions/play_spell_for_free.c,same native name
@@ -17264,7 +17311,7 @@ address,type,name,size,native_name,source,mapping
 0x266bc20,function,all_lands_are_basiclandtype,826,all_lands_are_basiclandtype,functions/produce_mana.c,recovery ledger
 0x266bf60,function,minimize_nondraining_mana,100,minimize_nondraining_mana,functions/produce_mana.c,recovery ledger
 0x266bfd0,function,mana_doesnt_drain_until_eot,101,mana_doesnt_drain_until_eot,functions/produce_mana.c,recovery ledger
-0x266c040,function,mana_doublers,210,mana_doublers,functions/produce_mana.c,public COFF entry 0x26b09f0
+0x266c040,function,mana_doublers,210,mana_doublers,functions/produce_mana.c,public COFF entry 0x26c7670
 0x266c120,function,produce_mana_tapped_all_one_color_with_default_impl,983,produce_mana_tapped_all_one_color_with_default_impl,functions/produce_mana.c,recovery ledger
 0x266c500,function,produce_mana_tapped_all_one_color_with_default,63,produce_mana_tapped_all_one_color_with_default,functions/produce_mana.c,recovery ledger
 0x266c540,function,produce_mana_tapped_all_one_color_impl,63,produce_mana_tapped_all_one_color_impl,functions/produce_mana.c,recovery ledger
@@ -17383,6 +17430,7 @@ address,type,name,size,native_name,source,mapping
 0x2677a90,function,remove_untargettable_legacy,209,remove_untargettable_legacy,functions/functions.c,recovery ledger
 0x2677b70,function,get_pt_for_creature_with_variable_pt,209,get_pt_for_creature_with_variable_pt,functions/functions.c,recovery ledger
 0x2677c50,function,fx_permanents_destroyed_this_way_accumulate,934,fx_permanents_destroyed_this_way_accumulate,functions/functions.c,recovery ledger
+0x2678000,function,has_only_1_target_and_could_legally_change_target_and_targets_me,117,has_only_1_target_and_could_legally_change_target_and_targets_me,functions/functions.c,recovery ledger
 0x2678080,function,is_not_karoo,82,is_not_karoo,functions/functions.c,same native name
 0x26780e0,function,count_harmonic_prodigy,170,count_harmonic_prodigy,functions/functions.c,recovery ledger
 0x2678190,function,creatures_cannot_block_legacy,401,creatures_cannot_block_legacy,functions/functions.c,same native name
@@ -17996,7 +18044,7 @@ address,type,name,size,native_name,source,mapping
 0x26a4c00,function,generic_activated_ability_with_target_in_grave,1496,generic_activated_ability_with_target_in_grave,functions/functions.c,recovery ledger
 0x26a51e0,function,whenever_i_deal_damage_to_a_player,109,whenever_i_deal_damage_to_a_player,functions/functions.c,same native name
 0x26a5250,function,ai_name_a_random_csvid,284,ai_name_a_random_csvid,functions/functions.c,recovery ledger
-0x26a5370,function,etb_ability,515,etb_ability,functions/functions.c,public COFF entry 0x2687080
+0x26a5370,function,etb_ability,515,etb_ability,functions/functions.c,public COFF entry 0x269dd00
 0x26a5580,function,cip_damage_creature,387,cip_damage_creature,functions/functions.c,same native name
 0x26a5710,function,cip_lifegain,77,cip_lifegain,functions/functions.c,same native name
 0x26a5760,function,karoo,767,karoo,functions/functions.c,same native name
@@ -18524,8 +18572,8 @@ address,type,name,size,native_name,source,mapping
 0x26e3c90,function,new_can_sacrifice,332,new_can_sacrifice,functions/sacrifices.c,recovery ledger
 0x26e3de0,function,can_sacrifice,91,can_sacrifice,functions/sacrifices.c,recovery ledger
 0x26e3e40,function,is_nice_creature_to_sacrifice,125,is_nice_creature_to_sacrifice,functions/sacrifices.c,recovery ledger
-0x26e3ec0,function,get_best_permanent_for_sacrifice,165,get_best_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26c1710
-0x26e3f70,function,new_get_special_permanent_for_sacrifice,403,new_get_special_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26c1740
+0x26e3ec0,function,get_best_permanent_for_sacrifice,165,get_best_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26d8cd0
+0x26e3f70,function,new_get_special_permanent_for_sacrifice,403,new_get_special_permanent_for_sacrifice,functions/sacrifices.c,public COFF entry 0x26d8d00
 0x26e4110,function,new_sacrifice_impl,2354,new_sacrifice_impl,functions/sacrifices.c,recovery ledger
 0x26e4a50,function,pick_creature_for_sacrifice,213,pick_creature_for_sacrifice,functions/sacrifices.c,recovery ledger
 0x26e4b30,function,pick_permanent_for_sacrifice,278,pick_permanent_for_sacrifice,functions/sacrifices.c,recovery ledger

@@ -113,11 +113,15 @@ IDs; the larger handler count also includes newly implemented old cards,
 renames, tokens, transformed faces and effects. Registration and CODED flags
 establish a recovery target, not correct or complete gameplay behavior.
 
-3,306 of the 3,310 new registered handlers already have contiguous ranges in
-the extracted DWARF census. Four require additional range/alias handling:
-`card_cat_dragon_token`, `card_pirate_token`, `card_professor_of_symbology`, and
-`card_treasure`. They remain in the backlog; absence from this initial range
-export does not mean their implementations are unavailable.
+3,306 of the 3,310 new registered handlers had contiguous ranges in the initial
+DWARF census. Four needed separate alias handling: `card_cat_dragon_token`,
+`card_pirate_token`, `card_professor_of_symbology`, and `card_treasure`.
+The COFF-only recovery pass has now restored all four original C identities
+and their original fixed-veneer bindings. Each native body is a complete
+five-byte jump to an independently recovered implementation. The unregistered
+`card_horse_token` forwarding entry is restored too. See
+[coff-card-forwarders-recovery.json](recovery-evidence/coff-card-forwarders-recovery.json)
+and the broader [COFF entry cross-check](recovery-evidence/coff-entry-coverage.json).
 
 A Capstone pass over those ranges found **243 non-card helper symbols absent
 from the baseline** that are called directly by new registered handlers.

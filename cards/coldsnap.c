@@ -385,7 +385,8 @@ Creature - Aurochs 2/1
 Trample
 Whenever ~ attacks, it gets +1/+0 until end of turn for each other attacking Aurochs. */
   // Used externally
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  test_definition_t this_test;
 	  default_test_definition(&this_test, TYPE_PERMANENT);
@@ -604,7 +605,7 @@ If you do, counter that spell if it has the same converted mana cost as the reve
 		  reveal_card_iid(player, card, deck_ptr[player][0]);
 		  if (get_cmc_by_internal_id(deck_ptr[player][0]) == get_cmc(trigger_cause_controller, trigger_cause)
 			  && !check_state(trigger_cause_controller, trigger_cause, STATE_CANNOT_TARGET))
-			kill_card(trigger_cause_controller, trigger_cause, KILL_SACRIFICE);
+			real_counter_a_spell(player, card, trigger_cause_controller, trigger_cause);
 		}
 	}
 
@@ -626,7 +627,7 @@ int card_coldsteel_heart(int player, int card, event_t event){
 		instance->info_slot = 1 << choose_a_color(player, get_deck_color(player, player));
 	}
 
-	return mana_producer(player, card, event);
+	return plain_mana_producer(player, card, event);
 }
 
 static int has_snow_mana_thunk(int player, int card, int number_of_age_counters)
@@ -701,7 +702,7 @@ int card_darien_king_of_kjeldor(int player, int card, event_t event){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_SOLDIER, &token);
 		token.pow = token.tou = 1;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
+		token.color_forced = COLOR_TEST_WHITE;
 		token.qty = amount;
 		generate_token(&token);
 	}
@@ -717,26 +718,37 @@ int card_dark_depths(int player, int card, event_t event){
 	 * |3: Remove an ice counter from ~.
 	 * When ~ has no ice counters on it, sacrifice it. If you do, put a legendary 20/20 |Sblack Avatar creature token with flying and indestructible named Marit Lage onto the battlefield. */
 
-	card_instance_t *instance = get_card_instance( player, card );
-
+	card_instance_t *instance = get_card_instance(player, card);
 	check_legend_rule(player, card, event);
-
-	if (event == EVENT_RESOLVE_SPELL){
-		play_land_sound_effect(player, card);
+	if (event == EVENT_RESOLVE_SPELL){ play_land_sound_effect(player, card); }
+	if (!is_humiliated(player, card, AL_TRIG)){
+	    enters_the_battlefield_with_counters(player, card, event, COUNTER_ICE, 10);
 	}
-
-	enters_the_battlefield_with_counters(player, card, event, COUNTER_ICE, 10);
-
-	if (event == EVENT_STATIC_EFFECTS && count_counters(player, card, COUNTER_ICE) == 0 ){
-		kill_card(player, card, KILL_SACRIFICE);
-		generate_token_by_id(player, card, CARD_ID_MARIT_LAGE);
+	if (event == EVENT_STATIC_EFFECTS && count_counters(player, card, COUNTER_ICE) == 0 && !is_humiliated(player, card, AL_TRIG)){
+	    kill_card(player, card, KILL_SACRIFICE);
+	    generate_token_by_id(player, card, CARD_ID_MARIT_LAGE);
 	}
-
-	if (event == EVENT_RESOLVE_ACTIVATION ){
-		remove_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_ICE, 1);
+	if (event == EVENT_CAN_ACTIVATE && mana_colors_added[player]){ return mana_producer(player, card, event); }
+	if (event == EVENT_ACTIVATE){
+	    if (mana_colors_added[player]){
+	        if (paying_mana() || !generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_X(4), 0, NULL, NULL)){
+	            return mana_producer(player, card, event);
+	        }
+	        if (!IS_AI(player)){
+	            int choice = DIALOG(player, card, event, DLG_RANDOM, "Get mana", 1, 1, "Use Ability", 1, 1);
+	            if (!choice){ spell_fizzled = 1; return 0; }
+	            if (choice == 1){ return mana_producer(player, card, event); }
+	            if (choice != 2){ return generic_activated_ability(player, card, event, 0, MANACOST_X(3), 0, NULL, NULL); }
+	        }
+	    }
+	    instance->info_slot = 2;
+	    return generic_activated_ability(player, card, event, 0, MANACOST_X(3), 0, NULL, NULL);
 	}
-
-	return generic_activated_ability(player, card, event, 0, MANACOST_X(3), 0, NULL, NULL);
+	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == 2){
+	    remove_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_ICE, 1);
+	}
+	if (IS_GAA_EVENT(event)){ return generic_activated_ability(player, card, event, 0, MANACOST_X(3), 0, NULL, NULL); }
+	return mana_colors_added[player] ? mana_producer(player, card, event) : 0;
 }
 
 int card_marit_lage(int player, int card, event_t event){
@@ -1041,6 +1053,8 @@ When enchanted creature is dealt damage, destroy it. */
 		}
 	}
 
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
+
 	return disabling_aura(player, card, event);
 }
 
@@ -1090,7 +1104,7 @@ you may pay half your life, rounded up. If you do, return this card from your gr
 		}
 	}
 
-	return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME | GAA_CAN_TARGET, MANACOST0, 0,
+	return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME | GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST0, 0,
 									&td, get_sleighted_color_text(player, card, "Select target non%s creature", COLOR_BLACK));
 }
 
@@ -1138,6 +1152,10 @@ int card_glacial_plating(int player, int card, event_t event)
 	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && (instance = in_play(player, card)) &&
 		affect_me(instance->damage_target_player, instance->damage_target_card) && ! is_humiliated(player, card, AL_STATIC) )
 		event_result += 3 * count_counters(player, card, COUNTER_AGE);
+
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
+		return 0;
+	}
 
 	return vanilla_aura(player, card, event, player);
 }
@@ -1472,7 +1490,8 @@ int card_jesters_scepter(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( comes_into_play(player, card, event) ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if( event == EVENT_ETB ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.zone = TARGET_ZONE_PLAYERS;
@@ -1700,7 +1719,7 @@ int card_jotun_owl_keeper(int player, int card, event_t event)
 		default_token_definition(player, card, CARD_ID_BIRD, &token);
 		token.pow = token.tou = 1;
 		token.key_plus = KEYWORD_FLYING;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
+		token.color_forced = COLOR_TEST_WHITE;
 		token.qty = count_counters(player, card, COUNTER_AGE);
 		generate_token(&token);
 
@@ -1736,16 +1755,31 @@ static int flip_coins(int player, int card, int number_of_age_counters)
 }
 int card_karplusan_minotaur(int player, int card, event_t event)
 {
-	/* Karplusan Minotaur	|2|R|R	0x200a4ee
+  /* Karplusan Minotaur	|2|R|R	0x200a4ee
 	 * Creature - Minotaur Warrior 3/3
 	 * Cumulative upkeep-Flip a coin.
 	 * Whenever you win a coin flip, ~ deals 1 damage to any target.
 	 * Whenever you lose a coin flip, ~ deals 1 damage to any target of an opponent's choice. */
 
-  // Coin flip triggers are in flip_a_coin() itself.
-
+  if (event == EVENT_COIN_FLIP_WON_OR_LOST && affected_card_controller == player)
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+    if (affected_card == 0)
+    {
+      td.preferred_controller = player;
+      td.who_chooses = 1-player;
+    }
+    td.allow_cancel = 0;
+    card_instance_t* instance = get_card_instance(player, card);
+    if (can_target(&td) && pick_target(&td, "TARGET_ANY"))
+    {
+      instance->number_of_targets = 1;
+      damage_creature(instance->targets[0].player, instance->targets[0].card, 1, player, card);
+    }
+  }
   cumulative_upkeep_general(player, card, event, rtrue, flip_coins);
-
   return 0;
 }
 
@@ -2220,6 +2254,7 @@ int card_mouth_of_ronom(int player, int card, event_t event){
 				if( pick_target(&td, "TARGET_CREATURE") ){
 					tap_card(player, card);
 					kill_card(player, card, KILL_SACRIFICE);
+					tapped_for_mana_color = -1;
 				}
 				else{
 					spell_fizzled = 1;
@@ -2435,6 +2470,8 @@ int card_rime_transfusion(int player, int card, event_t event){
 		}
 
 	}
+
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
 	return vanilla_aura(player, card, event, player);
 }
@@ -2877,39 +2914,32 @@ Enchant creature
 When ~ enters the battlefield, put six +1/+1 counters on enchanted creature.
 At the beginning of your upkeep, put a +1/+1 counter on enchanted creature if it attacked or blocked since your last upkeep. Otherwise, remove a +1/+1 counter from it.*/
 
-  card_instance_t* instance = in_play(player, card);
-
-  // Approximation: Checks whether any creature it was attached to has attacked or blocked since last upkeep, not the one it's currently attached to.
-
-  if (instance && instance->damage_target_card >= 0)
-	{
-	  // When ~ enters the battlefield, put six +1/+1 counters on enchanted creature.
-	  if (comes_into_play(player, card, event) && in_play(instance->damage_target_player, instance->damage_target_card))
-		add_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, 6);
-
-	  /* At the beginning of your upkeep, put a +1/+1 counter on enchanted creature if it attacked or blocked since your last upkeep. Otherwise, remove a +1/+1
-	   * counter from it. */
-	  upkeep_trigger_ability(player, card, event, player);
-
-	  if (event == EVENT_UPKEEP_TRIGGER_ABILITY && in_play(instance->damage_target_player, instance->damage_target_card))
-		{
-		  if (instance->targets[1].player == 66)
-			{
-			  add_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, 1);
-			  instance->targets[1].player = 0;
-			}
-		  else
-			remove_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, 1);
-		}
-
-	  card_instance_t* aff;
-	  if ((event == EVENT_DECLARE_ATTACKERS && (aff = in_play(instance->damage_target_player, instance->damage_target_card)) && (aff->state & STATE_ATTACKING))
-		  || (event == EVENT_DECLARE_BLOCKERS && in_play(instance->damage_target_player, instance->damage_target_card) && blocking(player, card, event)))
-		instance->targets[1].player = 66;
+	card_instance_t* instance = in_play(player, card);
+	if ((event == EVENT_DECLARE_ATTACKERS || event == EVENT_ETB_ABILITY || event == EVENT_UPKEEP_TRIGGER_ABILITY)
+	    && instance && instance->damage_target_card >= 0 && !is_humiliated(player, card, AL_TRIG)){
+	    int p = instance->damage_target_player, c = instance->damage_target_card;
+	    if (event == EVENT_ETB_ABILITY){
+	        if (in_play(p, c)){ add_counters(player, card, p, c, COUNTER_P1_P1, 6); }
+	        upkeep_trigger_ability(player, card, event, player);
+	    } else {
+	        upkeep_trigger_ability(player, card, event, player);
+	        if (event == EVENT_UPKEEP_TRIGGER_ABILITY){
+	            if (in_play(p, c)){
+	                if (instance->targets[1].player == 66){
+	                    add_counters(player, card, p, c, COUNTER_P1_P1, 1);
+	                    instance->targets[1].player = 0;
+	                } else {
+	                    remove_counters(player, card, p, c, COUNTER_P1_P1, 1);
+	                }
+	            }
+	        } else {
+	            card_instance_t* attached = in_play(p, c);
+	            if (attached && (attached->state & STATE_ATTACKING)){ instance->targets[1].player = 66; }
+	        }
+	    }
 	}
-
-  // Enchant creature
-  return vanilla_aura(player, card, event, player);
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
+	return vanilla_aura(player, card, event, player);
 }
 
 static int can_put_p1_p1_counter_on_opp(int player, int card, int number_of_age_counters)
@@ -3052,7 +3082,7 @@ Create a 1/1 |Sgreen Wolf creature token. It has "This creature gets +1/+1 for e
 	if( event == EVENT_RESOLVE_SPELL ){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_WOLF, &token);
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
+		token.color_forced = COLOR_TEST_GREEN;
 		token.pow = 1;
 		token.tou = 1;
 		token.special_infos = 66;
@@ -3294,7 +3324,7 @@ int card_surging_flame(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			damage_creature_or_player(player, card, event, 2);
+			damage_target0(player, card, 2);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -3443,20 +3473,20 @@ Sacrifice a creature: Add |R to your mana pool. */
 	return 0;
 }
 
-int card_thrummingstone(int player, int card, event_t event){
-/* CARD_ID_THRUMMING_STONE	8462
+int card_thrummingstone(int player, int card, event_t event)
+{
+  /* CARD_ID_THRUMMING_STONE	8462
 Thrumming Stone	|5
 Legendary Artifact
 Spells you cast have ripple 4. (Whenever you cast a spell, you may reveal the top four cards of your library.
 You may cast any revealed cards with the same name as the spell without paying their mana costs. Put the rest on the bottom of your library.)*/
 
-	check_legend_rule(player, card, event);
+  check_legend_rule(player, card, event);
 
-	if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-		ripple(trigger_cause_controller, trigger_cause);
-	}
-
-	return 0;
+  sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+    ripple(trigger_cause_controller, trigger_cause);
+  return 0;
 }
 
 int card_vanish_into_memory(int player, int card, event_t event){
@@ -3478,7 +3508,7 @@ return that card to the battlefield under its owner's control. If you do, discar
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
 			draw_cards(player, get_power(instance->targets[0].player, instance->targets[0].card));
-			remove_until_eot(player, card, instance->targets[0].player, instance->targets[0].card);
+			remove_until_upkeep_discard_cards_equal_to_toughness(player, card, instance->targets[0].player, instance->targets[0].card, player);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -3617,7 +3647,7 @@ int card_wilderness_elemental(int player, int card, event_t event){
 		default_test_definition(&this_test, TYPE_LAND);
 		this_test.subtype = SUBTYPE_BASIC;
 		this_test.subtype_flag = DOESNT_MATCH;
-		event_result += check_battlefield_for_special_card(player, card, 1-player, CBFSC_GET_COUNT, &this_test);
+		set_characteristic_pt(check_battlefield_for_special_card(player, card, 1-player, CBFSC_GET_COUNT, &this_test));
 	}
 
 	return 0;
@@ -3679,7 +3709,8 @@ Whenever Zur the Enchanter attacks, you may search your library for an enchantme
 */
 	check_legend_rule(player, card, event);
 
-	if (declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), player, card)){
+	dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+	if (event == EVENT_DAT_ABILITY){
 		test_definition_t this_test;
 		new_default_test_definition(&this_test, TYPE_ENCHANTMENT, "Select an enchantment with CMC 3 or less.");
 		this_test.cmc = 4;

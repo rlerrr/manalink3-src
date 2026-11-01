@@ -2057,6 +2057,9 @@ static int effect_self_mill(int player, int card, event_t event)
    * targets[0].card: graveyard_source[][] value
    * display_pic_csv_id: csvid */
 
+  if ((player_bits[player] & PB_GY_ABILITIES_DISABLED) && event != EVENT_END_TRIGGER)
+    return 0;
+
   enable_xtrigger_flags |= ENABLE_XTRIGGER_MILLED | ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY;
   if ((xtrigger_condition() == XTRIGGER_MILLED || xtrigger_condition() == XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY)
 	  && affect_me(player, card) && reason_for_trigger_controller == player
@@ -2089,6 +2092,23 @@ static int effect_self_mill(int player, int card, event_t event)
 				reanimate_permanent(player, -1, player, pos, REANIMATE_DEFAULT);
 			  }
 			break;
+
+      case CARD_ID_CREEPING_CHILL:
+        if (xtrigger_condition() == XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY)
+          return 0;
+        pos = find_in_graveyard_by_source(player, instance->targets[0].card, instance->targets[0].player);
+        if (pos == -1)
+          kill_card(player, card, KILL_EXILE);
+        else if (event == EVENT_TRIGGER)
+          event_result |= duh_mode(player) ? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL;
+        else if (event == EVENT_RESOLVE_TRIGGER)
+        {
+          damage_player(1-player, 3, player, card);
+          gain_life(player, 3);
+          rfg_card_from_grave(player, pos);
+          kill_card(player, card, KILL_EXILE);
+        }
+        break;
 
 		  case CASES_GY_FROM_ANYWHERE_TRIGGER_SHUFFLE:
 			// When ~ is put into a graveyard from anywhere, shuffle it into its owner's library.
@@ -2285,6 +2305,7 @@ void special_mill(int player, int card, int source_csvid, int orig_t_player, int
         case CASES_GY_FROM_ANYWHERE_TRIGGER_SHUFFLE_WHOLE_GY:
         case CARD_ID_GAEAS_BLESSING:
         case CARD_ID_NARCOMOEBA:
+        case CARD_ID_CREEPING_CHILL:
           enable_xtrigger_flags |= ENABLE_XTRIGGER_MILLED;
           int leg = create_legacy_effect_from_iid(t_player, iid, effect_self_mill, -1, -1);
           card_instance_t *legacy = get_card_instance(t_player, leg);

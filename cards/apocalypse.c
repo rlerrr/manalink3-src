@@ -58,14 +58,7 @@ static void recruiter(int player, int card, event_t event, int subtype){
 	}
 }
 
-static void phyrexians(int player, int card, event_t event, int amount){
 
-	if( comes_into_play(player, card, event) ){
-	   lose_life(player, amount);
-	   draw_cards(player, amount);
-	}
-
-}
 
 void volver(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white,
 			int colorless2, int black2, int blue2, int green2, int red2, int white2, int kicker1_priority, int kicker2_priority
@@ -168,9 +161,9 @@ static int desolation_creature(int player, int card, event_t event, type_t type)
 	if( event == EVENT_ETB_ABILITY ){
 		test_definition_t test;
 		default_test_definition(&test, type);
-		new_manipulate_all(player, card, player, &test, KILL_DESTROY);
+		new_manipulate_all(player, card, player, &test, ACT_KILL_DESTROY);
 		if( kicked(player, card) ){
-			new_manipulate_all(player, card, 1-player, &test, KILL_DESTROY);
+			new_manipulate_all(player, card, 1-player, &test, ACT_KILL_DESTROY);
 		}
 	}
 
@@ -1228,8 +1221,9 @@ int card_degavolver(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_REGENERATION, MANACOST0, 3, NULL, NULL);
 }
 
-int card_desolation_angel(int player, int card, event_t event){
-/*
+int card_desolation_angel(int player, int card, event_t event)
+{
+  /*
 Desolation Angel |3|B|B
 Creature — Angel 5/4
 Kicker {W}{W} (You may pay an additional {W}{W} as you cast this spell.)
@@ -1237,18 +1231,31 @@ Flying
 When Desolation Angel enters the battlefield, destroy all lands you control. If it was kicked, destroy all lands instead.
 */
 
-	return desolation_creature(player, card, event, TYPE_LAND);
+return desolation_creature(player, card, event, TYPE_LAND);
 }
 
-int card_desolation_giant(int player, int card, event_t event){
-/*
+int card_desolation_giant(int player, int card, event_t event)
+{
+  /*
 Desolation Giant English
 Creature — Giant 3/3, 2RR (4)
 Kicker {W}{W} (You may pay an additional {W}{W} as you cast this spell.)
 When Desolation Giant enters the battlefield, destroy all other creatures you control.
 	If it was kicked, destroy all other creatures instead.
 */
-	return desolation_creature(player, card, event, TYPE_CREATURE);
+
+if (event == EVENT_CAST_SPELL && affect_me(player, card) && !has_mana(player, COLOR_WHITE, 2))
+    ai_modifier -= 10 * count_subtype(player, TYPE_CREATURE, -1);
+  kicker(player, card, event, MANACOST_W(2));
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    test.not_me = 1;
+    new_manipulate_all(player, card, kicked(player, card) ? ANYBODY : player, &test, ACT_KILL_DESTROY);
+  }
+  return 0;
 }
 
 // divine light --> sivvi's rouse
@@ -1315,10 +1322,12 @@ Fervent Charge	|1|W|B|R
 Enchantment
 Whenever a creature you control attacks, it gets +2/+2 until end of turn. */
 
-  int amt;
-  if ((amt = declare_attackers_trigger(player, card, event, DAT_TRACK, player, -1)))
+  store_attackers(player, card, event, DAT_TRACK, player, -1, NULL);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  card_instance_t* instance = get_card_instance(player, card);
+	  int amt = instance->info_slot;
 	  unsigned char* attackers = (unsigned char*)(&instance->targets[2].player);
 	  for (--amt; amt >= 0; --amt)
 		if (in_play(current_turn, attackers[amt]))
@@ -1652,28 +1661,13 @@ int card_goblin_trenches(int player, int card, event_t event){
  * Enchantment
  * |2, Sacrifice a land: Put two 1/1 |Sred and |Swhite Goblin Soldier creature tokens onto the battlefield. */
 
-	if( event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, 0, MANACOST_X(2), 0, NULL, NULL) ){
-			return can_sacrifice_type_as_cost(player, 1, TYPE_LAND);
-		}
+	if (!IS_GAA_EVENT(event)){
+		return global_enchantment(player, card, event);
 	}
-
-	if( event == EVENT_ACTIVATE ){
-		test_definition_t test;
-		new_default_test_definition(&test, TYPE_CREATURE, "Select a land to sacrifice.");
-		if( charge_mana_for_activated_ability(player, card, MANACOST_X(2)) ){
-			if( new_sacrifice(player, card, player, SAC_AS_COST, &test) ){
-				spell_fizzled = 1;
-			}
-		}
+	if (event == EVENT_RESOLVE_ACTIVATION){
+		generate_tokens_by_id(player, card, CARD_ID_GOBLIN_SOLDIER, 2);
 	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *instance = get_card_instance( player, card );
-		generate_tokens_by_id(instance->parent_controller, instance->parent_card, CARD_ID_GOBLIN_SOLDIER, 2);
-	}
-
-	return global_enchantment(player, card, event);
+	return generic_activated_ability_with_sacrifice_as_cost(player, card, event, GAA_NONE, MANACOST_X(2), 0, NULL, NULL, TYPE_LAND, NULL, SARV_0);
 }
 
 int card_grave_defiler( int player, int card, event_t event){
@@ -1831,7 +1825,8 @@ Creature - Kavu 4/4
 Trample
 Whenever ~ attacks, it gets +1/+1 until end of turn for each other attacking Kavu. */
 
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  test_definition_t this_test;
 	  default_test_definition(&this_test, TYPE_CREATURE);
@@ -2095,7 +2090,8 @@ int card_mystic_snake(int player, int card, event_t event){
 		ai_modifier -= 10;
 	}
 
-	if( comes_into_play(player, card, event) ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if (event == EVENT_ETB_ABILITY){
 		if( instance->info_slot == 1 ){
 			real_counter_a_spell(player, card, card_on_stack_controller, card_on_stack);
 		}
@@ -2257,7 +2253,7 @@ int card_penumbra_bobcat(int player, int card, event_t event){
 		default_token_definition(player, card, CARD_ID_CAT, &token);
 		token.pow = 2;
 		token.tou = 1;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
+		token.color_forced = COLOR_TEST_BLACK;
 		generate_token(&token);
 	}
 	return 0;
@@ -2272,7 +2268,7 @@ int card_penumbra_wurm(int player, int card, event_t event){
 	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_WURM, &token);
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
+		token.color_forced = COLOR_TEST_BLACK;
 		token.key_plus = KEYWORD_TRAMPLE;
 		generate_token(&token);
 	}
@@ -2313,7 +2309,7 @@ Enchantment
 		default_test_definition(&test, TYPE_ARTIFACT|TYPE_CREATURE|TYPE_ENCHANTMENT);
 		test.cmc = instance->info_slot+1;
 		test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
-		APNAP(p, {new_manipulate_all(player, card, p, &test, KILL_DESTROY);};);
+		new_manipulate_all(player, card, ANYBODY, &test, KILL_DESTROY);
 	}
 
 	return global_enchantment(player, card, event);
@@ -2335,26 +2331,36 @@ At the beginning of your upkeep, you draw a card and you lose 1 life. */
 	return global_enchantment(player, card, event);
 }
 
-int card_phyrexian_rager(int player, int card, event_t event){
-/* CARD_ID_PHYREXIAN_RAGER	5418
+int card_phyrexian_rager(int player, int card, event_t event)
+{
+  /* CARD_ID_PHYREXIAN_RAGER	5418
 Phyrexian Rager	|2|B
 Creature - Horror 2/2
 When ~ enters the battlefield, you draw a card and you lose 1 life. */
 
-	phyrexians(player, card, event, 1);
-
-	return 0;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    lose_life(player, 1);
+    draw_cards(player, 1);
+  }
+  return 0;
 }
 
-int card_phyrexian_gargantua(int player, int card, event_t event){
-/* CARD_ID_PHYREXIAN_GARGANTUA	5417
+int card_phyrexian_gargantua(int player, int card, event_t event)
+{
+  /* CARD_ID_PHYREXIAN_GARGANTUA	5417
 Phyrexian Gargantua	|4|B|B
 Creature - Horror 4/4
 When ~ enters the battlefield, you draw two cards and you lose 2 life. */
 
-	phyrexians(player, card, event, 2);
-
-	return 0;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    lose_life(player, 2);
+    draw_cards(player, 2);
+  }
+  return 0;
 }
 
 int card_planar_despair(int player, int card, event_t event){
@@ -2377,26 +2383,26 @@ Powerstone Minefield	|2|R|W
 Enchantment
 Whenever a creature attacks or blocks, ~ deals 2 damage to it. */
 
-	int amt;
-	if ((amt = declare_attackers_trigger(player, card, event, DAT_TRACK, 2, -1))){
-		card_instance_t* instance = get_card_instance(player, card);
-		unsigned char* attackers = (unsigned char*)(&instance->targets[2].player);
-		for (--amt; amt >= 0; --amt){
-			if (in_play(current_turn, attackers[amt])){
-				damage_creature(current_turn, attackers[amt], 2, player, card);
-			}
-		}
+	store_attackers(player, card, event, DAT_TRACK, ANYBODY, -1, NULL);
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+	if (event == EVENT_DAT_ABILITY){
+	    card_instance_t* instance = get_card_instance(player, card);
+	    int i;
+	    for (i = instance->info_slot - 1; i >= 0; --i){
+	        int c = ((unsigned char*)&instance->targets[2].player)[i];
+	        if (in_play(current_turn, c)){ damage_creature(current_turn, c, 2, player, card); }
+	    }
 	}
-
-	if( event == EVENT_DECLARE_BLOCKERS){
-	   int i;
-	   for(i = 0; i < active_cards_count[1-current_turn]; i++){
-		   if( in_play(1-current_turn, i) && is_what(1-current_turn, i, TYPE_CREATURE) && blocking(1-current_turn, i, event) ){
-			   damage_creature(1-current_turn, i, 2, player, card);
-		   }
-	   }
+	if (event == EVENT_DECLARE_BLOCKERS){
+	    int c;
+	    for (c = 0; c < active_cards_count[1-current_turn]; ++c){
+	        if (in_play(1-current_turn, c) && is_what(1-current_turn, c, TYPE_CREATURE) && blocking(1-current_turn, c, event)){ damage_creature(1-current_turn, c, 2, player, card); }
+	    }
 	}
-
+	if (event == EVENT_CHECK_PUMP && current_phase < 0x16){
+	    pumpable_toughness[player] -= 2;
+	    pumpable_toughness[1-player] -= 2;
+	}
 	return global_enchantment(player, card, event);
 }
 
@@ -2414,7 +2420,7 @@ int card_prophetic_bolt(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			damage_creature_or_player(player, card, event, 4);
+			damage_target0(player, card, 4);
 			impulse_effect(player, 4, 0);
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -2431,7 +2437,7 @@ Whenever ~ deals damage, choose one -
 * Each player loses 1 life.
 * Each player gains 1 life. */
 
-	if( damage_dealt_by_me(player, card, event, 0) ){
+	if( damage_dealt_by_me(player, card, event, DDBM_MAY_DAMAGE_PLANESWALKER) ){
 		int ai_choice = 0;
 		if( life[player] == 1 ){
 			ai_choice = 1;
@@ -2476,7 +2482,7 @@ int card_quicksilver_dagger(int player, int card, event_t event){
 		}
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -2609,7 +2615,7 @@ int card_soul_link(int player, int card, event_t event)
 		}
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -2719,21 +2725,17 @@ Enchant creature
 Enchanted creature gets +2/+2.
 When enchanted creature dies, return that card to its owner's hand. */
 
-	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player != -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int t_player = instance->damage_target_player;
-		int t_card = instance->damage_target_card;
-		if(event == EVENT_GRAVEYARD_FROM_PLAY){
-			if( affect_me( t_player, t_card ) && is_this_dying(t_player, t_card) ){
-				int legacy = create_legacy_effect(player, card, &squee_embrace_legacy);
-				card_instance_t *leg = get_card_instance(player, legacy);
-				leg->targets[0].player = get_owner(t_player, t_card);
-				leg->targets[0].card = get_original_internal_card_id(t_player, t_card);
-				leg->targets[11].player = 1;
-			}
+	if (in_play(player, card) && get_card_instance(player, card)->damage_target_player != -1){
+		card_instance_t* instance = get_card_instance(player, card);
+		int p = instance->damage_target_player, c = instance->damage_target_card;
+		if (attached_creature_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY)){
+			int legacy = create_legacy_effect(player, card, squee_embrace_legacy);
+			card_instance_t* effect = get_card_instance(player, legacy);
+			effect->targets[0].player = get_owner(p, c);
+			effect->targets[0].card = get_original_internal_card_id(p, c);
+			effect->targets[11].player = 1;
 		}
 	}
-
 	return generic_aura(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
 }
 
@@ -2811,11 +2813,12 @@ Counter target spell and Suffocating Blast deals 3 damage to target creature.
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		instance->number_of_targets = 0;
 		counterspell(player, card, event, NULL, 0);
-		new_pick_target(&td, "TARGET_CREATURE", 1, 1);
+		if (can_target(&td)){ new_pick_target(&td, "TARGET_CREATURE", 1, 1); }
 	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		counterspell(player, card, event, NULL, 0);
+		instance->number_of_targets = 2;
 		if( validate_target(player, card, &td, 1) ){
 			damage_creature(instance->targets[1].player, instance->targets[1].card, 3, player, card);
 		}
@@ -3017,7 +3020,7 @@ int card_urborg_uprising(int player, int card, event_t event)
    * Sorcery
    * Return up to two target creature cards from your graveyard to your hand.
    * Draw a card. */
-  if (!IS_CASTING(player, card, event))
+  if (!IS_GS_EVENT(player, card, event))
 	return 0;
   test_definition_t test;
   new_default_test_definition(&test, TYPE_CREATURE, "Select up to two target creature cards.");

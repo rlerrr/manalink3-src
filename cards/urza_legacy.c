@@ -14,27 +14,20 @@ All creatures have vigilance.
 At the beginning of each player's end step, tap all untapped creatures that player controls that didn't attack this turn.
 ~ deals damage to the player equal to the number of creatures tapped this way. */
 
-	if( ! is_humiliated(player, card, AL_STATIC) ){
-		// All creatures have vigilance.
-		if( event == EVENT_ABILITIES && is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
-			vigilance(affected_card_controller, affected_card, event);
-		}
-
-		/* At the beginning of each player's end step, tap all untapped creatures that player controls that didn't attack this turn. ~ deals damage to the player
-		 * equal to the number of creatures tapped this way. */
-		if( eot_trigger(player, card, event) ){
-			card_instance_t* inst;
-			int count, dmg = 0;
-			for (count = 0; count < active_cards_count[current_turn]; ++count){
-				if ((inst = in_play(current_turn, count)) && is_what(current_turn, count, TYPE_CREATURE) && !(inst->state & (STATE_ATTACKED | STATE_TAPPED))){
-					tap_card(current_turn, count);
-					dmg++;
-				}
-			}
-			if( dmg > 0 ){
-				damage_player(current_turn, dmg, player, card);
+	if (!is_humiliated(player, card, AL_STATIC) && event == EVENT_ABILITIES
+		&& is_what(affected_card_controller, affected_card, TYPE_CREATURE)){
+		vigilance(affected_card_controller, affected_card, event);
+	}
+	if (eot_trigger(player, card, event)){
+		int damage = 0;
+		for (int c = 0; c < active_cards_count[current_turn]; ++c){
+			card_instance_t* instance = in_play(current_turn, c);
+			if (instance && is_what(current_turn, c, TYPE_CREATURE) && !(instance->state & (STATE_ATTACKED | STATE_TAPPED))){
+				tap_card(current_turn, c);
+				++damage;
 			}
 		}
+		if (damage > 0){ damage_player(current_turn, damage, player, card); }
 	}
 	return 0;
 }
@@ -341,7 +334,6 @@ search your library for up to two creature cards, and put those cards onto the b
 				new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature card.");
 				this_test.qty = 2;
 				new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_CMC, &this_test);
-				shuffle(player);
 				kill_card(player, card, KILL_SACRIFICE);
 		}
 	}
@@ -524,7 +516,8 @@ Land
 |T: Add |U to your mana pool.
 |1|U: ~ becomes a 2/1 |Sblue Faerie creature with flying until end of turn. It's still a land.*/
 
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG))
+    comes_into_play_tapped(player, card, event);
 	return manland_normal(player, card, event, MANACOST_XU(1, 1));
 }
 
@@ -564,7 +557,8 @@ Land
 |T: Add |W to your mana pool.
 |1|W: ~ becomes a 1/5 |Swhite Soldier creature until end of turn. It's still a land.*/
 
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG))
+    comes_into_play_tapped(player, card, event);
 	return manland_normal(player, card, event, MANACOST_XW(1, 1));
 }
 
@@ -606,7 +600,8 @@ Land
 |T: Add |R to your mana pool.
 |1|R: ~ becomes a 2/1 |Sred Warrior creature with first strike until end of turn. It's still a land. (It deals combat damage before creatures without first strike.)*/
 
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG))
+    comes_into_play_tapped(player, card, event);
 	return manland_normal(player, card, event, MANACOST_XR(1, 1));
 }
 
@@ -775,7 +770,7 @@ Put all enchantments on top of their owners' libraries. */
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_ENCHANTMENT);
-		APNAP(p, { new_manipulate_all(player, card, p, &this_test, ACT_PUT_ON_TOP); };);
+		new_manipulate_all(player, card, ANYBODY, &this_test, ACT_PUT_ON_TOP);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -837,7 +832,7 @@ At the beginning of your upkeep, if there are seven or more lands on the battlef
 		else if(event == EVENT_RESOLVE_TRIGGER){
 				test_definition_t this_test;
 				default_test_definition(&this_test, TYPE_LAND);
-				APNAP(p, {new_manipulate_all(player, card, p, &this_test, KILL_DESTROY);};);
+				new_manipulate_all(player, card, ANYBODY, &this_test, ACT_KILL_DESTROY);
 				kill_card(player, card, KILL_SACRIFICE);
 		}
 	}
@@ -1233,7 +1228,7 @@ int card_no_mercy(int player, int card, event_t event){
 	if( event == EVENT_DEAL_DAMAGE ){
 		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
 		if( damage->internal_card_id == damage_card ){
-			if( damage->damage_target_card == -1 && damage->damage_target_player == player ){
+			if( damage->damage_target_card == -1 && damage->damage_target_player == player && !damage_is_to_planeswalker(damage) ){
 				if( is_what(damage->damage_source_player, damage->damage_source_card, TYPE_CREATURE) ){
 					int good = 0;
 					if( damage->info_slot > 0 ){
@@ -1554,7 +1549,7 @@ int card_planar_collapse(int player, int card, event_t event){
 				state_untargettable(player, card, 1);
 				test_definition_t this_test;
 				default_test_definition(&this_test, TYPE_CREATURE);
-				APNAP(p,{new_manipulate_all(player, card, p, &this_test, KILL_BURY);};);
+				new_manipulate_all(player, card, ANYBODY, &this_test, KILL_BURY);
 				state_untargettable(player, card, 0);
 				kill_card(player, card, KILL_SACRIFICE);
 		}
@@ -1568,7 +1563,7 @@ int card_purify(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_ENCHANTMENT | TYPE_ARTIFACT);
-		APNAP(p,{new_manipulate_all(player, card, p, &this_test, KILL_DESTROY);};);
+		new_manipulate_all(player, card, ANYBODY, &this_test, KILL_DESTROY);
 		kill_card(player, card, KILL_SACRIFICE);
 	}
 
@@ -1755,7 +1750,7 @@ int card_rebuild(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_ARTIFACT);
-		APNAP(p, { new_manipulate_all(player, card, p, &this_test, ACT_BOUNCE); };);
+		new_manipulate_all(player, card, ANYBODY, &this_test, ACT_BOUNCE);
 		kill_card(player, card, KILL_SACRIFICE);
 	}
 
@@ -1995,7 +1990,8 @@ int card_snap2(int player, int card, event_t event){
 }
 
 int card_spawning_pool(int player, int card, event_t event){
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG))
+    comes_into_play_tapped(player, card, event);
 	return manland_normal(player, card, event, MANACOST_XB(1, 1));
 }
 
@@ -2135,7 +2131,8 @@ int card_tinker(int player, int card, event_t event){
 }
 
 int card_treetop_village(int player, int card, event_t event){
-	comes_into_play_tapped(player, card, event);
+	if (!is_humiliated(player, card, AL_TRIG))
+    comes_into_play_tapped(player, card, event);
 	return manland_normal(player, card, event, MANACOST_XG(1, 1));
 }
 

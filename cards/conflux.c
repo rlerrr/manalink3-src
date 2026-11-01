@@ -144,7 +144,7 @@ int card_banefire(int player, int card, event_t event){
 				get_card_instance(player, legacy)->targets[0].player = player;
 				get_card_instance(player, legacy)->targets[0].card = card;
 			}
-			damage_creature_or_player(player, card, event, instance->info_slot);
+			damage_target0(player, card, instance->info_slot);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -535,7 +535,7 @@ Sorcery
 Domain - Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle your library.
 ~ deals X damage to target player, where X is the number of basic land types among lands you control. */
 
-	if( ! IS_GAA_EVENT(event) ){
+	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
 
@@ -549,6 +549,7 @@ Domain - Search your library for a basic land card, put that card onto the battl
 	if(event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td1) ){
 			tutor_basic_land(player, 1, 1);
+			count_colors_of_lands_in_play();
 			int damage = count_domain(player, card);
 			if( damage > 0 ){
 				damage_player(instance->targets[0].player, damage, player, card);
@@ -569,29 +570,21 @@ Whenever another creature leaves the battlefield, you may have target player put
 Unearth |2|B (|2|B: Return this card from your graveyard to the battlefield. It gains haste.
 Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.) */
 
-	if( trigger_condition == TRIGGER_LEAVE_PLAY ){
+	if (trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card)){
+		test_definition_t test;
+		default_test_definition(&test, TYPE_CREATURE);
+		test_leaves_play_mode(player, card, event, ANYBODY, RESOLVE_TRIGGER_AI(player), &test, 1, 1);
+	}
+	if (event == EVENT_LEAVES_PLAY_ABILITY){
 		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE );
+		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.zone = TARGET_ZONE_PLAYERS;
-
-		if( affect_me( player, card) && !( trigger_cause == card && trigger_cause_controller == player) &&
-			reason_for_trigger_controller == player && can_target(&td)
-		  ){
-			if( is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) && in_play(trigger_cause_controller, trigger_cause) ){
-				if(event == EVENT_TRIGGER){
-					event_result |= RESOLVE_TRIGGER_AI(player);
-				}
-				else if(event == EVENT_RESOLVE_TRIGGER){
-						card_instance_t *instance = get_card_instance(player, card);
-						instance->number_of_targets = 0;
-						if( pick_target(&td, "TARGET_PLAYER") ){
-							mill(instance->targets[0].player, 2);
-						}
-				}
-			}
+		if (can_target(&td)){
+			card_instance_t* instance = get_card_instance(player, card);
+			instance->number_of_targets = 0;
+			if (pick_target(&td, "TARGET_PLAYER")){ mill(instance->targets[0].player, 2); }
 		}
 	}
-
 	return unearth(player, event, MANACOST_XB(2, 1));
 }
 
@@ -616,7 +609,7 @@ Put the rest on the bottom of your library in any order. */
 			new_default_test_definition(&this_test, TYPE_ARTIFACT, msg);
 			this_test.create_minideck = amount;
 			this_test.no_shuffle = 1;
-			if( new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test) != -1 ){
+			if( new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test) >= 0 ){
 				amount--;
 			}
 			if( amount > 0 ){
@@ -917,7 +910,7 @@ int card_hellkite_hatchling(int player, int card, event_t event){
 
 	devour(player, card, event, 1);
 
-	if( get_card_instance(player, card)->targets[1].player == 66 && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
+	if( get_card_instance(player, card)->targets[2].player == 66 && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && affect_me(player, card) ){
 		modify_pt_and_abilities(player, card, event, 0, 0, KEYWORD_FLYING | KEYWORD_TRAMPLE);
 	}
 
@@ -1164,23 +1157,20 @@ int card_martial_coup(int player, int card, event_t event){
 	 * Sorcery
 	 * Put X 1/1 |Swhite Soldier creature tokens onto the battlefield. If X is 5 or more, destroy all other creatures. */
 
-	if(event == EVENT_RESOLVE_SPELL){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		APNAP(p, {new_manipulate_all(player, card, p, &this_test, KILL_DESTROY);};);
-
-		card_instance_t *instance = get_card_instance( player, card);
-
+	if (event == EVENT_RESOLVE_SPELL){
+		card_instance_t* instance = get_card_instance(player, card);
+		if (instance->info_slot > 4){
+			test_definition_t test;
+			default_test_definition(&test, TYPE_CREATURE);
+			new_manipulate_all(player, card, ANYBODY, &test, KILL_DESTROY);
+		}
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_SOLDIER, &token);
 		token.pow = token.tou = 1;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
 		token.qty = instance->info_slot;
 		generate_token(&token);
-
 		kill_card(player, card, KILL_DESTROY);
 	}
-
 	return generic_spell(player, card, event, GS_X_SPELL, NULL, NULL, 0, NULL);
 }
 
@@ -1210,9 +1200,9 @@ Artifact Creature — Human Artificer 1/2
 		generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST_U(1), 0,
 								&td, "Select an artifact you control.");
 		if( spell_fizzled != 1 ){
-			instance->number_of_targets = 0;
 			bounce_permanent(instance->targets[0].player, instance->targets[0].card);
 		}
+		instance->number_of_targets = 0;
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
@@ -1231,7 +1221,7 @@ int card_matca_rioters(int player, int card, event_t event){
 	  Domain - Matca Rioters's power and toughness are each equal to the number of basic land types among lands you control.
 	*/
 	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card, AL_STATIC) && player != -1){
-		event_result += count_domain(player, card);
+		set_characteristic_pt(count_domain(player, card));
 	}
 	return 0;
 }
@@ -1314,6 +1304,8 @@ int card_nicol_bolas_planeswalker(int player, int card, event_t event){
 	 * +3: Destroy target noncreature permanent.
 	 * -2: Gain control of target creature.
 	 * -9: ~ deals 7 damage to target player or planeswalker. That player or that planeswalker's controller discards seven cards, then sacrifices seven permanents. */
+	check_legend_rule(player, card, event);
+
 	if (IS_ACTIVATING(event)){
 
 		target_definition_t td;
@@ -1363,7 +1355,7 @@ int card_nicol_bolas_planeswalker(int player, int card, event_t event){
 			case CHOICE_STEAL_CREATURE:
 			{
 				if( valid_target(&td1) ){
-					gain_control(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card);
+					gain_control_permanently(instance->parent_controller, instance->targets[0].player, instance->targets[0].card);
 				}
 			}
 			break;
@@ -1660,7 +1652,7 @@ int card_progenitus(int player, int card, event_t event)
   // Last ability handled in special_mill() and raw_put_iid_on_top_of_graveyard_with_triggers().
 
 	check_legend_rule(player, card, event);
-	unblockable(player, card, event);
+	protection_from_everything(player, card, event);
 	return 0;
 }
 
@@ -1678,7 +1670,7 @@ Haste
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_RED);
+		token.color_forced = COLOR_TEST_RED;
 		token.pow = 3;
 		token.tou = 1;
 		token.s_key_plus = SP_KEYWORD_HASTE;
@@ -1698,7 +1690,7 @@ You have no maximum hand size.
 	if( current_turn == player && event == EVENT_MAX_HAND_SIZE && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		event_result+=99;
 	}
-	return mana_producer(player, card, event);
+	return plain_mana_producer(player, card, event);
 }
 
 int card_rotting_rats(int player, int card, event_t event){
@@ -1901,20 +1893,15 @@ int card_sigil_of_the_empty_throne(int player, int card, event_t event){
 	 * Enchantment
 	 * Whenever you cast an enchantment spell, put a 4/4 |Swhite Angel creature token with flying onto the battlefield. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_ENCHANTMENT);
-
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			token_generation_t token;
-			default_token_definition(player, card, CARD_ID_ANGEL, &token);
-			token.pow = token.tou = 4;
-			token.key_plus = KEYWORD_FLYING;
-			token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
-			generate_token(&token);
-		}
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ENCHANTMENT, NULL, player, card);
+	if (event == EVENT_SPA){
+		token_generation_t token;
+		default_token_definition(player, card, CARD_ID_ANGEL, &token);
+		token.pow = token.tou = 4;
+		token.key_plus = KEYWORD_FLYING;
+		token.color_forced = COLOR_TEST_WHITE;
+		generate_token(&token);
 	}
-
 	return global_enchantment(player, card, event);
 }
 
@@ -1952,17 +1939,13 @@ Whenever another artifact enters the battlefield under your control or another a
 		instance->number_of_targets = 0;
 	}
 	
-		if( trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card) && !( trigger_cause == card && trigger_cause_controller == player) 
-			&& reason_for_trigger_controller == player ){
-			if( is_what(trigger_cause_controller, trigger_cause, TYPE_ARTIFACT) ){
-				if(event == EVENT_TRIGGER){
-					event_result |= RESOLVE_TRIGGER_AI(player);
-				}
-				else if(event == EVENT_RESOLVE_TRIGGER){
-						call_card_function(player, card, EVENT_ETB_ABILITY);
-				}
-			}
-		}
+	if (trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card) && !(trigger_cause == card && trigger_cause_controller == player) && reason_for_trigger_controller == player){
+		test_definition_t test;
+		default_test_definition(&test, TYPE_ARTIFACT);
+		test_leaves_play_mode(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test, 1, 1);
+	}
+	if (event == EVENT_LEAVES_PLAY_ABILITY){ call_card_function(player, card, EVENT_ETB_ABILITY); }
+
 
 
 
@@ -2072,7 +2055,7 @@ That player puts all noncreature cards revealed this way into his or her graveya
 	}
 
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
+	default_target_definition(player, card, &td, TYPE_NONE);
 	td.zone = TARGET_ZONE_PLAYERS;
 
 	card_instance_t *instance = get_card_instance( player, card);
@@ -2082,7 +2065,7 @@ That player puts all noncreature cards revealed this way into his or her graveya
 			test_definition_t this_test;
 			default_test_definition(&this_test, TYPE_CREATURE);
 			reveal_card_until_you_reveal_test(player, instance->targets[0].player, &this_test,
-												RCUYRT_PUT_TEST_INTO_PLAY | RCUYRT_MILL_REST);
+												RCUYRT_PUT_TEST_INTO_PLAY | RCUYRT_MILL_REST | RCUYRT_OPPONENT_REVEAL);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -2149,7 +2132,7 @@ Creature — Elemental Shapeshifter 4/4
 		priorities[CHOICE_P1_M1] = current_turn == player && current_phase == PHASE_AFTER_BLOCKING ? 8 : 1;
 		priorities[CHOICE_M1_P1] = current_turn != player && current_phase == PHASE_AFTER_BLOCKING ? 8 : 1;
 
-		int choice = DIALOG(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_NO_CANCEL,
+		int choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_RANDOM,
 							"Haste", 			green_ability, priorities[1],
 							"Trample", 			green_ability, priorities[2],
 							"Indestructible", 	green_ability, priorities[3],

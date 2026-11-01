@@ -1,11 +1,11 @@
 # Helper recovery triage
 
-Remaining manual review: **0 native helper ranges**. Separately tracked: **1,241 explicitly reviewed/reconstructed ranges** and **952 verified retained ranges**. The classifier does not edit C source or recovery records. Narrow argument/interface edits do not close whole-body review.
+Remaining manual review: **0 native helper ranges**. Separately tracked: **1,242 explicitly reviewed/reconstructed ranges** and **951 verified retained ranges**. The classifier does not edit C source or recovery records. Narrow argument/interface edits do not close whole-body review.
 
 | Review queue | Ranges |
 | --- | ---: |
 | `same_local_code` | 0 |
-| `verified_retained_source` | 952 |
+| `verified_retained_source` | 951 |
 | `callee_binding_only` | 0 |
 | `reference_review` | 0 |
 | `small_diff_review` | 0 |
@@ -15,7 +15,9 @@ Remaining manual review: **0 native helper ranges**. Separately tracked: **1,241
 | `cpp_review` | 0 |
 | `reviewed_cpp_source` | 17 |
 | `reviewed_compiler_source` | 34 |
-| `reconstructed_source` | 1,241 |
+| `reconstructed_source` | 1,242 |
+
+Separate split-DWARF census: **5 helper functions in 10 code ranges**, with **0 pending functions**. These discontiguous functions are excluded from the contiguous-range table above.
 
 Separately reviewed: **17 C++ utility/picker bodies** and **34 compiler-generated/header ranges**. Complete native bodies, specialized parameters and corresponding source were reviewed. Header copies are supplied by GCC and are excluded from authored/reconstructed-function totals; their review does not assert byte identity or CRT/caller equivalence.
 
@@ -25,7 +27,7 @@ Separately reviewed: **17 C++ utility/picker bodies** and **34 compiler-generate
 
 **0 duplicate implementation candidates** were found among retained/recovered pairs. These require ABI and caller review before canonicalizing names.
 
-952 existing ranges pass strict complete-body instruction equality, matching DWARF calling/storage contracts, visible source and reviewed direct targets. Their source is retained without another decompilation pass. This category is recomputed from current binaries on every run and is distinct from decompiled source recovery. 0 local-code matches still need signature/storage-contract review.
+951 existing ranges pass strict complete-body instruction equality, matching DWARF calling/storage contracts, visible source and reviewed direct targets. Their source is retained without another decompilation pass. This category is recomputed from current binaries on every run and is distinct from decompiled source recovery. 0 local-code matches still need signature/storage-contract review.
 
 Of the 0 remaining local matches, 0 have no pending direct targets but fail another retention prerequisite; 0 still have unreviewed direct targets. Reviewed target bodies keep their own dependency tracking; this is not a transitive gameplay-equivalence claim.
 

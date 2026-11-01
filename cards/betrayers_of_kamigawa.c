@@ -750,7 +750,7 @@ Creature - Human Cleric 1/1
 	if( event == EVENT_ABILITIES && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		int keyword = 0;
 		CYCLE_ALL_CARDS(p, c, 	{
-									if( p == player && is_what(p, c, TYPE_PERMANENT) && ! is_what(p, c, TYPE_LAND) ){
+									if( p == player && is_what(p, c, TYPE_PERMANENT) && ! is_what(p, c, TYPE_LAND) && in_play(p, c) ){
 										int clr = get_color(p, c);
 										int i;
 										for(i=1; i<6; i++){
@@ -831,7 +831,7 @@ int card_final_judgment(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
-		APNAP(p, {new_manipulate_all(player, card, p, &this_test, KILL_EXILE);};);
+		new_manipulate_all(player, card, ANYBODY, &this_test, KILL_EXILE);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -1031,19 +1031,17 @@ When enchanted |H2Mountain is put into a graveyard, you may return ~ from your g
 
 // goblin cohorth -->Mogg Conscripts
 
-int card_gods_eye_gate_to_reikai(int player, int card, event_t event){
-	/* Gods' Eye, Gate to the Reikai	""
+int card_gods_eye_gate_to_reikai(int player, int card, event_t event)
+{
+  /* Gods' Eye, Gate to the Reikai	""
 	 * Legendary Land
 	 * |T: Add |1 to your mana pool.
 	 * When ~ is put into a graveyard from the battlefield, put a 1/1 colorless Spirit creature token onto the battlefield. */
 
-	check_legend_rule(player, card, event);
-
-	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		generate_token_by_id(player, card, CARD_ID_SPIRIT);
-	}
-
-	return mana_producer(player, card, event);
+  check_legend_rule(player, card, event);
+  if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) && !is_humiliated(player, card, AL_TRIG))
+    generate_token_by_id(player, card, CARD_ID_SPIRIT);
+  return plain_mana_producer(player, card, event);
 }
 
 ARCANE_WITH_SPLICE(card_goryos_vengeance, MANACOST_XB(2,1)){
@@ -1094,7 +1092,7 @@ int card_higure_the_still_wind(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( ! IS_GAA_EVENT(event) ){
+	if( IS_GAA_EVENT(event) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE );
 		td.required_subtype = SUBTYPE_NINJA;
@@ -1303,7 +1301,7 @@ ARCANE(card_ire_of_kaminari){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 			if( valid_target(&td) ){
-				damage_creature_or_player(player, card, event, count_graveyard_by_subtype(player, SUBTYPE_ARCANE));
+				damage_target0(player, card, count_graveyard_by_subtype(player, SUBTYPE_ARCANE));
 			}
 	}
 	return 0;
@@ -1320,6 +1318,8 @@ Bushido 2 (Whenever this creature blocks or becomes blocked, it gets +2/+2 until
 	check_legend_rule(player, card, event);
 
 	cannot_be_countered(player, card, event);
+
+	bushido(player, card, event, 2);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -1353,7 +1353,7 @@ Bushido 2 (Whenever this creature blocks or becomes blocked, it gets +2/+2 until
 		}
 	}
 
-	return bushido(player, card, event, 2);
+	return 0;
 }
 
 int card_iwamori_the_open_fist(int player, int card, event_t event){
@@ -1736,6 +1736,10 @@ int card_mark_of_sakiko(int player, int card, event_t event)
 	  mana_doesnt_drain_until_eot(player, COLOR_GREEN, amt);
 	}
 
+  if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
+  	return 0;
+  }
+
   return vanilla_aura(player, card, event, player);
 }
 
@@ -1818,27 +1822,15 @@ Creature - Spirit 1/4
 Sacrifice ~: Target creature you control gains protection from the color of your choice until end of turn.
 Soulshift 3 (When this creature dies, you may return target Spirit card with converted mana cost 3 or less from your graveyard to your hand.)*/
 
-	if( ! IS_GAA_EVENT(event) ){
-		return soulshift(player, card, event, 3, 1);
-	}
-
+	if (!IS_GAA_EVENT(event)){ return soulshift(player, card, event, 3, 1); }
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE );
-	td.preferred_controller = td.allowed_controller = player;
-
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE ){
-		return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_SACRIFICE_ME | GAA_LITERAL_PROMPT, MANACOST0, 0,
-										&td, "Select target creature you control.");
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.allowed_controller = td.preferred_controller = player;
+	card_instance_t* instance = get_card_instance(player, card);
+	if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td)){
+		pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, select_a_protection(player) | KEYWORD_RECALC_SET_COLOR, 0);
 	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		pump_ability_until_eot(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card,
-								0, 0, select_a_protection(player) | KEYWORD_RECALC_SET_COLOR, 0);
-	}
-
-	return 0;
+	return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_SACRIFICE_ME | GAA_LITERAL_PROMPT, MANACOST0, 0, &td, "Select target creature you control.");
 }
 
 int neko_te_legacy(int player, int card, event_t event)
@@ -1964,7 +1956,8 @@ You gain X life. */
 int card_ogre_marauder(int player, int card, event_t event){
 	// Whenever ~ attacks, it gains "~ is unblockable" until end of turn unless defending player sacrifices a creature.
 
-	if (declare_attackers_trigger(player, card, event, 0, player, card))
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY)
 	{
 		int choice = 1;
 		if( can_sacrifice(1-player, player, 1, TYPE_CREATURE, 0) ){
@@ -2031,6 +2024,7 @@ Bushido 1 (Whenever this creature blocks or becomes blocked, it gets +1/+1 until
 |1|W: Prevent the next 1 damage that would be dealt to ~ this turn. */
 
 	check_legend_rule(player, card, event);
+	bushido(player, card, event, 1);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -2102,7 +2096,7 @@ Bushido 1 (Whenever this creature blocks or becomes blocked, it gets +1/+1 until
 		}
 	}
 
-	return bushido(player, card, event, 1);
+	return 0;
 }
 
 int card_orb_of_dreams(int player, int card, event_t event){
@@ -2142,30 +2136,25 @@ int card_oyobi_who_splits_the_heavens(int player, int card, event_t event)
   return 0;
 }
 
-int card_patron_of_the_akki(int player, int card, event_t event){
-
-	check_legend_rule(player, card, event);
-
-	// Whenever ~ attacks, creatures you control get +2/+0 until end of turn.
-	if (declare_attackers_trigger(player, card, event, 0, player, card)){
-		pump_creatures_until_eot(player, card, player, 0, 2,0, 0,0, NULL);
-	}
-
-	// Goblin offering
-	return patron(player, card, event, SUBTYPE_GOBLIN);
+int card_patron_of_the_akki(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    pump_creatures_until_eot(player, card, player, 0, 2, 0, 0, 0, NULL);
+  }
+  return patron(player, card, event, SUBTYPE_GOBLIN);
 }
 
-int card_patron_of_the_kitsune(int player, int card, event_t event){
-
-	check_legend_rule(player, card, event);
-
-	// Whenever a creature attacks, you may gain 1 life.
-	if (declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player) | DAT_SEPARATE_TRIGGERS, 2, -1)){
-		gain_life(player, 1);
-	}
-
-	// Fox offering
-	return patron(player, card, event, SUBTYPE_FOX);
+int card_patron_of_the_kitsune(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  store_attackers(player, card, event, DAT_SEPARATE_TRIGGERS, ANYBODY, -1, NULL);
+  dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 1);
+  if (event == EVENT_DAT_ABILITY)
+    gain_life(player, 1);
+  return patron(player, card, event, SUBTYPE_FOX);
 }
 
 int card_patron_of_the_moon(int player, int card, event_t event){
@@ -2337,7 +2326,7 @@ Snake offering (You may cast this card any time you could cast an instant by sac
 
 	check_legend_rule(player, card, event);
 
-	if( ! IS_GAA_EVENT(event) ){
+	if( IS_GAA_EVENT(event) ){
 		if( event == EVENT_RESOLVE_ACTIVATION ){
 			int i, end = active_cards_count[player], clr = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
 			int marked[151] = {0};
@@ -2355,10 +2344,6 @@ Snake offering (You may cast this card any time you could cast an instant by sac
 			}
 		}
 		return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_ONCE_PER_TURN, MANACOST0, 0, NULL, NULL);
-	}
-
-	if( event == EVENT_CLEANUP ){
-		get_card_instance(player, card)->targets[1].player = 0;
 	}
 
 	return patron(player, card, event, SUBTYPE_SNAKE);
@@ -2473,19 +2458,12 @@ LAB_0256e62a:
 
 int card_reduce_to_dreams(int player, int card, event_t event){
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		test_definition_t this_test;
-
-		default_test_definition(&this_test, TYPE_ENCHANTMENT);
-		APNAP(p, {new_manipulate_all(player, card, p, &this_test, ACT_BOUNCE);};);
-
-		default_test_definition(&this_test, TYPE_LAND);
-		this_test.type_flag = DOESNT_MATCH;
-		APNAP(p, {new_manipulate_all(player, card, p, &this_test, ACT_BOUNCE);};);
-
+	if (event == EVENT_RESOLVE_SPELL){
+		test_definition_t test;
+		default_test_definition(&test, TYPE_ARTIFACT | TYPE_ENCHANTMENT);
+		new_manipulate_all(player, card, ANYBODY, &test, ACT_BOUNCE);
 		kill_card(player, card, KILL_DESTROY);
 	}
-
 	return basic_spell(player, card, event);
 }
 
@@ -2843,7 +2821,7 @@ int card_sosukes_summons(int player, int card, event_t event){
 		default_token_definition(player, card, CARD_ID_SNAKE, &token);
 		token.pow = token.tou = 1;
 		token.qty = 2;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
+		token.color_forced = COLOR_TEST_GREEN;
 		generate_token(&token);
 
 		kill_card(player, card, KILL_DESTROY);
@@ -2946,25 +2924,13 @@ Sway of the Stars	|8|U|U
 Sorcery
 Each player shuffles his or her hand, graveyard, and permanents he or she owns into his or her library, then draws seven cards. Each player's life total becomes 7.*/
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		test_definition_t this_test;
-
-		default_test_definition(&this_test, TYPE_ENCHANTMENT);
-		APNAP(p, {new_manipulate_all(player, card, p, &this_test, ACT_BOUNCE);};);
-
-		default_test_definition(&this_test, TYPE_LAND);
-		this_test.type_flag = DOESNT_MATCH;
-		APNAP(p, {new_manipulate_all(player, card, p, &this_test, ACT_BOUNCE);};);
-
-		APNAP(p,{
-					draw_cards(p, 7);
-					set_life_total(p, 7);
-				};
-		);
-
+	if (event == EVENT_RESOLVE_SPELL){
+		test_definition_t test;
+		default_test_definition(&test, TYPE_PERMANENT);
+		new_manipulate_all(player, card, ANYBODY, &test, ACT_BOUNCE);
+		APNAP(p, { draw_cards(p, 7); set_life_total(p, 7); });
 		kill_card(player, card, KILL_DESTROY);
 	}
-
 	return basic_spell(player, card, event);
 }
 
@@ -2975,13 +2941,14 @@ Takenuma Bleeder	|2|B
 Creature - Ogre Shaman 3/3
 Whenever ~ attacks or blocks, you lose 1 life if you don't control a Demon. */
 
-  if ((xtrigger_condition() == XTRIGGER_ATTACKING || event == EVENT_DECLARE_ATTACKERS || event == EVENT_DECLARE_BLOCKERS)
-	  && !check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_DEMON)
-	  && (declare_attackers_trigger(player, card, event, 0, player, card)
-		  || (blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG))))
-	lose_life(player, 1);
-
-  return 0;
+	if (blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG) && !check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_DEMON)){
+		lose_life(player, 1);
+	}
+	dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+	if (event == EVENT_DAT_ABILITY && !check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_DEMON)){
+		lose_life(player, 1);
+	}
+	return 0;
 }
 
 int card_tallowisp(int player, int card, event_t event)
@@ -3012,42 +2979,27 @@ int card_tendo_ice_bridge(int player, int card, event_t event){
 	 * |T: Add |1 to your mana pool.
 	 * |T, Remove a charge counter from ~: Add one mana of any color to your mana pool. */
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	enters_the_battlefield_with_counters(player, card, event, COUNTER_CHARGE, 1);
-
-	if( event == EVENT_RESOLVE_SPELL ){
+	card_instance_t* instance = get_card_instance(player, card);
+	if (!is_humiliated(player, card, AL_TRIG)){
+		enters_the_battlefield_with_counters(player, card, event, COUNTER_CHARGE, 1);
+	}
+	if (event == EVENT_RESOLVE_SPELL){
 		play_land_sound_effect_force_color(player, card, COLOR_TEST_ANY_COLORED);
-
-		instance->info_slot = COLOR_TEST_ANY;
-		instance->targets[1].player = 66;
-		return 0;	// so mana_producer() doesn't play the colorless sound
-	}
-
-	if( count_counters(player, card, COUNTER_CHARGE) <= 0 && instance->targets[1].player == 66 ){
-		instance->info_slot = COLOR_TEST_COLORLESS;
-	}
-
-	int colored_mana_before = 0;
-	if( event == EVENT_ACTIVATE ){
-		int i;
-		for(i=COLOR_BLACK; i<=COLOR_WHITE;i++){
-			colored_mana_before+=mana_pool[player][i];
+		if (!is_humiliated(player, card, AL_TRIG)){
+			instance->info_slot = COLOR_TEST_ANY;
+			instance->targets[1].player = 66;
 		}
+		return 0;
 	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		int colored_mana_after = 0;
-		int i;
-		for(i=COLOR_BLACK; i<=COLOR_WHITE;i++){
-			colored_mana_after+=mana_pool[player][i];
+	if (event == EVENT_CHANGE_TYPE){
+		if (count_counters(player, card, COUNTER_CHARGE) <= 0 && instance->targets[1].player == 66){
+			instance->info_slot = COLOR_TEST_COLORLESS;
 		}
-		if( colored_mana_before < colored_mana_after ){
-			remove_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_CHARGE, 1);
-		}
+	}else if (event == EVENT_RESOLVE_ACTIVATION
+		&& !(color_to_color_test(tapped_for_mana_color) & (mana_colors_added[player] | COLOR_TEST_COLORLESS))){
+		remove_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_CHARGE, 1);
 	}
-
-  return mana_producer(player, card, event);
+	return mana_producer(player, card, event);
 }
 
 ARCANE(card_terashis_grasp){
@@ -3145,7 +3097,7 @@ You control enchanted creature. */
 		}
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -3798,7 +3750,8 @@ When ~ leaves the battlefield, sacrifice all non-Ogre creatures you control. */
 
 	check_legend_rule(player, card, event);
 
-	if( leaves_play(player, card, event, 1, 1) ){
+	leaves_play(player, card, event, 1, 1);
+	if (event == EVENT_LEAVES_PLAY_ABILITY){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
 		test.subtype = SUBTYPE_OGRE;

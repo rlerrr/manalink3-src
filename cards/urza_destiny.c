@@ -27,14 +27,10 @@ Aether Sting	|3|R
 Enchantment
 Whenever an opponent casts a creature spell, ~ deals 1 damage to that player. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_CREATURE);
-		if( new_specific_spell_played(player, card, event, 1-player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			damage_player(1-player, 1, player, card);
-		}
+	sp_ability_trigger(1-player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_CREATURE, NULL, player, card);
+	if (event == EVENT_SPA){
+		damage_player(1-player, 1, player, card);
 	}
-
 	return global_enchantment(player, card, event);
 }
 
@@ -221,7 +217,7 @@ Until end of turn, whenever a player taps |Ha Swamp for mana, that player adds |
 		default_test_definition(&test, TYPE_LAND);
 		test.subtype = SUBTYPE_SWAMP;
 		test.state = STATE_TAPPED;
-		test.state = DOESNT_MATCH;
+		test.state_flag = DOESNT_MATCH;
 		ai_modifier += (check_battlefield_for_special_card(player, card, player, CBFSC_GET_COUNT, &test) * 8);
 	}
 
@@ -240,17 +236,22 @@ Caltrops	|3
 Artifact
 Whenever a creature attacks, ~ deals 1 damage to it. */
 
-  int amt;
-  if ((amt = declare_attackers_trigger(player, card, event, DAT_TRACK, 2, -1)))
-	{
-	  card_instance_t* instance = get_card_instance(player, card);
-	  unsigned char* attackers = (unsigned char*)(&instance->targets[2].player);
-	  for (--amt; amt >= 0; --amt)
-		if (in_play(current_turn, attackers[amt]))
-		  damage_creature(current_turn, attackers[amt], 1, player, card);
+	if (event == EVENT_DECLARE_ATTACKERS){
+		store_attackers(player, card, event, DAT_TRACK, ANYBODY, -1, NULL);
 	}
-
-  return 0;
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+	if (event == EVENT_DAT_ABILITY){
+		card_instance_t* instance = get_card_instance(player, card);
+		unsigned char* attackers = (unsigned char*)&instance->targets[2].player;
+		for (int i = instance->info_slot - 1; i >= 0; --i){
+			if (in_play(current_turn, attackers[i])){
+				damage_creature(current_turn, attackers[i], 1, player, card);
+			}
+		}
+	}else if (event == EVENT_CHECK_PUMP && current_phase < PHASE_BEFORE_BLOCKING){
+		pumpable_toughness[current_turn] -= 1;
+	}
+	return 0;
 }
 
 int card_carnival_of_souls(int player, int card, event_t event){
@@ -462,19 +463,20 @@ Sacrifice an artifact: Put a +1/+1 counter on target creature.
 															0, &test, 0);
 }
 
-int card_false_prophet(int player, int card, event_t event){
-/* CARD_ID_FALSE_PROPHET	4123
+int card_false_prophet(int player, int card, event_t event)
+{
+  /* CARD_ID_FALSE_PROPHET	4123
 False Prophet	|2|W|W
 Creature - Human Cleric 2/2
 When ~ dies, exile all creatures. */
 
-	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		APNAP(p, { new_manipulate_all(player, card, p, &this_test, KILL_EXILE); };);
-	}
-
-	return 0;
+  if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    new_manipulate_all(player, card, ANYBODY, &test, ACT_KILL_EXILE);
+  }
+  return 0;
 }
 
 int card_fend_off(int player, int card, event_t event){
@@ -753,7 +755,7 @@ Creature - Elf Druid 1/1
 		}
 		if( choice == CHOICE_DRAW ){
 			add_state(player, card, STATE_TAPPED);
-			generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_SACRIFICE_ME, MANACOST_X(2), 0, NULL, NULL);
+			generic_activated_ability(player, card, EVENT_ACTIVATE, GAA_SACRIFICE_ME, MANACOST_X(2), 0, NULL, NULL);
 			if( spell_fizzled == 1 ){
 				remove_state(player, card, STATE_TAPPED);
 			}
@@ -842,53 +844,20 @@ int card_iridescent_drake(int player, int card, event_t event){
 	 * When ~ enters the battlefield, put target Aura card from a graveyard onto the battlefield under your control attached to ~. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-
-	if( event == EVENT_ETB_ABILITY ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_ENCHANTMENT);
-		this_test.subtype = SUBTYPE_AURA_CREATURE;
-
-
-		int can_target_aura_in_grave[2] = {0};
-		APNAP(p,{
-					if( new_special_count_grave(p, &this_test) && ! graveyard_has_shroud(p) ){
-						can_target_aura_in_grave[p] = 1;
-					}
-				}
-		);
-		int t_player = -1;
-		if( can_target_aura_in_grave[player] ){
-			t_player = player;
-			if( can_target_aura_in_grave[1-player] ){
-				target_definition_t td;
-				default_target_definition(player, card, &td, 0);
-				td.zone = TARGET_ZONE_PLAYERS;
-				td.illegal_abilities = 0;
-				td.allow_cancel = 0;
-
-				card_instance_t *instance = get_card_instance(player, card);
-
-				new_pick_target(&td, "Select a graveyard owner.", 0, GS_LITERAL_PROMPT);
-
-				t_player = instance->targets[0].player;
-				instance->number_of_targets = 0;
-			}
-		}
-		else{
-			if( can_target_aura_in_grave[1-player] ){
-				t_player = 1-player;
-			}
-		}
-		if( t_player > -1 ){
-			scnprintf(this_test.message, 100, "Select target Aura card with enchant creature %", t_player == player ?
-						"from your graveyard" : "from opponent's graveyard.");
-			int selected = new_select_a_card(player, t_player, TUTOR_FROM_GRAVE, 0, AI_MAX_CMC, -1, &this_test);
-			if( selected != -1 ){
-				reanimate_permanent(player, card, t_player, selected, REANIMATE_ATTACH_AS_AURA);
+	if (event == EVENT_ETB_ABILITY){
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_ENCHANTMENT, "Select target aura card with enchant creature or permanent");
+		test.subtype = SUBTYPE_AURA_CREATURE;
+		test.sub2 = SUBTYPE_AURA_PERMANENT;
+		test.subtype_flag = F2_MULTISUBTYPE;
+		if (select_target_from_either_grave(player, card, SFG_CANNOT_CANCEL, AI_MAX_CMC, AI_MAX_CMC, &test, 0, 1) != -1){
+			card_instance_t* instance = get_card_instance(player, card);
+			int selected = validate_target_from_grave_source(player, card, instance->targets[0].player, 1);
+			if (selected != -1){
+				reanimate_permanent(player, card, instance->targets[0].player, selected, REANIMATE_ATTACH_AURA_TO_REANIMATOR);
 			}
 		}
 	}
-
 	return 0;
 }
 
@@ -1210,8 +1179,8 @@ Destroy all enchantments. You gain 2 life for each enchantment destroyed this wa
 	if(event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_ENCHANTMENT);
-		int result = 0;
-		APNAP(p, { result += new_manipulate_all(player, card, p, &this_test, KILL_DESTROY); };);
+
+		int result = new_manipulate_all(player, card, ANYBODY, &this_test, KILL_DESTROY);
 		gain_life(player, result*2);
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -1255,7 +1224,7 @@ int card_opalescence(int player, int card, event_t event){
 	 * Enchantment
 	 * Each other non-Aura enchantment is a creature with power and toughness each equal to its converted mana cost. It's still an enchantment. */
 
-	if( event == EVENT_CHANGE_TYPE && is_what(affected_card_controller, affected_card, TYPE_ENCHANTMENT) &&
+	if( event == EVENT_CHANGE_TYPE && in_play(player, card) && is_what(affected_card_controller, affected_card, TYPE_ENCHANTMENT) &&
 		! has_subtype(affected_card_controller, affected_card, SUBTYPE_AURA) && ! is_humiliated(player, card, AL_STATIC) &&
 		! affect_me(player, card) )
 	{
@@ -1334,14 +1303,13 @@ int card_pattern_of_rebirth(int player, int card, event_t event){
 	 * Enchant creature
 	 * When enchanted creature dies, that creature's controller may search his or her library for a creature card and put that card onto the battlefield. If that player does, he or she shuffles his or her library. */
 
-	int controller = get_card_instance(player, card)->damage_target_player;
-	if( attached_creature_dies_trigger_for_controller(player, card, event, RESOLVE_TRIGGER_AI(controller)) ){
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature card.");
-		new_global_tutor(controller, controller, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_CMC, &this_test);
+	if (attached_creature_dies_trigger_for_controller(player, card, event, RESOLVE_TRIGGER_MANDATORY)){
+		int controller = get_card_instance(player, card)->damage_target_player;
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card.");
+		new_global_tutor(controller, controller, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_CMC, &test);
 	}
-
-	return vanilla_aura(player, card, event, player);
+	return aura(player, card, event, NULL, NULL);
 }
 
 void true_phyrexian_negator(int player, int card, event_t event)
@@ -1777,7 +1745,7 @@ int card_scent_of_cinder(int player, int card, event_t event){
 			this_test.color = get_sleighted_color_test(player, card, COLOR_TEST_RED);
 			this_test.zone = TARGET_ZONE_HAND;
 			int amount = reveal_cards_from_your_hand(player, card, &this_test);
-			damage_creature_or_player(player, card, event, amount);
+			damage_target0(player, card, amount);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -1902,6 +1870,8 @@ Whenever enchanted creature deals damage to a player, return target creature tha
 		}
 	}
 
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
+
 	return vanilla_aura(player, card, event, player);
 }
 
@@ -1954,7 +1924,7 @@ int card_sowing_salt(int player, int card, event_t event){
 	 * Sorcery
 	 * Exile target nonbasic land. Search its controller's graveyard, hand, and library for all cards with the same name as that land and exile them. Then that player shuffles his or her library. */
 
-	if (!IS_CASTING(player, card, event)){
+	if (!IS_GS_EVENT(player, card, event)){
 		return 0;
 	}
 
@@ -1983,7 +1953,7 @@ int card_splinter2(int player, int card, event_t event){
 	 * Exile target artifact. Search its controller's graveyard, hand, and library for all cards with the same name as that artifact and exile them. Then that
 	 * player shuffles his or her library. */
 
-	if (!IS_CASTING(player, card, event)){
+	if (!IS_GS_EVENT(player, card, event)){
 		return 0;
 	}
 

@@ -537,6 +537,7 @@ int bridge_from_below(int, int, event_t );
 int get_flashback(int player, int card);
 int fetchland(int player, int card, event_t event, subtype_t subtype1, subtype_t subtype2, int lifecost);
 int planeswalker(int, int, event_t, int);
+int attacking_planeswalker(int player, int card, event_t event);
 int planeswalker_its_attacking(int player, int card);	// Returns the card number of the planeswalker that creature {player,card} is currently attacking, -1 if it's attacking a player, or -2 if it was attacking a planeswalker that's no longer on the bf or has changed control.  Precondition: {player,card} is an attacking creature.
 int card_exploration(int, int, event_t );
 int card_dissipate(int , int, event_t);
@@ -2122,6 +2123,14 @@ int split_card_with_fuse(int player, int card, event_t event, int id_first_half,
                          int can_play_first_half, int priority_first_half, int id_second_half,
                          int can_play_second_half, int priority_second_half);
 int split_cards_id_table(int csvid, int half_played);
+#ifndef SHANDALAR
+/* Native inline helper returns the first-half ID or -1, not a Boolean. */
+inline int is_split_card(int csvid)
+{
+  return split_cards_id_table(csvid, 1);
+}
+#endif
+
 int test_not_in_array(int iid, int arrptr, int player, int card);
 int thriving_land(int player, int card, event_t event);
 int time_of_ice_effect(int player, int card, event_t event);
@@ -2409,6 +2418,29 @@ int roll_d8t(int player, int src_player, int src_card, int tgt_player, int tgt_c
 int roll_xd6t(int player, int x, int src_player, int src_card, int tgt_player, int tgt_card);
 void roll_2d6t(int player, int src_player, int src_card, int tgt_player, int tgt_card, int *r1,
                int *r2);
+#ifndef SHANDALAR
+/* Original untargeted dice helpers; retain source identity in die-roll dialogs. */
+static inline int roll_d6(int player, int src_player, int src_card)
+{
+  return roll_d6t(player, src_player, src_card, -1, -1);
+}
+
+static inline void roll_2d6(int player, int src_player, int src_card, int *r1, int *r2)
+{
+  roll_2d6t(player, src_player, src_card, -1, -1, r1, r2);
+}
+
+static inline int roll_2d6_difference(int player, int src_player, int src_card)
+{
+  return roll_2d6t_difference(player, src_player, src_card, -1, -1);
+}
+
+static inline int roll_xd6(int player, int x, int src_player, int src_card)
+{
+  return roll_xd6t(player, x, src_player, src_card, -1, -1);
+}
+#endif
+
 
 /* Interfaces recovered from October 2022 DWARF. */
 card_instance_t *on_stack(int player, int card);

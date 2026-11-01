@@ -1,5 +1,7 @@
 #include "manalink.h"
 
+static int prevent_all_damage_of_a_source_until_eot_legacy(int player, int card, event_t event);
+
 // Functions
 static int do_flashback_with_life(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white, int lif){
 	if( event == EVENT_GRAVEYARD_ABILITY && can_pay_life(player, lif) ){
@@ -401,22 +403,42 @@ Land
 	// original code : 0x4E279B
 
 	if( event == EVENT_CAN_ACTIVATE ){
-		if( mana_producer(player, card, event) && has_mana(player, COLOR_ANY, 2) ){
+		if( mana_producer(player, card, event) && (has_mana(player, COLOR_ANY, 2) || mana_colors_added[player]) ){
 			return 1;
 		}
 	}
 
 	if(event == EVENT_ACTIVATE ){
+    if (is_what(player, card, TYPE_LAND) && mana_colors_added[player])
+    {
+      int choice = 0;
+      if (has_mana(player, COLOR_ANY, 3))
+        choice = do_dialog(player, player, card, -1, -1,
+                           " Basic land ability\n Raid the Coffers\n Cancel", 1);
+      if (choice == 0)
+      {
+        produce_mana_tapped_all_one_color(player, card, mana_colors_added[player], 1);
+        return 0;
+      }
+      if (choice != 1)
+      {
+        if (choice == 2)
+          spell_fizzled = 1;
+        return 0;
+      }
+    }
 		add_state(player, card, STATE_TAPPED);
 		charge_mana(player, COLOR_ANY, 2);
 		if( spell_fizzled != 1 ){
 			int cc_mana = count_subtype(player, TYPE_LAND, get_hacked_subtype(player, card, SUBTYPE_SWAMP));
-			produce_mana_tapped(player, card, COLOR_BLACK, cc_mana);
 			ai_modifier += (cc_mana < 3 ? -96 : 48);
+      produce_mana_tapped_impl(player, card, COLOR_BLACK, cc_mana, 0, 1);
 		}
 		else{
 			remove_state(player, card, STATE_TAPPED);
 		}
+    if (!paying_mana())
+      ai_modifier -= 100;
 	}
 
 	return 0;
@@ -575,12 +597,13 @@ When Chainer, Dementia Master leaves the battlefield, exile all Nightmares.
 
 	boost_creature_type(player, card, event, SUBTYPE_NIGHTMARE, 1, 1, 0, BCT_INCLUDE_SELF);
 
-	if( leaves_play(player, card, event, 1, 1) ){
+	leaves_play(player, card, event, 1, 1);
+	if (event == EVENT_LEAVES_PLAY_ABILITY){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
 		this_test.subtype = SUBTYPE_NIGHTMARE;
 		this_test.not_me = 1; //To avoid unwanted interactions
-		APNAP(p, {new_manipulate_all(player, card, p, &this_test, KILL_EXILE);};);
+		new_manipulate_all(player, card, ANYBODY, &this_test, KILL_EXILE);
 	}
 
 	if( event == EVENT_CAN_ACTIVATE ){
@@ -680,7 +703,7 @@ then return all cards in your graveyard destroyed this way to the battlefield. *
 		}
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_ENCHANTMENT);
-		APNAP(p,{ new_manipulate_all(player, card, p, &this_test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &this_test, KILL_DESTROY);
 		if( tr ){
 			new_reanimate_all(player, card, player, &this_test, REANIMATE_DEFAULT);
 		}
@@ -1393,7 +1416,7 @@ Search your library for X cards. Then shuffle your library and put those cards o
 		int really_tutored = 0;
 
 		for (i = 0; i < instance->info_slot; ++i){
-			if(tutored[i] != -1){
+			if(tutored[i] >= 0){
 				put_on_top_of_deck(player, tutored[i]);
 				really_tutored++;
 			}
@@ -1653,7 +1676,10 @@ When no creatures are on the battlefield, sacrifice Last Laugh.
 		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 		if( result ){
 			int amount = BYTE0(result);
-			new_damage_all(player, card, ANYBODY, amount, NDA_ALL_CREATURES | NDA_PLAYER_TOO, NULL);
+			while (amount > 0){
+				new_damage_all(player, card, ANYBODY, amount, NDA_ALL_CREATURES | NDA_PLAYER_TOO, NULL);
+				--amount;
+			}
 		}
 	}
 
@@ -1683,8 +1709,9 @@ Counter target spell with converted mana cost 3 or less. If that spell is counte
 	if (event == EVENT_RESOLVE_SPELL){
 		if (counterspell_validate(player, card, &td, 0)){
 			card_instance_t* instance = get_card_instance(player, card);
-			set_flags_when_spell_is_countered(player, card, instance->targets[0].player, instance->targets[0].card);
+			if (pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card)){
 			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+			}
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -1952,6 +1979,11 @@ Narcissism	|2|G
 Enchantment
 |G, Discard a card: Target creature gets +2/+2 until end of turn.
 |G, Sacrifice ~: Target creature gets +2/+2 until end of turn. */
+	if (event == EVENT_CHECK_ABILITIES && affected_card_controller == player && card_narcissism(player, card, EVENT_CAN_ACTIVATE)){
+		int amount = MIN(has_mana(player, COLOR_GREEN, 1), hand_count[player] + (can_sacrifice_this_as_cost(player, card) != 0));
+		check_abilities_power += 2 * amount;
+		check_abilities_toughness += 2 * amount;
+	}
 
 	if( ! IS_GAA_EVENT(event) ){
 		return global_enchantment(player, card, event);
@@ -2130,7 +2162,7 @@ Creature - Zombie 3/1
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION && valid_target(&td) ){
-		lose_life(instance->targets[0].player, 2);
+		lose_life(instance->targets[0].player, 3);
 	}
 
 	return 0;
@@ -2182,7 +2214,7 @@ Flashback |4|G|G|G (You may cast this card from your graveyard for its flashback
 	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		copy_all_tokens(player, card, TYPE_CREATURE, NULL);
+		copy_all_tokens_both_players(player, card, TYPE_CREATURE, NULL);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -2220,24 +2252,26 @@ Pay No Heed	|W
 Instant
 Prevent all damage a source of your choice would deal this turn. */
 
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
-
+	if (!IS_GS_EVENT(player, card, event)){ return 0; }
 	target_definition_t td;
-	default_target_definition(player, card, &td, 0);
-	td.extra = damage_card;
-
-	card_instance_t *instance = get_card_instance( player, card);
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( valid_target(&td) ){
-			prevent_damage(instance->targets[0].player, instance->targets[0].card, -1);
+	default_target_definition(player, card, &td, TYPE_NONE);
+	td.zone = (TARGET_ZONE_IN_PLAY | TARGET_ZONE_ON_STACK);
+	card_instance_t* instance = get_card_instance(player, card);
+	if (event == EVENT_RESOLVE_SPELL){
+		if (valid_target(&td)){
+			int p = instance->targets[0].player, c = instance->targets[0].card;
+			int legacy = in_play(p, c) ? create_targetted_legacy_effect(player, card, prevent_all_damage_of_a_source_until_eot_legacy, p, c)
+				: create_legacy_effect(player, card, prevent_all_damage_of_a_source_until_eot_legacy);
+			if (legacy != -1){
+				card_instance_t* effect = get_card_instance(player, legacy);
+				effect->targets[0].player = p;
+				effect->targets[0].card = c;
+				if (effect->damage_target_player == -1){ create_card_name_legacy(player, legacy, get_id(p, c)); }
+			}
 		}
-		kill_card(player, card, KILL_DESTROY );
+		kill_card(player, card, KILL_DESTROY);
 	}
-
-	return generic_spell(player, card, event, GS_CAN_TARGET | GS_DAMAGE_PREVENTION, &td, "TARGET_DAMAGE", 1, NULL);
+	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select a damage source", 1, NULL);
 }
 
 int card_petradon(int player, int card, event_t event)
@@ -2817,7 +2851,7 @@ Enchanted creature's activated abilities can't be activated. */
 		draw_cards(player, 1);
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 

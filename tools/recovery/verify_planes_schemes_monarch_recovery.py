@@ -14,7 +14,20 @@ def verify(proof,image,root=ROOT):
     inventory={r['low_pc']:r for r in csv.DictReader((root/'.recovery/2022-functions.csv').open()) if r['low_pc']}
     for row in record['helpers']+record['support_helpers']+record['card_callers']:
         assert (row['source'],row['name'],row.get('receipt_sha256',row['definition_sha256'])) in receipts,row['name']
-        text=read(root/row['source']);a,b=span(text,row['name']);assert sha(text[a:b].encode())==row['definition_sha256'],row['name']
+        text=read(root/row['source']);a,b=span(text,row['name']);expected=row['definition_sha256']
+        if row['name']=='attacking_planeswalker' and proof.get('native_mana_cards_recovery'):
+            # The restored Assassin token refers to this callback across C
+            # units. Native DWARF and COFF prove public visibility. Preserve
+            # this earlier body receipt and accept only its explicit successor.
+            later=json.loads((root/proof['native_mana_cards_recovery']).read_text())
+            replacement=next(r for r in later['support_helpers'] if r['name']=='attacking_planeswalker')
+            assert replacement['prior_definition_sha256']==expected
+            assert any(e['source']==row['source'] and e['before_sha256']==expected and
+                       e['after_sha256']==replacement['definition_sha256'] and
+                       e['before'].startswith('static int attacking_planeswalker') and
+                       e['after']==e['before'].removeprefix('static ') for e in proof['source_edits'])
+            expected=replacement['definition_sha256']
+        assert sha(text[a:b].encode())==expected,row['name']
         for part in row['native_ranges']:
             lo=int(part['address'],16);hi=int(part['end'],16);native=inventory[part['address']]
             assert native['name']==row['name'] and native['high_pc']==part['end']

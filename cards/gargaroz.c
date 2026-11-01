@@ -77,27 +77,21 @@ int card_imps_michief(int player, int card, event_t event){
 
 int card_misdirection(int player, int card, event_t event){
 
-	al_pitchspell(player, card, event, COLOR_BLUE, 1);
-
-	if (event == EVENT_CAN_CAST ){
-		return card_deflection(player, card, event);
+	al_pitchspell(player, card, event, COLOR_BLUE, 0);
+	if (!IS_GS_EVENT(player, card, event)){ return 0; }
+	target_definition_t td;
+	counterspell_target_definition(player, card, &td, TYPE_ANY);
+	td.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
+	td.extra = (int32_t)has_only_1_target_and_could_legally_change_target;
+	if (event == EVENT_CAN_CAST){ return deflect_one_target(player, card, event, &td); }
+	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+		if (casting_al_pitchspell(player, card, event, COLOR_BLUE, 0)){ deflect_one_target(player, card, event, &td); }
+		else{ spell_fizzled = 1; }
 	}
-
-	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( casting_al_pitchspell(player, card, event, COLOR_BLUE, 1) ){
-			set_special_flags2(card_on_stack_controller, card_on_stack, SF2_MISDIRECTION);
-			card_deflection(player, card, event);
-			remove_special_flags2(card_on_stack_controller, card_on_stack, SF2_MISDIRECTION);
-		}
-		else{
-			spell_fizzled = 1;
-		}
+	if (event == EVENT_RESOLVE_SPELL){
+		deflect_one_target(player, card, event, &td);
+		kill_card(player, card, KILL_DESTROY);
 	}
-
-	if(event == EVENT_RESOLVE_SPELL){
-		return card_deflection(player, card, event);
-	}
-
 	return 0;
 }
 
@@ -116,42 +110,11 @@ static const char* has_only_1_target_and_could_legally_change_target_and_targets
 }
 
 int card_quicksilver_dragon(int player, int card, event_t event){
-	target_definition_t td_spell;
-	counterspell_target_definition(player, card, &td_spell, TYPE_SPELL);
-	td_spell.extra = (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_me;
-	td_spell.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
 
-	quicksilver_dragon_card = card;
-
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if (event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, GAA_SPELL_ON_STACK, 0, 0, 1, 0, 0, 0, 0, &td_spell, NULL) ){
-			if( call_card_function(card_on_stack_controller, card_on_stack_controller, EVENT_CHANGE_TARGET) ){
-				return 99;
-			}
-		}
+	if (!IS_GAA_EVENT(event)){
+		return morph(player, card, event, MANACOST_XU(4, 1));
 	}
-
-	if(event == EVENT_ACTIVATE ){
-		set_special_flags2(card_on_stack_controller, card_on_stack_controller, SF2_QUICKSILVER_DRAGON);
-		call_card_function(card_on_stack_controller, card_on_stack_controller, EVENT_CHANGE_TARGET);
-		if( spell_fizzled != 1 ){
-			instance->targets[0] = get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[9];
-			instance->number_of_targets = 1;
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[9].player = -1;
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[9].card = -1;
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->number_of_targets = 1;
-		}
-		remove_special_flags2(card_on_stack_controller, card_on_stack_controller, SF2_QUICKSILVER_DRAGON);
-	}
-
-	if(event == EVENT_RESOLVE_ACTIVATION){
-		if( counterspell_validate(player, card, &td_spell, 0) ){
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[0] = instance->targets[0];
-		}
-	}
-	return 0;
+	return deflect_away_from_me(player, card, event, 0, MANACOST_U(1), 0, NULL, 1);
 }
 
 static const char* has_only_1_target_and_could_legally_change_target_and_targets_a_player(int who_chooses, int player, int card)
@@ -169,41 +132,22 @@ static const char* has_only_1_target_and_could_legally_change_target_and_targets
 
 int card_rebound(int player, int card, event_t event){
 
-	target_definition_t td_spell;
-	counterspell_target_definition(player, card, &td_spell, TYPE_SPELL);
-	td_spell.extra = (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_player;
-	td_spell.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
-
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if (event == EVENT_CAN_CAST ){
-		return counterspell(player, card, event, &td_spell, 0);
+	if (!IS_GS_EVENT(player, card, event)){ return 0; }
+	target_definition_t td;
+	counterspell_target_definition(player, card, &td, TYPE_ANY);
+	td.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
+	td.extra = (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_player;
+	if (event == EVENT_CAN_CAST){ return deflect_one_target(player, card, event, &td); }
+	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+		set_special_flags2(card_on_stack_controller, card_on_stack, SF2_REBOUND);
+		deflect_one_target(player, card, event, &td);
+		remove_special_flags2(card_on_stack_controller, card_on_stack, SF2_REBOUND);
 	}
-
-	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		instance->number_of_targets = 0;
-		instance->targets[0].player = card_on_stack_controller;
-		instance->targets[0].card = card_on_stack;
-		set_special_flags2(instance->targets[0].player, instance->targets[0].card, SF2_REBOUND);
-		call_card_function(instance->targets[0].player, instance->targets[0].card, EVENT_CHANGE_TARGET);
-		if( spell_fizzled != 1 ){
-			instance->targets[1] = get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[9];
-			instance->number_of_targets = 2;
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[9].player = -1;
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[9].card = -1;
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->number_of_targets = 1;
-		}
-		remove_special_flags2(instance->targets[0].player, instance->targets[0].card, SF2_REBOUND);
-	}
-
-	if(event == EVENT_RESOLVE_SPELL){
-		if( counterspell_validate(player, card, &td_spell, 0) ){
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->targets[0] = instance->targets[1];
-		}
+	if (event == EVENT_RESOLVE_SPELL){
+		if (counterspell_validate(player, card, &td, 0)){ deflect_one_target(player, card, event, &td); }
 		kill_card(player, card, KILL_DESTROY);
 	}
-
-  return 0;
+	return 0;
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */

@@ -67,22 +67,12 @@ Aether Barrier	|2|U
 Enchantment
 Whenever a player casts a creature spell, that player sacrifices a permanent unless he or she pays |1. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice.");
-		if( new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			int sac = 1;
-			if( has_mana(trigger_cause_controller, COLOR_COLORLESS, 1) &&
-				charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, trigger_cause_controller, COLOR_COLORLESS, 1) )
-			{
-				sac = 0;
-			}
-			if( sac == 1 ){
-				new_sacrifice(player, card, trigger_cause_controller, SAC_CAUSED | SAC_NO_CANCEL, &test);
-			}
+	sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_CREATURE, NULL, player, card);
+	if (event == EVENT_SPA){
+		if (!has_mana(trigger_cause_controller, COLOR_COLORLESS, 1) || !charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, trigger_cause_controller, COLOR_COLORLESS, 1)){
+			player_sacrifices_a_creature(player, card, trigger_cause_controller);
 		}
 	}
-
 	return global_enchantment(player, card, event);
 }
 
@@ -135,6 +125,7 @@ int card_arc_mage(int player, int card, event_t event){
 			if( pick_target(&td, "TARGET_ANY") ){
 				if( new_pick_target(&td, "TARGET_ANY", 1, 1) ){
 					add_state(player, card, STATE_TAPPED);
+					tapped_for_mana_color = -1;
 					discard(player, 0, player);
 				}
 			}
@@ -318,7 +309,8 @@ Chieftain en-Dal	|1|W|W
 Creature - Human Knight 2/2
 Whenever ~ attacks, attacking creatures gain first strike until end of turn. */
 
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_CREATURE, "");
@@ -830,6 +822,7 @@ int card_kor_haven(int player, int card, event_t event){
 				else{
 					remove_state(player, card, STATE_TAPPED);
 				}
+				tapped_for_mana_color = -1;
 		}
 		else if(choice == 2){
 				spell_fizzled = 1;
@@ -913,7 +906,7 @@ int card_lin_sivvi_defiant_hero(int player, int card, event_t event){
 	}
 
 	test_definition_t test;
-	new_default_test_definition(&test, TYPE_ANY, "Select target Rebel card.");
+	new_default_test_definition(&test, TYPE_ANY, "Select target Rebel card, put it on the bottom of your library.");
 	test.subtype = SUBTYPE_REBEL;
 
 	card_instance_t *instance = get_card_instance( player, card );
@@ -924,7 +917,7 @@ int card_lin_sivvi_defiant_hero(int player, int card, event_t event){
 	};
 
 	if( event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability_with_target_in_grave(player, card, event, GAA_UNTAPPED, MANACOST_X(3), 0, NULL, NULL,
+		if( generic_activated_ability_with_target_in_grave(player, card, event, 0, MANACOST_X(3), 0, NULL, NULL,
 															0, &test, GS_GRAVE_RECYCLER) )
 		{
 			return 1;
@@ -936,7 +929,7 @@ int card_lin_sivvi_defiant_hero(int player, int card, event_t event){
 		int abils[3] = {
 						0,
 						generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_X(-1), 0, NULL, NULL),
-						generic_activated_ability_with_target_in_grave(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_X(3), 0,
+						generic_activated_ability_with_target_in_grave(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_X(3), 0,
 																		NULL, NULL, 0, &test, GS_GRAVE_RECYCLER)
 		};
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
@@ -951,7 +944,7 @@ int card_lin_sivvi_defiant_hero(int player, int card, event_t event){
 			return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(-1), 0, NULL, NULL);
 		}
 		if( choice == CHOICE_REBEL_RECYCLE ){
-			return generic_activated_ability_with_target_in_grave(player, card, event, GAA_UNTAPPED, MANACOST_X(3), 0, NULL, NULL,
+			return generic_activated_ability_with_target_in_grave(player, card, event, 0, MANACOST_X(3), 0, NULL, NULL,
 																	0, &test, GS_GRAVE_RECYCLER);
 		}
 	}
@@ -1316,7 +1309,8 @@ int card_parallax_nexus(int player, int card, event_t event){
 		}
 	}
 
-	if( leaves_play(player, card, event, 1, 0) ){
+	leaves_play(player, card, event, 1, 0);
+	if (event == EVENT_LEAVES_PLAY_ABILITY){
 		int i;
 		for(i=1; i<instance->info_slot; i++){
 			if( instance->targets[i].player != -1 ){
@@ -1389,7 +1383,8 @@ int card_parallax_wave(int player, int card, event_t event){
 		}
 	}
 
-	if( leaves_play(player, card, event, 1, 0) ){
+	leaves_play(player, card, event, 1, 0);
+	if (event == EVENT_LEAVES_PLAY_ABILITY){
 		int leg = 0;
 		int idx = 0;
 		int* loc;
@@ -1462,7 +1457,8 @@ int card_parallax_tide(int player, int card, event_t event){
 		}
 	}
 
-	if( leaves_play(player, card, event, 1, 0) ){
+	leaves_play(player, card, event, 1, 0);
+	if (event == EVENT_LEAVES_PLAY_ABILITY){
 		int leg = 0;
 		int idx = 0;
 		int* loc;
@@ -1484,6 +1480,14 @@ int card_plague_witch(int player, int card, event_t event){
 Plague Witch	|1|B
 Creature - Elf Spellshaper 1/1
 |B, |T, Discard a card: Target creature gets -1/-1 until end of turn. */
+
+	if (event == EVENT_CHECK_ABILITIES){
+		if (affected_card_controller == 1-player && card_plague_witch(player, card, EVENT_CAN_ACTIVATE)){
+			--check_abilities_power;
+			--check_abilities_toughness;
+		}
+		return 0;
+	}
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -1814,7 +1818,7 @@ If you control |Ha Forest, rather than pay ~'s mana cost, you may have each othe
 Destroy all enchantments. */
 
 	if( event == EVENT_MODIFY_COST ){
-		if( check_battlefield_for_subtype(player, TYPE_LAND, SUBTYPE_FOREST) )
+		if( check_battlefield_for_subtype(player, TYPE_LAND, SUBTYPE_FOREST) && player_can_gain_life_as_cost(1-player) )
 		{
 			null_casting_cost(player, card);
 			get_card_instance(player, card)->info_slot = 1;
@@ -1849,7 +1853,7 @@ Destroy all enchantments. */
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_ENCHANTMENT);
-		APNAP(p, { new_manipulate_all(player, card, p, &this_test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &this_test, ACT_KILL_DESTROY);
 
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -1925,7 +1929,7 @@ int card_saproling_burst(int player, int card, event_t event){
 
 		token_generation_t token;
 		default_token_definition(instance->parent_controller, instance->parent_card, CARD_ID_SAPROLING, &token);
-		token.pow = token.tou = count_counters(player, card, COUNTER_FADE);
+		token.pow = token.tou = 0x4000;
 		token.special_infos = 66;
 		generate_token(&token);
 	}
@@ -2107,7 +2111,7 @@ int card_seal_of_fire(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
-			damage_creature_or_player(player, card, event, 2);
+			damage_target0(player, card, 2);
 		}
 	}
 
@@ -2374,7 +2378,6 @@ Search your library for up to two |H2Forest cards and put them onto the battlefi
 		this_test.subtype = get_hacked_subtype(player, card, SUBTYPE_FOREST);
 		this_test.qty = 2;
 		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_VALUE, &this_test);
-		shuffle(player);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -2442,7 +2445,9 @@ When a creature you control attacks, sacrifice ~. */
 
 		// When a creature you control attacks, sacrifice ~.
 		// Simplification: only check once per attack.
-		if (declare_attackers_trigger(player, card, event, 0, player, -1))
+		store_attackers(player, card, event, 0, player, -1, NULL);
+		dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+		if (event == EVENT_DAT_ABILITY)
 			kill_card(player, card, KILL_SACRIFICE);
 	}
 

@@ -402,7 +402,10 @@ def main():
     from unify_scalar_helpers import verify_source
     unification=verify_source(ROOT)
     pending_count=len(rows)-counts['reconstructed_source']-counts['verified_retained_source']-counts['reviewed_cpp_source']-counts['reviewed_compiler_source']
+    from verify_split_cards_recovery import split_coverage
+    split_helpers=split_coverage(canonical_data or {},ROOT)
     result=dict(status='triage complete; no source or recovery-ledger mutation',pending_helper_ranges=pending_count,
+                split_helpers=split_helpers,pending_split_helper_functions=split_helpers['pending_functions'],
                 unledgered_helper_ranges=len(rows),reconstructed_consolidation_helpers=counts['reconstructed_source'],
                 verified_retained_helpers=counts['verified_retained_source'],local_retention=local_retention,
                 reviewed_cpp_helpers=counts['reviewed_cpp_source'],reviewed_compiler_ranges=counts['reviewed_compiler_source'],
@@ -451,11 +454,15 @@ def main():
             result['inputs'][str(ROOT/path)]=sha((ROOT/path).read_bytes())
         for row in reviewed_chooser['header_dependencies']:
             result['inputs'][row['path']]=sha(Path(row['path']).read_bytes())
+    if (canonical_data or {}).get('native_split_cards_recovery'):
+        for path in [canonical_data['native_split_cards_recovery'],'tools/recovery/verify_split_cards_recovery.py']:
+            result['inputs'][str(ROOT/path)]=sha((ROOT/path).read_bytes())
     args.output.parent.mkdir(parents=True,exist_ok=True);args.summary.parent.mkdir(parents=True,exist_ok=True)
     save_json(args.output,result)
     lines=['# Helper recovery triage','',f'Remaining manual review: **{pending_count:,} native helper ranges**. Separately tracked: **{counts["reconstructed_source"]:,} explicitly reviewed/reconstructed ranges** and **{counts["verified_retained_source"]:,} verified retained ranges**. The classifier does not edit C source or recovery records. Narrow argument/interface edits do not close whole-body review.','',
            '| Review queue | Ranges |','| --- | ---: |']
     lines += [f'| `{k}` | {counts[k]:,} |' for k in CATEGORIES]
+    lines += ['',f"Separate split-DWARF census: **{split_helpers['functions']} helper functions in {split_helpers['code_ranges']} code ranges**, with **{split_helpers['pending_functions']} pending functions**. These discontiguous functions are excluded from the contiguous-range table above."]
     if compiler_cpp:
         lines += ['',f"Separately reviewed: **{counts['reviewed_cpp_source']} C++ utility/picker bodies** and **{counts['reviewed_compiler_source']} compiler-generated/header ranges**. Complete native bodies, specialized parameters and corresponding source were reviewed. Header copies are supplied by GCC and are excluded from authored/reconstructed-function totals; their review does not assert byte identity or CRT/caller equivalence."]
     if unification and 'canonical_functions' in unification:

@@ -143,12 +143,11 @@ int card_conspiracy_adrianas_valor(int player, int card, event_t event){
 		store_attackers(player, card, event, DAT_STORE_IN_INFO_SLOT | DAT_TRACK, player, -1, &test);
 	}
 
-	int amt = declare_attackers_trigger(player, card, event, DAT_STORE_IN_INFO_SLOT | DAT_TRACK, player, -1);
-	if( amt && has_mana(player, COLOR_WHITE, 1) )
-	{
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+	if (event == EVENT_DAT_ABILITY){
 		card_instance_t* instance = get_card_instance(player, card);
 		unsigned char* attackers = (unsigned char*)(&instance->targets[2].player);
-		for (--amt; amt >= 0; --amt){
+		for (int amt = instance->targets[1].player - 1; amt >= 0; --amt){
 			if (in_play(current_turn, attackers[amt])){
 				charge_mana_while_resolving(player, card, event, player, COLOR_WHITE, 1);
 				if( spell_fizzled != 1 ){
@@ -716,6 +715,10 @@ int card_spectral_grasp(int player, int card, event_t event){
 		}
 	}
 
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
+		return 0;
+	}
+
 	return disabling_aura(player, card, event);
 }
 
@@ -1141,19 +1144,17 @@ LAB_0220fb84:
  * Reveal ~ as you draft it. The player to your right chooses a color, you choose another color, then the player to your left chooses a third color.
  * Destroy target creature that's one or more of the colors chosen as you drafted cards named ~. */
 
-int card_sinuous_vermin(int player, int card, event_t event){
-/* Sinuous Vermin	|1|B	0x200f0ac
+int card_sinuous_vermin(int player, int card, event_t event)
+{
+  /* Sinuous Vermin	|1|B	0x200f0ac
  * Creature - Rat Horror 2/2
  * |3|B|B: Monstrosity 3. (If this creature isn't monstrous, put three +1/+1 counters on it and it becomes monstrous.)
  * As long as ~ is monstrous, it has menace. (It can't be blocked except by two or more creatures.) */
 
-	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
-		if( event == EVENT_ABILITIES && affect_me(player, card) && is_monstrous(player, card) ){
-			menace(player, card, event);
-		}
-	}
-
-	return monstrosity(player, card, event, MANACOST_XB(3, 2), 3);
+  if (in_play(player, card) && !is_humiliated(player, card, AL_STATIC) &&
+      (event == EVENT_DECLARE_BLOCKERS || event == EVENT_ABILITIES) && is_monstrous(player, card))
+    menace(player, card, event);
+  return monstrosity(player, card, event, MANACOST_XB(3, 2), 3);
 }
 
 /* Smuggler Captain	|3|B	0x0000000
@@ -1247,14 +1248,14 @@ int card_grenzo_havoc_raiser(int player, int card, event_t event){
 						int iid = deck_ptr[0][0];
 						if( iid > -1 ){
 							rfg_top_card_of_deck(0);
-							create_may_play_card_from_exile_effect(player, card, 0, cards_data[iid].id, MPCFE_FOR_CMC);
+							create_may_play_card_from_exile_effect(player, card, 0, cards_data[iid].id, MPCFE_UNTIL_EOT | MPCFE_FOR_CMC);
 						}
 					}
 					for(i=0; i<BYTE1(damaged_players);i++){
 						int iid = deck_ptr[1][0];
 						if( iid > -1 ){
 							rfg_top_card_of_deck(1);
-							create_may_play_card_from_exile_effect(player, card, 1, cards_data[iid].id, MPCFE_FOR_CMC);
+							create_may_play_card_from_exile_effect(player, card, 1, cards_data[iid].id, MPCFE_UNTIL_EOT | MPCFE_FOR_CMC);
 						}
 					}
 			}
@@ -1295,7 +1296,7 @@ int card_skyline_despot(int player, int card, event_t event){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_DRAGON, &token);
 		token.pow = token.tou = 5;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_RED);
+		token.color_forced = COLOR_TEST_RED;
 		token.key_plus = KEYWORD_FLYING;
 		generate_token(&token);
 	}
@@ -1318,19 +1319,19 @@ int card_subterranean_tremors(int player, int card, event_t event){
 			this_test.keyword = KEYWORD_FLYING;
 			this_test.keyword_flag = 1;
 
-			APNAP(p, {new_damage_all(player, card, p, instance->info_slot, 0, &this_test);};);
+			new_damage_all(player, card, ANYBODY, instance->info_slot, 0, &this_test);
 
 			if( instance->info_slot >= 4 ){
 				default_test_definition(&this_test, TYPE_ARTIFACT);
 
-				APNAP(p, {new_manipulate_all(player, card, p, &this_test, KILL_DESTROY);};);
+				new_manipulate_all(player, card, ANYBODY, &this_test, ACT_KILL_DESTROY);
 			}
 
 			if( instance->info_slot >= 8 ){
 				token_generation_t token;
 				default_token_definition(player, card, CARD_ID_LIZARD, &token);
 				token.pow = token.tou = 8;
-				token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_RED);
+				token.color_forced = COLOR_TEST_RED;
 				generate_token(&token);
 			}
 		}
@@ -1369,18 +1370,18 @@ int card_borderland_explorer(int player, int card, event_t event){
 						test_definition_t test;
 						default_test_definition(&test, TYPE_LAND);
 						test.zone = TARGET_ZONE_HAND;
-						if( count_subtype(player, TYPE_LAND, -1) < 3 &&
-							! check_battlefield_for_special_card(player, card, player, CBFSC_CHECK_ONLY, &test) )
+						if( count_subtype(p, TYPE_LAND, -1) < 3 &&
+							! check_battlefield_for_special_card(player, card, p, CBFSC_CHECK_ONLY, &test) )
 						{
 							ai_mode = 0;
 						}
 
-						if( player == HUMAN || ai_mode ){
+						if( p == HUMAN || ai_mode ){
 							new_default_test_definition(&test, TYPE_ANY, "Select a card to discard or hit CANCEL");
 							int selected = new_select_a_card(p, p, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &test);
 							if( selected != -1 ){
 								new_discard_card(p, selected, 0, player);
-								tutor_basic_land(player, 0, 0);
+								tutor_basic_land(p, 0, 0);
 							}
 						}
 					}
@@ -1409,7 +1410,7 @@ int card_domesticated_hydra(int player, int card, event_t event){
 		}
 	}
 
-	return monstrosity(player, card, event, MANACOST_XG(-2, 3), get_card_instance(player, card)->info_slot);
+	return monstrosity(player, card, event, MANACOST_XG(-1, 3), get_card_instance(player, card)->info_slot);
 }
 
 /* Entourage of Trest	|4|G	0x0000000
@@ -1540,7 +1541,8 @@ int card_selvala_heart_of_the_wilds(int player, int card, event_t event){
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
-		int max_pow = check_battlefield_for_special_card(player, card, ANYBODY, CBFSC_GET_MAX_POW, &test);
+		test.not_me = 1;
+		int max_pow = check_battlefield_for_special_card(trigger_cause_controller, trigger_cause, ANYBODY, CBFSC_GET_MAX_POW, &test);
 		test.power = max_pow;
 		test.power_flag = F5_POWER_GREATER_THAN_VALUE;
 
@@ -1548,7 +1550,7 @@ int card_selvala_heart_of_the_wilds(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_ETB_ABILITY ){
-		int choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_WHO_CHOOSES(trigger_cause_controller),
+		int choice = DIALOG(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_WHO_CHOOSES(trigger_cause_controller),
 							"Draw a card", 	1, count_deck(trigger_cause_controller) >= 20 ? 10 : 1,
 							"Decline", 		1, 5);
 
@@ -1565,21 +1567,20 @@ int card_selvala_heart_of_the_wilds(int player, int card, event_t event){
 	default_test_definition(&test, TYPE_CREATURE);
 
 	if( event == EVENT_COUNT_MANA && affect_me(player, card) ){
-		if( mana_producer(player, card, event) && has_mana_for_activated_ability(player, card, MANACOST_G(1)) ){
-			int max_pow = check_battlefield_for_special_card(player, card, ANYBODY, CBFSC_GET_MAX_POW, &test);
+		if (has_mana_for_activated_ability(player, card, MANACOST_G(1)) && !is_tapped(player, card) &&
+			!is_animated_and_sick(player, card) && can_produce_mana(player, card)){
+			int max_pow = check_battlefield_for_special_card(player, card, player, CBFSC_GET_MAX_POW, &test);
 			declare_mana_available_hex(player, COLOR_TEST_ANY_COLORED, max_pow-1);
 		}
 	}
 
 	if( event == EVENT_CAN_ACTIVATE ){
-		if( mana_producer(player, card, event) && has_mana_for_activated_ability(player, card, MANACOST_G(1)) ){
-			return 1;
-		}
+		if (has_mana_for_activated_ability(player, card, MANACOST_G(1))){ return mana_producer(player, card, event); }
 	}
 
 	if( event == EVENT_ACTIVATE ){
 		if( charge_mana_for_activated_ability(player, card, MANACOST_G(1)) ){
-			int max_pow = check_battlefield_for_special_card(player, card, ANYBODY, CBFSC_GET_MAX_POW, &test);
+			int max_pow = check_battlefield_for_special_card(player, card, player, CBFSC_GET_MAX_POW, &test);
 			produce_mana_tapped_any_combination_of_colors(player, card, COLOR_TEST_ANY_COLORED, max_pow, NULL);
 		}
 	}
@@ -1677,6 +1678,8 @@ int card_splitting_slime(int player, int card, event_t event){
 
 int card_daretti_ingenious_iconoclast(int player, int card, event_t event)
 {
+	check_legend_rule(player, card, event);
+
 /* Daretti, Ingenious Iconoclast	|1|B|R
  * Planeswalker - Daretti (3)
  * +1: Create a 1/1 colorless Construct artifact creature token with defender.
@@ -1903,91 +1906,41 @@ int card_kaya_ghost_assassin(int player, int card, event_t event)
  * -1: Each opponent loses 2 life and you gain 2 life.
  * -2: Each opponent discards a card and you draw a card. */
 
-	if (IS_ACTIVATING(event))
-	{
-		card_instance_t* instance = get_card_instance(player, card);
-
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-
-		enum
-		{
-			CHOICE_EXILE = 1,
-			CHOICE_SUCK_LIFE,
-			CHOICE_DISCARD_DRAW
-		};
-
-		if( event == EVENT_ACTIVATE ){
-			instance->number_of_targets = instance->info_slot = 0;
-
-			int priority_exile = count_counters(player, card, COUNTER_LOYALTY) < 2 ? 35 : 5;
-			if( priority_exile == 35 && life[player] >= 8 ){
-				ai_modifier += 50;
-			}
-
-			int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_PLANESWALKER,
-								"Exile this or target creature", 1, priority_exile, 0,
-								"Opp. lose 2 life and you gain 2 life", 1, life[1-player]*3, -1,
-								"Opp. discard and you draw", 1, hand_count[1-player]*2, -2);
-			if( ! choice ){
-				cancel = 1;
-				return 0;
-			}
-
-			if( choice == CHOICE_EXILE ){
-				if( priority_exile == 35 && life[player] >= 8 && player == AI ){
-					instance->targets[0].player = player;
-					instance->targets[0].card = card;
-				}
-				else{
-					new_pick_target(&td, "TARGET_CREATURE", 0, 0);
-				}
-			}
-		}
-
-		if( event == EVENT_RESOLVE_ACTIVATION ){
-			int choice = instance->info_slot;
-			switch (choice)
-			{
-				case CHOICE_EXILE:
-				{
-					int valid = 1;
-					if( instance->targets[0].player != player && instance->targets[0].card != card && valid_target(&td) ){
-						valid = 0;
-					}
-					if( valid ){
-						int iid = get_original_internal_card_id(instance->targets[0].player, instance->targets[0].card);
-						int owner = get_owner(instance->targets[0].player, instance->targets[0].card);
-						int legacy = create_legacy_effect(instance->parent_controller, instance->parent_card, kaya_ghost_assassin_legacy);
-						card_instance_t* leg = get_card_instance(instance->parent_controller, legacy);
-						leg->targets[0].player = owner;
-						leg->targets[0].card = iid;
-						if( current_turn == player && current_phase == PHASE_UPKEEP ){
-							leg->targets[1].player = 1;
-						}
-						kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
-						lose_life(player, 2);
-					}
-					break;
-				}
-
-				case CHOICE_SUCK_LIFE:
-				{
-					lose_life(1-player, 2);
-					gain_life(player, 2);
-					break;
-				}
-
-				case CHOICE_DISCARD_DRAW:
-				{
-					discard(1-player, 0, player);
-					draw_cards(player, 1);
-					break;
-				}
-			}
-		}
+	check_legend_rule(player, card, event);
+	if (IS_ACTIVATING(event)){
+	    card_instance_t* instance = get_card_instance(player, card);
+	    target_definition_t td;
+	    default_target_definition(player, card, &td, TYPE_CREATURE);
+	    enum { CHOICE_EXILE = 1, CHOICE_SUCK_LIFE, CHOICE_DISCARD_DRAW };
+	    if (event == EVENT_ACTIVATE){
+	        instance->number_of_targets = instance->info_slot = 0;
+	        int priority_exile = count_counters(player, card, COUNTER_LOYALTY) < 2 ? (life[player] >= 8 ? 85 : 35) : 5;
+	        int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_PLANESWALKER,
+	                            "Exile this or target creature", 1, priority_exile, 0,
+	                            "Opp. lose 2 life and you gain 2 life", 1, life[1-player]*3, -1,
+	                            "Opp. discard and you draw", 1, hand_count[1-player]*2, -2);
+	        if (!choice){ spell_fizzled = 1; return 0; }
+	        if (choice == CHOICE_EXILE){
+	            int choice2 = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
+	                                 "Exile Kaya", 1, priority_exile,
+	                                 "Exile target creature", can_target(&td), 30);
+	            if (!choice2){ spell_fizzled = 1; return 0; }
+	            if (choice2 == 2){ new_pick_target(&td, "TARGET_CREATURE", 0, 0); }
+	            SET_BYTE1(instance->info_slot) = choice2;
+	        }
+	    }
+	    if (event == EVENT_RESOLVE_ACTIVATION){
+	        int choice = BYTE0(instance->info_slot);
+	        if (choice == CHOICE_EXILE){
+	            int choice2 = BYTE1(instance->info_slot);
+	            if (choice2 == 1){ remove_until_upkeep(player, card, instance->parent_controller, instance->parent_card, player); }
+	            else if (choice2 == 2 && valid_target(&td)){ remove_until_upkeep(player, card, instance->targets[0].player, instance->targets[0].card, player); }
+	            lose_life(player, 2);
+	        }
+	        if (choice == CHOICE_SUCK_LIFE){ lose_life(1-player, 2); gain_life(player, 2); }
+	        if (choice == CHOICE_DISCARD_DRAW){ discard(1-player, 0, player); draw_cards(player, 1); }
+	    }
 	}
-
 	return planeswalker(player, card, event, 5);
 }
 
@@ -2062,7 +2015,7 @@ int card_queen_marchesa(int player, int card, event_t event){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_ASSASSIN, &token);
 		token.pow = token.tou = 1;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
+		token.color_forced = COLOR_TEST_BLACK;
 		token.s_key_plus = SP_KEYWORD_HASTE | SP_KEYWORD_DEATHTOUCH;
 		generate_token(&token);
 	}

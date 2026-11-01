@@ -1,5 +1,7 @@
 #include "manalink.h"
 
+static int fangren_marauder_effect(int player, int card, event_t event);
+
 /* Canonical recovered helper declarations. */
 void battle_cry(int player, int card, event_t event);
 
@@ -177,7 +179,8 @@ int card_hero_of_bladehold( int player, int card, event_t event)
 {
   // Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)
   // Whenever ~ attacks, put two 1/1 |Swhite Soldier creature tokens onto the battlefield tapped and attacking.
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  token_generation_t token;
 	  default_token_definition(player, card, CARD_ID_SOLDIER, &token);
@@ -203,6 +206,8 @@ int card_tezzeret_agent_of_bolas(int player, int card, event_t event){
 	 * your library in any order.
 	 * -1: Target artifact becomes a 5/5 artifact creature.
 	 * -4: Target player loses X life and you gain X life, where X is twice the number of artifacts you control. */
+
+	check_legend_rule(player, card, event);
 
 	if (IS_ACTIVATING(event)){
 
@@ -554,7 +559,8 @@ Creature - Angel 4/4
 Flying
 Whenever ~ attacks, attacking creatures gain flying and lifelink until end of turn. */
 
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_CREATURE, "");
@@ -775,7 +781,9 @@ Whenever an opponent discards a card, you may gain 3 life.
 		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
 		if( result ){
 			int amount = BYTE0(result);
-			gain_life(player, 3*amount);
+			while( amount-- > 0 ){
+				gain_life(player, 3);
+			}
 		}
 	}
 
@@ -869,7 +877,7 @@ static int effect_hero_of_oxid_ridge(int player, int card, event_t event)
 
 int card_hero_of_oxid_ridge(int player, int card, event_t event)
 {
-/* CARD_ID_HERO_OF_OXID_RIDGE	11459
+  /* CARD_ID_HERO_OF_OXID_RIDGE	11459
 Hero of Oxid Ridge	|2|R|R
 Creature - Human Knight 4/2
 Haste
@@ -877,13 +885,12 @@ Battle cry (Whenever this creature attacks, each other attacking creature gets +
 Whenever ~ attacks, creatures with power 1 or less can't block this turn. */
 
   haste(player, card, event);
-
   battle_cry(player, card, event);
-
-  // Whenever ~ attacks, creatures with power 1 or less can't block this turn.
-  if (event == EVENT_DECLARE_ATTACKERS && is_attacking(player, card))
-	create_legacy_effect(player, card, &effect_hero_of_oxid_ridge);
-
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    create_legacy_effect(player, card, effect_hero_of_oxid_ridge);
+  }
   return 0;
 }
 
@@ -895,7 +902,7 @@ int card_creeping_corrosion(int player, int card, event_t event ){
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_ARTIFACT);
-		APNAP(p, { new_manipulate_all(player, card, p, &test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &test, KILL_DESTROY);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -1127,7 +1134,7 @@ Whenever a creature an opponent controls dies, that player loses 2 life. */
 		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 		if( result ){
 			int amount = BYTE0(result);
-			lose_life(1-player, 2*amount);
+			while (amount > 0){ lose_life(1-player, 2); --amount; }
 		}
 	}
 
@@ -1511,19 +1518,18 @@ Choose one -
 	return 0;
 }
 
-int card_septic_rats(int player, int card, event_t event )
+int card_septic_rats(int player, int card, event_t event)
 {
-/* CARD_ID_SEPTIC_RATS	11520
+  /* CARD_ID_SEPTIC_RATS	11520
 Septic Rats	|1|B|B
 Creature - Rat 2/2
 Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)
 Whenever ~ attacks, if defending player is poisoned, it gets +1/+1 until end of turn. */
 
-  if ((xtrigger_condition() == XTRIGGER_ATTACKING || event == EVENT_DECLARE_ATTACKERS)
-	  && POISON_COUNTERS(1-player) > 0
-	  && declare_attackers_trigger(player, card, event, 0, player, card))
-	pump_until_eot(player, card, player, card, 1, 1);
-
+  if (POISON_COUNTERS(1-player) > 0)
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+    pump_until_eot(player, card, player, card, 1, 1);
   return 0;
 }
 
@@ -1647,15 +1653,16 @@ Artifact Creature - Myr 1/3
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_CAN_ACTIVATE && can_target(&td1) ){
-		return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_UNTAPPED, MANACOST_X(3), 0, &td, NULL);
+		return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_UNTAPPED, MANACOST0, 0, &td, NULL);
 	}
 
 	if( event == EVENT_ACTIVATE){
-		generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST_X(3), 0,
+		generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST0, 0,
 								&td, "Select target Equipment you control.");
 		if( spell_fizzled != 1 ){
 			if( new_pick_target(&td1, "Select target creature you control.", 1, 1 | GS_LITERAL_PROMPT) ){
 				add_state(player, card, STATE_TAPPED);
+				tapped_for_mana_color = -1;
 			}
 		}
 	}
@@ -1803,14 +1810,13 @@ int card_contested_war_zone(int player, int card, event_t event){
  * |T: Add |C to your mana pool.
  * |1, |T: Attacking creatures get +1/+0 until end of turn. */
 
-
 	card_instance_t* damage = combat_damage_being_dealt(event);
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		play_land_sound_effect(player, card);
 	}
 
-	if( damage ){
+	if( damage && !is_humiliated(player, card, AL_TRIG) ){
 		if( damage->damage_target_player == player && damage->damage_target_card == -1 && (damage->targets[3].player & TYPE_CREATURE) &&
 			! damage_is_to_planeswalker(damage) )
 		{
@@ -1844,7 +1850,7 @@ int card_contested_war_zone(int player, int card, event_t event){
 		);
 	}
 
-	if( ! IS_GAA_EVENT(event) || event == EVENT_ACTIVATE ){
+	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE ){
 		return mana_producer(player, card, event);
 	}
 
@@ -1872,6 +1878,7 @@ int card_contested_war_zone(int player, int card, event_t event){
 			if( ! charge_mana_for_activated_ability(player, card, MANACOST_X(1)) ){
 				remove_state(player, card, STATE_TAPPED);
 			}
+			tapped_for_mana_color = -1;
 		}
 	}
 
@@ -2071,7 +2078,7 @@ Search your library for a card, exile it, then shuffle your library. Any opponen
 			int iid = deck_ptr[player][selected];
 			reveal_card_iid(player, card, iid);
 			rfg_card_in_deck(player, selected);
-			int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL
+			int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_WHO_CHOOSES(1-player),
 								"Opponent gets that card", 1, 1,
 								"Opponent draws 3 cards", 1, 1);
 			if( choice == 1 ){
@@ -2088,13 +2095,16 @@ Search your library for a card, exile it, then shuffle your library. Any opponen
 	return basic_spell(player, card, event);
 }
 
-int card_dross_ripper(int player, int card, event_t event){
-/* CARD_ID_DROSS_RIPPER	11440
+int card_dross_ripper(int player, int card, event_t event)
+{
+  /* CARD_ID_DROSS_RIPPER	11440
 Dross Ripper	|4
 Artifact Creature - Hound 3/3
 |2|B: ~ gets +1/+1 until end of turn. */
 
-	return generic_shade_merge_pt(player, card, event, 0, MANACOST_XB(2, 1), 1, 1);
+  if (event == EVENT_CAN_CAST)
+    return 1;
+  return generic_shade_merge_pt(player, card, event, 0, MANACOST_XB(2, 1), 1, 1);
 }
 
 int card_fangren_marauder(int player, int card, event_t event){
@@ -2103,16 +2113,39 @@ Fangren Marauder	|5|G
 Creature - Beast 5/5
 Whenever an artifact is put into a graveyard from the battlefield, you may gain 5 life. */
 
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
+	if (event == EVENT_STATIC_EFFECTS && affect_me(player, card)){
+		int found = 0;
+		int c;
+		for (c = 0; c < active_cards_count[player]; ++c){
+			if (in_play(player, c) && is_what(player, c, TYPE_EFFECT)){
+				card_instance_t* inst = get_card_instance(player, c);
+				if (inst->info_slot == (int)fangren_marauder_effect
+					&& ((inst->damage_target_player == player && inst->damage_target_card == card)
+						|| (inst->targets[0].player == player && inst->targets[0].card == card))){
+					found = 1;
+					break;
+				}
+			}
+		}
+		if (!found){
+			int legacy = create_targetted_legacy_effect(player, card, fangren_marauder_effect, player, card);
+			card_instance_t* inst = get_card_instance(player, legacy);
+			inst->targets[0].player = player;
+			inst->targets[0].card = card;
+			inst->number_of_targets = 1;
+			add_status(player, legacy, STATUS_INVISIBLE_FX);
+		}
+	}else if (event == EVENT_GRAVEYARD_FROM_PLAY){
 		count_for_gfp_ability(player, card, event, ANYBODY, TYPE_ARTIFACT, NULL);
 	}
-
 	int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
-	if( result ){
+	if (result){
 		int amount = BYTE0(result);
-		gain_life(player, amount*5);
+		while (amount > 0){
+			--amount;
+			gain_life(player, 5);
+		}
 	}
-
 	return 0;
 }
 
@@ -2510,7 +2543,7 @@ Whenever another artifact is put into a graveyard from the battlefield, Magnetic
 		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 		if( result ){
 			int dead[2] = {BYTE0(result), BYTE1(result)};
-			APNAP(p,{ damage_player(p, dead[p]*2, player, card); };);
+			APNAP(p,{ while (dead[p] > 0){ damage_player(p, 2, player, card); --dead[p]; } };);
 		}
 	}
 
@@ -2564,23 +2597,17 @@ Creature - Drone 1/3
 Flying
 Whenever you cast an artifact spell, you may untap target creature. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_ARTIFACT);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test) ){
-			target_definition_t td;
-			default_target_definition(player, card, &td, TYPE_CREATURE);
-			td.preferred_controller = player;
-
-			card_instance_t *instance = get_card_instance(player, card);
-
-			if( can_target(&td) && new_pick_target(&td, "TARGET_CREATURE", 0, 0) ){
-				untap_card(instance->targets[0].player, instance->targets[0].card);
-			}
-			instance->number_of_targets = 0;
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_ARTIFACT, NULL, player, card);
+	if (event == EVENT_SPA){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.preferred_controller = player;
+		card_instance_t* instance = get_card_instance(player, card);
+		if (can_target(&td) && new_pick_target(&td, "TARGET_CREATURE", 0, 0)){
+			untap_card(instance->targets[0].player, instance->targets[0].card);
 		}
+		instance->number_of_targets = 0;
 	}
-
 	return 0;
 }
 
@@ -2612,7 +2639,7 @@ int card_mirrorworks(int player, int card, event_t event)
 		test.type_flag = F1_NO_TOKEN;
 		test.not_me = 1;
 
-		etb_ability_global(player, event, RESOLVE_TRIGGER_AI(player), TYPE_ARTIFACT, NULL, player, card);
+		etb_ability_global(player, event, RESOLVE_TRIGGER_AI(player), TYPE_NONE, &test, player, card);
 	}
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -2700,7 +2727,7 @@ int card_morbid_plunder(int player, int card, event_t event)
   /* Morbid Plunder	|1|B|B
    * Sorcery
    * Return up to two target creature cards from your graveyard to your hand. */
-  if (!IS_CASTING(player, card, event))
+  if (!IS_GS_EVENT(player, card, event))
 	return 0;
   test_definition_t test;
   new_default_test_definition(&test, TYPE_CREATURE, "Select up to two target creature cards.");
@@ -2760,10 +2787,12 @@ int card_myr_turbine(int player, int card, event_t event){
 			}
 			if( choice == CHOICE_MYR ){
 				add_state(player, card, STATE_TAPPED);
+				tapped_for_mana_color = -1;
 			}
 			if( choice == CHOICE_TUTOR ){
 				if( tapsubtype_ability(player, card, 5, &td) ){
 					add_state(player, card, STATE_TAPPED);
+					tapped_for_mana_color = -1;
 				}
 				else{
 					spell_fizzled = 1;
@@ -2955,7 +2984,7 @@ int card_nested_ghoul(int player, int card, event_t event ){
 
 	int result = resolve_damage_trigger(player, card, event, 0, player, card);
 	if( result ){
-		generate_tokens_by_id(player, card, CARD_ID_ZOMBIE, result);
+		generate_tokens_by_id(player, card, 22242, result); /* October 2022 token id. */
 	}
 
 	return 0;
@@ -3024,8 +3053,7 @@ Destroy all creatures, then create an X/X colorless Horror artifact creature tok
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
 
-		int amount = 0;
-		APNAP(p, { amount += new_manipulate_all(player, card, p, &test, KILL_DESTROY); };);
+		int amount = new_manipulate_all(player, card, ANYBODY, &test, KILL_DESTROY);
 
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_HORROR, &token);
@@ -3230,8 +3258,7 @@ int card_rusted_slasher(int player, int card, event_t event)
 
   test_definition_t test;
   new_default_test_definition(&test, TYPE_ARTIFACT, "");
-  if (IS_AI(player))
-	test.not_me = 1;
+  test.not_me = 1;
 
   if (event == EVENT_CAN_ACTIVATE && CAN_ACTIVATE0(player, card) && new_can_sacrifice_as_cost(player, card, &test))
 	return can_regenerate(player, card);
@@ -3319,6 +3346,8 @@ int card_shriekhorn(int player, int card, event_t event){
  * ~ enters the battlefield with three charge counters on it.
  * |T, Remove a charge counter from ~: Target player puts the top two cards of his or her library into his or her graveyard. */
 
+	enters_the_battlefield_with_counters(player, card, event, COUNTER_CHARGE, 3);
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -3328,8 +3357,6 @@ int card_shriekhorn(int player, int card, event_t event){
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.zone = TARGET_ZONE_PLAYERS;
-
-	enters_the_battlefield_with_counters(player, card, event, COUNTER_CHARGE, 3);
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){

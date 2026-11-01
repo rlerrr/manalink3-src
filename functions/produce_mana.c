@@ -276,163 +276,735 @@ typedef enum {
 // This will only be correct for lands that are in play; info_slot isn't generally set while a land's still in hand
 
 
-int get_color_of_mana_produced_by_id(int csvid, int info_slot, int player){
-	/* Used to determine card_instance_t::mana_color.
-	 *
-	 * info_slot will be -1 when this is called during card creation.  The actual card_instance_t's info_slot will be 0, however, and if it happens to be a creature,
-	 * it'll get EVENT_CHANGE_TYPE messages.  Otherwise, the special cases below do not apply during card creation, only in response to EVENT_CHANGE_TYPE.
-	 *
-	 * Anything that returns -1 from here gets their card_instance_t::mana_color set to card_ptr_t::mana_source_colors.
-	 *
-	 * Most of what's left are cards whose produced mana colors vary. */
-	switch (csvid){
-		case CARD_ID_CAVERN_OF_SOULS:
-		case CARD_ID_CHANNEL:				//(hardcoded wrong)
-		case CARD_ID_DOUBLING_CUBE:			//should vary
-		case CARD_ID_ELEMENTAL_RESONANCE:	//should vary
-			return COLOR_TEST_COLORLESS;
-
-		// varying
-
-		case CARD_ID_CASCADE_BLUFFS:
-		case CARD_ID_COMMAND_TOWER:			// not safe to search for edh card if this is drawn during game startup :(
-		case CARD_ID_FETID_HEATH:
-		case CARD_ID_FIRE_LIT_THICKET:
-		case CARD_ID_FLOODED_GROVE:
-		case CARD_ID_GENERIC_ANIMATED_LAND:
-		case CARD_ID_GRAVEN_CAIRNS:
-		case CARD_ID_MYSTIC_GATE:
-		case CARD_ID_OPAL_PALACE:			// not safe to search for edh card if this is drawn during game startup :(
-		case CARD_ID_RUGGED_PRAIRIE:
-		case CARD_ID_SUNKEN_RUINS:
-		case CARD_ID_TWILIGHT_MIRE:
-		case CARD_ID_WOODED_BASTION:
-		case CARD_ID_COMMANDERS_SPHERE:		// not safe to search for edh card if this is drawn during game startup :(
-		case CARD_ID_BLOOM_TENDER:			//should vary
-		case CARD_ID_AN_HAVVA_TOWNSHIP:
-		case CARD_ID_AYSEN_ABBEY:
-		case CARD_ID_CASTLE_SENGIR:
-		case CARD_ID_KOSKUN_KEEP:
-		case CARD_ID_WIZARDS_SCHOOL:
-			return info_slot;	// even when it's -1
-
-		case CARD_ID_CHROME_MOX:
-		case CARD_ID_HONORED_HIERARCH:
-		case CARD_ID_REALMWRIGHT:
-			return info_slot >= 0 ? info_slot : 0;
-
-		case CARD_ID_PRISMATIC_LENS:
-		case CARD_ID_SHIMMERING_GROTTO:
-		case CARD_ID_UNKNOWN_SHORES:
-		case CARD_ID_HOLDOUT_SETTLEMENT:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS | COLOR_TEST_ANY;
-
-		case CARD_ID_COLDSTEEL_HEART:
-		case CARD_ID_GEM_BAZAAR:
-		case CARD_ID_PARADISE_PLUME:
-		case CARD_ID_UTOPIA_SPRAWL:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_ANY_COLORED;
-
-		case CARD_ID_GEMSTONE_CAVERNS:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS;
-
-		case CARD_ID_MIRRODINS_CORE:
-		case CARD_ID_SOL_GRAIL:
-		case CARD_ID_VERDANT_HAVEN:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_ANY_COLORED;
-
-		case CARD_ID_PHYREXIAN_TOWER:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS | COLOR_TEST_BLACK;
-
-		case CARD_ID_NIMBUS_MAZE:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS | COLOR_TEST_WHITE | COLOR_TEST_BLUE;
-
-		case CARD_ID_RIVER_OF_TEARS:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_BLUE | COLOR_TEST_BLACK;
-
-		case CARD_ID_TAINTED_FIELD:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS | COLOR_TEST_WHITE | COLOR_TEST_BLACK;
-
-		case CARD_ID_TAINTED_ISLE:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS | COLOR_TEST_BLUE | COLOR_TEST_BLACK;
-
-		case CARD_ID_TAINTED_PEAK:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS | COLOR_TEST_BLACK | COLOR_TEST_RED;
-
-		case CARD_ID_TAINTED_WOOD:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS | COLOR_TEST_BLACK | COLOR_TEST_GREEN;
-
-		case CARD_ID_TENDO_ICE_BRIDGE:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS | COLOR_TEST_ANY_COLORED;
-
-		case CARD_ID_NYKTHOS_SHRINE_TO_NYX:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS | COLOR_TEST_ANY_COLORED;
-
-		case CARD_ID_VIVID_CRAG:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_RED;
-
-		case CARD_ID_STORMTIDE_LEVIATHAN:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_BLUE;
-
-		case CARD_ID_VIVID_CREEK:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_BLUE;
-
-		case CARD_ID_VIVID_GROVE:
-		case CARD_ID_QUIRION_ELVES:
-		case CARD_ID_SILHANA_STARFLETCHER:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_GREEN;
-
-		case CARD_ID_URBORG_TOMB_OF_YAWGMOTH:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_BLACK;
-
-		case CARD_ID_VIVID_MARSH:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_BLACK;
-
-		case CARD_ID_VIVID_MEADOW:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_WHITE;
-
-		case CARD_ID_SPRINGJACK_PASTURE:
-			return info_slot >= 0 && (info_slot & (1<<30)) ? COLOR_TEST_ANY : COLOR_TEST_COLORLESS;
-
-		case CARD_ID_EXOTIC_ORCHARD:
-		case CARD_ID_FELLWAR_STONE:
-		case CARD_ID_QUIRION_EXPLORER:
-		case CARD_ID_SYLVOK_EXPLORER:
-			player = 1 - player;
-			// intentionally fall through
-		case CARD_ID_REFLECTING_POOL:
-		case CARD_ID_SQUANDERED_RESOURCES:
-		case CARD_ID_STAR_COMPASS:{
-			/* These should really be computed during EVENT_COUNT_MANA, not here.  This is called after EVENT_CHANGE_TYPE is dispatched to this card; other
-			 * cards might be queued to change type but not yet have done so. */
-			if (info_slot == -1){
-				return COLOR_TEST_ANY_COLORED;
-			}
-
-			// check the colors for all lands we have in play
-			int count, color = 0;
-			for (count = 0; count < active_cards_count[player] && (color & 0x3F) != 0x3F; ++count){
-				card_data_t* card_d = get_card_data(player, count);
-				if ((card_d->type & TYPE_LAND) && in_play(player, count) && card_d->id != CARD_ID_REFLECTING_POOL){
-					if( csvid != CARD_ID_STAR_COMPASS || (csvid == CARD_ID_STAR_COMPASS && has_subtype(player, count, SUBTYPE_BASIC)) ){
-						color |= get_colors_of_mana_land_could_produce_ignoring_costs(player, count);
-					}
-				}
-			}
-			if (csvid == CARD_ID_REFLECTING_POOL || csvid == CARD_ID_SQUANDERED_RESOURCES){
-				if (color & COLOR_TEST_ARTIFACT){
-					color &= ~COLOR_TEST_ARTIFACT;
-					color |= COLOR_TEST_COLORLESS;
-				}
-			} else {
-				color &= ~(COLOR_TEST_COLORLESS | COLOR_TEST_ARTIFACT);
-			}
-			return color;
-		}
-
-		default:
-			return -1;
-	}
+int get_color_of_mana_produced_by_id(int csvid,int info_slot,int player)
+{
+  /* Native 2022 mana transmutation, variable-color and land-scan rules. */
+  unsigned short land_id;
+  char id_low_byte;
+  int index;
+  card_data_t *land_data;
+  card_instance_t *permanent;
+  int count;
+  unsigned int found_colors;
+  unsigned int colors;
+  int initializing;
+  subtype_t subtype;
+  index = get_internal_card_id_from_csv_id(csvid);
+  id_low_byte = (char)csvid;
+  if (multi_mana_transmutation[player][0] != 0) {
+    count = mana_doublers(player,TYPE_LAND);
+    if (((1 < count) && ((cards_data[index].type & 1) != 0)) &&
+       (((cards_data[index].extra_ability & 0x1000) != 0 || (mana_colors_added[player] != 0)))) {
+      return multi_mana_transmutation[player][0];
+    }
+    colors = multi_mana_transmutation[player][0];
+    if (colors == 0) goto LAB_0266fdbb;
+    if (csvid == CARD_ID_SERRAS_SANCTUM) {
+      index = count_subtype(player,4,-1);
+      if (index < 2) {
+        return -1;
+      }
+      return multi_mana_transmutation[player][0];
+    }
+    if (csvid < 0xf37) {
+      if (0x6ea < csvid) {
+        if (csvid < 0x723) {
+          if (csvid < 0x6fc) {
+            return -1;
+          }
+          switch(csvid) {
+          case CARD_ID_HAVENWOOD_BATTLEGROUND:
+          case CARD_ID_HOLLOW_TREES:
+code_r0x026707f4:
+            return colors | 8;
+          case CARD_ID_ICATIAN_STORE:
+          case CARD_ID_RUINS_OF_TROKAIR:
+code_r0x0267081a:
+            return colors | 0x20;
+          case CARD_ID_SAND_SILOS:
+          case CARD_ID_SVYELUNITE_TEMPLE:
+code_r0x02670830:
+            return colors | 4;
+          }
+          goto LAB_0266fdbb;
+        }
+        if (csvid == CARD_ID_DORMANT_VOLCANO) {
+          return colors;
+        }
+        if (0xa83 < csvid) {
+          if (csvid < 0xaab) {
+            if (csvid < 0xa8c) {
+              return -1;
+            }
+            if ((1U << (id_low_byte + 0x74U & 0x1f) & 0x50000001U) == 0) {
+              return -1;
+            }
+            return colors;
+          }
+          if (csvid == CARD_ID_LOTUS_VALE) {
+            return colors;
+          }
+          if (csvid == CARD_ID_PHYREXIAN_TOWER) {
+            return colors;
+          }
+          goto LAB_0266fe70;
+        }
+        if (csvid == CARD_ID_SOLDEVI_EXCAVATIONS) {
+          return colors;
+        }
+        if (csvid < 0x92f) {
+          if (csvid == CARD_ID_BALDUVIAN_TRADING_POST) {
+            return colors;
+          }
+          if (csvid == CARD_ID_SCHOOL_OF_THE_UNSEEN) {
+            return colors;
+          }
+          goto LAB_0266fe64;
+        }
+        if (csvid == CARD_ID_TEFERIS_ISLE) {
+          return colors;
+        }
+        if (csvid == CARD_ID_CORAL_ATOLL) {
+          return colors;
+        }
+LAB_0266ff2a:
+        if (csvid == CARD_ID_QUIRION_ELVES) {
+LAB_026703ef:
+          if (-1 < info_slot) {
+            return info_slot;
+          }
+          return 8;
+        }
+        if (csvid != CARD_ID_SQUANDERED_RESOURCES) {
+          if (csvid != CARD_ID_SOL_GRAIL) {
+            return -1;
+          }
+          goto LAB_02670056;
+        }
+        goto LAB_0266ff42;
+      }
+      if (0x6bd < csvid) {
+        switch(csvid) {
+        case CARD_ID_GOLGARI_ROT_FARM:
+        case CARD_ID_DIMIR_AQUEDUCT:
+        case CARD_ID_GRUUL_TURF:
+        case CARD_ID_IZZET_BOILERWORKS:
+        case CARD_ID_AZORIUS_CHANCERY:
+        case CARD_ID_RAKDOS_CARNARIUM:
+        case CARD_ID_SIMIC_GROWTH_CHAMBER:
+          return colors;
+        case CARD_ID_BOTTOMLESS_VAULT:
+        case CARD_ID_EBON_STRONGHOLD:
+          goto LAB_02670a18;
+        case CARD_ID_DWARVEN_HOLD:
+        case CARD_ID_DWARVEN_RUINS:
+LAB_02670a10:
+          return colors | 0x10;
+        }
+        goto LAB_0266fdbb;
+      }
+      if (csvid == CARD_ID_TOLARIAN_ACADEMY) {
+        index = count_subtype(player,0x40,-1);
+        if (index < 2) {
+          return -1;
+        }
+        return multi_mana_transmutation[player][0];
+      }
+      if (csvid < 0x5e9) {
+        if (csvid == CARD_ID_CABAL_COFFERS) {
+          index = count_subtype(player,1,0x5009);
+          if (index < 2) {
+            return -1;
+          }
+          return multi_mana_transmutation[player][0];
+        }
+        goto LAB_026708c0;
+      }
+      if (csvid == CARD_ID_GAEAS_CRADLE) {
+        index = count_subtype(player,2,-1);
+        if (index < 2) {
+          return -1;
+        }
+        return multi_mana_transmutation[player][0];
+      }
+      if (csvid == CARD_ID_ORZHOV_BASILICA) {
+        return colors;
+      }
+LAB_02670794:
+      if (csvid != CARD_ID_EXOTIC_ORCHARD) {
+        return -1;
+      }
+      goto LAB_0266fef0;
+    }
+    if (csvid == CARD_ID_ITLIMOC_CRADLE_OF_THE_SUN) {
+      index = count_subtype(player,2,-1);
+      if (index < 2) {
+        return -1;
+      }
+      return multi_mana_transmutation[player][0] | 3;
+    }
+    if (0x4413 < csvid) {
+      if (csvid == CARD_ID_VAULT_OF_CATLACAN) {
+        index = count_subtype(player,0x40,-1);
+        if (index < 2) {
+          return -1;
+        }
+        return multi_mana_transmutation[player][0] | 2;
+      }
+      if (csvid < 0x477f) {
+        if (csvid != CARD_ID_SANCTUM_OF_THE_SUN) {
+          if (csvid != CARD_ID_GOLD_FORGE_GARRISON) {
+            return -1;
+          }
+          return colors;
+        }
+        if (life[player] < 2) {
+          return -1;
+        }
+        return colors;
+      }
+      if (csvid == CARD_ID_CABAL_STRONGHOLD) {
+        index = count_basic_lands(player,0x5009);
+        if (index < 2) {
+          return -1;
+        }
+        return multi_mana_transmutation[player][0];
+      }
+      goto LAB_02670097;
+    }
+    if (csvid == CARD_ID_SULFUR_VENT) {
+LAB_02670a18:
+      return colors | 2;
+    }
+    if (csvid < 0x1411) {
+      if (csvid == CARD_ID_GEOTHERMAL_CREVICE) goto LAB_02670a10;
+      if (csvid < 0x138c) {
+        if (csvid != CARD_ID_ANCIENT_SPRING) {
+          if (0x11f6 < csvid) {
+            return -1;
+          }
+          if (0x11d7 < csvid) {
+            if ((1U << (id_low_byte + 0x28U & 0x1f) & 0x40400001U) == 0) {
+              return -1;
+            }
+            return colors;
+          }
+          if (csvid == CARD_ID_HICKORY_WOODLOT) {
+            return colors;
+          }
+          if (csvid != CARD_ID_PEAT_BOG) {
+            return -1;
+          }
+          return colors;
+        }
+        goto code_r0x02670830;
+      }
+      if (csvid != CARD_ID_IRRIGATION_DITCH) {
+        return -1;
+      }
+      goto code_r0x0267081a;
+    }
+    if (csvid == CARD_ID_MOSSFIRE_VALLEY) {
+      return colors;
+    }
+    if (csvid < 0x15f8) {
+      if (csvid == CARD_ID_TINDER_FARM) goto code_r0x026707f4;
+      if (0x141f < csvid) {
+        if (csvid == CARD_ID_CRYSTAL_QUARRY) {
+          return colors;
+        }
+        if (csvid == CARD_ID_DARKWATER_CATACOMBS) {
+          return colors;
+        }
+        if (csvid == CARD_ID_SHIVAN_REEF) {
+          return colors;
+        }
+      }
+      goto LAB_0266fee4;
+    }
+    if (csvid == CARD_ID_WOODED_BASTION) {
+      return colors;
+    }
+    if (csvid < 0x25fe) {
+      if (csvid == CARD_ID_GRAVEN_CAIRNS) {
+        return colors;
+      }
+      if (0x22ea < csvid) {
+        if (csvid == CARD_ID_MYSTIC_GATE) {
+          return colors;
+        }
+        if (csvid == CARD_ID_SUNKEN_RUINS) {
+          return colors;
+        }
+        if (csvid == CARD_ID_FIRE_LIT_THICKET) {
+          return colors;
+        }
+        if (0x2456 < csvid) goto LAB_026702a5;
+        goto LAB_0266fdc7;
+      }
+      if ((csvid - 0x163dU < 0x1e) && ((1U << ((unsigned char)(csvid - 0x163dU) & 0x1f) & 0x20000101U) != 0))
+      {
+        return colors;
+      }
+      goto LAB_0266fdd3;
+    }
+    if (csvid == CARD_ID_RUGGED_PRAIRIE) {
+      return colors;
+    }
+    if (0x2684 < csvid) {
+      if (csvid == CARD_ID_CASCADING_CATARACTS) {
+        return colors;
+      }
+      if (csvid == CARD_ID_LOST_VALE) {
+        return colors;
+      }
+      if (csvid == CARD_ID_TWILIGHT_MIRE) {
+        return colors;
+      }
+      goto LAB_02670150;
+    }
+    if (csvid == CARD_ID_FETID_HEATH) {
+      return colors;
+    }
+    if (csvid == CARD_ID_FLOODED_GROVE) {
+      return colors;
+    }
+    if (csvid == CARD_ID_CASCADE_BLUFFS) {
+      return colors;
+    }
+LAB_0267029d:
+    if (0x2615 < csvid) {
+      if (csvid == CARD_ID_FLOODED_GROVE) {
+        return info_slot;
+      }
+      if (csvid == CARD_ID_RUGGED_PRAIRIE) {
+        return info_slot;
+      }
+      if (csvid == CARD_ID_FETID_HEATH) {
+        return info_slot;
+      }
+      return -1;
+    }
+LAB_026702a5:
+    if (0x25fc < csvid) {
+      if ((1U << (id_low_byte + 3U & 0x1f) & 0x1080001U) != 0) {
+        return info_slot;
+      }
+      return -1;
+    }
+    if (csvid == CARD_ID_MYSTIC_GATE) {
+      return info_slot;
+    }
+    if (csvid == CARD_ID_SUNKEN_RUINS) {
+      return info_slot;
+    }
+    if (csvid == CARD_ID_FIRE_LIT_THICKET) {
+      return info_slot;
+    }
+    return -1;
+  }
+LAB_0266fdbb:
+  if (0x2456 < csvid) {
+LAB_02670097:
+    if (csvid == CARD_ID_MOX_AMBER) {
+      if (info_slot == -1) {
+        return 0x3e;
+      }
+      colors = 0;
+      if (0 < active_cards_count[player]) {
+        index = 0;
+        do {
+          land_data = get_card_data(player,index);
+          if (((((land_data->type & 2) != 0) && (count = is_legendary(player,index), count != 0)) ||
+              (count = is_planeswalker(player,index), count != 0)) &&
+             (permanent = in_play(player,index), permanent != (card_instance_t *)0x0)) {
+            found_colors = get_color(player,index);
+            colors = colors | found_colors;
+          }
+          index = index + 1;
+        } while ((index < active_cards_count[player]) && ((colors & 0x3f) != 0x3f));
+      }
+      return colors & 0xffffffbe;
+    }
+    if (csvid < 0x4824) {
+LAB_02670150:
+      if (csvid == CARD_ID_NYKTHOS_SHRINE_TO_NYX) {
+LAB_02670ad8:
+        if (info_slot < 0) {
+          return 0x3f;
+        }
+        return info_slot;
+      }
+      if (csvid < 0x34b7) {
+        if (csvid == CARD_ID_SPRINGJACK_PASTURE) {
+          if (-1 < info_slot) {
+            return (-(unsigned int)((info_slot & 0x40000000U) == 0) & 0xffffffc2) + 0x3f;
+          }
+          return 1;
+        }
+        if (0x2697 < csvid) {
+          if (csvid == CARD_ID_CAVERN_OF_SOULS) {
+            return 1;
+          }
+          if (csvid < 0x3029) {
+            if (csvid == CARD_ID_TWILIGHT_MIRE) {
+              return info_slot;
+            }
+            if (csvid == CARD_ID_COMMAND_TOWER) {
+              return info_slot;
+            }
+            return -1;
+          }
+          if (csvid != CARD_ID_VERDANT_HAVEN) {
+            return -1;
+          }
+LAB_02670056:
+          if (info_slot < 0) {
+            return 0x3e;
+          }
+          return info_slot;
+        }
+        goto LAB_0267029d;
+      }
+      if (csvid == CARD_ID_AETHER_HUB) {
+LAB_0267034c:
+        if (info_slot < 0) {
+          info_slot = 0x3f;
+        }
+        return info_slot;
+      }
+      if (csvid < 0x3f8f) {
+        if (csvid != CARD_ID_HONORED_HIERARCH) {
+          if (csvid < 0x3b31) {
+            if (csvid != CARD_ID_UNKNOWN_SHORES) {
+              if (csvid < 0x3515) {
+                return -1;
+              }
+              if (csvid != CARD_ID_OPAL_PALACE) {
+                if (csvid != CARD_ID_COMMANDERS_SPHERE) {
+                  return -1;
+                }
+                return info_slot;
+              }
+              return info_slot;
+            }
+            goto LAB_0267034c;
+          }
+          if (csvid != CARD_ID_CORRUPTED_GRAFSTONE) {
+            return -1;
+          }
+        }
+LAB_0267022c:
+        return (int)(info_slot ^ 0xffffffffU) >> 0x1f & info_slot;
+      }
+      if (csvid == CARD_ID_CABAL_STRONGHOLD) {
+LAB_0266fe8a:
+        if (info_slot < 0) {
+          return 3;
+        }
+        return info_slot;
+      }
+      if (0x47bd < csvid) {
+        return -1;
+      }
+      if (csvid != CARD_ID_NAGA_VITALIST) {
+        if (csvid == CARD_ID_PATH_OF_ANCESTRY) {
+          return info_slot;
+        }
+        if (csvid != CARD_ID_CASCADING_CATARACTS) {
+          return -1;
+        }
+        goto LAB_0267034c;
+      }
+    }
+    else {
+      if (0x54ee < csvid) {
+        if (csvid != 0x57d9) {
+          if (csvid == CARD_ID_GENERIC_ANIMATED_LAND) {
+            return info_slot;
+          }
+          return -1;
+        }
+        goto LAB_02670056;
+      }
+      if (0x54e9 < csvid) {
+        if (4 < csvid - 0x54eaU) {
+          return -1;
+        }
+        initializing = info_slot < 0;
+        switch(csvid) {
+        case 0x54eb:
+          if (initializing) {
+            return 8;
+          }
+          return info_slot | 8;
+        case 0x54ec:
+          if (initializing) {
+            return 0x20;
+          }
+          return info_slot | 0x20;
+        case 0x54ed:
+          if (initializing) {
+            return 4;
+          }
+          return info_slot | 4;
+        case 0x54ee:
+          if (initializing) {
+            return 2;
+          }
+          return info_slot | 2;
+        }
+        if (initializing) {
+          return 0x10;
+        }
+        return info_slot | 0x10;
+      }
+      if (csvid != CARD_ID_PLAZA_OF_HARMONY) {
+        if (0x4ce9 < csvid) {
+          if (csvid == 0x5020) {
+            return info_slot;
+          }
+          if (csvid != 0x5066) {
+            return -1;
+          }
+          return info_slot;
+        }
+        if (csvid != CARD_ID_INCUBATION_DRUID) {
+          return -1;
+        }
+      }
+    }
+    goto LAB_0266ff42;
+  }
+LAB_0266fdc7:
+  if (0x2428 < csvid) {
+    switch(csvid) {
+    case CARD_ID_SHIMMERING_GROTTO:
+      goto LAB_0267034c;
+    default:
+      return -1;
+    case CARD_ID_VIVID_CRAG:
+      if (-1 < info_slot) {
+        return info_slot;
+      }
+      return 0x10;
+    case CARD_ID_VIVID_CREEK:
+      if (-1 < info_slot) {
+        return info_slot;
+      }
+      return 4;
+    case CARD_ID_VIVID_GROVE:
+      goto LAB_026703ef;
+    case CARD_ID_VIVID_MARSH:
+      if (-1 < info_slot) {
+        return info_slot;
+      }
+      return 2;
+    case CARD_ID_VIVID_MEADOW:
+      if (-1 < info_slot) {
+        return info_slot;
+      }
+      return 0x20;
+    }
+  }
+LAB_0266fdd3:
+  if (csvid == CARD_ID_CHROME_MOX) goto LAB_0267022c;
+  if (csvid < 0x19e9) {
+    if (csvid == CARD_ID_TAINTED_FIELD) {
+      if (info_slot < 0) {
+        return 0x23;
+      }
+      return info_slot;
+    }
+    if (0x16ff < csvid) {
+      if (csvid == CARD_ID_TAINTED_PEAK) {
+        if (info_slot < 0) {
+          return 0x13;
+        }
+        return info_slot;
+      }
+      if (csvid == CARD_ID_TAINTED_WOOD) {
+        if (info_slot < 0) {
+          return 0xb;
+        }
+        return info_slot;
+      }
+      if (csvid != CARD_ID_TAINTED_ISLE) {
+        return -1;
+      }
+      if (info_slot < 0) {
+        return 7;
+      }
+      return info_slot;
+    }
+    if (csvid == CARD_ID_SCHOOL_OF_THE_UNSEEN) goto LAB_0267034c;
+LAB_0266fe64:
+    if (csvid < 0x928) {
+LAB_026708c0:
+      if (csvid != CARD_ID_STAR_COMPASS) {
+        if (csvid < 0x489) {
+          if (csvid != CARD_ID_FELLWAR_STONE) {
+            if (csvid != CARD_ID_GEM_BAZAAR) {
+              return (unsigned int)(csvid == CARD_ID_CHANNEL) * 2 + -1;
+            }
+            goto LAB_02670056;
+          }
+        }
+        else {
+          if (csvid < 0x88d) {
+            if (0x87d < csvid) {
+              if ((1U << (id_low_byte + 0x82U & 0x1f) & 0x4041U) != 0) {
+                return info_slot;
+              }
+              return -1;
+            }
+            goto LAB_02670794;
+          }
+          if (csvid != CARD_ID_BENTHIC_EXPLORERS) {
+            if (0x8d5 < csvid) {
+              return -1;
+            }
+            if (csvid != CARD_ID_KOSKUN_KEEP) {
+              if (csvid != CARD_ID_WIZARDS_SCHOOL) {
+                return -1;
+              }
+              return info_slot;
+            }
+            return info_slot;
+          }
+        }
+        goto LAB_0266fef0;
+      }
+    }
+    else {
+LAB_0266fe70:
+      if (csvid != CARD_ID_REFLECTING_POOL) {
+        if (csvid < 0xcad) goto LAB_0266ff2a;
+        if (csvid == CARD_ID_PHYREXIAN_TOWER) goto LAB_0266fe8a;
+LAB_0266fee4:
+        if (csvid != CARD_ID_QUIRION_EXPLORER) {
+          return -1;
+        }
+        goto LAB_0266fef0;
+      }
+    }
+  }
+  else {
+    if (csvid == CARD_ID_GEMSTONE_CAVERNS) {
+      if (info_slot < 0) {
+        return 1;
+      }
+      return info_slot;
+    }
+    if (0x2170 < csvid) {
+      if (csvid == CARD_ID_NIMBUS_MAZE) {
+        if (info_slot < 0) {
+          return 0x25;
+        }
+        return info_slot;
+      }
+      if (0x2318 < csvid) {
+        if (csvid != CARD_ID_RIVER_OF_TEARS) {
+          return -1;
+        }
+        if (info_slot < 0) {
+          return 6;
+        }
+        return info_slot;
+      }
+      if (csvid == CARD_ID_URBORG_TOMB_OF_YAWGMOTH) {
+        if (info_slot < 0) {
+          return 2;
+        }
+        return 1 >> ((unsigned char)info_slot & 0x1f);
+      }
+      if (0x22a6 < csvid) {
+        if (csvid == CARD_ID_GRAVEN_CAIRNS) {
+          return info_slot;
+        }
+        return -1;
+      }
+      if (csvid == CARD_ID_PARADISE_PLUME) goto LAB_02670056;
+      if (csvid != CARD_ID_PRISMATIC_LENS) {
+        return -1;
+      }
+      goto LAB_0267034c;
+    }
+    if (csvid == CARD_ID_TENDO_ICE_BRIDGE) goto LAB_02670ad8;
+    if (0x1d96 < csvid) {
+      if (csvid == CARD_ID_ELEMENTAL_RESONANCE) {
+        return 1;
+      }
+      if (0x2009 < csvid) {
+        if ((csvid != CARD_ID_UTOPIA_SPRAWL) && (csvid != CARD_ID_COLDSTEEL_HEART)) {
+          return -1;
+        }
+        goto LAB_02670056;
+      }
+      if (csvid != CARD_ID_SILHANA_STARFLETCHER) {
+        return -1;
+      }
+      goto LAB_026703ef;
+    }
+    if (csvid == CARD_ID_DOUBLING_CUBE) {
+      return 1;
+    }
+    if (csvid != CARD_ID_SYLVOK_EXPLORER) {
+      if (csvid != CARD_ID_MIRRODINS_CORE) {
+        return -1;
+      }
+      goto LAB_02670056;
+    }
+LAB_0266fef0:
+    player = 1 - player;
+  }
+LAB_0266ff42:
+  if (info_slot == -1) {
+    return 0x3e;
+  }
+  colors = 0;
+  if (active_cards_count[player] < 1) {
+    if (csvid == CARD_ID_REFLECTING_POOL || csvid == CARD_ID_SQUANDERED_RESOURCES) {
+      return 0;
+    }
+    if ((csvid == CARD_ID_NAGA_VITALIST) || (csvid == CARD_ID_INCUBATION_DRUID)) {
+      return 0;
+    }
+  }
+  else {
+    index = 0;
+    do {
+      land_data = get_card_data(player,index);
+      if (((((land_data->type & 1) != 0) &&
+           (permanent = in_play(player,index), permanent != (card_instance_t *)0x0)) &&
+          (land_id = land_data->id, land_id != 0x424d && land_id != 0xcac)) && (land_id != 0x4ce9)) {
+        if (csvid == CARD_ID_STAR_COMPASS) {
+          subtype = SUBTYPE_BASIC;
+LAB_0267001a:
+          count = has_subtype(player,index,subtype);
+          if (count == 0) goto LAB_0266ff80;
+        }
+        else if (csvid == CARD_ID_PLAZA_OF_HARMONY) {
+          subtype = SUBTYPE_GATE;
+          goto LAB_0267001a;
+        }
+        found_colors = get_colors_of_mana_land_could_produce_ignoring_costs(player,index);
+        colors = colors | found_colors;
+      }
+LAB_0266ff80:
+      index = index + 1;
+    } while ((index < active_cards_count[player]) && ((colors & 0x3f) != 0x3f));
+    if ((csvid == CARD_ID_REFLECTING_POOL || csvid == CARD_ID_SQUANDERED_RESOURCES) || ((csvid == CARD_ID_NAGA_VITALIST || (csvid == CARD_ID_INCUBATION_DRUID))))
+    goto LAB_02670cf0;
+  }
+  if ((csvid != CARD_ID_BENTHIC_EXPLORERS) && (csvid != CARD_ID_PLAZA_OF_HARMONY)) {
+    return colors & 0xffffffbe;
+  }
+LAB_02670cf0:
+  if ((colors & 0x40) != 0) {
+    return colors & 0xffffffbf | 1;
+  }
+  return colors;
 }
 
 // Stores last-hacked color_test in info_slot.  No avoiding it; it's needed for get_color_of_mana_produced_by_id(), which doesn't get a card ref.

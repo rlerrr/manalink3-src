@@ -429,7 +429,6 @@ Pay |E|E: Prevent all damage that would be dealt to you this turn by a source of
 	default_target_definition(player, card, &td, TYPE_EFFECT);
 	td.special = TARGET_SPECIAL_DAMAGE_PLAYER;
 	td.extra = damage_card;
-	td.preferred_controller = player;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -562,8 +561,8 @@ Destroy all creatures. You gain 1 life for each creature destroyed this way.
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
-		int result = 0;
-		APNAP(p, { result += new_manipulate_all(player, card, p, &this_test, KILL_BURY);};);
+
+		int result = new_manipulate_all(player, card, ANYBODY, &this_test, KILL_BURY);
 		gain_life(player, result);
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -927,7 +926,7 @@ Enchanted permanent gets -4/-0.
 
 	etb_energy(player, card, event, 2);
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -1018,17 +1017,17 @@ Pay |E|E|E|E|E|E|E|E: Return all other creatures to their owners' hands. Activat
 		add_energy(player, 3);
 	}
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
+	else if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance( player, card);
 
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
 		this_test.not_me = 1;
-		APNAP(p, {new_manipulate_all(instance->parent_controller, instance->parent_card, p, &this_test, ACT_BOUNCE);};);
+		new_manipulate_all(instance->parent_controller, instance->parent_card, ANYBODY, &this_test, ACT_BOUNCE);
 
 	}
 
-	return generic_activated_ability(player, card, event, 0, MANACOST0, (GVC_PLAYER_COUNTERS(PCOUNTER_ENERGY, 8)), NULL, NULL);
+	return generic_activated_ability(player, card, event, GAA_CAN_SORCERY_BE_PLAYED, MANACOST0, (GVC_PLAYER_COUNTERS(PCOUNTER_ENERGY, 8)), NULL, NULL);
 }
 
 int card_ceremonious_rejection(int player, int card, event_t event){
@@ -1088,7 +1087,7 @@ to that permanent's converted mana cost. If you do, gain control of it.
 				amount = choose_a_number(player, "How much Energy you'll spend?", amount);
 			}
 			remove_energy(player, amount);
-			if( amount <= cmc ){
+			if( amount == cmc ){
 				gain_control_permanently(player, instance->targets[0].player, instance->targets[0].card);
 			}
 		}
@@ -1301,7 +1300,7 @@ You may reveal an artifact card from among them and put it into your hand. Put t
 			new_default_test_definition(&test, TYPE_ARTIFACT, "Select an artifact card.");
 			test.create_minideck = amount;
 			test.no_shuffle = 1;
-			if( new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test) != -1 ){
+			if( new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test) >= 0 ){
 				amount--;
 			}
 			if( amount ){
@@ -1342,60 +1341,41 @@ Choose one -
 * You may choose new targets for target spell.
 * Copy target instant or sorcery spell. You may choose new targets for the copy.
 */
-	if( event == EVENT_CAN_CAST || event == EVENT_CAN_COUNTER ){
-		return counterspell(player, card, event, NULL, 0);
+
+	if (event == EVENT_CAN_CAST || event == EVENT_CAN_COUNTER){
+	    return counterspell(player, card, event, NULL, 0);
 	}
-
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
+	if (!IS_GS_EVENT(player, card, event)){ return 0; }
+	enum { CHOICE_COUNTER = 1, CHOICE_REDIRECT, CHOICE_COPY };
+	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+	    get_card_instance(player, card)->number_of_targets = 0;
+	    if (!check_special_flags2(player, card, SF2_COPIED_FROM_STACK)){
+	        int priority_copy = 1;
+	        if (is_what(card_on_stack_controller, card_on_stack, TYPE_SPELL)){
+	            card_instance_t* spell = get_card_instance(card_on_stack_controller, card_on_stack);
+	            for (int i = 0; i < spell->number_of_targets; ++i){
+	                if (spell->targets[i].player == 1-player){ priority_copy = 10; break; }
+	            }
+	        }
+	        int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
+	                            "Counter", 1, 5,
+	                            "Redirect", deflect_multi_targets(player, card, EVENT_CAN_CAST, NULL), 6,
+	                            "Copy", is_what(card_on_stack_controller, card_on_stack, TYPE_SPELL), priority_copy);
+	        if (!choice){ spell_fizzled = 1; return 0; }
+	        if (choice == CHOICE_COUNTER || choice == CHOICE_COPY){ return counterspell(player, card, event, NULL, 0); }
+	        if (choice == CHOICE_REDIRECT){ return deflect_multi_targets(player, card, event, NULL); }
+	    }
 	}
-
-	enum{
-		CHOICE_COUNTER = 1,
-		CHOICE_COPY
-	};
-
-	if(	event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		get_card_instance(player, card)->number_of_targets = 0;
-		if( ! check_special_flags2(player, card, SF2_COPIED_FROM_STACK) ){
-			int priority_counter = 5;
-			int priority_copy = 1;
-			if( is_what(card_on_stack_controller, card_on_stack, TYPE_SPELL) ){
-				card_instance_t* spell = get_card_instance(card_on_stack_controller, card_on_stack);
-				int i;
-				for(i=0; i<spell->number_of_targets; i++ ){
-					if( spell->targets[i].player == 1-player ){
-						priority_copy = 10;
-						break;
-					}
-				}
-			}
-
-			int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
-								"Counter", 1, priority_counter,
-								"Copy", is_what(card_on_stack_controller, card_on_stack, TYPE_SPELL), priority_copy);
-			if( ! choice ){
-				spell_fizzled = 1;
-				return 0;
-			}
-		}
-		return counterspell(player, card, event, NULL, 0);
+	if (event == EVENT_RESOLVE_SPELL){
+	    card_instance_t* instance = get_card_instance(player, card);
+	    if (counterspell_validate(player, card, NULL, 0)){
+	        if (instance->info_slot == CHOICE_COUNTER){ real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card); }
+	        if (instance->info_slot == CHOICE_REDIRECT){ deflect_multi_targets(player, card, event, NULL); }
+	        if (instance->info_slot == CHOICE_COPY){ copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card); }
+	    }
+	    instance->number_of_targets = 0;
+	    kill_card(player, card, KILL_DESTROY);
 	}
-
-	if (event == EVENT_RESOLVE_SPELL) {
-		card_instance_t* instance = get_card_instance(player, card);
-		if( counterspell_validate(player, card, NULL, 0) ){
-			if( instance->info_slot == CHOICE_COUNTER ){
-				real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
-			}
-			if( instance->info_slot == CHOICE_COPY ){
-				copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
-			}
-		}
-		instance->number_of_targets = 0;
-		kill_card(player, card, KILL_DESTROY);
-	}
-
 	return 0;
 }
 
@@ -1451,7 +1431,8 @@ Enchant artifact or creature
 When Malfunction enters the battlefield, tap enchanted permanent.
 Enchanted permanent doesn't untap during its controller's untap step.
 */
-	if( comes_into_play(player, card, event) ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if (event == EVENT_ETB ){
 		card_instance_t *instance = get_card_instance(player, card);
 		if( instance->damage_target_player > -1 ){
 			tap_card( instance->damage_target_player, instance->damage_target_card );
@@ -1463,7 +1444,7 @@ Enchanted permanent doesn't untap during its controller's untap step.
 		does_not_untap(instance->damage_target_player, instance->damage_target_card, event);
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -1483,15 +1464,12 @@ where X is that spell's converted mana cost.
 |3|U|U, Exile Metallurgic Summonings: Return all instant and sorcery cards from your graveyard to your hand.
 Activate this ability only if you control six or more artifacts.
 */
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_SPELL);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			token_generation_t token;
-			default_token_definition(player, card, CARD_ID_CONSTRUCT, &token);
-			token.pow = token.tou = get_cmc(trigger_cause_controller, trigger_cause);
-			generate_token(&token);
-		}
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_SPELL, NULL, player, card);
+	if (event == EVENT_SPA){
+		token_generation_t token;
+		default_token_definition(player, card, CARD_ID_CONSTRUCT, &token);
+		token.pow = token.tou = get_cmc(trigger_cause_controller, trigger_cause);
+		generate_token(&token);
 	}
 
 	if( ! IS_GAA_EVENT(event) ){
@@ -2184,8 +2162,8 @@ Whenever another creature dies, you get |E (an energy counter).
 
 	if( get_card_instance(player, card)->kill_code <= 0 ){
 		int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( amount ){
-			add_energy(player, amount);
+		for (; amount > 0; --amount){
+			add_energy(player, 1);
 		}
 	}
 
@@ -2251,36 +2229,30 @@ Sorcery
 Choose target creature. You get |E|E (two energy counters), then you may pay any amount of |E.
 The creature gets -1/-1 until end of turn for each |E paid this way.
 */
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
 
+	if (!IS_GS_EVENT(player, card, event)){ return 0; }
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-	td.extra = (int32_t)ai_helper_function_for_die_young;
-
-	card_instance_t *instance = get_card_instance( player, card);
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( valid_target(&td) ){
-			add_energy(player, 2);
-			int tou = get_toughness(player, card)-get_card_instance(player, card)->damage_on_card;
-			int amount = MIN(ENERGY_COUNTERS(player), tou);
-			if( player == AI && amount < tou ){
-				amount = 0;
-			}
-			if( player == HUMAN ){
-				amount = choose_a_number(player, "How much Energy you'll spend?", amount);
-			}
-			remove_energy(player, amount);
-			if( amount ){
-				pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -amount, -amount);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
+	card_instance_t* instance = get_card_instance(player, card);
+	if (event == EVENT_RESOLVE_SPELL){
+	    if (valid_target(&td)){
+	        add_energy(player, 2);
+	        int toughness = get_toughness(player, card);
+	        card_instance_t* spell = get_card_instance(player, card);
+	        int amount = ENERGY_COUNTERS(player);
+	        if (player == AI){
+	            td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+	            td.extra = (int32_t)ai_helper_function_for_die_young;
+	            if (amount < toughness - spell->damage_on_card){ amount = 0; }
+	        } else if (player == HUMAN){
+	            amount = choose_a_number(player, "How much Energy you'll spend?", amount);
+	            amount = MAX(0, MIN(amount, ENERGY_COUNTERS(player)));
+	        }
+	        remove_energy(player, amount);
+	        if (amount){ pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -amount, -amount); }
+	    }
+	    kill_card(player, card, KILL_DESTROY);
 	}
-
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
@@ -2328,6 +2300,10 @@ Destroy X target creatures.
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+        int choice = do_dialog(player, player, card, -1, -1, " Sac X destroy X\n Sac 0/target 0.\n Cancel", 0);
+        if (choice == 1){ return basic_spell(player, card, event); }
+        if (choice == 2){ spell_fizzled = 1; return 0; }
+        if (choice != 0){ return 0; }
 		instance->number_of_targets = 0;
 		int max_sac = 0;
 		CYCLE_ALL_CARDS(p, c, 	{
@@ -2361,7 +2337,7 @@ Destroy X target creatures.
 		int sc = 0;
 		while( sc < t ){
 				sac[sc] = new_sacrifice(player, card, player, SAC_JUST_MARK | SAC_RETURN_CHOICE | SAC_AS_COST, &test);
-				if( sac[sc] > -1 ){
+				if( sac[sc] > 0 ){
 					sc++;
 				}
 				else{
@@ -2646,7 +2622,10 @@ with that name and exile them. That player shuffles his or her library, then dra
 				}
 			}
 			else{
-				csvid = card_from_list(player, 3, TYPE_LAND | TYPE_ARTIFACT, DOESNT_MATCH, 0, 0, 0, 0, 0, 0, -1, 0);
+				test_definition_t test;
+				new_default_test_definition(&test, TYPE_LAND | TYPE_ARTIFACT, "Choose a nonartifact, nonland card name.");
+				test.type_flag = DOESNT_MATCH;
+				csvid = new_card_from_list(player, 3, &test);
 			}
 			if( csvid > -1 ){
 				amount = lobotomy_effect(player, instance->targets[0].player, csvid, -1, LOBOTOMY_MUST_FIND_ALL_COPIES);
@@ -2997,12 +2976,17 @@ Choose one or both -
 		}
 		int base_target = 0;
 		if( instance->info_slot == CHOICE_WEAKEN || instance->info_slot == CHOICE_BOTH ){
-			if( ! new_pick_target(&td, "TARGET_CREATURE", base_target, 1) ){
+			if (!new_pick_target(&td, "Select target creature it gets -1/-1 until end of turn.", base_target, GS_LITERAL_PROMPT)){
+				spell_fizzled = 1;
 				return 0;
 			}
+			base_target++;
 		}
 		if( instance->info_slot == CHOICE_PUMP || instance->info_slot == CHOICE_BOTH ){
-			new_pick_target(&td2, "TARGET_CREATURE", base_target, 1);
+			if (!new_pick_target(&td2, "Select target creature put a +1/+1 counter on it.", base_target, GS_LITERAL_PROMPT)){
+				spell_fizzled = 1;
+				return 0;
+			}
 		}
 	}
 
@@ -3017,7 +3001,7 @@ Choose one or both -
 		}
 		if( choice == CHOICE_BOTH || choice == CHOICE_PUMP ){
 			if( validate_target(player, card, &td2, base_target) ){
-				add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 1);
+				add_counters(player, card, instance->targets[base_target].player, instance->targets[base_target].card, COUNTER_P1_P1, 1);
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -3311,6 +3295,7 @@ Draw three cards.
 }
 
 int card_chandra_torch_of_defiance(int player, int card, event_t event){
+	check_legend_rule(player, card, event);
 	/* Chandra, Torch of Defiance	|2|R|R	0x200f2b4
 	 * Legendary Planeswalker - Chandra (4)
 	 * +1: Exile the top card of your library. You may cast that card. If you don't, ~ deals 2 damage to each opponent.
@@ -3346,7 +3331,6 @@ int card_chandra_torch_of_defiance(int player, int card, event_t event){
 			}
 			default_target_definition(player, card, &td, TYPE_CREATURE);
 		}
-
 
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_PLANESWALKER,
 							"Exile top card", 					1, 					priority_exile, 		+1,
@@ -3391,6 +3375,7 @@ int card_chandra_torch_of_defiance(int player, int card, event_t event){
 		}
 		if( choice == CHOICE_MANA ){
 			produce_mana(p, COLOR_RED, 2);
+			tapped_for_mana_color = -2;
 		}
 
 		if( choice == CHOICE_DAMAGE_CREATURE ){
@@ -3411,21 +3396,18 @@ int card_chandra_torch_of_defiance_emblem(int player, int card, event_t event){
 	/* Chandra, Torch of Defiance Emblem	""	0x200f2b9
 	 * Emblem - Chandra
 	 * Whenever you cast a spell, this emblem deals 5 damage to any target. */
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
+
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+	if (event == EVENT_SPA){
 		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
+		default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
 		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 		td.allow_cancel = 0;
-
-		get_card_instance(player, card)->number_of_targets = 0;
-
-		if( new_specific_spell_played(player, card, event, player, (can_target(&td) ? RESOLVE_TRIGGER_MANDATORY : 0), NULL) ){
-			if( new_pick_target(&td, "TARGET_ANY", 0, 0) ){
-				damage_target0(player, card, 5);
-			}
+		if (new_pick_target(&td, "TARGET_ANY", 0, 0)){
+			damage_target0(player, card, 5);
 		}
+		get_card_instance(player, card)->number_of_targets = 0;
 	}
-
 	return 0;
 }
 
@@ -3598,34 +3580,26 @@ Instant
 Choose target creature. You get |E|E|E (three energy counters), then you may pay any amount of |E.
 Harnessed Lightning deals that much damage to that creature.
 */
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
 
+	if (!IS_GS_EVENT(player, card, event)){ return 0; }
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-	td.extra = (int32_t)ai_helper_function_for_harness_lightning;
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( valid_target(&td) ){
+	if (event == EVENT_RESOLVE_SPELL){
+		if (valid_target(&td)){
 			add_energy(player, 3);
-			int tou = get_toughness(player, card)-get_card_instance(player, card)->damage_on_card;
-			int amount = MIN(ENERGY_COUNTERS(player), tou);
-			if( player == AI && amount < tou ){
-				amount = 0;
-			}
-			if( player == HUMAN ){
+			int toughness = get_toughness(player, card);
+			card_instance_t* instance = get_card_instance(player, card);
+			int amount = ENERGY_COUNTERS(player);
+			if (player == AI && amount < toughness - (unsigned short)instance->damage_on_card){ amount = 0; }
+			else if (player == HUMAN){
 				amount = choose_a_number(player, "How much Energy you'll spend?", amount);
+				amount = MAX(0, MIN(amount, ENERGY_COUNTERS(player)));
 			}
 			remove_energy(player, amount);
-			if( amount ){
-				damage_target0(player, card, amount);
-			}
+			if (amount){ damage_target0(player, card, amount); }
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
-
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
@@ -3672,7 +3646,7 @@ Incendiary Sabotage deals 3 damage to each creature.
 	new_default_test_definition(&test, TYPE_ARTIFACT, "Select an artifact to sacrifice.");
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		APNAP(p, {new_damage_all(player, card, p, 3, NDA_ALL_CREATURES, NULL);};);
+		new_damage_all(player, card, ANYBODY, 3, NDA_ALL_CREATURES, NULL);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -4027,6 +4001,11 @@ Flying
 3/3
 */
 
+    if (event == EVENT_CHECK_ABILITIES && affect_me(player, card) &&
+        generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_R(1), 0, NULL, NULL)){
+        check_abilities_keywords |= KEYWORD_FIRST_STRIKE;
+    }
+
     if( event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST ){
 		if( current_turn == player ){
 			return generic_shade(player, card, event, 0, MANACOST_R(1), 1, 0, 0, 0);
@@ -4112,18 +4091,17 @@ Flying
 		int pow = choice == CHOICE_PUMP ? 1 : 0;
 		int key = choice == CHOICE_FIRST_STRIKE ? KEYWORD_FIRST_STRIKE : 0;
 		int s_key = choice == CHOICE_HASTE ? SP_KEYWORD_HASTE : 0;
-		if( pow ){
-			alternate_legacy_text(1, instance->parent_controller, pump_until_eot_merge_previous(instance->parent_controller, instance->parent_card,
-											instance->parent_controller, instance->parent_card, 1, 0));
-		}
-		if(key){
-		   alternate_legacy_text(2, instance->parent_controller, pump_ability_until_eot(instance->parent_controller, instance->parent_card,
-									instance->parent_controller, instance->parent_card, 0, 0, key, 0));
-		}
-		if(s_key){
-		   alternate_legacy_text(3, instance->parent_controller, pump_ability_until_eot(instance->parent_controller, instance->parent_card,
-									instance->parent_controller, instance->parent_card, 0, 0, 0, s_key));
-	    }
+		if (pow){
+            pump_until_eot_merge_previous_alt(player, card, instance->parent_controller, instance->parent_card, 1, 0, 1);
+        }
+        if (key){
+            alternate_legacy_text(2, player, pump_ability_until_eot(player, card,
+                instance->parent_controller, instance->parent_card, 0, 0, key, 0));
+        }
+        if (s_key){
+            alternate_legacy_text(3, player, pump_ability_until_eot(player, card,
+                instance->parent_controller, instance->parent_card, 0, 0, 0, s_key));
+        }
 	}
 	return 0;
 }
@@ -4380,17 +4358,13 @@ Whenever a land enters the battlefield under your control, you get |E (an energy
 Pay |E|E|E|E|E|E|E|E: Create a 6/6 colorless Beast artifact creature token.
 2/3
 */
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && has_mana(player, COLOR_ANY, 1) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_LAND);
-		int result = new_specific_cip(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test);
-		if( result ){
-			add_energy(player, result);
-		}
-	}
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *instance = get_card_instance( player, card);
+	landfall(player, card, event);
+	if (event == EVENT_ETB_ABILITY){
+		add_energy(player, 1);
+	}
+	else if (event == EVENT_RESOLVE_ACTIVATION){
+		card_instance_t* instance = get_card_instance(player, card);
 		token_generation_t token;
 		default_token_definition(instance->parent_controller, instance->parent_card, CARD_ID_BEAST, &token);
 		token.pow = token.tou = 6;
@@ -4398,7 +4372,6 @@ Pay |E|E|E|E|E|E|E|E: Create a 6/6 colorless Beast artifact creature token.
 		token.action = TOKEN_ACTION_CONVERT_INTO_ARTIFACT;
 		generate_token(&token);
 	}
-
 	return generic_activated_ability(player, card, event, 0, MANACOST0, GVC_PLAYER_COUNTERS(PCOUNTER_ENERGY, 8), NULL, NULL);
 }
 
@@ -4448,7 +4421,7 @@ Blossoming Defense |G	0x200f34f
 Instant
 Target creature you control gets +2/+2 and gains hexproof until end of turn.
 */
-	return vanilla_instant_pump(player, card, event, ANYBODY, player, 2, 2, 0, SP_KEYWORD_HEXPROOF);
+	return vanilla_instant_pump(player, card, event, player, player, 2, 2, 0, SP_KEYWORD_HEXPROOF);
 }
 
 int card_bristling_hydra(int player, int card, event_t event){
@@ -4757,13 +4730,28 @@ int card_kujar_seedsculptor(int player, int card, event_t event)
   return 0;
 }
 
-int card_larger_than_life(int player, int card, event_t event ){
-/*
+int card_larger_than_life(int player, int card, event_t event)
+{
+  /*
 Larger Than Life |1|G	0x200f381
 Sorcery
 Target creature gets +4/+4 and gains trample until end of turn.
 */
-	return vanilla_instant_pump(player, card, event, ANYBODY, player, 4, 4, KEYWORD_TRAMPLE, 0);
+
+if (!IS_GS_EVENT(player, card, event))
+    return 0;
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  td.preferred_controller = player;
+  card_instance_t* instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target(&td))
+      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+          4, 4, KEYWORD_TRAMPLE, 0);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
 int card_longtusk_cub(int player, int card, event_t event){
@@ -4847,6 +4835,7 @@ Planeswalker - Nissa
 -6: You get an emblem with "Whenever a land enters the battlefield under your control, you may draw a card."
 5
 */
+	check_legend_rule(player, card, event);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return planeswalker(player, card, event, 5);
@@ -4918,8 +4907,9 @@ Planeswalker - Nissa
 		if( choice == CHOICE_UNTAP_AND_ANIMATE ){
 			if( valid_target(&td) ){
 				untap_card(instance->targets[0].player, instance->targets[0].card);
-				int legacy = turn_into_creature(player, card, instance->targets[0].player, instance->targets[0].card, 1, 5, 5);
+				int legacy = turn_into_creature(player, card, instance->targets[0].player, instance->targets[0].card, COLOR_TEST_WHITE, 5, 5);
 				get_card_instance(player, legacy)->targets[8].card = SP_KEYWORD_HASTE;
+				get_card_instance(player, legacy)->targets[9].card = SUBTYPE_ELEMENTAL;
 			}
 		}
 
@@ -5456,6 +5446,8 @@ Planeswalker - Dovin
 3
 */
 
+	check_legend_rule(player, card, event);
+
 	if( ! IS_GAA_EVENT(event) ){
 		return planeswalker(player, card, event, 3);
 	}
@@ -5653,20 +5645,22 @@ Legendary Creature - Human Advisor
 Whenever an opponent casts a noncreature spell, that player loses 2 life and you gain 2 life.
 2/3
 */
+
 	check_legend_rule(player, card, event);
-
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		this_test.type_flag = DOESNT_MATCH;
-		if( new_specific_spell_played(player, card, event, 1-player, RESOLVE_TRIGGER_MANDATORY, &this_test) ){
-			lose_life(1-player, 2);
-			gain_life(player, 2);
-		}
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
+		test_definition_t test;
+		default_test_definition(&test, TYPE_CREATURE);
+		test.type_flag = DOESNT_MATCH;
+		sp_ability_trigger(1-player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
 	}
-
+	if (event == EVENT_SPA){
+		lose_life(1-player, 2);
+		gain_life(player, 2);
+	}
 	return 0;
 }
+
+static int rashmi_triggering = 0;
 
 int card_rashmi_eternities_crafter(int player, int card, event_t event){
 /*
@@ -5677,33 +5671,26 @@ If it's a nonland card with converted mana cost less than that spell's, you may 
 If you don't cast the revealed card, put it into your hand.
 2/3
 */
+
 	check_legend_rule(player, card, event);
-
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && get_specific_storm_count(player) == 1 &&
-		deck_ptr[player][0] != -1 )
-	{
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-			int iid = deck_ptr[player][0];
-			reveal_card_iid(player, card, iid);
-			int add_to_hand = 1;
-			if( ! is_what(-1, iid, TYPE_LAND) && can_legally_play_iid(player, iid) ){
-				char msg [100];
-				scnprintf(msg, 100, "Play %s", cards_ptr[cards_data[iid].id]->name);
-				int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_SMALLCARD_ID(iid),
-									msg, 		1, 10,
-									"Decline", 	1, 5);
-				if( choice == 1 ){
-					play_card_in_deck_for_free(player, player, 0);
-					add_to_hand = 0;
-				}
-			}
-			if( add_to_hand ){
-				add_card_to_hand(player, iid);
-				remove_card_from_deck(player, 0);
-			}
-		}
+	if (!rashmi_triggering && trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && get_specific_storm_count(player) == 0 && deck_ptr[player][0] != -1){
+	    sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
 	}
-
+	if (event == EVENT_SPA){
+	    rashmi_triggering = 1;
+	    int iid = deck_ptr[player][0];
+	    card_instance_t* instance = get_card_instance(player, card);
+	    reveal_card_iid(player, card, iid);
+	    if (!is_what(-1, iid, TYPE_LAND) && can_legally_play_iid(player, iid) && get_cmc_by_internal_id(iid) < get_cmc(instance->targets[1].player, instance->targets[1].card)){
+	        char msg[100];
+	        scnprintf(msg, 100, "Play %s", cards_ptr[cards_data[iid].id]->name);
+	        int choice = DIALOG(player, card, EVENT_RESOLVE_ACTIVATION, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_SMALLCARD_ID(iid), msg, 1, 10, "Decline", 1, 2);
+	        if (choice == 1){ play_card_in_deck_for_free(player, player, 0); rashmi_triggering = 0; return 0; }
+	    }
+	    add_card_to_hand(player, iid);
+	    remove_card_from_deck(player, 0);
+	    rashmi_triggering = 0;
+	}
 	return 0;
 }
 
@@ -5743,6 +5730,7 @@ Planeswalker - Saheeli
 -7: Search your library for up to three artifact cards with different names, put them onto the battlefield, then shuffle your library.
 3
 */
+	check_legend_rule(player, card, event);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return planeswalker(player, card, event, 3);
@@ -5806,11 +5794,17 @@ Planeswalker - Saheeli
 			int chosen[3] = {-1, -1, -1};
 
 			test_definition_t test;
-			new_default_test_definition(&test, TYPE_ARTIFACT, "Select up to three artifact cards with different names.");
+			default_test_definition(&test, TYPE_ARTIFACT);
 			test.value_for_special_selection_function = (int)chosen;
 			test.special_selection_function = test_not_in_array3;
-			test.qty = 3;
-			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_CMC, &test);
+			test.qty = 1;
+			test.no_shuffle = 1;
+			for (int i = 0; i < 3; ++i){
+				if (ai_is_speculating != 1){ sprintf(test.message, "Select up to three artifact cards with different names. Card #%d of up to 3", i+1); }
+				if (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_CMC, &test) < 0){ break; }
+				chosen[i] = get_card_instance(player, card)->targets[0].card;
+				shuffle(player);
+			}
 		}
 	}
 
@@ -5905,12 +5899,8 @@ int card_aetherflux_reservoir(int player, int card, event_t event){
 	 * Artifact
 	 * Whenever you cast a spell, you gain 1 life for each spell you've cast this turn.
 	 * Pay 50 life: ~ deals 50 damage to any target. */
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) )
-	{
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-			gain_life(player, get_specific_storm_count(player));
-		}
-	}
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+	if (event == EVENT_SPA){ gain_life(player, get_specific_storm_count(player)); return 0; }
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -6034,8 +6024,8 @@ Whenever a permanent you control is put into a graveyard, you get |E (an energy 
 
 	if( get_card_instance(player, card)->kill_code <= 0 ){
 		int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-		if( amount ){
-			add_energy(player, amount);
+		for (; amount > 0; --amount){
+			add_energy(player, 1);
 		}
 	}
 
@@ -6055,7 +6045,7 @@ Whenever a permanent you control is put into a graveyard, you get |E (an energy 
 			}
 			if( pc ){
 				test_definition_t test;
-				new_default_test_definition(&test, TYPE_ANY, "Select a card to cast for free.");
+				new_default_test_definition(&test, TYPE_ANY, "Select a card to play for free.");
 				int selected = select_card_from_zone(player, player, playable[0], pc, 0, AI_MAX_CMC, -1, &test);
 				if( selected != -1 ){
 					play_card_in_deck_for_free(player, player, playable[1][selected]);
@@ -6137,7 +6127,7 @@ Whenever one or more +1/+1 counters are placed on a permanent you control, you m
 		}
 	}
 
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_X(3), 0,
+	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST_X(3), 0,
 									&td, "Select target permanent or player.");
 }
 
@@ -6159,7 +6149,8 @@ int card_ballista_charger(int player, int card, event_t event){
 	 * Artifact - Vehicle 6/6
 	 * Whenever ~ attacks, it deals 1 damage to any target.
 	 * Crew 3 */
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
 		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
@@ -6210,7 +6201,8 @@ Whenever Bomat Courier attacks, exile the top card of your library face down. (Y
 */
 	haste(player, card, event);
 
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
 		int iid = deck_ptr[player][0];
 		int leg;
 		int idx;
@@ -6236,9 +6228,9 @@ Whenever Bomat Courier attacks, exile the top card of your library face down. (Y
 		while ((loc = exiledby_find_any(player-2, instance->targets[1].card, &leg, &idx)) != NULL){
 				int owner = (*loc & 0x80000000) ? 1 : 0;
 				int iid = *loc & ~0x80000000;
+				*loc = -1;
 				add_card_to_hand(owner, iid);
 				remove_card_from_rfg(owner, cards_data[iid].id);
-				*loc = -1;
 		}
 	}
 
@@ -6447,13 +6439,8 @@ int card_dynavolt_tower(int player, int card, event_t event){
 	 * Artifact
 	 * Whenever you cast an instant or sorcery spell, you get |E|E.
 	 * |T, Pay |E|E|E|E|E: ~ deals 3 damage to any target. */
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_SPELL);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &this_test) ){
-			add_energy(player, 2);
-		}
-	}
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_SPELL, NULL, player, card);
+	if (event == EVENT_SPA){ add_energy(player, 2); }
 
 	if (!IS_GAA_EVENT(event)  ){
 		return 0;
@@ -6610,8 +6597,9 @@ int card_fireforgers_puzzleknot(int player, int card, event_t event){
 									&td, "TARGET_ANY");
 }
 
-int card_fleetwheel_cruiser(int player, int card, event_t event){
-/*
+int card_fleetwheel_cruiser(int player, int card, event_t event)
+{
+  /*
 Fleetwheel Cruiser |4	0x200f46c
 Artifact - Vehicle
 Trample, haste
@@ -6619,13 +6607,12 @@ When Fleetwheel Cruiser enters the battlefield, it becomes an artifact creature 
 Crew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)
 5/3
 */
-	if( comes_into_play(player, card, event) ){
-		turn_into_creature(player, card, player, card, 1, 0, 0);
-	}
 
-	haste(player, card, event);
-
-	return vehicle(player, card, event, 2);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+    turn_into_creature(player, card, player, card, 1, 0, 0);
+  haste(player, card, event);
+  return vehicle(player, card, event, 2);
 }
 
 int card_foundry_inspector(int player, int card, event_t event){
@@ -6656,7 +6643,7 @@ Artifact
 Each player may play an additional land on each of his or her turns.
 At the beginning of each player's upkeep, if that player has no cards in hand, that player draws three cards.
 */
-	check_playable_lands(player);
+	check_playable_lands(current_turn);
 
 	if( upkeep_trigger_mode(player, card, event, hand_count[current_turn] == 0 ? RESOLVE_TRIGGER_MANDATORY : 0) ){
 		draw_cards(current_turn, 3);
@@ -6760,6 +6747,7 @@ Whenever Key to the City becomes untapped, you may pay |2. If you do, draw a car
 	if( event == EVENT_ACTIVATE ){
 		add_state(player, card, STATE_TAPPED);
 		instance->number_of_targets = 0;
+		tapped_for_mana_color = -1;
 		discard(player, 0, player);
 		new_pick_target(&td, "TARGET_CREATURE", 0, 0);
 	}
@@ -6875,7 +6863,7 @@ Pay |E: Multiform Wonder gets +2/-2 or -2/+2 until end of turn.
 	card_instance_t *instance = get_card_instance( player, card);
 
 	enum{
-		CHOICE_ABILITY,
+		CHOICE_ABILITY = 1,
 		CHOICE_PUMP
 	};
 
@@ -6956,7 +6944,7 @@ Pay |E: Multiform Wonder gets +2/-2 or -2/+2 until end of turn.
 					}
 				}
 			}
-			int choice2 = DIALOG(player, card, event, DLG_NO_CANCEL, DLG_NO_STORAGE
+			int choice2 = DIALOG(player, card, event, DLG_NO_CANCEL, DLG_NO_STORAGE,
 								"Flyng", 1, priority_lifelink,
 								"Vigilance", 1, priority_flying,
 								"Lifelink", 1, priority_vigilance);
@@ -6981,7 +6969,7 @@ Pay |E: Multiform Wonder gets +2/-2 or -2/+2 until end of turn.
 		}
 		if( choice == CHOICE_PUMP ){
 			enum{
-					C2_P2_M2,
+					C2_P2_M2 = 1,
 					C2_M2_P2,
 			};
 			int priority_P2_M2 = 0;
@@ -6996,7 +6984,7 @@ Pay |E: Multiform Wonder gets +2/-2 or -2/+2 until end of turn.
 					priority_M2_P2 = 10;
 				}
 			}
-			int choice2 = DIALOG(player, card, event, DLG_NO_CANCEL, DLG_NO_STORAGE
+			int choice2 = DIALOG(player, card, event, DLG_NO_CANCEL, DLG_NO_STORAGE,
 								"+2/-2", 1, priority_P2_M2,
 								"-2/+2", 1, priority_M2_P2);
 			int pow = 0;
@@ -7058,76 +7046,38 @@ Artifact
 |T: Put the top two cards of your library into your graveyard.
 |2, Exile Perpetual Timepiece: Shuffle any number of target cards from your graveyard into your library.
 */
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
+
+	if (!IS_GAA_EVENT(event)){ return 0; }
+	card_instance_t* instance = get_card_instance(player, card);
+	if (event == EVENT_CAN_ACTIVATE){
+	    if (generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL)){ return 1; }
+	    return generic_activated_ability(player, card, event, GAA_RFG_ME, MANACOST_X(2), 0, NULL, NULL);
 	}
-
-	enum{
-		CHOICE_MILL = 1,
-		CHOICE_SHUFFLE
-	};
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(2), 0, NULL, NULL) ){
-			return 1;
-		}
-		return generic_activated_ability(player, card, event, GAA_RFG_ME, MANACOST_X(2), 0, NULL, NULL);
+	if (event == EVENT_ACTIVATE){
+	    int can_mill = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL);
+	    int can_shuffle = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_RFG_ME, MANACOST_X(2), 0, NULL, NULL);
+	    int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1,
+	                        "Mill 2", can_mill, 15,
+	                        "Shuffle grave into deck", can_shuffle, count_graveyard(player)*2);
+	    if (!choice){ spell_fizzled = 1; return 0; }
+	    if (choice == 1){
+	        add_state(player, card, STATE_TAPPED);
+	        tapped_for_mana_color = -1;
+	        ai_modifier += 15;
+	    }
+	    if (choice == 2 && charge_mana_for_activated_ability(player, card, MANACOST_X(2))){
+	        test_definition_t test;
+	        new_default_test_definition(&test, TYPE_ANY, "Select target card to shuffle into deck.");
+	        int max_targ = player == HUMAN ? count_graveyard(player) : internal_rand(count_graveyard(player))+1;
+	        int amount = select_multiple_cards_from_graveyard(player, player, 0, AI_MAX_VALUE, &test, max_targ, &instance->targets[0]);
+	        SET_BYTE1(instance->info_slot) += amount;
+	        kill_card(player, card, KILL_EXILE);
+	    }
 	}
-
-	if( event == EVENT_ACTIVATE ){
-		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
-							"Mill 2", 1, 15,
-							"Shuffle grave into deck", 1, count_graveyard(player)*2);
-		if( ! choice ){
-			spell_fizzled = 1;
-			return 0;
-		}
-		if( choice == CHOICE_MILL ){
-			ai_modifier += 15;
-		}
-		SET_BYTE0(instance->info_slot) += choice;
-		if( charge_mana_for_activated_ability(player, card, MANACOST_X(2)) ){
-			switch( choice ){
-					case CHOICE_MILL:
-						tap_card(player, card);
-						break;
-					case CHOICE_SHUFFLE:
-					{
-						test_definition_t test;
-						new_default_test_definition(&test, TYPE_ANY, "Select target card to shuffle into deck.");
-
-						int max_targ = player == HUMAN ? count_graveyard(player) : internal_rand(count_graveyard(player))+1;
-
-						int amount = select_multiple_cards_from_graveyard(player, player, 0, AI_MAX_VALUE, &test, max_targ,
-																			&instance->targets[0]);
-						SET_BYTE1(instance->info_slot) += amount;
-
-						kill_card(player, card, KILL_EXILE);
-						break;
-					}
-			}
-		}
+	if (event == EVENT_RESOLVE_ACTIVATION){
+	    if (instance->info_slot == 1){ mill(player, 2); }
+	    if (instance->info_slot == 2){ shuffle(player); }
 	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		int choice = BYTE0(instance->info_slot);
-		if( choice == CHOICE_MILL ){
-			mill(player, 2);
-		}
-		if( choice == CHOICE_SHUFFLE ){
-			int i;
-			for(i=BYTE1(instance->info_slot)-1; i > -1; i--){
-				int selected = validate_target_from_grave_source(player, card, player, i);
-				if( selected != -1 ){
-					from_graveyard_to_deck(player, selected, 1);
-				}
-			}
-			shuffle(player);
-		}
-	}
-
 	return 0;
 }
 
@@ -7144,19 +7094,23 @@ Artifact Creature - Insect
 
 // Prophetic Prism: reprint ROE
 
-int card_renegade_freighter(int player, int card, event_t event){
-/*
+int card_renegade_freighter(int player, int card, event_t event)
+{
+  /*
 Renegade Freighter |3	0x200f4b2
 Artifact - Vehicle
 Whenever Renegade Freighter attacks, it gets +1/+1 and gains trample until end of turn.
 Crew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)
 4/3
 */
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
-		pump_ability_until_eot(player, card, player, card, 1, 1, KEYWORD_TRAMPLE, 0);
-	}
 
-	return vehicle(player, card, event, 2);
+
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    pump_ability_until_eot(player, card, player, card, 1, 1, KEYWORD_TRAMPLE, 0);
+  }
+  return vehicle(player, card, event, 2);
 }
 
 int card_scrapheap_scrounger(int player, int card, event_t event){
@@ -7171,7 +7125,7 @@ Scrapheap Scrounger can't block.
 	cannot_block(player, card, event);
 
 	if( event == EVENT_GRAVEYARD_ABILITY ){
-		if( count_graveyard_by_type(player, TYPE_CREATURE) > 1 ){
+		if( count_graveyard_by_type(player, TYPE_CREATURE) > 1 && has_mana_for_activated_ability(player, card, MANACOST_XB(1, 1)) ){
 			return GA_RETURN_TO_PLAY;
 		}
 	}
@@ -7262,28 +7216,17 @@ Crew 3 (Tap any number of creatures you control with total power 3 or more: This
 		}
 	}
 
-	if( event == EVENT_ETB_ABILITY ){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_ETB_ABILITY || event == EVENT_DAT_ABILITY){
 		skysovereign_consul_flagship_ability(player, card);
-	}
-
-	store_attackers(player, card, event, 0, player, card, NULL);
-
-	if (xtrigger_condition() == XTRIGGER_ATTACKING && affect_me(player, card) && reason_for_trigger_controller == player)
-	{
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
-		td.allowed_controller = td.preferred_controller = 1-player;
-
-		if( can_target(&td) && resolve_declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-			skysovereign_consul_flagship_ability(player, card);
-		}
 	}
 
 	return vehicle(player, card, event, 3);
 }
 
-int card_smugglers_copter(int player, int card, event_t event){
-/*
+int card_smugglers_copter(int player, int card, event_t event)
+{
+  /*
 Smuggler's Copter |2	0x200f4cb
 Artifact - Vehicle
 Flying
@@ -7291,14 +7234,18 @@ Whenever Smuggler's Copter attacks or blocks, you may draw a card. If you do, di
 Crew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)
 3/3
 */
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_CHECK_DECK_COUNT(player, 1), player, card) ||
-		blocking(player, card, event) )
-	{
-		draw_cards(player, 1);
-		discard(player, 0, player);
-	}
 
-	return vehicle(player, card, event, 1);
+  declare_attackers_trigger_t mode = duh_mode(player) && count_deck(player) > 11 ?
+      DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL;
+  dat_ability(player, card, event, mode, 0);
+  if (event == EVENT_DAT_ABILITY ||
+      (event == EVENT_DECLARE_BLOCKERS && blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG) &&
+       (player == AI || do_dialog(player, player, card, -1, -1, " Draw then discard\n Pass", 0) == 0)))
+  {
+    draw_cards(player, 1);
+    discard(player, 0, player);
+  }
+  return vehicle(player, card, event, 1);
 }
 
 /*
@@ -7372,31 +7319,22 @@ When Aether Hub enters the battlefield, you get |E (an energy counter).
 |T, Pay |E: Add one mana of any color to your mana pool.
 */
 
-	etb_energy(player, card, event, 1);
-
-	if( event != EVENT_COUNT_MANA && event != EVENT_ACTIVATE ){
-		return mana_producer(player, card, event);
-	}
-
-	if( event == EVENT_COUNT_MANA && affect_me(player, card) ){
-		if( can_produce_mana(player, card) ){
-			if( ENERGY_COUNTERS(player) ){
-				declare_mana_available(player, COLOR_ANY, 1);
-			}
-			else{
-				declare_mana_available(player, COLOR_COLORLESS, 1);
-			}
+	if (!is_humiliated(player, card, AL_TRIG)){ etb_energy(player, card, event, 1); }
+	if (event == EVENT_CHANGE_TYPE){
+		if (affect_me(player, card)){
+			get_card_instance(player, card)->info_slot = ENERGY_COUNTERS(player) ? COLOR_TEST_ANY : mana_colors_added[player] | COLOR_TEST_COLORLESS;
 		}
-	}
-
-	if( event == EVENT_ACTIVATE ){
-		color_test_t colors = ENERGY_COUNTERS(player) ? get_card_instance(player, card)->mana_color : COLOR_TEST_COLORLESS;
+	}else if (event == EVENT_COUNT_MANA){
+		if (affect_me(player, card) && !is_tapped(player, card) && !is_animated_and_sick(player, card) && can_produce_mana(player, card)){
+			if (ENERGY_COUNTERS(player)){ declare_mana_available_hex(player, COLOR_TEST_ANY, 1); }
+			else{ declare_mana_available(player, mana_colors_added[player], 1); }
+		}
+	}else if (event == EVENT_CAN_ACTIVATE){ return mana_producer(player, card, event); }
+	else if (event == EVENT_ACTIVATE){
+		color_test_t colors = ENERGY_COUNTERS(player) ? get_card_instance(player, card)->mana_color : mana_colors_added[player] | COLOR_TEST_COLORLESS;
 		produce_mana_tapped_all_one_color(player, card, colors, 1);
-		if( chosen_colors & ~COLOR_TEST_COLORLESS ){
-			remove_energy(player, 1);
-		}
+		if (chosen_colors & ~(mana_colors_added[player] | COLOR_TEST_COLORLESS)){ remove_energy(player, 1); }
 	}
-
 	return 0;
 }
 
@@ -7439,8 +7377,11 @@ At the beginning of your upkeep, if you control three or more artifacts, you gai
 */
 
 	check_legend_rule(player, card, event);
+	upkeep_trigger_ability(player, card, event, player);
+	if (event == EVENT_UPKEEP_TRIGGER_ABILITY && !is_humiliated(player, card, AL_TRIG)
+		&& count_subtype(player, TYPE_ARTIFACT, -1) >= 3){ gain_life(player, 1); }
 
-	if( ! IS_GAA_EVENT(event) ){
+	if (!IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE){
 		return mana_producer(player, card, event);
 	}
 
@@ -7458,7 +7399,7 @@ At the beginning of your upkeep, if you control three or more artifacts, you gai
 			int can_tutor_artifact = count_subtype(player, TYPE_ARTIFACT, -1) >= 3 &&
 									generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_SACRIFICE_ME,
 																MANACOST_X(5), 0, NULL, NULL) ? 1 : 0;
-			choice = DIALOG(player, card, event, DLG_RANDOM,
+			choice = DIALOG(player, card, event, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1,
 							"Get mana", 1, 5,
 							"Tutor artifact", can_tutor_artifact, 10);
 		}
@@ -7471,9 +7412,11 @@ At the beginning of your upkeep, if you control three or more artifacts, you gai
 		}
 		if( choice == CHOICE_TUTOR_ARTIFACT ){
 			add_state(player, card, STATE_TAPPED);
-			if( charge_mana_for_activated_ability(player, card, MANACOST_X(5)) ){
+			if( charge_mana_for_activated_ability(player, card, MANACOST_X(4)) ){
 				kill_card(player, card, KILL_SACRIFICE);
 			}
+			else{ remove_state(player, card, STATE_TAPPED); }
+			tapped_for_mana_color = -1;
 		}
 	}
 
@@ -7537,6 +7480,7 @@ Land
 					untap_card_no_event(player, card);
 			}
 
+			tapped_for_mana_color = -1;
 		}
 	}
 
@@ -7571,6 +7515,8 @@ int card_chandra_pyrogenius(int player, int card, event_t event){
 	 * +2: ~ deals 2 damage to each opponent.
 	 * -3: ~ deals 4 damage to target creature.
 	 * -10: ~ deals 6 damage to target player or planeswalker and each creature that player or that planeswalker's controller controls. */
+	check_legend_rule(player, card, event);
+
 	if( ! IS_GAA_EVENT(event) ){
 		return planeswalker(player, card, event, 5);
 	}
@@ -7666,7 +7612,7 @@ Liberating Combustion deals 6 damage to target creature. You may search your lib
 
 				scnprintf(test.message, 100, "Select a card named %s.", cards_ptr[test.id]->name);
 				int result = new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &test);
-			    if( result == -1 ){
+			    if( result < 0 ){
 				new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 0, AI_FIRST_FOUND, &test);
 			    }
 		   }
@@ -7721,6 +7667,7 @@ Planeswalker - Nissa
 -12: Creatures you control get +5/+5 and gain trample until end of turn.
 5
 */
+	check_legend_rule(player, card, event);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return planeswalker(player, card, event, 5);
@@ -7765,6 +7712,7 @@ Planeswalker - Nissa
 				int card_added = add_card_to_hand(player, deck_ptr[player][0]);
 				remove_card_from_deck(player, 0);
 				if( is_what(player, card_added, TYPE_LAND) ){
+					set_special_flags(player, card_added, SF_PLAYED_FROM_DECK);
 					put_into_play(player, card_added);
 				}
 			}

@@ -119,11 +119,16 @@ int card_cartouche_of_solidarity(int player, int card, event_t event)
    * Enchanted creature gets +1/+1 and has first strike. */
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-
-  if (event == EVENT_ETB_ABILITY)
-	vigilant_white_warriors(player, card, 1);
-
-  return generic_aura(player, card, event, player, 1,1, KEYWORD_FIRST_STRIKE,0, 0,0,0);
+  if (event == EVENT_ETB)
+    vigilant_white_warriors(player, card, 1);
+  if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS)
+    return 0;
+  attached_gets_pt(player, card, event, 1, 1);
+  attached_gets_kw(player, card, event, KEYWORD_FIRST_STRIKE, 0);
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  td.allowed_controller = player;
+  return aura(player, card, event, &td, "TARGET_CREATURE_YOU_CONTROL");
 }
 
 int card_cast_out(int player, int card, event_t event)
@@ -325,7 +330,7 @@ int card_protection_of_the_hekma(int player, int card, event_t event)
 	  && !is_humiliated(player, card, AL_STATIC))
 	prevent_damage(affected_card_controller, affected_card, 1);
 
-  return 0;
+  return global_enchantment(player, card, event);
 }
 
 int card_regal_caracal(int player, int card, event_t event)
@@ -335,7 +340,7 @@ int card_regal_caracal(int player, int card, event_t event)
    * Other Cats you control get +1/+1 and have lifelink.
    * When ~ enters the battlefield, create two 1/1 |Swhite Cat creature tokens with lifelink. */
 
-  boost_subtype(player, card, event, SUBTYPE_KNIGHT, 1,1, 0,SP_KEYWORD_LIFELINK, BCT_CONTROLLER_ONLY);
+  boost_subtype(player, card, event, SUBTYPE_CAT, 1,1, 0,SP_KEYWORD_LIFELINK, BCT_CONTROLLER_ONLY);
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 

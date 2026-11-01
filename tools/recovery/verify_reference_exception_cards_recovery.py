@@ -1,0 +1,123 @@
+"""Bind reviewed retained reference exceptions card bodies to source, DWARF, native bytes and exports."""
+import json,re,struct
+from pathlib import Path
+from capstone import Cs,CS_ARCH_X86,CS_MODE_32
+from capstone.x86_const import X86_OP_MEM
+from canonicalize_helpers import ROOT,read,sha,span
+from inspect_release import Image,inherited_value
+from verify_split_cards_recovery import native_ranges,contract
+
+
+def verify(proof,image,root=ROOT):
+    path=proof.get('native_reference_exception_cards_recovery')
+    if not path:return {}
+    record=json.loads((root/path).read_text(encoding='utf-8'));assert sha(image.data)==record['dll_sha256']
+    debug=Image(Path('G:/Manalink/ManalinkEh_10_22_Hotfix.dbg').read_bytes());assert sha(debug.data)==record['dbg_sha256']
+    dw=debug.dwarf();md=Cs(CS_ARCH_X86,CS_MODE_32)
+    receipts={(e['source'],e.get('native_source_reconstruction',{}).get('function'),e['after_sha256']) for e in proof['source_edits']}
+    for row in record['cards']:
+        d=dw.get_DIE_from_refaddr(int(row['die_offset'],16))
+        assert inherited_value(d,'DW_AT_name')==row['name'] and contract(dw,d)==row['contract']
+        assert native_ranges(dw,d)==[(int(p['address'],16),int(p['end'],16)) for p in row['native_ranges']]
+        t=read(root/row['source']);a,b=span(t,row['name']);assert sha(t[a:b].encode())==row['definition_sha256'],row['name']
+        assert (row['source'],row['name'],row['definition_sha256']) in receipts,row['name']
+        for part in row['native_ranges']:
+            lo=int(part['address'],16);hi=int(part['end'],16);data=image.pe.get_data(lo-0x2000000,hi-lo)
+            assert sha(data)==part['bytes_sha256']
+            assert sha((root/part['raw_export']).read_bytes())==part['raw_export_sha256']
+            ins=list(md.disasm(data,lo));assert sum(i.size for i in ins)==hi-lo
+            assert [[hex(i.address),i.mnemonic,i.op_str] for i in ins]==part['instructions']
+    for typename, layout in record['native_type_layouts'].items():
+        d=dw.get_DIE_from_refaddr(int(layout['typedef_die'],16))
+        assert inherited_value(d,'DW_AT_name')==typename
+        t=d.get_DIE_from_attribute('DW_AT_type')
+        while t.tag in ('DW_TAG_typedef','DW_TAG_const_type'):t=t.get_DIE_from_attribute('DW_AT_type')
+        assert hex(t.offset)==layout['structure_die'] and t.attributes['DW_AT_byte_size'].value==layout['size']
+        fields={}
+        for child in t.iter_children():
+            if child.tag!='DW_TAG_member':continue
+            name=inherited_value(child,'DW_AT_name');a=child.attributes.get('DW_AT_data_member_location')
+            if name is None or not a:continue
+            value=a.value
+            if isinstance(value,list):
+                assert value[0]==0x23
+                number=0;shift=0
+                for b in value[1:]:number|=(b&127)<<shift;shift+=7
+                value=number
+            fields[name]=value
+        assert fields==layout['fields'],typename
+    for row in record['source_dependencies']:
+        t=read(root/row['source']);a,b=span(t,row['name']);assert sha(t[a:b].encode())==row['definition_sha256'],row['name']
+    for row in record['native_data']:
+        data=bytes.fromhex(row['bytes']);assert sha(data)==row['sha256']
+        assert image.pe.get_data(int(row['address'],16)-0x2000000,len(data))==data
+    for row in record['support_helpers']:
+        t=read(root/row['source']);a,b=span(t,row['name'])
+        assert sha(t[a:b].encode())==row['definition_sha256']
+        assert (row['source'],row['name'],row['definition_sha256']) in receipts
+        assert row['native_owner'] in {r['name'] for r in record['cards']}
+    for row in record['support_contracts']:
+        d=dw.get_DIE_from_refaddr(int(row['die_offset'],16))
+        assert inherited_value(d,'DW_AT_name')==row['name'] and contract(dw,d)==row['contract']
+        assert native_ranges(dw,d)==[(int(p['address'],16),int(p['end'],16)) for p in row['native_ranges']]
+    for row in record['physical_interface_inputs']:
+        assert sha((root/row['path']).read_bytes())==row['sha256']
+    definitions=read(root/'defs.h');subtypes=read(root/'subtypes.h')
+    for key,pattern in record['header_constants'].items():
+        assert re.search(pattern,definitions+'\n'+subtypes),key
+    for row in record['native_enumerators']:
+        d=dw.get_DIE_from_refaddr(int(row['die_offset'],16))
+        assert inherited_value(d,'DW_AT_name')==row['name']
+        assert d.attributes['DW_AT_const_value'].value==row['value']
+    for row in record['source_constants']:
+        assert re.search(row['pattern'],read(root/row['source'])),row['name']
+    for row in record.get('section_symbols',[]):
+        section=image.pe.sections[row['section_number']-1]
+        assert section.Name.rstrip(b'\0').decode()==row['section_name']
+        assert section.VirtualAddress==int(row['section_rva'],16)
+        assert any(n==row['name'] and v==row['symbol_value'] and s==row['section_number'] for n,v,s,k,c in image.symbols)
+        assert 0x2000000+section.VirtualAddress+row['symbol_value']==int(row['address'],16)
+    for row in record['absolute_symbols']:
+        assert any(n==row['name'] and v==int(row['address'],16) and s==-1 for n,v,s,k,c in image.symbols),row['name']
+    for row in record['callee_bindings']:
+        t=read(root/row['source']);a,b=span(t,row['name']);sig=t[a:t.index('{',a)].strip()
+        assert sha(sig.encode())==row['signature_sha256'],(row['source'],row['name'])
+        d=dw.get_DIE_from_refaddr(int(row['die_offset'],16))
+        assert inherited_value(d,'DW_AT_name')==row['native_name']
+        assert int(row['native_address'],16) in [a for a,b in native_ranges(dw,d)]
+    for source,decls in record['forward_declarations'].items():
+        t=read(root/source)
+        for decl in decls:
+            assert t.count(decl)==1,(source,decl)
+            name=re.search(r'\b(\w+)\(',decl).group(1)
+            assert t.index(decl)<span(t,name)[0],name
+    detailed=Cs(CS_ARCH_X86,CS_MODE_32);detailed.detail=True
+    owners={r['name']:r for r in record['cards']}
+    for row in record['switch_tables']:
+        owner=owners[row['owner']];parts=owner['native_ranges'];assert len(parts)==1
+        lo=int(parts[0]['address'],16);hi=int(parts[0]['end'],16)
+        ins=list(detailed.disasm(image.pe.get_data(lo-0x2000000,hi-lo),lo));starts={i.address for i in ins}
+        table=int(row['address'],16);targets=struct.unpack('<6I',image.pe.get_data(table-0x2000000,24))
+        assert [hex(t) for t in targets]==[e['target'] for e in row['entries']]
+        assert [e['index'] for e in row['entries']]==list(range(6)) and all(lo<=t<hi and t in starts for t in targets)
+        index=next(j for j,i in enumerate(ins) if i.address==int(row['jump_address'],16));jump=ins[index]
+        assert jump.mnemonic=='jmp' and jump.operands[0].type==X86_OP_MEM and jump.operands[0].mem.disp==table and jump.operands[0].mem.scale==4
+        window=ins[index-3:index+1];assert [[hex(i.address),i.mnemonic,i.op_str] for i in window]==row['bound_window']
+        assert any(i.mnemonic=='cmp' and i.op_str.endswith(', 5') for i in window) and any(i.mnemonic=='ja' for i in window)
+    for row in record['byte_copies']:
+        assert row['owner'] in owners and image.pe.get_data(int(row['address'],16)-0x2000000,1)==b'\0'
+        at=int(row['instructions'][0][0],16);ins=list(detailed.disasm(image.pe.get_data(at-0x2000000,12),at))[:2]
+        assert [[hex(i.address),i.mnemonic,i.op_str] for i in ins]==row['instructions']
+        assert ins[0].operands[1].type==X86_OP_MEM and ins[0].operands[1].size==1 and ins[0].operands[1].mem.disp==int(row['address'],16)
+        assert ins[1].operands[0].type==X86_OP_MEM and ins[1].operands[0].size==1 and ins[1].operands[0].mem.disp==2
+    row=record['fixed_external_call'];t=read(root/row['source']);a,b=span(t,row['owner'])
+    assert row['source_fragment'] in t[a:b] and row['target']=='0x458920'
+    assert len(record['cards'])==17
+    return dict(card_handlers=17,changed_definitions=sum(r['source_changed'] for r in record['cards']),
+                retained_after_full_review=sum(not r['source_changed'] for r in record['cards']),
+                source_dependency_bodies=len(record['source_dependencies']),inlined_support_helpers=len(record['support_helpers']),native_enum_contracts=len(record['native_enumerators']),native_data_ranges=len(record['native_data']),scope=record['scope'])
+
+
+if __name__=='__main__':
+    from canonicalize_helpers import load
+    print(json.dumps(verify(load(),Image((ROOT/'.recovery/2022-ManalinkEh.dll').read_bytes())),indent=2))

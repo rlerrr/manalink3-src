@@ -324,6 +324,56 @@ def verify_interface_evidence(proof,root=ROOT):
     from verify_compiler_cpp_recovery import verify as verify_compiler_cpp_recovery
     from verify_cpp_chooser_recovery import verify as verify_cpp_chooser_recovery
     from verify_native_jump_table import verify as verify_native_jump_table
+    from verify_split_cards_recovery import verify as verify_split_cards_recovery
+    from verify_short_cards_recovery import verify as verify_short_cards_recovery
+    from verify_trigger_cards_recovery import verify as verify_trigger_cards_recovery
+    from verify_mana_cards_recovery import verify as verify_mana_cards_recovery
+    from verify_shared_cards_recovery import verify as verify_shared_cards_recovery
+    from verify_small_diff_cards_recovery import verify as verify_small_diff_cards_recovery
+    from verify_control_cycling_cards_recovery import verify as verify_control_cycling_cards_recovery
+    from verify_animation_tutor_cards_recovery import verify as verify_animation_tutor_cards_recovery
+    from verify_pump_graveyard_cards_recovery import verify as verify_pump_graveyard_cards_recovery
+    from verify_activation_mana_cards_recovery import verify as verify_activation_mana_cards_recovery
+    from verify_legend_target_cards_recovery import verify as verify_legend_target_cards_recovery
+    from verify_short_wrapper_cards_recovery import verify as verify_short_wrapper_cards_recovery
+    from verify_mass_trigger_cards_recovery import verify as verify_mass_trigger_cards_recovery
+    from verify_attack_graveyard_cards_recovery import verify as verify_attack_graveyard_cards_recovery
+    from verify_mana_combat_cards_recovery import verify as verify_mana_combat_cards_recovery
+    from verify_attack_token_cards_recovery import verify as verify_attack_token_cards_recovery
+    from verify_combat_aura_cards_recovery import verify as verify_combat_aura_cards_recovery
+    from verify_attack_aura_cards_recovery import verify as verify_attack_aura_cards_recovery
+    from verify_storm_token_cards_recovery import verify as verify_storm_token_cards_recovery
+    from verify_damage_history_cards_recovery import verify as verify_damage_history_cards_recovery
+    from verify_attack_mana_cards_recovery import verify as verify_attack_mana_cards_recovery
+    from verify_storm_protection_cards_recovery import verify as verify_storm_protection_cards_recovery
+    from verify_spell_combat_cards_recovery import verify as verify_spell_combat_cards_recovery
+    from verify_mana_legacy_cards_recovery import verify as verify_mana_legacy_cards_recovery
+    from verify_mana_choice_cards_recovery import verify as verify_mana_choice_cards_recovery
+    from verify_mana_imprint_cards_recovery import verify as verify_mana_imprint_cards_recovery
+    from verify_mana_retarget_cards_recovery import verify as verify_mana_retarget_cards_recovery
+    from verify_imprint_protection_cards_recovery import verify as verify_imprint_protection_cards_recovery
+    from verify_modal_imprint_cards_recovery import verify as verify_modal_imprint_cards_recovery
+    from verify_retained_reference_cards_recovery import verify as verify_retained_reference_cards_recovery
+    from verify_odyssey_modal_cards_recovery import verify as verify_odyssey_modal_cards_recovery
+    from verify_arcane_command_cards_recovery import verify as verify_arcane_command_cards_recovery
+    from verify_reference_token_cards_recovery import verify as verify_reference_token_cards_recovery
+    from verify_reference_exception_cards_recovery import verify as verify_reference_exception_cards_recovery
+    from verify_coff_card_forwarders import verify as verify_coff_card_forwarders
+    from verify_native_absolute_bindings import verify as verify_native_absolute_bindings
+    from verify_native_header_enums import verify as verify_native_header_enums
+    from verify_header_name_recovery import verify as verify_header_name_recovery
+    from verify_header_inline_recovery import verify as verify_header_inline_recovery
+    from verify_aura_animation_cards_recovery import verify as verify_aura_animation_cards_recovery
+    from verify_spell_death_cards_recovery import verify as verify_spell_death_cards_recovery
+    from verify_aura_activation_cards_recovery import verify as verify_aura_activation_cards_recovery
+    from verify_trigger_replacement_cards_recovery import verify as verify_trigger_replacement_cards_recovery
+    from verify_grave_mana_cards_recovery import verify as verify_grave_mana_cards_recovery
+    from verify_land_deflection_cards_recovery import verify as verify_land_deflection_cards_recovery
+    from verify_grave_trigger_cards_recovery import verify as verify_grave_trigger_cards_recovery
+    from verify_damage_subtype_cards_recovery import verify as verify_damage_subtype_cards_recovery
+    from verify_counterspell_aura_cards_recovery import verify as verify_counterspell_aura_cards_recovery
+    from verify_combat_ai_cards_recovery import verify as verify_combat_ai_cards_recovery
+    from verify_damage_dispatch_cards_recovery import verify as verify_damage_dispatch_cards_recovery
     return dict(native_domains=domains,caller_ranges=len(ranges),argument_edits=verify_argument_edits(proof,image,root),
                 constant_argument_edits=verify_constant_edits(proof,image,root),
                 inline_counter_arguments=verify_inline_counters(proof,image,root),
@@ -367,6 +417,56 @@ def verify_interface_evidence(proof,root=ROOT):
                 compiler_cpp=verify_compiler_cpp_recovery(proof,image,root),
                 cpp_chooser=verify_cpp_chooser_recovery(proof,image,root),
                 native_jump_table=verify_native_jump_table(proof,image,root),
+                split_helpers_changed_cards=verify_split_cards_recovery(proof,image,root),
+                short_changed_cards=verify_short_cards_recovery(proof,image,root),
+                trigger_changed_cards=verify_trigger_cards_recovery(proof,image,root),
+                mana_changed_cards=verify_mana_cards_recovery(proof,image,root),
+                shared_changed_cards=verify_shared_cards_recovery(proof,image,root),
+                small_difference_cards=verify_small_diff_cards_recovery(proof,image,root),
+                control_cycling_cards=verify_control_cycling_cards_recovery(proof,image,root),
+                animation_tutor_cards=verify_animation_tutor_cards_recovery(proof,image,root),
+                pump_graveyard_cards=verify_pump_graveyard_cards_recovery(proof,image,root),
+                activation_mana_cards=verify_activation_mana_cards_recovery(proof,image,root),
+                legend_target_cards=verify_legend_target_cards_recovery(proof,image,root),
+                short_wrapper_cards=verify_short_wrapper_cards_recovery(proof,image,root),
+                mass_trigger_cards=verify_mass_trigger_cards_recovery(proof,image,root),
+                attack_graveyard_cards=verify_attack_graveyard_cards_recovery(proof,image,root),
+                mana_combat_cards=verify_mana_combat_cards_recovery(proof,image,root),
+                attack_token_cards=verify_attack_token_cards_recovery(proof,image,root),
+                combat_aura_cards=verify_combat_aura_cards_recovery(proof,image,root),
+                attack_aura_cards=verify_attack_aura_cards_recovery(proof,image,root),
+                storm_token_cards=verify_storm_token_cards_recovery(proof,image,root),
+                damage_history_cards=verify_damage_history_cards_recovery(proof,image,root),
+                attack_mana_cards=verify_attack_mana_cards_recovery(proof,image,root),
+                storm_protection_cards=verify_storm_protection_cards_recovery(proof,image,root),
+                spell_combat_cards=verify_spell_combat_cards_recovery(proof,image,root),
+                mana_legacy_cards=verify_mana_legacy_cards_recovery(proof,image,root),
+                mana_choice_cards=verify_mana_choice_cards_recovery(proof,image,root),
+                mana_imprint_cards=verify_mana_imprint_cards_recovery(proof,image,root),
+                mana_retarget_cards=verify_mana_retarget_cards_recovery(proof,image,root),
+                imprint_protection_cards=verify_imprint_protection_cards_recovery(proof,image,root),
+                modal_imprint_cards=verify_modal_imprint_cards_recovery(proof,image,root),
+                retained_reference_cards=verify_retained_reference_cards_recovery(proof,image,root),
+                odyssey_modal_cards=verify_odyssey_modal_cards_recovery(proof,image,root),
+                arcane_command_cards=verify_arcane_command_cards_recovery(proof,image,root),
+                reference_token_cards=verify_reference_token_cards_recovery(proof,image,root),
+                reference_exception_cards=verify_reference_exception_cards_recovery(proof,image,root),
+                coff_card_forwarders=verify_coff_card_forwarders(proof,image,root),
+                native_absolute_bindings=verify_native_absolute_bindings(proof,image,root),
+                native_header_enums=verify_native_header_enums(proof,image,root),
+                native_header_names=verify_header_name_recovery(proof,image,root),
+                native_header_inline=verify_header_inline_recovery(proof,image,root),
+                aura_animation_cards=verify_aura_animation_cards_recovery(proof,image,root),
+                spell_death_cards=verify_spell_death_cards_recovery(proof,image,root),
+                aura_activation_cards=verify_aura_activation_cards_recovery(proof,image,root),
+                trigger_replacement_cards=verify_trigger_replacement_cards_recovery(proof,image,root),
+                grave_mana_cards=verify_grave_mana_cards_recovery(proof,image,root),
+                land_deflection_cards=verify_land_deflection_cards_recovery(proof,image,root),
+                grave_trigger_cards=verify_grave_trigger_cards_recovery(proof,image,root),
+                damage_subtype_cards=verify_damage_subtype_cards_recovery(proof,image,root),
+                counterspell_aura_cards=verify_counterspell_aura_cards_recovery(proof,image,root),
+                combat_ai_cards=verify_combat_ai_cards_recovery(proof,image,root),
+                damage_dispatch_cards=verify_damage_dispatch_cards_recovery(proof,image,root),
                 scope='Reviewed interface edits only; retained custom callers explicitly distinguished from native caller ranges.')
 
 def predecessor_bytes(row,archive,root=ROOT):

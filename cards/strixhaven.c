@@ -4683,6 +4683,12 @@ int card_gnarled_professor(int player, int card, event_t event)
   return 0;
 }
 
+/* October 2022 COFF entry 0x23d8110: native tail jump to card_gnarled_professor. */
+int card_professor_of_symbology(int player, int card, event_t event)
+{
+  return card_gnarled_professor(player, card, event);
+}
+
 /* ManalinkEh 2022: 0x23d0c90; original cards/strixhaven.c:3086. */
 int card_hunt_for_specimens(int player, int card, event_t event)
 {

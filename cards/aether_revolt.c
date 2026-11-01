@@ -308,7 +308,8 @@ Whenever ~ attacks, you get |E|E (two energy counters).
 Pay |E|E: Exile ~, then return it to the battlefield under its owner's control.
 */
 
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY){
 		add_energy(player, 2);
 	}
 
@@ -634,7 +635,9 @@ Sacrifice ~: Prevent all combat damage a creature of your choice would deal this
 		test_definition_t test;
 		new_default_test_definition(&test, TYPE_ANY, "Select a card named Ajani, Valiant Protector.");
 		test.id = CARD_ID_AJANI_VALIANT_PROTECTOR;
-		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &test);
+		if (!new_special_count_grave(player, &test) || new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 0, AI_FIRST_FOUND, &test) < 0){
+			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &test);
+		}
 	}
 
 	if( ! IS_GAA_EVENT(event) )
@@ -646,8 +649,8 @@ Sacrifice ~: Prevent all combat damage a creature of your choice would deal this
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_RESOLVE_ACTIVATION )
-		maze_of_ith_effect(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card);
+	if( event == EVENT_RESOLVE_ACTIVATION && valid_target(&td) )
+		negate_combat_damage_this_turn(player, card, instance->targets[0].player, instance->targets[0].card, 0);
 
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_SACRIFICE_ME | GAA_LITERAL_PROMPT, MANACOST0,
 									0, &td, "Select a creature.");
@@ -807,7 +810,7 @@ Choose one -
 		return generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL);
 	}
 
-	if(	event == EVENT_CAST_SPELL && affect_me(player, card) ){
+	if(	((event == EVENT_CAST_SPELL && affect_me(player, card)) || event == EVENT_CHANGE_TARGET) ){
 		instance->number_of_targets = 0;
 		if( ! check_special_flags2(player, card, SF2_COPIED_FROM_STACK) ){
 			int choice = DIALOG(player, card, event, DLG_RANDOM,
@@ -867,6 +870,7 @@ You may cast a card with converted mana cost 4 or less from your hand without pa
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE | TYPE_ARTIFACT);
+	td.preferred_controller = 1-player;
 	td.allow_cancel = 2; //"Done" button
 
 	card_instance_t *instance = get_card_instance( player, card );
@@ -880,7 +884,7 @@ You may cast a card with converted mana cost 4 or less from your hand without pa
 				validated++;
 			}
 		}
-		if( validated )
+		if (validated && hand_count[player] > 0)
 			av_free_spell(player, 4);
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -906,6 +910,12 @@ Whenever a spell or ability you control counters a spell, you may draw a card. I
 		}
 	}
 
+	else if (event == EVENT_COUNTERSPELL && attacking_card_controller == player){
+		if (do_dialog(player, player, card, -1, -1, " Draw & discard\n Pass", count_deck(player) < 11) == 0){
+			draw_cards(player, 1);
+			discard(player, 0, player);
+		}
+	}
 	return 0;
 }
 
@@ -937,46 +947,33 @@ Hexproof (This creature can't be the target of spells or abilities your opponent
 	return improvise(player, card, event);
 }
 
-int card_battle_at_the_bridge(int player, int card, event_t event){
-/*
+int card_battle_at_the_bridge(int player, int card, event_t event)
+{
+  /*
 Battle at the Bridge	|X|B
 Sorcery
 Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for |1.)
 Target creature gets -X/-X until end of turn. You gain X life.
 */
 
-	if( ! IS_GS_EVENT(player, card, event) && event != EVENT_MODIFY_COST )
-		return 0;
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-
-	card_instance_t *instance = get_card_instance( player, card);
-
-	if( event == EVENT_MODIFY_COST )
-		return improvise(player, card, event);
-
-	if( event == EVENT_CAN_CAST )
-		return generic_spell(player, card, event, GS_X_SPELL | GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		int val = improvise_impl(player, card, event, 1);
-		if( val ){
-			td.allow_cancel = val == 2 ? 0 : 1;
-			return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
-		}
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( valid_target(&td) ){
-			int val = instance->info_slot;
-			pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -val, -val);
-			gain_life(player, val);
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return 0;
+if (!IS_GS_EVENT(player, card, event))
+    return improvise(player, card, event);
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  card_instance_t* instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_CAST || (event == EVENT_CAST_SPELL && affect_me(player, card)))
+    improvise(player, card, event);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target(&td))
+    {
+      int amount = instance->info_slot;
+      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -amount, -amount);
+      gain_life(player, amount);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, GS_CAN_TARGET | GS_X_SPELL, &td, "TARGET_CREATURE", 1, NULL);
 }
 
 int card_call_for_unity(int player, int card, event_t event)
@@ -1076,13 +1073,13 @@ Sorcery
 
 	card_instance_t *instance = get_card_instance( player, card);
 
-	if( event == EVENT_CAN_CAST && can_target(&td) )
+	if( (event == EVENT_CAN_CAST || event == EVENT_CAN_CHANGE_TARGET) && can_target(&td) )
 		return generic_spell(player, card, event, GS_CAN_TARGET, &td2, NULL, 1, NULL);
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+	if( ((event == EVENT_CAST_SPELL && affect_me(player, card)) || event == EVENT_CHANGE_TARGET) ){
 		generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 		if( spell_fizzled != 1 ){
-			new_pick_target(&td2, "TARGER_LAND", 1, 1);
+			new_pick_target(&td2, "TARGET_LAND", 1, 1);
 		}
 	}
 
@@ -1091,7 +1088,7 @@ Sorcery
 			damage_target0(player, card, 4);
 		}
 		if( validate_target(player, card, &td2, 1) ){
-			effect_frost_titan(player, card, instance->targets[0].player, instance->targets[0].card);
+			effect_frost_titan(player, card, instance->targets[1].player, instance->targets[1].card);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}

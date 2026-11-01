@@ -1,0 +1,2214 @@
+{
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "helpers": [
+    {
+      "name": "roll_d6",
+      "callee": "roll_d6t",
+      "native_target_address": "0x26506f0",
+      "definition": "static inline int roll_d6(int player, int src_player, int src_card)\n{\n  return roll_d6t(player, src_player, src_card, -1, -1);\n}",
+      "definition_sha256": "1d0fd9ebceac6fb9bad0b40546efa7283f3b4ac89f8dca3c2879fb149cf61d94",
+      "native_origins": [
+        {
+          "name": "roll_d6",
+          "source": "cards/unglued_unhinged.c",
+          "die_offset": "0x2c61c31",
+          "external": null,
+          "line": 3435,
+          "contract": {
+            "return_type": "int",
+            "parameters": [
+              {
+                "name": "player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_card",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              }
+            ]
+          },
+          "instances": [
+            {
+              "die_offset": "0x2c5ef4f",
+              "owner": "card_urzas_science_fair_project",
+              "call_line": 1177,
+              "ranges": [
+                {
+                  "address": "0x2304760",
+                  "end": "0x2304780",
+                  "bytes": "c7442410ffffffffc744240cffffffff897c2408895c2404891c24e870bf3400",
+                  "sha256": "1a46869f119019ce690963280565a9a79f6dcb6f2fd383f7dc6f640f5ecf4ee4",
+                  "instructions": [
+                    [
+                      "0x2304760",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x2304768",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x2304770",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x2304774",
+                      "mov",
+                      "dword ptr [esp + 4], ebx"
+                    ],
+                    [
+                      "0x2304778",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x230477b",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                },
+                {
+                  "address": "0x2304787",
+                  "end": "0x2304789",
+                  "bytes": "89c6",
+                  "sha256": "750468e50b8500dfb8f128039880db2804b753a3ffcba500cbba0621b06a948c",
+                  "instructions": [
+                    [
+                      "0x2304787",
+                      "mov",
+                      "esi, eax"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c5f464",
+              "owner": "card_jack_in_the_mox",
+              "call_line": 1060,
+              "ranges": [
+                {
+                  "address": "0x23044cd",
+                  "end": "0x2304500",
+                  "bytes": "c7442410ffffffffc744240cffffffff89742408895c2404891c24e803c2340083f8067732ff248544f173028db42600000000",
+                  "sha256": "9171abd03450982fe10d9f02640360208977ed7ddd37ba758bc363389c871d23",
+                  "instructions": [
+                    [
+                      "0x23044cd",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x23044d5",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x23044dd",
+                      "mov",
+                      "dword ptr [esp + 8], esi"
+                    ],
+                    [
+                      "0x23044e1",
+                      "mov",
+                      "dword ptr [esp + 4], ebx"
+                    ],
+                    [
+                      "0x23044e5",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x23044e8",
+                      "call",
+                      "0x26506f0"
+                    ],
+                    [
+                      "0x23044ed",
+                      "cmp",
+                      "eax, 6"
+                    ],
+                    [
+                      "0x23044f0",
+                      "ja",
+                      "0x2304524"
+                    ],
+                    [
+                      "0x23044f2",
+                      "jmp",
+                      "dword ptr [eax*4 + 0x273f144]"
+                    ],
+                    [
+                      "0x23044f9",
+                      "lea",
+                      "esi, [esi]"
+                    ]
+                  ]
+                },
+                {
+                  "address": "0x2304538",
+                  "end": "0x230453d",
+                  "bytes": "bf03000000",
+                  "sha256": "e0f59d3f6d06e1e36bb1d7b96a40ea7e167c2d54db8eb4500cd7edc694004f63",
+                  "instructions": [
+                    [
+                      "0x2304538",
+                      "mov",
+                      "edi, 3"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c5ff03",
+              "owner": "card_elvish_impersonators",
+              "call_line": 829,
+              "ranges": [
+                {
+                  "address": "0x2303e38",
+                  "end": "0x2303e5b",
+                  "bytes": "8b450c89742404893424c7442410ffffffffc744240cffffffff89442408e895c83400",
+                  "sha256": "7ebbbcb1af77c9d285722ee048784c54facd390e5475d7d672475c2ae47ab134",
+                  "instructions": [
+                    [
+                      "0x2303e38",
+                      "mov",
+                      "eax, dword ptr [ebp + 0xc]"
+                    ],
+                    [
+                      "0x2303e3b",
+                      "mov",
+                      "dword ptr [esp + 4], esi"
+                    ],
+                    [
+                      "0x2303e3f",
+                      "mov",
+                      "dword ptr [esp], esi"
+                    ],
+                    [
+                      "0x2303e42",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x2303e4a",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x2303e52",
+                      "mov",
+                      "dword ptr [esp + 8], eax"
+                    ],
+                    [
+                      "0x2303e56",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                },
+                {
+                  "address": "0x2303e5f",
+                  "end": "0x2303e61",
+                  "bytes": "89c7",
+                  "sha256": "d2bd2152477cbaa9a78f100a02805ad38939027500988fec3d31729570bb484c",
+                  "instructions": [
+                    [
+                      "0x2303e5f",
+                      "mov",
+                      "edi, eax"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        145,
+                        4
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c5ff6f",
+              "owner": "card_elvish_impersonators",
+              "call_line": 830,
+              "ranges": [
+                {
+                  "address": "0x2303e5b",
+                  "end": "0x2303e5f",
+                  "bytes": "89742404",
+                  "sha256": "c99e88dc0d1b3be9f912ac7b97184fa0d98f8061c9b148405c4a6e3c4aa3e022",
+                  "instructions": [
+                    [
+                      "0x2303e5b",
+                      "mov",
+                      "dword ptr [esp + 4], esi"
+                    ]
+                  ]
+                },
+                {
+                  "address": "0x2303e61",
+                  "end": "0x2303e80",
+                  "bytes": "8b450c893424c7442410ffffffffc744240cffffffff89442408e870c83400",
+                  "sha256": "2505e4897080df6e33c463bc74e8f3a94700c2629962058a5e4f7a8f64a969d1",
+                  "instructions": [
+                    [
+                      "0x2303e61",
+                      "mov",
+                      "eax, dword ptr [ebp + 0xc]"
+                    ],
+                    [
+                      "0x2303e64",
+                      "mov",
+                      "dword ptr [esp], esi"
+                    ],
+                    [
+                      "0x2303e67",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x2303e6f",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x2303e77",
+                      "mov",
+                      "dword ptr [esp + 8], eax"
+                    ],
+                    [
+                      "0x2303e7b",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                },
+                {
+                  "address": "0x2303e83",
+                  "end": "0x2303e85",
+                  "bytes": "89c3",
+                  "sha256": "59c3ff3b5508dff4125aa5d1f346b64fba779a271c5d8a02cd964dd9edb49f4b",
+                  "instructions": [
+                    [
+                      "0x2303e83",
+                      "mov",
+                      "ebx, eax"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        145,
+                        4
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c6056a",
+              "owner": "card_krazy_kow",
+              "call_line": 673,
+              "ranges": [
+                {
+                  "address": "0x2303b98",
+                  "end": "0x2303bb8",
+                  "bytes": "c7442410ffffffffc744240cffffffff897c2408895c2404891c24e838cb3400",
+                  "sha256": "a42b726009e686cade237118aad520fa40b4f2b147d94f11cb70f29694e37fd5",
+                  "instructions": [
+                    [
+                      "0x2303b98",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x2303ba0",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x2303ba8",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x2303bac",
+                      "mov",
+                      "dword ptr [esp + 4], ebx"
+                    ],
+                    [
+                      "0x2303bb0",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x2303bb3",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c60730",
+              "owner": "card_goblin_tutor",
+              "call_line": 631,
+              "ranges": [
+                {
+                  "address": "0x23039f8",
+                  "end": "0x2303a18",
+                  "bytes": "c7442410ffffffffc744240cffffffff897c240889742404893424e8d8cc3400",
+                  "sha256": "7ca38ff4d47da14d34fcf5c4ccd197849f8c752f9d2cadc02f342a4d2721defd",
+                  "instructions": [
+                    [
+                      "0x23039f8",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x2303a00",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x2303a08",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x2303a0c",
+                      "mov",
+                      "dword ptr [esp + 4], esi"
+                    ],
+                    [
+                      "0x2303a10",
+                      "mov",
+                      "dword ptr [esp], esi"
+                    ],
+                    [
+                      "0x2303a13",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c60875",
+              "owner": "card_chicken_egg",
+              "call_line": 598,
+              "ranges": [
+                {
+                  "address": "0x2303968",
+                  "end": "0x2303988",
+                  "bytes": "c7442410ffffffffc744240cffffffff897c2408895c2404891c24e868cd3400",
+                  "sha256": "cbc4b14c28d6709fffc8629358f122b31ac8ab9d01abb170dcc67a3e7cdfc811",
+                  "instructions": [
+                    [
+                      "0x2303968",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x2303970",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x2303978",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x230397c",
+                      "mov",
+                      "dword ptr [esp + 4], ebx"
+                    ],
+                    [
+                      "0x2303980",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x2303983",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c60bf4",
+              "owner": "card_poultrygeist",
+              "call_line": 546,
+              "ranges": [
+                {
+                  "address": "0x23037d7",
+                  "end": "0x23037f7",
+                  "bytes": "c7442410ffffffffc744240cffffffff897c2408895c2404891c24e8f9ce3400",
+                  "sha256": "fad43743a8ea419458719d585093434eeb7bc628a7255e4ddf3f816856f4dfe6",
+                  "instructions": [
+                    [
+                      "0x23037d7",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x23037df",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x23037e7",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x23037eb",
+                      "mov",
+                      "dword ptr [esp + 4], ebx"
+                    ],
+                    [
+                      "0x23037ef",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x23037f2",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                },
+                {
+                  "address": "0x23037fe",
+                  "end": "0x2303801",
+                  "bytes": "8945f0",
+                  "sha256": "6f4593845df7d880045a6bebdb6b606748de9945cd26d4a3e429e3670b66f4d2",
+                  "instructions": [
+                    [
+                      "0x23037fe",
+                      "mov",
+                      "dword ptr [ebp - 0x10], eax"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c60e83",
+              "owner": "card_jumbo_imp",
+              "call_line": 499,
+              "ranges": [
+                {
+                  "address": "0x23035f0",
+                  "end": "0x2303610",
+                  "bytes": "c7442410ffffffffc744240cffffffff897c2408895c2404891c24e8e0d03400",
+                  "sha256": "b1fd11807cfadee0d8c808f35d939b4ee82fe3acadfd25c5c70f93009b76d9e9",
+                  "instructions": [
+                    [
+                      "0x23035f0",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x23035f8",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x2303600",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x2303604",
+                      "mov",
+                      "dword ptr [esp + 4], ebx"
+                    ],
+                    [
+                      "0x2303608",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x230360b",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c60f7a",
+              "owner": "card_jumbo_imp",
+              "call_line": 502,
+              "ranges": [
+                {
+                  "address": "0x230364c",
+                  "end": "0x230366c",
+                  "bytes": "c7442410ffffffffc744240cffffffff897c2408895c2404891c24e884d03400",
+                  "sha256": "bf25b698482300bc3d2800586579dddc99ba1cb58eaf58b035953c499974f9f4",
+                  "instructions": [
+                    [
+                      "0x230364c",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x2303654",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x230365c",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x2303660",
+                      "mov",
+                      "dword ptr [esp + 4], ebx"
+                    ],
+                    [
+                      "0x2303664",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x2303667",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c61872",
+              "owner": "roll_d6_shim",
+              "call_line": 197,
+              "ranges": [
+                {
+                  "address": "0x2302b49",
+                  "end": "0x2302b6c",
+                  "bytes": "8b550cc7442410ffffffffc744240cffffffff8954240889442404890424e884db3400",
+                  "sha256": "4f5b03f8ef8a5830f8555eedde5f3d3d71b8678d8f4c0cd98fbd08d95b36588f",
+                  "instructions": [
+                    [
+                      "0x2302b49",
+                      "mov",
+                      "edx, dword ptr [ebp + 0xc]"
+                    ],
+                    [
+                      "0x2302b4c",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x2302b54",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x2302b5c",
+                      "mov",
+                      "dword ptr [esp + 8], edx"
+                    ],
+                    [
+                      "0x2302b60",
+                      "mov",
+                      "dword ptr [esp + 4], eax"
+                    ],
+                    [
+                      "0x2302b64",
+                      "mov",
+                      "dword ptr [esp], eax"
+                    ],
+                    [
+                      "0x2302b67",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        145,
+                        4
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        80
+                      ],
+                      [
+                        145,
+                        0
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        80
+                      ],
+                      [
+                        145,
+                        0
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "roll_d6",
+          "source": "cards/unstable.c",
+          "die_offset": "0x55bf8ea",
+          "external": null,
+          "line": 3435,
+          "contract": {
+            "return_type": "int",
+            "parameters": [
+              {
+                "name": "player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_card",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              }
+            ]
+          },
+          "instances": [
+            {
+              "die_offset": "0x55bba40",
+              "owner": "card_painiac",
+              "call_line": 1505,
+              "ranges": [
+                {
+                  "address": "0x25c7948",
+                  "end": "0x25c7968",
+                  "bytes": "897c2408895c2404891c24c7442410ffffffffc744240cffffffffe8888d0800",
+                  "sha256": "34807adf5c187cff96fa988975965782a254c5f0d2f69db9397da7a5887b7170",
+                  "instructions": [
+                    [
+                      "0x25c7948",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x25c794c",
+                      "mov",
+                      "dword ptr [esp + 4], ebx"
+                    ],
+                    [
+                      "0x25c7950",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x25c7953",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x25c795b",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x25c7963",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x55bc293",
+              "owner": "card_box_of_free_range_goblins",
+              "call_line": 1316,
+              "ranges": [
+                {
+                  "address": "0x25c7420",
+                  "end": "0x25c7440",
+                  "bytes": "c7442410ffffffffc744240cffffffff897c240889742404893424e8b0920800",
+                  "sha256": "4eea2efef25d6a7598bd78862e406cd825b26443382edbd4695336143d33966f",
+                  "instructions": [
+                    [
+                      "0x25c7420",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x25c7428",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x25c7430",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x25c7434",
+                      "mov",
+                      "dword ptr [esp + 4], esi"
+                    ],
+                    [
+                      "0x25c7438",
+                      "mov",
+                      "dword ptr [esp], esi"
+                    ],
+                    [
+                      "0x25c743b",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x55bcfda",
+              "owner": "card_inhumaniac",
+              "call_line": 1014,
+              "ranges": [
+                {
+                  "address": "0x25c6a08",
+                  "end": "0x25c6a28",
+                  "bytes": "c7442410ffffffffc744240cffffffff897c2408895c2404891c24e8c89c0800",
+                  "sha256": "8260c194e45f20fd9061c6e219355072298d3c49a7358119ff6f80c078991323",
+                  "instructions": [
+                    [
+                      "0x25c6a08",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x25c6a10",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x25c6a18",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x25c6a1c",
+                      "mov",
+                      "dword ptr [esp + 4], ebx"
+                    ],
+                    [
+                      "0x25c6a20",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x25c6a23",
+                      "call",
+                      "0x26506f0"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "roll_2d6",
+      "callee": "roll_2d6t",
+      "native_target_address": "0x2650990",
+      "definition": "static inline void roll_2d6(int player, int src_player, int src_card, int *r1, int *r2)\n{\n  roll_2d6t(player, src_player, src_card, -1, -1, r1, r2);\n}",
+      "definition_sha256": "eb9949618c111a4be262451a3dbec59c7643f66d257048329152186f2e38c32f",
+      "native_origins": [
+        {
+          "name": "roll_2d6",
+          "source": "cards/unstable.c",
+          "die_offset": "0x55bf897",
+          "external": null,
+          "line": 3442,
+          "contract": {
+            "return_type": "void",
+            "parameters": [
+              {
+                "name": "player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_card",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "r1",
+                "type": "int *",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "r2",
+                "type": "int *",
+                "locations": [],
+                "constant": null
+              }
+            ]
+          },
+          "instances": [
+            {
+              "die_offset": "0x55befd0",
+              "owner": "card_go_to_jail",
+              "call_line": 227,
+              "ranges": [
+                {
+                  "address": "0x25c5250",
+                  "end": "0x25c5283",
+                  "bytes": "8d45a08d55a489442414a17086620089042489542418c7442410ffffffffc744240cffffffff897c240889742404e80db70800",
+                  "sha256": "6da9f77d61e698dbaf4dec196accad8deba759521435059bde806827ef28313e",
+                  "instructions": [
+                    [
+                      "0x25c5250",
+                      "lea",
+                      "eax, [ebp - 0x60]"
+                    ],
+                    [
+                      "0x25c5253",
+                      "lea",
+                      "edx, [ebp - 0x5c]"
+                    ],
+                    [
+                      "0x25c5256",
+                      "mov",
+                      "dword ptr [esp + 0x14], eax"
+                    ],
+                    [
+                      "0x25c525a",
+                      "mov",
+                      "eax, dword ptr [0x628670]"
+                    ],
+                    [
+                      "0x25c525f",
+                      "mov",
+                      "dword ptr [esp], eax"
+                    ],
+                    [
+                      "0x25c5262",
+                      "mov",
+                      "dword ptr [esp + 0x18], edx"
+                    ],
+                    [
+                      "0x25c5266",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x25c526e",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x25c5276",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x25c527a",
+                      "mov",
+                      "dword ptr [esp + 4], esi"
+                    ],
+                    [
+                      "0x25c527e",
+                      "call",
+                      "0x2650990"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "void",
+                "parameters": [
+                  {
+                    "name": "r2",
+                    "type": "int *",
+                    "locations": [
+                      [
+                        145,
+                        156,
+                        127,
+                        159
+                      ],
+                      [
+                        82
+                      ],
+                      [
+                        145,
+                        156,
+                        127,
+                        159
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "r1",
+                    "type": "int *",
+                    "locations": [
+                      [
+                        145,
+                        152,
+                        127,
+                        159
+                      ],
+                      [
+                        80
+                      ],
+                      [
+                        116,
+                        20
+                      ],
+                      [
+                        145,
+                        152,
+                        127,
+                        159
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [],
+                    "constant": null
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "roll_2d6_difference",
+      "callee": "roll_2d6t_difference",
+      "native_target_address": "0x2650a00",
+      "definition": "static inline int roll_2d6_difference(int player, int src_player, int src_card)\n{\n  return roll_2d6t_difference(player, src_player, src_card, -1, -1);\n}",
+      "definition_sha256": "162a76e321796f1e638aadef70b59655e5f174ef5129f4ad0534eb70de93f5c5",
+      "native_origins": [
+        {
+          "name": "roll_2d6_difference",
+          "source": "cards/unstable.c",
+          "die_offset": "0x55bf84d",
+          "external": null,
+          "line": 3443,
+          "contract": {
+            "return_type": "int",
+            "parameters": [
+              {
+                "name": "player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_card",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              }
+            ]
+          },
+          "instances": [
+            {
+              "die_offset": "0x55bc142",
+              "owner": "card_garbage_elemental_c",
+              "call_line": 1366,
+              "ranges": [
+                {
+                  "address": "0x25c74c0",
+                  "end": "0x25c74e0",
+                  "bytes": "897c240889742404893424c7442410ffffffffc744240cffffffffe820950800",
+                  "sha256": "bae6518bb046e9049614f35a6c130fe6b359d065b0a6aac96238abc8d4e54a22",
+                  "instructions": [
+                    [
+                      "0x25c74c0",
+                      "mov",
+                      "dword ptr [esp + 8], edi"
+                    ],
+                    [
+                      "0x25c74c4",
+                      "mov",
+                      "dword ptr [esp + 4], esi"
+                    ],
+                    [
+                      "0x25c74c8",
+                      "mov",
+                      "dword ptr [esp], esi"
+                    ],
+                    [
+                      "0x25c74cb",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x25c74d3",
+                      "mov",
+                      "dword ptr [esp + 0xc], 0xffffffff"
+                    ],
+                    [
+                      "0x25c74db",
+                      "call",
+                      "0x2650a00"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "roll_xd6",
+      "callee": "roll_xd6t",
+      "native_target_address": "0x2650a70",
+      "definition": "static inline int roll_xd6(int player, int x, int src_player, int src_card)\n{\n  return roll_xd6t(player, x, src_player, src_card, -1, -1);\n}",
+      "definition_sha256": "1203b120cc47d0d3eea5be3a23d6bc5c73b6f51a359970bbefbe3c89fc340732",
+      "native_origins": [
+        {
+          "name": "roll_xd6",
+          "source": "cards/unglued_unhinged.c",
+          "die_offset": "0x2c61be7",
+          "external": null,
+          "line": 3444,
+          "contract": {
+            "return_type": "int",
+            "parameters": [
+              {
+                "name": "player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "x",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_card",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              }
+            ]
+          },
+          "instances": [
+            {
+              "die_offset": "0x2c601b9",
+              "owner": "card_spark_fiend",
+              "call_line": 714,
+              "ranges": [
+                {
+                  "address": "0x2303c60",
+                  "end": "0x2303c88",
+                  "bytes": "c7442414ffffffffc7442410ffffffff897c240c895c2408c744240402000000891c24e8e8cd3400",
+                  "sha256": "27c92b939a49dca8fff1ad79d2f8a95d66399fff3e59434fe000fcec788e8950",
+                  "instructions": [
+                    [
+                      "0x2303c60",
+                      "mov",
+                      "dword ptr [esp + 0x14], 0xffffffff"
+                    ],
+                    [
+                      "0x2303c68",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x2303c70",
+                      "mov",
+                      "dword ptr [esp + 0xc], edi"
+                    ],
+                    [
+                      "0x2303c74",
+                      "mov",
+                      "dword ptr [esp + 8], ebx"
+                    ],
+                    [
+                      "0x2303c78",
+                      "mov",
+                      "dword ptr [esp + 4], 2"
+                    ],
+                    [
+                      "0x2303c80",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x2303c83",
+                      "call",
+                      "0x2650a70"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "x",
+                    "type": "int",
+                    "locations": [
+                      [
+                        50,
+                        159
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c602d2",
+              "owner": "card_spark_fiend",
+              "call_line": 745,
+              "ranges": [
+                {
+                  "address": "0x2303d1d",
+                  "end": "0x2303d45",
+                  "bytes": "c7442414ffffffffc7442410ffffffff897c240c895c2408c744240402000000891c24e82bcd3400",
+                  "sha256": "63ccb223d291abc2a6efe4397af832be461097c076b06dc24815e7aeee6e4f14",
+                  "instructions": [
+                    [
+                      "0x2303d1d",
+                      "mov",
+                      "dword ptr [esp + 0x14], 0xffffffff"
+                    ],
+                    [
+                      "0x2303d25",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x2303d2d",
+                      "mov",
+                      "dword ptr [esp + 0xc], edi"
+                    ],
+                    [
+                      "0x2303d31",
+                      "mov",
+                      "dword ptr [esp + 8], ebx"
+                    ],
+                    [
+                      "0x2303d35",
+                      "mov",
+                      "dword ptr [esp + 4], 2"
+                    ],
+                    [
+                      "0x2303d3d",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x2303d40",
+                      "call",
+                      "0x2650a70"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "x",
+                    "type": "int",
+                    "locations": [
+                      [
+                        50,
+                        159
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            },
+            {
+              "die_offset": "0x2c60354",
+              "owner": "card_spark_fiend",
+              "call_line": 735,
+              "ranges": [
+                {
+                  "address": "0x2303d80",
+                  "end": "0x2303da8",
+                  "bytes": "c7442414ffffffffc7442410ffffffff897c240c895c2408c744240402000000891c24e8c8cc3400",
+                  "sha256": "c84bba7a3d29d78a88fbc4eb3b8ad0e4340b4126c754cd878e9594f9547f770f",
+                  "instructions": [
+                    [
+                      "0x2303d80",
+                      "mov",
+                      "dword ptr [esp + 0x14], 0xffffffff"
+                    ],
+                    [
+                      "0x2303d88",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x2303d90",
+                      "mov",
+                      "dword ptr [esp + 0xc], edi"
+                    ],
+                    [
+                      "0x2303d94",
+                      "mov",
+                      "dword ptr [esp + 8], ebx"
+                    ],
+                    [
+                      "0x2303d98",
+                      "mov",
+                      "dword ptr [esp + 4], 2"
+                    ],
+                    [
+                      "0x2303da0",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x2303da3",
+                      "call",
+                      "0x2650a70"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        87
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "x",
+                    "type": "int",
+                    "locations": [
+                      [
+                        50,
+                        159
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "roll_xd6",
+          "source": "cards/unstable.c",
+          "die_offset": "0x55bf803",
+          "external": null,
+          "line": 3444,
+          "contract": {
+            "return_type": "int",
+            "parameters": [
+              {
+                "name": "player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "x",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_player",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              },
+              {
+                "name": "src_card",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              }
+            ]
+          },
+          "instances": [
+            {
+              "die_offset": "0x55bb67e",
+              "owner": "roll_xd6_shim",
+              "call_line": 1643,
+              "ranges": [
+                {
+                  "address": "0x25c4bfa",
+                  "end": "0x25c4c21",
+                  "bytes": "8974240c895c2408c7442414ffffffffc7442410ffffffff8b4038891c2489442404e84fbe0800",
+                  "sha256": "f556abf3453aed473545e6c3d01d367cf8d284651acc9a0482f036596d85dc4d",
+                  "instructions": [
+                    [
+                      "0x25c4bfa",
+                      "mov",
+                      "dword ptr [esp + 0xc], esi"
+                    ],
+                    [
+                      "0x25c4bfe",
+                      "mov",
+                      "dword ptr [esp + 8], ebx"
+                    ],
+                    [
+                      "0x25c4c02",
+                      "mov",
+                      "dword ptr [esp + 0x14], 0xffffffff"
+                    ],
+                    [
+                      "0x25c4c0a",
+                      "mov",
+                      "dword ptr [esp + 0x10], 0xffffffff"
+                    ],
+                    [
+                      "0x25c4c12",
+                      "mov",
+                      "eax, dword ptr [eax + 0x38]"
+                    ],
+                    [
+                      "0x25c4c15",
+                      "mov",
+                      "dword ptr [esp], ebx"
+                    ],
+                    [
+                      "0x25c4c18",
+                      "mov",
+                      "dword ptr [esp + 4], eax"
+                    ],
+                    [
+                      "0x25c4c1c",
+                      "call",
+                      "0x2650a70"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "src_card",
+                    "type": "int",
+                    "locations": [
+                      [
+                        86
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "src_player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "x",
+                    "type": "int",
+                    "locations": [
+                      [
+                        112,
+                        56
+                      ]
+                    ],
+                    "constant": null
+                  },
+                  {
+                    "name": "player",
+                    "type": "int",
+                    "locations": [
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "is_split_card",
+      "callee": "split_cards_id_table",
+      "native_target_address": "0x267c470",
+      "definition": "inline int is_split_card(int csvid)\n{\n  return split_cards_id_table(csvid, 1);\n}",
+      "definition_sha256": "af1490238d67bd15819a5cb2847bd98754496662ef505d1700870b12ebdeeb35",
+      "native_origins": [
+        {
+          "name": "is_split_card",
+          "source": "functions/functions.c",
+          "die_offset": "0x65b1f38",
+          "external": true,
+          "line": 3020,
+          "contract": {
+            "return_type": "int",
+            "parameters": [
+              {
+                "name": "csvid",
+                "type": "int",
+                "locations": [],
+                "constant": null
+              }
+            ]
+          },
+          "instances": [
+            {
+              "die_offset": "0x65a7185",
+              "owner": "split_cards_cmc_table_by_id",
+              "call_line": 4848,
+              "ranges": [
+                {
+                  "address": "0x267ed2d",
+                  "end": "0x267ed3d",
+                  "bytes": "c744240401000000890424e833d7ffff",
+                  "sha256": "5c9c04d36018fb7d382eddf45032fba4a5fa00177e36120b731a36ff19c2f72d",
+                  "instructions": [
+                    [
+                      "0x267ed2d",
+                      "mov",
+                      "dword ptr [esp + 4], 1"
+                    ],
+                    [
+                      "0x267ed35",
+                      "mov",
+                      "dword ptr [esp], eax"
+                    ],
+                    [
+                      "0x267ed38",
+                      "call",
+                      "0x267c470"
+                    ]
+                  ]
+                }
+              ],
+              "contract": {
+                "return_type": "int",
+                "parameters": [
+                  {
+                    "name": "csvid",
+                    "type": "int",
+                    "locations": [
+                      [
+                        80
+                      ],
+                      [
+                        83
+                      ]
+                    ],
+                    "constant": null
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "source_edits": [
+    {
+      "before": "int split_cards_id_table(int csvid, int half_played);",
+      "after": "int split_cards_id_table(int csvid, int half_played);\n#ifndef SHANDALAR\n/* Native inline helper returns the first-half ID or -1, not a Boolean. */\ninline int is_split_card(int csvid)\n{\n  return split_cards_id_table(csvid, 1);\n}\n#endif\n"
+    },
+    {
+      "before": "void roll_2d6t(int player, int src_player, int src_card, int tgt_player, int tgt_card, int *r1,\n               int *r2);",
+      "after": "void roll_2d6t(int player, int src_player, int src_card, int tgt_player, int tgt_card, int *r1,\n               int *r2);\n#ifndef SHANDALAR\n/* Original untargeted dice helpers; retain source identity in die-roll dialogs. */\nstatic inline int roll_d6(int player, int src_player, int src_card)\n{\n  return roll_d6t(player, src_player, src_card, -1, -1);\n}\n\nstatic inline void roll_2d6(int player, int src_player, int src_card, int *r1, int *r2)\n{\n  roll_2d6t(player, src_player, src_card, -1, -1, r1, r2);\n}\n\nstatic inline int roll_2d6_difference(int player, int src_player, int src_card)\n{\n  return roll_2d6t_difference(player, src_player, src_card, -1, -1);\n}\n\nstatic inline int roll_xd6(int player, int x, int src_player, int src_card)\n{\n  return roll_xd6t(player, x, src_player, src_card, -1, -1);\n}\n#endif\n"
+    }
+  ],
+  "source_before_sha256": "82862c6e85a2fdbaa48c51598fcccd7083b21dd525140232e1e1f6450f94d4ee",
+  "source_after_sha256": "278ad4099fd21f5c95a5af9a185a19bcab9c06abe75388b939b51d4ae5b84ee2",
+  "runtime_before": {
+    "path": ".recovery/header-inline-before.dll",
+    "dll_sha256": "22105d470816016191e8df1efbf4e3835a725343cf29bea496ed27c97f99d366"
+  },
+  "runtime_after": {
+    "path": ".recovery/header-inline-after.dll",
+    "dll_sha256": "e2d00eabd3f34b5486337e5542ed3a8b4ef2c1bc11934a1e93a67e9822840b4d",
+    "dbg_sha256": "1396fee0491ef9cc21ec7e208579974c322669cca954d5e6b4566a4bef0702ab"
+  },
+  "scope": "Restore5 original header-only APIs from7 abstract native DIEs and21 inline instances/27 caller-owned fragments. Four dice wrappers forward to the recovered targeted APIs with target pair(-1,-1); is_split_card returns the first-half ID or-1 from split_cards_id_table(csvid,1), not Boolean. Static versus external-inline linkage follows native DWARF. Fragments never supply invented standalone entry addresses. Existing reconstructed caller bodies remain unchanged. Source argument names/signatures plus observed native slot setup establish forwarding; equal actual player/source arguments at individual sites cannot independently distinguish every hypothetical alias permutation. Header compilation and sealed runtime identity are separate from downstream gameplay testing."
+}

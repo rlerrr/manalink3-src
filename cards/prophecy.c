@@ -378,8 +378,9 @@ Artifact
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_LAND);
 		new_manipulate_all(player, card, player, &this_test, ACT_TAP);
-		artifact_animation(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card,
+		int legacy = artifact_animation(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card,
 							1, 3, 3, 0, 0);
+		get_card_instance(instance->parent_controller, legacy)->targets[9].card = SUBTYPE_TURTLE;
 	}
 
 	return generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, MANACOST0, 0, NULL, NULL);
@@ -591,7 +592,9 @@ LAB_025fcb6a:
 int card_entangler(int player, int card, event_t event)
 {
   attached_creature_can_block_additional(player, card, event, 255);
-  return vanilla_aura(player, card, event, player);
+  if (IS_AURA_EVENT(player, card, event) || event == EVENT_STATIC_EFFECTS)
+    return vanilla_aura(player, card, event, player);
+  return 0;
 }
 
 int card_foil(int player, int card, event_t event){
@@ -736,14 +739,13 @@ int card_lesser_gargadon(int player, int card, event_t event){
 	  Creature - Beast 6/4
 	  Whenever Lesser Gargadon attacks or blocks, sacrifice a land.
 	*/
-	if( ! is_humiliated(player, card, AL_TRIG) ){
-		if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) || blocking(player, card, event) ){
-			test_definition_t test;
-			new_default_test_definition(&test, TYPE_LAND, "Select a land to sacrifice.");
-			new_sacrifice(player, card, player, SAC_CAUSED | SAC_NO_CANCEL, &test);
-		}
-	}
 
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY || (blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG))){
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_LAND, "Select a land to sacrifice.");
+		new_sacrifice(player, card, player, SAC_CAUSED | SAC_NO_CANCEL, &test);
+	}
 	return 0;
 }
 
@@ -778,7 +780,7 @@ int card_jolrael_empress_of_beasts(int player, int card, event_t event){
 	}
 
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
+	default_target_definition(player, card, &td, TYPE_NONE);
 	td.zone = TARGET_ZONE_PLAYERS;
 	td.preferred_controller = player;
 
@@ -799,7 +801,7 @@ int card_jolrael_empress_of_beasts(int player, int card, event_t event){
 		if( valid_target(&td) ){
 			test_definition_t this_test;
 			default_test_definition(&this_test, TYPE_LAND);
-			land_animation2(instance->parent_card, instance->parent_card, instance->targets[0].player, -1, 1, 3, 3, 0, 0, 0, &this_test);
+			land_animation2(instance->parent_controller, instance->parent_card, instance->targets[0].player, -1, 1, 3, 3, 0, 0, 0, &this_test);
 		}
 	}
 
@@ -820,6 +822,7 @@ When Keldon Firebombers enters the battlefield, each player sacrifices all lands
 					if( lands_to_sacrifice[p] ){
 						test_definition_t test;
 						default_test_definition(&test, TYPE_LAND);
+						test.qty = lands_to_sacrifice[p];
 						scnprintf(test.message, 100, "Select %d land%s to sacrifice.", lands_to_sacrifice[p],
 									lands_to_sacrifice[p] > 1 ? "s" : "");
 						new_sacrifice(player, card, p, SAC_CAUSED | SAC_NO_CANCEL, &test);
@@ -888,7 +891,7 @@ int card_mageta_the_lion(int player, int card, event_t event){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
 		this_test.not_me = 1;
-		APNAP(p, { new_manipulate_all(instance->parent_controller, instance->parent_card, p, &this_test, KILL_BURY); };);
+		new_manipulate_all(instance->parent_controller, instance->parent_card, ANYBODY, &this_test, KILL_BURY);
 	}
 
 	return 0;
@@ -896,10 +899,9 @@ int card_mageta_the_lion(int player, int card, event_t event){
 
 int card_mungha_wurm(int player, int card, event_t event){
 
-	if( current_turn == player ){
-		return card_winter_orb(player, card, event);
+	if (current_turn == player){
+		untap_only_one_permanent_type(player, card, event, ANYBODY, TYPE_LAND);
 	}
-
 	return 0;
 }
 
@@ -910,7 +912,7 @@ int card_overburden(int player, int card, event_t event){
 		default_test_definition(&test, TYPE_CREATURE);
 		test.type_flag = F1_NO_TOKEN;
 
-		etb_ability_global(player, event, RESOLVE_TRIGGER_MANDATORY, 0, &test, player, card);
+		etb_ability_global(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, 0, &test, player, card);
 	}
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -923,7 +925,7 @@ int card_overburden(int player, int card, event_t event){
 
 		card_instance_t *instance = get_card_instance(player, card);
 
-		if( new_pick_target(&td, "Select a land you control to bounce.", 0, 0)  ){
+		if( new_pick_target(&td, "Select a land you control to bounce.", 0, GS_LITERAL_PROMPT)  ){
 			bounce_permanent(instance->targets[0].player, instance->targets[0].card);
 		}
 		instance->number_of_targets = 0;
@@ -998,16 +1000,16 @@ Reveille Squad |2|W|W
 Creature — Human Rebel 3/3
 Whenever one or more creatures attack you, if Reveille Squad is untapped, you may untap all creatures you control.
 */
-	if( ! is_tapped(player, card) ){
-		int amt;
-		if ((amt = declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player) | DAT_ATTACKS_PLAYER, 1-player, -1)))
-		{
-			test_definition_t test;
-			default_test_definition(&test, TYPE_CREATURE);
-			new_manipulate_all(player, card, player, &test, ACT_UNTAP);
-		}
-	}
 
+	if (!is_tapped(player, card)){
+		store_attackers(player, card, event, DAT_ATTACKS_PLAYER, 1-player, -1, NULL);
+		dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 1);
+	}
+	if (event == EVENT_DAT_ABILITY){
+		test_definition_t test;
+		default_test_definition(&test, TYPE_CREATURE);
+		new_manipulate_all(player, card, player, &test, ACT_UNTAP);
+	}
 	return 0;
 }
 
@@ -1085,20 +1087,21 @@ if( event == EVENT_RESOLVE_ACTIVATION ){
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_U(1), 0, &td1, "TARGET_CREATURE");
 }
 
-int card_rhystic_study(int player, int card, event_t event){
-/*CARD_ID_RHYSTIC_STUDY	4877
+int card_rhystic_study(int player, int card, event_t event)
+{
+  /*CARD_ID_RHYSTIC_STUDY	4877
 Rhystic Study	|2|U
 Enchantment
 Whenever an opponent casts a spell, you may draw a card unless that player pays |1. */
 
-	if( new_specific_spell_played(player, card, event, 1-player, RESOLVE_TRIGGER_AI(player), NULL) ){
-		charge_mana(1-player, COLOR_ANY, 1);
-		if( spell_fizzled == 1 ){
-			draw_cards(player, 1);
-		}
-	}
-
-	return global_enchantment(player, card, event);
+  sp_ability_trigger(1-player, event, RESOLVE_TRIGGER_AI(player), TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    charge_mana(1-player, COLOR_ANY, 1);
+    if (spell_fizzled == 1)
+      draw_cards(player, 1);
+  }
+  return global_enchantment(player, card, event);
 }
 
 int card_rhystic_tutor(int player, int card, event_t event){
@@ -1199,7 +1202,7 @@ Creature — Human Rebel 1/3
 	}
 
 	if(event == EVENT_ACTIVATE ){
-		generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_XW(2, 1), 0, &td, NULL);
+		generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST_XW(2, 1), 0, &td, "Select target attacking creature.");
 		if( spell_fizzled != 1 ){
 			if( instance->targets[0].player == 1-player && instance->targets[0].card == instance->blocking ){
 				ai_modifier += 48;

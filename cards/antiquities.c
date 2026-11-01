@@ -424,7 +424,7 @@ Whenever enchanted artifact becomes tapped or a player activates an ability of e
 		}
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -469,6 +469,7 @@ Sacrifice a creature: Add |C|C to your mana pool. */
 		new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice.");
 		if( new_sacrifice(player, card, player, SAC_AS_COST, &test) ){
 			produce_mana(player, COLOR_COLORLESS, 2);
+			tapped_for_mana_color = -2;
 		}
 		else{
 			spell_fizzled = 1;
@@ -715,6 +716,7 @@ Artifact
 
 	  card_instance_t* instance = get_card_instance(player, card);
 
+	  tapped_for_mana_color = -1;
 	  instance->state |= STATE_TAPPED;
 
 	  int store_max_x = max_x_value;
@@ -725,7 +727,7 @@ Artifact
 
 	  max_x_value = store_max_x;
 
-	  if (cancel != 1)
+	  if (spell_fizzled != 1)
 		{
 		  instance->number_of_targets = 0;
 		  td.preferred_controller = player;
@@ -744,7 +746,7 @@ Artifact
 
 			  if (!select_target(player, card, &td, prompt, &instance->targets[i]))
 				{
-				  cancel = 1;
+				  spell_fizzled = 1;
 				  break;
 				}
 
@@ -755,7 +757,7 @@ Artifact
 			get_card_instance(instance->targets[i].player, instance->targets[i].card)->state &= ~(STATE_CANNOT_TARGET | STATE_TARGETTED);
 		}
 
-	  if (cancel == 1)
+	  if (spell_fizzled == 1)
 		{
 		  instance->number_of_targets = 0;
 		  instance->state &= ~STATE_TAPPED;
@@ -843,19 +845,16 @@ Enchantment
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION, MANACOST_X(2), 0, &td, "TARGET_DAMAGE");
 }
 
-int card_citanul_druid(int player, int card, event_t event){
-/* CARD_ID_CITANUL_DRUID	482
+int card_citanul_druid(int player, int card, event_t event)
+{
+  /* CARD_ID_CITANUL_DRUID	482
 Citanul Druid	|1|G
 Creature - Human Druid 1/1
 Whenever an opponent casts an artifact spell, put a +1/+1 counter on ~. */
-  // 0x451c40
 
-  test_definition_t test;
-  new_default_test_definition(&test, TYPE_ARTIFACT, "");
-
-  if (new_specific_spell_played(player, card, event, 1-player, RESOLVE_TRIGGER_MANDATORY, &test))
-	add_counters(player, card, player, card, COUNTER_P1_P1, 1);
-
+  sp_ability_trigger(1-player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ARTIFACT, NULL, player, card);
+  if (event == EVENT_SPA)
+    add_counters(player, card, player, card, COUNTER_P1_P1, 1);
   return 0;
 }
 
@@ -946,7 +945,7 @@ Destroy target artifact. It can't be regenerated. That artifact's controller gai
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
+	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_ARTIFACT", 1, NULL);
 }
 
 int card_cursed_rack(int player, int card, event_t event){
@@ -989,7 +988,7 @@ int card_drafnas_restoration(int player, int card, event_t event)
    * Sorcery
    * Return any number of target artifact cards from target player's graveyard to the top of his or her library in any order. */
 
-  if (!IS_CASTING(player, card, event))
+  if (!IS_GS_EVENT(player, card, event))
 	return 0;
 
   target_definition_t td;
@@ -1264,7 +1263,7 @@ Sacrifice a creature: Destroy target artifact. Activate this ability only during
 		kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
 	}
 
-	return generic_activated_ability(player, card, event, GAA_SACRIFICE_CREATURE | GAA_CAN_TARGET | GAA_ONCE_PER_TURN | GAA_ONLY_ON_UPKEEP,
+	return generic_activated_ability(player, card, event, GAA_SACRIFICE_CREATURE | GAA_CAN_TARGET | GAA_ONCE_PER_TURN | GAA_ONLY_ON_UPKEEP | GAA_IN_YOUR_TURN,
 									MANACOST0, 0, &td, "TARGET_ARTIFACT");
 }
 
@@ -1464,7 +1463,7 @@ As long as ~ is untapped, all damage that would be dealt to you by artifacts is 
 		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
 		if( damage->internal_card_id == damage_card ){
 			if( damage->damage_target_card == -1 && damage->damage_target_player == player &&
-				damage->info_slot > 0
+				!damage_is_to_planeswalker(damage) && damage->info_slot > 0
 			  ){
 				if( damage_from_artifact_source(-1, affected_card_controller, affected_card) ){
 					damage->damage_target_card = card;
@@ -1522,94 +1521,61 @@ Land
 |1: ~ becomes a 2/2 Assembly-Worker artifact creature until end of turn. It's still a land.
 |T: Target Assembly-Worker creature gets +1/+1 until end of turn. */
 
-	// Used externally
-	if( event == EVENT_CHANGE_TYPE && affect_me(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->targets[12].card > 0 ){
-			event_result = instance->targets[12].card;
-		}
-	}
-
-	if( (event == EVENT_COUNT_MANA && affect_me(player, card)) || event == EVENT_CAN_ACTIVATE ){
-		return mana_producer(player, card, event);
-	}
-
-	if( event == EVENT_CLEANUP ){
-		get_card_instance(player, card)->targets[12].card = get_internal_card_id_from_csv_id(CARD_ID_MISHRAS_FACTORY);
-	}
-
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
-
-	enum{
-		CHOICE_MANA = 1,
-		CHOICE_TRANSFORM,
-		CHOICE_PUMP
-	};
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = player;
-	td.required_subtype = SUBTYPE_ASSEMBLY_WORKER;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_ACTIVATE ){
-		instance->number_of_targets = 0;
-		int choice = CHOICE_MANA;
-		instance->info_slot = choice;
-		if(! paying_mana() ){
-			int can_transform = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_X(2), 0, NULL, NULL);
-
-			int can_pump = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0,
-													&td, NULL);
-
-			int priority_animate = ! is_what(player, card, TYPE_CREATURE) &&
-									((current_turn == player && current_phase < PHASE_DECLARE_ATTACKERS) ||
-									(current_turn == 1-player && current_phase < PHASE_DECLARE_BLOCKERS)) ? 10 : 1;
-
-			int priority_pump = current_phase == PHASE_AFTER_BLOCKING ? 15 : 1;
-
-			choice = DIALOG(player, card, event, DLG_RANDOM,
-							"Generate mana", 1, 5,
-							"Animate", can_transform, priority_animate,
-							"Pump an Assembly Worker", can_pump, priority_pump);
-		}
-			if( ! choice ){
-				spell_fizzled = 1;
-				return 0;
-			}
-
-			if( choice == CHOICE_MANA ){
-				return mana_producer(player, card, event);
-			}
-
-			if( choice == CHOICE_TRANSFORM ){
-				charge_mana_for_activated_ability(player, card, MANACOST_X(1));
-			}
-			if( choice == CHOICE_PUMP ){
-				if( charge_mana_for_activated_ability(player, card, MANACOST0) ){
-					if( new_pick_target(&td, "Select an Assembly Worker to pump", 0, 1 | GS_LITERAL_PROMPT) ){
-						add_state(player, card, STATE_TAPPED);
-					} 
-				}
-			}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		int choice = instance->info_slot;
-		if (choice == CHOICE_TRANSFORM ){
-			get_card_instance(instance->parent_controller, instance->parent_card)->targets[12].card =
-					get_internal_card_id_from_csv_id(CARD_ID_ASSEMBLY_WORKER);
-			add_status(instance->parent_controller, instance->parent_card, STATUS_ANIMATED);
-		}
-		if (choice == CHOICE_PUMP && valid_target(&td)){
-			pump_until_eot(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card, 1, 1);
-		}
-	}
-
-	return 0;
+    if (event == EVENT_CHECK_ABILITIES && affected_card_controller == player && CAN_TAP(player, card) &&
+        can_use_activated_abilities(player, card) && has_mana_for_activated_ability(player, card, MANACOST0) &&
+        current_turn == 1-player && has_subtype(affected_card_controller, affected_card, SUBTYPE_ASSEMBLY_WORKER)){
+        ++check_abilities_power;
+        ++check_abilities_toughness;
+    }
+    if (event == EVENT_COUNT_MANA && affect_me(player, card)){
+        return mana_producer(player, card, event);
+    }
+    has_subtype_if_animated_self(player, card, event, SUBTYPE_ASSEMBLY_WORKER);
+    if (!IS_GAA_EVENT(event)){ return 0; }
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.preferred_controller = player;
+    td.required_subtype = SUBTYPE_ASSEMBLY_WORKER;
+    card_instance_t *instance = get_card_instance(player, card);
+    int can_pump = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE,
+        GAA_UNTAPPED | GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST0, 0, &td, NULL);
+    int pump_priority = current_phase == PHASE_AFTER_BLOCKING ? 15 : 1;
+    int paying_for_pump = paying_mana();
+    int status = instance->token_status;
+    int paying_for_animation = paying_mana();
+    int mana_priority = paying_mana();
+    int can_mana = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+    int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, DLG_NO_DISPLAY_FOR_AI,
+        "Produce mana", can_mana, mana_priority,
+        "Become an Assembly Worker", !paying_for_animation, !(status & STATUS_LEGACY_TYPECHANGE), DLG_MANA(MANACOST_X(1)),
+        "Pump an Assembly Worker", can_pump && !paying_for_pump, pump_priority);
+    if (event == EVENT_CAN_ACTIVATE){ return choice; }
+    if (event == EVENT_ACTIVATE){
+        if (!choice){ return 0; }
+        if (choice == 1){ return mana_producer(player, card, event); }
+        if (choice == 3){
+            if (charge_mana_for_activated_ability(player, card, MANACOST0)){
+                if (!new_pick_target(&td, "Select an Assembly Worker to pump", 0, 1 | GS_LITERAL_PROMPT)){
+                    spell_fizzled = 1;
+                    remove_state(player, card, STATE_TAPPED);
+                    return 0;
+                }
+                add_state(player, card, STATE_TAPPED);
+                tapped_for_mana_color = -1;
+            }
+        }
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION){
+        if (choice == 2){
+            alternate_legacy_text(2, player, animate_self_to_artifact_creature(player, card, 2, 2, 0, 0, 0, 0));
+            add_status(instance->parent_controller, instance->parent_card, STATUS_ANIMATED);
+        }
+        if (choice == 3 && valid_target(&td)){
+            alternate_legacy_text(1, player, pump_until_eot(instance->parent_controller, instance->parent_card,
+                instance->targets[0].player, instance->targets[0].card, 1, 1));
+        }
+    }
+    return 0;
 }
 
 int card_assembly_worker(int player, int card, event_t event){
@@ -1620,9 +1586,6 @@ Artifact Creature Land - Assembly-Worker 2/2
 |T: Target ~ creature gets +1/+1 until end of turn.
 |1: Until end of turn, Mishra's Factory becomes a 2/2 ~ artifact creature. It's still a land. */
 
-	if( get_special_infos(player, card) != 66 ){
-		return card_mishras_factory(player, card, event);
-	}
 	return 0;
 }
 
@@ -1678,6 +1641,8 @@ Land
 
   if (event == EVENT_RESOLVE_SPELL)
 	play_land_sound_effect(player, card);
+
+  if (event == EVENT_QUERY){ return attacking_card == QUERY_IS_PLAIN_MANA_PRODUCER; }
 
   return 0;
 }
@@ -1741,50 +1706,13 @@ int card_orcish_mechanic(int player, int card, event_t event){
 	/* Orcish Mechanics	|2|R	0x200c302
 	 * Creature - Orc 1/1
 	 * |T, Sacrifice an artifact: ~ deals 2 damage to any target. */
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
 
-	target_definition_t td1;
-	default_target_definition(player, card, &td1, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER );
-	td1.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0, &td1, "TARGET_ANY") ){
-			return can_sacrifice_type_as_cost(player, 1, TYPE_ARTIFACT);
-		}
-	}
-
-	if( event == EVENT_ACTIVATE ){
-		instance->number_of_targets = 0;
-
-		test_definition_t test;
-		new_default_test_definition(&test, TYPE_ARTIFACT, "Select an artifact to sacrifice.");
-		int sac = new_sacrifice(player, card, player, SAC_JUST_MARK|SAC_AS_COST|SAC_RETURN_CHOICE, &test);
-		if( sac ){
-			get_card_instance(player, card)->state |= STATE_TAPPED;
-			if( pick_target(&td1, "TARGET_CREATURE_OR_PLAYER") ){
-				kill_card(BYTE2(sac), BYTE3(sac), KILL_SACRIFICE);
-			}
-			else{
-				state_untargettable(BYTE2(sac), BYTE3(sac), 0);
-				get_card_instance(player, card)->state &= ~STATE_TAPPED;
-			}
-		}
-		else{
-			spell_fizzled = 1;
-		}
-	}
-
-	if(event == EVENT_RESOLVE_ACTIVATION ){
-		if( valid_target(&td1) ){
-			damage_target0(player, card, 2);
-		}
-	}
-
-	return 0;
+	if (!IS_GAA_EVENT(event)){ return 0; }
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+	if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td)){ damage_target0(player, card, 2); }
+	return generic_activated_ability_with_sacrifice_as_cost(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_ANY", TYPE_ARTIFACT, NULL, SARV_0);
 }
 
 // Ornithopter --> vanilla
@@ -2036,7 +1964,6 @@ Priest of Yawgmoth |1|B
 Creature — Human Cleric 1/2
 {T}, Sacrifice an artifact: Add to your mana pool an amount of {B} equal to the sacrificed artifact's converted mana cost.
 */
-	// I really don't know how to hint the AI about the amount of mana produced by this, Korath please take care of this
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		if( generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL) ){
@@ -2060,6 +1987,17 @@ Creature — Human Cleric 1/2
 		}
 	}
 
+    if (event == EVENT_COUNT_MANA && affect_me(player, card) && !is_tapped(player, card)
+        && !is_animated_and_sick(player, card) && can_produce_mana(player, card)){
+        int max_cmc = 0;
+        for (int c = 0; c < active_cards_count[player]; ++c){
+            if (in_play(player, c) && is_what(player, c, TYPE_ARTIFACT) && can_sacrifice_this_as_cost(player, c)){
+                int cmc = get_cmc(player, c);
+                if (cmc > max_cmc){ max_cmc = cmc; }
+            }
+        }
+        declare_mana_available(player, COLOR_BLACK, max_cmc);
+    }
 	return 0;
 }
 
@@ -2086,7 +2024,7 @@ int card_primal_clay(int player, int card, event_t event)
 	  int new_iid = create_a_card_type(instance->internal_card_id);
 	  card_data_t* cd = &cards_data[new_iid];
 
-	  char prompt[600];
+	  char prompt[1207];
 	  if (ai_is_speculating != 1)
 		{
 		  load_text(0, "PRIMAL_CLAY");
@@ -2100,7 +2038,7 @@ int card_primal_clay(int player, int card, event_t event)
 			cd->toughness = 6;
 			cd->static_ability = KEYWORD_DEFENDER;
 			if (get_id(player, card) == CARD_ID_PRIMAL_CLAY)
-			  add_a_subtype(player, card, SUBTYPE_WALL);
+			  add_a_subtype_permanently(player, card, player, card, SUBTYPE_WALL);
 			break;
 
 		  case 1:
@@ -2453,6 +2391,7 @@ Land
 				else{
 					remove_state(player, card, STATE_TAPPED);
 				}
+				tapped_for_mana_color = -1;
 		}
 		else{
 			spell_fizzled = 1;
@@ -3072,7 +3011,7 @@ If you don't, put it into its owner's graveyard. Then shuffle your library. */
 				this_test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
 			}
 			int card_added = new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test);
-			if( card_added != -1 ){
+			if( card_added >= 0 ){
 				int pip = 1;
 				int diff = get_cmc(player, card_added)-amount;
 				if( diff > 0 ){
@@ -3099,23 +3038,8 @@ int card_triskelion(int player, int card, event_t event){
 	 * Artifact Creature - Construct 1/1
 	 * ~ enters the battlefield with three +1/+1 counters on it.
 	 * Remove a +1/+1 counter from ~: It deals 1 damage to any target. */
-	enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 3);
 
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER );
-	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( valid_target(&td) ){
-			damage_creature_or_player(player, card, event, 1);
-		}
-	}
-
-	return generic_activated_ability(player, card, event, GAA_1_1_COUNTER | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_ANY");
+	return triskelion_like_creature(player, card, event, 3, MANACOST0);
 }
 
 int card_urzas_avenger(int player, int card, event_t event){
@@ -3178,18 +3102,15 @@ Urza's Chalice	|1
 Artifact
 Whenever a player casts an artifact spell, you may pay |1. If you do, you gain 1 life. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_ARTIFACT);
-
-		if( has_mana(player, COLOR_ANY, 1) && new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test) ){
-			charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 1);
-			if( spell_fizzled != 1 ){
+	sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_CREATURE, NULL, player, card);
+	if (event == EVENT_SPA){
+		if (has_mana(player, COLOR_ANY, 1)){
+			charge_mana_while_resolving(player, card, EVENT_SPA, player, COLOR_COLORLESS, 1);
+			if (spell_fizzled != 1){
 				gain_life(player, 1);
 			}
 		}
 	}
-
 	return 0;
 }
 

@@ -1,5 +1,7 @@
 #include "manalink.h"
 
+static int ward_enchantment(int player, int card, event_t event, int keyword);
+
 /* Canonical recovered helper declarations. */
 int ai_can_sleight_card(int player, int card);
 int lace(int player, int card, event_t event, int color_test);
@@ -270,55 +272,9 @@ LAB_024bdb4f:
   return 0;
 }
 
-static int dmg_source_color = 0;
-static const char* colored_damage_source(int who_chooses, int player, int card){
-	card_instance_t* dmg = get_card_instance(player, card);
-	if( dmg->internal_card_id != damage_card ){
-		return "must be a damage card";
-	}
-	if( dmg->damage_target_player != who_chooses || dmg->damage_target_card != -1 ){
-		return "must be damage dealt to you";
-	}
 
-	int clr = dmg->initial_color;
-	if( in_play(dmg->damage_source_player, dmg->damage_source_card) ){
-		clr = get_color(dmg->damage_source_player, dmg->damage_source_card);
-	}
-	if( !(clr & dmg_source_color) ){
-		return "illegal color of damage source";
-	}
 
-	if( is_what(dmg->damage_source_player, dmg->damage_source_card, TYPE_CREATURE) &&
-		check_special_flags(dmg->damage_source_player, dmg->damage_source_card, SF_ATTACKING_PWALKER) )
-	{
-		return "must be damage dealt to you";
-	}
 
-	return NULL;
-}
-
-static int cop(int player, int card, event_t event, int color_test){
-
-	if( ! IS_GAA_EVENT(event) ){
-		return global_enchantment(player, card, event);
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_EFFECT);
-	td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-	td.extra = (int32_t)colored_damage_source;
-	dmg_source_color = get_sleighted_color_test(player, card, color_test);
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( valid_target(&td) ){
-			get_card_instance(instance->targets[0].player, instance->targets[0].card)->info_slot = 0;
-		}
-	}
-
-	return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION, MANACOST_X(1), 0, &td, "TARGET_DAMAGE");
-}
 
 void damage_enchanted_permanent_controller_at_upkeep(int player, int card, event_t event, int dmg){
 
@@ -482,7 +438,7 @@ Enchantment - Aura
 Enchant artifact
 As long as enchanted artifact isn't a creature, it's an artifact creature with power and toughness each equal to its converted mana cost. */
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -505,18 +461,16 @@ Enchanted creature gets -1/-0. */
 	// 0x4B5780
 	// See also card_dance_of_the_dead() in ice_age.c and card_necromancy() in visions.c
 
-	if( ! is_humiliated(player, card, AL_STATIC) && get_card_instance( player, card )->damage_target_player != -1 ){
-		card_instance_t *instance = get_card_instance( player, card );
-		if( event == EVENT_POWER && affect_me(instance->damage_target_player, instance->damage_target_card) ){
-			event_result--;
-		}
-		if( leaves_play(player, card, event, 1, 0) ){
-			kill_card(instance->damage_target_player, instance->damage_target_card, KILL_SACRIFICE);
-		}
-	}
+	attached_gets_pt(player, card, event, -1, 0);
+    leaves_play(player, card, event, 1, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY && !is_humiliated(player, card, AL_STATIC)
+        && get_card_instance(player, card)->damage_target_player != -1){
+        card_instance_t* attached = get_card_instance(player, card);
+        kill_card(attached->damage_target_player, attached->damage_target_card, KILL_SACRIFICE);
+    }
 
 	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
+		return aura(player, card, event, NULL, NULL);
 	}
 
 	test_definition_t test;
@@ -572,7 +526,7 @@ Enchanted Wall can attack as though it didn't have defender. */
 		}
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -636,6 +590,8 @@ Enchanted creature gets +X/+Y, where X is half the number of |H1Forests you cont
 			event_result += (total+1)/2;
 		}
 	}
+
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
 	return vanilla_aura(player, card, event, player);
 }
@@ -829,7 +785,7 @@ Creature - Human Knight 2/2
 First strike (This creature deals combat damage before creatures without first strike.)
 Protection from |Swhite (This creature can't be blocked, targeted, dealt damage, or enchanted by anything |Swhite.) */
 
-	if( ! is_humiliated(player, card, AL_STATIC) ){
+	if( !is_humiliated(player, card, AL_STATIC) && event == EVENT_ABILITIES && affect_me(player, card) ){
 		protection_from_color(player, card, event, KEYWORD_PROT_WHITE);
 	}
 	return 0;
@@ -883,7 +839,7 @@ Enchantment - Aura
 Enchant creature
 Enchanted creature has protection from |Sblack. This effect doesn't remove ~. */
 
-	return ward(player, card, event, KEYWORD_PROT_BLACK);
+	return ward_enchantment(player, card, event, KEYWORD_PROT_BLACK);
 }
 
 // blaze of glory --> Korath, please do this
@@ -897,18 +853,18 @@ int card_blessing(int player, int card, event_t event)
    * Enchant creature
    * |W: Enchanted creature gets +1/+1 until end of turn. */
 
-  if (event == EVENT_SHOULD_AI_PLAY)
-	// Originally +/- (24 + 12*lands), and didn't check controller of enchanted creature.
-	ai_modifier += (get_card_instance(player, card)->damage_target_player != player) ? 0 : (player == AI ? 12 : -12) * landsofcolor_controlled[player][COLOR_WHITE];
-
-  if (event == EVENT_RESOLVE_ACTIVATION)
-	{
-	  card_instance_t* instance = get_card_instance(player, card);
-	  if (in_play(instance->damage_target_player, instance->damage_target_card))
-		pump_until_eot_merge_previous(player, card, instance->damage_target_player, instance->damage_target_card, 1,1);
+	if (event == EVENT_SHOULD_AI_PLAY){
+	    ai_modifier += (get_card_instance(player, card)->damage_target_player != player) ? 0 : (player == AI ? 12 : -12) * landsofcolor_controlled[player][COLOR_WHITE];
 	}
-
-  return vanilla_aura(player, card, event, player) || generic_activated_ability(player, card, event, 0, MANACOST_W(1), 0, NULL, NULL);
+	if (IS_GAA_EVENT(event)){
+	    if (event == EVENT_RESOLVE_ACTIVATION){
+	        card_instance_t* instance = get_card_instance(player, card);
+	        if (in_play(instance->damage_target_player, instance->damage_target_card)){ pump_until_eot_merge_previous(player, card, instance->damage_target_player, instance->damage_target_card, 1, 1); }
+	    }
+	    return generic_activated_ability(player, card, event, 0, MANACOST_W(1), 0, NULL, NULL);
+	}
+	if (IS_AURA_EVENT(player, card, event) || event == EVENT_STATIC_EFFECTS){ return vanilla_aura(player, card, event, player); }
+	return generic_activated_ability(player, card, event, 0, MANACOST_W(1), 0, NULL, NULL);
 }
 
 int card_blue_elemental_blast(int player, int card, event_t event){
@@ -929,7 +885,7 @@ Enchantment - Aura
 Enchant creature
 Enchanted creature has protection from |Sblue. This effect doesn't remove ~. */
 
-	return ward(player, card, event, KEYWORD_PROT_BLUE);
+	return ward_enchantment(player, card, event, KEYWORD_PROT_BLUE);
 }
 
 // Bog Wraith --> vanilla
@@ -1046,47 +1002,50 @@ Artifact
 If ~ turns over completely at least once during the flip, destroy all nontoken permanents it touches. Then destroy ~.
 (In-game effect: Probability of destroying target permanent: 75%; two permanents: 5%; your own permanents: 5%; no permanents: 15%.) */
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *instance = get_card_instance( player, card);
-		if( in_play(instance->parent_controller, instance->parent_card) ){
-			int p = 1-player;
-			int roll = internal_rand(100);
-			if( roll < 5 ){
-				p = player;
-				roll+=50;
-				roll+=internal_rand(50);
-			}
-			int killed = 0;
-			int k;
-			for(k=50; k<100; k+=10){
-				if( roll > k ){
-					killed++;
-				}
-			}
-			if( killed > 0 ){
-				int p_array[100];
-				int pa_count = 0;
-				for(k=0; k<active_cards_count[p]; k++){
-					if( in_play(p, k) && is_what(p, k, TYPE_PERMANENT) ){
-						p_array[pa_count] = k;
-						pa_count++;
-						if( pa_count > 99 ){
-							break;
-						}
-					}
-				}
-				int rnd = internal_rand(pa_count);
-				while( killed > 0 && rnd < pa_count ){
-						if( ! is_token(p, p_array[rnd]) ){
-							kill_card(p, p_array[rnd], KILL_DESTROY);
-						}
-						killed--;
-				}
-			}
-			kill_card(player, instance->parent_card, KILL_DESTROY);
-		}
+	if (event == EVENT_ACTIVATE){
+	    target_definition_t td;
+	    default_target_definition(player, card, &td, TYPE_PERMANENT);
+	    td.illegal_abilities = 0;
+	    td.preferred_controller = 1-player;
+	    td.allow_cancel = 3;
+	    get_card_instance(player, card)->number_of_targets = 0;
+	    generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(1), 0, NULL, NULL);
+	    if (spell_fizzled != 1){ new_pick_target(&td, "Aim Chaos Orb at which card?", 0, 0); }
+	    return 0;
 	}
-
+	if (event == EVENT_RESOLVE_ACTIVATION){
+	    card_instance_t* instance = get_card_instance(player, card);
+	    if (in_play(instance->parent_controller, instance->parent_card)){
+	        int p = instance->targets[0].player == -1 ? 1-player : instance->targets[0].player;
+	        int roll = internal_rand(100);
+	        if (roll < 5){ p = 1-p; roll += 50 + internal_rand(50); }
+	        int killed = 0;
+	        for (int k = 50; k < 100; k += 10){ if (roll > k){ ++killed; } }
+	        if (killed > 0){
+	            int permanents[100];
+	            int count = 0;
+	            for (int k = 0; k < active_cards_count[p]; ++k){
+	                if (in_play(p, k) && is_what(p, k, TYPE_PERMANENT) && !is_token(p, k)){
+	                    permanents[count++] = k;
+	                    if (count > 99){ break; }
+	                }
+	            }
+	            target_definition_t td;
+	            default_target_definition(player, card, &td, TYPE_PERMANENT);
+	            td.illegal_abilities = 0;
+	            int focused = valid_target(&td) && instance->targets[0].player == p && internal_rand(100) > 25;
+	            int used_focus = 0;
+	            while (killed-- > 0){
+	                int selected = internal_rand(count);
+	                if (!used_focus && focused){
+	                    kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+	                    used_focus = 1;
+	                } else if (selected < count){ kill_card(p, permanents[selected], KILL_DESTROY); }
+	            }
+	        }
+	        kill_card(instance->parent_controller, instance->parent_card, KILL_DESTROY);
+	    }
+	}
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(1), 0, NULL, NULL);
 }
 
@@ -1099,49 +1058,114 @@ Target spell or permanent becomes |Sred. (Its mana symbols remain unchanged.) */
 	return lace(player, card, event, COLOR_TEST_RED);
 }
 
-int card_circle_of_protection_black(int player, int card, event_t event){
-/* CARD_ID_CIRCLE_OF_PROTECTION_BLACK	33
+int card_circle_of_protection_black(int player, int card, event_t event)
+{
+  /* CARD_ID_CIRCLE_OF_PROTECTION_BLACK	33
 Circle of Protection: Black	|1|W
 Enchantment
 |1: The next time a |Sblack source of your choice would deal damage to you this turn, prevent that damage. */
 
-	return cop(player, card, event, COLOR_TEST_BLACK);
+if (IS_GAA_EVENT(event))
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_EFFECT);
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+    td.extra = (int32_t)black_damage_source;
+    card_instance_t* instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
+      get_card_instance(instance->targets[0].player, instance->targets[0].card)->info_slot = 0;
+    return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION,
+        MANACOST_X(1), 0, &td, "TARGET_DAMAGE");
+  }
+  return global_enchantment(player, card, event);
 }
 
-int card_circle_of_protection_blue(int player, int card, event_t event){
-/* CARD_ID_CIRCLE_OF_PROTECTION_BLUE	34
+int card_circle_of_protection_blue(int player, int card, event_t event)
+{
+  /* CARD_ID_CIRCLE_OF_PROTECTION_BLUE	34
 Circle of Protection: Blue	|1|W
 Enchantment
 |1: The next time a |Sblue source of your choice would deal damage to you this turn, prevent that damage. */
 
-	return cop(player, card, event, COLOR_TEST_BLUE);
+if (IS_GAA_EVENT(event))
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_EFFECT);
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+    td.extra = (int32_t)blue_damage_source;
+    card_instance_t* instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
+      get_card_instance(instance->targets[0].player, instance->targets[0].card)->info_slot = 0;
+    return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION,
+        MANACOST_X(1), 0, &td, "TARGET_DAMAGE");
+  }
+  return global_enchantment(player, card, event);
 }
 
-int card_circle_of_protection_green(int player, int card, event_t event){
-/* CARD_ID_CIRCLE_OF_PROTECTION_GREEN	35
+int card_circle_of_protection_green(int player, int card, event_t event)
+{
+  /* CARD_ID_CIRCLE_OF_PROTECTION_GREEN	35
 Circle of Protection: Green	|1|W
 Enchantment
 |1: The next time a |Sgreen source of your choice would deal damage to you this turn, prevent that damage. */
 
-	return cop(player, card, event, COLOR_TEST_GREEN);
+if (IS_GAA_EVENT(event))
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_EFFECT);
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+    td.extra = (int32_t)green_damage_source;
+    card_instance_t* instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
+      get_card_instance(instance->targets[0].player, instance->targets[0].card)->info_slot = 0;
+    return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION,
+        MANACOST_X(1), 0, &td, "TARGET_DAMAGE");
+  }
+  return global_enchantment(player, card, event);
 }
 
-int card_circle_of_protection_red(int player, int card, event_t event){
-/* CARD_ID_CIRCLE_OF_PROTECTION_RED	36
+int card_circle_of_protection_red(int player, int card, event_t event)
+{
+  /* CARD_ID_CIRCLE_OF_PROTECTION_RED	36
 Circle of Protection: Red	|1|W
 Enchantment
 |1: The next time a |Sred source of your choice would deal damage to you this turn, prevent that damage. */
 
-	return cop(player, card, event, COLOR_TEST_RED);
+if (IS_GAA_EVENT(event))
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_EFFECT);
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+    td.extra = (int32_t)red_damage_source;
+    card_instance_t* instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
+      get_card_instance(instance->targets[0].player, instance->targets[0].card)->info_slot = 0;
+    return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION,
+        MANACOST_X(1), 0, &td, "TARGET_DAMAGE");
+  }
+  return global_enchantment(player, card, event);
 }
 
-int card_circle_of_protection_white(int player, int card, event_t event){
-/* CARD_ID_CIRCLE_OF_PROTECTION_WHITE	37
+int card_circle_of_protection_white(int player, int card, event_t event)
+{
+  /* CARD_ID_CIRCLE_OF_PROTECTION_WHITE	37
 Circle of Protection: White	|1|W
 Enchantment
 |1: The next time a |Swhite source of your choice would deal damage to you this turn, prevent that damage. */
 
-	return cop(player, card, event, COLOR_TEST_WHITE);
+if (IS_GAA_EVENT(event))
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_EFFECT);
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+    td.extra = (int32_t)white_damage_source;
+    card_instance_t* instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
+      get_card_instance(instance->targets[0].player, instance->targets[0].card)->info_slot = 0;
+    return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION,
+        MANACOST_X(1), 0, &td, "TARGET_DAMAGE");
+  }
+  return global_enchantment(player, card, event);
 }
 
 int card_clockwork_beast(int player, int card, event_t event){
@@ -1191,7 +1215,7 @@ Enchanted land has indestructible and can't be enchanted by other Auras. */
 		}
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -1254,28 +1278,21 @@ Remove ~ from your deck before playing if you're not playing for ante.
 Discard your hand, ante the top card of your library, then draw seven cards. */
 
 
-int card_control_magic(int player, int card, event_t event){
-/* CARD_ID_CONTROL_MAGIC	44
+int card_control_magic(int player, int card, event_t event)
+{
+  /* CARD_ID_CONTROL_MAGIC	44
 Control Magic	|2|U|U
 Enchantment - Aura
 Enchant creature
 You control enchanted creature. */
 
-	// Used externally
-	if( leaves_play(player, card, event, 0, 0) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		return generic_stealing_aura(player, card, event, &td, "TARGET_CREATURE");
-	}
-
-	if( ! IS_AURA_EVENT(player, card, event) ){
-		return 0;
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-
-	return generic_stealing_aura(player, card, event, &td, "TARGET_CREATURE");
+  leaves_play(player, card, event, 0, 0);
+  if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS &&
+      event != EVENT_LEAVES_PLAY_ABILITY && event != EVENT_CARDCONTROLLED)
+    return 0;
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  return generic_stealing_aura(player, card, event, &td, "TARGET_CREATURE");
 }
 
 int card_conversion2(int player, int card, event_t event){
@@ -1357,7 +1374,7 @@ When enchanted creature dies, ~ deals damage equal to that creature's toughness 
 		card_instance_t *instance = get_card_instance(player, card);
 		int p = instance->damage_target_player;
 		int c = instance->damage_target_card;
-		if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c) && is_this_dying(p, c) ){
+		if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c) && is_this_dying(p, c) && !check_for_death_trigger_removal(affected_card_controller, affected_card) ){
 			instance->targets[11].player = 66;
 			instance->targets[0].player = instance->damage_target_player;
 			instance->damage_target_player = instance->damage_target_card = -1;
@@ -1366,11 +1383,15 @@ When enchanted creature dies, ~ deals damage equal to that creature's toughness 
 
 	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		card_instance_t *instance = get_card_instance(player, card);
-		damage_player(instance->targets[0].player, 2, player, card);
+		int amount = card_counts[player][5] + 1;
+		do {
+			instance = get_card_instance(player, card);
+			damage_player(instance->targets[0].player, 2, player, card);
+		} while (--amount);
 		kill_card(player, card, KILL_STATE_BASED_ACTION);
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -1409,7 +1430,7 @@ At the beginning of the upkeep of enchanted land's controller, ~ deals 1 damage 
 
 	damage_enchanted_permanent_controller_at_upkeep(player, card, event, 1);
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -1772,27 +1793,14 @@ Whenever a land is put into a graveyard from the battlefield, ~ deals 2 damage t
 	}
 
 	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		card_instance_t *instance= get_card_instance(player, card);
-		if( in_play(affected_card_controller, affected_card) && is_what(affected_card_controller, affected_card, TYPE_LAND) &&
-			is_this_dying(affected_card_controller, affected_card) )
-		{
-			if( instance->targets[11].player < 0 ){
-				instance->targets[11].player = 0;
-			}
-			if( affected_card_controller == 0 ){
-				SET_BYTE0(instance->targets[11].player)++;
-			}
-			if( affected_card_controller == 1 ){
-				SET_BYTE1(instance->targets[11].player)++;
-			}
-		}
+		count_for_gfp_ability_and_store_values(player, card, event, ANYBODY, TYPE_LAND, NULL, GFPC_TRACK_CONTROLLER, 0);
 	}
 
 	if( get_card_instance(player, card)->kill_code <= 0 ){
 		int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 		if( result ){
-			damage_player(0, 2*BYTE0(result), player, card);
-			damage_player(1, 2*BYTE1(result), player, card);
+			int dead[2] = {BYTE0(result), BYTE1(result)};
+			APNAP(p, { while (dead[p] > 0){ damage_player(p, 2, player, card); --dead[p]; } };);
 		}
 	}
 
@@ -2057,7 +2065,9 @@ Creature - Skeleton 1/1
 |B: Regenerate ~. (The next time this creature would be destroyed this turn, it isn't. Instead tap it, remove all damage from it, and remove it from combat.)*/
 
 	// Used externally
-	return regeneration(player, card, event, MANACOST_B(1));
+	if (event == EVENT_CAN_CAST)
+    return 1;
+  return regeneration(player, card, event, MANACOST_B(1));
 }
 
 int card_dwarven_demolition_team(int player, int card, event_t event)
@@ -2140,6 +2150,8 @@ When ~ enters the battlefield, if enchanted creature has flying, ~ deals 2 damag
 			}
 		}
 	}
+
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
 	return vanilla_aura(player, card, event, 1-player);
 }
@@ -2237,7 +2249,7 @@ int card_farmstead(int player, int card, event_t event){
 		}
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -2295,7 +2307,7 @@ At the beginning of the upkeep of enchanted enchantment's controller, ~ deals 1 
 
 	damage_enchanted_permanent_controller_at_upkeep(player, card, event, 1);
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -2351,7 +2363,9 @@ int card_firebreathing(int player, int card, event_t event){
 										instance->damage_target_player, instance->damage_target_card, 1, 0);
 	}
 
-	return vanilla_aura(player, card, event, player);
+	if (IS_AURA_EVENT(player, card, event) || event == EVENT_STATIC_EFFECTS)
+    return vanilla_aura(player, card, event, player);
+  return 0;
 }
 
 int card_flashfires(int player, int card, event_t event){
@@ -2546,8 +2560,8 @@ int card_gaeas_liege(int player, int card, event_t event){
 	 * |T: Target land becomes |Ha Forest until ~ leaves the battlefield. */
 
 	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && player != -1){
-		event_result += count_subtype(card != -1 && is_attacking(player, card) ? 1-player : player,
-									  TYPE_PERMANENT, get_hacked_subtype(player, card, SUBTYPE_FOREST));
+		set_characteristic_pt(count_subtype(card != -1 && is_attacking(player, card) ? 1-player : player,
+									  TYPE_PERMANENT, get_hacked_subtype(player, card, SUBTYPE_FOREST)));
 	}
 
 	if( ! IS_GAA_EVENT(event) ){
@@ -2756,7 +2770,7 @@ Enchantment - Aura
 Enchant creature
 Enchanted creature has protection from |Sgreen. This effect doesn't remove ~. */
 
-	return ward(player, card, event, KEYWORD_PROT_GREEN);
+	return ward_enchantment(player, card, event, KEYWORD_PROT_GREEN);
 }
 
 int aff_player = -1;
@@ -2979,7 +2993,9 @@ int card_holy_armor(int player, int card, event_t event)
 		pump_until_eot_merge_previous(player, card, instance->damage_target_player, instance->damage_target_card, 0,1);
 	}
 
-  return vanilla_aura(player, card, event, player) || generic_activated_ability(player, card, event, 0, MANACOST_W(1), 0, NULL, NULL);
+  if (IS_AURA_EVENT(player, card, event) || event == EVENT_STATIC_EFFECTS)
+	return vanilla_aura(player, card, event, player);
+  return generic_activated_ability(player, card, event, 0, MANACOST_W(1), 0, NULL, NULL);
 }
 
 int card_holy_strenght(int player, int card, event_t event){
@@ -3064,7 +3080,7 @@ Sorcery
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return generic_spell(player, card, event, GS_X_SPELL, NULL, NULL, 1, NULL);
+	return generic_spell(player, card, event, GS_X_SPELL, NULL, NULL, 0, NULL);
 }
 
 int card_hypnotic_specter(int player, int card, event_t event)
@@ -3257,62 +3273,27 @@ Enchant creature
 Enchanted creature can attack as though it had haste.
 |0: Untap enchanted creature. Activate this ability only during your turn and only once each turn. */
 
-  card_instance_t* instance = get_card_instance(player, card);
-
-  int rval = vanilla_aura(player, card, event, player);
-
-  if (event == EVENT_CAST_SPELL && affect_me(player, card) && cancel != 1)	// after vanilla_aura()
-	{
-	  card_instance_t* tgt_inst = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-	  if ((tgt_inst->regen_status & KEYWORD_DEFENDER) && !(tgt_inst->token_status & STATUS_WALL_CAN_ATTACK))
-		ai_modifier -= 48;
-	  if (instance->targets[0].player == player
-		  && (get_card_data(instance->targets[0].player, instance->targets[0].card)->extra_ability & (EA_ACT_ABILITY | EA_ACT_INTERRUPT | EA_MANA_SOURCE)))
-		ai_modifier += 48;
+	if (event == EVENT_CAST_SPELL && affect_me(player, card) && spell_fizzled != 1){
+	    card_instance_t* instance = in_play(player, card);
+	    if (instance && instance->targets[0].player != -1 && instance->targets[0].card != -1){
+	        card_instance_t* tgt = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+	        if ((tgt->regen_status & KEYWORD_DEFENDER) && !(tgt->token_status & STATUS_WALL_CAN_ATTACK)){ ai_modifier -= 48; }
+	        if (instance->targets[0].player == player && (get_card_data(player, instance->targets[0].card)->extra_ability & (EA_ACT_ABILITY | EA_ACT_INTERRUPT | EA_MANA_SOURCE))){ ai_modifier += 48; }
+	    }
 	}
-
-  int tp = instance->damage_target_player, tc = instance->damage_target_card;
-  if (tp >= 0 && tc >= 0)
-	{
-	  card_instance_t* tgt_inst = get_card_instance(tp, tc);
-
-	  /* Current Oracle wording has reverted to the original functionality, which only allows attacking and not tapping like the 5th-edition wording does.  I'm
-	   * going to studiously ignore that rather than trying to hack it into combat selection and AI, or trying to only removing summoning sickness during
-	   * Declare Attackers or such. */
-	  if ((tgt_inst->state & STATE_SUMMON_SICK)
-		  && ((event == EVENT_RESOLVE_SPELL && cancel != 1)	// after_vanilla_aura()
-			  || (event == EVENT_CARDCONTROLLED && affect_me(tp, tc) && in_play(tp, tc))))
-		{
-		  tgt_inst->state &= ~STATE_SUMMON_SICK;
-		  instance->targets[3].player = 1;	// For the restore-summoning-sickness hack below
-		}
-
-	  if (event == EVENT_RESOLVE_ACTIVATION && in_play(tp, tc))
-		untap_card(tp, tc);
-
-	  /* Hack (translated from the exe) to restore summoning sickness if this leaves play.  Only sort of works.  (Try casting two Instill Energies on the same
-	   * creature and then Disenchanting one, for example.)
-	   *
-	   * A real solution would be to:
-	   * 1. Set both STATE_SUMMON_SICK and some other bit when a creature enters play or is controlled and remove both at start of turn (maybe STATE_SICKNESS,
-	   *    which I haven't seen the exe use so far)
-	   * 2. Make this and Haste and so on only remove STATE_SUMMON_SICK and only during EVENT_ABILITIES, and add STATE_SUMMON_SICK at the start of
-	   *    EVENT_ABILITIES if the other bit is set. */
-	  if (trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card) && reason_for_trigger_controller == player
-		  && trigger_cause_controller == player && trigger_cause == card && instance->targets[3].player == 1
-		  && in_play(tp, tc))
-		{
-		  if (event == EVENT_TRIGGER)
-			event_result |= RESOLVE_TRIGGER_MANDATORY;
-		  if (event == EVENT_RESOLVE_TRIGGER)
-			tgt_inst->state |= STATE_SUMMON_SICK;
-		}
+	if (event == EVENT_ABILITIES || event == EVENT_RESOLVE_ACTIVATION){
+	    card_instance_t* instance = in_play(player, card);
+	    if (instance){
+	        int p = instance->damage_target_player, c = instance->damage_target_card;
+	        if (p < 0 || c < 0){ p = instance->targets[0].player; c = instance->targets[0].card; }
+	        if (p >= 0 && c >= 0){
+	            if (event == EVENT_ABILITIES && affect_me(p, c)){ haste(p, c, event); }
+	            if (event == EVENT_RESOLVE_ACTIVATION && in_play(p, c)){ untap_card(p, c); }
+	        }
+	    }
 	}
-
-  if (event == EVENT_BEGIN_TURN && current_turn == instance->damage_target_player)
-	instance->targets[3].player = 0;
-
-  return rval || generic_activated_ability(player, card, event, GAA_ONCE_PER_TURN|GAA_IN_YOUR_TURN, MANACOST_X(0), 0, NULL, NULL);
+	if (IS_AURA_EVENT(player, card, event) || event == EVENT_STATIC_EFFECTS){ return vanilla_aura(player, card, event, player); }
+	return generic_activated_ability(player, card, event, GAA_ONCE_PER_TURN | GAA_IN_YOUR_TURN, MANACOST0, 0, NULL, NULL);
 }
 
 int card_invisibility(int player, int card, event_t event){
@@ -3330,6 +3311,10 @@ Enchanted creature can't be blocked except by Walls. */
 		{
 			event_result = 1;
 		}
+	}
+
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
+		return 0;
 	}
 
 	return vanilla_aura(player, card, event, player);
@@ -3568,8 +3553,8 @@ Artifact
 			int choice = do_dialog(player, player, card, -1, -1, " Animate Jade Idol\n Pass", ai_choice);
 			if(choice == 0 && charge_mana_for_activated_ability(player, card, MANACOST_X(2)) ){
 				set_special_flags(player, card, SF_TYPE_ALREADY_CHANGED);
-				add_a_subtype(player, card, SUBTYPE_GOLEM);
-				artifact_animation(player, card, player, card, 16, 3, 6, 0, 0);
+				int leg = artifact_animation(player, card, player, card, 16, 3, 6, 0, 0);
+				get_card_instance(player, leg)->targets[9].card = SUBTYPE_GOLEM;
 				instance->regen_status |= KEYWORD_RECALC_CHANGE_TYPE;
 				get_abilities(player, card, EVENT_CHANGE_TYPE, -1);
 			}
@@ -3588,8 +3573,8 @@ Artifact
 
 	if( event == EVENT_RESOLVE_ACTIVATION){
 		card_instance_t *instance = get_card_instance( player, card );
-		add_a_subtype(instance->parent_controller, instance->parent_card, SUBTYPE_GOLEM);
-		artifact_animation(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 16, 3, 6, 0, 0);
+		int leg = artifact_animation(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 16, 3, 6, 0, 0);
+		get_card_instance(player, leg)->targets[9].card = SUBTYPE_GOLEM;
 	}
 
 	return 0;
@@ -3634,18 +3619,23 @@ Artifact Creature - Juggernaut 5/3
    return 0;
 }
 
-int card_jump(int player, int card, event_t event){
-/* CARD_ID_JUMP	133
+int card_jump(int player, int card, event_t event)
+{
+  /* CARD_ID_JUMP	133
 Jump	|U
 Instant
 Target creature gains flying until end of turn. */
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card)  ){
-		if( current_phase < PHASE_DECLARE_BLOCKERS ){
-			ai_modifier+=15;
-		}
-	}
-	return vanilla_instant_pump(player, card, event, ANYBODY, player, 0, 0, KEYWORD_FLYING, 0);
+if (event == EVENT_CAST_SPELL && affect_me(player, card) && current_phase < PHASE_DECLARE_BLOCKERS)
+    ai_modifier += 15;
+  if (IS_GS_EVENT(player, card, event))
+  {
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.preferred_controller = player;
+    return vanilla_pump(player, card, event, &td, 0, 0, KEYWORD_FLYING, 0);
+  }
+  return 0;
 }
 
 int card_karma(int player, int card, event_t event){
@@ -3697,14 +3687,10 @@ Kormus Bell	|4
 Artifact
 All |H1Swamps are 1/1 |Sblack creatures that are still lands. */
 
-	if( event == EVENT_CHANGE_TYPE ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_LAND);
-		this_test.subtype = get_hacked_subtype(player, card, SUBTYPE_SWAMP);
-
-		global_type_change(player, card, event, 2, TYPE_CREATURE, &this_test, 1, 1, 0, 0, 0);
-	}
-
+	test_definition_t test;
+	default_test_definition(&test, TYPE_LAND);
+	test.subtype = get_hacked_subtype(player, card, SUBTYPE_SWAMP);
+	global_type_change(player, card, event, ANYBODY, TYPE_CREATURE, &test, 1, 1, 0, 0, COLOR_TEST_BLACK);
 	return 0;
 }
 
@@ -3733,7 +3719,7 @@ When enchanted land becomes tapped, destroy it. That land's controller attaches 
 		}
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -3852,9 +3838,9 @@ Enchantment
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if (counterspell_validate(player, card, &td, 0)){
-			set_flags_when_spell_is_countered(player, card, instance->targets[0].player, instance->targets[0].card);
-			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
+		if (counterspell_validate(player, card, &td, 0) &&
+            pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card)){
+			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_STATE_BASED_ACTION);
 		}
 	}
 
@@ -4612,7 +4598,7 @@ Artifact
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_ARTIFACT|TYPE_CREATURE|TYPE_ENCHANTMENT);
-		APNAP(p, { new_manipulate_all(player, card, p, &this_test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &this_test, KILL_DESTROY);
 	}
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(1), 0, NULL, NULL);
@@ -4723,32 +4709,22 @@ Enchanted creature doesn't untap during its controller's untap step.
 At the beginning of the upkeep of enchanted creature's controller, that player may pay |4. If he or she does, untap the creature. */
 
   // 0x4bac90
-  card_instance_t* instance = get_card_instance(player, card);
-  int p = instance->damage_target_player, c = instance->damage_target_card;
 
-  if (p >= 0 && c >= 0 && ! is_humiliated(player, card, AL_TRIG) ){
-	  if (comes_into_play(player, card, event))
-		tap_card(p, c);
-
-	  does_not_untap(p, c, event);
-
-	  // Can't make it an optional trigger, because activator (usually) doesn't control the card.
-	  if (can_use_activated_abilities(player, card))
-		upkeep_trigger_ability(player, card, event, p);
-
-	  // not has_mana_for_activated_ability() or charge_mana_for_activated_ability() here, since they both require the controller to be activating
-
-	  if (event == EVENT_UPKEEP_TRIGGER_ABILITY
-		  && (!duh_mode(p)	// Only ask if tapped/not-enough-mana if duh mode is off
-			  || (is_tapped(p, c)
-				  && has_mana(p, COLOR_COLORLESS, 4))))	// AI choosing - only if enchantee is tapped, and can pay mana
-		if ((p != HUMAN		// AI choosing for itself
-			 || do_dialog(instance->damage_target_player, player, card, p, c, " Pay to untap\n Pass", 0) == 0)	// Human choosing, or AI speculating
-			&& charge_mana_while_resolving(player, card, EVENT_RESOLVE_ACTIVATION, p, COLOR_COLORLESS, 4))
-		  untap_card(p, c);
+	card_instance_t* instance = get_card_instance(player, card);
+	int p = instance->damage_target_player, c = instance->damage_target_card;
+	if (p >= 0 && c >= 0 && !is_humiliated(player, card, AL_TRIG)){
+	    etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	    if (event == EVENT_ETB_ABILITY){ tap_card(p, c); }
+	    does_not_untap(p, c, event);
+	    if (can_use_activated_abilities(player, card)){ upkeep_trigger_ability(player, card, event, p); }
+	    if (event == EVENT_UPKEEP_TRIGGER_ABILITY && is_tapped(p, c) && has_mana(p, COLOR_COLORLESS, 4)
+	        && (p != HUMAN || do_dialog(p, player, card, p, c, " Pay to untap\n Pass", 0) == 0)
+	        && charge_mana_while_resolving(player, card, EVENT_RESOLVE_ACTIVATION, p, COLOR_COLORLESS, 4)){
+	        untap_card(p, c);
+	    }
 	}
-
-  return disabling_aura(player, card, event);
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
+	return disabling_aura(player, card, event);
 }
 
 // pearled unicorn --> vanilla
@@ -4959,7 +4935,7 @@ Prevent X of that damage, where X is the amount of mana that player paid this wa
 		upkeep_trigger_ability(player, card, event, instance->damage_target_player);
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -5124,7 +5100,7 @@ Whenever enchanted land becomes tapped, ~ deals 2 damage to that land's controll
 		}
 	}
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -5162,8 +5138,7 @@ Return target creature card from your graveyard to your hand. */
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &this_test);
 		if( spell_fizzled != 1 ){
-			card_instance_t *instance = get_card_instance(player, card);
-			int iid = get_grave(player)[instance->targets[0].player];
+			int iid = get_grave(player)[validate_target_from_grave_source(player, card, player, 0)];
 			ai_modifier += cards_ptr[iid]->ai_base_value;
 		}
 		return 0;
@@ -5198,7 +5173,7 @@ Enchantment - Aura
 Enchant creature
 Enchanted creature has protection from |Sred. This effect doesn't remove ~. */
 
-	return ward(player, card, event, KEYWORD_PROT_RED);
+	return ward_enchantment(player, card, event, KEYWORD_PROT_RED);
 }
 
 int card_regeneration(int player, int card, event_t event){
@@ -5209,22 +5184,18 @@ Enchant creature (Target a creature as you cast this. This card enters the battl
 |G: Regenerate enchanted creature. (The next time that creature would be destroyed this turn, it isn't.
 Instead tap it, remove all damage from it, and remove it from combat.) */
 
-	if( get_card_instance(player, card)->damage_target_player > -1 && ! is_humiliated(player, card, AL_NM_NL_ACT) ){
-		if( event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE ){
-			return generic_activated_ability(player, card, event, GAA_REGENERATION, MANACOST_G(1), 0, NULL, NULL);
-		}
+	card_instance_t* instance = get_card_instance(player, card);
+	if (instance->damage_target_player >= 0 && !is_humiliated(player, card, AL_NM_NL_ACT) && in_play(player, card) && IS_GAA_EVENT(event)){
+	    instance = get_card_instance(player, card);
+	    int p = instance->damage_target_player, c = instance->damage_target_card;
+	    if (event == EVENT_CAN_ACTIVATE){
+	        if (p < 0 || !(land_can_be_played & LCBP_REGENERATION) || !can_be_regenerated(p, c)){ return 0; }
+	    }
+	    if (event == EVENT_RESOLVE_ACTIVATION && can_be_regenerated(p, c)){ regenerate_target(p, c); }
+	    return generic_activated_ability(player, card, event, 0, MANACOST_G(1), 0, NULL, NULL) ? 99 : 0;
 	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t* instance = get_card_instance(player, card);
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-		if( can_be_regenerated(p, c) ){
-			regenerate_target(p, c);
-		}
-	}
-
-	return vanilla_aura(player, card, event, player);
+	if (IS_AURA_EVENT(player, card, event) || event == EVENT_STATIC_EFFECTS){ return vanilla_aura(player, card, event, player); }
+	return 0;
 }
 
 int card_regrowth(int player, int card, event_t event){
@@ -5641,18 +5612,17 @@ Creature - Troll 2/2
 	return regeneration(player, card, event, MANACOST_B(1));
 }
 
-int card_sengir_vampire(int player, int card, event_t event){
-/* CARD_ID_SENGIR_VAMPIRE	220
+int card_sengir_vampire(int player, int card, event_t event)
+{
+  /* CARD_ID_SENGIR_VAMPIRE	220
 Sengir Vampire	|3|B|B
 Creature - Vampire 4/4
 Flying (This creature can't be blocked except by creatures with flying or reach.)
 Whenever a creature dealt damage by ~ this turn dies, put a +1/+1 counter on ~. */
 
-	// Used externally
-	if( sengir_vampire_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		add_counters(player, card, player, card, COUNTER_P1_P1, 1);
-	}
-	return 0;
+  if (sengir_vampire_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+    add_counters(player, card, player, card, COUNTER_P1_P1, card_counts[player][5] + 1);
+  return 0;
 }
 
 int card_serra_angel(int player, int card, event_t event){
@@ -6580,14 +6550,10 @@ Verduran Enchantress	|1|G|G
 Creature - Human Druid 0/2
 Whenever you cast an enchantment spell, you may draw a card. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_ENCHANTMENT);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_OPTIONAL, &test) ){
-			draw_cards(player, 1);
-		}
+	sp_ability_trigger(player, event, duh_mode(player) ? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL, TYPE_ENCHANTMENT, NULL, player, card);
+	if (event == EVENT_SPA){
+		draw_cards(player, 1);
 	}
-
 	return 0;
 }
 
@@ -6742,7 +6708,7 @@ Destroy X target |H1Mountains. ~ deals damage to each creature and each player e
 				}
 			}
 			if( dmg > 0 ){
-				APNAP(p, {new_damage_all(player, card, p, dmg, NDA_ALL_CREATURES | NDA_PLAYER_TOO, NULL);};);
+				new_damage_all(player, card, ANYBODY, dmg, NDA_ALL_CREATURES | NDA_PLAYER_TOO, NULL);
 			}
 			kill_card(player, card, KILL_DESTROY);
 	}
@@ -6807,7 +6773,7 @@ At the beginning of the upkeep of enchanted creature's controller, ~ deals 1 dam
 
 	damage_enchanted_permanent_controller_at_upkeep(player, card, event, 1);
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -6827,7 +6793,7 @@ At the beginning of the upkeep of enchanted artifact's controller, ~ deals 1 dam
 
 	damage_enchanted_permanent_controller_at_upkeep(player, card, event, 1);
 
-	if( ! IS_AURA_EVENT(player, card, event) ){
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
 		return 0;
 	}
 
@@ -6897,7 +6863,7 @@ Creature - Human Knight 2/2
 First strike (This creature deals combat damage before creatures without first strike.)
 Protection from |Sblack (This creature can't be blocked, targeted, dealt damage, or enchanted by anything |Sblack.) */
 
-	if( ! is_humiliated(player, card, AL_STATIC) ){
+	if( !is_humiliated(player, card, AL_STATIC) && event == EVENT_ABILITIES && affect_me(player, card) ){
 		protection_from_color(player, card, event, KEYWORD_PROT_BLACK);
 	}
 	return 0;
@@ -6911,7 +6877,7 @@ Enchantment - Aura
 Enchant creature
 Enchanted creature has protection from |Swhite. This effect doesn't remove ~. */
 
-	return ward(player, card, event, KEYWORD_PROT_WHITE);
+	return ward_enchantment(player, card, event, KEYWORD_PROT_WHITE);
 }
 
 int card_wild_growth(int player, int card, event_t event){
@@ -6931,6 +6897,10 @@ int card_winter_orb(int player, int card, event_t event){
 Winter Orb	|2
 Artifact
 As long as ~ is untapped, players can't untap more than one land during their untap steps. */
+
+	if (is_tapped(player, card)){
+		return 0;
+	}
 
 	// Used externally
 	untap_only_one_permanent_type(player, card, event, ANYBODY, TYPE_LAND);

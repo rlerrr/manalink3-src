@@ -170,6 +170,7 @@ enum hybrid_t: uint8_t
 /* event_t codes */
 typedef enum
 {
+  EVENT_0 = 0,
   EVENT_UNTAP_PHASE			= 0x01,
   EVENT_UPKEEP_PHASE		= 0x04,	// Never actually dispatched in Manalink.  In Shandalar, affected_card_controller is whose upkeep, and affected_card is 0 if this is the first upkeep this turn, 1 otherwise.
 	EVENT_UPKEEP = EVENT_UPKEEP_PHASE,	// easier to type, and common enough that it merits it.  See also EVENT_GY_UPKEEP and EVENT_EXILE_UPKEEP_COUNTERS below.
@@ -323,7 +324,7 @@ typedef enum
   EVENT_SET_LEGACY_EFFECT_TEXT	= 0x200,
   EVENT_TRIGGER_RESOLVED		= 0x300,	// Sent at the end of every card's EVENT_RESOLVE_TRIGGER.  Notably, trigger_condition is inaccessible.
   EVENT_CAN_CHANGE_TARGET		= 0x400,
-  //EVENT_CHANGE_TARGET			= 0x500,	// moved to common section below; procrastinate renumbering
+  EVENT_GRAVEYARD_ABILITY_EOT = 0x500, // Sent to graveyard cards with an end-of-turn ability.
   EVENT_CAN_MOVE_AURA			= 0x600,
   EVENT_MOVE_AURA				= 0x700,
   EVENT_RESOLVE_MOVING_AURA		= 0x800,
@@ -354,7 +355,7 @@ typedef enum
   EVENT_SPA = EVENT_SP_ABILITY,
   EVENT_DAT_ABILITY = 0x1F00,
   EVENT_CARD_TO_EXILE = 0x2000,
-  // 0x500 and 0x2100 to 0x3F00 free; CANT_CREW retains its existing shared value below.
+  // 0x2100 to 0x3F00 free; CANT_CREW retains its existing shared value below.
 #endif
 
   // Events common to both Manalink and Shandalar; or in one and likely to be used in the other
@@ -383,7 +384,11 @@ typedef enum
  *					initially set all false.  If there are any creatures that can't crew, a card should set the corresponding bool
  *					in *affected_card to true and event_result to 1.
  *					In Manalink, checked in "vehicle" */
+#ifndef SHANDALAR
+  EVENT_CANT_CREW = 0x1D00, /* Native October 2022 crew-query event. */
+#else
   EVENT_CANT_CREW							= 0x4F00,
+#endif
   EVENT_HIDDEN_AGENDA						= 0x5000,	// In Manalink, sent to Conspiracy cards at the start of the first upkeep, if they either call vanguard_card(..., 11) or are special-cased in functions/rules_engine.c:is_hidden_agenda() and cards/conspiracy.c:card_hidden_agenda().  In Shandalar, sent to a face-down Conspiracy's original card function to see whether the AI should consider turning the card face-up, and should be treated similarly to EVENT_CAN_ACTIVATE.
   EVENT_ETB_ABILITY							= 0x5100,	// Manalink: Sent back to a card calling etb_ability().  Shandalar: {affected_card_controller, affected_card} enters the battlefield; replaces TRIGGER_COMES_INTO_PLAY directly.
 	EVENT_ETB = EVENT_ETB_ABILITY,	// easier to type, and common enough that it merits it
@@ -731,9 +736,7 @@ typedef enum
 /* Modes for kill_card() */
 typedef enum
 {
-#ifdef SHANDALAR
   KILL_0		 = 0,
-#endif
   KILL_BURY      = 1,
   KILL_DESTROY   = 2,
   KILL_SACRIFICE = 3,
@@ -1027,6 +1030,9 @@ typedef enum
   KEYWORD_PRISTINE        = KEYWORD_PROT_COLORED|KEYWORD_PROT_ARTIFACTS,
   KEYWORD_RECALC_ALL      = KEYWORD_RECALC_CHANGE_TYPE|KEYWORD_RECALC_TOUGHNESS|KEYWORD_RECALC_POWER|KEYWORD_RECALC_ABILITIES|KEYWORD_RECALC_SET_COLOR,
   KEYWORD_NONABILITIES    = KEYWORD_RECALC_ALL|(1<<31),
+  /* Original October 2022 enumerator names and masks. */
+  KEYWORD_CHANGELING = 0x80000,
+  KEYWORD_REAL_KEYWORDS = 0x60f7ffff,
 } keyword_t;
 
 // Special abilities
@@ -1065,6 +1071,13 @@ typedef enum
   SP_KEYWORD_SQUIRRELLINK = 1<<29,
   SP_KEYWORD_HORSEMANSHIP				= 1<<30,
   SP_KEYWORD_DOES_NOT_END_AT_EOT		= 1<<31,
+  /* Original October 2022 enumerator names and masks. */
+  SP_KEYWORD_RAMPAGE = 0x40,
+  SP_KEYWORD_TRAMPLE_OVER_PWS = 0x40000,
+  SP_KEYWORD_MINBLOCKERS_3 = 0x80000,
+  SP_KEYWORD_MAXBLOCKERS_1 = 0x200000,
+  SP_KEYWORD_REAL_KEYWORDS = 0x6283eb0f,
+  SP_KEYWORD_NOT_SIMPLE_BITS = 0x1553bc40,
 } sp_keyword_t;
 
 /* October 2022 DWARF: ability classes in targets[17].card. */
@@ -1826,6 +1839,9 @@ typedef enum
 	EA_PLAY_COST		= 0x40000000,	// If set, this specific card receives EVENT_MODIFY_COST_GLOBAL events to change other spells' casting costs.
 	EA_ABILITY_COST		= 0x80000000,
 #endif
+  /* Original October 2022 enum names. */
+  EA_0 = 0x0,
+  EA_ATTACK_LEGALITY_ALL = 0x80,
 } extra_abilities_t;
 STATIC_ASSERT(sizeof(extra_abilities_t) == 4, extra_abilities_t_wrong_size);
 
@@ -2284,6 +2300,7 @@ typedef enum {
 	TRAP_HOMING_SLIVER					= 0x702,
 	TRAP_CHALLENGE_EPIC					= 0x703,
 	TRAP_FIRST_TURN_UPKEEP				= 0x704,
+	TRAP_TURN_IS_EXTRA					= 0x705,
 #define TRAP_MAX_BITS_PERSISTENT		0x707
 #if ((TRAP_MAX_BITS_PERSISTENT - TRAP_MIN_BITS_PERSISTENT + 1) % 8) != 0
 #  error "Number of bits per turn must be a multiple of 8"
@@ -2398,6 +2415,8 @@ typedef enum
 	SF_TARGETS_ALREADY_SET				= 1<<29,
 	SF_DONT_COPY_TOKEN_SOURCE			= 1<<30,	// If this token is copied, don't set the copy's source
 	SF_PLAYED_FROM_EXILE				= 1<<31,	// Misplaced; only permanents should have these flags, since they overlap the targets array
+  /* Original October 2022 enumerator names and masks. */
+  SF_0 = 0x0,
 } special_flags_t;
 
 /* Special flags  2*/
@@ -2435,6 +2454,9 @@ typedef enum
 	SF2_DEEP_WATER					= 1<<29,
 	SF2_REFLECTING_MIRROR			= 1<<30,
 	SF2_COPIED_FROM_STACK			= 1<<31,
+  /* Original October 2022 enumerator names and masks. */
+  SF2_0 = 0x0,
+  SF2_REDIRECT = 0x40000000,
 } special_flags2_t;
 
 /* Special flags  3*/
@@ -2570,7 +2592,7 @@ typedef enum
 	REF_UPKEEP_ABILITY_IN_GRAVE			= 1<<5,
 	REF_CONT_AND_TRIG_ABILITY_IN_GRAVE	= 1<<6,
 	REF_BRIDGE_FROM_BELOW				= 1<<7,
-	//1<<8 unused
+	REF_GAIN_LIFE_TRIGGER				= 1<<8,
 	REF_KROVIKAN_HORROR					= 1<<9,
 	REF_DISCARD_TRIGGER_MADNESS			= 1<<10,
 	//1<<11 unused
@@ -2583,6 +2605,7 @@ typedef enum
 	REF_AURA_RETURNING_FROM_GRAVE		= 1<<18,
 	REF_CONSPIRE						= 1<<19,
 	REF_RECOVER							= 1<<20,
+	REF_EOT_ABILITY_IN_GRAVE			= 1<<21,
 	REF_BEGINNING_OF_COMBAT_EFFECTS		= 1<<22,
 } re_flags_t;
 
@@ -3177,6 +3200,8 @@ typedef enum
 
   TARGET_ZONE_INSTANCE	= (TARGET_ZONE_HAND | TARGET_ZONE_IN_PLAY | TARGET_ZONE_ON_STACK),	// All target zones backed by a card_instance_t
 #endif
+  /* Original October 2022 enum names. */
+  TARGET_ZONE_0 = 0x0,
 } target_zone_t;
 
 typedef enum
@@ -3201,6 +3226,8 @@ typedef enum
 	TARGET_STATE_TAPPED_OR_BLOCKING	= (1 << 13),	// Not checked for illegal_state
 	TARGET_STATE_DESTROYED			= (1 << 14),	// Not checked for illegal_state
 	TARGET_STATE_DYING				= TARGET_STATE_DESTROYED,
+  /* Original October 2022 enum names. */
+  TARGET_STATE_0 = 0x0,
 } target_state_t;
 
 typedef enum
@@ -3306,6 +3333,11 @@ typedef enum {
 	PAUE_UNTAP										= 1<<16,
 	PAUE_RESET_FORCED_SUBTYPES_AT_EOT				= 1<<17,
 	PAUE_RESET_ADDED_SUBTYPES_AT_EOT				= 1<<18,
+	PAUE_KILL_TARGET_IF_SOURCE_LEAVES_BATTLEFIELD = 1<<3,
+	PAUE_FORCE_COLOR = 1<<17,
+	PAUE_FORCE_SUBTYPE = 1<<18,
+	PAUE_ADD_SUBTYPE = 1<<19,
+	PAUE_FORCE_PT = 1<<20,
 } paue_3player_t;
 
 typedef enum {
@@ -3545,6 +3577,8 @@ typedef enum {
 	GCUS_CHECK_POWER =	1<<4,	// lose control if power of stolen creature is greater than the one of the stealing creature (Old Man of the Sea)
 	GCUS_ENCHANTED =	1<<5,	// lose control if is not enchanted (Rootwater Matriarch)
 	GCUS_SOURCE_IN_PLAY = 1<<6,	// lose control if source of effect is no more in play
+  /* Original October 2022 enum names. */
+  GCUS_EO_YOUR_T = 0x80,
 } gcus_t;
 
 typedef enum {
@@ -3588,6 +3622,13 @@ typedef enum
   MPCFE_UNTIL_EOT	= 1<<3,	// can only play until end of turn
   MPCFE_ATTACH		= 1<<4,	// attach effect to {player,card}, so can only play so long as its source is on the battlefield
   MPCFE_UNTIL_END_OF_YOUR_NEXT_TURN = 1<<5,	// can only play until the end of your next turn
+  /* Original October 2022 enumerator names and masks. */
+  MPCFE_0 = 0x0,
+  MPCFE_UNTIL_YOUR_NEXT_UPKEEP = 0x40,
+  MPCFE_EXILE_ON_RESOLUTION = 0x80,
+  MPCFE_ATTACK_WITH_ROGUE = 0x100,
+  MPCFE_LUKKA = 0x200,
+  MPCFE_DURING_YOUR_NEXT_TURN = 0x400,
 } mpcfe_mode_t;
 
 typedef enum
@@ -3669,6 +3710,8 @@ typedef enum
 	RCUYRT_RETURN_REVEALED_CARDS 		= 1<<10,
 	RCUYRT_EXILE_TEST			 		= 1<<11,
 	RCUYRT_REVEAL_UP_TO_X			 	= 1<<12, //Will use BYTE1(test.qty) as max cards to reveal.
+	RCUYRT_PLAY_SPELL_FOR_FREE = 1<<13,
+	RCUYRT_OPPONENT_REVEAL = 1<<14,
 } reveal_card_until_you_reveal_test_flags_t;
 
 typedef enum
@@ -3789,7 +3832,16 @@ typedef enum
 	DFC_SYMBOL_COMPASS	= 6,
 	DFC_SYMBOL_LAND		= 7,
 
+	DFC_SYMBOL_MODAL_FRONT = 8,
+	DFC_SYMBOL_MODAL_BACK = 9,
+	DFC_SYMBOL_FAN_CLOSE = 10,
+	DFC_SYMBOL_FAN_OPEN = 11,
+
+#ifndef SHANDALAR
+	DFC_SYMBOL_MAX = DFC_SYMBOL_FAN_OPEN
+#else
 	DFC_SYMBOL_MAX		= DFC_SYMBOL_LAND
+#endif
 } DfcSymbol;
 
 typedef enum

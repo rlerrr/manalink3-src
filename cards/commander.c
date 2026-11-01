@@ -60,7 +60,7 @@ int card_acorn_catapult(int player, int card, event_t event){
 			token_generation_t token;
 			default_token_definition(player, card, CARD_ID_SQUIRREL, &token);
 			token.pow = token.tou = 1;
-			token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
+			token.color_forced = COLOR_TEST_GREEN;
 			token.t_player = instance->targets[0].player;
 			generate_token(&token);
 		}
@@ -81,7 +81,7 @@ int card_alliance_of_arms(int player, int card, event_t event){
 			default_token_definition(player, card, CARD_ID_SOLDIER, &token);
 			token.qty = amount;
 			token.pow = token.tou = 1;
-			token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
+			token.color_forced = COLOR_TEST_WHITE;
 			generate_token(&token);
 
 			token.t_player = 1-player;
@@ -128,7 +128,8 @@ As ~ enters the battlefield, each player chooses war or peace.
 Creatures controlled by players who chose war get +3/+0.
 Creatures controlled by players who chose peace get +0/+3. */
 
-	if( comes_into_play(player, card, event) ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if (event == EVENT_ETB ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int i;
 		for(i=0; i<2; i++){
@@ -302,36 +303,25 @@ Command Tower	""
 Land
 |T: Add to your mana pool one mana of any color in your commander's color identity. */
 
-	card_instance_t *instance = get_card_instance( player, card);
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		int count = 0;
-		while( count < active_cards_count[player] ){
-				if( in_play(player, count) && get_id(player, count) == CARD_ID_ELDER_DRAGON_HIGHLANDER ){
-					card_instance_t *this = get_card_instance(player, count);
-					int fake = this->info_slot;
-					instance->info_slot = cards_data[fake].color;
-					instance->info_slot |= get_color_from_remainder_text(cards_data[fake].id);
-					break;
+	card_instance_t* instance = get_card_instance(player, card);
+	if (event == EVENT_RESOLVE_SPELL){
+		for (int i = 0; i < active_cards_count[player]; ++i){
+			if (in_play(player, i) && get_id(player, i) == CARD_ID_ELDER_DRAGON_HIGHLANDER){
+				card_instance_t* commander = get_card_instance(player, i);
+				int iid = commander->targets[2].player;
+				instance->info_slot = cards_data[iid].color & COLOR_TEST_ANY_COLORED;
+				instance->info_slot |= get_color_from_remainder_text(cards_data[iid].id) & COLOR_TEST_ANY_COLORED;
+				iid = commander->targets[2].card;
+				if (iid >= 0){
+					instance->info_slot |= cards_data[iid].color & COLOR_TEST_ANY_COLORED;
+					instance->info_slot |= get_color_from_remainder_text(cards_data[iid].id) & COLOR_TEST_ANY_COLORED;
 				}
-				count++;
+				break;
+			}
 		}
-		if( event == EVENT_RESOLVE_SPELL ){
-			play_land_sound_effect_force_color(player, card, instance->info_slot);
-		}
+		play_land_sound_effect_force_color(player, card, instance->info_slot);
 	}
-
-	if( event == EVENT_CAN_ACTIVATE ){
-		return mana_producer(player, card, event);
-	}
-
-	if( event == EVENT_ACTIVATE ){
-		if( instance->info_slot > 0 ){
-			return mana_producer(player, card, event);
-		}
-	}
-
-	return 0;
+	return plain_mana_producer(player, card, event);
 }
 
 int card_crescendo_of_war(int player, int card, event_t event)
@@ -407,7 +397,7 @@ int card_death_by_dragons(int player, int card, event_t event){
 		if( valid_target(&td) ){
 			token_generation_t token;
 			default_token_definition(player, card, CARD_ID_DRAGON, &token);
-			token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_RED);
+			token.color_forced = COLOR_TEST_RED;
 			token.pow = token.tou = 5;
 			token.t_player = 1-instance->targets[0].player;
 			generate_token(&token);
@@ -488,7 +478,7 @@ When ~ enters the battlefield, if you cast it from your hand, destroy all creatu
 			test_definition_t this_test;
 			default_test_definition(&this_test, TYPE_CREATURE);
 			this_test.not_me = 1;
-			APNAP(p, {new_manipulate_all(player, card, p, &this_test, KILL_DESTROY);};);
+			new_manipulate_all(player, card, ANYBODY, &this_test, KILL_DESTROY);
 		}
 	}
 
@@ -627,6 +617,7 @@ int card_homeward_path(int player, int card, event_t event){
 				instance->state &= ~STATE_TAPPED;
 				cancel = 1;
 			}
+			tapped_for_mana_color = -1;
 		}
 	}
 
@@ -655,7 +646,7 @@ When ~ enters the battlefield, create four 1/1 |Sgreen Insect creature tokens wi
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_INSECT, &token);
 		token.qty = 4;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
+		token.color_forced = COLOR_TEST_GREEN;
 		token.key_plus = KEYWORD_FLYING;
 		token.s_key_plus = SP_KEYWORD_DEATHTOUCH;
 		generate_token(&token);
@@ -677,7 +668,8 @@ Whenever Kaalia of the Vast attacks an opponent, you may put an Angel, Demon, or
 */
 	check_legend_rule(player, card, event);
 
-	if (declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player) | DAT_ATTACKS_PLAYER, player, card))
+	dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+	if (event == EVENT_DAT_ABILITY)
 	{
 		test_definition_t test;
 		new_default_test_definition(&test, TYPE_CREATURE, "Select an Angel, Demon, or Dragon creature");
@@ -802,20 +794,26 @@ int card_magmatic_force(int player, int card, event_t event){
 
 int card_mana_charged_dragon(int player, int card, event_t event)
 {
-/* CARD_ID_MANA_CHARGED_DRAGON	11742
+  /* CARD_ID_MANA_CHARGED_DRAGON	11742
 Mana-Charged Dragon	|4|R|R
 Creature - Dragon 5/5
 Flying, trample
 Join forces - Whenever ~ attacks or blocks, each player starting with you may pay any amount of mana.
 ~ gets +X/+0 until end of turn, where X is the total amount of mana paid this way. */
 
-  if (blocking(player, card, event) || declare_attackers_trigger(player, card, event, 0, player, card))
-	{
-	  int amt = join_forces(player, 1);
-	  if (amt > 0)
-		pump_until_eot(player, card, player, card, amt, 0);
-	}
-
+  if (blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG))
+  {
+    int amount = join_forces(player, 1);
+    if (amount > 0)
+      pump_until_eot(player, card, player, card, amount, 0);
+  }
+  dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    int amount = join_forces(player, 1);
+    if (amount > 0)
+      pump_until_eot(player, card, player, card, amount, 0);
+  }
   return 0;
 }
 
@@ -1041,14 +1039,15 @@ Legendary Creature - Vedalken Wizard 1/1
 
 int card_riddlekeeper(int player, int card, event_t event)
 {
-/* CARD_ID_RIDDLEKEEPER	11729
+  /* CARD_ID_RIDDLEKEEPER	11729
 Riddlekeeper	|2|U
 Creature - Homunculus 1/4
 Whenever a creature attacks you or a planeswalker you control, that creature's controller puts the top two cards of his or her library into his or her graveyard.*/
 
-  if (declare_attackers_trigger(player, card, event, DAT_SEPARATE_TRIGGERS, 1-player, -1))
-	mill(1-player, 2);
-
+  store_attackers(player, card, event, DAT_SEPARATE_TRIGGERS, 1-player, -1, NULL);
+  dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 1);
+  if (event == EVENT_DAT_ABILITY)
+    mill(1-player, 2);
   return 0;
 }
 
@@ -1062,17 +1061,11 @@ int card_riku_of_two_reflections(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && player == reason_for_trigger_controller &&
-		has_mana_multi(player, MANACOST_UR(1, 1))
-	  ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_SPELL);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test) &&
-			charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, MANACOST_UR(1,1))
-		  ){
-			copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
-		}
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_SPELL, NULL, player, card);
+	if (event == EVENT_SPA && has_mana_multi(player, MANACOST_UR(1, 1)) && charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, MANACOST_UR(1, 1))){
+		copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
 	}
+
 
 	if(	trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && player == reason_for_trigger_controller ){
 		test_definition_t test;
@@ -1370,8 +1363,9 @@ Put ~ on the bottom of its owner's library. */
 
 	if(event == EVENT_RESOLVE_SPELL ){
 		card_instance_t *instance = get_card_instance( player, card );
-		set_flags_when_spell_is_countered(player, card, instance->targets[0].player, instance->targets[0].card);
-		put_on_bottom_of_deck(instance->targets[0].player, instance->targets[0].card);
+		if (pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card)){
+			put_on_bottom_of_deck(instance->targets[0].player, instance->targets[0].card);
+		}
 		put_on_bottom_of_deck(player, card);
 	}
 

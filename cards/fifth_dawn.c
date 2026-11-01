@@ -695,6 +695,7 @@ Flying
 			if( new_pick_target(&td, "Select target Equipment you control.", 0, 1 | GS_LITERAL_PROMPT) ){
 				if( new_pick_target(&td1, "Select target creature you control.", 1, 1 | GS_LITERAL_PROMPT) ){
 					add_state(player, card, STATE_TAPPED);
+					tapped_for_mana_color = -1;
 					instance->number_of_targets = 2;
 				}
 			}
@@ -787,7 +788,7 @@ int card_beacon_of_destruction(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			damage_creature_or_player(player, card, event, 5);
+			damage_target0(player, card, 5);
 			shuffle_into_library(player, card);
 		}
 		else{
@@ -924,17 +925,17 @@ int card_blasting_station(int player, int card, event_t event){
 									&td, "TARGET_ANY");
 }
 
-int card_blind_creeper(int player, int card, event_t event){
-/* CARD_ID_BLIND_CREEPER	7018
+int card_blind_creeper(int player, int card, event_t event)
+{
+  /* CARD_ID_BLIND_CREEPER	7018
 Blind Creeper	|1|B
 Creature - Zombie Beast 3/3
 Whenever a player casts a spell, ~ gets -1/-1 until end of turn. */
 
-	if( new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-		pump_until_eot(player, card, player, card, -1, -1);
-	}
-
-	return 0;
+  sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+    pump_until_eot(player, card, player, card, -1, -1);
+  return 0;
 }
 
 int card_bringer_of_the_black_dawn(int player, int card, event_t event){
@@ -1096,9 +1097,9 @@ Artifact
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *parent = get_card_instance(instance->parent_controller, instance->parent_card);
-		add_a_subtype(instance->parent_controller, instance->parent_card, SUBTYPE_CONSTRUCT);
-		artifact_animation(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 1,
+		int legacy = artifact_animation(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 1,
 							instance->info_slot, instance->info_slot, 0, 0);
+		get_card_instance(player, legacy)->targets[9].card = SUBTYPE_CONSTRUCT;
 		parent->targets[1].player = 0;
 	}
 
@@ -1181,6 +1182,7 @@ Sacrifice ~: Add |W|U|B|R|G to your mana pool. */
 
 	if( event == EVENT_ACTIVATE ){
 		produce_mana_multi(player, 0, 1, 1, 1, 1, 1);
+		tapped_for_mana_color = -2;
 		kill_card(player, card, KILL_SACRIFICE);
 	}
 
@@ -1374,20 +1376,19 @@ int card_crucible_of_worlds(int player, int card, event_t event)
   return 0;
 }
 
-int card_desecration_elemental(int player, int card, event_t event){
-/* CARD_ID_DESECRATION_ELEMENTAL	7036
+int card_desecration_elemental(int player, int card, event_t event)
+{
+  /* CARD_ID_DESECRATION_ELEMENTAL	7036
 Desecration Elemental	|3|B
 Creature - Elemental 8/8
 Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)
 Whenever a player casts a spell, sacrifice a creature. */
 
-	fear(player, card, event);
-
-	if( specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
-		sacrifice(player, card, player, 1, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-	}
-
-	return 0;
+  fear(player, card, event);
+  sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+    player_sacrifices_a_permanent(player, card, player, TYPE_CREATURE, SAC_CAUSED);
+  return 0;
 }
 
 int card_devour_in_shadows(int player, int card, event_t event){
@@ -1513,18 +1514,18 @@ Tap up to three target lands. */
 	return 0;
 }
 
-int card_ebon_drake(int player, int card, event_t event){
-/* CARD_ID_EBON_DRAKE	7043
+int card_ebon_drake(int player, int card, event_t event)
+{
+  /* CARD_ID_EBON_DRAKE	7043
 Ebon Drake	|2|B
 Creature - Drake 3/3
 Flying
 Whenever a player casts a spell, you lose 1 life. */
 
-	if( specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
-		lose_life(player, 1);
-	}
-
-	return 0;
+  sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+    lose_life(player, 1);
+  return 0;
 }
 
 static int endless_whispers_legacy(int player, int card, event_t event){
@@ -1816,8 +1817,8 @@ int card_ensouled_scimitar(int player, int card, event_t event){
 			resolve_activation_basic_equipment(player, card);
 		}
 		if( instance->info_slot == 67 ){
-			add_a_subtype(player, instance->parent_card, SUBTYPE_SPIRIT);
-			artifact_animation(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 1, 1, 5, KEYWORD_FLYING, 0);
+			int legacy = artifact_animation(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 1, 1, 5, KEYWORD_FLYING, 0);
+			get_card_instance(instance->parent_controller, legacy)->targets[9].card = SUBTYPE_SPIRIT;
 		}
 	}
 
@@ -1870,7 +1871,8 @@ int card_eternal_witness(int player, int card, event_t event)
    * Creature - Human Shaman 2/1
    * When ~ enters the battlefield, you may return target card from your graveyard to your hand. */
 
-  if (comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player)))
+  etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if (event == EVENT_ETB_ABILITY)
 	{
 	  test_definition_t test;
 	  new_default_test_definition(&test, 0, "Select target card.");
@@ -1887,11 +1889,9 @@ Enchantment
 Whenever you cast an instant or sorcery spell, you may pay |1. If you do, scry 2.
 (Look at the top two cards of your library, then put any number of them on the bottom of your library and the rest on top in any order.) */
 
-	if( has_mana(player, COLOR_COLORLESS, 1) &&
-		specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), TYPE_SPELL, 0, 0, 0, 0, 0, 0, 0, -1, 0)
-	  ){
-		charge_mana(player, COLOR_COLORLESS, 1);
-		if( spell_fizzled != 1 ){
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_SPELL, NULL, player, card);
+	if (event == EVENT_SPA){
+		if (has_mana(player, COLOR_COLORLESS, 1) && charge_mana(player, COLOR_COLORLESS, 1)){
 			scry(player, 2);
 		}
 	}
@@ -1905,7 +1905,8 @@ Fangren Pathcutter	|4|G|G
 Creature - Beast 4/6
 Whenever ~ attacks, attacking creatures gain trample until end of turn. */
 
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
 	{
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_CREATURE, "");
@@ -2255,7 +2256,8 @@ Equipped creature gets +3/+2.
 Whenever ~ becomes unattached from a permanent, sacrifice that permanent.
 Equip |0 (|0: Attach to target creature you control. Equip only as a sorcery.) */
 
-	if( event == EVENT_UNATTACH || leaves_play(player, card, event, 1, 0) ){
+	leaves_play(player, card, event, 1, 0);
+	if (event == EVENT_UNATTACH || event == EVENT_LEAVES_PLAY_ABILITY){
 		if( is_equipping(player, card) ){
 			card_instance_t *instance = get_card_instance(player, card);
 			if( player == instance->damage_target_player ){
@@ -2322,7 +2324,6 @@ int card_guardian_idol(int player, int card, event_t event){
 				abilities[1] = 1;
 			}
 
-
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
 						  "Produce mana", abilities[0], 1,
 						  "Animate", abilities[1], current_phase < PHASE_DECLARE_ATTACKERS ? 10 : 0);
@@ -2350,8 +2351,8 @@ int card_guardian_idol(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( instance->info_slot == 2 ){
-			add_a_subtype(instance->parent_controller, instance->parent_card, SUBTYPE_GOLEM);
-			artifact_animation(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 1, 2, 2, 0, 0);
+			int legacy = artifact_animation(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 1, 2, 2, 0, 0);
+			get_card_instance(instance->parent_controller, legacy)->targets[9].card = SUBTYPE_GOLEM;
 		}
 	}
 
@@ -2593,7 +2594,8 @@ When ~ enters the battlefield, you may return up to two target creatures to thei
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( comes_into_play_mode(player, card, event, can_target(&td) ? RESOLVE_TRIGGER_AI(player) : 0) ){
+	etb_ability(player, card, event, can_target(&td) ? RESOLVE_TRIGGER_AI(player) : 0);
+	if (event == EVENT_ETB_ABILITY){
 		int i;
 		for(i=0; i<2; i++){
 			if( can_target(&td) && pick_target(&td, "TARGET_CREATURE") ){
@@ -2690,7 +2692,10 @@ Joiner Adept	|1|G
 Creature - Elf Druid 2/1
 Lands you control have "|T: Add one mana of any color to your mana pool." */
 
-	return permanents_you_control_can_tap_for_mana_all_one_color(player, card, event, TYPE_LAND, -1, COLOR_TEST_ANY_COLORED, 1);
+	if (event == EVENT_MODIFY_MANA_PROD && !is_humiliated(player, card, AL_STATIC)){
+		mana_colors_added[player] |= COLOR_TEST_ANY_COLORED;
+	}
+	return 0;
 }
 
 int card_kaldra(int player, int card, event_t event){
@@ -2726,6 +2731,7 @@ Sacrifice an artifact: Add |C|C to your mana pool. */
 		new_default_test_definition(&test, TYPE_ARTIFACT, "Select an artifact to sacrifice.");
 		if( new_sacrifice(player, card, player, SAC_AS_COST, &test) ){
 			produce_mana(player, COLOR_COLORLESS, 2);
+			tapped_for_mana_color = -2;
 		}
 		else{
 			spell_fizzled = 1;
@@ -2741,17 +2747,21 @@ Leonin Squire	|1|W
 Creature - Cat Soldier 2/2
 When ~ enters the battlefield, return target artifact card with converted mana cost 1 or less from your graveyard to your hand. */
 
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && reason_for_trigger_controller == player ){
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_ARTIFACT, "Select an artifact card with CMC 1 or less.");
-		this_test.cmc = 2;
-		this_test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
-		int trig_mode = new_special_count_grave(player, &this_test) && ! graveyard_has_shroud(player) ? RESOLVE_TRIGGER_MANDATORY : 0;
-		if( comes_into_play_mode(player, card, event, trig_mode) ){
-			new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 1, AI_MAX_VALUE, &this_test);
-		}
+	if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && reason_for_trigger_controller == player){
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_ARTIFACT, "Select an artifact card with CMC 1 or less.");
+		test.cmc = 2;
+		test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
+		int mode = new_special_count_grave(player, &test) && !graveyard_has_shroud(player) ? RESOLVE_TRIGGER_MANDATORY : 0;
+		etb_ability(player, card, event, mode);
 	}
-
+	if (event == EVENT_ETB_ABILITY){
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_ARTIFACT, "Select an artifact card with CMC 1 or less.");
+		test.cmc = 2;
+		test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
+		new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 1, AI_MAX_VALUE, &test);
+	}
 	return 0;
 }
 
@@ -2782,24 +2792,24 @@ Target creature gets -1/-1 until end of turn. Scry 2.
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-int card_magma_giant(int player, int card, event_t event){
-/* CARD_ID_MAGMA_GIANT	3656
+int card_magma_giant(int player, int card, event_t event)
+{
+  /* CARD_ID_MAGMA_GIANT	3656
 Magma Giant	|5|R|R
 Creature - Giant 5/5
 When ~ enters the battlefield, it deals 2 damage to each creature and each player. */
 
-	if( comes_into_play(player, card, event) ){
-		APNAP(p, {new_damage_all(player, card, p, 2, NDA_ALL_CREATURES | NDA_PLAYER_TOO, NULL);};);
-	}
-
-	return 0;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+    new_damage_all(player, card, ANYBODY, 2, NDA_ALL_CREATURES | NDA_PLAYER_TOO, NULL);
+  return 0;
 }
 
 int card_magma_jet(int player, int card, event_t event){
 	/* Magma Jet	|1|R	0x2005476
 	 * Instant
 	 * ~ deals 2 damage to any target. Scry 2. */
-	if (!IS_CASTING(player, card, event)){
+	if (!IS_GS_EVENT(player, card, event)){
 		return 0;
 	}
 
@@ -3714,30 +3724,19 @@ Enchantment - Aura
 Enchant artifact
 Enchanted artifact can't attack or block, and its activated abilities can't be activated. */
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( in_play(player, card) && instance->damage_target_player != -1 ){
-		if( is_what(instance->damage_target_player, instance->damage_target_card, TYPE_CREATURE) ){
+	card_instance_t* instance = get_card_instance(player, card);
+	if (in_play(player, card) && !is_humiliated(player, card, AL_STATIC) && instance->damage_target_player != -1){
+		if (is_what(instance->damage_target_player, instance->damage_target_card, TYPE_CREATURE)){
 			cannot_attack(instance->damage_target_player, instance->damage_target_card, event);
 			cannot_block(instance->damage_target_player, instance->damage_target_card, event);
 		}
-		if( instance->targets[1].player != instance->damage_target_player || instance->targets[1].card != instance->damage_target_card ){
-			if( instance->targets[1].player != -1 && instance->targets[1].card != -1 ){
-				disable_all_activated_abilities(instance->targets[1].player, instance->targets[1].card, 0);
-			}
+		if (event == EVENT_ABILITIES && affect_me(instance->damage_target_player, instance->damage_target_card)){
 			disable_all_activated_abilities(instance->damage_target_player, instance->damage_target_card, 1);
-			instance->targets[1].player = instance->damage_target_player;
-			instance->targets[1].card = instance->damage_target_card;
 		}
 	}
-
-	if( ! IS_AURA_EVENT(player, card, event) ){
-		return 0;
-	}
-
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_ARTIFACT );
-
+	default_target_definition(player, card, &td, TYPE_ARTIFACT);
 	return targeted_aura(player, card, event, &td, "TARGET_ARTIFACT");
 }
 
@@ -3777,7 +3776,8 @@ When ~ dies, turn the exiled card face up. If it's a creature card, put it onto 
 		}
 	}
 
-	if( comes_into_play(player, card, event) ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if( event == EVENT_ETB_ABILITY ){
 		int result = -1;
 		if( hand_count[player] > 0 ){
 			if( player == HUMAN ){
@@ -3973,7 +3973,8 @@ Creature - Elemental 6/6
 When ~ enters the battlefield, it deals 6 damage to each creature with flying.
 You may have ~ assign its combat damage as though it weren't blocked. */
 
-	if( comes_into_play(player, card, event) ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if (event == EVENT_ETB_ABILITY){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
 		this_test.keyword = KEYWORD_FLYING;
@@ -3989,7 +3990,8 @@ int card_trinket_mage(int player, int card, event_t event){
 	 * When ~ enters the battlefield, you may search your library for an artifact card with converted mana cost 1 or less, reveal that card, and put it into
 	 * your hand. If you do, shuffle your library. */
 
-	if( comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+	if (event == EVENT_ETB_ABILITY){
 		test_definition_t this_test;
 		new_default_test_definition(&this_test, TYPE_ARTIFACT, "Select an artifact card with CMC 1 or less");
 		this_test.cmc = 2;
@@ -4062,7 +4064,7 @@ You may choose not to untap ~ during your untap step.
 		td.power_requirement = count_subtype(player, TYPE_LAND, SUBTYPE_ISLAND) | TARGET_PT_LESSER_OR_EQUAL;
 		if( valid_target(&td) ){
 			gain_control_until_source_is_in_play_and_tapped(instance->parent_controller, instance->parent_card,
-															instance->targets[0].player, instance->targets[0].card, GCUS_TAPPED);
+															instance->targets[0].player, instance->targets[0].card, GCUS_SOURCE_IN_PLAY | GCUS_TAPPED);
 		}
 	}
 

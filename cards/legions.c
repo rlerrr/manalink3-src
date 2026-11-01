@@ -211,7 +211,7 @@ int card_brood_sliver(int player, int card, event_t event){
 		}
 	}
 
-	if( resolve_damage_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	if( resolve_damage_trigger(player, card, event, DDBM_0, player, card) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int slivers[2] = {BYTE0(instance->targets[1].player), BYTE1(instance->targets[1].player)};
 		instance->targets[1].player = 0;
@@ -569,10 +569,10 @@ If you search your library this way, shuffle it. */
 		if( check_battlefield_for_special_card(player, card, player, 0, &this_test) ){
 			result = new_global_tutor(player, player, TUTOR_FROM_HAND, TUTOR_PLAY, 0, AI_FIRST_FOUND, &this_test);
 		}
-		if( result == -1 && new_special_count_grave(player, &this_test) ){
+		if( result < 0 && new_special_count_grave(player, &this_test) ){
 			new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_PLAY, 0, AI_FIRST_FOUND, &this_test);
 		}
-		if( result == -1 ){
+		if( result < 0 ){
 			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_FIRST_FOUND, &this_test);
 		}
 	}
@@ -716,7 +716,8 @@ Whenever ~ attacks or blocks, you lose 1 life for each +1/+1 counter on it. */
 		amplify(player, card, 1);
 
 	// Whenever ~ attacks or blocks, you lose 1 life for each +1/+1 counter on it.
-	if( declare_attackers_trigger(player, card, event, 0, player, card) ||
+	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+	if (event == EVENT_DAT_ABILITY ||
 		(blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG)) )
 	{
 		lose_life(player, count_1_1_counters(player, card));
@@ -754,7 +755,7 @@ Whenever a Sliver deals damage, its controller gains that much life.
 		}
 	}
 
-	if( resolve_damage_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	if( resolve_damage_trigger(player, card, event, DDBM_0, player, card) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int slivers[2] = {BYTE0(instance->targets[1].player), BYTE1(instance->targets[1].player)};
 		instance->targets[1].player = 0;
@@ -802,7 +803,8 @@ Creature - Human Soldier 3/5
 Cycling |2|W (|2|W, Discard this card: Draw a card.)
 When you cycle ~, Soldier creatures get +1/+1 and gain first strike until end of turn. */
 
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND ){
+	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != -1 &&
+        !(player_bits[player] & PB_GY_ABILITIES_DISABLED) ){
 		pump_subtype_until_eot(player, card, 2, SUBTYPE_SOLDIER, 1, 1, KEYWORD_FIRST_STRIKE, 0);
 	}
 
@@ -816,7 +818,7 @@ Creature - Goblin 2/1
 Cycling |1|R (|1|R, Discard this card: Draw a card.)
 When you cycle ~, you may have it deal X damage to target creature, where X is the number of Goblins on the battlefield. */
 
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND ){
+	if (event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != 1 && !(player_bits[player] & PB_GY_ABILITIES_DISABLED)){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 
@@ -838,7 +840,7 @@ Creature - Zombie 4/3
 Cycling |B|B (|B|B, Discard this card: Draw a card.)
 When you cycle ~, you may have target player lose life equal to the number of Zombies on the battlefield. */
 
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND ){
+	if (event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != 1 && !(player_bits[player] & PB_GY_ABILITIES_DISABLED)){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.zone = TARGET_ZONE_PLAYERS;
@@ -861,7 +863,8 @@ Creature - Human Wizard 2/2
 Cycling |2|U (|2|U, Discard this card: Draw a card.)
 When you cycle ~, Wizard creatures gain flying until end of turn. */
 
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND ){
+	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != 1 &&
+        !(player_bits[player] & PB_GY_ABILITIES_DISABLED) ){
 		pump_subtype_until_eot(player, card, 2, SUBTYPE_WIZARD, 0, 0, KEYWORD_FLYING, 0);
 	}
 
@@ -875,7 +878,8 @@ Creature - Elf 2/2
 Cycling |2|G|G (|2|G|G, Discard this card: Draw a card.)
 When you cycle ~, Elf creatures get +2/+2 until end of turn. */
 
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND ){
+	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != 1 &&
+        !(player_bits[player] & PB_GY_ABILITIES_DISABLED) ){
 		pump_subtype_until_eot(player, card, 2, SUBTYPE_ELF, 2, 2, 0, 0);
 	}
 
@@ -1541,7 +1545,7 @@ int card_planar_guide(int player, int card, event_t event){
 
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
-		APNAP(p,{ new_manipulate_all(instance->parent_controller, instance->parent_card, p, &this_test, ACT_RFG_UNTIL_EOT); };);
+		new_manipulate_all(instance->parent_controller, instance->parent_card, ANYBODY, &this_test, ACT_RFG_UNTIL_EOT);
 	}
 
 	return generic_activated_ability(player, card, event, GAA_RFG_ME, MANACOST_XW(3, 1), 0, NULL, NULL);
@@ -1611,7 +1615,7 @@ Creature - Beast 0/3
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_ACTIVATE ){
-		generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_XU(1, 1), 0, &td, "TARGET_CREATURE");
+		generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_XU(1, 1), 0, &td, "TARGET_CREATURE");
 		if( spell_fizzled != 1 ){
 			ai_modifier += ((get_power(instance->targets[0].player, instance->targets[0].card)-get_power(player, card))*8);
 		}
@@ -1621,12 +1625,13 @@ Creature - Beast 0/3
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
 			int pow = get_power(instance->targets[0].player, instance->targets[0].card);
-			set_pt_and_abilities_until_eot(instance->parent_controller, instance->parent_card,
-											instance->parent_controller, instance->parent_card, pow, 0, 0, 0, 0);
+			int leg = real_set_pt(instance->parent_controller, instance->parent_card,
+								  instance->parent_controller, instance->parent_card, pow, -1, 8);
+			add_status(player, leg, STATUS_INVISIBLE_FX);
 		}
 	}
 
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_XU(1, 1), 0, &td, "TARGET_CREATURE");
+	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_XU(1, 1), 0, &td, "TARGET_CREATURE");
 }
 
 int card_root_sliver(int player, int card, event_t event){
@@ -1637,19 +1642,10 @@ Creature - Sliver 2/2
 Sliver spells can't be countered by spells or abilities. */
 
 	cannot_be_countered(player, card, event);
-
-	if( event == EVENT_CAST_SPELL ){
-		if( ! affect_me(player, card) ){
-			test_definition_t this_test;
-			default_test_definition(&this_test, 0);
-			this_test.subtype = SUBTYPE_SLIVER;
-
-			type_uncounterable(player, card, event, player, 0, &this_test);
-		}
-	}
-
-	type_uncounterable(player, card, event, player, 0, NULL);
-
+	test_definition_t test;
+	default_test_definition(&test, TYPE_NONE);
+	test.subtype = SUBTYPE_SLIVER;
+	type_uncounterable(player, card, event, player, 0, &test);
 	return 0;
 }
 
@@ -1890,7 +1886,7 @@ Whenever a Sliver deals combat damage to a player, its controller may draw a car
 		}
 	}
 
-	if( resolve_damage_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+	if( resolve_damage_trigger(player, card, event, DDBM_0, player, card) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int slivers[2] = {BYTE0(instance->targets[1].player), BYTE1(instance->targets[1].player)};
 		instance->targets[1].player = 0;
@@ -1997,7 +1993,7 @@ Morph |1|G (You may cast this card face down as a 2/2 creature for |3. Turn it f
 When ~ is turned face up, creatures of the creature type of your choice get +2/+2 and gain trample until end of turn. */
 
 	if( event == EVENT_TURNED_FACE_UP ){
-		int subt = select_a_subtype(player, card);
+		int subt = select_a_subtype_full_choice(player, card, player, NULL, 2);
 		pump_subtype_until_eot(player, card, 2, subt, 2, 2, KEYWORD_TRAMPLE, 0);
 	}
 	return morph(player, card, event, MANACOST_XG(1, 1));
@@ -2080,7 +2076,7 @@ int card_wall_of_hope(int player, int card, event_t event){
 	Whenever Wall of Hope is dealt damage, you gain that much life.
 */
 	if( ! is_humiliated(player, card, AL_TRIG) ){
-		if( damage_dealt_to_me_arbitrary(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+		if( damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card) ){
 			card_instance_t *instance = get_card_instance(player, card);
 			gain_life(player, instance->targets[7].card);
 			instance->targets[7].card = 0;

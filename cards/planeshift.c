@@ -154,7 +154,7 @@ int card_allied_strategies(int player, int card, event_t event){
 	 * Sorcery
 	 * Domain - Target player draws a card for each basic land type among lands he or she controls. */
 
-	if( ! IS_GAA_EVENT(event) ){
+	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
 
@@ -317,7 +317,7 @@ When ~ enters the battlefield, sacrifice it unless you return a non-Lair land yo
 
 	// also code for the others "Lair" lands
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) && !is_humiliated(player, card, AL_TRIG) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_LAND);
 		td.allowed_controller = player;
@@ -332,7 +332,7 @@ When ~ enters the battlefield, sacrifice it unless you return a non-Lair land yo
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( event == EVENT_ETB_ABILITY ){
+	if( event == EVENT_ETB_ABILITY && !is_humiliated(player, card, AL_TRIG) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_LAND);
 		td.allowed_controller = player;
@@ -352,7 +352,7 @@ When ~ enters the battlefield, sacrifice it unless you return a non-Lair land yo
 		}
 	}
 
-	return mana_producer(player, card, event);
+	return plain_mana_producer(player, card, event);
 }
 
 int card_crosis_charm(int player, int card, event_t event){
@@ -666,10 +666,15 @@ All Goblins are black and are Zombies in addition to their other creature types.
 */
 	boost_creature_type(player, card, event, SUBTYPE_GOBLIN, 1, 1, 0, BCT_INCLUDE_SELF);
 
-	if( event == EVENT_SET_COLOR && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) &&
+	if( (event == EVENT_SET_COLOR || event == EVENT_CHANGE_TYPE) && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) &&
 		has_subtype(affected_card_controller, affected_card, SUBTYPE_GOBLIN) )
 	{
-		event_result = COLOR_TEST_BLACK;
+		if (event == EVENT_SET_COLOR){
+			event_result = COLOR_TEST_BLACK;
+		}
+		else{
+			add_a_subtype(affected_card_controller, affected_card, SUBTYPE_ZOMBIE);
+		}
 	}
 
 	return global_enchantment(player, card, event);
@@ -1191,7 +1196,7 @@ int card_march_of_souls(int player, int card, event_t event){
 					default_token_definition(player, card, CARD_ID_SPIRIT, &token);
 					token.t_player = p;
 					token.qty = killed[p];
-					token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
+					token.color_forced = COLOR_TEST_WHITE;
 					token.key_plus = KEYWORD_FLYING;
 					generate_token(&token);
 				}
@@ -1262,17 +1267,18 @@ Spells with the chosen name can't be cast. */
 	return 0;
 }
 
-int card_mogg_sentry(int player, int card, event_t event){
-	/*
+int card_mogg_sentry(int player, int card, event_t event)
+{
+  /*
 	  Mogg Sentry |R
 	  Creature - Goblin Warrior 1/1
 	  Whenever an opponent casts a spell, Mogg Sentry gets +2/+2 until end of turn.
 	*/
-	if( new_specific_spell_played(player, card, event, 1-player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
-		pump_until_eot_merge_previous(player, card, player, card, 2, 2);
-	}
 
-	return 0;
+  sp_ability_trigger(1-player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+    pump_until_eot_merge_previous(player, card, player, card, 2, 2);
+  return 0;
 }
 
 int card_nemata_grove_guardian(int player, int card, event_t event){
@@ -1423,7 +1429,7 @@ int card_orims_chant(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL);
+		generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
 		if( spell_fizzled != 1 ){
 			if( ! is_token(player, card) ){
 				do_kicker(player, card, MANACOST_W(1));
@@ -1630,17 +1636,16 @@ Quirion Dryad	|1|G
 Creature - Dryad 1/1
 Whenever you cast a |Swhite, |Sblue, |Sblack, or |Sred spell, put a +1/+1 counter on ~. */
 
-	if( ! is_unlocked(player, card, event, 4) ){ return 0; }
-
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
+	if (!is_unlocked(player, card, event, 4)){ return 0; }
+	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_ANY);
 		test.color = get_sleighted_color_test(player, card, COLOR_TEST_BLACK | COLOR_TEST_BLUE | COLOR_TEST_RED | COLOR_TEST_WHITE);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			add_counters(player, card, player, card, COUNTER_P1_P1, 1);
-		}
+		sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
 	}
-
+	if (event == EVENT_SPA){
+		add_counters(player, card, player, card, COUNTER_P1_P1, 1);
+	}
 	return 0;
 }
 
@@ -1915,15 +1920,42 @@ int card_sparkcaster(int player, int card, event_t event){
 	return 0;
 }
 
-int card_star_compass(int player, int card, event_t event){
-	/*
+int card_star_compass(int player, int card, event_t event)
+{
+  /*
 	  Star Compass |2
 	  Artifact
 	  Star Compass enters the battlefield tapped.
 	  {T}: Add to your mana pool one mana of any color that a basic land you control could produce.
 	*/
-	comes_into_play_tapped(player, card, event);
-	return card_fellwar_stone(player, card, event);
+
+  comes_into_play_tapped(player, card, event);
+  if (event == EVENT_CHANGE_TYPE && affect_me(player, card))
+  {
+    card_instance_t* instance = get_card_instance(player, card);
+    for (int c = 0; c < active_cards_count[player]; ++c)
+      if (in_play(player, c) && is_what(player, c, TYPE_LAND) && has_subtype(player, c, SUBTYPE_BASIC) &&
+          get_colors_of_mana_land_could_produce_ignoring_costs(player, c))
+      {
+        int colors = get_color_of_mana_produced_by_id(get_id(player, card), COLOR_TEST_ANY_COLORED, player);
+        instance->card_color = (uint8_t)colors;
+        instance->mana_color = (uint8_t)colors;
+      }
+  }
+  card_instance_t* instance = get_card_instance(player, card);
+  if (instance->mana_color == 0 || instance->mana_color == COLOR_TEST_COLORLESS)
+  {
+    if (event == EVENT_CAN_ACTIVATE && player == AI)
+      return 0;
+    if (event == EVENT_ACTIVATE && can_produce_mana(player, card))
+    {
+      produce_mana_tapped(player, card, COLOR_COLORLESS, 0);
+      return 0;
+    }
+    if (event == EVENT_COUNT_MANA)
+      return 0;
+  }
+  return mana_producer(player, card, event);
 }
 
 int card_stormscape_battlemage(int player, int card, event_t event){
@@ -2160,7 +2192,7 @@ int card_terminal_moraine(int player, int card, event_t event){
 			choice = CHOICE_TUTOR_LAND;
 		}
 		instance->info_slot = choice;
-		if( ! IS_AI(player) ){
+		if( !IS_AI(player) && !paying_mana() ){
 			choice = DIALOG(player, card, event, DLG_RANDOM,
 							"Produce mana", 1, 1,
 							"Sac & Tutor basic land", 1, 5);

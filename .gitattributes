@@ -9,3 +9,10 @@
 /*.pl	text
 /*.bat	text
 /*.lds	text
+
+# Recovery receipts and their tool inputs are pinned by raw-byte SHA-256.
+# Preserve mixed historical line endings rather than converting on checkout.
+/docs/recovery-evidence/** -text
+/tools/recovery/** -text
+/tools/*.py -text
+/config/reccmp/functions.csv -text

@@ -14,7 +14,20 @@ def verify(proof,image,root=ROOT):
     inventory={r['low_pc']:r for r in csv.DictReader((root/'.recovery/2022-functions.csv').open()) if r['low_pc']}
     for row in record['helpers']+record['card_callers']:
         assert (row['source'],row['name'],row['definition_sha256']) in receipts,row['name']
-        text=read(root/row['source']);a,b=span(text,row['name']);assert sha(text[a:b].encode())==row['definition_sha256'],row['name']
+        text=read(root/row['source']);a,b=span(text,row['name']);current_sha=sha(text[a:b].encode())
+        expected_sha=row['definition_sha256']
+        if row['name']=='special_mill' and proof.get('native_split_cards_recovery'):
+            # Preserve the earlier receipt. The later complete-body review
+            # explicitly corrects its missing Creeping Chill producer case.
+            later=json.loads((root/proof['native_split_cards_recovery']).read_text())
+            replacement=next(r for r in later['support_helpers'] if r['name']=='special_mill')
+            assert replacement['source']==row['source'] and replacement['native_ranges']==row['native_ranges']
+            assert any(e['source']==row['source'] and e['before_sha256']==expected_sha and
+                       e['after_sha256']==replacement['definition_sha256'] and
+                       e.get('native_source_reconstruction',{}).get('function')=='special_mill'
+                       for e in proof['source_edits'])
+            expected_sha=replacement['definition_sha256']
+        assert current_sha==expected_sha,row['name']
         for part in row['native_ranges']:
             lo=int(part['address'],16);hi=int(part['end'],16);native=inventory[part['address']]
             assert native['name']==row['name'] and native['high_pc']==part['end']

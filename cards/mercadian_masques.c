@@ -226,6 +226,10 @@ Enchanted creature gets +2/+2 for each other enchantment on the battlefield. */
 		}
 	}
 
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
+		return 0;
+	}
+
 	return vanilla_aura(player, card, event, player);
 }
 
@@ -490,7 +494,7 @@ Creature - Human Spellshaper 1/1
 		return 0;
 	}
 
-	int active = can_use_activated_abilities(player, card) && has_mana(player, COLOR_BLACK, 1) && ! is_tapped(player, card) &&
+	int active = can_produce_mana(player, card) && has_mana(player, COLOR_BLACK, 1) && ! is_tapped(player, card) &&
 				! is_sick(player, card);
 
 	if( event == EVENT_CAN_ACTIVATE && active && hand_count[player] > 0 ){
@@ -526,17 +530,20 @@ Briar Patch	|1|G|G
 Enchantment
 Whenever a creature attacks you, it gets -1/-0 until end of turn. */
 
-  int amt;
-  if ((amt = declare_attackers_trigger(player, card, event, DAT_TRACK | DAT_ATTACKS_PLAYER, 1-player, -1)))
-	{
-	  card_instance_t* instance = get_card_instance(player, card);
-	  unsigned char* attackers = (unsigned char*)(&instance->targets[2].player);
-	  for (--amt; amt >= 0; --amt)
-		if (in_play(current_turn, attackers[amt]) )
-		  pump_until_eot(player, card, current_turn, attackers[amt], -1,0);
+	store_attackers(player, card, event, DAT_TRACK, 1-player, -1, NULL);
+	dat_ability(player, card, event, DAT_TRACK | DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+	if (event == EVENT_DAT_ABILITY){
+		card_instance_t* instance = get_card_instance(player, card);
+		unsigned char* attackers = (unsigned char*)&instance->targets[2].player;
+		for (int i = instance->info_slot - 1; i >= 0; --i){
+			if (in_play(current_turn, attackers[i])){
+				pump_until_eot(player, card, current_turn, attackers[i], -1, 0);
+			}
+		}
+	}else if (event == EVENT_CHECK_PUMP && current_turn == 1-player && current_phase < PHASE_BEFORE_BLOCKING){
+		pumpable_power[1-player] -= 1;
 	}
-
-  return global_enchantment(player, card, event);
+	return global_enchantment(player, card, event);
 }
 
 int card_bribery(int player, int card, event_t event){
@@ -559,6 +566,14 @@ int card_cackling_witch(int player, int card, event_t event){
 Cackling Witch	|1|B
 Creature - Human Spellshaper 1/1
 |X|B, |T, Discard a card: Target creature gets +X/+0 until end of turn. */
+
+	if (event == EVENT_CHECK_ABILITIES){
+		if (affected_card_controller == player && card_cackling_witch(player, card, EVENT_CAN_ACTIVATE)){
+			int available = has_mana(player, COLOR_ANY, 1);
+			if (available - 1 > 0){ check_abilities_power += available - 1; }
+		}
+		return 0;
+	}
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -823,7 +838,7 @@ int card_charisma(int player, int card, event_t event){
 				}
 			}
 		}
-		if( instance->info_slot > 1 && trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) &&
+		if( instance->info_slot != -1 && trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) &&
 			reason_for_trigger_controller == player )
 		{
 			if(event == EVENT_TRIGGER){
@@ -838,6 +853,8 @@ int card_charisma(int player, int card, event_t event){
 			}
 		}
 	}
+
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
 	return vanilla_aura(player, card, event, player);
 }
@@ -879,7 +896,8 @@ Cho-Arrim Bruiser	|5|W
 Creature - Ogre Rebel 3/4
 Whenever ~ attacks, you may tap up to two target creatures. */
 
-	if (declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), player, card))
+	dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+	if (event == EVENT_DAT_ABILITY)
 	{
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -897,17 +915,19 @@ Whenever ~ attacks, you may tap up to two target creatures. */
   return 0;
 }
 
-int card_cho_manno_revolutionary(int player, int card, event_t event ){
-/* CARD_ID_CHO_MANNO_REVOLUTIONARY	4429
+int card_cho_manno_revolutionary(int player, int card, event_t event)
+{
+  /* CARD_ID_CHO_MANNO_REVOLUTIONARY	4429
 Cho-Manno, Revolutionary	|2|W|W
 Legendary Creature - Human Rebel 2/2
 Prevent all damage that would be dealt to ~. */
 
-	check_legend_rule(player, card, event);
-
-	prevent_all_damage(player, card, event);
-
-	return 0;
+  if (event == EVENT_CHECK_ABILITIES && affect_me(player, card) && current_phase < PHASE_AFTER_BLOCKING &&
+      !is_humiliated(player, card, AL_STATIC))
+    check_abilities_toughness += 0x3fff;
+  check_legend_rule(player, card, event);
+  prevent_all_damage(player, card, event);
+  return 0;
 }
 
 int card_cinder_elemental(int player, int card, event_t event ){
@@ -1137,17 +1157,13 @@ Customs Depot	|1|U
 Enchantment
 Whenever you cast a creature spell, you may pay |1. If you do, draw a card, then discard a card. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_CREATURE);
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test) ){
-			if( charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 1) ){
-				draw_cards(player, 1);
-				discard(player, 0, player);
-			}
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_CREATURE, NULL, player, card);
+	if (event == EVENT_SPA){
+		if (charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 1)){
+			draw_cards(player, 1);
+			discard(player, 0, player);
 		}
 	}
-
 	return global_enchantment(player, card, event);
 }
 
@@ -1212,6 +1228,14 @@ Deepwood Drummer	|1|G
 Creature - Human Spellshaper 1/1
 |G, |T, Discard a card: Target creature gets +2/+2 until end of turn. */
 
+	if (event == EVENT_CHECK_ABILITIES){
+		if (affected_card_controller == player && card_deepwood_drummer(player, card, EVENT_CAN_ACTIVATE)){
+			check_abilities_power += 2;
+			check_abilities_toughness += 2;
+		}
+		return 0;
+	}
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1256,6 +1280,10 @@ Enchanted creature doesn't untap during its controller's untap step. */
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t* instance = get_card_instance(player, card);
 		does_not_untap(instance->damage_target_player, instance->damage_target_card, event);
+	}
+
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){
+		return 0;
 	}
 
 	return disabling_aura(player, card, event);
@@ -1540,7 +1568,7 @@ Destroy all creatures with converted mana cost X or less. */
 		default_test_definition(&test, TYPE_CREATURE);
 		test.cmc = instance->info_slot+1;
 		test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
-		APNAP(p, { new_manipulate_all(player, card, p, &test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &test, KILL_DESTROY);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -1712,25 +1740,18 @@ Furious Assault	|2|R
 Enchantment
 Whenever you cast a creature spell, ~ deals 1 damage to target player. */
 
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_CREATURE);
-
-		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			target_definition_t td1;
-			default_target_definition(player, card, &td1, TYPE_CREATURE);
-			td1.zone = TARGET_ZONE_PLAYERS;
-			td1.allow_cancel = 0;
-
-			card_instance_t *instance= get_card_instance(player, card);
-
-			if( can_target(&td1) && new_pick_target(&td1, "TARGET_PLAYER", 0, 0) ){
-				damage_player(instance->targets[0].player, 1, player, card);
-			}
-			instance->number_of_targets = 0;
+	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_CREATURE, NULL, player, card);
+	if (event == EVENT_SPA){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TARGET_TYPE_PLANESWALKER);
+		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+		td.allow_cancel = 0;
+		card_instance_t* instance = get_card_instance(player, card);
+		if (can_target(&td) && new_pick_target(&td, "TARGET_PLAYER_OR_PLANESWALKER", 0, 0)){
+			damage_player(instance->targets[0].player, 1, player, card);
 		}
+		instance->number_of_targets = 0;
 	}
-
 	return global_enchantment(player, card, event);
 }
 
@@ -1925,7 +1946,7 @@ Creature - Human Spellshaper 1/1
 		default_test_definition(&test, TYPE_ARTIFACT);
 		test.cmc = instance->info_slot + 1;
 		test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
-		APNAP(p, { new_manipulate_all(instance->parent_controller, instance->parent_card, p, &test, KILL_DESTROY); };);
+		new_manipulate_all(instance->parent_controller, instance->parent_card, ANYBODY, &test, KILL_DESTROY);
 	}
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_DISCARD, MANACOST_XR(-1, 1), 0, NULL, NULL);
@@ -2117,10 +2138,11 @@ Horn of Plenty |6
 Artifact
 Whenever a player casts a spell, he or she may pay {1}. If that player does, he or she draws a card at the beginning of the next end step.
 */
-	if( new_specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, NULL) ){
+	sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_AI(player), TYPE_ANY, NULL, player, card);
+	if (event == EVENT_SPA){
 		int choice = 2;
 		if( has_mana( trigger_cause_controller, COLOR_ANY, 1) ){
-			choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
+			choice = DIALOG(trigger_cause_controller, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
 							"Activate Horn of Plenty", 1, 14-(hand_count[player]*2),
 							"Decline", 1, 5);
 		}
@@ -2217,7 +2239,7 @@ int card_invigorate(int player, int card, event_t event){
 
 	if( event == EVENT_MODIFY_COST ){
 		card_instance_t *instance = get_card_instance( player, card );
-		if( check_battlefield_for_subtype(player, TYPE_LAND, SUBTYPE_FOREST) ){
+		if( check_battlefield_for_subtype(player, TYPE_LAND, SUBTYPE_FOREST) && player_can_gain_life_as_cost(1-player) ){
 			instance->info_slot = 1;
 			null_casting_cost(player, card);
 		}
@@ -2289,7 +2311,9 @@ Ivory Mask	|2|W|W
 Enchantment
 You have shroud. (You can't be the target of spells or abilities.) */
 
-	give_shroud_to_player(player, card, event);
+	if (in_play(player, card) && !is_humiliated(player, card, AL_STATIC)){
+		give_shroud_to_player(player, card, event);
+	}
 	return global_enchantment(player, card, event);
 }
 
@@ -2709,9 +2733,6 @@ int card_magistrates_scepter(int player, int card, event_t event){
 			spell_fizzled = 1;
 			return 0;
 		}
-		else{
-			choice = 1;
-		}
 		if( choice == CHOICE_COUNTER ){
 			return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(4), 0, NULL, NULL);
 		}
@@ -2769,7 +2790,7 @@ Mercadian Atlas	|5
 Artifact
 At the beginning of your end step, if you didn't play a land this turn, you may draw a card. */
 
-	if( current_turn == player && ! lands_played && ! is_humiliated(player, card, AL_TRIG) &&
+	if( current_turn == player && !(land_can_be_played & LCBP_LAND_HAS_BEEN_PLAYED) && ! is_humiliated(player, card, AL_TRIG) &&
 		eot_trigger_mode(player, card, event, player, RESOLVE_TRIGGER_AI(player)) )
 	{
 		draw_cards(player, 1);
@@ -2973,7 +2994,7 @@ Exile X target creature cards from your graveyard. For each creature card exiled
 		instance->info_slot = select_multiple_cards_from_graveyard(player, player, 0, AI_MIN_VALUE, &this_test, max_cards, &instance->targets[0]);
 
 		if( instance->info_slot > 0 ){
-			int diff = true_get_updated_casting_cost(player, card, -1, event, -1);
+			int diff = true_get_updated_casting_cost(player, card, -1, event, 0);
 			int amount = instance->info_slot += diff;
 			charge_mana(player, COLOR_COLORLESS, amount);
 		}
@@ -3230,6 +3251,12 @@ Enchantment - Aura
 Enchant creature
 Prevent all damage that would be dealt by enchanted creature. */
 
+	if (event == EVENT_CHECK_ABILITIES){
+		card_instance_t* instance = get_card_instance(player, card);
+		if (affect_me(instance->damage_target_player, instance->damage_target_card) && in_play(player, card)){
+			check_abilities_power -= get_power(instance->damage_target_player, instance->damage_target_card);
+		}
+	}
 	if( in_play(player, card) && get_card_instance( player, card )->damage_target_player != -1 && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t *instance = get_card_instance( player, card );
 		int t_player = instance->damage_target_player;
@@ -3243,6 +3270,8 @@ Prevent all damage that would be dealt by enchanted creature. */
 			}
 		}
 	}
+
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
 	return disabling_aura(player, card, event);
 }
@@ -3621,7 +3650,7 @@ int card_pulverize(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_ARTIFACT);
-		APNAP(p, { new_manipulate_all(player, card, p, &this_test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &this_test, KILL_DESTROY);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -3648,7 +3677,7 @@ int card_puppets_verdict(int player, int card, event_t event)
 			test.power = 2;
 			test.power_flag = F5_POWER_GREATER_THAN_VALUE;
 		}
-		APNAP(p, { new_manipulate_all(player, card, p, &test, KILL_DESTROY); };);
+		new_manipulate_all(player, card, ANYBODY, &test, KILL_DESTROY);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -3881,7 +3910,7 @@ int card_rishadan_port(int player, int card, event_t event){
 	 * |T: Add |C to your mana pool.
 	 * |1, |T: Tap target land. */
 
-	if( ! IS_GAA_EVENT(event) || event == EVENT_ACTIVATE ){
+	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE ){
 		return mana_producer(player, card, event);
 	}
 
@@ -4420,6 +4449,10 @@ Statecraft |3|U
 Enchantment
 Prevent all combat damage that would be dealt to and dealt by creatures you control.
 */
+	if (event == EVENT_CHECK_ABILITIES && affected_card_controller == player){
+		check_abilities_power -= get_power(player, affected_card);
+		check_abilities_toughness += 0x3fff;
+	}
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_PREVENT_DAMAGE ){
 			card_instance_t *damage= get_card_instance(affected_card_controller, affected_card);
@@ -4664,7 +4697,7 @@ Artifact Creature - Spellshaper 1/1
 			artifact_animation(player, instance->parent_card, instance->targets[0].player, instance->targets[0].card, 1, -1, -1, 0, 0);
 		}
 	}
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST_X(1), 0, &td, "TARGET_ARTIFACT");
+	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET|GAA_DISCARD, MANACOST_X(1), 0, &td, "TARGET_ARTIFACT");
 }
 
 int card_trade_routes(int player, int card, event_t event){
@@ -4700,7 +4733,7 @@ int card_trade_routes(int player, int card, event_t event){
 
 	if( event == EVENT_ACTIVATE ){
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
-							"Return a target land to your hand", can_target(&td), 5,
+							"Return a land to your hand", can_target(&td), 5,
 							"Discard a land card and draw", check_battlefield_for_special_card(player, card, player, 0, &test), 5 + (7-hand_count[player]));
 		if( ! choice ){
 			spell_fizzled = 1;

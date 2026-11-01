@@ -201,7 +201,7 @@ int card_hidden_agenda(int player, int card, event_t event){
 
 	if( event == EVENT_HIDDEN_AGENDA ){
 		int csvid = -1;
-		if( player == AI ){
+		if( IS_AI(player) ){
 			test_definition_t test;
 			default_test_definition(&test, TYPE_ANY);
 			int this_conspiracy = instance->targets[13].card;
@@ -243,25 +243,26 @@ int card_hidden_agenda(int player, int card, event_t event){
 			csvid = get_random_hidden_name_for_ai(&test, -1);
 		}
 		else{
-			csvid = card_from_list(player, 3, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+			test_definition_t test;
+			new_default_test_definition(&test, TYPE_ANY, "Choose a card name.");
+			csvid = new_card_from_list(player, 3, &test);
 		}
 		store_conspiracys_hidden_name(player, card, csvid);
 
 		if( get_card_instance(player, card)->targets[13].card == CARD_ID_CONSPIRACY_SUMMONERS_BOND ){
 			csvid = -1;
-			if( player == AI ){
+			if( IS_AI(player) ){
 				test_definition_t test;
 				default_test_definition(&test, TYPE_CREATURE);
 
 				csvid = get_random_hidden_name_for_ai(&test, get_conspiracys_hidden_name(player, card));
 			}
 			else{
-				while( 1 ){
-					csvid = card_from_list(player, 3, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-					if( csvid != get_conspiracys_hidden_name(player, card) ){
-						break;
-					}
-				}
+				test_definition_t test;
+                new_default_test_definition(&test, TYPE_ANY, "Choose a card name.");
+                test.id = get_conspiracys_hidden_name(player, card);
+                test.id_flag = DOESNT_MATCH;
+                csvid = new_card_from_list(player, 3, &test);
 			}
 			store_conspiracys_hidden_name2(player, card, csvid);
 		}
@@ -438,7 +439,7 @@ int card_secret_summoning(int player, int card, event_t event){
 		scnprintf(msg, 100, "Select a card named %s", cards_ptr[ get_conspiracys_hidden_name(player, card) ]->name);
 		test_definition_t test;
 		new_default_test_definition(&test, TYPE_CREATURE, msg);
-		while( new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &test) != -1 ){
+		while( new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &test) >= 0 ){
 		}
 	}
 
@@ -751,7 +752,7 @@ int card_custodi_soulbinders(int player, int card, event_t event){
 		default_token_definition(player, card, CARD_ID_SPIRIT, &token);
 		token.qty = 1;
 		token.key_plus = KEYWORD_FLYING;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
+		token.color_forced = COLOR_TEST_WHITE;
 		generate_token(&token);
 	}
 
@@ -835,12 +836,8 @@ int card_unquestioned_authority(int player, int card, event_t event){
 		draw_cards(player, 1);
 	}
 
-	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player != -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		protection_from_creatures(instance->damage_target_player, instance->damage_target_card, event);
-	}
-
-	return generic_aura(player, card, event, player, 0, 0, 0, 0, 0, 0, 0);
+	attached_gets_kw(player, card, event, KEYWORD_PROT_CREATURES, SP_KEYWORD_0);
+	return aura(player, card, event, NULL, NULL);
 }
 /*************
 * 	Blue	 *
@@ -932,15 +929,12 @@ int card_grixis_illusionist(int player, int card, event_t event, int clr, int po
 		    int leg = create_targetted_legacy_effect(player, card, &fx_change_landtype, inst->targets[0].player, inst->targets[0].card);
 		    card_instance_t* legacy = get_card_instance(player, leg);
 		    legacy->targets[1].player = color;
-			legacy->eot_toughness = 1;
-		    get_card_instance(player, cantrip(player, card, 1))->eot_toughness = 2;
 
 		}
-	    kill_card(player, card, KILL_DESTROY);
 
 	}
 
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET|GAA_LITERAL_PROMPT, MANACOST0, 0, &td, "Select target land you control.");
+	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET|GAA_LITERAL_PROMPT, MANACOST0, 0, &td, "Select target land you control it becomes your chosen basic land type.");
 }
 
 int card_enclave_elite(int player, int card, event_t event){
@@ -1101,6 +1095,7 @@ int card_muzzio_visionary_architect(int player, int card, event_t event){
 		if( amount > 0 ){
 			int result = reveal_x_and_choose_a_card_type(player, card, amount, TYPE_ARTIFACT);
 			if( result != -1 ){
+				set_special_flags(player, result, SF_PLAYED_FROM_DECK);
 				put_into_play(player, result);
 			}
 		}
@@ -1212,25 +1207,20 @@ int card_stasis_cell(int player, int card, event_t event){
 	  3U: Attach Stasis Cell to target creature.
 	*/
 
-	if( get_card_instance(player, card)->damage_target_player > -1 ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-		does_not_untap(p, c, event);
-		if( event == EVENT_CAN_ACTIVATE ){
-			if( generic_activated_ability(player, card, event, 0, MANACOST_XU(3, 1), 0, NULL, NULL) ){
-				return call_card_function(player, card, EVENT_CAN_MOVE_AURA);
-			}
+	card_instance_t* instance = get_card_instance(player, card);
+	if (instance->damage_target_player >= 0){
+		does_not_untap(instance->damage_target_player, instance->damage_target_card, event);
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.preferred_controller = 1-player;
+		if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE){
+			return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST_XU(3, 1), 0, &td, "Select target creature to attach this.");
 		}
-		if( event == EVENT_ACTIVATE ){
-			if( charge_mana_for_activated_ability(player, card, MANACOST_XU(3, 1)) ){
-				return call_card_function(player, card, EVENT_MOVE_AURA);
-			}
-		}
-		if( event == EVENT_RESOLVE_ACTIVATION ){
-			return call_card_function(player, card, EVENT_RESOLVE_MOVING_AURA);
+		if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td)){
+			attach_aura_to_target(player, instance->parent_card, event, instance->targets[0].player, instance->targets[0].card);
 		}
 	}
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 	return disabling_aura(player, card, event);
 }
 
@@ -1244,23 +1234,15 @@ int card_travellers_cloak(int player, int card, event_t event){
 	  Enchanted creature has landwalk of the chosen type.
 	*/
 
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if (event == EVENT_ETB_ABILITY){ draw_cards(player, 1); }
+	else if( event == EVENT_RESOLVE_SPELL ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.preferred_controller = player;
 		if( valid_target(&td) ){
 			get_card_instance(player, card)->info_slot = 1<<(choose_a_color(player, get_deck_color(player, 1-player))-1);
 		}
-	}
-
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-
-	if( event == EVENT_ETB_ABILITY ){
-		draw_cards(player, 1);
 	}
 
 	return generic_aura(player, card, event, player, 0, 0, get_card_instance(player, card)->info_slot, 0, 0, 0, 0);
@@ -1367,18 +1349,19 @@ Whenever players finish voting, each opponent who voted for a choice you didn't 
 2/1
 */
 
-int card_infectious_horror(int player, int card, event_t event){
-	/*
+int card_infectious_horror(int player, int card, event_t event)
+{
+  /*
 	  Infectious Horror |3|B REPRINT
 	  Creature - Zombie Horror
 	  Whenever Infectious Horror attacks, each opponent loses 2 life.
 	  2/2
 	*/
-	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
-		lose_life(1-player, 2);
-	}
 
-	return 0;
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+    lose_life(1-player, 2);
+  return 0;
 }
 
 int card_necromantic_thirst(int player, int card, event_t event){
@@ -1401,6 +1384,8 @@ int card_necromantic_thirst(int player, int card, event_t event){
 			}
 		}
 	}
+
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
 	return vanilla_aura(player, card, event, player);
 }
@@ -1710,6 +1695,8 @@ int card_flowstone_blade(int player, int card, event_t event){
 		}
 	}
 
+	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
+
 	return vanilla_aura(player, card, event, player);
 }
 
@@ -1800,7 +1787,6 @@ int card_ignition_team(int player, int card, event_t event){
 	if( (event == EVENT_CAST_SPELL || event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE) && affect_me(player, card) ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_LAND);
-		this_test.state = STATE_TAPPED;
 		enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, check_battlefield_for_special_card(player, card, ANYBODY, CBFSC_GET_COUNT, &this_test));
 	}
 
@@ -1815,8 +1801,8 @@ int card_ignition_team(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance( player, card);
 
 	if( event == EVENT_RESOLVE_ACTIVATION && valid_target(&td) ){
-		add_a_subtype(instance->targets[0].player, instance->targets[0].card, SUBTYPE_ELEMENTAL);
-		land_animation2(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card, 1, 4, 4, 0, 0, 0, NULL);
+		int legacy = land_animation2(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card, 1, 4, 4, 0, 0, 0, NULL);
+		get_card_instance(player, legacy)->targets[9].card = SUBTYPE_ELEMENTAL;
 	}
 
 	return generic_activated_ability(player, card, event, GAA_1_1_COUNTER | GAA_CAN_TARGET, MANACOST_XR(2,1), 0, &td, "TARGET_LAND");
@@ -1858,10 +1844,12 @@ int card_orcish_cannonade(int player, int card, event_t event){
 	default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
 	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
-	if (event == EVENT_RESOLVE_SPELL && valid_target(&td) ){
-		damage_target0(player, card, 2);
-		damage_player(player, 3, player, card);
-		draw_cards(player, 1);
+	if (event == EVENT_RESOLVE_SPELL){
+		if (valid_target(&td)){
+			damage_target0(player, card, 2);
+			damage_player(player, 3, player, card);
+			draw_cards(player, 1);
+		}
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -1961,7 +1949,6 @@ int card_vent_sentinel(int player, int card, event_t event){
 	 * Creature - Elemental 2/4
 	 * Defender
 	 * |1|R, |T: ~ deals damage to target player or planeswalker equal to the number of creatures with defender you control. */
-	cannot_attack(player, card, event);
 
 	if (!IS_GAA_EVENT(event))
 		return 0;
@@ -2137,11 +2124,13 @@ int card_provoke(int player, int card, event_t event){
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.allowed_controller = 1-player;
 
-	if (event == EVENT_RESOLVE_SPELL && valid_target(&td) ){
+	if (event == EVENT_RESOLVE_SPELL){
+		if (valid_target(&td)){
 		card_instance_t *instance = get_card_instance(player, card);
 		untap_card(instance->targets[0].player, instance->targets[0].card);
 		pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_MUST_BLOCK);
 		draw_cards(player, 1);
+		}
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -2224,6 +2213,7 @@ int card_dack_fayden(int player, int card, event_t event)
    * +1: Target player draws two cards, then discards two cards.
    * -2: Gain control of target artifact.
    * -6: You get an emblem with "Whenever you cast a spell that targets one or more permanents, gain control of those permanents." */
+	check_legend_rule(player, card, event);
 
   if (IS_ACTIVATING(event))
 	{
@@ -2289,8 +2279,7 @@ int card_dack_fayden(int player, int card, event_t event)
 					  if (player == AI)
 						ai_modifier -= 128;
 					}
-				  else
-					gain_control(player, card, instance->targets[0].player, instance->targets[0].card);
+				  gain_control_permanently(player, instance->targets[0].player, instance->targets[0].card);
 				}
 			  break;
 
@@ -2334,7 +2323,7 @@ int card_dack_faydens_emblem(int player, int card, event_t event)
 			for (i = 0; i < spell->number_of_targets; ++i)
 					if(spell->targets[i].player != player && spell->targets[i].card != -1 &&
 						is_what(spell->targets[i].player, spell->targets[i].card, TYPE_PERMANENT))
-						gain_control(player, card, spell->targets[i].player, spell->targets[i].card);
+						gain_control_permanently(player, spell->targets[i].player, spell->targets[i].card);
 		}
 	}
 
@@ -2442,8 +2431,8 @@ int card_flamewright(int player, int card, event_t event){
 	if( event == EVENT_ACTIVATE ){
 		int abils[3] = {
 						0,
-						generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(1), 0, NULL, NULL),
-						generic_activated_ability_with_sacrifice_as_cost(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0,
+						generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_X(1), 0, NULL, NULL),
+						generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0,
 																		&td, NULL, 0, &test, 0)
 		};
 
@@ -2723,13 +2712,15 @@ int card_selvala_explorer_returned(int player, int card, event_t event){
 		int spirits = parley(player, card);
 
 		produce_mana(player, COLOR_GREEN, spirits);
+		tapped_for_mana_color = COLOR_GREEN;
+		tapped_for_mana[COLOR_GREEN] = spirits;
 		gain_life(player, spirits);
 
 		draw_cards(player, 1);
 		draw_cards(1-player, 1);
 	}
 
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL);
+	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_MANA_ABILITY, MANACOST0, 0, NULL, NULL);
 }
 
 /*
@@ -2751,7 +2742,7 @@ int card_wood_sage(int player, int card, event_t event){
 		int *deck = deck_ptr[player];
 		int csvid = -1;
 		int cd = count_deck(player);
-		if( player == AI ){
+		if( IS_AI(player) ){
 			int rnd = internal_rand(cd);
 			int try = 0;
 			while( ! is_what(-1, deck[rnd], TYPE_CREATURE) && try < 2){
@@ -2766,7 +2757,9 @@ int card_wood_sage(int player, int card, event_t event){
 			}
 		}
 		else{
-			csvid = card_from_list(player, 3, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+			test_definition_t test;
+			new_default_test_definition(&test, TYPE_CREATURE, "Choose a creature card name.");
+			csvid = new_card_from_list(player, 3, &test);
 		}
 		if( csvid != -1 ){
 			int max = cd < 4 ? cd : 4;
