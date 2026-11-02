@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 from capstone import Cs, CS_ARCH_X86, CS_MODE_32
 from canonicalize_helpers import ROOT, read, sha, span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image, value, inherited_value
 from verify_inline_helpers import ranges
 from verify_split_cards_recovery import contract
@@ -51,9 +52,12 @@ def verify(proof, image, root=ROOT, *, record_key='native_inline_wrapper_recover
         text = read(root / row['source'])
         a, b = span(text, row['name'])
         assert sha(row['definition'].encode()) == row['definition_sha256']
-        if text[a:b] != row['definition']:
+        if not source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['definition_sha256']):
             from verify_global_index_recovery import has_source_repair
-            if has_source_repair(proof,root,row['source'],row['name'],row['definition_sha256']):
+            from verify_token_aggregate_recovery import has_source_repair as aggregate_repair
+            if aggregate_repair(proof,root,row['source'],row['name'],row['definition_sha256']):
+                from verify_token_aggregate_recovery import verify_superseded_definition
+            elif has_source_repair(proof,root,row['source'],row['name'],row['definition_sha256']):
                 from verify_global_index_recovery import verify_superseded_definition
             else:
                 from verify_selection_storage_recovery import verify_superseded_definition
@@ -89,10 +93,13 @@ def verify(proof, image, root=ROOT, *, record_key='native_inline_wrapper_recover
                 source_owner = witness['source_owner']
                 t = read(root / source_owner['source'])
                 x, y = span(t, source_owner['name'])
-                if sha(t[x:y].encode()) != source_owner['definition_sha256']:
+                if not source_hash_matches(proof,root,source_owner['source'],source_owner['name'],sha(t[x:y].encode()),source_owner['definition_sha256']):
                     from verify_global_index_recovery import has_source_repair
                     from verify_card_array_locals_recovery import has_source_repair as card_repair
-                    if card_repair(proof,root,source_owner['source'],source_owner['name'],source_owner['definition_sha256']):
+                    from verify_token_aggregate_recovery import has_source_repair as aggregate_repair
+                    if aggregate_repair(proof,root,source_owner['source'],source_owner['name'],source_owner['definition_sha256']):
+                        from verify_token_aggregate_recovery import verify_superseded_definition
+                    elif card_repair(proof,root,source_owner['source'],source_owner['name'],source_owner['definition_sha256']):
                         from verify_card_array_locals_recovery import verify_superseded_definition
                     elif has_source_repair(proof,root,source_owner['source'],source_owner['name'],source_owner['definition_sha256']):
                         from verify_global_index_recovery import verify_superseded_definition

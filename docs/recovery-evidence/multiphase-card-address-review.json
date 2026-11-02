@@ -1,0 +1,1806 @@
+{
+  "parsed_functions": 28,
+  "record_address_uses": 196,
+  "non_call_argument_address_uses": 0,
+  "rows": [
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_rhonas_the_indomitable",
+      "definition_sha256": "4cd54494df112ec06a09c9a4cd84ebf52578b504464657c16873fcc8234b87f9",
+      "address_uses": [
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "check_battlefield_for_special_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test2",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test2",
+          "callee": "check_battlefield_for_special_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "generic_activated_ability",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/battlebond.c",
+      "name": "card_najeela_the_blade_blossom",
+      "definition_sha256": "9267627e1d3ce6fccd71df7696160fe4b5f4adbcff770134335c8ebd35f62f1b",
+      "address_uses": [
+        {
+          "variable": "test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "store_attackers",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "default_token_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "generate_token",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_manipulate_all",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "pump_creatures_until_eot_no_repeat",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "name": "card_edgar_markov",
+      "definition_sha256": "ba7bd266db6352a0a236fba007cf402fc67e1ddf00c572a8b1f85d612f2f2a86",
+      "address_uses": [
+        {
+          "variable": "test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "sp_ability_trigger",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "new_manipulate_all",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "default_token_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "generate_token",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "name": "card_arahbo_roar_of_the_world",
+      "definition_sha256": "63537199debef6f59c9e7cda23e07d65d747cfd5ed7ad4b456aec3429865d260",
+      "address_uses": [
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "store_attackers",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/commander_2018.c",
+      "name": "card_varina_lich_queen",
+      "definition_sha256": "72e1bbe8b939ea3b6b8169e0808ec904f738ff43c967443965a8fe695f97dca4",
+      "address_uses": [
+        {
+          "variable": "test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "store_attackers",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_global_tutor",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_global_tutor",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "default_token_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "generate_token",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_plague_reaver",
+      "definition_sha256": "70959931bc2bd16e16460cfa1d0aaa097cb999463705a8b065e335ba2a92eb8e",
+      "address_uses": [
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_manipulate_all",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "generic_activated_ability",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "generic_activated_ability",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/dissension.c",
+      "name": "card_hide_seek",
+      "definition_sha256": "a20e2d91e3bb2059096720737dbebf5399e4b872adf49be0904ec861ab4a3d44",
+      "address_uses": [
+        {
+          "variable": "td3",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "would_validate_arbitrary_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td4",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td4",
+          "callee": "pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_select_a_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/dissension.c",
+      "name": "card_pure_simple",
+      "definition_sha256": "782dc71757233e1c3e4db50119739c011f789dd2cb296ff8cf8ef76e35da6593",
+      "address_uses": [
+        {
+          "variable": "td2",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td2",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "check_battlefield_for_special_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "check_battlefield_for_special_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test2",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test2",
+          "callee": "new_manipulate_all",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/dissension.c",
+      "name": "card_rise_fall",
+      "definition_sha256": "14e5c2f31976a06c0bc33098ea0d0f2d090ffa4e268d09617892c91a4526fd6d",
+      "address_uses": [
+        {
+          "variable": "td3",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "select_target_from_either_grave",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td4",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td4",
+          "callee": "pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test2",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test2",
+          "callee": "new_effect_coercion",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_torgaar_famine_incarnate",
+      "definition_sha256": "037e7de741b86464ac90e24429fb81999b9e813da5c838658b5c4ea7727c3510",
+      "address_uses": [
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "max_can_sacrifice_as_cost",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "max_can_sacrifice_as_cost",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "mark_sacrifice",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/dragons_maze.c",
+      "name": "card_breaking_entering",
+      "definition_sha256": "a34def840e73f9a15cfc6f0dd09658b9a38f1eb34c6f3fdbdfb1f71a3741614e",
+      "address_uses": [
+        {
+          "variable": "td2",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td2",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_select_a_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_select_a_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/dragons_maze.c",
+      "name": "card_down_dirty",
+      "definition_sha256": "9aded146128ed1817265aa78d51aae4a8a5a403952c799b35425ed79ab805f4d",
+      "address_uses": [
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td2",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td2",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "select_target_from_grave_source",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "validate_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/dragons_maze.c",
+      "name": "card_flesh_blood",
+      "definition_sha256": "8df2f1bc50dd7dfc5c140348a35be84b0b3604097ecafdbf040ce60a3b8fcab1",
+      "address_uses": [
+        {
+          "variable": "td3",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "select_target_from_either_grave",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td4",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td4",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td5",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td5",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td5",
+          "callee": "validate_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/dragons_maze.c",
+      "name": "card_turn_burn",
+      "definition_sha256": "4112ee7f0250a9238774b9169052a529d2e612a0f6da4257af0077d58aafd0e6",
+      "address_uses": [
+        {
+          "variable": "td3",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td4",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td4",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "hc",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "hc",
+          "callee": "humiliate_and_set_pt_abilities",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td5",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td5",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/ikoria.c",
+      "name": "card_zirda_the_dawnwaker",
+      "definition_sha256": "984bda3de5d7fa5cbee1d020370d49642c1e687633ec071afb8acbdb38ea816a",
+      "address_uses": [
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "remove_cost_mod_for_activated_abilities",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test2",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test2",
+          "callee": "set_cost_mod_for_activated_abilities",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "valid_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "generic_activated_ability",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/m20.c",
+      "name": "card_kykar_winds_fury",
+      "definition_sha256": "0164fc6da6d7d18fdd0c7cdb80b401b09e80a6a33a071de5a200eddda8eb458c",
+      "address_uses": [
+        {
+          "variable": "token",
+          "callee": "default_token_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "generate_token",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "new_can_sacrifice_as_cost",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "new_can_sacrifice_as_cost",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test3",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test3",
+          "callee": "new_sacrifice",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/mirrodin.c",
+      "name": "card_glissa_sunseeker",
+      "definition_sha256": "7375232bc425f03ebc087ab3051b792786b8e065187999a542ebefb5dd80a32d",
+      "address_uses": [
+        {
+          "variable": "test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "check_battlefield_for_special_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "valid_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "generic_activated_ability",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "generic_activated_ability",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_breyas_apprentice",
+      "definition_sha256": "92686f86c3dd9dc525255f9fdab08ba9553fec2991238adda5ec939ecbb23ec3",
+      "address_uses": [
+        {
+          "variable": "token",
+          "callee": "default_token_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "generate_token",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "generic_activated_ability_with_sacrifice_as_cost",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "new_sacrifice",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_junk_winder",
+      "definition_sha256": "bcbfa8310ea265a3ddd3da8ade6f39574f05f87fce405f7bf898af8e8047016e",
+      "address_uses": [
+        {
+          "variable": "test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "check_battlefield_for_special_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "etb_ability_global",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_dermotaxi",
+      "definition_sha256": "eccef2754abe665e22f11c9958943bace19e962283c12c38ea1af0cabc427d64",
+      "address_uses": [
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "new_select_a_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td2",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td2",
+          "callee": "target_available",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td2",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td2",
+          "callee": "select_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td2",
+          "callee": "select_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/planar_chaos.c",
+      "name": "card_boom_bust",
+      "definition_sha256": "3f5c136f208efb43c5f6c7e0601604a5bae3f3c87f2531eaadc3cedcb902d78f",
+      "address_uses": [
+        {
+          "variable": "td3",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td3",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td4",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td4",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_manipulate_all",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_noxious_field",
+      "definition_sha256": "946ea6c192762e44d889389618dae09fa6ff255325546548b5a07bc41a092443",
+      "address_uses": [
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_damage_all",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "aura_literal_prompt",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "card_biomancers_familiar",
+      "definition_sha256": "6d67590e281fac167f1127235cde277cd5ba2b695bbd2bc5f34ccd444a30c23f",
+      "address_uses": [
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "set_cost_mod_for_activated_abilities",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test2",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test2",
+          "callee": "remove_cost_mod_for_activated_abilities",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "generic_activated_ability",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_forerunner_of_the_legion",
+      "definition_sha256": "11d8b4d94bc7a8b14c846b5780815bba6f58b068f1ab3f112ba85133d0e181f3",
+      "address_uses": [
+        {
+          "variable": "test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "etb_ability_global",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "new_global_tutor",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_awaken_the_blood_avatar",
+      "definition_sha256": "28a224ebf3e2a96d776ce72dc6c2021ae1c133bfaffd23aaa0d922d857a8769e",
+      "address_uses": [
+        {
+          "variable": "test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "max_can_sacrifice_as_cost",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "max_can_sacrifice_as_cost",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test2",
+          "callee": "mark_sacrifice",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "default_token_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "generate_token",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_ashiok_nightmare_muse",
+      "definition_sha256": "6ab7fbd05e04b8bbd262d93de9ef6e906e2c3f838c5aa3069eb92e962f1dd0d3",
+      "address_uses": [
+        {
+          "variable": "token",
+          "callee": "default_token_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "generate_token",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "new_select_a_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "new_default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "special_count_zone",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "new_select_a_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "test",
+          "callee": "new_select_a_card",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_kiora_behemoth_beckoner",
+      "definition_sha256": "e21b8bcf9a8152e6de7c183aa367c7e85c47e31800d02cecb9be47316c11a106",
+      "address_uses": [
+        {
+          "variable": "this_test",
+          "callee": "default_test_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "this_test",
+          "callee": "etb_ability_global",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "can_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "new_pick_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "valid_target",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_jace_mirror_mage",
+      "definition_sha256": "1f6dece39c52cbaffa9b4c6bc1e77c18980d17e3c5df955a85e4d3fc7fa937dd",
+      "address_uses": [
+        {
+          "variable": "token",
+          "callee": "copy_token_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "token",
+          "callee": "generate_token",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        },
+        {
+          "variable": "td",
+          "callee": "default_target_definition",
+          "direct_call_argument": true,
+          "ancestry": [
+            "ExprList"
+          ]
+        }
+      ],
+      "parser_only_macro_stubs": []
+    }
+  ],
+  "scope": "Read-only C AST check on each recorded final definition. Every direct address of a restored local occurs as an immediate call argument, possibly through a cast; no direct pointer assignment, return or comma expression hides a later source consumer. Typedef names are syntactic parser stubs, not an ABI/type proof. Unrelated EXE_FN macros, when present, have no address operands and receive parser-only call names. Callee internals and arbitrary pointer retention are not inferred.",
+  "tool_path": ".recovery/review-multiphase-address-uses-v2-c79.py",
+  "tool_sha256": "85b512f8c8217a2acf3251f4a386d28bddb82eb9e220e3cca682150558e54a81",
+  "observed_exit_code": 0,
+  "observed_chunk_id": "10a498",
+  "source_record": "docs/recovery-evidence/multiphase-card-locals.json",
+  "source_record_sha256": "e383c9b4ec086803f86eef62998df70600a4f081741d2c88165488704d69d13d"
+}

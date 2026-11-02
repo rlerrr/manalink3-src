@@ -438,12 +438,10 @@ int charge_spell_cost(card_data_t *cd, int player, int card)
   int *piVar10;
   int *piVar11;
   int (*paiVar12)[8];
-  unsigned char bVar13;
   int iVar14;
   int iVar15;
   int v7[8];
 
-  bVar13 = 0;
   pcVar5 = EXE_BYTE_PTR(0x55cf18);
   uVar1 = cd->cc[1];
   do
@@ -468,8 +466,7 @@ int charge_spell_cost(card_data_t *cd, int player, int card)
       iVar15 = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, iVar14, iVar15);
       return iVar15;
     }
-    iVar15 = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, 0, 0);
-    if (iVar15 == 0)
+    if (EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, 0, 0) == 0)
     {
       return 0;
     }
@@ -478,8 +475,8 @@ int charge_spell_cost(card_data_t *cd, int player, int card)
     for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)
     {
       *piVar11 = *piVar10;
-      piVar10 = piVar10 + (unsigned int)bVar13 * -2 + 1;
-      piVar11 = piVar11 + (unsigned int)bVar13 * -2 + 1;
+      piVar10 = piVar10 + 1u;
+      piVar11 = piVar11 + 1u;
     }
     psVar8 = ((int8_t *)0x55cf20);
     do
@@ -528,8 +525,8 @@ int charge_spell_cost(card_data_t *cd, int player, int card)
     for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)
     {
       *piVar11 = *piVar10;
-      piVar10 = piVar10 + (unsigned int)bVar13 * -2 + 1;
-      piVar11 = piVar11 + (unsigned int)bVar13 * -2 + 1;
+      piVar10 = piVar10 + 1u;
+      piVar11 = piVar11 + 1u;
     }
     psVar8 = ((int8_t *)0x55cf20);
     do
@@ -564,8 +561,7 @@ int charge_spell_cost(card_data_t *cd, int player, int card)
     {
       if (ai_is_speculating == 1)
       {
-        iVar15 = internal_rand(2);
-        if (iVar15 == 0)
+        if (internal_rand(2) == 0)
         {
           iVar6 = has_mana(player, 7, 1);
           iVar15 = 0;
@@ -645,7 +641,7 @@ int charge_spell_cost(card_data_t *cd, int player, int card)
       for (iVar14 = 8; iVar14 != 0; iVar14 = iVar14 + -1)
       {
         (*paiVar12)[0] = 0;
-        paiVar12 = (int (*)[8])((int)paiVar12 + ((unsigned int)bVar13 * -2 + 1) * 4);
+        paiVar12 = (int (*)[8])((int)paiVar12 + 4u);
       }
     }
     else

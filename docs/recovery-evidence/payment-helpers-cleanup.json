@@ -1,0 +1,1307 @@
+{
+  "rows": [
+    {
+      "source": "functions/functions.c",
+      "name": "charge_mana_from_id_with_cost_mod",
+      "before_definition": "int charge_mana_from_id_with_cost_mod(int player, int card, event_t event, int csvid, int cost_mod)\n{\n  card_ptr_t *cp;\n  unsigned int uVar1;\n  bool bVar2;\n  card_instance_t *instance;\n  int iVar4;\n  int iVar5;\n  int number;\n  unsigned int uVar6;\n  unsigned int clred_artifact;\n  unsigned int uStack_2c;\n  int iStack_1c;\n  unsigned int uStack_18;\n  int iStack_14;\n\n  if (csvid < 0)\n  {\n    csvid = get_id(player, card);\n  }\n  if (card == -1)\n  {\n    iStack_14 = get_internal_card_id_from_csv_id(csvid);\n    if (csvid == 0x25ad)\n      goto LAB_0268b987;\n  }\n  else\n  {\n    instance = get_card_instance(player, card);\n    iStack_14 = instance->internal_card_id;\n    if ((unsigned int)cards_data[iStack_14].id != csvid)\n    {\n      backtrace_and_abort(\"functions/functions.c:11121\\ncards_data[iid].id == csvid\");\n    }\n    if (csvid == 0x25ad)\n    {\n\n      if (-1 < card)\n      {\n        return casting_reaper_king(player, card, event);\n      }\n    LAB_0268b987:\n      iStack_1c = add_card_to_hand(player, iStack_14);\n      iVar4 = casting_reaper_king(player, iStack_1c, event);\n      goto LAB_0268b91e;\n    }\n  }\n  cp = cards_ptr[csvid];\n  uVar6 = (unsigned int)cp->req_colorless;\n  if (uVar6 == 0x28)\n  {\n    uVar6 = 0;\n  }\n  clred_artifact = (unsigned int)(cards_data[iStack_14].type & 0x40);\n  if (is_phyrexian(csvid) == 0)\n  {\n\n    if (card < 0)\n    {\n\n      uStack_18 = true_get_updated_casting_cost(player, -1, iStack_14, event, uVar6 - cost_mod);\n      uStack_18 = uStack_18 & (int)(uStack_18 ^ 0xffffffff) >> 0x1f;\n      if (is_normal_hybrid(cp) == 0)\n      {\n        if (is_monocolor_hybrid(cp) == 0)\n          goto LAB_0268ba70;\n        card = add_card_to_hand(player, iStack_14);\n        instance = get_card_instance(player, card);\n        instance->state = instance->state | 0x20;\n        hand_count[player] = hand_count[player] + -1;\n        iStack_1c = card;\n        goto LAB_0268b9de;\n      }\n      card = add_card_to_hand(player, iStack_14);\n      instance = get_card_instance(player, card);\n      uVar6 = instance->state;\n      hand_count[player] = hand_count[player] + -1;\n      instance->state = uVar6 | 0x20;\n      iStack_1c = card;\n    }\n    else\n    {\n      uStack_18 = true_get_updated_casting_cost(player, card, -1, event, uVar6 - cost_mod);\n      uStack_18 = uStack_18 & (int)(uStack_18 ^ 0xffffffff) >> 0x1f;\n      iVar4 = is_normal_hybrid(cp);\n      iStack_1c = -1;\n      if (iVar4 == 0)\n      {\n        if (is_monocolor_hybrid(cp) == 0)\n        {\n        LAB_0268ba70:\n\n          if (csvid == 0x2ded)\n          {\n            iVar4 = count_graveyard_by_type(player, 2);\n            uStack_18 = uStack_18 - iVar4 & (int)(uStack_18 - iVar4 ^ 0xffffffff) >> 0x1f;\n          }\n          bVar2 = false;\n          if (cards_data[iStack_14].cc[1] == 0xff)\n          {\n            if (uStack_18 == 0)\n            {\n              uStack_18 = 0xffffffff;\n            }\n            else\n            {\n              bVar2 = true;\n            }\n          }\n          pay_mana_xbugrwaU[2] = (int)cp->req_blue;\n          pay_mana_xbugrwaU[5] = (int)cp->req_white;\n          pay_mana_xbugrwaU[1] = (int)cp->req_black;\n          pay_mana_xbugrwaU[4] = (int)cp->req_red;\n          pay_mana_xbugrwaU[3] = (int)cp->req_green;\n          uStack_2c = 0;\n          if (clred_artifact == 0)\n          {\n            uStack_2c = uStack_18;\n            uStack_18 = 0;\n          }\n          pay_mana_xbugrwaU[0] = uStack_2c;\n          pay_mana_xbugrwaU[6] = uStack_18;\n          charge_mana(player, COLOR_COLORLESS, 0);\n          if (!bVar2)\n          {\n            return (unsigned int)(spell_fizzled != 1);\n          }\n          if (spell_fizzled == 1)\n          {\n            return 0;\n          }\n          pay_mana_xbugrwaU[0] = -(unsigned int)(clred_artifact == 0);\n          pay_mana_xbugrwaU[6] = -(unsigned int)(clred_artifact != 0);\n          pay_mana_xbugrwaU[1] = 0;\n          pay_mana_xbugrwaU[2] = 0;\n          pay_mana_xbugrwaU[3] = 0;\n          pay_mana_xbugrwaU[4] = 0;\n          pay_mana_xbugrwaU[5] = 0;\n          charge_mana(player, COLOR_COLORLESS, 0);\n          return (unsigned int)(spell_fizzled != 1);\n        }\n      LAB_0268b9de:\n\n        iVar4 = get_color_for_monocolored_hybrid(player, card);\n        iVar4 = charge_mana_for_monocolor_hybrid(player, card, get_number_of_monocolored_hybrid_mana(player, card, 0), iVar4, uStack_18);\n        goto joined_r0x0268b918;\n      }\n    }\n\n    iVar4 = get_colors_for_hybrid(player, card, 0, 0);\n    iVar5 = get_colors_for_hybrid(player, card, iVar4, 0);\n    number = get_number_of_hybrid_mana(player, card, 0, 0);\n    iVar4 = charge_mana_hybrid(player, card, number, iVar4, iVar5, uStack_18);\n  }\n  else\n  {\n    iStack_1c = -1;\n    if (card < 0)\n    {\n      card = add_card_to_hand(player, iStack_14);\n      instance = get_card_instance(player, card);\n      uVar1 = instance->state;\n      hand_count[player] = hand_count[player] + -1;\n      instance->state = uVar1 | 0x20;\n      iStack_1c = card;\n    }\n    iVar4 = charge_phyrexian_mana(player, card, event, uVar6, (unsigned int)cp->req_black,\n                                  (unsigned int)cp->req_blue, (unsigned int)cp->req_green,\n                                  (unsigned int)cp->req_red, (unsigned int)cp->req_white,\n                                  clred_artifact);\n  }\njoined_r0x0268b918:\n  if (iStack_1c < 0)\n  {\n    return iVar4;\n  }\nLAB_0268b91e:\n  obliterate_card(player, iStack_1c);\n  return iVar4;\n}",
+      "after_definition": "int charge_mana_from_id_with_cost_mod(int player, int card, event_t event, int csvid, int cost_mod)\n{\n  if (csvid < 0)\n    csvid = get_id(player, card);\n  int iid;\n  if (card == -1)\n    iid = get_internal_card_id_from_csv_id(csvid);\n  else\n  {\n    iid = get_card_instance(player, card)->internal_card_id;\n    if (cards_data[iid].id != csvid)\n      backtrace_and_abort(\"functions/functions.c:11121\\ncards_data[iid].id == csvid\");\n  }\n  if (csvid == CARD_ID_REAPER_KING)\n  {\n    if (card >= 0)\n      return casting_reaper_king(player, card, event);\n    int temporary_card = add_card_to_hand(player, iid);\n    int result = casting_reaper_king(player, temporary_card, event);\n    obliterate_card(player, temporary_card);\n    return result;\n  }\n  card_ptr_t *cp = cards_ptr[csvid];\n  unsigned int base_cost = cp->req_colorless;\n  if (base_cost == 40)\n    base_cost = 0;\n  int artifact = cards_data[iid].type & TYPE_ARTIFACT;\n  int temporary_card = -1;\n  int result;\n  if (is_phyrexian(csvid))\n  {\n    if (card < 0)\n    {\n      card = add_card_to_hand(player, iid);\n      card_instance_t *instance = get_card_instance(player, card);\n      uint32_t state = instance->state;\n      --hand_count[player];\n      instance->state = state | STATE_INVISIBLE;\n      temporary_card = card;\n    }\n    result = charge_phyrexian_mana(player, card, event, base_cost, cp->req_black,\n        cp->req_blue, cp->req_green, cp->req_red, cp->req_white, artifact);\n  }\n  else\n  {\n    int cost = true_get_updated_casting_cost(player, card < 0 ? -1 : card,\n        card < 0 ? iid : -1, event, (int32_t)(base_cost - (uint32_t)cost_mod));\n    if (cost < 0)\n      cost = 0;\n    int normal_hybrid = is_normal_hybrid(cp);\n    int monocolor_hybrid = normal_hybrid ? 0 : is_monocolor_hybrid(cp);\n    if (!normal_hybrid && !monocolor_hybrid)\n    {\n      if (csvid == CARD_ID_KARADOR_GHOST_CHIEFTAIN)\n      {\n        cost = (int32_t)((uint32_t)cost - count_graveyard_by_type(player, TYPE_CREATURE));\n        if (cost < 0)\n          cost = 0;\n      }\n      int pay_x_after_fixed_cost = 0;\n      if (cards_data[iid].cc[1] == 0xff)\n      {\n        if (cost == 0)\n          cost = -1;\n        else\n          pay_x_after_fixed_cost = 1;\n      }\n      pay_mana_xbugrwaU[2] = cp->req_blue;\n      pay_mana_xbugrwaU[5] = cp->req_white;\n      pay_mana_xbugrwaU[1] = cp->req_black;\n      pay_mana_xbugrwaU[4] = cp->req_red;\n      pay_mana_xbugrwaU[3] = cp->req_green;\n      pay_mana_xbugrwaU[0] = artifact ? 0 : cost;\n      pay_mana_xbugrwaU[6] = artifact ? cost : 0;\n      charge_mana(player, COLOR_COLORLESS, 0);\n      if (!pay_x_after_fixed_cost || spell_fizzled == 1)\n        return spell_fizzled != 1;\n      pay_mana_xbugrwaU[0] = artifact ? 0 : -1;\n      pay_mana_xbugrwaU[6] = artifact ? -1 : 0;\n      for (int color = 1; color <= 5; ++color)\n        pay_mana_xbugrwaU[color] = 0;\n      charge_mana(player, COLOR_COLORLESS, 0);\n      return spell_fizzled != 1;\n    }\n    if (card < 0)\n    {\n      card = add_card_to_hand(player, iid);\n      card_instance_t *instance = get_card_instance(player, card);\n      uint32_t state = instance->state;\n      --hand_count[player];\n      instance->state = state | STATE_INVISIBLE;\n      temporary_card = card;\n    }\n    if (normal_hybrid)\n    {\n      int first_color = get_colors_for_hybrid(player, card, 0, 0);\n      int second_color = get_colors_for_hybrid(player, card, first_color, 0);\n      int number = get_number_of_hybrid_mana(player, card, 0, 0);\n      result = charge_mana_hybrid(player, card, number, first_color, second_color, cost);\n    }\n    else\n    {\n      int color = get_color_for_monocolored_hybrid(player, card);\n      int number = get_number_of_monocolored_hybrid_mana(player, card, 0);\n      result = charge_mana_for_monocolor_hybrid(player, card, number, color, cost);\n    }\n  }\n  if (temporary_card >= 0)\n    obliterate_card(player, temporary_card);\n  return result;\n}",
+      "before_sha256": "6133ac4cdabc630d72d365f5d8730a9ee0d133005e0c8e276a842a80b25a88e6",
+      "after_sha256": "d4fb45ed24aaba10db809482d6fd54929f8ef498a35506d1a7c7f4ec9f1cd0a7",
+      "payment_helpers_cleanup": true,
+      "facts": {
+        "removed_gotos": 5,
+        "removed_lab_gotos": 4,
+        "source_lines_removed": 69,
+        "removed_placeholder_occurrences": 80,
+        "removed_placeholder_names": 9
+      },
+      "expanded_before_definition": "int charge_mana_from_id_with_cost_mod(int player, int card, event_t event, int csvid, int cost_mod)\n{\n  card_ptr_t *cp;\n  unsigned int uVar1;\n  \n\n _Bool \n\n      bVar2;\n  card_instance_t *instance;\n  int iVar4;\n  int iVar5;\n  int number;\n  unsigned int uVar6;\n  unsigned int clred_artifact;\n  unsigned int uStack_2c;\n  int iStack_1c;\n  unsigned int uStack_18;\n  int iStack_14;\n\n  if (csvid < 0)\n  {\n    csvid = get_id(player, card);\n  }\n  if (card == -1)\n  {\n    iStack_14 = get_internal_card_id_from_csv_id(csvid);\n    if (csvid == 0x25ad)\n      goto LAB_0268b987;\n  }\n  else\n  {\n    instance = get_card_instance(player, card);\n    iStack_14 = instance->internal_card_id;\n    if ((unsigned int)cards_data[iStack_14].id != csvid)\n    {\n      backtrace_and_abort(\"functions/functions.c:11121\\ncards_data[iid].id == csvid\");\n    }\n    if (csvid == 0x25ad)\n    {\n\n      if (-1 < card)\n      {\n        return casting_reaper_king(player, card, event);\n      }\n    LAB_0268b987:\n      iStack_1c = add_card_to_hand(player, iStack_14);\n      iVar4 = casting_reaper_king(player, iStack_1c, event);\n      goto LAB_0268b91e;\n    }\n  }\n  cp = cards_ptr[csvid];\n  uVar6 = (unsigned int)cp->req_colorless;\n  if (uVar6 == 0x28)\n  {\n    uVar6 = 0;\n  }\n  clred_artifact = (unsigned int)(cards_data[iStack_14].type & 0x40);\n  if (is_phyrexian(csvid) == 0)\n  {\n\n    if (card < 0)\n    {\n\n      uStack_18 = true_get_updated_casting_cost(player, -1, iStack_14, event, uVar6 - cost_mod);\n      uStack_18 = uStack_18 & (int)(uStack_18 ^ 0xffffffff) >> 0x1f;\n      if (is_normal_hybrid(cp) == 0)\n      {\n        if (is_monocolor_hybrid(cp) == 0)\n          goto LAB_0268ba70;\n        card = add_card_to_hand(player, iStack_14);\n        instance = get_card_instance(player, card);\n        instance->state = instance->state | 0x20;\n        hand_count[player] = hand_count[player] + -1;\n        iStack_1c = card;\n        goto LAB_0268b9de;\n      }\n      card = add_card_to_hand(player, iStack_14);\n      instance = get_card_instance(player, card);\n      uVar6 = instance->state;\n      hand_count[player] = hand_count[player] + -1;\n      instance->state = uVar6 | 0x20;\n      iStack_1c = card;\n    }\n    else\n    {\n      uStack_18 = true_get_updated_casting_cost(player, card, -1, event, uVar6 - cost_mod);\n      uStack_18 = uStack_18 & (int)(uStack_18 ^ 0xffffffff) >> 0x1f;\n      iVar4 = is_normal_hybrid(cp);\n      iStack_1c = -1;\n      if (iVar4 == 0)\n      {\n        if (is_monocolor_hybrid(cp) == 0)\n        {\n        LAB_0268ba70:\n\n          if (csvid == 0x2ded)\n          {\n            iVar4 = count_graveyard_by_type(player, 2);\n            uStack_18 = uStack_18 - iVar4 & (int)(uStack_18 - iVar4 ^ 0xffffffff) >> 0x1f;\n          }\n          bVar2 = \n\n                 0\n\n                      ;\n          if (cards_data[iStack_14].cc[1] == 0xff)\n          {\n            if (uStack_18 == 0)\n            {\n              uStack_18 = 0xffffffff;\n            }\n            else\n            {\n              bVar2 = \n\n                     1\n\n                         ;\n            }\n          }\n          pay_mana_xbugrwaU[2] = (int)cp->req_blue;\n          pay_mana_xbugrwaU[5] = (int)cp->req_white;\n          pay_mana_xbugrwaU[1] = (int)cp->req_black;\n          pay_mana_xbugrwaU[4] = (int)cp->req_red;\n          pay_mana_xbugrwaU[3] = (int)cp->req_green;\n          uStack_2c = 0;\n          if (clred_artifact == 0)\n          {\n            uStack_2c = uStack_18;\n            uStack_18 = 0;\n          }\n          pay_mana_xbugrwaU[0] = uStack_2c;\n          pay_mana_xbugrwaU[6] = uStack_18;\n          charge_mana(player, COLOR_COLORLESS, 0);\n          if (!bVar2)\n          {\n            return (unsigned int)(spell_fizzled != 1);\n          }\n          if (spell_fizzled == 1)\n          {\n            return 0;\n          }\n          pay_mana_xbugrwaU[0] = -(unsigned int)(clred_artifact == 0);\n          pay_mana_xbugrwaU[6] = -(unsigned int)(clred_artifact != 0);\n          pay_mana_xbugrwaU[1] = 0;\n          pay_mana_xbugrwaU[2] = 0;\n          pay_mana_xbugrwaU[3] = 0;\n          pay_mana_xbugrwaU[4] = 0;\n          pay_mana_xbugrwaU[5] = 0;\n          charge_mana(player, COLOR_COLORLESS, 0);\n          return (unsigned int)(spell_fizzled != 1);\n        }\n      LAB_0268b9de:\n\n        iVar4 = get_color_for_monocolored_hybrid(player, card);\n        iVar4 = charge_mana_for_monocolor_hybrid(player, card, get_number_of_monocolored_hybrid_mana(player, card, 0), iVar4, uStack_18);\n        goto joined_r0x0268b918;\n      }\n    }\n\n    iVar4 = get_colors_for_hybrid(player, card, 0, 0);\n    iVar5 = get_colors_for_hybrid(player, card, iVar4, 0);\n    number = get_number_of_hybrid_mana(player, card, 0, 0);\n    iVar4 = charge_mana_hybrid(player, card, number, iVar4, iVar5, uStack_18);\n  }\n  else\n  {\n    iStack_1c = -1;\n    if (card < 0)\n    {\n      card = add_card_to_hand(player, iStack_14);\n      instance = get_card_instance(player, card);\n      uVar1 = instance->state;\n      hand_count[player] = hand_count[player] + -1;\n      instance->state = uVar1 | 0x20;\n      iStack_1c = card;\n    }\n    iVar4 = charge_phyrexian_mana(player, card, event, uVar6, (unsigned int)cp->req_black,\n                                  (unsigned int)cp->req_blue, (unsigned int)cp->req_green,\n                                  (unsigned int)cp->req_red, (unsigned int)cp->req_white,\n                                  clred_artifact);\n  }\njoined_r0x0268b918:\n  if (iStack_1c < 0)\n  {\n    return iVar4;\n  }\nLAB_0268b91e:\n  obliterate_card(player, iStack_1c);\n  return iVar4;\n}",
+      "expanded_after_definition": "int charge_mana_from_id_with_cost_mod(int player, int card, event_t event, int csvid, int cost_mod)\n{\n  if (csvid < 0)\n    csvid = get_id(player, card);\n  int iid;\n  if (card == -1)\n    iid = get_internal_card_id_from_csv_id(csvid);\n  else\n  {\n    iid = get_card_instance(player, card)->internal_card_id;\n    if (cards_data[iid].id != csvid)\n      backtrace_and_abort(\"functions/functions.c:11121\\ncards_data[iid].id == csvid\");\n  }\n  if (csvid == CARD_ID_REAPER_KING)\n  {\n    if (card >= 0)\n      return casting_reaper_king(player, card, event);\n    int temporary_card = add_card_to_hand(player, iid);\n    int result = casting_reaper_king(player, temporary_card, event);\n    obliterate_card(player, temporary_card);\n    return result;\n  }\n  card_ptr_t *cp = cards_ptr[csvid];\n  unsigned int base_cost = cp->req_colorless;\n  if (base_cost == 40)\n    base_cost = 0;\n  int artifact = cards_data[iid].type & TYPE_ARTIFACT;\n  int temporary_card = -1;\n  int result;\n  if (is_phyrexian(csvid))\n  {\n    if (card < 0)\n    {\n      card = add_card_to_hand(player, iid);\n      card_instance_t *instance = get_card_instance(player, card);\n      uint32_t state = instance->state;\n      --hand_count[player];\n      instance->state = state | STATE_INVISIBLE;\n      temporary_card = card;\n    }\n    result = charge_phyrexian_mana(player, card, event, base_cost, cp->req_black,\n        cp->req_blue, cp->req_green, cp->req_red, cp->req_white, artifact);\n  }\n  else\n  {\n    int cost = true_get_updated_casting_cost(player, card < 0 ? -1 : card,\n        card < 0 ? iid : -1, event, (int32_t)(base_cost - (uint32_t)cost_mod));\n    if (cost < 0)\n      cost = 0;\n    int normal_hybrid = is_normal_hybrid(cp);\n    int monocolor_hybrid = normal_hybrid ? 0 : is_monocolor_hybrid(cp);\n    if (!normal_hybrid && !monocolor_hybrid)\n    {\n      if (csvid == CARD_ID_KARADOR_GHOST_CHIEFTAIN)\n      {\n        cost = (int32_t)((uint32_t)cost - count_graveyard_by_type(player, TYPE_CREATURE));\n        if (cost < 0)\n          cost = 0;\n      }\n      int pay_x_after_fixed_cost = 0;\n      if (cards_data[iid].cc[1] == 0xff)\n      {\n        if (cost == 0)\n          cost = -1;\n        else\n          pay_x_after_fixed_cost = 1;\n      }\n      pay_mana_xbugrwaU[2] = cp->req_blue;\n      pay_mana_xbugrwaU[5] = cp->req_white;\n      pay_mana_xbugrwaU[1] = cp->req_black;\n      pay_mana_xbugrwaU[4] = cp->req_red;\n      pay_mana_xbugrwaU[3] = cp->req_green;\n      pay_mana_xbugrwaU[0] = artifact ? 0 : cost;\n      pay_mana_xbugrwaU[6] = artifact ? cost : 0;\n      charge_mana(player, COLOR_COLORLESS, 0);\n      if (!pay_x_after_fixed_cost || spell_fizzled == 1)\n        return spell_fizzled != 1;\n      pay_mana_xbugrwaU[0] = artifact ? 0 : -1;\n      pay_mana_xbugrwaU[6] = artifact ? -1 : 0;\n      for (int color = 1; color <= 5; ++color)\n        pay_mana_xbugrwaU[color] = 0;\n      charge_mana(player, COLOR_COLORLESS, 0);\n      return spell_fizzled != 1;\n    }\n    if (card < 0)\n    {\n      card = add_card_to_hand(player, iid);\n      card_instance_t *instance = get_card_instance(player, card);\n      uint32_t state = instance->state;\n      --hand_count[player];\n      instance->state = state | STATE_INVISIBLE;\n      temporary_card = card;\n    }\n    if (normal_hybrid)\n    {\n      int first_color = get_colors_for_hybrid(player, card, 0, 0);\n      int second_color = get_colors_for_hybrid(player, card, first_color, 0);\n      int number = get_number_of_hybrid_mana(player, card, 0, 0);\n      result = charge_mana_hybrid(player, card, number, first_color, second_color, cost);\n    }\n    else\n    {\n      int color = get_color_for_monocolored_hybrid(player, card);\n      int number = get_number_of_monocolored_hybrid_mana(player, card, 0);\n      result = charge_mana_for_monocolor_hybrid(player, card, number, color, cost);\n    }\n  }\n  if (temporary_card >= 0)\n    obliterate_card(player, temporary_card);\n  return result;\n}"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "charge_mana_for_activated_ability",
+      "before_definition": "int charge_mana_for_activated_ability(int player, int card, int cless, int black, int blue,\n                                           int green, int red, int white)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n\n  iVar3 = white;\n  instance = get_card_instance(player, card);\n  if ((instance->ext->special_flags2 & SF2_MYCOSYNTH_LATTICE) != 0)\n  {\n    iVar2 = black + blue + green + red;\n    white = 0;\n    red = 0;\n    cless = cless + iVar2 + iVar3;\n    green = 0;\n    blue = 0;\n    black = 0;\n  }\n  iVar3 = blue;\n  iVar2 = get_cost_mod_for_activated_abilities(player, card, cless, black, blue, green, red,\n                                                    white);\n  instance = get_card_instance(player, card);\n  if ((instance->ext->special_flags2 & SF2_CELESTIAL_DAWN) != 0)\n  {\n    blue = 0;\n    iVar3 = black + iVar3 + green;\n    green = 0;\n    white = white + iVar3 + red;\n    red = 0;\n    black = 0;\n  }\n  if ((cless == -1) && (iVar2 != -1))\n  {\n    charge_mana(player, COLOR_COLORLESS, iVar2);\n    iVar3 = 0;\n    if (spell_fizzled != 1)\n    {\n      pay_mana_xbugrwaU[0] = -1;\n      iVar2 = pay_mana_xbugrwaU[0];\n    LAB_0268e98e:\n      pay_mana_xbugrwaU[0] = iVar2;\n      pay_mana_xbugrwaU[2] = blue;\n      pay_mana_xbugrwaU[3] = green;\n      pay_mana_xbugrwaU[5] = white;\n      pay_mana_xbugrwaU[1] = black;\n      pay_mana_xbugrwaU[4] = red;\n      charge_mana(player, COLOR_COLORLESS, 0);\n      return (unsigned int)(spell_fizzled != 1);\n    }\n  }\n  else\n  {\n    iVar3 = 1;\n    if (((((blue != 0 || black != 0) || iVar2 != 0) || green != 0) || red != 0) || white != 0)\n      goto LAB_0268e98e;\n  }\n  return iVar3;\n}",
+      "after_definition": "int charge_mana_for_activated_ability(int player, int card, int cless, int black, int blue,\n    int green, int red, int white)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  if (instance->ext->special_flags2 & SF2_MYCOSYNTH_LATTICE)\n  {\n    cless += black + blue + green + red + white;\n    black = blue = green = red = white = 0;\n  }\n  int cost = get_cost_mod_for_activated_abilities(player, card, cless, black, blue, green, red, white);\n  instance = get_card_instance(player, card);\n  if (instance->ext->special_flags2 & SF2_CELESTIAL_DAWN)\n  {\n    white += black + blue + green + red;\n    black = blue = green = red = 0;\n  }\n  if (cless == -1 && cost != -1)\n  {\n    charge_mana(player, COLOR_COLORLESS, cost);\n    if (spell_fizzled == 1)\n      return 0;\n    cost = -1;\n  }\n  else if (!(cost || black || blue || green || red || white))\n    return 1;\n  pay_mana_xbugrwaU[0] = cost;\n  pay_mana_xbugrwaU[2] = blue;\n  pay_mana_xbugrwaU[3] = green;\n  pay_mana_xbugrwaU[5] = white;\n  pay_mana_xbugrwaU[1] = black;\n  pay_mana_xbugrwaU[4] = red;\n  charge_mana(player, COLOR_COLORLESS, 0);\n  return spell_fizzled != 1;\n}",
+      "before_sha256": "3ba1ce9ee79f16fa03937f7ce24eed709a468bf20986a9171b2282709c598cb8",
+      "after_sha256": "74bf4a141bcf60a6763917b78c47c266c969aeb01cd73796c2bc934e14b05d07",
+      "payment_helpers_cleanup": true,
+      "facts": {
+        "removed_gotos": 1,
+        "removed_lab_gotos": 1,
+        "source_lines_removed": 25,
+        "removed_placeholder_occurrences": 19,
+        "removed_placeholder_names": 2
+      },
+      "expanded_before_definition": "int charge_mana_for_activated_ability(int player, int card, int cless, int black, int blue,\n                                           int green, int red, int white)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n\n  iVar3 = white;\n  instance = get_card_instance(player, card);\n  if ((instance->ext->special_flags2 & SF2_MYCOSYNTH_LATTICE) != 0)\n  {\n    iVar2 = black + blue + green + red;\n    white = 0;\n    red = 0;\n    cless = cless + iVar2 + iVar3;\n    green = 0;\n    blue = 0;\n    black = 0;\n  }\n  iVar3 = blue;\n  iVar2 = get_cost_mod_for_activated_abilities(player, card, cless, black, blue, green, red,\n                                                    white);\n  instance = get_card_instance(player, card);\n  if ((instance->ext->special_flags2 & SF2_CELESTIAL_DAWN) != 0)\n  {\n    blue = 0;\n    iVar3 = black + iVar3 + green;\n    green = 0;\n    white = white + iVar3 + red;\n    red = 0;\n    black = 0;\n  }\n  if ((cless == -1) && (iVar2 != -1))\n  {\n    charge_mana(player, COLOR_COLORLESS, iVar2);\n    iVar3 = 0;\n    if (spell_fizzled != 1)\n    {\n      pay_mana_xbugrwaU[0] = -1;\n      iVar2 = pay_mana_xbugrwaU[0];\n    LAB_0268e98e:\n      pay_mana_xbugrwaU[0] = iVar2;\n      pay_mana_xbugrwaU[2] = blue;\n      pay_mana_xbugrwaU[3] = green;\n      pay_mana_xbugrwaU[5] = white;\n      pay_mana_xbugrwaU[1] = black;\n      pay_mana_xbugrwaU[4] = red;\n      charge_mana(player, COLOR_COLORLESS, 0);\n      return (unsigned int)(spell_fizzled != 1);\n    }\n  }\n  else\n  {\n    iVar3 = 1;\n    if (((((blue != 0 || black != 0) || iVar2 != 0) || green != 0) || red != 0) || white != 0)\n      goto LAB_0268e98e;\n  }\n  return iVar3;\n}",
+      "expanded_after_definition": "int charge_mana_for_activated_ability(int player, int card, int cless, int black, int blue,\n    int green, int red, int white)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  if (instance->ext->special_flags2 & SF2_MYCOSYNTH_LATTICE)\n  {\n    cless += black + blue + green + red + white;\n    black = blue = green = red = white = 0;\n  }\n  int cost = get_cost_mod_for_activated_abilities(player, card, cless, black, blue, green, red, white);\n  instance = get_card_instance(player, card);\n  if (instance->ext->special_flags2 & SF2_CELESTIAL_DAWN)\n  {\n    white += black + blue + green + red;\n    black = blue = green = red = 0;\n  }\n  if (cless == -1 && cost != -1)\n  {\n    charge_mana(player, COLOR_COLORLESS, cost);\n    if (spell_fizzled == 1)\n      return 0;\n    cost = -1;\n  }\n  else if (!(cost || black || blue || green || red || white))\n    return 1;\n  pay_mana_xbugrwaU[0] = cost;\n  pay_mana_xbugrwaU[2] = blue;\n  pay_mana_xbugrwaU[3] = green;\n  pay_mana_xbugrwaU[5] = white;\n  pay_mana_xbugrwaU[1] = black;\n  pay_mana_xbugrwaU[4] = red;\n  charge_mana(player, COLOR_COLORLESS, 0);\n  return spell_fizzled != 1;\n}"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "has_mana_for_activated_ability",
+      "before_definition": "int has_mana_for_activated_ability(int player, int card, int cless, int black, int blue,\n                                        int green, int red, int white)\n{\n  card_instance_t *instance;\n  int iVar2;\n  unsigned int colorless;\n  unsigned int uVar3;\n  int iVar4;\n  unsigned int uVar5;\n\n  iVar4 = white;\n  instance = get_card_instance(player, card);\n  if ((instance->ext->special_flags2 & SF2_MYCOSYNTH_LATTICE) != 0)\n  {\n    iVar2 = blue + black + green + red;\n    white = 0;\n    red = 0;\n    cless = cless + iVar2 + iVar4;\n    green = 0;\n    blue = 0;\n    black = 0;\n  }\n  colorless = get_cost_mod_for_activated_abilities(player, card, cless, black, blue, green,\n                                                        red, white);\n  instance = get_card_instance(player, card);\n  if ((instance->ext->special_flags2 & SF2_CELESTIAL_DAWN) == 0)\n  {\n    uVar5 = black | blue | green | red | colorless;\n  }\n  else\n  {\n    iVar4 = black + blue + green + red;\n    red = 0;\n    white = white + iVar4;\n    green = 0;\n    blue = 0;\n    black = 0;\n    uVar5 = colorless;\n  }\n  uVar3 = 1;\n  if (uVar5 != 0 || white != 0)\n  {\n    iVar4 = has_mana_multi(player, colorless, black, blue, green, red, white);\n    uVar3 = (unsigned int)(iVar4 != 0);\n  }\n  return uVar3;\n}",
+      "after_definition": "int has_mana_for_activated_ability(int player, int card, int cless, int black, int blue,\n    int green, int red, int white)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  if (instance->ext->special_flags2 & SF2_MYCOSYNTH_LATTICE)\n  {\n    cless += blue + black + green + red + white;\n    black = blue = green = red = white = 0;\n  }\n  int cost = get_cost_mod_for_activated_abilities(player, card, cless, black, blue, green, red, white);\n  instance = get_card_instance(player, card);\n  if (instance->ext->special_flags2 & SF2_CELESTIAL_DAWN)\n  {\n    white += black + blue + green + red;\n    black = blue = green = red = 0;\n  }\n  if (!(cost || black || blue || green || red || white))\n    return 1;\n  return has_mana_multi(player, cost, black, blue, green, red, white) != 0;\n}",
+      "before_sha256": "2473306fbe9608a63aab5923cf298b4d81542efb5dc31b7c95a94845ac12587b",
+      "after_sha256": "1c15c88570dfbd944ffe7e69b87aa150c65054c4c705c6329bb28232a4ce69f9",
+      "payment_helpers_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 27,
+        "removed_placeholder_occurrences": 18,
+        "removed_placeholder_names": 4
+      },
+      "expanded_before_definition": "int has_mana_for_activated_ability(int player, int card, int cless, int black, int blue,\n                                        int green, int red, int white)\n{\n  card_instance_t *instance;\n  int iVar2;\n  unsigned int colorless;\n  unsigned int uVar3;\n  int iVar4;\n  unsigned int uVar5;\n\n  iVar4 = white;\n  instance = get_card_instance(player, card);\n  if ((instance->ext->special_flags2 & SF2_MYCOSYNTH_LATTICE) != 0)\n  {\n    iVar2 = blue + black + green + red;\n    white = 0;\n    red = 0;\n    cless = cless + iVar2 + iVar4;\n    green = 0;\n    blue = 0;\n    black = 0;\n  }\n  colorless = get_cost_mod_for_activated_abilities(player, card, cless, black, blue, green,\n                                                        red, white);\n  instance = get_card_instance(player, card);\n  if ((instance->ext->special_flags2 & SF2_CELESTIAL_DAWN) == 0)\n  {\n    uVar5 = black | blue | green | red | colorless;\n  }\n  else\n  {\n    iVar4 = black + blue + green + red;\n    red = 0;\n    white = white + iVar4;\n    green = 0;\n    blue = 0;\n    black = 0;\n    uVar5 = colorless;\n  }\n  uVar3 = 1;\n  if (uVar5 != 0 || white != 0)\n  {\n    iVar4 = has_mana_multi(player, colorless, black, blue, green, red, white);\n    uVar3 = (unsigned int)(iVar4 != 0);\n  }\n  return uVar3;\n}",
+      "expanded_after_definition": "int has_mana_for_activated_ability(int player, int card, int cless, int black, int blue,\n    int green, int red, int white)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  if (instance->ext->special_flags2 & SF2_MYCOSYNTH_LATTICE)\n  {\n    cless += blue + black + green + red + white;\n    black = blue = green = red = white = 0;\n  }\n  int cost = get_cost_mod_for_activated_abilities(player, card, cless, black, blue, green, red, white);\n  instance = get_card_instance(player, card);\n  if (instance->ext->special_flags2 & SF2_CELESTIAL_DAWN)\n  {\n    white += black + blue + green + red;\n    black = blue = green = red = 0;\n  }\n  if (!(cost || black || blue || green || red || white))\n    return 1;\n  return has_mana_multi(player, cost, black, blue, green, red, white) != 0;\n}"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "attachment_granting_activated_ability",
+      "before_definition": "int attachment_granting_activated_ability(int player, int card, event_t event, int mode,\n                                               int cless, int black, int blue, int green, int red,\n                                               int white, uint32_t variable_costs,\n                                               target_definition_t *td, const char *prompt)\n{\n  int32_t iVar1;\n  card_instance_t *instance;\n  int iVar3;\n  card_instance_t *pcVar4;\n  int32_t player_00;\n  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))\n  {\n    instance = in_play(player, card);\n    if (instance == NULL)\n    {\n      return 0;\n    }\n    if (event == EVENT_CAN_ACTIVATE)\n    {\n      if (instance->damage_target_card < 0)\n      {\n        return 0;\n      }\n      if (instance->damage_target_player < '\\0')\n      {\n        return 0;\n      }\n      pcVar4 = in_play((int)instance->damage_target_player, instance->damage_target_card);\n      if (pcVar4 == NULL)\n      {\n        return 0;\n      }\n    }\n    player_00 = (int32_t)instance->damage_target_player;\n    iVar1 = instance->damage_target_card;\n    instance->targets[9].player = player_00;\n    instance->targets[9].card = iVar1;\n  }\n  else\n  {\n    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))\n    {\n      return 0;\n    }\n    instance = in_play(player, card);\n    if (instance == NULL)\n    {\n      return 0;\n    }\n    player_00 = instance->targets[9].player;\n  }\n  if ((-1 < player_00) && (iVar3 = instance->targets[9].card, -1 < iVar3))\n  {\n    if (td != NULL)\n    {\n      td->player = player_00;\n      td->card = iVar3;\n      if ((td->illegal_abilities & 0x20000) != 0)\n      {\n        iVar3 = get_protections_from(player_00, iVar3);\n        td->illegal_abilities = iVar3;\n        iVar3 = instance->targets[9].card;\n        player_00 = instance->targets[9].player;\n      }\n    }\n    return granted_generic_activated_ability(player, card, player_00, iVar3, event, mode,\n                                                   cless, black, blue, green, red, white,\n                                                   variable_costs, td, prompt);\n  }\n  return 0;\n}",
+      "after_definition": "int attachment_granting_activated_ability(int player, int card, event_t event, int mode,\n    int cless, int black, int blue, int green, int red, int white, uint32_t variable_costs,\n    target_definition_t *td, const char *prompt)\n{\n  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE &&\n      event != EVENT_RESOLVE_ACTIVATION && event != EVENT_CLEANUP)\n    return 0;\n  card_instance_t *instance = in_play(player, card);\n  if (!instance)\n    return 0;\n  if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE)\n  {\n    if (event == EVENT_CAN_ACTIVATE &&\n        (instance->damage_target_card < 0 || instance->damage_target_player < 0 ||\n         !in_play(instance->damage_target_player, instance->damage_target_card)))\n      return 0;\n    instance->targets[9].player = instance->damage_target_player;\n    instance->targets[9].card = instance->damage_target_card;\n  }\n  int recipient_player = instance->targets[9].player;\n  if (recipient_player < 0)\n    return 0;\n  int recipient_card = instance->targets[9].card;\n  if (recipient_card < 0)\n    return 0;\n  if (td)\n  {\n    td->player = recipient_player;\n    td->card = recipient_card;\n    if (td->illegal_abilities & KEYWORD_SHROUD)\n    {\n      td->illegal_abilities = get_protections_from(recipient_player, recipient_card);\n      recipient_card = instance->targets[9].card;\n      recipient_player = instance->targets[9].player;\n    }\n  }\n  return granted_generic_activated_ability(player, card, recipient_player, recipient_card,\n      event, mode, cless, black, blue, green, red, white, variable_costs, td, prompt);\n}",
+      "before_sha256": "79e421ed3d492f063c9f623e59e098a144f6483e61a99dc5ebae5698a06dddd4",
+      "after_sha256": "ad31c307032698c4dbb9c9fb162402ca8ef0dacdf78898a1723937f91b0bd7c5",
+      "payment_helpers_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 32,
+        "removed_placeholder_occurrences": 15,
+        "removed_placeholder_names": 3
+      },
+      "expanded_before_definition": "int attachment_granting_activated_ability(int player, int card, event_t event, int mode,\n                                               int cless, int black, int blue, int green, int red,\n                                               int white, uint32_t variable_costs,\n                                               target_definition_t *td, const char *prompt)\n{\n  int32_t iVar1;\n  card_instance_t *instance;\n  int iVar3;\n  card_instance_t *pcVar4;\n  int32_t player_00;\n  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))\n  {\n    instance = in_play(player, card);\n    if (instance == \n\n                   ((void *)0)\n\n                       )\n    {\n      return 0;\n    }\n    if (event == EVENT_CAN_ACTIVATE)\n    {\n      if (instance->damage_target_card < 0)\n      {\n        return 0;\n      }\n      if (instance->damage_target_player < '\\0')\n      {\n        return 0;\n      }\n      pcVar4 = in_play((int)instance->damage_target_player, instance->damage_target_card);\n      if (pcVar4 == \n\n                   ((void *)0)\n\n                       )\n      {\n        return 0;\n      }\n    }\n    player_00 = (int32_t)instance->damage_target_player;\n    iVar1 = instance->damage_target_card;\n    instance->targets[9].player = player_00;\n    instance->targets[9].card = iVar1;\n  }\n  else\n  {\n    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))\n    {\n      return 0;\n    }\n    instance = in_play(player, card);\n    if (instance == \n\n                   ((void *)0)\n\n                       )\n    {\n      return 0;\n    }\n    player_00 = instance->targets[9].player;\n  }\n  if ((-1 < player_00) && (iVar3 = instance->targets[9].card, -1 < iVar3))\n  {\n    if (td != \n\n             ((void *)0)\n\n                 )\n    {\n      td->player = player_00;\n      td->card = iVar3;\n      if ((td->illegal_abilities & 0x20000) != 0)\n      {\n        iVar3 = get_protections_from(player_00, iVar3);\n        td->illegal_abilities = iVar3;\n        iVar3 = instance->targets[9].card;\n        player_00 = instance->targets[9].player;\n      }\n    }\n    return granted_generic_activated_ability(player, card, player_00, iVar3, event, mode,\n                                                   cless, black, blue, green, red, white,\n                                                   variable_costs, td, prompt);\n  }\n  return 0;\n}",
+      "expanded_after_definition": "int attachment_granting_activated_ability(int player, int card, event_t event, int mode,\n    int cless, int black, int blue, int green, int red, int white, uint32_t variable_costs,\n    target_definition_t *td, const char *prompt)\n{\n  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE &&\n      event != EVENT_RESOLVE_ACTIVATION && event != EVENT_CLEANUP)\n    return 0;\n  card_instance_t *instance = in_play(player, card);\n  if (!instance)\n    return 0;\n  if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE)\n  {\n    if (event == EVENT_CAN_ACTIVATE &&\n        (instance->damage_target_card < 0 || instance->damage_target_player < 0 ||\n         !in_play(instance->damage_target_player, instance->damage_target_card)))\n      return 0;\n    instance->targets[9].player = instance->damage_target_player;\n    instance->targets[9].card = instance->damage_target_card;\n  }\n  int recipient_player = instance->targets[9].player;\n  if (recipient_player < 0)\n    return 0;\n  int recipient_card = instance->targets[9].card;\n  if (recipient_card < 0)\n    return 0;\n  if (td)\n  {\n    td->player = recipient_player;\n    td->card = recipient_card;\n    if (td->illegal_abilities & KEYWORD_SHROUD)\n    {\n      td->illegal_abilities = get_protections_from(recipient_player, recipient_card);\n      recipient_card = instance->targets[9].card;\n      recipient_player = instance->targets[9].player;\n    }\n  }\n  return granted_generic_activated_ability(player, card, recipient_player, recipient_card,\n      event, mode, cless, black, blue, green, red, white, variable_costs, td, prompt);\n}"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "equipment_granting_activated_ability",
+      "before_definition": "int equipment_granting_activated_ability(int player, int card, event_t event,\n                                              const char *dialog_option, int equip_cost, int mode,\n                                              int cless, int black, int blue, int green, int red,\n                                              int white, uint32_t variable_costs,\n                                              target_definition_t *td, const char *prompt)\n{\n  card_instance_t *instance;\n  card_instance_t *pcVar2;\n  int iVar3;\n  int iVar4;\n  if (((event != EVENT_ACTIVATE) && (1U < (uint32_t)event - (uint32_t)EVENT_RESOLVE_ACTIVATION)) &&\n      (event != EVENT_CLEANUP))\n  {\n    return 0;\n  }\n  instance = get_card_instance(player, card);\n  if (event == EVENT_RESOLVE_ACTIVATION)\n  {\n    iVar3 = can_activate_basic_equipment(player, card, EVENT_RESOLVE_ACTIVATION, equip_cost);\n    iVar4 = attachment_granting_activated_ability(player, card, EVENT_CAN_ACTIVATE, mode,\n                                                       cless, black, blue, green, red, white,\n                                                       variable_costs, td, prompt);\n    iVar3 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, dialog_option, iVar4, 2, \"Equip\",\n                        iVar3, 1, 0, 0, 0, 0);\n  }\n  else\n  {\n    pcVar2 = is_equipping(player, card);\n    if (pcVar2 == NULL)\n    {\n      if (event == EVENT_ACTIVATE)\n      {\n        instance->info_slot = 2;\n      }\n      return basic_equipment(player, card, event, equip_cost);\n    }\n    iVar3 = can_activate_basic_equipment(player, card, event, equip_cost);\n    iVar4 = attachment_granting_activated_ability(player, card, EVENT_CAN_ACTIVATE, mode,\n                                                       cless, black, blue, green, red, white,\n                                                       variable_costs, td, prompt);\n    iVar3 =\n        dialog_impl(player, card, event, dialog_option, iVar4, 2, \"Equip\", iVar3, 1, 0, 0, 0, 0);\n    if (event == EVENT_CAN_ACTIVATE)\n    {\n      return iVar3;\n    }\n    if (event == EVENT_ACTIVATE)\n    {\n      if (iVar3 == 1)\n      {\n        attachment_granting_activated_ability(player, card, EVENT_ACTIVATE, mode, cless, black,\n                                                   blue, green, red, white, variable_costs, td,\n                                                   prompt);\n        return 0;\n      }\n      if (iVar3 != 2)\n      {\n        return 0;\n      }\n      activate_basic_equipment(player, card, equip_cost);\n      return 0;\n    }\n  }\n  if (iVar3 == 1)\n  {\n    attachment_granting_activated_ability(player, card, event, mode, cless, black, blue, green,\n                                               red, white, variable_costs, td, prompt);\n    return 1;\n  }\n  if (iVar3 != 2)\n  {\n    return 0;\n  }\n  resolve_activation_basic_equipment(player, card);\n  return 0;\n}",
+      "after_definition": "int equipment_granting_activated_ability(int player, int card, event_t event,\n    const char *dialog_option, int equip_cost, int mode, int cless, int black, int blue,\n    int green, int red, int white, uint32_t variable_costs, target_definition_t *td,\n    const char *prompt)\n{\n  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE &&\n      event != EVENT_RESOLVE_ACTIVATION && event != EVENT_CLEANUP)\n    return 0;\n  card_instance_t *instance = get_card_instance(player, card);\n  if (event != EVENT_RESOLVE_ACTIVATION && !is_equipping(player, card))\n  {\n    if (event == EVENT_ACTIVATE)\n      instance->info_slot = 2;\n    return basic_equipment(player, card, event, equip_cost);\n  }\n  int equip_available = can_activate_basic_equipment(player, card, event, equip_cost);\n  int granted_available = attachment_granting_activated_ability(player, card,\n      EVENT_CAN_ACTIVATE, mode, cless, black, blue, green, red, white, variable_costs, td, prompt);\n  int choice = DIALOG(player, card, event,\n      dialog_option, granted_available, 2, \"Equip\", equip_available, 1);\n  if (event == EVENT_CAN_ACTIVATE)\n    return choice;\n  if (event == EVENT_ACTIVATE)\n  {\n    if (choice == 1)\n      attachment_granting_activated_ability(player, card, event, mode, cless,\n          black, blue, green, red, white, variable_costs, td, prompt);\n    else if (choice == 2)\n      activate_basic_equipment(player, card, equip_cost);\n    return 0;\n  }\n  if (choice == 1)\n  {\n    attachment_granting_activated_ability(player, card, event, mode, cless,\n        black, blue, green, red, white, variable_costs, td, prompt);\n    return 1;\n  }\n  if (choice == 2)\n    resolve_activation_basic_equipment(player, card);\n  return 0;\n}",
+      "before_sha256": "02a0c10855d9d48b6a23f3d21a5b3ade29b70afd1a24b73adc492cc4ab3d59e0",
+      "after_sha256": "4a4d9981de0b3fbd95574ffb8f61a6b9672be572ac6c1a325fd01ae885b8766c",
+      "payment_helpers_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 35,
+        "removed_placeholder_occurrences": 20,
+        "removed_placeholder_names": 3
+      },
+      "expanded_before_definition": "int equipment_granting_activated_ability(int player, int card, event_t event,\n                                              const char *dialog_option, int equip_cost, int mode,\n                                              int cless, int black, int blue, int green, int red,\n                                              int white, uint32_t variable_costs,\n                                              target_definition_t *td, const char *prompt)\n{\n  card_instance_t *instance;\n  card_instance_t *pcVar2;\n  int iVar3;\n  int iVar4;\n  if (((event != EVENT_ACTIVATE) && (1U < (uint32_t)event - (uint32_t)EVENT_RESOLVE_ACTIVATION)) &&\n      (event != EVENT_CLEANUP))\n  {\n    return 0;\n  }\n  instance = get_card_instance(player, card);\n  if (event == EVENT_RESOLVE_ACTIVATION)\n  {\n    iVar3 = can_activate_basic_equipment(player, card, EVENT_RESOLVE_ACTIVATION, equip_cost);\n    iVar4 = attachment_granting_activated_ability(player, card, EVENT_CAN_ACTIVATE, mode,\n                                                       cless, black, blue, green, red, white,\n                                                       variable_costs, td, prompt);\n    iVar3 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, dialog_option, iVar4, 2, \"Equip\",\n                        iVar3, 1, 0, 0, 0, 0);\n  }\n  else\n  {\n    pcVar2 = is_equipping(player, card);\n    if (pcVar2 == \n\n                 ((void *)0)\n\n                     )\n    {\n      if (event == EVENT_ACTIVATE)\n      {\n        instance->info_slot = 2;\n      }\n      return basic_equipment(player, card, event, equip_cost);\n    }\n    iVar3 = can_activate_basic_equipment(player, card, event, equip_cost);\n    iVar4 = attachment_granting_activated_ability(player, card, EVENT_CAN_ACTIVATE, mode,\n                                                       cless, black, blue, green, red, white,\n                                                       variable_costs, td, prompt);\n    iVar3 =\n        dialog_impl(player, card, event, dialog_option, iVar4, 2, \"Equip\", iVar3, 1, 0, 0, 0, 0);\n    if (event == EVENT_CAN_ACTIVATE)\n    {\n      return iVar3;\n    }\n    if (event == EVENT_ACTIVATE)\n    {\n      if (iVar3 == 1)\n      {\n        attachment_granting_activated_ability(player, card, EVENT_ACTIVATE, mode, cless, black,\n                                                   blue, green, red, white, variable_costs, td,\n                                                   prompt);\n        return 0;\n      }\n      if (iVar3 != 2)\n      {\n        return 0;\n      }\n      activate_basic_equipment(player, card, equip_cost);\n      return 0;\n    }\n  }\n  if (iVar3 == 1)\n  {\n    attachment_granting_activated_ability(player, card, event, mode, cless, black, blue, green,\n                                               red, white, variable_costs, td, prompt);\n    return 1;\n  }\n  if (iVar3 != 2)\n  {\n    return 0;\n  }\n  resolve_activation_basic_equipment(player, card);\n  return 0;\n}",
+      "expanded_after_definition": "int equipment_granting_activated_ability(int player, int card, event_t event,\n    const char *dialog_option, int equip_cost, int mode, int cless, int black, int blue,\n    int green, int red, int white, uint32_t variable_costs, target_definition_t *td,\n    const char *prompt)\n{\n  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE &&\n      event != EVENT_RESOLVE_ACTIVATION && event != EVENT_CLEANUP)\n    return 0;\n  card_instance_t *instance = get_card_instance(player, card);\n  if (event != EVENT_RESOLVE_ACTIVATION && !is_equipping(player, card))\n  {\n    if (event == EVENT_ACTIVATE)\n      instance->info_slot = 2;\n    return basic_equipment(player, card, event, equip_cost);\n  }\n  int equip_available = can_activate_basic_equipment(player, card, event, equip_cost);\n  int granted_available = attachment_granting_activated_ability(player, card,\n      EVENT_CAN_ACTIVATE, mode, cless, black, blue, green, red, white, variable_costs, td, prompt);\n  int choice = dialog_impl(player, card, event, dialog_option, granted_available, 2, \"Equip\", equip_available, 1, \n\n              ((void *)0)\n\n              , \n\n              ((void *)0)\n\n              , \n\n              ((void *)0)\n\n              , \n\n              ((void *)0)\n\n              )\n                                                                       ;\n  if (event == EVENT_CAN_ACTIVATE)\n    return choice;\n  if (event == EVENT_ACTIVATE)\n  {\n    if (choice == 1)\n      attachment_granting_activated_ability(player, card, event, mode, cless,\n          black, blue, green, red, white, variable_costs, td, prompt);\n    else if (choice == 2)\n      activate_basic_equipment(player, card, equip_cost);\n    return 0;\n  }\n  if (choice == 1)\n  {\n    attachment_granting_activated_ability(player, card, event, mode, cless,\n        black, blue, green, red, white, variable_costs, td, prompt);\n    return 1;\n  }\n  if (choice == 2)\n    resolve_activation_basic_equipment(player, card);\n  return 0;\n}"
+    }
+  ],
+  "constants": {
+    "CARD_ID_REAPER_KING": 9645,
+    "CARD_ID_KARADOR_GHOST_CHIEFTAIN": 11757,
+    "TYPE_CREATURE": 2,
+    "TYPE_ARTIFACT": 64,
+    "STATE_INVISIBLE": 32,
+    "SF2_MYCOSYNTH_LATTICE": 4,
+    "SF2_CELESTIAL_DAWN": 8,
+    "KEYWORD_SHROUD": 131072,
+    "COLOR_COLORLESS": 0,
+    "EVENT_ACTIVATE": 109,
+    "EVENT_RESOLVE_ACTIVATION": 114,
+    "EVENT_CAN_ACTIVATE": 115
+  },
+  "native_comparison": {
+    "result": {
+      "all_equal": true,
+      "three_way_comparisons": 165568,
+      "entry_invocations": 496704,
+      "helpers": 5,
+      "activation_color_masks": 32,
+      "attachment_equipment_event_values": 256,
+      "stateful_random_inputs": 12000,
+      "mutation_modes": 2,
+      "opaque_dialog_protocol_checked": true,
+      "exact_call_traces_and_full_state": true
+    },
+    "native_path": ".recovery/2022-ManalinkEh.dll",
+    "native_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "functions": [
+      {
+        "name": "charge_mana_from_id_with_cost_mod",
+        "address": "0x268b720",
+        "size": 1476,
+        "sha256": "ea4f8b4a23458c27c5244dd8e04a15dbbe29e2a336c84ef46c3369442f52f43b",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x268b756",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x268b7bb",
+            "target": "0x268b460",
+            "callee": "is_phyrexian"
+          },
+          {
+            "instruction": "0x268b822",
+            "target": "0x226d990",
+            "callee": "charge_phyrexian_mana"
+          },
+          {
+            "instruction": "0x268b86a",
+            "target": "0x2689830",
+            "callee": "true_get_updated_casting_cost"
+          },
+          {
+            "instruction": "0x268b885",
+            "target": "0x268b640",
+            "callee": "is_normal_hybrid"
+          },
+          {
+            "instruction": "0x268b8b3",
+            "target": "0x254aed0",
+            "callee": "get_colors_for_hybrid"
+          },
+          {
+            "instruction": "0x268b8cd",
+            "target": "0x254aed0",
+            "callee": "get_colors_for_hybrid"
+          },
+          {
+            "instruction": "0x268b8ec",
+            "target": "0x254ae10",
+            "callee": "get_number_of_hybrid_mana"
+          },
+          {
+            "instruction": "0x268b90e",
+            "target": "0x254b170",
+            "callee": "charge_mana_hybrid"
+          },
+          {
+            "instruction": "0x268b928",
+            "target": "0x26b4510",
+            "callee": "obliterate_card"
+          },
+          {
+            "instruction": "0x268b93f",
+            "target": "0x26c11b0",
+            "callee": "backtrace_and_abort"
+          },
+          {
+            "instruction": "0x268b967",
+            "target": "0x2558020",
+            "callee": "casting_reaper_king"
+          },
+          {
+            "instruction": "0x268b973",
+            "target": "0x26b3410",
+            "callee": "get_internal_card_id_from_csv_id"
+          },
+          {
+            "instruction": "0x268b991",
+            "target": "0x26b2e30",
+            "callee": "add_card_to_hand"
+          },
+          {
+            "instruction": "0x268b9a6",
+            "target": "0x2558020",
+            "callee": "casting_reaper_king"
+          },
+          {
+            "instruction": "0x268b9b7",
+            "target": "0x26b35a0",
+            "callee": "get_id"
+          },
+          {
+            "instruction": "0x268b9ce",
+            "target": "0x268b5f0",
+            "callee": "is_monocolor_hybrid"
+          },
+          {
+            "instruction": "0x268b9e5",
+            "target": "0x254a8d0",
+            "callee": "get_color_for_monocolored_hybrid"
+          },
+          {
+            "instruction": "0x268b9fb",
+            "target": "0x254a940",
+            "callee": "get_number_of_monocolored_hybrid_mana"
+          },
+          {
+            "instruction": "0x268ba16",
+            "target": "0x254aa50",
+            "callee": "charge_mana_for_monocolor_hybrid"
+          },
+          {
+            "instruction": "0x268ba32",
+            "target": "0x2689830",
+            "callee": "true_get_updated_casting_cost"
+          },
+          {
+            "instruction": "0x268ba4a",
+            "target": "0x268b640",
+            "callee": "is_normal_hybrid"
+          },
+          {
+            "instruction": "0x268ba60",
+            "target": "0x268b5f0",
+            "callee": "is_monocolor_hybrid"
+          },
+          {
+            "instruction": "0x268bb05",
+            "target": "0x26ae610",
+            "callee": "charge_mana"
+          },
+          {
+            "instruction": "0x268bb82",
+            "target": "0x26ae610",
+            "callee": "charge_mana"
+          },
+          {
+            "instruction": "0x268bbb0",
+            "target": "0x26b2e30",
+            "callee": "add_card_to_hand"
+          },
+          {
+            "instruction": "0x268bbbe",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x268bbfa",
+            "target": "0x26b2e30",
+            "callee": "add_card_to_hand"
+          },
+          {
+            "instruction": "0x268bc08",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x268bc6a",
+            "target": "0x26b2e30",
+            "callee": "add_card_to_hand"
+          },
+          {
+            "instruction": "0x268bc78",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x268bcae",
+            "target": "0x26e6090",
+            "callee": "count_graveyard_by_type"
+          }
+        ]
+      },
+      {
+        "name": "charge_mana_for_activated_ability",
+        "address": "0x268e850",
+        "size": 398,
+        "sha256": "bc25a344a5e24a681068e81c5aa848ae29e4c5645e390a08baff75c4f74bae7b",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x268e86c",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x268e8dd",
+            "target": "0x26888a0",
+            "callee": "get_cost_mod_for_activated_abilities"
+          },
+          {
+            "instruction": "0x268e8ef",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x268e967",
+            "target": "0x26ae610",
+            "callee": "charge_mana"
+          },
+          {
+            "instruction": "0x268e9c5",
+            "target": "0x26ae610",
+            "callee": "charge_mana"
+          }
+        ]
+      },
+      {
+        "name": "has_mana_for_activated_ability",
+        "address": "0x26901c0",
+        "size": 322,
+        "sha256": "57a5c4774a9dc4ffb31ca864fb4f8c3fa0fbc32df56f09e508385910fec5ae66",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x26901dc",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x269024f",
+            "target": "0x26888a0",
+            "callee": "get_cost_mod_for_activated_abilities"
+          },
+          {
+            "instruction": "0x2690260",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26902b7",
+            "target": "0x268ff90",
+            "callee": "has_mana_multi"
+          }
+        ]
+      },
+      {
+        "name": "attachment_granting_activated_ability",
+        "address": "0x269e690",
+        "size": 371,
+        "sha256": "4f8fe7f8af87ed0cfac5bd150c0a22fc2fe3044c4d6c846b34f917bc8dcb9cc0",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x269e6cd",
+            "target": "0x26b32d0",
+            "callee": "in_play"
+          },
+          {
+            "instruction": "0x269e765",
+            "target": "0x269c8c0",
+            "callee": "granted_generic_activated_ability"
+          },
+          {
+            "instruction": "0x269e785",
+            "target": "0x26b32d0",
+            "callee": "in_play"
+          },
+          {
+            "instruction": "0x269e7b7",
+            "target": "0x26b32d0",
+            "callee": "in_play"
+          },
+          {
+            "instruction": "0x269e7e7",
+            "target": "0x265d550",
+            "callee": "get_protections_from"
+          }
+        ]
+      },
+      {
+        "name": "equipment_granting_activated_ability",
+        "address": "0x269e810",
+        "size": 953,
+        "sha256": "ee2015a313d65215be4c3a189dccb9ea91805939b0e38a39a2883535a6760395",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x269e88f",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x269e8a7",
+            "target": "0x26eda00",
+            "callee": "is_equipping"
+          },
+          {
+            "instruction": "0x269e8c6",
+            "target": "0x26edf70",
+            "callee": "can_activate_basic_equipment"
+          },
+          {
+            "instruction": "0x269e923",
+            "target": "0x269e690",
+            "callee": "attachment_granting_activated_ability"
+          },
+          {
+            "instruction": "0x269e97d",
+            "target": "0x26e9c50",
+            "callee": "dialog_impl"
+          },
+          {
+            "instruction": "0x269e9b6",
+            "target": "0x26ee090",
+            "callee": "activate_basic_equipment"
+          },
+          {
+            "instruction": "0x269e9de",
+            "target": "0x26edf70",
+            "callee": "can_activate_basic_equipment"
+          },
+          {
+            "instruction": "0x269ea3b",
+            "target": "0x269e690",
+            "callee": "attachment_granting_activated_ability"
+          },
+          {
+            "instruction": "0x269ea99",
+            "target": "0x26e9c50",
+            "callee": "dialog_impl"
+          },
+          {
+            "instruction": "0x269eabf",
+            "target": "0x26ee230",
+            "callee": "resolve_activation_basic_equipment"
+          },
+          {
+            "instruction": "0x269eb24",
+            "target": "0x269e690",
+            "callee": "attachment_granting_activated_ability"
+          },
+          {
+            "instruction": "0x269eb5d",
+            "target": "0x26ee2a0",
+            "callee": "basic_equipment"
+          },
+          {
+            "instruction": "0x269ebbd",
+            "target": "0x269e690",
+            "callee": "attachment_granting_activated_ability"
+          }
+        ]
+      }
+    ],
+    "bindings": [
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b757",
+        "original_word": "0x27355",
+        "target": "(uintptr_t)get_card_instance-0x268b75bU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b76a",
+        "original_word": "0x7e7034",
+        "target": "(uintptr_t)cards_data+36"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b787",
+        "original_word": "0x73bb00",
+        "target": "(uintptr_t)&cards_ptr"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b7a9",
+        "original_word": "0x7e7038",
+        "target": "(uintptr_t)cards_data+40"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b7bc",
+        "original_word": "0xfffffca0",
+        "target": "(uintptr_t)is_phyrexian-0x268b7c0U",
+        "native_target": "0x268b460"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b823",
+        "original_word": "0xffbe2169",
+        "target": "(uintptr_t)charge_phyrexian_mana-0x268b827U",
+        "native_target": "0x226d990"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b86b",
+        "original_word": "0xffffdfc1",
+        "target": "(uintptr_t)true_get_updated_casting_cost-0x268b86fU",
+        "native_target": "0x2689830"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b886",
+        "original_word": "0xfffffdb6",
+        "target": "(uintptr_t)is_normal_hybrid-0x268b88aU",
+        "native_target": "0x268b640"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b8b4",
+        "original_word": "0xffebf618",
+        "target": "(uintptr_t)get_colors_for_hybrid-0x268b8b8U",
+        "native_target": "0x254aed0"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b8ce",
+        "original_word": "0xffebf5fe",
+        "target": "(uintptr_t)get_colors_for_hybrid-0x268b8d2U",
+        "native_target": "0x254aed0"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b8ed",
+        "original_word": "0xffebf51f",
+        "target": "(uintptr_t)get_number_of_hybrid_mana-0x268b8f1U",
+        "native_target": "0x254ae10"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b90f",
+        "original_word": "0xffebf85d",
+        "target": "(uintptr_t)charge_mana_hybrid-0x268b913U",
+        "native_target": "0x254b170"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b929",
+        "original_word": "0x28be3",
+        "target": "(uintptr_t)obliterate_card-0x268b92dU",
+        "native_target": "0x26b4510"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b940",
+        "original_word": "0x3586c",
+        "target": "(uintptr_t)backtrace_and_abort-0x268b944U",
+        "native_target": "0x26c11b0"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b968",
+        "original_word": "0xffecc6b4",
+        "target": "(uintptr_t)casting_reaper_king-0x268b96cU",
+        "native_target": "0x2558020"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b974",
+        "original_word": "0x27a98",
+        "target": "(uintptr_t)get_internal_card_id_from_csv_id-0x268b978U",
+        "native_target": "0x26b3410"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b992",
+        "original_word": "0x2749a",
+        "target": "(uintptr_t)add_card_to_hand-0x268b996U",
+        "native_target": "0x26b2e30"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b9a7",
+        "original_word": "0xffecc675",
+        "target": "(uintptr_t)casting_reaper_king-0x268b9abU",
+        "native_target": "0x2558020"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b9b8",
+        "original_word": "0x27be4",
+        "target": "(uintptr_t)get_id-0x268b9bcU",
+        "native_target": "0x26b35a0"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b9cf",
+        "original_word": "0xfffffc1d",
+        "target": "(uintptr_t)is_monocolor_hybrid-0x268b9d3U",
+        "native_target": "0x268b5f0"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b9e6",
+        "original_word": "0xffebeee6",
+        "target": "(uintptr_t)get_color_for_monocolored_hybrid-0x268b9eaU",
+        "native_target": "0x254a8d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268b9fc",
+        "original_word": "0xffebef40",
+        "target": "(uintptr_t)get_number_of_monocolored_hybrid_mana-0x268ba00U",
+        "native_target": "0x254a940"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268ba17",
+        "original_word": "0xffebf035",
+        "target": "(uintptr_t)charge_mana_for_monocolor_hybrid-0x268ba1bU",
+        "native_target": "0x254aa50"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268ba33",
+        "original_word": "0xffffddf9",
+        "target": "(uintptr_t)true_get_updated_casting_cost-0x268ba37U",
+        "native_target": "0x2689830"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268ba4b",
+        "original_word": "0xfffffbf1",
+        "target": "(uintptr_t)is_normal_hybrid-0x268ba4fU",
+        "native_target": "0x268b640"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268ba61",
+        "original_word": "0xfffffb8b",
+        "target": "(uintptr_t)is_monocolor_hybrid-0x268ba65U",
+        "native_target": "0x268b5f0"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268ba89",
+        "original_word": "0x7e703c",
+        "target": "(uintptr_t)cards_data+44"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bace",
+        "original_word": "0x4ef400",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[0]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bad6",
+        "original_word": "0x4ef408",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[2]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268baea",
+        "original_word": "0x4ef404",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[1]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268baf0",
+        "original_word": "0x4ef40c",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[3]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268baf6",
+        "original_word": "0x4ef410",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[4]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bafc",
+        "original_word": "0x4ef414",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[5]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb01",
+        "original_word": "0x4ef418",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[6]"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb06",
+        "original_word": "0x22b06",
+        "target": "(uintptr_t)charge_mana-0x268bb0aU",
+        "native_target": "0x26ae610"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb0c",
+        "original_word": "0x4ef194",
+        "target": "(uintptr_t)&spell_fizzled"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb33",
+        "original_word": "0x4ef400",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[0]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb4d",
+        "original_word": "0x4ef404",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[1]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb57",
+        "original_word": "0x4ef408",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[2]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb61",
+        "original_word": "0x4ef40c",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[3]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb6b",
+        "original_word": "0x4ef410",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[4]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb75",
+        "original_word": "0x4ef414",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[5]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb7e",
+        "original_word": "0x4ef418",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[6]"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb83",
+        "original_word": "0x22a89",
+        "target": "(uintptr_t)charge_mana-0x268bb87U",
+        "native_target": "0x26ae610"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bb89",
+        "original_word": "0x4ef194",
+        "target": "(uintptr_t)&spell_fizzled"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bbb1",
+        "original_word": "0x2727b",
+        "target": "(uintptr_t)add_card_to_hand-0x268bbb5U",
+        "native_target": "0x26b2e30"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bbbf",
+        "original_word": "0x26eed",
+        "target": "(uintptr_t)get_card_instance-0x268bbc3U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bbc6",
+        "original_word": "0x4ef1c4",
+        "target": "(uintptr_t)&hand_count"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bbd7",
+        "original_word": "0x4ef1c4",
+        "target": "(uintptr_t)&hand_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bbfb",
+        "original_word": "0x27231",
+        "target": "(uintptr_t)add_card_to_hand-0x268bbffU",
+        "native_target": "0x26b2e30"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bc09",
+        "original_word": "0x26ea3",
+        "target": "(uintptr_t)get_card_instance-0x268bc0dU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bc10",
+        "original_word": "0x4ef1c4",
+        "target": "(uintptr_t)&hand_count"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bc1e",
+        "original_word": "0x4ef1c4",
+        "target": "(uintptr_t)&hand_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bc6b",
+        "original_word": "0x271c1",
+        "target": "(uintptr_t)add_card_to_hand-0x268bc6fU",
+        "native_target": "0x26b2e30"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bc79",
+        "original_word": "0x26e33",
+        "target": "(uintptr_t)get_card_instance-0x268bc7dU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bc8c",
+        "original_word": "0x4ef1c4",
+        "target": "(uintptr_t)&hand_count"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bc94",
+        "original_word": "0x4ef1c4",
+        "target": "(uintptr_t)&hand_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_from_id_with_cost_mod",
+        "patch_address": "0x268bcaf",
+        "original_word": "0x5a3dd",
+        "target": "(uintptr_t)count_graveyard_by_type-0x268bcb3U",
+        "native_target": "0x26e6090"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e86d",
+        "original_word": "0x2423f",
+        "target": "(uintptr_t)get_card_instance-0x268e871U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e8de",
+        "original_word": "0xffff9fbe",
+        "target": "(uintptr_t)get_cost_mod_for_activated_abilities-0x268e8e2U",
+        "native_target": "0x26888a0"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e8f0",
+        "original_word": "0x241bc",
+        "target": "(uintptr_t)get_card_instance-0x268e8f4U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e968",
+        "original_word": "0x1fca4",
+        "target": "(uintptr_t)charge_mana-0x268e96cU",
+        "native_target": "0x26ae610"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e970",
+        "original_word": "0x4ef194",
+        "target": "(uintptr_t)&spell_fizzled"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e979",
+        "original_word": "0x4ef400",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[0]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e98a",
+        "original_word": "0x4ef400",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[0]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e995",
+        "original_word": "0x4ef408",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[2]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e99d",
+        "original_word": "0x4ef40c",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[3]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e9b6",
+        "original_word": "0x4ef404",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[1]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e9bc",
+        "original_word": "0x4ef410",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[4]"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e9c1",
+        "original_word": "0x4ef414",
+        "target": "(uintptr_t)&pay_mana_xbugrwaU[5]"
+      },
+      {
+        "kind": "callee",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e9c6",
+        "original_word": "0x1fc46",
+        "target": "(uintptr_t)charge_mana-0x268e9caU",
+        "native_target": "0x26ae610"
+      },
+      {
+        "kind": "data",
+        "owner": "charge_mana_for_activated_ability",
+        "patch_address": "0x268e9ce",
+        "original_word": "0x4ef194",
+        "target": "(uintptr_t)&spell_fizzled"
+      },
+      {
+        "kind": "callee",
+        "owner": "has_mana_for_activated_ability",
+        "patch_address": "0x26901dd",
+        "original_word": "0x228cf",
+        "target": "(uintptr_t)get_card_instance-0x26901e1U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "has_mana_for_activated_ability",
+        "patch_address": "0x2690250",
+        "original_word": "0xffff864c",
+        "target": "(uintptr_t)get_cost_mod_for_activated_abilities-0x2690254U",
+        "native_target": "0x26888a0"
+      },
+      {
+        "kind": "callee",
+        "owner": "has_mana_for_activated_ability",
+        "patch_address": "0x2690261",
+        "original_word": "0x2284b",
+        "target": "(uintptr_t)get_card_instance-0x2690265U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "has_mana_for_activated_ability",
+        "patch_address": "0x26902b8",
+        "original_word": "0xfffffcd4",
+        "target": "(uintptr_t)has_mana_multi-0x26902bcU",
+        "native_target": "0x268ff90"
+      },
+      {
+        "kind": "callee",
+        "owner": "attachment_granting_activated_ability",
+        "patch_address": "0x269e6ce",
+        "original_word": "0x14bfe",
+        "target": "(uintptr_t)in_play-0x269e6d2U",
+        "native_target": "0x26b32d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "attachment_granting_activated_ability",
+        "patch_address": "0x269e766",
+        "original_word": "0xffffe156",
+        "target": "(uintptr_t)granted_generic_activated_ability-0x269e76aU",
+        "native_target": "0x269c8c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "attachment_granting_activated_ability",
+        "patch_address": "0x269e786",
+        "original_word": "0x14b46",
+        "target": "(uintptr_t)in_play-0x269e78aU",
+        "native_target": "0x26b32d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "attachment_granting_activated_ability",
+        "patch_address": "0x269e7b8",
+        "original_word": "0x14b14",
+        "target": "(uintptr_t)in_play-0x269e7bcU",
+        "native_target": "0x26b32d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "attachment_granting_activated_ability",
+        "patch_address": "0x269e7e8",
+        "original_word": "0xfffbed64",
+        "target": "(uintptr_t)get_protections_from-0x269e7ecU",
+        "native_target": "0x265d550"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269e890",
+        "original_word": "0x1421c",
+        "target": "(uintptr_t)get_card_instance-0x269e894U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269e8a8",
+        "original_word": "0x4f154",
+        "target": "(uintptr_t)is_equipping-0x269e8acU",
+        "native_target": "0x26eda00"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269e8c7",
+        "original_word": "0x4f6a5",
+        "target": "(uintptr_t)can_activate_basic_equipment-0x269e8cbU",
+        "native_target": "0x26edf70"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269e924",
+        "original_word": "0xfffffd68",
+        "target": "(uintptr_t)attachment_granting_activated_ability-0x269e928U",
+        "native_target": "0x269e690"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269e97e",
+        "original_word": "0x4b2ce",
+        "target": "(uintptr_t)dialog_impl-0x269e982U",
+        "native_target": "0x26e9c50"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269e9b7",
+        "original_word": "0x4f6d5",
+        "target": "(uintptr_t)activate_basic_equipment-0x269e9bbU",
+        "native_target": "0x26ee090"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269e9df",
+        "original_word": "0x4f58d",
+        "target": "(uintptr_t)can_activate_basic_equipment-0x269e9e3U",
+        "native_target": "0x26edf70"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269ea3c",
+        "original_word": "0xfffffc50",
+        "target": "(uintptr_t)attachment_granting_activated_ability-0x269ea40U",
+        "native_target": "0x269e690"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269ea9a",
+        "original_word": "0x4b1b2",
+        "target": "(uintptr_t)dialog_impl-0x269ea9eU",
+        "native_target": "0x26e9c50"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269eac0",
+        "original_word": "0x4f76c",
+        "target": "(uintptr_t)resolve_activation_basic_equipment-0x269eac4U",
+        "native_target": "0x26ee230"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269eb25",
+        "original_word": "0xfffffb67",
+        "target": "(uintptr_t)attachment_granting_activated_ability-0x269eb29U",
+        "native_target": "0x269e690"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269eb5e",
+        "original_word": "0x4f73e",
+        "target": "(uintptr_t)basic_equipment-0x269eb62U",
+        "native_target": "0x26ee2a0"
+      },
+      {
+        "kind": "callee",
+        "owner": "equipment_granting_activated_ability",
+        "patch_address": "0x269ebbe",
+        "original_word": "0xffffface",
+        "target": "(uintptr_t)attachment_granting_activated_ability-0x269ebc2U",
+        "native_target": "0x269e690"
+      }
+    ],
+    "coff_globals": {
+      "hand_count": "0x4ef1c4",
+      "cards_data": "0x7e7010",
+      "pay_mana_xbugrwaU": "0x4ef400",
+      "spell_fizzled": "0x4ef194",
+      "cards_ptr": "0x73bb00"
+    },
+    "source_path": ".recovery/payment-native-check-c354.c",
+    "source_sha256": "979bfdaf11ab641f1043ced6460454e4db92109f6141301f3454ae406622620c",
+    "executable_path": ".recovery/payment-native-check-c354.exe",
+    "executable_sha256": "7f77eb79f2f5b5948da663219c68ca3d83ad5d4c081cd2b66e591bd79b3eeb1f",
+    "compile_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-static-libgcc",
+      "-Wl,--image-base,0x10000000",
+      "-I.",
+      ".recovery\\payment-native-check-c354.c",
+      "-o",
+      ".recovery\\payment-native-check-c354.exe"
+    ],
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "compile_log": ".recovery/payment-native-check-c354.compile.log",
+    "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_state_sha256": "76a11ba562fefe80b14b3cca12e817d40b773f03f19b145323ea2c2cb9c59871",
+  "raw_source_bytes_sha256": "3265822cdb4242b3fb1a3dcbaeae28eaffbd6d8d98fff3e8840f41d2f6f026b7",
+  "index_sha256": "c1924b91f666e6c673ce508281ac488faf07f9a50b2377ed27fdc1b6315d6e93",
+  "scope": "Five native branch bodies compared with predecessor and reconstruction, including temporary card lifetime/cleanup, hybrid/Phyrexian payment, fixed+X passes, fresh extension flags, recipient retargeting, dialog protocol and two callback-mutation modes. Exact calls and transient full records/extensions/target definition, payment vector, card definition/data and globals checked. Each helper uses controlled callees; no composition or UI/gameplay execution. Allocated players/cards/extensions and scalar color sums are bounded; signed-overflow arithmetic, arbitrary pointer aliases and complete native32 state excluded.",
+  "files": [
+    {
+      "source": "functions/functions.c",
+      "before_path": ".recovery/payment-helpers-before-c355/functions/functions.c",
+      "before_bytes_sha256": "3265822cdb4242b3fb1a3dcbaeae28eaffbd6d8d98fff3e8840f41d2f6f026b7",
+      "after_source_sha256": "c39fe6f5dc0de96bb184ded93eeb45191c828adc5a4b39e00a5e2ff960d6ccca"
+    }
+  ],
+  "whole_source_lines_removed": 188,
+  "compiler_expansion": {
+    "compiler_path": "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-E",
+      "-dD",
+      "functions/functions.c"
+    ],
+    "preflight_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-E",
+      "-dD",
+      "-x",
+      "c",
+      "-"
+    ],
+    "before_sha256": "04d9b16121551293e0f23917ad0081c5b8f6745c066905d3a22c8cb221521d18",
+    "projected_sha256": "1e3f6d23af7f7ef0fb169c6030960469b9e1090fad6570ae97f77f1a55aba577",
+    "unrelated_expanded_tokens_unchanged": true,
+    "ordinary_storage_enum_and_layout_probe": "\n#include <stddef.h>\n#include <limits.h>\n_Static_assert(sizeof(int)==4 && sizeof(void*)==4 && CHAR_BIT==8 && (char)255==-1, \"native_payment_integer_model\");\n_Static_assert(sizeof(card_instance_t)==300 && offsetof(card_instance_t,ext)==44 && offsetof(card_ext_t,special_flags2)==184 && sizeof(card_data_t)==72 && offsetof(card_data_t,id)==36 && offsetof(card_data_t,type)==40 && offsetof(card_data_t,cc)+1==44, \"native_payment_layout\");\n_Static_assert(sizeof(target_definition_t)==84 && offsetof(target_definition_t,illegal_abilities)==28 && offsetof(target_definition_t,player)==72 && offsetof(target_definition_t,card)==76, \"native_attachment_target_fields\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&hand_count[0]),int*) && __builtin_types_compatible_p(__typeof__(&spell_fizzled),int*) && __builtin_types_compatible_p(__typeof__(&pay_mana_xbugrwaU[0]),int*) && sizeof(pay_mana_xbugrwaU)==32, \"ordinary_payment_globals\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&cards_ptr[0]),card_ptr_t**) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_colorless),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_black),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_blue),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_green),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_red),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_white),uint8_t*), \"ordinary_cached_payment_definition\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->ext),card_ext_t**) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->state),uint32_t*) && sizeof(((card_ext_t*)0)->special_flags2)==4 && __builtin_types_compatible_p(__typeof__(&((target_definition_t*)0)->player),int32_t*) && __builtin_types_compatible_p(__typeof__(&((target_definition_t*)0)->card),int32_t*), \"ordinary_payment_records_and_targets\");\n_Static_assert(CARD_ID_REAPER_KING==9645, \"native_counter_enum\");\n_Static_assert(CARD_ID_KARADOR_GHOST_CHIEFTAIN==11757, \"native_counter_enum\");\n_Static_assert(TYPE_CREATURE==2, \"native_counter_enum\");\n_Static_assert(TYPE_ARTIFACT==64, \"native_counter_enum\");\n_Static_assert(STATE_INVISIBLE==32, \"native_counter_enum\");\n_Static_assert(SF2_MYCOSYNTH_LATTICE==4, \"native_counter_enum\");\n_Static_assert(SF2_CELESTIAL_DAWN==8, \"native_counter_enum\");\n_Static_assert(KEYWORD_SHROUD==131072, \"native_counter_enum\");\n_Static_assert(COLOR_COLORLESS==0, \"native_counter_enum\");\n_Static_assert(EVENT_ACTIVATE==109, \"native_counter_enum\");\n_Static_assert(EVENT_RESOLVE_ACTIVATION==114, \"native_counter_enum\");\n_Static_assert(EVENT_CAN_ACTIVATE==115, \"native_counter_enum\");\n",
+    "probe_exit_code": 0,
+    "before_archive": {
+      "path": ".recovery/payment-helpers-before-c355.i.gz",
+      "sha256": "2bb01877efb87af23793da637ce76f544e36583d950b06f50a1576100cb0d3fd"
+    },
+    "projected_archive": {
+      "path": ".recovery/payment-helpers-projected-c355.i.gz",
+      "sha256": "91389210fc688e84831c5a267db1cc992e1f6fd05a4d3c3c5b9f3f6debdadfd4"
+    },
+    "actual_sha256": "a79e4de71558e896972842e06574d59e5e49a485e8c67c368c420b6f6f3e988c",
+    "actual_unit_matches_preflight": true
+  },
+  "status": "Application-time snapshot: native comparisons and actual compiler-unit checks pass. Subsequent build/setup completion is published in payment-helpers-cleanup-coverage.json."
+}

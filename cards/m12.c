@@ -634,7 +634,6 @@ int card_gideons_avenger(int player, int card, event_t event)
 int card_grand_abolisher(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar2;
   int iVar3;
   test_definition_t test;
   iVar3 = current_turn;
@@ -645,11 +644,9 @@ int card_grand_abolisher(int player, int card, event_t event)
       instance = in_play(current_turn, card);
       if ((instance != NULL) && (1 - iVar3 == affected_card_controller))
       {
-        iVar2 = is_what(1 - iVar3, affected_card, 1);
-        if (iVar2 == 0)
+        if (is_what(1 - iVar3, affected_card, 1) == 0)
         {
-          iVar3 = is_humiliated(iVar3, card, AL_STATIC);
-          if (iVar3 == 0)
+          if (is_humiliated(iVar3, card, AL_STATIC) == 0)
           {
             infinite_casting_cost();
           }
@@ -1022,6 +1019,7 @@ int card_rune_scarred_demon(int player, int card, event_t event){
 
 int card_skinshifter(int player, int card, event_t event)
 {
+  int choice;
   card_instance_t *instance;
   int iVar2;
   unsigned int uVar3;
@@ -1032,9 +1030,8 @@ int card_skinshifter(int player, int card, event_t event)
 
   if (event - EVENT_POW_BOOST < 2)
   {
-    iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x2000, 0, 0, 0, 1, 0, 0, 0,
-                                      NULL, NULL);
-    if (iVar2 == 0)
+    if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x2000, 0, 0, 0, 1, 0, 0, 0,
+                                      NULL, NULL) == 0)
     {
       return 0;
     }
@@ -1064,15 +1061,15 @@ int card_skinshifter(int player, int card, event_t event)
         uVar6 = 10;
         uVar3 = 0;
       }
-      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "4/4 Rhino", 1,
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "4/4 Rhino", 1,
                           uVar3, "2/2 Bird", 1, uVar5, "0/8 Plant", 1, uVar6, 0, 0, 0, 0);
-      if (iVar2 == 0)
+      if (choice == 0)
       {
         spell_fizzled = 1;
         return 0;
       }
-      instance->info_slot = iVar2;
-      goto LAB_024a1bb5;
+      instance->info_slot = choice;
+      return generic_activated_ability(player, card, event, 0x2000, 0, 0, 0, 1, 0, 0, 0, NULL, NULL);
     }
   }
   else
@@ -1113,9 +1110,7 @@ int card_skinshifter(int player, int card, event_t event)
                                 SUBTYPE_PLANT);
     }
   }
-LAB_024a1bb5:
-  iVar2 = generic_activated_ability(player, card, event, 0x2000, 0, 0, 0, 1, 0, 0, 0, NULL, NULL);
-  return iVar2;
+  return generic_activated_ability(player, card, event, 0x2000, 0, 0, 0, 1, 0, 0, 0, NULL, NULL);
 }
 
 int card_spirit_mantle(int player, int card, event_t event){
@@ -2192,7 +2187,6 @@ int card_trollhide(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
   int player_00;
   instance = in_play(player, card);
   if (instance != NULL)
@@ -2209,26 +2203,22 @@ int card_trollhide(int player, int card, event_t event)
       else
       {
         if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-          goto LAB_024a5094;
+          return generic_aura(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
         player_00 = (int)instance->damage_target_player;
         iVar2 = instance->damage_target_card;
         if (event == EVENT_RESOLVE_ACTIVATION)
         {
-          iVar3 = can_regenerate(player_00, iVar2);
-          if (iVar3 != 0)
+          if (can_regenerate(player_00, iVar2) != 0)
           {
             regenerate_target(player_00, iVar2);
           }
         }
       }
-      iVar2 = granted_generic_activated_ability(player, card, player_00, iVar2, event, 0x800000, 1,
+      return granted_generic_activated_ability(player, card, player_00, iVar2, event, 0x800000, 1,
                                                 0, 0, 1, 0, 0, 0, NULL, NULL);
-      return iVar2;
     }
   }
-LAB_024a5094:
-  iVar2 = generic_aura(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
-  return iVar2;
+  return generic_aura(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
 }
 
 int card_crumbling_colossus(int player, int card, event_t event)

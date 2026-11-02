@@ -1,0 +1,209 @@
+{
+  "batch": "docs/recovery-evidence/forward-guard-cleanup.json",
+  "batch_sha256": "485535d664aa5cedd63f4a7ff69180867b805f465826eb56920873eaef4cc9e4",
+  "counts": {
+    "functions": 27,
+    "source_units": 23,
+    "removed_gotos": 31,
+    "removed_labels": 11,
+    "source_lines_removed": -20,
+    "card_handlers": 21,
+    "helpers": 6,
+    "source_lines_added": 20,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 4,
+    "changed_sections": [
+      ".CRT",
+      ".data",
+      ".rdata",
+      ".reloc",
+      ".text",
+      ".text.startup",
+      ".text.startup._GLOBAL__sub_I__ZN9__gnu_cxx9__freeresEv",
+      ".text.startup._GLOBAL__sub_I___cxa_get_globals_fast",
+      ".text.unlikely",
+      ".text.unlikely._ZSt16__throw_bad_castv",
+      ".text.unlikely._ZSt17__throw_bad_allocv",
+      ".text.unlikely._ZSt18__throw_bad_typeidv",
+      ".text.unlikely._ZSt19__throw_logic_errorPKc",
+      ".text.unlikely._ZSt19__throw_range_errorPKc",
+      ".text.unlikely._ZSt20__throw_domain_errorPKc",
+      ".text.unlikely._ZSt20__throw_length_errorPKc",
+      ".text.unlikely._ZSt20__throw_out_of_rangePKc",
+      ".text.unlikely._ZSt21__throw_bad_exceptionv",
+      ".text.unlikely._ZSt21__throw_runtime_errorPKc",
+      ".text.unlikely._ZSt22__throw_overflow_errorPKc",
+      ".text.unlikely._ZSt23__throw_underflow_errorPKc",
+      ".text.unlikely._ZSt24__throw_invalid_argumentPKc"
+    ],
+    "scope": "Compiler output comparison; export timestamp normalized, debug sections excluded. Source/control-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_forward_guards": {
+        "cleaned_definitions": 27,
+        "source_units": 23,
+        "removed_gotos": 31,
+        "removed_labels": 11,
+        "raw_cfg_state_pairs": 4514,
+        "expanded_cfg_state_pairs": 4514,
+        "assertion_sites": 9,
+        "scope": "Forward jump guards become conditional blocks. Conditions evaluate once; boolean negation swaps successors, with no integer-complement assumptions. No declarations move into a narrower scope. Every action, call, predicate and return retains its order in raw and expanded CFGs. Complete actual expansions match. No new native function coverage or gameplay tests."
+      },
+      "prior_source_input_hashes": {
+        "previous_tail_source_units": 90,
+        "previous_residual_source_units": 4,
+        "previous_direction_source_units": 31,
+        "previous_loop_source_units": 17,
+        "previous_comparison_source_units": 31,
+        "previous_comma_source_units": 61,
+        "extended_spell_source_units": 15,
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Fresh focused forward-guard validation and exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/forward-guards-readers-c208.log",
+      "sha256": "d2f3713470087a3c04e33f3505cc835b7080d56424b74bc44d59cbe51b5bbec0",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/forward-guards-build-c207.log",
+      "log_sha256": "a36979d7f72a89c6c8d038a0c8120067d2031f9400e5e6aad907fdbcb26ff703",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "c97d5761f8b74953263e56a188b92da58e6fd3c751a688de44073c152434a2a5",
+      "dbg_sha256": "1dbfe5a1da0ae5d6d7cd53302893754af40fce2499d2ea6869b05017ef03618a"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/forward-guards-proof-before-c206.json.gz",
+      "archive_sha256": "a26bcd2fba3025c1b6562ce8cd9f64d81cf3df96dc14bff91a2383cf42c87ee6",
+      "raw_sha256": "a79c44bee67d8f7ee8004efd9cc5ac002afef69dfb72371a285c875b57b472a4",
+      "verified_source_pin_successions": 23
+    },
+    "limits": "Readability recovery of accepted bodies, not new function coverage. Conditions evaluate once with negated branch successors; all ordered actions remain. No declarations gain narrower scope. Source and actual expanded CFGs each match4514 state pairs;23 complete actual expanded units checked with9 ASSERT sites. Code/layout changes are recorded, not byte-matching failures. Prior source-reader inputs checked without old semantic replay; no gameplay tests."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/forward-guards-setup-c210.log",
+    "log_sha256": "08095b69a3fbdc78be2da9de47d9c3fd0c8c34c722b637e53ae016e5ab64d287",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "csv_functions": 18725,
+    "metadata_sha256": "6205d6b097648b46a067b25b3d61eca1d3a5e0a1c293ac24c2ca5ce76dec9f3a",
+    "mapping_identities_unchanged": true,
+    "only_csv_changes": "Rebuilt public COFF address annotations",
+    "changed_annotations": [
+      {
+        "name": "target_must_be_permanent_or_suspend",
+        "native_address": "0x20e7ea0",
+        "before": "0x258e830",
+        "after": "0x258e950"
+      },
+      {
+        "name": "count_type_in_hand",
+        "native_address": "0x21d4b10",
+        "before": "0x26208f0",
+        "after": "0x26209f0"
+      },
+      {
+        "name": "locate_edh_card",
+        "native_address": "0x22c64f0",
+        "before": "0x25fd320",
+        "after": "0x25fd420"
+      },
+      {
+        "name": "breach_effect",
+        "native_address": "0x2359bb0",
+        "before": "0x2575c30",
+        "after": "0x2575cb0"
+      },
+      {
+        "name": "find_attached_legacy_effect_not_full",
+        "native_address": "0x235b430",
+        "before": "0x2579450",
+        "after": "0x25794d0"
+      },
+      {
+        "name": "proliferate_manual_single_permanent_or_player",
+        "native_address": "0x2438530",
+        "before": "0x24bb940",
+        "after": "0x24bb9d0"
+      },
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "0x26e90d0",
+        "after": "0x26e91d0"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "0x26f1540",
+        "after": "0x26f1640"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "0x26e7c50",
+        "after": "0x26e7d50"
+      },
+      {
+        "name": "new_damage_all",
+        "native_address": "0x26677f0",
+        "before": "0x26c6ee0",
+        "after": "0x26c6fe0"
+      },
+      {
+        "name": "mana_doublers",
+        "native_address": "0x266c040",
+        "before": "0x26ce0b0",
+        "after": "0x26ce1b0"
+      },
+      {
+        "name": "etb_ability",
+        "native_address": "0x26a5370",
+        "before": "0x26a46a0",
+        "after": "0x26a47a0"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "0x26dfa00",
+        "after": "0x26dfb00"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "0x26df9d0",
+        "after": "0x26dfad0"
+      }
+    ],
+    "prior_csv_reconstructed_sha256": "ddf830d7cccabcb41925cc29c3f400c8b6ebde352e9534cab811fd02562e40d1"
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c210.json",
+    "sha256": "717b563360ff005a5d6d4853486f9e5eb482bb19c498e10e3290c1eb28d9e597",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1026,
+      "lab_gotos": 4135,
+      "functions_with_placeholders": 2129,
+      "distinct_function_local_placeholder_spellings": 6840,
+      "placeholder_identifier_occurrences": 61038,
+      "union_keywords": 0
+    }
+  },
+  "limits": "Readability recovery of accepted bodies, not new function coverage. Conditions evaluate once with negated branch successors; all ordered actions remain. No declarations gain narrower scope. Source and actual expanded CFGs each match4514 state pairs;23 complete actual expanded units checked with9 ASSERT sites. Code/layout changes are recorded, not byte-matching failures. Prior source-reader inputs checked without old semantic replay; no gameplay tests."
+}

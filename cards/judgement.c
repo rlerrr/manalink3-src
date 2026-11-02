@@ -2011,23 +2011,22 @@ int card_solitary_confinement(int player, int card, event_t event)
         {
           discard_card(player, result);
           ai_modifier = ai_modifier - (life[player] * -3 + (7 - hand_count[player]) * 6);
-          goto LAB_0205ecec;
+          return global_enchantment(player, card, event);
         }
       }
       kill_card(player, card, KILL_SACRIFICE);
     }
   }
-LAB_0205ecec:
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 int card_soulcatchers_aerie(int player, int card, event_t event)
 {
+  int c;
+  int count;
   int iVar1;
   unsigned int uVar2;
   card_instance_t *instance;
-  int iVar4;
   test_definition_t this_test;
 
   if (event == EVENT_STATIC_EFFECTS)
@@ -2038,20 +2037,20 @@ int card_soulcatchers_aerie(int player, int card, event_t event)
       {
         if (0 < active_cards_count[player])
         {
-          iVar1 = 0;
+          c = 0;
           do
           {
-            instance = in_play(player, iVar1);
-            if ((((instance != NULL) && (iVar4 = is_what(player, iVar1, 0x80), iVar4 != 0)) &&
-                 (instance = get_card_instance(player, iVar1),
+            instance = in_play(player, c);
+            if ((((instance != NULL) && (is_what(player, c, 0x80) != 0)) &&
+                 (instance = get_card_instance(player, c),
                   instance->info_slot_fn == soulcatchers_aerie_effect)) &&
                 (((instance->damage_target_player == player &&
                    (instance->damage_target_card == card)) ||
                   ((instance->targets[0].player == player &&
                     (instance->targets[0].card == card))))))
               goto LAB_0205f0d8;
-            iVar1 = iVar1 + 1;
-          } while (iVar1 < active_cards_count[player]);
+            c = c + 1;
+          } while (c < active_cards_count[player]);
         }
         iVar1 =
             create_targetted_legacy_effect(player, card, soulcatchers_aerie_effect, player, card);
@@ -2066,8 +2065,7 @@ int card_soulcatchers_aerie(int player, int card, event_t event)
     }
     else
     {
-      iVar1 = is_humiliated(player, card, AL_STATIC);
-      if (iVar1 == 0)
+      if (is_humiliated(player, card, AL_STATIC) == 0)
         goto LAB_0205ef46;
     }
     is_humiliated(player, card, AL_TRIG);
@@ -2077,8 +2075,8 @@ int card_soulcatchers_aerie(int player, int card, event_t event)
     iVar1 = is_humiliated(player, card, AL_STATIC);
     if ((iVar1 == 0) && (event - EVENT_POWER < 2))
     {
-      iVar1 = count_counters(player, card, COUNTER_FEATHER);
-      boost_creature_type(player, card, event, SUBTYPE_BIRD, iVar1, iVar1, 0,
+      count = count_counters(player, card, COUNTER_FEATHER);
+      boost_creature_type(player, card, event, SUBTYPE_BIRD, count, count, 0,
                           BCT_INCLUDE_SELF | BCT_CONTROLLER_ONLY);
       is_humiliated(player, card, AL_TRIG);
       goto LAB_0205ef68;
@@ -2101,8 +2099,7 @@ LAB_0205ef68:
       add_counters(player, card, player, card, COUNTER_FEATHER, 1);
     }
   }
-  iVar1 = global_enchantment(player, card, event);
-  return iVar1;
+  return global_enchantment(player, card, event);
 }
 
 int card_spirit_cairn(int player, int card, event_t event)
@@ -2395,7 +2392,7 @@ Threshold - As long as seven or more cards are in your graveyard, ~ gets +1/+1 a
 /* ManalinkEh 2022: 0x2058d30; original cards/judgement.c:2054. */
 static int soulcatchers_aerie_effect(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   unsigned int uVar2;
   card_instance_t *pcVar3;
   int result;
@@ -2406,16 +2403,16 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
-      pcVar1 = get_card_instance(player, card);
-      if ((-1 < pcVar1->damage_target_player) &&
-          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
            result != 0x1775))
       {
         kill_card(player, card, KILL_EXILE);
       }
     }
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
     {
       return 0;
@@ -2427,8 +2424,8 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
   }
   else
   {
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, event), result != 0))
     {
       return 0;
@@ -2436,23 +2433,23 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
     if (event != EVENT_GRAVEYARD_FROM_PLAY)
       goto LAB_02058d68;
 
-    pcVar1 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     pcVar3 = in_play(affected_card_controller, affected_card);
     if ((pcVar3 != NULL) &&
         (result = is_this_dying(affected_card_controller, affected_card), result != 0))
     {
 
-      if ((pcVar1->damage_target_card == affected_card) &&
-          (pcVar1->damage_target_player == affected_card_controller))
+      if ((instance->damage_target_card == affected_card) &&
+          (instance->damage_target_player == affected_card_controller))
       {
-        pcVar1->damage_target_card = -1;
-        pcVar1->damage_target_player = -1;
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
         remove_status(player, card, 0x10000);
-        if (pcVar1->targets[0xb].player < 0)
+        if (instance->targets[0xb].player < 0)
         {
-          pcVar1->targets[0xb].player = 0;
+          instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
       }
       default_test_definition(&this_test, 0x47);
       this_test.subtype = 0x16;

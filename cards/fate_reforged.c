@@ -5,9 +5,8 @@ static int wotft_2(int,int,event_t);
 // Functions
 void bolster(int player, int card, int num_counters)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   card_instance_t *pcVar2;
-  int iVar3;
   int iVar4;
   int iVar5;
   int iVar6;
@@ -19,7 +18,7 @@ void bolster(int player, int card, int num_counters)
 
   EXE_FN(void, 0x477070, void)();
   EXE_FN(void, 0x477a90, void)();
-  pcVar1 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   iVar5 = active_cards_count[player] + -1;
   if (-1 < iVar5)
   {
@@ -30,7 +29,7 @@ void bolster(int player, int card, int num_counters)
     do
     {
       while ((pcVar2 = in_play(player, iVar5), iVar4 = iVar6,
-              pcVar2 == NULL || (iVar3 = is_what(player, iVar5, 2), iVar3 == 0)))
+              pcVar2 == NULL || (is_what(player, iVar5, 2) == 0)))
       {
       LAB_026230d8:
         iVar5 = iVar5 + -1;
@@ -54,17 +53,16 @@ void bolster(int player, int card, int num_counters)
     {
       default_target_definition(player, card, &td, 2);
       td.allow_cancel = 0;
-      pcVar1->number_of_targets = '\0';
+      instance->number_of_targets = '\0';
       td.allowed_controller = player;
       td.preferred_controller = player;
       td.illegal_abilities = 0;
       td.toughness_requirement = iVar6;
       scnprintf(msg, 100, "Select a creature you control with toughness %d.", iVar6);
-      iVar5 = new_pick_target(&td, msg, 0, 0x80);
-      if (iVar5 != 0)
+      if (new_pick_target(&td, msg, 0, 0x80) != 0)
       {
-        iStack_d0 = pcVar1->targets[0].player;
-        iStack_d4 = pcVar1->targets[0].card;
+        iStack_d0 = instance->targets[0].player;
+        iStack_d4 = instance->targets[0].card;
       }
     }
     if ((iStack_d0 != -1) && (iStack_d4 != -1))
@@ -327,6 +325,7 @@ static int runemark(int player, int card, event_t event, color_test_t colors, in
 // Colorless
 int card_ugin_the_spirit_dragon(int player, int card, event_t event)
 {
+  int i;
   int iVar1;
   card_instance_t *instance;
   int iVar3;
@@ -348,13 +347,13 @@ int card_ugin_the_spirit_dragon(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_ACTIVATE)
     {
-      iVar1 = 0;
+      i = 0;
       iStack_21c = 0;
-      while (iVar3 = count_counters(player, card, COUNTER_LOYALTY), iVar1 <= iVar3)
+      while (iVar3 = count_counters(player, card, COUNTER_LOYALTY), i <= iVar3)
       {
-        iVar1 = iVar1 + 1;
+        i = i + 1;
         this_test.cmc_flag = 3;
-        this_test.cmc = iVar1;
+        this_test.cmc = i;
         iVar3 = check_battlefield_for_special_card(player, card, 1 - player, 4, &this_test);
         iVar4 = check_battlefield_for_special_card(player, card, player, 4, &this_test);
         iVar3 = iVar3 * 3 + iVar4 * -2;
@@ -436,8 +435,7 @@ int card_ugin_the_spirit_dragon(int player, int card, event_t event)
       }
     }
   }
-  iVar1 = planeswalker(player, card, event, 7);
-  return iVar1;
+  return planeswalker(player, card, event, 7);
 }
 
 // White
@@ -2303,52 +2301,26 @@ int card_diplomacy_of_the_wastes(int player, int card, event_t event){
 int card_fearsome_awakening(int player, int card, event_t event)
 {
   int iVar1;
-  int iVar2;
   test_definition_t this_test;
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        new_default_test_definition(&this_test, 2, "Select target creature card.");
-        this_test.ai_selection_mode = 2;
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          iVar1 = validate_target_from_grave_source(player, card, player, 0);
-          if (((iVar1 != -1) &&
-               (iVar1 = reanimate_permanent(player, card, player, iVar1, REANIMATE_DEFAULT),
-                iVar1 != -1)) &&
-              (iVar2 = has_subtype(player, iVar1, SUBTYPE_DRAGON), iVar2 != 0))
-          {
-            add_counters(player, card, player, iVar1, COUNTER_P1_P1, 2);
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_0262896e;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   new_default_test_definition(&this_test, 2, "Select target creature card.");
   this_test.ai_selection_mode = 2;
-LAB_0262896e:
-  iVar1 = generic_spell(player, card, event, 8, NULL, NULL, 0, &this_test);
-  return iVar1;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    iVar1 = validate_target_from_grave_source(player, card, player, 0);
+    if (((iVar1 != -1) &&
+         (iVar1 = reanimate_permanent(player, card, player, iVar1, REANIMATE_DEFAULT),
+          iVar1 != -1)) &&
+        (has_subtype(player, iVar1, SUBTYPE_DRAGON) != 0))
+    {
+      add_counters(player, card, player, iVar1, COUNTER_P1_P1, 2);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 8, NULL, NULL, 0, &this_test);
 }
 
 int card_ghastly_conscripts(int player, int card, event_t event){

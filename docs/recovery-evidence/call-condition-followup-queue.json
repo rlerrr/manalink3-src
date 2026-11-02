@@ -1,0 +1,11 @@
+{
+  "status": "Original1673-statement cleanup queue resolved; broader recovery remains open.",
+  "counts": {
+    "statements": 0,
+    "reasons": {}
+  },
+  "rows": [],
+  "resolved_assertion_batch": "docs/recovery-evidence/assertion-call-condition-cleanup.json",
+  "scope": "All originally queued adjacent-call result statements are applied and checked:1673 rewrites in783 distinct definitions. This is cleanup coverage, not a count of recovered native cards/helpers or a completion claim for source recovery.",
+  "resolved_special_batch": "docs/recovery-evidence/special-call-condition-cleanup.json"
+}

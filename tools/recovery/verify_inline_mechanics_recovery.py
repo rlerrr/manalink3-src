@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 from capstone import Cs, CS_ARCH_X86, CS_MODE_32
 from canonicalize_helpers import ROOT, read, sha, span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image, value, inherited_value
 from global_initializers import inherited_type
 from object_initializers import unqualify
@@ -57,7 +58,7 @@ def compiled_classes(dw):
     return found
 
 
-def verify_origins(origins, image, dw, root):
+def verify_origins(origins, image, dw, root, proof=None):
     md = Cs(CS_ARCH_X86, CS_MODE_32)
     instances = fragments = 0
     owners = set()
@@ -85,7 +86,7 @@ def verify_origins(origins, image, dw, root):
             source = witness['source_owner']
             t = read(root / source['source'])
             a, b = span(t, source['name'])
-            assert sha(t[a:b].encode()) == source['definition_sha256']
+            assert source_hash_matches(proof,root,source['source'],source['name'],sha(t[a:b].encode()),source['definition_sha256'])
             parts = ranges(dw, inline)
             assert parts == [(int(p['address'], 16), int(p['end'], 16)) for p in witness['ranges']]
             for p, (lo, hi) in zip(witness['ranges'], parts):
@@ -143,7 +144,7 @@ def verify(proof, image, root=ROOT):
                                                size=4, field_offset=0, field_type=rhs)
         overloads.add((origin['name'], enum_name))
     assert len(overloads) == len(operators['native_origins']) == 8
-    result['cpp_operator_witnesses'] = verify_origins(operators['native_origins'], image, dw, root)
+    result['cpp_operator_witnesses'] = verify_origins(operators['native_origins'], image, dw, root, proof)
     rebuilt = compiled_classes(Image((root / 'ManalinkEh.dbg').read_bytes()).dwarf())
     members = record['cpp_implicit_members']
     assert len(members) == 3
@@ -156,7 +157,7 @@ def verify(proof, image, root=ROOT):
         assert value(t, 'DW_AT_name') == row['class_name']
         assert class_shape(t) == row['class_shape'] == rebuilt[row['class_name']]
         assert row['source_class_definition'] in read(root / origin['source'])
-    result['cpp_implicit_member_witnesses'] = verify_origins([r['native_origin'] for r in members], image, dw, root)
+    result['cpp_implicit_member_witnesses'] = verify_origins([r['native_origin'] for r in members], image, dw, root, proof)
     result.update(restored_cpp_operator_overloads=8, restored_cpp_operator_names=4,
                   accounted_implicit_cpp_members=3, remaining_inline_review_names=39)
     return result

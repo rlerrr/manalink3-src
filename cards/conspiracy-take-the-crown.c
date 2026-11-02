@@ -1104,13 +1104,12 @@ int card_garrulous_sycophant(int player, int card, event_t event){
 
 int card_marchesas_decreee(int player, int card, event_t event)
 {
-  int result;
   if ((event != EVENT_CAN_CAST) && (event != EVENT_SHOULD_AI_PLAY))
   {
     if (event == EVENT_CAST_SPELL)
     {
       if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_0220fb84;
+        return global_enchantment(player, card, event);
       store_attackers(player, card, EVENT_CAST_SPELL, DAT_SEPARATE_TRIGGERS, 1 - player, -1, NULL);
       dat_ability(player, card, EVENT_CAST_SPELL, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
       etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
@@ -1134,9 +1133,7 @@ int card_marchesas_decreee(int player, int card, event_t event)
     }
     return 0;
   }
-LAB_0220fb84:
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 /* Regicide	|B	0x0000000

@@ -433,7 +433,7 @@ static void return_auras_and_counters_to_play(int player, int card)
 {
   int player_00;
   unsigned int uVar1;
-  card_instance_t *pcVar2;
+  card_instance_t *instance;
   int result;
   card_instance_t *pcVar4;
   target_t *ptVar5;
@@ -441,15 +441,15 @@ static void return_auras_and_counters_to_play(int player, int card)
   int32_t iStack_18;
   int8_t iStack_14;
 
-  pcVar2 = get_card_instance(player, card);
-  player_00 = pcVar2->targets[0].player;
-  uVar1 = pcVar2->targets[0x12].player;
-  result = check_rfg(player_00, (unsigned int)cards_data[pcVar2->targets[0].card].id);
+  instance = get_card_instance(player, card);
+  player_00 = instance->targets[0].player;
+  uVar1 = instance->targets[0x12].player;
+  result = check_rfg(player_00, (unsigned int)cards_data[instance->targets[0].card].id);
   iStack_18 = -1;
   if (result != 0)
   {
-    iStack_18 = add_card_to_hand(player_00, pcVar2->targets[0].card);
-    remove_card_from_rfg(player_00, (unsigned int)cards_data[pcVar2->targets[0].card].id);
+    iStack_18 = add_card_to_hand(player_00, instance->targets[0].card);
+    remove_card_from_rfg(player_00, (unsigned int)cards_data[instance->targets[0].card].id);
     if ((int)uVar1 < 1)
     {
       put_into_play(player_00, iStack_18);
@@ -468,7 +468,7 @@ static void return_auras_and_counters_to_play(int player, int card)
         pcVar4 = in_play(player, result);
         if (((pcVar4 != NULL) && (pcVar4->internal_card_id == LEGACY_EFFECT_CUSTOM)) &&
             (((CardFunction)pcVar4->info_slot == store_counters_legacy &&
-              (pcVar4->targets[0x11].card == pcVar2->targets[0x12].card))))
+              (pcVar4->targets[0x11].card == instance->targets[0x12].card))))
         {
           copy_counters(player, card, player_00, iStack_18, player, result, 1);
           kill_card(player, result, KILL_EXILE);
@@ -480,7 +480,7 @@ static void return_auras_and_counters_to_play(int player, int card)
   }
   if ((uVar1 & 0x25) != 0)
   {
-    ptVar5 = pcVar2->targets + 1;
+    ptVar5 = instance->targets + 1;
     do
     {
       while ((ptVar5->player != -1 &&
@@ -497,13 +497,13 @@ static void return_auras_and_counters_to_play(int player, int card)
         set_special_flags(ptVar5->player, result, 0x20000000);
         put_into_play(ptVar5->player, result);
         ptVar5 = ptVar6;
-        if (ptVar6 == pcVar2->targets + 0x12)
+        if (ptVar6 == instance->targets + 0x12)
         {
           return;
         }
       }
       ptVar5 = ptVar5 + 1;
-    } while (ptVar5 != pcVar2->targets + 0x12);
+    } while (ptVar5 != instance->targets + 0x12);
   }
   return;
 }

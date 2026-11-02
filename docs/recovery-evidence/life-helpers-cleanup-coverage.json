@@ -1,0 +1,435 @@
+{
+  "status": "Six life gain/loss and loss-prevention helpers reconstructed and verified.",
+  "batch": "docs/recovery-evidence/life-helpers-cleanup.json",
+  "batch_sha256": "4d0e310e1eb4ca87b4192ff191fe04b56ac1414e08ac36c74472f77fa4090743",
+  "counts": {
+    "helpers": 6,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 11,
+    "removed_lab_gotos": 11,
+    "source_lines_removed": 176,
+    "removed_placeholder_occurrences": 144,
+    "removed_placeholder_names": 15
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "three_way_comparisons": 1147840,
+    "entry_invocations": 3443520,
+    "helpers": 6,
+    "all_uint16_loss_guard_ids": 65536,
+    "all_byte_poison_quantities": 256,
+    "stateful_random_inputs": 18000,
+    "mutation_modes": 2,
+    "recursive_both_player_loss_uses_native_body": true,
+    "exact_call_traces_and_full_state": true
+  },
+  "original_code_regions": [
+    {
+      "name": "life_total_can_change",
+      "address": "0x268f070",
+      "size": 56,
+      "sha256": "af6804400165799804aa5de72e28177ce506849856a7f16c27b4a3b7e7c1ce5a",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x268f07e",
+          "target": "0x2678870",
+          "callee": "native_check_id"
+        },
+        {
+          "instruction": "0x268f09e",
+          "target": "0x268efd0",
+          "callee": "check_for_id_legacy"
+        }
+      ]
+    },
+    {
+      "name": "can_lose_the_game_impl",
+      "address": "0x2685c90",
+      "size": 309,
+      "sha256": "3e090a1229719a963b4eb5b5da7bac55f43e7d8d6e0e98103922899beb207847",
+      "entry_abi": "regparm(1)",
+      "external_branches": [
+        {
+          "instruction": "0x2685cb7",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x2685cf7",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x2685d11",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x2685d29",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x2685d45",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x2685d55",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x2685dab",
+          "target": "0x2682d30",
+          "callee": "check_battlefield_for_subtype"
+        }
+      ]
+    },
+    {
+      "name": "gain_life_impl",
+      "address": "0x268f730",
+      "size": 464,
+      "sha256": "51df92ddc88554522a2612a2abe144ddfc67ff18627c52be22a2b0095af77b41",
+      "entry_abi": "regparm(3)",
+      "external_branches": [
+        {
+          "instruction": "0x268f763",
+          "target": "0x268f070",
+          "callee": "life_total_can_change"
+        },
+        {
+          "instruction": "0x268f7ca",
+          "target": "0x26cba00",
+          "callee": "dispatch_xtrigger2"
+        },
+        {
+          "instruction": "0x268f809",
+          "target": "0x268f1b0",
+          "callee": "lose_life"
+        },
+        {
+          "instruction": "0x268f837",
+          "target": "0x26c90f0",
+          "callee": "increase_trap_condition"
+        },
+        {
+          "instruction": "0x268f857",
+          "target": "0x26b4050",
+          "callee": "draw_cards"
+        },
+        {
+          "instruction": "0x268f86c",
+          "target": "0x268f900",
+          "callee": "gain_life"
+        },
+        {
+          "instruction": "0x268f885",
+          "target": "0x268f900",
+          "callee": "gain_life"
+        },
+        {
+          "instruction": "0x268f8a8",
+          "target": "0x268f1b0",
+          "callee": "lose_life"
+        },
+        {
+          "instruction": "0x268f8f0",
+          "target": "0x26cb970",
+          "callee": "dispatch_trigger2"
+        }
+      ]
+    },
+    {
+      "name": "trigger_gain_life",
+      "address": "0x268be60",
+      "size": 183,
+      "sha256": "f239e3a9c82c58baf714c373130e33192739298c2d0364f582969e17ab25e31e",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x268becf",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x268bf00",
+          "target": "0x26795b0",
+          "callee": "duh_mode"
+        }
+      ]
+    },
+    {
+      "name": "cannot_lose_the_game_impl",
+      "address": "0x26a3060",
+      "size": 814,
+      "sha256": "376b0f94f4ec290e708877e692885e9d76283b47c167ef1085953b45a5e6d180",
+      "entry_abi": "regparm(3)",
+      "external_branches": [
+        {
+          "instruction": "0x26a307a",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26a30cf",
+          "target": "0x26a2080",
+          "callee": "leaves_play"
+        },
+        {
+          "instruction": "0x26a31db",
+          "target": "0x26a2080",
+          "callee": "leaves_play"
+        },
+        {
+          "instruction": "0x26a3229",
+          "target": "0x26d4280",
+          "callee": "raw_set_poison"
+        },
+        {
+          "instruction": "0x26a32ec",
+          "target": "0x26d4280",
+          "callee": "raw_set_poison"
+        },
+        {
+          "instruction": "0x26a334b",
+          "target": "0x26d4280",
+          "callee": "raw_set_poison"
+        }
+      ]
+    },
+    {
+      "name": "lose_life",
+      "address": "0x268f1b0",
+      "size": 1408,
+      "sha256": "f80632933109750d55463068905f33d85e9f2a0081a81e89b21e255015785e76",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x268f22b",
+          "target": "0x268f070",
+          "callee": "life_total_can_change"
+        },
+        {
+          "instruction": "0x268f2a1",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x268f2e1",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x268f379",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x268f3a9",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x268f3e5",
+          "target": "0x26c90f0",
+          "callee": "increase_trap_condition"
+        },
+        {
+          "instruction": "0x268f404",
+          "target": "0x2658860",
+          "callee": "play_sound_effect"
+        },
+        {
+          "instruction": "0x268f4d0",
+          "target": "0x26e5080",
+          "callee": "impose_sacrifice"
+        },
+        {
+          "instruction": "0x268f512",
+          "target": "0x26b4050",
+          "callee": "draw_cards"
+        },
+        {
+          "instruction": "0x268f56f",
+          "target": "0x268f730",
+          "callee": "native_gain"
+        },
+        {
+          "instruction": "0x268f59a",
+          "target": "0x26b9430",
+          "callee": "mill"
+        },
+        {
+          "instruction": "0x268f5c1",
+          "target": "0x24040a0",
+          "callee": "oath_of_lim_dul_lifeloss_trigger"
+        },
+        {
+          "instruction": "0x268f5f7",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x268f611",
+          "target": "0x26d42e0",
+          "callee": "add_energy"
+        },
+        {
+          "instruction": "0x268f61d",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x268f63a",
+          "target": "0x268f730",
+          "callee": "native_gain"
+        },
+        {
+          "instruction": "0x268f656",
+          "target": "0x22d0100",
+          "callee": "lichs_mastery_lifeloss_trigger"
+        },
+        {
+          "instruction": "0x268f6a5",
+          "target": "0x26c90f0",
+          "callee": "increase_trap_condition"
+        },
+        {
+          "instruction": "0x268f6c4",
+          "target": "0x2658860",
+          "callee": "play_sound_effect"
+        },
+        {
+          "instruction": "0x268f6e0",
+          "target": "0x26c90f0",
+          "callee": "increase_trap_condition"
+        },
+        {
+          "instruction": "0x268f6ff",
+          "target": "0x2658860",
+          "callee": "play_sound_effect"
+        }
+      ]
+    }
+  ],
+  "external_data_bindings": 69,
+  "external_callee_bindings": 47,
+  "native_entry_abis": {
+    "life_total_can_change": "cdecl",
+    "can_lose_the_game_impl": "regparm(1)",
+    "gain_life_impl": "regparm(3)",
+    "trigger_gain_life": "cdecl",
+    "cannot_lose_the_game_impl": "regparm(3)",
+    "lose_life": "cdecl"
+  },
+  "native_tested_helpers": 6,
+  "register_adapters": {
+    "native_core": "regparm(3)",
+    "native_remove": "regparm(3)",
+    "native_clear": "regparm(2)",
+    "native_name": "regparm(3)"
+  },
+  "whole_unit_net_lines_removed": 176,
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 31,
+  "focused": {
+    "path": ".recovery/life-helpers-focused-c342.json",
+    "sha256": "c5fab5804a68824ec2a79b7ed07f6d8a35959f7e222cd9c58956ca41e90d537b",
+    "source_succession_links": 10
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/life-helpers-build-c343.log",
+    "log_sha256": "5db4015dd0323f91ea0b047abf70e18db00375d2aa7e824883d3282f28643258",
+    "verified_built_slots": 15169,
+    "dll_sha256": "0772f6b47994d5469affdfa67c5b91133b0475107301316dd8bd7daaa199a278",
+    "dbg_sha256": "d55e0f960248ff4f7e5b2ba7e40ebd4c430288d909113cdb36a6212b626a2f43"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/life-helpers-setup-c343.log",
+    "log_sha256": "3cc83aa7902feee2676ebcb19e59837e815db7ada515d62bacbd8e6c508992a7",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4817,
+    "stubs": 0,
+    "metadata_sha256": "7d8f167dd6402178300652a4fdec01568f9b42dbc81348ed496486f2a2d513eb",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e5c00",
+        "after": "public COFF entry 0x26e5b20"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ee070",
+        "after": "public COFF entry 0x26edf90"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e4780",
+        "after": "public COFF entry 0x26e46a0"
+      },
+      {
+        "name": "new_damage_all",
+        "native_address": "0x26677f0",
+        "before": "public COFF entry 0x26c3c90",
+        "after": "public COFF entry 0x26c3bb0"
+      },
+      {
+        "name": "mana_doublers",
+        "native_address": "0x266c040",
+        "before": "public COFF entry 0x26cae20",
+        "after": "public COFF entry 0x26cad40"
+      },
+      {
+        "name": "etb_ability",
+        "native_address": "0x26a5370",
+        "before": "public COFF entry 0x26a1450",
+        "after": "public COFF entry 0x26a1350"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "public COFF entry 0x26dc500",
+        "after": "public COFF entry 0x26dc420"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "public COFF entry 0x26dc530",
+        "after": "public COFF entry 0x26dc450"
+      }
+    ]
+  },
+  "index_unchanged": true,
+  "limits": "Six native branch bodies compared with predecessor and reconstruction. Exact calls, transient life gain/replacement contexts, full card records/data/player counters, decks and relevant globals checked with two callback mutation modes. Both-player loss retains real native recursion. Other helper/engine dependencies are controlled callees, not composition. All uint16 loss-guard IDs and all byte poison values covered in bounded layouts. Valid allocated game records, current_turn0/1, active counts0..4, bounded arithmetic excluding signed overflow, invalid allocation and full native32/gameplay behavior.",
+  "whole_unit_readability": {
+    "source": "functions/functions.c",
+    "source_sha256": "afb2aba7861459abb6bb46f31077158443a6c7e6d82a5dd8435f61a79218fc47",
+    "lab_gotos": 201,
+    "known_placeholder_occurrences": 3830
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c344.json",
+    "sha256": "bd18a65c7b4a2a535191029706ad17aa258888a94efe0c6989c0337907c88a3a",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1005,
+      "lab_gotos": 2827,
+      "functions_with_placeholders": 2087,
+      "distinct_function_local_placeholder_spellings": 6392,
+      "placeholder_identifier_occurrences": 50569,
+      "union_keywords": 0
+    }
+  }
+}

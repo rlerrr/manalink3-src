@@ -286,9 +286,10 @@ int card_argothian_treefolk(int player, int card, event_t event)
 
 int card_armageddon_clock(int player, int card, event_t event)
 {
+  card_instance_t *instance;
   card_instance_t *pcVar1;
   int iVar2;
-  card_instance_t *pcVar3;
+  card_instance_t *parent;
   int iVar4;
   bool bVar5;
   upkeep_trigger_ability(player, card, event, player);
@@ -349,30 +350,29 @@ LAB_02245b17:
   }
   else if (event == EVENT_ACTIVATE)
   {
-    pcVar1 = get_card_instance(player, card);
-    pcVar1->info_slot = pcVar1->info_slot | 1;
+    instance = get_card_instance(player, card);
+    instance->info_slot = instance->info_slot | 1;
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
     iVar2 = get_cost_mod_for_activated_abilities(player, card, 4, 0, 0, 0, 0, 0);
-    pcVar1 = get_card_instance(player, card);
-    pcVar3 = in_play(pcVar1->parent_controller, pcVar1->parent_card);
-    if ((pcVar3 != NULL) &&
-        ((((bVar5 = ai_is_speculating != 1, pcVar3->info_slot = 0,
+    instance = get_card_instance(player, card);
+    parent = in_play(instance->parent_controller, instance->parent_card);
+    if ((parent != NULL) &&
+        ((((bVar5 = ai_is_speculating != 1, parent->info_slot = 0,
             bVar5 && ((EXE_DWORD(0x60a534) != 1 || (((unsigned char)trace_mode & 2) != 0)))) ||
            (life[1] < life[0])) ||
           (iVar4 = count_counters(player, card, COUNTER_DOOM), life[1] < iVar4))))
     {
-      iVar2 = charge_mana_while_resolving(pcVar1->parent_controller, pcVar1->parent_card,
+      if (charge_mana_while_resolving(instance->parent_controller, instance->parent_card,
                                           EVENT_RESOLVE_ACTIVATION, EXE_DWORD(0x60a534),
-                                          COLOR_COLORLESS, iVar2);
-      if (iVar2 == 0)
+                                          COLOR_COLORLESS, iVar2) == 0)
       {
         spell_fizzled = -1;
       }
       else
       {
-        remove_counters(player, card, pcVar1->parent_controller, pcVar1->parent_card,
+        remove_counters(player, card, instance->parent_controller, instance->parent_card,
                                     COUNTER_DOOM, 1);
       }
     }
@@ -386,8 +386,8 @@ LAB_02245b17:
   }
   else if ((event == EVENT_STATIC_EFFECTS) && (stack_size == 0))
   {
-    pcVar1 = get_card_instance(player, card);
-    pcVar1->info_slot = 0;
+    instance = get_card_instance(player, card);
+    instance->info_slot = 0;
     return 0;
   }
   return 0;
@@ -526,9 +526,8 @@ int card_ashnods_transmogrant(int player, int card, event_t event)
       goto LAB_02246748;
     if (event == EVENT_CAN_ACTIVATE)
     {
-      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0xd, 0, 0, 0, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0xd, 0, 0, 0, 0, 0, 0, 0,
                                          &td, NULL);
-      return result;
     }
     if (event == EVENT_ACTIVATE)
     {
@@ -1054,9 +1053,8 @@ int card_dwarven_weaponsmith(int player, int card, event_t event)
       {
         return 0;
       }
-      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x18005, 0, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x18005, 0, 0, 0, 0, 0,
                                          0, 0, &td, NULL);
-      return result;
     }
     if (event == EVENT_ACTIVATE)
     {
@@ -1774,8 +1772,7 @@ int card_power_artifact(int player, int card, event_t event)
       default_target_definition(player, card, &td, 0x40);
       td.preferred_controller = player;
       get_card_instance(player, card);
-      result = targeted_aura(player, card, EVENT_CAN_CAST, &td, "TARGET_ARTIFACT");
-      return result;
+      return targeted_aura(player, card, EVENT_CAN_CAST, &td, "TARGET_ARTIFACT");
     }
     if (event == EVENT_CAST_SPELL)
     {
@@ -2728,7 +2725,10 @@ static const char* is_my_tetravite(int unused, int player, int card){
 
 int card_tetravus(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  int i;
+  int count;
+  int choice;
+  card_instance_t *instance;
   int iVar2;
   card_instance_t *pcVar3;
   int iVar4;
@@ -2737,22 +2737,13 @@ int card_tetravus(int player, int card, event_t event)
   resolve_trigger_t trigger_mode;
   int iStack_70;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    token_generation_t token;
-    uint8_t bytes[84];
-  } recovered_stack_token;
 
-  pcVar1 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    iVar2 = internal_rand(100);
-    set_special_infos(player, card, iVar2);
+    set_special_infos(player, card, internal_rand(100));
     enters_the_battlefield_with_counters(player, card, EVENT_RESOLVE_SPELL, COUNTER_P1_P1, 3);
-    iVar2 = duh_mode(player);
-    if (iVar2 == 0)
+    if (duh_mode(player) == 0)
     {
       trigger_mode = RESOLVE_TRIGGER_OPTIONAL;
     }
@@ -2770,38 +2761,40 @@ int card_tetravus(int player, int card, event_t event)
   {
     return 0;
   }
-  iVar2 = count_counters(player, card, COUNTER_P1_P1);
-  if (iVar2 < 1)
-    goto LAB_0224c2f7;
-  iVar2 = do_dialog(player, player, card, -1, -1,
-                    " Release some Tetravites (Auto)\n Release some Tetravites (Manual)\n Pass", 0);
-  if (iVar2 == 0)
+  count = count_counters(player, card, COUNTER_P1_P1);
+  if (!(count < 1))
   {
-  LAB_0224c712:
-    iVar2 = count_counters(player, card, COUNTER_P1_P1);
-  }
-  else
-  {
-    if (iVar2 != 1)
-      goto LAB_0224c2f7;
-    iVar2 = count_counters(player, card, COUNTER_P1_P1);
-    iVar2 = choose_a_number(player, "Remove how many counters?", iVar2);
-    iVar6 = count_counters(player, card, COUNTER_P1_P1);
-    if (iVar6 < iVar2)
-      goto LAB_0224c712;
-  }
-  if (0 < iVar2)
-  {
-    iVar6 = 0;
-    do
+    choice = do_dialog(player, player, card, -1, -1,
+                      " Release some Tetravites (Auto)\n Release some Tetravites (Manual)\n Pass", 0);
+    if (choice == 0)
     {
-      iVar6 = iVar6 + 1;
-      remove_counters(player, card, player, card, COUNTER_P1_P1, 1);
-    } while (iVar2 != iVar6);
-    default_token_definition(player, card, 0x37b, &recovered_stack_token.token);
-    recovered_stack_token.token.qty = (unsigned char)iVar2;
-    recovered_stack_token.token.special_infos = get_special_infos(player, card);
-    generate_token(&recovered_stack_token.token);
+    LAB_0224c712:
+      iVar2 = count_counters(player, card, COUNTER_P1_P1);
+    }
+    else
+    {
+      if (choice != 1)
+        goto LAB_0224c2f7;
+      count = count_counters(player, card, COUNTER_P1_P1);
+      iVar2 = choose_a_number(player, "Remove how many counters?", count);
+      iVar6 = count_counters(player, card, COUNTER_P1_P1);
+      if (iVar6 < iVar2)
+        goto LAB_0224c712;
+    }
+    if (0 < iVar2)
+    {
+      i = 0;
+      do
+      {
+        i = i + 1;
+        remove_counters(player, card, player, card, COUNTER_P1_P1, 1);
+      } while (iVar2 != i);
+      token_generation_t token;
+      default_token_definition(player, card, 0x37b, &token);
+      token.qty = (unsigned char)iVar2;
+      token.special_infos = get_special_infos(player, card);
+      generate_token(&token);
+    }
   }
 LAB_0224c2f7:
   iVar2 = 0;
@@ -2810,18 +2803,18 @@ LAB_0224c2f7:
   {
     if (0 < active_cards_count[iVar2])
     {
-      iVar6 = 0;
+      i = 0;
       do
       {
-        pcVar3 = in_play(iVar2, iVar6);
-        if ((pcVar3 != NULL) && (iVar4 = get_id(iVar2, iVar6), iVar4 == 0x37b))
+        pcVar3 = in_play(iVar2, i);
+        if ((pcVar3 != NULL) && (iVar4 = get_id(iVar2, i), iVar4 == 0x37b))
         {
           iVar4 = get_special_infos(player, card);
-          iVar5 = get_special_infos(iVar2, iVar6);
+          iVar5 = get_special_infos(iVar2, i);
           iStack_70 = iStack_70 + (unsigned int)(iVar4 == iVar5);
         }
-        iVar6 = iVar6 + 1;
-      } while (iVar6 < active_cards_count[iVar2]);
+        i = i + 1;
+      } while (i < active_cards_count[iVar2]);
     }
     iVar2 = iVar2 + 1;
   } while (iVar2 != 2);
@@ -2830,22 +2823,22 @@ LAB_0224c2f7:
     iVar2 = 2;
     if (0 < active_cards_count[player])
     {
-      iVar6 = 0;
+      i = 0;
       do
       {
-        pcVar3 = in_play(player, iVar6);
+        pcVar3 = in_play(player, i);
         if ((pcVar3 != NULL) &&
-            ((((iVar4 = get_id(player, iVar6),
-                iVar4 == 0x1e90 || (iVar4 = get_id(player, iVar6), iVar4 == 0x2f09)) ||
-               (iVar4 = get_id(player, iVar6), iVar4 == 0x41c4)) ||
-              ((iVar4 = get_id(player, iVar6),
-                iVar4 == 0x39ba || (iVar4 = get_id(player, iVar6), iVar4 == 0x3541))))))
+            ((((iVar4 = get_id(player, i),
+                iVar4 == 0x1e90 || (iVar4 = get_id(player, i), iVar4 == 0x2f09)) ||
+               (iVar4 = get_id(player, i), iVar4 == 0x41c4)) ||
+              ((iVar4 = get_id(player, i),
+                iVar4 == 0x39ba || (iVar4 = get_id(player, i), iVar4 == 0x3541))))))
         {
           iVar2 = 0;
           break;
         }
-        iVar6 = iVar6 + 1;
-      } while (iVar6 < active_cards_count[player]);
+        i = i + 1;
+      } while (i < active_cards_count[player]);
     }
     iVar2 = do_dialog(player, player, card, -1, -1,
                       " Dock some Tetravites (Auto)\n Dock some Tetravites (Manual)\n Pass", iVar2);
@@ -2854,40 +2847,41 @@ LAB_0224c2f7:
       iVar2 = 0;
       do
       {
-        iVar6 = 0;
+        i = 0;
         if (0 < active_cards_count[iVar2])
         {
           do
           {
-            pcVar1 = in_play(iVar2, iVar6);
-            if ((pcVar1 != NULL) && (iVar4 = get_id(iVar2, iVar6), iVar4 == 0x37b))
+            instance = in_play(iVar2, i);
+            if ((instance != NULL) && (iVar4 = get_id(iVar2, i), iVar4 == 0x37b))
             {
               iVar4 = get_special_infos(player, card);
-              iVar5 = get_special_infos(iVar2, iVar6);
+              iVar5 = get_special_infos(iVar2, i);
               if (iVar4 == iVar5)
               {
-                kill_card(iVar2, iVar6, KILL_SACRIFICE);
+                kill_card(iVar2, i, KILL_SACRIFICE);
                 add_counters(player, card, player, card, COUNTER_P1_P1, 1);
               }
             }
-            iVar6 = iVar6 + 1;
-          } while (iVar6 < active_cards_count[iVar2]);
+            i = i + 1;
+          } while (i < active_cards_count[iVar2]);
         }
         iVar2 = iVar2 + 1;
       } while (iVar2 != 2);
     }
     else if (iVar2 == 1)
     {
-      default_target_definition(player, card, &recovered_stack_token.target, 2);
-      recovered_stack_token.token.tou = 0;
-      recovered_stack_token.target.extra = (int32_t)(is_my_tetravite);
-      recovered_stack_token.token.keep_track_of_tokens_generated = 0x8000;
+      target_definition_t td;
+      default_target_definition(player, card, &td, 2);
+      td.illegal_abilities = 0;
+      td.extra = (int32_t)(is_my_tetravite);
+      td.special = 0x8000;
       tetra_code = get_special_infos(player, card);
-      while ((iVar2 = can_target(&recovered_stack_token.target),
+      while ((iVar2 = can_target(&td),
               iVar2 != 0 &&
-                  (iVar2 = pick_target(&recovered_stack_token.target, "TETRAVITE"), iVar2 != 0)))
+                  (iVar2 = pick_target(&td, "TETRAVITE"), iVar2 != 0)))
       {
-        kill_card(pcVar1->targets[0].player, pcVar1->targets[0].card, KILL_SACRIFICE);
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_SACRIFICE);
         add_counters(player, card, player, card, COUNTER_P1_P1, 1);
       }
     }

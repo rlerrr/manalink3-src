@@ -2,6 +2,7 @@
 import csv,json,re
 from elftools.dwarf.locationlists import LocationParser
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image,inherited_value,value
 from export_abi import type_of
 
@@ -14,7 +15,7 @@ def verify(proof,image,root=ROOT):
     inventory={r['low_pc']:r for r in csv.DictReader((root/'.recovery/2022-functions.csv').open()) if r['low_pc']}
     for row in record['helpers']+record['support_helpers']+record['card_callers']:
         assert (row['source'],row['name'],row.get('receipt_sha256',row['definition_sha256'])) in receipts,row['name']
-        text=read(root/row['source']);a,b=span(text,row['name']);assert sha(text[a:b].encode())==row['definition_sha256'],row['name']
+        text=read(root/row['source']);a,b=span(text,row['name']);assert source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['definition_sha256']),row['name']
         for part in row['native_ranges']:
             lo=int(part['address'],16);hi=int(part['end'],16);native=inventory[part['address']]
             assert native['name']==row['name'] and native['high_pc']==part['end']

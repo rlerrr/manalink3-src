@@ -1,0 +1,893 @@
+{
+  "status": "Resolved: all67 discovered call-result literal-comparison pairs applied;48 private int locals removed after raw/expanded checks and exact GCC int-result assertions.",
+  "counts": {
+    "functions": 48,
+    "source_units": 31,
+    "call_comparison_pairs": 67,
+    "private_int_locals": 48,
+    "parse_skips": 30
+  },
+  "rows": [
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_caught_in_the_brights",
+      "definition_sha256": "eb12e8cd43907afb7340d0d4e8a4f5e677f8bbb2c4d1291f28b658fc9d66ed87",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "has_subtype",
+          "expression_offset": 668,
+          "call_offset": 677,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "quicksmith_rebel_effect",
+      "definition_sha256": "75433174161bd7604164983ad5953983297994bfd448958e770bd9cd9e3ad381",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "validate_arbitrary_target",
+          "expression_offset": 698,
+          "call_offset": 720,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/champions_of_kamigawa.c",
+      "name": "card_swallowing_plague_impl",
+      "definition_sha256": "8b21b131301808ab3f854f6181bec0bff2d7b74007eca509dd4e9b413db204d8",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 554,
+          "call_offset": 563,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "name": "card_path_of_ancestry",
+      "definition_sha256": "1a0babd2f6835fcc1911a6e9aa31c9f02705bb60b875981d4dec9a9a90c7a788",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "get_id",
+          "expression_offset": 516,
+          "call_offset": 524,
+          "operator": "==",
+          "comparison_constant": "0x3953"
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2020.c",
+      "name": "card_jirina_kudro",
+      "definition_sha256": "cc192067657573814fad5d711a01d4da7bb01edcca9a783930fd7c1315bff320",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "get_id",
+          "expression_offset": 468,
+          "call_offset": 476,
+          "operator": "==",
+          "comparison_constant": "0x3953"
+        }
+      ]
+    },
+    {
+      "source": "cards/dissension.c",
+      "name": "card_leafdrake_roost",
+      "definition_sha256": "c37bae972e47acc177d5113c0e47e3ae9b618715630a8218ae0c003f8498532c",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 210,
+          "call_offset": 219,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_shalai_voice_of_plenty",
+      "definition_sha256": "34a83457829aa1110aec666dde64bbee1105a53a0148b3ec8ce42d0d579eebab",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 258,
+          "call_offset": 267,
+          "operator": "==",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 496,
+          "call_offset": 505,
+          "operator": "==",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "is_what",
+          "expression_offset": 572,
+          "call_offset": 581,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_medicine_bag",
+      "definition_sha256": "19995a650514d6aba87132569d996bd68dc93b921a1d4cb7c4a711f9f90e94c3",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 829,
+          "call_offset": 838,
+          "operator": "!=",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "can_be_regenerated",
+          "expression_offset": 881,
+          "call_offset": 890,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/fallen_empires.c",
+      "name": "card_tourachs_gate",
+      "definition_sha256": "272a557506ba02089503b2cbb7c81409871b2f3f6654815d0c13c6f0e7e6b49b",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "count_counters",
+          "expression_offset": 3386,
+          "call_offset": 3394,
+          "operator": "<",
+          "comparison_constant": "1"
+        }
+      ]
+    },
+    {
+      "source": "cards/ice_age.c",
+      "name": "card_justice",
+      "definition_sha256": "f1dbdb21a5e99a0076112e2972b459333ccd2274a31df8a7d8a6e2b0c6e91ed4",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 698,
+          "call_offset": 707,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/invasion.c",
+      "name": "card_tsabos_assassin",
+      "definition_sha256": "5a851341ca3a99f1d0b5c5360e70d10877a55aa5f8a764021799f3e40026d1f5",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 486,
+          "call_offset": 495,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/m19.c",
+      "name": "card_lathliss_dragon_queen",
+      "definition_sha256": "a0504728fbc58c46c648b42f30fa2ae353dac4d9fe48b00d542b029ce81b545a",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 250,
+          "call_offset": 259,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/m20.c",
+      "name": "vos_legacy",
+      "definition_sha256": "e0934ccb4a185ef3a9e21bd6f611e6d87bb943b256a14fc45518ea61db4eb713",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "check_state",
+          "expression_offset": 884,
+          "call_offset": 893,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_winds_of_abandon",
+      "definition_sha256": "85d99e718ab1af3fb33a2c26ce54780543912c3e71f5577ffd1376532a697b70",
+      "candidates": [
+        {
+          "variable": "choice",
+          "callee": "do_dialog",
+          "expression_offset": 2660,
+          "call_offset": 2669,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_gouged_zealot",
+      "definition_sha256": "e2f66be5f8e221929a40045742434401672480d9ec6b9c063f80a01cadd7861f",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "delirium",
+          "expression_offset": 304,
+          "call_offset": 313,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_scuttletide",
+      "definition_sha256": "883521ada3de2c2c0dfc0ebc588d2e3176d321e89f771f2373771efff05ebd01",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 199,
+          "call_offset": 208,
+          "operator": "==",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "has_subtype",
+          "expression_offset": 275,
+          "call_offset": 284,
+          "operator": "!=",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "delirium",
+          "expression_offset": 388,
+          "call_offset": 397,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_ravenous_squirrel",
+      "definition_sha256": "86bc2d96f4bda4c7601c8751d6dec621926c860c8e014c644d308cb35d5d98b0",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_what",
+          "expression_offset": 358,
+          "call_offset": 367,
+          "operator": "!=",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "check_special_flags",
+          "expression_offset": 476,
+          "call_offset": 485,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/odissey.c",
+      "name": "card_nefarious_lich",
+      "definition_sha256": "1201c2399b1d7c4ddc4b20ca63821371a6a88182ac089712e73a1b95d39d6e19",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 546,
+          "call_offset": 555,
+          "operator": "==",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 1097,
+          "call_offset": 1106,
+          "operator": "==",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "damage_is_to_planeswalker",
+          "expression_offset": 1445,
+          "call_offset": 1454,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/origins.c",
+      "name": "card_alhammarrets_archive",
+      "definition_sha256": "8acdae2fb3d4f02c0dbb19e3941449b02a270714be1d9892a41b57a441259b1e",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 577,
+          "call_offset": 586,
+          "operator": "==",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 755,
+          "call_offset": 764,
+          "operator": "==",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 1675,
+          "call_offset": 1684,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/planechase.c",
+      "name": "card_vela_the_night_clad",
+      "definition_sha256": "97603352390388deed4a632a47d089552d34015ad6d8ce8c725ba4e3234e2227",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_what",
+          "expression_offset": 245,
+          "call_offset": 254,
+          "operator": "!=",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 315,
+          "call_offset": 324,
+          "operator": "==",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 922,
+          "call_offset": 931,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/rise_of_the_eldrazi.c",
+      "name": "card_venerated_teacher",
+      "definition_sha256": "1849fd54252c8bd8eacb2f01cd370ba3d8aede4596dcc15c01260f2cd71b1d12",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 455,
+          "call_offset": 463,
+          "operator": "!=",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "iVar2",
+          "callee": "get_counter_type_by_id",
+          "expression_offset": 513,
+          "call_offset": 521,
+          "operator": "==",
+          "comparison_constant": "0x40"
+        },
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 1034,
+          "call_offset": 1042,
+          "operator": "!=",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "iVar2",
+          "callee": "get_counter_type_by_id",
+          "expression_offset": 1094,
+          "call_offset": 1119,
+          "operator": "==",
+          "comparison_constant": "0x40"
+        }
+      ]
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "ascend",
+      "definition_sha256": "b407783b8cc9296608a9b3f7ca1d615d138a1eeec4cc932749af578333946199",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "get_id",
+          "expression_offset": 603,
+          "call_offset": 611,
+          "operator": "==",
+          "comparison_constant": "0x47a0"
+        }
+      ]
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "proliferate_auto_single_permanent_or_player",
+      "definition_sha256": "5a83fa13fc373de8820dc3ea24ea80659c742ef20830cf2b4371001552c8a454",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "count_counters",
+          "expression_offset": 185,
+          "call_offset": 194,
+          "operator": "<",
+          "comparison_constant": "1"
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_search_for_blex",
+      "definition_sha256": "1832622c0230ad6303faff7d65acea95a5b2f2aae2def82f16c6d4757ca41b51",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "new_global_tutor",
+          "expression_offset": 768,
+          "call_offset": 776,
+          "operator": "<",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_nassari_dean_of_expression",
+      "definition_sha256": "43b21ed6e4a810c511295d5aa3f2288347254bd898cbf4ea83baa2b84e553abc",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "check_special_flags",
+          "expression_offset": 696,
+          "call_offset": 705,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/stronghold.c",
+      "name": "card_stronghold_taskmaster",
+      "definition_sha256": "e9e3f675a4080a4e2bc593585b25d970fff41fd1c51f304fa8db96f0caa93696",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 448,
+          "call_offset": 457,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/tempest.c",
+      "name": "card_dread_of_night",
+      "definition_sha256": "d33f660183c69acf19b7622a83f825eedaa214b6e49fd7d5cd1740354e5b37de",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 441,
+          "call_offset": 450,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_vantress_gargoyle",
+      "definition_sha256": "53346f14d086ca4a1f62d31f68d8bfb892677fff8df6e08da5f7f6ee2d9e351c",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "count_graveyard",
+          "expression_offset": 208,
+          "call_offset": 217,
+          "operator": "<",
+          "comparison_constant": "7"
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_arcane_signet",
+      "definition_sha256": "107219ed9d9cf74e0a30353cc3e47ecd0668f3e5763e800f90c3a56d94497cec",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "get_id",
+          "expression_offset": 484,
+          "call_offset": 492,
+          "operator": "==",
+          "comparison_constant": "0x3953"
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_battle_display",
+      "definition_sha256": "05406d911d5602f3c54f4158206468978d194ae59ff6a349ff9a998c1935eac2",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 1251,
+          "call_offset": 1260,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_boulder_rush",
+      "definition_sha256": "a2b4d5d6420a97771522d63997ef0a5eb0b92bfc8da7ab82f79c6b0178ebdaa7",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 1234,
+          "call_offset": 1243,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_brazen_borrower",
+      "definition_sha256": "c2fce17812e5e29bea4bca0437744ce321efff79b95d50b796c8bfba7c2d4174",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 208,
+          "call_offset": 217,
+          "operator": "==",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "check_for_ability",
+          "expression_offset": 283,
+          "call_offset": 292,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_petty_theft",
+      "definition_sha256": "b329fb73f1d4dac6f2813e599631f3bf3ba2512c212b6280e2ac704af03bc556",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 2077,
+          "call_offset": 2086,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_stomp",
+      "definition_sha256": "3920a291a43e6db978bfc1d60ac11b8fec792f5b292b268498379d1991165650",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 1288,
+          "call_offset": 1297,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_swift_end",
+      "definition_sha256": "5682296c06f8c90288d5966713f62bf9009d814f387bc527c4a1ca76108a2c78",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 1251,
+          "call_offset": 1260,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_syr_konrad_the_grim",
+      "definition_sha256": "6f2ee1c4ad16626d0c62289df7f674c4cbe481b2343b56d5008f11abab34cc00",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 278,
+          "call_offset": 287,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "name": "card_phyrexian_denouncer",
+      "definition_sha256": "3cd02bd3dce2d514d6eed02cc4e956e9145becf1df97e35d557b1457a9f7325a",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 466,
+          "call_offset": 475,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "name": "card_phyrexian_debaser",
+      "definition_sha256": "0f0f9553108d08ab8df33085e8e69d5e9281e541029714532bc94df2531728b5",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 464,
+          "call_offset": 473,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "name": "card_phyrexian_defiler",
+      "definition_sha256": "7af0e5c2451bfc63f0bdd5557e7615d3df81c30fb262ba484579bc38ca626ce2",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 464,
+          "call_offset": 473,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/weatherlight.c",
+      "name": "card_mana_chains",
+      "definition_sha256": "a042cf2872f3c84eec11a8e2f7c02428253ae8c22028098fd726b3bfaae3301f",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 271,
+          "call_offset": 280,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "cards/zendikar.c",
+      "name": "card_obsidian_fireheart",
+      "definition_sha256": "dc9cb36c808b94f861bac44a5e9c8e9a040277cfa715076deb8f8e1f2a02859f",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 897,
+          "call_offset": 906,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "remove_abilities_by_test",
+      "definition_sha256": "f29dfb31584e2bd50545389aad6d6302ce9aea0fd4dfcce6d9f4795efe54b694",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "new_make_test_in_play",
+          "expression_offset": 471,
+          "call_offset": 480,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "functions/auras.c",
+      "name": "attached_set_pt_part",
+      "definition_sha256": "27b4a8996ed0228a94782c7c4be057a6a3724c6c0b33a8a9a1a12304d2c60562",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 254,
+          "call_offset": 263,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "functions/auras.c",
+      "name": "cannot_be_enchanted_granted",
+      "definition_sha256": "32f3363aa1d5a334367092e6d68b5516000c4b718b1faf74b718b9db2783b606",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "has_subtype",
+          "expression_offset": 619,
+          "call_offset": 628,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "check_for_death_trigger_removal",
+      "definition_sha256": "f92d548c2f4fd96a0903691cb46f0194f9c042a128b13688af504636e459ae6e",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_humiliated",
+          "expression_offset": 638,
+          "call_offset": 646,
+          "operator": "==",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "iVar3",
+          "callee": "get_id",
+          "expression_offset": 719,
+          "call_offset": 727,
+          "operator": "==",
+          "comparison_constant": "0x5097"
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "count_basic_lands",
+      "definition_sha256": "4f3c334efeccd7d8e4d8cf8fd1d10f51f31f663c1bb6d092e1d5e5a031fc85fe",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_basic_land",
+          "expression_offset": 392,
+          "call_offset": 401,
+          "operator": "!=",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "has_subtype",
+          "expression_offset": 480,
+          "call_offset": 489,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "vanilla_creature_pumper",
+      "definition_sha256": "4e9c9b7cc2c7767211b7eefe9d4eb9dd3015e4900d92558d5eef9c3d14883d3e",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "valid_target",
+          "expression_offset": 822,
+          "call_offset": 831,
+          "operator": "!=",
+          "comparison_constant": "0"
+        }
+      ]
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "types_cannot_sac",
+      "definition_sha256": "c53440a7cf9c3b6ee3b032791a96809908c3e32fa405aeba8426a11fffe3ecdf",
+      "candidates": [
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 431,
+          "call_offset": 440,
+          "operator": "==",
+          "comparison_constant": "0"
+        },
+        {
+          "variable": "result",
+          "callee": "is_humiliated",
+          "expression_offset": 715,
+          "call_offset": 724,
+          "operator": "==",
+          "comparison_constant": "0"
+        }
+      ]
+    }
+  ],
+  "source_state_sha256": "53e59e7c0803a86688081dd59f28658e8829fe4e1d711d4245bf43ce808baa8e",
+  "scope": "Source-only screen of2604 tracked definitions, with30 parse skips. Each proposed private function-scope int has only direct-call assignment and immediate comparison references; function argument lists are excluded. Literal comparison operands are side-effect free, but compiler return types, actual expanded bindings and projection boundaries remain unverified. These are cleanup candidates, not remaining native function counts.",
+  "resolution": {
+    "batch": "docs/recovery-evidence/comma-comparison-cleanup.json",
+    "batch_sha256": "beaf70fe6bc25a6fa4b63fbb231ca2e1034b3d1d88dd0778f6d03e775a33cee7",
+    "applied_pairs": 67,
+    "removed_declarations": 48,
+    "pending_candidates": 0
+  }
+}

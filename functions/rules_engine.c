@@ -1664,6 +1664,8 @@ static int get_graveyard_counts(int player)
 
 static void static_graveyard_abilities(int player, int card, event_t event)
 {
+  int count;
+  int choice;
   uint16_t uVar1;
   uint16_t uVar2;
   uint16_t uVar3;
@@ -1811,8 +1813,8 @@ static void static_graveyard_abilities(int player, int card, event_t event)
           if (event != EVENT_RESOLVE_TRIGGER)
             goto LAB_026c3824;
           piVar6 = graveyard_ptr_mutable[player];
-          iVar14 = count_graveyard(player);
-          iVar14 = iVar14 + -1;
+          count = count_graveyard(player);
+          iVar14 = count + -1;
           if (-1 < iVar14)
           {
             do
@@ -1837,8 +1839,7 @@ static void static_graveyard_abilities(int player, int card, event_t event)
                                                 " Return Sword of the Meek\tto play\n Pass", 0),
                              iVar20 == 0))))
                   {
-                    iVar20 = reanimate_permanent(player, card, player, iVar14, REANIMATE_DEFAULT);
-                    equip_target_creature(player, iVar20, iVar11, iVar13);
+                    equip_target_creature(player, reanimate_permanent(player, card, player, iVar14, REANIMATE_DEFAULT), iVar11, iVar13);
                   }
                 }
                 else if ((unsigned short)uVar4 < 0x234d)
@@ -1881,8 +1882,8 @@ static void static_graveyard_abilities(int player, int card, event_t event)
                     {
                       pcVar19 = " Return Reach of Branches to hand\n Do not return";
                     LAB_026c5c9f:
-                      iVar20 = do_dialog(player, player, card, -1, -1, pcVar19, 0);
-                      if (iVar20 != 0)
+                      choice = do_dialog(player, player, card, -1, -1, pcVar19, 0);
+                      if (choice != 0)
                         goto LAB_026c483a;
                     }
                   LAB_026c5cc7:
@@ -1946,8 +1947,8 @@ static void static_graveyard_abilities(int player, int card, event_t event)
                   {
                     pcVar19 = " Return Ovalchase Daredevil to play\n Do not return";
                   LAB_026c4a9b:
-                    iVar20 = do_dialog(player, player, card, -1, -1, pcVar19, 0);
-                    if (iVar20 != 0)
+                    choice = do_dialog(player, player, card, -1, -1, pcVar19, 0);
+                    if (choice != 0)
                       goto LAB_026c483a;
                   }
                 LAB_026c4ac3:
@@ -2218,10 +2219,10 @@ static void static_graveyard_abilities(int player, int card, event_t event)
                                                             &this_test);
                 iVar16 = check_battlefield_for_special_card(player, iVar11, 1 - player, 4,
                                                             &this_test);
-                iVar20 =
+                choice =
                     do_dialog(player, player, iVar11, -1, -1, " Exile Kozilek\'s Return\n Decline",
                               (unsigned int)(iVar16 < iVar20));
-                if (iVar20 == 0)
+                if (choice == 0)
                 {
                   remove_card_from_grave(player, iVar13);
                   new_damage_all(player, iVar14, 2, 5, 1, NULL);

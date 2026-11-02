@@ -1,0 +1,4094 @@
+{
+  "rows": [
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_curious_pair",
+      "before_definition": "int card_curious_pair(int player, int card, event_t event)\n{\n  int result;\n\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025cd008;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025cd008;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025cd008:\n  result = generic_adventurer(player, card, event, 4, 5, 0x504e);\n  return result;\n}",
+      "after_definition": "int card_curious_pair(int player, int card, event_t event)\n{\n\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 4, 5, 0x504e);\n  }\n  return 0;\n}",
+      "before_sha256": "ad0d08b46c021a335a48c2fb08e6e6ac368eabfb29e760a27044d533e247731d",
+      "after_sha256": "e1d7dd13d70f1b59dbc715aef7061d83731e4c22c9d65b3b4a1900a758755e60",
+      "facts": {
+        "old_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  int result;\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025cd008;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025cd008;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025cd008:\n  result = generic_adventurer(player, card, event, 4, 5, 0x504e);\n  return result;\n}",
+        "new_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 4, 5, 0x504e);\n  }\n  return 0;\n}",
+        "common_helper_call": "generic_adventurer(player, card, event, 4, 5, 0x504e)",
+        "removed_gotos": 2,
+        "removed_labels": 1,
+        "removed_dead_result_local": true,
+        "prefix_preserved_except_dead_result_declaration": true
+      },
+      "trace_proof": {
+        "cases": [
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 4, 5, 0x504e)"
+              ]
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          }
+        ],
+        "event_classes": 9,
+        "scope": "Parsed source CFG interpretation for all eight compared event values plus a distinct other value, and both independent affected-card/player equalities. The shared helper call and arbitrary return value are preserved. Prefix effects remain source-identical and can change the globals before these equalities are observed. Native enum values are independently bound; this is local dispatch equivalence, not complete native behavior or gameplay."
+      },
+      "native_view": {
+        "owner_die": "0x567df24",
+        "address": "0x25ccfe0",
+        "end": "0x25cd07a",
+        "bytes_sha256": "713da9434fb62c69997d9e709402c4d17f861d690d7891528ed523bf6a409f14"
+      },
+      "before_view": {
+        "owner_die": "0x43da044",
+        "address": "0x257f510",
+        "end": "0x257f5a4",
+        "bytes_sha256": "664c09fbbedc234c43b98c6caea76e9a133294bbb49ff4607da13ad5c4519ba5"
+      },
+      "after_view": {
+        "owner_die": "0x43d9f57",
+        "address": "0x257f510",
+        "end": "0x257f5a2",
+        "bytes_sha256": "d32742a6efe7611d76bc369d87baf38970958480a11617f130b8783e01530c5c"
+      }
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_embereth_shieldbreaker",
+      "before_definition": "int card_embereth_shieldbreaker(int player, int card, event_t event)\n{\n  int result;\n\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025cdf58;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025cdf58;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025cdf58:\n  result = generic_adventurer(player, card, event, 1, 8, 0x505c);\n  return result;\n}",
+      "after_definition": "int card_embereth_shieldbreaker(int player, int card, event_t event)\n{\n\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 1, 8, 0x505c);\n  }\n  return 0;\n}",
+      "before_sha256": "c5db98035f80f06e72add14dfdc89bf38d22729a9881a2bdaf261e223d332996",
+      "after_sha256": "867b4441a7df4db24c6812a69a66b18a258cd3792d9e9f582dc9dd230caf841b",
+      "facts": {
+        "old_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  int result;\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025cdf58;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025cdf58;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025cdf58:\n  result = generic_adventurer(player, card, event, 1, 8, 0x505c);\n  return result;\n}",
+        "new_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 1, 8, 0x505c);\n  }\n  return 0;\n}",
+        "common_helper_call": "generic_adventurer(player, card, event, 1, 8, 0x505c)",
+        "removed_gotos": 2,
+        "removed_labels": 1,
+        "removed_dead_result_local": true,
+        "prefix_preserved_except_dead_result_declaration": true
+      },
+      "trace_proof": {
+        "cases": [
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 1, 8, 0x505c)"
+              ]
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          }
+        ],
+        "event_classes": 9,
+        "scope": "Parsed source CFG interpretation for all eight compared event values plus a distinct other value, and both independent affected-card/player equalities. The shared helper call and arbitrary return value are preserved. Prefix effects remain source-identical and can change the globals before these equalities are observed. Native enum values are independently bound; this is local dispatch equivalence, not complete native behavior or gameplay."
+      },
+      "native_view": {
+        "owner_die": "0x567c9db",
+        "address": "0x25cdf30",
+        "end": "0x25cdfca",
+        "bytes_sha256": "17b7b874c0220793f8d3647d13e40dbb88f3e843ee3d2184404b9990a0c2bba2"
+      },
+      "before_view": {
+        "owner_die": "0x43d9e8d",
+        "address": "0x257f650",
+        "end": "0x257f6e4",
+        "bytes_sha256": "4cdefaaab09afccc3b3a2537f494321b224184135d2c98af3013c638611ecce8"
+      },
+      "after_view": {
+        "owner_die": "0x43d9dcb",
+        "address": "0x257f650",
+        "end": "0x257f6e2",
+        "bytes_sha256": "8e8de26ebedda55df4031f94363707b12cccd741ec57da9b23624bf4446b9750"
+      }
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_foulmire_knight",
+      "before_definition": "int card_foulmire_knight(int player, int card, event_t event)\n{\n  int result;\n\n  deathtouch(player, card, event);\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025cf6f9;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025cf6f9;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025cf6f9:\n  result = generic_adventurer(player, card, event, 5, 5, 0x507c);\n  return result;\n}",
+      "after_definition": "int card_foulmire_knight(int player, int card, event_t event)\n{\n\n  deathtouch(player, card, event);\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 5, 5, 0x507c);\n  }\n  return 0;\n}",
+      "before_sha256": "7e8aa4e77a3de08346dcef92f60ab83022eb08efd57469726c87870f94cb249d",
+      "after_sha256": "739c3e58acdb25ef137cfdb4e0c6c4439c04c8d86118bfce41f62f2df0857bdd",
+      "facts": {
+        "old_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  int result;\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025cf6f9;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025cf6f9;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025cf6f9:\n  result = generic_adventurer(player, card, event, 5, 5, 0x507c);\n  return result;\n}",
+        "new_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 5, 5, 0x507c);\n  }\n  return 0;\n}",
+        "common_helper_call": "generic_adventurer(player, card, event, 5, 5, 0x507c)",
+        "removed_gotos": 2,
+        "removed_labels": 1,
+        "removed_dead_result_local": true,
+        "prefix_preserved_except_dead_result_declaration": true
+      },
+      "trace_proof": {
+        "cases": [
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 5, 0x507c)"
+              ]
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          }
+        ],
+        "event_classes": 9,
+        "scope": "Parsed source CFG interpretation for all eight compared event values plus a distinct other value, and both independent affected-card/player equalities. The shared helper call and arbitrary return value are preserved. Prefix effects remain source-identical and can change the globals before these equalities are observed. Native enum values are independently bound; this is local dispatch equivalence, not complete native behavior or gameplay."
+      },
+      "native_view": {
+        "owner_die": "0x567b005",
+        "address": "0x25cf6c0",
+        "end": "0x25cf772",
+        "bytes_sha256": "53dff1cadfadca0148ec33300002b9ea365352fd00a6ecc2e7be945ffe555f5f"
+      },
+      "before_view": {
+        "owner_die": "0x43d9a06",
+        "address": "0x257fa90",
+        "end": "0x257fb3c",
+        "bytes_sha256": "d3eb5a1399b68f349698cecfad27192b56bb4ddb0d865c3cfd836047b0773bdf"
+      },
+      "after_view": {
+        "owner_die": "0x43d996f",
+        "address": "0x257fa90",
+        "end": "0x257fb34",
+        "bytes_sha256": "9f3d8287860d9da6d4ad6ae8fe7f8986583512087752533ee653dfdd9369199e"
+      }
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_murderous_rider",
+      "before_definition": "int card_murderous_rider(int player, int card, event_t event)\n{\n  int result;\n  int owner;\n  int position;\n\n  lifelink(player, card, event);\n  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);\n  if ((result != 0) &&\n      (result = find_in_owners_graveyard(player, card, &owner, &position), result != 0))\n  {\n\n    result = graveyard_ptr_mutable[owner][position];\n    remove_card_from_grave(owner, position);\n    put_iid_under_the_first_x_cards_of_library(owner, result, 500);\n  }\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025d231d;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025d231d;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025d231d:\n  result = generic_adventurer(player, card, event, 5, 10, 0x50c7);\n  return result;\n}",
+      "after_definition": "int card_murderous_rider(int player, int card, event_t event)\n{\n  int result;\n  int owner;\n  int position;\n\n  lifelink(player, card, event);\n  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);\n  if ((result != 0) &&\n      (result = find_in_owners_graveyard(player, card, &owner, &position), result != 0))\n  {\n\n    result = graveyard_ptr_mutable[owner][position];\n    remove_card_from_grave(owner, position);\n    put_iid_under_the_first_x_cards_of_library(owner, result, 500);\n  }\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 5, 10, 0x50c7);\n  }\n  return 0;\n}",
+      "before_sha256": "319eec36588c7734656f0d658c024769977c5bd21f0ffff2026c667a1f8a1951",
+      "after_sha256": "6fc92ec45f93b6f5885a8fdf2cbd63d3e54e66e771fa0d45632adad9b29607b6",
+      "facts": {
+        "old_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  int result;\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025d231d;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025d231d;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025d231d:\n  result = generic_adventurer(player, card, event, 5, 10, 0x50c7);\n  return result;\n}",
+        "new_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 5, 10, 0x50c7);\n  }\n  return 0;\n}",
+        "common_helper_call": "generic_adventurer(player, card, event, 5, 10, 0x50c7)",
+        "removed_gotos": 2,
+        "removed_labels": 1,
+        "removed_dead_result_local": false,
+        "prefix_preserved_except_dead_result_declaration": true
+      },
+      "trace_proof": {
+        "cases": [
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 10, 0x50c7)"
+              ]
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          }
+        ],
+        "event_classes": 9,
+        "scope": "Parsed source CFG interpretation for all eight compared event values plus a distinct other value, and both independent affected-card/player equalities. The shared helper call and arbitrary return value are preserved. Prefix effects remain source-identical and can change the globals before these equalities are observed. Native enum values are independently bound; this is local dispatch equivalence, not complete native behavior or gameplay."
+      },
+      "native_view": {
+        "owner_die": "0x56777e8",
+        "address": "0x25d22c0",
+        "end": "0x25d2405",
+        "bytes_sha256": "9304c3d7fa04ad60e14182542601202004cb61f273945cf09062442c5f73a3e3"
+      },
+      "before_view": {
+        "owner_die": "0x43d8acb",
+        "address": "0x2580380",
+        "end": "0x25804b3",
+        "bytes_sha256": "8873663fb485397b3f1db1a23682146a242dc08ccb32992e285fcc56306d2248"
+      },
+      "after_view": {
+        "owner_die": "0x43d8a4a",
+        "address": "0x2580380",
+        "end": "0x25804a7",
+        "bytes_sha256": "335286350f08778cad214990b801ab210df1128897c0265a3635c96c0c90d315"
+      }
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_order_of_midnight",
+      "before_definition": "int card_order_of_midnight(int player, int card, event_t event)\n{\n  int result;\n\n  cannot_block(player, card, event);\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025d2d69;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025d2d69;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025d2d69:\n  result = generic_adventurer(player, card, event, 5, 8, 0x50d8);\n  return result;\n}",
+      "after_definition": "int card_order_of_midnight(int player, int card, event_t event)\n{\n\n  cannot_block(player, card, event);\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 5, 8, 0x50d8);\n  }\n  return 0;\n}",
+      "before_sha256": "186e72aaae7b9101be2e7f0ee00ac6ec33826df3564832417225d1b1a917b187",
+      "after_sha256": "936fe4c44c42a7eea6097d15116f09d9a420eec203305213ac440917a22cdabc",
+      "facts": {
+        "old_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  int result;\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025d2d69;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025d2d69;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025d2d69:\n  result = generic_adventurer(player, card, event, 5, 8, 0x50d8);\n  return result;\n}",
+        "new_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 5, 8, 0x50d8);\n  }\n  return 0;\n}",
+        "common_helper_call": "generic_adventurer(player, card, event, 5, 8, 0x50d8)",
+        "removed_gotos": 2,
+        "removed_labels": 1,
+        "removed_dead_result_local": true,
+        "prefix_preserved_except_dead_result_declaration": true
+      },
+      "trace_proof": {
+        "cases": [
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50d8)"
+              ]
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          }
+        ],
+        "event_classes": 9,
+        "scope": "Parsed source CFG interpretation for all eight compared event values plus a distinct other value, and both independent affected-card/player equalities. The shared helper call and arbitrary return value are preserved. Prefix effects remain source-identical and can change the globals before these equalities are observed. Native enum values are independently bound; this is local dispatch equivalence, not complete native behavior or gameplay."
+      },
+      "native_view": {
+        "owner_die": "0x5676cc1",
+        "address": "0x25d2d30",
+        "end": "0x25d2de2",
+        "bytes_sha256": "d9d3dec85a825d55c8a1bc293265d131f42f599ddf7c4b3b1142e22b78990177"
+      },
+      "before_view": {
+        "owner_die": "0x43d821a",
+        "address": "0x2580b90",
+        "end": "0x2580c3c",
+        "bytes_sha256": "d20edbbbb0f6b6256df96e3657056db7a182db19daddab58f93b215a94a492eb"
+      },
+      "after_view": {
+        "owner_die": "0x43d81c4",
+        "address": "0x2580b80",
+        "end": "0x2580c24",
+        "bytes_sha256": "bec2525a192abe83a042f3459dfe24b37ae7da4936c33772e5bab44cb2295caa"
+      }
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_realm_cloaked_giant",
+      "before_definition": "int card_realm_cloaked_giant(int player, int card, event_t event)\n{\n  int result;\n\n  vigilance(player, card, event);\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025d36d9;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025d36d9;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025d36d9:\n  result = generic_adventurer(player, card, event, 5, 8, 0x50e8);\n  return result;\n}",
+      "after_definition": "int card_realm_cloaked_giant(int player, int card, event_t event)\n{\n\n  vigilance(player, card, event);\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 5, 8, 0x50e8);\n  }\n  return 0;\n}",
+      "before_sha256": "c558b7ec41dc4c6dff6ececbeec5efa930be8f978a2b9d98a28e22a8ccdfdce8",
+      "after_sha256": "03f7533a067e564c922aad5a15e08826d8b9469cf86ae02eed78e330d0eb91a2",
+      "facts": {
+        "old_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  int result;\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025d36d9;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025d36d9;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025d36d9:\n  result = generic_adventurer(player, card, event, 5, 8, 0x50e8);\n  return result;\n}",
+        "new_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 5, 8, 0x50e8);\n  }\n  return 0;\n}",
+        "common_helper_call": "generic_adventurer(player, card, event, 5, 8, 0x50e8)",
+        "removed_gotos": 2,
+        "removed_labels": 1,
+        "removed_dead_result_local": true,
+        "prefix_preserved_except_dead_result_declaration": true
+      },
+      "trace_proof": {
+        "cases": [
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 5, 8, 0x50e8)"
+              ]
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          }
+        ],
+        "event_classes": 9,
+        "scope": "Parsed source CFG interpretation for all eight compared event values plus a distinct other value, and both independent affected-card/player equalities. The shared helper call and arbitrary return value are preserved. Prefix effects remain source-identical and can change the globals before these equalities are observed. Native enum values are independently bound; this is local dispatch equivalence, not complete native behavior or gameplay."
+      },
+      "native_view": {
+        "owner_die": "0x567617c",
+        "address": "0x25d36a0",
+        "end": "0x25d3752",
+        "bytes_sha256": "8ba8c5aacc0aeef4c65a3d5a6a2719cc06470f0857b5e2104d9d0449bf0c8165"
+      },
+      "before_view": {
+        "owner_die": "0x43d777d",
+        "address": "0x2581470",
+        "end": "0x258151c",
+        "bytes_sha256": "11ae07748c800c117e1ffe31434128fac46e3bf6fb700fe7658279f8b4c9c3da"
+      },
+      "after_view": {
+        "owner_die": "0x43d7752",
+        "address": "0x2581460",
+        "end": "0x2581504",
+        "bytes_sha256": "b97834994d7307f8cadf0381f2afda09fb1f9aadbf9aef75a05bbb58591208e2"
+      }
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_rimrock_knight",
+      "before_definition": "int card_rimrock_knight(int player, int card, event_t event)\n{\n  int result;\n\n  cannot_block(player, card, event);\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025d38e9;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025d38e9;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025d38e9:\n  result = generic_adventurer(player, card, event, 3, 5, 0x50f1);\n  return result;\n}",
+      "after_definition": "int card_rimrock_knight(int player, int card, event_t event)\n{\n\n  cannot_block(player, card, event);\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 3, 5, 0x50f1);\n  }\n  return 0;\n}",
+      "before_sha256": "39bb590095eb9ed164c49637648d6fc01a8739b0add2bb985dd21ffb1ba48ce8",
+      "after_sha256": "4f031886e5e2de8306748b9d562cb39ca6834b8e96f396f000de716637ac3d3a",
+      "facts": {
+        "old_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  int result;\n  if (event != EVENT_CAN_CAST)\n  {\n    if (event == EVENT_CAST_SPELL)\n    {\n      if ((card == affected_card) && (player == affected_card_controller))\n        goto LAB_025d38e9;\n    }\n    else if ((event == EVENT_RESOLVE_SPELL) ||\n             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))\n      goto LAB_025d38e9;\n    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))\n    {\n      return 0;\n    }\n  }\nLAB_025d38e9:\n  result = generic_adventurer(player, card, event, 3, 5, 0x50f1);\n  return result;\n}",
+        "new_dispatch": "int dispatch(int player, int card, event_t event)\n{\n  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||\n      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||\n      (event == EVENT_CAST_SPELL && card == affected_card &&\n       player == affected_card_controller) ||\n      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)\n  {\n    return generic_adventurer(player, card, event, 3, 5, 0x50f1);\n  }\n  return 0;\n}",
+        "common_helper_call": "generic_adventurer(player, card, event, 3, 5, 0x50f1)",
+        "removed_gotos": 2,
+        "removed_labels": 1,
+        "removed_dead_result_local": true,
+        "prefix_preserved_except_dead_result_declaration": true
+      },
+      "trace_proof": {
+        "cases": [
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 60,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 108,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 113,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 116,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 164,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 1024,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 21504,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 23808,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ],
+              "returned": [
+                "arbitrary_call_result",
+                "generic_adventurer(player, card, event, 3, 5, 0x50f1)"
+              ]
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": false,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": false,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          },
+          {
+            "event": 0,
+            "card_match": true,
+            "player_match": true,
+            "trace": {
+              "calls": [],
+              "returned": 0
+            }
+          }
+        ],
+        "event_classes": 9,
+        "scope": "Parsed source CFG interpretation for all eight compared event values plus a distinct other value, and both independent affected-card/player equalities. The shared helper call and arbitrary return value are preserved. Prefix effects remain source-identical and can change the globals before these equalities are observed. Native enum values are independently bound; this is local dispatch equivalence, not complete native behavior or gameplay."
+      },
+      "native_view": {
+        "owner_die": "0x5675ed3",
+        "address": "0x25d38b0",
+        "end": "0x25d3962",
+        "bytes_sha256": "817e58100243e7fdcdbff950dc789d3dfab72e20e26a8dcf876f7ae5ad635419"
+      },
+      "before_view": {
+        "owner_die": "0x43d76a0",
+        "address": "0x2581520",
+        "end": "0x25815cc",
+        "bytes_sha256": "cc6f20d678044e512ef0d7449ea948b552c604cb7d1d2fb15c83ff1344e94e3b"
+      },
+      "after_view": {
+        "owner_die": "0x43d76a0",
+        "address": "0x2581510",
+        "end": "0x25815b4",
+        "bytes_sha256": "78c1f041e84bcfd9628a72da753819f977c19b90675e054d5c3c87ab19b10d63"
+      }
+    }
+  ],
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "native_event_values": {
+    "EVENT_0": 0,
+    "EVENT_UNTAP_PHASE": 1,
+    "EVENT_UPKEEP_PHASE": 4,
+    "EVENT_UPKEEP": 4,
+    "EVENT_DRAW_PHASE": 10,
+    "EVENT_MAIN_PHASE1": 20,
+    "EVENT_DECLARE_ATTACKERS": 21,
+    "EVENT_DECLARE_BLOCKERS": 26,
+    "EVENT_MAIN_PHASE2": 30,
+    "EVENT_MAX_HAND_SIZE": 31,
+    "EVENT_PREVENT_DAMAGE": 33,
+    "EVENT_CLEANUP": 34,
+    "EVENT_DAMAGE_PREVENTION": 37,
+    "EVENT_DAMAGE_REDUCTION": 38,
+    "EVENT_POWER": 50,
+    "EVENT_TOUGHNESS": 51,
+    "EVENT_ABILITIES": 52,
+    "EVENT_RECALC_DAMAGE": 53,
+    "EVENT_SET_COLOR": 54,
+    "EVENT_CAN_COUNTER": 56,
+    "EVENT_POW_BOOST": 57,
+    "EVENT_TOU_BOOST": 58,
+    "EVENT_CHECK_PUMP": 59,
+    "EVENT_CHANGE_TYPE": 60,
+    "EVENT_CAN_SKIP_TURN": 106,
+    "EVENT_CAST_SPELL": 108,
+    "EVENT_ACTIVATE": 109,
+    "EVENT_DEAL_DAMAGE": 110,
+    "EVENT_REGENERATE": 112,
+    "EVENT_RESOLVE_SPELL": 113,
+    "EVENT_RESOLVE_ACTIVATION": 114,
+    "EVENT_CAN_ACTIVATE": 115,
+    "EVENT_CAN_CAST": 116,
+    "EVENT_GRAVEYARD_FROM_PLAY": 119,
+    "EVENT_BLOCK_LEGALITY": 120,
+    "EVENT_ATTACK_LEGALITY": 121,
+    "EVENT_TRIGGER": 125,
+    "EVENT_RESOLVE_TRIGGER": 126,
+    "EVENT_COUNT_MANA": 127,
+    "EVENT_UNKNOWN80": 128,
+    "EVENT_TAP_CARD": 129,
+    "EVENT_UNTAP": 130,
+    "EVENT_UNTAP_CARD": 131,
+    "EVENT_MUST_ATTACK": 137,
+    "EVENT_BEGIN_COMBAT": 137,
+    "EVENT_ATTACK_RATING": 138,
+    "EVENT_BLOCK_RATING": 139,
+    "EVENT_CHECK_ABILITIES": 140,
+    "EVENT_DISCARD": 141,
+    "EVENT_UNKNOWN8E": 142,
+    "EVENT_CAN_WASTE_MANA": 143,
+    "EVENT_GET_SELECTED_CARD": 144,
+    "EVENT_PLAY_ABILITY": 145,
+    "EVENT_BEFORE_COMBAT": 146,
+    "EVENT_VARIABLE_MANA_SRC": 147,
+    "EVENT_CARDCONTROLLED": 148,
+    "EVENT_DISABLE_ABILITIES": 160,
+    "EVENT_ENABLE_ABILITIES": 161,
+    "EVENT_MODIFY_COST_GLOBAL": 162,
+    "EVENT_MODIFY_AB_COST_GL": 163,
+    "EVENT_MODIFY_COST": 164,
+    "EVENT_PAY_MODIFIED_COST": 165,
+    "EVENT_MODIFY_MANA_PROD": 166,
+    "EVENT_AFTER_DAMAGE": 167,
+    "EVENT_GRAVEYARD_ABILITY": 176,
+    "EVENT_CAN_ACTIVATE_FROM_HAND": 177,
+    "EVENT_ACTIVATE_FROM_HAND": 178,
+    "EVENT_RESOLVE_ACTIVATION_FROM_HAND": 179,
+    "EVENT_GRAVEYARD_ABILITY_UPKEEP": 180,
+    "EVENT_PAY_FLASHBACK_COSTS": 181,
+    "EVENT_CAN_SPLICE": 182,
+    "EVENT_SPLICE": 183,
+    "EVENT_CAN_UNMORPH": 184,
+    "EVENT_UNMORPH": 185,
+    "EVENT_HAUNT": 186,
+    "EVENT_TURNED_FACE_UP": 187,
+    "EVENT_CAN_PAY_MADNESS_COST": 188,
+    "EVENT_PAY_MADNESS_COST": 189,
+    "EVENT_CHAOS": 191,
+    "EVENT_PLANESWALK_IN": 192,
+    "EVENT_PLANESWALK_OUT": 193,
+    "EVENT_RESOLVE_SPLICE": 194,
+    "EVENT_SHOULD_AI_PLAY": 199,
+    "EVENT_SET_LEGACY_EFFECT_NAME": 256,
+    "EVENT_SET_LEGACY_EFFECT_TEXT": 512,
+    "EVENT_TRIGGER_RESOLVED": 768,
+    "EVENT_CAN_CHANGE_TARGET": 1024,
+    "EVENT_GRAVEYARD_ABILITY_EOT": 1280,
+    "EVENT_CAN_MOVE_AURA": 1536,
+    "EVENT_MOVE_AURA": 1792,
+    "EVENT_RESOLVE_MOVING_AURA": 2048,
+    "EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE": 2304,
+    "EVENT_UPKEEP_TRIGGER_ABILITY": 2560,
+    "EVENT_RESOLVE_THIS_DIES_TRIGGER": 2816,
+    "EVENT_TAPPED_TO_PLAY_ABILITY": 3072,
+    "EVENT_RESOLVE_ACTIVATED_GRAVEYARD_ABILITY": 3328,
+    "EVENT_RETURN_TO_PLAY_FROM_GRAVE_MODIFIED": 3584,
+    "EVENT_ANOTHER_PERMANENT_HAS_TRANSFORMED": 3840,
+    "EVENT_PLAY_FIRST_HALF": 4096,
+    "EVENT_PLAY_SECOND_HALF": 4352,
+    "EVENT_HAS_MORPH": 4608,
+    "EVENT_SUBTYPE": 4864,
+    "EVENT_UNATTACH": 5120,
+    "EVENT_EQUIPMENT_ATTACHED": 5376,
+    "EVENT_DAMAGE_TRIGGER_ABILITY": 5632,
+    "EVENT_CAN_ACTIVATE_HIDEAWAY_LAND": 5888,
+    "EVENT_CHAPTER1": 6144,
+    "EVENT_CHAPTER2": 6400,
+    "EVENT_CHAPTER3": 6656,
+    "EVENT_CHAPTER4": 6912,
+    "EVENT_COMMANDER_TO_COMMAND_ZONE": 7168,
+    "EVENT_CANT_CREW": 7424,
+    "EVENT_SP_ABILITY": 7680,
+    "EVENT_SPA": 7680,
+    "EVENT_DAT_ABILITY": 7936,
+    "EVENT_CARD_TO_EXILE": 8192,
+    "EVENT_BECAME_MONSTROUS": 16384,
+    "EVENT_PHASING": 16640,
+    "EVENT_END_TRIGGER": 16896,
+    "EVENT_END_OF_UNTAP_STEP": 17152,
+    "EVENT_PHASE_CHANGED": 17408,
+    "EVENT_CHECK_DESTROY_IF_BLOCKED": 17664,
+    "EVENT_BEGIN_TURN": 17920,
+    "EVENT_STATIC_EFFECTS": 18176,
+    "EVENT_MANA_POOL_DRAINING": 18432,
+    "EVENT_CHOOSING_TO_UNTAP": 18688,
+    "EVENT_TRANSFORMED": 18944,
+    "EVENT_EFFECT_CREATED": 19200,
+    "EVENT_RESOLVE_GENERAL_EFFECT": 19456,
+    "EVENT_FIGHT": 19712,
+    "EVENT_QUERY_AWAKEN": 19968,
+    "EVENT_HIDDEN_AGENDA": 20480,
+    "EVENT_ETB_ABILITY": 20736,
+    "EVENT_ETB": 20736,
+    "EVENT_DREDGE": 20992,
+    "EVENT_SURVEIL": 21248,
+    "EVENT_CHANGE_TARGET": 21504,
+    "EVENT_SET_IN_MOTION": 21760,
+    "EVENT_COUNTERSPELL": 22016,
+    "EVENT_EXPLORE": 22272,
+    "EVENT_COUNTERS": 22528,
+    "EVENT_QUERY_CUMULATIVE_UPKEEP": 22784,
+    "EVENT_REMOVED_FROM_GRAVEYARD": 23040,
+    "EVENT_COIN_FLIP_WON_OR_LOST": 23296,
+    "EVENT_SPELL_COPIED": 23552,
+    "EVENT_QUERY": 23808,
+    "EVENT_QUERY_AFF": 24064,
+    "EVENT_LEAVES_PLAY_ABILITY": 24320,
+    "EVENT_LTB": 24320,
+    "EVENT_ATTACK_LEGALITY_ALL": 24576,
+    "EVENT_PROT_MISC": 24832,
+    "EVENT_SPELL_CAST": 25088,
+    "EVENT_LAND_PLAYED": 25344,
+    "EVENT_THIS_SPELL_CAST": 25600
+  },
+  "runtime_before": {
+    "dll_path": ".recovery/additional-local-names-after-c83.dll",
+    "dbg_path": ".recovery/additional-local-names-after-c83.dbg",
+    "dll_sha256": "66f32647d1b69cb07b9c31888a9bfbe0a3e227464ef67b7fc18937537b50b206",
+    "dbg_sha256": "8399f5547449aeaa7f90a09fecd34ceaae436f26a594ef75adfa181888d8c833"
+  },
+  "runtime_after": {
+    "dll_path": ".recovery/spell-dispatch-after-c84.dll",
+    "dbg_path": ".recovery/spell-dispatch-after-c84.dbg",
+    "dll_sha256": "311452a887b327cba902c144fee07332950bfe5e2fc6d4f852a7810f2bff9562",
+    "dbg_sha256": "d9e46e32ac2954ffe63e65a979234f53ef0a9f10977c517ec5bdba37344c7b07"
+  },
+  "before_link_inputs": {
+    ".recovery/build-gcc93/obj/cards/aether_revolt.o": "eda18891a5a8d9419b34b2d1f76ee0efc6e9f90f07319eb9bc327d8e29052d8f",
+    ".recovery/build-gcc93/obj/cards/alara_reborn.o": "460b880bd45f6544fa7b45bdd0d5b6766fbe573b149f16bf9e2e12c40a75d596",
+    ".recovery/build-gcc93/obj/cards/alliances.o": "8a3c4265b1bb223a223a6fcd3bda657e56c5509e7c487cd151895e2f763d202a",
+    ".recovery/build-gcc93/obj/cards/amonkhet.o": "89210c7e696227e676407791ec479ce150027db0ed8614df28cafc7ba3305cdc",
+    ".recovery/build-gcc93/obj/cards/antiquities.o": "80d1cb5165a81fcbd0a50f9ac9df72bca55f844826a12c7778accc94ea7f2a75",
+    ".recovery/build-gcc93/obj/cards/apocalypse.o": "24fdddc48acf4463cb48b8f01614b5205466f177d4e4c92cd58706a0fa60073e",
+    ".recovery/build-gcc93/obj/cards/arabian_nights.o": "e5277bbf9d4769fe836b68b909018bb6a043df337cfb661375af02274b25f7cd",
+    ".recovery/build-gcc93/obj/cards/archenemy.o": "60afaa61b4a68c96ac275379a8245178bbe94be9982e1090532319268f67627b",
+    ".recovery/build-gcc93/obj/cards/archenemy_nicol_bolas.o": "f696df1d7831001d3ff64988f2fd34b6b2e5dd022b1459a333becf1ea4be3423",
+    ".recovery/build-gcc93/obj/cards/artifact_creatures.o": "e06702d3247122e13e4ec9c47a7f7bb102f75e7aa741aca32906f6b9ceb2ed7e",
+    ".recovery/build-gcc93/obj/cards/avacyn_restored.o": "f7e32d5b674768ea02e829977ea258e6f882375926905325ebfe5554949fa5f6",
+    ".recovery/build-gcc93/obj/cards/battle_for_zendikar.o": "f485c57f48b0c3e39aa89b6b07ebb0c1391e1c04eb7381c09d27bdc845411fb3",
+    ".recovery/build-gcc93/obj/cards/battlebond.o": "6bdd232cdb5b445c0a5d83be7276352541332a497ffbbdedeebc38efc2194601",
+    ".recovery/build-gcc93/obj/cards/betrayers_of_kamigawa.o": "ee958e1aa3184ba10856056561a1c6e793b419f45734d8c94922c1c29014e9d0",
+    ".recovery/build-gcc93/obj/cards/born_of_the_gods.o": "3a7bc44310bd2953f08e63bc285a24235e21386591e8822453a520aa0d0f4e25",
+    ".recovery/build-gcc93/obj/cards/champions_of_kamigawa.o": "43464b40046c0d83711f28f757874c3f38c04a0fbb13e90e2c000e68fd6f5407",
+    ".recovery/build-gcc93/obj/cards/coldsnap.o": "30ceeeab883efd7ff4563a38e13584196f39bdb6708601cefbc5041d9f5b3e95",
+    ".recovery/build-gcc93/obj/cards/commander.o": "4bc73373d6a30105bf3bc8d66682119c23d2f51c0af949277944c934f3426545",
+    ".recovery/build-gcc93/obj/cards/commander_2013.o": "2d52a0dfe2ec722c656d61869990fa0c7498fb70f0b759b92b74911e0e4df3af",
+    ".recovery/build-gcc93/obj/cards/commander_2014.o": "a9ca2687d11e1b1950d6cc977e982bf287c31d84b93d8754c4ed623684704602",
+    ".recovery/build-gcc93/obj/cards/commander_2015.o": "e317d4bbf819626778892f0b88b1ed5f3b03801bc7bccefd19d6d7049a340a99",
+    ".recovery/build-gcc93/obj/cards/commander_2016.o": "94b0eb86d6a619c4beaf83256fa03aeac016ee6a71591e1c50b1b84de68d4809",
+    ".recovery/build-gcc93/obj/cards/commander_2017.o": "be90d352636cd54feeac3c57e6e612277d4c789a5098cf903fb0a996023f7b78",
+    ".recovery/build-gcc93/obj/cards/commander_2018.o": "4049c831bba0831bb6467b0c40bb9fa6e3187c8f061d14b722836b462d1e4561",
+    ".recovery/build-gcc93/obj/cards/commander_2019.o": "547d89ef13af6912ef626becc38ef2c5c5a16c62b40258bea0820ca5caf192a1",
+    ".recovery/build-gcc93/obj/cards/commander_2020.o": "657b3ffcaa7ddf90ad188aa7ce6988a9e7c46cebee94f0cec558d666752603a6",
+    ".recovery/build-gcc93/obj/cards/commander_legends.o": "2991afee320c467dba54cc532deb4162eb36edddd5bc9d7e0b8d717c64c9b8d0",
+    ".recovery/build-gcc93/obj/cards/conflux.o": "698682072c266a11fecdce16b21cc8721b592d45bb6747f6027bedb190cd0908",
+    ".recovery/build-gcc93/obj/cards/conspiracy-take-the-crown.o": "fc789a4fa96dd122b033bf667cd729c58003857b51fb54caabe9b0bf10048ac7",
+    ".recovery/build-gcc93/obj/cards/conspiracy.o": "d89c8cbebaed8cc9e24bb16d2c5c4c6d98744ec47e08f99ca38851fb75dbad76",
+    ".recovery/build-gcc93/obj/cards/dark_ascension.o": "abb0095f872fcd9cbad2d7c0dc79a2f49eab7608b0e81491f06ed4db585573e7",
+    ".recovery/build-gcc93/obj/cards/darksteel.o": "3295baaa52b86cfde6e7937b9a879ccd4fec81d165d7630bc9bfff8ad0b5c6c9",
+    ".recovery/build-gcc93/obj/cards/dissension.o": "c15c84205a1e58d5ca6264a76b80941f857450af81fc66aac71cda1f3fe99436",
+    ".recovery/build-gcc93/obj/cards/dominaria.o": "17bf3f1289d122894ebbc7a2fbae14a5f7a7660fcb93de601ce2042fb773f536",
+    ".recovery/build-gcc93/obj/cards/draft.o": "cb219ad59f3e8dafb4d2afbe9984789843b411a6afd40f107616dd4887cff379",
+    ".recovery/build-gcc93/obj/cards/dragons_maze.o": "a22a0b704d6e5d0985e41c6eb233ba24c873d919f8ea9ed0aa03d4d42071ad49",
+    ".recovery/build-gcc93/obj/cards/dragons_of_tarkir.o": "53d23bf9690df0787370f124f74e3c4fec16e9f3f4d91419cd07637834b9533b",
+    ".recovery/build-gcc93/obj/cards/eldritch_moon.o": "8b57bbbf47addb0dd8d5887dda63662deb638e0d4a287c971004700a90d4f4d1",
+    ".recovery/build-gcc93/obj/cards/equipment.o": "89a5e3fab8e75d3ba6ca1a78ba7b3cf0f97fb182e2de69b4b30cf148f984e2c8",
+    ".recovery/build-gcc93/obj/cards/eventide.o": "204d5f373988ab936485129c2c16884e66ba23668aa35103274f76018da1ce17",
+    ".recovery/build-gcc93/obj/cards/exodus.o": "eaa68cd69dbc0a72e62fb57cc079747eca234105c6a0a3a5fcfdaf5c788169cb",
+    ".recovery/build-gcc93/obj/cards/fallen_empires.o": "213ef83a4b7eeb5fdc9c80e58baf7d2da262e46aec61ab2755d613f4f8309501",
+    ".recovery/build-gcc93/obj/cards/fate_reforged.o": "ab8579b9c162b6b641a656325059b7350b39d82a21da654bcf1f405efdf76eba",
+    ".recovery/build-gcc93/obj/cards/fifth_dawn.o": "b51f772cb68eaf1d389d7492eefec469f4524f7e9e3070d3962c90d17f5ffb99",
+    ".recovery/build-gcc93/obj/cards/future_sight.o": "10d7295f18c9837526cc43531f08b105cc82cd208b040957b9c27133c2496720",
+    ".recovery/build-gcc93/obj/cards/gargaroz.o": "276494376976572c7a22f4268f0576c46cbdfec5cce3397195403eeed420396c",
+    ".recovery/build-gcc93/obj/cards/gatecrash.o": "3581efdfcb2691e6302d921dcc491f784572ae6930d3d91d9b96af6718805fed",
+    ".recovery/build-gcc93/obj/cards/global_series_jiang_yanggu_and_mu_yanling.o": "7e3280dc139e670bfdf54e259d9332b84cf9973a24bfc0b17202f8dc559cdc86",
+    ".recovery/build-gcc93/obj/cards/guildpact.o": "30759cebba6066c322f80c6b1ebd7263c17fa487803e521462504e7ec7f7b7b9",
+    ".recovery/build-gcc93/obj/cards/guilds_of_ravnica.o": "0b6a38b3ffa11d8c14e88232b682782e517eed1cc016ec6cedc032bd9cdc9055",
+    ".recovery/build-gcc93/obj/cards/homelands.o": "6b7d7a2eefa639da06ea084d226d5c72556fe3201fc903bfb7e2d4c857dd1ce0",
+    ".recovery/build-gcc93/obj/cards/hour_of_devastation.o": "d225a92ba1062b2257b938e7fbdb2249bcd14baabbf11d946307484509749708",
+    ".recovery/build-gcc93/obj/cards/ice_age.o": "45e1cd0cabbadfcbc4870c286ca2112ef69237c1fec20be51cf2b699e65c62ea",
+    ".recovery/build-gcc93/obj/cards/ikoria.o": "e14c7b3d9321bf70972bbf8f51dcb5e8caf0fbf834abfbcc665050ef4bc66c20",
+    ".recovery/build-gcc93/obj/cards/innistrad.o": "f3c8ce097283536e4cdd4d863b0b046c315b78016c9fcccc4325f8ef269000ac",
+    ".recovery/build-gcc93/obj/cards/invasion.o": "73f0119e74a33dfe3d0b56e610c438af18cf2dcbe4445b5eb22a439b4f128ef0",
+    ".recovery/build-gcc93/obj/cards/ixalan.o": "2eb0ef0dc821b33c00840141ec8196b3476579f211b820468d756492d83f9fcc",
+    ".recovery/build-gcc93/obj/cards/journey_into_nyx.o": "0e797947d72b297c56b40a5fcfbb13e2a04221b199b3f9b4d4ef37cd4d0fd267",
+    ".recovery/build-gcc93/obj/cards/judgement.o": "9408f085e34eb8b277abbfd5845d1de3e89613d7a3e06d6274b73a9eaa534dfd",
+    ".recovery/build-gcc93/obj/cards/jumpstart.o": "c0b73e5178379c1034e04c620dfa80fea6361ffd97502cd9c12b9f5e186b25f8",
+    ".recovery/build-gcc93/obj/cards/kaladesh.o": "7540f04fdaa989c3c9b6a7bdfab2a2f6d15a6fdf61e7bfece0f432ba00f8f66b",
+    ".recovery/build-gcc93/obj/cards/khans_of_tarkir.o": "969174beae6031bc2d2ca7e8256d9aed5eee5869fe3d8234a3189b1477a47d98",
+    ".recovery/build-gcc93/obj/cards/legends.o": "f12f68622bc51500c0da1616c4671098fd29ed17e50975ca8cd0ce2ff9d1f9c6",
+    ".recovery/build-gcc93/obj/cards/legions.o": "98022ff8c0ae7376a2c78bdbaf878848ab8570e3b699c73bbe2d19cc42494d05",
+    ".recovery/build-gcc93/obj/cards/lorwyn.o": "b4a8bc47978fc6ecc17b58b04749536188e3ee9a1277d6be84a2de0d90fce7b2",
+    ".recovery/build-gcc93/obj/cards/m10.o": "9e8dd346ee8db2b1d86a71450924844d9e007d275da42388a0610cda79a6906b",
+    ".recovery/build-gcc93/obj/cards/m11.o": "3049dcfa308ab5193d12fba4c22976c30fdfe6c3991ce8afd3d6bad77d6e9cb0",
+    ".recovery/build-gcc93/obj/cards/m12.o": "bd4b3303f8e2b7c147fb7392fb43e6387fa89540e6b8a35cdf11fa9e6c4598c6",
+    ".recovery/build-gcc93/obj/cards/m13.o": "858d2e01a782c0ff9eee3e079e1cead3bc309b64bf0e61f3058a50320a338d33",
+    ".recovery/build-gcc93/obj/cards/m14.o": "aa44214336726647a70b6a5f81e53b226a9a8a5751b489af4590e73a4d3c0800",
+    ".recovery/build-gcc93/obj/cards/m15.o": "835467e50a97775ba31ecb8bff10773744aa7560e58ba504575f08bc56ec4902",
+    ".recovery/build-gcc93/obj/cards/m19.o": "8486039d5c1bdd5300f7fcc621495cdaaf5c7adb79dcaefb4e01410af22213be",
+    ".recovery/build-gcc93/obj/cards/m20.o": "ee3f0f2c026350486319819f80339e3c0b8182ed9321670bfb3bb87e7d26d53f",
+    ".recovery/build-gcc93/obj/cards/mercadian_masques.o": "d6057ee700fd202293eefceeba223b23fef64e1c8a85ec394c3002828c6d8e81",
+    ".recovery/build-gcc93/obj/cards/mirage.o": "eb3c8ce59bfd7aeca0cf0ed7d6e3a3b6dca021a0e17d59b6938d206b87f8d3ac",
+    ".recovery/build-gcc93/obj/cards/mirrodin.o": "7190cb117aef863872f7d91d91edb3f79a4fc516706da2c780aad16604984891",
+    ".recovery/build-gcc93/obj/cards/mirrodin_besieged.o": "1dd319701822e69ef7598d237fbfecdf3365b324429759055d50f31a27d0a9a2",
+    ".recovery/build-gcc93/obj/cards/modern_horizons.o": "7f3ae6adc1b9248c4aec2b2ee6dfb78264f67be651dee507c291dffaac00eebc",
+    ".recovery/build-gcc93/obj/cards/modern_horizons_2.o": "e4544640e526e96e12985bf6173f7b47d78e7a47275de4d1be52a85408acc5c4",
+    ".recovery/build-gcc93/obj/cards/morningtide.o": "d8ab0b8f6937b2f588845bd398963fff0fc04fa7b031ed28dbda6fbe43ab2783",
+    ".recovery/build-gcc93/obj/cards/nemesis.o": "0c9bf5c2294bc6a2b1aaa5c9efea13fda800ae32c6a92ab7db805c4fa8215150",
+    ".recovery/build-gcc93/obj/cards/new_phyrexia.o": "94cffcb8da642ade75624508e182129d27096892389bca2deb582d05d06d0e6c",
+    ".recovery/build-gcc93/obj/cards/oath_of_the_gatewatch.o": "20185b0e73d3d765ed91d5bd79541e1186f52d75dc8fa35c8de672d65a69226e",
+    ".recovery/build-gcc93/obj/cards/odissey.o": "d3d2be7635d4f86797a454fec0e299fc2710defdab514aa573f9c19ea38916b4",
+    ".recovery/build-gcc93/obj/cards/odyssey.o": "e241d7c899623e2d7c0475f8a42ec034534621476d695d8137d495829a278022",
+    ".recovery/build-gcc93/obj/cards/onslaught.o": "c257487fb08a6ddb62ff04629796c8d50c086cf1f3229e3c3f4f27d55e34672f",
+    ".recovery/build-gcc93/obj/cards/origins.o": "9977e34ef38c6dfb36b3238387d4c64a64b81bd27a09abe26f7b72e1b0b670f3",
+    ".recovery/build-gcc93/obj/cards/planar_chaos.o": "a43c6ea271255f83a4a102d7259f3b7646e194ce2341a3443c8c4c7f1063fed7",
+    ".recovery/build-gcc93/obj/cards/planechase.o": "195d46a0c30ec0903122ce41de40b594dfbb49e3737419de5eed28e5b9bc654e",
+    ".recovery/build-gcc93/obj/cards/planeshift.o": "63fe83228ab721f7ff373b70039bceda90b0c1a75d3c186c0086db9cdab0f031",
+    ".recovery/build-gcc93/obj/cards/planeswalker.o": "94b02c2eef7c9275f8bd742ae3f1a8e87eb5929fd6ad4eae4d4152a95bb2727e",
+    ".recovery/build-gcc93/obj/cards/portal_1_2_3k.o": "abfb3ac8072d29685ac64282b9c668a8affddfc8a375013449e578306f74d6b2",
+    ".recovery/build-gcc93/obj/cards/promo.o": "d0d4571f16ee04f73e9ab247e1b320a449770e3552160b87e6ce0827d58d23be",
+    ".recovery/build-gcc93/obj/cards/prophecy.o": "8bc189ff684825a3e96723ce54c47b50851dfeeaa28c732f3cde7ec65a6c32b6",
+    ".recovery/build-gcc93/obj/cards/ravnica.o": "2ceeb78de42107ea1fd040194aac001d8fdbe232406062964210b33004261549",
+    ".recovery/build-gcc93/obj/cards/ravnica_allegiance.o": "a668a272a30b9f5ce6b3f26937c3d67a4ccec8e86d1860beca7239b410bc1ca3",
+    ".recovery/build-gcc93/obj/cards/return_to_ravnica.o": "59f62bd0c702d738adc39d4c38db6b1617433663b5c1122b6aa20a8dad4fa9dd",
+    ".recovery/build-gcc93/obj/cards/rise_of_the_eldrazi.o": "42eb57e0eeffd48bf558d1430e0737c08bd705ee516a5246f03b28995274fe34",
+    ".recovery/build-gcc93/obj/cards/rivals_of_ixalan.o": "c6e194712b30b8f31077dfcaa5f87889d0b341f6046419c72dca2d8042aabf30",
+    ".recovery/build-gcc93/obj/cards/saviors_of_kamigawa.o": "4fca14948c960b0fcf04353a1a7ebffbc27b81ffbd636bedba4135649f08d1fd",
+    ".recovery/build-gcc93/obj/cards/scars_of_mirrodin.o": "ca20b6ad6fc34d537b03a2a4a252fed5f355e00d80b2723c41c388533c63c4d4",
+    ".recovery/build-gcc93/obj/cards/scourge.o": "3edcc41ef9892a8590848393834bf1bed93add05b6bba5ebf37b1406a49f05d9",
+    ".recovery/build-gcc93/obj/cards/shadowmoor.o": "6d0298ecd5cdd4dd7e02b839b8d3f6621c438ce0734745fb1c6f8f0a3edc661c",
+    ".recovery/build-gcc93/obj/cards/shadows_over_innistrad.o": "6bc04d55ae5b60464da40d67793bc99922bd57552dee461edd62a1dca9a6e7a7",
+    ".recovery/build-gcc93/obj/cards/shards_of_alara.o": "3d104c61e4b5b0c48536ed1e4d1586bc00302887305a5b28993d78af3a454d90",
+    ".recovery/build-gcc93/obj/cards/strixhaven.o": "a6268639010aaa901405def898eb3aaa909b3bf45137b0cec2678da1091f3a4a",
+    ".recovery/build-gcc93/obj/cards/stronghold.o": "81cc5b0378fb7dbe2220c4797cc872b48dad187310c09ef8389f844e22a7a572",
+    ".recovery/build-gcc93/obj/cards/stubs.o": "e651ae9282c8f33a6cac34cd7a158af430ef01d4158a0fd0898939b05aa36dff",
+    ".recovery/build-gcc93/obj/cards/tempest.o": "a21a0439a7c92414a3cf2ae317cb0323ea5b0b3f268923a184a182698b766c8e",
+    ".recovery/build-gcc93/obj/cards/the_dark.o": "8bc63b09b6264bf24df3f88eb8f130ab4901f5770393f36bda6971d93bf797d4",
+    ".recovery/build-gcc93/obj/cards/theros.o": "a53ae4b94c43121a4eebc527e5de852f5d7982acb403d10807f36bae7fb0d854",
+    ".recovery/build-gcc93/obj/cards/theros_beyond_death.o": "1ff58cd1e05d7bf1b3d61e982b08a67ea63e760653ed92b88f1790046c21bf0a",
+    ".recovery/build-gcc93/obj/cards/throne_of_eldraine.o": "4a35d47172fa2d3b20c18812e4dc76b6c419c95ba9859d2710f4401cbe0deb46",
+    ".recovery/build-gcc93/obj/cards/time_spiral.o": "7337a3bbe05a00a18e46e0601ac31d048333f0d83a52cfbd12563dc02baf13dc",
+    ".recovery/build-gcc93/obj/cards/tokens.o": "0a88f489b574927b9b9a70680f61f82854fe3c71b187d4e2ea94a4936cca082b",
+    ".recovery/build-gcc93/obj/cards/torment.o": "4ecdbb65ae7c4680ca7ee47b2c7ffe5690aecb944c6fb6260b4e94e7405c4a9d",
+    ".recovery/build-gcc93/obj/cards/unglued_unhinged.o": "f07b43ff6969405ba0aae649a82f121ecab4a79e0fcd9b6d9d87cb20175e76b8",
+    ".recovery/build-gcc93/obj/cards/unlimited.o": "e5ea6d52b0926aa73a22eedfb6e4338026f27c9e65fef4df796f0d3f1a973c0f",
+    ".recovery/build-gcc93/obj/cards/unstable.o": "3fb60189b488ce45905f1faf2569bd7ee464b4ec549630a6dc4573f13840b543",
+    ".recovery/build-gcc93/obj/cards/urza_destiny.o": "cac3a589a12a334763cb3251635c82efa3d8a4ee28eaac15a01c009ff862a721",
+    ".recovery/build-gcc93/obj/cards/urza_legacy.o": "43a1d53d195adf5e08b686082b241cc81ed58065fcb1952d52d2a04cc2574b5c",
+    ".recovery/build-gcc93/obj/cards/urza_saga.o": "dc175ee7f7690373af7590c6e04804e157be374b8937d55cb1dac0781a85703b",
+    ".recovery/build-gcc93/obj/cards/vanguard.o": "37bb001de61021da76e136c881660be7227a41843dcd48301454fd1abdd983d4",
+    ".recovery/build-gcc93/obj/cards/visions.o": "70c38ab902bd59ccfba1a420d7790031df0993cd62a876ca745bec623381d7f6",
+    ".recovery/build-gcc93/obj/cards/war_of_the_spark.o": "11f43d6a817be85b788f7cce791336b6154ef8f453d71588c790319b334f1a88",
+    ".recovery/build-gcc93/obj/cards/weatherlight.o": "5733a86c834de0fbe11a0ae6e1fa12adef19af6cf378beabf107c9971643fb56",
+    ".recovery/build-gcc93/obj/cards/worldwake.o": "4755ad0314da4de54bbc1a49e2e22fec75c792910125f9c2434ce220bd49773d",
+    ".recovery/build-gcc93/obj/cards/zendikar.o": "03d3b2298e4130f65f59ce9994f52c1390121e01082506c79b6c38410e428701",
+    ".recovery/build-gcc93/obj/cards/zendikar_rising.o": "28d743fa079e6749f7e2cbf0dd4519db7f136436431a80306bbe83dcaf867e9c",
+    ".recovery/build-gcc93/obj/functions/abilities.o": "20ba8038706c01684f4f654c4a5caeb15f071eed71f1ba24c238cbc915379df8",
+    ".recovery/build-gcc93/obj/functions/ai.o": "cbc401ccc5bd74c991043fddfa3e39601692a0eae7c6219f9d8bb5294535e00b",
+    ".recovery/build-gcc93/obj/functions/auras.o": "73f81e529d91759438e3975f08f29345f90c724177dc7c9c4564323918f26fed",
+    ".recovery/build-gcc93/obj/functions/boost_creature_type.o": "b0e8074ca4e4c554ed0670518a556d14358f7837e038869501ed2585083560fc",
+    ".recovery/build-gcc93/obj/functions/challenge_mode.o": "54e64b2fffa7aa393e3636676764ab3e9b88dc882a5a0b11221825a4f7a54249",
+    ".recovery/build-gcc93/obj/functions/count_graveyard.o": "a917abf489b330d638b77890714d7d63225e17e7c15c7bbfd29bab77da410625",
+    ".recovery/build-gcc93/obj/functions/counters.o": "4d742c45c007c230fdac48d2218f4f9fdcb5bea7c5416b09be7c96f81b2e1af5",
+    ".recovery/build-gcc93/obj/functions/damage_effects.o": "bc8719e0fdd9e946ab917d9c593fa4a03f92b0106205334bcd3e7b6b238450e8",
+    ".recovery/build-gcc93/obj/functions/deadbox.o": "f36407331a0bad0edbcd57745dc7b5ec4a532ab5060bca5ef0926724868c0a3d",
+    ".recovery/build-gcc93/obj/functions/deck.o": "c352dd40d422fb926d818fbd094d8fc428bd30cbd740b04e3247a577c3a20165",
+    ".recovery/build-gcc93/obj/functions/dialog.o": "cb49c1420085a5f33e9603256e9a88b6ab7f786b87957e86db43f7aab79e85e5",
+    ".recovery/build-gcc93/obj/functions/dice.o": "c47c476f886d28ef4f866d6faec33a6678d0c3da3dcfdc8477f6730481621872",
+    ".recovery/build-gcc93/obj/functions/draft.o": "57ae899ea6ceb072f3d5343e8b0f0572efe52dfd63048c2fc88f0d779fb9b013",
+    ".recovery/build-gcc93/obj/functions/engine.o": "672d96eadd65851caf1e2b3c3f29d3b5ba29479adc2d5dbd309548319f52dcfb",
+    ".recovery/build-gcc93/obj/functions/equipments.o": "e138f240a4fe197d95a69c90e601bf9a4f958254c260a603317000e029fca35d",
+    ".recovery/build-gcc93/obj/functions/events.o": "f6b0e8bf9ba0a36fff9d0ebd45dddb6c38468bffd934c84893b1a0fcb00c2781",
+    ".recovery/build-gcc93/obj/functions/exiledby.o": "3e03111a674c69e657f914b731ef3c508bc9a7ece047b8973d1f7ce1c68d18b5",
+    ".recovery/build-gcc93/obj/functions/functions.o": "32205d3c116ae070e6740a3c6ab616a2310a8e4afecabe461ea676513ad308ab",
+    ".recovery/build-gcc93/obj/functions/gain_control_and_legend_rule.o": "fd77d49518923296dc3cb4f52466de831fc8a67a04ffff23f788794a3763708c",
+    ".recovery/build-gcc93/obj/functions/global_checking.o": "e0bd743fa7117c01264965356cc07391079fc50f2191ded8af02d905d7c9ec87",
+    ".recovery/build-gcc93/obj/functions/has_creature_type.o": "aa1b3633ca9afaf17b7267ff7e73cfc3b7721af3a61314e8759d5f372d82990a",
+    ".recovery/build-gcc93/obj/functions/has_threshold.o": "1801874a2392bffd14fd695cdef0b010efdd329ec91a38f4317fea2e79f3b622",
+    ".recovery/build-gcc93/obj/functions/helper_functions.o": "801466ab83cd9d8777c95b1fea6ba81e9a9913af4ec43d61294ecd5734c045be",
+    ".recovery/build-gcc93/obj/functions/load_text.o": "a16ec0ee1f45e4ac0a71630191accff3cbda582d15369f3b66fc7b53568dc112",
+    ".recovery/build-gcc93/obj/functions/manipulate_and_damage_all.o": "23e48ec021f3cb8141a8e7d2dbbf1c5419b9311b66a70a5766d58cbc5696b1cb",
+    ".recovery/build-gcc93/obj/functions/multiblock.o": "d65152c3fae6f6a0a645981024fc0890be79467f92beb67f88441ea8d64d07fe",
+    ".recovery/build-gcc93/obj/functions/packs.o": "7eb7d027e27236ea9ea95dce26d1f4ff80999e411a119926dc7d47d814b73a63",
+    ".recovery/build-gcc93/obj/functions/play_spell_for_free.o": "969b3b2284add33b7c4bf2f59d76787edaf60418351b3d35554f1a245c637b1a",
+    ".recovery/build-gcc93/obj/functions/produce_mana.o": "f02f92fff8bbd1d07d3568f768d53a7fda7eb64ff99905a49d276cece6c92a99",
+    ".recovery/build-gcc93/obj/functions/rules_engine.o": "de9c1ab07e51f7a7b1c3bdef89cb05a829ef52ea4460661d5559a602317cdbcc",
+    ".recovery/build-gcc93/obj/functions/sacrifices.o": "f065d35db2fdbe4389322fb292b90efa31d169af83a01a12ed568f8ec71586db",
+    ".recovery/build-gcc93/obj/functions/show_backtrace.o": "009b3bc0dbf46260103baab677de9929b33f34886740e326342313b3f4db022f",
+    ".recovery/build-gcc93/obj/functions/targets.o": "50da422d775de2561bdbe6d271eebdddf99a032dae3082f8690933282309d902",
+    ".recovery/build-gcc93/obj/functions/token_generation.o": "15ae42b45b55e33c6963ce86fc085a747cb7552b7badf013aeffbf0c2e706d89",
+    ".recovery/build-gcc93/obj/functions/tutors.o": "133298c3294810fb97e3ea028d82d136702fa1c33e8c45afcc725a0b596b0bb2",
+    ".recovery/build-gcc93/obj/functions/upkeep.o": "687f695563d9ea746cfb578ba1cff61eabd471029b10c2dc619999343b5d3f70",
+    ".recovery/build-gcc93/obj/functions/windows.o": "9e8f3553213dc29054a7dc8c03db4d8b6e2b57edd9296e93accf921a76d07769"
+  },
+  "scope": "Seven exact shared-tail adventure spell dispatchers become structured conditions. Fourteen LAB jumps and seven labels disappear; six unused result locals disappear. Common prefixes and helper arguments are retained, with no new affect_me helper call. Parsed statement-CFG interpretation covers252 native-event/affected-card/player classes and preserves arbitrary helper return values. This proves only the local dispatch rewrite relative to the reviewed source; full native semantics, aliases, downstream helper behavior and gameplay remain separate.",
+  "audit_tool_changes": [
+    {
+      "path": "tools/recovery/canonicalize_helpers.py",
+      "before_sha256": "5e86766cf739373ddacb0d2cd95d9423bfe4e38abf1eecae52d9505f71cc5ab5",
+      "after_sha256": "48d04d541d4f9bf5c92ae5d582466b0c126a0d80271a3a431af1b85c1a16ec5e"
+    },
+    {
+      "path": "tools/recovery/spell_dispatch_source.py",
+      "before_sha256": "667909b7b7f01961b06547c731fd745256ee7fc969b922cea34996bc599c30aa",
+      "after_sha256": "9cd57f8461595db60554b46aa005979fc1d1b46475d39eba1f39e7ae5a48cd16",
+      "reason": "Use JSON-stable list representation for arbitrary call return values; trace contents are unchanged."
+    }
+  ],
+  "after_link_inputs": {
+    ".recovery/build-gcc93/obj/cards/aether_revolt.o": "eda18891a5a8d9419b34b2d1f76ee0efc6e9f90f07319eb9bc327d8e29052d8f",
+    ".recovery/build-gcc93/obj/cards/alara_reborn.o": "460b880bd45f6544fa7b45bdd0d5b6766fbe573b149f16bf9e2e12c40a75d596",
+    ".recovery/build-gcc93/obj/cards/alliances.o": "8a3c4265b1bb223a223a6fcd3bda657e56c5509e7c487cd151895e2f763d202a",
+    ".recovery/build-gcc93/obj/cards/amonkhet.o": "89210c7e696227e676407791ec479ce150027db0ed8614df28cafc7ba3305cdc",
+    ".recovery/build-gcc93/obj/cards/antiquities.o": "80d1cb5165a81fcbd0a50f9ac9df72bca55f844826a12c7778accc94ea7f2a75",
+    ".recovery/build-gcc93/obj/cards/apocalypse.o": "24fdddc48acf4463cb48b8f01614b5205466f177d4e4c92cd58706a0fa60073e",
+    ".recovery/build-gcc93/obj/cards/arabian_nights.o": "e5277bbf9d4769fe836b68b909018bb6a043df337cfb661375af02274b25f7cd",
+    ".recovery/build-gcc93/obj/cards/archenemy.o": "60afaa61b4a68c96ac275379a8245178bbe94be9982e1090532319268f67627b",
+    ".recovery/build-gcc93/obj/cards/archenemy_nicol_bolas.o": "f696df1d7831001d3ff64988f2fd34b6b2e5dd022b1459a333becf1ea4be3423",
+    ".recovery/build-gcc93/obj/cards/artifact_creatures.o": "e06702d3247122e13e4ec9c47a7f7bb102f75e7aa741aca32906f6b9ceb2ed7e",
+    ".recovery/build-gcc93/obj/cards/avacyn_restored.o": "f7e32d5b674768ea02e829977ea258e6f882375926905325ebfe5554949fa5f6",
+    ".recovery/build-gcc93/obj/cards/battle_for_zendikar.o": "f485c57f48b0c3e39aa89b6b07ebb0c1391e1c04eb7381c09d27bdc845411fb3",
+    ".recovery/build-gcc93/obj/cards/battlebond.o": "6bdd232cdb5b445c0a5d83be7276352541332a497ffbbdedeebc38efc2194601",
+    ".recovery/build-gcc93/obj/cards/betrayers_of_kamigawa.o": "ee958e1aa3184ba10856056561a1c6e793b419f45734d8c94922c1c29014e9d0",
+    ".recovery/build-gcc93/obj/cards/born_of_the_gods.o": "3a7bc44310bd2953f08e63bc285a24235e21386591e8822453a520aa0d0f4e25",
+    ".recovery/build-gcc93/obj/cards/champions_of_kamigawa.o": "43464b40046c0d83711f28f757874c3f38c04a0fbb13e90e2c000e68fd6f5407",
+    ".recovery/build-gcc93/obj/cards/coldsnap.o": "30ceeeab883efd7ff4563a38e13584196f39bdb6708601cefbc5041d9f5b3e95",
+    ".recovery/build-gcc93/obj/cards/commander.o": "4bc73373d6a30105bf3bc8d66682119c23d2f51c0af949277944c934f3426545",
+    ".recovery/build-gcc93/obj/cards/commander_2013.o": "2d52a0dfe2ec722c656d61869990fa0c7498fb70f0b759b92b74911e0e4df3af",
+    ".recovery/build-gcc93/obj/cards/commander_2014.o": "a9ca2687d11e1b1950d6cc977e982bf287c31d84b93d8754c4ed623684704602",
+    ".recovery/build-gcc93/obj/cards/commander_2015.o": "e317d4bbf819626778892f0b88b1ed5f3b03801bc7bccefd19d6d7049a340a99",
+    ".recovery/build-gcc93/obj/cards/commander_2016.o": "94b0eb86d6a619c4beaf83256fa03aeac016ee6a71591e1c50b1b84de68d4809",
+    ".recovery/build-gcc93/obj/cards/commander_2017.o": "be90d352636cd54feeac3c57e6e612277d4c789a5098cf903fb0a996023f7b78",
+    ".recovery/build-gcc93/obj/cards/commander_2018.o": "4049c831bba0831bb6467b0c40bb9fa6e3187c8f061d14b722836b462d1e4561",
+    ".recovery/build-gcc93/obj/cards/commander_2019.o": "547d89ef13af6912ef626becc38ef2c5c5a16c62b40258bea0820ca5caf192a1",
+    ".recovery/build-gcc93/obj/cards/commander_2020.o": "657b3ffcaa7ddf90ad188aa7ce6988a9e7c46cebee94f0cec558d666752603a6",
+    ".recovery/build-gcc93/obj/cards/commander_legends.o": "2991afee320c467dba54cc532deb4162eb36edddd5bc9d7e0b8d717c64c9b8d0",
+    ".recovery/build-gcc93/obj/cards/conflux.o": "698682072c266a11fecdce16b21cc8721b592d45bb6747f6027bedb190cd0908",
+    ".recovery/build-gcc93/obj/cards/conspiracy-take-the-crown.o": "fc789a4fa96dd122b033bf667cd729c58003857b51fb54caabe9b0bf10048ac7",
+    ".recovery/build-gcc93/obj/cards/conspiracy.o": "d89c8cbebaed8cc9e24bb16d2c5c4c6d98744ec47e08f99ca38851fb75dbad76",
+    ".recovery/build-gcc93/obj/cards/dark_ascension.o": "abb0095f872fcd9cbad2d7c0dc79a2f49eab7608b0e81491f06ed4db585573e7",
+    ".recovery/build-gcc93/obj/cards/darksteel.o": "3295baaa52b86cfde6e7937b9a879ccd4fec81d165d7630bc9bfff8ad0b5c6c9",
+    ".recovery/build-gcc93/obj/cards/dissension.o": "c15c84205a1e58d5ca6264a76b80941f857450af81fc66aac71cda1f3fe99436",
+    ".recovery/build-gcc93/obj/cards/dominaria.o": "17bf3f1289d122894ebbc7a2fbae14a5f7a7660fcb93de601ce2042fb773f536",
+    ".recovery/build-gcc93/obj/cards/draft.o": "cb219ad59f3e8dafb4d2afbe9984789843b411a6afd40f107616dd4887cff379",
+    ".recovery/build-gcc93/obj/cards/dragons_maze.o": "a22a0b704d6e5d0985e41c6eb233ba24c873d919f8ea9ed0aa03d4d42071ad49",
+    ".recovery/build-gcc93/obj/cards/dragons_of_tarkir.o": "53d23bf9690df0787370f124f74e3c4fec16e9f3f4d91419cd07637834b9533b",
+    ".recovery/build-gcc93/obj/cards/eldritch_moon.o": "8b57bbbf47addb0dd8d5887dda63662deb638e0d4a287c971004700a90d4f4d1",
+    ".recovery/build-gcc93/obj/cards/equipment.o": "89a5e3fab8e75d3ba6ca1a78ba7b3cf0f97fb182e2de69b4b30cf148f984e2c8",
+    ".recovery/build-gcc93/obj/cards/eventide.o": "204d5f373988ab936485129c2c16884e66ba23668aa35103274f76018da1ce17",
+    ".recovery/build-gcc93/obj/cards/exodus.o": "eaa68cd69dbc0a72e62fb57cc079747eca234105c6a0a3a5fcfdaf5c788169cb",
+    ".recovery/build-gcc93/obj/cards/fallen_empires.o": "213ef83a4b7eeb5fdc9c80e58baf7d2da262e46aec61ab2755d613f4f8309501",
+    ".recovery/build-gcc93/obj/cards/fate_reforged.o": "ab8579b9c162b6b641a656325059b7350b39d82a21da654bcf1f405efdf76eba",
+    ".recovery/build-gcc93/obj/cards/fifth_dawn.o": "b51f772cb68eaf1d389d7492eefec469f4524f7e9e3070d3962c90d17f5ffb99",
+    ".recovery/build-gcc93/obj/cards/future_sight.o": "10d7295f18c9837526cc43531f08b105cc82cd208b040957b9c27133c2496720",
+    ".recovery/build-gcc93/obj/cards/gargaroz.o": "276494376976572c7a22f4268f0576c46cbdfec5cce3397195403eeed420396c",
+    ".recovery/build-gcc93/obj/cards/gatecrash.o": "3581efdfcb2691e6302d921dcc491f784572ae6930d3d91d9b96af6718805fed",
+    ".recovery/build-gcc93/obj/cards/global_series_jiang_yanggu_and_mu_yanling.o": "7e3280dc139e670bfdf54e259d9332b84cf9973a24bfc0b17202f8dc559cdc86",
+    ".recovery/build-gcc93/obj/cards/guildpact.o": "30759cebba6066c322f80c6b1ebd7263c17fa487803e521462504e7ec7f7b7b9",
+    ".recovery/build-gcc93/obj/cards/guilds_of_ravnica.o": "0b6a38b3ffa11d8c14e88232b682782e517eed1cc016ec6cedc032bd9cdc9055",
+    ".recovery/build-gcc93/obj/cards/homelands.o": "6b7d7a2eefa639da06ea084d226d5c72556fe3201fc903bfb7e2d4c857dd1ce0",
+    ".recovery/build-gcc93/obj/cards/hour_of_devastation.o": "d225a92ba1062b2257b938e7fbdb2249bcd14baabbf11d946307484509749708",
+    ".recovery/build-gcc93/obj/cards/ice_age.o": "45e1cd0cabbadfcbc4870c286ca2112ef69237c1fec20be51cf2b699e65c62ea",
+    ".recovery/build-gcc93/obj/cards/ikoria.o": "e14c7b3d9321bf70972bbf8f51dcb5e8caf0fbf834abfbcc665050ef4bc66c20",
+    ".recovery/build-gcc93/obj/cards/innistrad.o": "f3c8ce097283536e4cdd4d863b0b046c315b78016c9fcccc4325f8ef269000ac",
+    ".recovery/build-gcc93/obj/cards/invasion.o": "73f0119e74a33dfe3d0b56e610c438af18cf2dcbe4445b5eb22a439b4f128ef0",
+    ".recovery/build-gcc93/obj/cards/ixalan.o": "2eb0ef0dc821b33c00840141ec8196b3476579f211b820468d756492d83f9fcc",
+    ".recovery/build-gcc93/obj/cards/journey_into_nyx.o": "0e797947d72b297c56b40a5fcfbb13e2a04221b199b3f9b4d4ef37cd4d0fd267",
+    ".recovery/build-gcc93/obj/cards/judgement.o": "9408f085e34eb8b277abbfd5845d1de3e89613d7a3e06d6274b73a9eaa534dfd",
+    ".recovery/build-gcc93/obj/cards/jumpstart.o": "c0b73e5178379c1034e04c620dfa80fea6361ffd97502cd9c12b9f5e186b25f8",
+    ".recovery/build-gcc93/obj/cards/kaladesh.o": "7540f04fdaa989c3c9b6a7bdfab2a2f6d15a6fdf61e7bfece0f432ba00f8f66b",
+    ".recovery/build-gcc93/obj/cards/khans_of_tarkir.o": "969174beae6031bc2d2ca7e8256d9aed5eee5869fe3d8234a3189b1477a47d98",
+    ".recovery/build-gcc93/obj/cards/legends.o": "f12f68622bc51500c0da1616c4671098fd29ed17e50975ca8cd0ce2ff9d1f9c6",
+    ".recovery/build-gcc93/obj/cards/legions.o": "98022ff8c0ae7376a2c78bdbaf878848ab8570e3b699c73bbe2d19cc42494d05",
+    ".recovery/build-gcc93/obj/cards/lorwyn.o": "b4a8bc47978fc6ecc17b58b04749536188e3ee9a1277d6be84a2de0d90fce7b2",
+    ".recovery/build-gcc93/obj/cards/m10.o": "9e8dd346ee8db2b1d86a71450924844d9e007d275da42388a0610cda79a6906b",
+    ".recovery/build-gcc93/obj/cards/m11.o": "3049dcfa308ab5193d12fba4c22976c30fdfe6c3991ce8afd3d6bad77d6e9cb0",
+    ".recovery/build-gcc93/obj/cards/m12.o": "bd4b3303f8e2b7c147fb7392fb43e6387fa89540e6b8a35cdf11fa9e6c4598c6",
+    ".recovery/build-gcc93/obj/cards/m13.o": "858d2e01a782c0ff9eee3e079e1cead3bc309b64bf0e61f3058a50320a338d33",
+    ".recovery/build-gcc93/obj/cards/m14.o": "aa44214336726647a70b6a5f81e53b226a9a8a5751b489af4590e73a4d3c0800",
+    ".recovery/build-gcc93/obj/cards/m15.o": "835467e50a97775ba31ecb8bff10773744aa7560e58ba504575f08bc56ec4902",
+    ".recovery/build-gcc93/obj/cards/m19.o": "8486039d5c1bdd5300f7fcc621495cdaaf5c7adb79dcaefb4e01410af22213be",
+    ".recovery/build-gcc93/obj/cards/m20.o": "ee3f0f2c026350486319819f80339e3c0b8182ed9321670bfb3bb87e7d26d53f",
+    ".recovery/build-gcc93/obj/cards/mercadian_masques.o": "d6057ee700fd202293eefceeba223b23fef64e1c8a85ec394c3002828c6d8e81",
+    ".recovery/build-gcc93/obj/cards/mirage.o": "eb3c8ce59bfd7aeca0cf0ed7d6e3a3b6dca021a0e17d59b6938d206b87f8d3ac",
+    ".recovery/build-gcc93/obj/cards/mirrodin.o": "7190cb117aef863872f7d91d91edb3f79a4fc516706da2c780aad16604984891",
+    ".recovery/build-gcc93/obj/cards/mirrodin_besieged.o": "1dd319701822e69ef7598d237fbfecdf3365b324429759055d50f31a27d0a9a2",
+    ".recovery/build-gcc93/obj/cards/modern_horizons.o": "7f3ae6adc1b9248c4aec2b2ee6dfb78264f67be651dee507c291dffaac00eebc",
+    ".recovery/build-gcc93/obj/cards/modern_horizons_2.o": "e4544640e526e96e12985bf6173f7b47d78e7a47275de4d1be52a85408acc5c4",
+    ".recovery/build-gcc93/obj/cards/morningtide.o": "d8ab0b8f6937b2f588845bd398963fff0fc04fa7b031ed28dbda6fbe43ab2783",
+    ".recovery/build-gcc93/obj/cards/nemesis.o": "0c9bf5c2294bc6a2b1aaa5c9efea13fda800ae32c6a92ab7db805c4fa8215150",
+    ".recovery/build-gcc93/obj/cards/new_phyrexia.o": "94cffcb8da642ade75624508e182129d27096892389bca2deb582d05d06d0e6c",
+    ".recovery/build-gcc93/obj/cards/oath_of_the_gatewatch.o": "20185b0e73d3d765ed91d5bd79541e1186f52d75dc8fa35c8de672d65a69226e",
+    ".recovery/build-gcc93/obj/cards/odissey.o": "d3d2be7635d4f86797a454fec0e299fc2710defdab514aa573f9c19ea38916b4",
+    ".recovery/build-gcc93/obj/cards/odyssey.o": "e241d7c899623e2d7c0475f8a42ec034534621476d695d8137d495829a278022",
+    ".recovery/build-gcc93/obj/cards/onslaught.o": "c257487fb08a6ddb62ff04629796c8d50c086cf1f3229e3c3f4f27d55e34672f",
+    ".recovery/build-gcc93/obj/cards/origins.o": "9977e34ef38c6dfb36b3238387d4c64a64b81bd27a09abe26f7b72e1b0b670f3",
+    ".recovery/build-gcc93/obj/cards/planar_chaos.o": "a43c6ea271255f83a4a102d7259f3b7646e194ce2341a3443c8c4c7f1063fed7",
+    ".recovery/build-gcc93/obj/cards/planechase.o": "195d46a0c30ec0903122ce41de40b594dfbb49e3737419de5eed28e5b9bc654e",
+    ".recovery/build-gcc93/obj/cards/planeshift.o": "63fe83228ab721f7ff373b70039bceda90b0c1a75d3c186c0086db9cdab0f031",
+    ".recovery/build-gcc93/obj/cards/planeswalker.o": "94b02c2eef7c9275f8bd742ae3f1a8e87eb5929fd6ad4eae4d4152a95bb2727e",
+    ".recovery/build-gcc93/obj/cards/portal_1_2_3k.o": "abfb3ac8072d29685ac64282b9c668a8affddfc8a375013449e578306f74d6b2",
+    ".recovery/build-gcc93/obj/cards/promo.o": "d0d4571f16ee04f73e9ab247e1b320a449770e3552160b87e6ce0827d58d23be",
+    ".recovery/build-gcc93/obj/cards/prophecy.o": "8bc189ff684825a3e96723ce54c47b50851dfeeaa28c732f3cde7ec65a6c32b6",
+    ".recovery/build-gcc93/obj/cards/ravnica.o": "2ceeb78de42107ea1fd040194aac001d8fdbe232406062964210b33004261549",
+    ".recovery/build-gcc93/obj/cards/ravnica_allegiance.o": "a668a272a30b9f5ce6b3f26937c3d67a4ccec8e86d1860beca7239b410bc1ca3",
+    ".recovery/build-gcc93/obj/cards/return_to_ravnica.o": "59f62bd0c702d738adc39d4c38db6b1617433663b5c1122b6aa20a8dad4fa9dd",
+    ".recovery/build-gcc93/obj/cards/rise_of_the_eldrazi.o": "42eb57e0eeffd48bf558d1430e0737c08bd705ee516a5246f03b28995274fe34",
+    ".recovery/build-gcc93/obj/cards/rivals_of_ixalan.o": "c6e194712b30b8f31077dfcaa5f87889d0b341f6046419c72dca2d8042aabf30",
+    ".recovery/build-gcc93/obj/cards/saviors_of_kamigawa.o": "4fca14948c960b0fcf04353a1a7ebffbc27b81ffbd636bedba4135649f08d1fd",
+    ".recovery/build-gcc93/obj/cards/scars_of_mirrodin.o": "ca20b6ad6fc34d537b03a2a4a252fed5f355e00d80b2723c41c388533c63c4d4",
+    ".recovery/build-gcc93/obj/cards/scourge.o": "3edcc41ef9892a8590848393834bf1bed93add05b6bba5ebf37b1406a49f05d9",
+    ".recovery/build-gcc93/obj/cards/shadowmoor.o": "6d0298ecd5cdd4dd7e02b839b8d3f6621c438ce0734745fb1c6f8f0a3edc661c",
+    ".recovery/build-gcc93/obj/cards/shadows_over_innistrad.o": "6bc04d55ae5b60464da40d67793bc99922bd57552dee461edd62a1dca9a6e7a7",
+    ".recovery/build-gcc93/obj/cards/shards_of_alara.o": "3d104c61e4b5b0c48536ed1e4d1586bc00302887305a5b28993d78af3a454d90",
+    ".recovery/build-gcc93/obj/cards/strixhaven.o": "a6268639010aaa901405def898eb3aaa909b3bf45137b0cec2678da1091f3a4a",
+    ".recovery/build-gcc93/obj/cards/stronghold.o": "81cc5b0378fb7dbe2220c4797cc872b48dad187310c09ef8389f844e22a7a572",
+    ".recovery/build-gcc93/obj/cards/stubs.o": "e651ae9282c8f33a6cac34cd7a158af430ef01d4158a0fd0898939b05aa36dff",
+    ".recovery/build-gcc93/obj/cards/tempest.o": "a21a0439a7c92414a3cf2ae317cb0323ea5b0b3f268923a184a182698b766c8e",
+    ".recovery/build-gcc93/obj/cards/the_dark.o": "8bc63b09b6264bf24df3f88eb8f130ab4901f5770393f36bda6971d93bf797d4",
+    ".recovery/build-gcc93/obj/cards/theros.o": "a53ae4b94c43121a4eebc527e5de852f5d7982acb403d10807f36bae7fb0d854",
+    ".recovery/build-gcc93/obj/cards/theros_beyond_death.o": "1ff58cd1e05d7bf1b3d61e982b08a67ea63e760653ed92b88f1790046c21bf0a",
+    ".recovery/build-gcc93/obj/cards/throne_of_eldraine.o": "4ebba942aa27f74731344f00c217f98f1d98fa7b252b3709d22b1c878556f115",
+    ".recovery/build-gcc93/obj/cards/time_spiral.o": "7337a3bbe05a00a18e46e0601ac31d048333f0d83a52cfbd12563dc02baf13dc",
+    ".recovery/build-gcc93/obj/cards/tokens.o": "0a88f489b574927b9b9a70680f61f82854fe3c71b187d4e2ea94a4936cca082b",
+    ".recovery/build-gcc93/obj/cards/torment.o": "4ecdbb65ae7c4680ca7ee47b2c7ffe5690aecb944c6fb6260b4e94e7405c4a9d",
+    ".recovery/build-gcc93/obj/cards/unglued_unhinged.o": "f07b43ff6969405ba0aae649a82f121ecab4a79e0fcd9b6d9d87cb20175e76b8",
+    ".recovery/build-gcc93/obj/cards/unlimited.o": "e5ea6d52b0926aa73a22eedfb6e4338026f27c9e65fef4df796f0d3f1a973c0f",
+    ".recovery/build-gcc93/obj/cards/unstable.o": "3fb60189b488ce45905f1faf2569bd7ee464b4ec549630a6dc4573f13840b543",
+    ".recovery/build-gcc93/obj/cards/urza_destiny.o": "cac3a589a12a334763cb3251635c82efa3d8a4ee28eaac15a01c009ff862a721",
+    ".recovery/build-gcc93/obj/cards/urza_legacy.o": "43a1d53d195adf5e08b686082b241cc81ed58065fcb1952d52d2a04cc2574b5c",
+    ".recovery/build-gcc93/obj/cards/urza_saga.o": "dc175ee7f7690373af7590c6e04804e157be374b8937d55cb1dac0781a85703b",
+    ".recovery/build-gcc93/obj/cards/vanguard.o": "37bb001de61021da76e136c881660be7227a41843dcd48301454fd1abdd983d4",
+    ".recovery/build-gcc93/obj/cards/visions.o": "70c38ab902bd59ccfba1a420d7790031df0993cd62a876ca745bec623381d7f6",
+    ".recovery/build-gcc93/obj/cards/war_of_the_spark.o": "11f43d6a817be85b788f7cce791336b6154ef8f453d71588c790319b334f1a88",
+    ".recovery/build-gcc93/obj/cards/weatherlight.o": "5733a86c834de0fbe11a0ae6e1fa12adef19af6cf378beabf107c9971643fb56",
+    ".recovery/build-gcc93/obj/cards/worldwake.o": "4755ad0314da4de54bbc1a49e2e22fec75c792910125f9c2434ce220bd49773d",
+    ".recovery/build-gcc93/obj/cards/zendikar.o": "03d3b2298e4130f65f59ce9994f52c1390121e01082506c79b6c38410e428701",
+    ".recovery/build-gcc93/obj/cards/zendikar_rising.o": "28d743fa079e6749f7e2cbf0dd4519db7f136436431a80306bbe83dcaf867e9c",
+    ".recovery/build-gcc93/obj/functions/abilities.o": "20ba8038706c01684f4f654c4a5caeb15f071eed71f1ba24c238cbc915379df8",
+    ".recovery/build-gcc93/obj/functions/ai.o": "cbc401ccc5bd74c991043fddfa3e39601692a0eae7c6219f9d8bb5294535e00b",
+    ".recovery/build-gcc93/obj/functions/auras.o": "73f81e529d91759438e3975f08f29345f90c724177dc7c9c4564323918f26fed",
+    ".recovery/build-gcc93/obj/functions/boost_creature_type.o": "b0e8074ca4e4c554ed0670518a556d14358f7837e038869501ed2585083560fc",
+    ".recovery/build-gcc93/obj/functions/challenge_mode.o": "54e64b2fffa7aa393e3636676764ab3e9b88dc882a5a0b11221825a4f7a54249",
+    ".recovery/build-gcc93/obj/functions/count_graveyard.o": "a917abf489b330d638b77890714d7d63225e17e7c15c7bbfd29bab77da410625",
+    ".recovery/build-gcc93/obj/functions/counters.o": "4d742c45c007c230fdac48d2218f4f9fdcb5bea7c5416b09be7c96f81b2e1af5",
+    ".recovery/build-gcc93/obj/functions/damage_effects.o": "bc8719e0fdd9e946ab917d9c593fa4a03f92b0106205334bcd3e7b6b238450e8",
+    ".recovery/build-gcc93/obj/functions/deadbox.o": "f36407331a0bad0edbcd57745dc7b5ec4a532ab5060bca5ef0926724868c0a3d",
+    ".recovery/build-gcc93/obj/functions/deck.o": "c352dd40d422fb926d818fbd094d8fc428bd30cbd740b04e3247a577c3a20165",
+    ".recovery/build-gcc93/obj/functions/dialog.o": "cb49c1420085a5f33e9603256e9a88b6ab7f786b87957e86db43f7aab79e85e5",
+    ".recovery/build-gcc93/obj/functions/dice.o": "c47c476f886d28ef4f866d6faec33a6678d0c3da3dcfdc8477f6730481621872",
+    ".recovery/build-gcc93/obj/functions/draft.o": "57ae899ea6ceb072f3d5343e8b0f0572efe52dfd63048c2fc88f0d779fb9b013",
+    ".recovery/build-gcc93/obj/functions/engine.o": "672d96eadd65851caf1e2b3c3f29d3b5ba29479adc2d5dbd309548319f52dcfb",
+    ".recovery/build-gcc93/obj/functions/equipments.o": "e138f240a4fe197d95a69c90e601bf9a4f958254c260a603317000e029fca35d",
+    ".recovery/build-gcc93/obj/functions/events.o": "f6b0e8bf9ba0a36fff9d0ebd45dddb6c38468bffd934c84893b1a0fcb00c2781",
+    ".recovery/build-gcc93/obj/functions/exiledby.o": "3e03111a674c69e657f914b731ef3c508bc9a7ece047b8973d1f7ce1c68d18b5",
+    ".recovery/build-gcc93/obj/functions/functions.o": "32205d3c116ae070e6740a3c6ab616a2310a8e4afecabe461ea676513ad308ab",
+    ".recovery/build-gcc93/obj/functions/gain_control_and_legend_rule.o": "fd77d49518923296dc3cb4f52466de831fc8a67a04ffff23f788794a3763708c",
+    ".recovery/build-gcc93/obj/functions/global_checking.o": "e0bd743fa7117c01264965356cc07391079fc50f2191ded8af02d905d7c9ec87",
+    ".recovery/build-gcc93/obj/functions/has_creature_type.o": "aa1b3633ca9afaf17b7267ff7e73cfc3b7721af3a61314e8759d5f372d82990a",
+    ".recovery/build-gcc93/obj/functions/has_threshold.o": "1801874a2392bffd14fd695cdef0b010efdd329ec91a38f4317fea2e79f3b622",
+    ".recovery/build-gcc93/obj/functions/helper_functions.o": "801466ab83cd9d8777c95b1fea6ba81e9a9913af4ec43d61294ecd5734c045be",
+    ".recovery/build-gcc93/obj/functions/load_text.o": "a16ec0ee1f45e4ac0a71630191accff3cbda582d15369f3b66fc7b53568dc112",
+    ".recovery/build-gcc93/obj/functions/manipulate_and_damage_all.o": "23e48ec021f3cb8141a8e7d2dbbf1c5419b9311b66a70a5766d58cbc5696b1cb",
+    ".recovery/build-gcc93/obj/functions/multiblock.o": "d65152c3fae6f6a0a645981024fc0890be79467f92beb67f88441ea8d64d07fe",
+    ".recovery/build-gcc93/obj/functions/packs.o": "7eb7d027e27236ea9ea95dce26d1f4ff80999e411a119926dc7d47d814b73a63",
+    ".recovery/build-gcc93/obj/functions/play_spell_for_free.o": "969b3b2284add33b7c4bf2f59d76787edaf60418351b3d35554f1a245c637b1a",
+    ".recovery/build-gcc93/obj/functions/produce_mana.o": "f02f92fff8bbd1d07d3568f768d53a7fda7eb64ff99905a49d276cece6c92a99",
+    ".recovery/build-gcc93/obj/functions/rules_engine.o": "de9c1ab07e51f7a7b1c3bdef89cb05a829ef52ea4460661d5559a602317cdbcc",
+    ".recovery/build-gcc93/obj/functions/sacrifices.o": "f065d35db2fdbe4389322fb292b90efa31d169af83a01a12ed568f8ec71586db",
+    ".recovery/build-gcc93/obj/functions/show_backtrace.o": "009b3bc0dbf46260103baab677de9929b33f34886740e326342313b3f4db022f",
+    ".recovery/build-gcc93/obj/functions/targets.o": "50da422d775de2561bdbe6d271eebdddf99a032dae3082f8690933282309d902",
+    ".recovery/build-gcc93/obj/functions/token_generation.o": "15ae42b45b55e33c6963ce86fc085a747cb7552b7badf013aeffbf0c2e706d89",
+    ".recovery/build-gcc93/obj/functions/tutors.o": "133298c3294810fb97e3ea028d82d136702fa1c33e8c45afcc725a0b596b0bb2",
+    ".recovery/build-gcc93/obj/functions/upkeep.o": "687f695563d9ea746cfb578ba1cff61eabd471029b10c2dc619999343b5d3f70",
+    ".recovery/build-gcc93/obj/functions/windows.o": "9e8f3553213dc29054a7dc8c03db4d8b6e2b57edd9296e93accf921a76d07769"
+  }
+}

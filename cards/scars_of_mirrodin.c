@@ -106,9 +106,8 @@ void proliferate_auto_single_permanent_or_player(int player, int card, int p, in
 {
   unsigned char bVar1;
   unsigned char bVar2;
-  int result;
   counter_t type;
-  if ((c == -1) || (result = count_counters(p, c, ~COUNTER_P1_P1), result < 1))
+  if ((c == -1) || (count_counters(p, c, ~COUNTER_P1_P1) < 1))
   {
     if ((1 - player == p) && (POISON_COUNTERS(p) != '\0'))
     {
@@ -200,6 +199,7 @@ void proliferate_manual_single_permanent_or_player(int player, int card, int p, 
 
 void proliferate(int player, int card)
 {
+  int c;
   int32_t iVar1;
   card_instance_t *instance;
   int iVar3;
@@ -219,23 +219,23 @@ void proliferate(int player, int card)
     {
       p = uStack_78 ^ current_turn;
       proliferate_auto_single_permanent_or_player(player, card, p, -1);
-      iVar4 = active_cards_count[p] + -1;
+      c = active_cards_count[p] + -1;
       if (-1 < active_cards_count[p] + -1)
       {
         do
         {
-          while (((instance = in_play(p, iVar4),
-                   instance != NULL && (iVar3 = is_what(p, iVar4, 0x47), iVar3 != 0)) &&
-                  (iVar3 = count_counters(p, iVar4, ~COUNTER_P1_P1), 0 < iVar3)))
+          while (((instance = in_play(p, c),
+                   instance != NULL && (iVar3 = is_what(p, c, 0x47), iVar3 != 0)) &&
+                  (iVar3 = count_counters(p, c, ~COUNTER_P1_P1), 0 < iVar3)))
           {
-            iVar3 = iVar4 + -1;
-            proliferate_auto_single_permanent_or_player(player, card, p, iVar4);
-            iVar4 = iVar3;
+            iVar3 = c + -1;
+            proliferate_auto_single_permanent_or_player(player, card, p, c);
+            c = iVar3;
             if (iVar3 == -1)
               goto LAB_024387b8;
           }
-          iVar4 = iVar4 + -1;
-        } while (iVar4 != -1);
+          c = c + -1;
+        } while (c != -1);
       }
     LAB_024387b8:
       uStack_78 = uStack_78 + 1;
@@ -255,15 +255,13 @@ void proliferate(int player, int card)
     }
     else
     {
-      iVar4 = count_player_counters(player, PCOUNTER_invalid);
-      if (iVar4 == 0)
+      if (count_player_counters(player, PCOUNTER_invalid) == 0)
       {
         td.special = td.special | 0x2000000;
       }
       else
       {
-        iVar4 = count_player_counters(1 - player, PCOUNTER_invalid);
-        if (iVar4 == 0)
+        if (count_player_counters(1 - player, PCOUNTER_invalid) == 0)
         {
           td.special = td.special | 0x4000000;
         }
@@ -1499,9 +1497,10 @@ int card_thrummingbird(int player, int card, event_t event){
 
 int card_lux_cannon(int player, int card, event_t event)
 {
+  int choice;
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
+  int count;
   unsigned int uVar4;
   uint32_t variable_costs;
   target_definition_t *td_00;
@@ -1510,13 +1509,13 @@ int card_lux_cannon(int player, int card, event_t event)
 
   if (event == EVENT_SHOULD_AI_PLAY)
   {
-    iVar3 = count_counters(player, card, COUNTER_CHARGE);
+    count = count_counters(player, card, COUNTER_CHARGE);
     iVar2 = 1;
     if (player != 1)
     {
       iVar2 = -1;
     }
-    ai_modifier = ai_modifier + iVar2 * (iVar3 + (iVar3 / 3) * 0xc);
+    ai_modifier = ai_modifier + iVar2 * (count + (count / 3) * 0xc);
   }
   else
   {
@@ -1527,9 +1526,8 @@ int card_lux_cannon(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       if (event == EVENT_CAN_ACTIVATE)
       {
-        iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0,
+        return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0,
                                           NULL, NULL);
-        return iVar2;
       }
       if (event == EVENT_ACTIVATE)
       {
@@ -1540,11 +1538,11 @@ int card_lux_cannon(int player, int card, event_t event)
           iVar2 = count_counters(player, card, COUNTER_CHARGE);
           uVar4 = (unsigned int)(2 < iVar2);
         }
-        iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Add a charge counter", 1, 5,
+        choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Add a charge counter", 1, 5,
                             "Kill a permanent", uVar4, 10, 0, 0, 0, 0);
-        if (iVar2 != 0)
+        if (choice != 0)
         {
-          if (iVar2 == 1)
+          if (choice == 1)
           {
             prompt = NULL;
             td_00 = NULL;
@@ -1553,7 +1551,7 @@ int card_lux_cannon(int player, int card, event_t event)
           }
           else
           {
-            if (iVar2 != 2)
+            if (choice != 2)
             {
               return 0;
             }
@@ -1561,9 +1559,8 @@ int card_lux_cannon(int player, int card, event_t event)
             variable_costs = 0x17b0300;
             iVar2 = 5;
           }
-          iVar2 = generic_activated_ability(player, card, EVENT_ACTIVATE, iVar2, 0, 0, 0, 0, 0, 0,
+          return generic_activated_ability(player, card, EVENT_ACTIVATE, iVar2, 0, 0, 0, 0, 0, 0,
                                             variable_costs, td_00, prompt);
-          return iVar2;
         }
         spell_fizzled = 1;
         return 0;
@@ -3964,17 +3961,15 @@ int card_grindclock(int player, int card, event_t event)
   }
   if (event == EVENT_CAN_ACTIVATE)
   {
-    iVar1 = can_use_activated_abilities(player, card);
-    if (iVar1 == 0)
+    if (can_use_activated_abilities(player, card) == 0)
     {
       return 0;
     }
     default_target_definition(player, card, &td, 0);
     td.zone = 0x1000;
-    iVar1 = dialog_impl(player, card, EVENT_CAN_ACTIVATE, "Charge counter", 1, 1, "\001\025",
+    return dialog_impl(player, card, EVENT_CAN_ACTIVATE, "Charge counter", 1, 1, "\001\025",
                         "\001\020", 0, 0, 0, 0, 0, 0, "Mill", 1, 1, "\001\025", "\001\020", 0, 0, 0,
                         0, 0, 0, "\001\024", &td, "TARGET_PLAYER", 0, 0, 0, 0);
-    return iVar1;
   }
   if (event != EVENT_ACTIVATE)
   {
@@ -4312,48 +4307,24 @@ int card_instill_infection(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   target_definition_t td;
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 2);
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          result = valid_target(&td);
-          if (result != 0)
-          {
-            instance = get_card_instance(player, card);
-            add_counters(player, card, instance->targets[0].player,
-                                     instance->targets[0].card, COUNTER_M1_M1, 1);
-            draw_cards(player, 1);
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_02444ea5;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   default_target_definition(player, card, &td, 2);
-LAB_02444ea5:
-  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
-  return result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      add_counters(player, card, instance->targets[0].player,
+                               instance->targets[0].card, COUNTER_M1_M1, 1);
+      draw_cards(player, 1);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
 }
 
 int card_kembas_skyguard(int player, int card, event_t event){
@@ -4527,7 +4498,6 @@ int card_livewire_lash(int player, int card, event_t event)
   int32_t iVar2;
   int32_t iVar3;
   card_instance_t *instance;
-  int iVar5;
   int iVar6;
   const target_t *ptVar7;
   int player_00;
@@ -4539,11 +4509,9 @@ int card_livewire_lash(int player, int card, event_t event)
     player_00 = (int)instance->damage_target_player;
     iVar6 = instance->damage_target_card;
     instance = get_card_instance(player_00, iVar6);
-    iVar5 = is_humiliated(player, card, AL_STATIC);
-    if (iVar5 == 0)
+    if (is_humiliated(player, card, AL_STATIC) == 0)
     {
-      iVar5 = is_humiliated(player_00, iVar6, AL_TRIG);
-      if (iVar5 == 0)
+      if (is_humiliated(player_00, iVar6, AL_TRIG) == 0)
       {
         ptVar7 = becomes_target_of_spell(player, card, event, player_00, iVar6, 2,
                                          RESOLVE_TRIGGER_MANDATORY);
@@ -4556,11 +4524,9 @@ int card_livewire_lash(int player, int card, event_t event)
           default_target_definition(player_00, iVar6, &td, 0x102);
           td.zone = 0x1200;
           td.allow_cancel = 0;
-          iVar5 = can_target(&td);
-          if (iVar5 != 0)
+          if (can_target(&td) != 0)
           {
-            iVar5 = new_pick_target(&td, "TARGET_ANY", 0, 0);
-            if (iVar5 != 0)
+            if (new_pick_target(&td, "TARGET_ANY", 0, 0) != 0)
             {
               damage_creature(instance->targets[0].player, instance->targets[0].card, 2, player_00,
                               iVar6);
@@ -4573,8 +4539,7 @@ int card_livewire_lash(int player, int card, event_t event)
       }
     }
   }
-  iVar6 = vanilla_equipment(player, card, event, 2, 2, 0, 0, 0);
-  return iVar6;
+  return vanilla_equipment(player, card, event, 2, 2, 0, 0, 0);
 }
 
 int card_lumengrid_drake(int player, int card, event_t event){

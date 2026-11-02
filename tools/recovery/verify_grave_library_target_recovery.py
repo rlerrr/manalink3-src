@@ -2,6 +2,7 @@
 import csv,json,re
 from elftools.dwarf.locationlists import LocationParser
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image,inherited_value,value
 from export_abi import type_of
 
@@ -27,7 +28,9 @@ def verify(proof,image,root=ROOT):
                        e.get('native_source_reconstruction',{}).get('function')=='special_mill'
                        for e in proof['source_edits'])
             expected_sha=replacement['definition_sha256']
-        assert current_sha==expected_sha,row['name']
+        if not source_hash_matches(proof,root,row['source'],row['name'],current_sha,expected_sha):
+            from verify_disentangled_pair_locals import verify_superseded_definition
+            verify_superseded_definition(proof,image,root,row['source'],row['name'],expected_sha)
         for part in row['native_ranges']:
             lo=int(part['address'],16);hi=int(part['end'],16);native=inventory[part['address']]
             assert native['name']==row['name'] and native['high_pc']==part['end']

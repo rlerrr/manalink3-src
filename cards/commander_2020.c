@@ -78,15 +78,14 @@ int card_bonders_ornament(int player, int card, event_t event)
     }
   }
 
-  result = mana_producer(player, card, event);
-  return result;
+  return mana_producer(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25e6dd0; original cards/commander_2020.c:280. */
 int card_jirina_kudro(int player, int card, event_t event)
 {
+  int count;
   card_instance_t *instance;
-  int iVar2;
   int iVar3;
   token_generation_t token;
 
@@ -99,15 +98,15 @@ int card_jirina_kudro(int player, int card, event_t event)
     do
     {
       instance = in_play(player, iVar3);
-      if ((instance != NULL) && (iVar2 = get_id(player, iVar3), iVar2 == 0x3953))
+      if ((instance != NULL) && (get_id(player, iVar3) == 0x3953))
       {
-        iVar3 = count_counters(player, iVar3, COUNTER_VORTEX);
-        if (iVar3 / 2 == 0)
+        count = count_counters(player, iVar3, COUNTER_VORTEX);
+        if (count / 2 == 0)
         {
           return 0;
         }
         default_token_definition(player, card, 0x494c, &token);
-        token.qty = (unsigned char)(iVar3 / 2);
+        token.qty = (unsigned char)(count / 2);
         generate_token(&token);
         return 0;
       }
@@ -133,9 +132,7 @@ int card_nesting_grounds(int player, int card, event_t event)
 
   if (event == EVENT_CAN_ACTIVATE)
   {
-  LAB_025e6f0e:
-    result = mana_producer(player, card, event);
-    return result;
+    return mana_producer(player, card, event);
   }
   if (event != EVENT_ACTIVATE)
   {
@@ -171,7 +168,7 @@ int card_nesting_grounds(int player, int card, event_t event)
       }
       return 0;
     }
-    goto LAB_025e6f0e;
+    return mana_producer(player, card, event);
   }
   instance = get_card_instance(player, card);
   default_target_definition(player, card, &td_from, 0x47);
@@ -185,15 +182,13 @@ int card_nesting_grounds(int player, int card, event_t event)
                         result == 0))
   {
     instance->info_slot = 1;
-  LAB_025e6fb7:
-    result = mana_producer(player, card, EVENT_ACTIVATE);
-    return result;
+    return mana_producer(player, card, EVENT_ACTIVATE);
   }
   result = target_available(player, card, &td_to);
   if (result < 2)
   {
     instance->info_slot = 1;
-    goto LAB_025e6fb7;
+    return mana_producer(player, card, EVENT_ACTIVATE);
   }
   bVar6 = ai_is_speculating != 1;
   instance->info_slot = 2;
@@ -207,7 +202,7 @@ int card_nesting_grounds(int player, int card, event_t event)
       return 0;
     }
     if (result == 1)
-      goto LAB_025e6fb7;
+      return mana_producer(player, card, EVENT_ACTIVATE);
     if (result != 2)
     {
       return 0;
@@ -217,32 +212,32 @@ int card_nesting_grounds(int player, int card, event_t event)
   instance->number_of_targets = '\0';
   result = generic_activated_ability(player, card, EVENT_ACTIVATE, 7, 1, 0, 0, 0, 0, 0, 0, &td_from,
                                      "Select target permanent with a counter.");
-  if (result == 0)
-    goto LAB_025e72ab;
-  state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
-  result = can_target(&td_to);
-  if (result == 0)
+  if (!(result == 0))
   {
-  LAB_025e7321:
-
-    spell_fizzled = 1;
-  }
-  else
-  {
-    pick_next_target_noload(&td_to, "Select target perment to move a counter to.");
-    if (spell_fizzled != 1)
+    state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
+    result = can_target(&td_to);
+    if (result == 0)
     {
-      cVar3 = choose_existing_counter_type(player, player, card, instance->targets[0].player,
-                                           instance->targets[0].card, CECT_MOVE,
-                                           instance->targets[1].player, instance->targets[1].card);
-      if (cVar3 == COUNTER_invalid)
-        goto LAB_025e7321;
-      instance->info_slot = 2;
-      instance->targets[2].card = cVar3;
+    LAB_025e7321:
+
+      spell_fizzled = 1;
     }
+    else
+    {
+      pick_next_target_noload(&td_to, "Select target perment to move a counter to.");
+      if (spell_fizzled != 1)
+      {
+        cVar3 = choose_existing_counter_type(player, player, card, instance->targets[0].player,
+                                             instance->targets[0].card, CECT_MOVE,
+                                             instance->targets[1].player, instance->targets[1].card);
+        if (cVar3 == COUNTER_invalid)
+          goto LAB_025e7321;
+        instance->info_slot = 2;
+        instance->targets[2].card = cVar3;
+      }
+    }
+    state_untargettable(instance->targets[0].player, instance->targets[0].card, 0);
   }
-  state_untargettable(instance->targets[0].player, instance->targets[0].card, 0);
-LAB_025e72ab:
   if (spell_fizzled == 1)
   {
     remove_state(player, card, 0x10);
@@ -277,9 +272,7 @@ int card_fierce_guardianship(int player, int card, event_t event)
   {
     if (event == EVENT_CAN_CAST)
     {
-    LAB_025e6cfb:
-      result = card_negate(player, card, event);
-      return result;
+      return card_negate(player, card, event);
     }
     if (event == EVENT_CAST_SPELL)
     {
@@ -288,13 +281,13 @@ int card_fierce_guardianship(int player, int card, event_t event)
         instance->number_of_targets = '\0';
         result = nemesis_freespell(player, card, 0x6c);
         if (result != 0)
-          goto LAB_025e6cfb;
+          return card_negate(player, card, event);
         spell_fizzled = 1;
       }
     }
     else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
              (event == EVENT_CHANGE_TARGET))
-      goto LAB_025e6cfb;
+      return card_negate(player, card, event);
   }
   return 0;
 }

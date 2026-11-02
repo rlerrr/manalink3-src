@@ -1,0 +1,1409 @@
+{
+  "reviews": [
+    {
+      "kind": "packed_arguments",
+      "path": ".recovery/token-packed-value-review-c72.json",
+      "sha256": "523443964223a56f149ac006307d45fb801dc0e11cac5e82e5fc4c825bbb20d2",
+      "tool": "tools/recovery/token_packed_value_proof.py",
+      "tool_sha256": "80e23efc763ea2326bbd8c10f5650b3dffd882c176dcc41571b1d0b9c331ae9b",
+      "exit_code": 0,
+      "terminal_chunk_id": "037403",
+      "record": {
+        "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "current_dll_sha256": "89f9889d7deed1054f4cfcba84803fa9fe63404797b958c74c13c3d6477d9883",
+        "current_dbg_sha256": "00504f1617cf3346c63833070562a9c15e57001828fdbcb5bb69e36fbb9920f4",
+        "tool_sha256": "80e23efc763ea2326bbd8c10f5650b3dffd882c176dcc41571b1d0b9c331ae9b",
+        "rows": [
+          {
+            "source": "cards/ikoria.c",
+            "native_name": "card_vivien_monsters_advocate",
+            "current_name": "card_vivien_monsters_advocate",
+            "kind": "counter_choice",
+            "native": {
+              "view": {
+                "address": "0x228c7f0",
+                "end": "0x228cb2d",
+                "bytes_sha256": "b203a33b4bfd0486450192e1f2d392029ddba0cf012bf4eebbf4e83db3bb6cef"
+              },
+              "die_offset": "0x240fc31",
+              "origin": {
+                "kind": "same_dialog_result_indexed_int_table",
+                "table_values": [
+                  0,
+                  154,
+                  152,
+                  153
+                ],
+                "table_bytes": 16,
+                "selector_slot_relative_to_table": -4,
+                "dialog_call": "0x228cac2",
+                "selector_store": "0x228caca"
+              },
+              "token_frame": -96,
+              "action_argument_offset": 52,
+              "target_bits": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                "X0",
+                "X1",
+                "X2",
+                "X3",
+                "X4",
+                "X5",
+                "X6",
+                "X7",
+                "X8",
+                "X9",
+                "X10",
+                "X11",
+                "X12",
+                "X13",
+                "X14",
+                "X15"
+              ],
+              "store_sites": [
+                {
+                  "address": "0x228cb0d",
+                  "offset": 0,
+                  "bytes": 4,
+                  "instruction": [
+                    "mov",
+                    "dword ptr [ebp - 0x24], 1"
+                  ]
+                },
+                {
+                  "address": "0x228cb1f",
+                  "offset": 2,
+                  "bytes": 2,
+                  "instruction": [
+                    "mov",
+                    "word ptr [ebp - 0x22], ax"
+                  ]
+                }
+              ],
+              "seed_loads": [
+                "0x228cb14"
+              ],
+              "generator": "0x228cb23",
+              "instruction_window": [
+                [
+                  "0x228cb04",
+                  "mov",
+                  "eax, dword ptr [ebp - 0x6c]"
+                ],
+                [
+                  "0x228cb07",
+                  "lea",
+                  "edx, [ebp - 0x58]"
+                ],
+                [
+                  "0x228cb0a",
+                  "mov",
+                  "dword ptr [esp], edx"
+                ],
+                [
+                  "0x228cb0d",
+                  "mov",
+                  "dword ptr [ebp - 0x24], 1"
+                ],
+                [
+                  "0x228cb14",
+                  "mov",
+                  "eax, dword ptr [ebp + eax*4 - 0x68]"
+                ],
+                [
+                  "0x228cb18",
+                  "mov",
+                  "dword ptr [ebp - 0x28], 0x100000"
+                ],
+                [
+                  "0x228cb1f",
+                  "mov",
+                  "word ptr [ebp - 0x22], ax"
+                ],
+                [
+                  "0x228cb23",
+                  "call",
+                  "0x26659d0"
+                ]
+              ]
+            },
+            "current": {
+              "view": {
+                "address": "0x22450a0",
+                "end": "0x22453d5",
+                "bytes_sha256": "a74c69e14abbab89fc0c7381f0fd257ee41f6fb67a9458eb81f33e468f57fa1f"
+              },
+              "die_offset": "0x1fc4479",
+              "origin": {
+                "kind": "same_dialog_result_indexed_int_table",
+                "table_values": [
+                  0,
+                  154,
+                  152,
+                  153
+                ],
+                "table_bytes": 16,
+                "selector_slot_relative_to_table": -4,
+                "dialog_call": "0x224536f",
+                "selector_store": "0x224538a"
+              },
+              "token_frame": -96,
+              "action_argument_offset": 52,
+              "target_bits": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                "X0",
+                "X1",
+                "X2",
+                "X3",
+                "X4",
+                "X5",
+                "X6",
+                "X7",
+                "X8",
+                "X9",
+                "X10",
+                "X11",
+                "X12",
+                "X13",
+                "X14",
+                "X15"
+              ],
+              "store_sites": [
+                {
+                  "address": "0x22453c8",
+                  "offset": 0,
+                  "bytes": 4,
+                  "instruction": [
+                    "mov",
+                    "dword ptr [ebp - 0x24], eax"
+                  ]
+                }
+              ],
+              "seed_loads": [
+                "0x22453be"
+              ],
+              "generator": "0x22453cb",
+              "instruction_window": [
+                [
+                  "0x22453ae",
+                  "mov",
+                  "eax, dword ptr [ebp - 0x6c]"
+                ],
+                [
+                  "0x22453b1",
+                  "lea",
+                  "edx, [ebp - 0x58]"
+                ],
+                [
+                  "0x22453b4",
+                  "mov",
+                  "dword ptr [esp], edx"
+                ],
+                [
+                  "0x22453b7",
+                  "mov",
+                  "dword ptr [ebp - 0x28], 0x100000"
+                ],
+                [
+                  "0x22453be",
+                  "mov",
+                  "eax, dword ptr [ebp + eax*4 - 0x68]"
+                ],
+                [
+                  "0x22453c2",
+                  "shl",
+                  "eax, 0x10"
+                ],
+                [
+                  "0x22453c5",
+                  "or",
+                  "eax, 1"
+                ],
+                [
+                  "0x22453c8",
+                  "mov",
+                  "dword ptr [ebp - 0x24], eax"
+                ],
+                [
+                  "0x22453cb",
+                  "call",
+                  "0x26e0d80"
+                ]
+              ]
+            },
+            "source_definition_sha256": "eca250cf679ec8925f78c63b1badd95b329b08299b76b51eaf2f20be7647d1d0"
+          },
+          {
+            "source": "cards/strixhaven.c",
+            "native_name": "make_fractal",
+            "current_name": "make_one_fractal",
+            "kind": "counter_number",
+            "native": {
+              "view": {
+                "address": "0x23c8b60",
+                "end": "0x23c8bac",
+                "bytes_sha256": "a5c7b3c35899ab2645dce22a12da8bd011d0153f41008681f50667c01ff3f846"
+              },
+              "die_offset": "0x396063d",
+              "origin": {
+                "kind": "third_physical_int_parameter_in_ecx",
+                "parameter": 2,
+                "bits": 32,
+                "folded_parameters": {
+                  "amount": 1
+                }
+              },
+              "token_frame": -92,
+              "action_argument_offset": 52,
+              "target_bits": [
+                "X0",
+                "X1",
+                "X2",
+                "X3",
+                "X4",
+                "X5",
+                "X6",
+                "X7",
+                "X8",
+                "X9",
+                "X10",
+                "X11",
+                "X12",
+                "X13",
+                "X14",
+                "X15",
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "store_sites": [
+                {
+                  "address": "0x23c8b88",
+                  "offset": 0,
+                  "bytes": 4,
+                  "instruction": [
+                    "mov",
+                    "dword ptr [ebp - 0x20], ebx"
+                  ]
+                },
+                {
+                  "address": "0x23c8b9a",
+                  "offset": 2,
+                  "bytes": 2,
+                  "instruction": [
+                    "mov",
+                    "word ptr [ebp - 0x1e], 0"
+                  ]
+                }
+              ],
+              "seed_loads": [],
+              "generator": "0x23c8ba0",
+              "instruction_window": [
+                [
+                  "0x23c8b60",
+                  "push",
+                  "ebp"
+                ],
+                [
+                  "0x23c8b61",
+                  "mov",
+                  "ebp, esp"
+                ],
+                [
+                  "0x23c8b63",
+                  "push",
+                  "esi"
+                ],
+                [
+                  "0x23c8b64",
+                  "push",
+                  "ebx"
+                ],
+                [
+                  "0x23c8b65",
+                  "mov",
+                  "ebx, ecx"
+                ],
+                [
+                  "0x23c8b67",
+                  "sub",
+                  "esp, 0x5c"
+                ],
+                [
+                  "0x23c8b6a",
+                  "lea",
+                  "esi, [ebp - 0x54]"
+                ],
+                [
+                  "0x23c8b6d",
+                  "mov",
+                  "dword ptr [esp + 0xc], esi"
+                ],
+                [
+                  "0x23c8b71",
+                  "mov",
+                  "dword ptr [esp + 4], edx"
+                ],
+                [
+                  "0x23c8b75",
+                  "mov",
+                  "dword ptr [esp], eax"
+                ],
+                [
+                  "0x23c8b78",
+                  "mov",
+                  "dword ptr [esp + 8], 0x588e"
+                ],
+                [
+                  "0x23c8b80",
+                  "call",
+                  "0x2665470"
+                ],
+                [
+                  "0x23c8b85",
+                  "mov",
+                  "dword ptr [esp], esi"
+                ],
+                [
+                  "0x23c8b88",
+                  "mov",
+                  "dword ptr [ebp - 0x20], ebx"
+                ],
+                [
+                  "0x23c8b8b",
+                  "mov",
+                  "byte ptr [ebp - 0x2c], 0xc"
+                ],
+                [
+                  "0x23c8b8f",
+                  "mov",
+                  "byte ptr [ebp - 0x29], 1"
+                ],
+                [
+                  "0x23c8b93",
+                  "mov",
+                  "dword ptr [ebp - 0x24], 0x100000"
+                ],
+                [
+                  "0x23c8b9a",
+                  "mov",
+                  "word ptr [ebp - 0x1e], 0"
+                ],
+                [
+                  "0x23c8ba0",
+                  "call",
+                  "0x26659d0"
+                ]
+              ]
+            },
+            "current": {
+              "view": {
+                "address": "0x2510640",
+                "end": "0x251068c",
+                "bytes_sha256": "c4ea4e8d618ea92ca35bd08badb8494c5fcc985fc1cd6e7aba35b05f556793b2"
+              },
+              "die_offset": "0x406f9db",
+              "origin": {
+                "kind": "third_physical_int_parameter_in_ecx",
+                "parameter": 2,
+                "bits": 32,
+                "folded_parameters": {}
+              },
+              "token_frame": -92,
+              "action_argument_offset": 52,
+              "target_bits": [
+                "X0",
+                "X1",
+                "X2",
+                "X3",
+                "X4",
+                "X5",
+                "X6",
+                "X7",
+                "X8",
+                "X9",
+                "X10",
+                "X11",
+                "X12",
+                "X13",
+                "X14",
+                "X15",
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "store_sites": [
+                {
+                  "address": "0x251066e",
+                  "offset": 0,
+                  "bytes": 4,
+                  "instruction": [
+                    "mov",
+                    "dword ptr [ebp - 0x20], ebx"
+                  ]
+                }
+              ],
+              "seed_loads": [],
+              "generator": "0x2510680",
+              "instruction_window": [
+                [
+                  "0x2510640",
+                  "push",
+                  "ebp"
+                ],
+                [
+                  "0x2510641",
+                  "mov",
+                  "ebp, esp"
+                ],
+                [
+                  "0x2510643",
+                  "push",
+                  "esi"
+                ],
+                [
+                  "0x2510644",
+                  "push",
+                  "ebx"
+                ],
+                [
+                  "0x2510645",
+                  "mov",
+                  "ebx, ecx"
+                ],
+                [
+                  "0x2510647",
+                  "sub",
+                  "esp, 0x5c"
+                ],
+                [
+                  "0x251064a",
+                  "lea",
+                  "esi, [ebp - 0x54]"
+                ],
+                [
+                  "0x251064d",
+                  "and",
+                  "ebx, 0xffff"
+                ],
+                [
+                  "0x2510653",
+                  "mov",
+                  "dword ptr [esp + 0xc], esi"
+                ],
+                [
+                  "0x2510657",
+                  "mov",
+                  "dword ptr [esp + 4], edx"
+                ],
+                [
+                  "0x251065b",
+                  "mov",
+                  "dword ptr [esp], eax"
+                ],
+                [
+                  "0x251065e",
+                  "mov",
+                  "dword ptr [esp + 8], 0x588e"
+                ],
+                [
+                  "0x2510666",
+                  "call",
+                  "0x26e0c60"
+                ],
+                [
+                  "0x251066b",
+                  "mov",
+                  "dword ptr [esp], esi"
+                ],
+                [
+                  "0x251066e",
+                  "mov",
+                  "dword ptr [ebp - 0x20], ebx"
+                ],
+                [
+                  "0x2510671",
+                  "mov",
+                  "byte ptr [ebp - 0x2c], 0xc"
+                ],
+                [
+                  "0x2510675",
+                  "mov",
+                  "byte ptr [ebp - 0x29], 1"
+                ],
+                [
+                  "0x2510679",
+                  "mov",
+                  "dword ptr [ebp - 0x24], 0x100000"
+                ],
+                [
+                  "0x2510680",
+                  "call",
+                  "0x26e0d80"
+                ]
+              ]
+            },
+            "source_definition_sha256": "c0bcf6b3a384a76073ec1d0dadd8e27d340eba5effa20b843b8336d3c0a2eb62"
+          }
+        ],
+        "scope": "Read-only targeted bit-vector equivalence for two differing direct store sequences. Tracks each bit of32-bit values through actual MOV,AND,OR,SHL and partial writes; unsupported definitions become unknown, calls kill caller-save registers and token memory. Native/current generation sees identical action_argument bits for all32-bit input words. Vivien binds the indexed four-int table, constants0/154/152/153 and the selector spill to a direct dialog_impl result; chosen index/bounds and dialog control semantics are not proven. Fractal binds formal parameter3 to ECX at each function entry. This checks the packed field and its generator operand, not all token contents, arbitrary aliasing or gameplay."
+      }
+    },
+    {
+      "kind": "quantity_clone",
+      "path": ".recovery/token-quantity-clone-review-c72.json",
+      "sha256": "d233f1f3077c8719e9ff937a89cf44158d8d887a9b79dd6718b092855d77a91b",
+      "tool": "tools/recovery/token_quantity_clone_proof.py",
+      "tool_sha256": "f4e70b5a00e3f577760dbece3fb4caf67514263207ff7756b5c0495e4bb8dfd9",
+      "exit_code": 0,
+      "terminal_chunk_id": "2fe911",
+      "record": {
+        "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "current_dll_sha256": "89f9889d7deed1054f4cfcba84803fa9fe63404797b958c74c13c3d6477d9883",
+        "current_dbg_sha256": "00504f1617cf3346c63833070562a9c15e57001828fdbcb5bb69e36fbb9920f4",
+        "tool_sha256": "f4e70b5a00e3f577760dbece3fb4caf67514263207ff7756b5c0495e4bb8dfd9",
+        "native": {
+          "view": {
+            "address": "0x2666af0",
+            "end": "0x2666bb9",
+            "bytes_sha256": "8228f8f435625feb4c3b1a3628d73259d0f7b567584914c95481b44417875acc"
+          },
+          "argument_number": 6,
+          "amount_ebp_displacement": 32,
+          "token_frame": -96,
+          "qty_field_offset": 43,
+          "stores": [
+            {
+              "address": "0x2666b36",
+              "instruction": [
+                "mov",
+                "byte ptr [ebp - 0x2d], al"
+              ],
+              "value": "low8(formal amount)"
+            },
+            {
+              "address": "0x2666bb4",
+              "instruction": [
+                "mov",
+                "byte ptr [ebp - 0x2d], al"
+              ],
+              "value": "low8(formal amount)"
+            }
+          ],
+          "generator": "0x2666b63",
+          "every_generator_path_has_qty_store": true,
+          "stores_mutually_unreachable": true,
+          "no_store_site_repeats": true,
+          "instructions": [
+            [
+              "0x2666af0",
+              "push",
+              "ebp"
+            ],
+            [
+              "0x2666af1",
+              "mov",
+              "ebp, esp"
+            ],
+            [
+              "0x2666af3",
+              "push",
+              "edi"
+            ],
+            [
+              "0x2666af4",
+              "push",
+              "esi"
+            ],
+            [
+              "0x2666af5",
+              "push",
+              "ebx"
+            ],
+            [
+              "0x2666af6",
+              "sub",
+              "esp, 0x5c"
+            ],
+            [
+              "0x2666af9",
+              "mov",
+              "esi, dword ptr [ebp + 0x10]"
+            ],
+            [
+              "0x2666afc",
+              "mov",
+              "edx, dword ptr [ebp + 8]"
+            ],
+            [
+              "0x2666aff",
+              "mov",
+              "ecx, dword ptr [ebp + 0xc]"
+            ],
+            [
+              "0x2666b02",
+              "lea",
+              "eax, [esi - 2]"
+            ],
+            [
+              "0x2666b05",
+              "cmp",
+              "eax, 0xdc"
+            ],
+            [
+              "0x2666b0a",
+              "ja",
+              "0x2666b70"
+            ],
+            [
+              "0x2666b0c",
+              "movsx",
+              "edi, word ptr [eax + eax + 0x275e480]"
+            ],
+            [
+              "0x2666b14",
+              "lea",
+              "ebx, [ebp - 0x58]"
+            ],
+            [
+              "0x2666b17",
+              "test",
+              "edi, edi"
+            ],
+            [
+              "0x2666b19",
+              "mov",
+              "dword ptr [esp + 0xc], ebx"
+            ],
+            [
+              "0x2666b1d",
+              "jne",
+              "0x2666b80"
+            ],
+            [
+              "0x2666b1f",
+              "mov",
+              "dword ptr [esp + 8], 0x4979"
+            ],
+            [
+              "0x2666b27",
+              "mov",
+              "dword ptr [esp + 4], ecx"
+            ],
+            [
+              "0x2666b2b",
+              "mov",
+              "dword ptr [esp], edx"
+            ],
+            [
+              "0x2666b2e",
+              "call",
+              "0x2665470"
+            ],
+            [
+              "0x2666b33",
+              "mov",
+              "al, byte ptr [ebp + 0x20]"
+            ],
+            [
+              "0x2666b36",
+              "mov",
+              "byte ptr [ebp - 0x2d], al"
+            ],
+            [
+              "0x2666b39",
+              "mov",
+              "dword ptr [ebp - 0x28], 0x80000"
+            ],
+            [
+              "0x2666b40",
+              "mov",
+              "dword ptr [ebp - 0x18], 0x2664e00"
+            ],
+            [
+              "0x2666b47",
+              "mov",
+              "dword ptr [ebp - 0x24], esi"
+            ],
+            [
+              "0x2666b4a",
+              "mov",
+              "eax, dword ptr [ebp + 0x14]"
+            ],
+            [
+              "0x2666b4d",
+              "mov",
+              "dword ptr [esp], ebx"
+            ],
+            [
+              "0x2666b50",
+              "mov",
+              "byte ptr [ebp - 0x30], al"
+            ],
+            [
+              "0x2666b53",
+              "mov",
+              "eax, dword ptr [ebp + 0x18]"
+            ],
+            [
+              "0x2666b56",
+              "mov",
+              "dword ptr [ebp - 0x40], eax"
+            ],
+            [
+              "0x2666b59",
+              "mov",
+              "eax, dword ptr [ebp + 0x1c]"
+            ],
+            [
+              "0x2666b5c",
+              "mov",
+              "byte ptr [ebp - 0x2f], 1"
+            ],
+            [
+              "0x2666b60",
+              "mov",
+              "dword ptr [ebp - 0x3c], eax"
+            ],
+            [
+              "0x2666b63",
+              "call",
+              "0x26659d0"
+            ],
+            [
+              "0x2666b68",
+              "add",
+              "esp, 0x5c"
+            ],
+            [
+              "0x2666b6b",
+              "pop",
+              "ebx"
+            ],
+            [
+              "0x2666b6c",
+              "pop",
+              "esi"
+            ],
+            [
+              "0x2666b6d",
+              "pop",
+              "edi"
+            ],
+            [
+              "0x2666b6e",
+              "pop",
+              "ebp"
+            ],
+            [
+              "0x2666b6f",
+              "ret",
+              ""
+            ],
+            [
+              "0x2666b70",
+              "lea",
+              "ebx, [ebp - 0x58]"
+            ],
+            [
+              "0x2666b73",
+              "mov",
+              "dword ptr [esp + 0xc], ebx"
+            ],
+            [
+              "0x2666b77",
+              "jmp",
+              "0x2666b1f"
+            ],
+            [
+              "0x2666b79",
+              "lea",
+              "esi, [esi]"
+            ],
+            [
+              "0x2666b80",
+              "mov",
+              "dword ptr [esp + 4], ecx"
+            ],
+            [
+              "0x2666b84",
+              "mov",
+              "dword ptr [esp], edx"
+            ],
+            [
+              "0x2666b87",
+              "mov",
+              "dword ptr [esp + 8], edi"
+            ],
+            [
+              "0x2666b8b",
+              "call",
+              "0x2665470"
+            ],
+            [
+              "0x2666b90",
+              "mov",
+              "dword ptr [esp], edi"
+            ],
+            [
+              "0x2666b93",
+              "call",
+              "0x26b3410"
+            ],
+            [
+              "0x2666b98",
+              "lea",
+              "eax, [eax + eax*8]"
+            ],
+            [
+              "0x2666b9b",
+              "mov",
+              "eax, dword ptr [eax*8 + 0x7e7048]"
+            ],
+            [
+              "0x2666ba2",
+              "test",
+              "eax, eax"
+            ],
+            [
+              "0x2666ba4",
+              "je",
+              "0x2666bb1"
+            ],
+            [
+              "0x2666ba6",
+              "mov",
+              "byte ptr [ebp - 0x2e], 1"
+            ],
+            [
+              "0x2666baa",
+              "mov",
+              "dword ptr [ebp - 0x1c], 0x2664e30"
+            ],
+            [
+              "0x2666bb1",
+              "mov",
+              "al, byte ptr [ebp + 0x20]"
+            ],
+            [
+              "0x2666bb4",
+              "mov",
+              "byte ptr [ebp - 0x2d], al"
+            ],
+            [
+              "0x2666bb7",
+              "jmp",
+              "0x2666b4a"
+            ]
+          ]
+        },
+        "current": {
+          "view": {
+            "address": "0x26e19e0",
+            "end": "0x26e1a93",
+            "bytes_sha256": "071e32077ab80e04c3b0bf1bf56490cdaf8e5301f5dec1e5cc0484da3bd41326"
+          },
+          "argument_number": 6,
+          "amount_ebp_displacement": 32,
+          "token_frame": -96,
+          "qty_field_offset": 43,
+          "stores": [
+            {
+              "address": "0x26e1a3a",
+              "instruction": [
+                "mov",
+                "byte ptr [ebp - 0x2d], al"
+              ],
+              "value": "low8(formal amount)"
+            }
+          ],
+          "generator": "0x26e1a53",
+          "every_generator_path_has_qty_store": true,
+          "stores_mutually_unreachable": true,
+          "no_store_site_repeats": true,
+          "instructions": [
+            [
+              "0x26e19e0",
+              "push",
+              "ebp"
+            ],
+            [
+              "0x26e19e1",
+              "mov",
+              "ebp, esp"
+            ],
+            [
+              "0x26e19e3",
+              "push",
+              "edi"
+            ],
+            [
+              "0x26e19e4",
+              "push",
+              "esi"
+            ],
+            [
+              "0x26e19e5",
+              "push",
+              "ebx"
+            ],
+            [
+              "0x26e19e6",
+              "lea",
+              "ebx, [ebp - 0x58]"
+            ],
+            [
+              "0x26e19e9",
+              "sub",
+              "esp, 0x5c"
+            ],
+            [
+              "0x26e19ec",
+              "mov",
+              "esi, dword ptr [ebp + 0x10]"
+            ],
+            [
+              "0x26e19ef",
+              "mov",
+              "edx, dword ptr [ebp + 8]"
+            ],
+            [
+              "0x26e19f2",
+              "mov",
+              "ecx, dword ptr [ebp + 0xc]"
+            ],
+            [
+              "0x26e19f5",
+              "mov",
+              "dword ptr [esp + 0xc], ebx"
+            ],
+            [
+              "0x26e19f9",
+              "lea",
+              "eax, [esi - 2]"
+            ],
+            [
+              "0x26e19fc",
+              "cmp",
+              "eax, 0xdc"
+            ],
+            [
+              "0x26e1a01",
+              "ja",
+              "0x26e1a0f"
+            ],
+            [
+              "0x26e1a03",
+              "movsx",
+              "edi, word ptr [eax + eax + 0x2772360]"
+            ],
+            [
+              "0x26e1a0b",
+              "test",
+              "edi, edi"
+            ],
+            [
+              "0x26e1a0d",
+              "jne",
+              "0x26e1a60"
+            ],
+            [
+              "0x26e1a0f",
+              "mov",
+              "dword ptr [esp + 8], 0x4979"
+            ],
+            [
+              "0x26e1a17",
+              "mov",
+              "dword ptr [esp + 4], ecx"
+            ],
+            [
+              "0x26e1a1b",
+              "mov",
+              "dword ptr [esp], edx"
+            ],
+            [
+              "0x26e1a1e",
+              "call",
+              "0x26e0c60"
+            ],
+            [
+              "0x26e1a23",
+              "mov",
+              "dword ptr [ebp - 0x28], 0x80000"
+            ],
+            [
+              "0x26e1a2a",
+              "mov",
+              "dword ptr [ebp - 0x18], 0x26e04e0"
+            ],
+            [
+              "0x26e1a31",
+              "mov",
+              "dword ptr [ebp - 0x24], esi"
+            ],
+            [
+              "0x26e1a34",
+              "mov",
+              "eax, dword ptr [ebp + 0x20]"
+            ],
+            [
+              "0x26e1a37",
+              "mov",
+              "dword ptr [esp], ebx"
+            ],
+            [
+              "0x26e1a3a",
+              "mov",
+              "byte ptr [ebp - 0x2d], al"
+            ],
+            [
+              "0x26e1a3d",
+              "mov",
+              "eax, dword ptr [ebp + 0x14]"
+            ],
+            [
+              "0x26e1a40",
+              "mov",
+              "byte ptr [ebp - 0x30], al"
+            ],
+            [
+              "0x26e1a43",
+              "mov",
+              "eax, dword ptr [ebp + 0x18]"
+            ],
+            [
+              "0x26e1a46",
+              "mov",
+              "dword ptr [ebp - 0x40], eax"
+            ],
+            [
+              "0x26e1a49",
+              "mov",
+              "eax, dword ptr [ebp + 0x1c]"
+            ],
+            [
+              "0x26e1a4c",
+              "mov",
+              "dword ptr [ebp - 0x3c], eax"
+            ],
+            [
+              "0x26e1a4f",
+              "mov",
+              "byte ptr [ebp - 0x2f], 1"
+            ],
+            [
+              "0x26e1a53",
+              "call",
+              "0x26e0d80"
+            ],
+            [
+              "0x26e1a58",
+              "add",
+              "esp, 0x5c"
+            ],
+            [
+              "0x26e1a5b",
+              "pop",
+              "ebx"
+            ],
+            [
+              "0x26e1a5c",
+              "pop",
+              "esi"
+            ],
+            [
+              "0x26e1a5d",
+              "pop",
+              "edi"
+            ],
+            [
+              "0x26e1a5e",
+              "pop",
+              "ebp"
+            ],
+            [
+              "0x26e1a5f",
+              "ret",
+              ""
+            ],
+            [
+              "0x26e1a60",
+              "mov",
+              "dword ptr [esp + 4], ecx"
+            ],
+            [
+              "0x26e1a64",
+              "mov",
+              "dword ptr [esp], edx"
+            ],
+            [
+              "0x26e1a67",
+              "mov",
+              "dword ptr [esp + 8], edi"
+            ],
+            [
+              "0x26e1a6b",
+              "call",
+              "0x26e0c60"
+            ],
+            [
+              "0x26e1a70",
+              "mov",
+              "dword ptr [esp], edi"
+            ],
+            [
+              "0x26e1a73",
+              "call",
+              "0x266ead0"
+            ],
+            [
+              "0x26e1a78",
+              "lea",
+              "eax, [eax + eax*8]"
+            ],
+            [
+              "0x26e1a7b",
+              "mov",
+              "eax, dword ptr [eax*8 + 0x7e7048]"
+            ],
+            [
+              "0x26e1a82",
+              "test",
+              "eax, eax"
+            ],
+            [
+              "0x26e1a84",
+              "je",
+              "0x26e1a34"
+            ],
+            [
+              "0x26e1a86",
+              "mov",
+              "byte ptr [ebp - 0x2e], 1"
+            ],
+            [
+              "0x26e1a8a",
+              "mov",
+              "dword ptr [ebp - 0x1c], 0x26e0b40"
+            ],
+            [
+              "0x26e1a91",
+              "jmp",
+              "0x26e1a34"
+            ]
+          ]
+        },
+        "scope": "Read-only complete direct-CFG quantity-store comparison for generate_custom_token_from_subtype. Both native stores and the one rebuilt store write the low8 bits of immutable formal amount7 at EBP+32 into token.qty offset43. Every direct path reaching the generator passes a quantity store; native store sites are mutually unreachable and no site repeats. Caller-save register definitions and unknown operations are conservative. This proves the duplicated byte-store value/path behavior, not arbitrary aliases, all token fields or gameplay."
+      }
+    },
+    {
+      "kind": "inline_owner",
+      "path": ".recovery/token-inline-owner-review-c72.json",
+      "sha256": "c2881e4b52400c9d111ddd8ff63af9ce6920a661a8cf4503ccceaa7bf0fa58e2",
+      "tool": "tools/recovery/token_inline_owner_proof.py",
+      "tool_sha256": "cc7f7f88560dc1af5376eb033fecf45e3cfc9b5efbfabb10f0665eb3c4517ab0",
+      "exit_code": 0,
+      "terminal_chunk_id": "f96e8a",
+      "record": {
+        "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "current_dll_sha256": "89f9889d7deed1054f4cfcba84803fa9fe63404797b958c74c13c3d6477d9883",
+        "current_dbg_sha256": "00504f1617cf3346c63833070562a9c15e57001828fdbcb5bb69e36fbb9920f4",
+        "tool_sha256": "cc7f7f88560dc1af5376eb033fecf45e3cfc9b5efbfabb10f0665eb3c4517ab0",
+        "native": {
+          "owner_die": "0x61cc49e",
+          "owner_symbol": "_copy_token.part.0",
+          "owner_view": {
+            "address": "0x2666640",
+            "end": "0x2666673",
+            "bytes_sha256": "b9cdfaa3fc352aa4ba5be4966f43cc30febc5327fcaa186ae4018b396d207142"
+          },
+          "variable_die": "0x61cc4e0",
+          "variable_type": "0x61c78cb",
+          "variable_bytes": 76,
+          "frame_offset": -88,
+          "scope_tag": "DW_TAG_subprogram",
+          "scope_name": "copy_token",
+          "scope_ranges": [
+            [
+              40265280,
+              40265331
+            ]
+          ],
+          "token_api_operands": [
+            {
+              "call": {
+                "address": "0x2666660",
+                "name": "_copy_token_definition",
+                "arguments": [
+                  null,
+                  null,
+                  [
+                    "frame",
+                    -80
+                  ],
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              "token_argument_index": 2
+            },
+            {
+              "call": {
+                "address": "0x2666668",
+                "name": "_generate_token",
+                "arguments": [
+                  [
+                    "frame",
+                    -80
+                  ],
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              "token_argument_index": 0
+            }
+          ],
+          "direct_scalar_stores": []
+        },
+        "current": {
+          "owner_die": "0x5c63427",
+          "owner_symbol": "_copy_token.part.0",
+          "owner_view": {
+            "address": "0x26e1c60",
+            "end": "0x26e1c93",
+            "bytes_sha256": "453c13952f97b70f852de08c59f3bec8ada2b6d243b05b8f6712f3527c8f3478"
+          },
+          "variable_die": "0x5c634b5",
+          "variable_type": "0x5c5e6b2",
+          "variable_bytes": 76,
+          "frame_offset": -88,
+          "scope_tag": "DW_TAG_inlined_subroutine",
+          "scope_name": "copy_token_part",
+          "scope_ranges": [
+            [
+              40770663,
+              40770701
+            ]
+          ],
+          "token_api_operands": [
+            {
+              "call": {
+                "address": "0x26e1c80",
+                "name": "_copy_token_definition",
+                "arguments": [
+                  null,
+                  null,
+                  [
+                    "frame",
+                    -80
+                  ],
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              "token_argument_index": 2
+            },
+            {
+              "call": {
+                "address": "0x26e1c88",
+                "name": "_generate_token",
+                "arguments": [
+                  [
+                    "frame",
+                    -80
+                  ],
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              "token_argument_index": 0
+            }
+          ],
+          "direct_scalar_stores": []
+        },
+        "source_definition_sha256": {
+          "copy_token_part": "9dc9fe7569e95227c8959d6ac7603b0e5b0be901c90d0377d5b6e6aff260a8fa",
+          "copy_token": "87f65a02e273131c414344ab5cb3333347ac0a994b691ca75ded3d95e811c0ff"
+        },
+        "scope": "The native private copy_token.part.0 token is implemented in the current copy_token.part.0 concrete range by an actual DW_TAG_inlined_subroutine for source copy_token_part. Its76-byte token, fixed CFA-88 location and initializer/generator pointer operands are verified inside that inline scope. Neither scope has direct scalar token writes. The broad inventory deliberately excluded other-helper inline scopes; this explains its one unbound instance. The public wrapper and private register-argument clone remain distinct ranges/ABIs. This checks declaration, owner and API operands, not copied token contents, transitive helper semantics or gameplay."
+      }
+    }
+  ],
+  "scope": "Independent read-only replay of the three earlier packed-field, quantity-clone and inline-owner proof tools against the C71 build. These account for the four residual discovery flags; they do not establish all token contents, arbitrary dynamic values, aliases or gameplay. They ran separately from the full source/provenance audit. Native Fractal amount is folded to1 in the credited specialized body; no general four-argument equivalence is inferred."
+}

@@ -2278,43 +2278,41 @@ int card_petradon(int player, int card, event_t event)
 {
   target_t *ptVar1;
   target_t *ptVar2;
-  int iVar3;
+  int i;
   card_instance_t *instance;
-  int iVar5;
+  int csvid;
   target_definition_t td;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    iVar3 = 0;
+    i = 0;
     default_target_definition(player, card, &td, 1);
     td.allow_cancel = 0;
     instance = get_card_instance(player, card);
-    while (iVar3 != 2)
+    while (i != 2)
     {
-      iVar5 = can_target(&td);
-      if (iVar5 == 0)
+      if (can_target(&td) == 0)
         break;
-      iVar5 = new_pick_target(&td, "TARGET_LAND", iVar3, 0);
-      if (iVar5 != 0)
+      if (new_pick_target(&td, "TARGET_LAND", i, 0) != 0)
       {
-        ptVar2 = instance->targets + iVar3;
-        ptVar1 = instance->targets + iVar3;
-        iVar3 = iVar3 + 1;
+        ptVar2 = instance->targets + i;
+        ptVar1 = instance->targets + i;
+        i = i + 1;
         state_untargettable(ptVar1->player, ptVar2->card, 1);
       }
     }
-    iVar3 = 0;
+    i = 0;
     if (instance->number_of_targets != '\0')
     {
       do
       {
-        iVar5 = get_id(instance->targets[iVar3].player, instance->targets[iVar3].card);
-        ptVar2 = instance->targets + iVar3;
-        ptVar1 = instance->targets + iVar3;
-        iVar3 = iVar3 + 1;
+        csvid = get_id(instance->targets[i].player, instance->targets[i].card);
+        ptVar2 = instance->targets + i;
+        ptVar1 = instance->targets + i;
+        i = i + 1;
         exile_card_and_remember_it_on_exiledby(player, card, ptVar1->player, ptVar2->card);
-        create_card_name_legacy(player, card, iVar5);
-      } while (iVar3 < (int)(unsigned int)instance->number_of_targets);
+        create_card_name_legacy(player, card, csvid);
+      } while (i < (int)(unsigned int)instance->number_of_targets);
     }
     leaves_play(player, card, EVENT_ETB, 1, 0);
   }
@@ -2327,13 +2325,10 @@ int card_petradon(int player, int card, event_t event)
     }
     else if (event == EVENT_RESOLVE_ACTIVATION)
     {
-      iVar3 =
-          generic_shade_merge_pt(player, card, EVENT_RESOLVE_ACTIVATION, 0, 0, 0, 0, 0, 1, 0, 1, 0);
-      return iVar3;
+      return generic_shade_merge_pt(player, card, EVENT_RESOLVE_ACTIVATION, 0, 0, 0, 0, 0, 1, 0, 1, 0);
     }
   }
-  iVar3 = generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
-  return iVar3;
+  return generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
 }
 
 static int plagiarize_legacy(int player, int card, event_t event){
@@ -2647,42 +2642,37 @@ int card_shambling_swarm(int player, int card, event_t event)
   uint32_t num;
   int iVar1;
   int iVar2;
-  card_instance_t *pcVar3;
+  card_instance_t *instance;
   int iVar4;
   card_instance_t *pcVar5;
   int (*paiVar6)[151];
   unsigned int target_player_id;
-  unsigned char bVar7;
   unsigned int uStack_528;
   target_definition_t td;
   int marked[2][151];
-  bVar7 = 0;
-  iVar2 = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (iVar2 == 0)
+  if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) == 0)
   {
     return 0;
   }
   default_target_definition(player, card, &td, 2);
   td.allow_cancel = 0;
-  pcVar3 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   paiVar6 = marked;
   for (iVar2 = 0x12e; iVar2 != 0; iVar2 = iVar2 + -1)
   {
     (*paiVar6)[0] = 0;
-    paiVar6 = (int (*)[151])((int)paiVar6 + ((unsigned int)bVar7 * -2 + 1) * 4);
+    paiVar6 = (int (*)[151])((int)paiVar6 + 4u);
   }
   iVar2 = 0;
   do
   {
-    iVar4 = can_target(&td);
-    if (iVar4 == 0)
+    if (can_target(&td) == 0)
       break;
-    iVar4 = new_pick_target(&td, "TARGET_CREATURE", iVar2, 0);
-    if (iVar4 != 0)
+    if (new_pick_target(&td, "TARGET_CREATURE", iVar2, 0) != 0)
     {
-      add_state(pcVar3->targets[iVar2].player, pcVar3->targets[iVar2].card, 0x200000);
-      iVar4 = pcVar3->targets[iVar2].player;
-      iVar1 = pcVar3->targets[iVar2].card;
+      add_state(instance->targets[iVar2].player, instance->targets[iVar2].card, 0x200000);
+      iVar4 = instance->targets[iVar2].player;
+      iVar1 = instance->targets[iVar2].card;
       marked[iVar4][iVar1] = marked[iVar4][iVar1] + 1;
     }
     iVar2 = iVar2 + 1;
@@ -2696,9 +2686,8 @@ int card_shambling_swarm(int player, int card, event_t event)
     {
       while (num = marked[target_player_id][iVar2], num != 0)
       {
-        iVar4 = create_targetted_legacy_effect(player, card, remove_counters_at_eot,
-                                               target_player_id, iVar2);
-        pcVar5 = get_card_instance(player, iVar4);
+        pcVar5 = get_card_instance(player, create_targetted_legacy_effect(player, card, remove_counters_at_eot,
+                                               target_player_id, iVar2));
         pcVar5->eot_toughness = num;
         iVar4 = iVar2 + -1;
         add_counters(player, card, target_player_id, iVar2, COUNTER_M1_M1, num);
@@ -2712,7 +2701,7 @@ int card_shambling_swarm(int player, int card, event_t event)
     uStack_528 = uStack_528 + 1;
     if (uStack_528 == 2)
     {
-      pcVar3->number_of_targets = '\0';
+      instance->number_of_targets = '\0';
       return 0;
     }
   } while (true);
@@ -3182,9 +3171,8 @@ int card_cephalid_illusionist(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 2, 0, 1, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 2, 0, 1, 0, 0, 0, 0,
                                          &td, NULL);
-      return result;
     }
     if (event == EVENT_ACTIVATE)
     {

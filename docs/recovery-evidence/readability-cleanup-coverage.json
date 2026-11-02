@@ -1,0 +1,112 @@
+{
+  "renames": {
+    "renamed_function_locals": 65,
+    "identifier_occurrences": 724,
+    "source_units": 37,
+    "unchanged_runtime_sections": 26,
+    "scope": "65 collision-free single card-instance pointer renames use native DWARF vocabulary. All724 identifier uses change through token-aware replay; literals, nonidentifier bytes, declarations, operators, calls and control flow remain identical. Full normalized runtime sections must match between the two pinned naming builds. Native variable names support role-based spelling, not unique optimized-variable identity. Older semantic receipts remain independently checked; this successor accepts only the immediate pre-rename body digest."
+  },
+  "dispatch": {
+    "structured_card_handlers": 7,
+    "removed_lab_gotos": 14,
+    "removed_lab_labels": 7,
+    "removed_dead_result_locals": 6,
+    "parsed_dispatch_cases": 252,
+    "native_event_values": 8,
+    "source_units": 1,
+    "changed_linker_objects": 1,
+    "unchanged_linker_objects": 165,
+    "scope": "Seven exact shared-tail adventure spell dispatchers become structured conditions. Fourteen LAB jumps and seven labels disappear; six unused result locals disappear. Common prefixes and helper arguments are retained, with no new affect_me helper call. Parsed statement-CFG interpretation covers252 native-event/affected-card/player classes and preserves arbitrary helper return values. This proves only the local dispatch rewrite relative to the reviewed source; full native semantics, aliases, downstream helper behavior and gameplay remain separate."
+  },
+  "touched_definitions": 72,
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "setup_session_id": 47013,
+    "setup_exit_code": 0,
+    "setup_terminal_chunk_id": "d0b4de",
+    "setup_log": ".recovery/readability-cleanup-setup-c84.log",
+    "setup_log_sha256": "89ebee801b6e93a71c6ee5ab2bea88118b8f60676e63b28364a5b72f0d9e449f",
+    "builds": [
+      {
+        "name": "local_names",
+        "session_id": 24071,
+        "exit_code": 0,
+        "terminal_chunk_id": "5e942c",
+        "log": ".recovery/additional-local-names-build-c83.log",
+        "log_sha256": "7f5b08cffc4d2b6335bebf317e1d39b11b561c43babeaca0af145b8c1d76050b"
+      },
+      {
+        "name": "spell_dispatch",
+        "session_id": null,
+        "exit_code": 0,
+        "terminal_chunk_id": "3f5067",
+        "log": ".recovery/spell-dispatch-build-c84.log",
+        "log_sha256": "3783a612937d5b75788cefe8efb0a3e90efec2ded2d52f260e4ea3bc16485823"
+      }
+    ],
+    "focused_checks": [
+      {
+        "name": "local_names",
+        "exit_code": 0,
+        "terminal_chunk_id": "110211",
+        "log": ".recovery/additional-local-names-focused-final-c84.log",
+        "log_sha256": "beae48f7d198342cfb794d30fc90c6c5fa3ee18be67724359d3ba9f291ac7ac9"
+      },
+      {
+        "name": "spell_dispatch",
+        "exit_code": 0,
+        "terminal_chunk_id": "ff3d65",
+        "log": ".recovery/spell-dispatch-focused-final-c84.log",
+        "log_sha256": "d5a82906fbb438caf1334f889539fc4cd2d3a250086571a7c66c434c1836c5ca"
+      },
+      {
+        "name": "records",
+        "exit_code": 0,
+        "terminal_chunk_id": "b51239",
+        "log": ".recovery/readability-prior-records-c84.log",
+        "log_sha256": "04362bdb8c994a07350a9b79e5e847128d15099310f13d90df77014f1a3ddf19"
+      },
+      {
+        "name": "arrays",
+        "exit_code": 0,
+        "terminal_chunk_id": "587484",
+        "log": ".recovery/readability-prior-arrays-final-c84.log",
+        "log_sha256": "09a83e0206f1ff1dd15f59c7c42f64a739f3cc08462bb309b9403e0f254be7d1"
+      },
+      {
+        "name": "helpers",
+        "exit_code": 0,
+        "terminal_chunk_id": "635924",
+        "log": ".recovery/readability-prior-helpers-c84.log",
+        "log_sha256": "9ddbf6b6ac0785241a7c348f6d05249f5d15bff366cfd8e3fda4c5a49a461d9f"
+      },
+      {
+        "name": "shared_stack_test",
+        "exit_code": 0,
+        "terminal_chunk_id": "301c31",
+        "log": ".recovery/readability-prior-shared-c84.log",
+        "log_sha256": "09636550721a6fca5e2dd57d0e99c6724509c0fe46daa73ab909bd1c1fff8ba3"
+      },
+      {
+        "name": "wide_stack_test",
+        "exit_code": 0,
+        "terminal_chunk_id": "f26195",
+        "log": ".recovery/readability-prior-wide-c84.log",
+        "log_sha256": "ba5d058b977fbc90d23b032b905bdf575de39760de0f3d0ef172a1d725da6980"
+      }
+    ]
+  },
+  "followup_inventory": "docs/recovery-evidence/readability-followup-inventory.json",
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "191da323eee7b47331d895fae7ece9b932c73182217fb074d61a73eaa71c374d",
+    "docs/recovery-evidence/additional-local-names.json": "ea14a12e9ce6347cc0128c1150d989d0297101765a17598c11025e394ddcde23",
+    "docs/recovery-evidence/spell-dispatch-cleanup.json": "6f8eb486fbc177fcc7fa6993c8c2366f5d4c5ca866b99d61cb54967ade7aa1a4",
+    "tools/recovery/verify_additional_local_names.py": "891e01e2758f28630df9a23c86480bbf202a7004d440622decdcfe3b6615763a",
+    "tools/recovery/spell_dispatch_source.py": "9cd57f8461595db60554b46aa005979fc1d1b46475d39eba1f39e7ae5a48cd16",
+    "tools/recovery/verify_spell_dispatch_cleanup.py": "2185611fe9f619cefa62bba8eb6f4d67f1f61e34145b1bfe1204226165a3c8c1",
+    "docs/recovery-evidence/readability-followup-inventory.json": "52b16d76f85413dd6c368c2f04346620c582737420f24990d49eac64c47d8ff4",
+    "ManalinkEh.dll": "311452a887b327cba902c144fee07332950bfe5e2fc6d4f852a7810f2bff9562",
+    "ManalinkEh.dbg": "d9e46e32ac2954ffe63e65a979234f53ef0a9f10977c517ec5bdba37344c7b07"
+  },
+  "limits": "Alpha-renaming equivalence is supported by token projection and identical normalized runtime sections in its two pinned builds; later dispatch edits change one object. Historical semantic validators remain active; their body guards accept only an explicit immediate alpha-rename successor. The dispatch proof covers the complete compared-event/equality partition and a source-identical prefix, but does not prove all prior native semantics, helper behavior, arbitrary aliases, other compiler configurations or gameplay."
+}

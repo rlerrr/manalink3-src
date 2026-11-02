@@ -1,0 +1,2009 @@
+{
+  "rows": [
+    {
+      "source": "functions/functions.c",
+      "name": "true_get_updated_casting_cost",
+      "before_definition": "int true_get_updated_casting_cost(int player, int card, int iid, event_t event, int orig_cless)\n{\n  int count;\n  card_ptr_t *pcVar1;\n  bool bVar2;\n  bool bVar3;\n  char cVar4;\n  int iVar5;\n  bool bVar6;\n  unsigned int uVar7;\n  card_instance_t *instance;\n  int iVar9;\n  unsigned int uVar10;\n  int iVar11;\n  int iVar12;\n  unsigned int uVar13;\n  int card_00;\n  int player_00;\n  unsigned int uStack_14;\n\n  if (1 < (unsigned int)player)\n  {\n    backtrace_and_abort(\"functions/functions.c:10186\\nplayer == 0 || player == 1 || \"\n                        \"!\\\"get_updated_casting_cost() needs a real player\\\"\");\n  }\n  if ((char)-((char)((unsigned char)((unsigned int)card >> 0x18) ^ 0xff) >> 7) !=\n      (char)-(char)(iid >> 0x1f))\n  {\n    backtrace_and_abort(\n        \"functions/functions.c:10187\\n(card < 0) != (iid < 0) && \\\"get_updated_casting_cost() \"\n        \"needs exactly one of card and iid to be valid\\\"\");\n  }\n  if (iid < 0)\n  {\n    instance = get_card_instance(player, card);\n    iid = instance->internal_card_id;\n  }\n  if ((cards_data[iid].type & 1) != 0)\n  {\n    return 0;\n  }\n  uVar13 = (unsigned int)cards_data[iid].id;\n  pcVar1 = cards_ptr[uVar13];\n  uStack_14 = orig_cless;\n  if (orig_cless == -1)\n  {\n    uStack_14 = (unsigned int)pcVar1->req_colorless;\n    if (uStack_14 < 0x10)\n      goto LAB_026898ba;\n  }\n  else if (orig_cless < 0x10)\n    goto LAB_026898ba;\n  uStack_14 = 0;\nLAB_026898ba:\n  player_00 = 0;\n  uVar7 = get_color_by_internal_id(player, iid);\n  bVar3 = false;\n  bVar2 = false;\n  while (active_cards_count[player_00] < 1)\n  {\n  LAB_026899ce:\n    player_00 = player_00 + 1;\n    if (player_00 == 2)\n    {\n      if (((bVar2) && ((int)uStack_14 < 3)) && (dont_account_for_trinisphere < 1))\n      {\n        if (orig_cless == -1)\n        {\n          uVar13 = (unsigned int)pcVar1->req_black + (unsigned int)pcVar1->req_blue +\n                   (unsigned int)pcVar1->req_green + (unsigned int)pcVar1->req_red +\n                   (unsigned int)pcVar1->req_white;\n          if (uVar13 < 3)\n          {\n            uStack_14 = 3 - uVar13;\n          }\n        }\n        else\n        {\n          uStack_14 = 3 - orig_cless;\n        }\n      }\n      return uStack_14 + havengul_lich_hack;\n    }\n  }\n  card_00 = 0;\nLAB_02689900:\n  instance = in_play(player_00, card_00);\n  bVar6 = bVar3;\n  if ((instance != NULL) &&\n      ((iVar9 = is_what(player_00, card_00, 0x80),\n        iVar9 != 0 || (iVar9 = is_humiliated(player_00, card_00, AL_STATIC), iVar9 == 0))))\n  {\n    uVar10 = get_id(player_00, card_00);\n    iVar5 = affected_card;\n    iVar12 = affected_card_controller;\n    iVar9 = event_result;\n    cVar4 = COST_COLORLESS;\n    if (uVar10 == 0x2470)\n    {\n      if ((player == player_00) &&\n          ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_TREEFOLK),\n            iVar9 != 0 ||\n                (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_SHAMAN), iVar9 != 0))))\n      {\n        uStack_14 = uStack_14 - 1;\n      }\n      goto LAB_026899c0;\n    }\n    if ((int)uVar10 < 0x2471)\n    {\n      if (uVar10 == 0x14bf)\n      {\n        if (player == player_00)\n        {\n          uVar10 = get_sleighted_color_test(player, card_00, 0x22);\n          uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n        }\n      }\n      else if ((int)uVar10 < 0x14c0)\n      {\n        if (uVar10 == 0xb78)\n        {\n          if ((player != player_00) && (iVar9 = is_what(-1, iid, 0x44), iVar9 != 0))\n          {\n            uStack_14 = uStack_14 + 2;\n          }\n        }\n        else if ((int)uVar10 < 0xb79)\n        {\n          if (uVar10 == 0x3f4)\n          {\n            if (current_turn != player)\n            {\n              card_00 = card_00 + 1;\n              uStack_14 = uStack_14 + 3;\n              COST_COLORLESS = cVar4;\n              event_result = iVar9;\n              affected_card_controller = iVar12;\n              affected_card = iVar5;\n              if (active_cards_count[player_00] <= card_00)\n                goto LAB_026899ce;\n              goto LAB_02689900;\n            }\n          }\n          else\n          {\n            if (0x3f4 < (int)uVar10)\n            {\n              if (uVar10 == 0x883)\n              {\n              LAB_02689f50:\n                iVar9 = 2;\n              LAB_02689f58:\n                iVar9 = is_what(-1, iid, iVar9);\n                if (iVar9 != 0)\n                {\n                  return 99;\n                }\n                card_00 = card_00 + 1;\n                if (active_cards_count[player_00] <= card_00)\n                  goto LAB_026899ce;\n              }\n              else\n              {\n                if ((int)uVar10 < 0x884)\n                {\n                  if (uVar10 == 0x66a)\n                    goto LAB_0268a538;\n                  if ((uVar10 == 0x756) && (instance->damage_target_player == player))\n                    goto LAB_02689f50;\n                  goto LAB_026899c0;\n                }\n                if (uVar10 == 0x89b)\n                {\n                LAB_0268a538:\n                  iVar11 = (int)COST_COLORLESS;\n                  event_result = player;\n                  if (card < 0)\n                  {\n                    affected_card = iid;\n                    affected_card_controller = -1;\n                  }\n                  else\n                  {\n                    affected_card_controller = player;\n                    affected_card = card;\n                  }\n                  call_card_function(player_00, card_00, EVENT_MODIFY_COST_GLOBAL);\n                  uStack_14 = uStack_14 + (COST_COLORLESS - iVar11);\n                  card_00 = card_00 + 1;\n                  COST_COLORLESS = cVar4;\n                  event_result = iVar9;\n                  affected_card_controller = iVar12;\n                  affected_card = iVar5;\n                  if (active_cards_count[player_00] <= card_00)\n                    goto LAB_026899ce;\n                }\n                else\n                {\n                  if (uVar10 != 0xa9f)\n                    goto LAB_026899c0;\n                  card_00 = card_00 + 1;\n                  uStack_14 = uStack_14 - 1;\n                  COST_COLORLESS = cVar4;\n                  event_result = iVar9;\n                  affected_card_controller = iVar12;\n                  affected_card = iVar5;\n                  if (active_cards_count[player_00] <= card_00)\n                    goto LAB_026899ce;\n                }\n              }\n              goto LAB_02689900;\n            }\n            if (uVar10 == 0x2a9)\n            {\n              iVar9 = is_what(-1, iid, 0x10);\n              if ((iVar9 != 0) && (iVar9 = is_what(-1, iid, 2), iVar9 == 0))\n              {\n                iVar9 = get_cmc_by_id(uVar13);\n                uStack_14 = uStack_14 + iVar9;\n              }\n            }\n            else if ((int)uVar10 < 0x2aa)\n            {\n              if (uVar10 == 100)\n              {\n                if ((uVar7 & 0x20) != 0)\n                {\n                  card_00 = card_00 + 1;\n                  uStack_14 = uStack_14 + 3;\n                  COST_COLORLESS = cVar4;\n                  event_result = iVar9;\n                  affected_card_controller = iVar12;\n                  affected_card = iVar5;\n                  if (active_cards_count[player_00] <= card_00)\n                    goto LAB_026899ce;\n                  goto LAB_02689900;\n                }\n              }\n              else if (uVar10 == 0x16b)\n              {\n                uStack_14 = uStack_14 - (player == player_00);\n                card_00 = card_00 + 1;\n                COST_COLORLESS = cVar4;\n                event_result = iVar9;\n                affected_card_controller = iVar12;\n                affected_card = iVar5;\n                if (active_cards_count[player_00] <= card_00)\n                  goto LAB_026899ce;\n                goto LAB_02689900;\n              }\n            }\n            else if (uVar10 == 0x2d1)\n            {\n              if ((player == player_00) &&\n                  ((iVar9 = is_what(-1, iid, 0x10),\n                    iVar9 != 0 || (iVar9 = is_what(-1, iid, 4), iVar9 != 0))))\n              {\n                uStack_14 = uStack_14 - 2;\n              }\n            }\n            else if (uVar10 == 0x2e8)\n              goto LAB_0268a518;\n          }\n        }\n        else if (uVar10 == 0xcb8)\n        {\n          if (player == player_00)\n          {\n            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 0x10) == 0);\n          }\n        }\n        else if ((int)uVar10 < 0xcb9)\n        {\n          if (uVar10 == 0xc6c)\n          {\n            if (player == player_00)\n            {\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 2) == 0);\n            }\n          }\n          else if ((int)uVar10 < 0xc6d)\n          {\n            if (uVar10 == 0xbe3)\n            {\n            LAB_0268b118:\n              if (player == player_00)\n              {\n                iVar9 = 2;\n              LAB_0268a404:\n                uVar10 = is_what(-1, iid, iVar9);\n              joined_r0x0268a471:\n                if (uVar10 != 0)\n                {\n                  return 0x31;\n                }\n              }\n            }\n            else if ((uVar10 == 0xc3c) && (player == player_00))\n            {\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 8) == 0);\n            }\n          }\n          else if ((uVar10 == 0xc99) && (player == player_00))\n          {\n            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 0x20) == 0);\n          }\n        }\n        else if (uVar10 == 0xe70)\n        {\n        LAB_02689dce:\n          uVar10 = instance->targets[1].player;\n          if (0 < (int)uVar10)\n          {\n            if ((player + 1U & uVar10) != 0)\n            {\n              return 99;\n            }\n            card_00 = card_00 + 1;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n        }\n        else if ((int)uVar10 < 0xe71)\n        {\n          if (uVar10 != 0xcbd)\n          {\n            if (uVar10 != 0xdee)\n              goto LAB_026899c0;\n            card_00 = card_00 + 1;\n            uStack_14 = uStack_14 + 1;\n            COST_COLORLESS = cVar4;\n            event_result = iVar9;\n            affected_card_controller = iVar12;\n            affected_card = iVar5;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n          if (player == player_00)\n          {\n            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 4) == 0);\n          }\n        }\n        else\n        {\n          if (uVar10 == 0x148b)\n          {\n          LAB_0268ab50:\n            if (instance->targets[1].card == uVar13)\n            {\n              return 0x31;\n            }\n            card_00 = card_00 + 1;\n            COST_COLORLESS = cVar4;\n            event_result = iVar9;\n            affected_card_controller = iVar12;\n            affected_card = iVar5;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n          if ((uVar10 == 0x1495) && (player == player_00))\n          {\n            uVar10 = get_sleighted_color_test(player, card_00, 0x14);\n            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n          }\n        }\n      }\n      else if (uVar10 == 0x2018)\n      {\n        if (player != player_00)\n        {\n          card_00 = card_00 + 1;\n          uStack_14 = uStack_14 + 1;\n          COST_COLORLESS = cVar4;\n          event_result = iVar9;\n          affected_card_controller = iVar12;\n          affected_card = iVar5;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n        uStack_14 = uStack_14 - 1;\n      }\n      else if ((int)uVar10 < 0x2019)\n      {\n        if (uVar10 == 0x1989)\n        {\n          if (player == player_00)\n          {\n            iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_GOBLIN);\n            uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);\n          }\n        }\n        else if ((int)uVar10 < 0x198a)\n        {\n          if (uVar10 == 0x14cb)\n          {\n            if (player == player_00)\n            {\n              uVar10 = get_sleighted_color_test(player_00, card_00, 10);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n            }\n          }\n          else if ((int)uVar10 < 0x14cc)\n          {\n            if (uVar10 == 0x14c4)\n            {\n              if (player == player_00)\n              {\n                uVar10 = get_sleighted_color_test(player, card_00, 0xc);\n                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n              }\n            }\n            else if ((uVar10 == 0x14c9) && (player == player_00))\n            {\n              uVar10 = get_sleighted_color_test(player, card_00, 0x30);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n            }\n          }\n          else if (uVar10 == 0x17ec)\n          {\n          LAB_0268a939:\n            if ((player == player_00) && (cards_data[iid].id == 0x33c4))\n            {\n              uStack_14 = uStack_14 - 1;\n            }\n          }\n          else if (((uVar10 == 0x1974) && (player == player_00)) &&\n                   (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_DRAGON), iVar9 != 0))\n          {\n            uStack_14 = uStack_14 - 2;\n          }\n        }\n        else\n        {\n          if (uVar10 == 0x1b47)\n          {\n            card_00 = card_00 + 1;\n            bVar2 = true;\n            COST_COLORLESS = cVar4;\n            event_result = iVar9;\n            affected_card_controller = iVar12;\n            affected_card = iVar5;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n          if ((int)uVar10 < 0x1b48)\n          {\n            if (uVar10 == 0x1a19)\n              goto LAB_0268b118;\n            if (uVar10 == 0x1a73)\n              goto LAB_02689dce;\n            if ((uVar10 == 0x19c6) && (player == player_00))\n            {\n              iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ZOMBIE);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);\n            }\n          }\n          else if (((uVar10 == 0x1bb3) && (iVar9 = is_what(-1, iid, 0x40), iVar9 != 0)) &&\n                   (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n          {\n            iVar9 = count_subtype(player, 0x40, -1);\n            uStack_14 = uStack_14 - iVar9;\n          }\n        }\n      }\n      else if (uVar10 == 0x22c8)\n      {\n        iVar9 = instance->targets[1].card;\n        if (0 < iVar9)\n        {\n          iVar9 = is_what(-1, iid, iVar9);\n          uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);\n          card_00 = card_00 + 1;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n      }\n      else if ((int)uVar10 < 0x22c9)\n      {\n        if (uVar10 == 0x22ac)\n        {\n        LAB_0268a17f:\n          if (instance->targets[1].card == uVar13)\n          {\n            return 99;\n          }\n          card_00 = card_00 + 1;\n          COST_COLORLESS = cVar4;\n          event_result = iVar9;\n          affected_card_controller = iVar12;\n          affected_card = iVar5;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n        if ((int)uVar10 < 0x22ad)\n        {\n          if (uVar10 == 0x2195)\n          {\n            if (player == player_00)\n            {\n              iVar9 = count_graveyard_by_id(player, uVar13);\n              uStack_14 = uStack_14 - iVar9;\n            }\n          }\n          else if ((uVar10 == 0x21f5) && (player != player_00))\n          {\n            iVar9 = can_sorcery_be_played(player, event);\n            if (iVar9 == 0)\n            {\n              return 0x31;\n            }\n            card_00 = card_00 + 1;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n        }\n        else if ((((uVar10 == 0x22c5) &&\n                   (iVar9 = is_tapped(player_00, card_00), player == player_00)) &&\n                  (iVar9 != 0)) &&\n                 (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n        {\n          uStack_14 = uStack_14 - 2;\n        }\n      }\n      else if (uVar10 == 0x2438)\n      {\n        if ((player == player_00) &&\n            (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_GIANT), iVar9 != 0))\n        {\n          uStack_14 = uStack_14 - 2;\n        }\n      }\n      else if ((int)uVar10 < 0x2439)\n      {\n        if (((uVar10 == 0x23ba) && (iVar9 = is_what(-1, iid, 2), iVar9 == 0)) &&\n            (iVar9 = get_cmc_by_id(uVar13), 3 < iVar9))\n        {\n          return 99;\n        }\n      }\n      else\n      {\n        if (uVar10 == 0x2444)\n        {\n        LAB_0268a7e3:\n          iVar9 = is_what(-1, iid, 2);\n          uStack_14 = uStack_14 + (iVar9 == 0);\n          card_00 = card_00 + 1;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n        if (((uVar10 == 0x246b) && (player == player_00)) &&\n            ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_SOLDIER),\n              iVar9 != 0 ||\n                  (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_KITHKIN), iVar9 != 0))))\n        {\n          uStack_14 = uStack_14 - 1;\n        }\n      }\n    }\n    else\n    {\n      if (uVar10 == 0x306c)\n      {\n        if ((player == player_00) &&\n            ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ANGEL),\n              iVar9 != 0 ||\n                  (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_HUMAN), iVar9 != 0))))\n        {\n          iVar9 = count_counters(player_00, card_00, COUNTER_P1_P1);\n          uStack_14 = uStack_14 - iVar9;\n        }\n        goto LAB_026899c0;\n      }\n      if (0x306c < (int)uVar10)\n      {\n        if (uVar10 == 0x3f84)\n        {\n          if (player == player_00)\n          {\n            iVar9 = is_what(-1, iid, 0x38);\n            if (iVar9 != 0)\n            {\n              COST_WHITE = 'd';\n              COST_RED = 'd';\n              COST_GREEN = 'd';\n              COST_BLUE = 'd';\n              COST_BLACK = 'd';\n              COST_COLORLESS = 'd';\n            }\n            iVar9 = is_what(-1, iid, 2);\n            if ((iVar9 != 0) && (iVar9 = get_stormcreature_count(player_00), iVar9 == 0))\n            {\n              COST_COLORLESS = COST_COLORLESS + -1;\n            }\n          }\n          goto LAB_026899c0;\n        }\n        if (0x3f84 < (int)uVar10)\n        {\n          if (uVar10 == 0x4258)\n          {\n            if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n            {\n              uVar10 = get_sleighted_color_test(player, card_00, 0x20);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n            }\n          }\n          else if ((int)uVar10 < 0x4259)\n          {\n            if (uVar10 == 0x41d6)\n            {\n              if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n              {\n                uVar10 = get_sleighted_color_test(player_00, card_00, 2);\n                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n              }\n            }\n            else if ((int)uVar10 < 0x41d7)\n            {\n              if (uVar10 == 0x3ffd)\n                goto LAB_0268a518;\n              if (uVar10 == 0x407a)\n              {\n                iVar9 = instance->info_slot;\n                iVar12 = is_what(-1, iid, 2);\n                if ((iVar12 == 0) && (iVar12 = get_cmc_by_internal_id(iid), iVar12 == iVar9))\n                {\n                  COST_WHITE = 'd';\n                  COST_RED = 'd';\n                  COST_GREEN = 'd';\n                  COST_BLUE = 'd';\n                  COST_BLACK = 'd';\n                  COST_COLORLESS = 'd';\n                }\n              }\n            }\n            else if (uVar10 == 0x4229)\n            {\n              if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n              {\n                uVar10 = get_sleighted_color_test(player, card_00, 0x10);\n                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n              }\n            }\n            else if (((uVar10 == 0x423a) && (player == player_00)) &&\n                     (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n            {\n              uVar10 = get_sleighted_color_test(player, card_00, 4);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n            }\n          }\n          else if (uVar10 == 0x591b)\n          {\n            if ((player == player_00) && (iVar9 = is_what(-1, iid, 0x38), iVar9 != 0))\n            {\n              iVar9 = get_cmc_by_id(uVar13);\n              uStack_14 = uStack_14 - (4 < iVar9);\n            }\n          }\n          else if ((int)uVar10 < 0x591c)\n          {\n            if (uVar10 == 0x426f)\n            {\n              if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n              {\n                uVar10 = get_sleighted_color_test(player, card_00, 8);\n                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n              }\n            }\n            else if ((uVar10 == 0x5673) && (player == player_00))\n            {\n              iVar9 = count_creatures_with_p1_p1_counter(player);\n              uStack_14 = uStack_14 - iVar9;\n            }\n          }\n          else\n          {\n            if (((uVar10 == 0x6160) && (uVar10 = instance->targets[0].card, (uVar10 & 6) != 0)) &&\n                ((iVar9 = instance->targets[0].player, iVar9 == 2 || (iVar9 == player))))\n            {\n              if (((uVar10 & 2) != 0) &&\n                  ((unsigned int)cards_data[iid].id == instance->targets[1].player))\n              {\n                return 99;\n              }\n              if (((uVar10 & 4) != 0) && (iVar9 = instance->targets[1].player, -1 < iVar9))\n                goto LAB_02689f58;\n            }\n          }\n          goto LAB_026899c0;\n        }\n        if (uVar10 == 0x35a4)\n        {\n          if ((player == player_00) && (iVar9 = has_subtype(-1, iid, SUBTYPE_AURA), iVar9 != 0))\n          {\n            iVar9 = is_humiliated(player, card_00, AL_STATIC);\n            uStack_14 = uStack_14 - (iVar9 == 0);\n          }\n          goto LAB_026899c0;\n        }\n        if ((int)uVar10 < 0x35a5)\n        {\n          if (uVar10 == 0x31ff)\n          {\n            if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n            {\n              iVar9 = get_trap_condition(1 - player, 2);\n              uStack_14 = uStack_14 - iVar9;\n            }\n          }\n          else if ((int)uVar10 < 0x3200)\n          {\n            if (uVar10 == 0x3136)\n            {\n              if (player == player_00)\n              {\n                uStack_14 = uStack_14 - pcVar1->req_colorless;\n              }\n            }\n            else if (((uVar10 == 0x31b9) && (player == player_00)) &&\n                     (iVar9 = is_what(-1, iid, 2), iVar9 == 0))\n            {\n              iVar9 = is_what(-1, iid, 0x38);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);\n            }\n          }\n          else if ((uVar10 == 0x3351) && (instance = get_card_instance(player_00, card_00),\n                                          instance->targets[1].card == uVar13))\n          {\n            if (player != player_00)\n            {\n              return 99;\n            }\n            uStack_14 = uStack_14 - 2;\n          }\n          goto LAB_026899c0;\n        }\n        if (uVar10 == 0x3ae4)\n        {\n        LAB_0268aa1d:\n          if (player != player_00)\n          {\n            bVar3 = true;\n            goto LAB_0268a538;\n          }\n          goto LAB_026899c0;\n        }\n        if (0x3ae4 < (int)uVar10)\n        {\n          if (uVar10 != 0x3c7c)\n          {\n            if ((int)uVar10 < 0x3c7d)\n            {\n              if (uVar10 == 0x3b91)\n                goto LAB_0268a7e3;\n              if ((int)uVar10 < 0x3b92)\n              {\n                if ((uVar10 == 0x3b2d) || (uVar10 == 0x3b36))\n                  goto LAB_0268a518;\n              }\n              else if ((uVar10 == 0x3bc3) || (uVar10 == 0x3bf4))\n                goto LAB_0268a518;\n              goto LAB_026899c0;\n            }\n            if (uVar10 != 0x3eae)\n            {\n              if ((int)uVar10 < 0x3eaf)\n              {\n                if (((uVar10 & 0xfffffeff) == 0x3cb4) || (uVar10 == 0x3caa))\n                  goto LAB_0268a518;\n              }\n              else if ((uVar10 == 0x3ec5) || (uVar10 == 0x3eed))\n              {\n              LAB_0268a518:\n                if ((player == player_00) || (bVar6 = false, bVar3))\n                {\n                  bVar3 = true;\n                  goto LAB_0268a538;\n                }\n              }\n              goto LAB_026899c0;\n            }\n          }\n          goto LAB_0268aa1d;\n        }\n        if (uVar10 == 0x3953)\n        {\n          if (instance->targets[5].card == iid)\n          {\n            if (instance->targets[2].player == iid)\n            {\n              iVar9 = count_counters(player_00, card_00, COUNTER_VORTEX);\n              count = count_cards_by_id(player, 0x4aa5);\n              uVar10 = count_counters(player_00, card_00, COUNTER_VORTEX);\n              if ((uVar10 & 1) != 0)\n              {\n                uVar10 = uVar10 - 1;\n              }\n              uStack_14 = (iVar9 + uStack_14) - (uVar10 >> 1) * count;\n            }\n            else if (instance->targets[2].card == iid)\n            {\n              iVar9 = count_counters(player_00, card_00, COUNTER_VELOCITY);\n              count = count_cards_by_id(player, 0x4aa5);\n              uVar10 = count_counters(player_00, card_00, COUNTER_VELOCITY);\n              if ((uVar10 & 1) != 0)\n              {\n                uVar10 = uVar10 - 1;\n              }\n              uStack_14 = (iVar9 + uStack_14) - (uVar10 >> 1) * count;\n            }\n          }\n          goto LAB_026899c0;\n        }\n        if (0x3953 < (int)uVar10)\n        {\n          if (uVar10 == 0x3a78)\n            goto LAB_0268a939;\n          if ((int)uVar10 < 0x3a79)\n          {\n            if (uVar10 == 0x3a2f)\n              goto LAB_0268aa1d;\n            if (uVar10 == 0x3a34)\n              goto LAB_0268a518;\n          }\n          goto LAB_026899c0;\n        }\n        if (uVar10 == 0x3951)\n          goto LAB_0268a518;\n        card_00 = card_00 + 1;\n        COST_COLORLESS = cVar4;\n        event_result = iVar9;\n        affected_card_controller = iVar12;\n        affected_card = iVar5;\n        if (active_cards_count[player_00] <= card_00)\n          goto LAB_026899ce;\n        goto LAB_02689900;\n      }\n      if (uVar10 == 0x2b51)\n      {\n        uVar10 = instance->targets[1].card;\n        if (((0 < (int)uVar10) && ((uVar10 & 1) != 0)) && (player != player_00))\n        {\n          return 99;\n        }\n      }\n      else if ((int)uVar10 < 0x2b52)\n      {\n        if (uVar10 == 0x26ea)\n        {\n          iVar9 = is_what(-1, iid, 0x40);\n          if (player == player_00)\n          {\n            uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);\n            card_00 = card_00 + 1;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n        }\n        else if ((int)uVar10 < 0x26eb)\n        {\n          if (uVar10 == 0x24e1)\n          {\n            if ((player == player_00) &&\n                ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_MERFOLK),\n                  iVar9 != 0 || (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_WIZARD),\n                                 iVar9 != 0))))\n            {\n              uStack_14 = uStack_14 - 1;\n            }\n          }\n          else if ((int)uVar10 < 0x24e2)\n          {\n            if (uVar10 == 0x2472)\n            {\n              if ((player == player_00) &&\n                  ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ELEMENTAL),\n                    iVar9 != 0 || (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_WARRIOR),\n                                   iVar9 != 0))))\n              {\n                uStack_14 = uStack_14 - 1;\n              }\n            }\n            else if (((uVar10 == 0x2490) && (player == player_00)) &&\n                     ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_GOBLIN),\n                       iVar9 != 0 || (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ROGUE),\n                                      iVar9 != 0))))\n            {\n              uStack_14 = uStack_14 - 1;\n            }\n          }\n          else if ((uVar10 == 0x26ae) && (player != player_00))\n          {\n            if ((instance->targets[1].card == 0x42) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n            {\n              return 0x31;\n            }\n            if ((instance->targets[2].card == 0x42) && (iVar9 = is_what(-1, iid, 0x40), iVar9 != 0))\n            {\n              return 0x31;\n            }\n            if (instance->targets[3].card == 0x42)\n            {\n              iVar9 = 4;\n              goto LAB_0268a404;\n            }\n          }\n        }\n        else if (uVar10 == 0x2a09)\n        {\n          if (((player == player_00) &&\n               (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ELDRAZI), iVar9 != 0)) &&\n              ((uVar7 & 0x3e) == 0))\n          {\n            uStack_14 = uStack_14 - 2;\n          }\n        }\n        else if ((int)uVar10 < 0x2a0a)\n        {\n          if (uVar10 == 0x26eb)\n          {\n            iVar9 = is_what(-1, iid, 0x40);\n            if (iVar9 == 0)\n              goto LAB_02689dce;\n            card_00 = card_00 + 1;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n          if (((uVar10 == 0x294b) && (1 - player == player_00)) &&\n              (iVar9 = is_what(-1, iid, 1), iVar9 == 0))\n          {\n            uVar10 = instance->targets[10].card & uVar7;\n            goto joined_r0x0268a471;\n          }\n        }\n        else if (uVar10 == 0x2a2c)\n        {\n          iVar9 = is_what(-1, iid, 0x40);\n          uStack_14 = uStack_14 + (iVar9 == 0);\n          card_00 = card_00 + 1;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n      }\n      else if (uVar10 == 0x2ecf)\n      {\n        if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n        {\n          uStack_14 = uStack_14 - 2;\n        }\n      }\n      else if ((int)uVar10 < 0x2ed0)\n      {\n        if (uVar10 == 0x2de8)\n        {\n          if (current_phase - 0x15U < 9)\n          {\n            return 99;\n          }\n          card_00 = card_00 + 1;\n          COST_COLORLESS = cVar4;\n          event_result = iVar9;\n          affected_card_controller = iVar12;\n          affected_card = iVar5;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n        if ((int)uVar10 < 0x2de9)\n        {\n          if (uVar10 == 0x2d4e)\n            goto LAB_0268a17f;\n          if (((uVar10 == 0x2de7) && (player == player_00)) &&\n              (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n          {\n            iVar9 = count_counters(player, card_00, COUNTER_P1_P1);\n            uStack_14 = uStack_14 - iVar9;\n          }\n        }\n        else if ((uVar10 == 0x2e26) && (player != player_00))\n        {\n          if (current_turn == player_00)\n          {\n            return 99;\n          }\n          card_00 = card_00 + 1;\n          COST_COLORLESS = cVar4;\n          event_result = iVar9;\n          affected_card_controller = iVar12;\n          affected_card = iVar5;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n      }\n      else if (uVar10 == 0x2f7e)\n      {\n        if ((instance->targets[0].player == player) && (instance->targets[1].player == 0x42))\n        {\n          return 0x31;\n        }\n      }\n      else if ((int)uVar10 < 0x2f7f)\n      {\n        if (uVar10 == 0x2f02)\n          goto LAB_0268ab50;\n        if (((uVar10 == 0x2f19) && (player == player_00)) &&\n            (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ZOMBIE), iVar9 != 0))\n        {\n          uStack_14 = uStack_14 - pcVar1->req_colorless;\n        }\n      }\n      else\n      {\n        if (uVar10 == 0x2ff3)\n        {\n          if (player == player_00)\n            goto LAB_026899c0;\n          iVar9 = is_what(-1, iid, 2);\n          uStack_14 = uStack_14 + (iVar9 == 0);\n          card_00 = card_00 + 1;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n        if (((uVar10 == 0x3014) && (iVar9 = is_what(-1, iid, 2), iVar9 == 0)) &&\n            (iVar9 = is_what(-1, iid, 0x38), iVar9 != 0))\n        {\n          uStack_14 = uStack_14 - 2;\n        }\n      }\n    }\n  }\nLAB_026899c0:\n  bVar3 = bVar6;\n  card_00 = card_00 + 1;\n  if (active_cards_count[player_00] <= card_00)\n    goto LAB_026899ce;\n  goto LAB_02689900;\n}",
+      "after_definition": "int true_get_updated_casting_cost(int player, int card, int iid, event_t event, int orig_cless)\n{\n  if (1 < (unsigned int)player)\n  {\n    backtrace_and_abort(\"functions/functions.c:10186\\nplayer == 0 || player == 1 || \"\n                        \"!\\\"get_updated_casting_cost() needs a real player\\\"\");\n  }\n  if ((card < 0) == (iid < 0))\n  {\n    backtrace_and_abort(\n        \"functions/functions.c:10187\\n(card < 0) != (iid < 0) && \\\"get_updated_casting_cost() \"\n        \"needs exactly one of card and iid to be valid\\\"\");\n  }\n  if (iid < 0)\n    iid = get_card_instance(player, card)->internal_card_id;\n  if (cards_data[iid].type & TYPE_LAND)\n    return 0;\n  int spell_id = cards_data[iid].id;\n  card_ptr_t *definition = cards_ptr[spell_id];\n  uint32_t cost = orig_cless == -1 ? definition->req_colorless : (uint32_t)orig_cless;\n  if (orig_cless == -1 ? cost >= 16 : orig_cless >= 16)\n    cost = 0;\n  int colors = get_color_by_internal_id(player, iid);\n  int has_trinisphere = 0;\n  int controller;\n  int checked_player = 0;\n  for (controller = 0; controller < 2; controller++)\n  {\n    card_instance_t *instance;\n    int permanent = 0;\n    while (permanent < active_cards_count[controller])\n    {\n      if ((instance = in_play(controller, permanent)) &&\n          (is_what(controller, permanent, TYPE_EFFECT) ||\n           !is_humiliated(controller, permanent, AL_STATIC)))\n      {\n        int source_id = get_id(controller, permanent);\n        switch (source_id)\n        {\n        case CARD_ID_SPECIAL_EFFECT:\n        {\n          int flags = instance->targets[0].card;\n          if ((flags & SE_CSVID_CANT_BE_PLAYED) || (flags & SE_TYPE_CANT_BE_PLAYED))\n          {\n            if (player == instance->targets[0].player || instance->targets[0].player == ANYBODY)\n            {\n              if (flags & SE_CSVID_CANT_BE_PLAYED)\n              {\n                if (cards_data[iid].id == instance->targets[1].player)\n                {\n                  return 99;\n                }\n              }\n              if ((flags & SE_TYPE_CANT_BE_PLAYED) && instance->targets[1].player > -1)\n              {\n                if (is_what(-1, iid, instance->targets[1].player))\n                {\n                  return 99;\n                }\n              }\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_ANGELIC_ARBITER:\n        {\n          if (instance->targets[1].card > 0 && (instance->targets[1].card & 1) &&\n              controller != player)\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_ANIMAR_SOUL_OF_ELEMENTS:\n        {\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost -= count_1_1_counters(controller, permanent);\n          }\n          break;\n        }\n\n        case CARD_ID_ARCANE_LABORATORY:\n        case CARD_ID_RULE_OF_LAW:\n        {\n          if (instance->targets[1].player > 0 && (instance->targets[1].player & (1 + player)))\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_ARCANE_MELEE:\n        {\n          if (!is_what(-1, iid, TYPE_CREATURE) && is_what(-1, iid, TYPE_SPELL))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_AURA_OF_SILENCE:\n        {\n          if (controller != player && is_what(-1, iid, TYPE_ARTIFACT | TYPE_ENCHANTMENT))\n          {\n            cost += 2;\n          }\n          break;\n        }\n\n        case CARD_ID_BALLYRUSH_BANNERET:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_SOLDIER) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_KITHKIN)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_BASANDRA_BATTLE_SERAPH:\n        {\n          if (current_phase > PHASE_MAIN1 && current_phase < PHASE_MAIN2)\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_BOSK_BANNERET:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_TREEFOLK) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_SHAMAN)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_BRAND_OF_ILL_OMEN:\n        {\n          if (player == instance->damage_target_player && is_what(-1, iid, TYPE_CREATURE))\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_BRIGHTHEARTH_BANNERET:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_ELEMENTAL) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_WARRIOR)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_CENTAUR_OMENREADER:\n        {\n          if (is_tapped(controller, permanent) && controller == player &&\n              is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_CLOUD_KEY:\n        {\n          if (instance->targets[1].card > 0 && is_what(-1, iid, instance->targets[1].card))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_COUNCIL_OF_THE_ABSOLUTE:\n        {\n          if (get_card_instance(controller, permanent)->targets[1].card == spell_id)\n          {\n            if (controller == player)\n            {\n              cost -= 2;\n            }\n            else\n            {\n              return 99;\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_CURSE_OF_EXHAUSTION:\n        {\n          if (player == instance->targets[0].player && instance->targets[1].player == 66)\n          {\n            return 49;\n          }\n          break;\n        }\n\n        case CARD_ID_DEFENSE_GRID:\n        {\n          if (current_turn != player)\n          {\n            cost += 3;\n          }\n          break;\n        }\n\n        case CARD_ID_DRAGONSPEAKER_SHAMAN:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_DRAGON))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_ELDER_DRAGON_HIGHLANDER:\n        {\n          if (instance->targets[5].card == iid)\n          {\n            counter_t counter_type;\n            if (instance->targets[2].player == iid)\n              counter_type = COUNTER_VORTEX;\n            else if (instance->targets[2].card == iid)\n              counter_type = COUNTER_VELOCITY;\n            else\n              break;\n            int counters = count_counters(controller, permanent, counter_type);\n            int myths = count_cards_by_id(player, CARD_ID_MYTH_UNBOUND);\n            unsigned int repeated_counters = count_counters(controller, permanent, counter_type);\n            cost += counters - (repeated_counters >> 1) * myths;\n          }\n          break;\n        }\n\n        case CARD_ID_EMERALD_MEDALLION:\n        {\n          if (controller == player && (colors & COLOR_TEST_GREEN))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_ETHERIUM_SCULPTOR:\n        {\n          if (is_what(-1, iid, TYPE_ARTIFACT) && controller == player)\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_ETHERSWORN_CANONIST:\n        {\n          if (!is_what(-1, iid, TYPE_ARTIFACT))\n          {\n            if (instance->targets[1].player > 0 && (instance->targets[1].player & (1 + player)))\n            {\n              return 99;\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_EXCLUSION_RITUAL:\n        {\n          if (instance->targets[1].card == spell_id)\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_EYE_OF_UGIN:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_ELDRAZI) &&\n              !(colors & COLOR_TEST_ANY_COLORED))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_FROGTOSSER_BANNERET:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_GOBLIN) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_ROGUE)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_GADDOCK_TEEG:\n        {\n          if (!is_what(-1, iid, TYPE_CREATURE))\n          {\n            if (get_cmc_by_id(spell_id) > 3)\n            {\n              return 99;\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_GLOOM:\n        {\n          if ((colors & COLOR_TEST_WHITE))\n          {\n            cost += 3;\n          }\n          break;\n        }\n\n        case CARD_ID_GOBLIN_ELECTROMANCER:\n        {\n          if (controller == player && !is_what(-1, iid, TYPE_CREATURE) &&\n              is_what(-1, iid, TYPE_SPELL))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_GOBLIN_WARCHIEF:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_GOBLIN))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_GRAND_ABOLISHER:\n        {\n          if (controller != player && current_turn == controller)\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_GRAND_ARBITER_AUGUSTIN_IV:\n        {\n          if (controller == player)\n          {\n            cost--;\n          }\n          else\n          {\n            cost++;\n          }\n          break;\n        }\n\n        case CARD_ID_GRID_MONITOR:\n        case CARD_ID_STEEL_GOLEM:\n        {\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE))\n          {\n            return 49;\n          }\n          break;\n        }\n\n        case CARD_ID_HEARTLESS_SUMMONING:\n        {\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_HELM_OF_AWAKENING:\n          cost--;\n          break;\n\n        case CARD_ID_HERALD_OF_WAR:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_ANGEL) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_HUMAN)))\n          {\n            cost -= count_1_1_counters(controller, permanent);\n          }\n          break;\n        }\n\n        case CARD_ID_HERO_OF_IROAS:\n        {\n          if (controller == player && has_subtype(-1, iid, SUBTYPE_AURA) &&\n              !is_humiliated(controller, permanent, AL_STATIC))\n          {\n            --cost;\n          }\n          break;\n        }\n\n        case CARD_ID_IN_THE_EYE_OF_CHAOS:\n        {\n          if (is_what(-1, iid, TYPE_INSTANT) && !is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost += get_cmc_by_id(spell_id);\n          }\n          break;\n        }\n\n        case CARD_ID_IONA_SHIELD_OF_EMERIA:\n        {\n          if (controller == 1 - player && !is_what(-1, iid, TYPE_LAND))\n          {\n            if (colors & instance->targets[10].card)\n            {\n              return 49;\n            }\n          }\n          break;\n        }\n\n          /* Semi-general case.  Checks against player need to be handled both here and specially in\n           * the card function; and the card function shouldn't do anything with\n           * affected_card_controller except check it with affect_me() or pass it on to functions\n           * that explicitly understand the\n           * (-1,iid) convention.  Usually this means checking EVENT_MODIFY_COST_GLOBAL first and\n           * explicitly returning at the end.\n           * Simply checking affected_card_controller == player in the card function WILL FAIL.\n           * Calling most functions that look at affected_card_controller WILL CRASH. */\n\n          // Spells your opponents cast cost more/cost less/can't be played\n        case CARD_ID_ALHAMMARRET_HIGH_ARBITER:\n        case CARD_ID_DRAGONLORD_DROMOKA:\n        case CARD_ID_VOID_WINNOWER:\n        case CARD_ID_BRISELA_VOICE_OF_NIGHTMARES:\n          if (player == controller)\n          {\n            break;\n          }\n          checked_player = 1;\n          // intentionally fall through\n\n          // Spells you cast cost more/cost less/can't be played.  See above for usage.\n        case CARD_ID_ARCHENEMY:\n        case CARD_ID_CONDUIT_OF_RUIN:\n        case CARD_ID_DRAGONLORDS_SERVANT:\n        case CARD_ID_FOUNDRY_INSPECTOR:\n        case CARD_ID_GEIST_FUELED_SCARECROW:\n        case CARD_ID_HERALD_OF_KOZILEK:\n        case CARD_ID_HERALD_OF_THE_PANTHEON:\n        case CARD_ID_JACES_SANCTUM:\n        case CARD_ID_KRALLENHORDE_HOWLER:\n        case CARD_ID_MIZZIX_OF_THE_IZMAGNUS:\n        case CARD_ID_PLANAR_GATE:\n        case CARD_ID_SEAL_OF_THE_GUILDPACT:\n        case CARD_ID_VORACIOUS_READER:\n          if (player != controller && !checked_player)\n          {\n            break;\n          }\n          checked_player = 1;\n          // intentionally fall through\n\n          // Spells anybody casts cost more/cost less/can't be played.  See above for usage.\n        case CARD_ID_FEROZS_BAN:\n        case CARD_ID_IRINI_SENGIR:\n        {\n          int old_cost_colorless = COST_COLORLESS;\n          int old_affected_card_controller = affected_card_controller;\n          int old_affected_card = affected_card;\n          int old_event_result = event_result;\n\n          event_result = player;\n          if (card >= 0)\n          {\n            affected_card_controller = player;\n            affected_card = card;\n          }\n          else\n          {\n            affected_card_controller = -1;\n            affected_card = iid;\n          }\n\n          call_card_function(controller, permanent, EVENT_MODIFY_COST_GLOBAL);\n\n          affected_card_controller = old_affected_card_controller;\n          affected_card = old_affected_card;\n          event_result = old_event_result;\n\n          cost += COST_COLORLESS - old_cost_colorless;\n          COST_COLORLESS = old_cost_colorless;\n          break;\n        }\n\n        case CARD_ID_JET_MEDALLION:\n        {\n          if (controller == player && (colors & COLOR_TEST_BLACK))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_LOCKET_OF_YESTERDAYS:\n        {\n          if (controller == player)\n          {\n            cost -= count_graveyard_by_id(player, spell_id);\n          }\n          break;\n        }\n\n        case CARD_ID_LODESTONE_GOLEM:\n        {\n          if (!is_what(-1, iid, TYPE_ARTIFACT))\n          {\n            cost++;\n          }\n          break;\n        }\n\n        case CARD_ID_MANA_MATRIX:\n        {\n          if (controller == player &&\n              (is_what(-1, iid, TYPE_INSTANT) || is_what(-1, iid, TYPE_ENCHANTMENT)))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_MEDDLING_MAGE:\n        case CARD_ID_NEVERMORE:\n        {\n          if (instance->targets[1].card == spell_id)\n          {\n            return 49;\n          }\n          break;\n        }\n\n        case CARD_ID_MYCOSYNTH_GOLEM:\n        {\n          if (is_what(-1, iid, TYPE_ARTIFACT) && is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost -= count_subtype(player, TYPE_ARTIFACT, -1);\n          }\n          break;\n        }\n\n        case CARD_ID_NIGHTSCAPE_FAMILIAR:\n        {\n          if (controller == player &&\n              (colors &\n               get_sleighted_color_test(controller, permanent, COLOR_TEST_BLUE | COLOR_TEST_RED)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_OMNISCIENCE:\n        {\n          if (controller == player)\n          {\n            cost -= definition->req_colorless;\n          }\n          break;\n        }\n\n        case CARD_ID_PEARL_MEDALLION:\n        {\n          if (controller == player && (colors & COLOR_TEST_WHITE))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_RAKDOS_LORD_OF_RIOTS:\n        {\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost -= get_trap_condition(1 - player, TRAP_LIFE_LOST);\n          }\n          break;\n        }\n\n        case CARD_ID_ROOFTOP_STORM:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_ZOMBIE))\n          {\n            cost -= definition->req_colorless;\n          }\n          break;\n        }\n\n        case CARD_ID_RUBY_MEDALLION:\n        {\n          if (controller == player && (colors & COLOR_TEST_RED))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_SAPPHIRE_MEDALLION:\n        {\n          if (controller == player && (colors & COLOR_TEST_BLUE))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_SPHERE_OF_RESISTANCE:\n        {\n          cost++;\n          break;\n        }\n\n        case CARD_ID_STINKDRINKER_DAREDEVIL:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_GIANT))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_STONE_CALENDAR:\n        {\n          if (controller == player)\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_STONYBROOK_BANNERET:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_MERFOLK) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_WIZARD)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_STORMSCAPE_FAMILIAR:\n        {\n          if (controller == player &&\n              (colors & get_sleighted_color_test(controller, permanent,\n                                                 COLOR_TEST_WHITE | COLOR_TEST_BLACK)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_SUNSCAPE_FAMILIAR:\n        {\n          if (controller == player &&\n              (colors &\n               get_sleighted_color_test(controller, permanent, COLOR_TEST_GREEN | COLOR_TEST_BLUE)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_TEFERI_MAGE_OF_ZHALFIR:\n        {\n          if (controller != player && !can_sorcery_be_played(player, event))\n          {\n            return 49;\n          }\n          break;\n        }\n\n        case CARD_ID_THALIA_GUARDIAN_OF_THRABEN:\n        {\n          if (controller != player && !is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost++;\n          }\n          break;\n        }\n\n        case CARD_ID_THORNSCAPE_FAMILIAR:\n        {\n          if (controller == player &&\n              (colors &\n               get_sleighted_color_test(controller, permanent, COLOR_TEST_RED | COLOR_TEST_WHITE)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_THUNDERSCAPE_FAMILIAR:\n        {\n          if (controller == player &&\n              (colors & get_sleighted_color_test(controller, permanent,\n                                                 COLOR_TEST_BLACK | COLOR_TEST_GREEN)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_TRINISPHERE:\n          has_trinisphere = 1;\n          break;\n\n        case CARD_ID_THORN_OF_AMETHYST:\n        case CARD_ID_VRYN_WINGMARE:\n        {\n          if (!is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost++;\n          }\n          break;\n        }\n\n        case CARD_ID_UNDEAD_WARCHIEF:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_ZOMBIE))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_VOIDSTONE_GARGOYLE:\n        {\n          if (instance->targets[1].card == spell_id)\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_WARD_OF_BONES:\n        {\n          if (controller != player)\n          {\n            if (instance->targets[1].card == 66 && is_what(-1, iid, TYPE_CREATURE))\n            {\n              return 49;\n            }\n            else if (instance->targets[2].card == 66 && is_what(-1, iid, TYPE_ARTIFACT))\n            {\n              return 49;\n            }\n            else if (instance->targets[3].card == 66 && is_what(-1, iid, TYPE_ENCHANTMENT))\n            {\n              return 49;\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_OBSCURING_AETHER:\n        case CARD_ID_DREAM_CHISEL:\n        {\n          if (controller == player && cards_data[iid].id == CARD_ID_FACE_DOWN_CREATURE)\n          {\n            --cost;\n          }\n          break;\n        }\n\n        case CARD_ID_CONSPIRACY_HYMN_OF_THE_WILDS:\n        {\n          if (controller == player)\n          {\n            if (is_what(-1, iid, TYPE_SPELL))\n            {\n              infinite_casting_cost();\n            }\n            if (is_what(-1, iid, TYPE_CREATURE) && get_stormcreature_count(controller) == 0)\n            {\n              COST_COLORLESS--;\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_SANCTUM_PRELATE:\n        {\n          int value = instance->info_slot;\n          if (!is_what(-1, iid, TYPE_CREATURE) && get_cmc_by_internal_id(iid) == value)\n          {\n            infinite_casting_cost();\n          }\n          break;\n        }\n\n        case CARD_ID_AETHER_STORM:\n          if (is_what(-1, iid, TYPE_CREATURE))\n            return 99;\n          break;\n\n        case CARD_ID_BONTUS_MONUMENT:\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE) &&\n              (get_sleighted_color_test(controller, permanent, COLOR_TEST_BLACK) & colors))\n            --cost;\n          break;\n        case CARD_ID_KEFNETS_MONUMENT:\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE) &&\n              (get_sleighted_color_test(controller, permanent, COLOR_TEST_BLUE) & colors))\n            --cost;\n          break;\n        case CARD_ID_RHONASS_MONUMENT:\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE) &&\n              (get_sleighted_color_test(controller, permanent, COLOR_TEST_GREEN) & colors))\n            --cost;\n          break;\n        case CARD_ID_HAZORETS_MONUMENT:\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE) &&\n              (get_sleighted_color_test(controller, permanent, COLOR_TEST_RED) & colors))\n            --cost;\n          break;\n        case CARD_ID_OKETRAS_MONUMENT:\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE) &&\n              (get_sleighted_color_test(controller, permanent, COLOR_TEST_WHITE) & colors))\n            --cost;\n          break;\n\n        case CARD_ID_HAMZA_GUARDIAN_OF_ARASHIN:\n          if (controller == player)\n            cost -= count_creatures_with_p1_p1_counter(player);\n          break;\n\n        case CARD_ID_SPECTACLE_MAGE:\n          if (controller == player && is_what(-1, iid, TYPE_SPELL))\n            cost -= get_cmc_by_id(spell_id) > 4;\n          break;\n\n        default:\n          break;\n        }\n      }\n      permanent++;\n    }\n  }\n\n  if (has_trinisphere && (int32_t)cost < 3 && dont_account_for_trinisphere <= 0)\n  {\n    if (orig_cless == -1)\n    {\n      unsigned int colored_cost = definition->req_black + definition->req_blue +\n                                  definition->req_green + definition->req_red +\n                                  definition->req_white;\n      if (colored_cost < 3)\n        cost = 3 - colored_cost;\n    }\n    else\n      cost = 3U - (uint32_t)orig_cless;\n  }\n  return (int32_t)(cost + (uint32_t)havengul_lich_hack);\n}",
+      "before_sha256": "a2f65ac5a70e8d75b785b9547254d7f05c624181d6d872cfad27b77026666134",
+      "after_sha256": "5cc4b0962f3109c0557f496021030cecf80bf2944fdd3c4fc232839f44827dc1",
+      "casting_cost_cleanup": true,
+      "facts": {
+        "removed_gotos": 84,
+        "removed_lab_gotos": 83,
+        "source_lines_removed": 184,
+        "removed_placeholder_occurrences": 605,
+        "removed_placeholder_names": 13
+      },
+      "expanded_before_definition": "int true_get_updated_casting_cost(int player, int card, int iid, event_t event, int orig_cless)\n{\n  int count;\n  card_ptr_t *pcVar1;\n  \n\n _Bool \n\n      bVar2;\n  \n\n _Bool \n\n      bVar3;\n  char cVar4;\n  int iVar5;\n  \n\n _Bool \n\n      bVar6;\n  unsigned int uVar7;\n  card_instance_t *instance;\n  int iVar9;\n  unsigned int uVar10;\n  int iVar11;\n  int iVar12;\n  unsigned int uVar13;\n  int card_00;\n  int player_00;\n  unsigned int uStack_14;\n\n  if (1 < (unsigned int)player)\n  {\n    backtrace_and_abort(\"functions/functions.c:10186\\nplayer == 0 || player == 1 || \"\n                        \"!\\\"get_updated_casting_cost() needs a real player\\\"\");\n  }\n  if ((char)-((char)((unsigned char)((unsigned int)card >> 0x18) ^ 0xff) >> 7) !=\n      (char)-(char)(iid >> 0x1f))\n  {\n    backtrace_and_abort(\n        \"functions/functions.c:10187\\n(card < 0) != (iid < 0) && \\\"get_updated_casting_cost() \"\n        \"needs exactly one of card and iid to be valid\\\"\");\n  }\n  if (iid < 0)\n  {\n    instance = get_card_instance(player, card);\n    iid = instance->internal_card_id;\n  }\n  if ((cards_data[iid].type & 1) != 0)\n  {\n    return 0;\n  }\n  uVar13 = (unsigned int)cards_data[iid].id;\n  pcVar1 = cards_ptr[uVar13];\n  uStack_14 = orig_cless;\n  if (orig_cless == -1)\n  {\n    uStack_14 = (unsigned int)pcVar1->req_colorless;\n    if (uStack_14 < 0x10)\n      goto LAB_026898ba;\n  }\n  else if (orig_cless < 0x10)\n    goto LAB_026898ba;\n  uStack_14 = 0;\nLAB_026898ba:\n  player_00 = 0;\n  uVar7 = get_color_by_internal_id(player, iid);\n  bVar3 = \n\n         0\n\n              ;\n  bVar2 = \n\n         0\n\n              ;\n  while (active_cards_count[player_00] < 1)\n  {\n  LAB_026899ce:\n    player_00 = player_00 + 1;\n    if (player_00 == 2)\n    {\n      if (((bVar2) && ((int)uStack_14 < 3)) && (dont_account_for_trinisphere < 1))\n      {\n        if (orig_cless == -1)\n        {\n          uVar13 = (unsigned int)pcVar1->req_black + (unsigned int)pcVar1->req_blue +\n                   (unsigned int)pcVar1->req_green + (unsigned int)pcVar1->req_red +\n                   (unsigned int)pcVar1->req_white;\n          if (uVar13 < 3)\n          {\n            uStack_14 = 3 - uVar13;\n          }\n        }\n        else\n        {\n          uStack_14 = 3 - orig_cless;\n        }\n      }\n      return uStack_14 + havengul_lich_hack;\n    }\n  }\n  card_00 = 0;\nLAB_02689900:\n  instance = in_play(player_00, card_00);\n  bVar6 = bVar3;\n  if ((instance != \n\n                  ((void *)0)\n\n                      ) &&\n      ((iVar9 = is_what(player_00, card_00, 0x80),\n        iVar9 != 0 || (iVar9 = is_humiliated(player_00, card_00, AL_STATIC), iVar9 == 0))))\n  {\n    uVar10 = get_id(player_00, card_00);\n    iVar5 = affected_card;\n    iVar12 = affected_card_controller;\n    iVar9 = event_result;\n    cVar4 = COST_COLORLESS;\n    if (uVar10 == 0x2470)\n    {\n      if ((player == player_00) &&\n          ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_TREEFOLK),\n            iVar9 != 0 ||\n                (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_SHAMAN), iVar9 != 0))))\n      {\n        uStack_14 = uStack_14 - 1;\n      }\n      goto LAB_026899c0;\n    }\n    if ((int)uVar10 < 0x2471)\n    {\n      if (uVar10 == 0x14bf)\n      {\n        if (player == player_00)\n        {\n          uVar10 = get_sleighted_color_test(player, card_00, 0x22);\n          uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n        }\n      }\n      else if ((int)uVar10 < 0x14c0)\n      {\n        if (uVar10 == 0xb78)\n        {\n          if ((player != player_00) && (iVar9 = is_what(-1, iid, 0x44), iVar9 != 0))\n          {\n            uStack_14 = uStack_14 + 2;\n          }\n        }\n        else if ((int)uVar10 < 0xb79)\n        {\n          if (uVar10 == 0x3f4)\n          {\n            if (current_turn != player)\n            {\n              card_00 = card_00 + 1;\n              uStack_14 = uStack_14 + 3;\n              COST_COLORLESS = cVar4;\n              event_result = iVar9;\n              affected_card_controller = iVar12;\n              affected_card = iVar5;\n              if (active_cards_count[player_00] <= card_00)\n                goto LAB_026899ce;\n              goto LAB_02689900;\n            }\n          }\n          else\n          {\n            if (0x3f4 < (int)uVar10)\n            {\n              if (uVar10 == 0x883)\n              {\n              LAB_02689f50:\n                iVar9 = 2;\n              LAB_02689f58:\n                iVar9 = is_what(-1, iid, iVar9);\n                if (iVar9 != 0)\n                {\n                  return 99;\n                }\n                card_00 = card_00 + 1;\n                if (active_cards_count[player_00] <= card_00)\n                  goto LAB_026899ce;\n              }\n              else\n              {\n                if ((int)uVar10 < 0x884)\n                {\n                  if (uVar10 == 0x66a)\n                    goto LAB_0268a538;\n                  if ((uVar10 == 0x756) && (instance->damage_target_player == player))\n                    goto LAB_02689f50;\n                  goto LAB_026899c0;\n                }\n                if (uVar10 == 0x89b)\n                {\n                LAB_0268a538:\n                  iVar11 = (int)COST_COLORLESS;\n                  event_result = player;\n                  if (card < 0)\n                  {\n                    affected_card = iid;\n                    affected_card_controller = -1;\n                  }\n                  else\n                  {\n                    affected_card_controller = player;\n                    affected_card = card;\n                  }\n                  call_card_function(player_00, card_00, EVENT_MODIFY_COST_GLOBAL);\n                  uStack_14 = uStack_14 + (COST_COLORLESS - iVar11);\n                  card_00 = card_00 + 1;\n                  COST_COLORLESS = cVar4;\n                  event_result = iVar9;\n                  affected_card_controller = iVar12;\n                  affected_card = iVar5;\n                  if (active_cards_count[player_00] <= card_00)\n                    goto LAB_026899ce;\n                }\n                else\n                {\n                  if (uVar10 != 0xa9f)\n                    goto LAB_026899c0;\n                  card_00 = card_00 + 1;\n                  uStack_14 = uStack_14 - 1;\n                  COST_COLORLESS = cVar4;\n                  event_result = iVar9;\n                  affected_card_controller = iVar12;\n                  affected_card = iVar5;\n                  if (active_cards_count[player_00] <= card_00)\n                    goto LAB_026899ce;\n                }\n              }\n              goto LAB_02689900;\n            }\n            if (uVar10 == 0x2a9)\n            {\n              iVar9 = is_what(-1, iid, 0x10);\n              if ((iVar9 != 0) && (iVar9 = is_what(-1, iid, 2), iVar9 == 0))\n              {\n                iVar9 = get_cmc_by_id(uVar13);\n                uStack_14 = uStack_14 + iVar9;\n              }\n            }\n            else if ((int)uVar10 < 0x2aa)\n            {\n              if (uVar10 == 100)\n              {\n                if ((uVar7 & 0x20) != 0)\n                {\n                  card_00 = card_00 + 1;\n                  uStack_14 = uStack_14 + 3;\n                  COST_COLORLESS = cVar4;\n                  event_result = iVar9;\n                  affected_card_controller = iVar12;\n                  affected_card = iVar5;\n                  if (active_cards_count[player_00] <= card_00)\n                    goto LAB_026899ce;\n                  goto LAB_02689900;\n                }\n              }\n              else if (uVar10 == 0x16b)\n              {\n                uStack_14 = uStack_14 - (player == player_00);\n                card_00 = card_00 + 1;\n                COST_COLORLESS = cVar4;\n                event_result = iVar9;\n                affected_card_controller = iVar12;\n                affected_card = iVar5;\n                if (active_cards_count[player_00] <= card_00)\n                  goto LAB_026899ce;\n                goto LAB_02689900;\n              }\n            }\n            else if (uVar10 == 0x2d1)\n            {\n              if ((player == player_00) &&\n                  ((iVar9 = is_what(-1, iid, 0x10),\n                    iVar9 != 0 || (iVar9 = is_what(-1, iid, 4), iVar9 != 0))))\n              {\n                uStack_14 = uStack_14 - 2;\n              }\n            }\n            else if (uVar10 == 0x2e8)\n              goto LAB_0268a518;\n          }\n        }\n        else if (uVar10 == 0xcb8)\n        {\n          if (player == player_00)\n          {\n            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 0x10) == 0);\n          }\n        }\n        else if ((int)uVar10 < 0xcb9)\n        {\n          if (uVar10 == 0xc6c)\n          {\n            if (player == player_00)\n            {\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 2) == 0);\n            }\n          }\n          else if ((int)uVar10 < 0xc6d)\n          {\n            if (uVar10 == 0xbe3)\n            {\n            LAB_0268b118:\n              if (player == player_00)\n              {\n                iVar9 = 2;\n              LAB_0268a404:\n                uVar10 = is_what(-1, iid, iVar9);\n              joined_r0x0268a471:\n                if (uVar10 != 0)\n                {\n                  return 0x31;\n                }\n              }\n            }\n            else if ((uVar10 == 0xc3c) && (player == player_00))\n            {\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 8) == 0);\n            }\n          }\n          else if ((uVar10 == 0xc99) && (player == player_00))\n          {\n            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 0x20) == 0);\n          }\n        }\n        else if (uVar10 == 0xe70)\n        {\n        LAB_02689dce:\n          uVar10 = instance->targets[1].player;\n          if (0 < (int)uVar10)\n          {\n            if ((player + 1U & uVar10) != 0)\n            {\n              return 99;\n            }\n            card_00 = card_00 + 1;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n        }\n        else if ((int)uVar10 < 0xe71)\n        {\n          if (uVar10 != 0xcbd)\n          {\n            if (uVar10 != 0xdee)\n              goto LAB_026899c0;\n            card_00 = card_00 + 1;\n            uStack_14 = uStack_14 + 1;\n            COST_COLORLESS = cVar4;\n            event_result = iVar9;\n            affected_card_controller = iVar12;\n            affected_card = iVar5;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n          if (player == player_00)\n          {\n            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 4) == 0);\n          }\n        }\n        else\n        {\n          if (uVar10 == 0x148b)\n          {\n          LAB_0268ab50:\n            if (instance->targets[1].card == uVar13)\n            {\n              return 0x31;\n            }\n            card_00 = card_00 + 1;\n            COST_COLORLESS = cVar4;\n            event_result = iVar9;\n            affected_card_controller = iVar12;\n            affected_card = iVar5;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n          if ((uVar10 == 0x1495) && (player == player_00))\n          {\n            uVar10 = get_sleighted_color_test(player, card_00, 0x14);\n            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n          }\n        }\n      }\n      else if (uVar10 == 0x2018)\n      {\n        if (player != player_00)\n        {\n          card_00 = card_00 + 1;\n          uStack_14 = uStack_14 + 1;\n          COST_COLORLESS = cVar4;\n          event_result = iVar9;\n          affected_card_controller = iVar12;\n          affected_card = iVar5;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n        uStack_14 = uStack_14 - 1;\n      }\n      else if ((int)uVar10 < 0x2019)\n      {\n        if (uVar10 == 0x1989)\n        {\n          if (player == player_00)\n          {\n            iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_GOBLIN);\n            uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);\n          }\n        }\n        else if ((int)uVar10 < 0x198a)\n        {\n          if (uVar10 == 0x14cb)\n          {\n            if (player == player_00)\n            {\n              uVar10 = get_sleighted_color_test(player_00, card_00, 10);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n            }\n          }\n          else if ((int)uVar10 < 0x14cc)\n          {\n            if (uVar10 == 0x14c4)\n            {\n              if (player == player_00)\n              {\n                uVar10 = get_sleighted_color_test(player, card_00, 0xc);\n                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n              }\n            }\n            else if ((uVar10 == 0x14c9) && (player == player_00))\n            {\n              uVar10 = get_sleighted_color_test(player, card_00, 0x30);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n            }\n          }\n          else if (uVar10 == 0x17ec)\n          {\n          LAB_0268a939:\n            if ((player == player_00) && (cards_data[iid].id == 0x33c4))\n            {\n              uStack_14 = uStack_14 - 1;\n            }\n          }\n          else if (((uVar10 == 0x1974) && (player == player_00)) &&\n                   (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_DRAGON), iVar9 != 0))\n          {\n            uStack_14 = uStack_14 - 2;\n          }\n        }\n        else\n        {\n          if (uVar10 == 0x1b47)\n          {\n            card_00 = card_00 + 1;\n            bVar2 = \n\n                   1\n\n                       ;\n            COST_COLORLESS = cVar4;\n            event_result = iVar9;\n            affected_card_controller = iVar12;\n            affected_card = iVar5;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n          if ((int)uVar10 < 0x1b48)\n          {\n            if (uVar10 == 0x1a19)\n              goto LAB_0268b118;\n            if (uVar10 == 0x1a73)\n              goto LAB_02689dce;\n            if ((uVar10 == 0x19c6) && (player == player_00))\n            {\n              iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ZOMBIE);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);\n            }\n          }\n          else if (((uVar10 == 0x1bb3) && (iVar9 = is_what(-1, iid, 0x40), iVar9 != 0)) &&\n                   (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n          {\n            iVar9 = count_subtype(player, 0x40, -1);\n            uStack_14 = uStack_14 - iVar9;\n          }\n        }\n      }\n      else if (uVar10 == 0x22c8)\n      {\n        iVar9 = instance->targets[1].card;\n        if (0 < iVar9)\n        {\n          iVar9 = is_what(-1, iid, iVar9);\n          uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);\n          card_00 = card_00 + 1;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n      }\n      else if ((int)uVar10 < 0x22c9)\n      {\n        if (uVar10 == 0x22ac)\n        {\n        LAB_0268a17f:\n          if (instance->targets[1].card == uVar13)\n          {\n            return 99;\n          }\n          card_00 = card_00 + 1;\n          COST_COLORLESS = cVar4;\n          event_result = iVar9;\n          affected_card_controller = iVar12;\n          affected_card = iVar5;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n        if ((int)uVar10 < 0x22ad)\n        {\n          if (uVar10 == 0x2195)\n          {\n            if (player == player_00)\n            {\n              iVar9 = count_graveyard_by_id(player, uVar13);\n              uStack_14 = uStack_14 - iVar9;\n            }\n          }\n          else if ((uVar10 == 0x21f5) && (player != player_00))\n          {\n            iVar9 = can_sorcery_be_played(player, event);\n            if (iVar9 == 0)\n            {\n              return 0x31;\n            }\n            card_00 = card_00 + 1;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n        }\n        else if ((((uVar10 == 0x22c5) &&\n                   (iVar9 = is_tapped(player_00, card_00), player == player_00)) &&\n                  (iVar9 != 0)) &&\n                 (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n        {\n          uStack_14 = uStack_14 - 2;\n        }\n      }\n      else if (uVar10 == 0x2438)\n      {\n        if ((player == player_00) &&\n            (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_GIANT), iVar9 != 0))\n        {\n          uStack_14 = uStack_14 - 2;\n        }\n      }\n      else if ((int)uVar10 < 0x2439)\n      {\n        if (((uVar10 == 0x23ba) && (iVar9 = is_what(-1, iid, 2), iVar9 == 0)) &&\n            (iVar9 = get_cmc_by_id(uVar13), 3 < iVar9))\n        {\n          return 99;\n        }\n      }\n      else\n      {\n        if (uVar10 == 0x2444)\n        {\n        LAB_0268a7e3:\n          iVar9 = is_what(-1, iid, 2);\n          uStack_14 = uStack_14 + (iVar9 == 0);\n          card_00 = card_00 + 1;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n        if (((uVar10 == 0x246b) && (player == player_00)) &&\n            ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_SOLDIER),\n              iVar9 != 0 ||\n                  (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_KITHKIN), iVar9 != 0))))\n        {\n          uStack_14 = uStack_14 - 1;\n        }\n      }\n    }\n    else\n    {\n      if (uVar10 == 0x306c)\n      {\n        if ((player == player_00) &&\n            ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ANGEL),\n              iVar9 != 0 ||\n                  (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_HUMAN), iVar9 != 0))))\n        {\n          iVar9 = count_counters(player_00, card_00, COUNTER_P1_P1);\n          uStack_14 = uStack_14 - iVar9;\n        }\n        goto LAB_026899c0;\n      }\n      if (0x306c < (int)uVar10)\n      {\n        if (uVar10 == 0x3f84)\n        {\n          if (player == player_00)\n          {\n            iVar9 = is_what(-1, iid, 0x38);\n            if (iVar9 != 0)\n            {\n              COST_WHITE = 'd';\n              COST_RED = 'd';\n              COST_GREEN = 'd';\n              COST_BLUE = 'd';\n              COST_BLACK = 'd';\n              COST_COLORLESS = 'd';\n            }\n            iVar9 = is_what(-1, iid, 2);\n            if ((iVar9 != 0) && (iVar9 = get_stormcreature_count(player_00), iVar9 == 0))\n            {\n              COST_COLORLESS = COST_COLORLESS + -1;\n            }\n          }\n          goto LAB_026899c0;\n        }\n        if (0x3f84 < (int)uVar10)\n        {\n          if (uVar10 == 0x4258)\n          {\n            if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n            {\n              uVar10 = get_sleighted_color_test(player, card_00, 0x20);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n            }\n          }\n          else if ((int)uVar10 < 0x4259)\n          {\n            if (uVar10 == 0x41d6)\n            {\n              if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n              {\n                uVar10 = get_sleighted_color_test(player_00, card_00, 2);\n                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n              }\n            }\n            else if ((int)uVar10 < 0x41d7)\n            {\n              if (uVar10 == 0x3ffd)\n                goto LAB_0268a518;\n              if (uVar10 == 0x407a)\n              {\n                iVar9 = instance->info_slot;\n                iVar12 = is_what(-1, iid, 2);\n                if ((iVar12 == 0) && (iVar12 = get_cmc_by_internal_id(iid), iVar12 == iVar9))\n                {\n                  COST_WHITE = 'd';\n                  COST_RED = 'd';\n                  COST_GREEN = 'd';\n                  COST_BLUE = 'd';\n                  COST_BLACK = 'd';\n                  COST_COLORLESS = 'd';\n                }\n              }\n            }\n            else if (uVar10 == 0x4229)\n            {\n              if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n              {\n                uVar10 = get_sleighted_color_test(player, card_00, 0x10);\n                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n              }\n            }\n            else if (((uVar10 == 0x423a) && (player == player_00)) &&\n                     (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n            {\n              uVar10 = get_sleighted_color_test(player, card_00, 4);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n            }\n          }\n          else if (uVar10 == 0x591b)\n          {\n            if ((player == player_00) && (iVar9 = is_what(-1, iid, 0x38), iVar9 != 0))\n            {\n              iVar9 = get_cmc_by_id(uVar13);\n              uStack_14 = uStack_14 - (4 < iVar9);\n            }\n          }\n          else if ((int)uVar10 < 0x591c)\n          {\n            if (uVar10 == 0x426f)\n            {\n              if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n              {\n                uVar10 = get_sleighted_color_test(player, card_00, 8);\n                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);\n              }\n            }\n            else if ((uVar10 == 0x5673) && (player == player_00))\n            {\n              iVar9 = count_creatures_with_p1_p1_counter(player);\n              uStack_14 = uStack_14 - iVar9;\n            }\n          }\n          else\n          {\n            if (((uVar10 == 0x6160) && (uVar10 = instance->targets[0].card, (uVar10 & 6) != 0)) &&\n                ((iVar9 = instance->targets[0].player, iVar9 == 2 || (iVar9 == player))))\n            {\n              if (((uVar10 & 2) != 0) &&\n                  ((unsigned int)cards_data[iid].id == instance->targets[1].player))\n              {\n                return 99;\n              }\n              if (((uVar10 & 4) != 0) && (iVar9 = instance->targets[1].player, -1 < iVar9))\n                goto LAB_02689f58;\n            }\n          }\n          goto LAB_026899c0;\n        }\n        if (uVar10 == 0x35a4)\n        {\n          if ((player == player_00) && (iVar9 = has_subtype(-1, iid, SUBTYPE_AURA), iVar9 != 0))\n          {\n            iVar9 = is_humiliated(player, card_00, AL_STATIC);\n            uStack_14 = uStack_14 - (iVar9 == 0);\n          }\n          goto LAB_026899c0;\n        }\n        if ((int)uVar10 < 0x35a5)\n        {\n          if (uVar10 == 0x31ff)\n          {\n            if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n            {\n              iVar9 = get_trap_condition(1 - player, 2);\n              uStack_14 = uStack_14 - iVar9;\n            }\n          }\n          else if ((int)uVar10 < 0x3200)\n          {\n            if (uVar10 == 0x3136)\n            {\n              if (player == player_00)\n              {\n                uStack_14 = uStack_14 - pcVar1->req_colorless;\n              }\n            }\n            else if (((uVar10 == 0x31b9) && (player == player_00)) &&\n                     (iVar9 = is_what(-1, iid, 2), iVar9 == 0))\n            {\n              iVar9 = is_what(-1, iid, 0x38);\n              uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);\n            }\n          }\n          else if ((uVar10 == 0x3351) && (instance = get_card_instance(player_00, card_00),\n                                          instance->targets[1].card == uVar13))\n          {\n            if (player != player_00)\n            {\n              return 99;\n            }\n            uStack_14 = uStack_14 - 2;\n          }\n          goto LAB_026899c0;\n        }\n        if (uVar10 == 0x3ae4)\n        {\n        LAB_0268aa1d:\n          if (player != player_00)\n          {\n            bVar3 = \n\n                   1\n\n                       ;\n            goto LAB_0268a538;\n          }\n          goto LAB_026899c0;\n        }\n        if (0x3ae4 < (int)uVar10)\n        {\n          if (uVar10 != 0x3c7c)\n          {\n            if ((int)uVar10 < 0x3c7d)\n            {\n              if (uVar10 == 0x3b91)\n                goto LAB_0268a7e3;\n              if ((int)uVar10 < 0x3b92)\n              {\n                if ((uVar10 == 0x3b2d) || (uVar10 == 0x3b36))\n                  goto LAB_0268a518;\n              }\n              else if ((uVar10 == 0x3bc3) || (uVar10 == 0x3bf4))\n                goto LAB_0268a518;\n              goto LAB_026899c0;\n            }\n            if (uVar10 != 0x3eae)\n            {\n              if ((int)uVar10 < 0x3eaf)\n              {\n                if (((uVar10 & 0xfffffeff) == 0x3cb4) || (uVar10 == 0x3caa))\n                  goto LAB_0268a518;\n              }\n              else if ((uVar10 == 0x3ec5) || (uVar10 == 0x3eed))\n              {\n              LAB_0268a518:\n                if ((player == player_00) || (bVar6 = \n\n                                                     0\n\n                                                          , bVar3))\n                {\n                  bVar3 = \n\n                         1\n\n                             ;\n                  goto LAB_0268a538;\n                }\n              }\n              goto LAB_026899c0;\n            }\n          }\n          goto LAB_0268aa1d;\n        }\n        if (uVar10 == 0x3953)\n        {\n          if (instance->targets[5].card == iid)\n          {\n            if (instance->targets[2].player == iid)\n            {\n              iVar9 = count_counters(player_00, card_00, COUNTER_VORTEX);\n              count = count_cards_by_id(player, 0x4aa5);\n              uVar10 = count_counters(player_00, card_00, COUNTER_VORTEX);\n              if ((uVar10 & 1) != 0)\n              {\n                uVar10 = uVar10 - 1;\n              }\n              uStack_14 = (iVar9 + uStack_14) - (uVar10 >> 1) * count;\n            }\n            else if (instance->targets[2].card == iid)\n            {\n              iVar9 = count_counters(player_00, card_00, COUNTER_VELOCITY);\n              count = count_cards_by_id(player, 0x4aa5);\n              uVar10 = count_counters(player_00, card_00, COUNTER_VELOCITY);\n              if ((uVar10 & 1) != 0)\n              {\n                uVar10 = uVar10 - 1;\n              }\n              uStack_14 = (iVar9 + uStack_14) - (uVar10 >> 1) * count;\n            }\n          }\n          goto LAB_026899c0;\n        }\n        if (0x3953 < (int)uVar10)\n        {\n          if (uVar10 == 0x3a78)\n            goto LAB_0268a939;\n          if ((int)uVar10 < 0x3a79)\n          {\n            if (uVar10 == 0x3a2f)\n              goto LAB_0268aa1d;\n            if (uVar10 == 0x3a34)\n              goto LAB_0268a518;\n          }\n          goto LAB_026899c0;\n        }\n        if (uVar10 == 0x3951)\n          goto LAB_0268a518;\n        card_00 = card_00 + 1;\n        COST_COLORLESS = cVar4;\n        event_result = iVar9;\n        affected_card_controller = iVar12;\n        affected_card = iVar5;\n        if (active_cards_count[player_00] <= card_00)\n          goto LAB_026899ce;\n        goto LAB_02689900;\n      }\n      if (uVar10 == 0x2b51)\n      {\n        uVar10 = instance->targets[1].card;\n        if (((0 < (int)uVar10) && ((uVar10 & 1) != 0)) && (player != player_00))\n        {\n          return 99;\n        }\n      }\n      else if ((int)uVar10 < 0x2b52)\n      {\n        if (uVar10 == 0x26ea)\n        {\n          iVar9 = is_what(-1, iid, 0x40);\n          if (player == player_00)\n          {\n            uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);\n            card_00 = card_00 + 1;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n        }\n        else if ((int)uVar10 < 0x26eb)\n        {\n          if (uVar10 == 0x24e1)\n          {\n            if ((player == player_00) &&\n                ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_MERFOLK),\n                  iVar9 != 0 || (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_WIZARD),\n                                 iVar9 != 0))))\n            {\n              uStack_14 = uStack_14 - 1;\n            }\n          }\n          else if ((int)uVar10 < 0x24e2)\n          {\n            if (uVar10 == 0x2472)\n            {\n              if ((player == player_00) &&\n                  ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ELEMENTAL),\n                    iVar9 != 0 || (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_WARRIOR),\n                                   iVar9 != 0))))\n              {\n                uStack_14 = uStack_14 - 1;\n              }\n            }\n            else if (((uVar10 == 0x2490) && (player == player_00)) &&\n                     ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_GOBLIN),\n                       iVar9 != 0 || (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ROGUE),\n                                      iVar9 != 0))))\n            {\n              uStack_14 = uStack_14 - 1;\n            }\n          }\n          else if ((uVar10 == 0x26ae) && (player != player_00))\n          {\n            if ((instance->targets[1].card == 0x42) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n            {\n              return 0x31;\n            }\n            if ((instance->targets[2].card == 0x42) && (iVar9 = is_what(-1, iid, 0x40), iVar9 != 0))\n            {\n              return 0x31;\n            }\n            if (instance->targets[3].card == 0x42)\n            {\n              iVar9 = 4;\n              goto LAB_0268a404;\n            }\n          }\n        }\n        else if (uVar10 == 0x2a09)\n        {\n          if (((player == player_00) &&\n               (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ELDRAZI), iVar9 != 0)) &&\n              ((uVar7 & 0x3e) == 0))\n          {\n            uStack_14 = uStack_14 - 2;\n          }\n        }\n        else if ((int)uVar10 < 0x2a0a)\n        {\n          if (uVar10 == 0x26eb)\n          {\n            iVar9 = is_what(-1, iid, 0x40);\n            if (iVar9 == 0)\n              goto LAB_02689dce;\n            card_00 = card_00 + 1;\n            if (active_cards_count[player_00] <= card_00)\n              goto LAB_026899ce;\n            goto LAB_02689900;\n          }\n          if (((uVar10 == 0x294b) && (1 - player == player_00)) &&\n              (iVar9 = is_what(-1, iid, 1), iVar9 == 0))\n          {\n            uVar10 = instance->targets[10].card & uVar7;\n            goto joined_r0x0268a471;\n          }\n        }\n        else if (uVar10 == 0x2a2c)\n        {\n          iVar9 = is_what(-1, iid, 0x40);\n          uStack_14 = uStack_14 + (iVar9 == 0);\n          card_00 = card_00 + 1;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n      }\n      else if (uVar10 == 0x2ecf)\n      {\n        if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n        {\n          uStack_14 = uStack_14 - 2;\n        }\n      }\n      else if ((int)uVar10 < 0x2ed0)\n      {\n        if (uVar10 == 0x2de8)\n        {\n          if (current_phase - 0x15U < 9)\n          {\n            return 99;\n          }\n          card_00 = card_00 + 1;\n          COST_COLORLESS = cVar4;\n          event_result = iVar9;\n          affected_card_controller = iVar12;\n          affected_card = iVar5;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n        if ((int)uVar10 < 0x2de9)\n        {\n          if (uVar10 == 0x2d4e)\n            goto LAB_0268a17f;\n          if (((uVar10 == 0x2de7) && (player == player_00)) &&\n              (iVar9 = is_what(-1, iid, 2), iVar9 != 0))\n          {\n            iVar9 = count_counters(player, card_00, COUNTER_P1_P1);\n            uStack_14 = uStack_14 - iVar9;\n          }\n        }\n        else if ((uVar10 == 0x2e26) && (player != player_00))\n        {\n          if (current_turn == player_00)\n          {\n            return 99;\n          }\n          card_00 = card_00 + 1;\n          COST_COLORLESS = cVar4;\n          event_result = iVar9;\n          affected_card_controller = iVar12;\n          affected_card = iVar5;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n      }\n      else if (uVar10 == 0x2f7e)\n      {\n        if ((instance->targets[0].player == player) && (instance->targets[1].player == 0x42))\n        {\n          return 0x31;\n        }\n      }\n      else if ((int)uVar10 < 0x2f7f)\n      {\n        if (uVar10 == 0x2f02)\n          goto LAB_0268ab50;\n        if (((uVar10 == 0x2f19) && (player == player_00)) &&\n            (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ZOMBIE), iVar9 != 0))\n        {\n          uStack_14 = uStack_14 - pcVar1->req_colorless;\n        }\n      }\n      else\n      {\n        if (uVar10 == 0x2ff3)\n        {\n          if (player == player_00)\n            goto LAB_026899c0;\n          iVar9 = is_what(-1, iid, 2);\n          uStack_14 = uStack_14 + (iVar9 == 0);\n          card_00 = card_00 + 1;\n          if (active_cards_count[player_00] <= card_00)\n            goto LAB_026899ce;\n          goto LAB_02689900;\n        }\n        if (((uVar10 == 0x3014) && (iVar9 = is_what(-1, iid, 2), iVar9 == 0)) &&\n            (iVar9 = is_what(-1, iid, 0x38), iVar9 != 0))\n        {\n          uStack_14 = uStack_14 - 2;\n        }\n      }\n    }\n  }\nLAB_026899c0:\n  bVar3 = bVar6;\n  card_00 = card_00 + 1;\n  if (active_cards_count[player_00] <= card_00)\n    goto LAB_026899ce;\n  goto LAB_02689900;\n}",
+      "expanded_after_definition": "int true_get_updated_casting_cost(int player, int card, int iid, event_t event, int orig_cless)\n{\n  if (1 < (unsigned int)player)\n  {\n    backtrace_and_abort(\"functions/functions.c:10186\\nplayer == 0 || player == 1 || \"\n                        \"!\\\"get_updated_casting_cost() needs a real player\\\"\");\n  }\n  if ((card < 0) == (iid < 0))\n  {\n    backtrace_and_abort(\n        \"functions/functions.c:10187\\n(card < 0) != (iid < 0) && \\\"get_updated_casting_cost() \"\n        \"needs exactly one of card and iid to be valid\\\"\");\n  }\n  if (iid < 0)\n    iid = get_card_instance(player, card)->internal_card_id;\n  if (cards_data[iid].type & TYPE_LAND)\n    return 0;\n  int spell_id = cards_data[iid].id;\n  card_ptr_t *definition = cards_ptr[spell_id];\n  uint32_t cost = orig_cless == -1 ? definition->req_colorless : (uint32_t)orig_cless;\n  if (orig_cless == -1 ? cost >= 16 : orig_cless >= 16)\n    cost = 0;\n  int colors = get_color_by_internal_id(player, iid);\n  int has_trinisphere = 0;\n  int controller;\n  int checked_player = 0;\n  for (controller = 0; controller < 2; controller++)\n  {\n    card_instance_t *instance;\n    int permanent = 0;\n    while (permanent < active_cards_count[controller])\n    {\n      if ((instance = in_play(controller, permanent)) &&\n          (is_what(controller, permanent, TYPE_EFFECT) ||\n           !is_humiliated(controller, permanent, AL_STATIC)))\n      {\n        int source_id = get_id(controller, permanent);\n        switch (source_id)\n        {\n        case CARD_ID_SPECIAL_EFFECT:\n        {\n          int flags = instance->targets[0].card;\n          if ((flags & SE_CSVID_CANT_BE_PLAYED) || (flags & SE_TYPE_CANT_BE_PLAYED))\n          {\n            if (player == instance->targets[0].player || instance->targets[0].player == ANYBODY)\n            {\n              if (flags & SE_CSVID_CANT_BE_PLAYED)\n              {\n                if (cards_data[iid].id == instance->targets[1].player)\n                {\n                  return 99;\n                }\n              }\n              if ((flags & SE_TYPE_CANT_BE_PLAYED) && instance->targets[1].player > -1)\n              {\n                if (is_what(-1, iid, instance->targets[1].player))\n                {\n                  return 99;\n                }\n              }\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_ANGELIC_ARBITER:\n        {\n          if (instance->targets[1].card > 0 && (instance->targets[1].card & 1) &&\n              controller != player)\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_ANIMAR_SOUL_OF_ELEMENTS:\n        {\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost -= count_1_1_counters(controller, permanent);\n          }\n          break;\n        }\n\n        case CARD_ID_ARCANE_LABORATORY:\n        case CARD_ID_RULE_OF_LAW:\n        {\n          if (instance->targets[1].player > 0 && (instance->targets[1].player & (1 + player)))\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_ARCANE_MELEE:\n        {\n          if (!is_what(-1, iid, TYPE_CREATURE) && is_what(-1, iid, TYPE_SPELL))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_AURA_OF_SILENCE:\n        {\n          if (controller != player && is_what(-1, iid, TYPE_ARTIFACT | TYPE_ENCHANTMENT))\n          {\n            cost += 2;\n          }\n          break;\n        }\n\n        case CARD_ID_BALLYRUSH_BANNERET:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_SOLDIER) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_KITHKIN)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_BASANDRA_BATTLE_SERAPH:\n        {\n          if (current_phase > PHASE_MAIN1 && current_phase < PHASE_MAIN2)\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_BOSK_BANNERET:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_TREEFOLK) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_SHAMAN)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_BRAND_OF_ILL_OMEN:\n        {\n          if (player == instance->damage_target_player && is_what(-1, iid, TYPE_CREATURE))\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_BRIGHTHEARTH_BANNERET:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_ELEMENTAL) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_WARRIOR)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_CENTAUR_OMENREADER:\n        {\n          if (is_tapped(controller, permanent) && controller == player &&\n              is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_CLOUD_KEY:\n        {\n          if (instance->targets[1].card > 0 && is_what(-1, iid, instance->targets[1].card))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_COUNCIL_OF_THE_ABSOLUTE:\n        {\n          if (get_card_instance(controller, permanent)->targets[1].card == spell_id)\n          {\n            if (controller == player)\n            {\n              cost -= 2;\n            }\n            else\n            {\n              return 99;\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_CURSE_OF_EXHAUSTION:\n        {\n          if (player == instance->targets[0].player && instance->targets[1].player == 66)\n          {\n            return 49;\n          }\n          break;\n        }\n\n        case CARD_ID_DEFENSE_GRID:\n        {\n          if (current_turn != player)\n          {\n            cost += 3;\n          }\n          break;\n        }\n\n        case CARD_ID_DRAGONSPEAKER_SHAMAN:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_DRAGON))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_ELDER_DRAGON_HIGHLANDER:\n        {\n          if (instance->targets[5].card == iid)\n          {\n            counter_t counter_type;\n            if (instance->targets[2].player == iid)\n              counter_type = COUNTER_VORTEX;\n            else if (instance->targets[2].card == iid)\n              counter_type = COUNTER_VELOCITY;\n            else\n              break;\n            int counters = count_counters(controller, permanent, counter_type);\n            int myths = count_cards_by_id(player, CARD_ID_MYTH_UNBOUND);\n            unsigned int repeated_counters = count_counters(controller, permanent, counter_type);\n            cost += counters - (repeated_counters >> 1) * myths;\n          }\n          break;\n        }\n\n        case CARD_ID_EMERALD_MEDALLION:\n        {\n          if (controller == player && (colors & COLOR_TEST_GREEN))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_ETHERIUM_SCULPTOR:\n        {\n          if (is_what(-1, iid, TYPE_ARTIFACT) && controller == player)\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_ETHERSWORN_CANONIST:\n        {\n          if (!is_what(-1, iid, TYPE_ARTIFACT))\n          {\n            if (instance->targets[1].player > 0 && (instance->targets[1].player & (1 + player)))\n            {\n              return 99;\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_EXCLUSION_RITUAL:\n        {\n          if (instance->targets[1].card == spell_id)\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_EYE_OF_UGIN:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_ELDRAZI) &&\n              !(colors & COLOR_TEST_ANY_COLORED))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_FROGTOSSER_BANNERET:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_GOBLIN) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_ROGUE)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_GADDOCK_TEEG:\n        {\n          if (!is_what(-1, iid, TYPE_CREATURE))\n          {\n            if (get_cmc_by_id(spell_id) > 3)\n            {\n              return 99;\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_GLOOM:\n        {\n          if ((colors & COLOR_TEST_WHITE))\n          {\n            cost += 3;\n          }\n          break;\n        }\n\n        case CARD_ID_GOBLIN_ELECTROMANCER:\n        {\n          if (controller == player && !is_what(-1, iid, TYPE_CREATURE) &&\n              is_what(-1, iid, TYPE_SPELL))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_GOBLIN_WARCHIEF:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_GOBLIN))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_GRAND_ABOLISHER:\n        {\n          if (controller != player && current_turn == controller)\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_GRAND_ARBITER_AUGUSTIN_IV:\n        {\n          if (controller == player)\n          {\n            cost--;\n          }\n          else\n          {\n            cost++;\n          }\n          break;\n        }\n\n        case CARD_ID_GRID_MONITOR:\n        case CARD_ID_STEEL_GOLEM:\n        {\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE))\n          {\n            return 49;\n          }\n          break;\n        }\n\n        case CARD_ID_HEARTLESS_SUMMONING:\n        {\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_HELM_OF_AWAKENING:\n          cost--;\n          break;\n\n        case CARD_ID_HERALD_OF_WAR:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_ANGEL) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_HUMAN)))\n          {\n            cost -= count_1_1_counters(controller, permanent);\n          }\n          break;\n        }\n\n        case CARD_ID_HERO_OF_IROAS:\n        {\n          if (controller == player && has_subtype(-1, iid, SUBTYPE_AURA) &&\n              !is_humiliated(controller, permanent, AL_STATIC))\n          {\n            --cost;\n          }\n          break;\n        }\n\n        case CARD_ID_IN_THE_EYE_OF_CHAOS:\n        {\n          if (is_what(-1, iid, TYPE_INSTANT) && !is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost += get_cmc_by_id(spell_id);\n          }\n          break;\n        }\n\n        case CARD_ID_IONA_SHIELD_OF_EMERIA:\n        {\n          if (controller == 1 - player && !is_what(-1, iid, TYPE_LAND))\n          {\n            if (colors & instance->targets[10].card)\n            {\n              return 49;\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_ALHAMMARRET_HIGH_ARBITER:\n        case CARD_ID_DRAGONLORD_DROMOKA:\n        case CARD_ID_VOID_WINNOWER:\n        case CARD_ID_BRISELA_VOICE_OF_NIGHTMARES:\n          if (player == controller)\n          {\n            break;\n          }\n          checked_player = 1;\n\n\n\n        case CARD_ID_ARCHENEMY:\n        case CARD_ID_CONDUIT_OF_RUIN:\n        case CARD_ID_DRAGONLORDS_SERVANT:\n        case CARD_ID_FOUNDRY_INSPECTOR:\n        case CARD_ID_GEIST_FUELED_SCARECROW:\n        case CARD_ID_HERALD_OF_KOZILEK:\n        case CARD_ID_HERALD_OF_THE_PANTHEON:\n        case CARD_ID_JACES_SANCTUM:\n        case CARD_ID_KRALLENHORDE_HOWLER:\n        case CARD_ID_MIZZIX_OF_THE_IZMAGNUS:\n        case CARD_ID_PLANAR_GATE:\n        case CARD_ID_SEAL_OF_THE_GUILDPACT:\n        case CARD_ID_VORACIOUS_READER:\n          if (player != controller && !checked_player)\n          {\n            break;\n          }\n          checked_player = 1;\n\n\n\n        case CARD_ID_FEROZS_BAN:\n        case CARD_ID_IRINI_SENGIR:\n        {\n          int old_cost_colorless = COST_COLORLESS;\n          int old_affected_card_controller = affected_card_controller;\n          int old_affected_card = affected_card;\n          int old_event_result = event_result;\n\n          event_result = player;\n          if (card >= 0)\n          {\n            affected_card_controller = player;\n            affected_card = card;\n          }\n          else\n          {\n            affected_card_controller = -1;\n            affected_card = iid;\n          }\n\n          call_card_function(controller, permanent, EVENT_MODIFY_COST_GLOBAL);\n\n          affected_card_controller = old_affected_card_controller;\n          affected_card = old_affected_card;\n          event_result = old_event_result;\n\n          cost += COST_COLORLESS - old_cost_colorless;\n          COST_COLORLESS = old_cost_colorless;\n          break;\n        }\n\n        case CARD_ID_JET_MEDALLION:\n        {\n          if (controller == player && (colors & COLOR_TEST_BLACK))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_LOCKET_OF_YESTERDAYS:\n        {\n          if (controller == player)\n          {\n            cost -= count_graveyard_by_id(player, spell_id);\n          }\n          break;\n        }\n\n        case CARD_ID_LODESTONE_GOLEM:\n        {\n          if (!is_what(-1, iid, TYPE_ARTIFACT))\n          {\n            cost++;\n          }\n          break;\n        }\n\n        case CARD_ID_MANA_MATRIX:\n        {\n          if (controller == player &&\n              (is_what(-1, iid, TYPE_INSTANT) || is_what(-1, iid, TYPE_ENCHANTMENT)))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_MEDDLING_MAGE:\n        case CARD_ID_NEVERMORE:\n        {\n          if (instance->targets[1].card == spell_id)\n          {\n            return 49;\n          }\n          break;\n        }\n\n        case CARD_ID_MYCOSYNTH_GOLEM:\n        {\n          if (is_what(-1, iid, TYPE_ARTIFACT) && is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost -= count_subtype(player, TYPE_ARTIFACT, -1);\n          }\n          break;\n        }\n\n        case CARD_ID_NIGHTSCAPE_FAMILIAR:\n        {\n          if (controller == player &&\n              (colors &\n               get_sleighted_color_test(controller, permanent, COLOR_TEST_BLUE | COLOR_TEST_RED)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_OMNISCIENCE:\n        {\n          if (controller == player)\n          {\n            cost -= definition->req_colorless;\n          }\n          break;\n        }\n\n        case CARD_ID_PEARL_MEDALLION:\n        {\n          if (controller == player && (colors & COLOR_TEST_WHITE))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_RAKDOS_LORD_OF_RIOTS:\n        {\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost -= get_trap_condition(1 - player, TRAP_LIFE_LOST);\n          }\n          break;\n        }\n\n        case CARD_ID_ROOFTOP_STORM:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_ZOMBIE))\n          {\n            cost -= definition->req_colorless;\n          }\n          break;\n        }\n\n        case CARD_ID_RUBY_MEDALLION:\n        {\n          if (controller == player && (colors & COLOR_TEST_RED))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_SAPPHIRE_MEDALLION:\n        {\n          if (controller == player && (colors & COLOR_TEST_BLUE))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_SPHERE_OF_RESISTANCE:\n        {\n          cost++;\n          break;\n        }\n\n        case CARD_ID_STINKDRINKER_DAREDEVIL:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_GIANT))\n          {\n            cost -= 2;\n          }\n          break;\n        }\n\n        case CARD_ID_STONE_CALENDAR:\n        {\n          if (controller == player)\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_STONYBROOK_BANNERET:\n        {\n          if (controller == player && (has_subtype_by_id(player, spell_id, SUBTYPE_MERFOLK) ||\n                                       has_subtype_by_id(player, spell_id, SUBTYPE_WIZARD)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_STORMSCAPE_FAMILIAR:\n        {\n          if (controller == player &&\n              (colors & get_sleighted_color_test(controller, permanent,\n                                                 COLOR_TEST_WHITE | COLOR_TEST_BLACK)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_SUNSCAPE_FAMILIAR:\n        {\n          if (controller == player &&\n              (colors &\n               get_sleighted_color_test(controller, permanent, COLOR_TEST_GREEN | COLOR_TEST_BLUE)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_TEFERI_MAGE_OF_ZHALFIR:\n        {\n          if (controller != player && !can_sorcery_be_played(player, event))\n          {\n            return 49;\n          }\n          break;\n        }\n\n        case CARD_ID_THALIA_GUARDIAN_OF_THRABEN:\n        {\n          if (controller != player && !is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost++;\n          }\n          break;\n        }\n\n        case CARD_ID_THORNSCAPE_FAMILIAR:\n        {\n          if (controller == player &&\n              (colors &\n               get_sleighted_color_test(controller, permanent, COLOR_TEST_RED | COLOR_TEST_WHITE)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_THUNDERSCAPE_FAMILIAR:\n        {\n          if (controller == player &&\n              (colors & get_sleighted_color_test(controller, permanent,\n                                                 COLOR_TEST_BLACK | COLOR_TEST_GREEN)))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_TRINISPHERE:\n          has_trinisphere = 1;\n          break;\n\n        case CARD_ID_THORN_OF_AMETHYST:\n        case CARD_ID_VRYN_WINGMARE:\n        {\n          if (!is_what(-1, iid, TYPE_CREATURE))\n          {\n            cost++;\n          }\n          break;\n        }\n\n        case CARD_ID_UNDEAD_WARCHIEF:\n        {\n          if (controller == player && has_subtype_by_id(player, spell_id, SUBTYPE_ZOMBIE))\n          {\n            cost--;\n          }\n          break;\n        }\n\n        case CARD_ID_VOIDSTONE_GARGOYLE:\n        {\n          if (instance->targets[1].card == spell_id)\n          {\n            return 99;\n          }\n          break;\n        }\n\n        case CARD_ID_WARD_OF_BONES:\n        {\n          if (controller != player)\n          {\n            if (instance->targets[1].card == 66 && is_what(-1, iid, TYPE_CREATURE))\n            {\n              return 49;\n            }\n            else if (instance->targets[2].card == 66 && is_what(-1, iid, TYPE_ARTIFACT))\n            {\n              return 49;\n            }\n            else if (instance->targets[3].card == 66 && is_what(-1, iid, TYPE_ENCHANTMENT))\n            {\n              return 49;\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_OBSCURING_AETHER:\n        case CARD_ID_DREAM_CHISEL:\n        {\n          if (controller == player && cards_data[iid].id == CARD_ID_FACE_DOWN_CREATURE)\n          {\n            --cost;\n          }\n          break;\n        }\n\n        case CARD_ID_CONSPIRACY_HYMN_OF_THE_WILDS:\n        {\n          if (controller == player)\n          {\n            if (is_what(-1, iid, TYPE_SPELL))\n            {\n              infinite_casting_cost();\n            }\n            if (is_what(-1, iid, TYPE_CREATURE) && get_stormcreature_count(controller) == 0)\n            {\n              COST_COLORLESS--;\n            }\n          }\n          break;\n        }\n\n        case CARD_ID_SANCTUM_PRELATE:\n        {\n          int value = instance->info_slot;\n          if (!is_what(-1, iid, TYPE_CREATURE) && get_cmc_by_internal_id(iid) == value)\n          {\n            infinite_casting_cost();\n          }\n          break;\n        }\n\n        case CARD_ID_AETHER_STORM:\n          if (is_what(-1, iid, TYPE_CREATURE))\n            return 99;\n          break;\n\n        case CARD_ID_BONTUS_MONUMENT:\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE) &&\n              (get_sleighted_color_test(controller, permanent, COLOR_TEST_BLACK) & colors))\n            --cost;\n          break;\n        case CARD_ID_KEFNETS_MONUMENT:\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE) &&\n              (get_sleighted_color_test(controller, permanent, COLOR_TEST_BLUE) & colors))\n            --cost;\n          break;\n        case CARD_ID_RHONASS_MONUMENT:\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE) &&\n              (get_sleighted_color_test(controller, permanent, COLOR_TEST_GREEN) & colors))\n            --cost;\n          break;\n        case CARD_ID_HAZORETS_MONUMENT:\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE) &&\n              (get_sleighted_color_test(controller, permanent, COLOR_TEST_RED) & colors))\n            --cost;\n          break;\n        case CARD_ID_OKETRAS_MONUMENT:\n          if (controller == player && is_what(-1, iid, TYPE_CREATURE) &&\n              (get_sleighted_color_test(controller, permanent, COLOR_TEST_WHITE) & colors))\n            --cost;\n          break;\n\n        case CARD_ID_HAMZA_GUARDIAN_OF_ARASHIN:\n          if (controller == player)\n            cost -= count_creatures_with_p1_p1_counter(player);\n          break;\n\n        case CARD_ID_SPECTACLE_MAGE:\n          if (controller == player && is_what(-1, iid, TYPE_SPELL))\n            cost -= get_cmc_by_id(spell_id) > 4;\n          break;\n\n        default:\n          break;\n        }\n      }\n      permanent++;\n    }\n  }\n\n  if (has_trinisphere && (int32_t)cost < 3 && dont_account_for_trinisphere <= 0)\n  {\n    if (orig_cless == -1)\n    {\n      unsigned int colored_cost = definition->req_black + definition->req_blue +\n                                  definition->req_green + definition->req_red +\n                                  definition->req_white;\n      if (colored_cost < 3)\n        cost = 3 - colored_cost;\n    }\n    else\n      cost = 3U - (uint32_t)orig_cless;\n  }\n  return (int32_t)(cost + (uint32_t)havengul_lich_hack);\n}"
+    }
+  ],
+  "constants": {
+    "CARD_ID_SPECIAL_EFFECT": 24928,
+    "CARD_ID_ANGELIC_ARBITER": 11089,
+    "CARD_ID_ANIMAR_SOUL_OF_ELEMENTS": 11751,
+    "CARD_ID_ARCANE_LABORATORY": 3696,
+    "CARD_ID_RULE_OF_LAW": 6771,
+    "CARD_ID_ARCANE_MELEE": 12308,
+    "CARD_ID_AURA_OF_SILENCE": 2936,
+    "CARD_ID_BALLYRUSH_BANNERET": 9323,
+    "CARD_ID_BASANDRA_BATTLE_SERAPH": 11752,
+    "CARD_ID_BOSK_BANNERET": 9328,
+    "CARD_ID_BRAND_OF_ILL_OMEN": 1878,
+    "CARD_ID_BRIGHTHEARTH_BANNERET": 9330,
+    "CARD_ID_CENTAUR_OMENREADER": 8901,
+    "CARD_ID_CLOUD_KEY": 8904,
+    "CARD_ID_COUNCIL_OF_THE_ABSOLUTE": 13137,
+    "CARD_ID_CURSE_OF_EXHAUSTION": 12158,
+    "CARD_ID_DEFENSE_GRID": 1012,
+    "CARD_ID_DRAGONSPEAKER_SHAMAN": 6516,
+    "CARD_ID_ELDER_DRAGON_HIGHLANDER": 14675,
+    "CARD_ID_MYTH_UNBOUND": 19109,
+    "CARD_ID_EMERALD_MEDALLION": 3132,
+    "CARD_ID_ETHERIUM_SCULPTOR": 9962,
+    "CARD_ID_ETHERSWORN_CANONIST": 9963,
+    "CARD_ID_EXCLUSION_RITUAL": 11598,
+    "CARD_ID_EYE_OF_UGIN": 10761,
+    "CARD_ID_FROGTOSSER_BANNERET": 9360,
+    "CARD_ID_GADDOCK_TEEG": 9146,
+    "CARD_ID_GLOOM": 100,
+    "CARD_ID_GOBLIN_ELECTROMANCER": 12729,
+    "CARD_ID_GOBLIN_WARCHIEF": 6537,
+    "CARD_ID_GRAND_ABOLISHER": 11814,
+    "CARD_ID_GRAND_ARBITER_AUGUSTIN_IV": 8216,
+    "CARD_ID_GRID_MONITOR": 6681,
+    "CARD_ID_STEEL_GOLEM": 3043,
+    "CARD_ID_HEARTLESS_SUMMONING": 11983,
+    "CARD_ID_HELM_OF_AWAKENING": 2719,
+    "CARD_ID_HERALD_OF_WAR": 12396,
+    "CARD_ID_HERO_OF_IROAS": 13732,
+    "CARD_ID_IN_THE_EYE_OF_CHAOS": 681,
+    "CARD_ID_IONA_SHIELD_OF_EMERIA": 10571,
+    "CARD_ID_ALHAMMARRET_HIGH_ARBITER": 15076,
+    "CARD_ID_DRAGONLORD_DROMOKA": 14895,
+    "CARD_ID_VOID_WINNOWER": 15484,
+    "CARD_ID_BRISELA_VOICE_OF_NIGHTMARES": 16046,
+    "CARD_ID_ARCHENEMY": 14673,
+    "CARD_ID_CONDUIT_OF_RUIN": 15299,
+    "CARD_ID_DRAGONLORDS_SERVANT": 14900,
+    "CARD_ID_FOUNDRY_INSPECTOR": 16381,
+    "CARD_ID_GEIST_FUELED_SCARECROW": 16109,
+    "CARD_ID_HERALD_OF_KOZILEK": 15348,
+    "CARD_ID_HERALD_OF_THE_PANTHEON": 15149,
+    "CARD_ID_JACES_SANCTUM": 15158,
+    "CARD_ID_KRALLENHORDE_HOWLER": 15796,
+    "CARD_ID_MIZZIX_OF_THE_IZMAGNUS": 15530,
+    "CARD_ID_PLANAR_GATE": 744,
+    "CARD_ID_SEAL_OF_THE_GUILDPACT": 15540,
+    "CARD_ID_VORACIOUS_READER": 16069,
+    "CARD_ID_FEROZS_BAN": 2203,
+    "CARD_ID_IRINI_SENGIR": 1642,
+    "CARD_ID_JET_MEDALLION": 3180,
+    "CARD_ID_LOCKET_OF_YESTERDAYS": 8597,
+    "CARD_ID_LODESTONE_GOLEM": 10796,
+    "CARD_ID_MANA_MATRIX": 721,
+    "CARD_ID_MEDDLING_MAGE": 5259,
+    "CARD_ID_NEVERMORE": 12034,
+    "CARD_ID_MYCOSYNTH_GOLEM": 7091,
+    "CARD_ID_NIGHTSCAPE_FAMILIAR": 5269,
+    "CARD_ID_OMNISCIENCE": 12598,
+    "CARD_ID_PEARL_MEDALLION": 3225,
+    "CARD_ID_RAKDOS_LORD_OF_RIOTS": 12799,
+    "CARD_ID_ROOFTOP_STORM": 12057,
+    "CARD_ID_RUBY_MEDALLION": 3256,
+    "CARD_ID_SAPPHIRE_MEDALLION": 3261,
+    "CARD_ID_SPHERE_OF_RESISTANCE": 3566,
+    "CARD_ID_STINKDRINKER_DAREDEVIL": 9272,
+    "CARD_ID_STONE_CALENDAR": 363,
+    "CARD_ID_STONYBROOK_BANNERET": 9441,
+    "CARD_ID_STORMSCAPE_FAMILIAR": 5311,
+    "CARD_ID_SUNSCAPE_FAMILIAR": 5316,
+    "CARD_ID_TEFERI_MAGE_OF_ZHALFIR": 8693,
+    "CARD_ID_THALIA_GUARDIAN_OF_THRABEN": 12275,
+    "CARD_ID_THORNSCAPE_FAMILIAR": 5321,
+    "CARD_ID_THUNDERSCAPE_FAMILIAR": 5323,
+    "CARD_ID_TRINISPHERE": 6983,
+    "CARD_ID_THORN_OF_AMETHYST": 9284,
+    "CARD_ID_VRYN_WINGMARE": 15249,
+    "CARD_ID_UNDEAD_WARCHIEF": 6598,
+    "CARD_ID_VOIDSTONE_GARGOYLE": 8876,
+    "CARD_ID_WARD_OF_BONES": 9902,
+    "CARD_ID_OBSCURING_AETHER": 14968,
+    "CARD_ID_DREAM_CHISEL": 6124,
+    "CARD_ID_FACE_DOWN_CREATURE": 13252,
+    "CARD_ID_CONSPIRACY_HYMN_OF_THE_WILDS": 16260,
+    "CARD_ID_SANCTUM_PRELATE": 16506,
+    "CARD_ID_AETHER_STORM": 2179,
+    "CARD_ID_BONTUS_MONUMENT": 16854,
+    "CARD_ID_KEFNETS_MONUMENT": 16954,
+    "CARD_ID_RHONASS_MONUMENT": 17007,
+    "CARD_ID_HAZORETS_MONUMENT": 16937,
+    "CARD_ID_OKETRAS_MONUMENT": 16984,
+    "CARD_ID_HAMZA_GUARDIAN_OF_ARASHIN": 22131,
+    "CARD_ID_SPECTACLE_MAGE": 22811,
+    "TYPE_LAND": 1,
+    "TYPE_CREATURE": 2,
+    "TYPE_ENCHANTMENT": 4,
+    "TYPE_INSTANT": 16,
+    "TYPE_SPELL": 56,
+    "TYPE_ARTIFACT": 64,
+    "TYPE_EFFECT": 128,
+    "COLOR_TEST_BLACK": 2,
+    "COLOR_TEST_BLUE": 4,
+    "COLOR_TEST_GREEN": 8,
+    "COLOR_TEST_RED": 16,
+    "COLOR_TEST_WHITE": 32,
+    "COLOR_TEST_ANY_COLORED": 62,
+    "COUNTER_P1_P1": 0,
+    "SE_CSVID_CANT_BE_PLAYED": 2,
+    "SE_TYPE_CANT_BE_PLAYED": 4,
+    "AL_STATIC": 4
+  },
+  "native_comparison": {
+    "result": {
+      "all_equal": true,
+      "three_way_comparisons": 905664,
+      "entry_invocations": 2716992,
+      "helpers": 1,
+      "all_uint16_modifier_ids": 65536,
+      "stateful_random_inputs": 30000,
+      "mutation_modes": 2,
+      "assertion_failures_checked": true,
+      "exact_call_traces_and_full_state": true
+    },
+    "native_path": ".recovery/2022-ManalinkEh.dll",
+    "native_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "functions": [
+      {
+        "name": "true_get_updated_casting_cost",
+        "address": "0x2689830",
+        "size": 7139,
+        "sha256": "227e7b74fb96c30362328c2069d21f71f327710b0ca2e322c7a2dcbcdf9b84be",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x2689846",
+            "target": "0x26c11b0",
+            "callee": "backtrace_and_abort"
+          },
+          {
+            "instruction": "0x2689865",
+            "target": "0x26c11b0",
+            "callee": "backtrace_and_abort"
+          },
+          {
+            "instruction": "0x26898c9",
+            "target": "0x26804d0",
+            "callee": "get_color_by_internal_id"
+          },
+          {
+            "instruction": "0x2689907",
+            "target": "0x26b32d0",
+            "callee": "in_play"
+          },
+          {
+            "instruction": "0x2689925",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268993d",
+            "target": "0x26dd430",
+            "callee": "is_humiliated"
+          },
+          {
+            "instruction": "0x268994d",
+            "target": "0x26b35a0",
+            "callee": "get_id"
+          },
+          {
+            "instruction": "0x2689ac7",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x2689ba6",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x2689c49",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x2689c5c",
+            "target": "0x267ee00",
+            "callee": "get_cmc_by_id"
+          },
+          {
+            "instruction": "0x2689c93",
+            "target": "0x4e81fe",
+            "callee": "is_tapped"
+          },
+          {
+            "instruction": "0x2689cbf",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x2689d23",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x2689d46",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x2689d69",
+            "target": "0x26828d0",
+            "callee": "count_subtype"
+          },
+          {
+            "instruction": "0x2689da1",
+            "target": "0x26e5cd0",
+            "callee": "count_graveyard_by_id"
+          },
+          {
+            "instruction": "0x2689e45",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x2689e81",
+            "target": "0x2679b40",
+            "callee": "can_sorcery_be_played"
+          },
+          {
+            "instruction": "0x2689ed1",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x2689f0e",
+            "target": "0x26803c0",
+            "callee": "get_sleighted_color_test"
+          },
+          {
+            "instruction": "0x2689f66",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x2689fbc",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268a06b",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a0b1",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a0d4",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a1ca",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a1e9",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x268a23b",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a27e",
+            "target": "0x26803c0",
+            "callee": "get_sleighted_color_test"
+          },
+          {
+            "instruction": "0x268a2c2",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a2e1",
+            "target": "0x26803c0",
+            "callee": "get_sleighted_color_test"
+          },
+          {
+            "instruction": "0x268a333",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a352",
+            "target": "0x26803c0",
+            "callee": "get_sleighted_color_test"
+          },
+          {
+            "instruction": "0x268a389",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a412",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a45b",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a4a9",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268a58c",
+            "target": "0x26caff0",
+            "callee": "call_card_function"
+          },
+          {
+            "instruction": "0x268a602",
+            "target": "0x25a8610",
+            "callee": "count_creatures_with_p1_p1_counter"
+          },
+          {
+            "instruction": "0x268a641",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268a68a",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a6a9",
+            "target": "0x26803c0",
+            "callee": "get_sleighted_color_test"
+          },
+          {
+            "instruction": "0x268a6ef",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a702",
+            "target": "0x267ecb0",
+            "callee": "get_cmc_by_internal_id"
+          },
+          {
+            "instruction": "0x268a7f9",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a85c",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x268a871",
+            "target": "0x267bbb0",
+            "callee": "count_cards_by_id"
+          },
+          {
+            "instruction": "0x268a888",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x268a8d3",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x268a9da",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268a9fd",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268aae7",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268ab03",
+            "target": "0x26803c0",
+            "callee": "get_sleighted_color_test"
+          },
+          {
+            "instruction": "0x268ab3e",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268ab8e",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268abb1",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268abc4",
+            "target": "0x267ee00",
+            "callee": "get_cmc_by_id"
+          },
+          {
+            "instruction": "0x268abf7",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268ac33",
+            "target": "0x26803c0",
+            "callee": "get_sleighted_color_test"
+          },
+          {
+            "instruction": "0x268ac6e",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268acae",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268ad27",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268ad49",
+            "target": "0x26c8f90",
+            "callee": "get_trap_condition"
+          },
+          {
+            "instruction": "0x268ad7f",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268ad92",
+            "target": "0x267ee00",
+            "callee": "get_cmc_by_id"
+          },
+          {
+            "instruction": "0x268adcf",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268adee",
+            "target": "0x26803c0",
+            "callee": "get_sleighted_color_test"
+          },
+          {
+            "instruction": "0x268ae20",
+            "target": "0x26803c0",
+            "callee": "get_sleighted_color_test"
+          },
+          {
+            "instruction": "0x268aea6",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268aee6",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268af04",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268af20",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x268af77",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268afdf",
+            "target": "0x26738b0",
+            "callee": "has_subtype"
+          },
+          {
+            "instruction": "0x268affe",
+            "target": "0x26dd430",
+            "callee": "is_humiliated"
+          },
+          {
+            "instruction": "0x268b02e",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268b067",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268b0b0",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268b0c0",
+            "target": "0x26c8240",
+            "callee": "get_stormcreature_count"
+          },
+          {
+            "instruction": "0x268b0fe",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268b170",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268b1bd",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x268b227",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268b254",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268b27a",
+            "target": "0x26803c0",
+            "callee": "get_sleighted_color_test"
+          },
+          {
+            "instruction": "0x268b2db",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x268b2f0",
+            "target": "0x267bbb0",
+            "callee": "count_cards_by_id"
+          },
+          {
+            "instruction": "0x268b307",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x268b33d",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268b364",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268b38b",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268b3b2",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          },
+          {
+            "instruction": "0x268b3da",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x268b401",
+            "target": "0x26736e0",
+            "callee": "has_subtype_by_id"
+          }
+        ]
+      }
+    ],
+    "bindings": [
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689847",
+        "original_word": "0x37965",
+        "target": "(uintptr_t)backtrace_and_abort-0x268984bU",
+        "native_target": "0x26c11b0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689866",
+        "original_word": "0x37946",
+        "target": "(uintptr_t)backtrace_and_abort-0x268986aU",
+        "native_target": "0x26c11b0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268987e",
+        "original_word": "0x7e7038",
+        "target": "(uintptr_t)cards_data+40"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689886",
+        "original_word": "0x7e7010",
+        "target": "(uintptr_t)&cards_data"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268989c",
+        "original_word": "0x73bb00",
+        "target": "(uintptr_t)&cards_ptr"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x26898ca",
+        "original_word": "0xffff6c02",
+        "target": "(uintptr_t)get_color_by_internal_id-0x26898ceU",
+        "native_target": "0x26804d0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x26898eb",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689908",
+        "original_word": "0x299c4",
+        "target": "(uintptr_t)in_play-0x268990cU",
+        "native_target": "0x26b32d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689926",
+        "original_word": "0xffff8376",
+        "target": "(uintptr_t)is_what-0x268992aU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268993e",
+        "original_word": "0x53aee",
+        "target": "(uintptr_t)is_humiliated-0x2689942U",
+        "native_target": "0x26dd430"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268994e",
+        "original_word": "0x29c4e",
+        "target": "(uintptr_t)get_id-0x2689952U",
+        "native_target": "0x26b35a0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x26899c4",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x26899e7",
+        "original_word": "0x277546c",
+        "target": "(uintptr_t)&dont_account_for_trinisphere"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x26899f8",
+        "original_word": "0x2775468",
+        "target": "(uintptr_t)&havengul_lich_hack"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689ac8",
+        "original_word": "0xfffe9c14",
+        "target": "(uintptr_t)has_subtype_by_id-0x2689accU",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689b20",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689ba7",
+        "original_word": "0xffff80f5",
+        "target": "(uintptr_t)is_what-0x2689babU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689bb6",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689c13",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689c4a",
+        "original_word": "0xffff8052",
+        "target": "(uintptr_t)is_what-0x2689c4eU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689c5d",
+        "original_word": "0xffff519f",
+        "target": "(uintptr_t)get_cmc_by_id-0x2689c61U",
+        "native_target": "0x267ee00"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689c94",
+        "original_word": "0xfde5e566",
+        "target": "(uintptr_t)is_tapped-0x2689c98U",
+        "native_target": "0x4e81fe"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689cc0",
+        "original_word": "0xffff7fdc",
+        "target": "(uintptr_t)is_what-0x2689cc4U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689d24",
+        "original_word": "0xffff7f78",
+        "target": "(uintptr_t)is_what-0x2689d28U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689d47",
+        "original_word": "0xffff7f55",
+        "target": "(uintptr_t)is_what-0x2689d4bU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689d6a",
+        "original_word": "0xffff8b62",
+        "target": "(uintptr_t)count_subtype-0x2689d6eU",
+        "native_target": "0x26828d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689da2",
+        "original_word": "0x5bf2a",
+        "target": "(uintptr_t)count_graveyard_by_id-0x2689da6U",
+        "native_target": "0x26e5cd0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689deb",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689e46",
+        "original_word": "0xfffe9896",
+        "target": "(uintptr_t)has_subtype_by_id-0x2689e4aU",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689e82",
+        "original_word": "0xfffefcba",
+        "target": "(uintptr_t)can_sorcery_be_played-0x2689e86U",
+        "native_target": "0x2679b40"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689e92",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689ed2",
+        "original_word": "0xfffe980a",
+        "target": "(uintptr_t)has_subtype_by_id-0x2689ed6U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689f0f",
+        "original_word": "0xffff64ad",
+        "target": "(uintptr_t)get_sleighted_color_test-0x2689f13U",
+        "native_target": "0x26803c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689f67",
+        "original_word": "0xffff7d35",
+        "target": "(uintptr_t)is_what-0x2689f6bU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689f77",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x2689fbd",
+        "original_word": "0xfffe971f",
+        "target": "(uintptr_t)has_subtype_by_id-0x2689fc1U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a007",
+        "original_word": "0x628670",
+        "target": "(uintptr_t)&current_turn"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a015",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a06c",
+        "original_word": "0xffff7c30",
+        "target": "(uintptr_t)is_what-0x268a070U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a07b",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a0b2",
+        "original_word": "0xffff7bea",
+        "target": "(uintptr_t)is_what-0x268a0b6U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a0d5",
+        "original_word": "0xffff7bc7",
+        "target": "(uintptr_t)is_what-0x268a0d9U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a15b",
+        "original_word": "0x7e7034",
+        "target": "(uintptr_t)cards_data+36"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a18e",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a1cb",
+        "original_word": "0xffff7ad1",
+        "target": "(uintptr_t)is_what-0x268a1cfU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a1ea",
+        "original_word": "0x47542",
+        "target": "(uintptr_t)count_counters-0x268a1eeU",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a23c",
+        "original_word": "0xffff7a60",
+        "target": "(uintptr_t)is_what-0x268a240U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a27f",
+        "original_word": "0xffff613d",
+        "target": "(uintptr_t)get_sleighted_color_test-0x268a283U",
+        "native_target": "0x26803c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a2c3",
+        "original_word": "0xffff79d9",
+        "target": "(uintptr_t)is_what-0x268a2c7U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a2e2",
+        "original_word": "0xffff60da",
+        "target": "(uintptr_t)get_sleighted_color_test-0x268a2e6U",
+        "native_target": "0x26803c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a334",
+        "original_word": "0xffff7968",
+        "target": "(uintptr_t)is_what-0x268a338U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a353",
+        "original_word": "0xffff6069",
+        "target": "(uintptr_t)get_sleighted_color_test-0x268a357U",
+        "native_target": "0x26803c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a38a",
+        "original_word": "0xffff7912",
+        "target": "(uintptr_t)is_what-0x268a38eU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a39a",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a413",
+        "original_word": "0xffff7889",
+        "target": "(uintptr_t)is_what-0x268a417U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a45c",
+        "original_word": "0xffff7840",
+        "target": "(uintptr_t)is_what-0x268a460U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a4aa",
+        "original_word": "0xfffe9232",
+        "target": "(uintptr_t)has_subtype_by_id-0x268a4aeU",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a53b",
+        "original_word": "0x55cf18",
+        "target": "(uintptr_t)&COST_COLORLESS"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a545",
+        "original_word": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a54b",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)&event_result"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a55b",
+        "original_word": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a560",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)&event_result"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a56b",
+        "original_word": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a573",
+        "original_word": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a58d",
+        "original_word": "0x40a5f",
+        "target": "(uintptr_t)call_card_function-0x268a591U",
+        "native_target": "0x26caff0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a596",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)&event_result"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a59b",
+        "original_word": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a5a5",
+        "original_word": "0x55cf18",
+        "target": "(uintptr_t)&COST_COLORLESS"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a5bd",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a5c3",
+        "original_word": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a5c9",
+        "original_word": "0x55cf18",
+        "target": "(uintptr_t)&COST_COLORLESS"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a603",
+        "original_word": "0xfff1e009",
+        "target": "(uintptr_t)count_creatures_with_p1_p1_counter-0x268a607U",
+        "native_target": "0x25a8610"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a642",
+        "original_word": "0xfffe909a",
+        "target": "(uintptr_t)has_subtype_by_id-0x268a646U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a68b",
+        "original_word": "0xffff7611",
+        "target": "(uintptr_t)is_what-0x268a68fU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a6aa",
+        "original_word": "0xffff5d12",
+        "target": "(uintptr_t)get_sleighted_color_test-0x268a6aeU",
+        "native_target": "0x26803c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a6f0",
+        "original_word": "0xffff75ac",
+        "target": "(uintptr_t)is_what-0x268a6f4U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a703",
+        "original_word": "0xffff45a9",
+        "target": "(uintptr_t)get_cmc_by_internal_id-0x268a707U",
+        "native_target": "0x267ecb0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a711",
+        "original_word": "0x55cf1d",
+        "target": "(uintptr_t)&COST_WHITE"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a718",
+        "original_word": "0x55cf1c",
+        "target": "(uintptr_t)&COST_RED"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a71f",
+        "original_word": "0x55cf1b",
+        "target": "(uintptr_t)&COST_GREEN"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a726",
+        "original_word": "0x55cf1a",
+        "target": "(uintptr_t)&COST_BLUE"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a72d",
+        "original_word": "0x55cf19",
+        "target": "(uintptr_t)&COST_BLACK"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a734",
+        "original_word": "0x55cf18",
+        "target": "(uintptr_t)&COST_COLORLESS"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a759",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a79c",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a7fa",
+        "original_word": "0xffff74a2",
+        "target": "(uintptr_t)is_what-0x268a7feU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a809",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a85d",
+        "original_word": "0x46ecf",
+        "target": "(uintptr_t)count_counters-0x268a861U",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a872",
+        "original_word": "0xffff133a",
+        "target": "(uintptr_t)count_cards_by_id-0x268a876U",
+        "native_target": "0x267bbb0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a889",
+        "original_word": "0x46ea3",
+        "target": "(uintptr_t)count_counters-0x268a88dU",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a8d4",
+        "original_word": "0x281d8",
+        "target": "(uintptr_t)get_card_instance-0x268a8d8U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a949",
+        "original_word": "0x7e7034",
+        "target": "(uintptr_t)cards_data+36"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a9db",
+        "original_word": "0xffff72c1",
+        "target": "(uintptr_t)is_what-0x268a9dfU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268a9fe",
+        "original_word": "0xffff729e",
+        "target": "(uintptr_t)is_what-0x268aa02U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268aa47",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268aa73",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268aaaa",
+        "original_word": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268aab3",
+        "original_word": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268aae8",
+        "original_word": "0xffff71b4",
+        "target": "(uintptr_t)is_what-0x268aaecU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ab04",
+        "original_word": "0xffff58b8",
+        "target": "(uintptr_t)get_sleighted_color_test-0x268ab08U",
+        "native_target": "0x26803c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ab3f",
+        "original_word": "0xfffe8b9d",
+        "target": "(uintptr_t)has_subtype_by_id-0x268ab43U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ab63",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ab8f",
+        "original_word": "0xffff710d",
+        "target": "(uintptr_t)is_what-0x268ab93U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268abb2",
+        "original_word": "0xffff70ea",
+        "target": "(uintptr_t)is_what-0x268abb6U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268abc5",
+        "original_word": "0xffff4237",
+        "target": "(uintptr_t)get_cmc_by_id-0x268abc9U",
+        "native_target": "0x267ee00"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268abf8",
+        "original_word": "0xffff70a4",
+        "target": "(uintptr_t)is_what-0x268abfcU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ac34",
+        "original_word": "0xffff5788",
+        "target": "(uintptr_t)get_sleighted_color_test-0x268ac38U",
+        "native_target": "0x26803c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ac6f",
+        "original_word": "0xfffe8a6d",
+        "target": "(uintptr_t)has_subtype_by_id-0x268ac73U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268acaf",
+        "original_word": "0xffff6fed",
+        "target": "(uintptr_t)is_what-0x268acb3U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268accb",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ace1",
+        "original_word": "0x4ef184",
+        "target": "(uintptr_t)&current_phase"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268acf5",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ad28",
+        "original_word": "0xffff6f74",
+        "target": "(uintptr_t)is_what-0x268ad2cU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ad4a",
+        "original_word": "0x3e242",
+        "target": "(uintptr_t)get_trap_condition-0x268ad4eU",
+        "native_target": "0x26c8f90"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ad80",
+        "original_word": "0xffff6f1c",
+        "target": "(uintptr_t)is_what-0x268ad84U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ad93",
+        "original_word": "0xffff4069",
+        "target": "(uintptr_t)get_cmc_by_id-0x268ad97U",
+        "native_target": "0x267ee00"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268add0",
+        "original_word": "0xffff6ecc",
+        "target": "(uintptr_t)is_what-0x268add4U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268adef",
+        "original_word": "0xffff55cd",
+        "target": "(uintptr_t)get_sleighted_color_test-0x268adf3U",
+        "native_target": "0x26803c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ae21",
+        "original_word": "0xffff559b",
+        "target": "(uintptr_t)get_sleighted_color_test-0x268ae25U",
+        "native_target": "0x26803c0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ae3d",
+        "original_word": "0x628670",
+        "target": "(uintptr_t)&current_turn"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268ae51",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268aea7",
+        "original_word": "0xfffe8835",
+        "target": "(uintptr_t)has_subtype_by_id-0x268aeabU",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268aee7",
+        "original_word": "0xfffe87f5",
+        "target": "(uintptr_t)has_subtype_by_id-0x268aeebU",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268af05",
+        "original_word": "0xfffe87d7",
+        "target": "(uintptr_t)has_subtype_by_id-0x268af09U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268af21",
+        "original_word": "0x4680b",
+        "target": "(uintptr_t)count_counters-0x268af25U",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268af78",
+        "original_word": "0xffff6d24",
+        "target": "(uintptr_t)is_what-0x268af7cU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268afe0",
+        "original_word": "0xfffe88cc",
+        "target": "(uintptr_t)has_subtype-0x268afe4U",
+        "native_target": "0x26738b0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268afff",
+        "original_word": "0x5242d",
+        "target": "(uintptr_t)is_humiliated-0x268b003U",
+        "native_target": "0x26dd430"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b02f",
+        "original_word": "0xfffe86ad",
+        "target": "(uintptr_t)has_subtype_by_id-0x268b033U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b068",
+        "original_word": "0xffff6c34",
+        "target": "(uintptr_t)is_what-0x268b06cU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b072",
+        "original_word": "0x55cf1d",
+        "target": "(uintptr_t)&COST_WHITE"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b079",
+        "original_word": "0x55cf1c",
+        "target": "(uintptr_t)&COST_RED"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b080",
+        "original_word": "0x55cf1b",
+        "target": "(uintptr_t)&COST_GREEN"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b087",
+        "original_word": "0x55cf1a",
+        "target": "(uintptr_t)&COST_BLUE"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b08e",
+        "original_word": "0x55cf19",
+        "target": "(uintptr_t)&COST_BLACK"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b095",
+        "original_word": "0x55cf18",
+        "target": "(uintptr_t)&COST_COLORLESS"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b0b1",
+        "original_word": "0xffff6beb",
+        "target": "(uintptr_t)is_what-0x268b0b5U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b0c1",
+        "original_word": "0x3d17b",
+        "target": "(uintptr_t)get_stormcreature_count-0x268b0c5U",
+        "native_target": "0x26c8240"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b0cf",
+        "original_word": "0x55cf18",
+        "target": "(uintptr_t)&COST_COLORLESS"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b0d6",
+        "original_word": "0x55cf18",
+        "target": "(uintptr_t)&COST_COLORLESS"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b0ff",
+        "original_word": "0xfffe85dd",
+        "target": "(uintptr_t)has_subtype_by_id-0x268b103U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b171",
+        "original_word": "0xffff6b2b",
+        "target": "(uintptr_t)is_what-0x268b175U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b180",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "data",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b19d",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b1be",
+        "original_word": "0x278ee",
+        "target": "(uintptr_t)get_card_instance-0x268b1c2U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b228",
+        "original_word": "0xffff6a74",
+        "target": "(uintptr_t)is_what-0x268b22cU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b255",
+        "original_word": "0xffff6a47",
+        "target": "(uintptr_t)is_what-0x268b259U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b27b",
+        "original_word": "0xffff5141",
+        "target": "(uintptr_t)get_sleighted_color_test-0x268b27fU",
+        "native_target": "0x26803c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b2dc",
+        "original_word": "0x46450",
+        "target": "(uintptr_t)count_counters-0x268b2e0U",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b2f1",
+        "original_word": "0xffff08bb",
+        "target": "(uintptr_t)count_cards_by_id-0x268b2f5U",
+        "native_target": "0x267bbb0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b308",
+        "original_word": "0x46424",
+        "target": "(uintptr_t)count_counters-0x268b30cU",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b33e",
+        "original_word": "0xfffe839e",
+        "target": "(uintptr_t)has_subtype_by_id-0x268b342U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b365",
+        "original_word": "0xfffe8377",
+        "target": "(uintptr_t)has_subtype_by_id-0x268b369U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b38c",
+        "original_word": "0xfffe8350",
+        "target": "(uintptr_t)has_subtype_by_id-0x268b390U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b3b3",
+        "original_word": "0xfffe8329",
+        "target": "(uintptr_t)has_subtype_by_id-0x268b3b7U",
+        "native_target": "0x26736e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b3db",
+        "original_word": "0xffff68c1",
+        "target": "(uintptr_t)is_what-0x268b3dfU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "true_get_updated_casting_cost",
+        "patch_address": "0x268b402",
+        "original_word": "0xfffe82da",
+        "target": "(uintptr_t)has_subtype_by_id-0x268b406U",
+        "native_target": "0x26736e0"
+      }
+    ],
+    "coff_globals": {
+      "COST_GREEN": "0x55cf1b",
+      "active_cards_count": "0x4ef520",
+      "dont_account_for_trinisphere": "0x277546c",
+      "COST_WHITE": "0x55cf1d",
+      "cards_data": "0x7e7010",
+      "COST_COLORLESS": "0x55cf18",
+      "COST_BLUE": "0x55cf1a",
+      "COST_RED": "0x55cf1c",
+      "cards_ptr": "0x73bb00",
+      "event_result": "0x6205b4",
+      "current_phase": "0x4ef184",
+      "current_turn": "0x628670",
+      "affected_card": "0x7a398c",
+      "affected_card_controller": "0x738c84",
+      "COST_BLACK": "0x55cf19",
+      "havengul_lich_hack": "0x2775468"
+    },
+    "source_path": ".recovery/casting-native-check-c347.c",
+    "source_sha256": "de62bfd2f3929283eff775fd635bdb20fa4e7a61cd5e7c8134e2a87d158c02f5",
+    "executable_path": ".recovery/casting-native-check-c347.exe",
+    "executable_sha256": "c569b12f38ef15779e820e58f777ee2e2e88959a100741f90b2272f8295424b3",
+    "compile_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-static-libgcc",
+      "-Wl,--image-base,0x10000000",
+      "-I.",
+      ".recovery\\casting-native-check-c347.c",
+      "-o",
+      ".recovery\\casting-native-check-c347.exe"
+    ],
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "compile_log": ".recovery/casting-native-check-c347.compile.log",
+    "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "mixed_order_and_boundary_comparison": {
+      "result": {
+        "all_equal": true,
+        "mixed_controller_layouts": 512,
+        "three_way_mixed_comparisons": 1536,
+        "mutation_modes": 3,
+        "native_only_minimum_signed_cost_cases": 128
+      },
+      "source_path": ".recovery/casting-mixed-check-c347.c",
+      "source_sha256": "336bb564ef8d4129ff59933c1220d015ebf712d5bf4a93b86696a558808b8346",
+      "executable_path": ".recovery/casting-mixed-check-c347.exe",
+      "executable_sha256": "0a554e97b78689f9f6f77fa5863fc09bd4b08b0128743c767bc56071a69fc1a9",
+      "compile_argv": [
+        "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+        "-m32",
+        "-O2",
+        "-march=i586",
+        "-mpreferred-stack-boundary=2",
+        "-fno-omit-frame-pointer",
+        "-fno-tree-vrp",
+        "-static-libgcc",
+        "-Wl,--image-base,0x10000000",
+        "-I.",
+        ".recovery\\casting-mixed-check-c347.c",
+        "-o",
+        ".recovery\\casting-mixed-check-c347.exe"
+      ],
+      "log": ".recovery/casting-mixed-run-c347.json",
+      "log_sha256": "d7dbf779ba96b34fa902c955bad7c68290c8e7ceea7cd4c92e7fd38375e9f01c"
+    }
+  },
+  "source_state_sha256": "9fa8b25904d2f306b2019860669fb167e4259950a31b181e39fd4b2718435c3d",
+  "raw_source_bytes_sha256": "a3ef6f3652d5e6c928e2d22e414550a55b51c62fa113ffe9b626988f930570fe",
+  "index_sha256": "c1924b91f666e6c673ce508281ac488faf07f9a50b2377ed27fdc1b6315d6e93",
+  "scope": "Native casting-cost branch body compared with predecessor and structured named switch; all uint16 modifier IDs, two battlefield controllers, live count changes, card metadata/pointer mutation, cost-byte/global context, assertions and two opaque-callback mutation modes. All public callees are controlled; infinite_casting_cost is the separately pinned pure six-byte writer. Original source provides structure only; native2022 and predecessor establish behavior. Valid allocated records, bounded helper arithmetic, non-INT_MIN original-cost boundaries; full native32 state, actual card rules and gameplay not exhausted.",
+  "supporting_function": {
+    "source": "functions/functions.c",
+    "name": "infinite_casting_cost",
+    "definition": "void infinite_casting_cost(void){\n\tCOST_COLORLESS = COST_BLACK = COST_BLUE = COST_GREEN = COST_RED = COST_WHITE = 100;\n}",
+    "sha256": "f659e38e10bd9853ec450c8db5768b41e438489fbc2b45bfdf4e1e860bcfa7aa"
+  },
+  "files": [
+    {
+      "source": "functions/functions.c",
+      "before_path": ".recovery/casting-cost-before-c348/functions/functions.c",
+      "before_bytes_sha256": "a3ef6f3652d5e6c928e2d22e414550a55b51c62fa113ffe9b626988f930570fe",
+      "after_source_sha256": "30fe28e79df62c3f3f23b4b7b788eee125513fd0c0bdbe5144ae893b9486e573"
+    }
+  ],
+  "whole_source_lines_removed": 184,
+  "compiler_expansion": {
+    "compiler_path": "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-E",
+      "-dD",
+      "functions/functions.c"
+    ],
+    "preflight_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-E",
+      "-dD",
+      "-x",
+      "c",
+      "-"
+    ],
+    "before_sha256": "21fd572493f0dd85d84d59c45ef0a39beba8266ed5b37c3656ff1407c6f1a75d",
+    "projected_sha256": "172cdd6b3de166ff6f979305149f8cbb04b4ef02d0f502e53d720b53b4ba89b8",
+    "unrelated_expanded_tokens_unchanged": true,
+    "ordinary_storage_enum_and_layout_probe": "\n#include <stddef.h>\n#include <limits.h>\n_Static_assert(sizeof(int)==4 && sizeof(void*)==4 && CHAR_BIT==8 && (char)255==-1, \"native_casting_integer_model\");\n_Static_assert(sizeof(card_instance_t)==300 && sizeof(card_data_t)==72 && offsetof(card_data_t,id)==36 && offsetof(card_data_t,type)==40, \"native_casting_layout\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&active_cards_count[0]),int*) && __builtin_types_compatible_p(__typeof__(&current_turn),int*) && __builtin_types_compatible_p(__typeof__(&havengul_lich_hack),int*) && __builtin_types_compatible_p(__typeof__(&dont_account_for_trinisphere),int*) && __builtin_types_compatible_p(__typeof__(&current_phase),int*) && __builtin_types_compatible_p(__typeof__(&event_result),int*) && __builtin_types_compatible_p(__typeof__(&affected_card),int*) && __builtin_types_compatible_p(__typeof__(&affected_card_controller),int*), \"ordinary_casting_globals\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&COST_COLORLESS),char*) && __builtin_types_compatible_p(__typeof__(&COST_BLACK),char*) && __builtin_types_compatible_p(__typeof__(&COST_BLUE),char*) && __builtin_types_compatible_p(__typeof__(&COST_GREEN),char*) && __builtin_types_compatible_p(__typeof__(&COST_RED),char*) && __builtin_types_compatible_p(__typeof__(&COST_WHITE),char*), \"ordinary_cost_bytes\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&cards_ptr[0]),card_ptr_t**) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_colorless),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_black),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_blue),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_green),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_red),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_ptr_t*)0)->req_white),uint8_t*), \"ordinary_cached_card_definition\");\n_Static_assert(CARD_ID_SPECIAL_EFFECT==24928, \"native_counter_enum\");\n_Static_assert(CARD_ID_ANGELIC_ARBITER==11089, \"native_counter_enum\");\n_Static_assert(CARD_ID_ANIMAR_SOUL_OF_ELEMENTS==11751, \"native_counter_enum\");\n_Static_assert(CARD_ID_ARCANE_LABORATORY==3696, \"native_counter_enum\");\n_Static_assert(CARD_ID_RULE_OF_LAW==6771, \"native_counter_enum\");\n_Static_assert(CARD_ID_ARCANE_MELEE==12308, \"native_counter_enum\");\n_Static_assert(CARD_ID_AURA_OF_SILENCE==2936, \"native_counter_enum\");\n_Static_assert(CARD_ID_BALLYRUSH_BANNERET==9323, \"native_counter_enum\");\n_Static_assert(CARD_ID_BASANDRA_BATTLE_SERAPH==11752, \"native_counter_enum\");\n_Static_assert(CARD_ID_BOSK_BANNERET==9328, \"native_counter_enum\");\n_Static_assert(CARD_ID_BRAND_OF_ILL_OMEN==1878, \"native_counter_enum\");\n_Static_assert(CARD_ID_BRIGHTHEARTH_BANNERET==9330, \"native_counter_enum\");\n_Static_assert(CARD_ID_CENTAUR_OMENREADER==8901, \"native_counter_enum\");\n_Static_assert(CARD_ID_CLOUD_KEY==8904, \"native_counter_enum\");\n_Static_assert(CARD_ID_COUNCIL_OF_THE_ABSOLUTE==13137, \"native_counter_enum\");\n_Static_assert(CARD_ID_CURSE_OF_EXHAUSTION==12158, \"native_counter_enum\");\n_Static_assert(CARD_ID_DEFENSE_GRID==1012, \"native_counter_enum\");\n_Static_assert(CARD_ID_DRAGONSPEAKER_SHAMAN==6516, \"native_counter_enum\");\n_Static_assert(CARD_ID_ELDER_DRAGON_HIGHLANDER==14675, \"native_counter_enum\");\n_Static_assert(CARD_ID_MYTH_UNBOUND==19109, \"native_counter_enum\");\n_Static_assert(CARD_ID_EMERALD_MEDALLION==3132, \"native_counter_enum\");\n_Static_assert(CARD_ID_ETHERIUM_SCULPTOR==9962, \"native_counter_enum\");\n_Static_assert(CARD_ID_ETHERSWORN_CANONIST==9963, \"native_counter_enum\");\n_Static_assert(CARD_ID_EXCLUSION_RITUAL==11598, \"native_counter_enum\");\n_Static_assert(CARD_ID_EYE_OF_UGIN==10761, \"native_counter_enum\");\n_Static_assert(CARD_ID_FROGTOSSER_BANNERET==9360, \"native_counter_enum\");\n_Static_assert(CARD_ID_GADDOCK_TEEG==9146, \"native_counter_enum\");\n_Static_assert(CARD_ID_GLOOM==100, \"native_counter_enum\");\n_Static_assert(CARD_ID_GOBLIN_ELECTROMANCER==12729, \"native_counter_enum\");\n_Static_assert(CARD_ID_GOBLIN_WARCHIEF==6537, \"native_counter_enum\");\n_Static_assert(CARD_ID_GRAND_ABOLISHER==11814, \"native_counter_enum\");\n_Static_assert(CARD_ID_GRAND_ARBITER_AUGUSTIN_IV==8216, \"native_counter_enum\");\n_Static_assert(CARD_ID_GRID_MONITOR==6681, \"native_counter_enum\");\n_Static_assert(CARD_ID_STEEL_GOLEM==3043, \"native_counter_enum\");\n_Static_assert(CARD_ID_HEARTLESS_SUMMONING==11983, \"native_counter_enum\");\n_Static_assert(CARD_ID_HELM_OF_AWAKENING==2719, \"native_counter_enum\");\n_Static_assert(CARD_ID_HERALD_OF_WAR==12396, \"native_counter_enum\");\n_Static_assert(CARD_ID_HERO_OF_IROAS==13732, \"native_counter_enum\");\n_Static_assert(CARD_ID_IN_THE_EYE_OF_CHAOS==681, \"native_counter_enum\");\n_Static_assert(CARD_ID_IONA_SHIELD_OF_EMERIA==10571, \"native_counter_enum\");\n_Static_assert(CARD_ID_ALHAMMARRET_HIGH_ARBITER==15076, \"native_counter_enum\");\n_Static_assert(CARD_ID_DRAGONLORD_DROMOKA==14895, \"native_counter_enum\");\n_Static_assert(CARD_ID_VOID_WINNOWER==15484, \"native_counter_enum\");\n_Static_assert(CARD_ID_BRISELA_VOICE_OF_NIGHTMARES==16046, \"native_counter_enum\");\n_Static_assert(CARD_ID_ARCHENEMY==14673, \"native_counter_enum\");\n_Static_assert(CARD_ID_CONDUIT_OF_RUIN==15299, \"native_counter_enum\");\n_Static_assert(CARD_ID_DRAGONLORDS_SERVANT==14900, \"native_counter_enum\");\n_Static_assert(CARD_ID_FOUNDRY_INSPECTOR==16381, \"native_counter_enum\");\n_Static_assert(CARD_ID_GEIST_FUELED_SCARECROW==16109, \"native_counter_enum\");\n_Static_assert(CARD_ID_HERALD_OF_KOZILEK==15348, \"native_counter_enum\");\n_Static_assert(CARD_ID_HERALD_OF_THE_PANTHEON==15149, \"native_counter_enum\");\n_Static_assert(CARD_ID_JACES_SANCTUM==15158, \"native_counter_enum\");\n_Static_assert(CARD_ID_KRALLENHORDE_HOWLER==15796, \"native_counter_enum\");\n_Static_assert(CARD_ID_MIZZIX_OF_THE_IZMAGNUS==15530, \"native_counter_enum\");\n_Static_assert(CARD_ID_PLANAR_GATE==744, \"native_counter_enum\");\n_Static_assert(CARD_ID_SEAL_OF_THE_GUILDPACT==15540, \"native_counter_enum\");\n_Static_assert(CARD_ID_VORACIOUS_READER==16069, \"native_counter_enum\");\n_Static_assert(CARD_ID_FEROZS_BAN==2203, \"native_counter_enum\");\n_Static_assert(CARD_ID_IRINI_SENGIR==1642, \"native_counter_enum\");\n_Static_assert(CARD_ID_JET_MEDALLION==3180, \"native_counter_enum\");\n_Static_assert(CARD_ID_LOCKET_OF_YESTERDAYS==8597, \"native_counter_enum\");\n_Static_assert(CARD_ID_LODESTONE_GOLEM==10796, \"native_counter_enum\");\n_Static_assert(CARD_ID_MANA_MATRIX==721, \"native_counter_enum\");\n_Static_assert(CARD_ID_MEDDLING_MAGE==5259, \"native_counter_enum\");\n_Static_assert(CARD_ID_NEVERMORE==12034, \"native_counter_enum\");\n_Static_assert(CARD_ID_MYCOSYNTH_GOLEM==7091, \"native_counter_enum\");\n_Static_assert(CARD_ID_NIGHTSCAPE_FAMILIAR==5269, \"native_counter_enum\");\n_Static_assert(CARD_ID_OMNISCIENCE==12598, \"native_counter_enum\");\n_Static_assert(CARD_ID_PEARL_MEDALLION==3225, \"native_counter_enum\");\n_Static_assert(CARD_ID_RAKDOS_LORD_OF_RIOTS==12799, \"native_counter_enum\");\n_Static_assert(CARD_ID_ROOFTOP_STORM==12057, \"native_counter_enum\");\n_Static_assert(CARD_ID_RUBY_MEDALLION==3256, \"native_counter_enum\");\n_Static_assert(CARD_ID_SAPPHIRE_MEDALLION==3261, \"native_counter_enum\");\n_Static_assert(CARD_ID_SPHERE_OF_RESISTANCE==3566, \"native_counter_enum\");\n_Static_assert(CARD_ID_STINKDRINKER_DAREDEVIL==9272, \"native_counter_enum\");\n_Static_assert(CARD_ID_STONE_CALENDAR==363, \"native_counter_enum\");\n_Static_assert(CARD_ID_STONYBROOK_BANNERET==9441, \"native_counter_enum\");\n_Static_assert(CARD_ID_STORMSCAPE_FAMILIAR==5311, \"native_counter_enum\");\n_Static_assert(CARD_ID_SUNSCAPE_FAMILIAR==5316, \"native_counter_enum\");\n_Static_assert(CARD_ID_TEFERI_MAGE_OF_ZHALFIR==8693, \"native_counter_enum\");\n_Static_assert(CARD_ID_THALIA_GUARDIAN_OF_THRABEN==12275, \"native_counter_enum\");\n_Static_assert(CARD_ID_THORNSCAPE_FAMILIAR==5321, \"native_counter_enum\");\n_Static_assert(CARD_ID_THUNDERSCAPE_FAMILIAR==5323, \"native_counter_enum\");\n_Static_assert(CARD_ID_TRINISPHERE==6983, \"native_counter_enum\");\n_Static_assert(CARD_ID_THORN_OF_AMETHYST==9284, \"native_counter_enum\");\n_Static_assert(CARD_ID_VRYN_WINGMARE==15249, \"native_counter_enum\");\n_Static_assert(CARD_ID_UNDEAD_WARCHIEF==6598, \"native_counter_enum\");\n_Static_assert(CARD_ID_VOIDSTONE_GARGOYLE==8876, \"native_counter_enum\");\n_Static_assert(CARD_ID_WARD_OF_BONES==9902, \"native_counter_enum\");\n_Static_assert(CARD_ID_OBSCURING_AETHER==14968, \"native_counter_enum\");\n_Static_assert(CARD_ID_DREAM_CHISEL==6124, \"native_counter_enum\");\n_Static_assert(CARD_ID_FACE_DOWN_CREATURE==13252, \"native_counter_enum\");\n_Static_assert(CARD_ID_CONSPIRACY_HYMN_OF_THE_WILDS==16260, \"native_counter_enum\");\n_Static_assert(CARD_ID_SANCTUM_PRELATE==16506, \"native_counter_enum\");\n_Static_assert(CARD_ID_AETHER_STORM==2179, \"native_counter_enum\");\n_Static_assert(CARD_ID_BONTUS_MONUMENT==16854, \"native_counter_enum\");\n_Static_assert(CARD_ID_KEFNETS_MONUMENT==16954, \"native_counter_enum\");\n_Static_assert(CARD_ID_RHONASS_MONUMENT==17007, \"native_counter_enum\");\n_Static_assert(CARD_ID_HAZORETS_MONUMENT==16937, \"native_counter_enum\");\n_Static_assert(CARD_ID_OKETRAS_MONUMENT==16984, \"native_counter_enum\");\n_Static_assert(CARD_ID_HAMZA_GUARDIAN_OF_ARASHIN==22131, \"native_counter_enum\");\n_Static_assert(CARD_ID_SPECTACLE_MAGE==22811, \"native_counter_enum\");\n_Static_assert(TYPE_LAND==1, \"native_counter_enum\");\n_Static_assert(TYPE_CREATURE==2, \"native_counter_enum\");\n_Static_assert(TYPE_ENCHANTMENT==4, \"native_counter_enum\");\n_Static_assert(TYPE_INSTANT==16, \"native_counter_enum\");\n_Static_assert(TYPE_SPELL==56, \"native_counter_enum\");\n_Static_assert(TYPE_ARTIFACT==64, \"native_counter_enum\");\n_Static_assert(TYPE_EFFECT==128, \"native_counter_enum\");\n_Static_assert(COLOR_TEST_BLACK==2, \"native_counter_enum\");\n_Static_assert(COLOR_TEST_BLUE==4, \"native_counter_enum\");\n_Static_assert(COLOR_TEST_GREEN==8, \"native_counter_enum\");\n_Static_assert(COLOR_TEST_RED==16, \"native_counter_enum\");\n_Static_assert(COLOR_TEST_WHITE==32, \"native_counter_enum\");\n_Static_assert(COLOR_TEST_ANY_COLORED==62, \"native_counter_enum\");\n_Static_assert(COUNTER_P1_P1==0, \"native_counter_enum\");\n_Static_assert(SE_CSVID_CANT_BE_PLAYED==2, \"native_counter_enum\");\n_Static_assert(SE_TYPE_CANT_BE_PLAYED==4, \"native_counter_enum\");\n_Static_assert(AL_STATIC==4, \"native_counter_enum\");\n",
+    "probe_exit_code": 0,
+    "before_archive": {
+      "path": ".recovery/casting-cost-before-c348.i.gz",
+      "sha256": "4384dff113fdb93be63ee09d779ecaddf2a95c2e32a8aa7e95ecf77d32dbfe27"
+    },
+    "projected_archive": {
+      "path": ".recovery/casting-cost-projected-c348.i.gz",
+      "sha256": "75a38fea52b9d5428c55fbce123e2394cb509aeeecca0d37f7bff83a59410117"
+    },
+    "actual_sha256": "04d9b16121551293e0f23917ad0081c5b8f6745c066905d3a22c8cb221521d18",
+    "actual_unit_matches_preflight": true
+  },
+  "status": "Application-time snapshot: native comparisons and actual compiler-unit checks pass. Subsequent build/setup completion is published in casting-cost-cleanup-coverage.json."
+}

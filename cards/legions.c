@@ -383,18 +383,18 @@ Then shuffle your library. */
 int crypt_sliver_shared_ability(int player, int card, event_t event)
 {
   int card_00;
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   card_instance_t *pcVar2;
   int result;
   target_definition_t td2;
 
-  pcVar1 = get_card_instance(player, card);
-  result = pcVar1->targets[1].player;
+  instance = get_card_instance(player, card);
+  result = instance->targets[1].player;
   if (result < 0)
   {
     return 0;
   }
-  card_00 = pcVar1->targets[1].card;
+  card_00 = instance->targets[1].card;
   leaves_play(result, card_00, event, 0, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
@@ -448,17 +448,16 @@ LAB_024a5d70:
     td2.special = 0x800000;
   }
   if (((event == EVENT_RESOLVE_ACTIVATION) &&
-       (result = would_validate_arbitrary_target(&td2, pcVar1->targets[2].player,
-                                                 pcVar1->targets[2].card),
+       (result = would_validate_arbitrary_target(&td2, instance->targets[2].player,
+                                                 instance->targets[2].card),
         result != 0)) &&
-      (result = can_be_regenerated(pcVar1->targets[2].player, pcVar1->targets[2].card),
+      (result = can_be_regenerated(instance->targets[2].player, instance->targets[2].card),
        result != 0))
   {
-    regenerate_target(pcVar1->targets[2].player, pcVar1->targets[2].card);
+    regenerate_target(instance->targets[2].player, instance->targets[2].card);
   }
-  result = shared_sliver_activated_ability(player, card, event, 0x800007, 0, 0, 0, 0, 0, 0, 0, &td2,
+  return shared_sliver_activated_ability(player, card, event, 0x800007, 0, 0, 0, 0, 0, 0, 0, &td2,
                                            "Select target Sliver to regenerate.");
-  return result;
 }
 
 int card_crypt_sliver(int player, int card, event_t event)
@@ -1261,18 +1260,18 @@ At the beginning of each opponent's upkeep, if that player has two or fewer card
 int magma_sliver_shared_ability(int player, int card, event_t event)
 {
   int card_00;
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   card_instance_t *pcVar2;
   int result;
   target_definition_t td2;
 
-  pcVar1 = get_card_instance(player, card);
-  result = pcVar1->targets[1].player;
+  instance = get_card_instance(player, card);
+  result = instance->targets[1].player;
   if (result < 0)
   {
     return 0;
   }
-  card_00 = pcVar1->targets[1].card;
+  card_00 = instance->targets[1].card;
   leaves_play(result, card_00, event, 0, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
@@ -1321,17 +1320,16 @@ LAB_024a5ff0:
   td2.preferred_controller = player;
   td2.required_subtype = 0xb1;
   if ((event == EVENT_RESOLVE_ACTIVATION) &&
-      (result = would_validate_arbitrary_target(&td2, pcVar1->targets[2].player,
-                                                pcVar1->targets[2].card),
+      (result = would_validate_arbitrary_target(&td2, instance->targets[2].player,
+                                                instance->targets[2].card),
        result != 0))
   {
     result = count_subtype(2, 0x47, 0xb1);
-    pump_until_eot(pcVar1->targets[0].player, pcVar1->targets[0].card, pcVar1->targets[2].player,
-                   pcVar1->targets[2].card, result, 0);
+    pump_until_eot(instance->targets[0].player, instance->targets[0].card, instance->targets[2].player,
+                   instance->targets[2].card, result, 0);
   }
-  result = shared_sliver_activated_ability(player, card, event, 7, 0, 0, 0, 0, 0, 0, 0, &td2,
+  return shared_sliver_activated_ability(player, card, event, 7, 0, 0, 0, 0, 0, 0, 0, &td2,
                                            "Select target Sliver to pump.");
-  return result;
 }
 
 int card_magma_sliver(int player, int card, event_t event){

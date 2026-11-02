@@ -711,6 +711,7 @@ static void add_to_csvid_choices(int *choice_num, int **choice_csvids, int csvid
 static int add_card_to_pack(int *out_csvids, int pos, int *choice_num, int **choice_csvids, int num,
                           int rarity, int expansion, int booster, int testing_mode)
 {
+  int i;
   unsigned int *puVar1;
   unsigned int uVar2;
   bool bVar3;
@@ -788,18 +789,18 @@ static int add_card_to_pack(int *out_csvids, int pos, int *choice_num, int **cho
       if (bVar10)
       {
       LAB_026eb762:
-        iVar4 = 0;
+        i = 0;
         if (0 < pos)
         {
           do
           {
-            if (uVar2 == out_csvids[iVar4])
+            if (uVar2 == out_csvids[i])
             {
               bVar3 = true;
               goto LAB_026eb6f4;
             }
-            iVar4 = iVar4 + 1;
-          } while (iVar4 != pos);
+            i = i + 1;
+          } while (i != pos);
         }
       }
       bVar3 = false;
@@ -2708,8 +2709,7 @@ int make_pack(EXPANSION_t expansion, int booster, int *out_csvids)
   {
     if (out_csvids != NULL)
     {
-      iVar2 = make_pack_normal(expansion, booster, out_csvids, 0);
-      return iVar2;
+      return make_pack_normal(expansion, booster, out_csvids, 0);
     }
     iVar2 = pack_size(expansion, booster);
     out_csvids_00 = malloc(iVar2 * 4);
@@ -2740,7 +2740,6 @@ int test_packs(int run_time_test)
   EXPANSION_t eVar1;
   float fVar2;
   int iVar3;
-  int iVar4;
   int iVar5;
   FILE *pFVar6;
   int iVar7;
@@ -2780,8 +2779,7 @@ int test_packs(int run_time_test)
             }
             do
             {
-              iVar4 = make_pack(expansion, iVar7, NULL);
-              if (iVar4 == 0)
+              if (make_pack(expansion, iVar7, NULL) == 0)
               {
                 iStack_14 = 0;
               }

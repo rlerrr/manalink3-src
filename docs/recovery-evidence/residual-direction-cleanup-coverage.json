@@ -1,0 +1,87 @@
+{
+  "batch": "docs/recovery-evidence/residual-direction-cleanup.json",
+  "batch_sha256": "5424a3a5c373474b26cf02a15501c9ad982fbadca88590ca82245d35c3ac2879",
+  "counts": {
+    "functions": 4,
+    "source_units": 4,
+    "removed_flags": 3,
+    "folded_strides": 8,
+    "removed_initializations": 4,
+    "renamed_role_locals": 1,
+    "source_lines_removed": 6,
+    "pending": 0,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 26,
+    "changed_sections": [],
+    "scope": "Recorded compiler-output comparison only; source/control-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_residual_directions": {
+        "cleaned_definitions": 4,
+        "source_units": 4,
+        "folded_strides": 8,
+        "removed_flags": 3,
+        "removed_initializations": 4,
+        "renamed_role_locals": 1,
+        "replayed_stride_type_assertions": 8,
+        "native_name_bindings": 1,
+        "assertion_sites": 0,
+        "pending_candidates": 0,
+        "scope": "Statement-CFG reaching states prove zero at every folded read with no same-node flag write. Whole-function liveness proves the initializer value dead after folding; a later character role remains and uses native unsigned-byte vocabulary. Offset-preserving views retain all real engine-call descriptors in compiler/product input. GCC type/value/base checks and complete actual expansions pass. No new native function coverage or gameplay claim."
+      },
+      "prior_source_input_hashes": {
+        "previous_direction_source_units": 31,
+        "previous_loop_source_units": 17,
+        "previous_comparison_source_units": 31,
+        "previous_comma_source_units": 61,
+        "extended_spell_source_units": 15,
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Current residual-direction validation and exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/residual-directions-readers-c191.log",
+      "sha256": "1c805620194a1de7cc02a3a476516eca18de7592446388c8a5f2d436c63c4d45",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/residual-directions-build-c190.log",
+      "log_sha256": "dd207a8fdd628da8d3441e2c84212243f33b2500ddef9408fc278a9e6dc5b264",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "58ab8a6ec695e7a394a3d86f103797fd47f0af813972fe9eea6450d5b15cc9a0",
+      "dbg_sha256": "346819cd3581963fb34e39e868fbca96c0ffde048efc1ebd15711f0f7ad3075b"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/residual-directions-proof-before-c189.json.gz",
+      "archive_sha256": "65476ab3bed25759d6ae5bee0af64dc30483d24be7a62d0852c31a510c385684",
+      "raw_sha256": "93c93fc2e06337ce6733cf08a1a170cdc2199d78a55e861a45270f07f854c2ce",
+      "verified_source_pin_successions": 4
+    },
+    "limits": "Readability recovery of accepted bodies, not new function coverage. Reaching-zero/liveness, actual expanded source and GCC type/value checks validate the edited sites. All26 normalized runtime sections identical. Prior source-reader compatibility checked without rerunning old semantic audits. No gameplay tests."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/residual-directions-setup-c193.log",
+    "log_sha256": "21ffd5a7e26390f5bfdba2485c5ede96ecc9f215a64b57407a65f4ee7b010560",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "csv_functions": 18725,
+    "metadata_sha256": "143739317a2445c100bf30a0e5b72cface06c0a9c71d79c1ddc1c97ccab7857a",
+    "metadata_identical": true,
+    "mapping_results_identical": true
+  },
+  "limits": "Readability recovery of accepted bodies, not new function coverage. Reaching-zero/liveness, actual expanded source and GCC type/value checks validate the edited sites. All26 normalized runtime sections identical. Prior source-reader compatibility checked without rerunning old semantic audits. No gameplay tests."
+}

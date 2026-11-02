@@ -75,8 +75,7 @@ void evolve(int player, int card, event_t event)
     if ((card != affected_card) || (affected_card_controller != player))
       goto LAB_02516bb5;
   }
-  iVar1 = is_what(trigger_cause_controller, trigger_cause, 2);
-  if (iVar1 != 0)
+  if (is_what(trigger_cause_controller, trigger_cause, 2) != 0)
   {
     instance = get_card_instance(trigger_cause_controller, trigger_cause);
     instance->regen_status = instance->regen_status | 0x6000000;
@@ -422,13 +421,13 @@ int card_frontline_medic(int player, int card, event_t event)
 
 int card_gideon_champion_of_justice(int player, int card, event_t event)
 {
+  int choice;
   int iVar1;
   card_instance_t *instance;
   int iVar3;
   int iVar4;
   int iVar5;
   int iVar6;
-  int iVar7;
   bool bVar8;
   int iStack_148;
   target_definition_t td;
@@ -452,47 +451,45 @@ int card_gideon_champion_of_justice(int player, int card, event_t event)
     iVar4 = count_subtype(iVar1, 0x47, -1);
     iVar5 = count_subtype(player, 0x47, -1);
     iVar6 = count_counters(player, card, COUNTER_LOYALTY);
-    iVar7 = would_validate_arbitrary_target(&td, iVar1, -1);
-    iVar3 = dialog_impl(player, card, event, "\001\002", "\001\017",
-                        "Get Loyalty from opponent's creatures", iVar7, iVar3 * 2, 1, "Animate", 1,
+    choice = dialog_impl(player, card, event, "\001\002", "\001\017",
+                        "Get Loyalty from opponent's creatures", would_validate_arbitrary_target(&td, iVar1, -1), iVar3 * 2, 1, "Animate", 1,
                         iStack_148, 0, "Exile all the other permanents", 1,
                         (0xf - iVar6) * 3 + (iVar4 - iVar5) * 2, 0xfffffff1, 0, 0, 0, 0);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      if (iVar3 == 0)
+      if (choice == 0)
       {
         return 0;
       }
     }
     else if (bVar8)
     {
-      if (iVar3 == 1)
+      if (choice == 1)
       {
         instance->targets[0].player = iVar1;
         instance->targets[0].card = -1;
         instance->number_of_targets = '\x01';
       }
     }
-    else if (iVar3 == 2)
+    else if (choice == 2)
     {
       true_transform(instance->parent_controller, instance->parent_card);
     }
-    else if (iVar3 == 3)
+    else if (choice == 3)
     {
       default_test_definition(&this_test, 0x47);
       this_test.not_me = 1;
       new_manipulate_all(instance->parent_controller, instance->parent_card, 2, &this_test,
                          ACT_KILL_REMOVE);
     }
-    else if ((iVar3 == 1) && (iVar1 = valid_target(&td), iVar1 != 0))
+    else if ((choice == 1) && (iVar1 = valid_target(&td), iVar1 != 0))
     {
       iVar1 = count_subtype(instance->targets[0].player, 2, -1);
       add_counters(player, card, instance->parent_controller, instance->parent_card,
                                COUNTER_LOYALTY, iVar1);
     }
   }
-  iVar1 = planeswalker(player, card, event, 4);
-  return iVar1;
+  return planeswalker(player, card, event, 4);
 }
 
 int card_gideon_champion_animated(int player, int card, event_t event){
@@ -1224,8 +1221,7 @@ int card_simic_manipulator(int player, int card, event_t event)
       }
       result = count_counters(player, card, COUNTER_P1_P1);
       instance->info_slot = result;
-      result = can_target(&td);
-      return result;
+      return can_target(&td);
     }
     if (event == EVENT_ACTIVATE)
     {
@@ -2264,9 +2260,8 @@ int card_thrull_parasite(int player, int card, event_t event)
     }
   }
 LAB_0251c96c:
-  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 2, &td,
+  return generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 2, &td,
                                      "TARGET_PERMANENT");
-  return result;
 }
 
 int card_undercity_informer(int player, int card, event_t event){
@@ -3229,37 +3224,32 @@ Prevent all combat damage that would be dealt this turn by creatures with no +1/
 
 int card_ivy_lane_denizen(int player, int card, event_t event)
 {
+  target_definition_t td;
   card_instance_t *instance;
   int result;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    test_definition_t test;
-    uint8_t bytes[216];
-  } recovered_stack_this_test;
 
   if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
-    default_test_definition(&recovered_stack_this_test.test, 2);
-    recovered_stack_this_test.test.color = get_sleighted_color_test(player, card, 8);
-    recovered_stack_this_test.test.not_me = 1;
-    etb_ability_global(player, event, 2, TYPE_NONE, &recovered_stack_this_test.test, player, card);
+    test_definition_t this_test;
+    default_test_definition(&this_test, 2);
+    this_test.color = get_sleighted_color_test(player, card, 8);
+    this_test.not_me = 1;
+    etb_ability_global(player, event, 2, TYPE_NONE, &this_test, player, card);
   }
   if (event != EVENT_ETB)
   {
     return 0;
   }
-  default_target_definition(player, card, &recovered_stack_this_test.target, 2);
-  recovered_stack_this_test.target.preferred_controller = (int32_t)(player);
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = (int32_t)(player);
   instance = get_card_instance(player, card);
-  result = can_target(&recovered_stack_this_test.target);
+  result = can_target(&td);
   if (result != 0)
   {
-    result = pick_target(&recovered_stack_this_test.target, "TARGET_CREATURE");
+    result = pick_target(&td, "TARGET_CREATURE");
     if (result != 0)
     {
       add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
@@ -3308,14 +3298,12 @@ int card_ooze_flux(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 1, 0, 0, 1, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 1, 0, 0, 1, 0, 0, 0,
                                         &td, NULL);
-      return iVar3;
     }
     if (event == EVENT_ACTIVATE)
     {
-      iVar3 = charge_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0);
-      if (iVar3 == 0)
+      if (charge_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0) == 0)
       {
         return 0;
       }
@@ -3347,8 +3335,7 @@ int card_ooze_flux(int player, int card, event_t event)
   {
     if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
     {
-      iVar3 = global_enchantment(player, card, event);
-      return iVar3;
+      return global_enchantment(player, card, event);
     }
     default_target_definition(player, card, &td, 2);
     td.illegal_abilities = 0;
@@ -6225,14 +6212,12 @@ int card_zameck_guildmage(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 1, 1, 0, 0, 0,
-                                        NULL, NULL);
-      if (iVar2 == 0)
+      if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 1, 1, 0, 0, 0,
+                                        NULL, NULL) == 0)
       {
         return 0;
       }
-      iVar2 = can_target(&td);
-      if (iVar2 == 0)
+      if (can_target(&td) == 0)
       {
         iVar2 = count_subtype(player, 1, -1);
         if (((5 < iVar2) && (current_phase < 0x15)) && (current_turn == player))
@@ -6253,11 +6238,9 @@ int card_zameck_guildmage(int player, int card, event_t event)
         uStack_68 = 1;
         ai_modifier = ai_modifier + 0xf;
       }
-      iVar2 = can_target(&td);
-      if (iVar2 == 0)
+      if (can_target(&td) == 0)
       {
-        iVar2 = charge_mana_for_activated_ability(player, card, 0, 0, 1, 1, 0, 0);
-        if (iVar2 == 0)
+        if (charge_mana_for_activated_ability(player, card, 0, 0, 1, 1, 0, 0) == 0)
         {
           return 0;
         }
@@ -6772,7 +6755,6 @@ int card_armored_transport(int player, int card, event_t event)
   int iVar1;
   card_instance_t *pcVar2;
   card_instance_t *pcVar3;
-  int iVar4;
   int card_00;
   if (event == EVENT_CHECK_ABILITIES)
   {
@@ -6801,7 +6783,7 @@ int card_armored_transport(int player, int card, event_t event)
       do
       {
         pcVar3 = in_play(iVar1, card_00);
-        if (((pcVar3 != NULL) && (iVar4 = is_what(iVar1, card_00, 2), iVar4 != 0)) &&
+        if (((pcVar3 != NULL) && (is_what(iVar1, card_00, 2) != 0)) &&
             ((pcVar2->damage_source_card == card_00 && (pcVar3 = get_card_instance(iVar1, card_00),
                                                         (unsigned int)pcVar3->blocking == card))))
         {

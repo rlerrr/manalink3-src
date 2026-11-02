@@ -4232,71 +4232,44 @@ int card_reap_what_is_sown(int player, int card, event_t event)
 {
   target_t *ptVar1;
   target_t *ptVar2;
-  int iVar3;
+  int i;
   card_instance_t *instance;
-  int iVar5;
   target_definition_t *ptStack_68;
   target_definition_t td;
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 2);
-        td.preferred_controller = player;
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          instance = get_card_instance(player, card);
-          if (instance->number_of_targets != '\0')
-          {
-            iVar3 = 0;
-            do
-            {
-              while (true)
-              {
-                ptStack_68 = &td;
-                iVar5 = validate_target(player, card, ptStack_68, iVar3);
-                if (iVar5 == 0)
-                  break;
-                ptVar2 = instance->targets + iVar3;
-                ptVar1 = instance->targets + iVar3;
-                iVar3 = iVar3 + 1;
-                add_counters(player, card, ptVar1->player, ptVar2->card, COUNTER_P1_P1,
-                                         1);
-                if ((int)(unsigned int)instance->number_of_targets <= iVar3)
-                  goto LAB_020416bc;
-              }
-              iVar3 = iVar3 + 1;
-            } while (iVar3 < (int)(unsigned int)instance->number_of_targets);
-          }
-        LAB_020416bc:
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_020415aa;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   default_target_definition(player, card, &td, 2);
   td.preferred_controller = player;
-LAB_020415aa:
-  iVar3 = generic_spell(player, card, event, 0x20, &td, "TARGET_CREATURE", 3, NULL);
-  return iVar3;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    instance = get_card_instance(player, card);
+    if (instance->number_of_targets != '\0')
+    {
+      i = 0;
+      do
+      {
+        while (true)
+        {
+          ptStack_68 = &td;
+          if (validate_target(player, card, ptStack_68, i) == 0)
+            break;
+          ptVar2 = instance->targets + i;
+          ptVar1 = instance->targets + i;
+          i = i + 1;
+          add_counters(player, card, ptVar1->player, ptVar2->card, COUNTER_P1_P1,
+                                   1);
+          if ((int)(unsigned int)instance->number_of_targets <= i)
+            goto LAB_020416bc;
+        }
+        i = i + 1;
+      } while (i < (int)(unsigned int)instance->number_of_targets);
+    }
+  LAB_020416bc:
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 0x20, &td, "TARGET_CREATURE", 3, NULL);
 }
 
 int card_siren_of_the_silent_song(int player, int card, event_t event)
@@ -4898,6 +4871,5 @@ int card_crypsis(int player, int card, event_t event)
   td.allowed_controller = player;
   td.preferred_controller = player;
 LAB_0203794b:
-  result = generic_spell(player, card, event, 1, &td, "ASHNODS_BATTLEGEAR", 1, NULL);
-  return result;
+  return generic_spell(player, card, event, 1, &td, "ASHNODS_BATTLEGEAR", 1, NULL);
 }

@@ -1,0 +1,957 @@
+{
+  "rows": [
+    {
+      "source": "functions/counters.c",
+      "name": "quarry_hauler_helper",
+      "before_definition": "void quarry_hauler_helper(int player, int card, int t_player, int t_card)\n{\n  char cVar1;\n  card_instance_t *instance;\n  uint32_t uVar3;\n  int iVar4;\n  int iVar5;\n  counter_t cVar6;\n  int i;\n  uint32_t uVar8;\n  int iVar9;\n  unsigned int uVar10;\n  unsigned int uVar11;\n  uint32_t uVar12;\n  int *piVar13;\n  char (*pacVar14)[100];\n  counter_t cVar16;\n  uint32_t uVar17;\n  char (*pacVar18)[100];\n  uint32_t uVar19;\n  char (*pacVar20)[100];\n  uint32_t uVar21;\n  char (*pacVar22)[100];\n  uint32_t uVar23;\n  char (*pacVar24)[100];\n  uint32_t uVar25;\n  uint32_t uVar26;\n  uint32_t uVar27;\n  uint32_t uVar28;\n  uint32_t uVar29;\n  uint32_t uVar30;\n  unsigned int uStack_3fc;\n  uint32_t uStack_3f8;\n  uint32_t uStack_3f4;\n  uint32_t uStack_3f0;\n  uint32_t uStack_3ec;\n  int iStack_3e8;\n  unsigned int uStack_3e4;\n  counter_t counter_types[9];\n  int choices[9];\n  char ctr_names[9][100];\n\n  cVar16 = t_player;\n  iVar4 = t_card;\n  instance = get_card_instance(t_player, t_card);\n  if (instance->internal_card_id == activation_card)\n  {\n    iVar4 = instance->parent_card;\n    cVar16 = instance->parent_controller;\n    instance = get_card_instance(cVar16, iVar4);\n  }\n  uVar10 = 0;\n  if (instance->special_counters != '\\0')\n  {\n    counter_types[0] = (counter_t)instance->special_counter_type;\n    uVar10 = (unsigned int)(counter_types[0] != COUNTER_invalid);\n  }\n  if (instance->counters2 != '\\0')\n  {\n    cVar6 = (counter_t)(unsigned char)instance->targets[0x12].player;\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters3 != '\\0')\n  {\n    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 1);\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters4 != '\\0')\n  {\n    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 2);\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters5 != '\\0')\n  {\n    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 3);\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters != '\\0')\n  {\n    counter_types[uVar10] = COUNTER_P1_P1;\n    uVar10 = uVar10 + 1;\n  }\n  if (instance->counters_m1m1 != '\\0')\n  {\n    counter_types[uVar10] = COUNTER_M1_M1;\n    uVar10 = uVar10 + 1;\n  }\n  cVar1 = *(char *)((int)&instance->targets[0x12].card + 1);\n  if (((char)instance->targets[0x12].card == '\\0') ||\n      (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 2),\n       counter_types[uVar10] = cVar6, cVar6 == COUNTER_invalid))\n  {\n    if ((cVar1 == '\\0') ||\n        (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),\n         counter_types[uVar10] = cVar6, cVar6 == COUNTER_invalid))\n    {\n      uVar11 = uVar10;\n      if (uVar10 == 0)\n      {\n        return;\n      }\n    }\n    else\n    {\n      uVar11 = uVar10 + 1;\n    }\n  }\n  else\n  {\n    uVar11 = uVar10 + 1;\n    if ((cVar1 != '\\0') &&\n        (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),\n         counter_types[uVar11] = cVar6, cVar6 != COUNTER_invalid))\n    {\n      uVar11 = uVar10 + 2;\n    }\n  }\n  iVar9 = 0;\n  piVar13 = choices;\n  for (i = 9; i != 0; i = i + -1)\n  {\n    *piVar13 = 0;\n    piVar13 = piVar13 + 1u;\n  }\n  pacVar14 = ctr_names;\n  do\n  {\n    iVar9 = iVar9 + 1;\n    get_counter_name_by_type(*pacVar14, cVar16, iVar4);\n    pacVar14 = pacVar14 + 1;\n  } while (iVar9 < (int)uVar11);\n  uStack_3fc = uVar11;\n  if (uVar11 == 0)\n  {\n    uStack_3fc = 1;\n  }\n\n  iStack_3e8 = 0;\n  uStack_3e4 = uVar11;\n  if (uVar11 < 9)\n    goto LAB_026d5692;\nLAB_026d53b8:\n  uVar10 = (unsigned int)(choices[8] == 0);\nLAB_026d53c5:\n  if (choices[7] != 0)\n    goto LAB_026d56a1;\n  uStack_3ec = 1;\nLAB_026d53dd:\n  if (choices[6] != 0)\n    goto LAB_026d56b8;\n  uStack_3f0 = 1;\nLAB_026d53f5:\n  if (choices[5] != 0)\n    goto LAB_026d56cf;\n  uStack_3f4 = 1;\nLAB_026d540d:\n  if (choices[4] != 0)\n    goto LAB_026d56e6;\n  uVar12 = 1;\nLAB_026d5420:\n  if (choices[3] != 0)\n    goto LAB_026d56f5;\n  uVar8 = 1;\nLAB_026d5433:\n  if (choices[2] != 0)\n    goto LAB_026d5704;\n  uStack_3f8 = 1;\n  do\n  {\n    uVar3 = 1;\n    if (choices[1] != 0)\n      goto LAB_026d571b;\n    while (true)\n    {\n      pacVar14 = ctr_names + 8;\n      pacVar24 = ctr_names + 7;\n      pacVar22 = ctr_names + 6;\n      pacVar20 = ctr_names + 5;\n      pacVar18 = ctr_names + 4;\n      uVar30 = 0;\n      uVar29 = 0;\n      uVar28 = 0;\n      uVar27 = 0;\n      uVar26 = 1;\n      uVar25 = 1;\n      uVar23 = 1;\n      uVar21 = 1;\n      uVar19 = 1;\n      uVar17 = 1;\n      iVar9 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, \"\\001\\002\", \"\\001\\003\",\n                          \"\\001\\014\", \"\\001\\004\", \"\\001\\006\", t_player, t_card, \"\\001\\026\",\n                          ctr_names, (unsigned int)(iStack_3e8 == 0), 1, ctr_names + 1, uVar3, 1,\n                          ctr_names + 2, uStack_3f8, 1, ctr_names + 3, uVar8, 1, pacVar18, uVar12,\n                          1, pacVar20, uStack_3f4, 1, pacVar22, uStack_3f0, 1, pacVar24, uStack_3ec,\n                          1, pacVar14, uVar10, 1, 0, 0, 0, 0);\n      i = 1;\n      iVar4 = 1;\n      if (player == 1)\n      {\n\n        cVar16 = counter_types[uStack_3fc];\n        iVar4 = raw_counter_value(1, t_player, t_card, cVar16, 1);\n        iVar5 = raw_counter_value(1, t_player, t_card, cVar16, 0);\n        if (iVar4 < 0)\n        {\n          i = iVar4 / 3 + 0xd06;\n        }\n        else if (iVar4 < 1)\n        {\n          i = 0x168f;\n        }\n        else\n        {\n          i = iVar4 * 99 + 9999;\n        }\n        if (iVar5 < 0)\n        {\n          iVar4 = iVar5 / 3 + 0xd06;\n        }\n        else\n        {\n          iVar4 = 0x168f;\n          if (0 < iVar5)\n          {\n            iVar4 = iVar5 * 99 + 9999;\n          }\n        }\n        uStack_3fc = 2;\n      }\n      iVar4 =\n          dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, \"\\001\\002\", \"\\001\\003\", \"\\001\\014\",\n                      \"\\001\\006\", t_player, t_card, \"\\001\\011\", ctr_names + iVar9 + -1, \"\\001\\026\",\n                      \"Add\", 1, i, \"Remove\", 1, iVar4, 0, 0, 0, 0, uVar17, pacVar18, uVar12,\n                      uVar19, pacVar20, uStack_3f4, uVar21, pacVar22, uStack_3f0, uVar23, pacVar24,\n                      uStack_3ec, uVar25, pacVar14, uVar10, uVar26, uVar27, uVar28, uVar29, uVar30);\n      choices[iVar9 + -1] = iVar4;\n      uStack_3e4 = uStack_3e4 - 1;\n      if ((int)uStack_3e4 < 1)\n      {\n        iVar4 = 0;\n        do\n        {\n          if (choices[iVar4] == 1)\n          {\n            add_counters(player, card, t_player, t_card, counter_types[iVar4], 1);\n          }\n          else if (choices[iVar4] == 2)\n          {\n            remove_counters_impl(player, card, t_player, t_card,\n                                                  counter_types[iVar4], 1);\n          }\n          iVar4 = iVar4 + 1;\n        } while (iVar4 < (int)uVar11);\n        return;\n      }\n      iStack_3e8 = choices[0];\n      if (8 < uVar11)\n        goto LAB_026d53b8;\n    LAB_026d5692:\n      uVar10 = 0;\n      if (7 < uVar11)\n        goto LAB_026d53c5;\n    LAB_026d56a1:\n      uStack_3ec = 0;\n      if (6 < uVar11)\n        goto LAB_026d53dd;\n    LAB_026d56b8:\n      uStack_3f0 = 0;\n      if (5 < uVar11)\n        goto LAB_026d53f5;\n    LAB_026d56cf:\n      uStack_3f4 = 0;\n      if (4 < uVar11)\n        goto LAB_026d540d;\n    LAB_026d56e6:\n      uVar12 = 0;\n      if (3 < uVar11)\n        goto LAB_026d5420;\n    LAB_026d56f5:\n      uVar8 = 0;\n      if (2 < uVar11)\n        goto LAB_026d5433;\n    LAB_026d5704:\n      uStack_3f8 = 0;\n      if (1 < uVar11)\n        break;\n    LAB_026d571b:\n      uVar3 = 0;\n    }\n  } while (true);\n}",
+      "reference_definition": "void quarry_hauler_helper(int player, int card, int t_player, int t_card)\n{\n  char cVar1;\n  card_instance_t *instance;\n  uint32_t uVar3;\n  int iVar4;\n  int iVar5;\n  counter_t cVar6;\n  int i;\n  uint32_t uVar8;\n  int iVar9;\n  unsigned int uVar10;\n  unsigned int uVar11;\n  uint32_t uVar12;\n  int *piVar13;\n  char (*pacVar14)[100];\n  counter_t cVar16;\n  uint32_t uVar17;\n  char (*pacVar18)[100];\n  uint32_t uVar19;\n  char (*pacVar20)[100];\n  uint32_t uVar21;\n  char (*pacVar22)[100];\n  uint32_t uVar23;\n  char (*pacVar24)[100];\n  uint32_t uVar25;\n  uint32_t uVar26;\n  uint32_t uVar27;\n  uint32_t uVar28;\n  uint32_t uVar29;\n  uint32_t uVar30;\n  unsigned int uStack_3fc;\n  uint32_t uStack_3f8;\n  uint32_t uStack_3f4;\n  uint32_t uStack_3f0;\n  uint32_t uStack_3ec;\n  int iStack_3e8;\n  unsigned int uStack_3e4;\n  counter_t counter_types[9];\n  int choices[9];\n  char ctr_names[9][100];\n\n  cVar16 = t_player;\n  iVar4 = t_card;\n  instance = get_card_instance(t_player, t_card);\n  if (instance->internal_card_id == activation_card)\n  {\n    iVar4 = instance->parent_card;\n    cVar16 = instance->parent_controller;\n    instance = get_card_instance(cVar16, iVar4);\n  }\n  uVar10 = 0;\n  if (instance->special_counters != '\\0')\n  {\n    counter_types[0] = (counter_t)instance->special_counter_type;\n    uVar10 = (unsigned int)(counter_types[0] != COUNTER_invalid);\n  }\n  if (instance->counters2 != '\\0')\n  {\n    cVar6 = (counter_t)(unsigned char)instance->targets[0x12].player;\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters3 != '\\0')\n  {\n    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 1);\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters4 != '\\0')\n  {\n    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 2);\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters5 != '\\0')\n  {\n    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 3);\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters != '\\0')\n  {\n    counter_types[uVar10] = COUNTER_P1_P1;\n    uVar10 = uVar10 + 1;\n  }\n  if (instance->counters_m1m1 != '\\0')\n  {\n    counter_types[uVar10] = COUNTER_M1_M1;\n    uVar10 = uVar10 + 1;\n  }\n  cVar1 = *(char *)((int)&instance->targets[0x12].card + 1);\n  if (((char)instance->targets[0x12].card == '\\0') ||\n      (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 2),\n       counter_types[uVar10] = cVar6, cVar6 == COUNTER_invalid))\n  {\n    if ((cVar1 == '\\0') ||\n        (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),\n         counter_types[uVar10] = cVar6, cVar6 == COUNTER_invalid))\n    {\n      uVar11 = uVar10;\n      if (uVar10 == 0)\n      {\n        return;\n      }\n    }\n    else\n    {\n      uVar11 = uVar10 + 1;\n    }\n  }\n  else\n  {\n    uVar11 = uVar10 + 1;\n    if ((cVar1 != '\\0') &&\n        (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),\n         counter_types[uVar11] = cVar6, cVar6 != COUNTER_invalid))\n    {\n      uVar11 = uVar10 + 2;\n    }\n  }\n  iVar9 = 0;\n  piVar13 = choices;\n  for (i = 9; i != 0; i = i + -1)\n  {\n    *piVar13 = 0;\n    piVar13 = piVar13 + 1u;\n  }\n  pacVar14 = ctr_names;\n  do\n  {\n    iVar9 = iVar9 + 1;\n    get_counter_name_by_type(*pacVar14, counter_types[iVar9 - 1], 256);\n    pacVar14 = pacVar14 + 1;\n  } while (iVar9 < (int)uVar11);\n  uStack_3fc = uVar11;\n  if (uVar11 == 0)\n  {\n    uStack_3fc = 1;\n  }\n\n  iStack_3e8 = 0;\n  uStack_3e4 = uVar11;\n  if (uVar11 < 9)\n    goto LAB_026d5692;\nLAB_026d53b8:\n  uVar10 = (unsigned int)(choices[8] == 0);\nLAB_026d53c5:\n  if (choices[7] != 0)\n    goto LAB_026d56a1;\n  uStack_3ec = 1;\nLAB_026d53dd:\n  if (choices[6] != 0)\n    goto LAB_026d56b8;\n  uStack_3f0 = 1;\nLAB_026d53f5:\n  if (choices[5] != 0)\n    goto LAB_026d56cf;\n  uStack_3f4 = 1;\nLAB_026d540d:\n  if (choices[4] != 0)\n    goto LAB_026d56e6;\n  uVar12 = 1;\nLAB_026d5420:\n  if (choices[3] != 0)\n    goto LAB_026d56f5;\n  uVar8 = 1;\nLAB_026d5433:\n  if (choices[2] != 0)\n    goto LAB_026d5704;\n  uStack_3f8 = 1;\n  do\n  {\n    uVar3 = 1;\n    if (choices[1] != 0)\n      goto LAB_026d571b;\n    while (true)\n    {\n      pacVar14 = ctr_names + 8;\n      pacVar24 = ctr_names + 7;\n      pacVar22 = ctr_names + 6;\n      pacVar20 = ctr_names + 5;\n      pacVar18 = ctr_names + 4;\n      uVar30 = 0;\n      uVar29 = 0;\n      uVar28 = 0;\n      uVar27 = 0;\n      uVar26 = 1;\n      uVar25 = 1;\n      uVar23 = 1;\n      uVar21 = 1;\n      uVar19 = 1;\n      uVar17 = 1;\n      iVar9 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, \"\\001\\002\", \"\\001\\003\",\n                          \"\\001\\014\", \"\\001\\004\", \"\\001\\006\", t_player, t_card, \"\\001\\026\",\n                          ctr_names, (unsigned int)(iStack_3e8 == 0), 1, ctr_names + 1, uVar3, 1,\n                          ctr_names + 2, uStack_3f8, 1, ctr_names + 3, uVar8, 1, pacVar18, uVar12,\n                          1, pacVar20, uStack_3f4, 1, pacVar22, uStack_3f0, 1, pacVar24, uStack_3ec,\n                          1, pacVar14, uVar10, 1, 0, 0, 0, 0);\n      i = 1;\n      iVar4 = 1;\n      if (player == 1)\n      {\n\n        cVar16 = uStack_3fc == 9 ? (counter_t)choices[0] : counter_types[uStack_3fc];\n        iVar4 = raw_counter_value(1, t_player, t_card, cVar16, 1);\n        iVar5 = raw_counter_value(1, t_player, t_card, cVar16, 0);\n        if (iVar4 < 0)\n        {\n          i = iVar4 / 3 + 0xd06;\n        }\n        else if (iVar4 < 1)\n        {\n          i = 0x168f;\n        }\n        else\n        {\n          i = iVar4 * 99 + 9999;\n        }\n        if (iVar5 < 0)\n        {\n          iVar4 = iVar5 / 3 + 0xd06;\n        }\n        else\n        {\n          iVar4 = 0x168f;\n          if (0 < iVar5)\n          {\n            iVar4 = iVar5 * 99 + 9999;\n          }\n        }\n        uStack_3fc = 2;\n      }\n      iVar4 =\n          dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, \"\\001\\002\", \"\\001\\003\", \"\\001\\014\",\n                      \"\\001\\006\", t_player, t_card, \"\\001\\011\", ctr_names + iVar9 + -1, \"\\001\\026\",\n                      \"Add\", 1, i, \"Remove\", 1, iVar4, 0, 0, 0, 0, uVar17, pacVar18, uVar12,\n                      uVar19, pacVar20, uStack_3f4, uVar21, pacVar22, uStack_3f0, uVar23, pacVar24,\n                      uStack_3ec, uVar25, pacVar14, uVar10, uVar26, uVar27, uVar28, uVar29, uVar30);\n      choices[iVar9 + -1] = iVar4;\n      uStack_3e4 = uStack_3e4 - 1;\n      if ((int)uStack_3e4 < 1)\n      {\n        iVar4 = 0;\n        do\n        {\n          if (choices[iVar4] == 1)\n          {\n            add_counters(player, card, t_player, t_card, counter_types[iVar4], 1);\n          }\n          else if (choices[iVar4] == 2)\n          {\n            remove_counters_impl(player, card, t_player, t_card,\n                                                  counter_types[iVar4], 1);\n          }\n          iVar4 = iVar4 + 1;\n        } while (iVar4 < (int)uVar11);\n        return;\n      }\n      iStack_3e8 = choices[0];\n      if (8 < uVar11)\n        goto LAB_026d53b8;\n    LAB_026d5692:\n      uVar10 = 0;\n      if (7 < uVar11)\n        goto LAB_026d53c5;\n    LAB_026d56a1:\n      uStack_3ec = 0;\n      if (6 < uVar11)\n        goto LAB_026d53dd;\n    LAB_026d56b8:\n      uStack_3f0 = 0;\n      if (5 < uVar11)\n        goto LAB_026d53f5;\n    LAB_026d56cf:\n      uStack_3f4 = 0;\n      if (4 < uVar11)\n        goto LAB_026d540d;\n    LAB_026d56e6:\n      uVar12 = 0;\n      if (3 < uVar11)\n        goto LAB_026d5420;\n    LAB_026d56f5:\n      uVar8 = 0;\n      if (2 < uVar11)\n        goto LAB_026d5433;\n    LAB_026d5704:\n      uStack_3f8 = 0;\n      if (1 < uVar11)\n        break;\n    LAB_026d571b:\n      uVar3 = 0;\n    }\n  } while (true);\n}",
+      "after_definition": "void quarry_hauler_helper(int player, int card, int t_player, int t_card)\n{\n  card_instance_t *instance = get_card_instance(t_player, t_card);\n  if (instance->internal_card_id == activation_card)\n    instance = get_card_instance(instance->parent_controller, instance->parent_card);\n  const uint8_t *t18 = (const uint8_t *)&instance->targets[18].player;\n  const uint8_t *overflow = (const uint8_t *)&instance->targets[18].card;\n  const uint8_t quantities[9] = {instance->special_counters, instance->counters2,\n      instance->counters3, instance->counters4, instance->counters5, instance->counters,\n      instance->counters_m1m1, overflow[0], overflow[1]};\n  const counter_t types[9] = {instance->special_counter_type, t18[0], t18[1],\n      t18[2], t18[3], COUNTER_P1_P1, COUNTER_M1_M1, overflow[2], overflow[3]};\n  counter_t counter_types[9];\n  int num_types = 0;\n  for (int slot = 0; slot < 9; ++slot)\n    if (quantities[slot] != 0)\n    {\n      counter_types[num_types] = types[slot];\n      if (types[slot] != COUNTER_invalid)\n        ++num_types;\n    }\n  if (num_types == 0)\n    return;\n  int choices[9] = {0};\n  int to_choose = num_types;\n  int i;\n  char ctr_names[9][100];\n  for (i = 0; i < num_types; ++i)\n    get_counter_name_by_type(ctr_names[i], counter_types[i], 256);\n  while (to_choose > 0)\n  {\n    int choice1 = DIALOG(player, card, EVENT_RESOLVE_ACTIVATION,\n        DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL,\n        DLG_FULLCARD(t_player, t_card), DLG_NO_DISPLAY_FOR_AI,\n        ctr_names[0], num_types > 0 && choices[0] == 0, 1,\n        ctr_names[1], num_types > 1 && choices[1] == 0, 1,\n        ctr_names[2], num_types > 2 && choices[2] == 0, 1,\n        ctr_names[3], num_types > 3 && choices[3] == 0, 1,\n        ctr_names[4], num_types > 4 && choices[4] == 0, 1,\n        ctr_names[5], num_types > 5 && choices[5] == 0, 1,\n        ctr_names[6], num_types > 6 && choices[6] == 0, 1,\n        ctr_names[7], num_types > 7 && choices[7] == 0, 1,\n        ctr_names[8], num_types > 8 && choices[8] == 0, 1);\n    int priority[2] = {1, 1};\n    if (player == AI)\n    {\n      // Native code reuses the name-loop index, then the priority-loop index.\n      // At index 9 its adjacent stack word is choices[0].  Shorter lists can\n      // still leave this native AI lookup uninitialized; retain that quirk.\n      counter_t priority_type = i == 9 ? (counter_t)choices[0] : counter_types[i];\n      int raw_pri[2] = {\n          raw_counter_value(AI, t_player, t_card, priority_type, 1),\n          raw_counter_value(AI, t_player, t_card, priority_type, 0)};\n      for (i = 0; i < 2; ++i)\n        priority[i] = raw_pri[i] < 0 ? raw_pri[i] / 3 + 3334 :\n            (raw_pri[i] == 0 ? 5775 : raw_pri[i] * 99 + 9999);\n    }\n    int choice2 = DIALOG(player, card, EVENT_RESOLVE_ACTIVATION,\n        DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE, DLG_FULLCARD(t_player, t_card),\n        DLG_HEADER(ctr_names[choice1 - 1]), DLG_NO_DISPLAY_FOR_AI,\n        \"Add\", 1, priority[0], \"Remove\", 1, priority[1]);\n    choices[choice1 - 1] = choice2;\n    --to_choose;\n  }\n  for (i = 0; i < num_types; ++i)\n    if (choices[i] == 1)\n      add_counters(player, card, t_player, t_card, counter_types[i], 1);\n    else if (choices[i] == 2)\n      remove_counters_impl(player, card, t_player, t_card, counter_types[i], 1);\n}",
+      "before_sha256": "65f82ca73f2f242cc48901ae09dd32f38e180f0040c320ceb1ae82c06842e692",
+      "reference_sha256": "2faf086558918c0dbc694e36862f88248639ba7d2a289770e3967d251839dd7d",
+      "after_sha256": "332f0ddd25d09c6ae3dc99b86bfdfa343c9d429659998043d61df55bdf14bbde",
+      "counter_tail_cleanup": true,
+      "facts": {
+        "removed_gotos": 15,
+        "removed_lab_gotos": 15,
+        "source_lines_removed": 225,
+        "removed_placeholder_occurrences": 230,
+        "removed_placeholder_names": 34
+      },
+      "expanded_before_definition": "void quarry_hauler_helper(int player, int card, int t_player, int t_card)\n{\n  char cVar1;\n  card_instance_t *instance;\n  uint32_t uVar3;\n  int iVar4;\n  int iVar5;\n  counter_t cVar6;\n  int i;\n  uint32_t uVar8;\n  int iVar9;\n  unsigned int uVar10;\n  unsigned int uVar11;\n  uint32_t uVar12;\n  int *piVar13;\n  char (*pacVar14)[100];\n  counter_t cVar16;\n  uint32_t uVar17;\n  char (*pacVar18)[100];\n  uint32_t uVar19;\n  char (*pacVar20)[100];\n  uint32_t uVar21;\n  char (*pacVar22)[100];\n  uint32_t uVar23;\n  char (*pacVar24)[100];\n  uint32_t uVar25;\n  uint32_t uVar26;\n  uint32_t uVar27;\n  uint32_t uVar28;\n  uint32_t uVar29;\n  uint32_t uVar30;\n  unsigned int uStack_3fc;\n  uint32_t uStack_3f8;\n  uint32_t uStack_3f4;\n  uint32_t uStack_3f0;\n  uint32_t uStack_3ec;\n  int iStack_3e8;\n  unsigned int uStack_3e4;\n  counter_t counter_types[9];\n  int choices[9];\n  char ctr_names[9][100];\n\n  cVar16 = t_player;\n  iVar4 = t_card;\n  instance = get_card_instance(t_player, t_card);\n  if (instance->internal_card_id == activation_card)\n  {\n    iVar4 = instance->parent_card;\n    cVar16 = instance->parent_controller;\n    instance = get_card_instance(cVar16, iVar4);\n  }\n  uVar10 = 0;\n  if (instance->special_counters != '\\0')\n  {\n    counter_types[0] = (counter_t)instance->special_counter_type;\n    uVar10 = (unsigned int)(counter_types[0] != COUNTER_invalid);\n  }\n  if (instance->counters2 != '\\0')\n  {\n    cVar6 = (counter_t)(unsigned char)instance->targets[0x12].player;\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters3 != '\\0')\n  {\n    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 1);\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters4 != '\\0')\n  {\n    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 2);\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters5 != '\\0')\n  {\n    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 3);\n    counter_types[uVar10] = cVar6;\n    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);\n  }\n  if (instance->counters != '\\0')\n  {\n    counter_types[uVar10] = COUNTER_P1_P1;\n    uVar10 = uVar10 + 1;\n  }\n  if (instance->counters_m1m1 != '\\0')\n  {\n    counter_types[uVar10] = COUNTER_M1_M1;\n    uVar10 = uVar10 + 1;\n  }\n  cVar1 = *(char *)((int)&instance->targets[0x12].card + 1);\n  if (((char)instance->targets[0x12].card == '\\0') ||\n      (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 2),\n       counter_types[uVar10] = cVar6, cVar6 == COUNTER_invalid))\n  {\n    if ((cVar1 == '\\0') ||\n        (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),\n         counter_types[uVar10] = cVar6, cVar6 == COUNTER_invalid))\n    {\n      uVar11 = uVar10;\n      if (uVar10 == 0)\n      {\n        return;\n      }\n    }\n    else\n    {\n      uVar11 = uVar10 + 1;\n    }\n  }\n  else\n  {\n    uVar11 = uVar10 + 1;\n    if ((cVar1 != '\\0') &&\n        (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),\n         counter_types[uVar11] = cVar6, cVar6 != COUNTER_invalid))\n    {\n      uVar11 = uVar10 + 2;\n    }\n  }\n  iVar9 = 0;\n  piVar13 = choices;\n  for (i = 9; i != 0; i = i + -1)\n  {\n    *piVar13 = 0;\n    piVar13 = piVar13 + 1u;\n  }\n  pacVar14 = ctr_names;\n  do\n  {\n    iVar9 = iVar9 + 1;\n    get_counter_name_by_type(*pacVar14, cVar16, iVar4);\n    pacVar14 = pacVar14 + 1;\n  } while (iVar9 < (int)uVar11);\n  uStack_3fc = uVar11;\n  if (uVar11 == 0)\n  {\n    uStack_3fc = 1;\n  }\n\n  iStack_3e8 = 0;\n  uStack_3e4 = uVar11;\n  if (uVar11 < 9)\n    goto LAB_026d5692;\nLAB_026d53b8:\n  uVar10 = (unsigned int)(choices[8] == 0);\nLAB_026d53c5:\n  if (choices[7] != 0)\n    goto LAB_026d56a1;\n  uStack_3ec = 1;\nLAB_026d53dd:\n  if (choices[6] != 0)\n    goto LAB_026d56b8;\n  uStack_3f0 = 1;\nLAB_026d53f5:\n  if (choices[5] != 0)\n    goto LAB_026d56cf;\n  uStack_3f4 = 1;\nLAB_026d540d:\n  if (choices[4] != 0)\n    goto LAB_026d56e6;\n  uVar12 = 1;\nLAB_026d5420:\n  if (choices[3] != 0)\n    goto LAB_026d56f5;\n  uVar8 = 1;\nLAB_026d5433:\n  if (choices[2] != 0)\n    goto LAB_026d5704;\n  uStack_3f8 = 1;\n  do\n  {\n    uVar3 = 1;\n    if (choices[1] != 0)\n      goto LAB_026d571b;\n    while (\n\n          1\n\n              )\n    {\n      pacVar14 = ctr_names + 8;\n      pacVar24 = ctr_names + 7;\n      pacVar22 = ctr_names + 6;\n      pacVar20 = ctr_names + 5;\n      pacVar18 = ctr_names + 4;\n      uVar30 = 0;\n      uVar29 = 0;\n      uVar28 = 0;\n      uVar27 = 0;\n      uVar26 = 1;\n      uVar25 = 1;\n      uVar23 = 1;\n      uVar21 = 1;\n      uVar19 = 1;\n      uVar17 = 1;\n      iVar9 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, \"\\001\\002\", \"\\001\\003\",\n                          \"\\001\\014\", \"\\001\\004\", \"\\001\\006\", t_player, t_card, \"\\001\\026\",\n                          ctr_names, (unsigned int)(iStack_3e8 == 0), 1, ctr_names + 1, uVar3, 1,\n                          ctr_names + 2, uStack_3f8, 1, ctr_names + 3, uVar8, 1, pacVar18, uVar12,\n                          1, pacVar20, uStack_3f4, 1, pacVar22, uStack_3f0, 1, pacVar24, uStack_3ec,\n                          1, pacVar14, uVar10, 1, 0, 0, 0, 0);\n      i = 1;\n      iVar4 = 1;\n      if (player == 1)\n      {\n\n        cVar16 = counter_types[uStack_3fc];\n        iVar4 = raw_counter_value(1, t_player, t_card, cVar16, 1);\n        iVar5 = raw_counter_value(1, t_player, t_card, cVar16, 0);\n        if (iVar4 < 0)\n        {\n          i = iVar4 / 3 + 0xd06;\n        }\n        else if (iVar4 < 1)\n        {\n          i = 0x168f;\n        }\n        else\n        {\n          i = iVar4 * 99 + 9999;\n        }\n        if (iVar5 < 0)\n        {\n          iVar4 = iVar5 / 3 + 0xd06;\n        }\n        else\n        {\n          iVar4 = 0x168f;\n          if (0 < iVar5)\n          {\n            iVar4 = iVar5 * 99 + 9999;\n          }\n        }\n        uStack_3fc = 2;\n      }\n      iVar4 =\n          dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, \"\\001\\002\", \"\\001\\003\", \"\\001\\014\",\n                      \"\\001\\006\", t_player, t_card, \"\\001\\011\", ctr_names + iVar9 + -1, \"\\001\\026\",\n                      \"Add\", 1, i, \"Remove\", 1, iVar4, 0, 0, 0, 0, uVar17, pacVar18, uVar12,\n                      uVar19, pacVar20, uStack_3f4, uVar21, pacVar22, uStack_3f0, uVar23, pacVar24,\n                      uStack_3ec, uVar25, pacVar14, uVar10, uVar26, uVar27, uVar28, uVar29, uVar30);\n      choices[iVar9 + -1] = iVar4;\n      uStack_3e4 = uStack_3e4 - 1;\n      if ((int)uStack_3e4 < 1)\n      {\n        iVar4 = 0;\n        do\n        {\n          if (choices[iVar4] == 1)\n          {\n            add_counters(player, card, t_player, t_card, counter_types[iVar4], 1);\n          }\n          else if (choices[iVar4] == 2)\n          {\n            remove_counters_impl(player, card, t_player, t_card,\n                                                  counter_types[iVar4], 1);\n          }\n          iVar4 = iVar4 + 1;\n        } while (iVar4 < (int)uVar11);\n        return;\n      }\n      iStack_3e8 = choices[0];\n      if (8 < uVar11)\n        goto LAB_026d53b8;\n    LAB_026d5692:\n      uVar10 = 0;\n      if (7 < uVar11)\n        goto LAB_026d53c5;\n    LAB_026d56a1:\n      uStack_3ec = 0;\n      if (6 < uVar11)\n        goto LAB_026d53dd;\n    LAB_026d56b8:\n      uStack_3f0 = 0;\n      if (5 < uVar11)\n        goto LAB_026d53f5;\n    LAB_026d56cf:\n      uStack_3f4 = 0;\n      if (4 < uVar11)\n        goto LAB_026d540d;\n    LAB_026d56e6:\n      uVar12 = 0;\n      if (3 < uVar11)\n        goto LAB_026d5420;\n    LAB_026d56f5:\n      uVar8 = 0;\n      if (2 < uVar11)\n        goto LAB_026d5433;\n    LAB_026d5704:\n      uStack_3f8 = 0;\n      if (1 < uVar11)\n        break;\n    LAB_026d571b:\n      uVar3 = 0;\n    }\n  } while (\n\n          1\n\n              );\n}",
+      "expanded_after_definition": "void quarry_hauler_helper(int player, int card, int t_player, int t_card)\n{\n  card_instance_t *instance = get_card_instance(t_player, t_card);\n  if (instance->internal_card_id == activation_card)\n    instance = get_card_instance(instance->parent_controller, instance->parent_card);\n  const uint8_t *t18 = (const uint8_t *)&instance->targets[18].player;\n  const uint8_t *overflow = (const uint8_t *)&instance->targets[18].card;\n  const uint8_t quantities[9] = {instance->special_counters, instance->counters2,\n      instance->counters3, instance->counters4, instance->counters5, instance->counters,\n      instance->counters_m1m1, overflow[0], overflow[1]};\n  const counter_t types[9] = {instance->special_counter_type, t18[0], t18[1],\n      t18[2], t18[3], COUNTER_P1_P1, COUNTER_M1_M1, overflow[2], overflow[3]};\n  counter_t counter_types[9];\n  int num_types = 0;\n  for (int slot = 0; slot < 9; ++slot)\n    if (quantities[slot] != 0)\n    {\n      counter_types[num_types] = types[slot];\n      if (types[slot] != COUNTER_invalid)\n        ++num_types;\n    }\n  if (num_types == 0)\n    return;\n  int choices[9] = {0};\n  int to_choose = num_types;\n  int i;\n  char ctr_names[9][100];\n  for (i = 0; i < num_types; ++i)\n    get_counter_name_by_type(ctr_names[i], counter_types[i], 256);\n  while (to_choose > 0)\n  {\n    int choice1 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, \"\\x01\" \"\\x02\", \"\\x01\" \"\\x03\", \"\\x01\" \"\\x0C\", \"\\x01\" \"\\x04\", \"\\x01\" \"\\x06\", (t_player), (t_card), \"\\x01\" \"\\x16\", ctr_names[0], num_types > 0 && choices[0] == 0, 1, ctr_names[1], num_types > 1 && choices[1] == 0, 1, ctr_names[2], num_types > 2 && choices[2] == 0, 1, ctr_names[3], num_types > 3 && choices[3] == 0, 1, ctr_names[4], num_types > 4 && choices[4] == 0, 1, ctr_names[5], num_types > 5 && choices[5] == 0, 1, ctr_names[6], num_types > 6 && choices[6] == 0, 1, ctr_names[7], num_types > 7 && choices[7] == 0, 1, ctr_names[8], num_types > 8 && choices[8] == 0, 1, \n\n                 ((void *)0)\n\n                 , \n\n                 ((void *)0)\n\n                 , \n\n                 ((void *)0)\n\n                 , \n\n                 ((void *)0)\n\n                 )\n\n                                                          ;\n    int priority[2] = {1, 1};\n    if (player == AI)\n    {\n\n\n\n      counter_t priority_type = i == 9 ? (counter_t)choices[0] : counter_types[i];\n      int raw_pri[2] = {\n          raw_counter_value(AI, t_player, t_card, priority_type, 1),\n          raw_counter_value(AI, t_player, t_card, priority_type, 0)};\n      for (i = 0; i < 2; ++i)\n        priority[i] = raw_pri[i] < 0 ? raw_pri[i] / 3 + 3334 :\n            (raw_pri[i] == 0 ? 5775 : raw_pri[i] * 99 + 9999);\n    }\n    int choice2 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, \"\\x01\" \"\\x02\", \"\\x01\" \"\\x03\", \"\\x01\" \"\\x0C\", \"\\x01\" \"\\x06\", (t_player), (t_card), \"\\x01\" \"\\x09\", (ctr_names[choice1 - 1]), \"\\x01\" \"\\x16\", \"Add\", 1, priority[0], \"Remove\", 1, priority[1], \n\n                 ((void *)0)\n\n                 , \n\n                 ((void *)0)\n\n                 , \n\n                 ((void *)0)\n\n                 , \n\n                 ((void *)0)\n\n                 )\n\n\n                                                        ;\n    choices[choice1 - 1] = choice2;\n    --to_choose;\n  }\n  for (i = 0; i < num_types; ++i)\n    if (choices[i] == 1)\n      add_counters(player, card, t_player, t_card, counter_types[i], 1);\n    else if (choices[i] == 2)\n      remove_counters_impl(player, card, t_player, t_card, counter_types[i], 1);\n}"
+    },
+    {
+      "source": "functions/counters.c",
+      "name": "remove_counters_impl",
+      "before_definition": "static void remove_counters_impl(int player, int card, int t_player, int t_card,\n                                                  counter_t type, int num)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int32_t iVar3;\n  int iVar4;\n  int iStack_70;\n  target_definition_t td;\n  token_generation_t token;\n\n  instance = get_card_instance(t_player, t_card);\n  if (instance->internal_card_id == activation_card)\n  {\n    t_player = instance->parent_controller;\n    t_card = instance->parent_card;\n  }\n  iStack_70 = count_counters(t_player, t_card, type);\n  add_or_remove_counters_impl(player, card, t_player, t_card, type, -num);\n  if ((type == COUNTER_TIME) && (iVar2 = is_suspend_legacy(t_player, t_card), iVar2 != 0))\n  {\n    if (num < iStack_70)\n    {\n      iStack_70 = num;\n    }\n    iVar3 = instance->targets[9].card;\n    if (iVar3 == 0x2221)\n    {\n      draw_cards(t_player, iStack_70);\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x2228)\n    {\n      default_token_definition(t_player, t_card, 0x4986, &token);\n      token.qty = (uint8_t)iStack_70;\n      generate_token(&token);\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x223e)\n    {\n      default_target_definition(t_player, t_card, &td, 1);\n      td.required_subtype = 0x2000;\n      td.special = 0x1000;\n      td.allow_cancel = 0;\n      if (0 < iStack_70)\n      {\n        iVar2 = 0;\n        do\n        {\n          instance->number_of_targets = '\\0';\n          iVar4 = can_target(&td);\n          if ((iVar4 != 0) &&\n              (iVar4 = new_pick_target(&td, \"Select target nonbasic land.\", 0, 0x80), iVar4 != 0))\n          {\n            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);\n          }\n          iVar2 = iVar2 + 1;\n        } while (iStack_70 != iVar2);\n      }\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x224f)\n    {\n      default_target_definition(player, card, &td, 2);\n      td.preferred_controller = player;\n      if (0 < iStack_70)\n      {\n        iVar2 = 0;\n        do\n        {\n          instance->number_of_targets = '\\0';\n          iVar4 = can_target(&td);\n          if ((iVar4 != 0) && (iVar4 = pick_target(&td, \"TARGET_CREATURE\"), iVar4 != 0))\n          {\n            add_counters(t_player, t_card, instance->targets[0].player,\n                                     instance->targets[0].card, COUNTER_P1_P1, 1);\n          }\n          iVar2 = iVar2 + 1;\n        } while (iStack_70 != iVar2);\n      }\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x2287)\n    {\n      iVar2 = 0;\n      default_target_definition(player, card, &td, 2);\n      td.zone = 0x1000;\n      td.allow_cancel = 0;\n      if (0 < iStack_70)\n      {\n        do\n        {\n          instance->number_of_targets = '\\0';\n          iVar4 = can_target(&td);\n          if ((iVar4 != 0) && (iVar4 = pick_target(&td, \"TARGET_PLAYER\"), iVar4 != 0))\n          {\n            lose_life(instance->targets[0].player, 1);\n            gain_life(player, 1);\n          }\n          iVar2 = iVar2 + 1;\n        } while (iStack_70 != iVar2);\n      }\n    }\n  }\n  return;\n}",
+      "reference_definition": "static void remove_counters_impl(int player, int card, int t_player, int t_card,\n                                                  counter_t type, int num)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int32_t iVar3;\n  int iVar4;\n  int iStack_70;\n  target_definition_t td;\n  token_generation_t token;\n\n  instance = get_card_instance(t_player, t_card);\n  if (instance->internal_card_id == activation_card)\n  {\n    t_player = instance->parent_controller;\n    t_card = instance->parent_card;\n  }\n  iStack_70 = count_counters(t_player, t_card, type);\n  add_or_remove_counters_impl(player, card, t_player, t_card, type, -num);\n  if ((type == COUNTER_TIME) && (iVar2 = is_suspend_legacy(t_player, t_card), iVar2 != 0))\n  {\n    if (num < iStack_70)\n    {\n      iStack_70 = num;\n    }\n    iVar3 = instance->targets[9].card;\n    if (iVar3 == 0x2221)\n    {\n      draw_cards(t_player, iStack_70);\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x2228)\n    {\n      default_token_definition(t_player, t_card, 0x4986, &token);\n      token.qty = (uint8_t)iStack_70;\n      generate_token(&token);\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x223e)\n    {\n      default_target_definition(t_player, t_card, &td, 1);\n      td.required_subtype = 0x2000;\n      td.special = 0x1000;\n      td.allow_cancel = 0;\n      if (0 < iStack_70)\n      {\n        iVar2 = 0;\n        do\n        {\n          instance->number_of_targets = '\\0';\n          iVar4 = can_target(&td);\n          if ((iVar4 != 0) &&\n              (iVar4 = new_pick_target(&td, \"Select target nonbasic land.\", 0, 0x80), iVar4 != 0))\n          {\n            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);\n          }\n          iVar2 = iVar2 + 1;\n        } while (iStack_70 != iVar2);\n      }\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x224f)\n    {\n      default_target_definition(player, card, &td, 2);\n      td.preferred_controller = player;\n      if (0 < iStack_70)\n      {\n        iVar2 = 0;\n        do\n        {\n          instance->number_of_targets = '\\0';\n          iVar4 = can_target(&td);\n          if ((iVar4 != 0) && (iVar4 = pick_target(&td, \"TARGET_CREATURE\"), iVar4 != 0))\n          {\n            add_counters(t_player, t_card, instance->targets[0].player,\n                                     instance->targets[0].card, COUNTER_P1_P1, 1);\n          }\n          iVar2 = iVar2 + 1;\n        } while (iStack_70 != iVar2);\n      }\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x2287)\n    {\n      iVar2 = 0;\n      default_target_definition(player, card, &td, 2);\n      td.zone = 0x1000;\n      td.allow_cancel = 0;\n      if (0 < iStack_70)\n      {\n        do\n        {\n          instance->number_of_targets = '\\0';\n          iVar4 = can_target(&td);\n          if ((iVar4 != 0) && (iVar4 = pick_target(&td, \"TARGET_PLAYER\"), iVar4 != 0))\n          {\n            lose_life(instance->targets[0].player, 1);\n            gain_life(player, 1);\n          }\n          iVar2 = iVar2 + 1;\n        } while (iStack_70 != iVar2);\n      }\n    }\n  }\n  return;\n}",
+      "after_definition": "static void remove_counters_impl(int player, int card, int t_player, int t_card,\n    counter_t type, int num)\n{\n  card_instance_t *instance = get_card_instance(t_player, t_card);\n  target_definition_t td;\n  token_generation_t token;\n  if (instance->internal_card_id == activation_card)\n  {\n    t_player = instance->parent_controller;\n    t_card = instance->parent_card;\n  }\n  int removed = count_counters(t_player, t_card, type);\n  add_or_remove_counters_impl(player, card, t_player, t_card, type, -num);\n  if (type != COUNTER_TIME || !is_suspend_legacy(t_player, t_card))\n    return;\n  if (num < removed)\n    removed = num;\n  int suspended_card = instance->targets[9].card;\n  if (suspended_card == CARD_ID_AEON_CHRONICLER)\n  {\n    draw_cards(t_player, removed);\n    suspended_card = instance->targets[9].card;\n  }\n  if (suspended_card == CARD_ID_BENALISH_COMMANDER)\n  {\n    default_token_definition(t_player, t_card, CARD_ID_SOLDIER, &token);\n    token.qty = (uint8_t)removed;\n    generate_token(&token);\n    suspended_card = instance->targets[9].card;\n  }\n  if (suspended_card == CARD_ID_DETRITIVORE)\n  {\n    default_target_definition(t_player, t_card, &td, TYPE_LAND);\n    td.required_subtype = SUBTYPE_BASIC;\n    td.special = TARGET_SPECIAL_ILLEGAL_SUBTYPE;\n    td.allow_cancel = 0;\n    for (int i = 0; i < removed; ++i)\n    {\n      instance->number_of_targets = 0;\n      if (can_target(&td) && new_pick_target(&td, \"Select target nonbasic land.\", 0, 0x80))\n        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);\n    }\n    suspended_card = instance->targets[9].card;\n  }\n  if (suspended_card == CARD_ID_FUNGAL_BEHEMOTH)\n  {\n    default_target_definition(player, card, &td, TYPE_CREATURE);\n    td.preferred_controller = player;\n    for (int i = 0; i < removed; ++i)\n    {\n      instance->number_of_targets = 0;\n      if (can_target(&td) && pick_target(&td, \"TARGET_CREATURE\"))\n        add_counters(t_player, t_card, instance->targets[0].player,\n            instance->targets[0].card, COUNTER_P1_P1, 1);\n    }\n    suspended_card = instance->targets[9].card;\n  }\n  if (suspended_card == CARD_ID_ROILING_HORROR)\n  {\n    default_target_definition(player, card, &td, TYPE_CREATURE);\n    td.zone = TARGET_ZONE_PLAYERS;\n    td.allow_cancel = 0;\n    for (int i = 0; i < removed; ++i)\n    {\n      instance->number_of_targets = 0;\n      if (can_target(&td) && pick_target(&td, \"TARGET_PLAYER\"))\n      {\n        lose_life(instance->targets[0].player, 1);\n        gain_life(player, 1);\n      }\n    }\n  }\n}",
+      "before_sha256": "bfdfdfbbbeb1f77f7ff6d3e3bf10e787fb1bdc89db1c1f6a30556f5810c9d6c6",
+      "reference_sha256": "bfdfdfbbbeb1f77f7ff6d3e3bf10e787fb1bdc89db1c1f6a30556f5810c9d6c6",
+      "after_sha256": "22195154567221338504d118f964228678ac8b69141e301b322ea4634719ee55",
+      "counter_tail_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 33,
+        "removed_placeholder_occurrences": 51,
+        "removed_placeholder_names": 4
+      },
+      "expanded_before_definition": "static void remove_counters_impl(int player, int card, int t_player, int t_card,\n                                                  counter_t type, int num)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int32_t iVar3;\n  int iVar4;\n  int iStack_70;\n  target_definition_t td;\n  token_generation_t token;\n\n  instance = get_card_instance(t_player, t_card);\n  if (instance->internal_card_id == activation_card)\n  {\n    t_player = instance->parent_controller;\n    t_card = instance->parent_card;\n  }\n  iStack_70 = count_counters(t_player, t_card, type);\n  add_or_remove_counters_impl(player, card, t_player, t_card, type, -num);\n  if ((type == COUNTER_TIME) && (iVar2 = is_suspend_legacy(t_player, t_card), iVar2 != 0))\n  {\n    if (num < iStack_70)\n    {\n      iStack_70 = num;\n    }\n    iVar3 = instance->targets[9].card;\n    if (iVar3 == 0x2221)\n    {\n      draw_cards(t_player, iStack_70);\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x2228)\n    {\n      default_token_definition(t_player, t_card, 0x4986, &token);\n      token.qty = (uint8_t)iStack_70;\n      generate_token(&token);\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x223e)\n    {\n      default_target_definition(t_player, t_card, &td, 1);\n      td.required_subtype = 0x2000;\n      td.special = 0x1000;\n      td.allow_cancel = 0;\n      if (0 < iStack_70)\n      {\n        iVar2 = 0;\n        do\n        {\n          instance->number_of_targets = '\\0';\n          iVar4 = can_target(&td);\n          if ((iVar4 != 0) &&\n              (iVar4 = new_pick_target(&td, \"Select target nonbasic land.\", 0, 0x80), iVar4 != 0))\n          {\n            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);\n          }\n          iVar2 = iVar2 + 1;\n        } while (iStack_70 != iVar2);\n      }\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x224f)\n    {\n      default_target_definition(player, card, &td, 2);\n      td.preferred_controller = player;\n      if (0 < iStack_70)\n      {\n        iVar2 = 0;\n        do\n        {\n          instance->number_of_targets = '\\0';\n          iVar4 = can_target(&td);\n          if ((iVar4 != 0) && (iVar4 = pick_target(&td, \"TARGET_CREATURE\"), iVar4 != 0))\n          {\n            add_counters(t_player, t_card, instance->targets[0].player,\n                                     instance->targets[0].card, COUNTER_P1_P1, 1);\n          }\n          iVar2 = iVar2 + 1;\n        } while (iStack_70 != iVar2);\n      }\n      iVar3 = instance->targets[9].card;\n    }\n    if (iVar3 == 0x2287)\n    {\n      iVar2 = 0;\n      default_target_definition(player, card, &td, 2);\n      td.zone = 0x1000;\n      td.allow_cancel = 0;\n      if (0 < iStack_70)\n      {\n        do\n        {\n          instance->number_of_targets = '\\0';\n          iVar4 = can_target(&td);\n          if ((iVar4 != 0) && (iVar4 = pick_target(&td, \"TARGET_PLAYER\"), iVar4 != 0))\n          {\n            lose_life(instance->targets[0].player, 1);\n            gain_life(player, 1);\n          }\n          iVar2 = iVar2 + 1;\n        } while (iStack_70 != iVar2);\n      }\n    }\n  }\n  return;\n}",
+      "expanded_after_definition": "static void remove_counters_impl(int player, int card, int t_player, int t_card,\n    counter_t type, int num)\n{\n  card_instance_t *instance = get_card_instance(t_player, t_card);\n  target_definition_t td;\n  token_generation_t token;\n  if (instance->internal_card_id == activation_card)\n  {\n    t_player = instance->parent_controller;\n    t_card = instance->parent_card;\n  }\n  int removed = count_counters(t_player, t_card, type);\n  add_or_remove_counters_impl(player, card, t_player, t_card, type, -num);\n  if (type != COUNTER_TIME || !is_suspend_legacy(t_player, t_card))\n    return;\n  if (num < removed)\n    removed = num;\n  int suspended_card = instance->targets[9].card;\n  if (suspended_card == CARD_ID_AEON_CHRONICLER)\n  {\n    draw_cards(t_player, removed);\n    suspended_card = instance->targets[9].card;\n  }\n  if (suspended_card == CARD_ID_BENALISH_COMMANDER)\n  {\n    default_token_definition(t_player, t_card, CARD_ID_SOLDIER, &token);\n    token.qty = (uint8_t)removed;\n    generate_token(&token);\n    suspended_card = instance->targets[9].card;\n  }\n  if (suspended_card == CARD_ID_DETRITIVORE)\n  {\n    default_target_definition(t_player, t_card, &td, TYPE_LAND);\n    td.required_subtype = SUBTYPE_BASIC;\n    td.special = TARGET_SPECIAL_ILLEGAL_SUBTYPE;\n    td.allow_cancel = 0;\n    for (int i = 0; i < removed; ++i)\n    {\n      instance->number_of_targets = 0;\n      if (can_target(&td) && new_pick_target(&td, \"Select target nonbasic land.\", 0, 0x80))\n        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);\n    }\n    suspended_card = instance->targets[9].card;\n  }\n  if (suspended_card == CARD_ID_FUNGAL_BEHEMOTH)\n  {\n    default_target_definition(player, card, &td, TYPE_CREATURE);\n    td.preferred_controller = player;\n    for (int i = 0; i < removed; ++i)\n    {\n      instance->number_of_targets = 0;\n      if (can_target(&td) && pick_target(&td, \"TARGET_CREATURE\"))\n        add_counters(t_player, t_card, instance->targets[0].player,\n            instance->targets[0].card, COUNTER_P1_P1, 1);\n    }\n    suspended_card = instance->targets[9].card;\n  }\n  if (suspended_card == CARD_ID_ROILING_HORROR)\n  {\n    default_target_definition(player, card, &td, TYPE_CREATURE);\n    td.zone = TARGET_ZONE_PLAYERS;\n    td.allow_cancel = 0;\n    for (int i = 0; i < removed; ++i)\n    {\n      instance->number_of_targets = 0;\n      if (can_target(&td) && pick_target(&td, \"TARGET_PLAYER\"))\n      {\n        lose_life(instance->targets[0].player, 1);\n        gain_life(player, 1);\n      }\n    }\n  }\n}"
+    },
+    {
+      "source": "functions/counters.c",
+      "name": "move_counters",
+      "before_definition": "void move_counters(int player, int card, int t_player, int t_card, int src_player,\n                               int src_card, counter_t counter_type, int number)\n{\n  uint8_t uVar1;\n  int result;\n  card_instance_t *instance;\n  char cStack_14;\n  if ((t_card != src_card) || (t_player != src_player))\n  {\n    result = can_have_counters_placed_on_it(t_player, t_card);\n    if (result != 0)\n    {\n      cStack_14 = (char)counter_type;\n      if (cStack_14 == -1)\n      {\n        result = check_battlefield_for_id(t_player, 0x2d73);\n        if (result != 0)\n        {\n          instance = get_card_instance(src_player, src_card);\n          uVar1 = instance->counters_m1m1;\n          instance->counters_m1m1 = '\\0';\n          hack_silent_counters = hack_silent_counters + 1;\n          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n          clear_all_counters(src_player, src_card);\n          hack_silent_counters = hack_silent_counters + -1;\n          instance->counters_m1m1 = uVar1;\n        }\n        result = check_battlefield_for_id(1 - t_player, 0x4f3c);\n        if (result == 0)\n        {\n          hack_silent_counters = hack_silent_counters + 1;\n          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n          clear_all_counters(src_player, src_card);\n          hack_silent_counters = hack_silent_counters + -1;\n        }\n        else\n        {\n          result = count_counters(src_player, src_card, COUNTER_P1_P1);\n          remove_counters_impl(player, card, src_player, src_card, COUNTER_P1_P1,\n                                                0xff);\n          hack_silent_counters = hack_silent_counters + 1;\n          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n          clear_all_counters(src_player, src_card);\n          add_counters(player, card, src_player, src_card, COUNTER_P1_P1, result);\n          hack_silent_counters = hack_silent_counters + -1;\n        }\n      }\n      else\n      {\n        result = check_battlefield_for_id(t_player, 0x2d73);\n        if ((counter_type != COUNTER_M1_M1) || (result == 0))\n        {\n          result = check_battlefield_for_id(1 - t_player, 0x4f3c);\n          if ((counter_type != COUNTER_P1_P1) || (result == 0))\n          {\n            if (number < 0)\n            {\n              number = 0xff;\n            }\n            result = count_counters(src_player, src_card, counter_type);\n            if (result < number)\n            {\n              number = result;\n            }\n            if (0 < number)\n            {\n              remove_counters_impl(player, card, src_player, src_card,\n                                                    counter_type, number);\n            }\n            add_counters_predoubled(player, card, t_player, t_card, counter_type,\n                                                number);\n            return;\n          }\n        }\n      }\n    }\n  }\n  return;\n}",
+      "reference_definition": "void move_counters(int player, int card, int t_player, int t_card, int src_player,\n                               int src_card, counter_t counter_type, int number)\n{\n  uint8_t uVar1;\n  int result;\n  card_instance_t *instance;\n  char cStack_14;\n  if ((t_card != src_card) || (t_player != src_player))\n  {\n    result = can_have_counters_placed_on_it(t_player, t_card);\n    if (result != 0)\n    {\n      cStack_14 = (char)counter_type;\n      if (cStack_14 == -1)\n      {\n        result = check_battlefield_for_id(t_player, 0x2d73);\n        if (result != 0)\n        {\n          instance = get_card_instance(src_player, src_card);\n          uVar1 = instance->counters_m1m1;\n          instance->counters_m1m1 = '\\0';\n          hack_silent_counters = hack_silent_counters + 1;\n          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n          clear_all_counters(src_player, src_card);\n          hack_silent_counters = hack_silent_counters + -1;\n          instance->counters_m1m1 = uVar1;\n        }\n        result = check_battlefield_for_id(1 - t_player, 0x4f3c);\n        if (result == 0)\n        {\n          hack_silent_counters = hack_silent_counters + 1;\n          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n          clear_all_counters(src_player, src_card);\n          hack_silent_counters = hack_silent_counters + -1;\n        }\n        else\n        {\n          result = count_counters(src_player, src_card, COUNTER_P1_P1);\n          remove_counters_impl(player, card, src_player, src_card, COUNTER_P1_P1,\n                                                0xff);\n          hack_silent_counters = hack_silent_counters + 1;\n          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n          clear_all_counters(src_player, src_card);\n          add_counters(player, card, src_player, src_card, COUNTER_P1_P1, result);\n          hack_silent_counters = hack_silent_counters + -1;\n        }\n      }\n      else\n      {\n        result = check_battlefield_for_id(t_player, 0x2d73);\n        if ((counter_type != COUNTER_M1_M1) || (result == 0))\n        {\n          result = check_battlefield_for_id(1 - t_player, 0x4f3c);\n          if ((counter_type != COUNTER_P1_P1) || (result == 0))\n          {\n            if (number < 0)\n            {\n              number = 0xff;\n            }\n            result = count_counters(src_player, src_card, counter_type);\n            if (result < number)\n            {\n              number = result;\n            }\n            if (0 < number)\n            {\n              remove_counters_impl(player, card, src_player, src_card,\n                                                    counter_type, number);\n            }\n            add_counters_predoubled(player, card, t_player, t_card, counter_type,\n                                                number);\n            return;\n          }\n        }\n      }\n    }\n  }\n  return;\n}",
+      "after_definition": "void move_counters(int player, int card, int t_player, int t_card, int src_player,\n    int src_card, counter_t counter_type, int number)\n{\n  if ((t_player == src_player && t_card == src_card) ||\n      !can_have_counters_placed_on_it(t_player, t_card))\n    return;\n  if ((uint8_t)counter_type == COUNTER_invalid)\n  {\n    if (check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST))\n    {\n      card_instance_t *instance = get_card_instance(src_player, src_card);\n      uint8_t minus_counters = instance->counters_m1m1;\n      instance->counters_m1m1 = 0;\n      ++hack_silent_counters;\n      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n      clear_all_counters(src_player, src_card);\n      --hack_silent_counters;\n      instance->counters_m1m1 = minus_counters;\n    }\n    if (!check_battlefield_for_id(1 - t_player, CARD_ID_BLIGHTBEETLE))\n    {\n      ++hack_silent_counters;\n      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n      clear_all_counters(src_player, src_card);\n      --hack_silent_counters;\n    }\n    else\n    {\n      int plus_counters = count_counters(src_player, src_card, COUNTER_P1_P1);\n      remove_counters_impl(player, card, src_player, src_card, COUNTER_P1_P1, 255);\n      ++hack_silent_counters;\n      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n      clear_all_counters(src_player, src_card);\n      add_counters(player, card, src_player, src_card, COUNTER_P1_P1, plus_counters);\n      --hack_silent_counters;\n    }\n    return;\n  }\n  int melira = check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST);\n  if (counter_type == COUNTER_M1_M1 && melira)\n    return;\n  int blightbeetle = check_battlefield_for_id(1 - t_player, CARD_ID_BLIGHTBEETLE);\n  if (counter_type == COUNTER_P1_P1 && blightbeetle)\n    return;\n  if (number < 0)\n    number = 255;\n  int available = count_counters(src_player, src_card, counter_type);\n  if (available < number)\n    number = available;\n  if (number > 0)\n    remove_counters_impl(player, card, src_player, src_card, counter_type, number);\n  add_counters_predoubled(player, card, t_player, t_card, counter_type, number);\n}",
+      "before_sha256": "230781fd570c42a58f84c83791d15db4afca375a984b4addb95557f0116d5343",
+      "reference_sha256": "230781fd570c42a58f84c83791d15db4afca375a984b4addb95557f0116d5343",
+      "after_sha256": "b90189cf7df45f82a2806b123e551ae0a751af90f71ce05a0dc8ada6db02c443",
+      "counter_tail_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 26,
+        "removed_placeholder_occurrences": 6,
+        "removed_placeholder_names": 2
+      },
+      "expanded_before_definition": "void move_counters(int player, int card, int t_player, int t_card, int src_player,\n                               int src_card, counter_t counter_type, int number)\n{\n  uint8_t uVar1;\n  int result;\n  card_instance_t *instance;\n  char cStack_14;\n  if ((t_card != src_card) || (t_player != src_player))\n  {\n    result = can_have_counters_placed_on_it(t_player, t_card);\n    if (result != 0)\n    {\n      cStack_14 = (char)counter_type;\n      if (cStack_14 == -1)\n      {\n        result = check_battlefield_for_id(t_player, 0x2d73);\n        if (result != 0)\n        {\n          instance = get_card_instance(src_player, src_card);\n          uVar1 = instance->counters_m1m1;\n          instance->counters_m1m1 = '\\0';\n          hack_silent_counters = hack_silent_counters + 1;\n          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n          clear_all_counters(src_player, src_card);\n          hack_silent_counters = hack_silent_counters + -1;\n          instance->counters_m1m1 = uVar1;\n        }\n        result = check_battlefield_for_id(1 - t_player, 0x4f3c);\n        if (result == 0)\n        {\n          hack_silent_counters = hack_silent_counters + 1;\n          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n          clear_all_counters(src_player, src_card);\n          hack_silent_counters = hack_silent_counters + -1;\n        }\n        else\n        {\n          result = count_counters(src_player, src_card, COUNTER_P1_P1);\n          remove_counters_impl(player, card, src_player, src_card, COUNTER_P1_P1,\n                                                0xff);\n          hack_silent_counters = hack_silent_counters + 1;\n          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n          clear_all_counters(src_player, src_card);\n          add_counters(player, card, src_player, src_card, COUNTER_P1_P1, result);\n          hack_silent_counters = hack_silent_counters + -1;\n        }\n      }\n      else\n      {\n        result = check_battlefield_for_id(t_player, 0x2d73);\n        if ((counter_type != COUNTER_M1_M1) || (result == 0))\n        {\n          result = check_battlefield_for_id(1 - t_player, 0x4f3c);\n          if ((counter_type != COUNTER_P1_P1) || (result == 0))\n          {\n            if (number < 0)\n            {\n              number = 0xff;\n            }\n            result = count_counters(src_player, src_card, counter_type);\n            if (result < number)\n            {\n              number = result;\n            }\n            if (0 < number)\n            {\n              remove_counters_impl(player, card, src_player, src_card,\n                                                    counter_type, number);\n            }\n            add_counters_predoubled(player, card, t_player, t_card, counter_type,\n                                                number);\n            return;\n          }\n        }\n      }\n    }\n  }\n  return;\n}",
+      "expanded_after_definition": "void move_counters(int player, int card, int t_player, int t_card, int src_player,\n    int src_card, counter_t counter_type, int number)\n{\n  if ((t_player == src_player && t_card == src_card) ||\n      !can_have_counters_placed_on_it(t_player, t_card))\n    return;\n  if ((uint8_t)counter_type == COUNTER_invalid)\n  {\n    if (check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST))\n    {\n      card_instance_t *instance = get_card_instance(src_player, src_card);\n      uint8_t minus_counters = instance->counters_m1m1;\n      instance->counters_m1m1 = 0;\n      ++hack_silent_counters;\n      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n      clear_all_counters(src_player, src_card);\n      --hack_silent_counters;\n      instance->counters_m1m1 = minus_counters;\n    }\n    if (!check_battlefield_for_id(1 - t_player, CARD_ID_BLIGHTBEETLE))\n    {\n      ++hack_silent_counters;\n      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n      clear_all_counters(src_player, src_card);\n      --hack_silent_counters;\n    }\n    else\n    {\n      int plus_counters = count_counters(src_player, src_card, COUNTER_P1_P1);\n      remove_counters_impl(player, card, src_player, src_card, COUNTER_P1_P1, 255);\n      ++hack_silent_counters;\n      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);\n      clear_all_counters(src_player, src_card);\n      add_counters(player, card, src_player, src_card, COUNTER_P1_P1, plus_counters);\n      --hack_silent_counters;\n    }\n    return;\n  }\n  int melira = check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST);\n  if (counter_type == COUNTER_M1_M1 && melira)\n    return;\n  int blightbeetle = check_battlefield_for_id(1 - t_player, CARD_ID_BLIGHTBEETLE);\n  if (counter_type == COUNTER_P1_P1 && blightbeetle)\n    return;\n  if (number < 0)\n    number = 255;\n  int available = count_counters(src_player, src_card, counter_type);\n  if (available < number)\n    number = available;\n  if (number > 0)\n    remove_counters_impl(player, card, src_player, src_card, counter_type, number);\n  add_counters_predoubled(player, card, t_player, t_card, counter_type, number);\n}"
+    }
+  ],
+  "constants": {
+    "CARD_ID_AEON_CHRONICLER": 8737,
+    "CARD_ID_BENALISH_COMMANDER": 8744,
+    "CARD_ID_SOLDIER": 18822,
+    "CARD_ID_DETRITIVORE": 8766,
+    "CARD_ID_FUNGAL_BEHEMOTH": 8783,
+    "CARD_ID_ROILING_HORROR": 8839,
+    "CARD_ID_MELIRA_SYLVOK_OUTCAST": 11635,
+    "CARD_ID_BLIGHTBEETLE": 20284,
+    "COUNTER_TIME": 111,
+    "COUNTER_end": 187,
+    "COUNTER_invalid": 255,
+    "COUNTER_P1_P1": 0,
+    "COUNTER_M1_M1": 1,
+    "TYPE_LAND": 1,
+    "TYPE_CREATURE": 2,
+    "SUBTYPE_BASIC": 8192,
+    "TARGET_SPECIAL_ILLEGAL_SUBTYPE": 4096,
+    "TARGET_ZONE_PLAYERS": 4096,
+    "EVENT_RESOLVE_ACTIVATION": 114,
+    "AI": 1
+  },
+  "native_comparison": {
+    "result": {
+      "all_equal": true,
+      "three_way_comparisons": 552736,
+      "entry_invocations": 1658208,
+      "helpers": 3,
+      "original_quarry_name_error_negative_control": true,
+      "human_slot_masks": 512,
+      "ai_defined_priority_domain_only": true,
+      "opaque_dialog_protocol_checked": true,
+      "stateful_random_inputs": 30000,
+      "exact_call_traces_and_full_records": true
+    },
+    "native_path": ".recovery/2022-ManalinkEh.dll",
+    "native_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "functions": [
+      {
+        "name": "quarry_hauler_helper",
+        "address": "0x26d51e0",
+        "size": 1825,
+        "sha256": "58ab2b68d3711c5e44526c2deb263e54876a8daa59a562f98a88307b7a16eccf",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x26d51f9",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26d5367",
+            "target": "0x26cebf0",
+            "callee": "native_name"
+          },
+          {
+            "instruction": "0x26d55a2",
+            "target": "0x26e9c50",
+            "callee": "dialog_impl"
+          },
+          {
+            "instruction": "0x26d5652",
+            "target": "0x26e9c50",
+            "callee": "dialog_impl"
+          },
+          {
+            "instruction": "0x26d57a5",
+            "target": "0x26d48d0",
+            "callee": "native_remove"
+          },
+          {
+            "instruction": "0x26d57db",
+            "target": "0x26d4840",
+            "callee": "add_counters"
+          },
+          {
+            "instruction": "0x26d5814",
+            "target": "0x26d1950",
+            "callee": "raw_counter_value"
+          },
+          {
+            "instruction": "0x26d583e",
+            "target": "0x26d1950",
+            "callee": "raw_counter_value"
+          },
+          {
+            "instruction": "0x26d58b3",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          }
+        ]
+      },
+      {
+        "name": "remove_counters_impl",
+        "address": "0x26d48d0",
+        "size": 818,
+        "sha256": "ccfcf08c1cbdd96147e7942f7c1ddb061cfe38c75e5a194c2ee3cef584c62a19",
+        "entry_abi": "regparm(3)",
+        "external_branches": [
+          {
+            "instruction": "0x26d48eb",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26d4916",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26d4939",
+            "target": "0x26d0e90",
+            "callee": "native_core"
+          },
+          {
+            "instruction": "0x26d4957",
+            "target": "0x20eaa90",
+            "callee": "is_suspend_legacy"
+          },
+          {
+            "instruction": "0x26d49c5",
+            "target": "0x2660240",
+            "callee": "default_target_definition"
+          },
+          {
+            "instruction": "0x26d49f9",
+            "target": "0x26604c0",
+            "callee": "can_target"
+          },
+          {
+            "instruction": "0x26d4a0d",
+            "target": "0x2660d50",
+            "callee": "pick_target"
+          },
+          {
+            "instruction": "0x26d4a24",
+            "target": "0x268f1b0",
+            "callee": "lose_life"
+          },
+          {
+            "instruction": "0x26d4a37",
+            "target": "0x268f900",
+            "callee": "gain_life"
+          },
+          {
+            "instruction": "0x26d4a5f",
+            "target": "0x2660240",
+            "callee": "default_target_definition"
+          },
+          {
+            "instruction": "0x26d4a8d",
+            "target": "0x26604c0",
+            "callee": "can_target"
+          },
+          {
+            "instruction": "0x26d4aa1",
+            "target": "0x2660d50",
+            "callee": "pick_target"
+          },
+          {
+            "instruction": "0x26d4ad5",
+            "target": "0x26d4840",
+            "callee": "add_counters"
+          },
+          {
+            "instruction": "0x26d4b09",
+            "target": "0x2660240",
+            "callee": "default_target_definition"
+          },
+          {
+            "instruction": "0x26d4b4d",
+            "target": "0x26604c0",
+            "callee": "can_target"
+          },
+          {
+            "instruction": "0x26d4b71",
+            "target": "0x2660db0",
+            "callee": "new_pick_target"
+          },
+          {
+            "instruction": "0x26d4b8f",
+            "target": "0x26b5a00",
+            "callee": "kill_card"
+          },
+          {
+            "instruction": "0x26d4bc6",
+            "target": "0x2665470",
+            "callee": "default_token_definition"
+          },
+          {
+            "instruction": "0x26d4bd7",
+            "target": "0x26659d0",
+            "callee": "generate_token"
+          },
+          {
+            "instruction": "0x26d4bf2",
+            "target": "0x26b4050",
+            "callee": "draw_cards"
+          }
+        ]
+      },
+      {
+        "name": "move_counters",
+        "address": "0x26d5a00",
+        "size": 731,
+        "sha256": "d69010dbe4659353fe9edf7dd5456ba4ba8e879d54c285a05b4cfab4f412be7d",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x26d5a47",
+            "target": "0x26d44d0",
+            "callee": "can_have_counters_placed_on_it"
+          },
+          {
+            "instruction": "0x26d5a65",
+            "target": "0x2681910",
+            "callee": "check_battlefield_for_id"
+          },
+          {
+            "instruction": "0x26d5a86",
+            "target": "0x2681910",
+            "callee": "check_battlefield_for_id"
+          },
+          {
+            "instruction": "0x26d5ab3",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26d5adc",
+            "target": "0x26d48d0",
+            "callee": "native_remove"
+          },
+          {
+            "instruction": "0x26d5b03",
+            "target": "0x26d5970",
+            "callee": "add_counters_predoubled"
+          },
+          {
+            "instruction": "0x26d5b08",
+            "target": "0x2681910",
+            "callee": "check_battlefield_for_id"
+          },
+          {
+            "instruction": "0x26d5b27",
+            "target": "0x2681910",
+            "callee": "check_battlefield_for_id"
+          },
+          {
+            "instruction": "0x26d5b49",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26d5b6f",
+            "target": "0x26d48d0",
+            "callee": "native_remove"
+          },
+          {
+            "instruction": "0x26d5baa",
+            "target": "0x26d4ca0",
+            "callee": "copy_counters"
+          },
+          {
+            "instruction": "0x26d5bb9",
+            "target": "0x26ceef0",
+            "callee": "native_clear"
+          },
+          {
+            "instruction": "0x26d5bdf",
+            "target": "0x26d4840",
+            "callee": "add_counters"
+          },
+          {
+            "instruction": "0x26d5c30",
+            "target": "0x26d4ca0",
+            "callee": "copy_counters"
+          },
+          {
+            "instruction": "0x26d5c3a",
+            "target": "0x26ceef0",
+            "callee": "native_clear"
+          },
+          {
+            "instruction": "0x26d5c65",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26d5cb2",
+            "target": "0x26d4ca0",
+            "callee": "copy_counters"
+          },
+          {
+            "instruction": "0x26d5cbd",
+            "target": "0x26ceef0",
+            "callee": "native_clear"
+          }
+        ]
+      }
+    ],
+    "bindings": [
+      {
+        "kind": "callee",
+        "owner": "quarry_hauler_helper",
+        "patch_address": "0x26d51fa",
+        "original_word": "0xfffdd8b2",
+        "target": "(uintptr_t)get_card_instance-0x26d51feU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "quarry_hauler_helper",
+        "patch_address": "0x26d5200",
+        "original_word": "0x785f90",
+        "target": "(uintptr_t)&activation_card"
+      },
+      {
+        "kind": "callee",
+        "owner": "quarry_hauler_helper",
+        "patch_address": "0x26d5368",
+        "original_word": "0xffff9884",
+        "target": "(uintptr_t)native_name-0x26d536cU",
+        "native_target": "0x26cebf0"
+      },
+      {
+        "kind": "callee",
+        "owner": "quarry_hauler_helper",
+        "patch_address": "0x26d55a3",
+        "original_word": "0x146a9",
+        "target": "(uintptr_t)dialog_impl-0x26d55a7U",
+        "native_target": "0x26e9c50"
+      },
+      {
+        "kind": "callee",
+        "owner": "quarry_hauler_helper",
+        "patch_address": "0x26d5653",
+        "original_word": "0x145f9",
+        "target": "(uintptr_t)dialog_impl-0x26d5657U",
+        "native_target": "0x26e9c50"
+      },
+      {
+        "kind": "callee",
+        "owner": "quarry_hauler_helper",
+        "patch_address": "0x26d57a6",
+        "original_word": "0xfffff126",
+        "target": "(uintptr_t)native_remove-0x26d57aaU",
+        "native_target": "0x26d48d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "quarry_hauler_helper",
+        "patch_address": "0x26d57dc",
+        "original_word": "0xfffff060",
+        "target": "(uintptr_t)add_counters-0x26d57e0U",
+        "native_target": "0x26d4840"
+      },
+      {
+        "kind": "callee",
+        "owner": "quarry_hauler_helper",
+        "patch_address": "0x26d5815",
+        "original_word": "0xffffc137",
+        "target": "(uintptr_t)raw_counter_value-0x26d5819U",
+        "native_target": "0x26d1950"
+      },
+      {
+        "kind": "callee",
+        "owner": "quarry_hauler_helper",
+        "patch_address": "0x26d583f",
+        "original_word": "0xffffc10d",
+        "target": "(uintptr_t)raw_counter_value-0x26d5843U",
+        "native_target": "0x26d1950"
+      },
+      {
+        "kind": "callee",
+        "owner": "quarry_hauler_helper",
+        "patch_address": "0x26d58b4",
+        "original_word": "0xfffdd1f8",
+        "target": "(uintptr_t)get_card_instance-0x26d58b8U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d48ec",
+        "original_word": "0xfffde1c0",
+        "target": "(uintptr_t)get_card_instance-0x26d48f0U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d48f3",
+        "original_word": "0x785f90",
+        "target": "(uintptr_t)&activation_card"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4917",
+        "original_word": "0xffffce15",
+        "target": "(uintptr_t)count_counters-0x26d491bU",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d493a",
+        "original_word": "0xffffc552",
+        "target": "(uintptr_t)native_core-0x26d493eU",
+        "native_target": "0x26d0e90"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4958",
+        "original_word": "0xffa16134",
+        "target": "(uintptr_t)is_suspend_legacy-0x26d495cU",
+        "native_target": "0x20eaa90"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d49c6",
+        "original_word": "0xfff8b876",
+        "target": "(uintptr_t)default_target_definition-0x26d49caU",
+        "native_target": "0x2660240"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d49fa",
+        "original_word": "0xfff8bac2",
+        "target": "(uintptr_t)can_target-0x26d49feU",
+        "native_target": "0x26604c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4a0e",
+        "original_word": "0xfff8c33e",
+        "target": "(uintptr_t)pick_target-0x26d4a12U",
+        "native_target": "0x2660d50"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4a25",
+        "original_word": "0xfffba787",
+        "target": "(uintptr_t)lose_life-0x26d4a29U",
+        "native_target": "0x268f1b0"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4a38",
+        "original_word": "0xfffbaec4",
+        "target": "(uintptr_t)gain_life-0x26d4a3cU",
+        "native_target": "0x268f900"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4a60",
+        "original_word": "0xfff8b7dc",
+        "target": "(uintptr_t)default_target_definition-0x26d4a64U",
+        "native_target": "0x2660240"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4a8e",
+        "original_word": "0xfff8ba2e",
+        "target": "(uintptr_t)can_target-0x26d4a92U",
+        "native_target": "0x26604c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4aa2",
+        "original_word": "0xfff8c2aa",
+        "target": "(uintptr_t)pick_target-0x26d4aa6U",
+        "native_target": "0x2660d50"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4ad6",
+        "original_word": "0xfffffd66",
+        "target": "(uintptr_t)add_counters-0x26d4adaU",
+        "native_target": "0x26d4840"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4b0a",
+        "original_word": "0xfff8b732",
+        "target": "(uintptr_t)default_target_definition-0x26d4b0eU",
+        "native_target": "0x2660240"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4b4e",
+        "original_word": "0xfff8b96e",
+        "target": "(uintptr_t)can_target-0x26d4b52U",
+        "native_target": "0x26604c0"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4b72",
+        "original_word": "0xfff8c23a",
+        "target": "(uintptr_t)new_pick_target-0x26d4b76U",
+        "native_target": "0x2660db0"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4b90",
+        "original_word": "0xfffe0e6c",
+        "target": "(uintptr_t)kill_card-0x26d4b94U",
+        "native_target": "0x26b5a00"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4bc7",
+        "original_word": "0xfff908a5",
+        "target": "(uintptr_t)default_token_definition-0x26d4bcbU",
+        "native_target": "0x2665470"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4bd8",
+        "original_word": "0xfff90df4",
+        "target": "(uintptr_t)generate_token-0x26d4bdcU",
+        "native_target": "0x26659d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "remove_counters_impl",
+        "patch_address": "0x26d4bf3",
+        "original_word": "0xfffdf459",
+        "target": "(uintptr_t)draw_cards-0x26d4bf7U",
+        "native_target": "0x26b4050"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5a48",
+        "original_word": "0xffffea84",
+        "target": "(uintptr_t)can_have_counters_placed_on_it-0x26d5a4cU",
+        "native_target": "0x26d44d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5a66",
+        "original_word": "0xfffabea6",
+        "target": "(uintptr_t)check_battlefield_for_id-0x26d5a6aU",
+        "native_target": "0x2681910"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5a87",
+        "original_word": "0xfffabe85",
+        "target": "(uintptr_t)check_battlefield_for_id-0x26d5a8bU",
+        "native_target": "0x2681910"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5ab4",
+        "original_word": "0xffffbc78",
+        "target": "(uintptr_t)count_counters-0x26d5ab8U",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5add",
+        "original_word": "0xffffedef",
+        "target": "(uintptr_t)native_remove-0x26d5ae1U",
+        "native_target": "0x26d48d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5b04",
+        "original_word": "0xfffffe68",
+        "target": "(uintptr_t)add_counters_predoubled-0x26d5b08U",
+        "native_target": "0x26d5970"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5b09",
+        "original_word": "0xfffabe03",
+        "target": "(uintptr_t)check_battlefield_for_id-0x26d5b0dU",
+        "native_target": "0x2681910"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5b28",
+        "original_word": "0xfffabde4",
+        "target": "(uintptr_t)check_battlefield_for_id-0x26d5b2cU",
+        "native_target": "0x2681910"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5b4a",
+        "original_word": "0xffffbbe2",
+        "target": "(uintptr_t)count_counters-0x26d5b4eU",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5b70",
+        "original_word": "0xffffed5c",
+        "target": "(uintptr_t)native_remove-0x26d5b74U",
+        "native_target": "0x26d48d0"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5b75",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5b81",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5bab",
+        "original_word": "0xfffff0f1",
+        "target": "(uintptr_t)copy_counters-0x26d5bafU",
+        "native_target": "0x26d4ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5bba",
+        "original_word": "0xffff9332",
+        "target": "(uintptr_t)native_clear-0x26d5bbeU",
+        "native_target": "0x26ceef0"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5be0",
+        "original_word": "0xffffec5c",
+        "target": "(uintptr_t)add_counters-0x26d5be4U",
+        "native_target": "0x26d4840"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5be5",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5beb",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5bfa",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5c07",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5c31",
+        "original_word": "0xfffff06b",
+        "target": "(uintptr_t)copy_counters-0x26d5c35U",
+        "native_target": "0x26d4ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5c3b",
+        "original_word": "0xffff92b1",
+        "target": "(uintptr_t)native_clear-0x26d5c3fU",
+        "native_target": "0x26ceef0"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5c41",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5c48",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5c66",
+        "original_word": "0xfffdce46",
+        "target": "(uintptr_t)get_card_instance-0x26d5c6aU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5c7d",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5c8d",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5cb3",
+        "original_word": "0xffffefe9",
+        "target": "(uintptr_t)copy_counters-0x26d5cb7U",
+        "native_target": "0x26d4ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "move_counters",
+        "patch_address": "0x26d5cbe",
+        "original_word": "0xffff922e",
+        "target": "(uintptr_t)native_clear-0x26d5cc2U",
+        "native_target": "0x26ceef0"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5cc3",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      },
+      {
+        "kind": "data",
+        "owner": "move_counters",
+        "patch_address": "0x26d5ccc",
+        "original_word": "0x279528c",
+        "target": "(uintptr_t)&hack_silent_counters"
+      }
+    ],
+    "source_path": ".recovery/counter-tail-native-check-c335.c",
+    "source_sha256": "b86c3a7f5c1ec6ed0ea5f433e9a6f88f3f1381d924be2a13af812098da0c869f",
+    "executable_path": ".recovery/counter-tail-native-check-c335.exe",
+    "executable_sha256": "1757c35576e425b5d617ec5108eee36eadda53f7bccf9ce568e15440ae79b60c",
+    "compile_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-static-libgcc",
+      "-Wl,--image-base,0x10000000",
+      "-I.",
+      ".recovery\\counter-tail-native-check-c335.c",
+      "-o",
+      ".recovery\\counter-tail-native-check-c335.exe"
+    ],
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "compile_log": ".recovery/counter-tail-native-check-c335.compile.log",
+    "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_state_sha256": "b23d32d0a6a815be2576674dbe95b4577168766b7639e680339164acbdd9da13",
+  "raw_source_bytes_sha256": "8cc349caf4697963b862551a37907ed67ad76497f2efc386aca46db137562802",
+  "index_sha256": "c1924b91f666e6c673ce508281ac488faf07f9a50b2377ed27fdc1b6315d6e93",
+  "scope": "Three native branch bodies compared with reconstruction and decompiled reference; Quarry reference explicitly corrects prior formatter arguments and models native adjacent choices[0] access at index nine. Original formatter error rejected by negative control. Exact calls/full card records/globals with callback mutations; opaque dialog protocol, legal choices and visible text checked without executing UI. AI inputs restricted to defined priority-index states (all nine entries, or a trailing occupied invalid slot); native indeterminate shorter-list behavior is documented, not exhaustively reproduced. Counter types/counts and operation lengths bounded where signed arithmetic/lifetimes require it. Remove/move dependencies are opaque stubs, not composed engine behavior. No gameplay testing claimed.",
+  "files": [
+    {
+      "source": "functions/counters.c",
+      "before_path": ".recovery/counter-tail-before-c336/functions/counters.c",
+      "before_bytes_sha256": "8cc349caf4697963b862551a37907ed67ad76497f2efc386aca46db137562802",
+      "after_source_sha256": "f327cfbac85c3a27f3c22d3648583a219372d5579d57bd0950d53432c3d61322"
+    }
+  ],
+  "whole_source_lines_removed": 284,
+  "compiler_expansion": {
+    "compiler_path": "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-E",
+      "-dD",
+      "functions/counters.c"
+    ],
+    "preflight_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-E",
+      "-dD",
+      "-x",
+      "c",
+      "-"
+    ],
+    "before_sha256": "8648c2e0a8fc82233c08cf936987b332b7d2b893d03f71d76e861c5ad4574c97",
+    "projected_sha256": "ee28d19d1a67528afe8746c854b146164cd7335a424af0856c8e2fbdec5ee659",
+    "unrelated_expanded_tokens_unchanged": true,
+    "ordinary_storage_enum_and_layout_probe": "\n#include <stddef.h>\n#include <limits.h>\n_Static_assert(__builtin_types_compatible_p(__typeof__(&hack_silent_counters), int*) && __builtin_types_compatible_p(__typeof__(&activation_card), int*), \"ordinary_counter_globals\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->special_counters), uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->special_counter_type), uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->counters2), uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->counters3), uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->counters4), uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->counters5), uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->counters), uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->counters_m1m1), uint8_t*), \"ordinary_counter_bytes\");\n_Static_assert(__builtin_types_compatible_p(uint8_t,unsigned char) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->targets[18].player), int32_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->targets[18].card), int32_t*), \"counter_byte_views\");\n_Static_assert(sizeof(card_instance_t)==300 && offsetof(card_instance_t,special_counters)==0 && offsetof(card_instance_t,counters2)==1 && offsetof(card_instance_t,counters3)==2 && offsetof(card_instance_t,counters4)==3 && offsetof(card_instance_t,special_counter_type)==81 && offsetof(card_instance_t,counters)==288 && offsetof(card_instance_t,counters5)==289 && offsetof(card_instance_t,counters_m1m1)==299 && offsetof(card_instance_t,targets)+18*sizeof(target_t)==260, \"native_counter_layout\");\n_Static_assert(sizeof(target_definition_t)==84 && offsetof(target_definition_t,required_subtype)==44 && offsetof(target_definition_t,special)==56 && offsetof(target_definition_t,allow_cancel)==68 && offsetof(target_definition_t,preferred_controller)==8 && offsetof(target_definition_t,zone)==12 && offsetof(token_generation_t,qty)==43, \"native_suspend_local_fields\");\n_Static_assert(CHAR_BIT==8 && sizeof(void*)==4 && sizeof(int)==4 && sizeof(counter_t)==4 && __builtin_types_compatible_p(__typeof__(&((token_generation_t*)0)->qty), uint8_t*), \"native_counter_integer_model\");\n_Static_assert(CARD_ID_AEON_CHRONICLER==8737, \"native_counter_enum\");\n_Static_assert(CARD_ID_BENALISH_COMMANDER==8744, \"native_counter_enum\");\n_Static_assert(CARD_ID_SOLDIER==18822, \"native_counter_enum\");\n_Static_assert(CARD_ID_DETRITIVORE==8766, \"native_counter_enum\");\n_Static_assert(CARD_ID_FUNGAL_BEHEMOTH==8783, \"native_counter_enum\");\n_Static_assert(CARD_ID_ROILING_HORROR==8839, \"native_counter_enum\");\n_Static_assert(CARD_ID_MELIRA_SYLVOK_OUTCAST==11635, \"native_counter_enum\");\n_Static_assert(CARD_ID_BLIGHTBEETLE==20284, \"native_counter_enum\");\n_Static_assert(COUNTER_TIME==111, \"native_counter_enum\");\n_Static_assert(COUNTER_end==187, \"native_counter_enum\");\n_Static_assert(COUNTER_invalid==255, \"native_counter_enum\");\n_Static_assert(COUNTER_P1_P1==0, \"native_counter_enum\");\n_Static_assert(COUNTER_M1_M1==1, \"native_counter_enum\");\n_Static_assert(TYPE_LAND==1, \"native_counter_enum\");\n_Static_assert(TYPE_CREATURE==2, \"native_counter_enum\");\n_Static_assert(SUBTYPE_BASIC==8192, \"native_counter_enum\");\n_Static_assert(TARGET_SPECIAL_ILLEGAL_SUBTYPE==4096, \"native_counter_enum\");\n_Static_assert(TARGET_ZONE_PLAYERS==4096, \"native_counter_enum\");\n_Static_assert(EVENT_RESOLVE_ACTIVATION==114, \"native_counter_enum\");\n_Static_assert(AI==1, \"native_counter_enum\");\n",
+    "probe_exit_code": 0,
+    "before_archive": {
+      "path": ".recovery/counter-tail-before-c336.i.gz",
+      "sha256": "e9560e00f5f18543d6649f6be0206ef3598546a5be6ebb0ba75407c6eb60bf40"
+    },
+    "projected_archive": {
+      "path": ".recovery/counter-tail-projected-c336.i.gz",
+      "sha256": "3f84d51b3fa3f2fab258125204e40f7f453077993ef07a9cb1746640f0c111a5"
+    },
+    "actual_sha256": "d8c73fb0d7b3868ddfce2aee3e5a4c5376b19c2ae886080c23b8ad3b290a0781",
+    "actual_unit_matches_preflight": true
+  },
+  "status": "Application-time snapshot: native comparisons and actual compiler-unit checks pass. Subsequent build/setup completion is published in counter-tail-cleanup-coverage.json."
+}

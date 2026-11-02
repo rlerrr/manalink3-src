@@ -7,6 +7,8 @@ from test_parameter_repair_analysis import inspect,events,card_argument_proof
 
 
 def verify_superseded_definition(proof,image,root,source,name,old_sha):
+    from verify_disentangled_pair_locals import has_source_repair as pair_repair,verify_superseded_definition as pair_successor
+    if pair_repair(proof,root,source,name,old_sha):return pair_successor(proof,image,root,source,name,old_sha)
     path=proof.get('native_plain_test_parameter_recovery');assert path
     record=json.loads((root/path).read_bytes());assert sha(image.data)==record['native_dll_sha256']
     rows=[r for r in record['rows'] if (r['source'],r['name'],r['before_sha256'])==(source,name,old_sha)]

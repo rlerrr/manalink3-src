@@ -3,6 +3,7 @@ import json,re
 from pathlib import Path
 from capstone import Cs,CS_ARCH_X86,CS_MODE_32
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image,inherited_value
 from verify_split_cards_recovery import native_ranges,contract
 
@@ -19,7 +20,7 @@ def verify(proof,image,root=ROOT):
         assert inherited_value(d,'DW_AT_name')==row['name'] and contract(dw,d)==row['contract']
         assert native_ranges(dw,d)==[(int(p['address'],16),int(p['end'],16)) for p in row['native_ranges']]
         t=read(root/row['source']);a,b=span(t,row['name'])
-        if sha(t[a:b].encode())!=row['definition_sha256']:
+        if not source_hash_matches(proof,root,row['source'],row['name'],sha(t[a:b].encode()),row['definition_sha256']):
             from verify_card_array_locals_recovery import has_source_repair
             assert has_source_repair(proof,root,row['source'],row['name'],row['definition_sha256']),row['name']
         assert (row['source'],row['name'],row['definition_sha256']) in receipts,row['name']
@@ -30,13 +31,13 @@ def verify(proof,image,root=ROOT):
             ins=list(md.disasm(data,lo));assert sum(i.size for i in ins)==hi-lo
             assert [[hex(i.address),i.mnemonic,i.op_str] for i in ins]==part['instructions']
     for row in record['source_dependencies']:
-        t=read(root/row['source']);a,b=span(t,row['name']);assert sha(t[a:b].encode())==row['definition_sha256'],row['name']
+        t=read(root/row['source']);a,b=span(t,row['name']);assert source_hash_matches(proof,root,row['source'],row['name'],sha(t[a:b].encode()),row['definition_sha256']),row['name']
     for row in record['native_data']:
         data=bytes.fromhex(row['bytes']);assert sha(data)==row['sha256']
         assert image.pe.get_data(int(row['address'],16)-0x2000000,len(data))==data
     for row in record['support_helpers']:
         t=read(root/row['source']);a,b=span(t,row['name'])
-        assert sha(t[a:b].encode())==row['definition_sha256']
+        assert source_hash_matches(proof,root,row['source'],row['name'],sha(t[a:b].encode()),row['definition_sha256'])
         assert (row['source'],row['name'],row['definition_sha256']) in receipts
         assert row['native_owner'] in {r['name'] for r in record['cards']}
     for row in record['support_contracts']:

@@ -226,9 +226,7 @@ int lace(int player, int card, event_t event, int color_test)
     result = generic_spell(player, card, EVENT_CAN_CAST, 2, &td1, NULL, 1, NULL);
     if (result == 0)
     {
-      result =
-          generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_PERMANENT", 1, NULL);
-      return result;
+      return generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_PERMANENT", 1, NULL);
     }
     return result;
   }
@@ -240,8 +238,7 @@ int lace(int player, int card, event_t event, int color_test)
       if (result != 0)
       {
         instance->info_slot = 0x42;
-        result = generic_spell(player, card, EVENT_CAST_SPELL, 2, &td1, NULL, 1, NULL);
-        return result;
+        return generic_spell(player, card, EVENT_CAST_SPELL, 2, &td1, NULL, 1, NULL);
       }
       generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_PERMANENT", 1, NULL);
       if (spell_fizzled != 1)
@@ -2513,13 +2510,13 @@ int card_fungusaur(int player, int card, event_t event)
     {
       event_result = event_result | 2;
       is_humiliated(player, card, AL_TRIG);
-      goto LAB_024c4451;
+      return (unsigned int)(event == EVENT_CAN_CAST);
     }
     if (event == EVENT_RESOLVE_TRIGGER)
     {
       instance->eot_toughness = 1;
       is_humiliated(player, card, AL_TRIG);
-      goto LAB_024c4451;
+      return (unsigned int)(event == EVENT_CAN_CAST);
     }
   }
   result = is_humiliated(player, card, AL_TRIG);
@@ -2530,7 +2527,6 @@ int card_fungusaur(int player, int card, event_t event)
     instance->eot_toughness = 0;
     instance->info_slot = 0;
   }
-LAB_024c4451:
   return (unsigned int)(event == EVENT_CAN_CAST);
 }
 
@@ -2692,7 +2688,7 @@ int card_gloom2(int player, int card, event_t event)
         this_test.color = get_sleighted_color_test(player, card, 0x20);
         set_cost_mod_for_activated_abilities(2, -1, 4, &this_test);
         leaves_play(player, card, EVENT_RESOLVE_SPELL, 0, 0);
-        goto LAB_024c4af9;
+        return global_enchantment(player, card, event);
       }
       if (event == EVENT_CAST_SPELL)
       {
@@ -2707,7 +2703,7 @@ int card_gloom2(int player, int card, event_t event)
           }
         }
         leaves_play(player, card, EVENT_CAST_SPELL, 0, 0);
-        goto LAB_024c4af9;
+        return global_enchantment(player, card, event);
       }
     }
   }
@@ -2718,9 +2714,7 @@ int card_gloom2(int player, int card, event_t event)
     this_test.color = get_sleighted_color_test(player, card, 0x20);
     remove_cost_mod_for_activated_abilities(2, -1, 4, &this_test);
   }
-LAB_024c4af9:
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 int card_goblin_balloon_brigade(int player, int card, event_t event){
@@ -3350,32 +3344,28 @@ Whenever a player casts a |Sred spell, you may pay |1. If you do, you gain 1 lif
 
 int card_island_sanctuary(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   int iVar2;
   card_instance_t *pcVar3;
   unsigned int uVar4;
-  int iVar5;
   int card_00;
 
-  pcVar1 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   if (event == EVENT_CAN_CAST)
   {
-    iVar2 = basic_spell(player, card, EVENT_CAN_CAST);
-    return iVar2;
+    return basic_spell(player, card, EVENT_CAN_CAST);
   }
   if (event == EVENT_CAST_SPELL)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
       iVar2 = get_id(player, card);
-      iVar2 = check_battlefield_for_id(player, iVar2);
-      if (iVar2 == 0)
+      if (check_battlefield_for_id(player, iVar2) == 0)
       {
         ai_modifier = ai_modifier + 0x30;
       }
     }
-    iVar2 = is_humiliated(player, card, AL_STATIC);
-    if (iVar2 != 0)
+    if (is_humiliated(player, card, AL_STATIC) != 0)
     {
       return 0;
     }
@@ -3408,37 +3398,36 @@ int card_island_sanctuary(int player, int card, event_t event)
           event_result = event_result | 1;
           return 0;
         }
-        uVar4 = pcVar1->info_slot;
+        uVar4 = instance->info_slot;
         if ((uVar4 & 4) != 0)
         {
           return 0;
         }
         if ((uVar4 & 2) == 0)
         {
-          pcVar1->info_slot = uVar4 | 2;
+          instance->info_slot = uVar4 | 2;
           uVar4 = get_hacked_walk(iVar2, card, 2);
           for (card_00 = 0; card_00 < active_cards_count[0]; card_00 = card_00 + 1)
           {
             pcVar3 = in_play(0, card_00);
-            if ((pcVar3 != NULL) && (iVar5 = is_what(0, card_00, 2), iVar5 != 0))
+            if ((pcVar3 != NULL) && (is_what(0, card_00, 2) != 0))
             {
               pcVar3 = get_card_instance(0, card_00);
               if ((((uVar4 | 0x20) & pcVar3->regen_status) == 0) &&
                   (((pcVar3->regen_status & 0x800000) == 0 ||
                     ((pcVar3->token_status & 0x800) != 0))))
               {
-                iVar2 = internal_rand(8 - hand_count[iVar2]);
-                if (iVar2 == 0)
+                if (internal_rand(8 - hand_count[iVar2]) == 0)
                 {
-                  pcVar1->info_slot = pcVar1->info_slot | 1;
-                  uVar4 = pcVar1->info_slot;
+                  instance->info_slot = instance->info_slot | 1;
+                  uVar4 = instance->info_slot;
                   goto LAB_024c6b6a;
                 }
                 break;
               }
             }
           }
-          uVar4 = pcVar1->info_slot;
+          uVar4 = instance->info_slot;
         }
       LAB_024c6b6a:
         if ((uVar4 & 1) == 0)
@@ -3452,7 +3441,7 @@ int card_island_sanctuary(int player, int card, event_t event)
       {
         player_bits[player] =
             player_bits[player] | 1;
-        pcVar1->info_slot = pcVar1->info_slot & 0xfffffffe;
+        instance->info_slot = instance->info_slot & 0xfffffffe;
         iVar2 = create_legacy_effect_exe(player, card, LEGACY_EFFECT_TIME_WALK, -1, -1);
         if (iVar2 != -1)
         {
@@ -3462,7 +3451,7 @@ int card_island_sanctuary(int player, int card, event_t event)
           pcVar3->info_slot = uVar4 | 0x20;
         }
         suppress_draw = 1;
-        pcVar1->info_slot = pcVar1->info_slot | 4;
+        instance->info_slot = instance->info_slot | 4;
         return 0;
       }
       if ((event != EVENT_SHOULD_AI_PLAY) && (event != EVENT_CLEANUP))
@@ -3495,7 +3484,7 @@ int card_island_sanctuary(int player, int card, event_t event)
     return 0;
   }
 LAB_024c6a4e:
-  pcVar1->info_slot = 0;
+  instance->info_slot = 0;
   return 0;
 }
 
@@ -4022,8 +4011,7 @@ int card_living_artifact(int player, int card, event_t event)
 LAB_024c8258:
   default_target_definition(player, card, &td, 0x40);
   td.preferred_controller = player;
-  result = targeted_aura(player, card, event, &td, "TARGET_ARTIFACT");
-  return result;
+  return targeted_aura(player, card, event, &td, "TARGET_ARTIFACT");
 }
 
 int card_lord_of_the_pit(int player, int card, event_t event){
@@ -6969,8 +6957,7 @@ int zombie_master_shared_ability(int player, int card, event_t event)
   }
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
-    iVar2 = is_humiliated(iVar3, card_00, AL_NM_NL_ACT);
-    if (iVar2 != 0)
+    if (is_humiliated(iVar3, card_00, AL_NM_NL_ACT) != 0)
     {
       return 0;
     }
@@ -7021,11 +7008,9 @@ int zombie_master_shared_ability(int player, int card, event_t event)
     {
       state_untargettable(iVar3, card_00, 1);
       instance->number_of_targets = '\x01';
-      iVar2 = new_pick_target(&td, "Select a Zombie to regenerate.", 0, 0x81);
-      if (iVar2 != 0)
+      if (new_pick_target(&td, "Select a Zombie to regenerate.", 0, 0x81) != 0)
       {
-        iVar2 = can_use_activated_abilities(instance->targets[0].player, instance->targets[0].card);
-        if (iVar2 == 0)
+        if (can_use_activated_abilities(instance->targets[0].player, instance->targets[0].card) == 0)
         {
           spell_fizzled = 1;
         }
@@ -7344,7 +7329,7 @@ int enchanted_land_is_basic_land_type(int player, int card, event_t event, subty
 {
   card_instance_t *pcVar1;
   int result;
-  card_instance_t *pcVar3;
+  card_instance_t *instance;
   target_definition_t td_default;
 
   pcVar1 = in_play(player, card);
@@ -7362,14 +7347,14 @@ int enchanted_land_is_basic_land_type(int player, int card, event_t event, subty
       return 0;
     }
 
-    pcVar3 = get_card_instance((int)pcVar1->damage_target_player, pcVar1->damage_target_card);
+    instance = get_card_instance((int)pcVar1->damage_target_player, pcVar1->damage_target_card);
     if (hackable != 0)
     {
       subtype = get_hacked_subtype(player, card, subtype);
     }
-    result = land_into_new_basic_land_type(pcVar3->internal_card_id, subtype);
-    if ((cards_data[pcVar3->internal_card_id].type == '\x01') &&
-        (pcVar3->internal_card_id == result))
+    result = land_into_new_basic_land_type(instance->internal_card_id, subtype);
+    if ((cards_data[instance->internal_card_id].type == '\x01') &&
+        (instance->internal_card_id == result))
     {
       pcVar1->dummy3 = event_result;
       return 0;
@@ -7440,8 +7425,7 @@ int enchanted_land_is_basic_land_type(int player, int card, event_t event, subty
     return 0;
   }
 LAB_024c34ab:
-  result = targeted_aura(player, card, event, td, "TARGET_LAND");
-  return result;
+  return targeted_aura(player, card, event, td, "TARGET_LAND");
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */

@@ -1,0 +1,485 @@
+{
+  "status": "Five payment, activated-ability and attachment/equipment helpers reconstructed and verified.",
+  "batch": "docs/recovery-evidence/payment-helpers-cleanup.json",
+  "batch_sha256": "0709be368b5b0ef535add7bd054df6358fcaf54292015585a2ba5678540a9d88",
+  "counts": {
+    "helpers": 5,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 6,
+    "removed_lab_gotos": 5,
+    "source_lines_removed": 188,
+    "removed_placeholder_occurrences": 152,
+    "removed_placeholder_names": 21
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "three_way_comparisons": 165568,
+    "entry_invocations": 496704,
+    "helpers": 5,
+    "activation_color_masks": 32,
+    "attachment_equipment_event_values": 256,
+    "stateful_random_inputs": 12000,
+    "mutation_modes": 2,
+    "opaque_dialog_protocol_checked": true,
+    "exact_call_traces_and_full_state": true
+  },
+  "original_code_regions": [
+    {
+      "name": "charge_mana_from_id_with_cost_mod",
+      "address": "0x268b720",
+      "size": 1476,
+      "sha256": "ea4f8b4a23458c27c5244dd8e04a15dbbe29e2a336c84ef46c3369442f52f43b",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x268b756",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x268b7bb",
+          "target": "0x268b460",
+          "callee": "is_phyrexian"
+        },
+        {
+          "instruction": "0x268b822",
+          "target": "0x226d990",
+          "callee": "charge_phyrexian_mana"
+        },
+        {
+          "instruction": "0x268b86a",
+          "target": "0x2689830",
+          "callee": "true_get_updated_casting_cost"
+        },
+        {
+          "instruction": "0x268b885",
+          "target": "0x268b640",
+          "callee": "is_normal_hybrid"
+        },
+        {
+          "instruction": "0x268b8b3",
+          "target": "0x254aed0",
+          "callee": "get_colors_for_hybrid"
+        },
+        {
+          "instruction": "0x268b8cd",
+          "target": "0x254aed0",
+          "callee": "get_colors_for_hybrid"
+        },
+        {
+          "instruction": "0x268b8ec",
+          "target": "0x254ae10",
+          "callee": "get_number_of_hybrid_mana"
+        },
+        {
+          "instruction": "0x268b90e",
+          "target": "0x254b170",
+          "callee": "charge_mana_hybrid"
+        },
+        {
+          "instruction": "0x268b928",
+          "target": "0x26b4510",
+          "callee": "obliterate_card"
+        },
+        {
+          "instruction": "0x268b93f",
+          "target": "0x26c11b0",
+          "callee": "backtrace_and_abort"
+        },
+        {
+          "instruction": "0x268b967",
+          "target": "0x2558020",
+          "callee": "casting_reaper_king"
+        },
+        {
+          "instruction": "0x268b973",
+          "target": "0x26b3410",
+          "callee": "get_internal_card_id_from_csv_id"
+        },
+        {
+          "instruction": "0x268b991",
+          "target": "0x26b2e30",
+          "callee": "add_card_to_hand"
+        },
+        {
+          "instruction": "0x268b9a6",
+          "target": "0x2558020",
+          "callee": "casting_reaper_king"
+        },
+        {
+          "instruction": "0x268b9b7",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x268b9ce",
+          "target": "0x268b5f0",
+          "callee": "is_monocolor_hybrid"
+        },
+        {
+          "instruction": "0x268b9e5",
+          "target": "0x254a8d0",
+          "callee": "get_color_for_monocolored_hybrid"
+        },
+        {
+          "instruction": "0x268b9fb",
+          "target": "0x254a940",
+          "callee": "get_number_of_monocolored_hybrid_mana"
+        },
+        {
+          "instruction": "0x268ba16",
+          "target": "0x254aa50",
+          "callee": "charge_mana_for_monocolor_hybrid"
+        },
+        {
+          "instruction": "0x268ba32",
+          "target": "0x2689830",
+          "callee": "true_get_updated_casting_cost"
+        },
+        {
+          "instruction": "0x268ba4a",
+          "target": "0x268b640",
+          "callee": "is_normal_hybrid"
+        },
+        {
+          "instruction": "0x268ba60",
+          "target": "0x268b5f0",
+          "callee": "is_monocolor_hybrid"
+        },
+        {
+          "instruction": "0x268bb05",
+          "target": "0x26ae610",
+          "callee": "charge_mana"
+        },
+        {
+          "instruction": "0x268bb82",
+          "target": "0x26ae610",
+          "callee": "charge_mana"
+        },
+        {
+          "instruction": "0x268bbb0",
+          "target": "0x26b2e30",
+          "callee": "add_card_to_hand"
+        },
+        {
+          "instruction": "0x268bbbe",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x268bbfa",
+          "target": "0x26b2e30",
+          "callee": "add_card_to_hand"
+        },
+        {
+          "instruction": "0x268bc08",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x268bc6a",
+          "target": "0x26b2e30",
+          "callee": "add_card_to_hand"
+        },
+        {
+          "instruction": "0x268bc78",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x268bcae",
+          "target": "0x26e6090",
+          "callee": "count_graveyard_by_type"
+        }
+      ]
+    },
+    {
+      "name": "charge_mana_for_activated_ability",
+      "address": "0x268e850",
+      "size": 398,
+      "sha256": "bc25a344a5e24a681068e81c5aa848ae29e4c5645e390a08baff75c4f74bae7b",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x268e86c",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x268e8dd",
+          "target": "0x26888a0",
+          "callee": "get_cost_mod_for_activated_abilities"
+        },
+        {
+          "instruction": "0x268e8ef",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x268e967",
+          "target": "0x26ae610",
+          "callee": "charge_mana"
+        },
+        {
+          "instruction": "0x268e9c5",
+          "target": "0x26ae610",
+          "callee": "charge_mana"
+        }
+      ]
+    },
+    {
+      "name": "has_mana_for_activated_ability",
+      "address": "0x26901c0",
+      "size": 322,
+      "sha256": "57a5c4774a9dc4ffb31ca864fb4f8c3fa0fbc32df56f09e508385910fec5ae66",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26901dc",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x269024f",
+          "target": "0x26888a0",
+          "callee": "get_cost_mod_for_activated_abilities"
+        },
+        {
+          "instruction": "0x2690260",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26902b7",
+          "target": "0x268ff90",
+          "callee": "has_mana_multi"
+        }
+      ]
+    },
+    {
+      "name": "attachment_granting_activated_ability",
+      "address": "0x269e690",
+      "size": 371,
+      "sha256": "4f8fe7f8af87ed0cfac5bd150c0a22fc2fe3044c4d6c846b34f917bc8dcb9cc0",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x269e6cd",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x269e765",
+          "target": "0x269c8c0",
+          "callee": "granted_generic_activated_ability"
+        },
+        {
+          "instruction": "0x269e785",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x269e7b7",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x269e7e7",
+          "target": "0x265d550",
+          "callee": "get_protections_from"
+        }
+      ]
+    },
+    {
+      "name": "equipment_granting_activated_ability",
+      "address": "0x269e810",
+      "size": 953,
+      "sha256": "ee2015a313d65215be4c3a189dccb9ea91805939b0e38a39a2883535a6760395",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x269e88f",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x269e8a7",
+          "target": "0x26eda00",
+          "callee": "is_equipping"
+        },
+        {
+          "instruction": "0x269e8c6",
+          "target": "0x26edf70",
+          "callee": "can_activate_basic_equipment"
+        },
+        {
+          "instruction": "0x269e923",
+          "target": "0x269e690",
+          "callee": "attachment_granting_activated_ability"
+        },
+        {
+          "instruction": "0x269e97d",
+          "target": "0x26e9c50",
+          "callee": "dialog_impl"
+        },
+        {
+          "instruction": "0x269e9b6",
+          "target": "0x26ee090",
+          "callee": "activate_basic_equipment"
+        },
+        {
+          "instruction": "0x269e9de",
+          "target": "0x26edf70",
+          "callee": "can_activate_basic_equipment"
+        },
+        {
+          "instruction": "0x269ea3b",
+          "target": "0x269e690",
+          "callee": "attachment_granting_activated_ability"
+        },
+        {
+          "instruction": "0x269ea99",
+          "target": "0x26e9c50",
+          "callee": "dialog_impl"
+        },
+        {
+          "instruction": "0x269eabf",
+          "target": "0x26ee230",
+          "callee": "resolve_activation_basic_equipment"
+        },
+        {
+          "instruction": "0x269eb24",
+          "target": "0x269e690",
+          "callee": "attachment_granting_activated_ability"
+        },
+        {
+          "instruction": "0x269eb5d",
+          "target": "0x26ee2a0",
+          "callee": "basic_equipment"
+        },
+        {
+          "instruction": "0x269ebbd",
+          "target": "0x269e690",
+          "callee": "attachment_granting_activated_ability"
+        }
+      ]
+    }
+  ],
+  "external_data_bindings": 35,
+  "external_callee_bindings": 59,
+  "native_entry_abis": {
+    "charge_mana_from_id_with_cost_mod": "cdecl",
+    "charge_mana_for_activated_ability": "cdecl",
+    "has_mana_for_activated_ability": "cdecl",
+    "attachment_granting_activated_ability": "cdecl",
+    "equipment_granting_activated_ability": "cdecl"
+  },
+  "native_tested_helpers": 5,
+  "register_adapters": {
+    "native_core": "regparm(3)",
+    "native_remove": "regparm(3)",
+    "native_clear": "regparm(2)",
+    "native_name": "regparm(3)"
+  },
+  "whole_unit_net_lines_removed": 188,
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 12,
+  "focused": {
+    "path": ".recovery/payment-helpers-focused-c355.json",
+    "sha256": "9e8ba1e9e22b83c53b2a95ba808083de316a4778e2b4bbadee6dd7580de01278",
+    "source_succession_links": 12
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/payment-helpers-build-c356.log",
+    "log_sha256": "b60da9b559604f6cd35e61b91afc5feb528e97d75f026bb005b753460553eb14",
+    "verified_built_slots": 15169,
+    "dll_sha256": "ce62186afa914b45b8a5aa2a3d20501c7af16e05e8ccb16a8d29967df432d858",
+    "dbg_sha256": "385efee1b79a0627a6b73aa4bc737cdadfde2570d740bee073e478035b0fb24c"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/payment-helpers-setup-c356.log",
+    "log_sha256": "b587efd8ebace24fd7980d3fe5fcb038feef88fdfb1a9e5fcbc7f8653007802c",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4817,
+    "stubs": 0,
+    "metadata_sha256": "5033e7708c180c6446533847565681b7669b7212408a3bb2497f642279ff602a",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e5260",
+        "after": "public COFF entry 0x26e5280"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ed6d0",
+        "after": "public COFF entry 0x26ed6f0"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e3de0",
+        "after": "public COFF entry 0x26e3e00"
+      },
+      {
+        "name": "new_damage_all",
+        "native_address": "0x26677f0",
+        "before": "public COFF entry 0x26c32f0",
+        "after": "public COFF entry 0x26c3310"
+      },
+      {
+        "name": "mana_doublers",
+        "native_address": "0x266c040",
+        "before": "public COFF entry 0x26ca480",
+        "after": "public COFF entry 0x26ca4a0"
+      },
+      {
+        "name": "etb_ability",
+        "native_address": "0x26a5370",
+        "before": "public COFF entry 0x26a1350",
+        "after": "public COFF entry 0x26a1360"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "public COFF entry 0x26dbb60",
+        "after": "public COFF entry 0x26dbb80"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "public COFF entry 0x26dbb90",
+        "after": "public COFF entry 0x26dbbb0"
+      }
+    ]
+  },
+  "index_unchanged": true,
+  "limits": "Five native branch bodies compared with predecessor and reconstruction, including temporary card lifetime/cleanup, hybrid/Phyrexian payment, fixed+X passes, fresh extension flags, recipient retargeting, dialog protocol and two callback-mutation modes. Exact calls and transient full records/extensions/target definition, payment vector, card definition/data and globals checked. Each helper uses controlled callees; no composition or UI/gameplay execution. Allocated players/cards/extensions and scalar color sums are bounded; signed-overflow arithmetic, arbitrary pointer aliases and complete native32 state excluded.",
+  "whole_unit_readability": {
+    "source": "functions/functions.c",
+    "source_sha256": "c39fe6f5dc0de96bb184ded93eeb45191c828adc5a4b39e00a5e2ff960d6ccca",
+    "lab_gotos": 113,
+    "known_placeholder_occurrences": 3073
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c357.json",
+    "sha256": "886380ddd1c441c383e8e3d25170f8e0cd146c8b85c185209f7034de232b9fa9",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1002,
+      "lab_gotos": 2739,
+      "functions_with_placeholders": 2081,
+      "distinct_function_local_placeholder_spellings": 6358,
+      "placeholder_identifier_occurrences": 49812,
+      "union_keywords": 0
+    }
+  }
+}

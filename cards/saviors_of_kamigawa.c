@@ -3535,7 +3535,6 @@ int card_moonbow_llusionist(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
   target_definition_t td;
   target_definition_t td2;
 
@@ -3549,12 +3548,10 @@ int card_moonbow_llusionist(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar2 = can_target(&td2);
-      if (iVar2 != 0)
+      if (can_target(&td2) != 0)
       {
-        iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 2, 0, 0, 0, 0, 0, 0,
+        return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 2, 0, 0, 0, 0, 0, 0,
                                           &td, NULL);
-        return iVar2;
       }
     }
     else
@@ -3568,9 +3565,8 @@ int card_moonbow_llusionist(int player, int card, event_t event)
       {
         iVar2 = instance->targets[0].card;
         instance->number_of_targets = '\0';
-        iVar3 = new_pick_target(
-            &td, "Select target land it becomes the basic land type of your choice.", 0, 0x80);
-        if (iVar3 != 0)
+        if (new_pick_target(
+            &td, "Select target land it becomes the basic land type of your choice.", 0, 0x80) != 0)
         {
           bounce_permanent(player, iVar2);
         }
@@ -3589,9 +3585,8 @@ int card_moonbow_llusionist(int player, int card, event_t event)
     {
       iVar2 = recorded_rand(player, 5);
       iVar2 = choose_a_land(player, iVar2 + 1);
-      iVar3 = create_targetted_legacy_effect(
-          player, card, fx_change_landtype, instance->targets[0].player, instance->targets[0].card);
-      instance = get_card_instance(player, iVar3);
+      instance = get_card_instance(player, create_targetted_legacy_effect(
+          player, card, fx_change_landtype, instance->targets[0].player, instance->targets[0].card));
       instance->targets[1].player = iVar2;
     }
   }
@@ -3606,7 +3601,6 @@ static int card_choice_of_damnation_impl(int player, int card, event_t event)
   card_instance_t *instance;
   int iVar2;
   size_t __n_1;
-  int iVar3;
   unsigned int argument7;
   target_definition_t td;
   char buffer[100];
@@ -3658,8 +3652,7 @@ static int card_choice_of_damnation_impl(int player, int card, event_t event)
           }
           snprintf(buffer, 100,
                    " Opponent loses %d life\n Opponent sacrifices all but %d permanents", __n_1);
-          iVar3 = do_dialog(player, player, card, -1, -1, buffer, argument7);
-          if (iVar3 == 0)
+          if (do_dialog(player, player, card, -1, -1, buffer, argument7) == 0)
           {
             lose_life(instance->targets[0].player, __n_1);
           }
@@ -3671,7 +3664,7 @@ static int card_choice_of_damnation_impl(int player, int card, event_t event)
                           &test);
           }
         }
-        goto LAB_020b142d;
+        return generic_spell(player, card, event, 0x40, &td, NULL, 1, NULL);
       }
       if (event != EVENT_CHANGE_TARGET)
       {
@@ -3682,21 +3675,19 @@ static int card_choice_of_damnation_impl(int player, int card, event_t event)
   default_target_definition(player, card, &td, 2);
   td.zone = 0x1000;
   get_card_instance(player, card);
-LAB_020b142d:
-  iVar2 = generic_spell(player, card, event, 0x40, &td, NULL, 1, NULL);
-  return iVar2;
+  return generic_spell(player, card, event, 0x40, &td, NULL, 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x20b3030; original cards/saviors_of_kamigawa.c:943. */
 int card_freed_from_the_real(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   card_instance_t *pcVar2;
   int result;
   int argument1;
   uint32_t uVar4;
 
-  pcVar1 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   pcVar2 = in_play(player, card);
   if (((pcVar2 == NULL) ||
        (pcVar2 = get_card_instance(player, card), pcVar2->damage_target_player < '\0')) ||
@@ -3704,31 +3695,30 @@ int card_freed_from_the_real(int player, int card, event_t event)
   {
   LAB_020b3073:
     if (event == EVENT_CAN_CAST)
-      goto LAB_020b3097;
+      return vanilla_aura(player, card, event, 2);
     if (event == EVENT_CAST_SPELL)
     {
       if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_020b3097;
+        return vanilla_aura(player, card, event, 2);
     }
     else if ((event == EVENT_RESOLVE_SPELL) ||
              ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      goto LAB_020b3097;
+      return vanilla_aura(player, card, event, 2);
   }
   else
   {
 
-    argument1 = (int)pcVar1->damage_target_player;
-    result = pcVar1->damage_target_card;
-    if ((-1 < pcVar1->damage_target_player) && (event == EVENT_CAN_ACTIVATE))
+    argument1 = (int)instance->damage_target_player;
+    result = instance->damage_target_card;
+    if ((-1 < instance->damage_target_player) && (event == EVENT_CAN_ACTIVATE))
     {
-      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 1, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 1, 0, 0, 0, 0,
                                          NULL, NULL);
-      return result;
     }
     if (event == EVENT_ACTIVATE)
     {
 
-      pcVar1->info_slot = 0;
+      instance->info_slot = 0;
       result = is_tapped(argument1, result);
       uVar4 = 0;
       if (result != 0)
@@ -3742,18 +3732,17 @@ int card_freed_from_the_real(int player, int card, event_t event)
         spell_fizzled = 1;
         return 0;
       }
-      result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 0, 0, 1, 0, 0, 0, 0, NULL,
+      return generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 0, 0, 1, 0, 0, 0, 0, NULL,
                                          NULL);
-      return result;
     }
     if (event != EVENT_RESOLVE_ACTIVATION)
       goto LAB_020b3073;
 
-    if (pcVar1->info_slot == 1)
+    if (instance->info_slot == 1)
     {
       untap_card(argument1, result);
     }
-    else if (pcVar1->info_slot == 2)
+    else if (instance->info_slot == 2)
     {
       tap_card(argument1, result);
     }
@@ -3766,9 +3755,7 @@ int card_freed_from_the_real(int player, int card, event_t event)
   {
     return 0;
   }
-LAB_020b3097:
-  result = vanilla_aura(player, card, event, 2);
-  return result;
+  return vanilla_aura(player, card, event, 2);
 }
 
 

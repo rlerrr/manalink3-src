@@ -1122,7 +1122,6 @@ int card_sanguine_bond(int player, int card, event_t event)
 {
   int iVar1;
   card_instance_t *instance;
-  int iVar3;
 
   iVar1 = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (iVar1 != 0)
@@ -1130,8 +1129,7 @@ int card_sanguine_bond(int player, int card, event_t event)
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      iVar3 = check_battlefield_for_id(player, 0x304d);
-      if (iVar3 == 0)
+      if (check_battlefield_for_id(player, 0x304d) == 0)
       {
         lose_life(1 - player, iVar1);
       }
@@ -1141,6 +1139,5 @@ int card_sanguine_bond(int player, int card, event_t event)
       }
     }
   }
-  iVar1 = global_enchantment(player, card, event);
-  return iVar1;
+  return global_enchantment(player, card, event);
 }

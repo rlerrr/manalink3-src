@@ -1,6 +1,7 @@
 """Audit classic land/Sliver complete body receipts and native frame arrays."""
 import csv,json
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image,inherited_value
 from export_abi import type_of
 
@@ -14,7 +15,7 @@ def verify(proof,image,root=ROOT):
         assert (row['source'],row['name'],row['definition_sha256']) in receipts,row['name']
         text=read(root/row['source']);a,b=span(text,row['name'])
         current_hash=sha(text[a:b].encode())
-        if current_hash!=row['definition_sha256']:
+        if not source_hash_matches(proof,root,row['source'],row['name'],current_hash,row['definition_sha256']):
             # Narrow later correction: native instructions store preferred_controller
             # after initialization; Ghidra misleadingly hoisted it before the call.
             from verify_transform_awaken_exile_recovery import BAD_SONG_ORDER,GOOD_SONG_ORDER
@@ -27,7 +28,7 @@ def verify(proof,image,root=ROOT):
             assert correction['after_sha256']==current_hash
             assert correction['native_target_initialization_refinement']['supersedes']==path
         else:
-            assert current_hash==row['definition_sha256'],row['name']
+            assert source_hash_matches(proof,root,row['source'],row['name'],current_hash,row['definition_sha256']),row['name']
         for part in row['native_ranges']:
             lo=int(part['address'],16);hi=int(part['end'],16)
             assert sha(image.pe.get_data(lo-0x2000000,hi-lo))==part['bytes_sha256']

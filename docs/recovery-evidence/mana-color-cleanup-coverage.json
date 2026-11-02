@@ -1,0 +1,142 @@
+{
+  "status": "Both mana-color helper reconstructions completed and verified.",
+  "batch": "docs/recovery-evidence/mana-color-cleanup.json",
+  "batch_sha256": "7df012fc1e60321b11e58b0b516ab8ea80beb34cf665107f75af6a534df8b885",
+  "counts": {
+    "helpers": 2,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 62,
+    "removed_lab_gotos": 52,
+    "source_lines_removed": 618
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "three_way_comparisons": 9410128,
+    "helper_entry_invocations": 28230384,
+    "all_uint16_ids_each_helper": 65536,
+    "mutation_modes": 4,
+    "stateful_random_boards": 100000,
+    "random_signed32_primary_ids": 50000,
+    "exact_call_traces_and_full_state": true,
+    "native_helpers_run_in_composition": true
+  },
+  "original_code_regions": [
+    {
+      "name": "land",
+      "address": "0x266f670",
+      "size": 1816,
+      "sha256": "ec399dac06ec1b9b8d56f45f4f3717392a8b772f3a77e3bbfa6108a2396a835e",
+      "calls": {
+        "0x26b3560": 1,
+        "0x26b2ab0": 3,
+        "0x266c040": 1,
+        "0x26828d0": 6,
+        "0x26817d0": 1
+      }
+    },
+    {
+      "name": "primary",
+      "address": "0x266fd90",
+      "size": 4204,
+      "sha256": "9afb8961e6bf3948d859c009cf65398f1b0b5adff5e284940579627e27a54a7c",
+      "calls": {
+        "0x26b3410": 1,
+        "0x26b3560": 2,
+        "0x26b32d0": 2,
+        "0x26738b0": 1,
+        "0x266f670": 1,
+        "0x266c040": 1,
+        "0x26828d0": 6,
+        "0x26817d0": 1,
+        "0x2663540": 1,
+        "0x267ea70": 1,
+        "0x2681af0": 1
+      }
+    },
+    {
+      "name": "primary_cold",
+      "address": "0x2710010",
+      "size": 8,
+      "sha256": "fe2f2f5429c85a5be0377fcda079742c5a6727fe851653d1dbf9ad662198dbf4",
+      "calls": {}
+    }
+  ],
+  "external_data_bindings": 29,
+  "retained_jump_tables": 6,
+  "wide_read_upper_bits_unobserved": true,
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 151,
+  "focused": {
+    "path": ".recovery/mana-colors-focused-c310.json",
+    "sha256": "9602f4fcc2beca18aef66f0cb1fa3fa51f3adfc83fee7e22b6bb8adf906b3e0f"
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/mana-colors-build-c311.log",
+    "log_sha256": "64a21f07759e402f1df8053f245d7926a3f5f427b4a9f6c1f3a658dc86baa95f",
+    "verified_built_slots": 15169,
+    "dll_sha256": "4b4a388c54b6ca0dfe1c7bcd6d3dff106d93524fae190ae17eefabe2fc1925c9",
+    "dbg_sha256": "e7121725e775b572080376903869ba602c096255f595bf381db532cb5b7c6ad7"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/mana-colors-setup-c311.log",
+    "log_sha256": "141fe48d6d8cfe13a22525baaf51c69ca1643f39cebbf3e4f57dff2a1f015dac",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4817,
+    "stubs": 0,
+    "metadata_sha256": "f784f47d5e8848270e4b89eff0f56b20e3951577470d41144fd214a230e3a62f",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e6450",
+        "after": "public COFF entry 0x26e6680"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ee8c0",
+        "after": "public COFF entry 0x26eeaf0"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e4fd0",
+        "after": "public COFF entry 0x26e5200"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "public COFF entry 0x26dcd50",
+        "after": "public COFF entry 0x26dcf80"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "public COFF entry 0x26dcd80",
+        "after": "public COFF entry 0x26dcfb0"
+      }
+    ]
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c312.json",
+    "sha256": "aa9b29e7a68668862d01b32783c5842a3f8cdcda3956282fdf6dc501fbc39048",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1021,
+      "lab_gotos": 2931,
+      "functions_with_placeholders": 2110,
+      "distinct_function_local_placeholder_spellings": 6504,
+      "placeholder_identifier_occurrences": 51654,
+      "union_keywords": 0
+    }
+  },
+  "index_unchanged": true,
+  "limits": "Original native primary/cold and land-query branch bodies run in composition, with engine callees bound to shared controlled stubs. Exhaust uint16 IDs across recorded config/info states, add finite supported IDs, full-width info/ID samples and callback mutation boards. Exact traces and full records/global/predicate/RNG state compared. Valid allocated players/slots; full native32 input/state space and gameplay not exhausted."
+}

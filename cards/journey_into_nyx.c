@@ -24,6 +24,7 @@ void constellation(int player, int card, event_t event)
 static int strive(int player, int card, event_t event, target_definition_t *td, const char *prompt,
                   int cless, int black, int blue, int green, int red, int white)
 {
+  int i;
   target_t *ptVar1;
   target_t *ptVar2;
   uint8_t uVar3;
@@ -42,8 +43,7 @@ LAB_024d0b58:
   {
     ret_location = iVar5;
     load_text(NULL, (char *)prompt);
-    iVar5 = new_pick_target((target_definition_t *)td, (char *)prompt, ret_location, 0);
-    if (iVar5 == 0)
+    if (new_pick_target((target_definition_t *)td, (char *)prompt, ret_location, 0) == 0)
     {
       uVar3 = instance->number_of_targets;
       if (instance->targets[ret_location].card != -1)
@@ -63,8 +63,7 @@ LAB_024d0b58:
     }
     else
     {
-      iVar5 = charge_mana_multi(player, (int)cless, black, blue, green, red, white);
-      if (iVar5 == 0)
+      if (charge_mana_multi(player, (int)cless, black, blue, green, red, white) == 0)
       {
       LAB_024d0c60:
         uVar3 = instance->number_of_targets;
@@ -72,14 +71,14 @@ LAB_024d0b58:
         if (uVar3 != '\0')
         {
         LAB_024d0c67:
-          iVar5 = 0;
+          i = 0;
           do
           {
-            ptVar2 = instance->targets + iVar5;
-            ptVar1 = instance->targets + iVar5;
-            iVar5 = iVar5 + 1;
+            ptVar2 = instance->targets + i;
+            ptVar1 = instance->targets + i;
+            i = i + 1;
             remove_state(ptVar1->player, ptVar2->card, 0x300000);
-          } while (iVar5 < (int)(unsigned int)instance->number_of_targets);
+          } while (i < (int)(unsigned int)instance->number_of_targets);
         }
         if (spell_fizzled != 1)
         {
@@ -263,53 +262,29 @@ int card_deicide(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   target_definition_t td;
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 4);
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          result = valid_target(&td);
-          if (result != 0)
-          {
-            instance = get_card_instance(player, card);
-            result =
-                has_subtype(instance->targets[0].player, instance->targets[0].card, SUBTYPE_GOD);
-            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
-            if (result != 0)
-            {
-              result = get_id(instance->targets[0].player, instance->targets[0].card);
-              lobotomy_effect(player, instance->targets[0].player, result, -1, 0);
-            }
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_024d1885;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   default_target_definition(player, card, &td, 4);
-LAB_024d1885:
-  result = generic_spell(player, card, event, 1, &td, "TARGET_ENCHANTMENT", 1, NULL);
-  return result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      result =
+          has_subtype(instance->targets[0].player, instance->targets[0].card, SUBTYPE_GOD);
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+      if (result != 0)
+      {
+        result = get_id(instance->targets[0].player, instance->targets[0].card);
+        lobotomy_effect(player, instance->targets[0].player, result, -1, 0);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_ENCHANTMENT", 1, NULL);
 }
 
 int card_dictate_of_heliod(int player, int card, event_t event)
@@ -700,8 +675,7 @@ int card_oppressive_rays(int player, int card, event_t event)
         {
           iVar4 = 1 - current_turn;
         }
-        iVar4 = has_mana(iVar4, 7, 3);
-        if (iVar4 == 0)
+        if (has_mana(iVar4, 7, 3) == 0)
         {
           event_result = 1;
         }
@@ -722,8 +696,7 @@ int card_oppressive_rays(int player, int card, event_t event)
         ((instance->damage_target_card != trigger_cause ||
           (instance->damage_target_player != trigger_cause_controller))))
       goto LAB_024d2301;
-    iVar4 = has_mana(reason_for_trigger_controller, 7, 3);
-    if (iVar4 == 0)
+    if (has_mana(reason_for_trigger_controller, 7, 3) == 0)
     {
       forbid_attack = 1;
     LAB_024d23fe:
@@ -744,9 +717,8 @@ int card_oppressive_rays(int player, int card, event_t event)
         goto LAB_024d2301;
       goto LAB_024d23fe;
     }
-    iVar4 = charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER,
-                                        reason_for_trigger_controller, COLOR_COLORLESS, 3);
-    if (iVar4 == 0)
+    if (charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER,
+                                        reason_for_trigger_controller, COLOR_COLORLESS, 3) == 0)
     {
       forbid_attack = 1;
       spell_fizzled = 0;
@@ -1825,8 +1797,7 @@ static void bloodcrazed_hoplite_effect(int player, int card, int n)
       {
         return;
       }
-      iVar3 = pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS");
-      if (iVar3 != 0)
+      if (pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS") != 0)
       {
         instance->number_of_targets = '\0';
         remove_counters(player, card, instance->targets[0].player,
@@ -3331,15 +3302,13 @@ int card_natures_panoply(int player, int card, event_t event)
   target_t *ptVar1;
   target_t *ptVar2;
   card_instance_t *instance;
-  int iVar4;
-  int iVar5;
+  int i;
 
   target_definition_t td;
   if (event == EVENT_CHECK_PUMP)
   {
     instance = get_card_instance(player, card);
-    iVar5 = has_mana_to_cast_iid(player, EVENT_CAN_CAST, instance->internal_card_id);
-    if (iVar5 != 0)
+    if (has_mana_to_cast_iid(player, EVENT_CAN_CAST, instance->internal_card_id) != 0)
     {
       pumpable_power[player] = pumpable_power[player] + 1;
       pumpable_toughness[player] = pumpable_toughness[player] + 1;
@@ -3351,8 +3320,7 @@ int card_natures_panoply(int player, int card, event_t event)
     {
       default_target_definition(player, card, &td, 2);
       td.preferred_controller = player;
-      iVar5 = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE", 1, NULL);
-      return iVar5;
+      return generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE", 1, NULL);
     }
     if (event == EVENT_CAST_SPELL)
     {
@@ -3375,24 +3343,23 @@ int card_natures_panoply(int player, int card, event_t event)
         instance = get_card_instance(player, card);
         if (instance->number_of_targets != '\0')
         {
-          iVar5 = 0;
+          i = 0;
           do
           {
             while (true)
             {
-              iVar4 = validate_target(player, card, &td, iVar5);
-              if (iVar4 == 0)
+              if (validate_target(player, card, &td, i) == 0)
                 break;
-              ptVar2 = instance->targets + iVar5;
-              ptVar1 = instance->targets + iVar5;
-              iVar5 = iVar5 + 1;
+              ptVar2 = instance->targets + i;
+              ptVar1 = instance->targets + i;
+              i = i + 1;
               add_counters(player, card, ptVar1->player, ptVar2->card, COUNTER_P1_P1,
                                        1);
-              if ((int)(unsigned int)instance->number_of_targets <= iVar5)
+              if ((int)(unsigned int)instance->number_of_targets <= i)
                 goto LAB_024d9939;
             }
-            iVar5 = iVar5 + 1;
-          } while (iVar5 < (int)(unsigned int)instance->number_of_targets);
+            i = i + 1;
+          } while (i < (int)(unsigned int)instance->number_of_targets);
         }
       LAB_024d9939:
         kill_card(player, card, KILL_DESTROY);
@@ -3592,7 +3559,7 @@ int card_solidarity_of_heroes(int player, int card, event_t event)
   target_t *ptVar2;
   card_instance_t *instance;
   int iVar4;
-  int iVar5;
+  int i;
   target_definition_t *ptStack_68;
   target_definition_t td;
   if (event == EVENT_CAN_CAST)
@@ -3646,8 +3613,7 @@ int card_solidarity_of_heroes(int player, int card, event_t event)
   {
     ptStack_68 = &td;
     td.preferred_controller = player;
-    iVar5 = generic_spell(player, card, EVENT_CAN_CAST, 1, ptStack_68, "TARGET_CREATURE", 1, NULL);
-    return iVar5;
+    return generic_spell(player, card, EVENT_CAN_CAST, 1, ptStack_68, "TARGET_CREATURE", 1, NULL);
   }
   ptStack_68 = &td;
   td.preferred_controller = player;
@@ -3674,22 +3640,22 @@ LAB_024da1f5:
   instance = get_card_instance(player, card);
   if (instance->number_of_targets != '\0')
   {
-    iVar5 = 0;
+    i = 0;
     do
     {
-      while (iVar4 = validate_target(player, card, ptStack_68, iVar5), iVar4 != 0)
+      while (iVar4 = validate_target(player, card, ptStack_68, i), iVar4 != 0)
       {
-        iVar4 = count_counters(instance->targets[iVar5].player, instance->targets[iVar5].card,
+        iVar4 = count_counters(instance->targets[i].player, instance->targets[i].card,
                                COUNTER_P1_P1);
-        ptVar2 = instance->targets + iVar5;
-        ptVar1 = instance->targets + iVar5;
-        iVar5 = iVar5 + 1;
+        ptVar2 = instance->targets + i;
+        ptVar1 = instance->targets + i;
+        i = i + 1;
         add_counters(player, card, ptVar1->player, ptVar2->card, COUNTER_P1_P1, iVar4);
-        if ((int)(unsigned int)instance->number_of_targets <= iVar5)
+        if ((int)(unsigned int)instance->number_of_targets <= i)
           goto LAB_024da419;
       }
-      iVar5 = iVar5 + 1;
-    } while (iVar5 < (int)(unsigned int)instance->number_of_targets);
+      i = i + 1;
+    } while (i < (int)(unsigned int)instance->number_of_targets);
   }
 LAB_024da419:
   kill_card(player, card, KILL_DESTROY);

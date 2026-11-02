@@ -1,0 +1,344 @@
+{
+  "status": "Counter updater and four related helpers reconstructed and verified.",
+  "batch": "docs/recovery-evidence/counter-core-cleanup.json",
+  "batch_sha256": "433f68f59e3ed83b59b4b0356e9f3a260968f0c7171eb4be3608faa78a813a20",
+  "counts": {
+    "helpers": 5,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 37,
+    "removed_lab_gotos": 36,
+    "source_lines_removed": 469,
+    "removed_placeholder_occurrences": 307,
+    "removed_placeholder_names": 24
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "three_way_comparisons": 8938472,
+    "entry_invocations": 26815416,
+    "helpers": 5,
+    "all_uint16_modifier_ids": 65536,
+    "all_byte_quantities": 256,
+    "counter_type_values": 512,
+    "full32_amount_boundaries": true,
+    "stateful_random_inputs": 15000,
+    "mutation_modes": 3,
+    "raw_copy_composes_native_mutator": true,
+    "exact_call_traces_and_full_state": true
+  },
+  "original_code_regions": [
+    {
+      "name": "add_or_remove_counters_impl",
+      "address": "0x26d0e90",
+      "size": 2106,
+      "sha256": "1d5d1b0578dbc9a1e70ed2d8bbc6beafec62dea56ef23b146f6d0bec4e7af633",
+      "entry_abi": "regparm(3): player/card/t_player in EAX/EDX/ECX; t_card/type/num on stack",
+      "external_branches": [
+        {
+          "instruction": "0x26d0ebf",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26d0f29",
+          "target": "0x26cba00",
+          "callee": "dispatch_xtrigger2"
+        },
+        {
+          "instruction": "0x26d0ff5",
+          "target": "0x26d0e30",
+          "callee": "get_counter_type_by_instance"
+        },
+        {
+          "instruction": "0x26d11a2",
+          "target": "0x26cbe70",
+          "callee": "dispatch_event_with_attacker"
+        },
+        {
+          "instruction": "0x26d1209",
+          "target": "0x26cba00",
+          "callee": "dispatch_xtrigger2"
+        },
+        {
+          "instruction": "0x26d13d1",
+          "target": "0x26cbe70",
+          "callee": "dispatch_event_with_attacker"
+        },
+        {
+          "instruction": "0x26d1402",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x26d1456",
+          "target": "0x26cba00",
+          "callee": "dispatch_xtrigger2"
+        },
+        {
+          "instruction": "0x26d149e",
+          "target": "0x26c9120",
+          "callee": "set_trap_condition"
+        },
+        {
+          "instruction": "0x26d14f7",
+          "target": "0x2658860",
+          "callee": "play_sound_effect"
+        }
+      ]
+    },
+    {
+      "name": "copy_counters",
+      "address": "0x26d4ca0",
+      "size": 655,
+      "sha256": "4bc1eb2ab712e94d873342a24e05514a43058f7c8d483a8acb8a6538f31f545e",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26d4cb9",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26d4cd8",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26d4e60",
+          "target": "0x26d0e90",
+          "mode": "Keep original native core in composition"
+        },
+        {
+          "instruction": "0x26d4eee",
+          "target": "0x26d4840",
+          "callee": "add_counters"
+        },
+        {
+          "instruction": "0x26d4f23",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        }
+      ]
+    },
+    {
+      "name": "increment_all_counters",
+      "address": "0x26d4f30",
+      "size": 685,
+      "sha256": "57c8a76734278adbf4296bef7b9eaafd0226b564c1a5c2b6ba08f8be1652372b",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26d4f97",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26d510e",
+          "target": "0x26d4840",
+          "callee": "add_counters"
+        },
+        {
+          "instruction": "0x26d5176",
+          "target": "0x26ced10",
+          "callee": "native_experience"
+        },
+        {
+          "instruction": "0x26d5187",
+          "target": "0x26cec60",
+          "callee": "native_poison"
+        },
+        {
+          "instruction": "0x26d519f",
+          "target": "0x26cede0",
+          "callee": "native_energy"
+        },
+        {
+          "instruction": "0x26d51d3",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        }
+      ]
+    },
+    {
+      "name": "get_updated_counters_number_impl",
+      "address": "0x26d45f0",
+      "size": 535,
+      "sha256": "613f3986d8cfdd4ceaeeaada2359547e5985ad05d46698d093d550ca8f8eb4df",
+      "entry_abi": "regparm(3): player/card/type in EAX/EDX/ECX; number on stack",
+      "external_branches": [
+        {
+          "instruction": "0x26d460e",
+          "target": "0x26d4540",
+          "callee": "native_cost"
+        },
+        {
+          "instruction": "0x26d4637",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26d4700",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x26d4742",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x26d478f",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x26d47ce",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x26d47f5",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        }
+      ]
+    },
+    {
+      "name": "clear_all_counters",
+      "address": "0x26ceef0",
+      "size": 90,
+      "sha256": "ab554fe05987bc500580f8ba023c22203f192a3075a10de0b68c28f7b6632c2e",
+      "entry_abi": "regparm(2): t_player/t_card in EAX/EDX",
+      "external_branches": [
+        {
+          "instruction": "0x26ceefd",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        }
+      ]
+    }
+  ],
+  "external_data_bindings": 37,
+  "external_callee_bindings": 28,
+  "native_entry_abis": {
+    "add_or_remove_counters_impl": "regparm(3): player/card/t_player in EAX/EDX/ECX; t_card/type/num on stack",
+    "copy_counters": "cdecl",
+    "increment_all_counters": "cdecl",
+    "get_updated_counters_number_impl": "regparm(3): player/card/type in EAX/EDX/ECX; number on stack",
+    "clear_all_counters": "regparm(2): t_player/t_card in EAX/EDX"
+  },
+  "native_tested_helpers": 5,
+  "register_adapters": {
+    "native_cost": "regparm(3): player/card/type in EAX/EDX/ECX; num on stack",
+    "native_energy": "regparm(2): player/num in EAX/EDX; original add_energy.part.0",
+    "native_poison": "regparm(2): player/num in EAX/EDX; original poison.part.0",
+    "native_experience": "regparm(2): player/num in EAX/EDX; original add_experience.part.0"
+  },
+  "coff_global_name_bindings": {
+    "counters_added_type": "0x2721d68",
+    "enable_xtrigger_flags": "0x2795280",
+    "counters_added": "0x2795288",
+    "hack_silent_counters": "0x279528c"
+  },
+  "whole_unit_net_lines_removed": 442,
+  "supporting_c_helper": "snapshot_counters",
+  "supporting_c_helper_sha256": "07777816ed3c2d77014e2c3f77fb217e89bc078ccb286496edb7f1f0609beb25",
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 41,
+  "focused": {
+    "path": ".recovery/counter-core-focused-c328.json",
+    "sha256": "00b0ce84050993f87dbbbbae17a03f0e85a2deecf7d605cd168406e84b5c979e"
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/counter-core-build-c329.log",
+    "log_sha256": "cc894a33a3fda16fbd7ae0c482876617127b46b52d23bd8538f14fc5023c7f22",
+    "verified_built_slots": 15169,
+    "dll_sha256": "8159c181dcf0856a7363340fe2722140df08f995d6543e16a9872c4779ea8a8e",
+    "dbg_sha256": "29d79c1f51533bd57c6919aa96fb9df9f48fe21082b4735352e86741fd36965b"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/counter-core-setup-c329.log",
+    "log_sha256": "0a3242402e7310760bfbd6072f0590b399905b6b10e433e977b33b854f92acaa",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4817,
+    "stubs": 0,
+    "metadata_sha256": "1cd99847cedb76eba2ce18be263b9935617fd31c2665cb761b88537746fa9638",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e61d0",
+        "after": "public COFF entry 0x26e5e50"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ee640",
+        "after": "public COFF entry 0x26ee2c0"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e4d50",
+        "after": "public COFF entry 0x26e49d0"
+      },
+      {
+        "name": "new_damage_all",
+        "native_address": "0x26677f0",
+        "before": "public COFF entry 0x26c4260",
+        "after": "public COFF entry 0x26c3ee0"
+      },
+      {
+        "name": "mana_doublers",
+        "native_address": "0x266c040",
+        "before": "public COFF entry 0x26cb3f0",
+        "after": "public COFF entry 0x26cb070"
+      },
+      {
+        "name": "etb_ability",
+        "native_address": "0x26a5370",
+        "before": "public COFF entry 0x26a1a20",
+        "after": "public COFF entry 0x26a16a0"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "public COFF entry 0x26dcad0",
+        "after": "public COFF entry 0x26dc750"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "public COFF entry 0x26dcb00",
+        "after": "public COFF entry 0x26dc780"
+      }
+    ]
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c330.json",
+    "sha256": "9050992c81ada6125820fe942d07a89fe816c398976ce6b0fd2fc13867642660",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1010,
+      "lab_gotos": 2853,
+      "functions_with_placeholders": 2095,
+      "distinct_function_local_placeholder_spellings": 6447,
+      "placeholder_identifier_occurrences": 51000,
+      "union_keywords": 0
+    }
+  },
+  "index_unchanged": true,
+  "limits": "Original native counter core, copy, increment, modifier and clear branch bodies compared against predecessor and reconstruction. Raw copy keeps the native core in composition. Exact calls, transient counter contexts, full instances/card-data/player counters and relevant globals match with callback mutations. Source snapshot helper reads ordinary record bytes without external calls and writes only caller-local entries. Core amount tests include full32 boundaries; modifier quantities stay bounded to avoid signed arithmetic overflow. Valid allocated players/cards; full native32 state and gameplay not exhausted.",
+  "whole_unit_readability": {
+    "source": "functions/counters.c",
+    "source_sha256": "bada4bb61cf06059eb3643f2f824fb9836cf42c1e000f124b669c827cf871ed0",
+    "lab_gotos": 15,
+    "known_placeholder_occurrences": 287
+  }
+}

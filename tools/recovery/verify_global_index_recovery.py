@@ -2,6 +2,7 @@
 import collections,json,re
 from pathlib import Path
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image,inherited_value
 from global_index_analysis import inspect,global_types,flag_effects,INLINE_HELPER,GLOBALS
 from verify_array_role_recovery import replay
@@ -58,7 +59,7 @@ def verify_superseded_definition(proof,image,root,source,name,old_sha):
     assert sha(row['before_definition'].encode())==old_sha
     assert replay(row['before_definition'],row['changes'])==row['after_definition']
     text=read(root/source);a,b=span(text,name)
-    assert text[a:b]==row['after_definition'] and sha(text[a:b].encode())==row['after_sha256']
+    assert source_hash_matches(proof,root,source,name,sha(text[a:b].encode()),row['after_sha256']) and sha(row['after_definition'].encode())==row['after_sha256']
     receipts=[e for e in proof['source_edits'] if e.get('native_global_index_extension')==path
         and e['source']==source and e['before_sha256']==old_sha]
     assert len(receipts)==1 and receipts[0]['after_sha256']==row['after_sha256']

@@ -2049,7 +2049,7 @@ int card_grisly_anglerfish(int player, int card, event_t event)
 int card_identity_thief(int player, int card, event_t event)
 {
   int result;
-  card_instance_t *pcVar2;
+  card_instance_t *instance;
   card_instance_t *pcVar3;
   target_definition_t td;
   if (event == EVENT_CHANGE_TYPE)
@@ -2058,10 +2058,10 @@ int card_identity_thief(int player, int card, event_t event)
     {
       if (player == affected_card_controller)
       {
-        pcVar2 = get_card_instance(player, card);
-        if (0 < pcVar2->dummy3)
+        instance = get_card_instance(player, card);
+        if (0 < instance->dummy3)
         {
-          event_result = pcVar2->dummy3;
+          event_result = instance->dummy3;
         }
       }
       result = duh_mode(player);
@@ -2090,25 +2090,25 @@ int card_identity_thief(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
     td.illegal_type = 0x1000;
     td.special = 0x4000;
-    pcVar2 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     result = can_target(&td);
     if ((result != 0) &&
         (result = new_pick_target(&td, "Select another target nontoken creature.", 0, 0x80),
          result != 0))
     {
-      pcVar3 = get_card_instance(pcVar2->targets[0].player, pcVar2->targets[0].card);
-      pcVar2->dummy3 = pcVar3->internal_card_id;
-      remove_until_eot(player, card, pcVar2->targets[0].player, pcVar2->targets[0].card);
+      pcVar3 = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      instance->dummy3 = pcVar3->internal_card_id;
+      remove_until_eot(player, card, instance->targets[0].player, instance->targets[0].card);
     }
-    pcVar2->number_of_targets = '\0';
+    instance->number_of_targets = '\0';
     return 0;
   }
   if (event != EVENT_CLEANUP)
   {
     return 0;
   }
-  pcVar2 = get_card_instance(player, card);
-  pcVar2->dummy3 = 0;
+  instance = get_card_instance(player, card);
+  instance->dummy3 = 0;
   return 0;
 }
 
@@ -2573,52 +2573,28 @@ int card_cemetery_recruitment(int player, int card, event_t event)
   int iVar1;
   int iVar2;
   test_definition_t test;
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        new_default_test_definition(&test, 2, "Select target creature card.");
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          iVar1 = validate_target_from_grave_source(player, card, player, 0);
-          if (iVar1 != -1)
-          {
-            iVar2 = has_subtype_by_id(
-                player, (unsigned int)cards_data[graveyard_ptr_mutable[player][iVar1]].id,
-                SUBTYPE_ZOMBIE);
-            from_grave_to_hand(player, iVar1, 1);
-            if (iVar2 != 0)
-            {
-              draw_a_card(player);
-            }
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_024798d8;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   new_default_test_definition(&test, 2, "Select target creature card.");
-LAB_024798d8:
-  iVar1 = generic_spell(player, card, event, 8, NULL, NULL, 1, &test);
-  return iVar1;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    iVar1 = validate_target_from_grave_source(player, card, player, 0);
+    if (iVar1 != -1)
+    {
+      iVar2 = has_subtype_by_id(
+          player, (unsigned int)cards_data[graveyard_ptr_mutable[player][iVar1]].id,
+          SUBTYPE_ZOMBIE);
+      from_grave_to_hand(player, iVar1, 1);
+      if (iVar2 != 0)
+      {
+        draw_a_card(player);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 8, NULL, NULL, 1, &test);
 }
 
 int card_certain_death(int player, int card, event_t event)
@@ -6001,8 +5977,7 @@ int card_spell_queller(int player, int card, event_t event)
           iVar1 = instance->targets[1].card;
           if (-1 < iVar1)
           {
-            iVar1 = check_rfg(instance->targets[1].player, (unsigned int)cards_data[iVar1].id);
-            if (iVar1 != 0)
+            if (check_rfg(instance->targets[1].player, (unsigned int)cards_data[iVar1].id) != 0)
             {
               char prompt[100];
               scnprintf(prompt, 100, " Cast %s",
@@ -6023,8 +5998,7 @@ int card_spell_queller(int player, int card, event_t event)
         }
       }
     }
-    iVar1 = flash(player, card, event);
-    return iVar1;
+    return flash(player, card, event);
   }
   counterspell_target_definition(player, card, &td, 0xff);
   td.extra = 4;
@@ -6368,7 +6342,7 @@ int card_stitchers_graft(int player, int card, event_t event)
           does_not_untap_effect(player, card, (int)instance->damage_target_player,
                                 instance->damage_target_card, 0, 1);
           leaves_play(player, card, EVENT_DAT_ABILITY, 1, 0);
-          goto LAB_02484560;
+          return vanilla_equipment(player, card, event, 2, 3, 3, 0, 0);
         }
       }
     }
@@ -6386,9 +6360,7 @@ int card_stitchers_graft(int player, int card, event_t event)
       }
     }
   }
-LAB_02484560:
-  result = vanilla_equipment(player, card, event, 2, 3, 3, 0, 0);
-  return result;
+  return vanilla_equipment(player, card, event, 2, 3, 3, 0, 0);
 }
 
 int card_terrarion(int player, int card, event_t event)
@@ -6688,8 +6660,7 @@ int card_minds_dilation(int player, int card, event_t event)
   int iVar3;
 
   iVar1 = 1 - player;
-  iVar2 = get_specific_storm_count(iVar1);
-  if (iVar2 == 0)
+  if (get_specific_storm_count(iVar1) == 0)
   {
     iVar2 = new_specific_spell_played(player, card, event, iVar1, 2, NULL);
     if ((iVar2 != 0) && (*deck_ptr[iVar1] != -1))
@@ -6712,8 +6683,7 @@ int card_minds_dilation(int player, int card, event_t event)
       }
     }
   }
-  iVar1 = global_enchantment(player, card, event);
-  return iVar1;
+  return global_enchantment(player, card, event);
 }
 
 
@@ -6721,6 +6691,7 @@ int card_minds_dilation(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x247ea50; original cards/eldritch_moon.c:4282. */
 int card_mirrorwing_dragon(int player, int card, event_t event)
 {
+  int p;
   int32_t iVar1;
   card_instance_t *pcVar2;
   int iVar3;
@@ -6729,7 +6700,7 @@ int card_mirrorwing_dragon(int player, int card, event_t event)
   int iVar6;
   int iVar7;
   unsigned int iid;
-  int iStack_14;
+  int i;
   if (trigger_condition == TRIGGER_SPELL_CAST)
   {
     if ((((card == affected_card) && (player == affected_card_controller)) &&
@@ -6744,7 +6715,7 @@ int card_mirrorwing_dragon(int player, int card, event_t event)
                             pcVar4->number_of_targets == '\x01')) &&
           (iVar3 = is_what(trigger_cause_controller, trigger_cause, 0x38), iVar3 != 0))
       {
-        iVar3 = 0;
+        p = 0;
         if (event == EVENT_TRIGGER)
         {
           event_result = event_result | 2;
@@ -6753,11 +6724,11 @@ int card_mirrorwing_dragon(int player, int card, event_t event)
         {
           do
           {
-            for (iStack_14 = 0; iStack_14 < active_cards_count[iVar3]; iStack_14 = iStack_14 + 1)
+            for (i = 0; i < active_cards_count[p]; i = i + 1)
             {
-              if ((((trigger_cause_controller == iVar3) &&
-                    (pcVar4 = in_play(iVar3, iStack_14), pcVar4 != NULL)) &&
-                   (iVar5 = is_what(iVar3, iStack_14, 2), iStack_14 != card)) &&
+              if ((((trigger_cause_controller == p) &&
+                    (pcVar4 = in_play(p, i), pcVar4 != NULL)) &&
+                   (iVar5 = is_what(p, i, 2), i != card)) &&
                   (iVar5 != 0))
               {
                 iid = pcVar2->internal_card_id;
@@ -6777,14 +6748,13 @@ int card_mirrorwing_dragon(int player, int card, event_t event)
                   pcVar4->targets[iVar7].player = iVar1;
                   iVar7 = iVar7 + 1;
                 } while (iVar7 != 0x13);
-                pcVar4->targets[0].card = iStack_14;
-                pcVar4->targets[0].player = iVar3;
+                pcVar4->targets[0].card = i;
+                pcVar4->targets[0].player = p;
                 pcVar4->number_of_targets = '\x01';
                 set_special_flags2(trigger_cause_controller, iVar5, -0x80000000);
                 convert_to_token(trigger_cause_controller, iVar5);
                 set_special_flags(trigger_cause_controller, iVar5, 0x200c0000);
-                iVar7 = put_card_on_stack(trigger_cause_controller, iVar5, 0);
-                if (iVar7 == 0)
+                if (put_card_on_stack(trigger_cause_controller, iVar5, 0) == 0)
                 {
                   iVar6 = can_legally_play_iid(trigger_cause_controller, iid);
                   iVar7 = trigger_cause_controller;
@@ -6806,8 +6776,8 @@ int card_mirrorwing_dragon(int player, int card, event_t event)
                 }
               }
             }
-            iVar3 = iVar3 + 1;
-          } while (iVar3 < 2);
+            p = p + 1;
+          } while (p < 2);
         }
       }
     }

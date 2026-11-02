@@ -64,7 +64,10 @@ def verify_superseded_definition(proof,image,root,source,name,old_sha):
     assert len(found)==1;row=found[0]
     assert sha(row['before_definition'].encode())==old_sha and replay(row['before_definition'],row['changes'])==row['after_definition']
     text=read(root/source);a,b=span(text,name)
-    assert text[a:b]==row['after_definition'] and sha(text[a:b].encode())==row['after_sha256']
+    assert sha(row['after_definition'].encode())==row['after_sha256']
+    if text[a:b]!=row['after_definition']:
+        from verify_token_aggregate_recovery import verify_superseded_definition as aggregate_successor
+        aggregate_successor(proof,image,root,source,name,row['after_sha256'])
     receipts=[e for e in proof['source_edits'] if e.get('native_target_role_extension')==path and e['source']==source and e['before_sha256']==old_sha]
     assert len(receipts)==1 and receipts[0]['after_sha256']==row['after_sha256']
     view=row['native_snapshot']['view'];lo,hi=int(view['address'],16),int(view['end'],16)

@@ -2521,6 +2521,8 @@ int card_warped_devotion(int player, int card, event_t event){
 /* ManalinkEh 2022: 0x2187500; original cards/planeshift.c:311. */
 int card_confound(int player, int card, event_t event)
 {
+  card_instance_t *instance;
+  int i;
   int iVar1;
   int iVar2;
   card_instance_t *pcVar3;
@@ -2536,41 +2538,39 @@ int card_confound(int player, int card, event_t event)
     if ((0 < iVar1) && (pcVar3 = get_card_instance(card_on_stack_controller, card_on_stack),
                         pcVar3->number_of_targets != '\0'))
     {
-      iVar6 = 0;
+      i = 0;
       do
       {
-        while (((pcVar3->targets[iVar6].player == player &&
-                 (iVar2 = pcVar3->targets[iVar6].card, iVar2 != -1)) &&
+        while (((pcVar3->targets[i].player == player &&
+                 (iVar2 = pcVar3->targets[i].card, iVar2 != -1)) &&
                 (pcVar4 = in_play(player, iVar2), pcVar4 != NULL)))
         {
-          iVar2 = is_what(pcVar3->targets[iVar6].player, pcVar3->targets[iVar6].card, 2);
+          iVar2 = is_what(pcVar3->targets[i].player, pcVar3->targets[i].card, 2);
           if (iVar2 != 0)
           {
             return iVar1;
           }
-          iVar6 = iVar6 + 1;
-          if ((int)(unsigned int)pcVar3->number_of_targets <= iVar6)
+          i = i + 1;
+          if ((int)(unsigned int)pcVar3->number_of_targets <= i)
           {
             return 0;
           }
         }
-        iVar6 = iVar6 + 1;
-      } while (iVar6 < (int)(unsigned int)pcVar3->number_of_targets);
+        i = i + 1;
+      } while (i < (int)(unsigned int)pcVar3->number_of_targets);
     }
   }
   else
   {
     if (event != EVENT_RESOLVE_SPELL)
     {
-      iVar1 = card_counterspell(player, card, event);
-      return iVar1;
+      return card_counterspell(player, card, event);
     }
-    iVar1 = counterspell_validate(player, card, NULL, 0);
-    if (iVar1 != 0)
+    if (counterspell_validate(player, card, NULL, 0) != 0)
     {
 
-      pcVar3 = get_card_instance(player, card);
-      pcVar4 = get_card_instance(pcVar3->targets[0].player, pcVar3->targets[0].card);
+      instance = get_card_instance(player, card);
+      pcVar4 = get_card_instance(instance->targets[0].player, instance->targets[0].card);
       if (pcVar4->number_of_targets != '\0')
       {
         iVar1 = 0;
@@ -2583,7 +2583,7 @@ int card_confound(int player, int card, event_t event)
                     (iVar6 = is_what(pcVar4->targets[iVar1].player, pcVar4->targets[iVar1].card, 2),
                      iVar6 != 0))))
           {
-            real_counter_a_spell(player, card, pcVar3->targets[0].player, pcVar3->targets[0].card);
+            real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
             draw_a_card(player);
             break;
           }

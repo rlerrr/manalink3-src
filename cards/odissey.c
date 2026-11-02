@@ -836,7 +836,7 @@ int card_bomb_squad(int player, int card, event_t event)
   int iVar1;
   int iVar2;
   card_instance_t *instance;
-  int iVar4;
+  int c;
   target_definition_t td;
 
   upkeep_trigger_ability(player, card, event, player);
@@ -845,22 +845,22 @@ int card_bomb_squad(int player, int card, event_t event)
     iVar1 = 0;
     do
     {
-      iVar4 = 0;
+      c = 0;
       if (0 < active_cards_count[iVar1])
       {
         do
         {
-          while (((instance = in_play(iVar1, iVar4),
-                   instance == NULL || (iVar2 = is_what(iVar1, iVar4, 2), iVar2 == 0)) ||
-                  (iVar2 = count_counters(iVar1, iVar4, COUNTER_FUSE), iVar2 == 0)))
+          while (((instance = in_play(iVar1, c),
+                   instance == NULL || (iVar2 = is_what(iVar1, c, 2), iVar2 == 0)) ||
+                  (iVar2 = count_counters(iVar1, c, COUNTER_FUSE), iVar2 == 0)))
           {
-            iVar4 = iVar4 + 1;
-            if (active_cards_count[iVar1] <= iVar4)
+            c = c + 1;
+            if (active_cards_count[iVar1] <= c)
               goto LAB_02504d80;
           }
-          iVar2 = iVar4 + 1;
-          add_counters(player, card, iVar1, iVar4, COUNTER_FUSE, 1);
-          iVar4 = iVar2;
+          iVar2 = c + 1;
+          add_counters(player, card, iVar1, c, COUNTER_FUSE, 1);
+          c = iVar2;
         } while (iVar2 < active_cards_count[iVar1]);
       }
     LAB_02504d80:
@@ -883,30 +883,30 @@ int card_bomb_squad(int player, int card, event_t event)
       {
         if (0 < active_cards_count[iVar1])
         {
-          iVar4 = 0;
+          c = 0;
           do
           {
-            while (((instance = in_play(iVar1, iVar4),
-                     instance == NULL || (iVar2 = is_what(iVar1, iVar4, 2), iVar2 == 0)) ||
-                    (iVar2 = count_counters(iVar1, iVar4, COUNTER_FUSE), iVar2 == 0)))
+            while (((instance = in_play(iVar1, c),
+                     instance == NULL || (iVar2 = is_what(iVar1, c, 2), iVar2 == 0)) ||
+                    (iVar2 = count_counters(iVar1, c, COUNTER_FUSE), iVar2 == 0)))
             {
             LAB_02504ba0:
-              iVar4 = iVar4 + 1;
-              if (active_cards_count[iVar1] <= iVar4)
+              c = c + 1;
+              if (active_cards_count[iVar1] <= c)
                 goto LAB_02504c18;
             }
             if (3 < iVar2)
             {
-              remove_all_counters(player, card, iVar1, iVar4, COUNTER_FUSE);
-              damage_player(iVar1, 4, iVar1, iVar4);
-              kill_card(iVar1, iVar4, KILL_DESTROY);
+              remove_all_counters(player, card, iVar1, c, COUNTER_FUSE);
+              damage_player(iVar1, 4, iVar1, c);
+              kill_card(iVar1, c, KILL_DESTROY);
               goto LAB_02504ba0;
             }
             if (event != EVENT_SHOULD_AI_PLAY)
               goto LAB_02504ba0;
-            iVar4 = iVar4 + 1;
+            c = c + 1;
             ai_modifier = ai_modifier + iVar2 * (((iVar1 != 1) - 1 & 0xffffffe0) + 0x10);
-          } while (iVar4 < active_cards_count[iVar1]);
+          } while (c < active_cards_count[iVar1]);
         }
       LAB_02504c18:
         iVar1 = iVar1 + 1;
@@ -932,9 +932,8 @@ int card_bomb_squad(int player, int card, event_t event)
                              COUNTER_FUSE, 1);
   }
 LAB_02504afc:
-  iVar1 = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
+  return generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
                                     "TARGET_CREATURE");
-  return iVar1;
 }
 
 int card_braids_cabal_minion(int player, int card, event_t event){
@@ -2182,8 +2181,7 @@ int card_delaying_shield(int player, int card, event_t event)
       remove_all_counters(player, card, player, card, COUNTER_DELAY);
     }
   }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 int card_dematerialize(int player, int card, event_t event){
@@ -3901,7 +3899,6 @@ int card_need_for_speed(int player, int card, event_t event){
 int card_nefarious_lich(int player, int card, event_t event)
 {
   xtrigger_t xVar1;
-  int result;
   card_instance_t *instance;
   int p_Var4;
   test_definition_t test;
@@ -3914,7 +3911,7 @@ int card_nefarious_lich(int player, int card, event_t event)
        (player == affected_card_controller)) &&
       (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
         ((-1 < life_gained &&
-          (result = is_humiliated(player, card, AL_TRIG), result == 0))))))
+          (is_humiliated(player, card, AL_TRIG) == 0))))))
   {
     if (event != EVENT_TRIGGER)
     {
@@ -3923,7 +3920,7 @@ int card_nefarious_lich(int player, int card, event_t event)
         draw_cards(player, life_gained);
         life_gained = 0;
         leaves_play(player, card, EVENT_RESOLVE_TRIGGER, 1, 1);
-        goto LAB_0250e752;
+        return global_enchantment(player, card, event);
       }
       goto LAB_0250e71d;
     }
@@ -3936,12 +3933,12 @@ int card_nefarious_lich(int player, int card, event_t event)
     {
       instance = in_play(player, card);
       if (((instance != NULL) &&
-           (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
+           (is_humiliated(player, card, AL_STATIC) == 0)) &&
           ((instance = get_card_instance(affected_card_controller, affected_card),
             instance->internal_card_id == damage_card &&
                 (((instance->damage_target_card == -1 &&
                    (instance->damage_target_player == player)) &&
-                  (result = damage_is_to_planeswalker(instance), result == 0))))))
+                  (damage_is_to_planeswalker(instance) == 0))))))
       {
         default_test_definition(&test, 0xff);
         p_Var4 = instance->info_slot;
@@ -3962,7 +3959,7 @@ int card_nefarious_lich(int player, int card, event_t event)
         }
       }
       leaves_play(player, card, EVENT_PREVENT_DAMAGE, 1, 1);
-      goto LAB_0250e752;
+      return global_enchantment(player, card, event);
     }
   }
   leaves_play(player, card, event, 1, 1);
@@ -3970,9 +3967,7 @@ int card_nefarious_lich(int player, int card, event_t event)
   {
     lose_the_game(player);
   }
-LAB_0250e752:
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 int card_new_frontiers(int player, int card, event_t event){

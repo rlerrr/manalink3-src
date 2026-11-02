@@ -1720,8 +1720,8 @@ When ~ dies, each player loses 4 life. */
 
 int card_chocking_fumes(int player, int card, event_t event)
 {
+  int count;
   card_instance_t *instance;
-  int iVar2;
   int iVar3;
   if (event == EVENT_CAST_SPELL)
   {
@@ -1730,8 +1730,8 @@ int card_chocking_fumes(int player, int card, event_t event)
       iVar3 = -0x60;
       if (current_turn != player)
       {
-        iVar3 = count_attackers(current_turn);
-        iVar3 = iVar3 * 0xc;
+        count = count_attackers(current_turn);
+        iVar3 = count * 0xc;
       }
       ai_modifier = ai_modifier + iVar3;
     }
@@ -1744,8 +1744,8 @@ int card_chocking_fumes(int player, int card, event_t event)
       while (true)
       {
         instance = in_play(current_turn, iVar3);
-        if (((instance != NULL) && (iVar2 = is_what(current_turn, iVar3, 2), iVar2 != 0)) &&
-            (iVar2 = is_attacking(current_turn, iVar3), iVar2 != 0))
+        if (((instance != NULL) && (is_what(current_turn, iVar3, 2) != 0)) &&
+            (is_attacking(current_turn, iVar3) != 0))
         {
           add_counters(player, card, current_turn, iVar3, COUNTER_M1_M1, 1);
         }
@@ -1756,8 +1756,7 @@ int card_chocking_fumes(int player, int card, event_t event)
     }
     kill_card(player, card, KILL_DESTROY);
   }
-  iVar3 = basic_spell(player, card, event);
-  return iVar3;
+  return basic_spell(player, card, event);
 }
 
 int card_concussive_bolt(int player, int card, event_t event){
@@ -2194,7 +2193,7 @@ int card_gnathosaur(int player, int card, event_t event){
 int card_gore_vassal(int player, int card, event_t event)
 {
   int card_00;
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   unsigned int uVar2;
   int result;
   card_instance_t *pcVar4;
@@ -2204,7 +2203,7 @@ int card_gore_vassal(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = 2;
-    pcVar1 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
       result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x80000c, 0, 0, 0, 0, 0,
@@ -2233,14 +2232,14 @@ int card_gore_vassal(int player, int card, event_t event)
       {
         return 0;
       }
-      result = pcVar1->targets[0].player;
+      result = instance->targets[0].player;
       if ((((unsigned int)land_can_be_played >> 8 & 0xff) & 2) == 0)
       {
         uVar2 = (unsigned int)(player != result);
       }
       else
       {
-        card_00 = pcVar1->targets[0].card;
+        card_00 = instance->targets[0].card;
         if (player == result)
         {
           result = get_toughness(player, card_00);
@@ -2264,18 +2263,18 @@ int card_gore_vassal(int player, int card, event_t event)
     }
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = 2;
-    pcVar1 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
   }
   if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
-    add_counters(player, card, pcVar1->targets[0].player, pcVar1->targets[0].card,
+    add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                              COUNTER_M1_M1, 1);
-    pcVar4 = in_play(pcVar1->targets[0].player, pcVar1->targets[0].card);
+    pcVar4 = in_play(instance->targets[0].player, instance->targets[0].card);
     if ((pcVar4 != NULL) &&
-        (result = get_toughness(pcVar1->targets[0].player, pcVar1->targets[0].card), 0 < result))
+        (result = get_toughness(instance->targets[0].player, instance->targets[0].card), 0 < result))
     {
-      regenerate_or_shield(pcVar1->parent_controller, pcVar1->parent_card,
-                           pcVar1->targets[0].player, pcVar1->targets[0].card);
+      regenerate_or_shield(instance->parent_controller, instance->parent_card,
+                           instance->targets[0].player, instance->targets[0].card);
       return 0;
     }
   }
@@ -3681,6 +3680,7 @@ static int is_nonland_permanent_by_iid(int iid, int unused1, int unused2, int un
 
 int card_phyrexian_revoker(int player, int card, event_t event)
 {
+  int choice;
   card_instance_t *instance;
   int iVar2;
   int iVar3;
@@ -3711,10 +3711,10 @@ int card_phyrexian_revoker(int player, int card, event_t event)
     if (player == 1)
       goto LAB_02334985;
   LAB_0233489b:
-    iVar2 =
+    choice =
         dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014", "\001\003",
                     "Select a card in play", 1, 1, "Choose a card from a list", 1, 1, 0, 0, 0, 0);
-    if (iVar2 == 1)
+    if (choice == 1)
     {
     LAB_02334a90:
       iVar3 = new_pick_target(&td, "Select a nonland permanent in play.", 0, 0x80);
@@ -3726,7 +3726,7 @@ int card_phyrexian_revoker(int player, int card, event_t event)
       instance->number_of_targets = '\0';
       goto LAB_0233492f;
     }
-    if (iVar2 != 2)
+    if (choice != 2)
     {
       iVar2 = -1;
       goto LAB_0233492f;
@@ -3773,8 +3773,7 @@ int card_phyrexian_revoker(int player, int card, event_t event)
         goto LAB_0233489b;
     }
   LAB_02334992:
-    iVar2 = can_target(&td);
-    if (iVar2 != 0)
+    if (can_target(&td) != 0)
     {
       if ((ai_is_speculating != 1) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
         goto LAB_0233489b;
@@ -3814,7 +3813,7 @@ LAB_0233492f:
 /* ManalinkEh 2022: 0x232acc0; original cards/mirrodin_besieged.c:2033. */
 static int fangren_marauder_effect(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   int result;
   unsigned int uVar3;
   card_instance_t *pcVar4;
@@ -3824,16 +3823,16 @@ static int fangren_marauder_effect(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
-      pcVar1 = get_card_instance(player, card);
-      if ((-1 < pcVar1->damage_target_player) &&
-          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
            result != 0x2cb1))
       {
         kill_card(player, card, KILL_EXILE);
       }
     }
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
     {
       return 0;
@@ -3841,8 +3840,8 @@ static int fangren_marauder_effect(int player, int card, event_t event)
   }
   else
   {
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, event), result != 0))
     {
       return 0;
@@ -3850,23 +3849,23 @@ static int fangren_marauder_effect(int player, int card, event_t event)
     if (event == EVENT_GRAVEYARD_FROM_PLAY)
     {
 
-      pcVar1 = get_card_instance(player, card);
+      instance = get_card_instance(player, card);
       pcVar4 = in_play(affected_card_controller, affected_card);
       if ((pcVar4 != NULL) &&
           (result = is_this_dying(affected_card_controller, affected_card), result != 0))
       {
 
-        if ((pcVar1->damage_target_card == affected_card) &&
-            (pcVar1->damage_target_player == affected_card_controller))
+        if ((instance->damage_target_card == affected_card) &&
+            (instance->damage_target_player == affected_card_controller))
         {
-          pcVar1->damage_target_card = -1;
-          pcVar1->damage_target_player = -1;
+          instance->damage_target_card = -1;
+          instance->damage_target_player = -1;
           remove_status(player, card, 0x10000);
-          if (pcVar1->targets[0xb].player < 0)
+          if (instance->targets[0xb].player < 0)
           {
-            pcVar1->targets[0xb].player = 0;
+            instance->targets[0xb].player = 0;
           }
-          *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+          *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
         }
         count_for_gfp_ability(player, card, 0x77, 2, 0x40, NULL);
       }

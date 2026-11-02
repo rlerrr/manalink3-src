@@ -11,14 +11,16 @@ foreach ($directory in @($artifactDirectory, $objectDirectory,
         (Join-Path $objectDirectory 'cards'), (Join-Path $objectDirectory 'functions'))) {
     New-Item -ItemType Directory -Force -Path $directory | Out-Null
 }
-foreach ($name in @('ManalinkEh.dll', 'ManalinkEh.dbg', 'ManalinkEh.ao',
-        'libDrawcardlib.a', 'libcapturestackbacktrace.a')) {
-    $existing = Join-Path $buildRoot $name
-    $backupDirectory = Join-Path $artifactDirectory 'before'
-    if ((Test-Path -LiteralPath $existing) -and
-        -not (Test-Path -LiteralPath (Join-Path $backupDirectory $name))) {
-        New-Item -ItemType Directory -Force -Path $backupDirectory | Out-Null
-        Copy-Item -LiteralPath $existing -Destination (Join-Path $backupDirectory $name)
+if (-not (Test-Path -LiteralPath (Join-Path $buildRoot 'docs\recovery-evidence\historical-artifact-retirement.json'))) {
+    foreach ($name in @('ManalinkEh.dll', 'ManalinkEh.dbg', 'ManalinkEh.ao',
+            'libDrawcardlib.a', 'libcapturestackbacktrace.a')) {
+        $existing = Join-Path $buildRoot $name
+        $backupDirectory = Join-Path $artifactDirectory 'before'
+        if ((Test-Path -LiteralPath $existing) -and
+            -not (Test-Path -LiteralPath (Join-Path $backupDirectory $name))) {
+            New-Item -ItemType Directory -Force -Path $backupDirectory | Out-Null
+            Copy-Item -LiteralPath $existing -Destination (Join-Path $backupDirectory $name)
+        }
     }
 }
 $previousPath = $env:PATH

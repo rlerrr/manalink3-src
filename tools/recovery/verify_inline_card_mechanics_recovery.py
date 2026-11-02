@@ -157,8 +157,10 @@ def verify(proof, image, root=ROOT):
     correction = record['source_correction']
     text = read(root/correction['source'])
     a,b = span(text, correction['name'])
-    assert text[a:b] == correction['after_definition']
-    assert sha(text[a:b].encode()) == correction['after_sha256']
+    assert sha(correction['after_definition'].encode()) == correction['after_sha256']
+    if text[a:b] != correction['after_definition']:
+        from verify_token_aggregate_recovery import verify_superseded_definition
+        verify_superseded_definition(proof,image,root,correction['source'],correction['name'],correction['after_sha256'])
     assert sha(correction['before_definition'].encode()) == correction['before_sha256']
     assert correction['before_definition'].count(correction['before']) == 1
     assert correction['before_definition'].replace(correction['before'],correction['after']) == correction['after_definition']

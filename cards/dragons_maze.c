@@ -1052,8 +1052,7 @@ int card_renegade_krasis(int player, int card, event_t event)
        (player == affected_card_controller)) &&
       (trigger_cause_controller == player))
   {
-    iVar1 = is_what(player, trigger_cause, 2);
-    if (iVar1 != 0)
+    if (is_what(player, trigger_cause, 2) != 0)
     {
       iVar1 = get_power(trigger_cause_controller, trigger_cause);
       iVar2 = get_power(player, card);
@@ -2961,8 +2960,7 @@ int card_alive_well(int player, int card, event_t event)
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
-    iVar2 = split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4ac9, 1, 0, 0x4b47, 1, 0);
-    return iVar2;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4ac9, 1, 0, 0x4b47, 1, 0);
   }
   if (event != EVENT_CAN_CAST)
   {
@@ -2981,7 +2979,7 @@ int card_alive_well(int player, int card, event_t event)
         iVar2 = 0x14 - life[1];
         iVar3 = count_subtype(1, 2, -1);
         iVar2 = (iVar3 + iVar2) * 2;
-        goto LAB_02299f3b;
+        return split_card_with_fuse(player, card, event, 0x4ac9, 1, 10, 0x4b47, 1, iVar2);
       }
     }
     else
@@ -3005,7 +3003,7 @@ int card_alive_well(int player, int card, event_t event)
         }
         kill_card(player, card, KILL_DESTROY);
         iVar2 = 0;
-        goto LAB_02299f3b;
+        return split_card_with_fuse(player, card, event, 0x4ac9, 1, 10, 0x4b47, 1, iVar2);
       }
       if (event != EVENT_CAN_CHANGE_TARGET)
       {
@@ -3014,21 +3012,18 @@ int card_alive_well(int player, int card, event_t event)
         {
           return 0;
         }
-        goto LAB_02299f3b;
+        return split_card_with_fuse(player, card, event, 0x4ac9, 1, 10, 0x4b47, 1, iVar2);
       }
     }
   }
   iVar2 = 0;
-LAB_02299f3b:
-  iVar2 = split_card_with_fuse(player, card, event, 0x4ac9, 1, 10, 0x4b47, 1, iVar2);
-  return iVar2;
+  return split_card_with_fuse(player, card, event, 0x4ac9, 1, 10, 0x4b47, 1, iVar2);
 }
 
 int card_armed_dangerous(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
   unsigned int uVar4;
   target_definition_t td;
 
@@ -3038,17 +3033,13 @@ int card_armed_dangerous(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
     iVar2 = can_target(&td);
-    iVar3 = can_target(&td);
-    iVar2 =
-        split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4acb, iVar3, 0, 0x4ae3, iVar2, 0);
-    return iVar2;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4acb, can_target(&td), 0, 0x4ae3, iVar2, 0);
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
-    iVar2 = new_pick_target(&td, "Select target creature for Armed.", -1, 0x81);
-    if (iVar2 == 0)
+    if (new_pick_target(&td, "Select target creature for Armed.", -1, 0x81) == 0)
     {
       instance->number_of_targets = '\0';
     }
@@ -3062,8 +3053,7 @@ int card_armed_dangerous(int player, int card, event_t event)
         uVar4 = instance->info_slot;
         if ((uVar4 & 1) != 0)
         {
-          iVar2 = validate_target(player, card, &td, 0);
-          if (iVar2 == 0)
+          if (validate_target(player, card, &td, 0) == 0)
           {
             uVar4 = instance->info_slot;
           }
@@ -3077,8 +3067,7 @@ int card_armed_dangerous(int player, int card, event_t event)
         if ((uVar4 & 2) != 0)
         {
           uVar4 = (unsigned int)instance->number_of_targets;
-          iVar2 = validate_target(player, card, &td, uVar4 - 1);
-          if (iVar2 != 0)
+          if (validate_target(player, card, &td, uVar4 - 1) != 0)
           {
             pump_ability_until_eot(player, card, instance->targets[uVar4 - 1].player,
                                    instance->targets[uVar4 - 1].card, 0, 0, 0, 0x400000);
@@ -3099,8 +3088,7 @@ int card_armed_dangerous(int player, int card, event_t event)
     {
       default_target_definition(player, card, &td, 2);
       td.preferred_controller = player;
-      iVar2 = new_pick_target(&td, "Select target creature for Dangerous.", -1, 0x81);
-      if (iVar2 != 0)
+      if (new_pick_target(&td, "Select target creature for Dangerous.", -1, 0x81) != 0)
       {
         return 0;
       }
@@ -3125,9 +3113,7 @@ int card_armed_dangerous(int player, int card, event_t event)
   td.preferred_controller = player;
 LAB_0229a1df:
   iVar2 = can_target(&td);
-  iVar3 = can_target(&td);
-  iVar2 = split_card_with_fuse(player, card, event, 0x4acb, iVar3, 10, 0x4ae3, iVar2, 5);
-  return iVar2;
+  return split_card_with_fuse(player, card, event, 0x4acb, can_target(&td), 10, 0x4ae3, iVar2, 5);
 }
 
 static int beck_legacy(int player, int card, event_t event){
@@ -3144,13 +3130,11 @@ int card_beck_call(int player, int card, event_t event)
 {
   card_instance_t *instance;
   unsigned int uVar2;
-  int result;
 
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
-    result = split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4ad0, 1, 0, 0x4ad8, 1, 0);
-    return result;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4ad0, 1, 0, 0x4ad8, 1, 0);
   }
   if (event != EVENT_CAN_CAST)
   {
@@ -3184,8 +3168,7 @@ int card_beck_call(int player, int card, event_t event)
       return 0;
     }
   }
-  result = split_card_with_fuse(player, card, event, 0x4ad0, 1, 5, 0x4ad8, 1, 10);
-  return result;
+  return split_card_with_fuse(player, card, event, 0x4ad0, 1, 5, 0x4ad8, 1, 10);
 }
 
 int card_breaking_entering(int player, int card, event_t event)
@@ -3199,117 +3182,82 @@ int card_breaking_entering(int player, int card, event_t event)
   int counts[2];
   target_definition_t td;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    test_definition_t test;
-    uint8_t bytes[216];
-  } recovered_stack_td_1;
-
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
-    default_target_definition(player, card, &recovered_stack_td_1.target, 2);
-    recovered_stack_td_1.target.zone = 0x1000;
-    iVar3 = can_target(&recovered_stack_td_1.target);
-    iVar3 = split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4ad5, iVar3, 0, 0x4af5, 1, 0);
-    return iVar3;
+    target_definition_t td2;
+    default_target_definition(player, card, &td2, 2);
+    td2.zone = 0x1000;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4ad5, can_target(&td2), 0, 0x4af5, 1, 0);
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
-    default_target_definition(player, card, &recovered_stack_td_1.target, 2);
-    recovered_stack_td_1.target.zone = 0x1000;
-    iVar3 = new_pick_target(&recovered_stack_td_1.target, "Select target player for Breaking.", 0,
-                            0x81);
-    if (iVar3 == 0)
+    target_definition_t td3;
+    default_target_definition(player, card, &td3, 2);
+    td3.zone = 0x1000;
+    if (new_pick_target(&td3, "Select target player for Breaking.", 0,
+                            0x81) == 0)
     {
       instance->number_of_targets = '\0';
     }
     return 0;
   }
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 2);
-        td.zone = 0x1000;
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          uVar2 = instance->info_slot;
-          if ((uVar2 & 1) != 0)
-          {
-            iVar3 = validate_target(player, card, &td, 0);
-            if (iVar3 != 0)
-            {
-              mill(instance->targets[0].player, 8);
-            }
-            uVar2 = instance->info_slot;
-          }
-          if ((uVar2 & 2) != 0)
-          {
-            default_test_definition(&recovered_stack_td_1.test, 2);
-            iStack_150 = 1 - player;
-            iVar3 = count_graveyard_by_type(0, 2);
-            counts[0] = iVar3;
-            counts[1] = count_graveyard_by_type(1, 2);
-            if (0 < iVar3 + counts[1])
-            {
-              iVar3 = counts[iStack_150];
-              do
-              {
-                do
-                {
-                  if (iVar3 != 0)
-                  {
-                    memcpy(recovered_stack_td_1.test.message,
-                           "Select a creature card for Entering from (opponent's graveyard).\000",
-                           65);
-                    iVar4 = new_select_a_card(player, iStack_150, 2, 0, 2, -1,
-                                              &recovered_stack_td_1.test);
-                    if (iVar4 != -1)
-                      goto LAB_0229a91b;
-                  }
-                } while (counts[player] == 0);
-                memcpy(recovered_stack_td_1.test.message,
-                       "Select a creature card for Entering from (your graveyard).\000", 59);
-                iVar4 = new_select_a_card(player, player, 2, 0, 2, -1, &recovered_stack_td_1.test);
-              } while (iVar4 == -1);
-              iStack_150 = player;
-            LAB_0229a91b:
-              reanimate_permanent(player, card, iStack_150, iVar4, REANIMATE_HASTE_UNTIL_EOT);
-            }
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_0229a6a9;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   default_target_definition(player, card, &td, 2);
   td.zone = 0x1000;
-LAB_0229a6a9:
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    uVar2 = instance->info_slot;
+    if ((uVar2 & 1) != 0)
+    {
+      if (validate_target(player, card, &td, 0) != 0)
+      {
+        mill(instance->targets[0].player, 8);
+      }
+      uVar2 = instance->info_slot;
+    }
+    if ((uVar2 & 2) != 0)
+    {
+      test_definition_t this_test;
+      default_test_definition(&this_test, 2);
+      iStack_150 = 1 - player;
+      iVar3 = count_graveyard_by_type(0, 2);
+      counts[0] = iVar3;
+      counts[1] = count_graveyard_by_type(1, 2);
+      if (0 < iVar3 + counts[1])
+      {
+        iVar3 = counts[iStack_150];
+        do
+        {
+          do
+          {
+            if (iVar3 != 0)
+            {
+              memcpy(this_test.message,
+                     "Select a creature card for Entering from (opponent's graveyard).\000",
+                     65);
+              iVar4 = new_select_a_card(player, iStack_150, 2, 0, 2, -1,
+                                        &this_test);
+              if (iVar4 != -1)
+                goto LAB_0229a91b;
+            }
+          } while (counts[player] == 0);
+          memcpy(this_test.message,
+                 "Select a creature card for Entering from (your graveyard).\000", 59);
+          iVar4 = new_select_a_card(player, player, 2, 0, 2, -1, &this_test);
+        } while (iVar4 == -1);
+        iStack_150 = player;
+      LAB_0229a91b:
+        reanimate_permanent(player, card, iStack_150, iVar4, REANIMATE_HASTE_UNTIL_EOT);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
   ptStack_148 = &td;
-  iVar3 = can_target(ptStack_148);
-  iVar3 = split_card_with_fuse(player, card, event, 0x4ad5, iVar3, 5, 0x4af5, 1, 10);
-  return iVar3;
+  return split_card_with_fuse(player, card, event, 0x4ad5, can_target(ptStack_148), 5, 0x4af5, 1, 10);
 }
 
 int card_catch_release(int player, int card, event_t event)
@@ -3327,8 +3275,7 @@ int card_catch_release(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 0x47);
     result = can_target(&td);
-    result = split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4ad9, result, 0, 0x4b28, 1, 0);
-    return result;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4ad9, result, 0, 0x4b28, 1, 0);
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
@@ -3340,75 +3287,52 @@ int card_catch_release(int player, int card, event_t event)
     }
     return 0;
   }
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 0x47);
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          uVar2 = instance->info_slot;
-          if ((uVar2 & 1) != 0)
-          {
-            result = validate_target(player, card, &td, 0);
-            if (result != 0)
-            {
-              effect_act_of_treason(player, card, instance->targets[0].player,
-                                    instance->targets[0].card);
-            }
-            uVar2 = instance->info_slot;
-          }
-          if ((uVar2 & 2) != 0)
-          {
-            ptVar4 = typs;
-            typs[0] = TYPE_ARTIFACT;
-            typs[1] = TYPE_CREATURE;
-            typs[2] = TYPE_ENCHANTMENT;
-            typs[3] = TYPE_LAND;
-            typs[4] = TARGET_TYPE_PLANESWALKER;
-            type = TYPE_ARTIFACT;
-            while (true)
-            {
-              impose_sacrifice(player, card, player, 1, type, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-              ptVar4 = ptVar4 + 1;
-              impose_sacrifice(player, card, 1 - player, 1, type, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-              if (ptVar4 == typs + 5)
-                break;
-              type = *ptVar4;
-            }
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_0229ac1e;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   default_target_definition(player, card, &td, 0x47);
-LAB_0229ac1e:
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    uVar2 = instance->info_slot;
+    if ((uVar2 & 1) != 0)
+    {
+      result = validate_target(player, card, &td, 0);
+      if (result != 0)
+      {
+        effect_act_of_treason(player, card, instance->targets[0].player,
+                              instance->targets[0].card);
+      }
+      uVar2 = instance->info_slot;
+    }
+    if ((uVar2 & 2) != 0)
+    {
+      ptVar4 = typs;
+      typs[0] = TYPE_ARTIFACT;
+      typs[1] = TYPE_CREATURE;
+      typs[2] = TYPE_ENCHANTMENT;
+      typs[3] = TYPE_LAND;
+      typs[4] = TARGET_TYPE_PLANESWALKER;
+      type = TYPE_ARTIFACT;
+      while (true)
+      {
+        impose_sacrifice(player, card, player, 1, type, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+        ptVar4 = ptVar4 + 1;
+        impose_sacrifice(player, card, 1 - player, 1, type, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+        if (ptVar4 == typs + 5)
+          break;
+        type = *ptVar4;
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
   result = can_target(&td);
-  result = split_card_with_fuse(player, card, event, 0x4ad9, result, 10, 0x4b28, 1, 5);
-  return result;
+  return split_card_with_fuse(player, card, event, 0x4ad9, result, 10, 0x4b28, 1, 5);
 }
 
 int card_down_dirty(int player, int card, event_t event)
 {
+  target_definition_t td3;
   uint8_t uVar1;
   card_instance_t *instance;
   int iVar3;
@@ -3417,19 +3341,12 @@ int card_down_dirty(int player, int card, event_t event)
   unsigned int uVar6;
   int iStack_f0;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    test_definition_t test;
-    uint8_t bytes[216];
-  } recovered_stack_td;
-
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
-    default_target_definition(player, card, &recovered_stack_td.target, 0);
-    recovered_stack_td.target.zone = 0x1000;
+    target_definition_t td;
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
     iVar3 = count_graveyard(player);
     uVar6 = 0;
     if (iVar3 != 0)
@@ -3437,17 +3354,14 @@ int card_down_dirty(int player, int card, event_t event)
       iVar3 = graveyard_has_shroud(player);
       uVar6 = (unsigned int)(iVar3 == 0);
     }
-    iVar3 = can_target(&recovered_stack_td.target);
-    iVar3 =
-        split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4aef, iVar3, 0, 0x4aee, uVar6, 0);
-    return iVar3;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4aef, can_target(&td), 0, 0x4aee, uVar6, 0);
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
-    default_target_definition(player, card, &recovered_stack_td.target, 0);
-    recovered_stack_td.target.zone = 0x1000;
-    iVar3 = new_pick_target(&recovered_stack_td.target, "Select target player for Down.", -1, 0x81);
-    if (iVar3 == 0)
+    target_definition_t td2;
+    default_target_definition(player, card, &td2, 0);
+    td2.zone = 0x1000;
+    if (new_pick_target(&td2, "Select target player for Down.", -1, 0x81) == 0)
     {
       instance->number_of_targets = '\0';
     }
@@ -3460,8 +3374,8 @@ int card_down_dirty(int player, int card, event_t event)
       }
       goto LAB_0229aeda;
     }
-    default_target_definition(player, card, &recovered_stack_td.target, 2);
-    recovered_stack_td.target.zone = 0x1000;
+    default_target_definition(player, card, &td3, 2);
+    td3.zone = 0x1000;
     iVar3 = count_graveyard(player);
     iVar5 = 1 - player;
     uVar6 = 0;
@@ -3472,11 +3386,12 @@ int card_down_dirty(int player, int card, event_t event)
   {
     if (event == EVENT_PLAY_SECOND_HALF)
     {
+      test_definition_t this_test;
       uVar1 = instance->number_of_targets;
-      new_default_test_definition(&recovered_stack_td.test, 0xff,
+      new_default_test_definition(&this_test, 0xff,
                                   "Select target creature card for Entering.");
       iVar3 = select_target_from_grave_source(
-          player, card, player, SFG_0, 1, &recovered_stack_td.test, (unsigned int)(uVar1 != '\0'));
+          player, card, player, SFG_0, 1, &this_test, (unsigned int)(uVar1 != '\0'));
       if (iVar3 != -1)
       {
         return 0;
@@ -3499,8 +3414,8 @@ int card_down_dirty(int player, int card, event_t event)
       }
     }
   LAB_0229aeda:
-    default_target_definition(player, card, &recovered_stack_td.target, 2);
-    recovered_stack_td.target.zone = 0x1000;
+    default_target_definition(player, card, &td3, 2);
+    td3.zone = 0x1000;
     iVar3 = count_graveyard(player);
     iVar5 = 1 - player;
     if (iVar3 == 0)
@@ -3519,7 +3434,7 @@ int card_down_dirty(int player, int card, event_t event)
     uVar4 = instance->info_slot;
     if ((uVar4 & 1) != 0)
     {
-      iVar3 = validate_target(player, card, &recovered_stack_td.target, 0);
+      iVar3 = validate_target(player, card, &td3, 0);
       if (iVar3 == 0)
       {
         uVar4 = instance->info_slot;
@@ -3539,9 +3454,7 @@ int card_down_dirty(int player, int card, event_t event)
     kill_card(player, card, KILL_DESTROY);
   }
 LAB_0229af2b:
-  iVar3 = can_target(&recovered_stack_td.target);
-  iVar3 = split_card_with_fuse(player, card, event, 0x4aef, iVar3, iStack_f0, 0x4aee, uVar6, 10);
-  return iVar3;
+  return split_card_with_fuse(player, card, event, 0x4aef, can_target(&td3), iStack_f0, 0x4aee, uVar6, 10);
 }
 
 int card_far_away(int player, int card, event_t event)
@@ -3549,7 +3462,6 @@ int card_far_away(int player, int card, event_t event)
   unsigned char bVar1;
   card_instance_t *instance;
   int iVar3;
-  int iVar4;
   unsigned int uVar5;
   target_definition_t *ptStack_c0;
   target_definition_t td;
@@ -3562,16 +3474,12 @@ int card_far_away(int player, int card, event_t event)
     default_target_definition(player, card, &td2, 2);
     td2.zone = 0x1000;
     iVar3 = can_target(&td2);
-    iVar4 = can_target(&td);
-    iVar3 =
-        split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4afa, iVar4, 0, 0x4ace, iVar3, 0);
-    return iVar3;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4afa, can_target(&td), 0, 0x4ace, iVar3, 0);
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
     default_target_definition(player, card, &td2, 2);
-    iVar3 = new_pick_target(&td2, "Select target creature for Far.", -1, 0x81);
-    if (iVar3 == 0)
+    if (new_pick_target(&td2, "Select target creature for Far.", -1, 0x81) == 0)
     {
       instance->number_of_targets = '\0';
     }
@@ -3586,8 +3494,7 @@ int card_far_away(int player, int card, event_t event)
         uVar5 = instance->info_slot;
         if ((uVar5 & 1) != 0)
         {
-          iVar3 = validate_target(player, card, &td, 0);
-          if (iVar3 == 0)
+          if (validate_target(player, card, &td, 0) == 0)
           {
             uVar5 = instance->info_slot;
           }
@@ -3601,8 +3508,7 @@ int card_far_away(int player, int card, event_t event)
         if ((uVar5 & 2) != 0)
         {
           bVar1 = instance->number_of_targets;
-          iVar3 = validate_target(player, card, ptStack_c0, bVar1 - 1);
-          if (iVar3 != 0)
+          if (validate_target(player, card, ptStack_c0, bVar1 - 1) != 0)
           {
             impose_sacrifice(player, card, instance->targets[bVar1 - 1].player, 1, 2, 0, 0, 0, 0, 0,
                              0, 0, -1, 0);
@@ -3623,8 +3529,7 @@ int card_far_away(int player, int card, event_t event)
     {
       default_target_definition(player, card, &td2, 2);
       td2.zone = 0x1000;
-      iVar3 = new_pick_target(&td2, "Select target player for Away.", -1, 0x81);
-      if (iVar3 != 0)
+      if (new_pick_target(&td2, "Select target player for Away.", -1, 0x81) != 0)
       {
         return 0;
       }
@@ -3651,13 +3556,12 @@ int card_far_away(int player, int card, event_t event)
 LAB_0229b38f:
   ptStack_c0 = &td2;
   iVar3 = can_target(ptStack_c0);
-  iVar4 = can_target(&td);
-  iVar3 = split_card_with_fuse(player, card, event, 0x4afa, iVar4, 8, 0x4ace, iVar3, 10);
-  return iVar3;
+  return split_card_with_fuse(player, card, event, 0x4afa, can_target(&td), 8, 0x4ace, iVar3, 10);
 }
 
 int card_flesh_blood(int player, int card, event_t event)
 {
+  target_definition_t td5;
   card_instance_t *instance;
   int amt;
   unsigned int uVar2;
@@ -3668,23 +3572,16 @@ int card_flesh_blood(int player, int card, event_t event)
   target_definition_t td;
   target_definition_t td2;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    test_definition_t test;
-    uint8_t bytes[216];
-  } recovered_stack_td3;
-
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
+    target_definition_t td3;
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
     td2 = td;
     td2.allowed_controller = player;
-    default_target_definition(player, card, &recovered_stack_td3.target, 0x102);
-    recovered_stack_td3.target.zone = 0x1200;
+    default_target_definition(player, card, &td3, 0x102);
+    td3.zone = 0x1200;
     iVar4 = count_graveyard_by_type(2, 2);
     if ((iVar4 == 0) || (iVar4 = graveyard_has_shroud(2), iVar4 != 0))
     {
@@ -3699,28 +3596,26 @@ int card_flesh_blood(int player, int card, event_t event)
     uVar2 = 0;
     if (iVar4 != 0)
     {
-      iVar4 = can_target(&recovered_stack_td3.target);
+      iVar4 = can_target(&td3);
       uVar2 = (unsigned int)(iVar4 != 0);
     }
-    iVar4 =
-        split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b00, uVar7, 0, 0x4ad2, uVar2, 0);
-    return iVar4;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b00, uVar7, 0, 0x4ad2, uVar2, 0);
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
-    new_default_test_definition(&recovered_stack_td3.test, 2,
+    test_definition_t this_test;
+    new_default_test_definition(&this_test, 2,
                                 "Select target creature card for Flesh.");
     default_target_definition(player, card, &td2, 2);
     td2.preferred_controller = player;
-    iVar4 = new_pick_target(&td2, "Select target creature for Flesh.", 0, 0x81);
-    if (iVar4 == 0)
+    if (new_pick_target(&td2, "Select target creature for Flesh.", 0, 0x81) == 0)
     {
       spell_fizzled = 1;
       instance->number_of_targets = '\0';
     }
     else
     {
-      iVar4 = select_target_from_either_grave(player, card, SFG_0, 2, 2, &recovered_stack_td3.test,
+      iVar4 = select_target_from_either_grave(player, card, SFG_0, 2, 2, &this_test,
                                               1, 2);
       instance->number_of_targets = iVar4 != -1;
     }
@@ -3735,11 +3630,12 @@ int card_flesh_blood(int player, int card, event_t event)
   {
     if (event == EVENT_PLAY_SECOND_HALF)
     {
+      target_definition_t td4;
       default_target_definition(player, card, &td2, 2);
       td2.preferred_controller = player;
       td2.allowed_controller = player;
-      default_target_definition(player, card, &recovered_stack_td3.target, 0x102);
-      recovered_stack_td3.target.zone = 0x1200;
+      default_target_definition(player, card, &td4, 0x102);
+      td4.zone = 0x1200;
       iVar4 = 0;
       if ((instance->info_slot & 1U) != 0)
       {
@@ -3747,7 +3643,7 @@ int card_flesh_blood(int player, int card, event_t event)
       }
       iVar3 = new_pick_target(&td2, "Select target creature you control for Blood.", iVar4, 0x81);
       if ((iVar3 != 0) &&
-          (iVar4 = new_pick_target(&recovered_stack_td3.target,
+          (iVar4 = new_pick_target(&td4,
                                    "Select target creature, player, or planeswalker for Blood.",
                                    iVar4 + 1, 0x81),
            iVar4 != 0))
@@ -3775,8 +3671,8 @@ int card_flesh_blood(int player, int card, event_t event)
   td.preferred_controller = player;
   td2 = td;
   td2.allowed_controller = player;
-  default_target_definition(player, card, &recovered_stack_td3.target, 0x102);
-  recovered_stack_td3.target.zone = 0x1200;
+  default_target_definition(player, card, &td5, 0x102);
+  td5.zone = 0x1200;
   iVar4 = count_graveyard_by_type(2, 2);
   if ((iVar4 == 0) || (iVar4 = graveyard_has_shroud(2), iVar4 != 0))
   {
@@ -3791,11 +3687,11 @@ int card_flesh_blood(int player, int card, event_t event)
   uVar2 = 0;
   if (iVar4 != 0)
   {
-    iVar4 = can_target(&recovered_stack_td3.target);
+    iVar4 = can_target(&td5);
     uVar2 = (unsigned int)(iVar4 != 0);
   }
   if (event != EVENT_RESOLVE_SPELL)
-    goto LAB_0229b85e;
+    return split_card_with_fuse(player, card, event, 0x4b00, uVar7, 8, 0x4ad2, uVar2, 10);
   if ((instance->info_slot & 1U) == 0)
   {
     if ((instance->info_slot & 2U) != 0)
@@ -3805,7 +3701,7 @@ int card_flesh_blood(int player, int card, event_t event)
     LAB_0229b988:
       iVar4 = validate_target(player, card, &td2, iStack_19c);
       if ((iVar4 != 0) &&
-          (iVar4 = validate_target(player, card, &recovered_stack_td3.target, iStack_19c + 1),
+          (iVar4 = validate_target(player, card, &td5, iStack_19c + 1),
            iVar4 != 0))
       {
         iVar4 = instance->targets[iStack_19c].card;
@@ -3838,16 +3734,13 @@ int card_flesh_blood(int player, int card, event_t event)
     }
   }
   kill_card(player, card, KILL_DESTROY);
-LAB_0229b85e:
-  iVar4 = split_card_with_fuse(player, card, event, 0x4b00, uVar7, 8, 0x4ad2, uVar2, 10);
-  return iVar4;
+  return split_card_with_fuse(player, card, event, 0x4b00, uVar7, 8, 0x4ad2, uVar2, 10);
 }
 
 int card_give_take(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
   unsigned int uVar4;
   target_definition_t *ptStack_bc;
   target_definition_t td;
@@ -3867,17 +3760,13 @@ int card_give_take(int player, int card, event_t event)
       td2.extra = 0x200;
     }
     iVar2 = can_target(&td2);
-    iVar3 = can_target(&td);
-    iVar2 =
-        split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b01, iVar3, 0, 0x4b3c, iVar2, 0);
-    return iVar2;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b01, can_target(&td), 0, 0x4b3c, iVar2, 0);
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
     default_target_definition(player, card, &td2, 2);
     td2.preferred_controller = player;
-    iVar2 = new_pick_target(&td2, "Select target creature for Give.", -1, 0x81);
-    if (iVar2 == 0)
+    if (new_pick_target(&td2, "Select target creature for Give.", -1, 0x81) == 0)
     {
       instance->number_of_targets = '\0';
     }
@@ -3908,8 +3797,7 @@ int card_give_take(int player, int card, event_t event)
         td2.special = 0x40000;
         td2.extra = 0x200;
       }
-      iVar2 = new_pick_target(&td2, "Select target creature for Take.", -1, 0x81);
-      if (iVar2 != 0)
+      if (new_pick_target(&td2, "Select target creature for Take.", -1, 0x81) != 0)
       {
         return 0;
       }
@@ -3949,8 +3837,7 @@ int card_give_take(int player, int card, event_t event)
     uVar4 = instance->info_slot;
     if ((uVar4 & 1) != 0)
     {
-      iVar2 = validate_target(player, card, ptStack_bc, 0);
-      if (iVar2 == 0)
+      if (validate_target(player, card, ptStack_bc, 0) == 0)
       {
         uVar4 = instance->info_slot;
       }
@@ -3964,8 +3851,7 @@ int card_give_take(int player, int card, event_t event)
     if ((uVar4 & 2) != 0)
     {
       uVar4 = (unsigned int)instance->number_of_targets;
-      iVar2 = validate_target(player, card, &td2, uVar4 - 1);
-      if (iVar2 != 0)
+      if (validate_target(player, card, &td2, uVar4 - 1) != 0)
       {
         iVar2 = count_counters(instance->targets[uVar4 - 1].player,
                                instance->targets[uVar4 - 1].card, COUNTER_P1_P1);
@@ -3979,9 +3865,7 @@ int card_give_take(int player, int card, event_t event)
 LAB_0229bf00:
   ptStack_bc = &td;
   iVar2 = can_target(&td2);
-  iVar3 = can_target(ptStack_bc);
-  iVar2 = split_card_with_fuse(player, card, event, 0x4b01, iVar3, 10, 0x4b3c, iVar2, 8);
-  return iVar2;
+  return split_card_with_fuse(player, card, event, 0x4b01, can_target(ptStack_bc), 10, 0x4b3c, iVar2, 8);
 }
 
 
@@ -3989,13 +3873,11 @@ int card_profit_loss(int player, int card, event_t event)
 {
   card_instance_t *instance;
   unsigned int uVar2;
-  int result;
 
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
-    result = split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b1e, 1, 0, 0x4b0e, 1, 0);
-    return result;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b1e, 1, 0, 0x4b0e, 1, 0);
   }
   if (event != EVENT_CAN_CAST)
   {
@@ -4029,15 +3911,13 @@ int card_profit_loss(int player, int card, event_t event)
       return 0;
     }
   }
-  result = split_card_with_fuse(player, card, event, 0x4b1e, 1, 8, 0x4b0e, 1, 10);
-  return result;
+  return split_card_with_fuse(player, card, event, 0x4b1e, 1, 8, 0x4b0e, 1, 10);
 }
 
 int card_protect_serve(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
   unsigned int uVar4;
   target_definition_t *ptStack_c0;
   target_definition_t td;
@@ -4050,17 +3930,13 @@ int card_protect_serve(int player, int card, event_t event)
     td.preferred_controller = player;
     default_target_definition(player, card, &td2, 2);
     iVar2 = can_target(&td2);
-    iVar3 = can_target(&td);
-    iVar2 =
-        split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b1f, iVar3, 0, 0x4b32, iVar2, 0);
-    return iVar2;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b1f, can_target(&td), 0, 0x4b32, iVar2, 0);
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
     default_target_definition(player, card, &td2, 2);
     td2.preferred_controller = player;
-    iVar2 = new_pick_target(&td2, "Select target creature for Protect.", -1, 0x81);
-    if (iVar2 == 0)
+    if (new_pick_target(&td2, "Select target creature for Protect.", -1, 0x81) == 0)
     {
       instance->number_of_targets = '\0';
     }
@@ -4075,8 +3951,7 @@ int card_protect_serve(int player, int card, event_t event)
         uVar4 = instance->info_slot;
         if ((uVar4 & 1) != 0)
         {
-          iVar2 = validate_target(player, card, &td, 0);
-          if (iVar2 == 0)
+          if (validate_target(player, card, &td, 0) == 0)
           {
             uVar4 = instance->info_slot;
           }
@@ -4090,8 +3965,7 @@ int card_protect_serve(int player, int card, event_t event)
         if ((uVar4 & 2) != 0)
         {
           uVar4 = (unsigned int)instance->number_of_targets;
-          iVar2 = validate_target(player, card, &td, uVar4 - 1);
-          if (iVar2 != 0)
+          if (validate_target(player, card, &td, uVar4 - 1) != 0)
           {
             pump_until_eot(player, card, instance->targets[uVar4 - 1].player,
                            instance->targets[uVar4 - 1].card, -6, 0);
@@ -4111,8 +3985,7 @@ int card_protect_serve(int player, int card, event_t event)
     if (event == EVENT_PLAY_SECOND_HALF)
     {
       default_target_definition(player, card, &td2, 2);
-      iVar2 = new_pick_target(&td2, "Select target creature for Serve.", -1, 0x81);
-      if (iVar2 != 0)
+      if (new_pick_target(&td2, "Select target creature for Serve.", -1, 0x81) != 0)
       {
         return 0;
       }
@@ -4139,23 +4012,19 @@ int card_protect_serve(int player, int card, event_t event)
 LAB_0229c551:
   ptStack_c0 = &td2;
   iVar2 = can_target(ptStack_c0);
-  iVar3 = can_target(&td);
-  iVar2 = split_card_with_fuse(player, card, event, 0x4b1f, iVar3, 5, 0x4b32, iVar2, 5);
-  return iVar2;
+  return split_card_with_fuse(player, card, event, 0x4b1f, can_target(&td), 5, 0x4b32, iVar2, 5);
 }
 
 int card_ready_willing(int player, int card, event_t event)
 {
   card_instance_t *instance;
   unsigned int uVar2;
-  int result;
   test_definition_t this_test;
 
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
-    result = split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b23, 1, 0, 0x4b4d, 1, 0);
-    return result;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b23, 1, 0, 0x4b4d, 1, 0);
   }
   if (event != EVENT_CAN_CAST)
   {
@@ -4191,8 +4060,7 @@ int card_ready_willing(int player, int card, event_t event)
       return 0;
     }
   }
-  result = split_card_with_fuse(player, card, event, 0x4b23, 1, 10, 0x4b4d, 1, 8);
-  return result;
+  return split_card_with_fuse(player, card, event, 0x4b23, 1, 10, 0x4b4d, 1, 8);
 }
 
 int card_toil_trouble(int player, int card, event_t event)
@@ -4217,18 +4085,14 @@ int card_toil_trouble(int player, int card, event_t event)
     default_target_definition(player, card, &td2, 0);
     td2.zone = 0x1000;
     iVar5 = can_target(&td2);
-    iVar4 = can_target(&td);
-    iVar5 =
-        split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b3e, iVar4, 0, 0x4b40, iVar5, 0);
-    return iVar5;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b3e, can_target(&td), 0, 0x4b40, iVar5, 0);
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
     default_target_definition(player, card, &td2, 0);
     td2.zone = 0x1000;
     td2.preferred_controller = player;
-    iVar5 = new_pick_target(&td2, "Select target player for Toil.", -1, 0x81);
-    if (iVar5 == 0)
+    if (new_pick_target(&td2, "Select target player for Toil.", -1, 0x81) == 0)
     {
       instance->number_of_targets = '\0';
     }
@@ -4251,8 +4115,7 @@ int card_toil_trouble(int player, int card, event_t event)
     uVar3 = instance->info_slot;
     if ((uVar3 & 1) != 0)
     {
-      iVar5 = validate_target(player, card, &td, 0);
-      if (iVar5 != 0)
+      if (validate_target(player, card, &td, 0) != 0)
       {
         draw_cards(instance->targets[0].player, 2);
         lose_life(instance->targets[0].player, 2);
@@ -4262,8 +4125,7 @@ int card_toil_trouble(int player, int card, event_t event)
     if ((uVar3 & 2) != 0)
     {
       bVar1 = instance->number_of_targets;
-      iVar5 = validate_target(player, card, &td, bVar1 - 1);
-      if (iVar5 != 0)
+      if (validate_target(player, card, &td, bVar1 - 1) != 0)
       {
         iVar5 = instance->targets[bVar1 - 1].player;
         damage_player(iVar5, hand_count[iVar5], player, card);
@@ -4277,8 +4139,7 @@ int card_toil_trouble(int player, int card, event_t event)
     {
       default_target_definition(player, card, &td2, 0);
       td2.zone = 0x1000;
-      iVar5 = new_pick_target(&td2, "Select target player for Trouble.", -1, 0x81);
-      if (iVar5 != 0)
+      if (new_pick_target(&td2, "Select target player for Trouble.", -1, 0x81) != 0)
       {
         return 0;
       }
@@ -4315,47 +4176,35 @@ LAB_0229cbda:
   ptStack_c0 = &td2;
   iVar4 = can_target(ptStack_c0);
   can_play_first_half = can_target(&td);
-  iVar5 = split_card_with_fuse(player, card, event, 0x4b3e, can_play_first_half, iStack_c8, 0x4b40,
+  return split_card_with_fuse(player, card, event, 0x4b3e, can_play_first_half, iStack_c8, 0x4b40,
                                iVar4, iVar5);
-  return iVar5;
 }
 
 int card_turn_burn(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
   unsigned int uVar4;
   target_definition_t *ptStack_198;
   target_definition_t td;
   target_definition_t td2;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    test_definition_t test;
-    uint8_t bytes[216];
-  } recovered_stack_td2_1;
-
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
+    target_definition_t td3;
     default_target_definition(player, card, &td2, 2);
-    default_target_definition(player, card, &recovered_stack_td2_1.target, 0x102);
-    recovered_stack_td2_1.target.zone = 0x1200;
-    iVar2 = can_target(&recovered_stack_td2_1.target);
-    iVar3 = can_target(&td2);
-    iVar2 =
-        split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b42, iVar3, 0, 0x4ad6, iVar2, 0);
-    return iVar2;
+    default_target_definition(player, card, &td3, 0x102);
+    td3.zone = 0x1200;
+    iVar2 = can_target(&td3);
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b42, can_target(&td2), 0, 0x4ad6, iVar2, 0);
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
-    default_target_definition(player, card, &recovered_stack_td2_1.target, 2);
-    iVar2 = new_pick_target(&recovered_stack_td2_1.target, "Select target creature for Turn.", -1,
-                            0x81);
-    if (iVar2 == 0)
+    target_definition_t td4;
+    default_target_definition(player, card, &td4, 2);
+    if (new_pick_target(&td4, "Select target creature for Turn.", -1,
+                            0x81) == 0)
     {
       instance->number_of_targets = '\0';
     }
@@ -4370,21 +4219,21 @@ int card_turn_burn(int player, int card, event_t event)
         uVar4 = instance->info_slot;
         if ((uVar4 & 1) != 0)
         {
-          iVar2 = validate_target(player, card, &td, 0);
-          if (iVar2 == 0)
+          if (validate_target(player, card, &td, 0) == 0)
           {
             uVar4 = instance->info_slot;
           }
           else
           {
-            default_test_definition(&recovered_stack_td2_1.test, 0);
-            recovered_stack_td2_1.test.power = 0;
-            recovered_stack_td2_1.test.toughness = 1;
-            recovered_stack_td2_1.test.subtype = SUBTYPE_WEIRD;
-            recovered_stack_td2_1.test.color = get_sleighted_color_test(player, card, 0x10);
+            test_definition_t hc;
+            default_test_definition(&hc, 0);
+            hc.power = 0;
+            hc.toughness = 1;
+            hc.subtype = SUBTYPE_WEIRD;
+            hc.color = get_sleighted_color_test(player, card, 0x10);
             humiliate_and_set_pt_abilities(player, card, instance->targets[0].player,
                                            instance->targets[0].card, 4,
-                                           &recovered_stack_td2_1.test);
+                                           &hc);
             uVar4 = instance->info_slot;
           }
         }
@@ -4392,8 +4241,7 @@ int card_turn_burn(int player, int card, event_t event)
         if ((uVar4 & 2) != 0)
         {
           uVar4 = (unsigned int)instance->number_of_targets;
-          iVar2 = validate_target(player, card, ptStack_198, uVar4 - 1);
-          if (iVar2 != 0)
+          if (validate_target(player, card, ptStack_198, uVar4 - 1) != 0)
           {
             damage_creature(instance->targets[uVar4 - 1].player, instance->targets[uVar4 - 1].card,
                             2, player, card);
@@ -4412,12 +4260,11 @@ int card_turn_burn(int player, int card, event_t event)
   {
     if (event == EVENT_PLAY_SECOND_HALF)
     {
-      default_target_definition(player, card, &recovered_stack_td2_1.target, 0x102);
-      recovered_stack_td2_1.target.zone = 0x1200;
-      iVar2 =
-          new_pick_target(&recovered_stack_td2_1.target,
-                          "Select target creature, player, or planeswalker for Burn.", -1, 0x81);
-      if (iVar2 != 0)
+      target_definition_t td5;
+      default_target_definition(player, card, &td5, 0x102);
+      td5.zone = 0x1200;
+      if (new_pick_target(&td5,
+                          "Select target creature, player, or planeswalker for Burn.", -1, 0x81) != 0)
       {
         return 0;
       }
@@ -4444,16 +4291,13 @@ int card_turn_burn(int player, int card, event_t event)
 LAB_0229d048:
   ptStack_198 = &td2;
   iVar2 = can_target(ptStack_198);
-  iVar3 = can_target(&td);
-  iVar2 = split_card_with_fuse(player, card, event, 0x4b42, iVar3, 5, 0x4ad6, iVar2, 10);
-  return iVar2;
+  return split_card_with_fuse(player, card, event, 0x4b42, can_target(&td), 5, 0x4ad6, iVar2, 10);
 }
 
 int card_wear_tear(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
   unsigned int uVar4;
   target_definition_t *ptStack_c0;
   target_definition_t td;
@@ -4465,16 +4309,12 @@ int card_wear_tear(int player, int card, event_t event)
     default_target_definition(player, card, &td, 0x40);
     default_target_definition(player, card, &td2, 4);
     iVar2 = can_target(&td2);
-    iVar3 = can_target(&td);
-    iVar2 =
-        split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b46, iVar3, 0, 0x4b3d, iVar2, 0);
-    return iVar2;
+    return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b46, can_target(&td), 0, 0x4b3d, iVar2, 0);
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
     default_target_definition(player, card, &td2, 0x40);
-    iVar2 = new_pick_target(&td2, "Select target artifact for Wear.", -1, 0x81);
-    if (iVar2 == 0)
+    if (new_pick_target(&td2, "Select target artifact for Wear.", -1, 0x81) == 0)
     {
       instance->number_of_targets = '\0';
     }
@@ -4488,8 +4328,7 @@ int card_wear_tear(int player, int card, event_t event)
         uVar4 = instance->info_slot;
         if ((uVar4 & 1) != 0)
         {
-          iVar2 = validate_target(player, card, &td, 0);
-          if (iVar2 == 0)
+          if (validate_target(player, card, &td, 0) == 0)
           {
             uVar4 = instance->info_slot;
           }
@@ -4503,8 +4342,7 @@ int card_wear_tear(int player, int card, event_t event)
         if ((uVar4 & 2) != 0)
         {
           uVar4 = (unsigned int)instance->number_of_targets;
-          iVar2 = validate_target(player, card, ptStack_c0, uVar4 - 1);
-          if (iVar2 != 0)
+          if (validate_target(player, card, ptStack_c0, uVar4 - 1) != 0)
           {
             kill_card(instance->targets[uVar4 - 1].player, instance->targets[uVar4 - 1].card,
                       KILL_DESTROY);
@@ -4524,8 +4362,7 @@ int card_wear_tear(int player, int card, event_t event)
     if (event == EVENT_PLAY_SECOND_HALF)
     {
       default_target_definition(player, card, &td2, 4);
-      iVar2 = new_pick_target(&td2, "Select target enchantment for Tear.", -1, 0x81);
-      if (iVar2 != 0)
+      if (new_pick_target(&td2, "Select target enchantment for Tear.", -1, 0x81) != 0)
       {
         return 0;
       }
@@ -4551,9 +4388,7 @@ int card_wear_tear(int player, int card, event_t event)
 LAB_0229d498:
   ptStack_c0 = &td2;
   iVar2 = can_target(ptStack_c0);
-  iVar3 = can_target(&td);
-  iVar2 = split_card_with_fuse(player, card, event, 0x4b46, iVar3, 8, 0x4b3d, iVar2, 10);
-  return iVar2;
+  return split_card_with_fuse(player, card, event, 0x4b46, can_target(&td), 8, 0x4b3d, iVar2, 10);
 }
 
 // Artifacts

@@ -347,8 +347,7 @@ static int generic_control_legacy(int player, int card, event_t event)
       {
         return 0;
       }
-      iVar3 = is_tapped(iVar4, t_card);
-      if (iVar3 == 0)
+      if (is_tapped(iVar4, t_card) == 0)
       {
         if ((uVar6 & 8) != 0)
         {
@@ -388,8 +387,7 @@ static int generic_control_legacy(int player, int card, event_t event)
           return 0;
         }
       LAB_02664220:
-        iVar4 = is_enchanted(player_00, card_00);
-        if (iVar4 != 0)
+        if (is_enchanted(player_00, card_00) != 0)
         {
         LAB_02664250:
           if (!bVar7)

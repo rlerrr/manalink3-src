@@ -228,40 +228,38 @@ void copy_all_tokens_both_players(int player, int card, int type, test_definitio
 {
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
-  int iVar4;
+  int p;
+  int c;
   int *piVar5;
-  unsigned char bVar6;
   int marked[151];
 
-  iVar3 = current_turn;
+  p = current_turn;
 
-  bVar6 = 0;
   iVar2 = active_cards_count[current_turn];
   if (0 < iVar2)
   {
     piVar5 = marked;
-    for (iVar4 = 0x97; iVar4 != 0; iVar4 = iVar4 + -1)
+    for (c = 0x97; c != 0; c = c + -1)
     {
       *piVar5 = 0;
       piVar5 = piVar5 + 1;
     }
     if (0 < iVar2)
     {
-      iVar4 = 0;
+      c = 0;
       do
       {
-        instance = in_play(iVar3, iVar4);
-        if (((instance != NULL) && (iVar2 = is_token(iVar3, iVar4), iVar2 != 0)) &&
-            (((type != 0 && (iVar2 = is_what(iVar3, iVar4, type), iVar2 != 0)) ||
+        instance = in_play(p, c);
+        if (((instance != NULL) && (iVar2 = is_token(p, c), iVar2 != 0)) &&
+            (((type != 0 && (iVar2 = is_what(p, c, type), iVar2 != 0)) ||
               ((test != NULL &&
-                (iVar2 = new_make_test_in_play(iVar3, iVar4, -1, test), iVar2 != 0))))))
+                (iVar2 = new_make_test_in_play(p, c, -1, test), iVar2 != 0))))))
         {
-          marked[iVar4] = 1;
+          marked[c] = 1;
         }
-        iVar4 = iVar4 + 1;
-        iVar2 = active_cards_count[iVar3];
-      } while (iVar4 < iVar2);
+        c = c + 1;
+        iVar2 = active_cards_count[p];
+      } while (c < iVar2);
     }
     iVar2 = iVar2 + -1;
     if (-1 < iVar2)
@@ -269,40 +267,40 @@ void copy_all_tokens_both_players(int player, int card, int type, test_definitio
       do
       {
 
-        if ((marked[iVar2] != 0) && (-1 < iVar3))
+        if ((marked[iVar2] != 0) && (-1 < p))
         {
-          copy_token(iVar3, iVar2, iVar3, iVar2);
+          copy_token(p, iVar2, p, iVar2);
         }
         iVar2 = iVar2 + -1;
       } while (iVar2 != -1);
     }
   }
-  iVar3 = 1 - current_turn;
-  iVar2 = active_cards_count[iVar3];
+  p = 1 - current_turn;
+  iVar2 = active_cards_count[p];
   if (0 < iVar2)
   {
     piVar5 = marked;
-    for (iVar4 = 0x97; iVar4 != 0; iVar4 = iVar4 + -1)
+    for (c = 0x97; c != 0; c = c + -1)
     {
       *piVar5 = 0;
-      piVar5 = piVar5 + (unsigned int)bVar6 * -2 + 1;
+      piVar5 = piVar5 + 1u;
     }
     if (0 < iVar2)
     {
-      iVar4 = 0;
+      c = 0;
       do
       {
-        instance = in_play(iVar3, iVar4);
-        if (((instance != NULL) && (iVar2 = is_token(iVar3, iVar4), iVar2 != 0)) &&
-            (((type != 0 && (iVar2 = is_what(iVar3, iVar4, type), iVar2 != 0)) ||
+        instance = in_play(p, c);
+        if (((instance != NULL) && (iVar2 = is_token(p, c), iVar2 != 0)) &&
+            (((type != 0 && (iVar2 = is_what(p, c, type), iVar2 != 0)) ||
               ((test != NULL &&
-                (iVar2 = new_make_test_in_play(iVar3, iVar4, -1, test), iVar2 != 0))))))
+                (iVar2 = new_make_test_in_play(p, c, -1, test), iVar2 != 0))))))
         {
-          marked[iVar4] = 1;
+          marked[c] = 1;
         }
-        iVar4 = iVar4 + 1;
-        iVar2 = active_cards_count[iVar3];
-      } while (iVar4 < iVar2);
+        c = c + 1;
+        iVar2 = active_cards_count[p];
+      } while (c < iVar2);
     }
     iVar2 = iVar2 + -1;
     if (-1 < iVar2)
@@ -310,9 +308,9 @@ void copy_all_tokens_both_players(int player, int card, int type, test_definitio
       do
       {
 
-        if ((marked[iVar2] != 0) && (-1 < iVar3))
+        if ((marked[iVar2] != 0) && (-1 < p))
         {
-          copy_token(iVar3, iVar2, iVar3, iVar2);
+          copy_token(p, iVar2, p, iVar2);
         }
         iVar2 = iVar2 + -1;
       } while (iVar2 != -1);
@@ -337,6 +335,7 @@ int generic_token(int player, int card, event_t event);
 /* ManalinkEh 2022: 0x26659d0; original functions/token_generation.c:503. */
 void generate_token(token_generation_t *token)
 {
+  int i;
   uint16_t uVar1;
   uint16_t uVar2;
   int32_t iVar3;
@@ -365,20 +364,19 @@ void generate_token(token_generation_t *token)
 
   iVar8 = get_internal_card_id_from_csv_id(token->id);
   uStack_ac = (unsigned int)token->qty;
-  iVar8 = is_what(-1, iVar8, 0x80);
-  if (iVar8 == 0)
+  if (is_what(-1, iVar8, 0x80) == 0)
   {
     iVar8 = token->t_player;
     iVar14 = 0;
     do
     {
-      iVar13 = 0;
+      i = 0;
       if (0 < active_cards_count[iVar14])
       {
       LAB_026664f0:
         do
         {
-          pcVar9 = in_play(iVar14, iVar13);
+          pcVar9 = in_play(iVar14, i);
           if (pcVar9 != NULL)
           {
             uVar2 = cards_data[pcVar9->internal_card_id].id;
@@ -388,8 +386,8 @@ void generate_token(token_generation_t *token)
               {
                 if ((uVar2 != 0x1e90) && (uVar2 != 0x2f09))
                 {
-                  iVar13 = iVar13 + 1;
-                  if (active_cards_count[iVar14] <= iVar13)
+                  i = i + 1;
+                  if (active_cards_count[iVar14] <= i)
                     break;
                   goto LAB_026664f0;
                 }
@@ -408,8 +406,8 @@ void generate_token(token_generation_t *token)
             uStack_ac = uStack_ac * 2;
           }
         LAB_0266652b:
-          iVar13 = iVar13 + 1;
-        } while (iVar13 < active_cards_count[iVar14]);
+          i = i + 1;
+        } while (i < active_cards_count[iVar14]);
       }
       iVar14 = iVar14 + 1;
     } while (iVar14 != 2);
@@ -434,35 +432,35 @@ void generate_token(token_generation_t *token)
   }
   else
   {
-    iVar13 = 0;
+    i = 0;
     bVar5 = false;
     iStack_88 = 0;
     iVar14 = 0;
   LAB_02665aa9:
     do
     {
-      pcVar9 = in_play(iVar8, iVar13);
+      pcVar9 = in_play(iVar8, i);
       if ((pcVar9 != NULL) &&
-          (iVar8 = is_humiliated(token->t_player, iVar13, AL_STATIC), iVar8 == 0))
+          (iVar8 = is_humiliated(token->t_player, i, AL_STATIC), iVar8 == 0))
       {
-        iVar8 = get_id(token->t_player, iVar13);
+        iVar8 = get_id(token->t_player, i);
         iVar14 = iVar14 + (unsigned int)(iVar8 == 0x59a8);
-        iVar8 = get_id(token->t_player, iVar13);
+        iVar8 = get_id(token->t_player, i);
         iStack_88 = iStack_88 + (unsigned int)(iVar8 == 0x59ce);
-        iVar8 = get_id(token->t_player, iVar13);
+        iVar8 = get_id(token->t_player, i);
         if (iVar8 == 0x4b8f)
         {
           iVar8 = token->t_player;
-          iVar13 = iVar13 + 1;
+          i = i + 1;
           bVar5 = true;
-          if (active_cards_count[iVar8] <= iVar13)
+          if (active_cards_count[iVar8] <= i)
             break;
           goto LAB_02665aa9;
         }
       }
       iVar8 = token->t_player;
-      iVar13 = iVar13 + 1;
-    } while (iVar13 < active_cards_count[iVar8]);
+      i = i + 1;
+    } while (i < active_cards_count[iVar8]);
     for (; iVar14 != 0; iVar14 = iVar14 + -1)
     {
       while (iStack_94 != 0x4917)
@@ -863,13 +861,11 @@ static int resolve_token_iid(iid_t int_id, token_generation_t *token)
   int *piVar15;
   card_data_t *pcVar16;
   bool bVar17;
-  unsigned char bVar18;
   unsigned int uStack_6c;
   unsigned int uStack_64;
   unsigned int uStack_58;
   int dynused[16];
 
-  bVar18 = 0;
   iVar9 = get_internal_card_id_from_csv_id((unsigned int)cards_data[int_id].id);
   iVar11 = engine_dynamic_iid_start;
   if ((cards_data[iVar9].cc[2] != '\x03') && (cards_data[iVar9].type != 0x80))
@@ -932,7 +928,7 @@ static int resolve_token_iid(iid_t int_id, token_generation_t *token)
       for (iVar9 = 0x10; iVar9 != 0; iVar9 = iVar9 + -1)
       {
         *piVar15 = 0;
-        piVar15 = piVar15 + (unsigned int)bVar18 * -2 + 1;
+        piVar15 = piVar15 + 1u;
       }
       do
       {
@@ -1039,7 +1035,7 @@ static int get_copyable_special_infos(int t_player, int t_card)
       case 0x4925:
         goto LAB_02665409;
       default:
-        goto LAB_026653e3;
+        return 0;
       case 0x491f:
         goto LAB_0266545b;
       case 0x4926:
@@ -1054,7 +1050,6 @@ static int get_copyable_special_infos(int t_player, int t_card)
     }
     if (result != 0x38e)
     {
-    LAB_026653e3:
       return 0;
     }
   }
@@ -1209,7 +1204,7 @@ static int generate_token_by_id_impl(int player, int card, int csvid, int number
 {
   int iVar1;
   int iid;
-  int iVar2;
+  int i;
   token_generation_t token;
 
   default_token_definition(player, card, csvid, &token);
@@ -1222,20 +1217,19 @@ static int generate_token_by_id_impl(int player, int card, int csvid, int number
   else
   {
     token.no_sleight = '\x01';
-    iVar1 = get_internal_card_id_from_csv_id(csvid);
-    iid = resolve_token_iid(iVar1, &token);
+    iid = resolve_token_iid(get_internal_card_id_from_csv_id(csvid), &token);
     if (number < 1)
     {
       return -1;
     }
-    iVar2 = 0;
+    i = 0;
     do
     {
-      iVar2 = iVar2 + 1;
+      i = i + 1;
       iVar1 = add_card_to_hand(player, iid);
       set_token(player, iVar1, &token);
       put_into_play(player, iVar1);
-    } while (number != iVar2);
+    } while (number != i);
   }
   return iVar1;
 }
@@ -1321,19 +1315,20 @@ int generate_reserved_token_by_id(int player, int csvid)
 /* ManalinkEh 2022: 0x2665690; original functions/token_generation.c:87. */
 int copy_token_characteristics_for_clone(int player, int card, int t_player, int t_card)
 {
+  int csvid;
   uint8_t uVar1;
   int32_t iVar2;
   unsigned char bVar3;
   int iVar4;
-  card_instance_t *pcVar5;
+  card_instance_t *instance;
   card_instance_t *pcVar6;
   uint32_t uStack_14;
 
-  iVar4 = get_id(t_player, t_card);
+  csvid = get_id(t_player, t_card);
   uStack_14 = 0;
-  if (cards_ptr[iVar4]->card_type == 8)
+  if (cards_ptr[csvid]->card_type == 8)
   {
-    pcVar5 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     pcVar6 = get_card_instance(t_player, t_card);
     uStack_14 = pcVar6->original_internal_card_id;
     if (uStack_14 == 0xffffffff)
@@ -1341,24 +1336,24 @@ int copy_token_characteristics_for_clone(int player, int card, int t_player, int
       uStack_14 = (uint32_t)pcVar6->backup_internal_card_id;
     }
     iVar2 = pcVar6->targets[7].player;
-    pcVar5->targets[7].card = pcVar6->targets[7].card;
-    pcVar5->targets[7].player = iVar2;
+    instance->targets[7].card = pcVar6->targets[7].card;
+    instance->targets[7].player = iVar2;
     iVar2 = pcVar6->targets[8].card;
-    pcVar5->targets[8].player = pcVar6->targets[8].player;
-    pcVar5->targets[8].card = iVar2;
+    instance->targets[8].player = pcVar6->targets[8].player;
+    instance->targets[8].card = iVar2;
     uVar1 = cards_data[uStack_14].color;
-    iVar4 = get_internal_card_id_from_csv_id(iVar4);
+    iVar4 = get_internal_card_id_from_csv_id(csvid);
     if (uVar1 == cards_data[iVar4].color)
     {
-      bVar3 = pcVar5->initial_color & 0x3e;
+      bVar3 = instance->initial_color & 0x3e;
     }
     else
     {
       bVar3 = cards_data[uStack_14].color & 0x3e;
-      pcVar5->initial_color = bVar3;
+      instance->initial_color = bVar3;
     }
-    pcVar5->color = bVar3;
-    pcVar5->regen_status = pcVar5->regen_status | 0x10000000;
+    instance->color = bVar3;
+    instance->regen_status = instance->regen_status | 0x10000000;
     if ((t_player < 0) || (t_card < 0))
     {
       iVar4 = 0;
@@ -1367,8 +1362,8 @@ int copy_token_characteristics_for_clone(int player, int card, int t_player, int
     {
       iVar4 = get_copyable_special_infos(t_player, t_card);
     }
-    pcVar5 = get_card_instance(player, card);
-    pcVar5->targets[0xe].player = iVar4;
+    instance = get_card_instance(player, card);
+    instance->targets[0xe].player = iVar4;
     iVar4 = check_special_flags2(t_player, t_card, 0x80);
     uStack_14 = 1;
     if (iVar4 != 0)

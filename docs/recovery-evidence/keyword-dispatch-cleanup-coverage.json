@@ -1,0 +1,169 @@
+{
+  "batch": "docs/recovery-evidence/keyword-dispatch-cleanup.json",
+  "batch_sha256": "a695c600f5cbf2fe461fe64aa5c106781be838a22d9e6bb5d3a3e94dd67aa3c2",
+  "counts": {
+    "functions": 7,
+    "source_units": 1,
+    "source_lines_removed": 166,
+    "removed_lab_gotos": 34,
+    "removed_gotos": 34,
+    "removed_placeholder_occurrences": 115,
+    "removed_placeholder_names": 13,
+    "card_handlers": 0,
+    "helpers": 7,
+    "new_native_function_coverage": 0
+  },
+  "validation": {
+    "focused": {
+      "current_keyword_dispatch": {
+        "cleaned_definitions": 7,
+        "source_units": 1,
+        "source_lines_removed": 166,
+        "removed_lab_gotos": 34,
+        "removed_gotos": 34,
+        "removed_placeholder_occurrences": 115,
+        "removed_placeholder_names": 13,
+        "dispatch_product_states": 47,
+        "dispatch_matched_actions": 18973,
+        "native_composition_cases": 7768000,
+        "native_isolated_dispatch_cases": 7768000,
+        "enum_and_layout_assertions": 43,
+        "ordinary_storage_types_checked": true,
+        "scope": "Full32-bit request-mask symbolic action traces preserve calls, pointer-result stores, record updates and return paths with arbitrary fresh engine facts after every action. Native dispatch and six real worker bodies agree with predecessor and reconstruction on7768000 composition cases, with another7768000 isolated dispatch cases. Callback traces, instances/extensions, must-attack and player flags are checked. Typed global/record probes bind the ordinary-storage assumptions. Complete native32 state space and gameplay are not exhausted; no new native coverage claimed."
+      },
+      "current_inputs": {
+        "canonical_functions": 738,
+        "accepted_function_names": 735,
+        "auxiliary_functions": [
+          {
+            "recovery_name": "exile_at_end_of_combat_2022",
+            "canonical_name": "innistrad_exile_at_end_of_combat_legacy",
+            "kind": "retained_public_native_helper",
+            "native_ranges": 1
+          },
+          {
+            "recovery_name": "reset_storm_count_2022",
+            "canonical_name": "reset_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 14
+          },
+          {
+            "recovery_name": "keep_storm_count_2022",
+            "canonical_name": "keep_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 21
+          }
+        ],
+        "changed_files": 169,
+        "verification": "current source hashes and canonical name/ledger references",
+        "historical_provenance_replayed": false,
+        "historical_artifacts_retired": true,
+        "scope": "Current configuration inputs only. Historical source-edit replay, archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json."
+      },
+      "predecessor_source_units_checked": 1,
+      "reader_restoration_verified": true,
+      "physical_sources_unchanged": true,
+      "source_successor_chain_checked": true,
+      "index_unchanged": true
+    },
+    "focused_record": {
+      "path": ".recovery/keyword-dispatch-focused-c297.json",
+      "sha256": "232d7718944e0cacaed11aacdc46d15896ecf008a36841cec652d00499498308",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/keyword-dispatch-build-c296.log",
+      "log_sha256": "70ca3cc8e0e737b42f640378e96205cbf17fbfa82ef28646817a49ec9bdb3bf6",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "2f95e05feaf4141e712338d77808bf73d0d48e7521b71ee4e7b6ad34be2a7a31",
+      "dbg_sha256": "00d16b59a896185581df14baad3c4314680db2845efa010e893821d4a561a4cb"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/keyword-dispatch-proof-before-c295.json.gz",
+      "archive_sha256": "3837ed1f3e0128deb2dd7363ecab5c98910b6a50b02212714b63e5488cf69753",
+      "raw_sha256": "fb05d5f8339454b4ff7682d187db9f6b92d96706672c5fd173d1d34895348c7e",
+      "verified_source_pin_successions": 1
+    },
+    "legacy_context_bookkeeping": "Two statically nested audit context chains use ExitStack to stay importable beyond the Python block-depth limit. Full historical compiler/runtime replay remains retired and was not invoked.",
+    "limits": "All32-bit requested masks and event categories used by the dispatcher have matching symbolic action traces; engine facts refresh arbitrarily after every call or record write. Raw and actual expanded proofs match. An isolated native dispatcher comparison and a dispatcher-plus-six-real-worker comparison each cover7768000 cases with mutations of globals, player bits, ability-loss modes, record data and extension pointers. Original register ABIs are retained or explicitly bridged for controlled callees. Every record byte and seven final engine words are compared. Complete native32 state space and gameplay are not exhausted; no new native function coverage claimed."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/keyword-dispatch-setup-c299.log",
+    "log_sha256": "8f16281b01edd1ba8d6bc240f7d6f8750a4e27ed61f5426ad9393899593587f5",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "csv_functions": 18725,
+    "metadata_sha256": "29fae305f096bf04fe931730d707a1c3150ca97acbc11eb02e16dad50ca392bc",
+    "mapping_identities_unchanged": true,
+    "only_csv_changes": "Eight rebuilt public COFF entry address annotations",
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e6590",
+        "after": "public COFF entry 0x26e6630"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26eea00",
+        "after": "public COFF entry 0x26eeaa0"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e5110",
+        "after": "public COFF entry 0x26e51b0"
+      },
+      {
+        "name": "new_damage_all",
+        "native_address": "0x26677f0",
+        "before": "public COFF entry 0x26c43a0",
+        "after": "public COFF entry 0x26c4440"
+      },
+      {
+        "name": "mana_doublers",
+        "native_address": "0x266c040",
+        "before": "public COFF entry 0x26cb570",
+        "after": "public COFF entry 0x26cb610"
+      },
+      {
+        "name": "etb_ability",
+        "native_address": "0x26a5370",
+        "before": "public COFF entry 0x26a1b60",
+        "after": "public COFF entry 0x26a1c00"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "public COFF entry 0x26dce90",
+        "after": "public COFF entry 0x26dcf30"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "public COFF entry 0x26dcec0",
+        "after": "public COFF entry 0x26dcf60"
+      }
+    ]
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c299.json",
+    "sha256": "70cfffdfa6f1d47a4fe135ad4c15864f48e9b2c53c737292de855da6f8080304",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1024,
+      "lab_gotos": 3003,
+      "functions_with_placeholders": 2111,
+      "distinct_function_local_placeholder_spellings": 6509,
+      "placeholder_identifier_occurrences": 51744,
+      "union_keywords": 0
+    }
+  },
+  "index_unchanged": true,
+  "limits": "All32-bit requested masks and event categories used by the dispatcher have matching symbolic action traces; engine facts refresh arbitrarily after every call or record write. Raw and actual expanded proofs match. An isolated native dispatcher comparison and a dispatcher-plus-six-real-worker comparison each cover7768000 cases with mutations of globals, player bits, ability-loss modes, record data and extension pointers. Original register ABIs are retained or explicitly bridged for controlled callees. Every record byte and seven final engine words are compared. Complete native32 state space and gameplay are not exhausted; no new native function coverage claimed."
+}

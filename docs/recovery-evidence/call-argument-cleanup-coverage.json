@@ -1,0 +1,168 @@
+{
+  "batch": "docs/recovery-evidence/call-argument-cleanup.json",
+  "batch_sha256": "8db776bfa8a0b4101c31d0503b515046855d9996865b794f8556e7b8c08674a1",
+  "counts": {
+    "functions": 276,
+    "source_units": 84,
+    "inlined_call_results": 358,
+    "removed_locals": 75,
+    "retained_int_casts": 0,
+    "card_handlers": 236,
+    "helpers": 40,
+    "source_lines_removed": 440,
+    "new_native_function_coverage": 0
+  },
+  "validation": {
+    "focused": {
+      "current_call_arguments": {
+        "cleaned_definitions": 276,
+        "source_units": 84,
+        "inlined_call_results": 358,
+        "removed_locals": 75,
+        "cfg_state_pairs": 32266,
+        "assertion_sites": 30,
+        "scope": "Adjacent dead nonescaping int call-result stores become direct consumer arguments. Raw and actual expanded CFGs retain calls and control flow after store contraction. GCC proves producer result conversion, direct consumer function type, nonvolatile integral sibling locals and compile-time constants. Address formation reads no object contents. Other side effects and mutable global siblings are excluded. Exact whole-unit expansion and current source pins checked. No new native coverage or gameplay validation claimed."
+      },
+      "current_inputs": {
+        "canonical_functions": 738,
+        "accepted_function_names": 735,
+        "auxiliary_functions": [
+          {
+            "recovery_name": "exile_at_end_of_combat_2022",
+            "canonical_name": "innistrad_exile_at_end_of_combat_legacy",
+            "kind": "retained_public_native_helper",
+            "native_ranges": 1
+          },
+          {
+            "recovery_name": "reset_storm_count_2022",
+            "canonical_name": "reset_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 14
+          },
+          {
+            "recovery_name": "keep_storm_count_2022",
+            "canonical_name": "keep_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 21
+          }
+        ],
+        "changed_files": 169,
+        "verification": "current source hashes and canonical name/ledger references",
+        "historical_provenance_replayed": false,
+        "historical_artifacts_retired": true,
+        "scope": "Current configuration inputs only. Historical source-edit replay, archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json."
+      },
+      "predecessor_source_units_checked": 53,
+      "reader_restoration_verified": true,
+      "physical_sources_unchanged": true,
+      "source_successor_chain_checked": true,
+      "index_unchanged": true,
+      "controls": {
+        "path": ".recovery/call-argument-controls-c249.json",
+        "sha256": "a75d8d8f9d513222e464beb6b097df3062ad8f710a9f1663bf3662ab9f92a56c",
+        "results": {
+          "rejected": [
+            "live_after_call",
+            "side_effecting_sibling",
+            "address_escaped_sibling",
+            "volatile_result",
+            "nonadjacent_assignment"
+          ],
+          "nested_chain_verified": true,
+          "controls": [
+            {
+              "name": "safe_local",
+              "exit_code": 0,
+              "probe_sha256": "0d5c5022f69bc4fb0b7883f16c1011bbedc59ed12c7ed6dd3008338798fac094",
+              "diagnostics": ""
+            },
+            {
+              "name": "mutable_global",
+              "exit_code": 1,
+              "probe_sha256": "e47f000fd7ba60966c522bf604aa317323886dbae835dfb57a9134cd12aae74d",
+              "diagnostics": "<stdin>: In function 'f':\n<stdin>:5:5: error: static assertion failed: \"argument_safe_mutable_global\"\n"
+            },
+            {
+              "name": "volatile_typedef",
+              "exit_code": 1,
+              "probe_sha256": "1e1bb53ec8ff1aebe2ad786fec188451b1f93e636d87b7524f467b30cb1c1839",
+              "diagnostics": "<stdin>: In function 'f':\n<stdin>:6:5: error: static assertion failed: \"argument_safe_volatile_typedef\"\n"
+            },
+            {
+              "name": "mutable_consumer_pointer",
+              "exit_code": 1,
+              "probe_sha256": "11f33565407e952117aee822a729aff1bea2cc7cb9d83778ab31e4492acaa36f",
+              "diagnostics": "<stdin>: In function 'f':\n<stdin>:5:5: error: static assertion failed: \"argument_safe_mutable_consumer_pointer\"\n"
+            }
+          ]
+        }
+      }
+    },
+    "focused_record": {
+      "path": ".recovery/call-arguments-focused-c252.json",
+      "sha256": "f2a0adf637b82ed2727dc867643b3b18e1007938dae9b40231565305455cae2e",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/call-arguments-build-c251.log",
+      "log_sha256": "4846b86beddd86bd37de4ef8cc969eebcf23dda44c749b84b175363f66e4efcd",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "2b9961c7d48f5aa47441f3fc64b965d23a33bffa490e580c299917a8b53e7ea2",
+      "dbg_sha256": "46b5fdf9cd1d1ec1ff44709e343a82992d3bf56ba3bdc3774a66593b5651fe16"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/call-arguments-proof-before-c250.json.gz",
+      "archive_sha256": "9b3c08ca77a95b98002f77a5acb9ac99c7c605ae8b7b3983c3b5b50697edea31",
+      "raw_sha256": "42f5bdf859b5302df50437dd0d9deb12c2cabd8ea5f10edf0d881038c53d2f2b",
+      "verified_source_pin_successions": 84
+    },
+    "retired_preliminary_probe_inputs": {
+      "path": ".recovery/obsolete-call-screen-inputs-c253.json",
+      "sha256": "30f105f6a346c0bbd1ae80ade3eb0b55770bf48fa222913eeb6c75b6867b2875",
+      "counts": {
+        "files": 245,
+        "bytes": 375139717
+      }
+    },
+    "limits": "Current source/build/type probes and raw/expanded CFG contraction only. Stable sibling arguments retain their values across the nested call; actual GCC return types make extra casts unnecessary. Mutable global siblings, escaped/volatile reads, live results, side-effecting siblings and unsupported macro expressions remain untouched. New native function coverage and gameplay validation are not claimed. Full historical compiler/runtime replay remains retired."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/call-arguments-setup-c254.log",
+    "log_sha256": "a2ba71948f9368eaa9fe6756e454fb44f80e4c33a62cf6cb015aa4c1051ff042",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "csv_functions": 18725,
+    "metadata_sha256": "14cebac13de45f725450a546a6edcc8f328a5ab644336ceb7a6b50c4a9a2d565",
+    "csv_and_mapping_results_unchanged": true
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c254.json",
+    "sha256": "67fdf30db84b1e5426cf26a156c03b0214443b5dc95bd8115d017f274b1e622d",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1026,
+      "lab_gotos": 4135,
+      "functions_with_placeholders": 2126,
+      "distinct_function_local_placeholder_spellings": 6724,
+      "placeholder_identifier_occurrences": 55288,
+      "union_keywords": 0
+    }
+  },
+  "obsolete_probe_deletion": {
+    "path": ".recovery/obsolete-call-screen-deletion-c254.json",
+    "sha256": "5595f89a69fa607f0aa91db24daacce67380ed8e9a5f15207752322fc4b405a5",
+    "result": {
+      "retained": "Accepted GCC probes, original/native inputs, source backups, diagnostics and compact evidence",
+      "plan": ".recovery/obsolete-call-screen-inputs-c253.json",
+      "deletion_verified": true,
+      "logical_bytes": 375139717,
+      "deleted_files": 245
+    }
+  },
+  "index_unchanged": true,
+  "limits": "Current source/build/type probes and raw/expanded CFG contraction only. Stable sibling arguments retain their values across the nested call; actual GCC return types make extra casts unnecessary. Mutable global siblings, escaped/volatile reads, live results, side-effecting siblings and unsupported macro expressions remain untouched. New native function coverage and gameplay validation are not claimed. Full historical compiler/runtime replay remains retired."
+}

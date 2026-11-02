@@ -1,0 +1,97 @@
+{
+  "batch": "docs/recovery-evidence/comma-call-cleanup.json",
+  "batch_sha256": "4a813185fd899a64311b1efc20fa5ef8b1e20973e0ffb94b8bd38d8f5c9236e6",
+  "counts": {
+    "functions": 163,
+    "source_units": 61,
+    "inlined_assignments": 196,
+    "removed_declarations": 163,
+    "source_lines_removed": 169,
+    "pending": 0,
+    "card_handlers": 139,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 26,
+    "changed_sections": [],
+    "scope": "Recorded compiler-output comparison only; source/control-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_comma_calls": {
+        "cleaned_definitions": 163,
+        "source_units": 61,
+        "inlined_call_results": 196,
+        "removed_unused_int_locals": 163,
+        "replayed_call_type_assertions": 196,
+        "assertion_sites": 12,
+        "pending_candidates": 0,
+        "scope": "Each local is a private ordinary uninitialized int whose only identifier references are assignment LHSs and their immediate zero tests in comma operators, with argument lists excluded. Exact GCC int call-result types make the removed conversions identities; calls remain once at the same expression admission. Raw/expanded projections and complete actual units are checked. No new native coverage, whole-DLL identity or gameplay claim."
+      },
+      "prior_source_input_hashes": {
+        "extended_spell_source_units": 15,
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Current comma-call validation and exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/comma-calls-readers-c155.log",
+      "sha256": "6bea92eee02d27095bb1596a54b7895da5f3968439b61aa714602523c246dda8",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/comma-calls-build-c154.log",
+      "log_sha256": "3305a0a709cca6e709a4fb79e438c6494ee8971af84f5ca2f0a934f84cfd1b3f",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "cb340a5065a088637f4e39ef64eaa23c00493c89583166a544a399f94384d7b8",
+      "dbg_sha256": "fe152ba37b03a7f396625adfe5ffb0f8ef9765488a37ddc4bee5b1f5583ee9a4"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/comma-calls-proof-before-c153.json.gz",
+      "archive_sha256": "4b91007ed51098497e51f8842b727c5d9fa0185cd4cabb2f0a08c83b0bf37f55",
+      "raw_sha256": "30e8cf3541f4110c6aa3d071fffe14330baf3a8dae953f2c7612a16a2cb2d1cb",
+      "verified_source_pin_successions": 61
+    },
+    "pin_write_recovery": {
+      "script": ".recovery/finish-comma-pins-c153.py",
+      "script_sha256": "4e2563d148dc17d65919a20ec65c04a90ee1040fd7f60f44be665446d1ef118d",
+      "scope": "An ENOSPC interrupted metadata writing after source application. Exact old/current source pins and the archived predecessor proof were checked; only metadata writing was finished, without reapplying source edits."
+    },
+    "limits": "This preserves the accepted reconstruction. Raw/expanded private-use and comma-operator checks, exact expanded GCC int-result assertions, whole-unit projections, build and26 normalized runtime-section identities pass. Earlier semantic checkers and the full historical suite were not rerun; no new native function coverage or gameplay testing."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/comma-calls-setup-c157.log",
+    "log_sha256": "93fcb0b63e71e283613b95b2974f80cb39bc033e10bcb78d98ee9db61b2bccc5",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "metadata_sha256": "b08ca14ef43b64bffc4fd64a170f4000ed129752d56092a918b6a474f86134e0",
+    "csv_functions": 18725,
+    "metadata_identical": true,
+    "mapping_results_identical": true
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c157.json",
+    "sha256": "7b38773037623ce5abd903b8a8f63cb32f3848053c9f9de29e125d9e2c4436d8",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1262,
+      "lab_gotos": 5085,
+      "functions_with_placeholders": 2129,
+      "distinct_function_local_placeholder_spellings": 6887,
+      "placeholder_identifier_occurrences": 61161,
+      "union_keywords": 0
+    }
+  },
+  "limits": "This preserves the accepted reconstruction. Raw/expanded private-use and comma-operator checks, exact expanded GCC int-result assertions, whole-unit projections, build and26 normalized runtime-section identities pass. Earlier semantic checkers and the full historical suite were not rerun; no new native function coverage or gameplay testing."
+}

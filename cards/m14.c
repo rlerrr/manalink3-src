@@ -2436,7 +2436,6 @@ int card_primeval_bounty(int player, int card, event_t event){
 static int savage_summonings_effect(int player, int card, event_t event)
 {
   int iVar1;
-  int iVar2;
   if (event == EVENT_CAST_SPELL)
   {
     if (card != affected_card)
@@ -2474,8 +2473,8 @@ static int savage_summonings_effect(int player, int card, event_t event)
   }
   iVar1 = affected_card_controller;
   if (((reason_for_trigger_controller == affected_card_controller) &&
-       (iVar2 = is_what(trigger_cause_controller, trigger_cause, 2), iVar2 != 0)) &&
-      (iVar2 = check_state(trigger_cause_controller, trigger_cause, 0x100000), iVar2 != 0))
+       (is_what(trigger_cause_controller, trigger_cause, 2) != 0)) &&
+      (check_state(trigger_cause_controller, trigger_cause, 0x100000) != 0))
   {
     if (event == EVENT_TRIGGER)
     {

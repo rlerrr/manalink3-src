@@ -1,0 +1,13 @@
+{
+  "status": "Completed: whitespace-only ledger compaction before recovery commit",
+  "path": "docs/recovery-evidence/helper-canonicalization.json",
+  "before_bytes": 124145846,
+  "after_bytes": 88677636,
+  "before_sha256": "5e4c73ac86e5253a556537ebc8971251a71e48cde48e667ebcba90a612eed93e",
+  "after_sha256": "84dc8412cee43757958c662a8fc929e5fa02f70e0e268d13e20ffec9a7126678",
+  "before_format": "json.dumps(indent=2), ASCII escaping, LF, final newline",
+  "after_format": "json.dumps(indent=0), ASCII escaping, LF, final newline",
+  "parsed_json_identical": true,
+  "original_bytes_recreated_exactly_with_indent_2": true,
+  "scope": "Formatting only. Source hashes, evidence records, array order and recovery mappings are unchanged. Keep subsequent writes at indent=0 to avoid exceeding the remote large-file limit."
+}

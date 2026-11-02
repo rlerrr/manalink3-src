@@ -1,0 +1,276 @@
+{
+  "rows": [
+    {
+      "build": "native",
+      "name": "card_najeela_the_blade_blossom",
+      "dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "enum_die": "0x177945",
+      "values": {
+        "EVENT_CAN_ACTIVATE": 115,
+        "EVENT_ACTIVATE": 109,
+        "EVENT_RESOLVE_ACTIVATION": 114,
+        "EVENT_CLEANUP": 34,
+        "EVENT_RESOLVE_SPELL": 113,
+        "EVENT_CAST_SPELL": 108,
+        "EVENT_LEAVES_PLAY_ABILITY": 24320
+      }
+    },
+    {
+      "build": "native",
+      "name": "card_biomancers_familiar",
+      "dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "enum_die": "0x54f1e21",
+      "values": {
+        "EVENT_CAN_ACTIVATE": 115,
+        "EVENT_ACTIVATE": 109,
+        "EVENT_RESOLVE_ACTIVATION": 114,
+        "EVENT_CLEANUP": 34,
+        "EVENT_RESOLVE_SPELL": 113,
+        "EVENT_CAST_SPELL": 108,
+        "EVENT_LEAVES_PLAY_ABILITY": 24320
+      }
+    },
+    {
+      "build": "current",
+      "name": "card_najeela_the_blade_blossom",
+      "dbg_sha256": "dce82af5197abb1ca17b3a4f0b87ea528ee6d91cc11280b0948f24a5921db34f",
+      "enum_die": "0x84ee6d",
+      "values": {
+        "EVENT_CAN_ACTIVATE": 115,
+        "EVENT_ACTIVATE": 109,
+        "EVENT_RESOLVE_ACTIVATION": 114,
+        "EVENT_CLEANUP": 34,
+        "EVENT_RESOLVE_SPELL": 113,
+        "EVENT_CAST_SPELL": 108,
+        "EVENT_LEAVES_PLAY_ABILITY": 24320
+      }
+    },
+    {
+      "build": "current",
+      "name": "card_biomancers_familiar",
+      "dbg_sha256": "dce82af5197abb1ca17b3a4f0b87ea528ee6d91cc11280b0948f24a5921db34f",
+      "enum_die": "0x39e6e62",
+      "values": {
+        "EVENT_CAN_ACTIVATE": 115,
+        "EVENT_ACTIVATE": 109,
+        "EVENT_RESOLVE_ACTIVATION": 114,
+        "EVENT_CLEANUP": 34,
+        "EVENT_RESOLVE_SPELL": 113,
+        "EVENT_CAST_SPELL": 108,
+        "EVENT_LEAVES_PLAY_ABILITY": 24320
+      }
+    }
+  ],
+  "scope": "Native and current four-byte event enums have equal, pairwise-distinct values for all seven event classes used by the two reconstructed dispatch tails. This binds their finite predicate trace checks to concrete event values; it is not full behavior equivalence.",
+  "observed_exit_code": 0,
+  "observed_chunk_id": "78adfc",
+  "dispatch_cases": {
+    "cases": [
+      {
+        "handler": "najeela",
+        "event": "can",
+        "actions": [
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "can",
+        "cast_match": false,
+        "actions": [
+          "leaves",
+          "target",
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "can",
+        "cast_match": true,
+        "actions": [
+          "leaves",
+          "target",
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "najeela",
+        "event": "activate",
+        "actions": [
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "activate",
+        "cast_match": false,
+        "actions": [
+          "leaves",
+          "target",
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "activate",
+        "cast_match": true,
+        "actions": [
+          "leaves",
+          "target",
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "najeela",
+        "event": "resolve_activation",
+        "actions": [
+          "combat_effects",
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "resolve_activation",
+        "cast_match": false,
+        "actions": [
+          "leaves",
+          "target",
+          "legacy",
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "resolve_activation",
+        "cast_match": true,
+        "actions": [
+          "leaves",
+          "target",
+          "legacy",
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "najeela",
+        "event": "cleanup",
+        "actions": [
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "cleanup",
+        "cast_match": false,
+        "actions": [
+          "leaves",
+          "target",
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "cleanup",
+        "cast_match": true,
+        "actions": [
+          "leaves",
+          "target",
+          "generic_activation"
+        ]
+      },
+      {
+        "handler": "najeela",
+        "event": "resolve_spell",
+        "actions": []
+      },
+      {
+        "handler": "biomancer",
+        "event": "resolve_spell",
+        "cast_match": false,
+        "actions": [
+          "resolve_filter",
+          "set_global_cost",
+          "leaves"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "resolve_spell",
+        "cast_match": true,
+        "actions": [
+          "resolve_filter",
+          "set_global_cost",
+          "leaves"
+        ]
+      },
+      {
+        "handler": "najeela",
+        "event": "cast",
+        "actions": []
+      },
+      {
+        "handler": "biomancer",
+        "event": "cast",
+        "cast_match": false,
+        "actions": [
+          "leaves"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "cast",
+        "cast_match": true,
+        "actions": [
+          "set_cast_cost",
+          "leaves"
+        ]
+      },
+      {
+        "handler": "najeela",
+        "event": "leaves",
+        "actions": []
+      },
+      {
+        "handler": "biomancer",
+        "event": "leaves",
+        "cast_match": false,
+        "actions": [
+          "leaves",
+          "leave_filter",
+          "remove_global_cost"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "leaves",
+        "cast_match": true,
+        "actions": [
+          "leaves",
+          "leave_filter",
+          "remove_global_cost"
+        ]
+      },
+      {
+        "handler": "najeela",
+        "event": "other",
+        "actions": []
+      },
+      {
+        "handler": "biomancer",
+        "event": "other",
+        "cast_match": false,
+        "actions": [
+          "leaves"
+        ]
+      },
+      {
+        "handler": "biomancer",
+        "event": "other",
+        "cast_match": true,
+        "actions": [
+          "leaves"
+        ]
+      }
+    ],
+    "scope": "Finite event-dispatch classes and both cast predicates for the two recorded rewrites. Common effect blocks remain source-identical apart from indentation/declaration placement; event is a by-value local and is unchanged by calls. This does not assert callee purity, dynamic argument provenance or complete gameplay."
+  }
+}

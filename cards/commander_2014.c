@@ -2141,35 +2141,36 @@ int card_song_of_the_dryads(int player, int card, event_t event)
   }
   else
   {
-    if ((instance->damage_target_card != affected_card) ||
-        (instance->damage_target_player != affected_card_controller))
-      goto LAB_021dfe14;
-    result = get_hacked_subtype(player, card, 0x5001);
-    if (result == 0x5002)
+    if (!((instance->damage_target_card != affected_card) ||
+        (instance->damage_target_player != affected_card_controller)))
     {
-      instance->dummy3 = 1;
-    LAB_021dfeca:
-      event_result = instance->dummy3;
-    }
-    else
-    {
-      if (result == 0x5001)
+      result = get_hacked_subtype(player, card, 0x5001);
+      if (result == 0x5002)
       {
-        instance->dummy3 = 2;
-        goto LAB_021dfeca;
-      }
-      instance->dummy3 = 0;
-      if (result == 0x5006)
-      {
-        instance->dummy3 = 3;
-        event_result = 3;
+        instance->dummy3 = 1;
+      LAB_021dfeca:
+        event_result = instance->dummy3;
       }
       else
       {
-        if (result != 0x5007)
+        if (result == 0x5001)
+        {
+          instance->dummy3 = 2;
           goto LAB_021dfeca;
-        instance->dummy3 = 4;
-        event_result = 4;
+        }
+        instance->dummy3 = 0;
+        if (result == 0x5006)
+        {
+          instance->dummy3 = 3;
+          event_result = 3;
+        }
+        else
+        {
+          if (result != 0x5007)
+            goto LAB_021dfeca;
+          instance->dummy3 = 4;
+          event_result = 4;
+        }
       }
     }
   LAB_021dfe14:
@@ -2196,8 +2197,7 @@ int card_song_of_the_dryads(int player, int card, event_t event)
   }
   default_target_definition(player, card, &td, 0x47);
 LAB_021dfddf:
-  result = targeted_aura(player, card, event, &td, "TARGET_PERMANENT");
-  return result;
+  return targeted_aura(player, card, event, &td, "TARGET_PERMANENT");
 }
 
 // Treefolk --> Rhino
@@ -2652,7 +2652,6 @@ int card_myriad_landscape(int player, int card, event_t event){
 int card_assault_suit(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   instance = is_equipping(player, card);
   if (instance != NULL)
   {
@@ -2676,7 +2675,7 @@ int card_assault_suit(int player, int card, event_t event)
         leaves_play(player, card, EVENT_EQUIPMENT_ATTACHED, 0, 0);
         upkeep_trigger_ability_mode(player, card, EVENT_EQUIPMENT_ATTACHED, 1 - player,
                                     (unsigned int)(player != 1));
-        goto LAB_021e1368;
+        return vanilla_equipment(player, card, event, 3, 2, 2, 0, 4);
       }
       leaves_play(player, card, event, 0, 0);
       if ((event == EVENT_LEAVES_PLAY_ABILITY) || (event == EVENT_UNATTACH))
@@ -2692,9 +2691,7 @@ int card_assault_suit(int player, int card, event_t event)
       give_control_of_self((int)instance->damage_target_player, instance->damage_target_card);
     }
   }
-LAB_021e1368:
-  result = vanilla_equipment(player, card, event, 3, 2, 2, 0, 4);
-  return result;
+  return vanilla_equipment(player, card, event, 3, 2, 2, 0, 4);
 }
 
 int card_commanders_sphere(int player, int card, event_t event){
@@ -3069,10 +3066,9 @@ int card_zoetic_cavern(int player, int card, event_t event){
 /* ManalinkEh 2022: 0x21d9af0; original cards/commander_2014.c:2237. */
 static int titania_effect(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   int iVar2;
   card_instance_t *pcVar3;
-  int iVar4;
   token_generation_t token;
 
   if (event == EVENT_STATIC_EFFECTS)
@@ -3080,16 +3076,16 @@ static int titania_effect(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
-      pcVar1 = get_card_instance(player, card);
-      if ((-1 < pcVar1->damage_target_player) &&
-          (iVar2 = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (iVar2 = get_id((int)instance->damage_target_player, instance->damage_target_card),
            iVar2 != 0x389d))
       {
         kill_card(player, card, KILL_EXILE);
       }
     }
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (iVar2 = effect_follows_control_of_attachment(player, card, 0x4700), iVar2 != 0))
     {
       return 0;
@@ -3101,8 +3097,8 @@ static int titania_effect(int player, int card, event_t event)
   }
   else
   {
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (iVar2 = effect_follows_control_of_attachment(player, card, event), iVar2 != 0))
     {
       return 0;
@@ -3110,23 +3106,23 @@ static int titania_effect(int player, int card, event_t event)
     if (event != EVENT_GRAVEYARD_FROM_PLAY)
       goto LAB_021d9b25;
 
-    pcVar1 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     pcVar3 = in_play(affected_card_controller, affected_card);
     if ((pcVar3 != NULL) &&
         (iVar2 = is_this_dying(affected_card_controller, affected_card), iVar2 != 0))
     {
 
-      if ((pcVar1->damage_target_card == affected_card) &&
-          (pcVar1->damage_target_player == affected_card_controller))
+      if ((instance->damage_target_card == affected_card) &&
+          (instance->damage_target_player == affected_card_controller))
       {
-        pcVar1->damage_target_card = -1;
-        pcVar1->damage_target_player = -1;
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
         remove_status(player, card, 0x10000);
-        if (pcVar1->targets[0xb].player < 0)
+        if (instance->targets[0xb].player < 0)
         {
-          pcVar1->targets[0xb].player = 0;
+          instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
       }
       count_for_gfp_ability(player, card, 0x77, player, 1, NULL);
     }
@@ -3136,8 +3132,7 @@ static int titania_effect(int player, int card, event_t event)
       return 0;
     }
   }
-  iVar4 = check_status(player, card, 0x10000);
-  if (iVar4 == 0)
+  if (check_status(player, card, 0x10000) == 0)
   {
     default_token_definition(player, card, 0x4926, &token);
     token.pow = 5;

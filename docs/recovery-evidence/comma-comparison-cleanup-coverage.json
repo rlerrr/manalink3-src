@@ -1,0 +1,93 @@
+{
+  "batch": "docs/recovery-evidence/comma-comparison-cleanup.json",
+  "batch_sha256": "beaf70fe6bc25a6fa4b63fbb231ca2e1034b3d1d88dd0778f6d03e775a33cee7",
+  "counts": {
+    "functions": 48,
+    "source_units": 31,
+    "inlined_assignments": 67,
+    "removed_declarations": 48,
+    "source_lines_removed": 62,
+    "pending": 0,
+    "card_handlers": 37,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 26,
+    "changed_sections": [],
+    "scope": "Recorded compiler-output comparison only; source/control-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_comparisons": {
+        "cleaned_definitions": 48,
+        "source_units": 31,
+        "inlined_call_results": 67,
+        "removed_unused_int_locals": 48,
+        "replayed_call_type_assertions": 67,
+        "assertion_sites": 17,
+        "pending_candidates": 0,
+        "scope": "Each local is a private ordinary uninitialized int whose only identifier references are assignment LHSs and their immediate literal comparisons in comma operators, with argument lists excluded. Exact GCC int call-result types make the removed conversions identities; calls remain once at the same expression admission. Comparison literals are side-effect free and preserved. Raw/expanded projections and complete actual units are checked. No new native coverage, whole-DLL identity or gameplay claim."
+      },
+      "prior_source_input_hashes": {
+        "previous_comma_source_units": 61,
+        "extended_spell_source_units": 15,
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Current comma-call validation and exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/comma-comparisons-readers-c163.log",
+      "sha256": "f04c1f39d07a1385d0efc2c58fc5bbd87ad6e58a580c374cf324e5d487dd725d",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/comma-comparisons-build-c162.log",
+      "log_sha256": "3305a0a709cca6e709a4fb79e438c6494ee8971af84f5ca2f0a934f84cfd1b3f",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "395827bf1ccd7977b1b50a8bf1c5b83509b77a39a6c27a3a2e59888455132d8d",
+      "dbg_sha256": "a0a46e229cac30c5289996b6f305b16f570f50d9a9b967266653c33bcb079caf"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/comma-comparisons-proof-before-c161.json.gz",
+      "archive_sha256": "52ee88fa01371cbd36fec132e7813af82595b47e79ce8deb79973e78e8d5ca2a",
+      "raw_sha256": "53e59e7c0803a86688081dd59f28658e8829fe4e1d711d4245bf43ce808baa8e",
+      "verified_source_pin_successions": 31
+    },
+    "limits": "Preserves the accepted reconstruction. Ordinary int temporary names and side-effect-free literal comparisons are admitted; exact expanded GCC int-result assertions preserve conversions. Raw/expanded projections, all31 actual units, build and26 normalized runtime-section identities pass. Earlier semantic checkers and the full historical suite were not rerun; no new native function coverage or gameplay tests."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/comma-comparisons-setup-c165.log",
+    "log_sha256": "87e9b1712d1ab7c78c04ee1a687b1330037cf64af55578c25144819c43d8df24",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "metadata_sha256": "b08ca14ef43b64bffc4fd64a170f4000ed129752d56092a918b6a474f86134e0",
+    "csv_functions": 18725,
+    "metadata_identical": true,
+    "mapping_results_identical": true
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c165.json",
+    "sha256": "c88da03b5ce968351beda3b6f29fbc939fcc84c8130efc26ee0bfa7a6eb89c51",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1262,
+      "lab_gotos": 5085,
+      "functions_with_placeholders": 2129,
+      "distinct_function_local_placeholder_spellings": 6879,
+      "placeholder_identifier_occurrences": 61129,
+      "union_keywords": 0
+    }
+  },
+  "limits": "Preserves the accepted reconstruction. Ordinary int temporary names and side-effect-free literal comparisons are admitted; exact expanded GCC int-result assertions preserve conversions. Raw/expanded projections, all31 actual units, build and26 normalized runtime-section identities pass. Earlier semantic checkers and the full historical suite were not rerun; no new native function coverage or gameplay tests."
+}

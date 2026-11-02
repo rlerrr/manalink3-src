@@ -234,7 +234,6 @@ const char **load_text_nocopy(const char *header, int *num_lines)
 {
   int iVar1;
   LoadText *pLVar2;
-  int iVar3;
   int iVar4;
   LoadText *pLVar5;
   int iStack_14;
@@ -260,8 +259,7 @@ const char **load_text_nocopy(const char *header, int *num_lines)
   {
     do
     {
-      iVar3 = strcmp(pLVar5->key, header);
-      if (iVar3 == 0)
+      if (strcmp(pLVar5->key, header) == 0)
       {
         if (num_lines != NULL)
         {
@@ -287,8 +285,7 @@ const char **load_text_nocopy_from_file(const char *filename, const char *header
 {
   LoadText *pLVar1;
   int iVar2;
-  int iVar3;
-  int iVar4;
+  int i;
   LoadText *pLVar5;
 
   if (ai_is_speculating == 1)
@@ -319,12 +316,11 @@ const char **load_text_nocopy_from_file(const char *filename, const char *header
   iVar2 = num_loadtexts_from_file;
   if (0 < num_loadtexts_from_file)
   {
-    iVar4 = 0;
+    i = 0;
     pLVar5 = loadtexts_from_file;
     do
     {
-      iVar3 = strcmp(pLVar5->key, header);
-      if (iVar3 == 0)
+      if (strcmp(pLVar5->key, header) == 0)
       {
         if (num_lines != NULL)
         {
@@ -332,9 +328,9 @@ const char **load_text_nocopy_from_file(const char *filename, const char *header
         }
         return pLVar5->lines;
       }
-      iVar4 = iVar4 + 1;
+      i = i + 1;
       pLVar5 = pLVar5 + 1;
-    } while (iVar4 != iVar2);
+    } while (i != iVar2);
   }
   if (num_lines != NULL)
   {
@@ -349,7 +345,7 @@ int load_text(const char *ignored, const char *header)
 {
   const char **ppcVar1;
   const char **ppcVar2;
-  int result;
+  int i;
   char (*pacVar4)[300];
   int num_lines;
 
@@ -364,14 +360,14 @@ int load_text(const char *ignored, const char *header)
     num_lines = 0xfa;
   }
   pacVar4 = text_lines;
-  result = 0;
+  i = 0;
   do
   {
-    ppcVar1 = ppcVar2 + result;
-    result = result + 1;
+    ppcVar1 = ppcVar2 + i;
+    i = i + 1;
     _snprintf(*pacVar4, 300, "%s", *ppcVar1);
     pacVar4 = pacVar4 + 1;
-  } while (result < num_lines);
+  } while (i < num_lines);
 LAB_02676615:
   if (num_lines < 0xf9)
   {

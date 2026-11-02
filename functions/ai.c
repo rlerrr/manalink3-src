@@ -229,7 +229,6 @@ int can_autotap(int player, int card, autotap_t autotap_flags)
   };
 
   card_instance_t *instance;
-  int iVar2;
   int iVar3;
   unsigned int uVar4;
 
@@ -238,8 +237,7 @@ int can_autotap(int player, int card, autotap_t autotap_flags)
   {
     iVar3 = instance->internal_card_id;
     uVar4 = instance->card_color & 0x7f;
-    iVar2 = is_what(player, card, 1);
-    if (iVar2 != 0)
+    if (is_what(player, card, 1) != 0)
     {
       uVar4 = uVar4 | mana_colors_added[player];
     }
@@ -248,8 +246,7 @@ int can_autotap(int player, int card, autotap_t autotap_flags)
       uVar4 = cards_data[iVar3].extra_ability;
       if ((uVar4 & 0x1000) == 0)
       {
-        iVar2 = is_what(player, card, 1);
-        if (iVar2 == 0)
+        if (is_what(player, card, 1) == 0)
         {
           return 0;
         }

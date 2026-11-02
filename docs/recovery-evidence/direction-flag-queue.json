@@ -1,0 +1,838 @@
+{
+  "status": "Resolved: all36 discovered private entry-zero direction flags removed and49 stride expressions folded with unsigned literals and actual GCC value/type checks.",
+  "counts": {
+    "functions": 36,
+    "source_units": 31,
+    "flags": 36,
+    "stride_expressions": 49,
+    "unsupported_or_parse_skips": 1
+  },
+  "source_state_sha256": "e437de22917fa2484ad64ce7d8683e1c6b1c99301608640da79d31fd290b0a56",
+  "rows": [
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_ironclad_revolutionary",
+      "definition_sha256": "e67d0dd0e1b7b8a2f88a3554bbfdf3db87bd9e55045737cb2e4e1054a28fcad3",
+      "candidates": [
+        {
+          "variable": "bVar4",
+          "zero_assignment_offset": 186,
+          "stride_uses": [
+            {
+              "flag_offset": 506,
+              "expression_start": 492,
+              "expression_end": 520,
+              "scale": 8,
+              "forward_step": 4
+            },
+            {
+              "flag_offset": 560,
+              "expression_start": 546,
+              "expression_end": 574,
+              "scale": 8,
+              "forward_step": 4
+            },
+            {
+              "flag_offset": 829,
+              "expression_start": 815,
+              "expression_end": 843,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_merchants_dockhand",
+      "definition_sha256": "4fdbd673376614b24a26314e7b20e03402b28fbbd593233be0c4dbb7865505b2",
+      "candidates": [
+        {
+          "variable": "bVar6",
+          "zero_assignment_offset": 252,
+          "stride_uses": [
+            {
+              "flag_offset": 1299,
+              "expression_start": 1285,
+              "expression_end": 1313,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/alliances.c",
+      "name": "card_casting_of_bones",
+      "definition_sha256": "aacc3fc8ed59503bd3a8879be4a4e62f19be13a5fd550d4e168e81e8915dd5f9",
+      "candidates": [
+        {
+          "variable": "bVar6",
+          "zero_assignment_offset": 254,
+          "stride_uses": [
+            {
+              "flag_offset": 791,
+              "expression_start": 777,
+              "expression_end": 805,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/battle_for_zendikar.c",
+      "name": "card_drana_liberator_of_malakir",
+      "definition_sha256": "61586c52b992ca10194de780fb49dfbb14b32f6ba7d6e08131118a9b73edf888",
+      "candidates": [
+        {
+          "variable": "bVar7",
+          "zero_assignment_offset": 235,
+          "stride_uses": [
+            {
+              "flag_offset": 902,
+              "expression_start": 888,
+              "expression_end": 916,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "name": "card_kindred_charge",
+      "definition_sha256": "2c6c1ed68df634c20cc0260bef949ca2f2d25944f702932dfb65aea2f9f6f838",
+      "candidates": [
+        {
+          "variable": "bVar7",
+          "zero_assignment_offset": 261,
+          "stride_uses": [
+            {
+              "flag_offset": 1043,
+              "expression_start": 1029,
+              "expression_end": 1057,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2018.c",
+      "name": "card_saheeli_the_gifted",
+      "definition_sha256": "24863084bdb9ae46203534ec2bf36249625943a4a4327e35e140ddedeab9d3d5",
+      "candidates": [
+        {
+          "variable": "bVar8",
+          "zero_assignment_offset": 326,
+          "stride_uses": [
+            {
+              "flag_offset": 2495,
+              "expression_start": 2481,
+              "expression_end": 2509,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2018.c",
+      "name": "card_lord_windgrace",
+      "definition_sha256": "d0b6a3f2479cdc54f6d3fb3509c5720aadde0904dd9d935e958142d987c73234",
+      "candidates": [
+        {
+          "variable": "bVar9",
+          "zero_assignment_offset": 380,
+          "stride_uses": [
+            {
+              "flag_offset": 940,
+              "expression_start": 926,
+              "expression_end": 954,
+              "scale": 8,
+              "forward_step": 4
+            },
+            {
+              "flag_offset": 3531,
+              "expression_start": 3517,
+              "expression_end": 3545,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_slinn_voda_the_rising_deep",
+      "definition_sha256": "ea1af6af0e2c41af4963e65c670a34e6868fad1a9bde409c2390e356b545ebe1",
+      "candidates": [
+        {
+          "variable": "bVar5",
+          "zero_assignment_offset": 216,
+          "stride_uses": [
+            {
+              "flag_offset": 630,
+              "expression_start": 616,
+              "expression_end": 644,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/dragons_of_tarkir.c",
+      "name": "card_scale_blessing",
+      "definition_sha256": "601f73d7410b8bbc86c58e7f28afdefb6d23318a6c0588db246dcb59a0046e2d",
+      "candidates": [
+        {
+          "variable": "bVar7",
+          "zero_assignment_offset": 216,
+          "stride_uses": [
+            {
+              "flag_offset": 862,
+              "expression_start": 848,
+              "expression_end": 876,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_spike_cannibal",
+      "definition_sha256": "ffa3caaf40308d0515a9c0ccfb451c34c5615f753e9649d665d0741c44a71806",
+      "candidates": [
+        {
+          "variable": "bVar7",
+          "zero_assignment_offset": 226,
+          "stride_uses": [
+            {
+              "flag_offset": 590,
+              "expression_start": 576,
+              "expression_end": 604,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "name": "card_engineered_explosives",
+      "definition_sha256": "02792d9137c2a262bced881ff7c854c41d9c4f3f7ac327450058a0a59fb13a47",
+      "candidates": [
+        {
+          "variable": "bVar7",
+          "zero_assignment_offset": 210,
+          "stride_uses": [
+            {
+              "flag_offset": 791,
+              "expression_start": 777,
+              "expression_end": 805,
+              "scale": 2,
+              "forward_step": 1
+            },
+            {
+              "flag_offset": 1360,
+              "expression_start": 1346,
+              "expression_end": 1374,
+              "scale": 2,
+              "forward_step": 1
+            },
+            {
+              "flag_offset": 1418,
+              "expression_start": 1404,
+              "expression_end": 1432,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "card_uncage_the_menagerie",
+      "definition_sha256": "e733d31fc54aa4e2505b07ebb38fc2d01d843793ab48287cb77bb70e1570519b",
+      "candidates": [
+        {
+          "variable": "bVar7",
+          "zero_assignment_offset": 267,
+          "stride_uses": [
+            {
+              "flag_offset": 963,
+              "expression_start": 949,
+              "expression_end": 977,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/ice_age.c",
+      "name": "card_breath_of_dreams",
+      "definition_sha256": "84d75ed4ed50d314050a98fa64a89deba6ae6e377f9d3fa6f95d9245092930f4",
+      "candidates": [
+        {
+          "variable": "bVar8",
+          "zero_assignment_offset": 262,
+          "stride_uses": [
+            {
+              "flag_offset": 1785,
+              "expression_start": 1771,
+              "expression_end": 1799,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/kaladesh.c",
+      "name": "card_aetherborn_marauder",
+      "definition_sha256": "3ec4e2ed3f9d05de5aa96a7cbcc8a5179fc4fecf92655f72698499c60c20da8e",
+      "candidates": [
+        {
+          "variable": "bVar6",
+          "zero_assignment_offset": 214,
+          "stride_uses": [
+            {
+              "flag_offset": 480,
+              "expression_start": 466,
+              "expression_end": 494,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/m20.c",
+      "name": "card_field_of_the_dead",
+      "definition_sha256": "a399ce913bb6f7146cdf68a338d7c5ebb95ba3189288aebb18890dbc738db7b2",
+      "candidates": [
+        {
+          "variable": "bVar6",
+          "zero_assignment_offset": 235,
+          "stride_uses": [
+            {
+              "flag_offset": 911,
+              "expression_start": 897,
+              "expression_end": 925,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_quagmire_lamprey",
+      "definition_sha256": "d1bef257a8810b8c6a65731c6886983f0e53352a408582e5ee3049a30421fd82",
+      "candidates": [
+        {
+          "variable": "bVar6",
+          "zero_assignment_offset": 226,
+          "stride_uses": [
+            {
+              "flag_offset": 827,
+              "expression_start": 813,
+              "expression_end": 841,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_garth_one_eye",
+      "definition_sha256": "aabda0272de30abada8f98bf6f54cd6d38acdc08f4e8ebe0cff1587392d3bd14",
+      "candidates": [
+        {
+          "variable": "bVar9",
+          "zero_assignment_offset": 388,
+          "stride_uses": [
+            {
+              "flag_offset": 950,
+              "expression_start": 936,
+              "expression_end": 964,
+              "scale": 2,
+              "forward_step": 1
+            },
+            {
+              "flag_offset": 1002,
+              "expression_start": 988,
+              "expression_end": 1016,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/onslaught.c",
+      "name": "card_entrails_feaster",
+      "definition_sha256": "644da4555f026042ecf22c9e16754bbfd9474b7ccebe18c3da49fe329edbeef9",
+      "candidates": [
+        {
+          "variable": "bVar4",
+          "zero_assignment_offset": 184,
+          "stride_uses": [
+            {
+              "flag_offset": 515,
+              "expression_start": 501,
+              "expression_end": 529,
+              "scale": 8,
+              "forward_step": 4
+            },
+            {
+              "flag_offset": 569,
+              "expression_start": 555,
+              "expression_end": 583,
+              "scale": 8,
+              "forward_step": 4
+            },
+            {
+              "flag_offset": 838,
+              "expression_start": 824,
+              "expression_end": 852,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_forgotten_harvest",
+      "definition_sha256": "34d821a1e9548f034b34b579b23bb785502e81090baacaa7f74dd0f96940d255",
+      "candidates": [
+        {
+          "variable": "bVar5",
+          "zero_assignment_offset": 241,
+          "stride_uses": [
+            {
+              "flag_offset": 745,
+              "expression_start": 731,
+              "expression_end": 759,
+              "scale": 8,
+              "forward_step": 4
+            },
+            {
+              "flag_offset": 799,
+              "expression_start": 785,
+              "expression_end": 813,
+              "scale": 8,
+              "forward_step": 4
+            },
+            {
+              "flag_offset": 1068,
+              "expression_start": 1054,
+              "expression_end": 1082,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "card_deputy_of_detention",
+      "definition_sha256": "c674a308ae1cfafc59c90943120808fb00326ac6041cdc49b5d33ecee9a91285",
+      "candidates": [
+        {
+          "variable": "bVar11",
+          "zero_assignment_offset": 409,
+          "stride_uses": [
+            {
+              "flag_offset": 2019,
+              "expression_start": 2005,
+              "expression_end": 2034,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "name": "card_detention_sphere",
+      "definition_sha256": "fc1d86f8ba12d733427586f280cb3797c604fec630913fe74434398af135491c",
+      "candidates": [
+        {
+          "variable": "bVar10",
+          "zero_assignment_offset": 391,
+          "stride_uses": [
+            {
+              "flag_offset": 1947,
+              "expression_start": 1933,
+              "expression_end": 1962,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_slaughter_the_strong",
+      "definition_sha256": "3008ef271a1011dbf9780b47c52c8bd4733283169465a40b625093546cc5fe21",
+      "candidates": [
+        {
+          "variable": "bVar9",
+          "zero_assignment_offset": 327,
+          "stride_uses": [
+            {
+              "flag_offset": 1119,
+              "expression_start": 1105,
+              "expression_end": 1133,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_faeburrow_elder",
+      "definition_sha256": "5988d920284ec42e18f8ae653cbd06547999e5c4fcb66f0e56c278a3c2128070",
+      "candidates": [
+        {
+          "variable": "bVar6",
+          "zero_assignment_offset": 223,
+          "stride_uses": [
+            {
+              "flag_offset": 376,
+              "expression_start": 362,
+              "expression_end": 390,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "adventure_effect",
+      "definition_sha256": "d28ebd924f1b5716c48326d1f546d2b245ac4049f04370c92d492b0fcd72f1ce",
+      "candidates": [
+        {
+          "variable": "bVar26",
+          "zero_assignment_offset": 674,
+          "stride_uses": [
+            {
+              "flag_offset": 2376,
+              "expression_start": 2362,
+              "expression_end": 2391,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/torment.c",
+      "name": "card_shambling_swarm",
+      "definition_sha256": "a9318cdd5bd621d117443e5c07465bf9a3e454f6f7ef0712be03b27424f6d380",
+      "candidates": [
+        {
+          "variable": "bVar7",
+          "zero_assignment_offset": 331,
+          "stride_uses": [
+            {
+              "flag_offset": 722,
+              "expression_start": 708,
+              "expression_end": 736,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_tezzeret_master_of_the_bridge",
+      "definition_sha256": "3cbbd1f4721161803a1e373e49fa20764f41163fceaa8b5fe61cc4427a2d2dfe",
+      "candidates": [
+        {
+          "variable": "bVar7",
+          "zero_assignment_offset": 289,
+          "stride_uses": [
+            {
+              "flag_offset": 3377,
+              "expression_start": 3363,
+              "expression_end": 3391,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_tajuru_paragon",
+      "definition_sha256": "0aa4bb041556ae7e6735145941009b9237483419d78d5a678904476f6b6288c5",
+      "candidates": [
+        {
+          "variable": "bVar3",
+          "zero_assignment_offset": 192,
+          "stride_uses": [
+            {
+              "flag_offset": 590,
+              "expression_start": 576,
+              "expression_end": 604,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "granted_flanking_part",
+      "definition_sha256": "31a1a1897ad912a7c07448b3d683934c1cf4e5fc1d588b08a8c2c20bb3665cc4",
+      "candidates": [
+        {
+          "variable": "bVar4",
+          "zero_assignment_offset": 219,
+          "stride_uses": [
+            {
+              "flag_offset": 770,
+              "expression_start": 756,
+              "expression_end": 784,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/counters.c",
+      "name": "quarry_hauler_helper",
+      "definition_sha256": "8794c34427778f1bb46443b1a68b60eb5c2756d1da91b92e5dde42601d5e9eb0",
+      "candidates": [
+        {
+          "variable": "bVar15",
+          "zero_assignment_offset": 903,
+          "stride_uses": [
+            {
+              "flag_offset": 3444,
+              "expression_start": 3430,
+              "expression_end": 3459,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/deck.c",
+      "name": "rfg_whole_graveyard",
+      "definition_sha256": "4deb457d450cfc60d5cc61efdad8c8926c4ca6b82850bd7e15dd741b4bf51b85",
+      "candidates": [
+        {
+          "variable": "bVar7",
+          "zero_assignment_offset": 177,
+          "stride_uses": [
+            {
+              "flag_offset": 761,
+              "expression_start": 747,
+              "expression_end": 775,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "shuffle",
+      "definition_sha256": "1ef9a68803eabdd0fa9e1a8308f13064aa9ebcda7da7b452c175cb2007d8fb67",
+      "candidates": [
+        {
+          "variable": "bVar6",
+          "zero_assignment_offset": 218,
+          "stride_uses": [
+            {
+              "flag_offset": 1231,
+              "expression_start": 1217,
+              "expression_end": 1245,
+              "scale": 8,
+              "forward_step": 4
+            },
+            {
+              "flag_offset": 1291,
+              "expression_start": 1277,
+              "expression_end": 1305,
+              "scale": 8,
+              "forward_step": 4
+            },
+            {
+              "flag_offset": 1644,
+              "expression_start": 1630,
+              "expression_end": 1658,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "shapeshift_all",
+      "definition_sha256": "ef8aa24ed42b1f4ea82ceaf27017cfd89395990bb2b6fc8425478003640edb14",
+      "candidates": [
+        {
+          "variable": "bVar11",
+          "zero_assignment_offset": 403,
+          "stride_uses": [
+            {
+              "flag_offset": 837,
+              "expression_start": 823,
+              "expression_end": 852,
+              "scale": 8,
+              "forward_step": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "shares_creature_subtype_by_iid",
+      "definition_sha256": "9cb5597395d0cc4ea77e8c8f179b1be123dbd0ccfc9940fdffe6a53f92747473",
+      "candidates": [
+        {
+          "variable": "bVar5",
+          "zero_assignment_offset": 207,
+          "stride_uses": [
+            {
+              "flag_offset": 727,
+              "expression_start": 713,
+              "expression_end": 741,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/produce_mana.c",
+      "name": "produce_mana_tapped_any_combination_of_colors_impl",
+      "definition_sha256": "932a4ccd41805b1d1f7422e0f369e5f2b8464b3e471b3c170babc44bdbb12b8f",
+      "candidates": [
+        {
+          "variable": "bVar7",
+          "zero_assignment_offset": 362,
+          "stride_uses": [
+            {
+              "flag_offset": 1767,
+              "expression_start": 1753,
+              "expression_end": 1781,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/produce_mana.c",
+      "name": "produce_mana_tapped_all_different_colors_impl",
+      "definition_sha256": "0b2543e5f5c457ee7676c012eaf4c0899e270b9f6d415b45a24b3a2203686055",
+      "candidates": [
+        {
+          "variable": "bVar8",
+          "zero_assignment_offset": 426,
+          "stride_uses": [
+            {
+              "flag_offset": 1747,
+              "expression_start": 1733,
+              "expression_end": 1761,
+              "scale": 2,
+              "forward_step": 1
+            },
+            {
+              "flag_offset": 3388,
+              "expression_start": 3374,
+              "expression_end": 3402,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/token_generation.c",
+      "name": "resolve_token_iid",
+      "definition_sha256": "86029a2383182f602e2a1bf64d0ea3aa413c8ee4e32ea0bca39e3bec996f1d55",
+      "candidates": [
+        {
+          "variable": "bVar18",
+          "zero_assignment_offset": 511,
+          "stride_uses": [
+            {
+              "flag_offset": 3172,
+              "expression_start": 3158,
+              "expression_end": 3187,
+              "scale": 2,
+              "forward_step": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fold_requirements": [
+    "Preserve the unsigned-int arithmetic introduced by the explicit casts; replacing a stride with a signed literal can change surrounding pointer-address integer arithmetic.",
+    "Validate surrounding operand types before flattening a pointer/integer expression such as base + zero + step.",
+    "Check actual macro-expanded bindings and reject further writes, address escapes, volatile objects or unsupported executable/assembly syntax.",
+    "Do not replace the surrounding clear/copy loops with library calls without separate memory-coverage and alias evidence."
+  ],
+  "resolution": {
+    "batch": "docs/recovery-evidence/direction-flag-cleanup.json",
+    "batch_sha256": "0816a233284ec152161455b645047a1fb9a46c289a56cb0a2805fd6c49f73a89",
+    "removed_flags": 36,
+    "folded_strides": 49,
+    "pending_candidates": 0,
+    "remaining_contexts": "docs/recovery-evidence/direction-flag-followup-queue.json"
+  }
+}

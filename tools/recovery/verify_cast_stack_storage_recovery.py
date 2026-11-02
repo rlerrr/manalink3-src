@@ -25,7 +25,10 @@ def verify_superseded_definition(proof,image,root,source,name,old_sha):
     assert sha(row['before_definition'].encode())==old_sha
     assert replay(row['before_definition'],row['changes'])==row['after_definition']
     text=read(root/source);a,b=span(text,name)
-    assert text[a:b]==row['after_definition'] and sha(text[a:b].encode())==row['after_sha256']
+    assert sha(row['after_definition'].encode())==row['after_sha256']
+    if text[a:b]!=row['after_definition']:
+        from verify_token_aggregate_recovery import verify_superseded_definition as aggregate_successor
+        aggregate_successor(proof,image,root,source,name,row['after_sha256'])
     edits=[e for e in proof['source_edits'] if e.get('native_cast_stack_storage_extension')==path and e['source']==source]
     assert len(edits)==1 and edits[0]['before_sha256']==old_sha and edits[0]['after_sha256']==row['after_sha256']
     for test in row['native_tests']:

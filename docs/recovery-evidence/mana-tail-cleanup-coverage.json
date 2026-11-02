@@ -1,0 +1,480 @@
+{
+  "status": "Six remaining mana-helper cleanups completed and verified.",
+  "batch": "docs/recovery-evidence/mana-tail-cleanup.json",
+  "batch_sha256": "a1e44f72631c8b26a02539e438ed1b2d0cfe3ac83aa0ad8aaaf0c2acbc2ff60f",
+  "counts": {
+    "helpers": 6,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 9,
+    "removed_lab_gotos": 9,
+    "source_lines_removed": 122,
+    "removed_placeholder_occurrences": 149,
+    "removed_placeholder_names": 16
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "three_way_comparisons": 2137664,
+    "entry_invocations": 6412992,
+    "helpers": 3,
+    "low_seven_bit_available_masks": 128,
+    "two_color_amount_vectors": 16,
+    "stateful_random_inputs": 40000,
+    "mutation_modes": 3,
+    "exact_call_traces_and_full_state": true,
+    "retained_chooser_buffer_mutations": true,
+    "ai_text_rows_compared": 7
+  },
+  "original_code_regions": [
+    {
+      "name": "produce_mana_tapped2_impl",
+      "address": "0x266d580",
+      "size": 1008,
+      "sha256": "37e628f2b4af5caf34b6bd333b485b0b9a0e16896806bcd16c68933a953f5fec",
+      "external_branches": [
+        {
+          "instruction": "0x266d5ee",
+          "native_target": "0x267a130",
+          "callee": "check_special_flags2"
+        },
+        {
+          "instruction": "0x266d6f4",
+          "native_target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x266d736",
+          "native_target": "0x49d490",
+          "callee": "produce_mana"
+        },
+        {
+          "instruction": "0x266d754",
+          "native_target": "0x49d490",
+          "callee": "produce_mana"
+        },
+        {
+          "instruction": "0x266d76b",
+          "native_target": "0x266c040",
+          "callee": "mana_doublers"
+        },
+        {
+          "instruction": "0x266d786",
+          "native_target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x266d7a2",
+          "native_target": "0x267a130",
+          "callee": "check_special_flags2"
+        },
+        {
+          "instruction": "0x266d7c3",
+          "native_target": "0x266acc0",
+          "callee": "single_color_test_bit_to_color"
+        },
+        {
+          "instruction": "0x266d7dc",
+          "native_target": "0x49d490",
+          "callee": "produce_mana"
+        },
+        {
+          "instruction": "0x266d822",
+          "native_target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x266d865",
+          "native_target": "0x471eb0",
+          "callee": "do_dialog"
+        },
+        {
+          "instruction": "0x266d8e9",
+          "native_target": "0x266cbf0",
+          "callee": "produce_mana_tapped_impl"
+        },
+        {
+          "instruction": "0x266d8f1",
+          "native_target": "0x266acc0",
+          "callee": "single_color_test_bit_to_color"
+        },
+        {
+          "instruction": "0x266d907",
+          "native_target": "0x2679340",
+          "callee": "num_bits_set"
+        },
+        {
+          "instruction": "0x266d942",
+          "native_target": "0x266c120",
+          "callee": "produce_mana_tapped_all_one_color_with_default_impl"
+        },
+        {
+          "instruction": "0x266d951",
+          "native_target": "0x266acc0",
+          "callee": "single_color_test_bit_to_color"
+        }
+      ],
+      "entry_abi": "cdecl"
+    },
+    {
+      "name": "produce_mana_tapped_all_one_color_with_default_impl",
+      "address": "0x266c120",
+      "size": 983,
+      "sha256": "1c916dacdd8a6fa85ba0f428441e3b073f7a364ca73047733512c4581b4d7712",
+      "external_branches": [
+        {
+          "instruction": "0x266c152",
+          "native_target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x266c191",
+          "native_target": "0x266ae20",
+          "callee": "choose_mana_all_one_color"
+        },
+        {
+          "instruction": "0x266c1d0",
+          "native_target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x266c1ef",
+          "native_target": "0x267a130",
+          "callee": "check_special_flags2"
+        },
+        {
+          "instruction": "0x266c2a3",
+          "native_target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x266c2ce",
+          "native_target": "0x49d490",
+          "callee": "produce_mana"
+        },
+        {
+          "instruction": "0x266c31b",
+          "native_target": "0x471eb0",
+          "callee": "do_dialog"
+        },
+        {
+          "instruction": "0x266c35b",
+          "native_target": "0x266c040",
+          "callee": "mana_doublers"
+        },
+        {
+          "instruction": "0x266c376",
+          "native_target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x266c38d",
+          "native_target": "0x266acc0",
+          "callee": "single_color_test_bit_to_color"
+        },
+        {
+          "instruction": "0x266c3a4",
+          "native_target": "0x49d490",
+          "callee": "produce_mana"
+        },
+        {
+          "instruction": "0x266c3b3",
+          "native_target": "0x266acc0",
+          "callee": "single_color_test_bit_to_color"
+        },
+        {
+          "instruction": "0x266c409",
+          "native_target": "0x26765b0",
+          "callee": "load_text"
+        },
+        {
+          "instruction": "0x266c454",
+          "native_target": "0x471eb0",
+          "callee": "do_dialog"
+        },
+        {
+          "instruction": "0x266c495",
+          "native_target": "0x266c540",
+          "callee": "produce_mana_tapped_all_one_color_impl"
+        },
+        {
+          "instruction": "0x266c4b7",
+          "native_target": "0x2631010",
+          "callee": "devotion"
+        },
+        {
+          "instruction": "0x266c4c4",
+          "native_target": "0x26765b0",
+          "callee": "load_text"
+        }
+      ],
+      "entry_abi": "cdecl"
+    },
+    {
+      "name": "produce_mana_tapped_any_combination_of_colors_impl",
+      "address": "0x266e8a0",
+      "size": 1048,
+      "sha256": "b56129def2ab6f1c579bad2918561e95776070294fbdbf1afa16cf8ca5e17348",
+      "external_branches": [
+        {
+          "instruction": "0x266e8dd",
+          "native_target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x266e8fc",
+          "native_target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x266e93c",
+          "native_target": "0x266a640",
+          "callee": "native_choose_combination"
+        },
+        {
+          "instruction": "0x266e99d",
+          "native_target": "0x267a130",
+          "callee": "check_special_flags2"
+        },
+        {
+          "instruction": "0x266e9ce",
+          "native_target": "0x49d490",
+          "callee": "produce_mana"
+        },
+        {
+          "instruction": "0x266ea33",
+          "native_target": "0x49d490",
+          "callee": "produce_mana"
+        },
+        {
+          "instruction": "0x266ea62",
+          "native_target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x266ea97",
+          "native_target": "0x266c040",
+          "callee": "mana_doublers"
+        },
+        {
+          "instruction": "0x266eab5",
+          "native_target": "0x267a130",
+          "callee": "check_special_flags2"
+        },
+        {
+          "instruction": "0x266ead6",
+          "native_target": "0x266acc0",
+          "callee": "single_color_test_bit_to_color"
+        },
+        {
+          "instruction": "0x266eaef",
+          "native_target": "0x49d490",
+          "callee": "produce_mana"
+        },
+        {
+          "instruction": "0x266eb63",
+          "native_target": "0x266c120",
+          "callee": "produce_mana_tapped_all_one_color_with_default_impl"
+        },
+        {
+          "instruction": "0x266eb8a",
+          "native_target": "0x267a130",
+          "callee": "check_special_flags2"
+        },
+        {
+          "instruction": "0x266eba9",
+          "native_target": "0x49d490",
+          "callee": "produce_mana"
+        },
+        {
+          "instruction": "0x266ebf2",
+          "native_target": "0x266acc0",
+          "callee": "single_color_test_bit_to_color"
+        },
+        {
+          "instruction": "0x266ec2e",
+          "native_target": "0x471eb0",
+          "callee": "do_dialog"
+        },
+        {
+          "instruction": "0x266ec91",
+          "native_target": "0x49d490",
+          "callee": "produce_mana"
+        }
+      ],
+      "entry_abi": "cdecl"
+    }
+  ],
+  "external_data_bindings": 87,
+  "external_callee_bindings": 50,
+  "native_entry_abis": {
+    "produce_mana_tapped2_impl": "cdecl",
+    "produce_mana_tapped_all_one_color_with_default_impl": "cdecl",
+    "produce_mana_tapped_any_combination_of_colors_impl": "cdecl"
+  },
+  "native_tested_helpers": 3,
+  "source_equivalence": {
+    "role_projections": [
+      {
+        "name": "mana_producer",
+        "renames": {
+          "bVar1": "printed_colors",
+          "cVar4": "color_mask",
+          "uVar5": "color_value",
+          "cVar6": "available",
+          "iStack_14": "mana_amount"
+        },
+        "spelling": {
+          "is_what(player, card, 1)": "is_what(player, card, TYPE_LAND)",
+          "check_special_flags2(player, card, 0x20000000)": "check_special_flags2(player, card, SF2_DEEP_WATER)",
+          "check_special_flags2(player, card, 0x40)": "check_special_flags2(player, card, SF2_CONTAMINATION)"
+        },
+        "inverse_projection_identical": true,
+        "scope": "Only local identifiers and checked constant spellings change. Calls, repeated queries, cached loads, expressions and control flow remain identical after the inverse spelling projection."
+      },
+      {
+        "name": "mana_doublers",
+        "renames": {
+          "iStack_14": "multiplier"
+        },
+        "spelling": {
+          "0x2579": "CARD_ID_MANA_REFLECTION",
+          "0x525c": "CARD_ID_NYXBLOOM_ANCIENT"
+        },
+        "inverse_projection_identical": true,
+        "scope": "Only local identifiers and checked constant spellings change. Calls, repeated queries, cached loads, expressions and control flow remain identical after the inverse spelling projection."
+      }
+    ],
+    "basic_subtype_partition": {
+      "classes": [
+        {
+          "representative": 0,
+          "result": 0
+        },
+        {
+          "representative": 20489,
+          "result": 2
+        },
+        {
+          "representative": 20482,
+          "result": 4
+        },
+        {
+          "representative": 20481,
+          "result": 8
+        },
+        {
+          "representative": 20486,
+          "result": 16
+        },
+        {
+          "representative": 20487,
+          "result": 32
+        }
+      ],
+      "all_32bit_inputs": true,
+      "reason": "Both pure acyclic CFGs observe subtype only by equality/inequality with these five distinct constants (or the equivalent switch). One representative per singleton and the complement proves the complete bit-pattern domain.",
+      "constants": {
+        "SUBTYPE_SWAMP": 20489,
+        "SUBTYPE_ISLAND": 20482,
+        "SUBTYPE_FOREST": 20481,
+        "SUBTYPE_MOUNTAIN": 20486,
+        "SUBTYPE_PLAINS": 20487,
+        "COLOR_TEST_BLACK": 2,
+        "COLOR_TEST_BLUE": 4,
+        "COLOR_TEST_GREEN": 8,
+        "COLOR_TEST_RED": 16,
+        "COLOR_TEST_WHITE": 32,
+        "COLOR_TEST_0": 0
+      },
+      "before_sha256": "963f0609d2415f8c398f3b95717808053306b93a8b7f3bc5f10430b8efefd1ee",
+      "after_sha256": "34ba6f68120ad04fc062c3c43f9acaac443b0340a6facecab6545f0ae89ff512"
+    }
+  },
+  "private_callback_abi": "Native choose-combination callback uses regparm(3): EAX=cols, EDX=player, ECX=available; count/prompt on stack. Explicit bridge calls the common C stub.",
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 27,
+  "focused": {
+    "path": ".recovery/mana-tail-focused-c322.json",
+    "sha256": "96cfc4c9ce0a0e24c21da9fccdec7893f654135e6d5da8d69af2265962e6efac"
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/mana-tail-build-c323.log",
+    "log_sha256": "eac5c5eab473e3c6be890ca00749db026a12fd5729e3a96932129fad63e8a6af",
+    "verified_built_slots": 15169,
+    "dll_sha256": "a686f511703b302946ee66cbd9e381bb2db5ecbf146bb109bb86560770c06189",
+    "dbg_sha256": "8de9199b3222e58478dcfcc807a87f826a54541f5b34eeef44e007ffd3d2386e"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/mana-tail-setup-c323.log",
+    "log_sha256": "f28ac595b19ff90680ed1fc48a3d68b7242148636dec2502fd9305fa4b1787b6",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4817,
+    "stubs": 0,
+    "metadata_sha256": "7037f8ef5a055e45f693ee7109ede9995998aa3616cf77a7a2447e58691caebb",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e6240",
+        "after": "public COFF entry 0x26e61d0"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ee6b0",
+        "after": "public COFF entry 0x26ee640"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e4dc0",
+        "after": "public COFF entry 0x26e4d50"
+      },
+      {
+        "name": "mana_doublers",
+        "native_address": "0x266c040",
+        "before": "public COFF entry 0x26cb430",
+        "after": "public COFF entry 0x26cb3f0"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "public COFF entry 0x26dcb40",
+        "after": "public COFF entry 0x26dcad0"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "public COFF entry 0x26dcb70",
+        "after": "public COFF entry 0x26dcb00"
+      }
+    ]
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c324.json",
+    "sha256": "b9940f3a534b02c4a3b47e5560141dcc41fd31731503e95cd2776d710b1b5e3c",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1014,
+      "lab_gotos": 2889,
+      "functions_with_placeholders": 2100,
+      "distinct_function_local_placeholder_spellings": 6471,
+      "placeholder_identifier_occurrences": 51307,
+      "union_keywords": 0
+    }
+  },
+  "index_unchanged": true,
+  "limits": "Original native branch bodies, predecessor C and reconstructed C compared on recorded bounded mana quantities/valid array indices. Full state and exact engine-call traces match while callbacks mutate globals, instances and retained chooser buffers. External engine/helper operations remain controlled stubs, including dialogs, text loading and the single-color producers. Native entries retain cdecl and the private choose-combination callback has an explicit regparm(3) bridge. Native comparisons cover the first three structured helpers. The two local/constant spelling projections and pure subtype switch have separate source-equivalence checks. Full native32 state, out-of-bounds inputs, signed-overflow states and gameplay are not exhausted.",
+  "whole_unit_readability": {
+    "source": "functions/produce_mana.c",
+    "source_sha256": "8031453e25488e2084d350384cf88d01c90f24117a1d0a02386a252b9fe8ac26",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  }
+}

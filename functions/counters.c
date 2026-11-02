@@ -1,6 +1,33 @@
 #include <limits.h>
 
 #include "manalink.h"
+
+typedef struct
+{
+  counter_t type;
+  int num;
+} counter_snapshot_t;
+
+static int snapshot_counters(card_instance_t *instance, counter_snapshot_t counters[9])
+{
+  const uint8_t *labels = (const uint8_t *)&instance->targets[18].player;
+  const uint8_t *overflow = (const uint8_t *)&instance->targets[18].card;
+  const uint8_t quantities[9] = {instance->special_counters, instance->counters2,
+      instance->counters3, instance->counters4, instance->counters5, instance->counters,
+      instance->counters_m1m1, overflow[0], overflow[1]};
+  const counter_t types[9] = {instance->special_counter_type, labels[0], labels[1],
+      labels[2], labels[3], COUNTER_P1_P1, COUNTER_M1_M1, overflow[2], overflow[3]};
+  int count = 0;
+  for (int i = 0; i < 9; ++i)
+    if (quantities[i] != 0 && types[i] != COUNTER_invalid)
+    {
+      counters[count].type = types[i];
+      counters[count].num = quantities[i];
+      ++count;
+    }
+  return count;
+}
+
 static void add_or_remove_counters_impl(int player,int card,int t_player,int t_card,counter_t type,int num);
 
 /* Canonical recovered helper declarations. */
@@ -3381,106 +3408,61 @@ static int get_updated_counters_number_as_cost(int player, int card, counter_t t
 /* ManalinkEh 2022: 0x26d45f0; original functions/counters.c:933. */
 static int get_updated_counters_number_impl(int player, int card, counter_t type, int number)
 {
-  uint16_t uVar1;
-  int iVar2;
-  card_instance_t *instance;
-  int iVar4;
-  int card_00;
-  int iVar5;
-
-  iVar2 = get_updated_counters_number_as_cost(player, card, type, number);
-  if ((iVar2 != 0) && ((card < 0 || (iVar5 = is_what(player, card, 0x80), iVar5 == 0))))
-  {
-    iVar5 = 0;
-    do
+  number = get_updated_counters_number_as_cost(player, card, type, number);
+  if (number == 0 || (card >= 0 && is_what(player, card, TYPE_EFFECT)))
+    return number;
+  for (int p = 0; p < 2; ++p)
+    for (int c = 0; c < active_cards_count[p]; ++c)
     {
-      card_00 = 0;
-      if (0 < active_cards_count[iVar5])
+      card_instance_t *instance = in_play(p, c);
+      if (instance == NULL)
+        continue;
+      int csvid = cards_data[instance->internal_card_id].id;
+      switch (csvid)
       {
-        do
-        {
-          instance = in_play(iVar5, card_00);
-          if (instance != NULL)
-          {
-            uVar1 = cards_data[instance->internal_card_id].id;
-            if (uVar1 == 0x41bc)
-            {
-              if (player == iVar5)
-              {
-                iVar4 = is_what(player, card, 0x42);
-                iVar2 = (iVar2 + 1) - (unsigned int)(iVar4 == 0);
-              }
-            }
-            else if ((unsigned short)uVar1 < 0x41bd)
-            {
-              if (uVar1 == 0x3541)
-              {
-              LAB_026d4710:
-                if (type == COUNTER_P1_P1)
-                {
-                LAB_026d4671:
-                  iVar2 = iVar2 * 2;
-                }
-              }
-              else if ((unsigned short)uVar1 < 0x3542)
-              {
-                if (uVar1 == 0x1e90)
-                {
-                  if (player == iVar5)
-                    goto LAB_026d4671;
-                }
-                else if (uVar1 == 0x3192)
-                {
-                LAB_026d46e6:
-                  if ((player == iVar5) && (iVar4 = is_what(player, card, 2), iVar4 != 0))
-                    goto LAB_026d4710;
-                }
-              }
-              else if (uVar1 == 0x37c7)
-              {
-              LAB_026d46c8:
-                if (player == iVar5)
-                {
-                  iVar2 = (iVar2 + 1) - (unsigned int)(type != COUNTER_P1_P1);
-                }
-              }
-              else if (uVar1 == 0x39ba)
-                goto LAB_026d4671;
-            }
-            else if (uVar1 == 0x48bd)
-            {
-              iVar2 = iVar2 + (unsigned int)(player == iVar5);
-            }
-            else if ((unsigned short)uVar1 < 0x48be)
-            {
-              if (uVar1 == 0x42a5)
-              {
-                if ((player == iVar5) && (type == COUNTER_M1_M1))
-                {
-                  iVar4 = is_what(player, card, 2);
-                  iVar2 = iVar2 + -1 + (unsigned int)(iVar4 == 0);
-                }
-              }
-              else if ((uVar1 == 0x4348) && (iVar4 = is_what(iVar5, card, 0x47), iVar4 != 0))
-              {
-                iVar2 = iVar2 + -99;
-              }
-            }
-            else if (uVar1 == 0x4df1)
-            {
-              if (card == card_00)
-                goto LAB_026d46c8;
-            }
-            else if (uVar1 == 0x54d2)
-              goto LAB_026d46e6;
-          }
-          card_00 = card_00 + 1;
-        } while (card_00 < active_cards_count[iVar5]);
+      case CARD_ID_WINDING_CONSTRICTOR:
+        if (player == p)
+          number += is_what(player, card, TYPE_CREATURE | TYPE_ARTIFACT) != 0;
+        break;
+      case CARD_ID_PRIMAL_VIGOR:
+        if (type == COUNTER_P1_P1)
+          number *= 2;
+        break;
+      case CARD_ID_DOUBLING_SEASON:
+        if (player == p)
+          number *= 2;
+        break;
+      case CARD_ID_CORPSEJACK_MENACE:
+      case CARD_ID_BRANCHING_EVOLUTION:
+        if (player == p && is_what(player, card, TYPE_CREATURE))
+          if (type == COUNTER_P1_P1)
+            number *= 2;
+        break;
+      case CARD_ID_HARDENED_SCALES:
+        if (player == p && type == COUNTER_P1_P1)
+          ++number;
+        break;
+      case CARD_ID_SELESNYA_LOFT_GARDENS:
+        number *= 2;
+        break;
+      case CARD_ID_PIR_IMAGINATIVE_RASCAL:
+        number += player == p;
+        break;
+      case CARD_ID_VIZIER_OF_REMEDIES:
+        if (player == p && type == COUNTER_M1_M1)
+          number -= is_what(player, card, TYPE_CREATURE) != 0;
+        break;
+      case CARD_ID_SOLEMNITY:
+        if (is_what(p, card, TYPE_PERMANENT))
+          number -= 99;
+        break;
+      case CARD_ID_MOWU_LOYAL_COMPANION:
+        if (card == c && player == p && type == COUNTER_P1_P1)
+          ++number;
+        break;
       }
-      iVar5 = iVar5 + 1;
-    } while (iVar5 != 2);
-  }
-  return iVar2;
+    }
+  return number;
 }
 
 /* ManalinkEh 2022: 0x26d4810; original functions/counters.c:933. */
@@ -3498,384 +3480,180 @@ int get_updated_counters_number(int player, int card, counter_t type, int number
 
 /* ManalinkEh 2022: 0x26d0e90; original functions/counters.c:1012. */
 static void add_or_remove_counters_impl(int player, int card, int t_player, int t_card,
-                                                    counter_t type, int num)
+    counter_t type, int num)
 {
-  uint16_t uVar1;
-  bool bVar2;
-  int iVar3;
-  unsigned char bVar4;
-  uint8_t uVar5;
-  card_instance_t *instance;
-  counter_t cVar6;
-  const char *pcVar7;
-  int iVar8;
-  uint8_t *label;
-  int iStack_1c;
-  uint8_t *position;
-  iVar3 = counters_added;
-  iVar8 = counters_added_type;
-  if ((0 < num) && (((uint8_t)enable_xtrigger_flags & ENABLE_XTRIGGER_COUNTERS) !=
-                    ENABLE_XTRIGGER_0))
+  int saved_added = counters_added;
+  int saved_type = counters_added_type;
+  if (num > 0 && ((uint8_t)enable_xtrigger_flags & ENABLE_XTRIGGER_COUNTERS))
   {
     counters_added = num;
     counters_added_type = type;
-    pcVar7 = "counters";
-    if (num < 2)
-    {
-      pcVar7 = "counter";
-    }
-    dispatch_xtrigger2(t_player, XTRIGGER_REPLACE_COUNTERS, pcVar7, 0, t_player, t_card);
+    dispatch_xtrigger2(t_player, XTRIGGER_REPLACE_COUNTERS,
+        num == 1 ? "counter" : "counters", 0, t_player, t_card);
   }
-  counters_added_type = iVar8;
-  counters_added = iVar3;
-  instance = get_card_instance(t_player, t_card);
-  label = (uint8_t *)(instance->targets + 0x12);
+  counters_added_type = saved_type;
+  counters_added = saved_added;
+  card_instance_t *instance = get_card_instance(t_player, t_card);
+  uint8_t *labels = (uint8_t *)&instance->targets[18].player;
+  uint8_t *overflow = (uint8_t *)&instance->targets[18].card;
+  uint8_t *position = NULL;
+  uint8_t *label = NULL;
+  int slot = -1;
+  int power = 0;
+  int toughness = 0;
   switch (type)
   {
-  case COUNTER_P1_P1:
-    position = (uint8_t *)&instance->counters;
-    iStack_1c = 1;
-    goto code_r0x026d1118;
-  case COUNTER_M1_M1:
-    position = (uint8_t *)&instance->counters_m1m1;
-    iStack_1c = -1;
-  code_r0x026d1118:
-    label = NULL;
-    bVar4 = *position;
-    iVar8 = iStack_1c;
-    goto LAB_026d1122;
-  case COUNTER_P0_P1:
-    iVar8 = 1;
-    iStack_1c = 0;
-    break;
-  case COUNTER_P0_P2:
-    iVar8 = 2;
-    iStack_1c = 0;
-    break;
-  case COUNTER_P1_P0:
-    iVar8 = 0;
-    iStack_1c = 1;
-    break;
-  case COUNTER_P1_P2:
-    iVar8 = 2;
-    iStack_1c = 1;
-    break;
-  case COUNTER_P2_P0:
-    iVar8 = 0;
-    iStack_1c = 2;
-    break;
-  case COUNTER_P2_P2:
-    iVar8 = 2;
-    iStack_1c = 2;
-    break;
-  case COUNTER_M0_M1:
-    iVar8 = -1;
-    iStack_1c = 0;
-    break;
-  case COUNTER_M0_M2:
-    iVar8 = -2;
-    iStack_1c = 0;
-    break;
-  case COUNTER_M1_M0:
-    iVar8 = 0;
-    iStack_1c = -1;
-    break;
-  case COUNTER_M2_M1:
-    iVar8 = -1;
-    iStack_1c = -2;
-    break;
-  case COUNTER_M2_M2:
-    iVar8 = -2;
-    iStack_1c = -2;
-    break;
-  default:
-    iVar8 = 0;
-    iStack_1c = 0;
+  case COUNTER_P1_P1: position = &instance->counters; power = toughness = 1; break;
+  case COUNTER_M1_M1: position = &instance->counters_m1m1; power = toughness = -1; break;
+  case COUNTER_P0_P1: toughness = 1; break;
+  case COUNTER_P0_P2: toughness = 2; break;
+  case COUNTER_P1_P0: power = 1; break;
+  case COUNTER_P1_P2: power = 1; toughness = 2; break;
+  case COUNTER_P2_P0: power = 2; break;
+  case COUNTER_P2_P2: power = toughness = 2; break;
+  case COUNTER_M0_M1: toughness = -1; break;
+  case COUNTER_M0_M2: toughness = -2; break;
+  case COUNTER_M1_M0: power = -1; break;
+  case COUNTER_M2_M1: power = -2; toughness = -1; break;
+  case COUNTER_M2_M2: power = toughness = -2; break;
+  default: break;
   }
-  bVar4 = instance->special_counter_type;
-  position = (uint8_t *)instance;
-  if (type == bVar4)
+  if (position == NULL)
   {
-    if (instance->special_counters == '\0')
-    {
-      instance->special_counter_type = 0xff;
-      goto LAB_026d0f68;
-    }
-    label = (uint8_t *)&instance->special_counter_type;
-  LAB_026d1018:
-    if (bVar4 != 0xff)
-    {
-      bVar4 = *position;
-      if (num < 1)
-        goto LAB_026d102d;
-    LAB_026d112a:
-      if ((int)((unsigned int)bVar4 + num) < 0x100)
+    uint8_t *counts[7] = {&instance->special_counters, &instance->counters2,
+        &instance->counters3, &instance->counters4, &instance->counters5,
+        &overflow[0], &overflow[1]};
+    uint8_t *types[7] = {&instance->special_counter_type, &labels[0], &labels[1],
+        &labels[2], &labels[3], &overflow[2], &overflow[3]};
+    for (int i = 0; i < 7; ++i)
+      if (type == *types[i])
       {
-        *position = bVar4 + (char)num;
-        if (label == NULL)
-          goto LAB_026d1340;
+        if (*counts[i] != 0)
+        {
+          slot = i;
+          break;
+        }
+        *types[i] = COUNTER_invalid;
       }
+    if (slot == -1)
+    {
+      if (num < 0)
+        return;
+      int special_count = instance->special_counters;
+      if (special_count == 0 && type == get_counter_type_by_instance(instance))
+        slot = 0;
       else
       {
-        num = 0xff - (unsigned int)bVar4;
-        *position = bVar4 + (char)num;
-        if (label == NULL)
-          goto LAB_026d115d;
-      }
-      *(uint8_t *)&*label = (uint8_t)type;
-      goto LAB_026d115d;
-    }
-  LAB_026d1308:
-    *position = '\0';
-    bVar4 = 0;
-  LAB_026d1122:
-    if (0 < num)
-      goto LAB_026d112a;
-  LAB_026d102d:
-    if (-1 < num)
-    {
-    LAB_026d1033:
-      uVar5 = bVar4 + (char)num;
-      *position = uVar5;
-      if (label == NULL)
-        goto LAB_026d115d;
-    LAB_026d1042:
-      if ((uVar5 == '\0') &&
-          ((*(uint8_t *)&*label = 0xff,
-            label == (uint8_t *)&instance->special_counter_type ||
-                (label <= (uint8_t *)((int)&instance->targets[0x12].player + 3U)))))
-      {
-        uVar5 = (uint8_t)instance->targets[0x12].card;
-        if ((uVar5 == '\0') || (*(char *)((int)&instance->targets[0x12].card + 2) == -1))
-        {
-          uVar5 = *(uint8_t *)((int)&instance->targets[0x12].card + 1);
-          if ((uVar5 != '\0') && (*(char *)((int)&instance->targets[0x12].card + 3) != -1))
+        for (int i = 1; i < 5; ++i)
+          if (*counts[i] == 0)
           {
-            *position = uVar5;
-            *(uint8_t *)&*label = *(uint8_t *)((int)&instance->targets[0x12].card + 3);
-            *(uint8_t *)((int)&instance->targets[0x12].card + 1) = 0;
-            *(uint8_t *)((int)&instance->targets[0x12].card + 3) = 0xff;
+            slot = i;
+            break;
+          }
+        if (slot == -1)
+        {
+          if (special_count == 0)
+            slot = 0;
+          else if (overflow[2] == COUNTER_invalid)
+            slot = 5;
+          else if (overflow[3] == COUNTER_invalid)
+            slot = 6;
+        }
+      }
+    }
+    if (slot != -1)
+    {
+      position = counts[slot];
+      label = types[slot];
+      if (*label == COUNTER_invalid)
+        *position = 0;
+    }
+  }
+  if (position != NULL)
+  {
+    unsigned int count = *position;
+    int32_t sum = (int32_t)(count + (uint32_t)num);
+    if (num > 0)
+    {
+      if (sum >= 256)
+        num = 255 - count;
+      *position = (uint8_t)(count + (uint32_t)num);
+      if (label != NULL)
+        *label = (uint8_t)type;
+    }
+    else
+    {
+      if (num < 0 && sum < 0)
+        num = -(int)count;
+      *position = (uint8_t)(count + (uint32_t)num);
+      if (label != NULL && *position == 0)
+      {
+        *label = COUNTER_invalid;
+        if (slot < 5)
+        {
+          if (overflow[0] != 0 && overflow[2] != COUNTER_invalid)
+          {
+            *position = overflow[0];
+            *label = overflow[2];
+            overflow[0] = 0;
+            overflow[2] = COUNTER_invalid;
+          }
+          else if (overflow[1] != 0 && overflow[3] != COUNTER_invalid)
+          {
+            *position = overflow[1];
+            *label = overflow[3];
+            overflow[1] = 0;
+            overflow[3] = COUNTER_invalid;
           }
         }
-        else
-        {
-          *position = uVar5;
-          *(uint8_t *)&*label = *(uint8_t *)((int)&instance->targets[0x12].card + 2);
-          *(uint8_t *)&instance->targets[0x12].card = 0;
-          *(uint8_t *)((int)&instance->targets[0x12].card + 2) = 0xff;
-        }
       }
-      goto LAB_026d115d;
-    }
-    if ((int)((unsigned int)bVar4 + num) < 0)
-    {
-      num = -(unsigned int)bVar4;
-      goto LAB_026d1033;
-    }
-    uVar5 = bVar4 + (char)num;
-    *position = uVar5;
-    if (label != NULL)
-      goto LAB_026d1042;
-  LAB_026d1340:
-    if (iStack_1c != 0)
-    {
-      instance->counter_power = instance->counter_power + (short)iStack_1c * (short)num;
-      instance->regen_status = instance->regen_status | 0x4000000;
-    }
-    if (iVar8 != 0)
-    {
-      uVar1 = instance->counter_toughness;
-      instance->regen_status = instance->regen_status | 0x2000000;
-      instance->counter_toughness = uVar1 + (short)iVar8 * (short)num;
-    }
-    if (0 < num)
-    {
-      if (hack_silent_counters < 1)
-      {
-        play_sound_effect(WAV_COUNTER);
-      }
-      iVar3 = counters_added;
-      iVar8 = counters_added_type;
-      counters_added_type = type;
-      counters_added = num;
-      dispatch_event_with_attacker(t_player, t_card, EVENT_COUNTERS, player, card);
-      counters_added_type = iVar8;
-      counters_added = iVar3;
-      if (type == COUNTER_P1_P1)
-      {
-        iVar8 = is_what(t_player, t_card, 0x47);
-        if (iVar8 != 0)
-        {
-          set_trap_condition(t_player, 0x607, 1);
-        }
-        iVar8 = counters_added;
-        if (((uint8_t)enable_xtrigger_flags & ENABLE_XTRIGGER_1_1_COUNTERS) ==
-            ENABLE_XTRIGGER_0)
-        {
-          return;
-        }
-        pcVar7 = "+1/+1 counters";
-        if (num < 2)
-        {
-          pcVar7 = "+1/+1 counter";
-        }
-        counters_added = num;
-        dispatch_xtrigger2(t_player, XTRIGGER_1_1_COUNTERS, pcVar7, 0, t_player, t_card);
-        counters_added = iVar8;
-        return;
-      }
-      bVar2 = true;
-      goto LAB_026d11b8;
     }
   }
-  else
+  if (num != 0)
   {
-  LAB_026d0f68:
-    bVar4 = (unsigned char)instance->targets[0x12].player;
-    if (type == bVar4)
+    if (power != 0)
     {
-      if (instance->counters2 != '\0')
-      {
-        position = (uint8_t *)&instance->counters2;
-        goto LAB_026d1018;
-      }
-      *(uint8_t *)&instance->targets[0x12].player = 0xff;
+      instance->counter_power += (int16_t)power * (int16_t)num;
+      instance->regen_status |= KEYWORD_RECALC_POWER;
     }
-    bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 1);
-    if (type == bVar4)
+    if (toughness != 0)
     {
-      if (instance->counters3 != '\0')
-      {
-        label = (uint8_t *)((int)&instance->targets[0x12].player + 1);
-        position = (uint8_t *)&instance->counters3;
-        goto LAB_026d1018;
-      }
-      *(uint8_t *)((int)&instance->targets[0x12].player + 1) = 0xff;
+      uint16_t old_toughness = instance->counter_toughness;
+      instance->regen_status |= KEYWORD_RECALC_TOUGHNESS;
+      instance->counter_toughness = old_toughness + (int16_t)toughness * (int16_t)num;
     }
-    bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 2);
-    if (type == bVar4)
-    {
-      if (instance->counters4 != '\0')
-      {
-        label = (uint8_t *)((int)&instance->targets[0x12].player + 2);
-        position = (uint8_t *)&instance->counters4;
-        goto LAB_026d1018;
-      }
-      *(uint8_t *)((int)&instance->targets[0x12].player + 2) = 0xff;
-    }
-    bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 3);
-    if (type == bVar4)
-    {
-      if (instance->counters5 != '\0')
-      {
-        label = (uint8_t *)((int)&instance->targets[0x12].player + 3);
-        position = (uint8_t *)&instance->counters5;
-        goto LAB_026d1018;
-      }
-      *(uint8_t *)((int)&instance->targets[0x12].player + 3) = 0xff;
-    }
-    bVar4 = *(unsigned char *)((int)&instance->targets[0x12].card + 2);
-    if (type == bVar4)
-    {
-      if ((char)instance->targets[0x12].card != '\0')
-      {
-        label = (uint8_t *)((int)&instance->targets[0x12].card + 2);
-        position = (uint8_t *)&instance->targets[0x12].card;
-        goto LAB_026d1018;
-      }
-      *(uint8_t *)((int)&instance->targets[0x12].card + 2) = 0xff;
-    }
-    bVar4 = *(unsigned char *)((int)&instance->targets[0x12].card + 3);
-    if (type == bVar4)
-    {
-      if (*(char *)((int)&instance->targets[0x12].card + 1) != '\0')
-      {
-        label = (uint8_t *)((int)&instance->targets[0x12].card + 3);
-        position = (uint8_t *)((int)&instance->targets[0x12].card + 1);
-        goto LAB_026d1018;
-      }
-      *(uint8_t *)((int)&instance->targets[0x12].card + 3) = 0xff;
-    }
-    if (num < 0)
-    {
-      return;
-    }
-    uVar5 = instance->special_counters;
-    if ((uVar5 == '\0') && (cVar6 = get_counter_type_by_instance(instance), type == cVar6))
-    {
-    LAB_026d1009:
-      label = (uint8_t *)&instance->special_counter_type;
-      bVar4 = instance->special_counter_type;
-      goto LAB_026d1018;
-    }
-    if (instance->counters2 == '\0')
-    {
-      bVar4 = (unsigned char)instance->targets[0x12].player;
-      position = (uint8_t *)&instance->counters2;
-      goto LAB_026d1018;
-    }
-    if (instance->counters3 == '\0')
-    {
-      label = (uint8_t *)((int)&instance->targets[0x12].player + 1);
-      bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 1);
-      position = (uint8_t *)&instance->counters3;
-      goto LAB_026d1018;
-    }
-    if (instance->counters4 == '\0')
-    {
-      label = (uint8_t *)((int)&instance->targets[0x12].player + 2);
-      bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 2);
-      position = (uint8_t *)&instance->counters4;
-      goto LAB_026d1018;
-    }
-    if (instance->counters5 == '\0')
-    {
-      label = (uint8_t *)((int)&instance->targets[0x12].player + 3);
-      bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 3);
-      position = (uint8_t *)&instance->counters5;
-      goto LAB_026d1018;
-    }
-    if (uVar5 == '\0')
-      goto LAB_026d1009;
-    if (*(char *)((int)&instance->targets[0x12].card + 2) == -1)
-    {
-      position = (uint8_t *)&instance->targets[0x12].card;
-      label = (uint8_t *)((int)&instance->targets[0x12].card + 2);
-      goto LAB_026d1308;
-    }
-    if (*(char *)((int)&instance->targets[0x12].card + 3) == -1)
-    {
-      position = (uint8_t *)((int)&instance->targets[0x12].card + 1);
-      label = (uint8_t *)((int)&instance->targets[0x12].card + 3);
-      goto LAB_026d1308;
-    }
-  LAB_026d115d:
-    if (num != 0)
-      goto LAB_026d1340;
   }
-  iVar3 = counters_added;
-  iVar8 = counters_added_type;
+  if (num > 0 && hack_silent_counters < 1)
+    play_sound_effect(WAV_COUNTER);
+  saved_added = counters_added;
+  saved_type = counters_added_type;
   counters_added_type = type;
   counters_added = num;
   dispatch_event_with_attacker(t_player, t_card, EVENT_COUNTERS, player, card);
-  bVar2 = 0 < num;
-  counters_added_type = iVar8;
-  counters_added = iVar3;
-LAB_026d11b8:
-  iVar8 = counters_added;
-  if (((type == COUNTER_M1_M1) && (bVar2)) &&
-      (((uint8_t)enable_xtrigger_flags & ENABLE_XTRIGGER_M1_M1_COUNTERS) != ENABLE_XTRIGGER_0))
+  counters_added_type = saved_type;
+  counters_added = saved_added;
+  if (num > 0 && type == COUNTER_P1_P1)
   {
-    pcVar7 = "-1/-1 counters";
-    if (num < 2)
-    {
-      pcVar7 = "-1/-1 counter";
-    }
+    if (is_what(t_player, t_card, TYPE_PERMANENT))
+      set_trap_condition(t_player, TRAP_P1_P1_COUNTER_PLACED, 1);
+    saved_added = counters_added;
+    if (!((uint8_t)enable_xtrigger_flags & ENABLE_XTRIGGER_1_1_COUNTERS))
+      return;
     counters_added = num;
-    dispatch_xtrigger2(t_player, XTRIGGER_M1_M1_COUNTERS, pcVar7, 0, t_player, t_card);
+    dispatch_xtrigger2(t_player, XTRIGGER_1_1_COUNTERS,
+        num == 1 ? "+1/+1 counter" : "+1/+1 counters", 0, t_player, t_card);
+    counters_added = saved_added;
+    return;
   }
-  counters_added = iVar8;
-  return;
+  saved_added = counters_added;
+  if (num > 0 && type == COUNTER_M1_M1 &&
+      ((uint8_t)enable_xtrigger_flags & ENABLE_XTRIGGER_M1_M1_COUNTERS))
+  {
+    counters_added = num;
+    dispatch_xtrigger2(t_player, XTRIGGER_M1_M1_COUNTERS,
+        num == 1 ? "-1/-1 counter" : "-1/-1 counters", 0, t_player, t_card);
+  }
+  counters_added = saved_added;
 }
 
 /* ManalinkEh 2022: 0x26d4840; original functions/counters.c:1266. */
@@ -3908,11 +3686,11 @@ void add_counters(int player, int card, int t_player, int t_card, counter_t type
 /* ManalinkEh 2022: 0x26ceef0; original functions/counters.c:1630. */
 static void clear_all_counters(int t_player, int t_card)
 {
-  unsigned int uVar1;
+  unsigned int previous_status;
   card_instance_t *instance;
 
   instance = get_card_instance(t_player, t_card);
-  uVar1 = instance->regen_status;
+  previous_status = instance->regen_status;
   instance->special_counter_type = 0xff;
   instance->special_counters = '\0';
   instance->counters2 = '\0';
@@ -3925,116 +3703,83 @@ static void clear_all_counters(int t_player, int t_card)
   instance->targets[0x12].card = -0x10000;
   instance->counter_power = 0;
   instance->counter_toughness = 0;
-  instance->regen_status = uVar1 | 0x6000000;
+  instance->regen_status = previous_status | (KEYWORD_RECALC_POWER | KEYWORD_RECALC_TOUGHNESS);
   return;
 }
 
 /* ManalinkEh 2022: 0x26d48d0; original functions/counters.c:1304. */
 static void remove_counters_impl(int player, int card, int t_player, int t_card,
-                                                  counter_t type, int num)
+    counter_t type, int num)
 {
-  card_instance_t *instance;
-  int iVar2;
-  int32_t iVar3;
-  int iVar4;
-  int iStack_70;
+  card_instance_t *instance = get_card_instance(t_player, t_card);
   target_definition_t td;
   token_generation_t token;
-
-  instance = get_card_instance(t_player, t_card);
   if (instance->internal_card_id == activation_card)
   {
     t_player = instance->parent_controller;
     t_card = instance->parent_card;
   }
-  iStack_70 = count_counters(t_player, t_card, type);
+  int removed = count_counters(t_player, t_card, type);
   add_or_remove_counters_impl(player, card, t_player, t_card, type, -num);
-  if ((type == COUNTER_TIME) && (iVar2 = is_suspend_legacy(t_player, t_card), iVar2 != 0))
+  if (type != COUNTER_TIME || !is_suspend_legacy(t_player, t_card))
+    return;
+  if (num < removed)
+    removed = num;
+  int suspended_card = instance->targets[9].card;
+  if (suspended_card == CARD_ID_AEON_CHRONICLER)
   {
-    if (num < iStack_70)
+    draw_cards(t_player, removed);
+    suspended_card = instance->targets[9].card;
+  }
+  if (suspended_card == CARD_ID_BENALISH_COMMANDER)
+  {
+    default_token_definition(t_player, t_card, CARD_ID_SOLDIER, &token);
+    token.qty = (uint8_t)removed;
+    generate_token(&token);
+    suspended_card = instance->targets[9].card;
+  }
+  if (suspended_card == CARD_ID_DETRITIVORE)
+  {
+    default_target_definition(t_player, t_card, &td, TYPE_LAND);
+    td.required_subtype = SUBTYPE_BASIC;
+    td.special = TARGET_SPECIAL_ILLEGAL_SUBTYPE;
+    td.allow_cancel = 0;
+    for (int i = 0; i < removed; ++i)
     {
-      iStack_70 = num;
+      instance->number_of_targets = 0;
+      if (can_target(&td) && new_pick_target(&td, "Select target nonbasic land.", 0, 0x80))
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
     }
-    iVar3 = instance->targets[9].card;
-    if (iVar3 == 0x2221)
+    suspended_card = instance->targets[9].card;
+  }
+  if (suspended_card == CARD_ID_FUNGAL_BEHEMOTH)
+  {
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.preferred_controller = player;
+    for (int i = 0; i < removed; ++i)
     {
-      draw_cards(t_player, iStack_70);
-      iVar3 = instance->targets[9].card;
+      instance->number_of_targets = 0;
+      if (can_target(&td) && pick_target(&td, "TARGET_CREATURE"))
+        add_counters(t_player, t_card, instance->targets[0].player,
+            instance->targets[0].card, COUNTER_P1_P1, 1);
     }
-    if (iVar3 == 0x2228)
+    suspended_card = instance->targets[9].card;
+  }
+  if (suspended_card == CARD_ID_ROILING_HORROR)
+  {
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.zone = TARGET_ZONE_PLAYERS;
+    td.allow_cancel = 0;
+    for (int i = 0; i < removed; ++i)
     {
-      default_token_definition(t_player, t_card, 0x4986, &token);
-      token.qty = (uint8_t)iStack_70;
-      generate_token(&token);
-      iVar3 = instance->targets[9].card;
-    }
-    if (iVar3 == 0x223e)
-    {
-      default_target_definition(t_player, t_card, &td, 1);
-      td.required_subtype = 0x2000;
-      td.special = 0x1000;
-      td.allow_cancel = 0;
-      if (0 < iStack_70)
+      instance->number_of_targets = 0;
+      if (can_target(&td) && pick_target(&td, "TARGET_PLAYER"))
       {
-        iVar2 = 0;
-        do
-        {
-          instance->number_of_targets = '\0';
-          iVar4 = can_target(&td);
-          if ((iVar4 != 0) &&
-              (iVar4 = new_pick_target(&td, "Select target nonbasic land.", 0, 0x80), iVar4 != 0))
-          {
-            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-          }
-          iVar2 = iVar2 + 1;
-        } while (iStack_70 != iVar2);
-      }
-      iVar3 = instance->targets[9].card;
-    }
-    if (iVar3 == 0x224f)
-    {
-      default_target_definition(player, card, &td, 2);
-      td.preferred_controller = player;
-      if (0 < iStack_70)
-      {
-        iVar2 = 0;
-        do
-        {
-          instance->number_of_targets = '\0';
-          iVar4 = can_target(&td);
-          if ((iVar4 != 0) && (iVar4 = pick_target(&td, "TARGET_CREATURE"), iVar4 != 0))
-          {
-            add_counters(t_player, t_card, instance->targets[0].player,
-                                     instance->targets[0].card, COUNTER_P1_P1, 1);
-          }
-          iVar2 = iVar2 + 1;
-        } while (iStack_70 != iVar2);
-      }
-      iVar3 = instance->targets[9].card;
-    }
-    if (iVar3 == 0x2287)
-    {
-      iVar2 = 0;
-      default_target_definition(player, card, &td, 2);
-      td.zone = 0x1000;
-      td.allow_cancel = 0;
-      if (0 < iStack_70)
-      {
-        do
-        {
-          instance->number_of_targets = '\0';
-          iVar4 = can_target(&td);
-          if ((iVar4 != 0) && (iVar4 = pick_target(&td, "TARGET_PLAYER"), iVar4 != 0))
-          {
-            lose_life(instance->targets[0].player, 1);
-            gain_life(player, 1);
-          }
-          iVar2 = iVar2 + 1;
-        } while (iStack_70 != iVar2);
+        lose_life(instance->targets[0].player, 1);
+        gain_life(player, 1);
       }
     }
   }
-  return;
 }
 
 /* ManalinkEh 2022: 0x26d4c10; original functions/counters.c:1304. */
@@ -4067,300 +3812,73 @@ void quarry_hauler_helper(int player, int card, int t_player, int t_card);
 /* ManalinkEh 2022: 0x26d51e0; original functions/counters.c:2412. */
 void quarry_hauler_helper(int player, int card, int t_player, int t_card)
 {
-  char cVar1;
-  card_instance_t *instance;
-  uint32_t uVar3;
-  int iVar4;
-  int iVar5;
-  counter_t cVar6;
-  int iVar7;
-  uint32_t uVar8;
-  int iVar9;
-  unsigned int uVar10;
-  unsigned int uVar11;
-  uint32_t uVar12;
-  int *piVar13;
-  char (*pacVar14)[100];
-  unsigned char bVar15;
-  counter_t cVar16;
-  uint32_t uVar17;
-  char (*pacVar18)[100];
-  uint32_t uVar19;
-  char (*pacVar20)[100];
-  uint32_t uVar21;
-  char (*pacVar22)[100];
-  uint32_t uVar23;
-  char (*pacVar24)[100];
-  uint32_t uVar25;
-  uint32_t uVar26;
-  uint32_t uVar27;
-  uint32_t uVar28;
-  uint32_t uVar29;
-  uint32_t uVar30;
-  unsigned int uStack_3fc;
-  uint32_t uStack_3f8;
-  uint32_t uStack_3f4;
-  uint32_t uStack_3f0;
-  uint32_t uStack_3ec;
-  int iStack_3e8;
-  unsigned int uStack_3e4;
-  counter_t counter_types[9];
-  int choices[9];
-  char ctr_names[9][100];
-
-  bVar15 = 0;
-  cVar16 = t_player;
-  iVar4 = t_card;
-  instance = get_card_instance(t_player, t_card);
+  card_instance_t *instance = get_card_instance(t_player, t_card);
   if (instance->internal_card_id == activation_card)
-  {
-    iVar4 = instance->parent_card;
-    cVar16 = instance->parent_controller;
-    instance = get_card_instance(cVar16, iVar4);
-  }
-  uVar10 = 0;
-  if (instance->special_counters != '\0')
-  {
-    counter_types[0] = (counter_t)instance->special_counter_type;
-    uVar10 = (unsigned int)(counter_types[0] != COUNTER_invalid);
-  }
-  if (instance->counters2 != '\0')
-  {
-    cVar6 = (counter_t)(unsigned char)instance->targets[0x12].player;
-    counter_types[uVar10] = cVar6;
-    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);
-  }
-  if (instance->counters3 != '\0')
-  {
-    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 1);
-    counter_types[uVar10] = cVar6;
-    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);
-  }
-  if (instance->counters4 != '\0')
-  {
-    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 2);
-    counter_types[uVar10] = cVar6;
-    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);
-  }
-  if (instance->counters5 != '\0')
-  {
-    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 3);
-    counter_types[uVar10] = cVar6;
-    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);
-  }
-  if (instance->counters != '\0')
-  {
-    counter_types[uVar10] = COUNTER_P1_P1;
-    uVar10 = uVar10 + 1;
-  }
-  if (instance->counters_m1m1 != '\0')
-  {
-    counter_types[uVar10] = COUNTER_M1_M1;
-    uVar10 = uVar10 + 1;
-  }
-  cVar1 = *(char *)((int)&instance->targets[0x12].card + 1);
-  if (((char)instance->targets[0x12].card == '\0') ||
-      (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 2),
-       counter_types[uVar10] = cVar6, cVar6 == COUNTER_invalid))
-  {
-    if ((cVar1 == '\0') ||
-        (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),
-         counter_types[uVar10] = cVar6, cVar6 == COUNTER_invalid))
+    instance = get_card_instance(instance->parent_controller, instance->parent_card);
+  const uint8_t *t18 = (const uint8_t *)&instance->targets[18].player;
+  const uint8_t *overflow = (const uint8_t *)&instance->targets[18].card;
+  const uint8_t quantities[9] = {instance->special_counters, instance->counters2,
+      instance->counters3, instance->counters4, instance->counters5, instance->counters,
+      instance->counters_m1m1, overflow[0], overflow[1]};
+  const counter_t types[9] = {instance->special_counter_type, t18[0], t18[1],
+      t18[2], t18[3], COUNTER_P1_P1, COUNTER_M1_M1, overflow[2], overflow[3]};
+  counter_t counter_types[9];
+  int num_types = 0;
+  for (int slot = 0; slot < 9; ++slot)
+    if (quantities[slot] != 0)
     {
-      uVar11 = uVar10;
-      if (uVar10 == 0)
-      {
-        return;
-      }
+      counter_types[num_types] = types[slot];
+      if (types[slot] != COUNTER_invalid)
+        ++num_types;
     }
-    else
+  if (num_types == 0)
+    return;
+  int choices[9] = {0};
+  int to_choose = num_types;
+  int i;
+  char ctr_names[9][100];
+  for (i = 0; i < num_types; ++i)
+    get_counter_name_by_type(ctr_names[i], counter_types[i], 256);
+  while (to_choose > 0)
+  {
+    int choice1 = DIALOG(player, card, EVENT_RESOLVE_ACTIVATION,
+        DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL,
+        DLG_FULLCARD(t_player, t_card), DLG_NO_DISPLAY_FOR_AI,
+        ctr_names[0], num_types > 0 && choices[0] == 0, 1,
+        ctr_names[1], num_types > 1 && choices[1] == 0, 1,
+        ctr_names[2], num_types > 2 && choices[2] == 0, 1,
+        ctr_names[3], num_types > 3 && choices[3] == 0, 1,
+        ctr_names[4], num_types > 4 && choices[4] == 0, 1,
+        ctr_names[5], num_types > 5 && choices[5] == 0, 1,
+        ctr_names[6], num_types > 6 && choices[6] == 0, 1,
+        ctr_names[7], num_types > 7 && choices[7] == 0, 1,
+        ctr_names[8], num_types > 8 && choices[8] == 0, 1);
+    int priority[2] = {1, 1};
+    if (player == AI)
     {
-      uVar11 = uVar10 + 1;
+      // Native code reuses the name-loop index, then the priority-loop index.
+      // At index 9 its adjacent stack word is choices[0].  Shorter lists can
+      // still leave this native AI lookup uninitialized; retain that quirk.
+      counter_t priority_type = i == 9 ? (counter_t)choices[0] : counter_types[i];
+      int raw_pri[2] = {
+          raw_counter_value(AI, t_player, t_card, priority_type, 1),
+          raw_counter_value(AI, t_player, t_card, priority_type, 0)};
+      for (i = 0; i < 2; ++i)
+        priority[i] = raw_pri[i] < 0 ? raw_pri[i] / 3 + 3334 :
+            (raw_pri[i] == 0 ? 5775 : raw_pri[i] * 99 + 9999);
     }
+    int choice2 = DIALOG(player, card, EVENT_RESOLVE_ACTIVATION,
+        DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE, DLG_FULLCARD(t_player, t_card),
+        DLG_HEADER(ctr_names[choice1 - 1]), DLG_NO_DISPLAY_FOR_AI,
+        "Add", 1, priority[0], "Remove", 1, priority[1]);
+    choices[choice1 - 1] = choice2;
+    --to_choose;
   }
-  else
-  {
-    uVar11 = uVar10 + 1;
-    if ((cVar1 != '\0') &&
-        (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),
-         counter_types[uVar11] = cVar6, cVar6 != COUNTER_invalid))
-    {
-      uVar11 = uVar10 + 2;
-    }
-  }
-  iVar9 = 0;
-  piVar13 = choices;
-  for (iVar7 = 9; iVar7 != 0; iVar7 = iVar7 + -1)
-  {
-    *piVar13 = 0;
-    piVar13 = piVar13 + (unsigned int)bVar15 * -2 + 1;
-  }
-  pacVar14 = ctr_names;
-  do
-  {
-    iVar9 = iVar9 + 1;
-    get_counter_name_by_type(*pacVar14, cVar16, iVar4);
-    pacVar14 = pacVar14 + 1;
-  } while (iVar9 < (int)uVar11);
-  uStack_3fc = uVar11;
-  if (uVar11 == 0)
-  {
-    uStack_3fc = 1;
-  }
-
-  iStack_3e8 = 0;
-  uStack_3e4 = uVar11;
-  if (uVar11 < 9)
-    goto LAB_026d5692;
-LAB_026d53b8:
-  uVar10 = (unsigned int)(choices[8] == 0);
-LAB_026d53c5:
-  if (choices[7] != 0)
-    goto LAB_026d56a1;
-  uStack_3ec = 1;
-LAB_026d53dd:
-  if (choices[6] != 0)
-    goto LAB_026d56b8;
-  uStack_3f0 = 1;
-LAB_026d53f5:
-  if (choices[5] != 0)
-    goto LAB_026d56cf;
-  uStack_3f4 = 1;
-LAB_026d540d:
-  if (choices[4] != 0)
-    goto LAB_026d56e6;
-  uVar12 = 1;
-LAB_026d5420:
-  if (choices[3] != 0)
-    goto LAB_026d56f5;
-  uVar8 = 1;
-LAB_026d5433:
-  if (choices[2] != 0)
-    goto LAB_026d5704;
-  uStack_3f8 = 1;
-  do
-  {
-    uVar3 = 1;
-    if (choices[1] != 0)
-      goto LAB_026d571b;
-    while (true)
-    {
-      pacVar14 = ctr_names + 8;
-      pacVar24 = ctr_names + 7;
-      pacVar22 = ctr_names + 6;
-      pacVar20 = ctr_names + 5;
-      pacVar18 = ctr_names + 4;
-      uVar30 = 0;
-      uVar29 = 0;
-      uVar28 = 0;
-      uVar27 = 0;
-      uVar26 = 1;
-      uVar25 = 1;
-      uVar23 = 1;
-      uVar21 = 1;
-      uVar19 = 1;
-      uVar17 = 1;
-      iVar9 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, "\001\002", "\001\003",
-                          "\001\014", "\001\004", "\001\006", t_player, t_card, "\001\026",
-                          ctr_names, (unsigned int)(iStack_3e8 == 0), 1, ctr_names + 1, uVar3, 1,
-                          ctr_names + 2, uStack_3f8, 1, ctr_names + 3, uVar8, 1, pacVar18, uVar12,
-                          1, pacVar20, uStack_3f4, 1, pacVar22, uStack_3f0, 1, pacVar24, uStack_3ec,
-                          1, pacVar14, uVar10, 1, 0, 0, 0, 0);
-      iVar7 = 1;
-      iVar4 = 1;
-      if (player == 1)
-      {
-
-        cVar16 = counter_types[uStack_3fc];
-        iVar4 = raw_counter_value(1, t_player, t_card, cVar16, 1);
-        iVar5 = raw_counter_value(1, t_player, t_card, cVar16, 0);
-        if (iVar4 < 0)
-        {
-          iVar7 = iVar4 / 3 + 0xd06;
-        }
-        else if (iVar4 < 1)
-        {
-          iVar7 = 0x168f;
-        }
-        else
-        {
-          iVar7 = iVar4 * 99 + 9999;
-        }
-        if (iVar5 < 0)
-        {
-          iVar4 = iVar5 / 3 + 0xd06;
-        }
-        else
-        {
-          iVar4 = 0x168f;
-          if (0 < iVar5)
-          {
-            iVar4 = iVar5 * 99 + 9999;
-          }
-        }
-        uStack_3fc = 2;
-      }
-      iVar4 =
-          dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, "\001\002", "\001\003", "\001\014",
-                      "\001\006", t_player, t_card, "\001\011", ctr_names + iVar9 + -1, "\001\026",
-                      "Add", 1, iVar7, "Remove", 1, iVar4, 0, 0, 0, 0, uVar17, pacVar18, uVar12,
-                      uVar19, pacVar20, uStack_3f4, uVar21, pacVar22, uStack_3f0, uVar23, pacVar24,
-                      uStack_3ec, uVar25, pacVar14, uVar10, uVar26, uVar27, uVar28, uVar29, uVar30);
-      choices[iVar9 + -1] = iVar4;
-      uStack_3e4 = uStack_3e4 - 1;
-      if ((int)uStack_3e4 < 1)
-      {
-        iVar4 = 0;
-        do
-        {
-          if (choices[iVar4] == 1)
-          {
-            add_counters(player, card, t_player, t_card, counter_types[iVar4], 1);
-          }
-          else if (choices[iVar4] == 2)
-          {
-            remove_counters_impl(player, card, t_player, t_card,
-                                                  counter_types[iVar4], 1);
-          }
-          iVar4 = iVar4 + 1;
-        } while (iVar4 < (int)uVar11);
-        return;
-      }
-      iStack_3e8 = choices[0];
-      if (8 < uVar11)
-        goto LAB_026d53b8;
-    LAB_026d5692:
-      uVar10 = 0;
-      if (7 < uVar11)
-        goto LAB_026d53c5;
-    LAB_026d56a1:
-      uStack_3ec = 0;
-      if (6 < uVar11)
-        goto LAB_026d53dd;
-    LAB_026d56b8:
-      uStack_3f0 = 0;
-      if (5 < uVar11)
-        goto LAB_026d53f5;
-    LAB_026d56cf:
-      uStack_3f4 = 0;
-      if (4 < uVar11)
-        goto LAB_026d540d;
-    LAB_026d56e6:
-      uVar12 = 0;
-      if (3 < uVar11)
-        goto LAB_026d5420;
-    LAB_026d56f5:
-      uVar8 = 0;
-      if (2 < uVar11)
-        goto LAB_026d5433;
-    LAB_026d5704:
-      uStack_3f8 = 0;
-      if (1 < uVar11)
-        break;
-    LAB_026d571b:
-      uVar3 = 0;
-    }
-  } while (true);
+  for (i = 0; i < num_types; ++i)
+    if (choices[i] == 1)
+      add_counters(player, card, t_player, t_card, counter_types[i], 1);
+    else if (choices[i] == 2)
+      remove_counters_impl(player, card, t_player, t_card, counter_types[i], 1);
 }
 
 void copy_counters(int player, int card, int t_player, int t_card, int src_player,
@@ -4369,157 +3887,24 @@ void copy_counters(int player, int card, int t_player, int t_card, int src_playe
 
 /* ManalinkEh 2022: 0x26d4ca0; original functions/counters.c:1385. */
 void copy_counters(int player, int card, int t_player, int t_card, int src_player,
-                               int src_card, int raw)
+    int src_card, int raw)
 {
-  typedef struct
+  card_instance_t *instance = get_card_instance(src_player, src_card);
+  if (instance->internal_card_id == activation_card)
+    instance = get_card_instance(instance->parent_controller, instance->parent_card);
+  card_instance_t *target = get_card_instance(t_player, t_card);
+  if (target->internal_card_id == activation_card)
   {
-    counter_t typ;
-    int num;
-  } counter_copy_entry;
-
-  unsigned char bVar1;
-  card_instance_t *pcVar2;
-  card_instance_t *pcVar3;
-  counter_t cVar4;
-  int iVar5;
-  counter_copy_entry *paVar6;
-  counter_copy_entry *paVar7;
-  int iVar8;
-  counter_copy_entry counters[9];
-
-  pcVar2 = get_card_instance(src_player, src_card);
-  if (pcVar2->internal_card_id == activation_card)
-  {
-    pcVar2 = get_card_instance(pcVar2->parent_controller, pcVar2->parent_card);
+    t_player = target->parent_controller;
+    t_card = target->parent_card;
   }
-  pcVar3 = get_card_instance(t_player, t_card);
-  if (pcVar3->internal_card_id == activation_card)
-  {
-    t_player = pcVar3->parent_controller;
-    t_card = pcVar3->parent_card;
-  }
-  if ((pcVar2->special_counters == 0) ||
-      (counters[0].typ = (unsigned int)pcVar2->special_counter_type,
-       pcVar2->special_counter_type == COUNTER_invalid))
-  {
-    bVar1 = pcVar2->counters2;
-    iVar8 = 0;
-    if (bVar1 != 0)
-      goto LAB_026d4e85;
-  }
-  else
-  {
-    iVar8 = 1;
-    counters[0].num = (unsigned int)pcVar2->special_counters;
-    bVar1 = pcVar2->counters2;
-    if (bVar1 == 0)
-    {
-      iVar8 = 1;
-    }
+  counter_snapshot_t counters[9];
+  int count = snapshot_counters(instance, counters);
+  for (int i = 0; i < count; ++i)
+    if (raw)
+      add_or_remove_counters_impl(player, card, t_player, t_card, counters[i].type, counters[i].num);
     else
-    {
-    LAB_026d4e85:
-      cVar4 = (counter_t)(unsigned char)pcVar2->targets[0x12].player;
-      counters[iVar8].typ = cVar4;
-      if (cVar4 != COUNTER_invalid)
-      {
-        counters[iVar8].num = (unsigned int)bVar1;
-        iVar8 = iVar8 + 1;
-      }
-    }
-  }
-  bVar1 = pcVar2->counters3;
-  if ((bVar1 != 0) &&
-      (cVar4 = (counter_t) * (unsigned char *)((int)&pcVar2->targets[0x12].player + 1),
-       counters[iVar8].typ = cVar4, cVar4 != COUNTER_invalid))
-  {
-    counters[iVar8].num = (unsigned int)bVar1;
-    iVar8 = iVar8 + 1;
-  }
-  bVar1 = pcVar2->counters4;
-  if ((bVar1 != 0) &&
-      (cVar4 = (counter_t) * (unsigned char *)((int)&pcVar2->targets[0x12].player + 2),
-       counters[iVar8].typ = cVar4, cVar4 != COUNTER_invalid))
-  {
-    counters[iVar8].num = (unsigned int)bVar1;
-    iVar8 = iVar8 + 1;
-  }
-  bVar1 = pcVar2->counters5;
-  if ((bVar1 != 0) &&
-      (cVar4 = (counter_t) * (unsigned char *)((int)&pcVar2->targets[0x12].player + 3),
-       counters[iVar8].typ = cVar4, cVar4 != COUNTER_invalid))
-  {
-    counters[iVar8].num = (unsigned int)bVar1;
-    iVar8 = iVar8 + 1;
-  }
-  bVar1 = pcVar2->counters;
-  if (bVar1 != 0)
-  {
-    counters[iVar8].typ = COUNTER_P1_P1;
-    counters[iVar8].num = (unsigned int)bVar1;
-    iVar8 = iVar8 + 1;
-  }
-  bVar1 = pcVar2->counters_m1m1;
-  if (bVar1 != 0)
-  {
-    counters[iVar8].typ = COUNTER_M1_M1;
-    counters[iVar8].num = (unsigned int)bVar1;
-    iVar8 = iVar8 + 1;
-  }
-  bVar1 = (unsigned char)pcVar2->targets[0x12].card;
-  if ((bVar1 != 0) &&
-      (cVar4 = (counter_t) * (unsigned char *)((int)&pcVar2->targets[0x12].card + 2),
-       counters[iVar8].typ = cVar4, cVar4 != COUNTER_invalid))
-  {
-    counters[iVar8].num = (unsigned int)bVar1;
-    iVar8 = iVar8 + 1;
-  }
-  bVar1 = *(unsigned char *)((int)&pcVar2->targets[0x12].card + 1);
-  if ((bVar1 == 0) ||
-      (cVar4 = (counter_t) * (unsigned char *)((int)&pcVar2->targets[0x12].card + 3),
-       counters[iVar8].typ = cVar4, cVar4 == COUNTER_invalid))
-  {
-    if (raw == 0)
-    {
-      if (iVar8 == 0)
-      {
-        return;
-      }
-      goto LAB_026d4ebb;
-    }
-    if (iVar8 == 0)
-    {
-      return;
-    }
-  }
-  else
-  {
-    counters[iVar8].num = (unsigned int)bVar1;
-    iVar8 = iVar8 + 1;
-    if (raw == 0)
-    {
-    LAB_026d4ebb:
-      paVar6 = counters;
-      do
-      {
-        paVar7 = paVar6 + 1;
-        add_counters(player, card, t_player, t_card, paVar6->typ, paVar6->num);
-        paVar6 = paVar7;
-      } while (paVar7 != counters + iVar8);
-      return;
-    }
-  }
-  iVar5 = 0;
-  do
-  {
-    if (counters[iVar5].num != 0)
-    {
-      add_or_remove_counters_impl(player, card, t_player, t_card, counters[iVar5].typ,
-                                              counters[iVar5].num);
-    }
-    iVar5 = iVar5 + 1;
-  } while (iVar5 < iVar8);
-  return;
+      add_counters(player, card, t_player, t_card, counters[i].type, counters[i].num);
 }
 
 /* ManalinkEh 2022: 0x26d5970; original functions/counters.c:1281. */
@@ -4544,83 +3929,57 @@ void add_counters_predoubled(int player, int card, int t_player, int t_card,
 
 /* ManalinkEh 2022: 0x26d5a00; original functions/counters.c:1437. */
 void move_counters(int player, int card, int t_player, int t_card, int src_player,
-                               int src_card, counter_t counter_type, int number)
+    int src_card, counter_t counter_type, int number)
 {
-  uint8_t uVar1;
-  int result;
-  card_instance_t *instance;
-  char cStack_14;
-  if ((t_card != src_card) || (t_player != src_player))
+  if ((t_player == src_player && t_card == src_card) ||
+      !can_have_counters_placed_on_it(t_player, t_card))
+    return;
+  if ((uint8_t)counter_type == COUNTER_invalid)
   {
-    result = can_have_counters_placed_on_it(t_player, t_card);
-    if (result != 0)
+    if (check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST))
     {
-      cStack_14 = (char)counter_type;
-      if (cStack_14 == -1)
-      {
-        result = check_battlefield_for_id(t_player, 0x2d73);
-        if (result != 0)
-        {
-          instance = get_card_instance(src_player, src_card);
-          uVar1 = instance->counters_m1m1;
-          instance->counters_m1m1 = '\0';
-          hack_silent_counters = hack_silent_counters + 1;
-          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
-          clear_all_counters(src_player, src_card);
-          hack_silent_counters = hack_silent_counters + -1;
-          instance->counters_m1m1 = uVar1;
-        }
-        result = check_battlefield_for_id(1 - t_player, 0x4f3c);
-        if (result == 0)
-        {
-          hack_silent_counters = hack_silent_counters + 1;
-          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
-          clear_all_counters(src_player, src_card);
-          hack_silent_counters = hack_silent_counters + -1;
-        }
-        else
-        {
-          result = count_counters(src_player, src_card, COUNTER_P1_P1);
-          remove_counters_impl(player, card, src_player, src_card, COUNTER_P1_P1,
-                                                0xff);
-          hack_silent_counters = hack_silent_counters + 1;
-          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
-          clear_all_counters(src_player, src_card);
-          add_counters(player, card, src_player, src_card, COUNTER_P1_P1, result);
-          hack_silent_counters = hack_silent_counters + -1;
-        }
-      }
-      else
-      {
-        result = check_battlefield_for_id(t_player, 0x2d73);
-        if ((counter_type != COUNTER_M1_M1) || (result == 0))
-        {
-          result = check_battlefield_for_id(1 - t_player, 0x4f3c);
-          if ((counter_type != COUNTER_P1_P1) || (result == 0))
-          {
-            if (number < 0)
-            {
-              number = 0xff;
-            }
-            result = count_counters(src_player, src_card, counter_type);
-            if (result < number)
-            {
-              number = result;
-            }
-            if (0 < number)
-            {
-              remove_counters_impl(player, card, src_player, src_card,
-                                                    counter_type, number);
-            }
-            add_counters_predoubled(player, card, t_player, t_card, counter_type,
-                                                number);
-            return;
-          }
-        }
-      }
+      card_instance_t *instance = get_card_instance(src_player, src_card);
+      uint8_t minus_counters = instance->counters_m1m1;
+      instance->counters_m1m1 = 0;
+      ++hack_silent_counters;
+      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
+      clear_all_counters(src_player, src_card);
+      --hack_silent_counters;
+      instance->counters_m1m1 = minus_counters;
     }
+    if (!check_battlefield_for_id(1 - t_player, CARD_ID_BLIGHTBEETLE))
+    {
+      ++hack_silent_counters;
+      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
+      clear_all_counters(src_player, src_card);
+      --hack_silent_counters;
+    }
+    else
+    {
+      int plus_counters = count_counters(src_player, src_card, COUNTER_P1_P1);
+      remove_counters_impl(player, card, src_player, src_card, COUNTER_P1_P1, 255);
+      ++hack_silent_counters;
+      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
+      clear_all_counters(src_player, src_card);
+      add_counters(player, card, src_player, src_card, COUNTER_P1_P1, plus_counters);
+      --hack_silent_counters;
+    }
+    return;
   }
-  return;
+  int melira = check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST);
+  if (counter_type == COUNTER_M1_M1 && melira)
+    return;
+  int blightbeetle = check_battlefield_for_id(1 - t_player, CARD_ID_BLIGHTBEETLE);
+  if (counter_type == COUNTER_P1_P1 && blightbeetle)
+    return;
+  if (number < 0)
+    number = 255;
+  int available = count_counters(src_player, src_card, counter_type);
+  if (available < number)
+    number = available;
+  if (number > 0)
+    remove_counters_impl(player, card, src_player, src_card, counter_type, number);
+  add_counters_predoubled(player, card, t_player, t_card, counter_type, number);
 }
 
 
@@ -4628,113 +3987,25 @@ void move_counters(int player, int card, int t_player, int t_card, int src_playe
 /* ManalinkEh 2022: 0x26d4f30; original functions/counters.c:1506. */
 void increment_all_counters(int src_player, int src_card, int t_player, int t_card)
 {
-  counter_t *pcVar1;
-  char cVar2;
-  card_instance_t *instance;
-  counter_t cVar4;
-  int result;
-  unsigned int uStack_38;
-  counter_t counter_types[9];
-  if ((1 < (unsigned int)t_player) || (0x96 < t_card))
-  {
+  if ((unsigned int)t_player > 1 || t_card > 150)
     return;
-  }
   if (t_card < 0)
   {
-    if (ENERGY_COUNTERS(t_player) != '\0')
-    {
+    if (ENERGY_COUNTERS(t_player))
       add_energy(t_player, 1);
-    }
-    if (POISON_COUNTERS(t_player) != '\0')
-    {
+    if (POISON_COUNTERS(t_player))
       poison(t_player, 1);
-    }
-    if (EXPERIENCE_COUNTERS(t_player) == '\0')
-    {
-      return;
-    }
-    add_experience(t_player, 1);
+    if (EXPERIENCE_COUNTERS(t_player))
+      add_experience(t_player, 1);
     return;
   }
-  instance = get_card_instance(t_player, t_card);
+  card_instance_t *instance = get_card_instance(t_player, t_card);
   if (instance->internal_card_id == activation_card)
-  {
     instance = get_card_instance(instance->parent_controller, instance->parent_card);
-  }
-  uStack_38 = 0;
-  if (instance->special_counters != '\0')
-  {
-    counter_types[0] = (unsigned int)instance->special_counter_type;
-    uStack_38 = (unsigned int)(instance->special_counter_type != COUNTER_invalid);
-  }
-  if (instance->counters2 != '\0')
-  {
-    cVar4 = (counter_t)(unsigned char)instance->targets[0x12].player;
-    counter_types[uStack_38] = cVar4;
-    uStack_38 = uStack_38 + (cVar4 != COUNTER_invalid);
-  }
-  if (instance->counters3 != '\0')
-  {
-    cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 1);
-    counter_types[uStack_38] = cVar4;
-    uStack_38 = uStack_38 + (cVar4 != COUNTER_invalid);
-  }
-  if (instance->counters4 != '\0')
-  {
-    cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 2);
-    counter_types[uStack_38] = cVar4;
-    uStack_38 = uStack_38 + (cVar4 != COUNTER_invalid);
-  }
-  if (instance->counters5 != '\0')
-  {
-    cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 3);
-    counter_types[uStack_38] = cVar4;
-    uStack_38 = uStack_38 + (cVar4 != COUNTER_invalid);
-  }
-  if (instance->counters != '\0')
-  {
-    counter_types[uStack_38] = COUNTER_P1_P1;
-    uStack_38 = uStack_38 + 1;
-  }
-  if (instance->counters_m1m1 != '\0')
-  {
-    counter_types[uStack_38] = COUNTER_M1_M1;
-    uStack_38 = uStack_38 + 1;
-  }
-  cVar2 = *(char *)((int)&instance->targets[0x12].card + 1);
-  if (((char)instance->targets[0x12].card == '\0') ||
-      (cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 2),
-       counter_types[uStack_38] = cVar4, cVar4 == COUNTER_invalid))
-  {
-    if ((cVar2 == '\0') ||
-        (cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),
-         counter_types[uStack_38] = cVar4, cVar4 == COUNTER_invalid))
-    {
-      if (uStack_38 == 0)
-      {
-        return;
-      }
-      goto LAB_026d50de;
-    }
-  }
-  else
-  {
-    uStack_38 = uStack_38 + 1;
-    if ((cVar2 == '\0') ||
-        (cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),
-         counter_types[uStack_38] = cVar4, cVar4 == COUNTER_invalid))
-      goto LAB_026d50de;
-  }
-  uStack_38 = uStack_38 + 1;
-LAB_026d50de:
-  result = 0;
-  do
-  {
-    pcVar1 = counter_types + result;
-    result = result + 1;
-    add_counters(src_player, src_card, t_player, t_card, *pcVar1, 1);
-  } while (result < (int)uStack_38);
-  return;
+  counter_snapshot_t counters[9];
+  int count = snapshot_counters(instance, counters);
+  for (int i = 0; i < count; ++i)
+    add_counters(src_player, src_card, t_player, t_card, counters[i].type, 1);
 }
 
 #endif

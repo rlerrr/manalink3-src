@@ -968,8 +968,7 @@ int card_hellion_crucible(int player, int card, event_t event)
     {
       instance = get_card_instance(player, card);
       instance->info_slot = 0;
-      iVar1 = paying_mana();
-      if (iVar1 == 0)
+      if (paying_mana() == 0)
       {
         iVar1 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 2, 0, 0, 0, 1, 0, 0,
                                           NULL, NULL);
@@ -997,8 +996,7 @@ int card_hellion_crucible(int player, int card, event_t event)
             return 0;
           }
           add_state(player, card, 0x10);
-          iVar1 = charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 1, 0);
-          if (iVar1 == 0)
+          if (charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 1, 0) == 0)
           {
             remove_state(player, card, 0x10);
           }
@@ -1047,8 +1045,7 @@ int card_hellion_crucible(int player, int card, event_t event)
       return 0;
     }
   }
-  iVar1 = mana_producer(player, card, event);
-  return iVar1;
+  return mana_producer(player, card, event);
 }
 
 int card_hydrosurge(int player, int card, event_t event){

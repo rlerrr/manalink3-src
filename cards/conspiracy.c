@@ -1486,22 +1486,20 @@ int card_tyrants_choice(int player, int card, event_t event){
 
 int card_boldwyr_intimidator(int player, int card, event_t event)
 {
+  int choice;
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
   target_definition_t *ptStack_bc;
   target_definition_t td;
   target_definition_t td1;
 
   if (event == EVENT_BLOCK_LEGALITY)
   {
-    iVar2 = has_subtype(attacking_card_controller, attacking_card, SUBTYPE_WARRIOR);
-    if (iVar2 == 0)
+    if (has_subtype(attacking_card_controller, attacking_card, SUBTYPE_WARRIOR) == 0)
     {
       return 0;
     }
-    iVar2 = has_subtype(affected_card_controller, affected_card, SUBTYPE_COWARD);
-    if (iVar2 == 0)
+    if (has_subtype(affected_card_controller, affected_card, SUBTYPE_COWARD) == 0)
     {
       return 0;
     }
@@ -1547,59 +1545,52 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
   if (event == EVENT_ACTIVATE)
   {
     instance->number_of_targets = '\0';
-    iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 0, 0, 0, 0, 1, 0, 0, &td,
-                                      "TARGET_CREATURE");
-    if (iVar2 == 0)
+    if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 0, 0, 0, 0, 1, 0, 0, &td,
+                                      "TARGET_CREATURE") == 0)
     {
-      iVar2 = charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 1, 0);
-      if (iVar2 == 0)
+      if (charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 1, 0) == 0)
       {
         return 0;
       }
     LAB_0211c680:
-      iVar2 = pick_target(ptStack_bc, "TARGET_CREATURE");
-      if (iVar2 == 0)
+      if (pick_target(ptStack_bc, "TARGET_CREATURE") == 0)
       {
         return 0;
       }
       instance->info_slot = 0x43;
       return 0;
     }
-    iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 2, 0, 0, 0, 1, 0, 0,
-                                      ptStack_bc, "TARGET_CREATURE");
-    if (iVar2 == 0)
+    if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 2, 0, 0, 0, 1, 0, 0,
+                                      ptStack_bc, "TARGET_CREATURE") == 0)
     {
-      iVar2 = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 1, 0);
-      if (iVar2 == 0)
+      if (charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 1, 0) == 0)
       {
         return 0;
       }
     }
     else
     {
-      iVar2 = do_dialog(player, player, card, -1, -1,
+      choice = do_dialog(player, player, card, -1, -1,
                         " Turn target in Coward\n Turn target in Warrior\n Cancel", 1);
-      if (iVar2 == 2)
+      if (choice == 2)
       {
         spell_fizzled = 1;
         return 0;
       }
-      iVar3 = charge_mana_for_activated_ability(player, card, iVar2 * 2, 0, 0, 0, 1, 0);
-      if (iVar3 == 0)
+      if (charge_mana_for_activated_ability(player, card, choice * 2, 0, 0, 0, 1, 0) == 0)
       {
         return 0;
       }
-      if (iVar2 != 0)
+      if (choice != 0)
       {
-        if (iVar2 != 1)
+        if (choice != 1)
         {
           return 0;
         }
         goto LAB_0211c680;
       }
     }
-    iVar2 = pick_target(&td, "TARGET_CREATURE");
-    if (iVar2 == 0)
+    if (pick_target(&td, "TARGET_CREATURE") == 0)
     {
       return 0;
     }
@@ -1613,8 +1604,7 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
   iVar2 = instance->info_slot;
   if (iVar2 == 0x42)
   {
-    iVar2 = valid_target(&td);
-    if (iVar2 != 0)
+    if (valid_target(&td) != 0)
       goto LAB_0211c217;
     iVar2 = instance->info_slot;
   }
@@ -1622,8 +1612,7 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
   {
     return 0;
   }
-  iVar2 = valid_target(ptStack_bc);
-  if (iVar2 == 0)
+  if (valid_target(ptStack_bc) == 0)
   {
     return 0;
   }
@@ -2608,11 +2597,11 @@ int marchesa_effect(int player, int card, event_t event)
 
 int card_marchesa_the_black_rose(int player, int card, event_t event)
 {
+  card_instance_t *instance;
+  int c;
   card_instance_t *pcVar1;
   card_instance_t *pcVar2;
-  int iVar3;
   int attacker_index;
-  int iVar5;
   check_legend_rule(player, card, event);
   if (event != EVENT_STATIC_EFFECTS)
   {
@@ -2620,20 +2609,20 @@ int card_marchesa_the_black_rose(int player, int card, event_t event)
     dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
     if (event == EVENT_DAT_ABILITY)
     {
-      pcVar1 = get_card_instance(player, card);
-      attacker_index = pcVar1->info_slot - 1;
+      instance = get_card_instance(player, card);
+      attacker_index = instance->info_slot - 1;
       if (-1 < (int)attacker_index)
       {
         do
         {
           pcVar2 = in_play(current_turn,
-                           (unsigned int)(unsigned char)((unsigned char *)&pcVar1->targets[2]
+                           (unsigned int)(unsigned char)((unsigned char *)&instance->targets[2]
                                                              .player)[attacker_index]);
           if ((pcVar2 != NULL) && (life[player] <= life[1 - player]))
           {
             add_counters(
                 player, card, current_turn,
-                (unsigned int)(unsigned char)((unsigned char *)&pcVar1->targets[2]
+                (unsigned int)(unsigned char)((unsigned char *)&instance->targets[2]
                                                   .player)[attacker_index],
                 COUNTER_P1_P1, 1);
           }
@@ -2647,21 +2636,20 @@ int card_marchesa_the_black_rose(int player, int card, event_t event)
   {
     if (0 < active_cards_count[player])
     {
-      iVar5 = 0;
+      c = 0;
       do
       {
-        pcVar1 = in_play(player, iVar5);
-        if (((pcVar1 != NULL) && (iVar3 = is_what(player, iVar5, 0x80), iVar3 != 0)) &&
-            (pcVar1 = get_card_instance(player, iVar5), pcVar1->info_slot_fn == marchesa_effect))
+        pcVar1 = in_play(player, c);
+        if (((pcVar1 != NULL) && (is_what(player, c, 0x80) != 0)) &&
+            (pcVar1 = get_card_instance(player, c), pcVar1->info_slot_fn == marchesa_effect))
           goto LAB_0211f000;
-        iVar5 = iVar5 + 1;
-      } while (iVar5 < active_cards_count[player]);
+        c = c + 1;
+      } while (c < active_cards_count[player]);
     }
-    iVar5 = create_targetted_legacy_effect(player, card, marchesa_effect, player, card);
-    pcVar1 = get_card_instance(player, iVar5);
-    pcVar1->number_of_targets = '\0';
-    pcVar1->targets[0].card = -1;
-    pcVar1->targets[0].player = -1;
+    instance = get_card_instance(player, create_targetted_legacy_effect(player, card, marchesa_effect, player, card));
+    instance->number_of_targets = '\0';
+    instance->targets[0].card = -1;
+    instance->targets[0].player = -1;
   }
 LAB_0211f000:
   store_attackers(player, card, EVENT_STATIC_EFFECTS, DAT_TRACK | DAT_ATTACKS_PLAYER, player, -1,

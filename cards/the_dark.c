@@ -233,14 +233,13 @@ Artifact
 void change_lands_into_new_land_type(int player, int card, event_t event, int orig_basic_land_type,
                                      int orig_basic_land_type_flag, int basic_land_type_to_become)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   int iVar2;
   card_instance_t *pcVar3;
   unsigned int uVar4;
-  int iVar5;
   int iVar6;
 
-  pcVar1 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   if (((event == EVENT_CHANGE_TYPE) &&
        (iVar2 = is_what(affected_card_controller, affected_card, 1), iVar2 != 0)) &&
       (pcVar3 = in_play(player, card), pcVar3 != NULL))
@@ -297,7 +296,7 @@ void change_lands_into_new_land_type(int player, int card, event_t event, int or
         }
         do
         {
-          uVar4 = pcVar1->targets[iVar6].player;
+          uVar4 = instance->targets[iVar6].player;
           if (uVar4 == 0xffffffff)
           {
           joined_r0x0242b20f:
@@ -310,13 +309,12 @@ void change_lands_into_new_land_type(int player, int card, event_t event, int or
             {
               return;
             }
-            pcVar1->targets[iVar6].player = event_result;
-            iVar5 = check_status(affected_card_controller, affected_card, 0x40);
-            if (iVar5 != 0)
+            instance->targets[iVar6].player = event_result;
+            if (check_status(affected_card_controller, affected_card, 0x40) != 0)
             {
-              pcVar1->targets[iVar6].player = pcVar1->targets[iVar6].player | 0x80000000;
+              instance->targets[iVar6].player = instance->targets[iVar6].player | 0x80000000;
             }
-            pcVar1->targets[iVar6].card = iVar2;
+            instance->targets[iVar6].card = iVar2;
           LAB_0242b275:
             event_result = iVar2;
             pcVar3->dummy3 = iVar2;
@@ -329,7 +327,7 @@ void change_lands_into_new_land_type(int player, int card, event_t event, int or
           }
           if (event_result == uVar4)
           {
-            iVar2 = pcVar1->targets[iVar6].card;
+            iVar2 = instance->targets[iVar6].card;
             if (iVar2 != -1)
               goto LAB_0242b275;
             goto joined_r0x0242b20f;
@@ -1321,9 +1319,9 @@ Artifact
 
 int card_frankensteins_monster(int player, int card, event_t event)
 {
+  int i;
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
   int iVar4;
   counter_t type;
   test_definition_t this_test;
@@ -1363,8 +1361,7 @@ int card_frankensteins_monster(int player, int card, event_t event)
         iVar2 = count_graveyard_by_type(player, 2);
         while (true)
         {
-          iVar3 = has_mana(player, 0, iVar2 + iVar4);
-          if (iVar3 != 0)
+          if (has_mana(player, 0, iVar2 + iVar4) != 0)
             break;
           iVar2 = iVar2 + -1;
         }
@@ -1383,7 +1380,7 @@ int card_frankensteins_monster(int player, int card, event_t event)
     new_default_test_definition(&this_test, 2, "Select a creature card.");
     if (0 < instance->info_slot)
     {
-      iVar4 = 0;
+      i = 0;
       do
       {
         iVar2 = new_global_tutor(player, player, 2, 6, 0, 3, &this_test);
@@ -1391,7 +1388,7 @@ int card_frankensteins_monster(int player, int card, event_t event)
         {
           if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
           {
-            if (iVar4 != 0)
+            if (i != 0)
             {
               iVar2 = recorded_rand(player, 3);
               goto LAB_0242e47d;
@@ -1416,8 +1413,8 @@ int card_frankensteins_monster(int player, int card, event_t event)
           }
           add_counters(player, card, player, card, type, 1);
         }
-        iVar4 = iVar4 + 1;
-      } while (iVar4 < instance->info_slot);
+        i = i + 1;
+      } while (i < instance->info_slot);
     }
     remove_state(player, card, 0x800000);
     return 0;
@@ -2432,8 +2429,7 @@ int card_nameless_race(int player, int card, event_t event)
   else if (event == EVENT_RESOLVE_SPELL)
   {
     add_state(player, card, 0x800000);
-    iVar1 = can_pay_life(player, 1);
-    if (iVar1 != 0)
+    if (can_pay_life(player, 1) != 0)
     {
       default_test_definition(&this_test, 0x47);
       this_test.type_flag = 3;
@@ -2489,9 +2485,8 @@ int card_necropolis(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0,
-                                        NULL, NULL);
-      if (iVar2 == 0)
+      if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0,
+                                        NULL, NULL) == 0)
       {
         return 0;
       }
@@ -4144,6 +4139,7 @@ Tap X target creatures. */
 
 int card_worms_of_the_earth(int player, int card, event_t event)
 {
+  int choice;
   card_instance_t *instance;
   int iVar2;
   int iVar3;
@@ -4154,19 +4150,18 @@ int card_worms_of_the_earth(int player, int card, event_t event)
     iVar2 = life[current_turn];
     iVar3 = count_subtype(current_turn, 1, -1);
     iVar4 = count_subtype(current_turn, 1, -1);
-    iVar2 = dialog_impl(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, "\001\002", "\001\014",
+    choice = dialog_impl(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, "\001\002", "\001\014",
                         "\001\010", current_turn, "Sac two lands", iVar4, iVar3 * 5,
                         "Take 5 damage", 1, iVar2 * 2, 0, 0, 0, 0);
-    if (iVar2 == 1)
+    if (choice == 1)
     {
-      iVar2 = sacrifice(player, card, current_turn, 0, 1, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-      if (iVar2 != 0)
+      if (sacrifice(player, card, current_turn, 0, 1, 0, 0, 0, 0, 0, 0, 0, -1, 0) != 0)
       {
         impose_sacrifice(player, card, current_turn, 1, 1, 0, 0, 0, 0, 0, 0, 0, -1, 0);
         kill_card(player, card, KILL_SACRIFICE);
       }
     }
-    else if (iVar2 == 2)
+    else if (choice == 2)
     {
       damage_player(current_turn, 5, player, card);
       kill_card(player, card, KILL_SACRIFICE);
@@ -4175,7 +4170,7 @@ int card_worms_of_the_earth(int player, int card, event_t event)
     if (instance == NULL)
     {
       leaves_play(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, 0, 0);
-      goto LAB_024367b4;
+      return global_enchantment(player, card, event);
     }
   LAB_02436756:
     player_bits[player] = player_bits[player] | 8;
@@ -4205,9 +4200,7 @@ int card_worms_of_the_earth(int player, int card, event_t event)
           player_bits[(1 - player)] & 0xfffffff7;
     }
   }
-LAB_024367b4:
-  iVar2 = global_enchantment(player, card, event);
-  return iVar2;
+  return global_enchantment(player, card, event);
 }
 
 int card_wormwood_treefolk(int player, int card, event_t event){
@@ -4291,6 +4284,7 @@ int card_goblins_of_the_flarg(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2429bd0; original cards/the_dark.c:861. */
 int deep_water_legacy(int player, int card, event_t event)
 {
+  int c;
   int iVar1;
   int iVar2;
   card_instance_t *instance;
@@ -4314,24 +4308,23 @@ int deep_water_legacy(int player, int card, event_t event)
       } while (iVar2 != iVar1);
       if (0 < active_cards_count[player_00])
       {
-        iVar2 = 0;
+        c = 0;
         do
         {
-          instance = in_play(player_00, iVar2);
-          if (((instance != NULL) && (iVar4 = is_what(player_00, iVar2, 1), player == player_00)) &&
+          instance = in_play(player_00, c);
+          if (((instance != NULL) && (iVar4 = is_what(player_00, c, 1), player == player_00)) &&
               (iVar4 != 0))
           {
-            set_special_flags2(player_00, iVar2, 0x40);
+            set_special_flags2(player_00, c, 0x40);
           }
-          iVar2 = iVar2 + 1;
-        } while (iVar2 < active_cards_count[player_00]);
+          c = c + 1;
+        } while (c < active_cards_count[player_00]);
       }
       player_00 = player_00 + 1;
       iVar1 = iVar1 + 0x20;
     } while (player_00 != 2);
   }
-  iVar1 = eot_trigger(player, card, event);
-  if (iVar1 != 0)
+  if (eot_trigger(player, card, event) != 0)
   {
     kill_card(player, card, KILL_EXILE);
     cant_be_responded_to = 1;

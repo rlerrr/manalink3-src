@@ -1533,6 +1533,7 @@ int card_skullwinder(int player, int card, event_t event){
 
 int card_verdant_confluence(int player, int card, event_t event)
 {
+  int choice;
   card_instance_t *instance;
   unsigned int uVar2;
   int iVar3;
@@ -1550,8 +1551,7 @@ int card_verdant_confluence(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
     new_default_test_definition(&test, 0x47, "Select a permanent card.");
     get_card_instance(player, card);
-    iVar5 = basic_spell(player, card, EVENT_CAN_CAST);
-    return iVar5;
+    return basic_spell(player, card, EVENT_CAN_CAST);
   }
   if (event == EVENT_CAST_SPELL)
   {
@@ -1566,8 +1566,7 @@ int card_verdant_confluence(int player, int card, event_t event)
         choices[0] = 0;
         choices[1] = 0;
         choices[2] = 0;
-        iVar5 = check_special_flags2(player, card, -0x80000000);
-        if (iVar5 != 0)
+        if (check_special_flags2(player, card, -0x80000000) != 0)
         {
           iVar5 = 0;
         LAB_02356768:
@@ -1618,12 +1617,11 @@ int card_verdant_confluence(int player, int card, event_t event)
           uVar2 = (choices[1] == 2) - 1 & 0xf;
           while (true)
           {
-            iVar3 = can_target(&td);
-            iVar3 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002",
-                                "2 +1/+1 counters on target creature", iVar3, 10,
+            choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002",
+                                "2 +1/+1 counters on target creature", can_target(&td), 10,
                                 "Return a permanent from grave to hand", iVar5, uVar2,
                                 "Tutor basic land tapped", 1, 5, 0, 0, 0, 0);
-            if (iVar3 == 0)
+            if (choice == 0)
             {
               spell_fizzled = 1;
               instance->targets[0].card = -1;
@@ -1635,7 +1633,7 @@ int card_verdant_confluence(int player, int card, event_t event)
               return 0;
             }
             piVar4 = choice_cursor + 1;
-            *choice_cursor = iVar3;
+            *choice_cursor = choice;
             if (piVar4 == choices + 3)
             {
               *(char *)((int)&instance->info_slot + 1) = (char)choices[1];
@@ -1695,8 +1693,7 @@ int card_verdant_confluence(int player, int card, event_t event)
           if (uVar2 != 1)
             goto LAB_023565e7;
         LAB_023567fc:
-          iVar3 = validate_target(player, card, &td, ret_location);
-          if (iVar3 != 0)
+          if (validate_target(player, card, &td, ret_location) != 0)
           {
             add_counters(player, card, instance->targets[ret_location].player,
                                      instance->targets[ret_location].card, COUNTER_P1_P1, 2);

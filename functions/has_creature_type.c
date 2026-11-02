@@ -422,7 +422,7 @@ void get_subtypes(int player, int card, reported_subtypes_t *my_subtypes)
   card_instance_t *instance;
   int iVar4;
   unsigned int *puVar5;
-  int iVar6;
+  int i;
   int iVar7;
   int iVar8;
 
@@ -436,18 +436,18 @@ void get_subtypes(int player, int card, reported_subtypes_t *my_subtypes)
       puVar5 = puVar5 + 1;
     } while ((reported_subtypes_t *)puVar5 != my_subtypes + 1);
     pcVar1 = instance->ext;
-    iVar6 = 0;
+    i = 0;
     do
     {
-      my_subtypes->reported_subtypes[iVar6] = (unsigned int)pcVar1->subtype[iVar6];
-      iVar6 = iVar6 + 1;
-    } while (iVar6 != 0xc);
+      my_subtypes->reported_subtypes[i] = (unsigned int)pcVar1->subtype[i];
+      i = i + 1;
+    } while (i != 0xc);
     iVar4 = check_special_flags3(player, card, 0x40000);
-    iVar6 = 0xc;
+    i = 0xc;
     if (iVar4 != 0)
     {
       my_subtypes->reported_subtypes[0xc] = 0xde;
-      iVar6 = 0xd;
+      i = 0xd;
     }
     iVar4 = is_what(player, card, 2);
     if ((iVar4 != 0) &&
@@ -472,15 +472,15 @@ void get_subtypes(int player, int card, reported_subtypes_t *my_subtypes)
             puVar5 = puVar5 + 1;
           } while ((reported_subtypes_t *)puVar5 != my_subtypes + 1);
           iVar7 = 1;
-          iVar6 = 0;
+          i = 0;
         }
         else
         {
-          iVar7 = iVar6 + 1;
+          iVar7 = i + 1;
         }
         iVar8 = iVar8 + 8;
-        my_subtypes->reported_subtypes[iVar6] = uVar2;
-        iVar6 = iVar7;
+        my_subtypes->reported_subtypes[i] = uVar2;
+        i = iVar7;
       } while (iVar8 != iVar4);
     }
     return;
@@ -1794,13 +1794,12 @@ int has_subtype_by_id(int player, int id, subtype_t subtype)
 {
   unsigned int uVar1;
   int iVar2;
-  int iVar3;
+  int i;
   unsigned int *puVar4;
   subtype_t sVar5;
   unsigned int *my_subtypes;
   reported_subtypes_t stypes;
-  iVar2 = get_internal_card_id_from_csv_id(id);
-  iVar2 = is_what(-1, iVar2, 2);
+  iVar2 = is_what(-1, get_internal_card_id_from_csv_id(id), 2);
   sVar5 = subtype;
   if (((iVar2 == 0) || (0xffeU < (unsigned int)subtype - SUBTYPE_ALLY)) || (player < 0))
   {
@@ -1847,18 +1846,18 @@ int has_subtype_by_id(int player, int id, subtype_t subtype)
           puVar4 = puVar4 + 1;
         } while (stypes.reported_subtypes + 26 != puVar4);
       }
-      iVar3 = 0;
+      i = 0;
       if (-1 < iVar2)
       {
         do
         {
-          if (my_subtypes[iVar3] == 0)
+          if (my_subtypes[i] == 0)
           {
-            stypes.reported_subtypes[iVar3] = uVar1;
+            stypes.reported_subtypes[i] = uVar1;
             break;
           }
-          iVar3 = iVar3 + 1;
-        } while (iVar3 <= iVar2);
+          i = i + 1;
+        } while (i <= iVar2);
       }
       iVar2 = iVar2 + 1;
     } while (iVar2 != 0x14);
@@ -1885,8 +1884,7 @@ LAB_0267374c:
   {
     return 1;
   }
-  iVar2 = has_new_types(id, sVar5);
-  return iVar2;
+  return has_new_types(id, sVar5);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -1956,11 +1954,9 @@ int shares_creature_subtype_by_iid(int p0, int c0, int p1, int iid)
   int result;
   int *piVar3;
   int *piVar4;
-  unsigned char bVar5;
   reported_subtypes_t stypes;
   int subtypes[2][26];
 
-  bVar5 = 0;
   result = is_what(p0, c0, 2);
   if (((result != 0) || (result = has_subtype(p0, c0, SUBTYPE_TRIBAL), result != 0)) &&
       ((result = is_what(-1, iid, 2),
@@ -1973,7 +1969,7 @@ int shares_creature_subtype_by_iid(int p0, int c0, int p1, int iid)
     for (result = 0x34; result != 0; result = result + -1)
     {
       (*(int (*)[26])piVar3)[0] = 0;
-      piVar3 = (int *)((int)piVar3 + ((unsigned int)bVar5 * -2 + 1) * 4);
+      piVar3 = (int *)((int)piVar3 + 4u);
     }
     result = is_changeling(p0, c0);
     if (result == 0)
@@ -2055,7 +2051,7 @@ card_instance_t *update_alter_add_subtype(subtype_t subt, card_instance_t *inst)
 {
   card_ext_t *pcVar1;
   uint16_t *puVar2;
-  int result;
+  int i;
 
   if (inst == NULL)
   {
@@ -2071,16 +2067,16 @@ card_instance_t *update_alter_add_subtype(subtype_t subt, card_instance_t *inst)
     }
     puVar2 = puVar2 + 1;
   } while (puVar2 != pcVar1->subtype + 12);
-  result = 0;
+  i = 0;
   do
   {
-    if (pcVar1->subtype[result] == 0)
+    if (pcVar1->subtype[i] == 0)
     {
-      pcVar1->subtype[result] = (uint16_t)subt;
+      pcVar1->subtype[i] = (uint16_t)subt;
       return inst;
     }
-    result = result + 1;
-  } while (result != 0xc);
+    i = i + 1;
+  } while (i != 0xc);
   return inst;
 }
 
@@ -2146,7 +2142,7 @@ card_instance_t *update_alter_remove_creature_subtypes(card_instance_t *inst)
 {
   card_ext_t *pcVar1;
   int iVar2;
-  int iVar4;
+  int i;
   int iVar3;
 
   if (inst == NULL)
@@ -2154,14 +2150,14 @@ card_instance_t *update_alter_remove_creature_subtypes(card_instance_t *inst)
     inst = get_card_instance(affected_card_controller, affected_card);
   }
   pcVar1 = inst->ext;
-  iVar4 = 0;
+  i = 0;
   do
   {
-    while ((0xffeU < (uint32_t)pcVar1->subtype[iVar4] - 1U ||
-            (pcVar1->subtype[iVar4] = 0, iVar3 = iVar4, 0xb < iVar4)))
+    while ((0xffeU < (uint32_t)pcVar1->subtype[i] - 1U ||
+            (pcVar1->subtype[i] = 0, iVar3 = i, 0xb < i)))
     {
-      iVar4 = iVar4 + 1;
-      if (iVar4 == 0xc)
+      i = i + 1;
+      if (i == 0xc)
       {
         return inst;
       }

@@ -283,7 +283,6 @@ Flying, vigilance
 
 int card_allosaurus_rider(int player, int card, event_t event)
 {
-  int result;
   test_definition_t this_test;
   if (event - EVENT_POWER < 2)
   {
@@ -321,8 +320,7 @@ LAB_02161405:
   this_test.zone = 0x100;
   this_test.id = 0x615a;
   this_test.id_flag = 1;
-  result = coldsnap_pitchspell(player, card, event, &this_test);
-  return result;
+  return coldsnap_pitchspell(player, card, event, &this_test);
 }
 
 int card_arctic_nishoba(int player, int card, event_t event)
@@ -1199,8 +1197,7 @@ int card_haakon_stromgald_scourge(int player, int card, event_t event)
     {
       infinite_casting_cost();
     }
-    iVar1 = this_dies_trigger(player, card, EVENT_MODIFY_COST, RESOLVE_TRIGGER_MANDATORY);
-    if (iVar1 != 0)
+    if (this_dies_trigger(player, card, EVENT_MODIFY_COST, RESOLVE_TRIGGER_MANDATORY) != 0)
       goto LAB_02164961;
   LAB_02164865:
     if (event == EVENT_CAN_ACTIVATE)
@@ -1230,8 +1227,7 @@ int card_haakon_stromgald_scourge(int player, int card, event_t event)
   }
   else
   {
-    iVar1 = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if (iVar1 != 0)
+    if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) != 0)
     {
     LAB_02164961:
       lose_life(player, 2);
@@ -1241,9 +1237,8 @@ int card_haakon_stromgald_scourge(int player, int card, event_t event)
       if (event == EVENT_PAY_FLASHBACK_COSTS)
       {
         instance = get_card_instance(player, card);
-        iVar1 = get_updated_casting_cost(player, -1, instance->internal_card_id,
-                                         EVENT_PAY_FLASHBACK_COSTS, 1);
-        charge_mana_multi(player, iVar1, 2, 0, 0, 0, 0);
+        charge_mana_multi(player, get_updated_casting_cost(player, -1, instance->internal_card_id,
+                                         EVENT_PAY_FLASHBACK_COSTS, 1), 2, 0, 0, 0, 0);
         if (spell_fizzled != 1)
         {
           return 1;
@@ -1255,8 +1250,7 @@ int card_haakon_stromgald_scourge(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     iVar1 = get_updated_casting_cost(player, -1, instance->internal_card_id,
                                      EVENT_GRAVEYARD_ABILITY, 1);
-    iVar1 = has_mana_multi(player, iVar1, 2, 0, 0, 0, 0);
-    if (iVar1 != 0)
+    if (has_mana_multi(player, iVar1, 2, 0, 0, 0, 0) != 0)
     {
       return 2;
     }
@@ -1279,16 +1273,14 @@ LAB_02164880:
     iVar3 = *piVar4;
     if ((cards_data[iVar3].type & 0x30) == 0)
     {
-      iVar3 = can_sorcery_be_played(player, EVENT_ACTIVATE);
-      if (iVar3 == 0)
+      if (can_sorcery_be_played(player, EVENT_ACTIVATE) == 0)
       {
         spell_fizzled = 1;
         return 0;
       }
       iVar3 = *piVar4;
     }
-    iVar3 = has_mana_to_cast_id(player, EVENT_ACTIVATE, (unsigned int)cards_data[iVar3].id);
-    if (iVar3 != 0)
+    if (has_mana_to_cast_id(player, EVENT_ACTIVATE, (unsigned int)cards_data[iVar3].id) != 0)
     {
       charge_mana_from_id(player, -1, EVENT_ACTIVATE, (unsigned int)cards_data[*piVar4].id);
       if (spell_fizzled != 1)
@@ -1365,6 +1357,7 @@ static int gain_control_of_lands(int player, int card, int number_of_age_counter
 }
 int card_herald_of_leshrac(int player, int card, event_t event)
 {
+  int c;
   card_instance_t *instance;
   int iVar2;
   int iVar3;
@@ -1374,24 +1367,22 @@ int card_herald_of_leshrac(int player, int card, event_t event)
     if (((card == affected_card) && (player == affected_card_controller)) &&
         (0 < active_cards_count[player]))
     {
-      iVar2 = 0;
+      c = 0;
       do
       {
-        instance = in_play(player, iVar2);
+        instance = in_play(player, c);
         if (instance != NULL)
         {
-          iVar3 = is_what(player, iVar2, 1);
-          if (iVar3 != 0)
+          if (is_what(player, c, 1) != 0)
           {
-            iVar3 = is_stolen(player, iVar2);
-            if (iVar3 != 0)
+            if (is_stolen(player, c) != 0)
             {
               event_result = event_result + 1;
             }
           }
         }
-        iVar2 = iVar2 + 1;
-      } while (iVar2 < active_cards_count[player]);
+        c = c + 1;
+      } while (c < active_cards_count[player]);
     }
     leaves_play(player, card, event, 1, 1);
     return 0;
@@ -2956,8 +2947,7 @@ static int can_put_p1_p1_counter_on_opp(int player, int card, int number_of_age_
 static int put_p1_p1_counter_on_opp(int player, int card, int number_of_age_counters)
 {
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
+  int i;
   target_definition_t td;
 
   base_target_definition(player, card, &td, 2);
@@ -2970,24 +2960,22 @@ static int put_p1_p1_counter_on_opp(int player, int card, int number_of_age_coun
   instance->number_of_targets = '\0';
   if (0 < number_of_age_counters)
   {
-    iVar3 = 0;
+    i = 0;
     do
     {
-      iVar2 = can_target(&td);
-      if (iVar2 == 0)
+      if (can_target(&td) == 0)
       {
         return 0;
       }
-      iVar2 = pick_next_target_noload(&td, "Select a creature an opponent controls.");
-      if (iVar2 == 0)
+      if (pick_next_target_noload(&td, "Select a creature an opponent controls.") == 0)
       {
         return 0;
       }
-      iVar3 = iVar3 + 1;
+      i = i + 1;
       add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_P1_P1, 1);
       instance->number_of_targets = '\0';
-    } while (number_of_age_counters != iVar3);
+    } while (number_of_age_counters != i);
   }
   return 1;
 }
@@ -3740,7 +3728,7 @@ int card_commandeer(int player, int card, event_t event)
   card_instance_t *pcVar2;
   int card_00;
   target_definition_t *ptStack_144;
-  card_instance_t *pcStack_140;
+  card_instance_t *instance;
   target_definition_t td;
   test_definition_t this_test;
 
@@ -3753,12 +3741,11 @@ int card_commandeer(int player, int card, event_t event)
     this_test.zone = 0x100;
     this_test.id = 0x615a;
     this_test.id_flag = 1;
-    pcStack_140 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
     if (event == EVENT_CAN_CAST)
     {
-      result = counterspell(player, card, EVENT_CAN_CAST, &td, -1);
-      return result;
+      return counterspell(player, card, EVENT_CAN_CAST, &td, -1);
     }
     if (event == EVENT_CAST_SPELL)
       goto LAB_021622a0;
@@ -3782,7 +3769,7 @@ int card_commandeer(int player, int card, event_t event)
       this_test.zone = 0x100;
       this_test.id = 0x615a;
       this_test.id_flag = 1;
-      pcStack_140 = get_card_instance(player, card);
+      instance = get_card_instance(player, card);
       cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
     LAB_021622a0:
       ptStack_144 = &td;
@@ -3803,19 +3790,16 @@ int card_commandeer(int player, int card, event_t event)
       pcVar2 = get_card_instance(card_on_stack_controller, card_on_stack);
       if (pcVar2->number_of_targets == '\x01')
       {
-        pcStack_140->info_slot = 1;
-        result = deflect_one_target(player, card, EVENT_CAST_SPELL, NULL);
-        return result;
+        instance->info_slot = 1;
+        return deflect_one_target(player, card, EVENT_CAST_SPELL, NULL);
       }
       pcVar2 = get_card_instance(card_on_stack_controller, card_on_stack);
       if (pcVar2->number_of_targets < 2)
       {
-        result = counterspell(player, card, EVENT_CAST_SPELL, ptStack_144, 0);
-        return result;
+        return counterspell(player, card, EVENT_CAST_SPELL, ptStack_144, 0);
       }
-      pcStack_140->info_slot = 2;
-      result = deflect_multi_targets(player, card, EVENT_CAST_SPELL, NULL);
-      return result;
+      instance->info_slot = 2;
+      return deflect_multi_targets(player, card, EVENT_CAST_SPELL, NULL);
     }
     if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
     {
@@ -3841,7 +3825,7 @@ int card_commandeer(int player, int card, event_t event)
     this_test.zone = 0x100;
     this_test.id = 0x615a;
     this_test.id_flag = 1;
-    pcStack_140 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
   }
   if (event != EVENT_RESOLVE_SPELL)
@@ -3851,27 +3835,27 @@ int card_commandeer(int player, int card, event_t event)
   result = counterspell_validate(player, card, NULL, 0);
   if (result != 0)
   {
-    result = pcStack_140->info_slot;
+    result = instance->info_slot;
     if (result == 1)
     {
       deflect_one_target(player, card, EVENT_RESOLVE_SPELL, NULL);
-      result = pcStack_140->info_slot;
+      result = instance->info_slot;
     }
     if (result == 2)
     {
       deflect_multi_targets(player, card, EVENT_RESOLVE_SPELL, NULL);
     }
-    result = is_what(pcStack_140->targets[0].player, pcStack_140->targets[0].card, 0x144);
+    result = is_what(instance->targets[0].player, instance->targets[0].card, 0x144);
     if (result != 0)
     {
-      pcVar2 = get_card_instance(pcStack_140->targets[0].player, pcStack_140->targets[0].card);
+      pcVar2 = get_card_instance(instance->targets[0].player, instance->targets[0].card);
       result = pcVar2->internal_card_id;
       if (result != -1)
       {
-        obliterate_card(pcStack_140->targets[0].player, pcStack_140->targets[0].card);
+        obliterate_card(instance->targets[0].player, instance->targets[0].card);
         card_00 = add_card_to_hand(player, result);
         put_into_play(player, card_00);
-        result = pcStack_140->targets[0].player;
+        result = instance->targets[0].player;
         if (result != player)
         {
           if (result == 1)
@@ -3909,8 +3893,7 @@ int card_fury_of_the_horde(int player, int card, event_t event)
     cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
     if (event == EVENT_CAN_CAST)
     {
-      result = basic_spell(player, card, EVENT_CAN_CAST);
-      return result;
+      return basic_spell(player, card, EVENT_CAN_CAST);
     }
     if (event == EVENT_CAST_SPELL)
       goto LAB_02163eaf;
@@ -4124,19 +4107,16 @@ int card_zombie_musher(int player, int card, event_t event)
       iVar2 = can_use_activated_abilities(player, card);
       if ((iVar2 != 0) && (iVar1 = has_snow_mana(player, 1, iVar1), iVar1 != 0))
       {
-        iVar1 = can_regenerate(player, card);
-        return iVar1;
+        return can_regenerate(player, card);
       }
     }
     else if (event == EVENT_ACTIVATE)
     {
-      iVar1 = get_cost_mod_for_activated_abilities(player, card, 0, 0, 0, 0, 0, 0);
-      charge_snow_mana(player, card, 1, iVar1);
+      charge_snow_mana(player, card, 1, get_cost_mod_for_activated_abilities(player, card, 0, 0, 0, 0, 0, 0));
     }
     else if (event == EVENT_RESOLVE_ACTIVATION)
     {
-      iVar1 = regeneration(player, card, EVENT_RESOLVE_ACTIVATION, 1, 0, 0, 0, 0, 0);
-      return iVar1;
+      return regeneration(player, card, EVENT_RESOLVE_ACTIVATION, 1, 0, 0, 0, 0, 0);
     }
   }
   return 0;

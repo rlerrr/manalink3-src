@@ -1,0 +1,105 @@
+{
+  "batch": "docs/recovery-evidence/role-local-names.json",
+  "batch_sha256": "fd987c1100fbe501c67b2f9446c780e886b4434950c8676716c764ce76cf4b8b",
+  "counts": {
+    "functions": 163,
+    "card_handlers": 119,
+    "other_definitions": 44,
+    "renamed_locals": 164,
+    "source_units": 76,
+    "identifier_occurrences": 1930,
+    "native_local_references": 190,
+    "new_native_function_coverage": 0
+  },
+  "spellings": {
+    "i": 91,
+    "c": 48,
+    "count": 7,
+    "choice": 8,
+    "pow": 1,
+    "t_card": 3,
+    "num_counters": 2,
+    "csvid": 2,
+    "cmc": 2
+  },
+  "runtime_comparison": {
+    "identical_sections": 26,
+    "changed_sections": []
+  },
+  "validation": {
+    "focused": {
+      "current_roles": {
+        "renamed_locals": 164,
+        "functions": 163,
+        "source_units": 76,
+        "identifier_occurrences": 1930,
+        "native_local_references": 190,
+        "runtime_comparison": {
+          "identical_sections": 26,
+          "changed_sections": []
+        },
+        "scope": "Identifier-only edits with unchanged lines, complete expanded-unit alpha projection, unique ordinary int bindings, no target-name capture and stable source/expanded value roles. Proposed spellings are direct non-inline native int32 local vocabulary; optimized-variable identity is not asserted. No new native coverage or gameplay validation."
+      },
+      "prior_return_source_inputs_checked": 125,
+      "prior_assertion_special_source_inputs_checked": 18,
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Current role validation and exact prior-source input/hash compatibility only. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/role-names-readers-final-c128.log",
+      "sha256": "085b1a148d99663e2ccc2e71e862ef906db4e82810117ede276096ebbb140506",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/role-names-build-c126.log",
+      "log_sha256": "a80a7960253594f70f8a5a4aac565e978a019d473604d251754da53631a627ad",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "97364f50405c0708a6dca75a6c8f75f569fa089191abd245cf6b2b7d8f22d916",
+      "dbg_sha256": "fb0d5ef2ee731972dc83521ab6f06494076e93939d533f94a271fb904adc907c"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/role-names-proof-before-c125.json.gz",
+      "archive_sha256": "306500da57bf467e70d51b7a3e3a260094a3d5c6f760a14645528cd7a67d7672",
+      "raw_sha256": "4545cc159950b3f6e104c45fc546b5c43cefad90e29d52a794d48e3cf344ada3",
+      "verified_source_pin_successions": 76
+    },
+    "limits": "Native debug names are direct non-inline local vocabulary matched to stable source roles, not proven optimized-variable identities. Exact historical source inputs are checked without rerunning older semantic checkers. No new native coverage, full historical suite, fresh similarity score or gameplay tests.",
+    "metadata_writer_fix": {
+      "path": "tools/reccmp_project.py",
+      "before_sha256": "7b1a0f552edda45543a60e61f3705c8bc04132fed480191be732f9dd78e208cc",
+      "after_sha256": "e85e7c789bb26e336026b295789281dc570c526859a4a29e98e7fce13bcb8f9f",
+      "before_backup": ".recovery/reccmp-project-before-atomic-c130.py",
+      "reason": "Routine setup passed source/binary checks but reopening the existing CSV for truncation raised Windows EINVAL. Write its complete replacement to a sibling and atomically replace the CSV; preserve the CSV bytes and mapping semantics."
+    }
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/role-names-setup-final-c130.log",
+    "log_sha256": "6723f890fa8a4f652c4d529ffb4ec775420c2c656746753a65dfcd0a3b07dada",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "metadata_sha256": "75a64807d4c874d63f763f82fa6fea26a2dbda10edd735decf119eeb2961e508",
+    "csv_functions": 18725
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c130.json",
+    "sha256": "ae58b5dfc9f371f53501c6aca6a72fd4bb0a4c417b7344385f7e159663400efe",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1422,
+      "lab_gotos": 5256,
+      "functions_with_placeholders": 2132,
+      "distinct_function_local_placeholder_spellings": 7050,
+      "placeholder_identifier_occurrences": 61716,
+      "union_keywords": 0
+    }
+  },
+  "followup_queue": "docs/recovery-evidence/role-local-name-followup-queue.json",
+  "limits": "Native vocabulary plus stable source role does not prove optimized-variable identity. Twelve weak proposals remain unapplied. Whole-unit macro/identifier projection, current source, compiled runtime identity and source-reader compatibility are checked; older semantic audits, the full historical suite and gameplay tests were not rerun."
+}

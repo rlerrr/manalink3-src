@@ -1,0 +1,436 @@
+{
+  "status": "Resolved: all24 discovered bounded retry loops use skip-and-continue control flow after actual integer-bound and whole raw/expanded CFG checks.",
+  "counts": {
+    "functions": 24,
+    "source_units": 17,
+    "loops": 24,
+    "parse_or_cfg_skips": 12
+  },
+  "rows": [
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_illusionists_strategem",
+      "definition_sha256": "521fbfc2e10fc5d13da4c56e4ea560c3da53af0cb3945750e4a7613c022a176b",
+      "candidates": [
+        {
+          "counter": "i",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_020c2c91",
+          "outer_condition_offset": 1299,
+          "exit_guard_offset": 991,
+          "loop_offset": 846,
+          "retry_offset": 877,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_synchronized_strike",
+      "definition_sha256": "8b1245839b5e4f360b234954d33530a47f698f001cad80ad0fcb0add4b13cae8",
+      "candidates": [
+        {
+          "counter": "i",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_022e1c18",
+          "outer_condition_offset": 2051,
+          "exit_guard_offset": 1677,
+          "loop_offset": 1495,
+          "retry_offset": 1518,
+          "valid_statements": 5
+        }
+      ]
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_open_into_wonder",
+      "definition_sha256": "87de55c9c4d070979d4fe52cf962921f62e6217e3e1aa73751228bda97ad9022",
+      "candidates": [
+        {
+          "counter": "i",
+          "bound": "instance->info_slot",
+          "label": "LAB_022da950",
+          "outer_condition_offset": 2876,
+          "exit_guard_offset": 2254,
+          "loop_offset": 2114,
+          "retry_offset": 2137,
+          "valid_statements": 5
+        }
+      ]
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_by_force",
+      "definition_sha256": "fc9f87e6f8e53a7badb3328c4030bb756edc86f6bb691fb49f9476c4afdb602e",
+      "candidates": [
+        {
+          "counter": "iVar5",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_022ddd86",
+          "outer_condition_offset": 2449,
+          "exit_guard_offset": 2158,
+          "loop_offset": 2016,
+          "retry_offset": 2035,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2016.c",
+      "name": "card_sylvan_reclamation",
+      "definition_sha256": "c4ca7854265217308e629cc4a91227d73904d95d81c7e7013f6101f3a7f9a3b8",
+      "candidates": [
+        {
+          "counter": "i",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_023ea74e",
+          "outer_condition_offset": 946,
+          "exit_guard_offset": 677,
+          "loop_offset": 562,
+          "retry_offset": 581,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "name": "card_kindred_charge",
+      "definition_sha256": "964fed0310bf29e821eaa3c3f5d647ad1dc1b7d934a444c62abc99da2f7b8ae3",
+      "candidates": [
+        {
+          "counter": "c",
+          "bound": "active_cards_count[player]",
+          "label": "LAB_0228ec58",
+          "outer_condition_offset": 2365,
+          "exit_guard_offset": 2046,
+          "loop_offset": 1936,
+          "retry_offset": 1963,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_jayas_immolating_inferno",
+      "definition_sha256": "78fd4a09514d1d5405bde2176f3f4c0a435a32a89025add437d33fd24182b9ca",
+      "candidates": [
+        {
+          "counter": "i",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_022ce980",
+          "outer_condition_offset": 920,
+          "exit_guard_offset": 622,
+          "loop_offset": 507,
+          "retry_offset": 526,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_spike_cannibal",
+      "definition_sha256": "c6d677511c1f8f8514a6398421b51e85d81fc766b539d1566768d9e353b1adba",
+      "candidates": [
+        {
+          "counter": "c",
+          "bound": "active_cards_count[iVar3]",
+          "label": "LAB_02649870",
+          "outer_condition_offset": 1112,
+          "exit_guard_offset": 917,
+          "loop_offset": 734,
+          "retry_offset": 753,
+          "valid_statements": 3
+        }
+      ]
+    },
+    {
+      "source": "cards/innistrad.c",
+      "name": "card_travel_preparations",
+      "definition_sha256": "5b6f2472f3537d9400766eda7ec7ccd91bd8ea6d678451a2d955c5270533b5de",
+      "candidates": [
+        {
+          "counter": "i",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_02085cd9",
+          "outer_condition_offset": 1108,
+          "exit_guard_offset": 783,
+          "loop_offset": 668,
+          "retry_offset": 687,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/invasion.c",
+      "name": "card_sway_of_llusion",
+      "definition_sha256": "7500f6923efa3dcea48a816573672335600eff6cdf64c1ca86983ab101c9177c",
+      "candidates": [
+        {
+          "counter": "iVar6",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_0249d49b",
+          "outer_condition_offset": 2863,
+          "exit_guard_offset": 2429,
+          "loop_offset": 2292,
+          "retry_offset": 2315,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_unbounded_potential",
+      "definition_sha256": "7c2ca8212054cd66f5ac779610569f2934f0ca1b60f96e248e12219fb260f973",
+      "candidates": [
+        {
+          "counter": "iVar4",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_02241fec",
+          "outer_condition_offset": 2737,
+          "exit_guard_offset": 2434,
+          "loop_offset": 2297,
+          "retry_offset": 2320,
+          "valid_statements": 2
+        }
+      ]
+    },
+    {
+      "source": "cards/planechase.c",
+      "name": "card_bant",
+      "definition_sha256": "ebc4fa0c61381d412101137fbc440ae79850008fbd95603db9e05743637509b5",
+      "candidates": [
+        {
+          "counter": "iVar1",
+          "bound": "active_cards_count[current_turn]",
+          "label": "LAB_02413cd8",
+          "outer_condition_offset": 1258,
+          "exit_guard_offset": 1011,
+          "loop_offset": 798,
+          "retry_offset": 817,
+          "valid_statements": 3
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_tidal_surge",
+      "definition_sha256": "11e8b1cc9eae701a6c0973ea1240cfc3018b126dbcd8cc8341418d138a8ed542",
+      "candidates": [
+        {
+          "counter": "i",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_021c2c16",
+          "outer_condition_offset": 883,
+          "exit_guard_offset": 627,
+          "loop_offset": 512,
+          "retry_offset": 531,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_thrive",
+      "definition_sha256": "2a455cc17a76f82e6fa8940f397d845a8095173ca59974e73b3f1fc609fbfe91",
+      "candidates": [
+        {
+          "counter": "iVar6",
+          "bound": "instance->info_slot",
+          "label": "LAB_025ffb01",
+          "outer_condition_offset": 3300,
+          "exit_guard_offset": 3001,
+          "loop_offset": 2849,
+          "retry_offset": 2872,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_azor_the_lawbringer",
+      "definition_sha256": "29f68ad5b0c9cf0857b628b523d491127add4c2e5fa9991aa6e7ae5fbe8f63f7",
+      "candidates": [
+        {
+          "counter": "iVar4",
+          "bound": "active_cards_count[player]",
+          "label": "LAB_02193410",
+          "outer_condition_offset": 830,
+          "exit_guard_offset": 561,
+          "loop_offset": 372,
+          "retry_offset": 391,
+          "valid_statements": 3
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_semesters_end",
+      "definition_sha256": "ede9a487ee457e2bf53c588b85890dc23442f691a333086d9c438d7dd73c2205",
+      "candidates": [
+        {
+          "counter": "i",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_023dab39",
+          "outer_condition_offset": 962,
+          "exit_guard_offset": 684,
+          "loop_offset": 569,
+          "retry_offset": 588,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_crackle_with_power",
+      "definition_sha256": "ddc9f0a89fcd3d6077ec464c06d65d3a457cc07d27dc88d47cc55f16a0434163",
+      "candidates": [
+        {
+          "counter": "iVar4",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_023cb883",
+          "outer_condition_offset": 1932,
+          "exit_guard_offset": 1582,
+          "loop_offset": 1435,
+          "retry_offset": 1462,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_verdant_mastery",
+      "definition_sha256": "34279a0d253a3e3e21359d8ab1042c6ab990b7b5f1c36044862b9417a8b9a485",
+      "candidates": [
+        {
+          "counter": "iVar3",
+          "bound": "iStack_1d8",
+          "label": "LAB_023df72b",
+          "outer_condition_offset": 4850,
+          "exit_guard_offset": 4374,
+          "loop_offset": 4196,
+          "retry_offset": 4212,
+          "valid_statements": 7
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_lorehold_apprentice",
+      "definition_sha256": "4182ab30e21454c88b03edc58f5cbd8718b58f524c8ffe80c45c57126ac9afff",
+      "candidates": [
+        {
+          "counter": "result",
+          "bound": "active_cards_count[player]",
+          "label": "LAB_023d3240",
+          "outer_condition_offset": 837,
+          "exit_guard_offset": 627,
+          "loop_offset": 284,
+          "retry_offset": 303,
+          "valid_statements": 2
+        }
+      ]
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "name": "destroy_auras_attached",
+      "definition_sha256": "90cdd6d47c032d29f46abde544dbffe507733d135fd42787c6cd42600f094081",
+      "candidates": [
+        {
+          "counter": "c",
+          "bound": "active_cards_count[iVar3]",
+          "label": "LAB_025b23a0",
+          "outer_condition_offset": 958,
+          "exit_guard_offset": 821,
+          "loop_offset": 426,
+          "retry_offset": 445,
+          "valid_statements": 2
+        }
+      ]
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_finale_of_eternity",
+      "definition_sha256": "36a549d7143fa6316f0717f703b8eeb8e787854f55712303da000b8fa0e3ce16",
+      "candidates": [
+        {
+          "counter": "i",
+          "bound": "(int) ((unsigned int) instance->number_of_targets)",
+          "label": "LAB_021ccce6",
+          "outer_condition_offset": 1026,
+          "exit_guard_offset": 755,
+          "loop_offset": 640,
+          "retry_offset": 659,
+          "valid_statements": 4
+        }
+      ]
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_the_elderspell",
+      "definition_sha256": "f97edb778e22d233bad6fd35037d8121facd21e375bdf719511c183d708d57e0",
+      "candidates": [
+        {
+          "counter": "i",
+          "bound": "(int) ((unsigned int) pcVar5->number_of_targets)",
+          "label": "LAB_021d7962",
+          "outer_condition_offset": 1707,
+          "exit_guard_offset": 1269,
+          "loop_offset": 1154,
+          "retry_offset": 1173,
+          "valid_statements": 5
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "counter_triggered_ability_legacy",
+      "definition_sha256": "5fefb1b68da424cb79917abef024ba156041ae27aaee3be782354723770c0d2f",
+      "candidates": [
+        {
+          "counter": "i",
+          "bound": "stack_size",
+          "label": "LAB_02677a30",
+          "outer_condition_offset": 749,
+          "exit_guard_offset": 572,
+          "loop_offset": 236,
+          "retry_offset": 251,
+          "valid_statements": 3
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "reveal_cards_from_your_hand",
+      "definition_sha256": "3a019b116677ee4fdc019e59ad746593774eb11bec36f8cd5d0bec45aa09a97c",
+      "candidates": [
+        {
+          "counter": "iVar7",
+          "bound": "active_cards_count[player]",
+          "label": "LAB_02691ea0",
+          "outer_condition_offset": 2105,
+          "exit_guard_offset": 1879,
+          "loop_offset": 1660,
+          "retry_offset": 1671,
+          "valid_statements": 4
+        }
+      ]
+    }
+  ],
+  "source_state_sha256": "f96641824132af544be1213f46fbd76c5f468cc994ddc12bbabe577d642ff45a",
+  "scope": "A source-only control-flow screen of the earlier tracked definitions;24 candidates in17 files, not a remaining-function count. The invalid-target branch only increments a private ordinary int and jumps on the complement of the outer bound. Parsed statement CFGs bind both exits to the same action. Integer bound-type assertions, actual expanded-code checks and a complete before/after CFG proof are still required before editing.",
+  "style_reference": {
+    "path": "G:\\Manalink\\test build 12-1-2020\\src\\cards\\commander_2016.c",
+    "sha256": "f4ba5d4d74ea41e97650b9ec4740b9e192cb5863e90217d43caadef282da1935",
+    "name": "card_sylvan_reclamation",
+    "definition": "int card_sylvan_reclamation(int player, int card, event_t event){\n/*\nSylvan Reclamation |3|G|W\t0x200f660\nInstant\nExile up to two target artifacts and/or enchantments.\nBasic landcycling 2 (2, Discard this card: Search your library for a basic land card, reveal it, and put it into your hand. Then shuffle your library.)\n*/\n\n\tif( IS_ACTIVATING_FROM_HAND(event) ){\n\t\treturn basic_landcycling(player, card, event);\n\t}\n\n\tif( ! IS_GS_EVENT(player, card, event) ){\n\t\treturn 0;\n\t}\n\n\ttarget_definition_t td;\n\tdefault_target_definition(player, card, &td, TYPE_ARTIFACT | TYPE_ENCHANTMENT);\n\n\tcard_instance_t *instance = get_card_instance(player, card);\n\n\tif( event == EVENT_RESOLVE_SPELL ){\n\t\tint i;\n\t\tfor(i=0; i<instance->number_of_targets; i++)\n\t\t\tif( validate_target(player, card, &td, i) )\n\t\t\t\tkill_card(instance->targets[i].player, instance->targets[i].card, KILL_EXILE);\n\t\tkill_card(player, card, KILL_DESTROY);\n\t}\n\n\treturn generic_spell(player, card, event, GS_OPTIONAL_TARGET, &td, \"DISENCHANT\", 2, NULL);\n}",
+    "scope": "2020 source shows the intended direct target-iteration style. This is a style reference; the2022 payload, helper arguments and behavior must still be preserved and checked."
+  },
+  "resolution": {
+    "batch": "docs/recovery-evidence/target-loop-cleanup.json",
+    "batch_sha256": "d744c3f6b5537b82ffccd654e12cd38c11354bfea8d8e12bd210b503336bb1b5",
+    "structured_loops": 24,
+    "removed_lab_gotos": 24,
+    "removed_lab_labels": 23,
+    "pending_candidates": 0
+  }
+}

@@ -2,6 +2,7 @@
 import collections,json
 from pathlib import Path
 from canonicalize_helpers import ROOT,read,span,sha
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image
 from card_array_locals_analysis import inspect,source_changes,NAMES,TEST_NAMES,TOKEN_NAMES
 from verify_array_role_recovery import replay,variable
@@ -90,7 +91,7 @@ def has_source_repair(proof,root,source,name,old_sha):
     if not rows:return False
     assert len(rows)==1;row=rows[0];changes,after=source_changes(name,row['before_definition'])
     assert sha(row['before_definition'].encode())==old_sha and changes==row['changes'] and after==row['after_definition']
-    text=read(root/source);a,b=span(text,name);assert text[a:b]==after and sha(after.encode())==row['after_sha256']
+    text=read(root/source);a,b=span(text,name);assert source_hash_matches(proof,root,source,name,sha(text[a:b].encode()),row['after_sha256']) and sha(after.encode())==row['after_sha256']
     edits=[e for e in proof['source_edits'] if e.get('native_card_array_locals_extension')==path and (e['source'],e['before_sha256'])==(source,old_sha)]
     assert len(edits)==1 and edits[0]['after_sha256']==row['after_sha256']
     return True
@@ -121,7 +122,7 @@ def verify(proof,image,root=ROOT):
         assert validate(built[1][key],row)==validate(current[key],row)==left
         changes,after=source_changes(row['name'],row['before_definition']);assert changes==row['changes'] and after==row['after_definition']==replay(row['before_definition'],changes)
         assert sha(row['before_definition'].encode())==row['before_sha256']
-        text=read(root/row['source']);a,b=span(text,row['name']);assert text[a:b]==after and sha(after.encode())==row['after_sha256']
+        text=read(root/row['source']);a,b=span(text,row['name']);assert source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['after_sha256']) and sha(after.encode())==row['after_sha256']
         assert has_source_repair(proof,root,*key,row['before_sha256'])
     before,after=record['before_link_inputs'],record['after_link_inputs'];assert set(before)==set(after)
     expected={'.recovery/build-gcc93/obj/'+r['source'][:-2]+'.o' for r in rows};assert {p for p in before if before[p]!=after[p]}==expected

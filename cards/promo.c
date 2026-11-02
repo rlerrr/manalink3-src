@@ -740,19 +740,13 @@ Flying; banding
 
 int card_necropolis_of_azar(int player, int card, event_t event)
 {
+  int parent_controller;
   unsigned int uVar1;
   int iVar2;
   card_instance_t *instance;
   int iVar4;
   int iVar5;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    test_definition_t test;
-    token_generation_t token;
-    uint8_t bytes[216];
-  } recovered_stack_test;
 
   if (event == EVENT_CAN_CAST)
   {
@@ -760,16 +754,16 @@ int card_necropolis_of_azar(int player, int card, event_t event)
   }
   if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
-    new_default_test_definition(&recovered_stack_test.test, 2, "");
-    recovered_stack_test.test.color = get_sleighted_color_test(player, card, 2);
-    recovered_stack_test.test.color_flag = 1;
-    count_for_gfp_ability(player, card, 0x77, 2, 0, &recovered_stack_test.test);
+    test_definition_t test;
+    new_default_test_definition(&test, 2, "");
+    test.color = get_sleighted_color_test(player, card, 2);
+    test.color_flag = 1;
+    count_for_gfp_ability(player, card, 0x77, 2, 0, &test);
     uVar1 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar1 == 0)
     {
-      iVar2 = generic_activated_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, 0, 5, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, 0, 5, 0, 0, 0, 0,
                                         0, 0, NULL, NULL);
-      return iVar2;
     }
     uVar1 = uVar1 & 0xff;
     if (uVar1 != 0)
@@ -793,9 +787,8 @@ int card_necropolis_of_azar(int player, int card, event_t event)
       {
         return 0;
       }
-      iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 5, 0, 0, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 5, 0, 0, 0, 0, 0, 0,
                                         NULL, NULL);
-      return iVar2;
     }
   }
   iVar2 = generic_activated_ability(player, card, event, 0, 5, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -809,15 +802,16 @@ int card_necropolis_of_azar(int player, int card, event_t event)
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
+    token_generation_t token;
     play_sound_effect(WAV_NECRAZAR);
     instance = get_card_instance(player, card);
-    iVar5 = instance->parent_controller;
-    default_token_definition(player, card, 900, &recovered_stack_test.token);
-    iVar4 = network_rand(iVar5, 3);
-    recovered_stack_test.token.pow = (int32_t)(iVar4 + 1);
-    iVar5 = network_rand(iVar5, 3);
-    recovered_stack_test.token.tou = (int32_t)(iVar5 + 1);
-    generate_token(&recovered_stack_test.token);
+    parent_controller = instance->parent_controller;
+    default_token_definition(player, card, 900, &token);
+    iVar4 = network_rand(parent_controller, 3);
+    token.pow = (int32_t)(iVar4 + 1);
+    iVar5 = network_rand(parent_controller, 3);
+    token.tou = (int32_t)(iVar5 + 1);
+    generate_token(&token);
     return iVar2;
   }
   return iVar2;
@@ -1376,102 +1370,79 @@ int card_fruitcake_elemental(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x24108e0; original cards/promo.c:1353. */
 int card_seasons_beatings(int player, int card, event_t event)
 {
+  int c;
   int card_00;
-  int iVar1;
+  int p;
   card_instance_t *instance;
   int iVar3;
   int amt;
-  int iVar4;
+  int i;
   int iVar5;
   target_definition_t td;
   int creatures[151];
 
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 0);
-        td.zone = 0x1000;
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          iVar1 = valid_target(&td);
-          if (iVar1 != 0)
-          {
-
-            instance = get_card_instance(player, card);
-
-            iVar1 = instance->targets[0].player;
-            if (0 < active_cards_count[iVar1])
-            {
-              iVar4 = 0;
-              iVar5 = 0;
-              do
-              {
-                instance = in_play(iVar1, iVar5);
-                if ((instance != NULL) && (iVar3 = is_what(iVar1, iVar5, 2), iVar3 != 0))
-                {
-                  creatures[iVar4] = iVar5;
-                  iVar4 = iVar4 + 1;
-                }
-                iVar5 = iVar5 + 1;
-              } while (iVar5 < active_cards_count[iVar1]);
-              if (1 < iVar4)
-              {
-
-                iVar5 = 0;
-                do
-                {
-
-                  iVar3 = network_rand(player, iVar4 + -1);
-                  iVar3 = iVar3 + 1;
-                  if (iVar3 == iVar5)
-                  {
-                    iVar3 = 0;
-                  }
-                  card_00 = creatures[iVar5];
-                  amt = get_power(iVar1, card_00);
-                  iVar5 = iVar5 + 1;
-                  damage_creature(iVar1, creatures[iVar3], amt, iVar1, card_00);
-                } while (iVar4 != iVar5);
-              }
-            }
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_02410949;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   default_target_definition(player, card, &td, 0);
   td.zone = 0x1000;
-LAB_02410949:
-  iVar1 = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
-  return iVar1;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target(&td) != 0)
+    {
+
+      instance = get_card_instance(player, card);
+
+      p = instance->targets[0].player;
+      if (0 < active_cards_count[p])
+      {
+        i = 0;
+        c = 0;
+        do
+        {
+          instance = in_play(p, c);
+          if ((instance != NULL) && (iVar3 = is_what(p, c, 2), iVar3 != 0))
+          {
+            creatures[i] = c;
+            i = i + 1;
+          }
+          c = c + 1;
+        } while (c < active_cards_count[p]);
+        if (1 < i)
+        {
+
+          iVar5 = 0;
+          do
+          {
+
+            iVar3 = network_rand(player, i + -1);
+            iVar3 = iVar3 + 1;
+            if (iVar3 == iVar5)
+            {
+              iVar3 = 0;
+            }
+            card_00 = creatures[iVar5];
+            amt = get_power(p, card_00);
+            iVar5 = iVar5 + 1;
+            damage_creature(p, creatures[iVar3], amt, p, card_00);
+          } while (i != iVar5);
+        }
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x2410fc0; original cards/promo.c:1482. */
 int card_yule_ooze(int player, int card, event_t event)
 {
+  int p;
+  int c;
   int iVar1;
   card_instance_t *instance;
-  int iVar3;
+  int cmc;
   int iVar4;
   int iStack_4cc;
   target_t nlperms[151];
@@ -1495,34 +1466,32 @@ int card_yule_ooze(int player, int card, event_t event)
 
     if (0 < active_cards_count[iVar1])
     {
-      iVar4 = 0;
+      c = 0;
     LAB_02411092:
       do
       {
-        if ((card != iVar4) || (player != iVar1))
+        if ((card != c) || (player != iVar1))
         {
-          instance = in_play(iVar1, iVar4);
+          instance = in_play(iVar1, c);
           if (instance != NULL)
           {
-            iVar3 = is_what(iVar1, iVar4, 1);
-            if (iVar3 == 0)
+            if (is_what(iVar1, c, 1) == 0)
             {
-              iVar3 = is_what(iVar1, iVar4, 0x47);
-              if (iVar3 != 0)
+              if (is_what(iVar1, c, 0x47) != 0)
               {
-                nlperms[iStack_4cc].card = iVar4;
+                nlperms[iStack_4cc].card = c;
                 nlperms[iStack_4cc].player = iVar1;
-                iVar4 = iVar4 + 1;
+                c = c + 1;
                 iStack_4cc = iStack_4cc + 1;
-                if (active_cards_count[iVar1] <= iVar4)
+                if (active_cards_count[iVar1] <= c)
                   break;
                 goto LAB_02411092;
               }
             }
           }
         }
-        iVar4 = iVar4 + 1;
-      } while (iVar4 < active_cards_count[iVar1]);
+        c = c + 1;
+      } while (c < active_cards_count[iVar1]);
     }
     iVar1 = iVar1 + 1;
     if (iVar1 == 2)
@@ -1531,14 +1500,13 @@ int card_yule_ooze(int player, int card, event_t event)
       {
 
         iVar4 = network_rand(player, iStack_4cc);
-        iVar1 = nlperms[iVar4].player;
+        p = nlperms[iVar4].player;
         iVar4 = nlperms[iVar4].card;
-        iVar3 = get_cmc(iVar1, iVar4);
-        kill_card(iVar1, iVar4, KILL_DESTROY);
-        add_counters(player, card, player, card, COUNTER_P1_P1, iVar3);
+        cmc = get_cmc(p, iVar4);
+        kill_card(p, iVar4, KILL_DESTROY);
+        add_counters(player, card, player, card, COUNTER_P1_P1, cmc);
       }
-      iVar1 = regeneration(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, 0, 0, 0, 1, 1, 0);
-      return iVar1;
+      return regeneration(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, 0, 0, 0, 1, 1, 0);
     }
   } while (true);
 }

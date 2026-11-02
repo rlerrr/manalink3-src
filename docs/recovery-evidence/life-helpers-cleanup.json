@@ -1,0 +1,1447 @@
+{
+  "rows": [
+    {
+      "source": "functions/functions.c",
+      "name": "life_total_can_change",
+      "before_definition": "int life_total_can_change(int player)\n{\n  int result;\n  unsigned int uVar2;\n  result = check_battlefield_for_id(player, 0x2c48);\n  if (result != 0)\n  {\n    return 0;\n  }\n  uVar2 = check_for_id_legacy(player, 0x43b3);\n  return uVar2 >> 0x1f;\n}",
+      "after_definition": "int life_total_can_change(int player)\n{\n  if (check_battlefield_for_id(player, CARD_ID_PLATINUM_EMPERION))\n    return 0;\n  return check_for_id_legacy(player, CARD_ID_TEFERIS_PROTECTION) < 0;\n}",
+      "before_sha256": "8516596728500f0e1be37acc79bdcefaf3ec64222529e75bdb66cc8c1675a757",
+      "after_sha256": "4014aaf77be52eba8df1da280a5a49575819011444b3ce69bf31f16cecac6f06",
+      "life_helpers_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 6,
+        "removed_placeholder_occurrences": 3,
+        "removed_placeholder_names": 1
+      },
+      "expanded_before_definition": "int life_total_can_change(int player)\n{\n  int result;\n  unsigned int uVar2;\n  result = check_battlefield_for_id(player, 0x2c48);\n  if (result != 0)\n  {\n    return 0;\n  }\n  uVar2 = check_for_id_legacy(player, 0x43b3);\n  return uVar2 >> 0x1f;\n}",
+      "expanded_after_definition": "int life_total_can_change(int player)\n{\n  if (check_battlefield_for_id(player, CARD_ID_PLATINUM_EMPERION))\n    return 0;\n  return check_for_id_legacy(player, CARD_ID_TEFERIS_PROTECTION) < 0;\n}"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "can_lose_the_game_impl",
+      "before_definition": "static int can_lose_the_game_impl(int player)\n{\n  card_instance_t *instance;\n  int result;\n  int card;\n  int player_00;\n\n  player_00 = 0;\n  do\n  {\n    card = 0;\n    if (0 < active_cards_count[player_00])\n    {\n      do\n      {\n        instance = in_play(player_00, card);\n        if (instance != NULL)\n        {\n          result = is_what(player_00, card, 0x47);\n          if (result == 0)\n          {\n            result = is_what(player_00, card, 0x80);\n            if (((result != 0) && (instance = get_card_instance(player_00, card),\n                                   instance->display_pic_csv_id == 0x211f)) &&\n                (player == player_00))\n            {\n              return 0;\n            }\n          }\n          else\n          {\n            result = get_id(player_00, card);\n            if ((result == 0x51c) || (result == 0x4814))\n            {\n              if (player != player_00)\n                goto LAB_02685cdd;\n            LAB_02685ce8:\n              result = is_humiliated(player_00, card, AL_STATIC);\n              if (result == 0)\n              {\n                return 0;\n              }\n            }\n            else if (result == 0x4214)\n            {\n              result = check_battlefield_for_subtype(player, 0x100, 0x7005);\n              if ((result != 0) && (player == player_00))\n                goto LAB_02685ce8;\n            }\n            else\n            {\n            LAB_02685cdd:\n              if ((result == 0x29dc) && (player != player_00))\n                goto LAB_02685ce8;\n            }\n          }\n        }\n        card = card + 1;\n      } while (card < active_cards_count[player_00]);\n    }\n    player_00 = player_00 + 1;\n    if (player_00 == 2)\n    {\n      return 1;\n    }\n  } while (true);\n}",
+      "after_definition": "static int can_lose_the_game_impl(int player)\n{\n  for (int controller = 0; controller < 2; ++controller)\n    for (int card = 0; card < active_cards_count[controller]; ++card)\n    {\n      card_instance_t *instance = in_play(controller, card);\n      if (!instance)\n        continue;\n      if (is_what(controller, card, TYPE_PERMANENT))\n      {\n        int id = get_id(controller, card);\n        int prevents_loss = 0;\n        if (id == CARD_ID_PLATINUM_ANGEL || id == CARD_ID_LICHS_MASTERY)\n          prevents_loss = player == controller;\n        else if (id == CARD_ID_GIDEON_OF_THE_TRIALS_EMBLEM)\n        {\n          int has_gideon = check_battlefield_for_subtype(player, TARGET_TYPE_PLANESWALKER, SUBTYPE_GIDEON);\n          prevents_loss = has_gideon && player == controller;\n        }\n        else if (id == CARD_ID_ABYSSAL_PERSECUTOR)\n          prevents_loss = player != controller;\n        if (prevents_loss && !is_humiliated(controller, card, AL_STATIC))\n          return 0;\n      }\n      else if (is_what(controller, card, TYPE_EFFECT))\n      {\n        instance = get_card_instance(controller, card);\n        if (instance->display_pic_csv_id == CARD_ID_ANGELS_GRACE && player == controller)\n          return 0;\n      }\n    }\n  return 1;\n}",
+      "before_sha256": "d41a3cd7189d576d55fafbfd40857804f32035b4ff06df8503292b4c931c7b73",
+      "after_sha256": "78f0c396f0f43173c7d081b0705964d9d30c546074d3e1332c0145d5e2312287",
+      "life_helpers_cleanup": true,
+      "facts": {
+        "removed_gotos": 3,
+        "removed_lab_gotos": 3,
+        "source_lines_removed": 34,
+        "removed_placeholder_occurrences": 0,
+        "removed_placeholder_names": 0
+      },
+      "expanded_before_definition": "static int can_lose_the_game_impl(int player)\n{\n  card_instance_t *instance;\n  int result;\n  int card;\n  int player_00;\n\n  player_00 = 0;\n  do\n  {\n    card = 0;\n    if (0 < active_cards_count[player_00])\n    {\n      do\n      {\n        instance = in_play(player_00, card);\n        if (instance != \n\n                       ((void *)0)\n\n                           )\n        {\n          result = is_what(player_00, card, 0x47);\n          if (result == 0)\n          {\n            result = is_what(player_00, card, 0x80);\n            if (((result != 0) && (instance = get_card_instance(player_00, card),\n                                   instance->display_pic_csv_id == 0x211f)) &&\n                (player == player_00))\n            {\n              return 0;\n            }\n          }\n          else\n          {\n            result = get_id(player_00, card);\n            if ((result == 0x51c) || (result == 0x4814))\n            {\n              if (player != player_00)\n                goto LAB_02685cdd;\n            LAB_02685ce8:\n              result = is_humiliated(player_00, card, AL_STATIC);\n              if (result == 0)\n              {\n                return 0;\n              }\n            }\n            else if (result == 0x4214)\n            {\n              result = check_battlefield_for_subtype(player, 0x100, 0x7005);\n              if ((result != 0) && (player == player_00))\n                goto LAB_02685ce8;\n            }\n            else\n            {\n            LAB_02685cdd:\n              if ((result == 0x29dc) && (player != player_00))\n                goto LAB_02685ce8;\n            }\n          }\n        }\n        card = card + 1;\n      } while (card < active_cards_count[player_00]);\n    }\n    player_00 = player_00 + 1;\n    if (player_00 == 2)\n    {\n      return 1;\n    }\n  } while (\n\n          1\n\n              );\n}",
+      "expanded_after_definition": "static int can_lose_the_game_impl(int player)\n{\n  for (int controller = 0; controller < 2; ++controller)\n    for (int card = 0; card < active_cards_count[controller]; ++card)\n    {\n      card_instance_t *instance = in_play(controller, card);\n      if (!instance)\n        continue;\n      if (is_what(controller, card, TYPE_PERMANENT))\n      {\n        int id = get_id(controller, card);\n        int prevents_loss = 0;\n        if (id == CARD_ID_PLATINUM_ANGEL || id == CARD_ID_LICHS_MASTERY)\n          prevents_loss = player == controller;\n        else if (id == CARD_ID_GIDEON_OF_THE_TRIALS_EMBLEM)\n        {\n          int has_gideon = check_battlefield_for_subtype(player, TARGET_TYPE_PLANESWALKER, SUBTYPE_GIDEON);\n          prevents_loss = has_gideon && player == controller;\n        }\n        else if (id == CARD_ID_ABYSSAL_PERSECUTOR)\n          prevents_loss = player != controller;\n        if (prevents_loss && !is_humiliated(controller, card, AL_STATIC))\n          return 0;\n      }\n      else if (is_what(controller, card, TYPE_EFFECT))\n      {\n        instance = get_card_instance(controller, card);\n        if (instance->display_pic_csv_id == CARD_ID_ANGELS_GRACE && player == controller)\n          return 0;\n      }\n    }\n  return 1;\n}"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "gain_life_impl",
+      "before_definition": "static void gain_life_impl(int player, int amount, int from_lifelink)\n{\n  int iVar1;\n  int iVar2;\n  if (player == 2)\n  {\n    gain_life(current_turn, amount);\n    gain_life(1 - current_turn, amount);\n    return;\n  }\n  if (amount < 1)\n  {\n    return;\n  }\n  if (((uint32_t)player_bits[player] & PB_CANT_GAIN_LIFE) != 0)\n  {\n    return;\n  }\n  if (life_total_can_change(player) == 0)\n  {\n    return;\n  }\n  if (((uint32_t)event_flags & EA_LICH) != 0)\n  {\n    life_gain_context_push();\n    iVar1 = life_to_lose_on_gain_life;\n    iVar2 = life_gained;\n    life_to_lose_on_gain_life = 0;\n    life_gained = amount;\n    dispatch_xtrigger2(current_turn, XTRIGGER_REPLACE_GAIN_LIFE, \"gaining life\", 0, player,\n                       from_lifelink);\n    amount = life_gained;\n    life_gained = iVar2;\n    life_to_lose_on_gain_life = iVar1;\n    life_gain_context_pop();\n    if (amount < 1)\n    {\n      if (amount < 0)\n      {\n        lose_life(player, (amount ^ amount >> 0x1f) - (amount >> 0x1f));\n      }\n      goto LAB_0268f7f5;\n    }\n  }\n  life[player] = life[player] + amount;\n  increase_trap_condition(player, 1, amount);\n  iVar2 = life_gained;\n  if (((uint32_t)event_flags & EA_LICH) != 0)\n  {\n    life_gained = amount;\n    dispatch_trigger2(current_turn, TRIGGER_GAIN_LIFE, \"gained life\", 0, player, -1);\n  }\n  life_gained = iVar2;\n  if (life_gain_draw_count[player] != 0)\n  {\n    draw_cards(player, amount);\n  }\nLAB_0268f7f5:\n  if (0 < life_to_lose_on_gain_life)\n  {\n    lose_life(player, life_to_lose_on_gain_life);\n  }\n  return;\n}",
+      "after_definition": "static void gain_life_impl(int player, int amount, int from_lifelink)\n{\n  if (player == ANYBODY)\n  {\n    gain_life(current_turn, amount);\n    gain_life(1 - current_turn, amount);\n    return;\n  }\n  if (amount <= 0 || (player_bits[player] & PB_CANT_GAIN_LIFE) || !life_total_can_change(player))\n    return;\n  if (event_flags & EA_LICH)\n  {\n    life_gain_context_push();\n    int saved_loss = life_to_lose_on_gain_life;\n    int saved_gain = life_gained;\n    life_to_lose_on_gain_life = 0;\n    life_gained = amount;\n    dispatch_xtrigger2(current_turn, XTRIGGER_REPLACE_GAIN_LIFE, \"gaining life\", 0, player,\n        from_lifelink);\n    amount = life_gained;\n    life_gained = saved_gain;\n    life_to_lose_on_gain_life = saved_loss;\n    life_gain_context_pop();\n    if (amount <= 0)\n    {\n      if (amount < 0)\n        lose_life(player, -amount);\n      if (life_to_lose_on_gain_life > 0)\n        lose_life(player, life_to_lose_on_gain_life);\n      return;\n    }\n  }\n  life[player] += amount;\n  increase_trap_condition(player, TRAP_LIFE_GAINED, amount);\n  int saved_gain = life_gained;\n  if (event_flags & EA_LICH)\n  {\n    life_gained = amount;\n    dispatch_trigger2(current_turn, TRIGGER_GAIN_LIFE, \"gained life\", 0, player, -1);\n  }\n  life_gained = saved_gain;\n  if (life_gain_draw_count[player])\n    draw_cards(player, amount);\n  if (life_to_lose_on_gain_life > 0)\n    lose_life(player, life_to_lose_on_gain_life);\n}",
+      "before_sha256": "7e591f93c304dd98254e09a10ce9db7d32e1440ae9f948d7955ec86e75756197",
+      "after_sha256": "62f06f1271fe3bae86e1c5afe2419e172df027ca7cee9759bb5ae224fbe5519d",
+      "life_helpers_cleanup": true,
+      "facts": {
+        "removed_gotos": 1,
+        "removed_lab_gotos": 1,
+        "source_lines_removed": 18,
+        "removed_placeholder_occurrences": 8,
+        "removed_placeholder_names": 2
+      },
+      "expanded_before_definition": "static void gain_life_impl(int player, int amount, int from_lifelink)\n{\n  int iVar1;\n  int iVar2;\n  if (player == 2)\n  {\n    gain_life(current_turn, amount);\n    gain_life(1 - current_turn, amount);\n    return;\n  }\n  if (amount < 1)\n  {\n    return;\n  }\n  if (((uint32_t)player_bits[player] & PB_CANT_GAIN_LIFE) != 0)\n  {\n    return;\n  }\n  if (life_total_can_change(player) == 0)\n  {\n    return;\n  }\n  if (((uint32_t)event_flags & EA_LICH) != 0)\n  {\n    ((void (*)(void))(0x435C80))();\n    iVar1 = life_to_lose_on_gain_life;\n    iVar2 = life_gained;\n    life_to_lose_on_gain_life = 0;\n    life_gained = amount;\n    dispatch_xtrigger2(current_turn, XTRIGGER_REPLACE_GAIN_LIFE, \"gaining life\", 0, player,\n                       from_lifelink);\n    amount = life_gained;\n    life_gained = iVar2;\n    life_to_lose_on_gain_life = iVar1;\n    ((void (*)(void))(0x435CD0))();\n    if (amount < 1)\n    {\n      if (amount < 0)\n      {\n        lose_life(player, (amount ^ amount >> 0x1f) - (amount >> 0x1f));\n      }\n      goto LAB_0268f7f5;\n    }\n  }\n  life[player] = life[player] + amount;\n  increase_trap_condition(player, 1, amount);\n  iVar2 = life_gained;\n  if (((uint32_t)event_flags & EA_LICH) != 0)\n  {\n    life_gained = amount;\n    dispatch_trigger2(current_turn, TRIGGER_GAIN_LIFE, \"gained life\", 0, player, -1);\n  }\n  life_gained = iVar2;\n  if (life_gain_draw_count[player] != 0)\n  {\n    draw_cards(player, amount);\n  }\nLAB_0268f7f5:\n  if (0 < life_to_lose_on_gain_life)\n  {\n    lose_life(player, life_to_lose_on_gain_life);\n  }\n  return;\n}",
+      "expanded_after_definition": "static void gain_life_impl(int player, int amount, int from_lifelink)\n{\n  if (player == ANYBODY)\n  {\n    gain_life(current_turn, amount);\n    gain_life(1 - current_turn, amount);\n    return;\n  }\n  if (amount <= 0 || (player_bits[player] & PB_CANT_GAIN_LIFE) || !life_total_can_change(player))\n    return;\n  if (event_flags & EA_LICH)\n  {\n    ((void (*)(void))(0x435C80))();\n    int saved_loss = life_to_lose_on_gain_life;\n    int saved_gain = life_gained;\n    life_to_lose_on_gain_life = 0;\n    life_gained = amount;\n    dispatch_xtrigger2(current_turn, XTRIGGER_REPLACE_GAIN_LIFE, \"gaining life\", 0, player,\n        from_lifelink);\n    amount = life_gained;\n    life_gained = saved_gain;\n    life_to_lose_on_gain_life = saved_loss;\n    ((void (*)(void))(0x435CD0))();\n    if (amount <= 0)\n    {\n      if (amount < 0)\n        lose_life(player, -amount);\n      if (life_to_lose_on_gain_life > 0)\n        lose_life(player, life_to_lose_on_gain_life);\n      return;\n    }\n  }\n  life[player] += amount;\n  increase_trap_condition(player, TRAP_LIFE_GAINED, amount);\n  int saved_gain = life_gained;\n  if (event_flags & EA_LICH)\n  {\n    life_gained = amount;\n    dispatch_trigger2(current_turn, TRIGGER_GAIN_LIFE, \"gained life\", 0, player, -1);\n  }\n  life_gained = saved_gain;\n  if (life_gain_draw_count[player])\n    draw_cards(player, amount);\n  if (life_to_lose_on_gain_life > 0)\n    lose_life(player, life_to_lose_on_gain_life);\n}"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "trigger_gain_life",
+      "before_definition": "int trigger_gain_life(int player, int card, event_t event, int who_gains,\n                           resolve_trigger_t trigger_mode)\n{\n  int iVar2;\n\n  iVar2 = life_gained;\n  if (((((trigger_condition == 0xe0) && (reason_for_trigger_controller == player)) &&\n        (0 < life_gained)) &&\n       ((who_gains == 2 || (trigger_cause_controller == who_gains)))) &&\n      ((card == affected_card &&\n        ((player == affected_card_controller &&\n          (is_humiliated(player, card, AL_TRIG) == 0))))))\n  {\n    if (event == EVENT_TRIGGER)\n    {\n      if (trigger_mode == RESOLVE_TRIGGER_DUH)\n      {\n        iVar2 = duh_mode(player);\n        trigger_mode = (iVar2 != 0) + RESOLVE_TRIGGER_OPTIONAL;\n      }\n      event_result = event_result | trigger_mode;\n    }\n    else if (event == EVENT_RESOLVE_TRIGGER)\n    {\n      return iVar2;\n    }\n  }\n  return 0;\n}",
+      "after_definition": "int trigger_gain_life(int player, int card, event_t event, int who_gains,\n    resolve_trigger_t trigger_mode)\n{\n  int gained = life_gained;\n  if (trigger_condition != TRIGGER_GAIN_LIFE || reason_for_trigger_controller != player ||\n      gained <= 0 || (who_gains != ANYBODY && trigger_cause_controller != who_gains) ||\n      card != affected_card || player != affected_card_controller ||\n      is_humiliated(player, card, AL_TRIG))\n    return 0;\n  if (event == EVENT_TRIGGER)\n  {\n    if (trigger_mode == RESOLVE_TRIGGER_DUH)\n      trigger_mode = duh_mode(player) ? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL;\n    event_result |= trigger_mode;\n  }\n  else if (event == EVENT_RESOLVE_TRIGGER)\n    return gained;\n  return 0;\n}",
+      "before_sha256": "79afd50ba28ad987be5c2d8dcafd365b1863407c8e58d38433b79c90edfd7124",
+      "after_sha256": "889b0c820c9269ab319efcd52508690fbdd8940a3c711bf85eb8207766f7b378",
+      "life_helpers_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 10,
+        "removed_placeholder_occurrences": 5,
+        "removed_placeholder_names": 1
+      },
+      "expanded_before_definition": "int trigger_gain_life(int player, int card, event_t event, int who_gains,\n                           resolve_trigger_t trigger_mode)\n{\n  int iVar2;\n\n  iVar2 = life_gained;\n  if (((((trigger_condition == 0xe0) && (reason_for_trigger_controller == player)) &&\n        (0 < life_gained)) &&\n       ((who_gains == 2 || (trigger_cause_controller == who_gains)))) &&\n      ((card == affected_card &&\n        ((player == affected_card_controller &&\n          (is_humiliated(player, card, AL_TRIG) == 0))))))\n  {\n    if (event == EVENT_TRIGGER)\n    {\n      if (trigger_mode == RESOLVE_TRIGGER_DUH)\n      {\n        iVar2 = duh_mode(player);\n        trigger_mode = (iVar2 != 0) + RESOLVE_TRIGGER_OPTIONAL;\n      }\n      event_result = event_result | trigger_mode;\n    }\n    else if (event == EVENT_RESOLVE_TRIGGER)\n    {\n      return iVar2;\n    }\n  }\n  return 0;\n}",
+      "expanded_after_definition": "int trigger_gain_life(int player, int card, event_t event, int who_gains,\n    resolve_trigger_t trigger_mode)\n{\n  int gained = life_gained;\n  if (trigger_condition != TRIGGER_GAIN_LIFE || reason_for_trigger_controller != player ||\n      gained <= 0 || (who_gains != ANYBODY && trigger_cause_controller != who_gains) ||\n      card != affected_card || player != affected_card_controller ||\n      is_humiliated(player, card, AL_TRIG))\n    return 0;\n  if (event == EVENT_TRIGGER)\n  {\n    if (trigger_mode == RESOLVE_TRIGGER_DUH)\n      trigger_mode = duh_mode(player) ? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL;\n    event_result |= trigger_mode;\n  }\n  else if (event == EVENT_RESOLVE_TRIGGER)\n    return gained;\n  return 0;\n}"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "cannot_lose_the_game_impl",
+      "before_definition": "static void cannot_lose_the_game_impl(int player, int card, event_t event, int who_cant_lose,\n                                           int for_poison, int for_draw_on_empty_deck)\n{\n  unsigned char bVar1;\n  int iVar2;\n  card_instance_t *instance;\n  int32_t player_00;\n  int iVar4;\n  int iVar5;\n\n  instance = in_play(player, card);\n  if (instance == NULL)\n  {\n    return;\n  }\n  if ((instance->targets[5].player < 0) || (instance->targets[5].card < 0))\n  {\n    instance->targets[5].player = 0;\n    instance->targets[5].card = 0;\n    instance->targets[6].player = who_cant_lose;\n    leaves_play(player, card, event, 0, 0);\n    if (event != EVENT_LEAVES_PLAY_ABILITY)\n      goto LAB_026a3128;\n  LAB_026a31f0:\n    instance->targets[6].card = 0x11;\n    player_00 = instance->targets[6].player;\n  }\n  else\n  {\n    iVar2 = instance->targets[6].player;\n    leaves_play(player, card, event, 0, 0);\n    if (event == EVENT_LEAVES_PLAY_ABILITY)\n      goto LAB_026a31f0;\n    if (who_cant_lose == iVar2)\n      goto LAB_026a3128;\n    player_00 = instance->targets[6].player;\n  }\n  if (for_poison != 0)\n  {\n    raw_set_poison(player_00, (char)instance->targets[5].card + POISON_COUNTERS(player_00));\n    player_00 = instance->targets[6].player;\n  }\n  iVar2 = life[player_00];\n  instance->targets[5].card = 0;\n  instance->targets[6].player = who_cant_lose;\n  life[player_00] = iVar2 - instance->targets[5].player;\n  instance->targets[5].player = 0;\nLAB_026a3128:\n  if (((((trigger_condition == 0xcf) && (*deck_ptr[who_cant_lose] == -1)) &&\n        (who_cant_lose == reason_for_trigger_controller)) &&\n       ((card == affected_card && (affected_card_controller == player)))) &&\n      ((for_draw_on_empty_deck != 0 && (suppress_draw == 0))))\n  {\n    if (event == EVENT_TRIGGER)\n    {\n      event_result = 2;\n    }\n    else if (event == EVENT_RESOLVE_TRIGGER)\n    {\n      suppress_draw = 1;\n    }\n  }\n  iVar2 = life[who_cant_lose];\n  if (iVar2 < 1)\n  {\n    if (instance->targets[6].card != 0x11)\n    {\n      iVar5 = instance->targets[5].player;\n      life[who_cant_lose] = 1;\n      instance->targets[5].player = iVar5 + (1 - iVar2);\n    }\n  }\n  else if ((1 < iVar2) && (iVar5 = instance->targets[5].player, 0 < iVar5))\n  {\n    iVar4 = iVar2 + -1;\n    if (iVar5 < iVar2 + -1)\n    {\n      iVar4 = iVar5;\n    }\n    life[who_cant_lose] = iVar2 - iVar4;\n    instance->targets[5].player = iVar5 - iVar4;\n  }\n  if (for_poison != 0)\n  {\n    bVar1 = POISON_COUNTERS(who_cant_lose);\n    if (bVar1 < 10)\n    {\n      if ((bVar1 < 9) && (iVar2 = instance->targets[5].card, 0 < iVar2))\n      {\n        iVar5 = 9 - (unsigned int)bVar1;\n        if (iVar2 < (int)(9 - (unsigned int)bVar1))\n        {\n          iVar5 = iVar2;\n        }\n        raw_set_poison(who_cant_lose, bVar1 + (char)iVar5);\n        instance->targets[5].card = instance->targets[5].card - iVar5;\n      }\n    }\n    else if (instance->targets[6].card != 0x11)\n    {\n      raw_set_poison(who_cant_lose, '\\t');\n      instance->targets[5].card = instance->targets[5].card + (bVar1 - 9);\n      return;\n    }\n  }\n  return;\n}",
+      "after_definition": "static void cannot_lose_the_game_impl(int player, int card, event_t event, int who_cant_lose,\n    int for_poison, int for_draw_on_empty_deck)\n{\n  card_instance_t *instance = in_play(player, card);\n  if (!instance)\n    return;\n  int restore;\n  if (instance->targets[5].player < 0 || instance->targets[5].card < 0)\n  {\n    instance->targets[5].player = 0;\n    instance->targets[5].card = 0;\n    instance->targets[6].player = who_cant_lose;\n    leaves_play(player, card, event, 0, 0);\n    restore = event == EVENT_LEAVES_PLAY_ABILITY;\n  }\n  else\n  {\n    int previous_player = instance->targets[6].player;\n    leaves_play(player, card, event, 0, 0);\n    restore = event == EVENT_LEAVES_PLAY_ABILITY || who_cant_lose != previous_player;\n  }\n  // Leaving play permanently disables further suppression by this instance.\n  if (event == EVENT_LEAVES_PLAY_ABILITY)\n    instance->targets[6].card = 17;\n  if (restore)\n  {\n    int previous_player = instance->targets[6].player;\n    if (for_poison)\n    {\n      raw_set_poison(previous_player, (int8_t)instance->targets[5].card +\n          POISON_COUNTERS(previous_player));\n      previous_player = instance->targets[6].player;\n    }\n    int previous_life = life[previous_player];\n    instance->targets[5].card = 0;\n    instance->targets[6].player = who_cant_lose;\n    life[previous_player] = previous_life - instance->targets[5].player;\n    instance->targets[5].player = 0;\n  }\n  if (trigger_condition == TRIGGER_REPLACE_CARD_DRAW && *deck_ptr[who_cant_lose] == -1 &&\n      who_cant_lose == reason_for_trigger_controller && card == affected_card &&\n      affected_card_controller == player && for_draw_on_empty_deck && !suppress_draw)\n  {\n    if (event == EVENT_TRIGGER)\n      event_result = RESOLVE_TRIGGER_MANDATORY;\n    else if (event == EVENT_RESOLVE_TRIGGER)\n      suppress_draw = 1;\n  }\n  int current_life = life[who_cant_lose];\n  if (current_life < 1)\n  {\n    if (instance->targets[6].card != 17)\n    {\n      int hidden_loss = instance->targets[5].player;\n      life[who_cant_lose] = 1;\n      instance->targets[5].player = hidden_loss + (1 - current_life);\n    }\n  }\n  else if (current_life > 1 && instance->targets[5].player > 0)\n  {\n    int restored = current_life - 1;\n    if (instance->targets[5].player < restored)\n      restored = instance->targets[5].player;\n    life[who_cant_lose] = current_life - restored;\n    instance->targets[5].player -= restored;\n  }\n  if (for_poison)\n  {\n    uint8_t poison = POISON_COUNTERS(who_cant_lose);\n    if (poison < 9 && instance->targets[5].card > 0)\n    {\n      int restored = 9 - poison;\n      if (instance->targets[5].card < restored)\n        restored = instance->targets[5].card;\n      raw_set_poison(who_cant_lose, poison + (int8_t)restored);\n      instance->targets[5].card -= restored;\n    }\n    else if (poison >= 10 && instance->targets[6].card != 17)\n    {\n      raw_set_poison(who_cant_lose, 9);\n      instance->targets[5].card += poison - 9;\n    }\n  }\n}",
+      "before_sha256": "7640061ae57dc95548f850fe0498128dec895a7c2f9b15bfe75a9b9a0fbe81c9",
+      "after_sha256": "8e082862c5d5e34c3ed7ddfa87aba967efb0979c9b3ebd64b9d3e772662e2a2d",
+      "life_helpers_cleanup": true,
+      "facts": {
+        "removed_gotos": 3,
+        "removed_lab_gotos": 3,
+        "source_lines_removed": 23,
+        "removed_placeholder_occurrences": 41,
+        "removed_placeholder_names": 4
+      },
+      "expanded_before_definition": "static void cannot_lose_the_game_impl(int player, int card, event_t event, int who_cant_lose,\n                                           int for_poison, int for_draw_on_empty_deck)\n{\n  unsigned char bVar1;\n  int iVar2;\n  card_instance_t *instance;\n  int32_t player_00;\n  int iVar4;\n  int iVar5;\n\n  instance = in_play(player, card);\n  if (instance == \n\n                 ((void *)0)\n\n                     )\n  {\n    return;\n  }\n  if ((instance->targets[5].player < 0) || (instance->targets[5].card < 0))\n  {\n    instance->targets[5].player = 0;\n    instance->targets[5].card = 0;\n    instance->targets[6].player = who_cant_lose;\n    leaves_play(player, card, event, 0, 0);\n    if (event != EVENT_LEAVES_PLAY_ABILITY)\n      goto LAB_026a3128;\n  LAB_026a31f0:\n    instance->targets[6].card = 0x11;\n    player_00 = instance->targets[6].player;\n  }\n  else\n  {\n    iVar2 = instance->targets[6].player;\n    leaves_play(player, card, event, 0, 0);\n    if (event == EVENT_LEAVES_PLAY_ABILITY)\n      goto LAB_026a31f0;\n    if (who_cant_lose == iVar2)\n      goto LAB_026a3128;\n    player_00 = instance->targets[6].player;\n  }\n  if (for_poison != 0)\n  {\n    raw_set_poison(player_00, (char)instance->targets[5].card + (player_counters[(player_00)].poison_ + 0));\n    player_00 = instance->targets[6].player;\n  }\n  iVar2 = life[player_00];\n  instance->targets[5].card = 0;\n  instance->targets[6].player = who_cant_lose;\n  life[player_00] = iVar2 - instance->targets[5].player;\n  instance->targets[5].player = 0;\nLAB_026a3128:\n  if (((((trigger_condition == 0xcf) && (*deck_ptr[who_cant_lose] == -1)) &&\n        (who_cant_lose == reason_for_trigger_controller)) &&\n       ((card == affected_card && (affected_card_controller == player)))) &&\n      ((for_draw_on_empty_deck != 0 && (suppress_draw == 0))))\n  {\n    if (event == EVENT_TRIGGER)\n    {\n      event_result = 2;\n    }\n    else if (event == EVENT_RESOLVE_TRIGGER)\n    {\n      suppress_draw = 1;\n    }\n  }\n  iVar2 = life[who_cant_lose];\n  if (iVar2 < 1)\n  {\n    if (instance->targets[6].card != 0x11)\n    {\n      iVar5 = instance->targets[5].player;\n      life[who_cant_lose] = 1;\n      instance->targets[5].player = iVar5 + (1 - iVar2);\n    }\n  }\n  else if ((1 < iVar2) && (iVar5 = instance->targets[5].player, 0 < iVar5))\n  {\n    iVar4 = iVar2 + -1;\n    if (iVar5 < iVar2 + -1)\n    {\n      iVar4 = iVar5;\n    }\n    life[who_cant_lose] = iVar2 - iVar4;\n    instance->targets[5].player = iVar5 - iVar4;\n  }\n  if (for_poison != 0)\n  {\n    bVar1 = (player_counters[(who_cant_lose)].poison_ + 0);\n    if (bVar1 < 10)\n    {\n      if ((bVar1 < 9) && (iVar2 = instance->targets[5].card, 0 < iVar2))\n      {\n        iVar5 = 9 - (unsigned int)bVar1;\n        if (iVar2 < (int)(9 - (unsigned int)bVar1))\n        {\n          iVar5 = iVar2;\n        }\n        raw_set_poison(who_cant_lose, bVar1 + (char)iVar5);\n        instance->targets[5].card = instance->targets[5].card - iVar5;\n      }\n    }\n    else if (instance->targets[6].card != 0x11)\n    {\n      raw_set_poison(who_cant_lose, '\\t');\n      instance->targets[5].card = instance->targets[5].card + (bVar1 - 9);\n      return;\n    }\n  }\n  return;\n}",
+      "expanded_after_definition": "static void cannot_lose_the_game_impl(int player, int card, event_t event, int who_cant_lose,\n    int for_poison, int for_draw_on_empty_deck)\n{\n  card_instance_t *instance = in_play(player, card);\n  if (!instance)\n    return;\n  int restore;\n  if (instance->targets[5].player < 0 || instance->targets[5].card < 0)\n  {\n    instance->targets[5].player = 0;\n    instance->targets[5].card = 0;\n    instance->targets[6].player = who_cant_lose;\n    leaves_play(player, card, event, 0, 0);\n    restore = event == EVENT_LEAVES_PLAY_ABILITY;\n  }\n  else\n  {\n    int previous_player = instance->targets[6].player;\n    leaves_play(player, card, event, 0, 0);\n    restore = event == EVENT_LEAVES_PLAY_ABILITY || who_cant_lose != previous_player;\n  }\n\n  if (event == EVENT_LEAVES_PLAY_ABILITY)\n    instance->targets[6].card = 17;\n  if (restore)\n  {\n    int previous_player = instance->targets[6].player;\n    if (for_poison)\n    {\n      raw_set_poison(previous_player, (int8_t)instance->targets[5].card +\n          (player_counters[(previous_player)].poison_ + 0));\n      previous_player = instance->targets[6].player;\n    }\n    int previous_life = life[previous_player];\n    instance->targets[5].card = 0;\n    instance->targets[6].player = who_cant_lose;\n    life[previous_player] = previous_life - instance->targets[5].player;\n    instance->targets[5].player = 0;\n  }\n  if (trigger_condition == TRIGGER_REPLACE_CARD_DRAW && *deck_ptr[who_cant_lose] == -1 &&\n      who_cant_lose == reason_for_trigger_controller && card == affected_card &&\n      affected_card_controller == player && for_draw_on_empty_deck && !suppress_draw)\n  {\n    if (event == EVENT_TRIGGER)\n      event_result = RESOLVE_TRIGGER_MANDATORY;\n    else if (event == EVENT_RESOLVE_TRIGGER)\n      suppress_draw = 1;\n  }\n  int current_life = life[who_cant_lose];\n  if (current_life < 1)\n  {\n    if (instance->targets[6].card != 17)\n    {\n      int hidden_loss = instance->targets[5].player;\n      life[who_cant_lose] = 1;\n      instance->targets[5].player = hidden_loss + (1 - current_life);\n    }\n  }\n  else if (current_life > 1 && instance->targets[5].player > 0)\n  {\n    int restored = current_life - 1;\n    if (instance->targets[5].player < restored)\n      restored = instance->targets[5].player;\n    life[who_cant_lose] = current_life - restored;\n    instance->targets[5].player -= restored;\n  }\n  if (for_poison)\n  {\n    uint8_t poison = (player_counters[(who_cant_lose)].poison_ + 0);\n    if (poison < 9 && instance->targets[5].card > 0)\n    {\n      int restored = 9 - poison;\n      if (instance->targets[5].card < restored)\n        restored = instance->targets[5].card;\n      raw_set_poison(who_cant_lose, poison + (int8_t)restored);\n      instance->targets[5].card -= restored;\n    }\n    else if (poison >= 10 && instance->targets[6].card != 17)\n    {\n      raw_set_poison(who_cant_lose, 9);\n      instance->targets[5].card += poison - 9;\n    }\n  }\n}"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "lose_life",
+      "before_definition": "int lose_life(int player, int amount)\n{\n  int c;\n  bool bVar1;\n  bool bVar2;\n  int iVar3;\n  card_instance_t *instance;\n  int iVar5;\n  int iVar6;\n  unsigned int uVar7;\n  int iStack_4cc;\n  int marked[2][151];\n\n  if (amount < 1)\n  {\n    return 0;\n  }\n  if (player == 2)\n  {\n    iStack_4cc = 0;\n    iVar3 = current_turn;\n    do\n    {\n      iVar3 = lose_life(iVar3, amount);\n      iStack_4cc = iStack_4cc + iVar3;\n      player = 1 - current_turn;\n      iVar3 = -1;\n    } while (player == 2);\n  }\n  else\n  {\n    iStack_4cc = 0;\n  }\n  if (1 < (unsigned int)player)\n  {\n    return iStack_4cc;\n  }\n  if (life_total_can_change(player) == 0)\n  {\n    return iStack_4cc;\n  }\n  memset(marked, 0, sizeof(marked));\n  if (active_cards_count[player] < 1)\n  {\n    iVar3 = 1 - player;\n    bVar1 = false;\n    if (active_cards_count[iVar3] < 1)\n    {\n      increase_trap_condition(player, 2, amount);\n      life[player] = life[player] - amount;\n      play_sound_effect(WAV_LIFELOSS);\n      return iStack_4cc + amount;\n    }\n  LAB_0268f330:\n    bVar2 = false;\n    c = 0;\n    do\n    {\n      while (\n          ((instance = in_play(iVar3, c),\n            instance != NULL && ((uVar7 = (unsigned int)cards_data[instance->internal_card_id].id,\n                                  uVar7 == 0x2d75 || (uVar7 == 0x304d)))) &&\n           (iVar6 = is_humiliated(iVar3, c, AL_TRIG), iVar6 == 0)))\n      {\n        bVar2 = true;\n        marked[iVar3][c] = uVar7;\n        c = c + 1;\n        if (active_cards_count[iVar3] <= c)\n          goto LAB_0268f3d0;\n      }\n      c = c + 1;\n    } while (c < active_cards_count[iVar3]);\n  LAB_0268f3d0:\n    increase_trap_condition(player, 2, amount);\n    life[player] = life[player] - amount;\n    play_sound_effect(WAV_LIFELOSS);\n    if ((!bVar1) || (active_cards_count[player] < 1))\n      goto LAB_0268f526;\n  }\n  else\n  {\n    bVar1 = false;\n    iVar3 = 0;\n    do\n    {\n      while ((\n          (instance = in_play(player, iVar3),\n           instance != NULL && (((((uVar7 = (unsigned int)cards_data[instance->internal_card_id].id,\n                                    uVar7 == 0x1705 || (uVar7 == 0x804)) ||\n                                   (uVar7 == 0x1aff)) ||\n                                  ((uVar7 == 0x4148 || (uVar7 == 0x4814)))) ||\n                                 (uVar7 == 0x4fce)))) &&\n          (iVar5 = is_humiliated(player, iVar3, AL_TRIG), iVar5 == 0)))\n      {\n        bVar1 = true;\n        marked[player][iVar3] = uVar7;\n        iVar3 = iVar3 + 1;\n        if (active_cards_count[player] <= iVar3)\n          goto LAB_0268f307;\n      }\n      iVar3 = iVar3 + 1;\n    } while (iVar3 < active_cards_count[player]);\n  LAB_0268f307:\n    iVar3 = 1 - player;\n    if (0 < active_cards_count[iVar3])\n      goto LAB_0268f330;\n    increase_trap_condition(player, 2, amount);\n    life[player] = life[player] - amount;\n    play_sound_effect(WAV_LIFELOSS);\n    if (!bVar1)\n    {\n      return iStack_4cc + amount;\n    }\n    bVar2 = false;\n    if (active_cards_count[player] < 1)\n    {\n      return iStack_4cc + amount;\n    }\n  }\n  c = 0;\n  do\n  {\n    iVar6 = marked[player][c];\n    if (iVar6 == 0x4148)\n    {\n      instance = get_card_instance(player, c);\n      if (instance->targets[1].player != 0x42)\n      {\n        add_energy(player, 1);\n        instance = get_card_instance(player, c);\n        instance->targets[1].player = 0x42;\n      }\n    }\n    else if (iVar6 < 0x4149)\n    {\n      if (iVar6 == 0x1705)\n      {\n        gain_life_impl(player, amount * 2, 0);\n      }\n      else if (iVar6 == 0x1aff)\n      {\n        impose_sacrifice(player, c, player, amount, 0x47, 0, 0, 0, 0, 0, 0, 0, -1, 0);\n      }\n      else if (iVar6 == 0x804)\n      {\n        oath_of_lim_dul_lifeloss_trigger(player, c, amount);\n      }\n    }\n    else if (iVar6 == 0x4814)\n    {\n      lichs_mastery_lifeloss_trigger(player, c, amount);\n    }\n    else if (iVar6 == 0x4fce)\n    {\n      draw_cards(player, amount);\n    }\n    c = c + 1;\n  } while (c < active_cards_count[player]);\nLAB_0268f526:\n  iStack_4cc = iStack_4cc + amount;\n  if ((bVar2) && (0 < active_cards_count[iVar3]))\n  {\n    iVar5 = 0;\n    do\n    {\n      if (marked[iVar3][iVar5] == 0x2d75)\n      {\n        mill(player, amount);\n      }\n      else if (marked[iVar3][iVar5] == 0x304d)\n      {\n        gain_life_impl(iVar3, amount, 0);\n      }\n      iVar5 = iVar5 + 1;\n    } while (iVar5 < active_cards_count[iVar3]);\n  }\n  return iStack_4cc;\n}",
+      "after_definition": "int lose_life(int player, int amount)\n{\n  if (amount <= 0)\n    return 0;\n  int lost = 0;\n  if (player == ANYBODY)\n  {\n    lost = lose_life(current_turn, amount);\n    player = 1 - current_turn;\n  }\n  if ((unsigned int)player > 1 || !life_total_can_change(player))\n    return lost;\n  // Snapshot simultaneous triggers before any of them can remove a source.\n  int marked[2][151] = {{0}};\n  int own_triggers = 0;\n  for (int card = 0; card < active_cards_count[player]; ++card)\n  {\n    card_instance_t *instance = in_play(player, card);\n    if (!instance)\n      continue;\n    int id = cards_data[instance->internal_card_id].id;\n    if ((id == CARD_ID_TRANSCENDENCE || id == CARD_ID_OATH_OF_LIM_DUL ||\n         id == CARD_ID_LICHS_TOMB || id == CARD_ID_GONTIS_MACHINATIONS ||\n         id == CARD_ID_LICHS_MASTERY || id == CARD_ID_VILIS_BROKER_OF_BLOOD) &&\n        !is_humiliated(player, card, AL_TRIG))\n    {\n      own_triggers = 1;\n      marked[player][card] = id;\n    }\n  }\n  int opponent = 1 - player;\n  int opponent_triggers = 0;\n  for (int card = 0; card < active_cards_count[opponent]; ++card)\n  {\n    card_instance_t *instance = in_play(opponent, card);\n    if (!instance)\n      continue;\n    int id = cards_data[instance->internal_card_id].id;\n    if ((id == CARD_ID_MINDCRANK || id == CARD_ID_EXQUISITE_BLOOD) &&\n        !is_humiliated(opponent, card, AL_TRIG))\n    {\n      opponent_triggers = 1;\n      marked[opponent][card] = id;\n    }\n  }\n  increase_trap_condition(player, TRAP_LIFE_LOST, amount);\n  life[player] -= amount;\n  play_sound_effect(WAV_LIFELOSS);\n  if (own_triggers)\n    for (int card = 0; card < active_cards_count[player]; ++card)\n      switch (marked[player][card])\n      {\n      case CARD_ID_TRANSCENDENCE:\n        gain_life_impl(player, amount * 2, 0);\n        break;\n      case CARD_ID_OATH_OF_LIM_DUL:\n        oath_of_lim_dul_lifeloss_trigger(player, card, amount);\n        break;\n      case CARD_ID_LICHS_TOMB:\n        impose_sacrifice(player, card, player, amount, TYPE_PERMANENT, 0, 0, 0, 0, 0, 0, 0, -1, 0);\n        break;\n      case CARD_ID_GONTIS_MACHINATIONS:\n      {\n        card_instance_t *instance = get_card_instance(player, card);\n        if (instance->targets[1].player != 0x42)\n        {\n          add_energy(player, 1);\n          instance = get_card_instance(player, card);\n          instance->targets[1].player = 0x42;\n        }\n        break;\n      }\n      case CARD_ID_LICHS_MASTERY:\n        lichs_mastery_lifeloss_trigger(player, card, amount);\n        break;\n      case CARD_ID_VILIS_BROKER_OF_BLOOD:\n        draw_cards(player, amount);\n        break;\n      }\n  lost += amount;\n  if (opponent_triggers)\n    for (int card = 0; card < active_cards_count[opponent]; ++card)\n      switch (marked[opponent][card])\n      {\n      case CARD_ID_MINDCRANK:\n        mill(player, amount);\n        break;\n      case CARD_ID_EXQUISITE_BLOOD:\n        gain_life_impl(opponent, amount, 0);\n        break;\n      }\n  return lost;\n}",
+      "before_sha256": "7c983c7c8b76fe4c3b7d66f924778bfd67db7dd300f74bf8ede1b16d81e6dc4c",
+      "after_sha256": "f33c0a421c1f0a70f4994151b745fc1949539dea5265ebcebf6d38cb04f988c6",
+      "life_helpers_cleanup": true,
+      "facts": {
+        "removed_gotos": 4,
+        "removed_lab_gotos": 4,
+        "source_lines_removed": 85,
+        "removed_placeholder_occurrences": 87,
+        "removed_placeholder_names": 7
+      },
+      "expanded_before_definition": "int lose_life(int player, int amount)\n{\n  int c;\n  \n\n _Bool \n\n      bVar1;\n  \n\n _Bool \n\n      bVar2;\n  int iVar3;\n  card_instance_t *instance;\n  int iVar5;\n  int iVar6;\n  unsigned int uVar7;\n  int iStack_4cc;\n  int marked[2][151];\n\n  if (amount < 1)\n  {\n    return 0;\n  }\n  if (player == 2)\n  {\n    iStack_4cc = 0;\n    iVar3 = current_turn;\n    do\n    {\n      iVar3 = lose_life(iVar3, amount);\n      iStack_4cc = iStack_4cc + iVar3;\n      player = 1 - current_turn;\n      iVar3 = -1;\n    } while (player == 2);\n  }\n  else\n  {\n    iStack_4cc = 0;\n  }\n  if (1 < (unsigned int)player)\n  {\n    return iStack_4cc;\n  }\n  if (life_total_can_change(player) == 0)\n  {\n    return iStack_4cc;\n  }\n  memset(marked, 0, sizeof(marked));\n  if (active_cards_count[player] < 1)\n  {\n    iVar3 = 1 - player;\n    bVar1 = \n\n           0\n\n                ;\n    if (active_cards_count[iVar3] < 1)\n    {\n      increase_trap_condition(player, 2, amount);\n      life[player] = life[player] - amount;\n      play_sound_effect(WAV_LIFELOSS);\n      return iStack_4cc + amount;\n    }\n  LAB_0268f330:\n    bVar2 = \n\n           0\n\n                ;\n    c = 0;\n    do\n    {\n      while (\n          ((instance = in_play(iVar3, c),\n            instance != \n\n                       ((void *)0) \n\n                            && ((uVar7 = (unsigned int)cards_data[instance->internal_card_id].id,\n                                  uVar7 == 0x2d75 || (uVar7 == 0x304d)))) &&\n           (iVar6 = is_humiliated(iVar3, c, AL_TRIG), iVar6 == 0)))\n      {\n        bVar2 = \n\n               1\n\n                   ;\n        marked[iVar3][c] = uVar7;\n        c = c + 1;\n        if (active_cards_count[iVar3] <= c)\n          goto LAB_0268f3d0;\n      }\n      c = c + 1;\n    } while (c < active_cards_count[iVar3]);\n  LAB_0268f3d0:\n    increase_trap_condition(player, 2, amount);\n    life[player] = life[player] - amount;\n    play_sound_effect(WAV_LIFELOSS);\n    if ((!bVar1) || (active_cards_count[player] < 1))\n      goto LAB_0268f526;\n  }\n  else\n  {\n    bVar1 = \n\n           0\n\n                ;\n    iVar3 = 0;\n    do\n    {\n      while ((\n          (instance = in_play(player, iVar3),\n           instance != \n\n                      ((void *)0) \n\n                           && (((((uVar7 = (unsigned int)cards_data[instance->internal_card_id].id,\n                                    uVar7 == 0x1705 || (uVar7 == 0x804)) ||\n                                   (uVar7 == 0x1aff)) ||\n                                  ((uVar7 == 0x4148 || (uVar7 == 0x4814)))) ||\n                                 (uVar7 == 0x4fce)))) &&\n          (iVar5 = is_humiliated(player, iVar3, AL_TRIG), iVar5 == 0)))\n      {\n        bVar1 = \n\n               1\n\n                   ;\n        marked[player][iVar3] = uVar7;\n        iVar3 = iVar3 + 1;\n        if (active_cards_count[player] <= iVar3)\n          goto LAB_0268f307;\n      }\n      iVar3 = iVar3 + 1;\n    } while (iVar3 < active_cards_count[player]);\n  LAB_0268f307:\n    iVar3 = 1 - player;\n    if (0 < active_cards_count[iVar3])\n      goto LAB_0268f330;\n    increase_trap_condition(player, 2, amount);\n    life[player] = life[player] - amount;\n    play_sound_effect(WAV_LIFELOSS);\n    if (!bVar1)\n    {\n      return iStack_4cc + amount;\n    }\n    bVar2 = \n\n           0\n\n                ;\n    if (active_cards_count[player] < 1)\n    {\n      return iStack_4cc + amount;\n    }\n  }\n  c = 0;\n  do\n  {\n    iVar6 = marked[player][c];\n    if (iVar6 == 0x4148)\n    {\n      instance = get_card_instance(player, c);\n      if (instance->targets[1].player != 0x42)\n      {\n        add_energy(player, 1);\n        instance = get_card_instance(player, c);\n        instance->targets[1].player = 0x42;\n      }\n    }\n    else if (iVar6 < 0x4149)\n    {\n      if (iVar6 == 0x1705)\n      {\n        gain_life_impl(player, amount * 2, 0);\n      }\n      else if (iVar6 == 0x1aff)\n      {\n        impose_sacrifice(player, c, player, amount, 0x47, 0, 0, 0, 0, 0, 0, 0, -1, 0);\n      }\n      else if (iVar6 == 0x804)\n      {\n        oath_of_lim_dul_lifeloss_trigger(player, c, amount);\n      }\n    }\n    else if (iVar6 == 0x4814)\n    {\n      lichs_mastery_lifeloss_trigger(player, c, amount);\n    }\n    else if (iVar6 == 0x4fce)\n    {\n      draw_cards(player, amount);\n    }\n    c = c + 1;\n  } while (c < active_cards_count[player]);\nLAB_0268f526:\n  iStack_4cc = iStack_4cc + amount;\n  if ((bVar2) && (0 < active_cards_count[iVar3]))\n  {\n    iVar5 = 0;\n    do\n    {\n      if (marked[iVar3][iVar5] == 0x2d75)\n      {\n        mill(player, amount);\n      }\n      else if (marked[iVar3][iVar5] == 0x304d)\n      {\n        gain_life_impl(iVar3, amount, 0);\n      }\n      iVar5 = iVar5 + 1;\n    } while (iVar5 < active_cards_count[iVar3]);\n  }\n  return iStack_4cc;\n}",
+      "expanded_after_definition": "int lose_life(int player, int amount)\n{\n  if (amount <= 0)\n    return 0;\n  int lost = 0;\n  if (player == ANYBODY)\n  {\n    lost = lose_life(current_turn, amount);\n    player = 1 - current_turn;\n  }\n  if ((unsigned int)player > 1 || !life_total_can_change(player))\n    return lost;\n\n  int marked[2][151] = {{0}};\n  int own_triggers = 0;\n  for (int card = 0; card < active_cards_count[player]; ++card)\n  {\n    card_instance_t *instance = in_play(player, card);\n    if (!instance)\n      continue;\n    int id = cards_data[instance->internal_card_id].id;\n    if ((id == CARD_ID_TRANSCENDENCE || id == CARD_ID_OATH_OF_LIM_DUL ||\n         id == CARD_ID_LICHS_TOMB || id == CARD_ID_GONTIS_MACHINATIONS ||\n         id == CARD_ID_LICHS_MASTERY || id == CARD_ID_VILIS_BROKER_OF_BLOOD) &&\n        !is_humiliated(player, card, AL_TRIG))\n    {\n      own_triggers = 1;\n      marked[player][card] = id;\n    }\n  }\n  int opponent = 1 - player;\n  int opponent_triggers = 0;\n  for (int card = 0; card < active_cards_count[opponent]; ++card)\n  {\n    card_instance_t *instance = in_play(opponent, card);\n    if (!instance)\n      continue;\n    int id = cards_data[instance->internal_card_id].id;\n    if ((id == CARD_ID_MINDCRANK || id == CARD_ID_EXQUISITE_BLOOD) &&\n        !is_humiliated(opponent, card, AL_TRIG))\n    {\n      opponent_triggers = 1;\n      marked[opponent][card] = id;\n    }\n  }\n  increase_trap_condition(player, TRAP_LIFE_LOST, amount);\n  life[player] -= amount;\n  play_sound_effect(WAV_LIFELOSS);\n  if (own_triggers)\n    for (int card = 0; card < active_cards_count[player]; ++card)\n      switch (marked[player][card])\n      {\n      case CARD_ID_TRANSCENDENCE:\n        gain_life_impl(player, amount * 2, 0);\n        break;\n      case CARD_ID_OATH_OF_LIM_DUL:\n        oath_of_lim_dul_lifeloss_trigger(player, card, amount);\n        break;\n      case CARD_ID_LICHS_TOMB:\n        impose_sacrifice(player, card, player, amount, TYPE_PERMANENT, 0, 0, 0, 0, 0, 0, 0, -1, 0);\n        break;\n      case CARD_ID_GONTIS_MACHINATIONS:\n      {\n        card_instance_t *instance = get_card_instance(player, card);\n        if (instance->targets[1].player != 0x42)\n        {\n          add_energy(player, 1);\n          instance = get_card_instance(player, card);\n          instance->targets[1].player = 0x42;\n        }\n        break;\n      }\n      case CARD_ID_LICHS_MASTERY:\n        lichs_mastery_lifeloss_trigger(player, card, amount);\n        break;\n      case CARD_ID_VILIS_BROKER_OF_BLOOD:\n        draw_cards(player, amount);\n        break;\n      }\n  lost += amount;\n  if (opponent_triggers)\n    for (int card = 0; card < active_cards_count[opponent]; ++card)\n      switch (marked[opponent][card])\n      {\n      case CARD_ID_MINDCRANK:\n        mill(player, amount);\n        break;\n      case CARD_ID_EXQUISITE_BLOOD:\n        gain_life_impl(opponent, amount, 0);\n        break;\n      }\n  return lost;\n}"
+    }
+  ],
+  "constants": {
+    "CARD_ID_PLATINUM_EMPERION": 11336,
+    "CARD_ID_TEFERIS_PROTECTION": 17331,
+    "CARD_ID_PLATINUM_ANGEL": 1308,
+    "CARD_ID_LICHS_MASTERY": 18452,
+    "CARD_ID_GIDEON_OF_THE_TRIALS_EMBLEM": 16916,
+    "CARD_ID_ABYSSAL_PERSECUTOR": 10716,
+    "CARD_ID_ANGELS_GRACE": 8479,
+    "CARD_ID_TRANSCENDENCE": 5893,
+    "CARD_ID_OATH_OF_LIM_DUL": 2052,
+    "CARD_ID_LICHS_TOMB": 6911,
+    "CARD_ID_GONTIS_MACHINATIONS": 16712,
+    "CARD_ID_VILIS_BROKER_OF_BLOOD": 20430,
+    "CARD_ID_MINDCRANK": 11637,
+    "CARD_ID_EXQUISITE_BLOOD": 12365,
+    "TYPE_PERMANENT": 71,
+    "TYPE_EFFECT": 128,
+    "TARGET_TYPE_PLANESWALKER": 256,
+    "SUBTYPE_GIDEON": 28677,
+    "TRIGGER_REPLACE_CARD_DRAW": 207,
+    "TRIGGER_GAIN_LIFE": 224,
+    "EA_LICH": 2097152,
+    "PB_CANT_GAIN_LIFE": 2097152,
+    "TRAP_LIFE_GAINED": 1,
+    "TRAP_LIFE_LOST": 2,
+    "ANYBODY": 2,
+    "AL_STATIC": 4,
+    "AL_TRIG": 2,
+    "XTRIGGER_REPLACE_GAIN_LIFE": 16778752,
+    "RESOLVE_TRIGGER_MANDATORY": 2,
+    "RESOLVE_TRIGGER_OPTIONAL": 1,
+    "RESOLVE_TRIGGER_DUH": 3
+  },
+  "native_comparison": {
+    "result": {
+      "all_equal": true,
+      "three_way_comparisons": 1147840,
+      "entry_invocations": 3443520,
+      "helpers": 6,
+      "all_uint16_loss_guard_ids": 65536,
+      "all_byte_poison_quantities": 256,
+      "stateful_random_inputs": 18000,
+      "mutation_modes": 2,
+      "recursive_both_player_loss_uses_native_body": true,
+      "exact_call_traces_and_full_state": true
+    },
+    "native_path": ".recovery/2022-ManalinkEh.dll",
+    "native_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "functions": [
+      {
+        "name": "life_total_can_change",
+        "address": "0x268f070",
+        "size": 56,
+        "sha256": "af6804400165799804aa5de72e28177ce506849856a7f16c27b4a3b7e7c1ce5a",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x268f07e",
+            "target": "0x2678870",
+            "callee": "native_check_id"
+          },
+          {
+            "instruction": "0x268f09e",
+            "target": "0x268efd0",
+            "callee": "check_for_id_legacy"
+          }
+        ]
+      },
+      {
+        "name": "can_lose_the_game_impl",
+        "address": "0x2685c90",
+        "size": 309,
+        "sha256": "3e090a1229719a963b4eb5b5da7bac55f43e7d8d6e0e98103922899beb207847",
+        "entry_abi": "regparm(1)",
+        "external_branches": [
+          {
+            "instruction": "0x2685cb7",
+            "target": "0x26b35a0",
+            "callee": "get_id"
+          },
+          {
+            "instruction": "0x2685cf7",
+            "target": "0x26dd430",
+            "callee": "is_humiliated"
+          },
+          {
+            "instruction": "0x2685d11",
+            "target": "0x26b32d0",
+            "callee": "in_play"
+          },
+          {
+            "instruction": "0x2685d29",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x2685d45",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x2685d55",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x2685dab",
+            "target": "0x2682d30",
+            "callee": "check_battlefield_for_subtype"
+          }
+        ]
+      },
+      {
+        "name": "gain_life_impl",
+        "address": "0x268f730",
+        "size": 464,
+        "sha256": "51df92ddc88554522a2612a2abe144ddfc67ff18627c52be22a2b0095af77b41",
+        "entry_abi": "regparm(3)",
+        "external_branches": [
+          {
+            "instruction": "0x268f763",
+            "target": "0x268f070",
+            "callee": "life_total_can_change"
+          },
+          {
+            "instruction": "0x268f7ca",
+            "target": "0x26cba00",
+            "callee": "dispatch_xtrigger2"
+          },
+          {
+            "instruction": "0x268f809",
+            "target": "0x268f1b0",
+            "callee": "lose_life"
+          },
+          {
+            "instruction": "0x268f837",
+            "target": "0x26c90f0",
+            "callee": "increase_trap_condition"
+          },
+          {
+            "instruction": "0x268f857",
+            "target": "0x26b4050",
+            "callee": "draw_cards"
+          },
+          {
+            "instruction": "0x268f86c",
+            "target": "0x268f900",
+            "callee": "gain_life"
+          },
+          {
+            "instruction": "0x268f885",
+            "target": "0x268f900",
+            "callee": "gain_life"
+          },
+          {
+            "instruction": "0x268f8a8",
+            "target": "0x268f1b0",
+            "callee": "lose_life"
+          },
+          {
+            "instruction": "0x268f8f0",
+            "target": "0x26cb970",
+            "callee": "dispatch_trigger2"
+          }
+        ]
+      },
+      {
+        "name": "trigger_gain_life",
+        "address": "0x268be60",
+        "size": 183,
+        "sha256": "f239e3a9c82c58baf714c373130e33192739298c2d0364f582969e17ab25e31e",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x268becf",
+            "target": "0x26dd430",
+            "callee": "is_humiliated"
+          },
+          {
+            "instruction": "0x268bf00",
+            "target": "0x26795b0",
+            "callee": "duh_mode"
+          }
+        ]
+      },
+      {
+        "name": "cannot_lose_the_game_impl",
+        "address": "0x26a3060",
+        "size": 814,
+        "sha256": "376b0f94f4ec290e708877e692885e9d76283b47c167ef1085953b45a5e6d180",
+        "entry_abi": "regparm(3)",
+        "external_branches": [
+          {
+            "instruction": "0x26a307a",
+            "target": "0x26b32d0",
+            "callee": "in_play"
+          },
+          {
+            "instruction": "0x26a30cf",
+            "target": "0x26a2080",
+            "callee": "leaves_play"
+          },
+          {
+            "instruction": "0x26a31db",
+            "target": "0x26a2080",
+            "callee": "leaves_play"
+          },
+          {
+            "instruction": "0x26a3229",
+            "target": "0x26d4280",
+            "callee": "raw_set_poison"
+          },
+          {
+            "instruction": "0x26a32ec",
+            "target": "0x26d4280",
+            "callee": "raw_set_poison"
+          },
+          {
+            "instruction": "0x26a334b",
+            "target": "0x26d4280",
+            "callee": "raw_set_poison"
+          }
+        ]
+      },
+      {
+        "name": "lose_life",
+        "address": "0x268f1b0",
+        "size": 1408,
+        "sha256": "f80632933109750d55463068905f33d85e9f2a0081a81e89b21e255015785e76",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x268f22b",
+            "target": "0x268f070",
+            "callee": "life_total_can_change"
+          },
+          {
+            "instruction": "0x268f2a1",
+            "target": "0x26b32d0",
+            "callee": "in_play"
+          },
+          {
+            "instruction": "0x268f2e1",
+            "target": "0x26dd430",
+            "callee": "is_humiliated"
+          },
+          {
+            "instruction": "0x268f379",
+            "target": "0x26b32d0",
+            "callee": "in_play"
+          },
+          {
+            "instruction": "0x268f3a9",
+            "target": "0x26dd430",
+            "callee": "is_humiliated"
+          },
+          {
+            "instruction": "0x268f3e5",
+            "target": "0x26c90f0",
+            "callee": "increase_trap_condition"
+          },
+          {
+            "instruction": "0x268f404",
+            "target": "0x2658860",
+            "callee": "play_sound_effect"
+          },
+          {
+            "instruction": "0x268f4d0",
+            "target": "0x26e5080",
+            "callee": "impose_sacrifice"
+          },
+          {
+            "instruction": "0x268f512",
+            "target": "0x26b4050",
+            "callee": "draw_cards"
+          },
+          {
+            "instruction": "0x268f56f",
+            "target": "0x268f730",
+            "callee": "native_gain"
+          },
+          {
+            "instruction": "0x268f59a",
+            "target": "0x26b9430",
+            "callee": "mill"
+          },
+          {
+            "instruction": "0x268f5c1",
+            "target": "0x24040a0",
+            "callee": "oath_of_lim_dul_lifeloss_trigger"
+          },
+          {
+            "instruction": "0x268f5f7",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x268f611",
+            "target": "0x26d42e0",
+            "callee": "add_energy"
+          },
+          {
+            "instruction": "0x268f61d",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x268f63a",
+            "target": "0x268f730",
+            "callee": "native_gain"
+          },
+          {
+            "instruction": "0x268f656",
+            "target": "0x22d0100",
+            "callee": "lichs_mastery_lifeloss_trigger"
+          },
+          {
+            "instruction": "0x268f6a5",
+            "target": "0x26c90f0",
+            "callee": "increase_trap_condition"
+          },
+          {
+            "instruction": "0x268f6c4",
+            "target": "0x2658860",
+            "callee": "play_sound_effect"
+          },
+          {
+            "instruction": "0x268f6e0",
+            "target": "0x26c90f0",
+            "callee": "increase_trap_condition"
+          },
+          {
+            "instruction": "0x268f6ff",
+            "target": "0x2658860",
+            "callee": "play_sound_effect"
+          }
+        ]
+      }
+    ],
+    "bindings": [
+      {
+        "kind": "callee",
+        "owner": "life_total_can_change",
+        "patch_address": "0x268f07f",
+        "original_word": "0xfffe97ed",
+        "target": "(uintptr_t)native_check_id-0x268f083U",
+        "native_target": "0x2678870"
+      },
+      {
+        "kind": "callee",
+        "owner": "life_total_can_change",
+        "patch_address": "0x268f09f",
+        "original_word": "0xffffff2d",
+        "target": "(uintptr_t)check_for_id_legacy-0x268f0a3U",
+        "native_target": "0x268efd0"
+      },
+      {
+        "kind": "data",
+        "owner": "can_lose_the_game_impl",
+        "patch_address": "0x2685ca0",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "can_lose_the_game_impl",
+        "patch_address": "0x2685cb8",
+        "original_word": "0x2d8e4",
+        "target": "(uintptr_t)get_id-0x2685cbcU",
+        "native_target": "0x26b35a0"
+      },
+      {
+        "kind": "callee",
+        "owner": "can_lose_the_game_impl",
+        "patch_address": "0x2685cf8",
+        "original_word": "0x57734",
+        "target": "(uintptr_t)is_humiliated-0x2685cfcU",
+        "native_target": "0x26dd430"
+      },
+      {
+        "kind": "data",
+        "owner": "can_lose_the_game_impl",
+        "patch_address": "0x2685d04",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "can_lose_the_game_impl",
+        "patch_address": "0x2685d12",
+        "original_word": "0x2d5ba",
+        "target": "(uintptr_t)in_play-0x2685d16U",
+        "native_target": "0x26b32d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "can_lose_the_game_impl",
+        "patch_address": "0x2685d2a",
+        "original_word": "0xffffbf72",
+        "target": "(uintptr_t)is_what-0x2685d2eU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "can_lose_the_game_impl",
+        "patch_address": "0x2685d46",
+        "original_word": "0xffffbf56",
+        "target": "(uintptr_t)is_what-0x2685d4aU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "callee",
+        "owner": "can_lose_the_game_impl",
+        "patch_address": "0x2685d56",
+        "original_word": "0x2cd56",
+        "target": "(uintptr_t)get_card_instance-0x2685d5aU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "can_lose_the_game_impl",
+        "patch_address": "0x2685dac",
+        "original_word": "0xffffcf80",
+        "target": "(uintptr_t)check_battlefield_for_subtype-0x2685db0U",
+        "native_target": "0x2682d30"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f74e",
+        "original_word": "0x4ef1a6",
+        "target": "(uintptr_t)&player_bits+2"
+      },
+      {
+        "kind": "callee",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f764",
+        "original_word": "0xfffff908",
+        "target": "(uintptr_t)life_total_can_change-0x268f768U",
+        "native_target": "0x268f070"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f76e",
+        "original_word": "0x4ef18a",
+        "target": "(uintptr_t)&event_flags+2"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f77a",
+        "original_word": "0x435c80",
+        "target": "(uintptr_t)life_gain_context_push"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f784",
+        "original_word": "0x628670",
+        "target": "(uintptr_t)&current_turn+0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f78a",
+        "original_word": "0x73b6ac",
+        "target": "(uintptr_t)&life_gained+0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f7b3",
+        "original_word": "0x2797120",
+        "target": "(uintptr_t)&life_to_lose_on_gain_life+0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f7bc",
+        "original_word": "0x73b6ac",
+        "target": "(uintptr_t)&life_gained+0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f7c2",
+        "original_word": "0x2797120",
+        "target": "(uintptr_t)&life_to_lose_on_gain_life+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f7cb",
+        "original_word": "0x3c231",
+        "target": "(uintptr_t)dispatch_xtrigger2-0x268f7cfU",
+        "native_target": "0x26cba00"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f7d4",
+        "original_word": "0x73b6ac",
+        "target": "(uintptr_t)&life_gained+0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f7da",
+        "original_word": "0x2797120",
+        "target": "(uintptr_t)&life_to_lose_on_gain_life+0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f7e0",
+        "original_word": "0x73b6ac",
+        "target": "(uintptr_t)&life_gained+0"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f7e5",
+        "original_word": "0x435cd0",
+        "target": "(uintptr_t)life_gain_context_pop"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f7f6",
+        "original_word": "0x2797120",
+        "target": "(uintptr_t)&life_to_lose_on_gain_life+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f80a",
+        "original_word": "0xfffff9a2",
+        "target": "(uintptr_t)lose_life-0x268f80eU",
+        "native_target": "0x268f1b0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f81b",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f833",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f838",
+        "original_word": "0x398b4",
+        "target": "(uintptr_t)increase_trap_condition-0x268f83cU",
+        "native_target": "0x26c90f0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f83e",
+        "original_word": "0x4ef18a",
+        "target": "(uintptr_t)&event_flags+2"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f848",
+        "original_word": "0x4ef538",
+        "target": "(uintptr_t)life_gain_draw_count"
+      },
+      {
+        "kind": "callee",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f858",
+        "original_word": "0x247f4",
+        "target": "(uintptr_t)draw_cards-0x268f85cU",
+        "native_target": "0x26b4050"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f861",
+        "original_word": "0x628670",
+        "target": "(uintptr_t)&current_turn+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f86d",
+        "original_word": "0x8f",
+        "target": "(uintptr_t)gain_life-0x268f871U",
+        "native_target": "0x268f900"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f873",
+        "original_word": "0x628670",
+        "target": "(uintptr_t)&current_turn+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f886",
+        "original_word": "0x76",
+        "target": "(uintptr_t)gain_life-0x268f88aU",
+        "native_target": "0x268f900"
+      },
+      {
+        "kind": "callee",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f8a9",
+        "original_word": "0xfffff903",
+        "target": "(uintptr_t)lose_life-0x268f8adU",
+        "native_target": "0x268f1b0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f8b9",
+        "original_word": "0x628670",
+        "target": "(uintptr_t)&current_turn+0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f8bf",
+        "original_word": "0x73b6ac",
+        "target": "(uintptr_t)&life_gained+0"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f8ec",
+        "original_word": "0x73b6ac",
+        "target": "(uintptr_t)&life_gained+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f8f1",
+        "original_word": "0x3c07b",
+        "target": "(uintptr_t)dispatch_trigger2-0x268f8f5U",
+        "native_target": "0x26cb970"
+      },
+      {
+        "kind": "data",
+        "owner": "gain_life_impl",
+        "patch_address": "0x268f8f7",
+        "original_word": "0x73b6ac",
+        "target": "(uintptr_t)&life_gained+0"
+      },
+      {
+        "kind": "data",
+        "owner": "trigger_gain_life",
+        "patch_address": "0x268be69",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)&trigger_condition+0"
+      },
+      {
+        "kind": "data",
+        "owner": "trigger_gain_life",
+        "patch_address": "0x268be85",
+        "original_word": "0x737e1c",
+        "target": "(uintptr_t)&reason_for_trigger_controller+0"
+      },
+      {
+        "kind": "data",
+        "owner": "trigger_gain_life",
+        "patch_address": "0x268be8d",
+        "original_word": "0x73b6ac",
+        "target": "(uintptr_t)&life_gained+0"
+      },
+      {
+        "kind": "data",
+        "owner": "trigger_gain_life",
+        "patch_address": "0x268bea0",
+        "original_word": "0x62c17c",
+        "target": "(uintptr_t)&trigger_cause_controller+0"
+      },
+      {
+        "kind": "data",
+        "owner": "trigger_gain_life",
+        "patch_address": "0x268bea7",
+        "original_word": "0x7a398c",
+        "target": "(uintptr_t)&affected_card+0"
+      },
+      {
+        "kind": "data",
+        "owner": "trigger_gain_life",
+        "patch_address": "0x268beb1",
+        "original_word": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "trigger_gain_life",
+        "patch_address": "0x268bed0",
+        "original_word": "0x5155c",
+        "target": "(uintptr_t)is_humiliated-0x268bed4U",
+        "native_target": "0x26dd430"
+      },
+      {
+        "kind": "data",
+        "owner": "trigger_gain_life",
+        "patch_address": "0x268bef1",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)&event_result+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "trigger_gain_life",
+        "patch_address": "0x268bf01",
+        "original_word": "0xfffed6ab",
+        "target": "(uintptr_t)duh_mode-0x268bf05U",
+        "native_target": "0x26795b0"
+      },
+      {
+        "kind": "callee",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a307b",
+        "original_word": "0x10251",
+        "target": "(uintptr_t)in_play-0x26a307fU",
+        "native_target": "0x26b32d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a30d0",
+        "original_word": "0xffffefac",
+        "target": "(uintptr_t)leaves_play-0x26a30d4U",
+        "native_target": "0x26a2080"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a30fd",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a311a",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a312a",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)&trigger_condition+0"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a313b",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a3166",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a317a",
+        "original_word": "0x4ef530",
+        "target": "(uintptr_t)&player_counters+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a31dc",
+        "original_word": "0xffffeea0",
+        "target": "(uintptr_t)leaves_play-0x26a31e0U",
+        "native_target": "0x26a2080"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a3217",
+        "original_word": "0x4ef530",
+        "target": "(uintptr_t)&player_counters+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a322a",
+        "original_word": "0x31052",
+        "target": "(uintptr_t)raw_set_poison-0x26a322eU",
+        "native_target": "0x26d4280"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a3243",
+        "original_word": "0x4d7030",
+        "target": "(uintptr_t)&deck_ptr+0"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a3252",
+        "original_word": "0x737e1c",
+        "target": "(uintptr_t)&reason_for_trigger_controller+0"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a325e",
+        "original_word": "0x7a398c",
+        "target": "(uintptr_t)&affected_card+0"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a326a",
+        "original_word": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller+0"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a3280",
+        "original_word": "0x786dc8",
+        "target": "(uintptr_t)&suppress_draw+0"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a32a2",
+        "original_word": "0x786dc8",
+        "target": "(uintptr_t)&suppress_draw+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a32ed",
+        "original_word": "0x30f8f",
+        "target": "(uintptr_t)raw_set_poison-0x26a32f1U",
+        "native_target": "0x26d4280"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a3325",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a334c",
+        "original_word": "0x30f30",
+        "target": "(uintptr_t)raw_set_poison-0x26a3350U",
+        "native_target": "0x26d4280"
+      },
+      {
+        "kind": "data",
+        "owner": "cannot_lose_the_game_impl",
+        "patch_address": "0x26a3381",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)&event_result+0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f1d4",
+        "original_word": "0x628670",
+        "target": "(uintptr_t)&current_turn+0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f1f8",
+        "original_word": "0x628670",
+        "target": "(uintptr_t)&current_turn+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f22c",
+        "original_word": "0xfffffe40",
+        "target": "(uintptr_t)life_total_can_change-0x268f230U",
+        "native_target": "0x268f070"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f246",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f294",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f2a2",
+        "original_word": "0x2402a",
+        "target": "(uintptr_t)in_play-0x268f2a6U",
+        "native_target": "0x26b32d0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f2b6",
+        "original_word": "0x7e7034",
+        "target": "(uintptr_t)cards_data+36"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f2e2",
+        "original_word": "0x4e14a",
+        "target": "(uintptr_t)is_humiliated-0x268f2e6U",
+        "native_target": "0x26dd430"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f301",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f31e",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f36c",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f37a",
+        "original_word": "0x23f52",
+        "target": "(uintptr_t)in_play-0x268f37eU",
+        "native_target": "0x26b32d0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f38e",
+        "original_word": "0x7e7034",
+        "target": "(uintptr_t)cards_data+36"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f3aa",
+        "original_word": "0x4e082",
+        "target": "(uintptr_t)is_humiliated-0x268f3aeU",
+        "native_target": "0x26dd430"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f3c9",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f3e6",
+        "original_word": "0x39d06",
+        "target": "(uintptr_t)increase_trap_condition-0x268f3eaU",
+        "native_target": "0x26c90f0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f3ed",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f400",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f405",
+        "original_word": "0xfffc9457",
+        "target": "(uintptr_t)play_sound_effect-0x268f409U",
+        "native_target": "0x2658860"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f41a",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f4d1",
+        "original_word": "0x55bab",
+        "target": "(uintptr_t)impose_sacrifice-0x268f4d5U",
+        "native_target": "0x26e5080"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f4dc",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f513",
+        "original_word": "0x24b39",
+        "target": "(uintptr_t)draw_cards-0x268f517U",
+        "native_target": "0x26b4050"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f537",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f570",
+        "original_word": "0x1bc",
+        "target": "(uintptr_t)native_gain-0x268f574U",
+        "native_target": "0x268f730"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f578",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f59b",
+        "original_word": "0x29e91",
+        "target": "(uintptr_t)mill-0x268f59fU",
+        "native_target": "0x26b9430"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f5c2",
+        "original_word": "0xffd74ada",
+        "target": "(uintptr_t)oath_of_lim_dul_lifeloss_trigger-0x268f5c6U",
+        "native_target": "0x24040a0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f5f8",
+        "original_word": "0x234b4",
+        "target": "(uintptr_t)get_card_instance-0x268f5fcU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f612",
+        "original_word": "0x44cca",
+        "target": "(uintptr_t)add_energy-0x268f616U",
+        "native_target": "0x26d42e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f61e",
+        "original_word": "0x2348e",
+        "target": "(uintptr_t)get_card_instance-0x268f622U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f63b",
+        "original_word": "0xf1",
+        "target": "(uintptr_t)native_gain-0x268f63fU",
+        "native_target": "0x268f730"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f657",
+        "original_word": "0xffc40aa5",
+        "target": "(uintptr_t)lichs_mastery_lifeloss_trigger-0x268f65bU",
+        "native_target": "0x22d0100"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f681",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f6a6",
+        "original_word": "0x39a46",
+        "target": "(uintptr_t)increase_trap_condition-0x268f6aaU",
+        "native_target": "0x26c90f0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f6ad",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f6c0",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f6c5",
+        "original_word": "0xfffc9197",
+        "target": "(uintptr_t)play_sound_effect-0x268f6c9U",
+        "native_target": "0x2658860"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f6e1",
+        "original_word": "0x39a0b",
+        "target": "(uintptr_t)increase_trap_condition-0x268f6e5U",
+        "native_target": "0x26c90f0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f6e8",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f6fb",
+        "original_word": "0x4ef528",
+        "target": "(uintptr_t)&life+0"
+      },
+      {
+        "kind": "callee",
+        "owner": "lose_life",
+        "patch_address": "0x268f700",
+        "original_word": "0xfffc915c",
+        "target": "(uintptr_t)play_sound_effect-0x268f704U",
+        "native_target": "0x2658860"
+      },
+      {
+        "kind": "data",
+        "owner": "lose_life",
+        "patch_address": "0x268f715",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)&active_cards_count+0"
+      }
+    ],
+    "coff_globals": {
+      "active_cards_count": "0x4ef520",
+      "suppress_draw": "0x786dc8",
+      "trigger_cause_controller": "0x62c17c",
+      "life_gained": "0x73b6ac",
+      "event_flags": "0x4ef188",
+      "player_counters": "0x4ef530",
+      "cards_data": "0x7e7010",
+      "reason_for_trigger_controller": "0x737e1c",
+      "life": "0x4ef528",
+      "event_result": "0x6205b4",
+      "deck_ptr": "0x4d7030",
+      "current_turn": "0x628670",
+      "life_to_lose_on_gain_life": "0x2797120",
+      "affected_card": "0x7a398c",
+      "affected_card_controller": "0x738c84",
+      "trigger_condition": "0x7a2d78",
+      "player_bits": "0x4ef1a4"
+    },
+    "source_path": ".recovery/life-native-check-c341.c",
+    "source_sha256": "9be16d6458027296a8d2988266b7026b4cf05781fd196839b61de09b608442c0",
+    "executable_path": ".recovery/life-native-check-c341.exe",
+    "executable_sha256": "015834eb3aa18d506849ff15a23b13612517d45c596a6b19e1f7a7b7e8727596",
+    "compile_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-static-libgcc",
+      "-Wl,--image-base,0x10000000",
+      "-I.",
+      ".recovery\\life-native-check-c341.c",
+      "-o",
+      ".recovery\\life-native-check-c341.exe"
+    ],
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "compile_log": ".recovery/life-native-check-c341.compile.log",
+    "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_state_sha256": "3003be91e021c11b0f1a8901a42841d85632baeafb9be1ad4197bc66ab8c8de0",
+  "raw_source_bytes_sha256": "d61e68ababb9111d343d4091dcd50fc1f7c8e1855ce40e197b458b5753083dda",
+  "index_sha256": "c1924b91f666e6c673ce508281ac488faf07f9a50b2377ed27fdc1b6315d6e93",
+  "scope": "Six native branch bodies compared with predecessor and reconstruction. Exact calls, transient life gain/replacement contexts, full card records/data/player counters, decks and relevant globals checked with two callback mutation modes. Both-player loss retains real native recursion. Other helper/engine dependencies are controlled callees, not composition. All uint16 loss-guard IDs and all byte poison values covered in bounded layouts. Valid allocated game records, current_turn0/1, active counts0..4, bounded arithmetic excluding signed overflow, invalid allocation and full native32/gameplay behavior.",
+  "files": [
+    {
+      "source": "functions/functions.c",
+      "before_path": ".recovery/life-helpers-before-c342/functions/functions.c",
+      "before_bytes_sha256": "d61e68ababb9111d343d4091dcd50fc1f7c8e1855ce40e197b458b5753083dda",
+      "after_source_sha256": "afb2aba7861459abb6bb46f31077158443a6c7e6d82a5dd8435f61a79218fc47"
+    }
+  ],
+  "whole_source_lines_removed": 176,
+  "compiler_expansion": {
+    "compiler_path": "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-E",
+      "-dD",
+      "functions/functions.c"
+    ],
+    "preflight_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-E",
+      "-dD",
+      "-x",
+      "c",
+      "-"
+    ],
+    "before_sha256": "15444f37763baee8a91577ba5027cd98ea9f83dc1e060a7811879d98dffec81b",
+    "projected_sha256": "209ca2cf9da98fe87f751317ebfcd2262dad6c394bf1c239dabe5a3ae9ef3fe3",
+    "unrelated_expanded_tokens_unchanged": true,
+    "ordinary_storage_enum_and_layout_probe": "\n#include <stddef.h>\n#include <limits.h>\n_Static_assert(sizeof(int)==4 && sizeof(void*)==4 && CHAR_BIT==8 && (char)255==-1, \"native_life_integer_model\");\n_Static_assert(sizeof(card_instance_t)==300 && sizeof(card_data_t)==72 && offsetof(card_data_t,id)==36 && sizeof(PlayerCounters)==4 && offsetof(PlayerCounters,poison_)==0, \"native_life_layout\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&life[0]),int*) && __builtin_types_compatible_p(__typeof__(&active_cards_count[0]),int*) && __builtin_types_compatible_p(__typeof__(&current_turn),int*) && __builtin_types_compatible_p(__typeof__(&life_gained),int*) && __builtin_types_compatible_p(__typeof__(&life_to_lose_on_gain_life),int*) && __builtin_types_compatible_p(__typeof__(&life_gain_draw_count[0]),int*) && __builtin_types_compatible_p(__typeof__(&event_flags),int*), \"ordinary_life_globals\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&player_counters[0].poison_),uint8_t*) && __builtin_types_compatible_p(__typeof__(&cards_data[0].id),uint16_t*) && __builtin_types_compatible_p(__typeof__(&player_bits[0]),player_bits_t*) && __builtin_types_compatible_p(__typeof__(&deck_ptr[0]),int**), \"ordinary_life_inputs\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->targets[5].player),int32_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->targets[5].card),int32_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->targets[6].player),int32_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->targets[6].card),int32_t*), \"ordinary_hidden_loss_fields\");\n_Static_assert(CARD_ID_PLATINUM_EMPERION==11336, \"native_counter_enum\");\n_Static_assert(CARD_ID_TEFERIS_PROTECTION==17331, \"native_counter_enum\");\n_Static_assert(CARD_ID_PLATINUM_ANGEL==1308, \"native_counter_enum\");\n_Static_assert(CARD_ID_LICHS_MASTERY==18452, \"native_counter_enum\");\n_Static_assert(CARD_ID_GIDEON_OF_THE_TRIALS_EMBLEM==16916, \"native_counter_enum\");\n_Static_assert(CARD_ID_ABYSSAL_PERSECUTOR==10716, \"native_counter_enum\");\n_Static_assert(CARD_ID_ANGELS_GRACE==8479, \"native_counter_enum\");\n_Static_assert(CARD_ID_TRANSCENDENCE==5893, \"native_counter_enum\");\n_Static_assert(CARD_ID_OATH_OF_LIM_DUL==2052, \"native_counter_enum\");\n_Static_assert(CARD_ID_LICHS_TOMB==6911, \"native_counter_enum\");\n_Static_assert(CARD_ID_GONTIS_MACHINATIONS==16712, \"native_counter_enum\");\n_Static_assert(CARD_ID_VILIS_BROKER_OF_BLOOD==20430, \"native_counter_enum\");\n_Static_assert(CARD_ID_MINDCRANK==11637, \"native_counter_enum\");\n_Static_assert(CARD_ID_EXQUISITE_BLOOD==12365, \"native_counter_enum\");\n_Static_assert(TYPE_PERMANENT==71, \"native_counter_enum\");\n_Static_assert(TYPE_EFFECT==128, \"native_counter_enum\");\n_Static_assert(TARGET_TYPE_PLANESWALKER==256, \"native_counter_enum\");\n_Static_assert(SUBTYPE_GIDEON==28677, \"native_counter_enum\");\n_Static_assert(TRIGGER_REPLACE_CARD_DRAW==207, \"native_counter_enum\");\n_Static_assert(TRIGGER_GAIN_LIFE==224, \"native_counter_enum\");\n_Static_assert(EA_LICH==2097152, \"native_counter_enum\");\n_Static_assert(PB_CANT_GAIN_LIFE==2097152, \"native_counter_enum\");\n_Static_assert(TRAP_LIFE_GAINED==1, \"native_counter_enum\");\n_Static_assert(TRAP_LIFE_LOST==2, \"native_counter_enum\");\n_Static_assert(ANYBODY==2, \"native_counter_enum\");\n_Static_assert(AL_STATIC==4, \"native_counter_enum\");\n_Static_assert(AL_TRIG==2, \"native_counter_enum\");\n_Static_assert(XTRIGGER_REPLACE_GAIN_LIFE==16778752, \"native_counter_enum\");\n_Static_assert(RESOLVE_TRIGGER_MANDATORY==2, \"native_counter_enum\");\n_Static_assert(RESOLVE_TRIGGER_OPTIONAL==1, \"native_counter_enum\");\n_Static_assert(RESOLVE_TRIGGER_DUH==3, \"native_counter_enum\");\n",
+    "probe_exit_code": 0,
+    "before_archive": {
+      "path": ".recovery/life-helpers-before-c342.i.gz",
+      "sha256": "416c3ba91b16a1db74887e1a351fab37f775ba34c2faaefe02e1f97acd0fb714"
+    },
+    "projected_archive": {
+      "path": ".recovery/life-helpers-projected-c342.i.gz",
+      "sha256": "2bc503b6be2ccf453d4d3b8f93edd60012af877ce411142ea2145a9f90a20983"
+    },
+    "actual_sha256": "21fd572493f0dd85d84d59c45ef0a39beba8266ed5b37c3656ff1407c6f1a75d",
+    "actual_unit_matches_preflight": true
+  },
+  "status": "Application-time snapshot: native comparisons and actual compiler-unit checks pass. Subsequent build/setup completion is published in life-helpers-cleanup-coverage.json."
+}

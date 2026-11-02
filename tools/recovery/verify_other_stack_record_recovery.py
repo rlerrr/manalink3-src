@@ -81,6 +81,18 @@ def verify(proof,image,root=ROOT):
         token_plain=[r for r in current_rows if r['name'] in TOKEN_NAMES]
         assert len(token_plain)==2
         current_rows=[r for r in current_rows if r not in token_plain]
+    from token_aggregate_source import NAMES as aggregate_names
+    if proof.get('native_disentangled_pair_locals'):
+        pairs=json.loads((root/proof['native_disentangled_pair_locals']).read_bytes())
+        aggregate_names=aggregate_names|{v['name'] for v in pairs['rows']}
+    if proof.get('native_multiphase_card_locals'):
+        multi=json.loads((root/proof['native_multiphase_card_locals']).read_bytes())
+        aggregate_names=aggregate_names|{v['name'] for v in multi['rows']}
+    aggregate_rows=[v for v in current_rows if proof.get('native_token_aggregate_recovery') and v['name'] in aggregate_names]
+    current_rows=[v for v in current_rows if v not in aggregate_rows]
+    from final_array_locals_source import NAMES as final_array_names
+    final_array_rows=[v for v in current_rows if proof.get('native_final_array_locals_recovery') and v['name'] in final_array_names]
+    current_rows=[v for v in current_rows if v not in final_array_rows]
     current_dw,current_functions=compiled_records(current_debug,current_rows);kinds=collections.Counter()
     for entry in token_plain:
         old=record['repair']['after_sha256'] if entry['name']=='card_lord_windgrace' else entry['before_definition_sha256']
@@ -104,14 +116,25 @@ def verify(proof,image,root=ROOT):
         ci,cd,cdw,functions=builds[1];f=functions[(row['source'],row['name'])]
         checked=comparison(row,native,row['after_compiled'],image,original,ci,cd,dw,d,cdw,f)
         assert checked==row['after_comparison'];kinds[checked['kind']]+=1
-        f=current_functions[(row['source'],row['name'])]
-        assert f['size']==row['source_union_size'] and f['members']==row['source_members']
-        fresh=collect_bytes(current,current_dw,f['die'],f['frame_offset'],f['size'])
-        comparison(row,native,fresh,image,original,current,current_debug,dw,d,current_dw,f)
+        if row in final_array_rows:
+            from verify_final_array_locals_recovery import verify_current_row
+            verify_current_row(proof,image,root,row['source'],row['name'],row['before_definition_sha256'])
+        elif row in aggregate_rows:
+            from verify_token_aggregate_recovery import verify_current_row
+            verify_current_row(proof,image,root,row['source'],row['name'],row['before_definition_sha256'])
+        else:
+            f=current_functions[(row['source'],row['name'])]
+            assert f['size']==row['source_union_size'] and f['members']==row['source_members']
+            fresh=collect_bytes(current,current_dw,f['die'],f['frame_offset'],f['size'])
+            comparison(row,native,fresh,image,original,current,current_debug,dw,d,current_dw,f)
         if row['name']!='card_lord_windgrace':
             t=read(root/row['source']);a,b=span(t,row['name'])
             if sha(t[a:b].encode())!=row['before_definition_sha256']:
-                if row['name']=='card_geyadrone_dihada':
+                if row in final_array_rows:
+                    from verify_final_array_locals_recovery import verify_superseded_definition
+                elif row in aggregate_rows:
+                    from verify_token_aggregate_recovery import verify_superseded_definition
+                elif row['name']=='card_geyadrone_dihada':
                     from verify_selection_storage_recovery import verify_superseded_definition
                 elif row['name']=='card_vraska_relic_seeker':
                     from verify_card_array_locals_recovery import verify_superseded_definition

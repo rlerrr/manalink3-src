@@ -2,6 +2,7 @@
 import csv,json
 from elftools.dwarf.locationlists import LocationParser
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image,inherited_value
 from export_abi import type_of
 
@@ -14,7 +15,7 @@ def verify(proof,image,root=ROOT):
     for row in record['helpers']+record['card_callers']:
         assert (row['source'],row['name'],row['definition_sha256']) in receipts,row['name']
         text=read(root/row['source']);a,b=span(text,row['name'])
-        if sha(text[a:b].encode())!=row['definition_sha256']:
+        if not source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['definition_sha256']):
             from verify_plain_test_parameter_recovery import verify_superseded_definition
             verify_superseded_definition(proof,image,root,row['source'],row['name'],row['definition_sha256'])
         for part in row['native_ranges']:

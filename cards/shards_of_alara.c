@@ -3713,13 +3713,14 @@ and put them into your hand. If you do, shuffle your library. */
 
 static int realm_razer_legacy(int player, int card, event_t event)
 {
+  int p;
   int *piVar1;
   int iVar2;
   int iVar3;
-  card_instance_t *pcVar4;
+  card_instance_t *instance;
   int iVar5;
   card_instance_t *pcVar6;
-  int iVar7;
+  int c;
   target_t *ptVar8;
   int iVar9;
   int *piVar10;
@@ -3727,49 +3728,48 @@ static int realm_razer_legacy(int player, int card, event_t event)
   int lc[2];
   int lands[2][500];
 
-  pcVar4 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   if ((event == EVENT_CAN_ACTIVATE) && (player != 1))
   {
-    iVar9 = 0;
+    p = 0;
     do
     {
-      iVar7 = active_cards_count[iVar9] + -1;
-      if (-1 < iVar7)
+      c = active_cards_count[p] + -1;
+      if (-1 < c)
       {
         do
         {
-          iVar5 = is_what(iVar9, iVar7, 0x80);
-          if ((iVar5 != 0) && ((((player != iVar9 || (card != iVar7)) &&
-                                 (pcVar6 = get_card_instance(iVar9, iVar7),
-                                  pcVar6->targets[1].card == pcVar4->targets[1].card)) &&
-                                ((pcVar6->targets[0].player == pcVar4->targets[0].player &&
-                                  (pcVar6->targets[0].card == pcVar4->targets[0].card))))))
+          iVar5 = is_what(p, c, 0x80);
+          if ((iVar5 != 0) && ((((player != p || (card != c)) &&
+                                 (pcVar6 = get_card_instance(p, c),
+                                  pcVar6->targets[1].card == instance->targets[1].card)) &&
+                                ((pcVar6->targets[0].player == instance->targets[0].player &&
+                                  (pcVar6->targets[0].card == instance->targets[0].card))))))
           {
             ptVar8 = pcVar6->targets + 2;
             do
             {
               if (ptVar8->player == -1)
                 break;
-              iVar5 = check_rfg(ptVar8->player, (unsigned int)cards_data[ptVar8->card].id);
-              if (iVar5 != 0)
+              if (check_rfg(ptVar8->player, (unsigned int)cards_data[ptVar8->card].id) != 0)
               {
                 return 1;
               }
               ptVar8 = ptVar8 + 1;
             } while (ptVar8 != (target_t *)&pcVar6->parent_controller);
           }
-          iVar7 = iVar7 + -1;
-        } while (iVar7 != -1);
+          c = c + -1;
+        } while (c != -1);
       }
-      iVar9 = iVar9 + 1;
-    } while (iVar9 != 2);
+      p = p + 1;
+    } while (p != 2);
     event_00 = EVENT_CAN_ACTIVATE;
   }
   else
   {
     if (event != EVENT_ACTIVATE)
     {
-      leaves_play(pcVar4->targets[0].player, pcVar4->targets[0].card, event, 1, 0);
+      leaves_play(instance->targets[0].player, instance->targets[0].card, event, 1, 0);
       if (event != EVENT_LEAVES_PLAY_ABILITY)
       {
         return 0;
@@ -3779,25 +3779,24 @@ static int realm_razer_legacy(int player, int card, event_t event)
       iVar9 = 0;
       do
       {
-        iVar7 = active_cards_count[iVar9] + -1;
-        if (-1 < iVar7)
+        c = active_cards_count[iVar9] + -1;
+        if (-1 < c)
         {
           do
           {
-            iVar5 = is_what(iVar9, iVar7, 0x80);
-            if (((iVar5 != 0) && (((player != iVar9 || (card != iVar7)) &&
-                                   (pcVar6 = get_card_instance(iVar9, iVar7),
-                                    pcVar6->targets[1].card == pcVar4->targets[1].card)))) &&
-                ((pcVar6->targets[0].player == pcVar4->targets[0].player &&
-                  (pcVar6->targets[0].card == pcVar4->targets[0].card))))
+            iVar5 = is_what(iVar9, c, 0x80);
+            if (((iVar5 != 0) && (((player != iVar9 || (card != c)) &&
+                                   (pcVar6 = get_card_instance(iVar9, c),
+                                    pcVar6->targets[1].card == instance->targets[1].card)))) &&
+                ((pcVar6->targets[0].player == instance->targets[0].player &&
+                  (pcVar6->targets[0].card == instance->targets[0].card))))
             {
               ptVar8 = pcVar6->targets + 2;
               do
               {
                 if (ptVar8->player == -1)
                   break;
-                iVar5 = check_rfg(ptVar8->player, (unsigned int)cards_data[ptVar8->card].id);
-                if (iVar5 != 0)
+                if (check_rfg(ptVar8->player, (unsigned int)cards_data[ptVar8->card].id) != 0)
                 {
                   iVar5 = ptVar8->player;
                   iVar2 = ptVar8->card;
@@ -3810,8 +3809,8 @@ static int realm_razer_legacy(int player, int card, event_t event)
               } while (ptVar8 != (target_t *)&pcVar6->parent_controller);
               kill_card(player, card, KILL_EXILE);
             }
-            iVar7 = iVar7 + -1;
-          } while (iVar7 != -1);
+            c = c + -1;
+          } while (c != -1);
         }
         iVar9 = iVar9 + 1;
         if (iVar9 == 2)
@@ -3824,8 +3823,7 @@ static int realm_razer_legacy(int player, int card, event_t event)
             {
               iVar9 = *piVar10;
               piVar10 = piVar10 + 1;
-              iVar9 = add_card_to_hand(0, iVar9);
-              put_into_play(0, iVar9);
+              put_into_play(0, add_card_to_hand(0, iVar9));
             } while (piVar10 != piVar1);
           }
           if (0 < lc[1])
@@ -3836,8 +3834,7 @@ static int realm_razer_legacy(int player, int card, event_t event)
             {
               iVar9 = *piVar10;
               piVar10 = piVar10 + 1;
-              iVar9 = add_card_to_hand(1, iVar9);
-              put_into_play(1, iVar9);
+              put_into_play(1, add_card_to_hand(1, iVar9));
             } while (piVar1 != piVar10);
           }
           kill_card(player, card, KILL_EXILE);
@@ -3847,28 +3844,27 @@ static int realm_razer_legacy(int player, int card, event_t event)
     }
     lc[0] = 0;
     lc[1] = 0;
-    iVar9 = 0;
+    p = 0;
     do
     {
-      iVar7 = active_cards_count[iVar9] + -1;
-      if (-1 < iVar7)
+      c = active_cards_count[p] + -1;
+      if (-1 < c)
       {
         do
         {
-          iVar5 = is_what(iVar9, iVar7, 0x80);
-          if (((iVar5 != 0) && ((player != iVar9 || (card != iVar7)))) &&
-              ((pcVar6 = get_card_instance(iVar9, iVar7),
-                pcVar6->targets[1].card == pcVar4->targets[1].card &&
-                    ((pcVar6->targets[0].player == pcVar4->targets[0].player &&
-                      (pcVar6->targets[0].card == pcVar4->targets[0].card))))))
+          iVar5 = is_what(p, c, 0x80);
+          if (((iVar5 != 0) && ((player != p || (card != c)))) &&
+              ((pcVar6 = get_card_instance(p, c),
+                pcVar6->targets[1].card == instance->targets[1].card &&
+                    ((pcVar6->targets[0].player == instance->targets[0].player &&
+                      (pcVar6->targets[0].card == instance->targets[0].card))))))
           {
             ptVar8 = pcVar6->targets + 2;
             do
             {
               if (ptVar8->player == -1)
                 break;
-              iVar5 = check_rfg(ptVar8->player, (unsigned int)cards_data[ptVar8->card].id);
-              if (iVar5 != 0)
+              if (check_rfg(ptVar8->player, (unsigned int)cards_data[ptVar8->card].id) != 0)
               {
                 lands[ptVar8->player][lc[ptVar8->player]] = ptVar8->card;
                 lc[ptVar8->player] = lc[ptVar8->player] + 1;
@@ -3876,11 +3872,11 @@ static int realm_razer_legacy(int player, int card, event_t event)
               ptVar8 = ptVar8 + 1;
             } while (ptVar8 != (target_t *)&pcVar6->parent_controller);
           }
-          iVar7 = iVar7 + -1;
-        } while (iVar7 != -1);
+          c = c + -1;
+        } while (c != -1);
       }
-      iVar9 = iVar9 + 1;
-    } while (iVar9 != 2);
+      p = p + 1;
+    } while (p != 2);
     show_deck(player, lands[player], lc[player], "Realm Razer exiled these lands you own.", 0,
               ENGINE_DONE_LABEL);
     show_deck(player, lands[1 - player], lc[1 - player],
@@ -3888,7 +3884,7 @@ static int realm_razer_legacy(int player, int card, event_t event)
     spell_fizzled = 1;
     event_00 = EVENT_ACTIVATE;
   }
-  leaves_play(pcVar4->targets[0].player, pcVar4->targets[0].card, event_00, 1, 0);
+  leaves_play(instance->targets[0].player, instance->targets[0].card, event_00, 1, 0);
   return 0;
 }
 
@@ -4663,8 +4659,7 @@ int card_sigil_of_distinction(int player, int card, event_t event)
   target_definition_t td;
   if (event == EVENT_MODIFY_COST)
   {
-    iVar3 = check_battlefield_for_id(2, 0x23ba);
-    if (iVar3 != 0)
+    if (check_battlefield_for_id(2, 0x23ba) != 0)
     {
       infinite_casting_cost();
     }
@@ -4675,8 +4670,7 @@ int card_sigil_of_distinction(int player, int card, event_t event)
     if (instance == NULL)
       goto LAB_02144d33;
   LAB_02144d05:
-    iVar3 = is_humiliated(player, card, AL_STATIC);
-    if (iVar3 == 0)
+    if (is_humiliated(player, card, AL_STATIC) == 0)
     {
     LAB_02144e23:
       instance = get_card_instance(player, card);
@@ -4745,14 +4739,12 @@ int card_sigil_of_distinction(int player, int card, event_t event)
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    iVar3 = basic_equipment(player, card, EVENT_RESOLVE_ACTIVATION, 0);
-    return iVar3;
+    return basic_equipment(player, card, EVENT_RESOLVE_ACTIVATION, 0);
   }
 LAB_02144d33:
   default_target_definition(player, card, &td, 2);
-  iVar3 = generic_activated_ability(player, card, event, 0x102, 0, 0, 0, 0, 0, 0, 0x17b0100, &td,
+  return generic_activated_ability(player, card, event, 0x102, 0, 0, 0, 0, 0, 0, 0x17b0100, &td,
                                     "Select target creature you control.");
-  return iVar3;
 }
 
 int card_skill_borrower(int player, int card, event_t event){
@@ -4962,14 +4954,14 @@ static int tezzeret_the_seeker_legacy(int player, int card, event_t event){
 
 int card_tezzeret_the_seeker(int player, int card, event_t event)
 {
+  int i;
   int iVar1;
   card_instance_t *instance;
   int iVar3;
   int iVar4;
   int iStack_338;
   target_definition_t td;
-  iVar1 = is_unlocked(player, card, event, 0x17);
-  if (iVar1 == 0)
+  if (is_unlocked(player, card, event, 0x17) == 0)
   {
     return 0;
   }
@@ -5027,12 +5019,10 @@ int card_tezzeret_the_seeker(int player, int card, event_t event)
       instance->number_of_targets = '\0';
       if (iVar1 == 1)
       {
-        iVar1 = new_pick_target(&td, "TARGET_ARTIFACT", 0, 0);
-        if (iVar1 != 0)
+        if (new_pick_target(&td, "TARGET_ARTIFACT", 0, 0) != 0)
         {
           state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
-          iVar1 = can_target(&td);
-          if (iVar1 != 0)
+          if (can_target(&td) != 0)
           {
             new_pick_target(&td, "TARGET_ARTIFACT", 1, 0);
           }
@@ -5048,8 +5038,7 @@ int card_tezzeret_the_seeker(int player, int card, event_t event)
         }
         else
         {
-          iVar1 = count_counters(player, card, COUNTER_LOYALTY);
-          iVar1 = choose_a_number(player, "How many Loyalty you\'ll pay ?", iVar1);
+          iVar1 = choose_a_number(player, "How many Loyalty you\'ll pay ?", count_counters(player, card, COUNTER_LOYALTY));
           if ((iVar1 < 0) && (iVar3 = count_counters(player, card, COUNTER_LOYALTY), iVar3 < iVar1))
           {
             spell_fizzled = 1;
@@ -5094,22 +5083,20 @@ int card_tezzeret_the_seeker(int player, int card, event_t event)
       {
         if ((iVar1 == 1) && (instance->number_of_targets != '\0'))
         {
-          iVar1 = 0;
+          i = 0;
           do
           {
-            iVar3 = validate_target(player, card, &td, iVar1);
-            if (iVar3 != 0)
+            if (validate_target(player, card, &td, i) != 0)
             {
-              untap_card(instance->targets[iVar1].player, instance->targets[iVar1].card);
+              untap_card(instance->targets[i].player, instance->targets[i].card);
             }
-            iVar1 = iVar1 + 1;
-          } while (iVar1 < (int)(unsigned int)instance->number_of_targets);
+            i = i + 1;
+          } while (i < (int)(unsigned int)instance->number_of_targets);
         }
       }
     }
   }
-  iVar1 = planeswalker(player, card, event, 4);
-  return iVar1;
+  return planeswalker(player, card, event, 4);
 }
 
 int card_thorn_thrash_viashino(int player, int card, event_t event){
@@ -5210,9 +5197,8 @@ int card_tidehollow_sculler(int player, int card, event_t event)
       *puVar3 = 0xffffffff;
       player_00 = uVar1 >> 0x1f;
       iVar4 = (uVar1 & 0x7fffffff) + uVar1 * 8;
-      iVar2 = check_rfg(player_00,
-                        (unsigned int)*(unsigned short *)(cards_data[0].cc + iVar4 * 8 + -7));
-      if (iVar2 != 0)
+      if (check_rfg(player_00,
+                        (unsigned int)*(unsigned short *)(cards_data[0].cc + iVar4 * 8 + -7)) != 0)
       {
         add_card_to_hand(player_00, uVar1 & 0x7fffffff);
         remove_card_from_rfg(player_00,

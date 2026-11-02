@@ -1,0 +1,1185 @@
+{
+  "rows": [
+    {
+      "source": "functions/abilities.c",
+      "name": "special_abilities",
+      "before_definition": "void special_abilities(int player, int card, event_t event, int sp_abilities,\n                            int source_player, int source_card)\n{\n  unsigned char bVar1;\n  unsigned char bVar2;\n  unsigned char bVar3;\n  unsigned char bVar4;\n  card_instance_t *instance;\n  card_instance_t *pcVar6;\n  unsigned char bVar7;\n  unsigned char bVar8;\n  bool bVar9;\n\n  instance = get_card_instance(player, card);\n  bVar9 = event == EVENT_ABILITIES;\n  bVar1 = (unsigned char)((unsigned int)sp_abilities >> 1) & bVar9;\n  bVar2 = (unsigned char)((unsigned int)sp_abilities >> 4) & bVar9;\n  bVar8 = (unsigned char)((unsigned int)sp_abilities >> 2) & bVar9;\n  bVar3 = (unsigned char)((unsigned int)sp_abilities >> 5) & bVar9;\n  bVar7 = (unsigned char)((unsigned int)sp_abilities >> 3) & bVar9;\n  bVar4 = (unsigned char)((unsigned int)sp_abilities >> 8) & bVar9;\n  if (((sp_abilities & 1U) == 0) || (!bVar9))\n  {\n  LAB_026dfb5b:\n    if ((bVar1 != 0) && (card == affected_card))\n    {\n      if (player != affected_card_controller)\n        goto LAB_026dfed0;\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 2;\n    }\n  LAB_026dfb65:\n    if ((bVar8 != 0) && (card == affected_card))\n    {\n      if (player != affected_card_controller)\n        goto LAB_026dfed8;\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 4;\n    }\n  LAB_026dfb6d:\n    if ((bVar7 == 0) || (card != affected_card))\n      goto LAB_026dfb75;\n    if (player == affected_card_controller)\n    {\n      vigilance_part(player, card);\n      goto LAB_026dfb75;\n    }\n  LAB_026dfee0:\n    if (bVar2 != 0)\n      goto LAB_026dfef0;\n  LAB_026dfb7f:\n    if ((bVar3 == 0) || (card != affected_card))\n      goto LAB_026dfb89;\n    if (player == affected_card_controller)\n    {\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x20;\n      goto LAB_026dfb89;\n    }\n  LAB_026dff00:\n    if (bVar4 != 0)\n    {\n      bVar1 = (unsigned char)((unsigned int)sp_abilities >> 9) & bVar9;\n      goto LAB_026dff18;\n    }\n  LAB_026dfb93:\n    if (((sp_abilities & 0x200U) != 0) && (bVar9))\n    {\n    LAB_026dff68:\n      if ((card == affected_card) && (player == affected_card_controller))\n      {\n        deathtouch_part(player, card);\n      }\n      goto LAB_026dfbb4;\n    }\n  LAB_026dfba2:\n    if (((sp_abilities & 0x400U) == 0) || (event != EVENT_BEGIN_COMBAT))\n      goto LAB_026dfbb4;\n    if ((player == current_turn) && (forbid_attack == 0))\n    {\n      attack_if_able_part(player, card);\n    }\n  }\n  else\n  {\n    if (card != affected_card)\n      goto LAB_026dfb65;\n    if (player == affected_card_controller)\n    {\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 1;\n      goto LAB_026dfb5b;\n    }\n    if (bVar1 == 0)\n      goto LAB_026dfb65;\n  LAB_026dfed0:\n    if (bVar8 == 0)\n      goto LAB_026dfb6d;\n  LAB_026dfed8:\n    if (bVar7 != 0)\n      goto LAB_026dfee0;\n  LAB_026dfb75:\n    if ((bVar2 == 0) || (card != affected_card))\n      goto LAB_026dfb7f;\n    if (player == affected_card_controller)\n    {\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x10;\n      goto LAB_026dfb7f;\n    }\n  LAB_026dfef0:\n    if (bVar3 != 0)\n      goto LAB_026dff00;\n  LAB_026dfb89:\n    if (bVar4 == 0)\n      goto LAB_026dfb93;\n    if (card != affected_card)\n    {\n      if (((sp_abilities & 0x200U) != 0) && (bVar9))\n        goto LAB_026dfbb4;\n      goto LAB_026dfba2;\n    }\n    bVar1 = (unsigned char)((unsigned int)sp_abilities >> 9) & bVar9;\n    if (player == affected_card_controller)\n    {\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x100;\n      if (bVar1 == 0)\n        goto LAB_026dfbb4;\n      goto LAB_026dff68;\n    }\n  LAB_026dff18:\n    if (bVar1 == 0)\n      goto LAB_026dfba2;\n  LAB_026dfbb4:\n    if (((((sp_abilities & 0x800U) != 0) && (bVar9)) && (card == affected_card)) &&\n        (player == affected_card_controller))\n    {\n      indestructible_part(player, card);\n    }\n  }\n  if ((sp_abilities & 0x1000U) != 0)\n  {\n    lure_effect(source_player, source_card, event, player, card, 0, -1, 0, NULL);\n  }\n  if ((sp_abilities & 0x2000U) != 0)\n  {\n    granted_flanking(source_player, source_card, player, card, event);\n  }\n  if ((((sp_abilities & 0x4000U) != 0) && (bVar9)) &&\n      ((card == affected_card && (player == affected_card_controller))))\n  {\n    pcVar6 = get_card_instance(player, card);\n    pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x4000;\n  }\n  if ((sp_abilities & 0x400000U) != 0)\n  {\n    lure_effect(source_player, source_card, event, player, card, 1, -1, 0, NULL);\n  }\n  bVar1 = (unsigned char)((unsigned int)sp_abilities >> 0x18);\n  if (((sp_abilities & 0x800000U) == 0) || (!bVar9))\n  {\n  LAB_026dfc0b:\n    if ((((bVar1 >> 1 & bVar9) != 0) && (card == affected_card)) &&\n        (player == affected_card_controller))\n    {\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x2000000;\n    }\n  }\n  else if ((card == affected_card) && (player == affected_card_controller))\n  {\n    hexproof_part(player, card);\n    goto LAB_026dfc0b;\n  }\n  if ((sp_abilities & 0x4000000U) != 0)\n  {\n    block_if_able(player, card, event);\n  }\n  if ((sp_abilities & 0x8000000U) != 0)\n  {\n    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x8000000;\n  }\n  bVar2 = (unsigned char)((unsigned int)sp_abilities >> 0x15) & bVar9;\n  bVar4 = (unsigned char)((unsigned int)sp_abilities >> 0x13) & bVar9;\n  bVar3 = (unsigned char)((unsigned int)sp_abilities >> 0x11) & bVar9;\n  bVar7 = bVar1 >> 5 & bVar9;\n  if (((sp_abilities & 0x10000U) == 0) || (!bVar9))\n  {\n  LAB_026dfc72:\n    if ((bVar4 != 0) && (card == affected_card))\n    {\n      if (player != affected_card_controller)\n        goto LAB_026dfe78;\n      instance = get_card_instance(player, card);\n      instance->ext->sp_keywords = instance->ext->sp_keywords | 0x80000;\n    }\n  LAB_026dfc7a:\n    if (bVar2 == 0)\n    {\n    LAB_026dfc84:\n      if ((bVar3 != 0) && (card == affected_card))\n      {\n        if (player != affected_card_controller)\n          goto LAB_026dfe98;\n        instance = get_card_instance(player, card);\n        instance->ext->sp_keywords = instance->ext->sp_keywords | 0x20000;\n      }\n    }\n    else if (card == affected_card)\n    {\n      if (player != affected_card_controller)\n        goto LAB_026dfe88;\n      instance = get_card_instance(player, card);\n      instance->ext->sp_keywords = instance->ext->sp_keywords | 0x200000;\n      goto LAB_026dfc84;\n    }\n  LAB_026dfc8e:\n    if (bVar7 != 0)\n    {\n      if (card != affected_card)\n      {\n        return;\n      }\n      if (player != affected_card_controller)\n      {\n        return;\n      }\n      instance = get_card_instance(player, card);\n      instance->ext->sp_keywords = instance->ext->sp_keywords | 0x20000000;\n    }\n  }\n  else\n  {\n    if (card != affected_card)\n      goto LAB_026dfc7a;\n    if (player == affected_card_controller)\n    {\n      instance = get_card_instance(player, card);\n      instance->ext->sp_keywords = instance->ext->sp_keywords | 0x10000;\n      goto LAB_026dfc72;\n    }\n    if (bVar4 == 0)\n      goto LAB_026dfc7a;\n  LAB_026dfe78:\n    if (bVar2 == 0)\n      goto LAB_026dfc84;\n  LAB_026dfe88:\n    if (bVar3 == 0)\n      goto LAB_026dfc8e;\n  LAB_026dfe98:\n    if (bVar7 != 0)\n    {\n      return;\n    }\n  }\n  if ((((bVar1 >> 6 & bVar9) != 0) && (card == affected_card)) &&\n      (player == affected_card_controller))\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x40000000;\n  }\n  return;\n}",
+      "after_definition": "void special_abilities(int player, int card, event_t event, int sp_abilities,\n                            int source_player, int source_card)\n{\n  card_instance_t *instance;\n  card_instance_t *target;\n\n  instance = get_card_instance(player, card);\n  if ((sp_abilities & SP_KEYWORD_FEAR) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_FEAR;\n  }\n  if ((sp_abilities & SP_KEYWORD_LIFELINK) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_LIFELINK;\n  }\n  if ((sp_abilities & SP_KEYWORD_HASTE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_HASTE;\n  }\n  if ((sp_abilities & SP_KEYWORD_VIGILANCE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    vigilance_part(player, card);\n  }\n  if ((sp_abilities & SP_KEYWORD_UNBLOCKABLE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_UNBLOCKABLE;\n  }\n  if ((sp_abilities & SP_KEYWORD_CANNOT_BLOCK) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_CANNOT_BLOCK;\n  }\n  if ((sp_abilities & SP_KEYWORD_SHADOW) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_SHADOW;\n  }\n  if ((sp_abilities & SP_KEYWORD_DEATHTOUCH) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    deathtouch_part(player, card);\n  }\n  if ((sp_abilities & SP_KEYWORD_MUST_ATTACK) && event == EVENT_BEGIN_COMBAT &&\n      player == current_turn && forbid_attack == 0)\n  {\n    attack_if_able_part(player, card);\n  }\n  if ((sp_abilities & SP_KEYWORD_INDESTRUCTIBLE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    indestructible_part(player, card);\n  }\n  if (sp_abilities & SP_KEYWORD_MUST_BE_BLOCKED)\n  {\n    lure_effect(source_player, source_card, event, player, card, 0, -1, 0, NULL);\n  }\n  if (sp_abilities & SP_KEYWORD_FLANKING)\n  {\n    granted_flanking(source_player, source_card, player, card, event);\n  }\n  if ((sp_abilities & SP_KEYWORD_WITHER) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_WITHER;\n  }\n  if (sp_abilities & SP_KEYWORD_LURE)\n  {\n    lure_effect(source_player, source_card, event, player, card, 1, -1, 0, NULL);\n  }\n  if ((sp_abilities & SP_KEYWORD_HEXPROOF) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    hexproof_part(player, card);\n  }\n  if ((sp_abilities & SP_KEYWORD_INTIMIDATE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_INTIMIDATE;\n  }\n  if (sp_abilities & SP_KEYWORD_MUST_BLOCK)\n  {\n    block_if_able(player, card, event);\n  }\n  if (sp_abilities & SP_KEYWORD_SHADOW_HOSER)\n  {\n    instance->ext->sp_keywords |= SP_KEYWORD_SHADOW_HOSER;\n  }\n  if ((sp_abilities & SP_KEYWORD_MENACE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_MENACE;\n  }\n  if ((sp_abilities & SP_KEYWORD_MINBLOCKERS_3) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_MINBLOCKERS_3;\n  }\n  if ((sp_abilities & SP_KEYWORD_MAXBLOCKERS_1) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_MAXBLOCKERS_1;\n  }\n  if ((sp_abilities & SP_KEYWORD_SKULK) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_SKULK;\n  }\n  if ((sp_abilities & SP_KEYWORD_SQUIRRELLINK) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_SQUIRRELLINK;\n  }\n  if ((sp_abilities & SP_KEYWORD_HORSEMANSHIP) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_HORSEMANSHIP;\n  }\n}",
+      "before_sha256": "3fd32adff595cf03808cd1348edf92081ff85f8f7c448ad2b8b8d9243b8122c7",
+      "after_sha256": "6e5c10f39af6898b973df8a289f2a53a7ac2b6501db85fc9a312c6cc86ed76df",
+      "facts": {
+        "source_lines_removed": 127,
+        "removed_lab_gotos": 34,
+        "removed_gotos": 34,
+        "removed_placeholder_occurrences": 92,
+        "removed_placeholder_names": 8
+      },
+      "keyword_dispatch_cleanup": true,
+      "expanded_before_definition": "void special_abilities(int player, int card, event_t event, int sp_abilities,\n                            int source_player, int source_card)\n{\n  unsigned char bVar1;\n  unsigned char bVar2;\n  unsigned char bVar3;\n  unsigned char bVar4;\n  card_instance_t *instance;\n  card_instance_t *pcVar6;\n  unsigned char bVar7;\n  unsigned char bVar8;\n  \n\n _Bool \n\n      bVar9;\n\n  instance = get_card_instance(player, card);\n  bVar9 = event == EVENT_ABILITIES;\n  bVar1 = (unsigned char)((unsigned int)sp_abilities >> 1) & bVar9;\n  bVar2 = (unsigned char)((unsigned int)sp_abilities >> 4) & bVar9;\n  bVar8 = (unsigned char)((unsigned int)sp_abilities >> 2) & bVar9;\n  bVar3 = (unsigned char)((unsigned int)sp_abilities >> 5) & bVar9;\n  bVar7 = (unsigned char)((unsigned int)sp_abilities >> 3) & bVar9;\n  bVar4 = (unsigned char)((unsigned int)sp_abilities >> 8) & bVar9;\n  if (((sp_abilities & 1U) == 0) || (!bVar9))\n  {\n  LAB_026dfb5b:\n    if ((bVar1 != 0) && (card == affected_card))\n    {\n      if (player != affected_card_controller)\n        goto LAB_026dfed0;\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 2;\n    }\n  LAB_026dfb65:\n    if ((bVar8 != 0) && (card == affected_card))\n    {\n      if (player != affected_card_controller)\n        goto LAB_026dfed8;\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 4;\n    }\n  LAB_026dfb6d:\n    if ((bVar7 == 0) || (card != affected_card))\n      goto LAB_026dfb75;\n    if (player == affected_card_controller)\n    {\n      vigilance_part(player, card);\n      goto LAB_026dfb75;\n    }\n  LAB_026dfee0:\n    if (bVar2 != 0)\n      goto LAB_026dfef0;\n  LAB_026dfb7f:\n    if ((bVar3 == 0) || (card != affected_card))\n      goto LAB_026dfb89;\n    if (player == affected_card_controller)\n    {\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x20;\n      goto LAB_026dfb89;\n    }\n  LAB_026dff00:\n    if (bVar4 != 0)\n    {\n      bVar1 = (unsigned char)((unsigned int)sp_abilities >> 9) & bVar9;\n      goto LAB_026dff18;\n    }\n  LAB_026dfb93:\n    if (((sp_abilities & 0x200U) != 0) && (bVar9))\n    {\n    LAB_026dff68:\n      if ((card == affected_card) && (player == affected_card_controller))\n      {\n        deathtouch_part(player, card);\n      }\n      goto LAB_026dfbb4;\n    }\n  LAB_026dfba2:\n    if (((sp_abilities & 0x400U) == 0) || (event != EVENT_BEGIN_COMBAT))\n      goto LAB_026dfbb4;\n    if ((player == current_turn) && (forbid_attack == 0))\n    {\n      attack_if_able_part(player, card);\n    }\n  }\n  else\n  {\n    if (card != affected_card)\n      goto LAB_026dfb65;\n    if (player == affected_card_controller)\n    {\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 1;\n      goto LAB_026dfb5b;\n    }\n    if (bVar1 == 0)\n      goto LAB_026dfb65;\n  LAB_026dfed0:\n    if (bVar8 == 0)\n      goto LAB_026dfb6d;\n  LAB_026dfed8:\n    if (bVar7 != 0)\n      goto LAB_026dfee0;\n  LAB_026dfb75:\n    if ((bVar2 == 0) || (card != affected_card))\n      goto LAB_026dfb7f;\n    if (player == affected_card_controller)\n    {\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x10;\n      goto LAB_026dfb7f;\n    }\n  LAB_026dfef0:\n    if (bVar3 != 0)\n      goto LAB_026dff00;\n  LAB_026dfb89:\n    if (bVar4 == 0)\n      goto LAB_026dfb93;\n    if (card != affected_card)\n    {\n      if (((sp_abilities & 0x200U) != 0) && (bVar9))\n        goto LAB_026dfbb4;\n      goto LAB_026dfba2;\n    }\n    bVar1 = (unsigned char)((unsigned int)sp_abilities >> 9) & bVar9;\n    if (player == affected_card_controller)\n    {\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x100;\n      if (bVar1 == 0)\n        goto LAB_026dfbb4;\n      goto LAB_026dff68;\n    }\n  LAB_026dff18:\n    if (bVar1 == 0)\n      goto LAB_026dfba2;\n  LAB_026dfbb4:\n    if (((((sp_abilities & 0x800U) != 0) && (bVar9)) && (card == affected_card)) &&\n        (player == affected_card_controller))\n    {\n      indestructible_part(player, card);\n    }\n  }\n  if ((sp_abilities & 0x1000U) != 0)\n  {\n    lure_effect(source_player, source_card, event, player, card, 0, -1, 0, \n\n                                                                          ((void *)0)\n\n                                                                              );\n  }\n  if ((sp_abilities & 0x2000U) != 0)\n  {\n    granted_flanking(source_player, source_card, player, card, event);\n  }\n  if ((((sp_abilities & 0x4000U) != 0) && (bVar9)) &&\n      ((card == affected_card && (player == affected_card_controller))))\n  {\n    pcVar6 = get_card_instance(player, card);\n    pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x4000;\n  }\n  if ((sp_abilities & 0x400000U) != 0)\n  {\n    lure_effect(source_player, source_card, event, player, card, 1, -1, 0, \n\n                                                                          ((void *)0)\n\n                                                                              );\n  }\n  bVar1 = (unsigned char)((unsigned int)sp_abilities >> 0x18);\n  if (((sp_abilities & 0x800000U) == 0) || (!bVar9))\n  {\n  LAB_026dfc0b:\n    if ((((bVar1 >> 1 & bVar9) != 0) && (card == affected_card)) &&\n        (player == affected_card_controller))\n    {\n      pcVar6 = get_card_instance(player, card);\n      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x2000000;\n    }\n  }\n  else if ((card == affected_card) && (player == affected_card_controller))\n  {\n    hexproof_part(player, card);\n    goto LAB_026dfc0b;\n  }\n  if ((sp_abilities & 0x4000000U) != 0)\n  {\n    block_if_able(player, card, event);\n  }\n  if ((sp_abilities & 0x8000000U) != 0)\n  {\n    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x8000000;\n  }\n  bVar2 = (unsigned char)((unsigned int)sp_abilities >> 0x15) & bVar9;\n  bVar4 = (unsigned char)((unsigned int)sp_abilities >> 0x13) & bVar9;\n  bVar3 = (unsigned char)((unsigned int)sp_abilities >> 0x11) & bVar9;\n  bVar7 = bVar1 >> 5 & bVar9;\n  if (((sp_abilities & 0x10000U) == 0) || (!bVar9))\n  {\n  LAB_026dfc72:\n    if ((bVar4 != 0) && (card == affected_card))\n    {\n      if (player != affected_card_controller)\n        goto LAB_026dfe78;\n      instance = get_card_instance(player, card);\n      instance->ext->sp_keywords = instance->ext->sp_keywords | 0x80000;\n    }\n  LAB_026dfc7a:\n    if (bVar2 == 0)\n    {\n    LAB_026dfc84:\n      if ((bVar3 != 0) && (card == affected_card))\n      {\n        if (player != affected_card_controller)\n          goto LAB_026dfe98;\n        instance = get_card_instance(player, card);\n        instance->ext->sp_keywords = instance->ext->sp_keywords | 0x20000;\n      }\n    }\n    else if (card == affected_card)\n    {\n      if (player != affected_card_controller)\n        goto LAB_026dfe88;\n      instance = get_card_instance(player, card);\n      instance->ext->sp_keywords = instance->ext->sp_keywords | 0x200000;\n      goto LAB_026dfc84;\n    }\n  LAB_026dfc8e:\n    if (bVar7 != 0)\n    {\n      if (card != affected_card)\n      {\n        return;\n      }\n      if (player != affected_card_controller)\n      {\n        return;\n      }\n      instance = get_card_instance(player, card);\n      instance->ext->sp_keywords = instance->ext->sp_keywords | 0x20000000;\n    }\n  }\n  else\n  {\n    if (card != affected_card)\n      goto LAB_026dfc7a;\n    if (player == affected_card_controller)\n    {\n      instance = get_card_instance(player, card);\n      instance->ext->sp_keywords = instance->ext->sp_keywords | 0x10000;\n      goto LAB_026dfc72;\n    }\n    if (bVar4 == 0)\n      goto LAB_026dfc7a;\n  LAB_026dfe78:\n    if (bVar2 == 0)\n      goto LAB_026dfc84;\n  LAB_026dfe88:\n    if (bVar3 == 0)\n      goto LAB_026dfc8e;\n  LAB_026dfe98:\n    if (bVar7 != 0)\n    {\n      return;\n    }\n  }\n  if ((((bVar1 >> 6 & bVar9) != 0) && (card == affected_card)) &&\n      (player == affected_card_controller))\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x40000000;\n  }\n  return;\n}",
+      "expanded_projected_definition": "void special_abilities(int player, int card, event_t event, int sp_abilities,\n                            int source_player, int source_card)\n{\n  card_instance_t *instance;\n  card_instance_t *target;\n\n  instance = get_card_instance(player, card);\n  if ((sp_abilities & SP_KEYWORD_FEAR) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_FEAR;\n  }\n  if ((sp_abilities & SP_KEYWORD_LIFELINK) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_LIFELINK;\n  }\n  if ((sp_abilities & SP_KEYWORD_HASTE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_HASTE;\n  }\n  if ((sp_abilities & SP_KEYWORD_VIGILANCE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    vigilance_part(player, card);\n  }\n  if ((sp_abilities & SP_KEYWORD_UNBLOCKABLE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_UNBLOCKABLE;\n  }\n  if ((sp_abilities & SP_KEYWORD_CANNOT_BLOCK) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_CANNOT_BLOCK;\n  }\n  if ((sp_abilities & SP_KEYWORD_SHADOW) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_SHADOW;\n  }\n  if ((sp_abilities & SP_KEYWORD_DEATHTOUCH) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    deathtouch_part(player, card);\n  }\n  if ((sp_abilities & SP_KEYWORD_MUST_ATTACK) && event == EVENT_BEGIN_COMBAT &&\n      player == current_turn && forbid_attack == 0)\n  {\n    attack_if_able_part(player, card);\n  }\n  if ((sp_abilities & SP_KEYWORD_INDESTRUCTIBLE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    indestructible_part(player, card);\n  }\n  if (sp_abilities & SP_KEYWORD_MUST_BE_BLOCKED)\n  {\n    lure_effect(source_player, source_card, event, player, card, 0, -1, 0, ((void *)0));\n  }\n  if (sp_abilities & SP_KEYWORD_FLANKING)\n  {\n    granted_flanking(source_player, source_card, player, card, event);\n  }\n  if ((sp_abilities & SP_KEYWORD_WITHER) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_WITHER;\n  }\n  if (sp_abilities & SP_KEYWORD_LURE)\n  {\n    lure_effect(source_player, source_card, event, player, card, 1, -1, 0, ((void *)0));\n  }\n  if ((sp_abilities & SP_KEYWORD_HEXPROOF) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    hexproof_part(player, card);\n  }\n  if ((sp_abilities & SP_KEYWORD_INTIMIDATE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    target = get_card_instance(player, card);\n    target->ext->sp_keywords |= SP_KEYWORD_INTIMIDATE;\n  }\n  if (sp_abilities & SP_KEYWORD_MUST_BLOCK)\n  {\n    block_if_able(player, card, event);\n  }\n  if (sp_abilities & SP_KEYWORD_SHADOW_HOSER)\n  {\n    instance->ext->sp_keywords |= SP_KEYWORD_SHADOW_HOSER;\n  }\n  if ((sp_abilities & SP_KEYWORD_MENACE) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_MENACE;\n  }\n  if ((sp_abilities & SP_KEYWORD_MINBLOCKERS_3) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_MINBLOCKERS_3;\n  }\n  if ((sp_abilities & SP_KEYWORD_MAXBLOCKERS_1) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_MAXBLOCKERS_1;\n  }\n  if ((sp_abilities & SP_KEYWORD_SKULK) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_SKULK;\n  }\n  if ((sp_abilities & SP_KEYWORD_SQUIRRELLINK) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_SQUIRRELLINK;\n  }\n  if ((sp_abilities & SP_KEYWORD_HORSEMANSHIP) && event == EVENT_ABILITIES &&\n      card == affected_card && player == affected_card_controller)\n  {\n    instance = get_card_instance(player, card);\n    instance->ext->sp_keywords |= SP_KEYWORD_HORSEMANSHIP;\n  }\n}"
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "deathtouch_part",
+      "before_definition": "static void deathtouch_part(int player, int card)\n{\n  card_ext_t *pcVar1;\n  card_instance_t *instance;\n\n  instance = get_card_instance(player, card);\n  pcVar1 = instance->ext;\n  if (((uint32_t)player_bits[player] & 0x40) != 0)\n  {\n    pcVar1->sp_keywords = pcVar1->sp_keywords & 0xfffffdff;\n    return;\n  }\n  pcVar1->sp_keywords = pcVar1->sp_keywords | 0x200;\n  return;\n}",
+      "after_definition": "static void deathtouch_part(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  card_ext_t *extension = instance->ext;\n  if (player_bits[player] & PB_CANT_HAVE_OR_GAIN_DEATHTOUCH)\n    extension->sp_keywords &= ~SP_KEYWORD_DEATHTOUCH;\n  else\n    extension->sp_keywords |= SP_KEYWORD_DEATHTOUCH;\n}",
+      "before_sha256": "9d3214b3bac5900dd40db671f15b733d63740dd7f8007f52ac248ddf59765c2f",
+      "after_sha256": "745b802b9307f324fd71af66e3d7f8b52001d1b4602ab31f207060a6190fda51",
+      "facts": {
+        "source_lines_removed": 6,
+        "removed_lab_gotos": 0,
+        "removed_gotos": 0,
+        "removed_placeholder_occurrences": 6,
+        "removed_placeholder_names": 1
+      },
+      "keyword_dispatch_cleanup": true,
+      "expanded_before_definition": "static void deathtouch_part(int player, int card)\n{\n  card_ext_t *pcVar1;\n  card_instance_t *instance;\n\n  instance = get_card_instance(player, card);\n  pcVar1 = instance->ext;\n  if (((uint32_t)player_bits[player] & 0x40) != 0)\n  {\n    pcVar1->sp_keywords = pcVar1->sp_keywords & 0xfffffdff;\n    return;\n  }\n  pcVar1->sp_keywords = pcVar1->sp_keywords | 0x200;\n  return;\n}",
+      "expanded_projected_definition": "static void deathtouch_part(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  card_ext_t *extension = instance->ext;\n  if (player_bits[player] & PB_CANT_HAVE_OR_GAIN_DEATHTOUCH)\n    extension->sp_keywords &= ~SP_KEYWORD_DEATHTOUCH;\n  else\n    extension->sp_keywords |= SP_KEYWORD_DEATHTOUCH;\n}"
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "hexproof_part",
+      "before_definition": "static void hexproof_part(int player, int card)\n{\n  card_ext_t *pcVar1;\n  card_instance_t *instance;\n\n  instance = get_card_instance(player, card);\n  pcVar1 = instance->ext;\n  if ((((uint32_t)player_bits[player] >> 8 & 0xffU) & 1) != 0)\n  {\n    pcVar1->sp_keywords = pcVar1->sp_keywords & 0xff7fffff;\n    return;\n  }\n  pcVar1->sp_keywords = pcVar1->sp_keywords | 0x800000;\n  return;\n}",
+      "after_definition": "static void hexproof_part(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  card_ext_t *extension = instance->ext;\n  if (player_bits[player] & PB_CANT_HAVE_OR_GAIN_HEXPROOF)\n    extension->sp_keywords &= ~SP_KEYWORD_HEXPROOF;\n  else\n    extension->sp_keywords |= SP_KEYWORD_HEXPROOF;\n}",
+      "before_sha256": "e2483eeaa1079b0886c4ddbef16b4bccf691de31653efdff460809d2ee0ebca3",
+      "after_sha256": "939ea7cb1dcb393c86f27d9284aa0d2097355c04ae616636ade5a6dc6b3d7813",
+      "facts": {
+        "source_lines_removed": 6,
+        "removed_lab_gotos": 0,
+        "removed_gotos": 0,
+        "removed_placeholder_occurrences": 6,
+        "removed_placeholder_names": 1
+      },
+      "keyword_dispatch_cleanup": true,
+      "expanded_before_definition": "static void hexproof_part(int player, int card)\n{\n  card_ext_t *pcVar1;\n  card_instance_t *instance;\n\n  instance = get_card_instance(player, card);\n  pcVar1 = instance->ext;\n  if ((((uint32_t)player_bits[player] >> 8 & 0xffU) & 1) != 0)\n  {\n    pcVar1->sp_keywords = pcVar1->sp_keywords & 0xff7fffff;\n    return;\n  }\n  pcVar1->sp_keywords = pcVar1->sp_keywords | 0x800000;\n  return;\n}",
+      "expanded_projected_definition": "static void hexproof_part(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  card_ext_t *extension = instance->ext;\n  if (player_bits[player] & PB_CANT_HAVE_OR_GAIN_HEXPROOF)\n    extension->sp_keywords &= ~SP_KEYWORD_HEXPROOF;\n  else\n    extension->sp_keywords |= SP_KEYWORD_HEXPROOF;\n}"
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "indestructible_part",
+      "before_definition": "static void indestructible_part(int player, int card)\n{\n  card_instance_t *instance;\n\n  instance = get_card_instance(player, card);\n  instance->ext->sp_keywords = instance->ext->sp_keywords | 0x800;\n  return;\n}",
+      "after_definition": "static void indestructible_part(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  instance->ext->sp_keywords |= SP_KEYWORD_INDESTRUCTIBLE;\n}",
+      "before_sha256": "e379bd408a9f086b5985d683fe3cfcc9aa74a4ef2b2d931fa086a6503a400f2f",
+      "after_sha256": "5a2b65db43f24eac626aa274ca944cb9dcfa3c5d98d4534fa64c1e73761b665e",
+      "facts": {
+        "source_lines_removed": 3,
+        "removed_lab_gotos": 0,
+        "removed_gotos": 0,
+        "removed_placeholder_occurrences": 0,
+        "removed_placeholder_names": 0
+      },
+      "keyword_dispatch_cleanup": true,
+      "expanded_before_definition": "static void indestructible_part(int player, int card)\n{\n  card_instance_t *instance;\n\n  instance = get_card_instance(player, card);\n  instance->ext->sp_keywords = instance->ext->sp_keywords | 0x800;\n  return;\n}",
+      "expanded_projected_definition": "static void indestructible_part(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  instance->ext->sp_keywords |= SP_KEYWORD_INDESTRUCTIBLE;\n}"
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "attack_if_able_part",
+      "before_definition": "static int attack_if_able_part(int player, int card)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  iVar3 = player;\n  instance = get_card_instance(player, card);\n  if ((instance->state & 0x8000) == 0)\n  {\n    instance->state = instance->state | 0x8000;\n    iVar2 = can_attack(player, card);\n    iVar3 = player;\n    if (iVar2 != 0)\n    {\n      must_attack = 1;\n      return player;\n    }\n  }\n  return iVar3;\n}",
+      "after_definition": "static int attack_if_able_part(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  if (!(instance->state & STATE_UNKNOWN8000))\n  {\n    instance->state |= STATE_UNKNOWN8000;\n    if (can_attack(player, card))\n      must_attack = 1;\n  }\n  return player;\n}",
+      "before_sha256": "33d1c6bc58f1500ba36c80a5b856773ab3b045da64a8768a726a2a6d6616ef5e",
+      "after_sha256": "be484902381b630064206543b6aae0048de9adfc12eab6da99d90fed82dbd0f2",
+      "facts": {
+        "source_lines_removed": 9,
+        "removed_lab_gotos": 0,
+        "removed_gotos": 0,
+        "removed_placeholder_occurrences": 7,
+        "removed_placeholder_names": 2
+      },
+      "keyword_dispatch_cleanup": true,
+      "expanded_before_definition": "static int attack_if_able_part(int player, int card)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  iVar3 = player;\n  instance = get_card_instance(player, card);\n  if ((instance->state & 0x8000) == 0)\n  {\n    instance->state = instance->state | 0x8000;\n    iVar2 = can_attack(player, card);\n    iVar3 = player;\n    if (iVar2 != 0)\n    {\n      must_attack = 1;\n      return player;\n    }\n  }\n  return iVar3;\n}",
+      "expanded_projected_definition": "static int attack_if_able_part(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  if (!(instance->state & STATE_UNKNOWN8000))\n  {\n    instance->state |= STATE_UNKNOWN8000;\n    if (can_attack(player, card))\n      must_attack = 1;\n  }\n  return player;\n}"
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "vigilance_part",
+      "before_definition": "static void vigilance_part(int player, int card)\n{\n  card_instance_t *instance;\n  int result;\n\n  instance = get_card_instance(player, card);\n  instance->ext->sp_keywords = instance->ext->sp_keywords | 8;\n  if (((player != -1) && (card != -1)) &&\n      (result = is_humiliated(player, card, AL_KEY), result != 0))\n  {\n    return;\n  }\n  instance->state = instance->state | 0x2000;\n  return;\n}",
+      "after_definition": "static void vigilance_part(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  instance->ext->sp_keywords |= SP_KEYWORD_VIGILANCE;\n  if (player != -1 && card != -1 && is_humiliated(player, card, AL_KEY))\n    return;\n  instance->state |= STATE_VIGILANCE;\n}",
+      "before_sha256": "5b3ba638a1c1dbd4ba0f2f56e784aa3a41f7ae0520a929571084ad83b37082c4",
+      "after_sha256": "d42f814707ea2120ada3cd0476877b582c75bbfaef0e8d9cb9ebdf72b9da5d01",
+      "facts": {
+        "source_lines_removed": 7,
+        "removed_lab_gotos": 0,
+        "removed_gotos": 0,
+        "removed_placeholder_occurrences": 0,
+        "removed_placeholder_names": 0
+      },
+      "keyword_dispatch_cleanup": true,
+      "expanded_before_definition": "static void vigilance_part(int player, int card)\n{\n  card_instance_t *instance;\n  int result;\n\n  instance = get_card_instance(player, card);\n  instance->ext->sp_keywords = instance->ext->sp_keywords | 8;\n  if (((player != -1) && (card != -1)) &&\n      (result = is_humiliated(player, card, AL_KEY), result != 0))\n  {\n    return;\n  }\n  instance->state = instance->state | 0x2000;\n  return;\n}",
+      "expanded_projected_definition": "static void vigilance_part(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  instance->ext->sp_keywords |= SP_KEYWORD_VIGILANCE;\n  if (player != -1 && card != -1 && is_humiliated(player, card, AL_KEY))\n    return;\n  instance->state |= STATE_VIGILANCE;\n}"
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "block_if_able",
+      "before_definition": "int block_if_able(int player, int card, event_t event)\n{\n  unsigned int uVar1;\n  card_instance_t *instance;\n\n  instance = get_card_instance(player, card);\n  uVar1 = instance->ext->sp_keywords;\n  if ((uVar1 & 0x4000000) == 0)\n  {\n    instance->ext->sp_keywords = uVar1 | 0x4000000;\n  }\n  if ((current_turn != player) && (event == EVENT_DECLARE_BLOCKERS))\n  {\n    select_blocker(player, card, player);\n    return 0;\n  }\n  return 0;\n}",
+      "after_definition": "int block_if_able(int player, int card, event_t event)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  unsigned int keyword = instance->ext->sp_keywords;\n  if (!(keyword & SP_KEYWORD_MUST_BLOCK))\n    instance->ext->sp_keywords = keyword | SP_KEYWORD_MUST_BLOCK;\n  if (current_turn != player && event == EVENT_DECLARE_BLOCKERS)\n    select_blocker(player, card, player);\n  return 0;\n}",
+      "before_sha256": "714f8fda9c294f709c4f256a73ff629cae0bdc5ff7b28ff2ea2ae7258ebefc27",
+      "after_sha256": "4ebbb587b00aec2472dff4dbfabb2eb62fe849681e9482c3db9a9ff828ce63ef",
+      "facts": {
+        "source_lines_removed": 8,
+        "removed_lab_gotos": 0,
+        "removed_gotos": 0,
+        "removed_placeholder_occurrences": 4,
+        "removed_placeholder_names": 1
+      },
+      "keyword_dispatch_cleanup": true,
+      "expanded_before_definition": "int block_if_able(int player, int card, event_t event)\n{\n  unsigned int uVar1;\n  card_instance_t *instance;\n\n  instance = get_card_instance(player, card);\n  uVar1 = instance->ext->sp_keywords;\n  if ((uVar1 & 0x4000000) == 0)\n  {\n    instance->ext->sp_keywords = uVar1 | 0x4000000;\n  }\n  if ((current_turn != player) && (event == EVENT_DECLARE_BLOCKERS))\n  {\n    select_blocker(player, card, player);\n    return 0;\n  }\n  return 0;\n}",
+      "expanded_projected_definition": "int block_if_able(int player, int card, event_t event)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  unsigned int keyword = instance->ext->sp_keywords;\n  if (!(keyword & SP_KEYWORD_MUST_BLOCK))\n    instance->ext->sp_keywords = keyword | SP_KEYWORD_MUST_BLOCK;\n  if (current_turn != player && event == EVENT_DECLARE_BLOCKERS)\n    select_blocker(player, card, player);\n  return 0;\n}"
+    }
+  ],
+  "constants": {
+    "EVENT_ABILITIES": 52,
+    "EVENT_BEGIN_COMBAT": 137,
+    "SP_KEYWORD_0": 0,
+    "SP_KEYWORD_FEAR": 1,
+    "SP_KEYWORD_LIFELINK": 2,
+    "SP_KEYWORD_HASTE": 4,
+    "SP_KEYWORD_VIGILANCE": 8,
+    "SP_KEYWORD_UNBLOCKABLE": 16,
+    "SP_KEYWORD_CANNOT_BLOCK": 32,
+    "SP_KEYWORD_SHADOW": 256,
+    "SP_KEYWORD_DEATHTOUCH": 512,
+    "SP_KEYWORD_MUST_ATTACK": 1024,
+    "SP_KEYWORD_INDESTRUCTIBLE": 2048,
+    "SP_KEYWORD_MUST_BE_BLOCKED": 4096,
+    "SP_KEYWORD_FLANKING": 8192,
+    "SP_KEYWORD_WITHER": 16384,
+    "SP_KEYWORD_BUSHIDO": 32768,
+    "SP_KEYWORD_MENACE": 65536,
+    "SP_KEYWORD_SKULK": 131072,
+    "SP_KEYWORD_CANNON_FODDER": 262144,
+    "SP_KEYWORD_RFG_WHEN_DAMAGE": 1048576,
+    "SP_KEYWORD_LURE": 4194304,
+    "SP_KEYWORD_HEXPROOF": 8388608,
+    "SP_KEYWORD_FREEZE_WHEN_DAMAGE": 16777216,
+    "SP_KEYWORD_INTIMIDATE": 33554432,
+    "SP_KEYWORD_MUST_BLOCK": 67108864,
+    "SP_KEYWORD_SHADOW_HOSER": 134217728,
+    "SP_KEYWORD_DIE_AT_EOT": 268435456,
+    "SP_KEYWORD_SQUIRRELLINK": 536870912,
+    "SP_KEYWORD_HORSEMANSHIP": 1073741824,
+    "SP_KEYWORD_DOES_NOT_END_AT_EOT": 2147483648,
+    "SP_KEYWORD_RAMPAGE": 64,
+    "SP_KEYWORD_TRAMPLE_OVER_PWS": 262144,
+    "SP_KEYWORD_MINBLOCKERS_3": 524288,
+    "SP_KEYWORD_MAXBLOCKERS_1": 2097152,
+    "SP_KEYWORD_REAL_KEYWORDS": 1652812559,
+    "SP_KEYWORD_NOT_SIMPLE_BITS": 357809216,
+    "PB_CANT_HAVE_OR_GAIN_DEATHTOUCH": 64,
+    "PB_CANT_HAVE_OR_GAIN_HEXPROOF": 256,
+    "STATE_UNKNOWN8000": 32768,
+    "STATE_VIGILANCE": 8192,
+    "AL_KEY": 64
+  },
+  "enum_probe_text": "_Static_assert(EVENT_ABILITIES == 52U, \"keyword_dispatch_enum\");\n_Static_assert(EVENT_BEGIN_COMBAT == 137U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_0 == 0U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_FEAR == 1U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_LIFELINK == 2U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_HASTE == 4U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_VIGILANCE == 8U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_UNBLOCKABLE == 16U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_CANNOT_BLOCK == 32U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_SHADOW == 256U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_DEATHTOUCH == 512U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_MUST_ATTACK == 1024U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_INDESTRUCTIBLE == 2048U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_MUST_BE_BLOCKED == 4096U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_FLANKING == 8192U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_WITHER == 16384U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_BUSHIDO == 32768U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_MENACE == 65536U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_SKULK == 131072U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_CANNON_FODDER == 262144U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_RFG_WHEN_DAMAGE == 1048576U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_LURE == 4194304U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_HEXPROOF == 8388608U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_FREEZE_WHEN_DAMAGE == 16777216U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_INTIMIDATE == 33554432U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_MUST_BLOCK == 67108864U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_SHADOW_HOSER == 134217728U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_DIE_AT_EOT == 268435456U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_SQUIRRELLINK == 536870912U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_HORSEMANSHIP == 1073741824U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_DOES_NOT_END_AT_EOT == 2147483648U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_RAMPAGE == 64U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_TRAMPLE_OVER_PWS == 262144U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_MINBLOCKERS_3 == 524288U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_MAXBLOCKERS_1 == 2097152U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_REAL_KEYWORDS == 1652812559U, \"keyword_dispatch_enum\");\n_Static_assert(SP_KEYWORD_NOT_SIMPLE_BITS == 357809216U, \"keyword_dispatch_enum\");\n_Static_assert(PB_CANT_HAVE_OR_GAIN_DEATHTOUCH == 64U, \"keyword_dispatch_enum\");\n_Static_assert(PB_CANT_HAVE_OR_GAIN_HEXPROOF == 256U, \"keyword_dispatch_enum\");\n_Static_assert(STATE_UNKNOWN8000 == 32768U, \"keyword_dispatch_enum\");\n_Static_assert(STATE_VIGILANCE == 8192U, \"keyword_dispatch_enum\");\n_Static_assert(AL_KEY == 64U, \"keyword_dispatch_enum\");\n_Static_assert(sizeof(void*)==4 && sizeof(int)==4 && sizeof(player_bits[0])==4 && offsetof(card_instance_t,ext)==44 && offsetof(card_instance_t,state)==8 && offsetof(card_ext_t,sp_keywords)==0 && offsetof(card_instance_t,targets)+17*sizeof(target_t)+offsetof(target_t,card)==256, \"keyword_dispatch_abi\");\n",
+  "dispatch_proof": {
+    "product_states": 47,
+    "processed_states": 8151,
+    "matched_actions": 18973,
+    "bdd_nodes": 128068,
+    "transition_sha256": "f81d4d1586d8be8d463d280c10e4220c098820f446c38a1ae351d694b3b1bd95",
+    "scope": "Symbolic next-action equivalence over every32-bit keyword mask and all event categories used by this routine. Card/controller/turn/forbid facts are independent and refreshed arbitrarily after every matched call or record write. Only nonescaping private flag stores and declarations are silent. Calls, pointer-result assignments, record updates and returns match in order; target/pcVar6 is an alpha rename. Local byte conversions and unsigned shifts are preserved. No callback-purity or stable-global assumption across actions."
+  },
+  "isolated_dispatch_comparison": {
+    "result": {
+      "all_equal": true,
+      "three_way_comparisons": 7768000,
+      "helper_invocations": 23304000,
+      "basis_request_masks": 70,
+      "event_categories": 7,
+      "initial_global_fact_combinations": 16,
+      "callback_mutation_modes": 4,
+      "all_low_word_requests": 65536,
+      "random_full_width_requests": 50000,
+      "call_trace_and_record_writes_checked": true
+    },
+    "source_path": ".recovery/special-dispatch-native-check-c292.c",
+    "source_sha256": "f4f44d99216bf7cb14245af2279ea823384d97915b2668f87fcdf41f0acb3e7e",
+    "executable_path": ".recovery/keyword-routing-native-check-c292.exe",
+    "executable_sha256": "8c457dedd02076723c3701b1ab4b336a6d0bc89e13693f439d2423c5da5c49fd",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "compile_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-static-libgcc",
+      "-Wl,--image-base,0x10000000",
+      "-I.",
+      ".recovery\\special-dispatch-native-check-c292.c",
+      "-o",
+      ".recovery\\keyword-routing-native-check-c292.exe"
+    ],
+    "compile_log": ".recovery/special-dispatch-native-check-c292.compile.log",
+    "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_path": ".recovery/2022-ManalinkEh.dll",
+    "native_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "function": {
+      "address": "0x26dfaf0",
+      "size": 2061,
+      "sha256": "f1d04ff5d7ffe22417bfd6233942a34f4eccd7d4ce7ea4df4ad3b3ceee608dfe",
+      "call_targets": {
+        "0x26b2ab0": 15,
+        "0x26dfa50": 1,
+        "0x26dcfb0": 2,
+        "0x26def40": 1,
+        "0x26dd150": 1,
+        "0x26dd110": 1,
+        "0x26dd0c0": 1,
+        "0x26dd080": 1,
+        "0x26dd1a0": 1
+      }
+    },
+    "external_data_bindings": [
+      {
+        "instruction": "0x26dfd78",
+        "patch_address": "0x26dfd79",
+        "original": "0x628670",
+        "target": "current_turn"
+      },
+      {
+        "instruction": "0x26dfd86",
+        "patch_address": "0x26dfd88",
+        "original": "0x6205b0",
+        "target": "forbid_attack"
+      },
+      {
+        "instruction": "0x26dfda8",
+        "patch_address": "0x26dfda9",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26dfdb6",
+        "patch_address": "0x26dfdb7",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26dfdd8",
+        "patch_address": "0x26dfdd9",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26dfde6",
+        "patch_address": "0x26dfde7",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26dfe18",
+        "patch_address": "0x26dfe19",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26dfe26",
+        "patch_address": "0x26dfe27",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26dfe50",
+        "patch_address": "0x26dfe51",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26dfe5e",
+        "patch_address": "0x26dfe5f",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26dfea8",
+        "patch_address": "0x26dfea9",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26dfeb6",
+        "patch_address": "0x26dfeb7",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26dff2a",
+        "patch_address": "0x26dff2b",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26dff68",
+        "patch_address": "0x26dff69",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26dff76",
+        "patch_address": "0x26dff77",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26dff98",
+        "patch_address": "0x26dff99",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26dffa6",
+        "patch_address": "0x26dffa7",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26dffd8",
+        "patch_address": "0x26dffd9",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26dffe6",
+        "patch_address": "0x26dffe7",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26e0020",
+        "patch_address": "0x26e0021",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26e002e",
+        "patch_address": "0x26e002f",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26e0060",
+        "patch_address": "0x26e0061",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26e0088",
+        "patch_address": "0x26e0089",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26e0096",
+        "patch_address": "0x26e0097",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26e00d0",
+        "patch_address": "0x26e00d1",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26e00de",
+        "patch_address": "0x26e00df",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26e0100",
+        "patch_address": "0x26e0101",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26e010e",
+        "patch_address": "0x26e010f",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26e0140",
+        "patch_address": "0x26e0141",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26e014e",
+        "patch_address": "0x26e014f",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26e0180",
+        "patch_address": "0x26e0181",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26e018e",
+        "patch_address": "0x26e018f",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26e01d0",
+        "patch_address": "0x26e01d1",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26e01de",
+        "patch_address": "0x26e01df",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26e0218",
+        "patch_address": "0x26e0219",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26e0226",
+        "patch_address": "0x26e0227",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      },
+      {
+        "instruction": "0x26e0258",
+        "patch_address": "0x26e0259",
+        "original": "0x7a398c",
+        "target": "affected_card"
+      },
+      {
+        "instruction": "0x26e0266",
+        "patch_address": "0x26e0267",
+        "original": "0x738c84",
+        "target": "affected_card_controller"
+      }
+    ],
+    "limits": "Original dispatch body with relocated absolute engine-global references. Nine called entries share controlled C stubs, including explicit regparm2/regparm3 bridges for private GCC routines. Compare full call traces, all three instance/extension records and final engine facts; callbacks may mutate globals, record contents and extension pointers. The complete native32 input space and gameplay are not exhausted."
+  },
+  "native_comparison": {
+    "result": {
+      "all_equal": true,
+      "three_way_comparisons": 7768000,
+      "helper_invocations": 23304000,
+      "basis_request_masks": 70,
+      "event_categories": 7,
+      "initial_global_fact_combinations": 16,
+      "callback_mutation_modes": 4,
+      "all_low_word_requests": 65536,
+      "random_full_width_requests": 50000,
+      "call_trace_and_record_writes_checked": true
+    },
+    "source_path": ".recovery/keyword-routing-workers-check-c293.c",
+    "source_sha256": "9d7b18157d69ac632ce611ce733c89603779b89d62f986e0b0dffa5da50ba5af",
+    "executable_path": ".recovery/keyword-routing-workers-check-c293.exe",
+    "executable_sha256": "42fe30fa765ec66ed878eb6fe6c4f957ad92ee2871b7e76a4e54e910a6ce4fcb",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "compile_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-static-libgcc",
+      "-Wl,--image-base,0x10000000",
+      "-I.",
+      ".recovery\\keyword-routing-workers-check-c293.c",
+      "-o",
+      ".recovery\\keyword-routing-workers-check-c293.exe"
+    ],
+    "compile_log": ".recovery/keyword-routing-workers-check-c293.compile.log",
+    "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_path": ".recovery/2022-ManalinkEh.dll",
+    "native_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "functions": [
+      {
+        "name": "special_abilities",
+        "address": "0x26dfaf0",
+        "size": 2061,
+        "sha256": "f1d04ff5d7ffe22417bfd6233942a34f4eccd7d4ce7ea4df4ad3b3ceee608dfe",
+        "call_targets": {
+          "0x26b2ab0": 15,
+          "0x26dfa50": 1,
+          "0x26dcfb0": 2,
+          "0x26def40": 1,
+          "0x26dd150": 1,
+          "0x26dd110": 1,
+          "0x26dd0c0": 1,
+          "0x26dd080": 1,
+          "0x26dd1a0": 1
+        }
+      },
+      {
+        "name": "deathtouch.part.0",
+        "address": "0x26dd080",
+        "size": 64,
+        "sha256": "520cc9f26fb8562ccaa557c9424775609e25e0653dceaefbe2844e8267a2bc44",
+        "call_targets": {
+          "0x26b2ab0": 1
+        }
+      },
+      {
+        "name": "hexproof.part.0",
+        "address": "0x26dd0c0",
+        "size": 80,
+        "sha256": "04f2ff7bdc5f69762eb030fb50b25b124c2f0b3e6bb269c6170953a160d8dbb9",
+        "call_targets": {
+          "0x26b2ab0": 1
+        }
+      },
+      {
+        "name": "indestructible.part.0",
+        "address": "0x26dd110",
+        "size": 32,
+        "sha256": "c7169c7961bf1d98791c2081f305171e815b7cef4419688dd633bf564f0f3baa",
+        "call_targets": {
+          "0x26b2ab0": 1
+        }
+      },
+      {
+        "name": "attack_if_able.part.0",
+        "address": "0x26dd150",
+        "size": 80,
+        "sha256": "9ca4566988c3ce488bf343028947e89e8bd82a18502e8a4829e6980b78cbcd95",
+        "call_targets": {
+          "0x26b2ab0": 1,
+          "0x26ab730": 1
+        }
+      },
+      {
+        "name": "vigilance.part.0",
+        "address": "0x26dd1a0",
+        "size": 96,
+        "sha256": "2e36a882cfb4fb0d4ac4bce82f7828f7e7f3f4585731cb33269e16e2998c7b9c",
+        "call_targets": {
+          "0x26b2ab0": 1,
+          "0x26dd050": 1
+        }
+      },
+      {
+        "name": "is_humiliated.part.1",
+        "address": "0x26dd050",
+        "size": 48,
+        "sha256": "b69f79ffee3ab0073f1b926fe4defb1288eacfaa9c4694daf2bfe142810fde83",
+        "call_targets": {
+          "0x26b2ab0": 1
+        }
+      },
+      {
+        "name": "block_if_able",
+        "address": "0x26def40",
+        "size": 97,
+        "sha256": "9b73c41e1c0bce83518912de1e9f91913a70e39d435e5ae59b47aa61136488be",
+        "call_targets": {
+          "0x26b2ab0": 1,
+          "0x26dee60": 1
+        }
+      }
+    ],
+    "external_data_bindings": [
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfd78",
+        "patch_address": "0x26dfd79",
+        "original": "0x628670",
+        "target": "(uintptr_t)&current_turn"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfd86",
+        "patch_address": "0x26dfd88",
+        "original": "0x6205b0",
+        "target": "(uintptr_t)&forbid_attack"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfda8",
+        "patch_address": "0x26dfda9",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfdb6",
+        "patch_address": "0x26dfdb7",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfdd8",
+        "patch_address": "0x26dfdd9",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfde6",
+        "patch_address": "0x26dfde7",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfe18",
+        "patch_address": "0x26dfe19",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfe26",
+        "patch_address": "0x26dfe27",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfe50",
+        "patch_address": "0x26dfe51",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfe5e",
+        "patch_address": "0x26dfe5f",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfea8",
+        "patch_address": "0x26dfea9",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dfeb6",
+        "patch_address": "0x26dfeb7",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dff2a",
+        "patch_address": "0x26dff2b",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dff68",
+        "patch_address": "0x26dff69",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dff76",
+        "patch_address": "0x26dff77",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dff98",
+        "patch_address": "0x26dff99",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dffa6",
+        "patch_address": "0x26dffa7",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dffd8",
+        "patch_address": "0x26dffd9",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26dffe6",
+        "patch_address": "0x26dffe7",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e0020",
+        "patch_address": "0x26e0021",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e002e",
+        "patch_address": "0x26e002f",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e0060",
+        "patch_address": "0x26e0061",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e0088",
+        "patch_address": "0x26e0089",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e0096",
+        "patch_address": "0x26e0097",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e00d0",
+        "patch_address": "0x26e00d1",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e00de",
+        "patch_address": "0x26e00df",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e0100",
+        "patch_address": "0x26e0101",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e010e",
+        "patch_address": "0x26e010f",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e0140",
+        "patch_address": "0x26e0141",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e014e",
+        "patch_address": "0x26e014f",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e0180",
+        "patch_address": "0x26e0181",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e018e",
+        "patch_address": "0x26e018f",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e01d0",
+        "patch_address": "0x26e01d1",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e01de",
+        "patch_address": "0x26e01df",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e0218",
+        "patch_address": "0x26e0219",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e0226",
+        "patch_address": "0x26e0227",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e0258",
+        "patch_address": "0x26e0259",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "owner": "special_abilities",
+        "instruction": "0x26e0266",
+        "patch_address": "0x26e0267",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      },
+      {
+        "owner": "deathtouch.part.0",
+        "instruction": "0x26dd095",
+        "patch_address": "0x26dd098",
+        "original": "0x4ef1a4",
+        "target": "(uintptr_t)player_bits"
+      },
+      {
+        "owner": "hexproof.part.0",
+        "instruction": "0x26dd0d5",
+        "patch_address": "0x26dd0d8",
+        "original": "0x4ef1a5",
+        "target": "(uintptr_t)player_bits+1"
+      },
+      {
+        "owner": "attack_if_able.part.0",
+        "instruction": "0x26dd18e",
+        "patch_address": "0x26dd190",
+        "original": "0x4ef170",
+        "target": "(uintptr_t)&must_attack"
+      },
+      {
+        "owner": "block_if_able",
+        "instruction": "0x26def6d",
+        "patch_address": "0x26def6f",
+        "original": "0x628670",
+        "target": "(uintptr_t)&current_turn"
+      }
+    ],
+    "supporting_is_humiliated_source": "int is_humiliated(int player, int card, ability_loss_t mode)\n{\n  if (player == -1 || card == -1)\n    return 0;\n  int flags = get_card_instance(player, card)->targets[17].card;\n  return flags > 0 ? flags & mode : 0;\n}",
+    "limits": "Native dispatcher and six original worker bodies run in composition. Forty-two data operands bind engine globals to test storage. Only get-instance, can-attack, select-blocker, lure and granted-flanking callees use controlled C stubs; native private worker bodies and the humiliation reader remain active. Compare call traces, every instance/extension byte and seven final global words while callbacks mutate globals, player flags, ability-loss modes and extension pointers. Full native32 state space and gameplay are not exhausted."
+  },
+  "source_state_sha256": "fb05d5f8339454b4ff7682d187db9f6b92d96706672c5fd173d1d34895348c7e",
+  "counts": {
+    "functions": 7,
+    "source_units": 1,
+    "source_lines_removed": 166,
+    "removed_lab_gotos": 34,
+    "removed_gotos": 34,
+    "removed_placeholder_occurrences": 115,
+    "removed_placeholder_names": 13
+  },
+  "expanded_dispatch_proof": {
+    "product_states": 47,
+    "processed_states": 8151,
+    "matched_actions": 18973,
+    "bdd_nodes": 128068,
+    "transition_sha256": "f81d4d1586d8be8d463d280c10e4220c098820f446c38a1ae351d694b3b1bd95",
+    "scope": "Symbolic next-action equivalence over every32-bit keyword mask and all event categories used by this routine. Card/controller/turn/forbid facts are independent and refreshed arbitrarily after every matched call or record write. Only nonescaping private flag stores and declarations are silent. Calls, pointer-result assignments, record updates and returns match in order; target/pcVar6 is an alpha rename. Local byte conversions and unsigned shifts are preserved. No callback-purity or stable-global assumption across actions."
+  },
+  "preprocess_before": {
+    "compiler_path": "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "rows": [
+      {
+        "archive_path": ".recovery/keyword-dispatch-pp-c294/before.i.gz",
+        "archive_sha256": "1a6a47cfa26975e20daf7dd65e34e4d2b8e770c5dd4922107ae671367d99d00f",
+        "raw_sha256": "43a7ed3e79a63be4f8fb8cfc51d2073d39b26fc048c4e0cb8c7f6e2e45cf1e10",
+        "source": "functions/abilities.c",
+        "source_bytes_sha256": "9ea0c1e69096f71be600a751e76b76ea4c2eccfaf11f2895c1bb1ed073397963",
+        "argv": [
+          "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+          "-m32",
+          "-O2",
+          "-ggdb2",
+          "-march=i586",
+          "-mpreferred-stack-boundary=2",
+          "-fno-omit-frame-pointer",
+          "-fno-tree-vrp",
+          "-Wall",
+          "-Wextra",
+          "-Wpointer-arith",
+          "-Wcast-qual",
+          "-Wcast-align",
+          "-Wwrite-strings",
+          "-Wshadow",
+          "-W",
+          "-Winline",
+          "-Wno-unused-parameter",
+          "-I..",
+          "-I.",
+          "-Wbad-function-cast",
+          "-Wstrict-prototypes",
+          "-Wnested-externs",
+          "-E",
+          "-dD",
+          "functions/abilities.c"
+        ]
+      }
+    ]
+  },
+  "enum_probe": {
+    "archive_path": ".recovery/keyword-dispatch-pp-c294/enum-type-probes.i.gz",
+    "archive_sha256": "7c91611933928a93e0daecd73ca730791e67ad75613db8ac270c63c725fd80f2",
+    "raw_sha256": "60ed4f8ec5ceef8fa8852ce0997c2f5ba556b944cbeb37a47f995de43d40da2e",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-fsyntax-only",
+      "-x",
+      "c",
+      "-"
+    ],
+    "exit_code": 0,
+    "log_path": ".recovery/keyword-dispatch-pp-c294/enum-type-probes.log",
+    "log_sha256": "3c99652f6e4dcbc811721a8bc50b6eeee98a4cfc687c2fbc10cf7c9b6ae6dd04"
+  },
+  "preflight": {
+    "status": "passed",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-E",
+      "-dD",
+      "-x",
+      "c",
+      "-"
+    ],
+    "stdin_sha256": "840463013afb9a650f9bd10089ccbe457d0dc2e425196ac6f97c3abe4636fd41",
+    "projected_source_sha256": "6bb0c6803823069258b7c6140169f2f3d6df2fd585c4d24fb5e4461bdd82b6b2",
+    "archive_path": ".recovery/keyword-dispatch-pp-c294/projected.i.gz",
+    "archive_sha256": "2e2ea22329145d7633e0144b58b27998f0436a4153245b74dd87d58a5f11cb51",
+    "raw_sha256": "3b5657843971bf503dc955566e798cc647260db4f55c368117945d4263a9ee7a"
+  },
+  "raw_source_bytes_sha256": "9ea0c1e69096f71be600a751e76b76ea4c2eccfaf11f2895c1bb1ed073397963",
+  "ordinary_storage_probe": {
+    "archive_path": ".recovery/keyword-dispatch-storage-types-c294.i.gz",
+    "archive_sha256": "45d3e6496351c9ee2a7d0a3b660ef8e71a0850806a780a2ea4fa0daecc0419af",
+    "raw_sha256": "efb116dae3cf8d0ff8080e9d9810a8dfd9c9fba97e7f37021320671187502ad6",
+    "assertion_text": "_Static_assert((__builtin_types_compatible_p(__typeof__(&affected_card), int *)) && (__builtin_types_compatible_p(__typeof__(&affected_card_controller), int *)) && (__builtin_types_compatible_p(__typeof__(&current_turn), int *)) && (__builtin_types_compatible_p(__typeof__(&forbid_attack), int *)) && (__builtin_types_compatible_p(__typeof__(&must_attack), int *)) && (__builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->ext), card_ext_t **)) && (__builtin_types_compatible_p(__typeof__(&((card_ext_t*)0)->sp_keywords), uint32_t *)), \"ordinary_dispatch_storage\");\n",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-fsyntax-only",
+      "-x",
+      "c",
+      "-"
+    ],
+    "exit_code": 0,
+    "log_path": ".recovery/keyword-dispatch-storage-types-c294.i.log",
+    "log_sha256": "01456b5557fc2fc3f41db8eded0b09b0a9b2c032e315953242d000ef83049743"
+  },
+  "files": [
+    {
+      "source": "functions/abilities.c",
+      "before_path": ".recovery/keyword-dispatch-before-c295/functions/abilities.c",
+      "before_bytes_sha256": "9ea0c1e69096f71be600a751e76b76ea4c2eccfaf11f2895c1bb1ed073397963",
+      "after_source_sha256": "6bb0c6803823069258b7c6140169f2f3d6df2fd585c4d24fb5e4461bdd82b6b2",
+      "preprocess_after": {
+        "archive_path": ".recovery/keyword-dispatch-after-c296.i.gz",
+        "archive_sha256": "32e2c96f7e99d3f3d3bbafdf49de24fc60ffbb222e42353897f026a401e3a355",
+        "raw_sha256": "d40fc1659b287e26d93868d6747285931b71f9c5d7dab62d2a13e691c468d551",
+        "source_bytes_sha256": "3d746792d99dcefe3ec6843e5d213e509367d0fca48ee8db3e3e71e29199d293",
+        "argv": [
+          "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+          "-m32",
+          "-O2",
+          "-ggdb2",
+          "-march=i586",
+          "-mpreferred-stack-boundary=2",
+          "-fno-omit-frame-pointer",
+          "-fno-tree-vrp",
+          "-Wall",
+          "-Wextra",
+          "-Wpointer-arith",
+          "-Wcast-qual",
+          "-Wcast-align",
+          "-Wwrite-strings",
+          "-Wshadow",
+          "-W",
+          "-Winline",
+          "-Wno-unused-parameter",
+          "-I..",
+          "-I.",
+          "-Wbad-function-cast",
+          "-Wstrict-prototypes",
+          "-Wnested-externs",
+          "-E",
+          "-dD",
+          "functions/abilities.c"
+        ]
+      }
+    }
+  ],
+  "index_before_sha256": "c1924b91f666e6c673ce508281ac488faf07f9a50b2377ed27fdc1b6315d6e93",
+  "status": "Applied and verified structured keyword dispatch and six workers:34 gotos,166 source lines,115 placeholder references and13 placeholder names removed.",
+  "scope": "Structured dispatch preserves full32-bit mask action traces with arbitrary fresh engine facts after calls and record writes. Original native dispatcher and six worker bodies agree with predecessor/reconstruction on7768000 composition cases plus7768000 isolated cases. No new native coverage or gameplay claim.",
+  "validation": {
+    "focused": {
+      "current_keyword_dispatch": {
+        "cleaned_definitions": 7,
+        "source_units": 1,
+        "source_lines_removed": 166,
+        "removed_lab_gotos": 34,
+        "removed_gotos": 34,
+        "removed_placeholder_occurrences": 115,
+        "removed_placeholder_names": 13,
+        "dispatch_product_states": 47,
+        "dispatch_matched_actions": 18973,
+        "native_composition_cases": 7768000,
+        "native_isolated_dispatch_cases": 7768000,
+        "enum_and_layout_assertions": 43,
+        "ordinary_storage_types_checked": true,
+        "scope": "Full32-bit request-mask symbolic action traces preserve calls, pointer-result stores, record updates and return paths with arbitrary fresh engine facts after every action. Native dispatch and six real worker bodies agree with predecessor and reconstruction on7768000 composition cases, with another7768000 isolated dispatch cases. Callback traces, instances/extensions, must-attack and player flags are checked. Typed global/record probes bind the ordinary-storage assumptions. Complete native32 state space and gameplay are not exhausted; no new native coverage claimed."
+      },
+      "current_inputs": {
+        "canonical_functions": 738,
+        "accepted_function_names": 735,
+        "auxiliary_functions": [
+          {
+            "recovery_name": "exile_at_end_of_combat_2022",
+            "canonical_name": "innistrad_exile_at_end_of_combat_legacy",
+            "kind": "retained_public_native_helper",
+            "native_ranges": 1
+          },
+          {
+            "recovery_name": "reset_storm_count_2022",
+            "canonical_name": "reset_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 14
+          },
+          {
+            "recovery_name": "keep_storm_count_2022",
+            "canonical_name": "keep_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 21
+          }
+        ],
+        "changed_files": 169,
+        "verification": "current source hashes and canonical name/ledger references",
+        "historical_provenance_replayed": false,
+        "historical_artifacts_retired": true,
+        "scope": "Current configuration inputs only. Historical source-edit replay, archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json."
+      },
+      "predecessor_source_units_checked": 1,
+      "reader_restoration_verified": true,
+      "physical_sources_unchanged": true,
+      "source_successor_chain_checked": true,
+      "index_unchanged": true
+    },
+    "focused_record": {
+      "path": ".recovery/keyword-dispatch-focused-c297.json",
+      "sha256": "232d7718944e0cacaed11aacdc46d15896ecf008a36841cec652d00499498308",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/keyword-dispatch-build-c296.log",
+      "log_sha256": "70ca3cc8e0e737b42f640378e96205cbf17fbfa82ef28646817a49ec9bdb3bf6",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "2f95e05feaf4141e712338d77808bf73d0d48e7521b71ee4e7b6ad34be2a7a31",
+      "dbg_sha256": "00d16b59a896185581df14baad3c4314680db2845efa010e893821d4a561a4cb"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/keyword-dispatch-proof-before-c295.json.gz",
+      "archive_sha256": "3837ed1f3e0128deb2dd7363ecab5c98910b6a50b02212714b63e5488cf69753",
+      "raw_sha256": "fb05d5f8339454b4ff7682d187db9f6b92d96706672c5fd173d1d34895348c7e",
+      "verified_source_pin_successions": 1
+    },
+    "legacy_context_bookkeeping": "Two statically nested audit context chains use ExitStack to stay importable beyond the Python block-depth limit. Full historical compiler/runtime replay remains retired and was not invoked.",
+    "limits": "All32-bit requested masks and event categories used by the dispatcher have matching symbolic action traces; engine facts refresh arbitrarily after every call or record write. Raw and actual expanded proofs match. An isolated native dispatcher comparison and a dispatcher-plus-six-real-worker comparison each cover7768000 cases with mutations of globals, player bits, ability-loss modes, record data and extension pointers. Original register ABIs are retained or explicitly bridged for controlled callees. Every record byte and seven final engine words are compared. Complete native32 state space and gameplay are not exhausted; no new native function coverage claimed."
+  }
+}

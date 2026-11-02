@@ -1,0 +1,68 @@
+{
+  "batch": "docs/recovery-evidence/assertion-call-condition-cleanup.json",
+  "batch_sha256": "a7f268397e8af1ff0539ab0b5fff6bdf8b2e4dc74465c3567ed0bab185104d8d",
+  "counts": {
+    "cleaned_definitions": 63,
+    "card_handlers": 15,
+    "other_definitions": 48,
+    "source_units": 15,
+    "inlined_assignments": 154,
+    "removed_unused_int_locals": 20,
+    "source_lines_removed": 176,
+    "placeholder_uses_removed": 328,
+    "assertion_sites": 45
+  },
+  "cumulative_call_condition_cleanup": {
+    "cleaned_definitions": 781,
+    "source_units": 125,
+    "inlined_assignments": 1669,
+    "removed_unused_int_locals": 151,
+    "source_lines_removed": 1848,
+    "pending_candidate_statements": 4,
+    "new_native_function_coverage": 0
+  },
+  "validation": {
+    "focused": {
+      "cleaned_definitions": 63,
+      "source_units": 15,
+      "inlined_call_results": 154,
+      "removed_unused_int_locals": 20,
+      "assertion_sites": 45,
+      "pending_candidates": 4,
+      "scope": "Raw and GCC-expanded statement CFG/liveness checks plus signed-int32 GCC call types. Whole-unit expanded C is identical to the projected rewrites except 45 independently checked ASSERT diagnostic source lines and whitespace. No byte matching or gameplay-equivalence claim."
+    },
+    "source_lines_removed": 176,
+    "placeholder_uses_removed": 328,
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "exit_code": 0,
+      "log": ".recovery/assertion-conditions-build-c100.log",
+      "log_sha256": "6f765c3625aa7047e52d6d2c89a67c299fa0948d7d4dc6f41f34cfcc5ac99953",
+      "verified_built_slots": 15169,
+      "dll_sha256": "2849315ca022867ade33835a13ed62651f93b7f5c1a63afec95f47aaa66049a4",
+      "dbg_sha256": "fd78a43fab08cfaa3e2ec5f6a488459ab1c9f86cfe46944f53b8695ad4449519"
+    },
+    "focused_log": {
+      "path": ".recovery/assertion-conditions-focused-c101.log",
+      "sha256": "1d2a94fdfea85bccec2af5c1bf4a8707fa34a3c6b498b1776d1fa2b31a031829",
+      "exit_code": 0
+    },
+    "projection_log": {
+      "path": ".recovery/assertion-conditions-projection-c102.log",
+      "sha256": "f5137165a664bc562f7531bac312470aa448b0b4802e6f8688e4e814c5fa80cf",
+      "exit_code": 0
+    },
+    "limits": "No full historical suite or whole-DLL byte identity check was run for this batch. ASSERT diagnostics intentionally follow new source lines. Gameplay testing remains deferred."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/assertion-conditions-setup-c102.log",
+    "log_sha256": "2366072cb1a91939248b130f3cde2f4dbf69a8eb18c074bddd8667de4b440d91",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "metadata_sha256": "75a64807d4c874d63f763f82fa6fea26a2dbda10edd735decf119eeb2961e508",
+    "csv_functions": 18725
+  },
+  "limits": "Source readability recovery, not new native handler coverage. No full historical audit, whole-DLL byte matching or gameplay test. ASSERT failure messages use current lines. Four special parser/binding cases remain in the published queue."
+}

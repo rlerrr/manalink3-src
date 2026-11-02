@@ -1,6 +1,7 @@
 """Audit graveyard/flashback helpers, optimized arguments and native source units."""
 import csv,json
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image,value,inherited_value
 from elftools.dwarf.dwarf_expr import DWARFExprParser
 
@@ -19,7 +20,7 @@ def verify(proof,image,root=ROOT):
     for row in record['helpers']+record['card_callers']:
         key=(row['source'],row['name'],row['definition_sha256']);assert key in receipts,row['name']
         e=receipts[key];text=read(root/row['source']);a,b=span(text,row['name'])
-        assert sha(text[a:b].encode())==row['definition_sha256'],row['name']
+        assert source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['definition_sha256']),row['name']
         for part in row['native_ranges']:
             lo=int(part['address'],16);hi=int(part['end'],16)
             assert sha(image.pe.get_data(lo-0x2000000,hi-lo))==part['bytes_sha256']

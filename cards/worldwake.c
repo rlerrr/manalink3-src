@@ -304,8 +304,8 @@ int card_archon_of_redemption(int player, int card, event_t event){
 
 int card_avenger_of_zendikar(int player, int card, event_t event)
 {
+  int count;
   card_instance_t *instance;
-  int iVar2;
   int iVar3;
   test_definition_t test;
   if (((trigger_condition == 0xdb) && (card == affected_card)) &&
@@ -330,10 +330,10 @@ int card_avenger_of_zendikar(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (instance->info_slot == 1)
     {
-      iVar3 = count_permanents_by_type(player, TYPE_LAND);
-      if (0 < iVar3)
+      count = count_permanents_by_type(player, TYPE_LAND);
+      if (0 < count)
       {
-        generate_tokens_by_id(player, card, 0x4973, iVar3);
+        generate_tokens_by_id(player, card, 0x4973, count);
       }
     }
     else
@@ -345,8 +345,8 @@ int card_avenger_of_zendikar(int player, int card, event_t event)
         {
           instance = in_play(player, iVar3);
           if (((instance != NULL) &&
-               (iVar2 = has_subtype(player, iVar3, SUBTYPE_PLANT), iVar2 != 0)) &&
-              (iVar2 = is_what(player, iVar3, 2), iVar2 != 0))
+               (has_subtype(player, iVar3, SUBTYPE_PLANT) != 0)) &&
+              (is_what(player, iVar3, 2) != 0))
           {
             add_counters(player, card, player, iVar3, COUNTER_P1_P1, 1);
           }
@@ -2477,7 +2477,7 @@ int card_strength_of_the_tajuru(int player, int card, event_t event)
   target_t *ptVar2;
   card_instance_t *instance;
   int iVar4;
-  int iVar5;
+  int i;
   target_definition_t td;
 
   if (event == EVENT_CAN_CAST)
@@ -2485,8 +2485,7 @@ int card_strength_of_the_tajuru(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
     get_card_instance(player, card);
-    iVar5 = generic_spell(player, card, EVENT_CAN_CAST, 5, &td, NULL, 1, NULL);
-    return iVar5;
+    return generic_spell(player, card, EVENT_CAN_CAST, 5, &td, NULL, 1, NULL);
   }
   if (event == EVENT_CAST_SPELL)
   {
@@ -2500,30 +2499,30 @@ int card_strength_of_the_tajuru(int player, int card, event_t event)
             (generic_spell(player, card, EVENT_CAST_SPELL, 5, &td, "TARGET_CREATURE", 1, NULL),
              spell_fizzled != 1))))
       {
-        iVar5 = 1;
+        i = 1;
         state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
         while (((((iVar4 = has_mana(player, 0, 1),
-                   iVar4 != 0 && (iVar4 = can_target(&td), iVar5 < 10)) &&
+                   iVar4 != 0 && (iVar4 = can_target(&td), i < 10)) &&
                   (iVar4 != 0)) &&
                  ((iVar4 = do_dialog(player, player, card, -1, -1, " Pay kicker\n Pass", 0),
                    iVar4 == 0 && (charge_mana(player, COLOR_COLORLESS, 1), spell_fizzled != 1)))) &&
-                (iVar4 = new_pick_target(&td, "TARGET_CREATURE", iVar5, 1), iVar4 != 0)))
+                (iVar4 = new_pick_target(&td, "TARGET_CREATURE", i, 1), iVar4 != 0)))
         {
-          ptVar2 = instance->targets + iVar5;
-          ptVar1 = instance->targets + iVar5;
-          iVar5 = iVar5 + 1;
+          ptVar2 = instance->targets + i;
+          ptVar1 = instance->targets + i;
+          i = i + 1;
           state_untargettable(ptVar1->player, ptVar2->card, 1);
         }
-        iVar5 = 0;
+        i = 0;
         if (instance->number_of_targets != '\0')
         {
           do
           {
-            ptVar2 = instance->targets + iVar5;
-            ptVar1 = instance->targets + iVar5;
-            iVar5 = iVar5 + 1;
+            ptVar2 = instance->targets + i;
+            ptVar1 = instance->targets + i;
+            i = i + 1;
             state_untargettable(ptVar1->player, ptVar2->card, 0);
-          } while (iVar5 < (int)(unsigned int)instance->number_of_targets);
+          } while (i < (int)(unsigned int)instance->number_of_targets);
         }
       }
     }
@@ -2535,23 +2534,23 @@ int card_strength_of_the_tajuru(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
     {
-      iVar5 = 0;
+      i = 0;
       if (instance->number_of_targets != '\0')
       {
         do
         {
-          while (iVar4 = validate_target(player, card, &td, iVar5), iVar4 != 0)
+          while (iVar4 = validate_target(player, card, &td, i), iVar4 != 0)
           {
-            ptVar2 = instance->targets + iVar5;
-            ptVar1 = instance->targets + iVar5;
-            iVar5 = iVar5 + 1;
+            ptVar2 = instance->targets + i;
+            ptVar1 = instance->targets + i;
+            i = i + 1;
             add_counters(player, card, ptVar1->player, ptVar2->card, COUNTER_P1_P1,
                                      instance->info_slot);
-            if ((int)(unsigned int)instance->number_of_targets <= iVar5)
+            if ((int)(unsigned int)instance->number_of_targets <= i)
               goto LAB_0258b080;
           }
-          iVar5 = iVar5 + 1;
-        } while (iVar5 < (int)(unsigned int)instance->number_of_targets);
+          i = i + 1;
+        } while (i < (int)(unsigned int)instance->number_of_targets);
       }
     LAB_0258b080:
       kill_card(player, card, KILL_DESTROY);
@@ -2986,50 +2985,25 @@ int card_roiling_terrain(int player, int card, event_t event)
   int result;
   target_definition_t td;
 
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 1);
-        instance = get_card_instance(player, card);
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          result = valid_target(&td);
-          if (result != 0)
-          {
-
-            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-            result = count_graveyard_by_type(instance->targets[0].player, 1);
-            damage_player(instance->targets[0].player, result + 1, player, card);
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_0258a026;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   default_target_definition(player, card, &td, 1);
-  get_card_instance(player, card);
-LAB_0258a026:
-  result = generic_spell(player, card, event, 1, &td, "TARGET_LAND", 1, NULL);
-  return result;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      result = count_graveyard_by_type(instance->targets[0].player, 1);
+      damage_player(instance->targets[0].player, result + 1, player, card);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_LAND", 1, NULL);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -3069,8 +3043,7 @@ int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t
           (iVar3 = check_for_death_trigger_removal(player_00, iVar1), iVar3 == 0))
       {
 
-        iVar3 = create_legacy_effect(player, card, zendikon_legacy);
-        instance = get_card_instance(player, iVar3);
+        instance = get_card_instance(player, create_legacy_effect(player, card, zendikon_legacy));
         iVar3 = get_owner(player_00, iVar1);
         instance->targets[0].player = iVar3;
         iVar1 = get_original_internal_card_id(player_00, iVar1);
@@ -3112,8 +3085,7 @@ LAB_02583f00:
   {
     backtrace_and_abort("cards/worldwake.c:109\n!(spkws & SP_KEYWORD_NOT_SIMPLE_BITS)");
   }
-  iVar1 = generic_animating_aura(player, card, event, &td, "TARGET_LAND", pow, tgh, kws, spkws);
-  return iVar1;
+  return generic_animating_aura(player, card, event, &td, "TARGET_LAND", pow, tgh, kws, spkws);
 }
 
 /* ManalinkEh 2022: 0x2586250; original cards/worldwake.c:858. */
@@ -3191,7 +3163,7 @@ int card_canopy_cover(int player, int card, event_t event)
           }
           attached_gets_sp_kw2(player, card, EVENT_BLOCK_LEGALITY, SP_KEYWORD2_GRANTED_PROT_MISC);
           get_card_instance(player, card);
-          goto LAB_0258590a;
+          return aura(player, card, event, NULL, NULL);
         }
       }
     }
@@ -3205,9 +3177,7 @@ int card_canopy_cover(int player, int card, event_t event)
   {
     event_result = event_result | 1;
   }
-LAB_0258590a:
-  result = aura(player, card, event, NULL, NULL);
-  return result;
+  return aura(player, card, event, NULL, NULL);
 }
 #endif
 

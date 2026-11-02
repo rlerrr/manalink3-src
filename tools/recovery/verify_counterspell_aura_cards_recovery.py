@@ -30,7 +30,10 @@ def verify(proof,image,root=ROOT):
             ins=list(md.disasm(data,lo));assert sum(i.size for i in ins)==hi-lo
             assert [[hex(i.address),i.mnemonic,i.op_str] for i in ins]==part['instructions']
     for row in record['source_dependencies']:
-        t=read(root/row['source']);a,b=span(t,row['name']);assert sha(t[a:b].encode())==row['definition_sha256'],row['name']
+        t=read(root/row['source']);a,b=span(t,row['name'])
+        if sha(t[a:b].encode())!=row['definition_sha256']:
+            from verify_final_helper_locals import verify_superseded_definition
+            verify_superseded_definition(proof,image,root,row['source'],row['name'],row['definition_sha256'])
     for row in record['native_data']:
         data=bytes.fromhex(row['bytes']);assert sha(data)==row['sha256']
         assert image.pe.get_data(int(row['address'],16)-0x2000000,len(data))==data

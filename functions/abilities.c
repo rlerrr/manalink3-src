@@ -45,13 +45,8 @@ int is_humiliated(int player, int card, ability_loss_t mode);
 
 int is_humiliated_by_instance(card_instance_t *instance, ability_loss_t mode)
 {
-  ability_loss_t aVar1;
-  aVar1 = instance->targets[0x11].card;
-  if (0 < (int)aVar1)
-  {
-    return aVar1 & mode;
-  }
-  return 0;
+  int flags = instance->targets[17].card;
+  return flags > 0 ? flags & mode : 0;
 }
 
 
@@ -1080,620 +1075,147 @@ void remove_abilities_by_test(int player, event_t event, test_definition_t *test
 /* ManalinkEh 2022: 0x26ddb20; original functions/abilities.c:355. */
 void remove_abilities(int player, int card, event_t event, ability_loss_t mode)
 {
-  ability_loss_t aVar1;
-  card_instance_t *instance;
-
-  instance = in_play(affected_card_controller, affected_card);
+  card_instance_t *instance = in_play(affected_card_controller, affected_card);
   if (instance != NULL)
   {
-    aVar1 = instance->targets[0x11].card;
-    if (-1 < (int)aVar1)
-    {
-      mode = mode | aVar1;
-    }
-    instance->targets[0x11].card = mode;
+    int flags = instance->targets[17].card;
+    if (flags >= 0)
+      mode |= flags;
+    instance->targets[17].card = mode;
   }
-  return;
 }
 
 /* ManalinkEh 2022: 0x26ddb60; original functions/abilities.c:367. */
 int has_an_activated_ability(iid_t iid)
 {
-  int iVar1;
-  char cVar2;
-  int iVar3;
-  unsigned int uVar4;
-  unsigned short uVar5;
+  if (!(cards_data[iid].type & (TYPE_LAND | TYPE_CREATURE | TYPE_ENCHANTMENT | TYPE_ARTIFACT)))
+    return 0;
 
-  iVar3 = 0;
-  if ((cards_data[iid].type & 0x47) != 0)
+  int csvid = cards_data[iid].id;
+  switch (csvid)
   {
-    iVar1 = *(int *)&cards_data[iid].id;
-    uVar5 = (unsigned short)iVar1;
-    if (uVar5 != 0x2baa)
-    {
-      cVar2 = (char)iVar1;
-      if (uVar5 < 0x2bab)
-      {
-        if (uVar5 == 0x1710)
-        {
-          return 0;
-        }
-        if (uVar5 < 0x1711)
-        {
-          if (uVar5 == 0xed1)
-          {
-            return 0;
-          }
-          if (uVar5 < 0xed2)
-          {
-            if (uVar5 == 0xba8)
-            {
-              return 0;
-            }
-            if (uVar5 < 0xba9)
-            {
-              if (uVar5 == 0x7fd)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x7fe)
-              {
-                if (uVar5 == 0x2ad)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x789)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x50)
-                {
-                  return 0;
-                }
-              }
-              else
-              {
-                if (uVar5 == 0xac6)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0xb84)
-                {
-                  return 0;
-                }
-              }
-            }
-            else
-            {
-              if (uVar5 == 0xcb7)
-              {
-                return 0;
-              }
-              if (uVar5 < 0xcb8)
-              {
-                if (uVar5 == 0xbcc)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0xc30)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0xbaa)
-                {
-                  return 0;
-                }
-              }
-              else
-              {
-                if (uVar5 == 0xd57)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0xd72)
-                {
-                  return 0;
-                }
-              }
-            }
-          }
-          else
-          {
-            if (uVar5 == 0x1530)
-            {
-              return 0;
-            }
-            if (uVar5 < 0x1531)
-            {
-              if (uVar5 == 0x1261)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x1262)
-              {
-                if (uVar5 == 0x11f2)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x1227)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0xf7c)
-                {
-                  return 0;
-                }
-              }
-              else if (uVar5 < 0x1266)
-              {
-                if (0x1262 < uVar5)
-                {
-                  return 0;
-                }
-              }
-              else if (uVar5 == 0x144c)
-              {
-                return 0;
-              }
-            }
-            else
-            {
-              if (uVar5 == 0x158a)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x158b)
-              {
-                if (uVar5 == 0x155c)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x1580)
-                {
-                  return 0;
-                }
-              }
-              else
-              {
-                if (uVar5 == 0x161f)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x1652)
-                {
-                  return 0;
-                }
-              }
-            }
-          }
-        }
-        else
-        {
-          if (uVar5 == 0x2532)
-          {
-            return 0;
-          }
-          if (uVar5 < 0x2533)
-          {
-            if (uVar5 == 0x1f18)
-            {
-              return 0;
-            }
-            if (uVar5 < 0x1f19)
-            {
-              if (uVar5 == 0x1b7a)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x1b7b)
-              {
-                if (uVar5 == 0x1998)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x1a6a)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x1805)
-                {
-                  return 0;
-                }
-              }
-              else
-              {
-                if (uVar5 == 0x1beb)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x1ea3)
-                {
-                  return 0;
-                }
-              }
-            }
-            else
-            {
-              if (uVar5 == 0x21f5)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x21f6)
-              {
-                if (uVar5 == 0x20bd)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x215c)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x20a0)
-                {
-                  return 0;
-                }
-              }
-              else
-              {
-                if (uVar5 == 0x230a)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x238d)
-                {
-                  return 0;
-                }
-              }
-            }
-          }
-          else if (uVar5 < 0x298f)
-          {
-            if (uVar5 < 0x2982)
-            {
-              if (uVar5 == 0x2631)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x2632)
-              {
-                if (uVar5 == 0x259e)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x260a)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x2544)
-                {
-                  return 0;
-                }
-              }
-              else
-              {
-                if (uVar5 == 0x2689)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x28bd)
-                {
-                  return 0;
-                }
-              }
-            }
-            else if ((1 << (cVar2 + 0x7eU & 0x1f) & 0x1201U) != 0)
-            {
-              return 0;
-            }
-          }
-          else
-          {
-            if (uVar5 == 0x2b2b)
-            {
-              return 0;
-            }
-            if (uVar5 == 0x2b83)
-            {
-              return 0;
-            }
-            if (uVar5 == 0x29af)
-            {
-              return 0;
-            }
-          }
-        }
-      }
-      else
-      {
-        if (uVar5 == 0x3471)
-        {
-          return 0;
-        }
-        if (uVar5 < 0x3472)
-        {
-          if (uVar5 == 0x3163)
-          {
-            return 0;
-          }
-          if (uVar5 < 0x3164)
-          {
-            if (uVar5 == 0x2f0b)
-            {
-              return 0;
-            }
-            if (uVar5 < 0x2f0c)
-            {
-              if (uVar5 == 0x2d8e)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x2d8f)
-              {
-                if (uVar5 == 0x2c5e)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x2d02)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x2bd8)
-                {
-                  return 0;
-                }
-              }
-              else if ((iVar1 - 0x2ddeU & 0xffbf) == 0)
-              {
-                return 0;
-              }
-            }
-            else
-            {
-              if (uVar5 == 0x3046)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x3047)
-              {
-                if (uVar5 == 0x2ff2)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x300a)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x2f2f)
-                {
-                  return 0;
-                }
-              }
-              else
-              {
-                if (uVar5 == 0x307d)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x3136)
-                {
-                  return 0;
-                }
-              }
-            }
-          }
-          else
-          {
-            if (uVar5 == 0x323d)
-            {
-              return 0;
-            }
-            if (uVar5 < 0x323e)
-            {
-              if (uVar5 < 0x320e)
-              {
-                if (uVar5 < 0x31f5)
-                {
-                  if (uVar5 == 0x31a1)
-                  {
-                    return 0;
-                  }
-                  if (uVar5 == 0x31cd)
-                  {
-                    return 0;
-                  }
-                }
-                else if ((1 << (cVar2 + 0xbU & 0x1f) & 0x1400005U) != 0)
-                {
-                  return 0;
-                }
-              }
-            }
-            else
-            {
-              if (uVar5 == 0x330a)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x330b)
-              {
-                if (uVar5 == 0x327a)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x32d9)
-                {
-                  return 0;
-                }
-              }
-              else
-              {
-                if (uVar5 == 0x331a)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x337a)
-                {
-                  return 0;
-                }
-              }
-            }
-          }
-        }
-        else
-        {
-          if (uVar5 == 0x382e)
-          {
-            return 0;
-          }
-          if (uVar5 < 0x382f)
-          {
-            if (uVar5 == 0x35cd)
-            {
-              return 0;
-            }
-            if (uVar5 < 0x35ce)
-            {
-              if (uVar5 < 0x358f)
-              {
-                if (uVar5 < 0x3570)
-                {
-                  if (uVar5 == 0x34d1)
-                  {
-                    return 0;
-                  }
-                  if (uVar5 == 0x3547)
-                  {
-                    return 0;
-                  }
-                }
-                else if ((1 << (cVar2 + 0x90U & 0x1f) & 0x40038003U) != 0)
-                {
-                  return 0;
-                }
-              }
-              else if (uVar5 == 0x35b2)
-              {
-                return 0;
-              }
-            }
-            else
-            {
-              if (uVar5 == 0x3700)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x3701)
-              {
-                if (uVar5 == 0x35df)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x3681)
-                {
-                  return 0;
-                }
-              }
-              else
-              {
-                if (uVar5 == 0x3704)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x37e7)
-                {
-                  return 0;
-                }
-              }
-            }
-          }
-          else
-          {
-            if (uVar5 == 0x3f81)
-            {
-              return 0;
-            }
-            if (uVar5 < 0x3f82)
-            {
-              if (uVar5 == 0x3d25)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x3d26)
-              {
-                if (uVar5 == 0x3bed)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x3c9c)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x3a4b)
-                {
-                  return 0;
-                }
-              }
-              else
-              {
-                if (uVar5 == 0x3e38)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x3f37)
-                {
-                  return 0;
-                }
-              }
-            }
-            else
-            {
-              if (uVar5 == 0x4330)
-              {
-                return 0;
-              }
-              if (uVar5 < 0x4331)
-              {
-                if (uVar5 < 0x4186)
-                {
-                  if (0x4183 < uVar5)
-                  {
-                    return 0;
-                  }
-                }
-                else if (uVar5 == 0x42a7)
-                {
-                  return 0;
-                }
-              }
-              else
-              {
-                if (uVar5 == 0x4837)
-                {
-                  return 0;
-                }
-                if (uVar5 == 0x4b9c)
-                {
-                  return 0;
-                }
-              }
-            }
-          }
-        }
-      }
-      if (((cards_data[iid].extra_ability & 0x1000) != 0) || (uVar5 == 0x36eb))
-      {
-        return 2;
-      }
-      iVar3 = 1;
-      if ((cards_data[iid].extra_ability & 3) == 0)
-      {
-        uVar4 = check_card_for_rules_engine(iid);
-        return uVar4 >> 0xc & 1;
-      }
-    }
+  case CARD_ID_FASTBOND:
+  case CARD_ID_INVOKE_PREJUDICE:
+  case CARD_ID_FORBIDDEN_LORE:
+  case CARD_ID_MYSTIC_MIGHT:
+  case CARD_ID_PYGMY_HIPPO:
+  case CARD_ID_BONE_DANCER:
+  case CARD_ID_GOBLIN_GRENADIERS:
+  case CARD_ID_GOBLIN_VANDAL:
+  case CARD_ID_OPHIDIAN:
+  case CARD_ID_DAUTHI_MINDRIPPER:
+  case CARD_ID_ROOTWATER_SHAMAN:
+  case CARD_ID_SAMITE_BLESSING:
+  case CARD_ID_THALAKOS_DECEIVER:
+  case CARD_ID_HERMETIC_STUDY:
+  case CARD_ID_YAWGMOTHS_WILL:
+  case CARD_ID_SAPRAZZAN_HEIR:
+  case CARD_ID_VERNAL_EQUINOX:
+  case CARD_ID_LACCOLITH_GRUNT:
+  case CARD_ID_LACCOLITH_TITAN:
+  case CARD_ID_LACCOLITH_WARRIOR:
+  case CARD_ID_LACCOLITH_WHELP:
+  case CARD_ID_YAWGMOTHS_AGENDA:
+  case CARD_ID_QUICKSILVER_DAGGER:
+  case CARD_ID_ANIMAL_BONEYARD:
+  case CARD_ID_CAUSTIC_TAR:
+  case CARD_ID_CHAMBER_OF_MANIPULATION:
+  case CARD_ID_PSIONIC_GIFT:
+  case CARD_ID_SQUIRREL_NEST:
+  case CARD_ID_ARCANE_TEACHINGS:
+  case CARD_ID_FUTURE_SIGHT:
+  case CARD_ID_MINDS_DESIRE:
+  case CARD_ID_PSYCHIC_MEMBRANE:
+  case CARD_ID_CRUCIBLE_OF_WORLDS:
+  case CARD_ID_VEDALKEN_ORRERY:
+  case CARD_ID_FLAME_FUSILLADE:
+  case CARD_ID_SINS_OF_THE_PAST:
+  case CARD_ID_COUNTERBALANCE:
+  case CARD_ID_HAAKON_STROMGALD_SCOURGE:
+  case CARD_ID_FALLEN_IDEAL:
+  case CARD_ID_TEFERI_MAGE_OF_ZHALFIR:
+  case CARD_ID_MAGUS_OF_THE_FUTURE:
+  case CARD_ID_COLFENORS_URN:
+  case CARD_ID_ELEMENTAL_MASTERY:
+  case CARD_ID_FURYSTOKE_GIANT:
+  case CARD_ID_POWER_OF_FIRE:
+  case CARD_ID_BANISHING_KNACK:
+  case CARD_ID_ENDLESS_HORIZONS:
+  case CARD_ID_SCOURGE_OF_THE_NOBILIS:
+  case CARD_ID_HIVE_MIND:
+  case CARD_ID_ORACLE_OF_MUL_DAYA:
+  case CARD_ID_PREDATORY_URGE:
+  case CARD_ID_PYROMANCER_ASCENSION:
+  case CARD_ID_SPHINX_OF_JWAR_ISLE:
+  case CARD_ID_SPLINTER_TWIN:
+  case CARD_ID_LEYLINE_OF_ANTICIPATION:
+  case CARD_ID_STORMTIDE_LEVIATHAN:
+  case CARD_ID_CLONE_SHELL:
+  case CARD_ID_SEMBLANCE_ANVIL:
+  case CARD_ID_SHIMMER_MYR:
+  case CARD_ID_PRAETORS_GRASP:
+  case CARD_ID_MANA_CHARGED_DRAGON:
+  case CARD_ID_GARRUKS_HORDE:
+  case CARD_ID_PAST_IN_FLAMES:
+  case CARD_ID_SNAPCASTER_MAGE:
+  case CARD_ID_TALONS_OF_FALKENRATH:
+  case CARD_ID_ABUNDANT_GROWTH:
+  case CARD_ID_DUAL_CASTING:
+  case CARD_ID_LIGHTNING_PROWESS:
+  case CARD_ID_OMNISCIENCE:
+  case CARD_ID_YEVA_NATURES_HERALD:
+  case CARD_ID_DEVIANT_GLEE:
+  case CARD_ID_HYPERSONIC_DRAGON:
+  case CARD_ID_PURSUIT_OF_FLIGHT:
+  case CARD_ID_RACECOURSE_FURY:
+  case CARD_ID_SEARCH_THE_CITY:
+  case CARD_ID_SECURITY_BLOCKADE:
+  case CARD_ID_UNDERWORLD_CONNECTIONS:
+  case CARD_ID_DEBTORS_PULPIT:
+  case CARD_ID_NIGHTVEIL_SPECTER:
+  case CARD_ID_SKYGAMES:
+  case CARD_ID_TIN_STREET_MARKET:
+  case CARD_ID_MELEK_IZZET_PARAGON:
+  case CARD_ID_DRAGON_MANTLE:
+  case CARD_ID_PROPHET_OF_KRUPHIX:
+  case CARD_ID_SPAWNING_GROUNDS:
+  case CARD_ID_CLAIM_OF_EREBOS:
+  case CARD_ID_COURSER_OF_KRUPHIX:
+  case CARD_ID_EPHARAS_RADIANCE:
+  case CARD_ID_EPIPHANY_STORM:
+  case CARD_ID_EVANESCENT_INTELLECT:
+  case CARD_ID_FEARSOME_TEMPER:
+  case CARD_ID_LIGHTNING_VOLLEY:
+  case CARD_ID_ORACLES_INSIGHT:
+  case CARD_ID_RETRACTION_HELIX:
+  case CARD_ID_PROPHETIC_FLAMESPEAKER:
+  case CARD_ID_BURNING_ANGER:
+  case CARD_ID_CHIEF_ENGINEER:
+  case CARD_ID_LENS_OF_CLARITY:
+  case CARD_ID_SINGING_BELL_STRIKE:
+  case CARD_ID_GLEAM_OF_AUTHORITY:
+  case CARD_ID_GRUESOME_SLAUGHTER:
+  case CARD_ID_GIGANTOPLASM:
+  case CARD_ID_OATH_OF_NISSA:
+  case CARD_ID_RATTLECHAINS:
+  case CARD_ID_SIGARDAS_AID:
+  case CARD_ID_CONSPIRACY_EMISSARYS_PLOY:
+  case CARD_ID_QUICKSMITH_REBEL:
+  case CARD_ID_QUICKSMITH_SPY:
+  case CARD_ID_VIZIER_OF_THE_MENAGERIE:
+  case CARD_ID_RAMUNAP_EXCAVATOR:
+  case CARD_ID_RAFF_CAPASHEN_SHIPS_MAGE:
+  case CARD_ID_EXPANSION_EXPLOSION:
+    return 0;
+  default:
+    break;
   }
-  return iVar3;
+
+  if ((cards_data[iid].extra_ability & EA_MANA_SOURCE) || csvid == CARD_ID_TREASONOUS_OGRE)
+    return 2;
+  if (cards_data[iid].extra_ability & (EA_ACT_ABILITY | EA_ACT_INTERRUPT))
+    return 1;
+  return ((unsigned int)check_card_for_rules_engine(iid) >> 12) & 1;
 }
 
 /* ManalinkEh 2022: 0x26e0db0; original functions/abilities.c:3063. */
@@ -1806,7 +1328,6 @@ void protection_from_colored_spells(int player, int card, event_t event)
   int iVar2;
   unsigned int uVar3;
   card_instance_t *instance;
-  int iVar5;
 
   player_00 = attacking_card_controller;
   iVar2 = attacking_card;
@@ -1842,8 +1363,7 @@ void protection_from_colored_spells(int player, int card, event_t event)
         {
           return;
         }
-        iVar5 = is_being_cast(player_00, iVar2);
-        if (iVar5 == 0)
+        if (is_being_cast(player_00, iVar2) == 0)
         {
           return;
         }
@@ -1859,8 +1379,7 @@ void protection_from_colored_spells(int player, int card, event_t event)
         {
           return;
         }
-        iVar2 = is_being_cast(attacking_card_controller, attacking_card);
-        if (iVar2 == 0)
+        if (is_being_cast(attacking_card_controller, attacking_card) == 0)
         {
           return;
         }
@@ -1891,28 +1410,21 @@ static void set_misc_protection_impl(int player, int card)
 /* ManalinkEh 2022: 0x26df800; original functions/abilities.c:1250. */
 int get_special_abilities_by_instance(card_instance_t *instance)
 {
-  unsigned int uVar1;
-  unsigned int uVar2;
-
-  uVar2 = instance->ext->sp_keywords;
-  if ((instance->state & 0x2000) != 0)
+  unsigned int keyword = instance->ext->sp_keywords;
+  if (instance->state & STATE_VIGILANCE)
   {
-    uVar2 = uVar2 | 8;
-    instance->ext->sp_keywords = uVar2;
+    keyword |= SP_KEYWORD_VIGILANCE;
+    instance->ext->sp_keywords = keyword;
   }
-  uVar1 = instance->targets[0x11].card;
-  if (0 < (int)uVar1)
+  int mode = instance->targets[17].card;
+  if (mode > 0)
   {
-    if ((uVar1 & 0x40) != 0)
-    {
-      uVar2 = 0;
-    }
-    if ((uVar1 & 0x80) != 0)
-    {
-      uVar2 = uVar2 | 0x800;
-    }
+    if (mode & AL_KEY)
+      keyword = 0;
+    if (mode & AL_INDESTRUCTIBLE)
+      keyword |= SP_KEYWORD_INDESTRUCTIBLE;
   }
-  return uVar2;
+  return keyword;
 }
 
 
@@ -2038,4348 +1550,1371 @@ void maxblockers_1(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x26d7530; original functions/abilities.c:1269. */
 static int has_sp_key_by_csvid_impl(int csvid, int sp_key)
 {
-  char cVar1;
-  unsigned int uVar2;
-  unsigned int uVar3;
+  switch (csvid)
+  {
+  case CARD_ID_GLUTTONOUS_ZOMBIE:
+  case CARD_ID_SEVERED_LEGION:
+  case CARD_ID_SHADOWMAGE_INFILTRATOR:
+  case CARD_ID_ORDER_OF_YAWGMOTH:
+  case CARD_ID_SUQATA_ASSASSIN:
+  case CARD_ID_RAZORTOOTH_RATS:
+  case CARD_ID_COMMANDER_GREVEN_IL_VEC:
+  case CARD_ID_SQUIRMING_MASS:
+  case CARD_ID_CATERAN_ENFORCER:
+  case CARD_ID_RATHI_INTIMIDATOR:
+  case CARD_ID_AVATAR_OF_WOE:
+  case CARD_ID_FRIGHTCRAWLER:
+  case CARD_ID_GUILTFEEDER:
+  case CARD_ID_DROSS_PROWLER:
+  case CARD_ID_WOEBEARER:
+  case CARD_ID_ARCBOUND_FIEND:
+  case CARD_ID_DROSS_GOLEM:
+  case CARD_ID_DESECRATION_ELEMENTAL:
+  case CARD_ID_NEZUMI_CUTTHROAT:
+  case CARD_ID_PAINWRACKER_ONI:
+  case CARD_ID_CRAWLING_FILTH:
+  case CARD_ID_DIMIR_HOUSE_GUARD:
+  case CARD_ID_UNDERCITY_SHADE:
+  case CARD_ID_RATCATCHER:
+  case CARD_ID_SQUEALING_DEVIL:
+  case CARD_ID_PHOBIAN_PHANTASM:
+  case CARD_ID_CORPULENT_CORPSE:
+  case CARD_ID_DUST_ELEMENTAL:
+  case CARD_ID_NIHILITH:
+  case CARD_ID_DREAD:
+  case CARD_ID_SHRIEKMAW:
+  case CARD_ID_SQUEAKING_PIE_SNEAK:
+  case CARD_ID_PRICKLY_BOGGART:
+  case CARD_ID_CROWD_OF_CINDERS:
+  case CARD_ID_INKFATHOM_WITCH:
+  case CARD_ID_LINGERING_TORMENTOR:
+  case CARD_ID_JHESSIAN_ZOMBIES:
+    return sp_key & SP_KEYWORD_FEAR;
 
-  uVar2 = sp_key & 1;
-  cVar1 = (char)csvid;
-  if ((uVar2 == 0) || (csvid == 0x1cae))
-    goto LAB_026d7540;
-  if (csvid < 0x1caf)
-  {
-    if (csvid == 0x1287)
-      goto LAB_026d7540;
-    if (0x1287 < csvid)
-    {
-      if (csvid != 0x1ab6)
-      {
-        if (csvid < 0x1ab7)
-        {
-          if (csvid != 0x1744)
-          {
-            if (csvid < 0x1745)
-            {
-              if (csvid != 0x12bf)
-              {
-                uVar2 = (unsigned int)(csvid == 0x15c2);
-              }
-            }
-            else
-            {
-              uVar2 = (unsigned int)(csvid == 0x19fd);
-            }
-          }
-        }
-        else if (csvid != 0x1b7c)
-        {
-          if (csvid < 0x1b7d)
-          {
-            if (csvid != 0x1abe)
-            {
-              uVar2 = (unsigned int)(csvid == 0x1ae1);
-            }
-          }
-          else
-          {
-            uVar2 = (unsigned int)(csvid == 0x1c96);
-          }
-        }
-      }
-      goto LAB_026d7540;
-    }
-    if (csvid == 0xae4)
-      goto LAB_026d7540;
-    if (0xae4 < csvid)
-    {
-      if (csvid != 0x1063)
-      {
-        if (csvid < 0x1064)
-        {
-          if (csvid != 0xbd4)
-          {
-            uVar2 = (unsigned int)(csvid == 0xc25);
-          }
-        }
-        else
-        {
-          uVar2 = (unsigned int)(csvid == 0x1139);
-        }
-      }
-      goto LAB_026d7540;
-    }
-    if (csvid == 0x4c4)
-      goto LAB_026d7540;
-    if (csvid < 0x4c5)
-    {
-      if (csvid != 0x416)
-      {
-        uVar2 = (unsigned int)(csvid == 0x479);
-      }
-      goto LAB_026d7540;
-    }
-    if (csvid == 0x69a)
-      goto LAB_026d7540;
-    uVar2 = 0;
-    if ((sp_key & 2U) == 0)
-      goto LAB_026d789a;
-    uVar2 = 0;
-  LAB_026d9c11:
-    if ((csvid == 0x54d) || (csvid == 0x585))
-      goto LAB_026d7897;
-    if ((sp_key & 4U) == 0)
-      goto LAB_026d75bd;
-  LAB_026d78b4:
-    if (csvid == 0x1de1)
-      goto LAB_026d8d12;
-    if (0x1de1 < csvid)
-    {
-    LAB_026dc27a:
-      if (csvid < 0x2841)
-      {
-        if (0x2826 < csvid)
-        {
-          uVar3 = 1U << (cVar1 - 0x27U & 0x1f) & 0x2020401;
-        joined_r0x026dc2fb:
-          if (uVar3 != 0)
-            goto LAB_026d8d12;
-          goto LAB_026d75bd;
-        }
-      LAB_026dc28c:
-        if (0x234f < csvid)
-          goto LAB_026d9af8;
-        if (0x2339 < csvid)
-        {
-          uVar3 = 1U << (cVar1 - 0x3aU & 0x1f) & 0x204001;
-          goto joined_r0x026dc2fb;
-        }
-        if (csvid == 0x20d4)
-          goto LAB_026d8d12;
-        if (csvid < 0x20d5)
-        {
-          if (csvid == 0x1efe)
-            goto LAB_026d8d12;
-          if (csvid < 0x1eff)
-          {
-            if (csvid == 0x1eb3)
-              goto LAB_026d8d12;
-            if (0x1eb3 < csvid)
-            {
-              if (csvid == 0x1ec7)
-                goto LAB_026d8d12;
-              if ((sp_key & 8U) == 0)
-                goto LAB_026d7927;
-              goto LAB_026d93dd;
-            }
-            if ((csvid == 0x1e1e) || (csvid == 0x1e40))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026da6c2:
-            if ((csvid != 0x1e50) && (csvid != 0x1e80))
-              goto LAB_026da6d8;
-            goto LAB_026d814b;
-          }
-          if (csvid == 0x2067)
-            goto LAB_026d8d12;
-          if (csvid < 0x2068)
-          {
-            if ((csvid == 0x1f7b) || (csvid == 0x201d))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-            goto LAB_026daddf;
-          }
-          if (csvid == 0x20b3)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        }
-        else
-        {
-          if (csvid == 0x22a5)
-            goto LAB_026d8d12;
-          if (0x22a5 < csvid)
-          {
-            if ((csvid != 0x22ef) && ((csvid & 0xffffffefU) != 0x22c2))
-              goto LAB_026d75bd;
-            goto LAB_026d8d12;
-          }
-          if (csvid == 0x2269)
-            goto LAB_026d8d12;
-          if (0x2269 < csvid)
-          {
-            if (csvid != 0x22a0)
-              goto LAB_026d75bd;
-            goto LAB_026d8d12;
-          }
-          if ((csvid == 0x2123) || (csvid == 0x21a8))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d9677:
-          if (csvid == 0x21d7)
-            goto LAB_026d814b;
-          if (0x21d7 < csvid)
-            goto LAB_026d9688;
-        LAB_026daddf:
-          if (csvid == 0x1ffc)
-            goto LAB_026d814b;
-          if (csvid < 0x1ffd)
-          {
-            if (csvid < 0x1eff)
-            {
-              if (0x1ee7 < csvid)
-              {
-                uVar3 = 1U << (cVar1 + 0x18U & 0x1f) & 0x400011;
-                goto joined_r0x026dae35;
-              }
-            }
-            else if (csvid == 0x1f96)
-              goto LAB_026d814b;
-            goto LAB_026d7927;
-          }
-        }
-        if (((csvid - 0x2186U & 0xfffffffb) != 0) && (csvid != 0x2088))
-          goto LAB_026d7927;
-        goto LAB_026d814b;
-      }
-    LAB_026dbe0d:
-      if (csvid == 0x2cc1)
-        goto LAB_026d8d12;
-      if (csvid < 0x2cc2)
-      {
-      LAB_026dbe1e:
-        if (csvid == 0x2a50)
-          goto LAB_026d8d12;
-        if (0x2a50 < csvid)
-          goto LAB_026dbe2f;
-        if (csvid < 0x2935)
-        {
-          if ((0x2932 < csvid) || (csvid == 0x28b6))
-            goto LAB_026d8d12;
-          if (csvid < 0x28b7)
-          {
-            if ((csvid == 0x2864) || (csvid == 0x2878))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-            goto LAB_026dc16f;
-          }
-          if (csvid == 0x291d)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026dc148:
-          if (csvid != 0x292c)
-          {
-            if (0x292c < csvid)
-              goto LAB_026dbff8;
-            if (csvid != 0x280a)
-              goto LAB_026dc164;
-          }
-          goto LAB_026d814b;
-        }
-        if (csvid == 0x29df)
-          goto LAB_026d8d12;
-        if (0x29df < csvid)
-        {
-          if (csvid != 0x29fe)
-            goto LAB_026d75bd;
-          goto LAB_026d8d12;
-        }
-        if ((csvid & 0xffffff7fU) == 0x2946)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026dc030:
-        if ((csvid != 0x2953) && (csvid != 0x29a6))
-          goto LAB_026d7652;
-        goto LAB_026d814b;
-      }
-    LAB_026dc0c2:
-      if (csvid == 0x2fc6)
-        goto LAB_026d8d12;
-      if (csvid < 0x2fc7)
-      {
-      LAB_026dbd63:
-        if (csvid == 0x2ea7)
-          goto LAB_026d8d12;
-        if (csvid < 0x2ea8)
-        {
-          if (csvid == 0x2df2)
-            goto LAB_026d8d12;
-          if (csvid < 0x2df3)
-          {
-            if ((csvid == 0x2cc3) || (csvid == 0x2da6))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-            goto LAB_026dc137;
-          }
-          if (csvid == 0x2e0d)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026dbf10:
-          if (csvid != 0x2e5e)
-          {
-            if (0x2e5e < csvid)
-              goto LAB_026dbf1d;
-            if (csvid != 0x2d5f)
-            {
-              if (csvid < 0x2d60)
-              {
-                if ((csvid == 0x2d3e) || (csvid == 0x2d4b))
-                  goto LAB_026d814b;
-              }
-              else if (csvid == 0x2df3)
-                goto LAB_026d814b;
-              goto LAB_026d7652;
-            }
-          }
-        }
-        else
-        {
-          if (csvid == 0x2f90)
-            goto LAB_026d8d12;
-          if (0x2f90 < csvid)
-          {
-            if (csvid == 0x2fad)
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026dbda0:
-            if (csvid == 0x2fc3)
-              goto LAB_026d814b;
-            if (0x2fc3 < csvid)
-              goto LAB_026dbdb1;
-            goto LAB_026dbf10;
-          }
-          if ((csvid == 0x2eec) || (csvid == 0x2f8c))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026dbf1d:
-          if (((csvid != 0x2eba) && (csvid != 0x2f40)) && (csvid != 0x2ea2))
-            goto LAB_026d7652;
-        }
-      }
-      else
-      {
-        if (csvid == 0x3081)
-          goto LAB_026d8d12;
-        if (0x3081 < csvid)
-        {
-          if (((csvid == 0x3113) || (csvid == 0x313c)) || (csvid == 0x30e2))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          goto LAB_026d885f;
-        }
-        if (csvid == 0x302e)
-          goto LAB_026d8d12;
-        if (0x302e < csvid)
-        {
-          if (csvid != 0x3051)
-            goto LAB_026d75bd;
-          goto LAB_026d8d12;
-        }
-        if ((csvid == 0x2fef) || (csvid == 0x3015))
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026dbdb1:
-        if (csvid != 0x3020)
-        {
-          if (csvid < 0x3021)
-          {
-            if (csvid < 0x3001)
-            {
-              if ((0x2ffe < csvid) || (csvid == 0x2fdd))
-                goto LAB_026d814b;
-            }
-            else if (csvid == 0x3016)
-              goto LAB_026d814b;
-            goto LAB_026d7652;
-          }
-          if ((csvid != 0x30c6) && ((csvid != 0x30ef && (csvid != 0x30a2))))
-            goto LAB_026d7652;
-        }
-      }
-      goto LAB_026d814b;
-    }
-    if (csvid == 0xff2)
-      goto LAB_026d8d12;
-    if (0xff2 < csvid)
-    {
-      if (csvid == 0x16c0)
-        goto LAB_026d8d12;
-      if (0x16c0 < csvid)
-      {
-        if (csvid == 0x1a14)
-          goto LAB_026d8d12;
-        if (csvid < 0x1a15)
-        {
-          if (csvid == 0x18cf)
-            goto LAB_026d8d12;
-          if (csvid < 0x18d0)
-          {
-            if (csvid == 0x17b5)
-              goto LAB_026d8d12;
-            if (0x17b5 < csvid)
-            {
-              if ((csvid != 0x183b) && (csvid != 0x1858))
-                goto LAB_026d75bd;
-              goto LAB_026d8d12;
-            }
-            if ((csvid == 0x170c) || (csvid == 0x17a9))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          }
-          else
-          {
-            if (csvid == 0x1925)
-              goto LAB_026d8d12;
-            if (0x1925 < csvid)
-            {
-              if (csvid == 0x198f)
-                goto LAB_026d8d12;
-              if ((sp_key & 8U) == 0)
-                goto LAB_026d7927;
-            LAB_026da736:
-              if ((csvid != 0x199d) && (csvid != 0x1b1d))
-                goto LAB_026d7927;
-              goto LAB_026d814b;
-            }
-            if ((csvid == 0x18d3) || (csvid == 0x190b))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026d93ee:
-            if (csvid == 0x1909)
-              goto LAB_026d814b;
-            if (0x1909 < csvid)
-              goto LAB_026da6b1;
-          }
-          if (csvid != 0x16ce)
-          {
-            if (csvid < 0x16cf)
-            {
-            LAB_026da840:
-              if (csvid != 0x15fc)
-              {
-                if (csvid < 0x15fd)
-                {
-                  if (csvid != 0x14c6)
-                    goto joined_r0x026da892;
-                }
-                else if (csvid != 0x1677)
-                  goto LAB_026d7927;
-              }
-            }
-            else if (((csvid != 0x16ee) && (csvid != 0x171a)) && (csvid != 0x16e8))
-              goto LAB_026d7927;
-          }
-        }
-        else
-        {
-          if (csvid == 0x1bf2)
-            goto LAB_026d8d12;
-          if (csvid < 0x1bf3)
-          {
-            if (csvid == 0x1b11)
-              goto LAB_026d8d12;
-            if (csvid < 0x1b12)
-            {
-              if (csvid < 0x1aaf)
-              {
-                if (0x1aac < csvid)
-                  goto LAB_026d8d12;
-              }
-              else if (csvid == 0x1abf)
-                goto LAB_026d8d12;
-              goto LAB_026d75bd;
-            }
-            if (csvid == 0x1ba3)
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026da6b1:
-            if (csvid != 0x1bd0)
-            {
-              if (0x1bd0 < csvid)
-                goto LAB_026da6c2;
-              if (csvid != 0x1bac)
-              {
-                if (csvid < 0x1bad)
-                  goto LAB_026da736;
-                if (csvid != 0x1bc0)
-                  goto LAB_026d7927;
-              }
-            }
-          }
-          else
-          {
-            if (csvid == 0x1d0c)
-              goto LAB_026d8d12;
-            if (0x1d0c < csvid)
-            {
-              if (csvid != 0x1db0)
-                goto LAB_026d75bd;
-              goto LAB_026d8d12;
-            }
-            if ((csvid == 0x1c6c) || (csvid == 0x1cc1))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026da6d8:
-            if (csvid != 0x1c77)
-              goto LAB_026d7927;
-          }
-        }
-        goto LAB_026d814b;
-      }
-      if (csvid == 0x1390)
-        goto LAB_026d8d12;
-      if (csvid < 0x1391)
-      {
-        if (csvid < 0x10de)
-        {
-          if (0x10d8 < csvid)
-          {
-            uVar3 = 1U << (cVar1 + 0x27U & 0x1f) & 0x15;
-          joined_r0x026da8e8:
-            if (uVar3 == 0)
-              goto LAB_026d75bd;
-            goto LAB_026d8d12;
-          }
-          if ((csvid == 0x1071) || ((csvid & 0xffffffefU) == 0x1024))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d8d80:
-          if (csvid < 0x108f)
-          {
-            if (0x1074 < csvid)
-            {
-              uVar3 = 1U << (cVar1 + 0x8bU & 0x1f) & 0x2200001;
-            joined_r0x026dae35:
-              if (uVar3 != 0)
-                goto LAB_026d814b;
-            }
-          }
-          else if (csvid == 0x1108)
-            goto LAB_026d814b;
-        }
-        else
-        {
-          if (csvid == 0x11a7)
-            goto LAB_026d8d12;
-          if (csvid < 0x11a8)
-          {
-            if ((csvid == 0x117e) || (csvid == 0x11a1))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026d8d6a:
-            if (csvid == 0x110f)
-              goto LAB_026d814b;
-            if (csvid < 0x1110)
-              goto LAB_026d8d80;
-          }
-          else
-          {
-            if (csvid == 0x1298)
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          }
-          if (((csvid == 0x120f) || (csvid == 0x1345)) || (csvid == 0x119b))
-            goto LAB_026d814b;
-        }
-      }
-      else
-      {
-        if (csvid == 0x15d4)
-          goto LAB_026d8d12;
-        if (0x15d4 < csvid)
-        {
-          if (csvid == 0x1696)
-            goto LAB_026d8d12;
-          if (0x1696 < csvid)
-          {
-            if (csvid != 0x16bb)
-              goto LAB_026d75bd;
-            goto LAB_026d8d12;
-          }
-          if ((csvid == 0x15e7) || (csvid == 0x160d))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          goto LAB_026da840;
-        }
-        if (csvid == 0x1502)
-          goto LAB_026d8d12;
-        if (csvid < 0x1503)
-        {
-          if ((csvid == 0x13d9) || (csvid == 0x13fe))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          goto LAB_026d8d37;
-        }
-        if (csvid == 0x151b)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      joined_r0x026da892:
-        if (csvid == 0x157e)
-          goto LAB_026d814b;
-      }
-      goto LAB_026d7927;
-    }
-    if (csvid == 0x602)
-      goto LAB_026d8d12;
-    if (csvid < 0x603)
-    {
-      if (csvid < 0x4d4)
-      {
-        if (csvid < 0x4c5)
-        {
-          if (csvid < 0x430)
-          {
-            if (csvid < 0x417)
-            {
-              if ((csvid == 0xab) || (csvid == 0x127))
-                goto LAB_026d8d12;
-              if ((sp_key & 8U) == 0)
-                goto LAB_026d7927;
-              goto LAB_026d91df;
-            }
-            if ((1U << (cVar1 - 0x17U & 0x1f) & 0x1100001U) != 0)
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026d91f0:
-            if (((csvid & 0xffffffbfU) == 0x3bb) || (csvid == 0x381))
-              goto LAB_026d814b;
-          }
-          else
-          {
-            if (((csvid == 0x4a0) || (csvid == 0x4ae)) || (csvid == 0x462))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026d910e:
-            if (0x4ae < csvid)
-              goto LAB_026d9119;
-          LAB_026d91df:
-            if (csvid == 0x35b)
-              goto LAB_026d814b;
-            if (0x35b < csvid)
-              goto LAB_026d91f0;
-            if (csvid == 0x242)
-              goto LAB_026d814b;
-            if (csvid < 0x243)
-            {
-              if ((csvid == 0xdd) || (csvid == 0x226))
-                goto LAB_026d814b;
-            }
-            else if (csvid == 0x2f3)
-              goto LAB_026d814b;
-          }
-        }
-        else
-        {
-          if ((1U << (cVar1 + 0x3bU & 0x1f) & 0x4011U) != 0)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d923a:
-          if (0x4c9 < csvid)
-            goto LAB_026da2ed;
-          if (0x4c7 < csvid)
-            goto LAB_026d814b;
-        }
-      }
-      else
-      {
-        if (0x531 < csvid)
-        {
-          if (((csvid == 0x57b) || (csvid == 0x5c4)) || (csvid == 0x557))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d9119:
-          if (csvid == 0x560)
-            goto LAB_026d814b;
-          if (0x560 < csvid)
-            goto LAB_026d9126;
-        LAB_026d9172:
-          if (csvid != 0x531)
-          {
-            if (csvid < 0x532)
-              goto LAB_026d923a;
-            if (csvid != 0x554)
-              goto LAB_026d7927;
-          }
-          goto LAB_026d814b;
-        }
-        if (0x512 < csvid)
-        {
-          if ((1U << (cVar1 - 0x13U & 0x1f) & 0x40200001U) != 0)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          goto LAB_026d9172;
-        }
-        if ((csvid - 0x4d9U < 0x1d) &&
-            ((1U << ((unsigned char)(csvid - 0x4d9U) & 0x1f) & 0x10400001U) != 0))
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026da2ed:
-        if (csvid == 0x50c)
-          goto LAB_026d814b;
-      }
-      goto LAB_026d7927;
-    }
-    if (csvid < 0xb4f)
-    {
-      if (0xb4c < csvid)
-        goto LAB_026d8d12;
-      if (csvid < 0x6a2)
-      {
-        if (0x686 < csvid)
-        {
-          switch (csvid)
-          {
-          case 0x687:
-          case 0x689:
-          case 0x690:
-          case 0x695:
-          case 0x6a1:
-            goto LAB_026d8d12;
-          default:
-            goto LAB_026d75bd;
-          }
-        }
-        if (csvid == 0x666)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026d9126:
-        if (((csvid != 0x63c) && (csvid != 0x6d0)) && (csvid != 0x58c))
-          goto LAB_026d7927;
-        goto LAB_026d814b;
-      }
-      if (csvid == 0x951)
-        goto LAB_026d8d12;
-      if (csvid < 0x952)
-      {
-        if ((csvid == 0x744) || (csvid == 0x87b))
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-        goto LAB_026d8d48;
-      }
-      if (csvid == 0xae5)
-        goto LAB_026d8d12;
-      if ((sp_key & 8U) == 0)
-        goto LAB_026d7927;
-    LAB_026da598:
-      if (csvid == 0xaeb)
-        goto LAB_026d814b;
-      if (csvid < 0xaec)
-      {
-        if ((csvid != 0x966) && (csvid != 0xaa5))
-          goto LAB_026d7927;
-        goto LAB_026d814b;
-      }
-      if (csvid == 0xd60)
-        goto LAB_026d814b;
-      if ((sp_key & 0x100U) == 0)
-        goto LAB_026d7652;
-      goto LAB_026da5b9;
-    }
-    if (csvid == 0xe4b)
-      goto LAB_026d8d12;
-    if (csvid < 0xe4c)
-    {
-      if (csvid == 0xd2e)
-        goto LAB_026d8d12;
-      if (csvid < 0xd2f)
-      {
-        if ((csvid != 0xbed) && (csvid != 0xd2a))
-          goto LAB_026d75bd;
-        goto LAB_026d8d12;
-      }
-      if (csvid == 0xe42)
-        goto LAB_026d8d12;
-      if ((sp_key & 8U) == 0)
-        goto LAB_026d7927;
-    LAB_026da51d:
-      if (csvid == 0xdf3)
-        goto LAB_026d814b;
-      if (csvid < 0xdf4)
-        goto LAB_026da598;
-    }
-    else
-    {
-      if (csvid == 0xf3b)
-        goto LAB_026d8d12;
-      if (0xf3b < csvid)
-      {
-        if (csvid == 0xf82)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026d8d59:
-        if (csvid == 0xfcd)
-          goto LAB_026d814b;
-        if (0xfcd < csvid)
-          goto LAB_026d8d6a;
-        goto LAB_026da51d;
-      }
-      if ((csvid == 0xe97) || (csvid == 0xec8))
-        goto LAB_026d8d12;
-      if ((sp_key & 8U) == 0)
-        goto LAB_026d7927;
-    }
-    if (((csvid == 0xe55) || (csvid == 0xed0)) || (csvid == 0xe4e))
-      goto LAB_026d814b;
-    if ((sp_key & 0x100U) == 0)
-      goto LAB_026d7652;
-  LAB_026da554:
-    if (csvid != 0xdf6)
-      goto joined_r0x026da562;
-    goto LAB_026d7962;
+  case CARD_ID_RHOX_WAR_MONK:
+  case CARD_ID_KNIGHT_OF_MEADOWGRAIN:
+  case CARD_ID_MISTMEADOW_SKULK:
+  case CARD_ID_BRION_STOUTARM:
+  case CARD_ID_CHANGELING_HERO:
+  case CARD_ID_DIVINITY_OF_PRIDE:
+  case CARD_ID_NIP_GWYLLION:
+  case CARD_ID_VORACIOUS_HATCHLING:
+  case CARD_ID_WINDWRIGHT_MAGE:
+  case CARD_ID_BANESLAYER_ANGEL:
+  case CARD_ID_CHILD_OF_NIGHT:
+  case CARD_ID_CARAVAN_HURDA:
+  case CARD_ID_ESCAPED_NULL:
+  case CARD_ID_SERRA_ASCENDANT:
+  case CARD_ID_FLENSERMITE:
+  case CARD_ID_CHANCELLOR_OF_THE_DROSS:
+  case CARD_ID_VAULT_SKIRGE:
+  case CARD_ID_VISH_KAL_BLOOD_ARBITER:
+  case CARD_ID_VAMPIRE_OUTCASTS:
+  case CARD_ID_MARKOV_PATRICIAN:
+  case CARD_ID_DROGSKOL_REAVER:
+  case CARD_ID_ELGAUD_INQUISITOR:
+  case CARD_ID_GRISELBRAND:
+  case CARD_ID_SERAPH_OF_DAWN:
+  case CARD_ID_ELDERWOOD_SCION:
+  case CARD_ID_AJANIS_SUNSTRIKER:
+  case CARD_ID_RHOX_FAITHMENDER:
+  case CARD_ID_DAGGERDROME_IMP:
+  case CARD_ID_TRAINED_CARACAL:
+  case CARD_ID_BLOOD_BARON_OF_VIZKOPA:
+  case CARD_ID_TITHE_DRINKER:
+  case CARD_ID_ARCHANGEL_OF_THUNE:
+  case CARD_ID_FIENDSLAYER_PALADIN:
+  case CARD_ID_HOPEFUL_EIDOLON:
+  case CARD_ID_INSATIABLE_HARPY:
+  case CARD_ID_DAWNBRINGER_CHARIOTEERS:
+  case CARD_ID_SUNGRACE_PEGASUS:
+  case CARD_ID_ABZAN_GUIDE:
+  case CARD_ID_SIDISIS_PET:
+  case CARD_ID_SOULFIRE_GRAND_MASTER:
+  case CARD_ID_CHAMPION_OF_ARASHIN:
+  case CARD_ID_DRAGONLORD_DROMOKA:
+  case CARD_ID_HIDDEN_DRAGONSLAYER:
+  case CARD_ID_SHIELDHIDE_DRAGON:
+  case CARD_ID_LILIANA_HERETICAL_HEALER:
+  case CARD_ID_WAR_ORACLE:
+  case CARD_ID_KALITAS_TRAITOR_OF_GHET:
+  case CARD_ID_INDULGENT_ARISTOCRAT:
+  case CARD_ID_NEARHEATH_CHAPLAIN:
+  case CARD_ID_FAITHBEARER_PALADIN:
+  case CARD_ID_GISELA_THE_BROKEN_BLADE:
+  case CARD_ID_HERONS_GRACE_CHAMPION:
+  case CARD_ID_LONE_RIDER:
+  case CARD_ID_MARKOV_CRUSADER:
+  case CARD_ID_AETHERBORN_MARAUDER:
+  case CARD_ID_CONTRABAND_KINGPIN:
+  case CARD_ID_TYMNA_THE_WEAVER:
+  case CARD_ID_BALEFUL_AMMIT:
+  case CARD_ID_SACRED_CAT:
+  case CARD_ID_SCROUNGER_OF_SOULS:
+  case CARD_ID_BLOODLINE_NECROMANCER:
+  case CARD_ID_LICIA_SANGUINE_TRIBUNE:
+  case CARD_ID_BISHOPS_SOLDIER:
+  case CARD_ID_QUEENS_AGENT:
+  case CARD_ID_ELENDA_THE_DUSK_ROSE:
+  case CARD_ID_SADISTIC_SKYMARCHER:
+  case CARD_ID_EVRA_HALCYON_WITNESS:
+  case CARD_ID_LYRA_DAWNBRINGER:
+  case CARD_ID_MESA_UNICORN:
+  case CARD_ID_SANCTUM_SPIRIT:
+  case CARD_ID_COURT_CLERIC:
+  case CARD_ID_DAYBREAK_CHAPLAIN:
+  case CARD_ID_MILITANT_ANGEL:
+  case CARD_ID_VENGEANT_VAMPIRE:
+  case CARD_ID_BLOOD_OPERATIVE:
+  case CARD_ID_HEALERS_HAWK:
+  case CARD_ID_THE_HAUNT_OF_HIGHTOWER:
+  case CARD_ID_THIRSTING_SHADE:
+  case CARD_ID_VIZKOPA_VAMPIRE:
+  case CARD_ID_CHARITY_EXTRACTOR:
+  case CARD_ID_CHARMED_STRAY:
+  case CARD_ID_CAVALIER_OF_NIGHT:
+  case CARD_ID_SEPHARA_SKYS_BLADE:
+  case CARD_ID_KRRIK_SON_OF_YAWGMOTH:
+  case CARD_ID_THALIAS_GEISTCALLER:
+  case CARD_ID_BELOVED_PRINCESS:
+  case CARD_ID_HUSHBRINGER:
+  case CARD_ID_MURDEROUS_RIDER:
+  case CARD_ID_SMITTEN_SWORDMASTER:
+  case CARD_ID_ALSEID_OF_LIFES_BOUNTY:
+  case CARD_ID_ARCHON_OF_SUNS_GRACE:
+  case CARD_ID_DREAM_TRAWLER:
+  case CARD_ID_GRAVEBREAKER_LAMIA:
+  case CARD_ID_HATEFUL_EIDOLON:
+  case CARD_ID_CUBWARDEN:
+  case CARD_ID_LURRUS_OF_THE_DREAM_DEN:
+  case CARD_ID_SPLENDOR_MARE:
+  case CARD_ID_VITALITY_HUNTER:
+  case CARD_ID_ANOINTED_CHORISTER:
+  case CARD_ID_ARCHFIENDS_VESSEL:
+  case CARD_ID_BASRIS_ACOLYTE:
+  case CARD_ID_BLOOD_GLUTTON:
+  case CARD_ID_INDULGING_PATRICIAN:
+  case CARD_ID_MANGARA_THE_DIPLOMAT:
+  case CARD_ID_GHASTLY_GLOOMHUNTER:
+  case CARD_ID_ORAH_SKYCLAVE_HIEROPHANT:
+  case CARD_ID_LATHIEL_THE_BOUNTEOUS_DAWN:
+  case CARD_ID_LIESA_SHROUD_OF_DUSK:
+    return sp_key & SP_KEYWORD_LIFELINK;
+
+  case CARD_ID_NETHER_SHADOW:
+  case CARD_ID_BALL_LIGHTNING:
+  case CARD_ID_GOBLIN_CHARIOT:
+  case CARD_ID_LAVA_HOUNDS:
+  case CARD_ID_LIGHTNING_ELEMENTAL:
+  case CARD_ID_RAGING_GOBLIN:
+  case CARD_ID_VIASHINO_SANDSTALKER:
+  case CARD_ID_BLAZING_SPECTER:
+  case CARD_ID_SKYKNIGHT_LEGIONNAIRE:
+  case CARD_ID_GROUNDBREAKER:
+  case CARD_ID_SPARK_ELEMENTAL:
+  case CARD_ID_RORIX_BLADEWING:
+  case CARD_ID_SPIRIT_OF_THE_NIGHT:
+  case CARD_ID_VULSHOK_SORCERER:
+  case CARD_ID_RIP_CLAN_CRASHER:
+  case CARD_ID_TALRUUM_MINOTAUR:
+  case CARD_ID_SLITH_FIREWALKER:
+  case CARD_ID_HELLKITE_OVERLORD:
+  case CARD_ID_ERON_THE_RELENTLESS:
+  case CARD_ID_VOLCANIC_DRAGON:
+  case CARD_ID_THUNDERING_GIANT:
+  case CARD_ID_JESKA_WARRIOR_ADEPT:
+  case CARD_ID_BALDUVIAN_WAR_MAKERS:
+  case CARD_ID_VIASHINO_CUTTHROAT:
+  case CARD_ID_ASHEN_GHOUL:
+  case CARD_ID_AMBUSH_PARTY:
+  case CARD_ID_YAVIMAYA_ANTS:
+  case CARD_ID_RAGING_COUGAR:
+  case CARD_ID_RAGING_MINOTAUR:
+  case CARD_ID_THUNDERMARE:
+  case CARD_ID_FLOWSTONE_HELLION:
+  case CARD_ID_FURNACE_SPIRIT:
+  case CARD_ID_BRIMSTONE_DRAGON:
+  case CARD_ID_OGRE_BERSERKER:
+  case CARD_ID_CRAZED_SKIRGE:
+  case CARD_ID_GOBLIN_WAR_BUGGY:
+  case CARD_ID_SHIVAN_RAPTOR:
+  case CARD_ID_AVALANCHE_RIDERS:
+  case CARD_ID_VIASHINO_SANDSCOUT:
+  case CARD_ID_GOBLIN_BERSERKER:
+  case CARD_ID_KELDON_CHAMPION:
+  case CARD_ID_WILD_COLOS:
+  case CARD_ID_MOUNTAIN_BANDIT:
+  case CARD_ID_RENEGADE_TROOPS:
+  case CARD_ID_GERRARDS_IRREGULARS:
+  case CARD_ID_KYREN_LEGATE:
+  case CARD_ID_LAVA_RUNNER:
+  case CARD_ID_SHRIEKING_MOGG:
+  case CARD_ID_HALAM_DJINN:
+  case CARD_ID_RAGING_KAVU:
+  case CARD_ID_SKIZZIK:
+  case CARD_ID_GOBLIN_RINGLEADER:
+  case CARD_ID_MINOTAUR_TACTICIAN:
+  case CARD_ID_KAMAHL_PIT_FIGHTER:
+  case CARD_ID_MAGNIVORE:
+  case CARD_ID_PARDIC_FIRECAT:
+  case CARD_ID_CENTAUR_CHIEFTAIN:
+  case CARD_ID_HELL_BENT_RAIDER:
+  case CARD_ID_ICHORID:
+  case CARD_ID_ANGER:
+  case CARD_ID_AVARAX:
+  case CARD_ID_BLISTERING_FIRECAT:
+  case CARD_ID_MENACING_OGRE:
+  case CARD_ID_RECKLESS_ONE:
+  case CARD_ID_CLICKSLITHER:
+  case CARD_ID_CRESTED_CRAGHORN:
+  case CARD_ID_MACETAIL_HYSTRODON:
+  case CARD_ID_SKIRK_ALARMIST:
+  case CARD_ID_KARONA_FALSE_GOD:
+  case CARD_ID_GOBLIN_STRIKER:
+  case CARD_ID_VULSHOK_BATTLEMASTER:
+  case CARD_ID_VULSHOK_BERSERKER:
+  case CARD_ID_ARCBOUND_HYBRID:
+  case CARD_ID_OXIDDA_GOLEM:
+  case CARD_ID_IRON_BARB_HELLION:
+  case CARD_ID_AKKI_LAVARUNNER:
+  case CARD_ID_KIKI_JIKI_MIRROR_BREAKER:
+  case CARD_ID_ASHEN_MONSTROSITY:
+  case CARD_ID_AKUTA_BORN_OF_ASH:
+  case CARD_ID_GLITTERFANG:
+  case CARD_ID_ONI_OF_WILD_PLACES:
+  case CARD_ID_SHINEN_OF_FURYS_FIRE:
+  case CARD_ID_GOBLIN_FIRE_FIEND:
+  case CARD_ID_HUNTED_DRAGON:
+  case CARD_ID_GIANT_SOLIFUGE:
+  case CARD_ID_HELLHOLE_RATS:
+  case CARD_ID_STALKING_VENGEANCE:
+  case CARD_ID_GARZA_ZOL_PLAGUE_QUEEN:
+  case CARD_ID_LIGHTNING_SERPENT:
+  case CARD_ID_BARBED_SHOCKER:
+  case CARD_ID_MIRRI_THE_CURSED:
+  case CARD_ID_TIMBERMARE:
+  case CARD_ID_UKTABI_DRAKE:
+  case CARD_ID_BONDED_FETCH:
+  case CARD_ID_DEEPCAVERN_IMP:
+  case CARD_ID_HENCHFIEND_OF_UKOR:
+  case CARD_ID_SKIZZIK_SURGER:
+  case CARD_ID_STORM_ENTITY:
+  case CARD_ID_TAROX_BLADEWING:
+  case CARD_ID_CHANGELING_BERSERKER:
+  case CARD_ID_GLAREWIELDER:
+  case CARD_ID_HOSTILITY:
+  case CARD_ID_FROGTOSSER_BANNERET:
+  case CARD_ID_DEMIGOD_OF_REVENGE:
+  case CARD_ID_MUDBRAWLER_COHORT:
+  case CARD_ID_PYRE_CHARGER:
+  case CARD_ID_SOOTSTOKE_KINDLER:
+  case CARD_ID_HEARTLASH_CINDER:
+  case CARD_ID_HOTHEADED_GIANT:
+  case CARD_ID_THUNDERBLUST:
+  case CARD_ID_BLOODTHORN_TAUNTER:
+  case CARD_ID_HELLS_THUNDER:
+  case CARD_ID_PREDATOR_DRAGON:
+  case CARD_ID_HELLSPARK_ELEMENTAL:
+  case CARD_ID_RAKKA_MAR:
+  case CARD_ID_BLITZ_HELLION:
+  case CARD_ID_BLOODBRAID_ELF:
+  case CARD_ID_GIANT_AMBUSH_BEETLE:
+  case CARD_ID_IGNEOUS_POUNCER:
+  case CARD_ID_KARRTHUS_TYRANT_OF_JUND:
+  case CARD_ID_SEWN_EYE_DRAKE:
+  case CARD_ID_THRAXIMUNDAR:
+  case CARD_ID_GOBLIN_CHIEFTAIN:
+  case CARD_ID_CRYPT_RIPPER:
+  case CARD_ID_GOBLIN_GUIDE:
+  case CARD_ID_GOBLIN_RUINBLASTER:
+  case CARD_ID_HELLKITE_CHARGER:
+  case CARD_ID_TUKTUK_GRUNTS:
+  case CARD_ID_AKOUM_BATTLESINGER:
+  case CARD_ID_CUNNING_SPARKMAGE:
+  case CARD_ID_SKITTER_OF_LIZARDS:
+  case CARD_ID_TUKTUK_THE_EXPLORER:
+  case CARD_ID_VENGEVINE:
+  case CARD_ID_ARC_RUNNER:
+  case CARD_ID_GAEAS_REVENGE:
+  case CARD_ID_BLACKCLEAVE_GOBLIN:
+  case CARD_ID_FLAMEBORN_HELLION:
+  case CARD_ID_KULDOTHA_PHOENIX:
+  case CARD_ID_PUTREFAX:
+  case CARD_ID_HELLKITE_IGNITER:
+  case CARD_ID_HERO_OF_OXID_RIDGE:
+  case CARD_ID_SLASH_PANTHER:
+  case CARD_ID_SKULLBRIAR_THE_WALKING_GRAVE:
+  case CARD_ID_CHANDRAS_PHOENIX:
+  case CARD_ID_FALKENRATH_MARAUDERS:
+  case CARD_ID_MANOR_SKELETON:
+  case CARD_ID_ERDWAL_RIPPER:
+  case CARD_ID_FALKENRATH_ARISTOCRAT:
+  case CARD_ID_HELLRIDER:
+  case CARD_ID_MARKOV_WARLORD:
+  case CARD_ID_STRANGLEROOT_GEIST:
+  case CARD_ID_ARCHWING_DRAGON:
+  case CARD_ID_CRATERHOOF_BEHEMOTH:
+  case CARD_ID_FERVENT_CATHAR:
+  case CARD_ID_MAD_PROPHET:
+  case CARD_ID_ZEALOUS_CONSCRIPTS:
+  case CARD_ID_DUSKMANTLE_PROWLER:
+  case CARD_ID_RECKLESS_BRUTE:
+  case CARD_ID_THUNDERMAW_HELLKITE:
+  case CARD_ID_ASH_ZEALOT:
+  case CARD_ID_CARNIVAL_HELLSTEED:
+  case CARD_ID_DREG_MANGLER:
+  case CARD_ID_HYPERSONIC_DRAGON:
+  case CARD_ID_IZZET_STATICASTER:
+  case CARD_ID_MINOTAUR_AGGRESSOR:
+  case CARD_ID_RAKDOS_SHRED_FREAK:
+  case CARD_ID_TENEMENT_CRASHER:
+  case CARD_ID_LEGION_LOYALIST:
+  case CARD_ID_MOLTEN_PRIMORDIAL:
+  case CARD_ID_EXAVA_RAKDOS_BLOOD_WITCH:
+  case CARD_ID_MAZE_RUSHER:
+  case CARD_ID_SPIKE_JESTER:
+  case CARD_ID_VIASHINO_FIRSTBLADE:
+  case CARD_ID_MINOTAUR_SKULLCLEAVER:
+  case CARD_ID_MISTCUTTER_HYDRA:
+  case CARD_ID_STORMBREATH_DRAGON:
+  case CARD_ID_IMPETUOUS_SUNCHASER:
+  case CARD_ID_ORACLE_OF_BONES:
+  case CARD_ID_SATYR_NYX_SMITH:
+  case CARD_ID_STORMCALLER_OF_KERANOS:
+  case CARD_ID_ANKLE_SHANKER:
+  case CARD_ID_GURMAG_SWIFTWING:
+  case CARD_ID_MONASTERY_SWIFTSPEAR:
+  case CARD_ID_VALLEY_DASHER:
+  case CARD_ID_ZURGO_HELMSMASHER:
+  case CARD_ID_TYRANTS_FAMILIAR:
+  case CARD_ID_FLAMEWAKE_PHOENIX:
+  case CARD_ID_LIGHTNING_SHRIEKER:
+  case CARD_ID_SHAMAN_OF_THE_GREAT_HUNT:
+  case CARD_ID_DRAGONLORD_KOLAGHAN:
+  case CARD_ID_KOLAGHAN_STORMSINGER:
+  case CARD_ID_FIREFIEND_ELEMENTAL:
+  case CARD_ID_RECLUSIVE_ARTIFICER:
+  case CARD_ID_SCAB_CLAN_BERSERKER:
+  case CARD_ID_AKOUM_FIREBIRD:
+  case CARD_ID_BEASTCALLER_SAVANT:
+  case CARD_ID_DUST_STALKER:
+  case CARD_ID_MUNDA_AMBUSH_LEADER:
+  case CARD_ID_WARCHIEF_GIANT:
+  case CARD_ID_ELDRAZI_OBLIGATOR:
+  case CARD_ID_REALITY_SMASHER:
+  case CARD_ID_RECKLESS_BUSHWHACKER:
+  case CARD_ID_STORMCHASER_MAGE:
+  case CARD_ID_EMBER_EYE_WOLF:
+  case CARD_ID_GEIER_REACH_BANDIT:
+  case CARD_ID_GOLDNIGHT_CASTIGATOR:
+  case CARD_ID_INCORRIGIBLE_YOUTHS:
+  case CARD_ID_VOLDAREN_DUELIST:
+  case CARD_ID_DECIMATOR_OF_THE_PROVINCES:
+  case CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP:
+  case CARD_ID_IMPETUOUS_DEVILS:
+  case CARD_ID_MOURNWILLOW:
+  case CARD_ID_BOMAT_COURIER:
+  case CARD_ID_BRAZEN_SCOURGE:
+  case CARD_ID_FLEETWHEEL_CRUISER:
+  case CARD_ID_IRON_LEAGUE_STEED:
+  case CARD_ID_LATHNU_HELLION:
+  case CARD_ID_OVALCHASE_DRAGSTER:
+  case CARD_ID_SNARE_THOPTER:
+  case CARD_ID_SPEEDWAY_FANATIC:
+  case CARD_ID_CHARGING_CINDERHORN:
+  case CARD_ID_KRAUM_LUDEVICS_OPUS:
+  case CARD_ID_ENRAGED_GIANT:
+  case CARD_ID_LIGHTNING_RUNNER:
+  case CARD_ID_YAHENNI_UNDYING_PARTISAN:
+  case CARD_ID_AHN_CROP_CRASHER:
+  case CARD_ID_CROCODILE_OF_THE_CROSSING:
+  case CARD_ID_GLORYBRINGER:
+  case CARD_ID_EARTHSHAKER_KHENRA:
+  case CARD_ID_EDGAR_MARKOV:
+  case CARD_ID_IZZET_CHEMISTER:
+  case CARD_ID_TERRITORIAL_HELLKITE:
+  case CARD_ID_BRAZEN_BUCCANEERS:
+  case CARD_ID_CAPTAIN_LANNERY_STORM:
+  case CARD_ID_CHARGING_MONSTROSAUR:
+  case CARD_ID_NEST_ROBBER:
+  case CARD_ID_TILONALLIS_SKINSHIFTER:
+  case CARD_ID_MASTERFUL_NINJA:
+  case CARD_ID_PARTY_CRASHER:
+  case CARD_ID_FANATICAL_FIREBRAND:
+  case CARD_ID_STORM_FLEET_SPRINTER:
+  case CARD_ID_ADELIZ_THE_CINDER_WIND:
+  case CARD_ID_DARIGAAZ_REINCARNATED:
+  case CARD_ID_GRAND_WARLORD_RADHA:
+  case CARD_ID_KELDON_OVERSEER:
+  case CARD_ID_PYROMANTIC_PILGRIM:
+  case CARD_ID_WARCRY_PHOENIX:
+  case CARD_ID_KHORVATH_BRIGHTFLAME:
+  case CARD_ID_MAGMA_HELLION:
+  case CARD_ID_HOSTILE_MINOTAUR:
+  case CARD_ID_EMISSARY_OF_GRUDGES:
+  case CARD_ID_LOYAL_APPRENTICE:
+  case CARD_ID_TAWNOS_URZAS_APPRENTICE:
+  case CARD_ID_ARCLIGHT_PHOENIX:
+  case CARD_ID_BARGING_SERGEANT:
+  case CARD_ID_GOLGARI_RAIDERS:
+  case CARD_ID_TAJIC_LEGIONS_EDGE:
+  case CARD_ID_TORCH_COURIER:
+  case CARD_ID_CHARGING_WAR_BOAR:
+  case CARD_ID_FIREBLADE_ARTIST:
+  case CARD_ID_TIN_STREET_DODGER:
+  case CARD_ID_DREADHORDE_BUTCHER:
+  case CARD_ID_GOBLIN_ASSAULT_TEAM:
+  case CARD_ID_RUBBLEBELT_RIOTERS:
+  case CARD_ID_TENTH_DISTRICT_LEGIONNAIRE:
+  case CARD_ID_GOBLIN_CHAMPION:
+  case CARD_ID_LIGHTNING_SKELEMENTAL:
+  case CARD_ID_ORE_SCALE_GUARDIAN:
+  case CARD_ID_VENGEFUL_DEVIL:
+  case CARD_ID_VIASHINO_SANDSPRINTER:
+  case CARD_ID_GLINT_HORN_BUCCANEER:
+  case CARD_ID_GOBLIN_SMUGGLER:
+  case CARD_ID_LIGHTNING_STORMKIN:
+  case CARD_ID_THUNDERKIN_AWAKENER:
+  case CARD_ID_ANJE_FALKENRATH:
+  case CARD_ID_SKYFIRE_PHOENIX:
+  case CARD_ID_TECTONIC_HELLION:
+  case CARD_ID_BURNING_YARD_TRAINER:
+  case CARD_ID_CLACKBRIDGE_TROLL:
+  case CARD_ID_DEATHLESS_KNIGHT:
+  case CARD_ID_EMBERETH_PALADIN:
+  case CARD_ID_FERVENT_CHAMPION:
+  case CARD_ID_GINGERBRUTE:
+  case CARD_ID_RANKLE_MASTER_OF_PRANKS:
+  case CARD_ID_ROBBER_OF_THE_RICH:
+  case CARD_ID_GALLIA_OF_THE_ENDLESS_DANCE:
+  case CARD_ID_PHOENIX_OF_ASH:
+  case CARD_ID_STORM_HERALD:
+  case CARD_ID_THUNDERING_CHARIOT:
+  case CARD_ID_INFERNIUS_SPAWNINGTON_III_ESQ:
+  case CARD_ID_LAVA_SERPENT:
+  case CARD_ID_SPRITE_DRAGON:
+  case CARD_ID_YIDARO_WANDERING_MONSTER:
+  case CARD_ID_DARING_FIENDBONDER:
+  case CARD_ID_FIREFLUX_SQUAD:
+  case CARD_ID_PAKO_ARCANE_RETRIEVER:
+  case CARD_ID_BOLT_HOUND:
+  case CARD_ID_CHANDRAS_FIREMAW:
+  case CARD_ID_SUBIRA_TULZIDI_CARAVANNER:
+  case CARD_ID_LIGHTNING_PHOENIX:
+  case CARD_ID_BRUSHFIRE_ELEMENTAL:
+  case CARD_ID_KAZA_ROIL_CHASER:
+  case CARD_ID_RELIC_ROBBER:
+  case CARD_ID_SHATTERSKULL_CHARGER:
+  case CARD_ID_SHATTERSKULL_MINOTAUR:
+  case CARD_ID_WAYWARD_GUIDE_BEAST:
+  case CARD_ID_BOARDING_PARTY:
+  case CARD_ID_FRENZIED_SADDLEBRUTE:
+    return sp_key & SP_KEYWORD_HASTE;
+
+  case CARD_ID_LIGHTNING_REAVER:
+    return sp_key & (SP_KEYWORD_FEAR | SP_KEYWORD_HASTE);
+
+  case CARD_ID_RAKDOS_RAGEMUTT:
+  case CARD_ID_SPARK_TROOPER:
+  case CARD_ID_BANEHOUND:
+    return sp_key & (SP_KEYWORD_LIFELINK | SP_KEYWORD_HASTE);
+
+  case CARD_ID_SERRA_ANGEL:
+  case CARD_ID_YOTIAN_SOLDIER:
+  case CARD_ID_BARTEL_RUNEAXE:
+  case CARD_ID_RABID_WOMBAT:
+  case CARD_ID_ZEPHYR_FALCON:
+  case CARD_ID_WINDSEEKER_CENTAUR:
+  case CARD_ID_ARDENT_MILITIA:
+  case CARD_ID_DIVING_GRIFFIN:
+  case CARD_ID_STOIC_ANGEL:
+  case CARD_ID_ARCHANGEL:
+  case CARD_ID_SERRA_SPHINX:
+  case CARD_ID_MIRRI_CAT_WARRIOR:
+  case CARD_ID_WILT_LEAF_CAVALIERS:
+  case CARD_ID_GODSIRE:
+  case CARD_ID_CHARGING_TROLL:
+  case CARD_ID_GHOST_HOUNDS:
+  case CARD_ID_BAY_FALCON:
+  case CARD_ID_IRON_HEART_CHIMERA:
+  case CARD_ID_TEMPEST_DRAKE:
+  case CARD_ID_SKYSHROUD_FALCON:
+  case CARD_ID_STANDING_TROOPS:
+  case CARD_ID_ALABORN_GRENADIER:
+  case CARD_ID_ARMORED_GRIFFIN:
+  case CARD_ID_HERALD_OF_SERRA:
+  case CARD_ID_RADIANT_ARCHANGEL:
+  case CARD_ID_ALERT_SHU_INFANTRY:
+  case CARD_ID_ANGEL_OF_LIGHT:
+  case CARD_ID_VETERAN_CAVALIER:
+  case CARD_ID_JHOVALL_QUEEN:
+  case CARD_ID_STEADFAST_GUARD:
+  case CARD_ID_ARDENT_SOLDIER:
+  case CARD_ID_RIPTIDE_CRAB:
+  case CARD_ID_TAHNGARTH_TALRUUM_HERO:
+  case CARD_ID_CANTIVORE:
+  case CARD_ID_MYSTIC_PENITENT:
+  case CARD_ID_WAYWARD_ANGEL:
+  case CARD_ID_MILITANT_MONK:
+  case CARD_ID_POSSESSED_NOMAD:
+  case CARD_ID_REBORN_HERO:
+  case CARD_ID_BORDER_PATROL:
+  case CARD_ID_LIEGE_OF_THE_AXE:
+  case CARD_ID_NOBLE_TEMPLAR:
+  case CARD_ID_RAZOR_GOLEM:
+  case CARD_ID_LOXODON_STALWART:
+  case CARD_ID_RAKSHA_GOLDEN_CUB:
+  case CARD_ID_SKYHUNTER_PROWLER:
+  case CARD_ID_TORII_WATCHWARD:
+  case CARD_ID_COURIER_HAWK:
+  case CARD_ID_GUARDIAN_OF_VITU_GHAZI:
+  case CARD_ID_NIGHTGUARD_PATROL:
+  case CARD_ID_OATHSWORN_GIANT:
+  case CARD_ID_LIONHEART_MAVERICK:
+  case CARD_ID_COURT_HUSSAR:
+  case CARD_ID_ADARKAR_VALKYRIE:
+  case CARD_ID_ITH_HIGH_ARCANIST:
+  case CARD_ID_JEDITS_DRAGOONS:
+  case CARD_ID_SERRA_AVENGER:
+  case CARD_ID_ARBITER_OF_KNOLLRIDGE:
+  case CARD_ID_OAKGNARL_WARRIOR:
+  case CARD_ID_THOUGHTWEFT_TRIO:
+  case CARD_ID_CHANGELING_SENTINEL:
+  case CARD_ID_STONEHEWER_GIANT:
+  case CARD_ID_KITHKIN_RABBLE:
+  case CARD_ID_TWILIGHT_SHEPHERD:
+  case CARD_ID_STEWARD_OF_VALERON:
+  case CARD_ID_MEGLONOTH:
+  case CARD_ID_NACATL_HUNT_PRIDE:
+  case CARD_ID_SKYWARD_EYE_PROPHETS:
+  case CARD_ID_CAPTAIN_OF_THE_WATCH:
+  case CARD_ID_GRIFFIN_SENTINEL:
+  case CARD_ID_KAZANDU_BLADEMASTER:
+  case CARD_ID_SHEPHERD_OF_THE_LOST:
+  case CARD_ID_IKIRAL_OUTRIDER:
+  case CARD_ID_KNIGHT_OF_CLIFFHAVEN:
+  case CARD_ID_SUN_TITAN:
+  case CARD_ID_GLIMMERPOINT_STAG:
+  case CARD_ID_KEMBAS_LEGION:
+  case CARD_ID_PRIESTS_OF_NORN:
+  case CARD_ID_CHANCELLOR_OF_THE_TANGLE:
+  case CARD_ID_ELESH_NORN_GRAND_CENOBITE:
+  case CARD_ID_HOVERMYR:
+  case CARD_ID_TARIEL_RECKONER_OF_SOULS:
+  case CARD_ID_ABBEY_GRIFFIN:
+  case CARD_ID_ELITE_INQUISITOR:
+  case CARD_ID_GEIST_HONORED_MONK:
+  case CARD_ID_THRABEN_SENTRY:
+  case CARD_ID_LOYAL_CATHAR:
+  case CARD_ID_SCORNED_VILLAGER:
+  case CARD_ID_VILLAGE_SURVIVORS:
+  case CARD_ID_VORAPEDE:
+  case CARD_ID_BRUNA_LIGHT_OF_ALABASTER:
+  case CARD_ID_RIDERS_OF_GAVONY:
+  case CARD_ID_THRABEN_VALIANT:
+  case CARD_ID_KROND_THE_DAWN_CLAD:
+  case CARD_ID_GUARDIAN_LIONS:
+  case CARD_ID_SENTINEL_SPIDER:
+  case CARD_ID_BRUSHSTRIDER:
+  case CARD_ID_HUSSAR_PATROL:
+  case CARD_ID_RISEN_SANCTUARY:
+  case CARD_ID_ANGELIC_SKIRMISHER:
+  case CARD_ID_KNIGHT_OF_OBLIGATION:
+  case CARD_ID_LUMINATE_PRIMORDIAL:
+  case CARD_ID_TRUEFIRE_PALADIN:
+  case CARD_ID_JELENN_SPHINX:
+  case CARD_ID_MAZE_SENTINEL:
+  case CARD_ID_RURIC_THAR_THE_UNBOWED:
+  case CARD_ID_TEYSA_ENVOY_OF_GHOSTS:
+  case CARD_ID_ANAX_AND_CYMEDE:
+  case CARD_ID_HUNDRED_HANDED_ONE:
+  case CARD_ID_OBSERVANT_ALSEID:
+  case CARD_ID_SENTRY_OF_THE_UNDERWORLD:
+  case CARD_ID_ROON_OF_THE_HIDDEN_REALM:
+  case CARD_ID_AKROAN_PHALANX:
+  case CARD_ID_BRIMAZ_KING_OF_ORESKOS:
+  case CARD_ID_VANGUARD_OF_BRIMAZ:
+  case CARD_ID_EAGLE_OF_THE_WATCH:
+  case CARD_ID_PHERES_BAND_WARCHIEF:
+  case CARD_ID_RAVENOUS_LEUCROCOTA:
+  case CARD_ID_AVACYN_GUARDIAN_ANGEL:
+  case CARD_ID_SOUL_OF_THEROS:
+  case CARD_ID_WARDEN_OF_THE_BEYOND:
+  case CARD_ID_ALABASTER_KIRIN:
+  case CARD_ID_HALLOWED_SPIRITKEEPER:
+  case CARD_ID_DAGHATAR_THE_ADAMANT:
+  case CARD_ID_DRAGON_BELL_MONK:
+  case CARD_ID_OJUTAI_SOUL_OF_WINTER:
+  case CARD_ID_CIRCLE_OF_ELDERS:
+  case CARD_ID_HERALD_OF_DROMOKA:
+  case CARD_ID_MISTHOOF_KIRIN:
+  case CARD_ID_CITADEL_CASTELLAN:
+  case CARD_ID_SENTINEL_OF_THE_ETERNAL_WATCH:
+  case CARD_ID_SKYSNARE_SPIDER:
+  case CARD_ID_TOPAN_FREEBLADE:
+  case CARD_ID_DEATHLESS_BEHEMOTH:
+  case CARD_ID_GHOSTLY_SENTINEL:
+  case CARD_ID_WOODLAND_WANDERER:
+  case CARD_ID_HERALD_OF_THE_HOST:
+  case CARD_ID_KALEMNES_CAPTAIN:
+  case CARD_ID_KALEMNE_DISCIPLE_OF_IROAS:
+  case CARD_ID_AFFA_PROTECTOR:
+  case CARD_ID_EMBODIMENT_OF_INSIGHT:
+  case CARD_ID_STEPPE_GLIDER:
+  case CARD_ID_SYLVAN_ADVOCATE:
+  case CARD_ID_TAJURU_PATHWARDEN:
+  case CARD_ID_WARDEN_OF_GEOMETRIES:
+  case CARD_ID_ARCHANGEL_AVACYN:
+  case CARD_ID_SAGE_OF_ANCIENT_LORE:
+  case CARD_ID_BRUNA_THE_FADING_LIGHT:
+  case CARD_ID_TANGLECLAW_WEREWOLF:
+  case CARD_ID_WOODLAND_PATROL:
+  case CARD_ID_CATACLYSMIC_GEARHULK:
+  case CARD_ID_TRUSTY_COMPANION:
+  case CARD_ID_AKIRI_LINE_SLINGER:
+  case CARD_ID_AETHER_INSPECTOR:
+  case CARD_ID_HEART_OF_KIRAN:
+  case CARD_ID_AVEN_WIND_GUIDE:
+  case CARD_ID_UNWAVERING_INITIATE:
+  case CARD_ID_WINGED_SHEPHERD:
+  case CARD_ID_ANGEL_OF_CONDEMNATION:
+  case CARD_ID_BITTERBOW_SHARPSHOOTERS:
+  case CARD_ID_DJERU_WITH_EYES_OPEN:
+  case CARD_ID_RAMUNAP_HYDRA:
+  case CARD_ID_STEADFAST_SENTINEL:
+  case CARD_ID_BISHOP_OF_REBIRTH:
+  case CARD_ID_DUSK_LEGION_DREADNOUGHT:
+  case CARD_ID_HUATLIS_SNUBHORN:
+  case CARD_ID_STEADFAST_ARMASAUR:
+  case CARD_ID_SUNRISE_SEEKER:
+  case CARD_ID_KNIGHT_OF_THE_WIDGET:
+  case CARD_ID_RELENTLESS_RAPTOR:
+  case CARD_ID_SUN_SENTINEL:
+  case CARD_ID_ZACAMA_PRIMAL_CALAMITY:
+  case CARD_ID_ARYEL_KNIGHT_OF_WINDGRACE:
+  case CARD_ID_BAIRD_STEWARD_OF_ARGIVE:
+  case CARD_ID_UNTAMED_KAVU:
+  case CARD_ID_ARCHON_OF_VALORS_REACH:
+  case CARD_ID_GORM_THE_GREAT:
+  case CARD_ID_ARCADES_THE_STRATEGIST:
+  case CARD_ID_GALLANT_CAVALRY:
+  case CARD_ID_GREENWOOD_SENTINEL:
+  case CARD_ID_KNIGHT_OF_THE_TUSK:
+  case CARD_ID_MILITIA_BUGLER:
+  case CARD_ID_PALLADIA_MORS_THE_RUINER:
+  case CARD_ID_SERRAS_GUARDIAN:
+  case CARD_ID_VIGILANT_BALOTH:
+  case CARD_ID_LOYAL_UNICORN:
+  case CARD_ID_THANTIS_THE_WARWEAVER:
+  case CARD_ID_BOUNTY_AGENT:
+  case CARD_ID_CONCLAVE_CAVALIER:
+  case CARD_ID_INTRUSIVE_PACKBEAST:
+  case CARD_ID_PARHELION_PATROL:
+  case CARD_ID_ROSEMANE_CENTAUR:
+  case CARD_ID_SWATHCUTTER_GIANT:
+  case CARD_ID_SWIFTBLADE_VINDICATOR:
+  case CARD_ID_VERNADI_SHIELDMATE:
+  case CARD_ID_WARY_OKAPI:
+  case CARD_ID_AZORIUS_KNIGHT_ARBITER:
+  case CARD_ID_IMPERIOUS_OLIGARCH:
+  case CARD_ID_LUMBERING_BATTLEMENT:
+  case CARD_ID_SPHINX_OF_NEW_PRAHV:
+  case CARD_ID_TENTH_DISTRICT_VETERAN:
+  case CARD_ID_HUATLIS_RAPTOR:
+  case CARD_ID_LOXODON_SERGEANT:
+  case CARD_ID_MOWU_LOYAL_COMPANION:
+  case CARD_ID_PARHELION_II:
+  case CARD_ID_SEGOVIAN_ANGEL:
+  case CARD_ID_CAVALIER_OF_DAWN:
+  case CARD_ID_DIAMOND_KNIGHT:
+  case CARD_ID_GARGOS_VICIOUS_WATCHER:
+  case CARD_ID_GOLDMANE_GRIFFIN:
+  case CARD_ID_KAALIA_ZENITH_SEEKER:
+  case CARD_ID_SQUAD_CAPTAIN:
+  case CARD_ID_STEADFAST_SENTRY:
+  case CARD_ID_CLIFFSIDE_RESCUER:
+  case CARD_ID_CHULANE_TELLER_OF_TALES:
+  case CARD_ID_FAEBURROW_ELDER:
+  case CARD_ID_FEASTING_TROLL_KING:
+  case CARD_ID_LINDEN_THE_STEADFAST_QUEEN:
+  case CARD_ID_LONESOME_UNICORN:
+  case CARD_ID_REALM_CLOAKED_GIANT:
+  case CARD_ID_SHINECHASER:
+  case CARD_ID_SIGNPOST_SCARECROW:
+  case CARD_ID_SILVERWING_SQUADRON:
+  case CARD_ID_GRASPING_GIANT:
+  case CARD_ID_TARANIKA_AKROAN_VETERAN:
+  case CARD_ID_HIGHCLIFF_FELIDAR:
+  case CARD_ID_ALERT_HEEDBONDER:
+  case CARD_ID_FARFINDER:
+  case CARD_ID_FRONDLAND_FELIDAR:
+  case CARD_ID_IMPOSING_VANTASAUR:
+  case CARD_ID_KAHEERA_THE_ORPHANGUARD:
+  case CARD_ID_MAJESTIC_AURICORN:
+  case CARD_ID_MANED_SERVAL:
+  case CARD_ID_MOSSCOAT_GORIAK:
+  case CARD_ID_YANNIK_SCAVENGING_SENTINEL:
+  case CARD_ID_ALPINE_WATCHDOG:
+  case CARD_ID_BASRIS_LIEUTENANT:
+  case CARD_ID_ELDER_GARGAROTH:
+  case CARD_ID_GARRUKS_WARSTEED:
+  case CARD_ID_PREDATORY_WURM:
+  case CARD_ID_VALOROUS_STEED:
+  case CARD_ID_WARDEN_OF_THE_WOODS:
+  case CARD_ID_EMERIA_CAPTAIN:
+  case CARD_ID_EXPEDITION_HEALER:
+  case CARD_ID_MURASA_ROOTGRAZER:
+  case CARD_ID_PROWLING_FELIDAR:
+  case CARD_ID_TROVE_WARDEN:
+  case CARD_ID_VETERAN_ADVENTURER:
+  case CARD_ID_AKROMA_VISION_OF_IXIDOR:
+  case CARD_ID_COLFENOR_THE_LAST_YEW:
+  case CARD_ID_KANGEE_SKY_WARDEN:
+  case CARD_ID_STAUNCH_THRONEGUARD:
+  case CARD_ID_YURLOK_OF_SCORCH_THRASH:
+    return sp_key & SP_KEYWORD_VIGILANCE;
+
+  case CARD_ID_SPHINX_OF_THE_STEEL_WIND:
+  case CARD_ID_FELIDAR_SOVEREIGN:
+  case CARD_ID_DAWNSTRIKE_PALADIN:
+  case CARD_ID_CHROMANTICORE:
+  case CARD_ID_BRISELA_VOICE_OF_NIGHTMARES:
+  case CARD_ID_AERIAL_RESPONDER:
+  case CARD_ID_ANGEL_OF_INVENTION:
+  case CARD_ID_VONA_BUTCHER_OF_MAGAN:
+  case CARD_ID_DANITHA_CAPASHEN_PARAGON:
+  case CARD_ID_SUNBLADE_ANGEL:
+  case CARD_ID_SPEAKER_OF_THE_HEAVENS:
+    return sp_key & (SP_KEYWORD_LIFELINK | SP_KEYWORD_VIGILANCE);
+
+  case CARD_ID_AKROMA_ANGEL_OF_WRATH:
+  case CARD_ID_LIGHTNING_ANGEL:
+  case CARD_ID_BULL_CERODON:
+  case CARD_ID_RAZIA_BOROS_ARCHANGEL:
+  case CARD_ID_HORDE_OF_NOTIONS:
+  case CARD_ID_CERODON_YEARLING:
+  case CARD_ID_AURELIA_THE_WARLEADER:
+  case CARD_ID_MANTIS_RIDER:
+  case CARD_ID_SASKIA_THE_UNYIELDING:
+  case CARD_ID_SAMUT_VOICE_OF_DISSENT:
+  case CARD_ID_GISHATH_SUNS_AVATAR:
+  case CARD_ID_END_RAZE_FORERUNNERS:
+  case CARD_ID_KELSIEN_THE_PLAGUE:
+    return sp_key & (SP_KEYWORD_HASTE | SP_KEYWORD_VIGILANCE);
+
+  case CARD_ID_DAUTHI_GHOUL:
+  case CARD_ID_DAUTHI_HORROR:
+  case CARD_ID_DAUTHI_MARAUDER:
+  case CARD_ID_DAUTHI_MERCENARY:
+  case CARD_ID_DAUTHI_MINDRIPPER:
+  case CARD_ID_DAUTHI_SLAYER:
+  case CARD_ID_SOLTARI_CRUSADER:
+  case CARD_ID_SOLTARI_FOOT_SOLDIER:
+  case CARD_ID_SOLTARI_GUERRILLAS:
+  case CARD_ID_SOLTARI_LANCER:
+  case CARD_ID_SOLTARI_MONK:
+  case CARD_ID_SOLTARI_PRIEST:
+  case CARD_ID_SOLTARI_TROOPER:
+  case CARD_ID_THALAKOS_DREAMSOWER:
+  case CARD_ID_THALAKOS_MISTFOLK:
+  case CARD_ID_THALAKOS_SEER:
+  case CARD_ID_THALAKOS_SENTRY:
+  case CARD_ID_SOLTARI_CHAMPION:
+  case CARD_ID_THALAKOS_DECEIVER:
+  case CARD_ID_DAUTHI_CUTTHROAT:
+  case CARD_ID_DAUTHI_JACKAL:
+  case CARD_ID_DAUTHI_WARLORD:
+  case CARD_ID_SOLTARI_VISIONARY:
+  case CARD_ID_THALAKOS_SCOUT:
+  case CARD_ID_DRIFTER_IL_DAL:
+  case CARD_ID_FACELESS_DEVOURER:
+  case CARD_ID_LOOTER_IL_KOR:
+  case CARD_ID_STRONGHOLD_OVERSEER:
+  case CARD_ID_ZEALOT_IL_VEC:
+  case CARD_ID_AUGUR_IL_VEC:
+  case CARD_ID_INFILTRATOR_IL_KOR:
+  case CARD_ID_SPIRIT_EN_DAL:
+  case CARD_ID_STRONGHOLD_RATS:
+    return sp_key & SP_KEYWORD_SHADOW;
+
+  case CARD_ID_NETHER_TRAITOR:
+    return sp_key & (SP_KEYWORD_HASTE | SP_KEYWORD_SHADOW);
+
+  case CARD_ID_WRENS_RUN_VANQUISHER:
+  case CARD_ID_TIDEHOLLOW_STRIX:
+  case CARD_ID_THORNWEALD_ARCHER:
+  case CARD_ID_MOONGLOVE_WINNOWER:
+  case CARD_ID_PESTILENT_KATHARI:
+  case CARD_ID_WINGED_COATL:
+  case CARD_ID_ACIDIC_SLIME:
+  case CARD_ID_DEADLY_RECLUSE:
+  case CARD_ID_GIANT_SCORPION:
+  case CARD_ID_TURNTIMBER_BASILISK:
+  case CARD_ID_DAGGERBACK_BASILISK:
+  case CARD_ID_NIRKANA_CUTTHROAT:
+  case CARD_ID_GRAVE_TITAN:
+  case CARD_ID_GREATER_BASILISK:
+  case CARD_ID_GLISSA_THE_TRAITOR:
+  case CARD_ID_HORNET_QUEEN:
+  case CARD_ID_DAMIA_SAGE_OF_STONE:
+  case CARD_ID_VENGEFUL_PHARAOH:
+  case CARD_ID_AMBUSH_VIPER:
+  case CARD_ID_BITTERHEART_WITCH:
+  case CARD_ID_TYPHOID_RATS:
+  case CARD_ID_DIREGRAF_CAPTAIN:
+  case CARD_ID_KESSIG_RECLUSE:
+  case CARD_ID_HARVESTER_OF_SOULS:
+  case CARD_ID_BALEFUL_STRIX:
+  case CARD_ID_XATHRID_GORGON:
+  case CARD_ID_SLUICEWAY_SCORPION:
+  case CARD_ID_THRILL_KILL_ASSASSIN:
+  case CARD_ID_WASTELAND_VIPER:
+  case CARD_ID_KOROZDA_GORGON:
+  case CARD_ID_MASTER_OF_CRUELTIES:
+  case CARD_ID_MAZE_ABOMINATION:
+  case CARD_ID_DEATHGAZE_COCKATRICE:
+  case CARD_ID_LILIANAS_REAVER:
+  case CARD_ID_AGENT_OF_THE_FATES:
+  case CARD_ID_BALEFUL_EIDOLON:
+  case CARD_ID_HYTHONIA_THE_CRUEL:
+  case CARD_ID_KEEPSAKE_GORGON:
+  case CARD_ID_SEDGE_SCORPION:
+  case CARD_ID_FELHIDE_PETRIFIER:
+  case CARD_ID_FLEETFEATHER_COCKATRICE:
+  case CARD_ID_PHARIKAS_CHOSEN:
+  case CARD_ID_SOUL_OF_INNISTRAD:
+  case CARD_ID_HEIR_OF_THE_WILDS:
+  case CARD_ID_RUTHLESS_RIPPER:
+  case CARD_ID_SHAMBLING_ATTENDANTS:
+  case CARD_ID_RAVING_DEAD:
+  case CARD_ID_ACID_SPEWER_DRAGON:
+  case CARD_ID_DEATHMIST_RAPTOR:
+  case CARD_ID_DRAGONLORD_SILUMGAR:
+  case CARD_ID_HAND_OF_SILUMGAR:
+  case CARD_ID_SIDISI_UNDEAD_VIZIER:
+  case CARD_ID_UKUD_COBRA:
+  case CARD_ID_GRAVEBLADE_MARAUDER:
+  case CARD_ID_PHARIKAS_DISCIPLE:
+  case CARD_ID_FATHOM_FEEDER:
+  case CARD_ID_MALAKIR_FAMILIAR:
+  case CARD_ID_SKULLWINDER:
+  case CARD_ID_AYLI_ETERNAL_PILGRIM:
+  case CARD_ID_THE_GITROG_MONSTER:
+  case CARD_ID_CRYPTOLITH_FRAGMENT:
+  case CARD_ID_GNARLWOOD_DRYAD:
+  case CARD_ID_GONTI_LORD_OF_LUXURY:
+  case CARD_ID_THORN_OF_THE_BLACK_ROSE:
+  case CARD_ID_SILAS_RENN_SEEKER_ADEPT:
+  case CARD_ID_AETHER_POISONER:
+  case CARD_ID_NARNAM_RENEGADE:
+  case CARD_ID_BONE_PICKER:
+  case CARD_ID_WASTELAND_SCORPION:
+  case CARD_ID_RUIN_RAT:
+  case CARD_ID_STEADY_HANDED_MOOK:
+  case CARD_ID_DEADEYE_BRAWLER:
+  case CARD_ID_DIRE_FLEET_POISONER:
+  case CARD_ID_TETZIMOC_PRIMAL_DEATH:
+  case CARD_ID_VAMPIRE_CHAMPION:
+  case CARD_ID_FERAL_ABOMINATION:
+  case CARD_ID_SOULBLADE_CORRUPTER:
+  case CARD_ID_VIRTUS_THE_VEILED:
+  case CARD_ID_ISARETH_THE_AWAKENER:
+  case CARD_ID_POISON_TIP_ARCHER:
+  case CARD_ID_NIGHT_INCARNATE:
+  case CARD_ID_HIRED_POISONER:
+  case CARD_ID_OCHRAN_ASSASSIN:
+  case CARD_ID_PITILESS_GORGON:
+  case CARD_ID_NOXIOUS_GROODION:
+  case CARD_ID_ORZHOV_ENFORCER:
+  case CARD_ID_GOD_ETERNAL_RHONAS:
+  case CARD_ID_KRAUL_STINGER:
+  case CARD_ID_PLAGUE_ENGINEER:
+  case CARD_ID_VENOMOUS_CHANGELING:
+  case CARD_ID_EMBODIMENT_OF_AGONIES:
+  case CARD_ID_FOULMIRE_KNIGHT:
+  case CARD_ID_OAKHAME_ADVERSARY:
+  case CARD_ID_WINTERMOOR_COMMANDER:
+  case CARD_ID_MIRE_TRITON:
+  case CARD_ID_MOSS_VIPER:
+  case CARD_ID_VENOMOUS_HIEROPHANT:
+  case CARD_ID_CHEVILL_BANE_OF_MONSTERS:
+  case CARD_ID_INSATIABLE_HEMOPHAGE:
+  case CARD_ID_VOID_BECKONER:
+  case CARD_ID_ZAXARA_THE_EXEMPLARY:
+  case CARD_ID_HOODED_BLIGHTFANG:
+  case CARD_ID_ORNERY_DILOPHOSAUR:
+  case CARD_ID_WITCH_OF_THE_MOORS:
+  case CARD_ID_TAJURU_BLIGHTBLADE:
+  case CARD_ID_ELVISH_DREADLORD:
+    return sp_key & SP_KEYWORD_DEATHTOUCH;
+
+  case CARD_ID_VAMPIRE_NIGHTHAWK:
+  case CARD_ID_WURMCOIL_ENGINE:
+  case CARD_ID_GIFTED_AETHERBORN:
+  case CARD_ID_ARVAD_THE_CURSED:
+  case CARD_ID_LEYLINE_PROWLER:
+  case CARD_ID_TOMEBOUND_LICH:
+  case CARD_ID_VAMPIRE_OF_THE_DIRE_MOON:
+  case CARD_ID_YAROK_THE_DESECRATED:
+  case CARD_ID_ALELA_ARTFUL_PROVOCATEUR:
+  case CARD_ID_NETHROI_APEX_OF_DEATH:
+  case CARD_ID_NIGHTHAWK_SCAVENGER:
+    return sp_key & (SP_KEYWORD_LIFELINK | SP_KEYWORD_DEATHTOUCH);
+
+  case CARD_ID_QUEEN_MARCHESA:
+  case CARD_ID_ZAGRAS_THIEF_OF_HEARTBEATS:
+    return sp_key & (SP_KEYWORD_HASTE | SP_KEYWORD_DEATHTOUCH);
+
+  case CARD_ID_ATRAXA_PRAETORS_VOICE:
+    return sp_key & (SP_KEYWORD_LIFELINK | SP_KEYWORD_VIGILANCE | SP_KEYWORD_DEATHTOUCH);
+
+  case CARD_ID_QUESTING_BEAST:
+    return sp_key & (SP_KEYWORD_HASTE | SP_KEYWORD_VIGILANCE | SP_KEYWORD_DEATHTOUCH);
+
+  case CARD_ID_DARKSTEEL_INGOT:
+  case CARD_ID_DARKSTEEL_BRUTE:
+  case CARD_ID_DARKSTEEL_CITADEL:
+  case CARD_ID_DARKSTEEL_COLOSSUS:
+  case CARD_ID_DARKSTEEL_GARGOYLE:
+  case CARD_ID_DARKSTEEL_PENDANT:
+  case CARD_ID_DARKSTEEL_REACTOR:
+  case CARD_ID_MYR_MATRIX:
+  case CARD_ID_STUFFY_DOLL:
+  case CARD_ID_SAPLING_OF_COLFENOR:
+  case CARD_ID_SPEARBREAKER_BEHEMOTH:
+  case CARD_ID_ULAMOG_THE_INFINITE_GYRE:
+  case CARD_ID_PHYLACTERY_LICH:
+  case CARD_ID_DARKSTEEL_AXE:
+  case CARD_ID_DARKSTEEL_JUGGERNAUT:
+  case CARD_ID_DARKSTEEL_MYR:
+  case CARD_ID_BLIGHTSTEEL_COLOSSUS:
+  case CARD_ID_DARKSTEEL_PLATE:
+  case CARD_ID_DARKSTEEL_RELIC:
+  case CARD_ID_CREEPY_DOLL:
+  case CARD_ID_PREDATOR_OOZE:
+  case CARD_ID_TAJIC_BLADE_OF_THE_LEGION:
+  case CARD_ID_COLOSSUS_OF_AKROS:
+  case CARD_ID_EREBOS_GOD_OF_THE_DEAD:
+  case CARD_ID_HELIOD_GOD_OF_THE_SUN:
+  case CARD_ID_NYLEA_GOD_OF_THE_HUNT:
+  case CARD_ID_PURPHOROS_GOD_OF_THE_FORGE:
+  case CARD_ID_THASSA_GOD_OF_THE_SEA:
+  case CARD_ID_EPHARA_GOD_OF_THE_POLIS:
+  case CARD_ID_KARAMETRA_GOD_OF_HARVESTS:
+  case CARD_ID_MOGIS_GOD_OF_SLAUGHTER:
+  case CARD_ID_PHENAX_GOD_OF_DECEPTION:
+  case CARD_ID_XENAGOS_GOD_OF_REVELS:
+  case CARD_ID_ATHREOS_GOD_OF_PASSAGE:
+  case CARD_ID_IROAS_GOD_OF_VICTORY:
+  case CARD_ID_KERANOS_GOD_OF_STORMS:
+  case CARD_ID_KRUPHIX_GOD_OF_HORIZONS:
+  case CARD_ID_PHARIKA_GOD_OF_AFFLICTION:
+  case CARD_ID_ULAMOG_THE_CEASELESS_HUNGER:
+  case CARD_ID_FRUITCAKE_ELEMENTAL:
+  case CARD_ID_STONEHOOF_CHIEFTAIN:
+  case CARD_ID_CASCADING_CATARACTS:
+  case CARD_ID_KEFNET_THE_MINDFUL:
+  case CARD_ID_OKETRA_THE_TRUE:
+  case CARD_ID_SERAPH_OF_THE_SUNS:
+  case CARD_ID_SYLVAN_AWAKENING:
+  case CARD_ID_IMPERVIOUS_GREATWURM:
+  case CARD_ID_ATHREOS_SHROUD_VEILED:
+  case CARD_ID_EREBOS_BLEAK_HEARTED:
+  case CARD_ID_HELIOD_SUN_CROWNED:
+  case CARD_ID_KLOTHYS_GOD_OF_DESTINY:
+  case CARD_ID_NYLEA_KEEN_EYED:
+  case CARD_ID_PURPHOROS_BRONZE_BLOODED:
+  case CARD_ID_THASSA_DEEP_DWELLING:
+  case CARD_ID_BRASH_TAUNTER:
+  case CARD_ID_SKYCLAVE_RELIC:
+    return sp_key & SP_KEYWORD_INDESTRUCTIBLE;
+
+  case CARD_ID_TRANSCENDENT_MASTER:
+    return sp_key & (SP_KEYWORD_LIFELINK | SP_KEYWORD_INDESTRUCTIBLE);
+
+  case CARD_ID_HAZORET_THE_FERVENT:
+    return sp_key & (SP_KEYWORD_HASTE | SP_KEYWORD_INDESTRUCTIBLE);
+
+  case CARD_ID_WESTVALE_ABBEY:
+    return sp_key & (SP_KEYWORD_LIFELINK | SP_KEYWORD_HASTE | SP_KEYWORD_INDESTRUCTIBLE);
+
+  case CARD_ID_DARKSTEEL_SENTINEL:
+  case CARD_ID_AVACYN_ANGEL_OF_HOPE:
+  case CARD_ID_ZETALPA_PRIMAL_DAWN:
+    return sp_key & (SP_KEYWORD_VIGILANCE | SP_KEYWORD_INDESTRUCTIBLE);
+
+  case CARD_ID_RHONAS_THE_INDOMITABLE:
+    return sp_key & (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_INDESTRUCTIBLE);
+
+  case CARD_ID_BURNING_SHIELD_ASKARI:
+  case CARD_ID_CADAVEROUS_KNIGHT:
+  case CARD_ID_FEMEREF_KNIGHT:
+  case CARD_ID_JOLRAELS_CENTAUR:
+  case CARD_ID_MTENDA_HERDER:
+  case CARD_ID_SEARING_SPEAR_ASKARI:
+  case CARD_ID_SIDAR_JABARI:
+  case CARD_ID_TELIMTOR:
+  case CARD_ID_ZHALFIRIN_COMMANDER:
+  case CARD_ID_ZHALFIRIN_KNIGHT:
+  case CARD_ID_FALLEN_ASKARI:
+  case CARD_ID_KNIGHT_OF_VALOR:
+  case CARD_ID_KNIGHT_OF_THE_MISTS:
+  case CARD_ID_TEFERIS_HONOR_GUARD:
+  case CARD_ID_ZHALFIRIN_CRUSADER:
+  case CARD_ID_SHADOW_RIDER:
+  case CARD_ID_BENALISH_CAVALRY:
+  case CARD_ID_BLAZING_BLADE_ASKARI:
+  case CARD_ID_CAVALRY_MASTER:
+  case CARD_ID_GUSTCLOAK_CAVALIER:
+  case CARD_ID_KNIGHT_OF_THE_HOLY_NIMBUS:
+  case CARD_ID_OUTRIDER_EN_KOR:
+  case CARD_ID_PENTARCH_PALADIN:
+  case CARD_ID_SKULKING_KNIGHT:
+  case CARD_ID_RIFTMARKED_KNIGHT:
+  case CARD_ID_BOGARDAN_LANCER:
+  case CARD_ID_KNIGHT_OF_SURSI:
+  case CARD_ID_SIDAR_KONDO_OF_JAMURAA:
+  case CARD_ID_OLD_FOGEY:
+    return sp_key & SP_KEYWORD_FLANKING;
+
+  case CARD_ID_SUQATA_LANCER:
+    return sp_key & (SP_KEYWORD_HASTE | SP_KEYWORD_FLANKING);
+
+  case CARD_ID_CINDERBONES:
+  case CARD_ID_INESCAPABLE_BRUTE:
+  case CARD_ID_JUVENILE_GLOOMWIDOW:
+  case CARD_ID_KULRATH_KNIGHT:
+  case CARD_ID_LOCKJAW_SNAPPER:
+  case CARD_ID_MIDNIGHT_BANSHEE:
+  case CARD_ID_OONAS_GATEWARDEN:
+  case CARD_ID_RUSTRAZOR_BUTCHER:
+  case CARD_ID_SCUZZBACK_SCRAPPER:
+  case CARD_ID_SICKLE_RIPPER:
+  case CARD_ID_SLINKING_GIANT:
+  case CARD_ID_WILDSLAYER_ELVES:
+  case CARD_ID_DUERGAR_CAVE_GUARD:
+  case CARD_ID_HARVEST_GWYLLION:
+  case CARD_ID_HATEFLAYER:
+  case CARD_ID_NECROSKITTER:
+  case CARD_ID_NEEDLE_SPECTER:
+  case CARD_ID_NOXIOUS_HATCHLING:
+  case CARD_ID_PUNCTURE_BLAST:
+  case CARD_ID_RENDCLAW_TROW:
+  case CARD_ID_SMOLDERING_BUTCHER:
+  case CARD_ID_STIGMA_LASHER:
+  case CARD_ID_TWINBLADE_SLASHER:
+    return sp_key & SP_KEYWORD_WITHER;
+
+  case CARD_ID_BOGGART_RAM_GANG:
+    return sp_key & (SP_KEYWORD_HASTE | SP_KEYWORD_WITHER);
+
+  case CARD_ID_BATTLE_MAD_RONIN:
+  case CARD_ID_BROTHERS_YAMAZAKI:
+  case CARD_ID_BUSHI_TENDERFOOT:
+  case CARD_ID_CURSED_RONIN:
+  case CARD_ID_DEVOTED_RETAINER:
+  case CARD_ID_KITSUNE_BLADEMASTER:
+  case CARD_ID_KONDAS_HATAMOTO:
+  case CARD_ID_MOTHRIDER_SAMURAI:
+  case CARD_ID_NAGAO_BOUND_BY_HONOR:
+  case CARD_ID_NEZUMI_RONIN:
+  case CARD_ID_NUMAI_OUTCAST:
+  case CARD_ID_SAMURAI_ENFORCERS:
+  case CARD_ID_SAMURAI_OF_THE_PALE_CURTAIN:
+  case CARD_ID_SENSEI_GOLDEN_TAIL:
+  case CARD_ID_TAKENO_SAMURAI_GENERAL:
+  case CARD_ID_INDEBTED_SAMURAI:
+  case CARD_ID_ISAO_ENLIGHTENED_BUSHI:
+  case CARD_ID_KENTARO_THE_SMILING_CAT:
+  case CARD_ID_OPAL_EYE_KONDAS_YOJIMBO:
+  case CARD_ID_RONIN_CLIFFRIDER:
+  case CARD_ID_SILVERSTORM_SAMURAI:
+  case CARD_ID_TAKENOS_CAVALRY:
+  case CARD_ID_TOSHIRO_UMEZAWA:
+  case CARD_ID_ARABA_MOTHRIDER:
+  case CARD_ID_HAND_OF_CRUELTY:
+  case CARD_ID_HAND_OF_HONOR:
+  case CARD_ID_IIZUKA_THE_RUTHLESS:
+  case CARD_ID_INNER_CHAMBER_GUARD:
+  case CARD_ID_KITSUNE_DAWNBLADE:
+  case CARD_ID_KUROS_TAKEN:
+  case CARD_ID_RONIN_CAVEKEEPER:
+  case CARD_ID_SOKENZAN_RENEGADE:
+  case CARD_ID_SOKENZAN_SPELLBLADE:
+    return sp_key & SP_KEYWORD_BUSHIDO;
+
+  case CARD_ID_RONIN_HOUNDMASTER:
+    return sp_key & (SP_KEYWORD_HASTE | SP_KEYWORD_BUSHIDO);
+
+  case CARD_ID_KONDA_LORD_OF_EIGANJO:
+    return sp_key & (SP_KEYWORD_VIGILANCE | SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_BUSHIDO);
+
+  case CARD_ID_TWO_HEADED_DRAGON:
+  case CARD_ID_WIND_SPIRIT:
+  case CARD_ID_VIASHINO_RUNNER:
+  case CARD_ID_VINE_KAMI:
+  case CARD_ID_HORDE_OF_BOGGARTS:
+  case CARD_ID_STORMBLOOD_BERSERKER:
+  case CARD_ID_RIPSCALE_PREDATOR:
+  case CARD_ID_PURPHOROSS_EMISSARY:
+  case CARD_ID_IRE_SHAMAN:
+  case CARD_ID_BOGGART_BRUTE:
+  case CARD_ID_GILT_LEAF_WINNOWER:
+  case CARD_ID_GEYSERFIELD_STALKER:
+  case CARD_ID_SHATTERSKULL_RECRUIT:
+  case CARD_ID_GOBLIN_DARK_DWELLERS:
+  case CARD_ID_GOBLIN_FREERUNNER:
+  case CARD_ID_KOZILEK_THE_GREAT_DISTORTION:
+  case CARD_ID_GATSTAF_ARSONISTS:
+  case CARD_ID_INSOLENT_NEONATE:
+  case CARD_ID_MORKRUT_NECROPOD:
+  case CARD_ID_RELENTLESS_DEAD:
+  case CARD_ID_SIN_PRODDER:
+  case CARD_ID_DERANGED_WHELP:
+  case CARD_ID_ARADARA_EXPRESS:
+  case CARD_ID_DEPUTIZED_PROTESTER:
+  case CARD_ID_MAULFIST_SQUAD:
+  case CARD_ID_NOXIOUS_GEARHULK:
+  case CARD_ID_PYRETIC_HUNTER:
+  case CARD_ID_WAYWARD_GIANT:
+  case CARD_ID_IKRA_SHIDIQI_THE_USURPER:
+  case CARD_ID_ALLEY_STRANGLER:
+  case CARD_ID_GLINT_SLEEVE_SIPHONER:
+  case CARD_ID_KARI_ZEV_SKYSHIP_RAIDER:
+  case CARD_ID_SWEATWORKS_BRAWLER:
+  case CARD_ID_CURSED_MINOTAUR:
+  case CARD_ID_FLAMEBLADE_ADEPT:
+  case CARD_ID_PLAGUE_BELCHER:
+  case CARD_ID_DREAMSTEALER:
+  case CARD_ID_GRANITIC_TITAN:
+  case CARD_ID_KHENRA_SCRAPPER:
+  case CARD_ID_KHERU_MIND_EATER:
+  case CARD_ID_MATHAS_FIEND_SEEKER:
+  case CARD_ID_DIRE_FLEET_INTERLOPER:
+  case CARD_ID_FATHOM_FLEET_CAPTAIN:
+  case CARD_ID_FIRE_SHRINE_KEEPER:
+  case CARD_ID_RAMPAGING_FEROCIDON:
+  case CARD_ID_SKY_TERROR:
+  case CARD_ID_GOBLIN_HABERDASHER:
+  case CARD_ID_OVERT_OPERATIVE:
+  case CARD_ID_GOBLIN_TRAILBLAZER:
+  case CARD_ID_TOMB_ROBBER:
+  case CARD_ID_VORACIOUS_VAMPIRE:
+  case CARD_ID_JOSU_VESS_LICH_KNIGHT:
+  case CARD_ID_STRONGHOLD_CONFESSOR:
+  case CARD_ID_BRAWL_BASH_OGRE:
+  case CARD_ID_TWO_HEADED_ZOMBIE:
+  case CARD_ID_LOYAL_SUBORDINATE:
+  case CARD_ID_ROT_HULK:
+  case CARD_ID_DIMIR_SPYBUG:
+  case CARD_ID_KRAUL_RAIDER:
+  case CARD_ID_GHOR_CLAN_WRECKER:
+  case CARD_ID_RAKDOS_TRUMPETER:
+  case CARD_ID_DREADMALKIN:
+  case CARD_ID_GOD_ETERNAL_BONTU:
+  case CARD_ID_IRON_BULLY:
+  case CARD_ID_MASSACRE_GIRL:
+  case CARD_ID_CABAL_THERAPIST:
+  case CARD_ID_GLUTTONOUS_SLUG:
+  case CARD_ID_GREVEN_PREDATOR_CAPTAIN:
+  case CARD_ID_BELLE_OF_THE_BRAWL:
+  case CARD_ID_ELITE_HEADHUNTER:
+  case CARD_ID_LOCTHWAIN_PALADIN:
+  case CARD_ID_STORMFIST_CRUSADER:
+  case CARD_ID_ATRIS_ORACLE_OF_HALF_TRUTHS:
+  case CARD_ID_CALCULATING_LICH:
+  case CARD_ID_CAVERN_WHISPERER:
+  case CARD_ID_HUNTED_NIGHTMARE:
+  case CARD_ID_LABYRINTH_RAPTOR:
+  case CARD_ID_SONOROUS_HOWLBONDER:
+  case CARD_ID_NIKARA_LAIR_SCAVENGER:
+  case CARD_ID_SILVAR_DEVOURER_OF_THE_FREE:
+  case CARD_ID_BONE_PIT_BRUTE:
+  case CARD_ID_KELS_FIGHT_FIXER:
+  case CARD_ID_BLACKBLOOM_ROGUE:
+  case CARD_ID_BREECHES_BRAZEN_PLUNDERER:
+  case CARD_ID_ROGRAKH_SON_OF_ROHGAHH:
+    return sp_key & SP_KEYWORD_MENACE;
+
+  case CARD_ID_NULLPRIEST_OF_OBLIVION:
+    return sp_key & (SP_KEYWORD_LIFELINK | SP_KEYWORD_MENACE);
+
+  case CARD_ID_VILLAGE_MESSENGER:
+  case CARD_ID_CHITTERING_HOST:
+    return sp_key & (SP_KEYWORD_HASTE | SP_KEYWORD_MENACE);
+
+  case CARD_ID_YENNETT_CRYPTIC_SOVEREIGN:
+  case CARD_ID_SYR_GWYN_HERO_OF_ASHVALE:
+  case CARD_ID_ABOMINATION_OF_LLANOWAR:
+    return sp_key & (SP_KEYWORD_VIGILANCE | SP_KEYWORD_MENACE);
+
+  case CARD_ID_KUNOROS_HOUND_OF_ATHREOS:
+    return sp_key & (SP_KEYWORD_LIFELINK | SP_KEYWORD_VIGILANCE | SP_KEYWORD_MENACE);
+
+  case CARD_ID_KEDEREKT_CREEPER:
+  case CARD_ID_DIRE_FLEET_RAVAGER:
+  case CARD_ID_PESTILENT_SPIRIT:
+    return sp_key & (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_MENACE);
+
+  case CARD_ID_BONTU_THE_GLORIFIED:
+    return sp_key & (SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_MENACE);
+
+  case CARD_ID_FORGOTTEN_CREATION:
+  case CARD_ID_FURTIVE_HOMUNCULUS:
+  case CARD_ID_PALE_RIDER_OF_TROSTAD:
+  case CARD_ID_STARTLED_AWAKE:
+  case CARD_ID_UNINVITED_GEIST:
+  case CARD_ID_FOGWALKER:
+  case CARD_ID_WHARF_INFILTRATOR:
+    return sp_key & SP_KEYWORD_SKULK;
+
+  case CARD_ID_FARBOG_REVENANT:
+  case CARD_ID_VAMPIRE_CUTTHROAT:
+    return sp_key & (SP_KEYWORD_LIFELINK | SP_KEYWORD_SKULK);
+
+  case CARD_ID_RANCID_RATS:
+    return sp_key & (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_SKULK);
+
+  case CARD_ID_TAOIST_HERMIT:
+  case CARD_ID_ZUO_CI_THE_MOCKING_SAGE:
+  case CARD_ID_PLATED_SLAGWURM:
+  case CARD_ID_TROLL_ASCETIC:
+  case CARD_ID_SILHANA_LEDGEWALKER:
+  case CARD_ID_DROVE_OF_ELVES:
+  case CARD_ID_SLIPPERY_BOGLE:
+  case CARD_ID_URIL_THE_MISTSTALKER:
+  case CARD_ID_SACRED_WOLF:
+  case CARD_ID_THRUN_THE_LAST_TROLL:
+  case CARD_ID_AVEN_FLEETWING:
+  case CARD_ID_DUNGROVE_ELDER:
+  case CARD_ID_GLADECOVER_SCOUT:
+  case CARD_ID_GEIST_OF_SAINT_TRAFT:
+  case CARD_ID_INVISIBLE_STALKER:
+  case CARD_ID_LUMBERKNOT:
+  case CARD_ID_LONE_REVENANT:
+  case CARD_ID_SIGARDA_HOST_OF_HERONS:
+  case CARD_ID_PRIMAL_HUNTBEAST:
+  case CARD_ID_RUBBLEBACK_RHINO:
+  case CARD_ID_LAZAV_DIMIR_MASTERMIND:
+  case CARD_ID_ASCENDED_LAWMAGE:
+  case CARD_ID_WITCHSTALKER:
+  case CARD_ID_BENTHIC_GIANT:
+  case CARD_ID_SYLVAN_CARYATID:
+  case CARD_ID_BASSARA_TOWER_ARCHER:
+  case CARD_ID_MARCHESAS_EMISSARY:
+  case CARD_ID_XATHRID_SLYBLADE:
+  case CARD_ID_NARSET_ENLIGHTENED_MASTER:
+  case CARD_ID_SAGU_MAULER:
+  case CARD_ID_WHIRLWIND_ADEPT:
+  case CARD_ID_SIEGE_BEHEMOTH:
+  case CARD_ID_STORMSURGE_KRAKEN:
+  case CARD_ID_SILUMGAR_THE_DRIFTING_DEATH:
+  case CARD_ID_BELLTOLL_DRAGON:
+  case CARD_ID_CONIFER_STRIDER:
+  case CARD_ID_PLATED_CRUSHER:
+  case CARD_ID_HEDRON_ALIGNMENT:
+  case CARD_ID_SPHINX_OF_THE_FINAL_WORD:
+  case CARD_ID_AUTUMNAL_GLOOM:
+  case CARD_ID_BASTION_INVENTOR:
+  case CARD_ID_SCALED_BEHEMOTH:
+  case CARD_ID_STRIPED_RIVERWINDER:
+  case CARD_ID_CARNAGE_TYRANT:
+  case CARD_ID_JADE_GUARDIAN:
+  case CARD_ID_AS_LUCK_WOULD_HAVE_IT:
+  case CARD_ID_SOUL_OF_THE_RAPIDS:
+  case CARD_ID_COLD_WATER_SNAPPER:
+  case CARD_ID_KNIGHT_OF_GRACE:
+  case CARD_ID_KNIGHT_OF_MALICE:
+  case CARD_ID_LICHS_MASTERY:
+  case CARD_ID_VINE_MARE:
+  case CARD_ID_ANGLER_TURTLE:
+  case CARD_ID_ARBORETUM_ELEMENTAL:
+  case CARD_ID_NULLHIDE_FEROX:
+  case CARD_ID_HUMONGULUS:
+  case CARD_ID_SPHINX_OF_THE_GUILDPACT:
+  case CARD_ID_WARDSCALE_CROCODILE:
+  case CARD_ID_LOTUS_FIELD:
+  case CARD_ID_SLIPPERY_BOGBONDER:
+  case CARD_ID_GARRUKS_HARBINGER:
+  case CARD_ID_NINE_LIVES:
+  case CARD_ID_SPINED_MEGALODON:
+  case CARD_ID_SPOREWEB_WEAVER:
+  case CARD_ID_NEVINYRRAL_URBORG_TYRANT:
+    return sp_key & SP_KEYWORD_HEXPROOF;
+
+  case CARD_ID_CRAGPLATE_BALOTH:
+    return sp_key & (SP_KEYWORD_HASTE | SP_KEYWORD_HEXPROOF);
+
+  case CARD_ID_NIGHTVEIL_PREDATOR:
+    return sp_key & (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_HEXPROOF);
+
+  case CARD_ID_ELUSIVE_TORMENTOR:
+    return sp_key & (SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_HEXPROOF);
+
+  case CARD_ID_BLADETUSK_BOAR:
+  case CARD_ID_HALO_HUNTER:
+  case CARD_ID_BELLOWING_TANGLEWURM:
+  case CARD_ID_GETH_LORD_OF_THE_VAULT:
+  case CARD_ID_BLIND_ZEALOT:
+  case CARD_ID_BRAIN_WEEVIL:
+  case CARD_ID_GATSTAF_SHEPHERD:
+  case CARD_ID_SPECTRAL_RIDER:
+  case CARD_ID_ELBRUS_THE_BINDING_BLADE:
+  case CARD_ID_HIGHBORN_GHOUL:
+  case CARD_ID_IMMERWOLF:
+  case CARD_ID_MIKAEUS_THE_UNHALLOWED:
+  case CARD_ID_HEIRS_OF_STROMKIRK:
+  case CARD_ID_VELA_THE_NIGHT_CLAD:
+  case CARD_ID_SEPULCHRAL_PRIMORDIAL:
+  case CARD_ID_ACADEMY_RAIDER:
+  case CARD_ID_ACCURSED_SPIRIT:
+  case CARD_ID_CYCLOPS_TYRANT:
+  case CARD_ID_LIFEBANE_ZOMBIE:
+  case CARD_ID_CAVERN_LAMPAD:
+  case CARD_ID_FORLORN_PSEUDAMMA:
+  case CARD_ID_KRENKOS_ENFORCER:
+  case CARD_ID_FLESH_CARVER:
+    return sp_key & SP_KEYWORD_INTIMIDATE;
+
+  case CARD_ID_EARL_OF_SQUIRREL:
+    return sp_key & SP_KEYWORD_SQUIRRELLINK;
+
+  case CARD_ID_GUAN_YU_SAINTED_WARRIOR:
+  case CARD_ID_LIU_BEI_LORD_OF_SHU:
+  case CARD_ID_SHU_CAVALRY:
+  case CARD_ID_SHU_ELITE_COMPANIONS:
+  case CARD_ID_ZHAO_ZILONG_TIGER_GENERAL:
+  case CARD_ID_LU_MENG_WU_GENERAL:
+  case CARD_ID_LU_XUN_SCHOLAR_GENERAL:
+  case CARD_ID_SUN_CE_YOUNG_CONQUERER:
+  case CARD_ID_WU_ELITE_CAVALRY:
+  case CARD_ID_WU_LIGHT_CAVALRY:
+  case CARD_ID_WU_SCOUT:
+  case CARD_ID_CAO_REN_WEI_COMMANDER:
+  case CARD_ID_WEI_ELITE_COMPANIONS:
+  case CARD_ID_WEI_NIGHT_RAIDERS:
+  case CARD_ID_WEI_SCOUT:
+  case CARD_ID_WEI_STRIKE_FORCE:
+  case CARD_ID_XIAHOU_DUN_THE_ONE_EYED:
+  case CARD_ID_ZHANG_HE_WEI_GENERAL:
+  case CARD_ID_BARBARIAN_GENERAL:
+  case CARD_ID_MA_CHAO_WESTERN_WARRIOR:
+  case CARD_ID_YELLOW_SCARVES_CAVALRY:
+  case CARD_ID_YELLOW_SCARVES_GENERAL:
+  case CARD_ID_YUAN_SHAO_THE_INDECISIVE:
+  case CARD_ID_LADY_ZHURONG_WARRIOR_QUEEN:
+    return sp_key & SP_KEYWORD_HORSEMANSHIP;
+
+  case CARD_ID_LU_BU_MASTER_AT_ARMS:
+    return sp_key & (SP_KEYWORD_HASTE | SP_KEYWORD_HORSEMANSHIP);
+
+  case CARD_ID_SHU_GENERAL:
+  case CARD_ID_ZHANG_FEI_FIERCE_WARRIOR:
+    return sp_key & (SP_KEYWORD_VIGILANCE | SP_KEYWORD_HORSEMANSHIP);
+
+  default:
+    return 0;
   }
-  if (csvid == 0x2398)
-  {
-  LAB_026d7540:
-    if ((sp_key & 2U) == 0)
-      goto LAB_026d789a;
-    if (csvid < 0x3f99)
-    {
-      if (0x3f8c < csvid)
-      {
-        if ((1U << (cVar1 + 0x73U & 0x1f) & 0x811U) == 0)
-          goto LAB_026d789a;
-      LAB_026d7897:
-        uVar2 = uVar2 | 2;
-      LAB_026d789a:
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-        if (csvid == 0x3155)
-          goto LAB_026d8d12;
-        if (csvid < 0x3156)
-          goto LAB_026d78b4;
-      LAB_026d8cfa:
-        if (csvid == 0x43b4)
-          goto LAB_026d8d12;
-        if (csvid < 0x43b5)
-        {
-        LAB_026d8d07:
-          if (csvid == 0x3c13)
-            goto LAB_026d8d12;
-          if (0x3c13 < csvid)
-          {
-          LAB_026d907f:
-            if (csvid != 0x4023)
-            {
-              if (0x4023 < csvid)
-                goto LAB_026d9090;
-              if (csvid < 0x3e97)
-                goto LAB_026d9442;
-              goto LAB_026d9544;
-            }
-            goto LAB_026d8d12;
-          }
-        LAB_026d8de9:
-          if (csvid == 0x35cc)
-            goto LAB_026d8d12;
-          if (0x35cc < csvid)
-            goto LAB_026d8dfa;
-        LAB_026d8fdf:
-          if (csvid == 0x32c1)
-            goto LAB_026d8d12;
-          if (0x32c1 < csvid)
-            goto LAB_026d8ff0;
-          if (0x31fe < csvid)
-          {
-            if ((csvid == 0x3231) || (csvid == 0x3256))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-            goto LAB_026da220;
-          }
-          if (0x31e4 < csvid)
-          {
-            uVar3 = 1U << (cVar1 + 0x1bU & 0x1f) & 0x2800001;
-            goto joined_r0x026da8e8;
-          }
-          if (csvid == 0x31a7)
-            goto LAB_026d8d12;
-          if (0x31a7 < csvid)
-          {
-            if ((csvid == 0x31cd) || (csvid == 0x31d4))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-            goto LAB_026da1d8;
-          }
-          if ((csvid == 0x316e) || (csvid == 0x3182))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026da9a3:
-          if (csvid == 0x3180)
-            goto LAB_026d814b;
-        }
-        else
-        {
-        LAB_026d9323:
-          if (0x4f8e < csvid)
-            goto LAB_026d9737;
-          if (csvid < 0x4f73)
-          {
-          LAB_026d9339:
-            if (csvid != 0x4a9e)
-            {
-              if (csvid < 0x4a9f)
-                goto LAB_026dae9c;
-              if (csvid != 0x4d66)
-              {
-                if (0x4d66 < csvid)
-                  goto LAB_026d935b;
-                goto LAB_026d9e4f;
-              }
-            }
-            goto LAB_026d8d12;
-          }
-          if ((1U << (cVar1 + 0x8dU & 0x1f) & 0x8000009U) != 0)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d96e1:
-          if (csvid < 0x4f86)
-          {
-          LAB_026d9391:
-            if (0x4f70 < csvid)
-            {
-              uVar3 = 1U << (cVar1 + 0x8fU & 0x1f) & 0x100041;
-              goto joined_r0x026da0bb;
-            }
-            if ((csvid == 0x4f47) || (csvid == 0x4f60))
-              goto LAB_026d814b;
-          }
-          else if ((csvid - 0x4fbfU & 0xfffffffd) == 0)
-            goto LAB_026d814b;
-        }
-        goto LAB_026d7652;
-      }
-      if (csvid == 0x31fc)
-        goto LAB_026d7897;
-      if (csvid < 0x31fd)
-      {
-        if (csvid == 0x2b3b)
-          goto LAB_026d7897;
-        if (csvid < 0x2b3c)
-        {
-          if (csvid == 0x2777)
-            goto LAB_026d7897;
-          if (csvid < 0x2778)
-            goto LAB_026d9aba;
-          if (csvid == 0x2915)
-            goto LAB_026d7897;
-          if (csvid < 0x2916)
-          {
-            if (((csvid == 0x2892) || (csvid == 0x289e)) || (csvid == 0x2871))
-              goto LAB_026d7897;
-            if ((sp_key & 4U) == 0)
-              goto LAB_026d75bd;
-            goto LAB_026dc27a;
-          }
-          if (((csvid == 0x29cf) || (csvid == 0x2aab)) || (csvid == 0x292c))
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-          goto LAB_026dbe1e;
-        }
-        if (csvid == 0x2f87)
-          goto LAB_026d7897;
-        if (0x2f87 < csvid)
-        {
-          if (csvid == 0x30e9)
-            goto LAB_026d7897;
-          if (0x30e9 < csvid)
-          {
-            if ((csvid != 0x313d) && (csvid != 0x3198))
-            {
-              if (csvid == 0x30fa)
-              {
-                uVar2 = uVar2 | 2;
-              }
-              goto LAB_026d789a;
-            }
-            goto LAB_026d7897;
-          }
-          if (((csvid == 0x3062) || (csvid == 0x30ae)) || (csvid == 0x2f8b))
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-          goto LAB_026dc0c2;
-        }
-        if (csvid == 0x2dba)
-          goto LAB_026d7897;
-        if (0x2dba < csvid)
-        {
-          if (((csvid == 0x2e57) || (csvid == 0x2eed)) || (csvid == 0x2df5))
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-          goto LAB_026dbd63;
-        }
-        if (csvid == 0x2cb3)
-          goto LAB_026d7897;
-        if (0x2cb3 < csvid)
-        {
-          if (csvid == 0x2d3b)
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-          goto LAB_026dbe0d;
-        }
-        if ((csvid == 0x2ba4) || (csvid == 0x2c95))
-          goto LAB_026d7897;
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026dbe2f:
-        if (csvid == 0x2bca)
-          goto LAB_026d8d12;
-        if (csvid < 0x2bcb)
-        {
-          if (csvid < 0x2b53)
-          {
-            if (0x2b3b < csvid)
-            {
-              uVar3 = 1U << (cVar1 - 0x3cU & 0x1f) & 0x400081;
-              goto joined_r0x026da8e8;
-            }
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          }
-          else
-          {
-            if (csvid == 0x2b73)
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026dbff8:
-            if (csvid == 0x2bab)
-              goto LAB_026d814b;
-            if (0x2bab < csvid)
-              goto LAB_026dbe70;
-          }
-          if (csvid != 0x2acc)
-          {
-            if (csvid < 0x2acd)
-              goto LAB_026dc030;
-            if (csvid != 0x2ada)
-              goto LAB_026d7652;
-          }
-        }
-        else
-        {
-          if (((csvid == 0x2c1c) || (csvid == 0x2c4c)) || (csvid == 0x2bf5))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026dbe70:
-          if (((csvid != 0x2bff) && (csvid != 0x2cca)) && (csvid != 0x2be7))
-            goto LAB_026d7652;
-        }
-        goto LAB_026d814b;
-      }
-      if (csvid == 0x3a2f)
-        goto LAB_026d7897;
-      if (csvid < 0x3a30)
-      {
-        if (csvid == 0x349b)
-          goto LAB_026d7897;
-        if (0x349b < csvid)
-        {
-          if (csvid == 0x3782)
-            goto LAB_026d7897;
-          if (csvid < 0x3783)
-          {
-            if (((csvid == 0x362a) || (csvid == 0x376c)) || (csvid == 0x356e))
-              goto LAB_026d7897;
-            if ((sp_key & 4U) == 0)
-              goto LAB_026d75bd;
-            goto LAB_026d8de9;
-          }
-          if (((csvid == 0x3927) || (csvid == 0x3a10)) || (csvid == 0x382b))
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-        LAB_026d8dfa:
-          if (csvid == 0x38f3)
-            goto LAB_026d8d12;
-          if (0x38f3 < csvid)
-          {
-            if (csvid == 0x3b66)
-              goto LAB_026d8d12;
-            if (csvid < 0x3b67)
-              goto LAB_026d8f78;
-            if (csvid == 0x3ba5)
-              goto LAB_026d8d12;
-            if (0x3ba5 < csvid)
-            {
-              if (csvid == 0x3bd2)
-                goto LAB_026d8d12;
-              if ((sp_key & 8U) == 0)
-                goto LAB_026d7927;
-              goto LAB_026d8663;
-            }
-            if ((csvid == 0x3b6a) || (csvid == 0x3b9b))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026d8e67:
-            if (csvid < 0x3b87)
-            {
-              if (0x3b6c < csvid)
-              {
-                uVar3 = 1U << (cVar1 + 0x93U & 0x1f) & 0x2000081;
-                goto joined_r0x026da0bb;
-              }
-              goto LAB_026d8e7d;
-            }
-            if (csvid != 0x3bca)
-              goto LAB_026d7652;
-            goto LAB_026d814b;
-          }
-          if (csvid == 0x37fc)
-            goto LAB_026d8d12;
-          if (csvid < 0x37fd)
-          {
-            if (csvid == 0x3789)
-              goto LAB_026d8d12;
-            if (csvid < 0x378a)
-            {
-              if ((csvid == 0x35e3) || (csvid == 0x35f6))
-                goto LAB_026d8d12;
-              if ((sp_key & 8U) == 0)
-                goto LAB_026d7927;
-              goto LAB_026d9289;
-            }
-            if ((csvid == 0x37c6) || (csvid == 0x37e9))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026d92a5:
-            if (csvid < 0x37ea)
-            {
-              if (((csvid == 0x3777) || (csvid == 0x3785)) || (csvid == 0x3764))
-                goto LAB_026d814b;
-              goto LAB_026d7652;
-            }
-          LAB_026d92b0:
-            if ((csvid == 0x38c6) || (csvid == 0x38cb))
-              goto LAB_026d814b;
-          }
-          else
-          {
-            if (csvid == 0x389e)
-              goto LAB_026d8d12;
-            if (0x389e < csvid)
-            {
-              if (csvid == 0x38d7)
-                goto LAB_026d8d12;
-              if ((sp_key & 8U) == 0)
-                goto LAB_026d7927;
-              goto LAB_026d92b0;
-            }
-            if ((csvid - 0x3855U & 0xffffffef) == 0)
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          }
-          if (csvid != 0x3881)
-            goto LAB_026d7652;
-          goto LAB_026d814b;
-        }
-        if (0x33e8 < csvid)
-        {
-          if (csvid == 0x3493)
-            goto LAB_026d7897;
-        LAB_026dbcb1:
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-        LAB_026d9260:
-          if (csvid - 0x34adU < 2)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          goto LAB_026d9278;
-        }
-        if (0x33c9 < csvid)
-        {
-          if ((1U << (cVar1 + 0x36U & 0x1f) & 0x40100001U) == 0)
-            goto LAB_026dbcb1;
-          goto LAB_026d7897;
-        }
-        if (csvid == 0x3345)
-          goto LAB_026d7897;
-        if (csvid < 0x3346)
-        {
-          if ((csvid == 0x3236) || (csvid == 0x330f))
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-          goto LAB_026d8fdf;
-        }
-        if (csvid == 0x33b2)
-          goto LAB_026d7897;
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026d8ff0:
-        if (csvid == 0x33ab)
-          goto LAB_026d8d12;
-        if (csvid < 0x33ac)
-        {
-          if (csvid == 0x335b)
-            goto LAB_026d8d12;
-          if (csvid < 0x335c)
-          {
-            if ((csvid == 0x32d3) || (csvid == 0x330f))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-            goto LAB_026da150;
-          }
-          if (csvid == 0x3377)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026da108:
-          if (csvid != 0x339d)
-          {
-            if (csvid < 0x339e)
-            {
-              if ((csvid == 0x336a) || (csvid == 0x3378))
-                goto LAB_026d814b;
-            }
-            else if (csvid == 0x33b0)
-              goto LAB_026d814b;
-            goto LAB_026d7652;
-          }
-        }
-        else
-        {
-          if (csvid == 0x34fb)
-            goto LAB_026d8d12;
-          if (csvid < 0x34fc)
-          {
-            if (csvid != 0x33ba)
-              goto LAB_026d9260;
-            goto LAB_026d8d12;
-          }
-          if (csvid == 0x35a9)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d9028:
-          if (csvid != 0x3544)
-          {
-            if (csvid - 0x355bU < 0x14)
-            {
-              uVar3 = 1U << ((unsigned char)(csvid - 0x355bU) & 0x1f) & 0x88001;
-              goto joined_r0x026da0bb;
-            }
-            goto LAB_026d7652;
-          }
-        }
-        goto LAB_026d814b;
-      }
-      if (csvid == 0x3e96)
-        goto LAB_026d7897;
-      if (csvid < 0x3e97)
-      {
-        if (csvid == 0x3d07)
-          goto LAB_026d7897;
-        if (csvid < 0x3d08)
-        {
-          if (csvid == 0x3b44)
-            goto LAB_026d7897;
-          if (0x3b44 < csvid)
-          {
-            if (csvid == 0x3b93)
-              goto LAB_026d7897;
-            if ((sp_key & 4U) == 0)
-              goto LAB_026d75bd;
-            goto LAB_026d8d07;
-          }
-          if ((csvid == 0x3a59) || (csvid == 0x3aab))
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-        LAB_026d8f78:
-          if (csvid == 0x3a64)
-            goto LAB_026d8d12;
-          if (csvid < 0x3a65)
-          {
-            if ((csvid != 0x391d) && (csvid != 0x3a30))
-              goto LAB_026d75bd;
-            goto LAB_026d8d12;
-          }
-          if (csvid == 0x3b1a)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d8e7d:
-          if (csvid != 0x3a71)
-          {
-            if (csvid < 0x3a72)
-            {
-              if ((csvid == 0x3a11) || (csvid == 0x3a57))
-                goto LAB_026d814b;
-            }
-            else if (csvid == 0x3afc)
-              goto LAB_026d814b;
-            goto LAB_026d7652;
-          }
-          goto LAB_026d814b;
-        }
-        if (((csvid == 0x3df5) || (csvid == 0x3e1d)) || (csvid == 0x3dc5))
-          goto LAB_026d7897;
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026d9442:
-        if (0x3e8e < csvid)
-        {
-          uVar3 = 1U << (cVar1 + 0x71U & 0x1f) & 0x85;
-          goto joined_r0x026da8e8;
-        }
-        if (csvid < 0x3d4d)
-        {
-          if (csvid < 0x3d2e)
-          {
-            if ((csvid == 0x3cbb) || (csvid == 0x3ce7))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-            goto LAB_026d8674;
-          }
-          if ((1U << (cVar1 - 0x2eU & 0x1f) & 0x40000005U) != 0)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d8685:
-          if (csvid != 0x3d48)
-          {
-            if (csvid < 0x3d49)
-            {
-              if (csvid != 0x3cea)
-                goto LAB_026d7652;
-            }
-            else
-            {
-              uVar3 = csvid - 0x3d4f;
-            joined_r0x026d9ec8:
-              if (1 < uVar3)
-                goto LAB_026d7652;
-            }
-          }
-          goto LAB_026d814b;
-        }
-        if (csvid == 0x3ddc)
-          goto LAB_026d8d12;
-        if (csvid < 0x3ddd)
-        {
-          if ((csvid == 0x3db8) || (csvid == 0x3dd4))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          goto LAB_026d8652;
-        }
-        if (csvid == 0x3df4)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      joined_r0x026d94ae:
-        if (csvid != 0x3e42)
-          goto LAB_026d7652;
-      }
-      else if (csvid < 0x3f19)
-      {
-        if (0x3efe < csvid)
-        {
-          if ((1U << (cVar1 + 1U & 0x1f) & 0x2040001U) != 0)
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-        LAB_026d9647:
-          if (csvid != 0x3f01)
-            goto LAB_026d75bd;
-          goto LAB_026d8d12;
-        }
-        if (((csvid == 0x3ee0) || (csvid == 0x3eef)) || (csvid == 0x3eae))
-          goto LAB_026d7897;
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026d9636:
-        if (csvid == 0x3efb)
-          goto LAB_026d8d12;
-        if (0x3efb < csvid)
-          goto LAB_026d9647;
-        if ((csvid == 0x3ec8) || (csvid == 0x3ef4))
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026d9df5:
-        if (csvid < 0x3eaf)
-        {
-          if ((csvid < 0x3ead) && (csvid != 0x3d7a))
-            goto joined_r0x026d94ae;
-        }
-        else if (csvid != 0x3f54)
-          goto LAB_026d7652;
-      }
-      else
-      {
-        if (csvid == 0x3f64)
-          goto LAB_026d7897;
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026d9544:
-        if (csvid == 0x3f1f)
-          goto LAB_026d8d12;
-        if (csvid < 0x3f20)
-          goto LAB_026d9636;
-        if (((csvid == 0x3faf) || (csvid == 0x3ffb)) || (csvid == 0x3fac))
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026d9580:
-        if (csvid != 0x3f72)
-        {
-          if (csvid < 0x3f73)
-            goto LAB_026d9df5;
-          if (((csvid != 0x3f98) && (csvid != 0x3fb7)) && (csvid != 0x3f8d))
-            goto LAB_026d7652;
-        }
-      }
-      goto LAB_026d814b;
-    }
-    if (csvid == 0x4f4a)
-      goto LAB_026d7897;
-    if (csvid < 0x4f4b)
-    {
-      if (csvid == 0x47dc)
-        goto LAB_026d7897;
-      if (0x47dc < csvid)
-      {
-        if (csvid == 0x4bbf)
-          goto LAB_026d7897;
-        if (csvid < 0x4bc0)
-        {
-          if (csvid == 0x49d3)
-            goto LAB_026d7897;
-          if (0x49d3 < csvid)
-          {
-            if (((csvid == 0x4ac8) || (csvid == 0x4b60)) || (csvid == 0x4ac5))
-              goto LAB_026d7897;
-            if ((sp_key & 4U) == 0)
-              goto LAB_026d75bd;
-            goto LAB_026d9339;
-          }
-          if (csvid == 0x483e)
-            goto LAB_026d7897;
-          if (0x483e < csvid)
-          {
-            if (csvid == 0x49d1)
-              goto LAB_026d7897;
-            if ((sp_key & 4U) == 0)
-              goto LAB_026d75bd;
-            goto LAB_026daea9;
-          }
-          if ((csvid == 0x4818) || (csvid == 0x4821))
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-        LAB_026d856f:
-          if (csvid == 0x480c)
-            goto LAB_026d8d12;
-          if (csvid < 0x480d)
-          {
-            if ((csvid == 0x47cd) || (csvid == 0x47f2))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-            goto LAB_026d837a;
-          }
-          if (csvid == 0x4835)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d8598:
-          if ((csvid == 0x4872) || (csvid == 0x488c))
-            goto LAB_026d814b;
-        }
-        else
-        {
-          if (csvid == 0x4d66)
-            goto LAB_026d7897;
-          if (csvid < 0x4d67)
-          {
-            if ((csvid - 0x4d3aU < 0x13) &&
-                ((1U << ((unsigned char)(csvid - 0x4d3aU) & 0x1f) & 0x40005U) != 0))
-              goto LAB_026d7897;
-            if ((sp_key & 4U) == 0)
-              goto LAB_026d75bd;
-          LAB_026d9e4f:
-            if (csvid == 0x4c33)
-              goto LAB_026d8d12;
-            if (0x4c33 < csvid)
-            {
-              if (csvid == 0x4ca7)
-                goto LAB_026d8d12;
-              if (0x4ca7 < csvid)
-              {
-                if (csvid == 0x4d41)
-                  goto LAB_026d8d12;
-                if ((sp_key & 8U) == 0)
-                  goto LAB_026d7927;
-                goto LAB_026d9e81;
-              }
-              if ((csvid == 0x4c75) || (csvid == 0x4c9e))
-                goto LAB_026d8d12;
-              if ((sp_key & 8U) == 0)
-                goto LAB_026d7927;
-            LAB_026d9e98:
-              if (csvid < 0x4c5b)
-              {
-                if (0x4c3e < csvid)
-                {
-                  uVar3 = 1U << (cVar1 - 0x3fU & 0x1f) & 0x8000201;
-                  goto joined_r0x026da0bb;
-                }
-                if (csvid != 0x4c15)
-                {
-                  if (0x4c15 < csvid)
-                  {
-                    uVar3 = csvid - 0x4c29;
-                    goto joined_r0x026d9ec8;
-                  }
-                  if (csvid != 0x4bfb)
-                    goto LAB_026d7652;
-                }
-              }
-              else if ((csvid != 0x4c9e) && (csvid != 0x4ccb))
-                goto LAB_026d7652;
-              goto LAB_026d814b;
-            }
-            if (csvid == 0x4b58)
-              goto LAB_026d8d12;
-            if (0x4b58 < csvid)
-            {
-              if ((csvid == 0x4bb6) || (csvid == 0x4c2c))
-                goto LAB_026d8d12;
-              if ((sp_key & 8U) == 0)
-                goto LAB_026d7927;
-              goto LAB_026d75d7;
-            }
-            if ((csvid == 0x4ab2) || (csvid == 0x4b50))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-          LAB_026d8398:
-            if (csvid < 0x4abe)
-            {
-              if (0x4aa1 < csvid)
-              {
-                uVar3 = 1U << (cVar1 + 0x5eU & 0x1f) & 0x8020001;
-                goto joined_r0x026da0bb;
-              }
-              if ((csvid == 0x4a3b) || (csvid == 0x4a62))
-                goto LAB_026d814b;
-            }
-            else if ((csvid & 0xffffffefU) == 0x4b64)
-              goto LAB_026d814b;
-          }
-          else
-          {
-            if (csvid == 0x4de3)
-              goto LAB_026d7897;
-            if (csvid < 0x4de4)
-            {
-              if (csvid - 0x4d7dU < 2)
-                goto LAB_026d7897;
-              if ((sp_key & 4U) == 0)
-                goto LAB_026d75bd;
-            LAB_026dafb8:
-              if ((csvid == 0x4d94) || (csvid == 0x4db3))
-                goto LAB_026d8d12;
-              if ((sp_key & 8U) == 0)
-                goto LAB_026d7927;
-            LAB_026dafd7:
-              if (csvid < 0x4e04)
-              {
-                if (0x4de6 < csvid)
-                {
-                  uVar3 = 1U << (cVar1 + 0x19U & 0x1f) & 0x10000401;
-                  goto joined_r0x026da0bb;
-                }
-                if (((csvid == 0x4d37) || (csvid == 0x4dc1)) || (csvid == 0x4d28))
-                  goto LAB_026d814b;
-                goto LAB_026d7652;
-              }
-            }
-            else
-            {
-              if (csvid == 0x4e2e)
-                goto LAB_026d7897;
-              if ((sp_key & 4U) == 0)
-                goto LAB_026d75bd;
-            LAB_026d935b:
-              if (csvid == 0x4e9a)
-                goto LAB_026d8d12;
-              if (0x4e9a < csvid)
-              {
-                if (csvid == 0x4f1a)
-                  goto LAB_026d8d12;
-                if (csvid < 0x4f1b)
-                {
-                  if ((csvid == 0x4eb2) || (csvid == 0x4ec7))
-                    goto LAB_026d8d12;
-                  if ((sp_key & 8U) == 0)
-                    goto LAB_026d7927;
-                  goto LAB_026d75fe;
-                }
-                if (csvid == 0x4f1d)
-                  goto LAB_026d8d12;
-                if ((sp_key & 8U) == 0)
-                  goto LAB_026d7927;
-                goto LAB_026d9391;
-              }
-              if (csvid == 0x4e16)
-                goto LAB_026d8d12;
-              if (csvid < 0x4e17)
-                goto LAB_026dafb8;
-              if (csvid == 0x4e33)
-                goto LAB_026d8d12;
-              if ((sp_key & 8U) == 0)
-                goto LAB_026d7927;
-            }
-            if (csvid == 0x4e2e)
-              goto LAB_026d814b;
-          }
-        }
-        goto LAB_026d7652;
-      }
-      if (csvid == 0x43a0)
-        goto LAB_026d7897;
-      if (0x43a0 < csvid)
-      {
-        if (csvid == 0x4712)
-          goto LAB_026d7897;
-        if (csvid < 0x4713)
-        {
-          if (((csvid == 0x444f) || (csvid == 0x44ae)) || (csvid == 0x43c9))
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-          goto LAB_026d8cfa;
-        }
-        if (((csvid == 0x47ab) || (csvid == 0x47cc)) || (csvid == 0x4767))
-          goto LAB_026d7897;
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026dae9c:
-        if (csvid == 0x47a4)
-          goto LAB_026d8d12;
-        if (0x47a4 < csvid)
-        {
-        LAB_026daea9:
-          if (csvid == 0x487c)
-            goto LAB_026d8d12;
-          if (csvid < 0x487d)
-            goto LAB_026d856f;
-          if (csvid == 0x49fd)
-            goto LAB_026d8d12;
-          if (0x49fd < csvid)
-          {
-            if (csvid == 0x4a8d)
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-            goto LAB_026d8387;
-          }
-          if ((csvid - 0x48adU & 0xfffffff7) == 0)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d84f8:
-          if (csvid != 0x49ec)
-          {
-            if (0x49ec < csvid)
-            {
-              if (csvid - 0x49f7U < 0x1e)
-              {
-                uVar3 = 1U << ((unsigned char)(csvid - 0x49f7U) & 0x1f) & 0x20002001;
-                goto joined_r0x026da0bb;
-              }
-              goto LAB_026d7652;
-            }
-            if (csvid != 0x48a6)
-            {
-              if (csvid < 0x48a7)
-                goto LAB_026d8598;
-              if (csvid != 0x49c1)
-                goto LAB_026d7652;
-            }
-          }
-          goto LAB_026d814b;
-        }
-        if (csvid == 0x449c)
-          goto LAB_026d8d12;
-        if (csvid < 0x449d)
-        {
-          if (0x43d8 < csvid)
-          {
-            if ((csvid == 0x440c) || (csvid == 0x443c))
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-            goto LAB_026d83f0;
-          }
-          if (0x43cf < csvid)
-          {
-            uVar3 = 1U << (cVar1 + 0x30U & 0x1f) & 0x111;
-            goto joined_r0x026da8e8;
-          }
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d85d8:
-          if (csvid != 0x43c7)
-          {
-            if (csvid < 0x43c8)
-            {
-              if (csvid != 0x4331)
-              {
-                if (csvid < 0x4332)
-                {
-                  if ((csvid == 0x42c3) || (csvid == 0x42e1))
-                    goto LAB_026d814b;
-                }
-                else if (csvid == 0x434b)
-                  goto LAB_026d814b;
-                goto LAB_026d7652;
-              }
-            }
-            else if (((csvid != 0x440c) && (csvid != 0x441a)) && (csvid != 0x43f9))
-              goto LAB_026d7652;
-          }
-        }
-        else
-        {
-          if (csvid == 0x4719)
-            goto LAB_026d8d12;
-          if (0x4719 < csvid)
-          {
-            if (csvid == 0x477b)
-              goto LAB_026d8d12;
-            if ((sp_key & 8U) == 0)
-              goto LAB_026d7927;
-            goto LAB_026d8401;
-          }
-          if ((csvid == 0x4675) || (csvid == 0x468b))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-        LAB_026d84a0:
-          if (csvid != 0x466c)
-          {
-            if (csvid < 0x466d)
-            {
-              if ((csvid == 0x4492) || (csvid == 0x44ae))
-                goto LAB_026d814b;
-            }
-            else if (csvid == 0x4763)
-              goto LAB_026d814b;
-            goto LAB_026d7652;
-          }
-        }
-        goto LAB_026d814b;
-      }
-      if (csvid == 0x41cb)
-        goto LAB_026d7897;
-      if (csvid < 0x41cc)
-      {
-        if (csvid == 0x40fd)
-          goto LAB_026d7897;
-        if (csvid < 0x40fe)
-        {
-          if ((csvid == 0x3fc7) || (csvid == 0x40cc))
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-          goto LAB_026d907f;
-        }
-        if (csvid == 0x4145)
-          goto LAB_026d7897;
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026d9090:
-        if (csvid == 0x416a)
-          goto LAB_026d8d12;
-        if (0x416a < csvid)
-          goto LAB_026dbaa7;
-        if (csvid == 0x4091)
-          goto LAB_026d8d12;
-        if (csvid < 0x4092)
-        {
-          if (csvid != 0x4065)
-          {
-            if (csvid < 0x4066)
-            {
-              if ((csvid == 0x402d) || (csvid == 0x4055))
-                goto LAB_026d8d12;
-            }
-            else if (csvid == 0x408e)
-              goto LAB_026d8d12;
-            goto LAB_026d75bd;
-          }
-          goto LAB_026d8d12;
-        }
-        if (csvid == 0x40f2)
-          goto LAB_026d8d12;
-        if (csvid < 0x40f3)
-        {
-          if ((csvid == 0x40d1) || (csvid == 0x40e4))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          goto LAB_026dc5bf;
-        }
-        if (csvid == 0x4139)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026d90d7:
-        if (csvid != 0x414c)
-        {
-          if (0x414c < csvid)
-            goto LAB_026d90e8;
-          if ((csvid != 0x40f2) && (csvid != 0x4109))
-            goto LAB_026d7652;
-        }
-      }
-      else
-      {
-        if (((csvid == 0x4342) || (csvid == 0x4385)) || (csvid == 0x4272))
-          goto LAB_026d7897;
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026dbaa7:
-        if (csvid == 0x4227)
-          goto LAB_026d8d12;
-        if (0x4227 < csvid)
-        {
-          if (csvid == 0x438f)
-            goto LAB_026d8d12;
-          if (0x438f < csvid)
-          {
-            if (csvid != 0x4398)
-              goto LAB_026d75bd;
-            goto LAB_026d8d12;
-          }
-          if ((csvid == 0x4274) || (csvid == 0x42e8))
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          goto LAB_026d836f;
-        }
-        if (csvid == 0x41ec)
-          goto LAB_026d8d12;
-        if (0x41ec < csvid)
-        {
-          if (csvid != 0x421b)
-            goto LAB_026d75bd;
-          goto LAB_026d8d12;
-        }
-        if ((csvid - 0x41bfU & 0xfffffffd) == 0)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026d90e8:
-        if ((csvid != 0x41ca) && (csvid != 0x4274))
-          goto LAB_026d7652;
-      }
-      goto LAB_026d814b;
-    }
-    if (csvid < 0x523e)
-    {
-      if (0x5220 < csvid)
-      {
-        if ((1U << (cVar1 - 0x21U & 0x1f) & 0x10000009U) != 0)
-        {
-          uVar2 = uVar2 | 2;
-        }
-        goto LAB_026d789a;
-      }
-      if (csvid < 0x5030)
-      {
-        if (0x5013 < csvid)
-        {
-          if ((1U << (cVar1 - 0x14U & 0x1f) & 0x8000101U) != 0)
-          {
-            uVar2 = uVar2 | 2;
-          }
-          goto LAB_026d789a;
-        }
-        if (0x4fcb < csvid)
-        {
-          if ((csvid == 0x4fdd) || (csvid == 0x4ffa))
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-        LAB_026d997f:
-          if (csvid != 0x500f)
-          {
-            if (csvid < 0x5010)
-              goto LAB_026d99c2;
-            if (csvid != 0x5013)
-              goto LAB_026d75bd;
-          }
-          goto LAB_026d8d12;
-        }
-        if (csvid < 0x4fb5)
-        {
-          if ((sp_key & 4U) != 0)
-            goto LAB_026d9323;
-          goto LAB_026d75bd;
-        }
-        if ((1U << (cVar1 + 0x4bU & 0x1f) & 0x440001U) != 0)
-          goto LAB_026d7897;
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026d99c2:
-        if ((csvid == 0x4fc6) || (csvid == 0x4fdf))
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026d760f:
-        if (csvid != 0x4fe8)
-        {
-          if (csvid < 0x4fe9)
-            goto LAB_026d96e1;
-        LAB_026d7620:
-          if (csvid != 0x50ab)
-          {
-            if (csvid < 0x50ac)
-              goto LAB_026d9934;
-          LAB_026d7631:
-            if (((csvid != 0x50e2) && (csvid != 0x50e7)) && (csvid != 0x50b0))
-              goto LAB_026d7652;
-          }
-        }
-      }
-      else
-      {
-        if (csvid == 0x51d6)
-          goto LAB_026d7897;
-        if (0x51d6 < csvid)
-        {
-          if ((csvid == 0x51dc) || (csvid == 0x51ff))
-            goto LAB_026d7897;
-          if ((sp_key & 4U) == 0)
-            goto LAB_026d75bd;
-        LAB_026db0a8:
-          if (csvid == 0x521d)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          goto LAB_026d75e8;
-        }
-        if (((csvid == 0x50c6) || (csvid == 0x510e)) || (csvid == 0x5097))
-          goto LAB_026d7897;
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026d8212:
-        if (csvid == 0x508c)
-          goto LAB_026d8d12;
-        if (0x508c < csvid)
-          goto LAB_026d8223;
-        if (csvid == 0x503a)
-          goto LAB_026d8d12;
-        if (csvid < 0x503b)
-          goto LAB_026d997f;
-        if (csvid < 0x505b)
-        {
-          if (0x5045 < csvid)
-          {
-            uVar3 = 1U << (cVar1 + 0xbaU & 0x1f) & 0x100801;
-            goto joined_r0x026da8e8;
-          }
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          if (csvid == 0x5045)
-            goto LAB_026d814b;
-          goto LAB_026d7652;
-        }
-        if (csvid == 0x506e)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026d9934:
-        if (((csvid != 0x5066) && (csvid != 0x506b)) && (csvid != 0x5045))
-          goto LAB_026d7652;
-      }
-      goto LAB_026d814b;
-    }
-    if (csvid == 0x5464)
-      goto LAB_026d7897;
-    if (csvid < 0x5465)
-    {
-      if (0x5426 < csvid)
-      {
-      LAB_026d972e:
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026d9737:
-        if (csvid == 0x53a4)
-          goto LAB_026d8d12;
-        if (csvid < 0x53a5)
-          goto LAB_026d8212;
-        goto LAB_026d9748;
-      }
-      if (0x540f < csvid)
-      {
-        if ((1U << (cVar1 - 0x10U & 0x1f) & 0x420c01U) != 0)
-          goto LAB_026d7897;
-        if ((sp_key & 4U) == 0)
-          goto LAB_026d75bd;
-      LAB_026d817a:
-        if ((csvid & 0xfffffff7U) == 0x5427)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-        goto LAB_026d8194;
-      }
-      if (csvid == 0x536e)
-        goto LAB_026d7897;
-      if (0x536e < csvid)
-      {
-        if (csvid != 0x53a1)
-          goto LAB_026d972e;
-        goto LAB_026d7897;
-      }
-      if ((csvid == 0x5306) || (csvid == 0x5359))
-        goto LAB_026d7897;
-      if ((sp_key & 4U) == 0)
-        goto LAB_026d75bd;
-    LAB_026d8223:
-      if (csvid == 0x526e)
-        goto LAB_026d8d12;
-      if (csvid < 0x526f)
-      {
-        if (0x50f2 < csvid)
-          goto LAB_026db0a8;
-        if (csvid < 0x50e2)
-        {
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          goto LAB_026d7620;
-        }
-        if ((1U << (cVar1 + 0x1eU & 0x1f) & 0x10011U) != 0)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-        goto LAB_026d7631;
-      }
-      if (csvid == 0x52da)
-        goto LAB_026d8d12;
-      if (0x52da < csvid)
-      {
-        if (csvid == 0x5352)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-        goto LAB_026d8255;
-      }
-      if ((csvid == 0x5297) || (csvid == 0x52ae))
-        goto LAB_026d8d12;
-      if ((sp_key & 8U) == 0)
-        goto LAB_026d7927;
-    LAB_026d82c8:
-      if (csvid != 0x529d)
-      {
-        if (csvid < 0x529e)
-        {
-          if ((csvid == 0x5220) || (csvid == 0x523d))
-            goto LAB_026d814b;
-        }
-        else if (csvid == 0x52cc)
-        {
-          uVar2 = uVar2 | 8;
-          goto LAB_026d7927;
-        }
-        goto LAB_026d7652;
-      }
-    }
-    else if (csvid < 0x55b2)
-    {
-      if (0x55a4 < csvid)
-      {
-        if ((1U << (cVar1 + 0x5bU & 0x1f) & 0x1041U) != 0)
-        {
-          uVar2 = uVar2 | 2;
-        }
-        goto LAB_026d789a;
-      }
-      if (((csvid == 0x54a8) || (csvid == 0x5554)) || (csvid == 0x5479))
-        goto LAB_026d7897;
-      if ((sp_key & 4U) == 0)
-        goto LAB_026d75bd;
-    LAB_026d9748:
-      if (csvid == 0x5522)
-        goto LAB_026d8d12;
-      if (0x5522 < csvid)
-        goto LAB_026d9759;
-      if (csvid < 0x53fa)
-      {
-        if (csvid < 0x53e3)
-        {
-          if ((csvid != 0x53c4) && (csvid != 0x53d9))
-            goto LAB_026d75bd;
-          goto LAB_026d8d12;
-        }
-        if ((1U << (cVar1 + 0x1dU & 0x1f) & 0x400401U) != 0)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026d833c:
-        if (csvid != 0x53ed)
-          goto LAB_026d7652;
-        goto LAB_026d814b;
-      }
-      if (csvid == 0x54af)
-        goto LAB_026d8d12;
-      if (csvid < 0x54b0)
-        goto LAB_026d817a;
-      if (csvid == 0x54db)
-        goto LAB_026d8d12;
-      if ((sp_key & 8U) == 0)
-        goto LAB_026d7927;
-    LAB_026d98a0:
-      if (csvid != 0x54c4)
-      {
-        if (csvid < 0x54c5)
-        {
-          if ((csvid == 0x5487) || (csvid == 0x54a8))
-            goto LAB_026d814b;
-        }
-        else if (csvid == 0x54ca)
-          goto LAB_026d814b;
-        goto LAB_026d7652;
-      }
-    }
-    else
-    {
-      if (csvid - 0x568fU < 2)
-        goto LAB_026d7897;
-      if ((sp_key & 4U) == 0)
-        goto LAB_026d75bd;
-    LAB_026d9759:
-      if (csvid == 0x5623)
-        goto LAB_026d8d12;
-      if (csvid < 0x5624)
-      {
-        if (csvid == 0x55bf)
-          goto LAB_026d8d12;
-        if (0x55bf < csvid)
-        {
-          if (csvid - 0x55dbU < 2)
-            goto LAB_026d8d12;
-          if ((sp_key & 8U) == 0)
-            goto LAB_026d7927;
-          goto LAB_026d97bd;
-        }
-        if ((csvid == 0x5538) || (csvid == 0x5572))
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      }
-      else
-      {
-        if (((csvid == 0x5648) || (csvid == 0x566a)) || (csvid == 0x5627))
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026d81a1:
-        if (0x562f < csvid)
-        {
-          if (csvid != 0x56c0)
-          {
-            if (csvid < 0x56c1)
-            {
-              if (csvid == 0x5650)
-                goto LAB_026d814b;
-              if (csvid == 0x5684)
-              {
-                uVar2 = uVar2 | 8;
-                goto LAB_026d7927;
-              }
-            }
-            else if (csvid == 0x56d7)
-              goto LAB_026d814b;
-            goto LAB_026d7652;
-          }
-          goto LAB_026d814b;
-        }
-      LAB_026d97bd:
-        if (0x5610 < csvid)
-        {
-          uVar3 = 1U << (cVar1 - 0x11U & 0x1f) & 0x48010001;
-          goto joined_r0x026da0bb;
-        }
-      }
-      if (csvid != 0x5543)
-      {
-        if (csvid < 0x5544)
-          goto LAB_026d98a0;
-        if (((csvid != 0x559d) && (csvid != 0x55b8)) && (csvid != 0x5549))
-          goto LAB_026d7652;
-      }
-    }
-    goto LAB_026d814b;
-  }
-  if (0x2398 < csvid)
-  {
-    if (csvid != 0x2564)
-    {
-      if (csvid < 0x2565)
-      {
-        if (csvid != 0x24bf)
-        {
-          if (csvid < 0x24c0)
-          {
-            if (csvid != 0x242a)
-            {
-              uVar2 = (unsigned int)(csvid == 0x2437);
-            }
-          }
-          else
-          {
-            uVar2 = (unsigned int)(csvid == 0x2520);
-          }
-        }
-      }
-      else if ((csvid != 0x2835) && (csvid != 0x2840))
-      {
-        uVar2 = (unsigned int)(csvid == 0x265b);
-      }
-    }
-    goto LAB_026d7540;
-  }
-  if (csvid == 0x2066)
-    goto LAB_026d7540;
-  if (csvid < 0x2067)
-  {
-    if (csvid != 0x1f3b)
-    {
-      if (csvid < 0x1f3c)
-      {
-        if (csvid != 0x1d1e)
-        {
-          uVar2 = (unsigned int)(csvid == 0x1e89);
-        }
-      }
-      else
-      {
-        uVar2 = (unsigned int)(csvid == 0x2051);
-      }
-    }
-    goto LAB_026d7540;
-  }
-  if (csvid == 0x2245)
-    goto LAB_026d7540;
-  if (csvid < 0x2246)
-  {
-    if (csvid != 0x20e5)
-    {
-      uVar2 = (unsigned int)(csvid == 0x213e);
-    }
-    goto LAB_026d7540;
-  }
-  if (csvid == 0x2317)
-    goto LAB_026d7540;
-  uVar2 = 0;
-  if ((sp_key & 2U) == 0)
-    goto LAB_026d789a;
-  uVar2 = 0;
-LAB_026d9aba:
-  if (csvid == 0x2389)
-    goto LAB_026d7897;
-  if (csvid < 0x238a)
-  {
-    if (csvid == 0x2310)
-      goto LAB_026d7897;
-    if (csvid < 0x2311)
-      goto LAB_026d9c11;
-    if (csvid == 0x237f)
-      goto LAB_026d7897;
-    if ((sp_key & 4U) == 0)
-      goto LAB_026d75bd;
-    goto LAB_026dc28c;
-  }
-  if (((csvid == 0x266a) || (csvid == 0x26ac)) || (csvid == 0x2624))
-    goto LAB_026d7897;
-  if ((sp_key & 4U) == 0)
-    goto LAB_026d75bd;
-LAB_026d9af8:
-  if (csvid == 0x264b)
-    goto LAB_026d8d12;
-  if (0x264b < csvid)
-  {
-    if (csvid == 0x272f)
-    {
-    LAB_026d8d12:
-      uVar2 = uVar2 | 4;
-    LAB_026d75bd:
-      if ((sp_key & 8U) == 0)
-        goto LAB_026d7927;
-      if (csvid != 0x3906)
-      {
-        if (csvid < 0x3907)
-        {
-        LAB_026d884e:
-          if (csvid != 0x25eb)
-          {
-            if (csvid < 0x25ec)
-            {
-            LAB_026d8d37:
-              if (csvid != 0x13e4)
-              {
-                if (csvid < 0x13e5)
-                {
-                LAB_026d8d48:
-                  if (csvid != 0x89f)
-                  {
-                    if (0x89f < csvid)
-                      goto LAB_026d8d59;
-                    if (csvid != 0x4ae)
-                      goto LAB_026d910e;
-                  }
-                }
-                else
-                {
-                LAB_026d93dd:
-                  if (csvid != 0x1ec1)
-                  {
-                    if (csvid < 0x1ec2)
-                      goto LAB_026d93ee;
-                    goto LAB_026d9677;
-                  }
-                }
-              }
-            }
-            else
-            {
-            LAB_026d885f:
-              if (csvid != 0x3120)
-              {
-                if (csvid < 0x3121)
-                {
-                LAB_026dc137:
-                  if (csvid != 0x2cf5)
-                  {
-                    if (0x2cf5 < csvid)
-                      goto LAB_026dbda0;
-                    goto LAB_026dc148;
-                  }
-                }
-                else
-                {
-                LAB_026d9278:
-                  if (csvid != 0x34ea)
-                  {
-                    if (csvid < 0x34eb)
-                    {
-                    LAB_026da150:
-                      if (csvid != 0x331f)
-                      {
-                        if (csvid < 0x3320)
-                        {
-                        LAB_026da220:
-                          if (csvid != 0x3252)
-                          {
-                            if (csvid < 0x3253)
-                            {
-                            LAB_026da1d8:
-                              if (csvid != 0x31cc)
-                              {
-                                if (csvid < 0x31cd)
-                                {
-                                  if (csvid != 0x3147)
-                                    goto LAB_026da9a3;
-                                }
-                                else if (csvid != 0x3203)
-                                  goto LAB_026d7652;
-                              }
-                            }
-                            else if (((csvid != 0x32bd) && (csvid != 0x32c4)) && (csvid != 0x3256))
-                              goto LAB_026d7652;
-                          }
-                        }
-                        else if (csvid != 0x33de)
-                        {
-                          if (csvid < 0x33df)
-                            goto LAB_026da108;
-                          if (((csvid != 0x3497) && (csvid != 0x34bd)) && (csvid != 0x343c))
-                            goto LAB_026d7652;
-                        }
-                      }
-                    }
-                    else
-                    {
-                    LAB_026d9289:
-                      if (csvid != 0x36f7)
-                      {
-                        if (csvid < 0x36f8)
-                        {
-                          if (csvid != 0x3603)
-                          {
-                            if (csvid < 0x3604)
-                              goto LAB_026d9028;
-                            if (((csvid != 0x367e) && (csvid != 0x3684)) && (csvid != 0x3637))
-                              goto LAB_026d7652;
-                          }
-                        }
-                        else if (csvid != 0x37e9)
-                          goto LAB_026d92a5;
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        else
-        {
-        LAB_026d75d7:
-          if (csvid != 0x4bcb)
-          {
-            if (csvid < 0x4bcc)
-            {
-            LAB_026d836f:
-              if (csvid < 0x42bb)
-              {
-                if (csvid < 0x42a1)
-                {
-                LAB_026d8652:
-                  if (csvid != 0x3d65)
-                  {
-                    if (0x3d65 < csvid)
-                    {
-                    LAB_026dc5bf:
-                      if (0x40cc < csvid)
-                        goto LAB_026d90d7;
-                      if (csvid < 0x40af)
-                        goto LAB_026d9580;
-                      uVar3 = 1U << (cVar1 + 0x51U & 0x1f) & 0x22000001;
-                      goto joined_r0x026da0bb;
-                    }
-                  LAB_026d8663:
-                    if (csvid != 0x3be4)
-                    {
-                      if (csvid < 0x3be5)
-                        goto LAB_026d8e67;
-                    LAB_026d8674:
-                      if (csvid != 0x3cbf)
-                      {
-                        if (0x3cbf < csvid)
-                          goto LAB_026d8685;
-                        if (csvid != 0x3c9f)
-                        {
-                          if (0x3c9f < csvid)
-                          {
-                            uVar3 = csvid - 0x3ca1;
-                            goto joined_r0x026d9ec8;
-                          }
-                          if (csvid != 0x3c82)
-                            goto LAB_026d7652;
-                        }
-                      }
-                    }
-                  }
-                }
-                else
-                {
-                  uVar3 = 1U << (cVar1 + 0x5fU & 0x1f) & 0x2008001;
-                joined_r0x026da0bb:
-                  if (uVar3 == 0)
-                    goto LAB_026d7652;
-                }
-              }
-              else
-              {
-              LAB_026d837a:
-                if (csvid != 0x47cc)
-                {
-                  if (csvid < 0x47cd)
-                  {
-                  LAB_026d83f0:
-                    if (csvid != 0x4489)
-                    {
-                      if (csvid < 0x448a)
-                        goto LAB_026d85d8;
-                    LAB_026d8401:
-                      if (csvid != 0x4780)
-                      {
-                        if (csvid < 0x4781)
-                          goto LAB_026d84a0;
-                        if (csvid != 0x47ac)
-                        {
-                          if (csvid < 0x47ad)
-                          {
-                            uVar3 = csvid - 0x479e;
-                            goto joined_r0x026d9ec8;
-                          }
-                          if (csvid != 0x47ae)
-                            goto LAB_026d7652;
-                        }
-                      }
-                    }
-                  }
-                  else
-                  {
-                  LAB_026d8387:
-                    if (csvid != 0x4a21)
-                    {
-                      if (0x4a21 < csvid)
-                        goto LAB_026d8398;
-                      goto LAB_026d84f8;
-                    }
-                  }
-                }
-              }
-            }
-            else
-            {
-            LAB_026d75e8:
-              if (csvid < 0x5120)
-              {
-                if (0x5104 < csvid)
-                {
-                  uVar3 = 1U << (cVar1 - 5U & 0x1f) & 0x4000045;
-                  goto joined_r0x026da0bb;
-                }
-              LAB_026d75fe:
-                if (csvid != 0x4ee7)
-                {
-                  if (0x4ee7 < csvid)
-                    goto LAB_026d760f;
-                LAB_026d9e81:
-                  if (csvid != 0x4cd9)
-                  {
-                    if (csvid < 0x4cda)
-                      goto LAB_026d9e98;
-                    goto LAB_026dafd7;
-                  }
-                }
-              }
-              else
-              {
-              LAB_026d8194:
-                if (csvid != 0x5450)
-                {
-                  if (0x5450 < csvid)
-                    goto LAB_026d81a1;
-                LAB_026d8255:
-                  if (csvid < 0x5363)
-                  {
-                    if (0x5348 < csvid)
-                    {
-                      uVar3 = 1U << (cVar1 + 0xb7U & 0x1f) & 0x20c0001;
-                      goto joined_r0x026da0bb;
-                    }
-                    if (csvid != 0x52e5)
-                    {
-                      if (csvid < 0x52e6)
-                        goto LAB_026d82c8;
-                      if ((csvid != 0x5329) && (csvid != 0x5342))
-                      {
-                        if (csvid == 0x531d)
-                        {
-                          uVar2 = uVar2 | 8;
-                          goto LAB_026d7927;
-                        }
-                        goto LAB_026d7652;
-                      }
-                    }
-                  }
-                  else
-                  {
-                    if (csvid < 0x5424)
-                    {
-                      if (csvid < 0x5412)
-                        goto LAB_026d833c;
-                      uVar3 = 1U << (cVar1 - 0x12U & 0x1f) & 0x20021;
-                      goto joined_r0x026da0bb;
-                    }
-                    if (csvid != 0x5440)
-                      goto LAB_026d7652;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    LAB_026d814b:
-      uVar2 = uVar2 | 8;
-    LAB_026d7927:
-      if ((sp_key & 0x100U) != 0)
-      {
-        if (csvid != 0x214f)
-        {
-          if (0x214f < csvid)
-            goto LAB_026d793d;
-        LAB_026da5b9:
-          if (csvid != 0xd63)
-          {
-            if (csvid < 0xd64)
-            {
-              if (csvid < 0xc32)
-              {
-                if (csvid < 0xc2c)
-                  goto joined_r0x026da636;
-              }
-              else if ((0x1c < csvid - 0xcd5U) ||
-                       ((1U << ((unsigned char)(csvid - 0xcd5U) & 0x1f) & 0x1d0000fdU) == 0))
-                goto joined_r0x026da562;
-            }
-            else if (csvid != 0xdea)
-            {
-              if (0xdea < csvid)
-                goto LAB_026da554;
-              if (csvid != 0xd72)
-              {
-                if (csvid - 0xd95U < 3)
-                {
-                  uVar2 = (uVar2 | 0x100U);
-                  goto LAB_026d7652;
-                }
-                goto joined_r0x026da562;
-              }
-            }
-          }
-        }
-        goto LAB_026d7962;
-      }
-    }
-    else
-    {
-      if (csvid < 0x2730)
-      {
-        if (csvid != 0x26c5)
-        {
-          if (csvid < 0x26c6)
-          {
-            if ((csvid == 0x264f) || (csvid == 0x26a3))
-              goto LAB_026d8d12;
-          }
-          else if (csvid == 0x2701)
-            goto LAB_026d8d12;
-          goto LAB_026d75bd;
-        }
-        goto LAB_026d8d12;
-      }
-      if (csvid < 0x2807)
-      {
-        if (((0x2804 < csvid) || (csvid == 0x27ac)) || (csvid == 0x27cd))
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      }
-      else
-      {
-        if (csvid == 0x280a)
-          goto LAB_026d8d12;
-        if ((sp_key & 8U) == 0)
-          goto LAB_026d7927;
-      LAB_026dc164:
-        if (0x280a < csvid)
-        {
-        LAB_026dc16f:
-          if (((csvid != 0x289b) && (csvid != 0x28ba)) && (csvid != 0x2871))
-            goto LAB_026d7652;
-          goto LAB_026d814b;
-        }
-      }
-      if (csvid == 0x27c1)
-        goto LAB_026d814b;
-      if (csvid < 0x27c2)
-      {
-        if ((csvid == 0x2760) || (csvid == 0x27bd))
-          goto LAB_026d814b;
-      }
-      else if (csvid == 0x27df)
-        goto LAB_026d814b;
-    }
-  LAB_026d7652:
-    if ((sp_key & 0x200U) == 0)
-      goto LAB_026d7c41;
-    if (csvid == 0x3ec1)
-      goto LAB_026d7e06;
-    if (csvid < 0x3ec2)
-    {
-      if (csvid < 0x3375)
-      {
-        if (0x336a < csvid)
-        {
-          uVar3 = 1U << (cVar1 + 0x95U & 0x1f) & 0x281;
-          goto joined_r0x026d8beb;
-        }
-        if (csvid == 0x2c95)
-          goto LAB_026d7e06;
-        if (0x2c95 < csvid)
-        {
-          if (csvid == 0x2f85)
-            goto LAB_026d7e06;
-          if (csvid < 0x2f86)
-          {
-            if (csvid < 0x2e6c)
-            {
-              if (0x2e57 < csvid)
-              {
-                uVar3 = 1U << (cVar1 + 0xa8U & 0x1f) & 0x80101;
-                goto joined_r0x026d8beb;
-              }
-              if (((csvid == 0x2de2) || (csvid == 0x2de9)) || (csvid == 0x2cb9))
-                goto LAB_026d7e06;
-              if ((sp_key & 0x800U) == 0)
-                goto LAB_026d76e0;
-              goto LAB_026d8b60;
-            }
-            if (csvid == 0x2f4a)
-              goto LAB_026d7e06;
-            if ((sp_key & 0x800U) == 0)
-              goto LAB_026d76e0;
-          }
-          else
-          {
-            if (csvid == 0x3162)
-              goto LAB_026d7e06;
-            if (0x3162 < csvid)
-            {
-              if (((csvid != 0x3234) && (csvid != 0x332b)) && (csvid != 0x321b))
-                goto LAB_026d7c41;
-              goto LAB_026d7e06;
-            }
-            if (((csvid == 0x3067) || (csvid == 0x30e4)) || (csvid == 0x2fbe))
-              goto LAB_026d7e06;
-            if ((sp_key & 0x800U) == 0)
-              goto LAB_026d76e0;
-          LAB_026d8c22:
-            if ((csvid == 0x2fd2) || (csvid == 0x3016))
-              goto LAB_026d7bb6;
-          }
-          if (csvid != 0x2e88)
-            goto LAB_026d7ab0;
-          goto LAB_026d7bb6;
-        }
-        if (csvid < 0x28a3)
-        {
-          if (0x2888 < csvid)
-          {
-            uVar3 = 1U << (cVar1 + 0x77U & 0x1f) & 0x2000005;
-            goto joined_r0x026d8beb;
-          }
-          if (csvid == 0x23fe)
-            goto LAB_026d7e06;
-          if (csvid < 0x23ff)
-          {
-            if (csvid != 0x2350)
-              goto LAB_026d86ff;
-            goto LAB_026d7e06;
-          }
-          if ((csvid == 0x270d) || (csvid == 0x27ca))
-            goto LAB_026d7e06;
-          if ((sp_key & 0x800U) == 0)
-            goto LAB_026d76e0;
-        LAB_026d8b71:
-          if (csvid == 0x275a)
-            goto LAB_026d7bb6;
-          if (csvid < 0x275b)
-            goto LAB_026d8720;
-        }
-        else
-        {
-          if (csvid == 0x2a92)
-            goto LAB_026d7e06;
-          if (csvid < 0x2a93)
-          {
-            if (((csvid & 0xfffffff7U) != 0x29c7) && (csvid != 0x2930))
-              goto LAB_026d7c41;
-            goto LAB_026d7e06;
-          }
-          if ((csvid == 0x2afb) || (csvid - 0x2b77U < 2))
-            goto LAB_026d7e06;
-          if ((sp_key & 0x800U) == 0)
-            goto LAB_026d76e0;
-        }
-        if (csvid < 0x2be8)
-        {
-          if (((0x2be3 < csvid) || ((csvid == 0x2b3e || (csvid == 0x2b96)))) || (csvid == 0x2b3b))
-            goto LAB_026d7bb6;
-        }
-        else if ((csvid == 0x2c9b) || (csvid == 0x2cad))
-          goto LAB_026d7bb6;
-        goto LAB_026d7ab0;
-      }
-      if (csvid == 0x3891)
-        goto LAB_026d7e06;
-      if (csvid < 0x3892)
-      {
-        if (csvid == 0x363d)
-          goto LAB_026d7e06;
-        if (csvid < 0x363e)
-        {
-          if (csvid == 0x3448)
-            goto LAB_026d7e06;
-          if (0x3448 < csvid)
-          {
-            if ((csvid != 0x34e9) && ((csvid & 0xfffffffbU) != 0x3499))
-              goto LAB_026d7c41;
-            goto LAB_026d7e06;
-          }
-          if ((csvid == 0x33fd) || ((csvid == 0x3438 || (csvid == 0x33df))))
-            goto LAB_026d7e06;
-          if ((sp_key & 0x800U) == 0)
-            goto LAB_026d76e0;
-        LAB_026d8a82:
-          if (csvid != 0x33ae)
-          {
-            if (csvid < 0x33af)
-              goto LAB_026d8c22;
-            if (((csvid != 0x3476) && (csvid != 0x348e)) && (csvid != 0x3462))
-              goto LAB_026d7ab0;
-          }
-          goto LAB_026d7bb6;
-        }
-        if (csvid == 0x37c9)
-          goto LAB_026d7e06;
-        if (0x37c9 < csvid)
-        {
-          if ((csvid != 0x3815) && (csvid != 0x3829))
-            goto LAB_026d7c41;
-          goto LAB_026d7e06;
-        }
-        if ((csvid == 0x367c) || ((csvid == 0x3760 || (csvid == 0x363f))))
-          goto LAB_026d7e06;
-        if ((sp_key & 0x800U) == 0)
-          goto LAB_026d76e0;
-      LAB_026d8a00:
-        if (0x367a < csvid)
-          goto LAB_026d89b0;
-        if (csvid < 0x365d)
-        {
-          if ((csvid == 0x3615) || (csvid == 0x365b))
-            goto LAB_026d7bb6;
-        }
-        else if ((1U << (cVar1 + 0xa3U & 0x1f) & 0x20000021U) != 0)
-          goto LAB_026d7bb6;
-      }
-      else
-      {
-        if (csvid == 0x3b5a)
-          goto LAB_026d7e06;
-        if (csvid < 0x3b5b)
-        {
-          if (csvid != 0x3a52)
-          {
-            if (csvid < 0x3a53)
-            {
-              if (((csvid == 0x3a21) || (csvid == 0x3a32)) || (csvid == 0x3947))
-                goto LAB_026d7e06;
-            }
-            else if ((csvid == 0x3b25) || ((csvid - 0x3aafU & 0xffffffdf) == 0))
-              goto LAB_026d7e06;
-            goto LAB_026d7c41;
-          }
-          goto LAB_026d7e06;
-        }
-        if (csvid == 0x3cc3)
-          goto LAB_026d7e06;
-        if (0x3cc3 < csvid)
-        {
-          if ((csvid == 0x3e37) || (csvid == 0x3e70))
-            goto LAB_026d7e06;
-          if ((sp_key & 0x800U) == 0)
-            goto LAB_026d76e0;
-          goto LAB_026d7c6c;
-        }
-        if (((csvid == 0x3c0c) || (csvid == 0x3cb6)) || (csvid == 0x3bdc))
-          goto LAB_026d7e06;
-        if ((sp_key & 0x800U) == 0)
-          goto LAB_026d76e0;
-      LAB_026d89b0:
-        if (csvid == 0x3c71)
-        {
-        LAB_026d7bb6:
-          uVar2 = uVar2 | 0x800;
-          goto LAB_026d76e0;
-        }
-        if (csvid == 0x3db6)
-        {
-          uVar2 = uVar2 | 0x800;
-          goto LAB_026d76e0;
-        }
-      }
-      goto LAB_026d7ab0;
-    }
-    if (0x4ce6 < csvid)
-    {
-      if (csvid == 0x5248)
-        goto LAB_026d7e06;
-      if (csvid < 0x5249)
-      {
-        if (csvid < 0x4fde)
-        {
-          if (0x4fc6 < csvid)
-          {
-            uVar3 = 1U << (cVar1 + 0x39U & 0x1f) & 0x400011;
-            goto joined_r0x026d8beb;
-          }
-          if (csvid == 0x4ecb)
-            goto LAB_026d7e06;
-          if (csvid < 0x4ecc)
-          {
-            if (((csvid == 0x4ddc) || (csvid == 0x4de3)) || (csvid == 0x4db7))
-              goto LAB_026d7e06;
-          }
-          else if ((csvid == 0x4f1b) || (csvid == 0x4f67))
-            goto LAB_026d7e06;
-          goto LAB_026d7c41;
-        }
-        if (csvid == 0x50cb)
-          goto LAB_026d7e06;
-        if (csvid < 0x50cc)
-        {
-          if ((csvid != 0x501c) && (csvid != 0x507b))
-            goto LAB_026d7c41;
-          goto LAB_026d7e06;
-        }
-        if ((csvid == 0x50e2) || (csvid == 0x5141))
-          goto LAB_026d7e06;
-        if ((sp_key & 0x800U) == 0)
-          goto LAB_026d76e0;
-      LAB_026d7a78:
-        if (csvid != 0x5227)
-        {
-          if (csvid < 0x5228)
-          {
-          LAB_026d7b90:
-            if (csvid != 0x4857)
-            {
-              if (csvid < 0x4858)
-              {
-                if (csvid != 0x427b)
-                  goto LAB_026dac43;
-              }
-              else if ((csvid != 0x51e4) && (csvid != 0x5211))
-                goto LAB_026d7bab;
-            }
-          }
-          else
-          {
-          LAB_026d7a89:
-            if (csvid != 0x52a4)
-            {
-              if (0x52a4 < csvid)
-                goto LAB_026d7a9a;
-              if (((csvid != 0x5259) && (csvid != 0x5273)) && (csvid != 0x523b))
-                goto LAB_026d7ab0;
-            }
-          }
-        }
-      }
-      else
-      {
-        if (csvid == 0x5460)
-          goto LAB_026d7e06;
-        if (csvid < 0x5461)
-        {
-          if (csvid == 0x5345)
-            goto LAB_026d7e06;
-          if (csvid < 0x5346)
-          {
-            if (((csvid == 0x52bd) || (csvid == 0x52fe)) || (csvid == 0x524d))
-              goto LAB_026d7e06;
-            if ((sp_key & 0x800U) == 0)
-              goto LAB_026d76e0;
-            goto LAB_026d7a89;
-          }
-          if (((csvid == 0x53b9) || (csvid == 0x5413)) || (csvid == 0x536e))
-            goto LAB_026d7e06;
-          if ((sp_key & 0x800U) == 0)
-            goto LAB_026d76e0;
-        LAB_026d7a9a:
-          if (csvid == 0x5429)
-            goto LAB_026d7bb6;
-        }
-        else
-        {
-          if (csvid == 0x5601)
-            goto LAB_026d7e06;
-          if (0x5601 < csvid)
-          {
-            if ((csvid != 0x5627) && (csvid != 0x565d))
-              goto LAB_026d7c41;
-            goto LAB_026d7e06;
-          }
-          if ((csvid == 0x54f3) || ((csvid == 0x55a5 || (csvid == 0x5483))))
-            goto LAB_026d7e06;
-          if ((sp_key & 0x800U) == 0)
-            goto LAB_026d76e0;
-        }
-        if (csvid != 0x55ea)
-          goto LAB_026d7ab0;
-      }
-      goto LAB_026d7bb6;
-    }
-    if (0x4cdf < csvid)
-    {
-      uVar3 = 1U << (cVar1 + 0x20U & 0x1f) & 0x45;
-    joined_r0x026d8beb:
-      if (uVar3 == 0)
-        goto LAB_026d7c41;
-    LAB_026d7e06:
-      uVar2 = uVar2 | 0x200;
-    LAB_026d7c41:
-      if ((sp_key & 0x800U) == 0)
-        goto LAB_026d76e0;
-      if (csvid != 0x3609)
-      {
-        if (csvid < 0x360a)
-        {
-        LAB_026d8b60:
-          if (csvid != 0x2d42)
-          {
-            if (csvid < 0x2d43)
-              goto LAB_026d8b71;
-            if (csvid != 0x34b7)
-            {
-              if (csvid < 0x34b8)
-                goto LAB_026d8a82;
-              if (csvid != 0x35aa)
-              {
-                if (csvid < 0x35ab)
-                {
-                  if (((csvid == 0x3504) || (csvid == 0x357c)) || (csvid == 0x34d4))
-                    goto LAB_026d7bb6;
-                }
-                else if ((csvid == 0x35b8) || (csvid == 0x35d4))
-                  goto LAB_026d7bb6;
-                goto LAB_026d7ab0;
-              }
-            }
-          }
-        }
-        else
-        {
-        LAB_026d7c5b:
-          if (csvid != 0x4256)
-          {
-            if (0x4256 < csvid)
-              goto LAB_026d7a78;
-          LAB_026d7c6c:
-            if (csvid != 0x3e96)
-            {
-              if (csvid < 0x3e97)
-                goto LAB_026d8a00;
-              if (csvid != 0x41df)
-              {
-                if (csvid < 0x41e0)
-                  goto LAB_026d7c00;
-                if (csvid != 0x4227)
-                {
-                  if (csvid == 0x4239)
-                  {
-                    uVar2 = uVar2 | 0x800;
-                    goto LAB_026d76e0;
-                  }
-                  goto LAB_026d7ab0;
-                }
-              }
-            }
-          }
-        }
-      }
-      goto LAB_026d7bb6;
-    }
-    if (csvid == 0x4709)
-      goto LAB_026d7e06;
-    if (csvid < 0x470a)
-    {
-      if (csvid == 0x4145)
-        goto LAB_026d7e06;
-      if (0x4145 < csvid)
-      {
-        if (csvid == 0x42aa)
-          goto LAB_026d7e06;
-        if (0x42aa < csvid)
-        {
-          if (((csvid != 0x43f3) && (csvid != 0x46b7)) && (csvid != 0x433d))
-            goto LAB_026d7c41;
-          goto LAB_026d7e06;
-        }
-        if (((csvid == 0x41d4) || (csvid == 0x426e)) || (csvid == 0x4174))
-          goto LAB_026d7e06;
-        if ((sp_key & 0x800U) == 0)
-          goto LAB_026d76e0;
-        goto LAB_026d7c5b;
-      }
-      if (csvid == 0x40a3)
-        goto LAB_026d7e06;
-      if (csvid < 0x40a4)
-      {
-        if (((csvid == 0x400f) || (csvid == 0x4065)) || (csvid == 0x3ef1))
-          goto LAB_026d7e06;
-        if ((sp_key & 0x800U) == 0)
-          goto LAB_026d76e0;
-      }
-      else
-      {
-        if (((csvid == 0x40f6) || (csvid == 0x410a)) || (csvid == 0x40cc))
-          goto LAB_026d7e06;
-        if ((sp_key & 0x800U) == 0)
-          goto LAB_026d76e0;
-      LAB_026d7c00:
-        if ((csvid == 0x40f7) || (csvid == 0x41d5))
-          goto LAB_026d7bb6;
-      }
-      if (csvid == 0x3f75)
-        goto LAB_026d7bb6;
-      if ((sp_key & 0x2000U) == 0)
-        goto LAB_026d7ab0;
-      goto LAB_026d8dc5;
-    }
-    if (csvid == 0x4a01)
-      goto LAB_026d7e06;
-    if (0x4a01 < csvid)
-    {
-      if (csvid < 0x4c02)
-      {
-        if (0x4bf1 < csvid)
-        {
-          uVar3 = 1U << (cVar1 + 0xeU & 0x1f) & 0x8021;
-          goto joined_r0x026d8beb;
-        }
-        if (((csvid == 0x4aa7) || (csvid == 0x4bc1)) || (csvid == 0x4a24))
-          goto LAB_026d7e06;
-      }
-      if ((sp_key & 0x800U) == 0)
-        goto LAB_026d76e0;
-    LAB_026d7bab:
-      if (csvid != 0x4bc5)
-        goto LAB_026d7ab0;
-      goto LAB_026d7bb6;
-    }
-    if (csvid == 0x47ab)
-      goto LAB_026d7e06;
-    if (0x47ab < csvid)
-    {
-      if (((csvid & 0xffffffefU) == 0x48cb) || (csvid == 0x47df))
-        goto LAB_026d7e06;
-      if ((sp_key & 0x800U) == 0)
-        goto LAB_026d76e0;
-      goto LAB_026d7b90;
-    }
-    if (((csvid == 0x4789) || (csvid == 0x4793)) || (csvid == 0x470f))
-      goto LAB_026d7e06;
-    if ((sp_key & 0x800U) == 0)
-      goto LAB_026d76e0;
-  LAB_026dac43:
-    if ((csvid == 0x479f) || (csvid == 0x426e))
-      goto LAB_026d7bb6;
-    if ((sp_key & 0x2000U) == 0)
-      goto LAB_026d7ab0;
-  LAB_026d8dd0:
-    if (csvid == 0x45a1)
-    {
-      uVar2 = uVar2 | 0x2000;
-    }
-    goto LAB_026d7ab0;
-  }
-  if (csvid == 0x2510)
-    goto LAB_026d8d12;
-  if (0x2510 < csvid)
-  {
-    if (csvid == 0x25a8)
-      goto LAB_026d8d12;
-    if (0x25a8 < csvid)
-    {
-      if (csvid == 0x25d0)
-        goto LAB_026d8d12;
-      if ((sp_key & 8U) == 0)
-        goto LAB_026d7927;
-      goto LAB_026d884e;
-    }
-    if ((csvid == 0x2527) || (csvid == 0x258b))
-      goto LAB_026d8d12;
-    if ((sp_key & 8U) == 0)
-      goto LAB_026d7927;
-    if (csvid == 0x256c)
-      goto LAB_026d814b;
-  LAB_026d96af:
-    if (csvid != 0x2477)
-      goto LAB_026d7652;
-    goto LAB_026d814b;
-  }
-  if (0x23d5 < csvid)
-  {
-    if (csvid == 0x2490)
-      goto LAB_026d8d12;
-    if ((sp_key & 8U) == 0)
-      goto LAB_026d7927;
-  LAB_026d9688:
-    if (csvid != 0x2447)
-    {
-      if (csvid < 0x2448)
-        goto LAB_026dc53a;
-      if ((csvid != 0x24e0) && (csvid != 0x256c))
-        goto LAB_026d96af;
-    }
-    goto LAB_026d814b;
-  }
-  if (csvid < 0x23c3)
-  {
-    if (csvid == 0x2388)
-      goto LAB_026d8d12;
-    if ((sp_key & 8U) == 0)
-      goto LAB_026d7927;
-  }
-  else
-  {
-    if ((1U << (cVar1 + 0x3dU & 0x1f) & 0x50001U) != 0)
-      goto LAB_026d8d12;
-    if ((sp_key & 8U) == 0)
-      goto LAB_026d7927;
-  LAB_026dc53a:
-    if ((csvid == 0x23d3) || (csvid == 0x240d))
-      goto LAB_026d814b;
-  }
-  if (csvid == 0x2366)
-    goto LAB_026d814b;
-  if ((sp_key & 0x100U) == 0)
-    goto LAB_026d7652;
-LAB_026d793d:
-  if (csvid == 0x2220)
-  {
-  LAB_026d7962:
-    uVar2 = (uVar2 | 0x100U);
-    goto LAB_026d7652;
-  }
-  if (0x2220 < csvid)
-  {
-    if (csvid != 0x2344)
-    {
-      if (csvid < 0x2345)
-      {
-        if ((csvid != 0x22b6) && (csvid != 0x22f5))
-          goto joined_r0x026da562;
-      }
-      else if (csvid != 0x234a)
-        goto LAB_026d7652;
-    }
-    goto LAB_026d7962;
-  }
-  if (csvid == 0x21a8)
-    goto LAB_026d7962;
-  if (csvid < 0x21a9)
-  {
-    if ((csvid == 0x215b) || (csvid == 0x2196))
-      goto LAB_026d7962;
-  joined_r0x026da562:
-    if ((sp_key & 0x200U) != 0)
-      goto LAB_026d86ff;
-    goto LAB_026d7c41;
-  }
-  if (csvid == 0x21ec)
-    goto LAB_026d7962;
-joined_r0x026da636:
-  if ((sp_key & 0x200U) == 0)
-    goto LAB_026d7c41;
-LAB_026d86ff:
-  if ((csvid & 0xfffffffdU) == 0x550)
-    goto LAB_026d7e06;
-  if ((sp_key & 0x800U) == 0)
-    goto LAB_026d76e0;
-LAB_026d8720:
-  if (csvid == 0x1b0a)
-    goto LAB_026d7bb6;
-  if (0x1b0a < csvid)
-  {
-    if (((csvid == 0x21ed) || (csvid == 0x2686)) || (csvid == 0x1c77))
-      goto LAB_026d7bb6;
-    if ((sp_key & 0x2000U) == 0)
-      goto LAB_026d7ab0;
-  LAB_026d875b:
-    if (csvid != 0x21b4)
-    {
-      if (csvid < 0x21b5)
-      {
-        if (csvid != 0x217c)
-        {
-          if (csvid < 0x217d)
-            goto LAB_026dad70;
-          if ((csvid & 0xffffffdfU) != 0x218f)
-            goto LAB_026d773d;
-        }
-      }
-      else if (csvid != 0x22fb)
-      {
-        if (csvid < 0x22fc)
-        {
-          if ((csvid != 0x2285) && (csvid != 0x22c0))
-          {
-            if (csvid == 0x21db)
-            {
-              uVar2 = uVar2 | 0x2000;
-              goto LAB_026d7ab0;
-            }
-            goto LAB_026d773d;
-          }
-        }
-        else
-        {
-        LAB_026d8dc5:
-          if (csvid != 0x40f5)
-            goto LAB_026d8dd0;
-        }
-      }
-    }
-    goto LAB_026d7e2b;
-  }
-  if (0x1ad7 < csvid)
-  {
-    if (csvid - 0x1ad9U < 3)
-      goto LAB_026d7bb6;
-    if ((sp_key & 0x2000U) == 0)
-      goto LAB_026d7ab0;
-  LAB_026dad70:
-    if ((csvid - 0x2126U < 0xc) &&
-        ((1U << ((unsigned char)(csvid - 0x2126U) & 0x1f) & 0x805U) != 0))
-    {
-      uVar2 = uVar2 | 0x2000;
-      goto LAB_026d7ab0;
-    }
-    goto LAB_026d773d;
-  }
-  if ((0x1ad4 < csvid) || (csvid == 0x619))
-    goto LAB_026d7bb6;
-LAB_026d76e0:
-  if ((sp_key & 0x2000U) == 0)
-    goto LAB_026d7ab0;
-  if (csvid == 0xbde)
-    goto LAB_026d7e2b;
-  if (0xbde < csvid)
-    goto LAB_026d875b;
-  if (csvid == 0xa48)
-    goto LAB_026d7e2b;
-  if (0xa48 < csvid)
-  {
-    if (csvid < 0xaff)
-    {
-      if (csvid < 0xae5)
-      {
-        if (csvid == 0xa8e)
-          goto LAB_026d7e2b;
-        if (csvid < 0xa8f)
-        {
-          if (csvid - 0xa69U < 2)
-          {
-            uVar2 = uVar2 | 0x2000;
-            goto LAB_026d7ab0;
-          }
-        }
-        else if (csvid - 0xaaeU < 2)
-          goto LAB_026d7e2b;
-      }
-      else if ((1U << (cVar1 + 0x1bU & 0x1f) & 0x2000011U) != 0)
-      {
-        uVar2 = uVar2 | 0x2000;
-        goto LAB_026d7ab0;
-      }
-    }
-    goto LAB_026d773d;
-  }
-  if (csvid == 0x9f6)
-  {
-  LAB_026d7e2b:
-    uVar2 = uVar2 | 0x2000;
-  LAB_026d7ab0:
-    if ((sp_key & 0x4000U) == 0)
-      goto LAB_026d7753;
-    if (0x25cd < csvid)
-    {
-      if (csvid < 0x269a)
-      {
-        if (0x2664 < csvid)
-        {
-          switch (csvid)
-          {
-          case 0x2665:
-          case 0x2666:
-          case 0x2670:
-          case 0x2678:
-          case 0x2680:
-          case 0x268f:
-          case 0x2699:
-            goto LAB_026d87bb;
-          default:
-            goto LAB_026d7753;
-          }
-        }
-        if ((csvid != 0x25f7) &&
-            ((0x1d < csvid - 0x262cU ||
-              ((1U << ((unsigned char)(csvid - 0x262cU) & 0x1f) & 0x28000001U) == 0))))
-          goto LAB_026d7b03;
-      }
-      else if (csvid != 0x26a7)
-        goto LAB_026d7b03;
-    LAB_026d87bb:
-      uVar2 = uVar2 | 0x4000;
-      goto LAB_026d7753;
-    }
-    if (csvid < 0x25bb)
-    {
-      if (csvid < 0x2584)
-      {
-        if (csvid < 0x2562)
-          goto LAB_026d7742;
-        switch (csvid)
-        {
-        case 0x2562:
-        case 0x2569:
-        case 0x2571:
-        case 0x2576:
-        case 0x2583:
-          goto LAB_026d87bb;
-        default:
-          goto LAB_026d7753;
-        }
-      }
-      if (csvid != 0x2592)
-        goto LAB_026d7b03;
-      goto LAB_026d87bb;
-    }
-    if ((1U << (cVar1 + 0x45U & 0x1f) & 0x49001U) != 0)
-    {
-      uVar2 = uVar2 | 0x4000;
-      goto LAB_026d7753;
-    }
-  LAB_026d7b03:
-    if ((sp_key & 0x8000U) != 0)
-    {
-    LAB_026d80d9:
-      if (csvid - 0x1e46U < 2)
-        goto LAB_026d7fcb;
-    }
-  LAB_026d775c:
-    if ((sp_key & 0x10000U) == 0)
-      goto LAB_026d77c0;
-    if (csvid != 0x4455)
-    {
-      if (0x4455 < csvid)
-      {
-        if (csvid != 0x4e98)
-        {
-          if (csvid < 0x4e99)
-          {
-            if (csvid != 0x4abd)
-            {
-              if (csvid < 0x4abe)
-              {
-                if (csvid != 0x4796)
-                {
-                  if (csvid < 0x4797)
-                  {
-                    if (csvid != 0x4689)
-                    {
-                      if (csvid < 0x468a)
-                      {
-                        if ((csvid == 0x447e) || (csvid == 0x463d))
-                          goto LAB_026d77b7;
-                      }
-                      else if ((csvid == 0x4725) || (csvid == 0x4790))
-                        goto LAB_026d77b7;
-                      goto LAB_026d7f47;
-                    }
-                  }
-                  else if (csvid != 0x49c9)
-                  {
-                    if (csvid < 0x49ca)
-                    {
-                      if ((csvid == 0x4805) || (csvid == 0x4856))
-                        goto LAB_026d77b7;
-                    }
-                    else
-                    {
-                      if (csvid == 0x4a5a)
-                        goto LAB_026d77b7;
-                      if (csvid == 0x4aa1)
-                      {
-                        uVar2 = uVar2 | 0x10000;
-                        goto LAB_026d77c0;
-                      }
-                    }
-                    goto LAB_026d7f47;
-                  }
-                }
-              }
-              else if (csvid != 0x4cf6)
-              {
-                if (csvid < 0x4cf7)
-                {
-                  if (csvid != 0x4bd7)
-                  {
-                    if (csvid < 0x4bd8)
-                    {
-                      if ((csvid == 0x4ac7) || (csvid == 0x4b88))
-                        goto LAB_026d77b7;
-                    }
-                    else if ((csvid == 0x4cb4) || (csvid == 0x4ce6))
-                      goto LAB_026d77b7;
-                    goto LAB_026d7f47;
-                  }
-                }
-                else if (csvid != 0x4dca)
-                {
-                  if (csvid < 0x4dcb)
-                  {
-                    if ((csvid == 0x4d97) || (csvid == 0x4db4))
-                      goto LAB_026d77b7;
-                  }
-                  else if ((csvid == 0x4dec) || (csvid == 0x4e6b))
-                    goto LAB_026d77b7;
-                  goto LAB_026d7f47;
-                }
-              }
-            }
-          }
-          else if (csvid != 0x5351)
-          {
-            if (csvid < 0x5352)
-            {
-              if (csvid != 0x511f)
-              {
-                if (csvid < 0x5120)
-                {
-                  if (csvid != 0x5058)
-                  {
-                    if (csvid < 0x5059)
-                    {
-                      if ((csvid == 0x4ff5) || (csvid == 0x502e))
-                        goto LAB_026d77b7;
-                    }
-                    else if ((csvid == 0x50af) || (csvid == 0x5119))
-                      goto LAB_026d77b7;
-                    goto LAB_026d7f47;
-                  }
-                }
-                else if (csvid != 0x52c9)
-                {
-                  if (csvid < 0x52ca)
-                  {
-                    if ((csvid == 0x51e5) || (csvid == 0x523d))
-                      goto LAB_026d77b7;
-                  }
-                  else if ((csvid == 0x52fa) || (csvid == 0x533f))
-                    goto LAB_026d77b7;
-                  goto LAB_026d7f47;
-                }
-              }
-            }
-            else if (csvid != 0x5518)
-            {
-              if (csvid < 0x5519)
-              {
-                if (csvid != 0x5403)
-                {
-                  if (csvid < 0x5404)
-                  {
-                    if ((csvid == 0x539f) || (csvid == 0x53f6))
-                      goto LAB_026d77b7;
-                  }
-                  else if ((csvid == 0x5428) || (csvid == 0x54da))
-                    goto LAB_026d77b7;
-                  goto LAB_026d7f47;
-                }
-              }
-              else if (csvid != 0x564a)
-              {
-                if (csvid < 0x564b)
-                {
-                  if ((csvid == 0x55ab) || (csvid == 0x562c))
-                    goto LAB_026d77b7;
-                }
-                else if (csvid == 0x56b1)
-                {
-                  uVar2 = uVar2 | 0x10000;
-                  goto LAB_026d77c0;
-                }
-                goto LAB_026d7f47;
-              }
-            }
-          }
-        }
-        goto LAB_026d77b7;
-      }
-      if (csvid == 0x3ef4)
-        goto LAB_026d77b7;
-      if (csvid < 0x3ef5)
-      {
-        if (csvid == 0x3b21)
-          goto LAB_026d77b7;
-        if (csvid < 0x3b22)
-        {
-          if (csvid == 0x270d)
-            goto LAB_026d77b7;
-          if (csvid < 0x270e)
-            goto LAB_026db89c;
-          if (csvid == 0x34d6)
-            goto LAB_026d77b7;
-          if (csvid < 0x34d7)
-          {
-            if ((csvid == 0x2e4c) || (csvid == 0x32ee))
-              goto LAB_026d77b7;
-          }
-          else if ((csvid == 0x3a5e) || (csvid == 0x3af1))
-            goto LAB_026d77b7;
-          goto LAB_026d77c0;
-        }
-        if (csvid == 0x3df9)
-          goto LAB_026d77b7;
-        if (csvid < 0x3dfa)
-        {
-          if (csvid < 0x3cf7)
-          {
-            if (((csvid < 0x3cf5) && (csvid != 0x3be3)) && (csvid != 0x3c4c))
-              goto LAB_026d77c0;
-            goto LAB_026d77b7;
-          }
-          if ((csvid == 0x3d0f) || (csvid == 0x3dd2))
-            goto LAB_026d77b7;
-          if ((sp_key & 0x20000U) == 0)
-            goto LAB_026d7f47;
-          goto LAB_026db802;
-        }
-        if (csvid == 0x3e52)
-          goto LAB_026d77b7;
-        if (0x3e52 < csvid)
-        {
-          if ((csvid != 0x3e8f) && (csvid != 0x3eca))
-            goto LAB_026d8006;
-          goto LAB_026d77b7;
-        }
-        if ((csvid == 0x3e17) || (csvid == 0x3e3c))
-          goto LAB_026d77b7;
-        if ((sp_key & 0x20000U) == 0)
-          goto LAB_026d7f47;
-        goto LAB_026da332;
-      }
-      if (csvid == 0x41d5)
-        goto LAB_026d77b7;
-      if (0x41d5 < csvid)
-      {
-        if (csvid == 0x430e)
-          goto LAB_026d77b7;
-        if (csvid < 0x430f)
-        {
-          if (csvid == 0x4261)
-            goto LAB_026d77b7;
-          if (csvid < 0x4262)
-          {
-            if ((csvid == 0x41f0) || (csvid == 0x420e))
-              goto LAB_026d77b7;
-          }
-          else if ((csvid == 0x42e3) || (csvid == 0x42f7))
-            goto LAB_026d77b7;
-        }
-        else if (csvid < 0x4408)
-        {
-          if (csvid < 0x43f2)
-          {
-            if ((csvid == 0x439a) || (csvid == 0x43a3))
-              goto LAB_026d77b7;
-          }
-          else if ((1U << (cVar1 + 0xeU & 0x1f) & 0x208003U) != 0)
-            goto LAB_026d77b7;
-        }
-        goto LAB_026d7f47;
-      }
-      if (csvid == 0x40b9)
-        goto LAB_026d77b7;
-      if (0x40b9 < csvid)
-      {
-        if (csvid != 0x4146)
-        {
-          if (csvid < 0x4147)
-          {
-            if ((csvid == 0x40e2) || (csvid == 0x4118))
-              goto LAB_026d77b7;
-          }
-          else if ((csvid == 0x4163) || (csvid == 0x41a6))
-            goto LAB_026d77b7;
-          goto LAB_026d7f47;
-        }
-        goto LAB_026d77b7;
-      }
-      if (csvid == 0x403e)
-        goto LAB_026d77b7;
-      if (0x403e < csvid)
-      {
-        if ((csvid != 0x4051) && (csvid != 0x4064))
-          goto LAB_026d7f47;
-        goto LAB_026d77b7;
-      }
-      if ((csvid == 0x3f9c) || (csvid == 0x3fd8))
-        goto LAB_026d77b7;
-      if ((sp_key & 0x20000U) == 0)
-        goto LAB_026d7f47;
-    LAB_026d77dd:
-      if (csvid != 0x3f64)
-      {
-        if (csvid < 0x3f65)
-        {
-          if ((csvid != 0x3e86) && (csvid != 0x3ee4))
-            goto LAB_026d7804;
-        }
-        else if (csvid != 0x3f6e)
-          goto LAB_026d7f47;
-      }
-      goto LAB_026da344;
-    }
-  LAB_026d77b7:
-    uVar2 = uVar2 | 0x10000;
-  LAB_026d77c0:
-    if ((sp_key & 0x20000U) != 0)
-      goto LAB_026d77cc;
-  LAB_026d7f47:
-    if (((sp_key & 0x20000000U) != 0) && (csvid == 0x4622))
-    {
-      uVar2 = uVar2 | 0x20000000;
-      goto joined_r0x026d7f21;
-    }
-  LAB_026d7804:
-    if ((sp_key & 0x800000U) == 0)
-      goto LAB_026d7ece;
-  LAB_026d7810:
-    if (csvid == 0x3924)
-    {
-    LAB_026d7ec8:
-      uVar2 = uVar2 | 0x800000;
-      goto LAB_026d7ece;
-    }
-    if (0x3924 < csvid)
-    {
-      if (csvid != 0x4814)
-      {
-        if (csvid < 0x4815)
-        {
-          if (csvid != 0x4276)
-          {
-            if (csvid < 0x4277)
-            {
-              if (csvid != 0x3d46)
-              {
-                if (csvid < 0x3d47)
-                {
-                  if (csvid != 0x3c2a)
-                  {
-                    if (csvid < 0x3c2b)
-                    {
-                      if (csvid == 0x3a08)
-                        goto LAB_026d7ec8;
-                      if (csvid != 0x3a17)
-                        goto joined_r0x026d7f21;
-                      uVar2 = uVar2 | 0x800000;
-                    }
-                    else
-                    {
-                      if (csvid != 0x3cfb)
-                        goto joined_r0x026d7f21;
-                      uVar2 = uVar2 | 0x800000;
-                    }
-                    goto LAB_026d7ece;
-                  }
-                }
-                else if ((csvid != 0x3db6) && (csvid != 0x411f))
-                {
-                  if (csvid != 0x3d80)
-                    goto joined_r0x026d7f21;
-                  uVar2 = uVar2 | 0x800000;
-                  goto LAB_026d7ece;
-                }
-              }
-            }
-            else if (csvid != 0x45f7)
-            {
-              if (csvid < 0x45f8)
-              {
-                if ((csvid == 0x43d6) || (csvid == 0x4427))
-                  goto LAB_026d7ec8;
-                if (csvid != 0x434d)
-                  goto joined_r0x026d7f21;
-                uVar2 = uVar2 | 0x800000;
-              }
-              else
-              {
-                if (csvid == 0x47c7)
-                  goto LAB_026d7ec8;
-                if (csvid < 0x47c8)
-                {
-                  if (csvid != 0x4776)
-                    goto joined_r0x026d7f21;
-                  uVar2 = uVar2 | 0x800000;
-                }
-                else
-                {
-                  if (1 < csvid - 0x480fU)
-                    goto joined_r0x026d7f21;
-                  uVar2 = uVar2 | 0x800000;
-                }
-              }
-              goto LAB_026d7ece;
-            }
-          }
-        }
-        else if (csvid != 0x4f8f)
-        {
-          if (csvid < 0x4f90)
-          {
-            if (csvid != 0x4bf6)
-            {
-              if (csvid < 0x4bf7)
-              {
-                if (csvid != 0x4b4f)
-                {
-                  if (csvid < 0x4b50)
-                  {
-                    if (csvid == 0x4a63)
-                      goto LAB_026d7ec8;
-                    if (csvid != 0x4ac0)
-                      goto joined_r0x026d7f21;
-                    uVar2 = uVar2 | 0x800000;
-                  }
-                  else
-                  {
-                    if (csvid != 0x4bf2)
-                      goto joined_r0x026d7f21;
-                    uVar2 = uVar2 | 0x800000;
-                  }
-                  goto LAB_026d7ece;
-                }
-              }
-              else if ((csvid != 0x4d29) && (csvid != 0x4e55))
-              {
-                if (csvid != 0x4cc6)
-                  goto joined_r0x026d7f21;
-                uVar2 = uVar2 | 0x800000;
-                goto LAB_026d7ece;
-              }
-            }
-          }
-          else if (csvid != 0x54a9)
-          {
-            if (csvid < 0x54aa)
-            {
-              if ((csvid == 0x544e) || (csvid == 0x5481))
-                goto LAB_026d7ec8;
-              if (csvid != 0x5404)
-                goto joined_r0x026d7f21;
-              uVar2 = uVar2 | 0x800000;
-            }
-            else
-            {
-              if ((csvid == 0x5538) || (csvid == 0x569d))
-                goto LAB_026d7ec8;
-              if (csvid != 0x54ab)
-                goto joined_r0x026d7f21;
-              uVar2 = uVar2 | 0x800000;
-            }
-            goto LAB_026d7ece;
-          }
-        }
-      }
-      goto LAB_026d7ec8;
-    }
-    if (csvid == 0x307e)
-      goto LAB_026d7ec8;
-    if (0x307e < csvid)
-    {
-      if (csvid == 0x3618)
-        goto LAB_026d7ec8;
-      if (csvid < 0x3619)
-      {
-        if (csvid == 0x333a)
-          goto LAB_026d7ec8;
-        if (0x333a < csvid)
-        {
-          if (((csvid == 0x344c) || (csvid == 0x34fe)) || (csvid == 0x3431))
-            goto LAB_026d7ec8;
-          if ((sp_key & 0x2000000U) == 0)
-            goto joined_r0x026d7f21;
-          goto LAB_026db312;
-        }
-        if (csvid == 0x3208)
-          goto LAB_026d7ec8;
-        if (0x3208 < csvid)
-        {
-          if (csvid == 0x32c0)
-            goto LAB_026d7ec8;
-          if ((sp_key & 0x2000000U) == 0)
-            goto joined_r0x026d7f21;
-          goto LAB_026db31f;
-        }
-        if ((csvid == 0x30b1) || (csvid == 0x3138))
-          goto LAB_026d7ec8;
-        if ((sp_key & 0x2000000U) == 0)
-          goto joined_r0x026d7f21;
-        goto LAB_026db5d3;
-      }
-      if (csvid == 0x3819)
-        goto LAB_026d7ec8;
-      if (csvid < 0x381a)
-      {
-        if (((csvid == 0x377a) || (csvid == 0x3800)) || (csvid == 0x36dc))
-          goto LAB_026d7ec8;
-        if ((sp_key & 0x2000000U) == 0)
-          goto joined_r0x026d7f21;
-        goto LAB_026db2a6;
-      }
-      if (((csvid - 0x3894U & 0xfffffffb) == 0) || (csvid == 0x385f))
-        goto LAB_026d7ec8;
-      if ((sp_key & 0x2000000U) == 0)
-        goto joined_r0x026d7f21;
-    LAB_026db23c:
-      if (csvid == 0x387d)
-      {
-        uVar2 = uVar2 | 0x2000000;
-      }
-      goto joined_r0x026d7f21;
-    }
-    if (csvid == 0x2ba2)
-      goto LAB_026d7ec8;
-    if (0x2ba2 < csvid)
-    {
-      if (0x2e22 < csvid)
-      {
-        if ((csvid == 0x2eda) || (csvid == 0x2ee8))
-          goto LAB_026d7ec8;
-        if (csvid == 0x2eb9)
-        {
-          uVar2 = uVar2 | 0x800000;
-        }
-        goto LAB_026d7ece;
-      }
-      if (0x2e03 < csvid)
-      {
-        if ((1U << (cVar1 - 4U & 0x1f) & 0x40400001U) == 0)
-          goto joined_r0x026d7f21;
-        uVar2 = uVar2 | 0x800000;
-        goto LAB_026d7ece;
-      }
-      if (csvid == 0x2d15)
-        goto LAB_026d7ec8;
-      if ((sp_key & 0x2000000U) == 0)
-        goto joined_r0x026d7f21;
-      goto LAB_026d7ef0;
-    }
-    if (csvid == 0x1fbf)
-      goto LAB_026d7ec8;
-    if (csvid < 0x1fc0)
-    {
-      if (csvid != 0x1a65)
-      {
-        if (csvid < 0x1a66)
-        {
-          if (csvid == 0x10f8)
-            goto LAB_026d7ec8;
-          if (csvid != 0x1107)
-            goto joined_r0x026d7f21;
-          uVar2 = uVar2 | 0x800000;
-        }
-        else
-        {
-          if (csvid != 0x1aa4)
-            goto joined_r0x026d7f21;
-          uVar2 = uVar2 | 0x800000;
-        }
-        goto LAB_026d7ece;
-      }
-      goto LAB_026d7ec8;
-    }
-    if (((csvid == 0x268e) || (csvid == 0x287d)) || (csvid == 0x252f))
-      goto LAB_026d7ec8;
-    if ((sp_key & 0x2000000U) == 0)
-      goto joined_r0x026d7f21;
-  LAB_026db176:
-    if (csvid != 0x290a)
-    {
-      if (csvid == 0x2941)
-      {
-        uVar2 = uVar2 | 0x2000000;
-      }
-      goto joined_r0x026d7f21;
-    }
-  }
-  else
-  {
-    if (0x9f6 < csvid)
-    {
-      if ((csvid != 0xa26) && (csvid != 0xa32))
-        goto LAB_026d773d;
-      goto LAB_026d7e2b;
-    }
-    if (csvid == 0x9ab)
-      goto LAB_026d7e2b;
-    if (0x9ab < csvid)
-    {
-      if (csvid != 0x9d3)
-        goto LAB_026d773d;
-      uVar2 = uVar2 | 0x2000;
-      goto LAB_026d7ab0;
-    }
-    if (csvid - 0x975U < 2)
-    {
-      uVar2 = uVar2 | 0x2000;
-      goto LAB_026d7ab0;
-    }
-  LAB_026d773d:
-    if ((sp_key & 0x4000U) != 0)
-    {
-    LAB_026d7742:
-      if ((csvid & 0xfffffff7U) == 0x2510)
-        goto LAB_026d87bb;
-    }
-  LAB_026d7753:
-    if ((sp_key & 0x8000U) == 0)
-      goto LAB_026d775c;
-    if (csvid == 0x1d44)
-    {
-    LAB_026d7fcb:
-      uVar2 = uVar2 | 0x8000;
-      goto LAB_026d775c;
-    }
-    if (0x1d44 < csvid)
-    {
-      if (csvid != 0x1db1)
-      {
-        if (csvid < 0x1db2)
-        {
-          if (csvid < 0x1d93)
-          {
-            if (csvid < 0x1d7a)
-            {
-              if ((csvid == 0x1d69) || ((csvid & 0xfffffff7U) == 0x1d47))
-                goto LAB_026d7fcb;
-            }
-            else if ((1U << (cVar1 + 0x86U & 0x1f) & 0x1004001U) != 0)
-              goto LAB_026d7fcb;
-          }
-          else if (csvid == 0x1da0)
-            goto LAB_026d7fcb;
-        }
-        else
-        {
-          if (0x1e05 < csvid)
-          {
-            if (csvid != 0x1e2f)
-              goto LAB_026d80d9;
-            goto LAB_026d7fcb;
-          }
-          if (0x1de4 < csvid)
-          {
-            switch (csvid)
-            {
-            case 0x1de5:
-            case 0x1de6:
-            case 0x1dec:
-            case 0x1df1:
-            case 0x1e00:
-            case 0x1e05:
-              goto LAB_026d7fcb;
-            }
-          }
-        }
-        goto LAB_026d775c;
-      }
-      goto LAB_026d7fcb;
-    }
-    if (csvid < 0x1ca0)
-    {
-      if (0x1c6d < csvid)
-      {
-        switch (csvid)
-        {
-        case 0x1c6e:
-        case 0x1c77:
-        case 0x1c79:
-        case 0x1c8c:
-        case 0x1c93:
-        case 0x1c99:
-        case 0x1c9f:
-          goto LAB_026d7fcb;
-        }
-        goto LAB_026d775c;
-      }
-      switch (csvid)
-      {
-      case 0x1bfa:
-      case 0x1c02:
-      case 0x1c07:
-      case 0x1c14:
-      case 0x1c1a:
-        goto LAB_026d7fcb;
-      case 0x1bfb:
-      case 0x1bfc:
-      case 0x1bfd:
-      case 0x1bfe:
-      case 0x1bff:
-      case 0x1c00:
-      case 0x1c01:
-      case 0x1c03:
-      case 0x1c04:
-      case 0x1c05:
-      case 0x1c06:
-      case 0x1c08:
-      case 0x1c09:
-      case 0x1c0a:
-      case 0x1c0b:
-      case 0x1c0c:
-      case 0x1c0d:
-      case 0x1c0e:
-      case 0x1c0f:
-      case 0x1c10:
-      case 0x1c11:
-      case 0x1c12:
-      case 0x1c13:
-      case 0x1c15:
-      case 0x1c16:
-      case 0x1c17:
-      case 0x1c18:
-      case 0x1c19:
-        goto LAB_026d775c;
-      default:
-        if ((sp_key & 0x10000U) == 0)
-          goto LAB_026d77c0;
-      }
-    LAB_026db89c:
-      if (csvid == 0xf6a)
-        goto LAB_026d77b7;
-      if (0xf6a < csvid)
-        goto LAB_026d7ff0;
-      if ((csvid == 0x49a) || (csvid == 0x86d))
-        goto LAB_026d77b7;
-    }
-    else
-    {
-      if (csvid < 0x1cca)
-      {
-        if ((csvid < 0x1cc1) || ((1U << (cVar1 + 0x3fU & 0x1f) & 0x131U) == 0))
-          goto LAB_026d775c;
-        goto LAB_026d7fcb;
-      }
-      if (csvid == 0x1ce8)
-        goto LAB_026d7fcb;
-      if ((sp_key & 0x10000U) == 0)
-        goto LAB_026d77c0;
-    LAB_026d7ff0:
-      if ((csvid == 0x1d00) || (csvid == 0x255c))
-        goto LAB_026d77b7;
-    }
-  LAB_026d8006:
-    if ((sp_key & 0x20000U) != 0)
-    {
-    LAB_026d77cc:
-      if (csvid == 0x3e60)
-        goto LAB_026da344;
-      if (0x3e60 < csvid)
-        goto LAB_026d77dd;
-    LAB_026db802:
-      if (csvid < 0x3dd1)
-      {
-        if ((0x3dc4 < csvid) && ((1U << (cVar1 + 0x3bU & 0x1f) & 0x821U) != 0))
-        {
-        LAB_026da344:
-          uVar2 = uVar2 | 0x20000;
-          goto LAB_026d7f47;
-        }
-      }
-      else
-      {
-      LAB_026da332:
-        if ((csvid == 0x3e2a) || (csvid == 0x3e37))
-          goto LAB_026da344;
-      }
-      goto LAB_026d7804;
-    }
-    if ((sp_key & 0x800000U) != 0)
-      goto LAB_026d7810;
-  LAB_026d7ece:
-    if ((sp_key & 0x2000000U) == 0)
-      goto joined_r0x026d7f21;
-    if (csvid < 0x2fc9)
-    {
-      if (0x2fae < csvid)
-      {
-        if ((1U << (cVar1 + 0x51U & 0x1f) & 0x2000101U) != 0)
-        {
-          uVar2 = uVar2 | 0x2000000;
-        }
-        goto joined_r0x026d7f21;
-      }
-    LAB_026d7ef0:
-      if (csvid != 0x2d31)
-      {
-        if (csvid < 0x2d32)
-        {
-          if (csvid != 0x2bc8)
-          {
-            if (0x2bc8 < csvid)
-            {
-              if (csvid == 0x2bfd)
-              {
-                uVar2 = uVar2 | 0x2000000;
-              }
-              goto joined_r0x026d7f21;
-            }
-            goto LAB_026db176;
-          }
-        }
-        else if (csvid != 0x2f33)
-        {
-          if (csvid < 0x2f34)
-          {
-            if (csvid != 0x2e73)
-            {
-              if (csvid == 0x2eb6)
-              {
-                uVar2 = uVar2 | 0x2000000;
-              }
-              goto joined_r0x026d7f21;
-            }
-          }
-          else if (csvid != 0x2f89)
-            goto joined_r0x026d7f21;
-        }
-      }
-    }
-    else
-    {
-    LAB_026db312:
-      if (csvid != 0x33fc)
-      {
-        if (csvid < 0x33fd)
-        {
-        LAB_026db31f:
-          if (csvid != 0x32f8)
-          {
-            if (0x32f8 < csvid)
-            {
-              if (csvid < 0x33c7)
-              {
-                if (0x33c4 < csvid)
-                {
-                  uVar2 = uVar2 | 0x2000000;
-                }
-              }
-              else if (csvid == 0x33dc)
-              {
-                uVar2 = uVar2 | 0x2000000;
-              }
-              goto joined_r0x026d7f21;
-            }
-            if (csvid != 0x306b)
-            {
-            LAB_026db5d3:
-              if (csvid == 0x30f8)
-              {
-                uVar2 = uVar2 | 0x2000000;
-              }
-              goto joined_r0x026d7f21;
-            }
-          }
-        }
-        else
-        {
-        LAB_026db2a6:
-          if (csvid != 0x372e)
-          {
-            if (0x372e < csvid)
-              goto LAB_026db23c;
-            if (csvid != 0x3459)
-            {
-              if (csvid == 0x3596)
-              {
-                uVar2 = uVar2 | 0x2000000;
-              }
-              goto joined_r0x026d7f21;
-            }
-          }
-        }
-      }
-    }
-  }
-  uVar2 = uVar2 | 0x2000000;
-joined_r0x026d7f21:
-  if ((sp_key & 0x40000000U) != 0)
-  {
-    switch (csvid)
-    {
-    case 0x107a:
-    case 0x107e:
-    case 0x1084:
-    case 0x1086:
-    case 0x108a:
-    case 0x108e:
-    case 0x108f:
-    case 0x1099:
-    case 0x109b:
-    case 0x10a1:
-    case 0x10a4:
-    case 0x10a6:
-    case 0x10a8:
-    case 0x10ae:
-    case 0x10be:
-    case 0x10c0:
-    case 0x10c1:
-    case 0x10c2:
-    case 0x10c3:
-    case 0x10c6:
-    case 0x10cb:
-    case 0x10d9:
-    case 0x10da:
-    case 0x10e1:
-    case 0x10e2:
-    case 0x10e4:
-    case 0x10ef:
-      return uVar2 | 0x40000000;
-    }
-  }
-  return uVar2;
 }
 
 
@@ -6402,13 +2937,11 @@ int get_special_abilities(int player, int card)
 /* ManalinkEh 2022: 0x26df890; original functions/abilities.c:2786. */
 int check_for_special_ability(int player, int card, int keyword)
 {
-  int result;
   card_instance_t *instance;
   unsigned int uVar2;
   if (player == -1)
   {
-    result = has_sp_key_by_csvid_impl((unsigned int)cards_data[card].id, keyword);
-    return result;
+    return has_sp_key_by_csvid_impl((unsigned int)cards_data[card].id, keyword);
   }
   instance = get_card_instance(player, card);
   uVar2 = get_special_abilities_by_instance(instance);
@@ -6438,7 +2971,6 @@ static void lure_effect_part(int player, int card, event_t event, int luring_pla
 {
   uint8_t uVar1;
   card_instance_t *pcVar2;
-  int iVar3;
   card_instance_t *pcVar4;
   unsigned int uVar5;
   int iVar6;
@@ -6457,7 +2989,7 @@ static void lure_effect_part(int player, int card, event_t event, int luring_pla
          (pcVar2 = in_play(luring_player, luring_card), pcVar2 != NULL)) &&
         ((pcVar2->state & 4) != 0))
     {
-      if ((all_must_block == 0) && (iVar3 = is_unblocked(luring_player, luring_card), iVar3 == 0))
+      if ((all_must_block == 0) && (is_unblocked(luring_player, luring_card) == 0))
       {
         return;
       }
@@ -6474,8 +3006,7 @@ static void lure_effect_part(int player, int card, event_t event, int luring_pla
       td.who_chooses = iVar6;
       td.preferred_controller = td.allowed_controller;
       td.required_subtype = subtype;
-      iVar6 = can_target(&td);
-      if (iVar6 != 0)
+      if (can_target(&td) != 0)
       {
         if (event == EVENT_TRIGGER)
         {
@@ -6494,8 +3025,7 @@ static void lure_effect_part(int player, int card, event_t event, int luring_pla
               load_text(NULL, "PROMPT_CHOOSEBLOCKERS");
               prompt = text_lines[0];
             }
-            iVar6 = is_what(player, card, 0x80);
-            if (iVar6 == 0)
+            if (is_what(player, card, 0x80) == 0)
             {
               uVar5 = get_id(player, card);
             }
@@ -6518,8 +3048,7 @@ static void lure_effect_part(int player, int card, event_t event, int luring_pla
             {
               return;
             }
-            iVar6 = can_target(&td);
-            if (iVar6 == 0)
+            if (can_target(&td) == 0)
             {
               return;
             }
@@ -6557,88 +3086,57 @@ static void lure_effect(int player, int card, event_t event, int luring_player,
 /* ManalinkEh 2022: 0x26dd080; original functions/abilities.c:651. */
 static void deathtouch_part(int player, int card)
 {
-  card_ext_t *pcVar1;
-  card_instance_t *instance;
-
-  instance = get_card_instance(player, card);
-  pcVar1 = instance->ext;
-  if (((uint32_t)player_bits[player] & 0x40) != 0)
-  {
-    pcVar1->sp_keywords = pcVar1->sp_keywords & 0xfffffdff;
-    return;
-  }
-  pcVar1->sp_keywords = pcVar1->sp_keywords | 0x200;
-  return;
+  card_instance_t *instance = get_card_instance(player, card);
+  card_ext_t *extension = instance->ext;
+  if (player_bits[player] & PB_CANT_HAVE_OR_GAIN_DEATHTOUCH)
+    extension->sp_keywords &= ~SP_KEYWORD_DEATHTOUCH;
+  else
+    extension->sp_keywords |= SP_KEYWORD_DEATHTOUCH;
 }
 
 
 /* ManalinkEh 2022: 0x26dd0c0; original functions/abilities.c:653. */
 static void hexproof_part(int player, int card)
 {
-  card_ext_t *pcVar1;
-  card_instance_t *instance;
-
-  instance = get_card_instance(player, card);
-  pcVar1 = instance->ext;
-  if ((((uint32_t)player_bits[player] >> 8 & 0xffU) & 1) != 0)
-  {
-    pcVar1->sp_keywords = pcVar1->sp_keywords & 0xff7fffff;
-    return;
-  }
-  pcVar1->sp_keywords = pcVar1->sp_keywords | 0x800000;
-  return;
+  card_instance_t *instance = get_card_instance(player, card);
+  card_ext_t *extension = instance->ext;
+  if (player_bits[player] & PB_CANT_HAVE_OR_GAIN_HEXPROOF)
+    extension->sp_keywords &= ~SP_KEYWORD_HEXPROOF;
+  else
+    extension->sp_keywords |= SP_KEYWORD_HEXPROOF;
 }
 
 
 /* ManalinkEh 2022: 0x26dd110; original functions/abilities.c:655. */
 static void indestructible_part(int player, int card)
 {
-  card_instance_t *instance;
-
-  instance = get_card_instance(player, card);
-  instance->ext->sp_keywords = instance->ext->sp_keywords | 0x800;
-  return;
+  card_instance_t *instance = get_card_instance(player, card);
+  instance->ext->sp_keywords |= SP_KEYWORD_INDESTRUCTIBLE;
 }
 
 
 /* ManalinkEh 2022: 0x26dd150; original functions/abilities.c:803. */
 static int attack_if_able_part(int player, int card)
 {
-  card_instance_t *instance;
-  int iVar2;
-  int iVar3;
-  iVar3 = player;
-  instance = get_card_instance(player, card);
-  if ((instance->state & 0x8000) == 0)
+  card_instance_t *instance = get_card_instance(player, card);
+  if (!(instance->state & STATE_UNKNOWN8000))
   {
-    instance->state = instance->state | 0x8000;
-    iVar2 = can_attack(player, card);
-    iVar3 = player;
-    if (iVar2 != 0)
-    {
+    instance->state |= STATE_UNKNOWN8000;
+    if (can_attack(player, card))
       must_attack = 1;
-      return player;
-    }
   }
-  return iVar3;
+  return player;
 }
 
 
 /* ManalinkEh 2022: 0x26dd1a0; original functions/abilities.c:1140. */
 static void vigilance_part(int player, int card)
 {
-  card_instance_t *instance;
-  int result;
-
-  instance = get_card_instance(player, card);
-  instance->ext->sp_keywords = instance->ext->sp_keywords | 8;
-  if (((player != -1) && (card != -1)) &&
-      (result = is_humiliated(player, card, AL_KEY), result != 0))
-  {
+  card_instance_t *instance = get_card_instance(player, card);
+  instance->ext->sp_keywords |= SP_KEYWORD_VIGILANCE;
+  if (player != -1 && card != -1 && is_humiliated(player, card, AL_KEY))
     return;
-  }
-  instance->state = instance->state | 0x2000;
-  return;
+  instance->state |= STATE_VIGILANCE;
 }
 
 
@@ -6695,20 +3193,12 @@ int attack_if_able(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x26def40; original functions/abilities.c:861. */
 int block_if_able(int player, int card, event_t event)
 {
-  unsigned int uVar1;
-  card_instance_t *instance;
-
-  instance = get_card_instance(player, card);
-  uVar1 = instance->ext->sp_keywords;
-  if ((uVar1 & 0x4000000) == 0)
-  {
-    instance->ext->sp_keywords = uVar1 | 0x4000000;
-  }
-  if ((current_turn != player) && (event == EVENT_DECLARE_BLOCKERS))
-  {
+  card_instance_t *instance = get_card_instance(player, card);
+  unsigned int keyword = instance->ext->sp_keywords;
+  if (!(keyword & SP_KEYWORD_MUST_BLOCK))
+    instance->ext->sp_keywords = keyword | SP_KEYWORD_MUST_BLOCK;
+  if (current_turn != player && event == EVENT_DECLARE_BLOCKERS)
     select_blocker(player, card, player);
-    return 0;
-  }
   return 0;
 }
 
@@ -6733,10 +3223,8 @@ static void granted_flanking_part(int s_player, int s_card, int t_player, int t_
   char *pcVar2;
   int card;
   bool bVar3;
-  unsigned char bVar4;
   unsigned int uStack_148;
   char marked[2][151];
-  bVar4 = 0;
   result = check_for_special_ability(t_player, t_card, 0x2000);
   if (result != 0)
   {
@@ -6756,7 +3244,7 @@ static void granted_flanking_part(int s_player, int s_card, int t_player, int t_
       pcVar2[1] = '\0';
       pcVar2[2] = '\0';
       pcVar2[3] = '\0';
-      pcVar2 = pcVar2 + (unsigned int)bVar4 * -8 + 4;
+      pcVar2 = pcVar2 + 4u;
     }
     if (!bVar3)
     {
@@ -6822,266 +3310,139 @@ void granted_flanking(int s_player, int s_card, int t_player, int t_card, event_
 void special_abilities(int player, int card, event_t event, int sp_abilities,
                             int source_player, int source_card)
 {
-  unsigned char bVar1;
-  unsigned char bVar2;
-  unsigned char bVar3;
-  unsigned char bVar4;
-  card_instance_t *pcVar5;
-  card_instance_t *pcVar6;
-  unsigned char bVar7;
-  unsigned char bVar8;
-  bool bVar9;
+  card_instance_t *instance;
+  card_instance_t *target;
 
-  pcVar5 = get_card_instance(player, card);
-  bVar9 = event == EVENT_ABILITIES;
-  bVar1 = (unsigned char)((unsigned int)sp_abilities >> 1) & bVar9;
-  bVar2 = (unsigned char)((unsigned int)sp_abilities >> 4) & bVar9;
-  bVar8 = (unsigned char)((unsigned int)sp_abilities >> 2) & bVar9;
-  bVar3 = (unsigned char)((unsigned int)sp_abilities >> 5) & bVar9;
-  bVar7 = (unsigned char)((unsigned int)sp_abilities >> 3) & bVar9;
-  bVar4 = (unsigned char)((unsigned int)sp_abilities >> 8) & bVar9;
-  if (((sp_abilities & 1U) == 0) || (!bVar9))
+  instance = get_card_instance(player, card);
+  if ((sp_abilities & SP_KEYWORD_FEAR) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
   {
-  LAB_026dfb5b:
-    if ((bVar1 != 0) && (card == affected_card))
-    {
-      if (player != affected_card_controller)
-        goto LAB_026dfed0;
-      pcVar6 = get_card_instance(player, card);
-      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 2;
-    }
-  LAB_026dfb65:
-    if ((bVar8 != 0) && (card == affected_card))
-    {
-      if (player != affected_card_controller)
-        goto LAB_026dfed8;
-      pcVar6 = get_card_instance(player, card);
-      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 4;
-    }
-  LAB_026dfb6d:
-    if ((bVar7 == 0) || (card != affected_card))
-      goto LAB_026dfb75;
-    if (player == affected_card_controller)
-    {
-      vigilance_part(player, card);
-      goto LAB_026dfb75;
-    }
-  LAB_026dfee0:
-    if (bVar2 != 0)
-      goto LAB_026dfef0;
-  LAB_026dfb7f:
-    if ((bVar3 == 0) || (card != affected_card))
-      goto LAB_026dfb89;
-    if (player == affected_card_controller)
-    {
-      pcVar6 = get_card_instance(player, card);
-      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x20;
-      goto LAB_026dfb89;
-    }
-  LAB_026dff00:
-    if (bVar4 != 0)
-    {
-      bVar1 = (unsigned char)((unsigned int)sp_abilities >> 9) & bVar9;
-      goto LAB_026dff18;
-    }
-  LAB_026dfb93:
-    if (((sp_abilities & 0x200U) != 0) && (bVar9))
-    {
-    LAB_026dff68:
-      if ((card == affected_card) && (player == affected_card_controller))
-      {
-        deathtouch_part(player, card);
-      }
-      goto LAB_026dfbb4;
-    }
-  LAB_026dfba2:
-    if (((sp_abilities & 0x400U) == 0) || (event != EVENT_BEGIN_COMBAT))
-      goto LAB_026dfbb4;
-    if ((player == current_turn) && (forbid_attack == 0))
-    {
-      attack_if_able_part(player, card);
-    }
+    target = get_card_instance(player, card);
+    target->ext->sp_keywords |= SP_KEYWORD_FEAR;
   }
-  else
+  if ((sp_abilities & SP_KEYWORD_LIFELINK) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
   {
-    if (card != affected_card)
-      goto LAB_026dfb65;
-    if (player == affected_card_controller)
-    {
-      pcVar6 = get_card_instance(player, card);
-      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 1;
-      goto LAB_026dfb5b;
-    }
-    if (bVar1 == 0)
-      goto LAB_026dfb65;
-  LAB_026dfed0:
-    if (bVar8 == 0)
-      goto LAB_026dfb6d;
-  LAB_026dfed8:
-    if (bVar7 != 0)
-      goto LAB_026dfee0;
-  LAB_026dfb75:
-    if ((bVar2 == 0) || (card != affected_card))
-      goto LAB_026dfb7f;
-    if (player == affected_card_controller)
-    {
-      pcVar6 = get_card_instance(player, card);
-      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x10;
-      goto LAB_026dfb7f;
-    }
-  LAB_026dfef0:
-    if (bVar3 != 0)
-      goto LAB_026dff00;
-  LAB_026dfb89:
-    if (bVar4 == 0)
-      goto LAB_026dfb93;
-    if (card != affected_card)
-    {
-      if (((sp_abilities & 0x200U) != 0) && (bVar9))
-        goto LAB_026dfbb4;
-      goto LAB_026dfba2;
-    }
-    bVar1 = (unsigned char)((unsigned int)sp_abilities >> 9) & bVar9;
-    if (player == affected_card_controller)
-    {
-      pcVar6 = get_card_instance(player, card);
-      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x100;
-      if (bVar1 == 0)
-        goto LAB_026dfbb4;
-      goto LAB_026dff68;
-    }
-  LAB_026dff18:
-    if (bVar1 == 0)
-      goto LAB_026dfba2;
-  LAB_026dfbb4:
-    if (((((sp_abilities & 0x800U) != 0) && (bVar9)) && (card == affected_card)) &&
-        (player == affected_card_controller))
-    {
-      indestructible_part(player, card);
-    }
+    target = get_card_instance(player, card);
+    target->ext->sp_keywords |= SP_KEYWORD_LIFELINK;
   }
-  if ((sp_abilities & 0x1000U) != 0)
+  if ((sp_abilities & SP_KEYWORD_HASTE) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
+  {
+    target = get_card_instance(player, card);
+    target->ext->sp_keywords |= SP_KEYWORD_HASTE;
+  }
+  if ((sp_abilities & SP_KEYWORD_VIGILANCE) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
+  {
+    vigilance_part(player, card);
+  }
+  if ((sp_abilities & SP_KEYWORD_UNBLOCKABLE) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
+  {
+    target = get_card_instance(player, card);
+    target->ext->sp_keywords |= SP_KEYWORD_UNBLOCKABLE;
+  }
+  if ((sp_abilities & SP_KEYWORD_CANNOT_BLOCK) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
+  {
+    target = get_card_instance(player, card);
+    target->ext->sp_keywords |= SP_KEYWORD_CANNOT_BLOCK;
+  }
+  if ((sp_abilities & SP_KEYWORD_SHADOW) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
+  {
+    target = get_card_instance(player, card);
+    target->ext->sp_keywords |= SP_KEYWORD_SHADOW;
+  }
+  if ((sp_abilities & SP_KEYWORD_DEATHTOUCH) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
+  {
+    deathtouch_part(player, card);
+  }
+  if ((sp_abilities & SP_KEYWORD_MUST_ATTACK) && event == EVENT_BEGIN_COMBAT &&
+      player == current_turn && forbid_attack == 0)
+  {
+    attack_if_able_part(player, card);
+  }
+  if ((sp_abilities & SP_KEYWORD_INDESTRUCTIBLE) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
+  {
+    indestructible_part(player, card);
+  }
+  if (sp_abilities & SP_KEYWORD_MUST_BE_BLOCKED)
   {
     lure_effect(source_player, source_card, event, player, card, 0, -1, 0, NULL);
   }
-  if ((sp_abilities & 0x2000U) != 0)
+  if (sp_abilities & SP_KEYWORD_FLANKING)
   {
     granted_flanking(source_player, source_card, player, card, event);
   }
-  if ((((sp_abilities & 0x4000U) != 0) && (bVar9)) &&
-      ((card == affected_card && (player == affected_card_controller))))
+  if ((sp_abilities & SP_KEYWORD_WITHER) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
   {
-    pcVar6 = get_card_instance(player, card);
-    pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x4000;
+    target = get_card_instance(player, card);
+    target->ext->sp_keywords |= SP_KEYWORD_WITHER;
   }
-  if ((sp_abilities & 0x400000U) != 0)
+  if (sp_abilities & SP_KEYWORD_LURE)
   {
     lure_effect(source_player, source_card, event, player, card, 1, -1, 0, NULL);
   }
-  bVar1 = (unsigned char)((unsigned int)sp_abilities >> 0x18);
-  if (((sp_abilities & 0x800000U) == 0) || (!bVar9))
-  {
-  LAB_026dfc0b:
-    if ((((bVar1 >> 1 & bVar9) != 0) && (card == affected_card)) &&
-        (player == affected_card_controller))
-    {
-      pcVar6 = get_card_instance(player, card);
-      pcVar6->ext->sp_keywords = pcVar6->ext->sp_keywords | 0x2000000;
-    }
-  }
-  else if ((card == affected_card) && (player == affected_card_controller))
+  if ((sp_abilities & SP_KEYWORD_HEXPROOF) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
   {
     hexproof_part(player, card);
-    goto LAB_026dfc0b;
   }
-  if ((sp_abilities & 0x4000000U) != 0)
+  if ((sp_abilities & SP_KEYWORD_INTIMIDATE) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
+  {
+    target = get_card_instance(player, card);
+    target->ext->sp_keywords |= SP_KEYWORD_INTIMIDATE;
+  }
+  if (sp_abilities & SP_KEYWORD_MUST_BLOCK)
   {
     block_if_able(player, card, event);
   }
-  if ((sp_abilities & 0x8000000U) != 0)
+  if (sp_abilities & SP_KEYWORD_SHADOW_HOSER)
   {
-    pcVar5->ext->sp_keywords = pcVar5->ext->sp_keywords | 0x8000000;
+    instance->ext->sp_keywords |= SP_KEYWORD_SHADOW_HOSER;
   }
-  bVar2 = (unsigned char)((unsigned int)sp_abilities >> 0x15) & bVar9;
-  bVar4 = (unsigned char)((unsigned int)sp_abilities >> 0x13) & bVar9;
-  bVar3 = (unsigned char)((unsigned int)sp_abilities >> 0x11) & bVar9;
-  bVar7 = bVar1 >> 5 & bVar9;
-  if (((sp_abilities & 0x10000U) == 0) || (!bVar9))
+  if ((sp_abilities & SP_KEYWORD_MENACE) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
   {
-  LAB_026dfc72:
-    if ((bVar4 != 0) && (card == affected_card))
-    {
-      if (player != affected_card_controller)
-        goto LAB_026dfe78;
-      pcVar5 = get_card_instance(player, card);
-      pcVar5->ext->sp_keywords = pcVar5->ext->sp_keywords | 0x80000;
-    }
-  LAB_026dfc7a:
-    if (bVar2 == 0)
-    {
-    LAB_026dfc84:
-      if ((bVar3 != 0) && (card == affected_card))
-      {
-        if (player != affected_card_controller)
-          goto LAB_026dfe98;
-        pcVar5 = get_card_instance(player, card);
-        pcVar5->ext->sp_keywords = pcVar5->ext->sp_keywords | 0x20000;
-      }
-    }
-    else if (card == affected_card)
-    {
-      if (player != affected_card_controller)
-        goto LAB_026dfe88;
-      pcVar5 = get_card_instance(player, card);
-      pcVar5->ext->sp_keywords = pcVar5->ext->sp_keywords | 0x200000;
-      goto LAB_026dfc84;
-    }
-  LAB_026dfc8e:
-    if (bVar7 != 0)
-    {
-      if (card != affected_card)
-      {
-        return;
-      }
-      if (player != affected_card_controller)
-      {
-        return;
-      }
-      pcVar5 = get_card_instance(player, card);
-      pcVar5->ext->sp_keywords = pcVar5->ext->sp_keywords | 0x20000000;
-    }
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords |= SP_KEYWORD_MENACE;
   }
-  else
+  if ((sp_abilities & SP_KEYWORD_MINBLOCKERS_3) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
   {
-    if (card != affected_card)
-      goto LAB_026dfc7a;
-    if (player == affected_card_controller)
-    {
-      pcVar5 = get_card_instance(player, card);
-      pcVar5->ext->sp_keywords = pcVar5->ext->sp_keywords | 0x10000;
-      goto LAB_026dfc72;
-    }
-    if (bVar4 == 0)
-      goto LAB_026dfc7a;
-  LAB_026dfe78:
-    if (bVar2 == 0)
-      goto LAB_026dfc84;
-  LAB_026dfe88:
-    if (bVar3 == 0)
-      goto LAB_026dfc8e;
-  LAB_026dfe98:
-    if (bVar7 != 0)
-    {
-      return;
-    }
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords |= SP_KEYWORD_MINBLOCKERS_3;
   }
-  if ((((bVar1 >> 6 & bVar9) != 0) && (card == affected_card)) &&
-      (player == affected_card_controller))
+  if ((sp_abilities & SP_KEYWORD_MAXBLOCKERS_1) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
   {
-    pcVar5 = get_card_instance(player, card);
-    pcVar5->ext->sp_keywords = pcVar5->ext->sp_keywords | 0x40000000;
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords |= SP_KEYWORD_MAXBLOCKERS_1;
   }
-  return;
+  if ((sp_abilities & SP_KEYWORD_SKULK) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords |= SP_KEYWORD_SKULK;
+  }
+  if ((sp_abilities & SP_KEYWORD_SQUIRRELLINK) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords |= SP_KEYWORD_SQUIRRELLINK;
+  }
+  if ((sp_abilities & SP_KEYWORD_HORSEMANSHIP) && event == EVENT_ABILITIES &&
+      card == affected_card && player == affected_card_controller)
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords |= SP_KEYWORD_HORSEMANSHIP;
+  }
 }
 
 #endif
@@ -7328,62 +3689,31 @@ int humility_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x26dd340; original functions/abilities.c:13. */
 int can_use_activated_abilities(int player, int card)
 {
-  unsigned int uVar1;
-  card_instance_t *instance;
-  unsigned int uVar3;
-
-  instance = get_card_instance(player, card);
-  uVar1 = instance->targets[0x11].card;
-  uVar3 = 1;
-  if (0 < (int)uVar1)
-  {
-    uVar3 = (unsigned int)((uVar1 & 0x28) == 0);
-  }
-  return uVar3;
+  card_instance_t *instance = get_card_instance(player, card);
+  int mode = instance->targets[17].card;
+  return mode <= 0 || !(mode & AL_NM_ACT);
 }
 
 
 /* ManalinkEh 2022: 0x26dd380; original functions/abilities.c:19. */
 int can_use_activated_abilities_by_instance(card_instance_t *instance)
 {
-  unsigned int uVar1;
-  unsigned int uVar2;
-  uVar1 = instance->targets[0x11].card;
-  uVar2 = 1;
-  if (0 < (int)uVar1)
-  {
-    uVar2 = (unsigned int)((uVar1 & 0x28) == 0);
-  }
-  return uVar2;
+  int mode = instance->targets[17].card;
+  return mode <= 0 || !(mode & AL_NM_ACT);
 }
 
 
 /* ManalinkEh 2022: 0x26dd3a0; original functions/abilities.c:24. */
 int can_produce_mana(int player, int card)
 {
-  card_instance_t *instance;
-  unsigned int uVar2;
-  unsigned int uVar3;
-  unsigned char bVar4;
-
-  instance = get_card_instance(player, card);
-  uVar3 = instance->targets[0x11].card;
-  if ((int)uVar3 < 1)
+  card_instance_t *instance = get_card_instance(player, card);
+  int mode = instance->targets[17].card;
+  int result = mode <= 0 || !(mode & AL_MANA);
+  if (player == AI && result)
   {
-    bVar4 = 1;
-    uVar3 = 1;
+    result = !(instance->ext->special_flags & SF_MANA_PRODUCER_DISABLED_FOR_AI);
   }
-  else
-  {
-    uVar2 = uVar3 >> 4 ^ 1;
-    uVar3 = uVar2 & 1;
-    bVar4 = (unsigned char)uVar2 & 1;
-  }
-  if ((player == 1) && (bVar4 != 0))
-  {
-    uVar3 = (unsigned int)((instance->ext->special_flags & SF_MANA_PRODUCER_DISABLED_FOR_AI) == 0);
-  }
-  return uVar3;
+  return result;
 }
 
 #endif
@@ -7396,14 +3726,12 @@ void remove_abilities_by_test(int player, event_t event, test_definition_t *test
 {
   ability_loss_t aVar1;
   card_instance_t *instance;
-  int result;
 
   if ((((event == EVENT_ABILITIES) || (event == EVENT_CAST_SPELL)) &&
        (instance = in_play(affected_card_controller, affected_card), instance != NULL)) &&
       (((player == 2 || (affected_card_controller == player)) &&
         ((test == NULL ||
-          (result = new_make_test_in_play(affected_card_controller, affected_card, -1, test),
-           result != 0))))))
+          (new_make_test_in_play(affected_card_controller, affected_card, -1, test) != 0))))))
   {
     instance = get_card_instance(affected_card_controller, affected_card);
     aVar1 = instance->targets[0x11].card;

@@ -566,14 +566,13 @@ int card_thromok_the_insatiable(int player, int card, event_t event ){
 
 int card_vela_the_night_clad(int player, int card, event_t event)
 {
-  int result;
   test_definition_t test;
   check_legend_rule(player, card, event);
   if (event == EVENT_ABILITIES)
   {
     if (((affected_card_controller == player) &&
-         (result = is_what(player, affected_card, 2), result != 0)) &&
-        (result = is_humiliated(player, card, AL_STATIC), result == 0))
+         (is_what(player, affected_card, 2) != 0)) &&
+        (is_humiliated(player, card, AL_STATIC) == 0))
     {
       intimidate(affected_card_controller, affected_card, EVENT_ABILITIES);
     }
@@ -592,7 +591,7 @@ int card_vela_the_night_clad(int player, int card, event_t event)
   if ((((card == affected_card) && (player == affected_card_controller)) &&
        ((trigger_cause_controller == player &&
          ((trigger_cause != card && (reason_for_trigger_controller == player)))))) &&
-      (result = is_humiliated(player, card, AL_TRIG), result == 0))
+      (is_humiliated(player, card, AL_TRIG) == 0))
   {
     default_test_definition(&test, 2);
     test_leaves_play(player, card, event, player, &test, 1, 1);
@@ -818,6 +817,7 @@ static int effect_indestructible_as_long_as_has_divinity_counter(int player, int
 }
 int card_bant(int player, int card, event_t event)
 {
+  int c;
   int iVar1;
   int iVar2;
   card_instance_t *instance;
@@ -837,21 +837,19 @@ int card_bant(int player, int card, event_t event)
     if ((instance != NULL) && (0 < active_cards_count[current_turn]))
     {
       iStack_68 = 0;
-      iVar1 = 0;
+      c = 0;
       do
       {
-        while ((instance = in_play(current_turn, iVar1),
-                instance == NULL || (iVar2 = is_what(current_turn, iVar1, 2), iVar2 == 0)))
+        if ((instance = in_play(current_turn, c),
+                instance == NULL || (iVar2 = is_what(current_turn, c, 2), iVar2 == 0)))
         {
-          iVar1 = iVar1 + 1;
-          if (active_cards_count[current_turn] <= iVar1)
-            goto LAB_02413cd8;
+          c = c + 1;
+          continue;
         }
-        iVar2 = is_humiliated(current_turn, iVar1, AL_TRIG);
+        iVar2 = is_humiliated(current_turn, c, AL_TRIG);
         iStack_68 = iStack_68 + (unsigned int)(iVar2 == 0);
-        iVar1 = iVar1 + 1;
-      } while (iVar1 < active_cards_count[current_turn]);
-    LAB_02413cd8:
+        c = c + 1;
+      } while (c < active_cards_count[current_turn]);
       if (0 < iStack_68)
       {
         pump_until_eot(player, card, current_turn, card_00, iStack_68, iStack_68);
@@ -878,8 +876,7 @@ int card_bant(int player, int card, event_t event)
     }
     instance->number_of_targets = '\0';
   }
-  iVar1 = generic_plane(player, card, event);
-  return iVar1;
+  return generic_plane(player, card, event);
 }
 
 int card_cliffside_market(int player, int card, event_t event){
@@ -1017,8 +1014,7 @@ int card_feeding_grounds(int player, int card, event_t event)
       COST_COLORLESS = COST_COLORLESS + -1;
     }
   }
-  result = generic_plane(player, card, event);
-  return result;
+  return generic_plane(player, card, event);
 }
 
 int card_fields_of_summer(int player, int card, event_t event){
@@ -1568,7 +1564,6 @@ int card_ravens_run(int player, int card, event_t event)
   target_t *ptVar2;
   int iVar3;
   card_instance_t *instance;
-  int iVar5;
   target_definition_t td;
   vanguard_card(player, card, event, 7, 0x14, 0);
   if (event == EVENT_CHAOS)
@@ -1583,8 +1578,7 @@ int card_ravens_run(int player, int card, event_t event)
       iVar3 = 0;
       while (iVar3 != 3)
       {
-        iVar5 = new_pick_target(&td, "TARGET_CREATURE", iVar3, 0);
-        if (iVar5 != 0)
+        if (new_pick_target(&td, "TARGET_CREATURE", iVar3, 0) != 0)
         {
           ptVar2 = instance->targets + iVar3;
           ptVar1 = instance->targets + iVar3;
@@ -1608,8 +1602,7 @@ int card_ravens_run(int player, int card, event_t event)
   {
     wither(affected_card_controller, affected_card, EVENT_ABILITIES);
   }
-  iVar3 = generic_plane(player, card, event);
-  return iVar3;
+  return generic_plane(player, card, event);
 }
 
 int card_sanctum_of_serra(int player, int card, event_t event){
@@ -2378,37 +2371,29 @@ int card_grand_ossuary(int player, int card, event_t event)
   int card_00;
   unsigned int uVar2;
   int iVar3;
-  card_instance_t *pcVar4;
+  card_instance_t *instance;
   int32_t iVar5;
   unsigned int t_player;
   target_t *ptStack_144;
   card_instance_t *pcStack_140;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    token_generation_t token;
-    uint8_t bytes[84];
-  } recovered_stack_td;
 
-  char msg[100];
 
   vanguard_card(player, card, event, 7, 0x14, 0);
   if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
-    pcVar4 = in_play(affected_card_controller, affected_card);
-    if ((((pcVar4 != NULL) &&
+    instance = in_play(affected_card_controller, affected_card);
+    if ((((instance != NULL) &&
           (iVar3 = is_this_dying(affected_card_controller, affected_card), iVar3 != 0)) &&
          (iVar3 = is_what(affected_card_controller, affected_card, 2), iVar3 != 0)) &&
         (iVar3 = check_for_death_trigger_removal(affected_card_controller, affected_card),
          iVar3 == 0))
     {
-      pcVar4 = get_card_instance(player, card);
-      uVar2 = pcVar4->targets[0xb].player;
+      instance = get_card_instance(player, card);
+      uVar2 = instance->targets[0xb].player;
       if ((int)uVar2 < 0)
       {
-        pcVar4->targets[0xb].player = 0;
+        instance->targets[0xb].player = 0;
         uVar2 = 0;
       }
       else
@@ -2419,44 +2404,59 @@ int card_grand_ossuary(int player, int card, event_t event)
       }
       card_00 = affected_card;
       iVar3 = affected_card_controller;
-      pcVar4->targets[uVar2].player = affected_card_controller;
+      instance->targets[uVar2].player = affected_card_controller;
       iVar3 = get_power(iVar3, card_00);
-      pcVar4->targets[uVar2].card = iVar3;
-      *(char *)&pcVar4->targets[0xb].player = (char)pcVar4->targets[0xb].player + '\x01';
+      instance->targets[uVar2].card = iVar3;
+      *(char *)&instance->targets[0xb].player = (char)instance->targets[0xb].player + '\x01';
     }
   LAB_02418361:
     uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
-      goto LAB_0241805b;
+      return generic_plane(player, card, event);
     pcStack_140 = get_card_instance(player, card);
     uVar2 = uVar2 & 0xff;
     if (uVar2 == 0)
-      goto LAB_0241805b;
+      return generic_plane(player, card, event);
   LAB_02418098:
     ptStack_144 = pcStack_140->targets;
     do
     {
       iVar1 = ptStack_144->player;
       iVar5 = ptStack_144->card;
-      default_target_definition(player, card, &recovered_stack_td.target, 2);
-      recovered_stack_td.target.allow_cancel = 0;
-      recovered_stack_td.target.who_chooses = iVar1;
-      recovered_stack_td.target.allowed_controller = iVar1;
-      recovered_stack_td.target.preferred_controller = iVar1;
+      target_definition_t td;
+      char msg[100];
+      default_target_definition(player, card, &td, 2);
+      td.allow_cancel = 0;
+      td.who_chooses = iVar1;
+      td.allowed_controller = iVar1;
+      td.preferred_controller = iVar1;
       while (iVar5 != 0)
       {
       LAB_02418119:
-        iVar3 = can_target(&recovered_stack_td.target);
-        if (iVar3 == 0)
+        if (can_target(&td) == 0)
           break;
         if (1 < iVar5)
           goto code_r0x02418132;
         scnprintf(msg, 100, "Select target creature you control (%d counter%s left to distribute).",
                   iVar5, "");
-        iVar3 = new_pick_target(&recovered_stack_td.target, msg, 0, 0x80);
-        if (iVar3 != 0)
+        if (new_pick_target(&td, msg, 0, 0x80) != 0)
           goto LAB_02418176;
       }
+      goto LAB_024181bf;
+code_r0x02418132:
+  scnprintf(msg, 100, "Select target creature you control (%d counter%s left to distribute).",
+            iVar5, "s");
+  if (new_pick_target(&td, msg, 0, 0x80) != 0)
+  {
+  LAB_02418176:
+    iVar5 = iVar5 + -1;
+    add_counters(player, card, pcStack_140->targets[0].player,
+                             pcStack_140->targets[0].card, COUNTER_P1_P1, 1);
+    pcStack_140->number_of_targets = '\0';
+    if (iVar5 == 0)
+      goto LAB_024181bf;
+  }
+  goto LAB_02418119;
     LAB_024181bf:
       ptStack_144 = ptStack_144 + 1;
     } while (ptStack_144 != pcStack_140->targets + uVar2);
@@ -2474,7 +2474,8 @@ int card_grand_ossuary(int player, int card, event_t event)
   }
   if (event == EVENT_CHAOS)
   {
-    default_token_definition(player, card, 0x497d, &recovered_stack_td.token);
+    token_generation_t token;
+    default_token_definition(player, card, 0x497d, &token);
     uVar2 = 0;
     do
     {
@@ -2486,32 +2487,14 @@ int card_grand_ossuary(int player, int card, event_t event)
                                                  &this_test);
       uVar2 = uVar2 + 1;
       new_manipulate_all(player, card, t_player, &this_test, ACT_KILL_REMOVE);
-      recovered_stack_td.token.qty = (uint8_t)iVar3;
-      recovered_stack_td.target.illegal_type = t_player;
-      generate_token(&recovered_stack_td.token);
+      token.qty = (uint8_t)iVar3;
+      token.t_player = t_player;
+      generate_token(&token);
     } while (uVar2 != 2);
-    iVar3 = get_actual_plane(player);
-    iVar3 = get_new_plane(iVar3);
-    planeswalk_to(player, iVar3, 0);
+    planeswalk_to(player, get_new_plane(get_actual_plane(player)), 0);
   }
-LAB_0241805b:
-  iVar3 = generic_plane(player, card, event);
-  return iVar3;
-code_r0x02418132:
-  scnprintf(msg, 100, "Select target creature you control (%d counter%s left to distribute).",
-            iVar5, "s");
-  iVar3 = new_pick_target(&recovered_stack_td.target, msg, 0, 0x80);
-  if (iVar3 != 0)
-  {
-  LAB_02418176:
-    iVar5 = iVar5 + -1;
-    add_counters(player, card, pcStack_140->targets[0].player,
-                             pcStack_140->targets[0].card, COUNTER_P1_P1, 1);
-    pcStack_140->number_of_targets = '\0';
-    if (iVar5 == 0)
-      goto LAB_024181bf;
-  }
-  goto LAB_02418119;
+  return generic_plane(player, card, event);
+
 }
 
 static void gotd_effect(int player){
@@ -2785,10 +2768,9 @@ int card_lair_of_the_ashen_idol(int player, int card, event_t event){
 
 int card_mount_keralia(int player, int card, event_t event)
 {
-  int iVar1;
+  int count;
   int iVar2;
   card_instance_t *instance;
-  int iVar4;
   unsigned int player_00;
   unsigned int uStack_14;
   vanguard_card(player, card, event, 7, 0x14, 0);
@@ -2798,21 +2780,20 @@ int card_mount_keralia(int player, int card, event_t event)
   }
   else if (event == EVENT_PLANESWALK_OUT)
   {
-    iVar1 = count_counters(player, card, COUNTER_PRESSURE);
+    count = count_counters(player, card, COUNTER_PRESSURE);
     uStack_14 = 0;
     do
     {
       player_00 = uStack_14 ^ current_turn;
-      iVar2 = get_id(player, card);
-      iVar2 = check_for_id_legacy(player_00, iVar2);
+      iVar2 = check_for_id_legacy(player_00, get_id(player, card));
       if ((iVar2 == 0) && (iVar2 = active_cards_count[player_00] + -1, -1 < iVar2))
       {
         do
         {
           instance = in_play(player_00, iVar2);
-          if ((instance != NULL) && (iVar4 = is_what(player_00, iVar2, 0x102), iVar4 != 0))
+          if ((instance != NULL) && (is_what(player_00, iVar2, 0x102) != 0))
           {
-            damage_creature(player_00, iVar2, iVar1, player, card);
+            damage_creature(player_00, iVar2, count, player, card);
           }
           iVar2 = iVar2 + -1;
         } while (iVar2 != -1);
@@ -2820,13 +2801,11 @@ int card_mount_keralia(int player, int card, event_t event)
       uStack_14 = uStack_14 + 1;
     } while (uStack_14 != 2);
   }
-  iVar1 = eot_trigger(player, card, event);
-  if (iVar1 != 0)
+  if (eot_trigger(player, card, event) != 0)
   {
     add_counters(player, card, player, card, COUNTER_PRESSURE, 1);
   }
-  iVar1 = generic_plane(player, card, event);
-  return iVar1;
+  return generic_plane(player, card, event);
 }
 
 int card_nephalia2(int player, int card, event_t event){
@@ -3108,35 +3087,34 @@ static int stensia_chaos_legacy(int player, int card, event_t event)
 
 int card_stensia(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   int iVar2;
   int iVar3;
   card_instance_t *pcVar4;
-  int iVar5;
   target_t *ptVar6;
   target_t *ptVar7;
   int card_00;
-  int iStack_18;
+  int i;
   vanguard_card(player, card, event, 7, 0x14, 0);
   if (event == EVENT_DEAL_DAMAGE)
   {
-    pcVar1 = get_card_instance(affected_card_controller, affected_card);
-    if ((((pcVar1->internal_card_id == damage_card) && (0 < pcVar1->info_slot)) &&
-         (pcVar1->damage_target_card == -1)) &&
-        (((pcVar1->damage_source_player == player &&
-           (iVar2 = damage_is_to_planeswalker(pcVar1), iVar2 == 0)) &&
-          (iVar2 = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2),
+    instance = get_card_instance(affected_card_controller, affected_card);
+    if ((((instance->internal_card_id == damage_card) && (0 < instance->info_slot)) &&
+         (instance->damage_target_card == -1)) &&
+        (((instance->damage_source_player == player &&
+           (iVar2 = damage_is_to_planeswalker(instance), iVar2 == 0)) &&
+          (iVar2 = is_what((int)instance->damage_source_player, instance->damage_source_card, 2),
            iVar2 != 0))))
     {
-      iVar3 = (int)pcVar1->damage_source_player;
-      iVar2 = pcVar1->damage_source_card;
+      iVar3 = (int)instance->damage_source_player;
+      iVar2 = instance->damage_source_card;
       if (0 < active_cards_count[iVar3])
       {
         card_00 = 0;
         do
         {
           pcVar4 = in_play(iVar3, card_00);
-          if (((pcVar4 != NULL) && (iVar5 = is_what(iVar3, card_00, 0x80), iVar5 != 0)) &&
+          if (((pcVar4 != NULL) && (is_what(iVar3, card_00, 0x80) != 0)) &&
               ((pcVar4 = get_card_instance(iVar3, card_00),
                 pcVar4->info_slot_fn == stensia_legacy &&
                     ((iVar3 == pcVar4->damage_target_player &&
@@ -3156,26 +3134,26 @@ int card_stensia(int player, int card, event_t event)
       {
         if (0 < iVar2)
         {
-          iStack_18 = 0;
+          i = 0;
           do
           {
-            if ((pcVar4->targets[iStack_18].player == (int)pcVar1->damage_source_player) &&
-                (pcVar4->targets[iStack_18].card == pcVar1->damage_source_card))
+            if ((pcVar4->targets[i].player == (int)instance->damage_source_player) &&
+                (pcVar4->targets[i].card == instance->damage_source_card))
               goto LAB_02419f98;
-            iStack_18 = iStack_18 + 1;
-          } while (iVar2 != iStack_18);
+            i = i + 1;
+          } while (iVar2 != i);
         }
         if (9 < iVar2)
           goto LAB_02419f98;
       }
-      pcVar4->targets[iVar2].player = (int)pcVar1->damage_source_player;
-      pcVar4->targets[iVar2].card = pcVar1->damage_source_card;
+      pcVar4->targets[iVar2].player = (int)instance->damage_source_player;
+      pcVar4->targets[iVar2].card = instance->damage_source_card;
       pcVar4->targets[0x10].player = pcVar4->targets[0x10].player + 1;
     }
   LAB_02419f98:
-    pcVar1 = get_card_instance(player, card);
-    if ((pcVar1->targets[0x10].player < 1) || (trigger_condition != 0xd7))
-      goto LAB_02419e17;
+    instance = get_card_instance(player, card);
+    if ((instance->targets[0x10].player < 1) || (trigger_condition != 0xd7))
+      return generic_plane(player, card, event);
   LAB_02419fc2:
     if (((card == affected_card) && (player == affected_card_controller)) &&
         (reason_for_trigger_controller == player))
@@ -3183,51 +3161,48 @@ int card_stensia(int player, int card, event_t event)
       if (event == EVENT_TRIGGER)
       {
         event_result = event_result | 2;
-        goto LAB_02419e17;
+        return generic_plane(player, card, event);
       }
       if (event == EVENT_RESOLVE_TRIGGER)
       {
-        pcVar1 = get_card_instance(player, card);
-        iVar2 = pcVar1->targets[0x10].player;
-        pcVar1->targets[0x10].player = 0;
+        instance = get_card_instance(player, card);
+        iVar2 = instance->targets[0x10].player;
+        instance->targets[0x10].player = 0;
         if (0 < iVar2)
         {
-          ptVar6 = pcVar1->targets;
+          ptVar6 = instance->targets;
           do
           {
             ptVar7 = ptVar6 + 1;
             add_counters(player, card, ptVar6->player, ptVar6->card, COUNTER_P1_P1, 1);
-            iVar3 = create_targetted_legacy_effect(player, card, stensia_legacy, ptVar6->player,
-                                                   ptVar6->card);
-            add_status(player, iVar3, 0x10000);
+            add_status(player, create_targetted_legacy_effect(player, card, stensia_legacy, ptVar6->player,
+                                                   ptVar6->card), 0x10000);
             ptVar6 = ptVar7;
-          } while (ptVar7 != pcVar1->targets + iVar2);
+          } while (ptVar7 != instance->targets + iVar2);
         }
-        goto LAB_02419e17;
+        return generic_plane(player, card, event);
       }
     }
   }
   else
   {
-    pcVar1 = get_card_instance(player, card);
-    if ((0 < pcVar1->targets[0x10].player) && (trigger_condition == 0xd7))
+    instance = get_card_instance(player, card);
+    if ((0 < instance->targets[0x10].player) && (trigger_condition == 0xd7))
       goto LAB_02419fc2;
   }
   if ((event == EVENT_CHAOS) && (iVar2 = active_cards_count[player] + -1, -1 < iVar2))
   {
     do
     {
-      pcVar1 = in_play(player, iVar2);
-      if ((pcVar1 != NULL) && (iVar3 = is_what(player, iVar2, 2), iVar3 != 0))
+      instance = in_play(player, iVar2);
+      if ((instance != NULL) && (iVar3 = is_what(player, iVar2, 2), iVar3 != 0))
       {
         create_targetted_legacy_activate(player, card, stensia_chaos_legacy, player, iVar2);
       }
       iVar2 = iVar2 + -1;
     } while (iVar2 != -1);
   }
-LAB_02419e17:
-  iVar2 = generic_plane(player, card, event);
-  return iVar2;
+  return generic_plane(player, card, event);
 }
 
 int card_takenuma2(int player, int card, event_t event){
@@ -3258,6 +3233,7 @@ int card_takenuma2(int player, int card, event_t event){
 
 int card_talon_gates(int player, int card, event_t event)
 {
+  int choice;
   card_instance_t *instance;
   int iVar2;
   int iVar3;
@@ -3275,17 +3251,14 @@ int card_talon_gates(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       if (event == EVENT_CAN_ACTIVATE)
       {
-        iVar2 = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
-        if (iVar2 == 0)
+        if (can_sorcery_be_played(player, EVENT_CAN_ACTIVATE) == 0)
         {
           return 0;
         }
         iVar2 = count_counters(player, card, COUNTER_VORTEX);
-        iVar2 = has_mana(player, 0, iVar2);
-        if (iVar2 == 0)
+        if (has_mana(player, 0, iVar2) == 0)
         {
-          iVar2 = check_battlefield_for_special_card(player, card, player, 0, &test);
-          return iVar2;
+          return check_battlefield_for_special_card(player, card, player, 0, &test);
         }
         return 1;
       }
@@ -3293,7 +3266,7 @@ int card_talon_gates(int player, int card, event_t event)
     else
     {
       if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-        goto LAB_0241a4f3;
+        return generic_plane(player, card, event);
       new_default_test_definition(&test, 1, "Select a nonland card to Suspend.");
       test.type_flag = 1;
       test.zone = 0x100;
@@ -3302,21 +3275,18 @@ int card_talon_gates(int player, int card, event_t event)
     ptStack_ec = &test;
     if (event == EVENT_ACTIVATE)
     {
-      iVar2 = count_counters(player, card, COUNTER_VORTEX);
-      iVar2 = has_mana(player, 0, iVar2);
-      iVar3 = check_battlefield_for_special_card(player, card, player, 0, ptStack_ec);
-      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014",
-                          "Cast the Planar Dice", iVar2, 1, "Suspend a card", iVar3, 1, 0, 0, 0, 0);
-      if (iVar2 == 0)
+      iVar2 = has_mana(player, 0, count_counters(player, card, COUNTER_VORTEX));
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014",
+                          "Cast the Planar Dice", iVar2, 1, "Suspend a card", check_battlefield_for_special_card(player, card, player, 0, ptStack_ec), 1, 0, 0, 0, 0);
+      if (choice == 0)
       {
         spell_fizzled = 1;
         return 0;
       }
-      instance->targets[1].player = iVar2;
-      if (iVar2 == 1)
+      instance->targets[1].player = choice;
+      if (choice == 1)
       {
-        iVar2 = count_counters(player, card, COUNTER_VORTEX);
-        charge_mana(player, COLOR_COLORLESS, iVar2);
+        charge_mana(player, COLOR_COLORLESS, count_counters(player, card, COUNTER_VORTEX));
         if (spell_fizzled != 1)
         {
           iVar2 = internal_rand(6);
@@ -3359,16 +3329,14 @@ int card_talon_gates(int player, int card, event_t event)
       {
         iVar2 = iVar2 + 1;
         if (active_cards_count[player] <= iVar2)
-          goto LAB_0241a4f3;
+          return generic_plane(player, card, event);
       }
       iVar3 = iVar2 + 1;
       remove_counters(player, card, player, iVar2, COUNTER_TIME, 2);
       iVar2 = iVar3;
     } while (iVar3 < active_cards_count[player]);
   }
-LAB_0241a4f3:
-  iVar2 = generic_plane(player, card, event);
-  return iVar2;
+  return generic_plane(player, card, event);
 }
 
 int card_the_zephyr_maze(int player, int card, event_t event){

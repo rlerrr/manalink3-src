@@ -1,0 +1,703 @@
+{
+  "status": "Remaining bare-return syntax contexts; not unrecovered native functions. One supported raw case awaits expanded offsetof parsing; other expressions need object/scope review before duplication.",
+  "source_state_sha256": "a79c44bee67d8f7ee8004efd9cc5ac002afef69dfb72371a285c875b57b472a4",
+  "counts": {
+    "functions": 69,
+    "bare_return_gotos": 111
+  },
+  "rows": [
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_illusionists_strategem",
+      "definition_sha256": "80655050670b91868184053234e471497375a90a3d79881389d8f3553340f746",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_020c2b8d"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_kari_zevs_expertise",
+      "definition_sha256": "d2d9e2b0143380be14a5c20766a98074dbd32adc605feb7a204c4ae85a6b80c8",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_020c42ed"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_ice_over",
+      "definition_sha256": "831104021521369683f9266ae57387c071974480c8128b147639bd468432d41b",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_020c2900"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_peema_aether_seer",
+      "definition_sha256": "7914ab59946023a5d187c9a790e654a63964cac89d79c10588d6ac724c9163f8",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_020c6834"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_tezzerets_simulacrum",
+      "definition_sha256": "8ff56de3da82a0e2cb4dc6ab5ccc0aa93955c2b3720fc8b3c0868a7e1765d15d",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_020caee0"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/alliances.c",
+      "name": "card_natures_blessing",
+      "definition_sha256": "7276c87a9803238e5118234cdf3a068c07a18a68926e221b1a4d4bf58f23304b",
+      "bare_return_gotos": 4,
+      "labels": [
+        "LAB_020a438b"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_deem_worthy",
+      "definition_sha256": "e0ca5e1bf02ac3504c2d5e1e98887b802146152b06063a7a779089c5a8fd629e",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_022de50b"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/battle_for_zendikar.c",
+      "name": "card_earthen_arms",
+      "definition_sha256": "4752b91cbaa5ddb259a145ed049f6661e951d4bea2837a39f794929f5dde81c9",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_024561c2"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/battle_for_zendikar.c",
+      "name": "card_veteran_warleader",
+      "definition_sha256": "74be41d823bd76544c0eae68a25dd12bfa6bb35c0ebbfffc33de17e1e843501b",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_024591f8"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "name": "card_crypsis",
+      "definition_sha256": "ae138acd98f3bea381431dd218749c4dda85277a55e831fa9f377e350f4d07b3",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_0203794b"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/champions_of_kamigawa.c",
+      "name": "card_swallowing_plague_impl",
+      "definition_sha256": "cc51dafffdb73d9f681a26d0e3a1bd77ab90d8921fc21d34eee0bf845f064ce4",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02609e91"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/champions_of_kamigawa.c",
+      "name": "card_cranial_extraction_impl",
+      "definition_sha256": "afadc50287c257630618972da2991904155f0268c66d0516a99900b20e13071b",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_02609a3c"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "name": "card_song_of_the_dryads",
+      "definition_sha256": "6e9457f579ddcc7562c215c7cf229fdaf8d08eebe24fcc711f22edbeb6499205",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_021dfddf"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_commanders_plate",
+      "definition_sha256": "90fa0d96c75f874afd477f4c17cff29f385ebbe4e24d8fbead72595f7cb90bae",
+      "bare_return_gotos": 3,
+      "labels": [
+        "LAB_025a5f22"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/darksteel.c",
+      "name": "card_dismantle",
+      "definition_sha256": "b28b89390e32b811db1beedb11e2225edbd9e296b9413d03741fe2dcd8222841",
+      "bare_return_gotos": 7,
+      "labels": [
+        "LAB_02250389"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_dominating_licid",
+      "definition_sha256": "03dbd06cb07a830c6bd363ec1f77e11eaa394a85893279896a60380f8eb8e1b7",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02643e9b"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_elven_palisade",
+      "definition_sha256": "053202fa4d4c667724a939c670a08e1582aef616ac4f03e824b9570ae53ab0c9",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_0264da39"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_medicine_bag",
+      "definition_sha256": "219b3051cb44a500cf3859a477c3239ff81d2ac8fd70e61d03a6d7859caae3ee",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_0264e637"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/gatecrash.c",
+      "name": "card_thrull_parasite",
+      "definition_sha256": "2c79dab7b76451fe58054e4fffd0f763c42157c608d97ce29a5c43e9d36f4588",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_0251c96c"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "card_direct_current",
+      "definition_sha256": "31ccebc727312c53b87777cda63b5df3fa4411ef9b885db64eb5d09e3d402bf2",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_0261b6a9"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "card_selective_snare",
+      "definition_sha256": "826a11192642d0af56b140e4415e068243ff2dd7a3f6235222cfdc2bc9d445bf",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_026209dc"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "card_risk_factor",
+      "definition_sha256": "70754dbf422238a396d359f3f85f127743c7a3faf5d00c947f5ca6e23d9cfb3b",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02620415"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "card_beacon_bolt",
+      "definition_sha256": "aa7846d65994d3bfd8dcf03a52c02d0e85f97b5d84a0bcfb37c870818484e466",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_0261a449"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "name": "card_kjeldoran_elite_guard",
+      "definition_sha256": "32d0ff3826f39da38707b17974abaab2ae4f9495b333c7d7436b85a19a4022ef",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_023fed93"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "name": "card_soul_burn",
+      "definition_sha256": "1a9b7f78202f1ac497e72f1b67a124c5b7378a696907056b6aa6cc3331b6323a",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_0240903f"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "name": "card_karplusan_giant",
+      "definition_sha256": "6740a1ad8641f4d468dd49b20703d1cecad5b782b7374428a1f061029a579f8b",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_023fe70d"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/invasion.c",
+      "name": "card_lightning_dart",
+      "definition_sha256": "25f74b0d15413397e2bb54801de7fdc5c610f7590b7871d8f188798228175a1d",
+      "bare_return_gotos": 3,
+      "labels": [
+        "LAB_02498cf8"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/legends.c",
+      "name": "card_life_matrix",
+      "definition_sha256": "6f1bbcdc660a540b2ab2706d6f795c320cd7c8a9cab40ef9c6b2774920301294",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_021f9af1"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_ghouls_feast",
+      "definition_sha256": "4dfcdf848e1f61699267190587b291b03135b87c2ac19139cf03c8c9a6d786df",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02180aae"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_specters_wail",
+      "definition_sha256": "76387d7ed3e54b25ca417fa428ff36a143fcc28d3653419cf3af35bbf51dc605",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02184152"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_rouse",
+      "definition_sha256": "7edd4da342ec9907bb1b758d8f960119fe3bb0f7eb1a67247cd44f910f6141db",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02182dc4"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/mirage.c",
+      "name": "card_ether_well",
+      "definition_sha256": "ccdd82ad67c0df58481bd4dd031fe6093d33bb411996702ce14651226881cb1d",
+      "bare_return_gotos": 3,
+      "labels": [
+        "LAB_0238d12d"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/mirage.c",
+      "name": "card_mind_harness",
+      "definition_sha256": "732171419a2da16a81d18f6a0b7013ae5c049f8e564c221c91add7f02c0ddf11",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_0238f2eb"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_smiting_helix",
+      "definition_sha256": "3b6da8356a360cf61691960857c86545bd7159de4d0ac33a74d0a7a761487cd6",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_0233c8bc"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_geomancers_gambit",
+      "definition_sha256": "9595576817c83db4a0856799be557e6324b9ca66b64147e4507717ceea668090",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_02338c00"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_calibrated_blast",
+      "definition_sha256": "7606af0bcf21f7c72f9af994e626fc9eca9b0f84aacfa792e63b9914da72f6b4",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_0222ffeb"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_kaleidoscorch",
+      "definition_sha256": "bdabfd6ffd57af39d4395d80a3b4cc9168d340f18735c49eea612d3c2f5f3563",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_022386e3"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_blessed_respite",
+      "definition_sha256": "217c55ec9ad765f880c7ec251a101e8f054be23972a8ec79a0354da418557cc4",
+      "bare_return_gotos": 4,
+      "labels": [
+        "LAB_0222e73b"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_mine_collapse",
+      "definition_sha256": "b9a1d6f35ec4c8d280aafade17dd5c391f847424a4939cae6ae97e9c5824cf2c",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02239e8e"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "card_numbing_dose",
+      "definition_sha256": "c8bdbb7499f9c92367cd6062cb5e77ca50dee2878cc3db44932d47a810d20712",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_02279ed6"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/odissey.c",
+      "name": "card_bomb_squad",
+      "definition_sha256": "0a16a5baa0687e54996e99f171dd88442a6214e3450acc24a3f8fda6029d7849",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02504afc"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_remove",
+      "definition_sha256": "53cdce2164becb14deb5438b2788200740673a2df13f1e301dfea031053c2ec1",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_021c35cc"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_mirror_strike",
+      "definition_sha256": "8d639020b45fd420da155f3e17fbe24a569fb01ecb5edc42457b4861973f297c",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02604c32"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_troubled_healer",
+      "definition_sha256": "cc6565c9c435ba1779040e2abfbf058195580b3a12c8d2e336bb24e2bd9176c9",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02607a34"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_flay",
+      "definition_sha256": "8be45eb1ff17040377c4f7e31ea153565d7201293da4e21280222e8581535977",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02602a52"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_mana_vapors",
+      "definition_sha256": "f9cd95164ec7a4a37631918dc6b689ab6e777456d68daf99275f5ca127e2cd97",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_02604647"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_rhystic_syphon",
+      "definition_sha256": "ddec2072f3b6a01b75e930f0dd7bd92fc7a58fb9ada73a42c25e1fcda424191a",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_026061fb"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/ravnica.c",
+      "name": "card_flickerform",
+      "definition_sha256": "c74ee9237daa6fae500409cb24a3c852a3f01fe0d9ac4d1e33ea77c46adc7b47",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_024e8d4f"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "card_skewer_the_critics",
+      "definition_sha256": "94c7cb1ddae1487381da6c73fe824600b501bfa47fdde2f9cc13911172cbbc94",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_025c33f4"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_baleful_mastery",
+      "definition_sha256": "88f224b8e9c3cc931c6fe358d36fe5ecd46138ab00c1db4ae824d660dead2cd7",
+      "bare_return_gotos": 3,
+      "labels": [
+        "LAB_023c9abe"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_rushed_rebirth",
+      "definition_sha256": "fca824e429274b7c470496777194f2aa0a24069accae7e72a49b10455e2c6928",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_023da4f4"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/stronghold.c",
+      "name": "card_duct_crawler",
+      "definition_sha256": "7be0b8c6981bc978e55838f4ee0b50c455a7da25f0ff19daa66846028fb4c7ac",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02135365"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/tempest.c",
+      "name": "card_reality_anchor",
+      "definition_sha256": "775090592988ca4796e21d6e48770cbb3feccddf11fae0c1c94173be70e2ce91",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_0215d064"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_polukranos_unchained",
+      "definition_sha256": "698ffe8eada4eaf55db40bafd05e9a22754c8e381636fddd6f8444fe67cc9f62",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_0235f762"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_claim_the_firstborn",
+      "definition_sha256": "8a87b4137eccef97928985cce3c4c6752a4c4d465397ec3614c5adfb1d1984b4",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_025cce32"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_battle_display",
+      "definition_sha256": "2ba6c266d5f4a129ff65f07f3b91238f4b960f01805d57aed14375f9803d5378",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_025cb4ae"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_boulder_rush",
+      "definition_sha256": "1f7bf43e13e1be58f200b280c17938e5df7df416edc25f3b151f4630a7227f82",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_025cb9ce"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_petty_theft",
+      "definition_sha256": "78583e2909d96e3be632b704ac2606fb1add120e7320c3d98261dd1e3304263d",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_025d2ef1"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_steelclaw_lance",
+      "definition_sha256": "db1cd872d0220bbb521cadc2f5cbc5701191ec650f18c3fa50de06a9bff49ca7",
+      "bare_return_gotos": 3,
+      "labels": [
+        "LAB_025d3f79"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_swift_end",
+      "definition_sha256": "8e92c7891240f62b86965e2a77fc4c847ad22b194cd10bf85498f5ccf98201b3",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_025d495e"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "enchanted_land_is_basic_land_type",
+      "definition_sha256": "9a8e6114c2105a07c3ae72246f052ab33f554aa5501c8ba47372c8ad4233926b",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_024c34ab"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/urza_destiny.c",
+      "name": "card_rescue",
+      "definition_sha256": "c62a29dd19e1b01969291ad1036bd44ac075b367fbb8ad715c931882c2ccaedf",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02109e6b"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/visions.c",
+      "name": "card_wicked_reward",
+      "definition_sha256": "b8fcec4eddcd3f4ebabd1134215a6ec0a21fb8ef670555b9cd819c3ea2bf7a4e",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_02025c8e"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/weatherlight.c",
+      "name": "card_boiling_blood",
+      "definition_sha256": "a44c403ab548e3e4603dd53e84a861a2654dd1db49de87afd2e987542d641205",
+      "bare_return_gotos": 3,
+      "labels": [
+        "LAB_022f6d8a"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/zendikar.c",
+      "name": "card_vampire_hexmage",
+      "definition_sha256": "83cb4ea1d7decaa3992c6eaaa77f6413c3c36b25239ae68424e2e89af830b0af",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_025ded02"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/zendikar.c",
+      "name": "card_obsidian_fireheart",
+      "definition_sha256": "66cbaf5f427a38e5a983bfe0dae9539a250af95e3424d7a21ed7431454e93255",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_025e11ba"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_cleansing_wildfire",
+      "definition_sha256": "db26b76e0e280489329b122fc95e00129db8f2e63f43a4570e4d7e7e2b42061d",
+      "bare_return_gotos": 2,
+      "labels": [
+        "LAB_023088d0"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "vanilla_creature_pumper",
+      "definition_sha256": "f5d4982a1d07a36d2e46f4a7f238c14cc29924a5c89678b508cc1c235a1c9539",
+      "bare_return_gotos": 1,
+      "labels": [
+        "LAB_0269e2f8"
+      ],
+      "reason": "excluded by return-expression object/scope guards; not an approved source edit"
+    },
+    {
+      "source": "functions/produce_mana.c",
+      "name": "get_colors_of_mana_land_could_produce_ignoring_costs",
+      "definition_sha256": "84b2e79bf58e4cae71ba3cb86d46c05d0e2bb7169558907de686f032f3fef6bd",
+      "bare_return_gotos": 5,
+      "labels": [
+        "LAB_0266fcde",
+        "LAB_0266f8d8",
+        "LAB_0266fcd6",
+        "LAB_0266f82c"
+      ],
+      "reason": "expanded offsetof syntax"
+    }
+  ]
+}

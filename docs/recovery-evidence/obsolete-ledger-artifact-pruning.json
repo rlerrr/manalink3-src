@@ -1,0 +1,855 @@
+{
+  "status": "Completed: obsolete rollback ledgers and completed-batch build snapshots deleted",
+  "files": 166,
+  "logical_bytes": 8576854051,
+  "free_before": 3489386496,
+  "free_after": 6727774208,
+  "freed_bytes": 3238387712,
+  "scope": "Only explicitly named files directly inside .recovery; no source snapshots, native release binaries, Ghidra projects, current outputs, tools or published evidence removed.",
+  "verification": "All planned paths absent; protected input/output/ledger/CSV hashes and staged diff unchanged.",
+  "protected_sha256": {
+    "docs/recovery-evidence/helper-canonicalization.json": "4e7e58235261d72ea94555a46a5770dcdcd729d0bc83ea5a7cca6b9515d8cfe8",
+    "docs/recovery-evidence/recovered-functions.json": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "docs/recovery-evidence/card-triage.json": "0b22c7d30abe792f806b50c79ad42e45caa8f26fca67ed796ebbf34339c20109",
+    "config/reccmp/functions.csv": "29fae305f096bf04fe931730d707a1c3150ca97acbc11eb02e16dad50ca392bc",
+    "ManalinkEh.dll": "2f95e05feaf4141e712338d77808bf73d0d48e7521b71ee4e7b6ad34be2a7a31",
+    "ManalinkEh.dbg": "00d16b59a896185581df14baad3c4314680db2845efa010e893821d4a561a4cb",
+    ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    ".recovery/2020-ManalinkEh.dll": "927d076ca9e6a46b8a2bde0aeeed5e3b847ec8f55d22cebc9f92744bea460759",
+    ".recovery/canonical-helper-before.zip": "ce8ade61acad3d30073dcf7befc117b355b06bd4d3abd13c6a6ca7ab927d5abb"
+  },
+  "index_diff_sha256": "c1924b91f666e6c673ce508281ac488faf07f9a50b2377ed27fdc1b6315d6e93",
+  "limits": "Historical replay was already retired. Older receipt paths may name deleted snapshots; those are historical references, not supported replay inputs.",
+  "deleted": [
+    {
+      "path": ".recovery/ability-storage-proof-before.json",
+      "bytes": 92835769,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/activation-mana-card-triage-before-publication.json",
+      "bytes": 35524398,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/activation-mana-card-triage-before.json",
+      "bytes": 35524398,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/activation-mana-proof-before-write.json",
+      "bytes": 27233540,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/additional-local-names-proof-before-c83.json",
+      "bytes": 94937525,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/arcane-command-card-triage-before.json",
+      "bytes": 86565057,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/arcane-command-proof-before-write.json",
+      "bytes": 88790283,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/array-census-proof-before.json",
+      "bytes": 93024297,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/array-role-proof-before.json",
+      "bytes": 92667985,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/attack-aura-card-triage-before.json",
+      "bytes": 43533769,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/attack-aura-proof-before-write.json",
+      "bytes": 38662153,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/attack-graveyard-card-triage-before.json",
+      "bytes": 40444569,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/attack-graveyard-proof-before-write.json",
+      "bytes": 33930869,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/attack-mana-proof-before-write.json",
+      "bytes": 41552192,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/attack-mana-storm-protection-card-triage-before.json",
+      "bytes": 46576287,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/attack-token-card-triage-before.json",
+      "bytes": 41807325,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/attack-token-proof-before-write.json",
+      "bytes": 35701391,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/aura-activation-card-triage-before.json",
+      "bytes": 59350221,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/aura-activation-proof-before-write.json",
+      "bytes": 56755707,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/aura-animation-card-triage-before.json",
+      "bytes": 62741263,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/aura-animation-proof-before-write.json",
+      "bytes": 60729654,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/call-arguments-before-c250.dll",
+      "bytes": 8981251,
+      "reason": "Completed-batch rebuilt binary/debug snapshot; historical runtime replay retired"
+    },
+    {
+      "path": ".recovery/call-conditions-after-c91.dbg.gz",
+      "bytes": 40158231,
+      "reason": "Completed-batch rebuilt binary/debug snapshot; historical runtime replay retired"
+    },
+    {
+      "path": ".recovery/call-conditions-after-c91.dll.gz",
+      "bytes": 3368300,
+      "reason": "Completed-batch rebuilt binary/debug snapshot; historical runtime replay retired"
+    },
+    {
+      "path": ".recovery/card-array-locals-proof-before.json",
+      "bytes": 93161833,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/card-literal-card-triage-before.json",
+      "bytes": 88610384,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/card-literal-computed-before-format-fix.json",
+      "bytes": 89130731,
+      "reason": "Superseded full ledger rollback/control snapshot"
+    },
+    {
+      "path": ".recovery/card-literal-tool-migration-proof-before.json",
+      "bytes": 91384717,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/cast-stack-proof-before.json",
+      "bytes": 92566790,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/coff-card-forwarders-proof-before.json",
+      "bytes": 94650039,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/coff-forwarders-card-triage-before.json",
+      "bytes": 89523643,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/combat-ai-card-triage-before.json",
+      "bytes": 49909338,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/combat-ai-proof-before-write.json",
+      "bytes": 45528939,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/combat-aura-card-triage-before.json",
+      "bytes": 42626825,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/combat-aura-proof-before-build-binding-fix.json",
+      "bytes": 37872634,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/combat-aura-proof-before-write.json",
+      "bytes": 36740413,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/control-cycling-proof-before-write.json",
+      "bytes": 23430285,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/counterspell-aura-card-triage-before.json",
+      "bytes": 51089238,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/counterspell-aura-proof-before-write.json",
+      "bytes": 46939576,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/damage-dispatch-card-triage-before.json",
+      "bytes": 48758817,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/damage-dispatch-proof-before-write.json",
+      "bytes": 44153300,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/damage-history-card-triage-before.json",
+      "bytes": 45529714,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/damage-history-proof-before-write.json",
+      "bytes": 40302508,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/damage-subtype-card-triage-before.json",
+      "bytes": 52311054,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/damage-subtype-proof-before-write.json",
+      "bytes": 48398955,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/disentangled-pairs-proof-before-c76.json",
+      "bytes": 94291574,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/final-array-locals-proof-before-c73.json",
+      "bytes": 93458955,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/final-helper-locals-proof-before-c80.json",
+      "bytes": 94854746,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/global-index-proof-before.json",
+      "bytes": 92898534,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/grave-mana-card-triage-before.json",
+      "bytes": 56357477,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/grave-mana-proof-before-write.json",
+      "bytes": 53192582,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/grave-trigger-card-triage-before.json",
+      "bytes": 53607983,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/grave-trigger-proof-before-write.json",
+      "bytes": 49932361,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/header-inline-proof-before.json",
+      "bytes": 92094968,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/header-names-proof-before.json",
+      "bytes": 91898576,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/header-types-proof-before.json",
+      "bytes": 92515273,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-541.json",
+      "bytes": 601434,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-587.json",
+      "bytes": 678250,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-630-callers-final.json",
+      "bytes": 5598774,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-630-callers.json",
+      "bytes": 5451303,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-630-inline.json",
+      "bytes": 5823288,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-630-leaves-callers.json",
+      "bytes": 5793371,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-630.json",
+      "bytes": 1075192,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-631-current.json",
+      "bytes": 5839734,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-631-interface-callers.json",
+      "bytes": 7695742,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-631.json",
+      "bytes": 5838537,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-632.json",
+      "bytes": 7717096,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-724-parents.json",
+      "bytes": 8009446,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-724.json",
+      "bytes": 7950585,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-727-instance.json",
+      "bytes": 8082277,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-727.json",
+      "bytes": 8037396,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-728.json",
+      "bytes": 8179221,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-730-edh.json",
+      "bytes": 8534008,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-730-restart.json",
+      "bytes": 8441442,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-730-subtypes.json",
+      "bytes": 8386669,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-730.json",
+      "bytes": 8193444,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-731-counter-owners.json",
+      "bytes": 12077261,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-731-counter-tail.json",
+      "bytes": 12017458,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-731-inline296.json",
+      "bytes": 10302703,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-731-inline335.json",
+      "bytes": 10468883,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-731-inline391.json",
+      "bytes": 10678024,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-731-native170.json",
+      "bytes": 11824041,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-731-registration-domains.json",
+      "bytes": 12222997,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-731-spellings.json",
+      "bytes": 9354349,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-731-subtype.json",
+      "bytes": 8537676,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-738-counter-apis.json",
+      "bytes": 12331236,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-738-counter-clean.json",
+      "bytes": 12393701,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-738-data-spellings.json",
+      "bytes": 12919872,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-738-final-data.json",
+      "bytes": 12923841,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-738-final-spellings.json",
+      "bytes": 12377722,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-738-hex-mana-array.json",
+      "bytes": 12400907,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/helper-canonicalization-738-sacrifice-global.json",
+      "bytes": 12423910,
+      "reason": "Superseded canonicalization candidate ledger; current published canonicalization retained"
+    },
+    {
+      "path": ".recovery/imprint-protection-card-triage-before.json",
+      "bytes": 75828541,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/imprint-protection-proof-before-write.json",
+      "bytes": 78195718,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/inline-card-mechanics-proof-before.json",
+      "bytes": 92169899,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/inline-final-control-proof.json",
+      "bytes": 92512534,
+      "reason": "Superseded full ledger rollback/control snapshot"
+    },
+    {
+      "path": ".recovery/inline-final-proof-before.json",
+      "bytes": 92423315,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/inline-mechanics-proof-before.json",
+      "bytes": 92145588,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/inline-predicates-proof-before.json",
+      "bytes": 92097580,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/inline-wrappers-proof-before-retirement-rule.json",
+      "bytes": 92145588,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/inline-wrappers-proof-before.json",
+      "bytes": 92120905,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/instance-lifetimes-before-c262.dll",
+      "bytes": 8981251,
+      "reason": "Completed-batch rebuilt binary/debug snapshot; historical runtime replay retired"
+    },
+    {
+      "path": ".recovery/instance-names-proof-before-c75.json",
+      "bytes": 93577590,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/land-deflection-card-triage-before.json",
+      "bytes": 54959372,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/land-deflection-proof-before-write.json",
+      "bytes": 51533973,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/legend-target-card-triage-before.json",
+      "bytes": 37169790,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/legend-target-proof-before-counter-binding-fix.json",
+      "bytes": 32503728,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/legend-target-proof-before-header-spelling-fix.json",
+      "bytes": 33187223,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/legend-target-proof-before-write.json",
+      "bytes": 29432248,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/loop-lifetimes-after-c233.dll",
+      "bytes": 8981251,
+      "reason": "Completed-batch rebuilt binary/debug snapshot; historical runtime replay retired"
+    },
+    {
+      "path": ".recovery/loop-lifetimes-before-c231.dll",
+      "bytes": 8981251,
+      "reason": "Completed-batch rebuilt binary/debug snapshot; historical runtime replay retired"
+    },
+    {
+      "path": ".recovery/mana-cards-proof-before-write.json",
+      "bytes": 21982964,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mana-choice-card-triage-before.json",
+      "bytes": 68572068,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mana-choice-proof-before-write.json",
+      "bytes": 67530850,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mana-combat-card-triage-before.json",
+      "bytes": 41087809,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mana-combat-proof-before-write.json",
+      "bytes": 34776495,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mana-imprint-card-triage-before.json",
+      "bytes": 70770999,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mana-imprint-proof-before-write.json",
+      "bytes": 70086712,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mana-legacy-card-triage-before.json",
+      "bytes": 66524982,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mana-legacy-proof-before-write.json",
+      "bytes": 65142159,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mana-retarget-card-triage-before.json",
+      "bytes": 73139931,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mana-retarget-proof-before-write.json",
+      "bytes": 72857445,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mass-trigger-card-triage-before.json",
+      "bytes": 39868866,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/mass-trigger-proof-before-write.json",
+      "bytes": 33168542,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/modal-imprint-card-triage-before.json",
+      "bytes": 79009244,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/modal-imprint-proof-before-write.json",
+      "bytes": 79684966,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/multiphase-card-proof-before-c78.json",
+      "bytes": 94653821,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/native-absolute-before-receipt-byte-hash-fix.json",
+      "bytes": 94668411,
+      "reason": "Superseded full ledger rollback/control snapshot"
+    },
+    {
+      "path": ".recovery/native-absolute-bindings-linked.dll",
+      "bytes": 8953071,
+      "reason": "Completed-batch rebuilt binary/debug snapshot; historical runtime replay retired"
+    },
+    {
+      "path": ".recovery/native-absolute-bindings-proof-before.json",
+      "bytes": 94665130,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/native-header-enums-proof-before.json",
+      "bytes": 91892953,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/odyssey-modal-card-triage-before.json",
+      "bytes": 83133582,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/odyssey-modal-proof-before-write.json",
+      "bytes": 85459730,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/other-stack-proof-before.json",
+      "bytes": 92517624,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/plain-test-proof-before.json",
+      "bytes": 92533361,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/player-lifetimes-after-c241.dll",
+      "bytes": 8981251,
+      "reason": "Completed-batch rebuilt binary/debug snapshot; historical runtime replay retired"
+    },
+    {
+      "path": ".recovery/player-lifetimes-before-c240.dll",
+      "bytes": 8981251,
+      "reason": "Completed-batch rebuilt binary/debug snapshot; historical runtime replay retired"
+    },
+    {
+      "path": ".recovery/pump-graveyard-card-triage-before.json",
+      "bytes": 34341683,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/pump-graveyard-proof-before-write.json",
+      "bytes": 25581058,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/reference-exception-card-triage-before.json",
+      "bytes": 88610384,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/reference-exception-proof-before-write.json",
+      "bytes": 94142490,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/reference-token-card-triage-before.json",
+      "bytes": 87279339,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/reference-token-proof-before-write.json",
+      "bytes": 89672746,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/retained-reference-proof-before-write.json",
+      "bytes": 84490505,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/reverse-array-proof-before.json",
+      "bytes": 92994269,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/scoped-array-proof-before.json",
+      "bytes": 93113614,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/selection-storage-proof-before.json",
+      "bytes": 92878092,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/shared-stack-tests-proof-before.json",
+      "bytes": 92204295,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/short-wrapper-card-triage-before.json",
+      "bytes": 39473198,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/short-wrapper-proof-before-write.json",
+      "bytes": 33187223,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/spell-combat-card-triage-before.json",
+      "bytes": 64573174,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/spell-combat-proof-before-write.json",
+      "bytes": 62869392,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/spell-death-card-triage-before.json",
+      "bytes": 61008066,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/spell-death-proof-before-write.json",
+      "bytes": 58697264,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/spell-dispatch-proof-before-c84.json",
+      "bytes": 95329704,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/storm-protection-proof-before-write.json",
+      "bytes": 42826428,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/storm-token-card-triage-before.json",
+      "bytes": 44506660,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/storm-token-proof-before-write.json",
+      "bytes": 39069677,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/target-role-proof-before.json",
+      "bytes": 92736400,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/target-storage-enum-proof-before.json",
+      "bytes": 92532222,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/token-aggregate-proof-before-c71.json",
+      "bytes": 93257587,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/token-callback-proof-before.json",
+      "bytes": 93253180,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/token-scope-proof-before.json",
+      "bytes": 93237277,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/trigger-replacement-card-triage-before.json",
+      "bytes": 57821848,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/trigger-replacement-proof-before-write.json",
+      "bytes": 54938346,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    },
+    {
+      "path": ".recovery/wide-stack-tests-proof-before.json",
+      "bytes": 92335382,
+      "reason": "Superseded full ledger rollback snapshot; current published ledgers retained"
+    }
+  ]
+}

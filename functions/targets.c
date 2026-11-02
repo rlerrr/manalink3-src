@@ -1802,7 +1802,7 @@ static int target_available_impl(int player, int card, int *return_count,
   int iVar1;
   card_instance_t *instance;
   unsigned int tgt_player;
-  int iVar3;
+  int i;
   unsigned int player_00;
   bool bVar4;
   int iStack_28;
@@ -1814,15 +1814,14 @@ static int target_available_impl(int player, int card, int *return_count,
     who_chooses = test_damage_target_or_source;
   }
   iStack_20 = 0;
-  iVar3 = 0;
+  i = 0;
   do
   {
-    iVar1 = validate_target_impl(
-        player, card, iVar3, -1, NULL, who_chooses, allowed_controller, preferred_controller, zone,
+    if (validate_target_impl(
+        player, card, i, -1, NULL, who_chooses, allowed_controller, preferred_controller, zone,
         required_type, illegal_type, required_abilities, illegal_abilities, required_color,
         illegal_color, extra, required_subtype, power_requirement, toughness_requirement, special,
-        required_state, illegal_state, flags);
-    if (iVar1 != 0)
+        required_state, illegal_state, flags) != 0)
     {
       if (return_count == NULL)
       {
@@ -1830,8 +1829,8 @@ static int target_available_impl(int player, int card, int *return_count,
       }
       iStack_20 = iStack_20 + 1;
     }
-    iVar3 = iVar3 + 1;
-  } while (iVar3 != 2);
+    i = i + 1;
+  } while (i != 2);
   if ((who_chooses == 0) || (((unsigned char)trace_mode & 2) != 0))
   {
     bVar4 = (allowed_controller & 2U) == 0;
@@ -1851,13 +1850,13 @@ static int target_available_impl(int player, int card, int *return_count,
     }
     if (0 < iStack_14)
     {
-      iVar3 = 0;
+      i = 0;
       do
       {
-        instance = get_card_instance(player_00, iVar3);
+        instance = get_card_instance(player_00, i);
         if (instance->internal_card_id != -1)
         {
-          iVar1 = iVar3;
+          iVar1 = i;
           tgt_player = player_00;
           if (test_damage_target_or_source != 0)
           {
@@ -1874,13 +1873,12 @@ static int target_available_impl(int player, int card, int *return_count,
               tgt_player = (int)instance->damage_source_player;
             }
           }
-          iVar1 = validate_target_impl(
+          if (validate_target_impl(
               player, card, tgt_player, iVar1, NULL, who_chooses, allowed_controller,
               preferred_controller, zone, required_type, illegal_type, required_abilities,
               illegal_abilities, required_color, illegal_color, extra, required_subtype,
               power_requirement, toughness_requirement, special, required_state, illegal_state,
-              flags);
-          if (iVar1 != 0)
+              flags) != 0)
           {
             if (return_count == NULL)
             {
@@ -1890,8 +1888,8 @@ static int target_available_impl(int player, int card, int *return_count,
           }
         }
       LAB_0265f14e:
-        iVar3 = iVar3 + 1;
-      } while (iStack_14 != iVar3);
+        i = i + 1;
+      } while (iStack_14 != i);
     }
     player_00 = player_00 ^ 1;
     iStack_28 = iStack_28 + -1;
@@ -1982,19 +1980,17 @@ int real_validate_target(int tgt_player, int tgt_card, char *return_error_str, i
       {
         flags = 2;
       }
-      iVar3 = has_subtype(iVar3, iVar1, SUBTYPE_EQUIPMENT);
-      if (iVar3 != 0)
+      if (has_subtype(iVar3, iVar1, SUBTYPE_EQUIPMENT) != 0)
       {
         flags = flags | 4;
       }
     }
   }
-  iVar1 = validate_target_impl(
+  return validate_target_impl(
       uStack_14, iVar1, tgt_player, tgt_card, return_error_str, who_chooses, allowed_controller,
       preferred_controller, zone, required_type, illegal_type, required_abilities,
       illegal_abilities, required_color, illegal_color, extra, required_subtype, power_requirement,
       toughness_requirement, special, required_state, illegal_state, flags);
-  return iVar1;
 }
 
 
@@ -2031,21 +2027,19 @@ int real_target_available(int *return_count, int test_damage_target_or_source, i
     {
       flags = 2;
     }
-    iVar2 = has_subtype(iStack_14, iVar1, SUBTYPE_EQUIPMENT);
-    if (iVar2 != 0)
+    if (has_subtype(iStack_14, iVar1, SUBTYPE_EQUIPMENT) != 0)
     {
       flags = flags | 4;
     }
   }
   if ((unsigned int)test_damage_target_or_source < 3)
   {
-    iVar1 = target_available_impl(iStack_14, iVar1, return_count, test_damage_target_or_source,
+    return target_available_impl(iStack_14, iVar1, return_count, test_damage_target_or_source,
                                        who_chooses, allowed_controller, preferred_controller, zone,
                                        required_type, illegal_type, required_abilities,
                                        illegal_abilities, required_color, illegal_color, extra,
                                        required_subtype, power_requirement, toughness_requirement,
                                        special, required_state, illegal_state, flags);
-    return iVar1;
   }
   return 0;
 }
@@ -2174,13 +2168,6 @@ int valid_target(target_definition_t *td)
 
 
 #ifndef SHANDALAR
-typedef union
-{
-  char error_reason[208];
-  char multiblocker_error[200];
-  target_t candidates[60];
-} target_selection_storage_t;
-
 /* ManalinkEh 2022: 0x265f3d0; original functions/targets.c:1042. */
 static int select_target_impl(int player, int card, int who_chooses, int allowed_controller,
                                    int preferred_controller, int zone, int required_type,
@@ -2201,11 +2188,9 @@ static int select_target_impl(int player, int card, int who_chooses, int allowed
   unsigned int uStack_2d8;
   unsigned int uStack_2d4;
   int unknown_v44;
-  target_t tmp_tgt;
-  char illegal_tgt[200];
-  target_selection_storage_t selection;
   if (((who_chooses != 1) || (((unsigned char)trace_mode & 2) != 0)) && (ai_is_speculating != 1))
   {
+    target_t tmp_tgt;
     if (zone == 0)
     {
       if ((allowed_controller & 2U) == 0)
@@ -2297,14 +2282,16 @@ static int select_target_impl(int player, int card, int who_chooses, int allowed
       {
         if (ai_is_speculating != 1)
         {
-          sprintf(selection.multiblocker_error, EXE_STR(0x73940c), EXE_STR(0x728f6c));
-          display_error_message(selection.multiblocker_error);
+          char illegal_tgt[200];
+          sprintf(illegal_tgt, EXE_STR(0x73940c), EXE_STR(0x728f6c));
+          display_error_message(illegal_tgt);
         }
         goto LAB_0265f467;
       }
     }
+    char err_reason[208];
     iVar5 = validate_target_impl(
-        player, card, tmp_tgt.player, tmp_tgt.card, selection.error_reason, who_chooses,
+        player, card, tmp_tgt.player, tmp_tgt.card, err_reason, who_chooses,
         allowed_controller, preferred_controller, zone, required_type, illegal_type,
         required_abilities, illegal_abilities, required_color, illegal_color, extra,
         required_subtype, power_requirement, toughness_requirement, special, required_state,
@@ -2322,13 +2309,14 @@ static int select_target_impl(int player, int card, int who_chooses, int allowed
     }
     if (ai_is_speculating != 1)
     {
-      if (selection.error_reason[0] == '\0')
+      if (err_reason[0] == '\0')
       {
         display_error_message(EXE_STR(0x73732c));
       }
       else
       {
-        sprintf(illegal_tgt, EXE_STR(0x73940c), selection.error_reason);
+        char illegal_tgt[200];
+        sprintf(illegal_tgt, EXE_STR(0x73940c), err_reason);
         display_error_message(illegal_tgt);
       }
     }
@@ -2367,6 +2355,7 @@ static int select_target_impl(int player, int card, int who_chooses, int allowed
 joined_r0x0265f86d:
   if (spell_fizzled != 1)
   {
+    target_t candidates[60];
     iVar7 = 0;
     iVar3 = 0;
     do
@@ -2386,8 +2375,8 @@ joined_r0x0265f86d:
                    flags),
                iVar6 != 0))
           {
-            selection.candidates[iVar3].player = iVar7;
-            selection.candidates[iVar3].card = iVar5;
+            candidates[iVar3].player = iVar7;
+            candidates[iVar3].card = iVar5;
             iVar3 = iVar3 + 1;
             if (0x39 < iVar3)
               goto LAB_0265f755;
@@ -2400,14 +2389,14 @@ joined_r0x0265f86d:
   LAB_0265f755:
     if (uStack_2d8 != 0)
     {
-      selection.candidates[iVar3].player = 1;
-      selection.candidates[iVar3].card = -1;
+      candidates[iVar3].player = 1;
+      candidates[iVar3].card = -1;
       iVar3 = iVar3 + 1;
     }
     if (uStack_2d4 != 0)
     {
-      selection.candidates[iVar3].player = 0;
-      selection.candidates[iVar3].card = -1;
+      candidates[iVar3].player = 0;
+      candidates[iVar3].card = -1;
       iVar3 = iVar3 + 1;
     }
     if (iVar3 != 0)
@@ -2416,8 +2405,8 @@ joined_r0x0265f86d:
       if (ai_is_speculating == 1)
       {
         EXE_DWORD(0x7a2fe4) = internal_rand(iVar3);
-        EXE_DWORD(0x78fa30) = (selection.candidates[EXE_DWORD(0x7a2fe4)].player < 1 ? 0 : 0x100) |
-                              (selection.candidates[EXE_DWORD(0x7a2fe4)].card & 0xff) | 0x4000;
+        EXE_DWORD(0x78fa30) = (candidates[EXE_DWORD(0x7a2fe4)].player < 1 ? 0 : 0x100) |
+                              (candidates[EXE_DWORD(0x7a2fe4)].card & 0xff) | 0x4000;
         sub_498F20();
       }
       else
@@ -2428,9 +2417,9 @@ joined_r0x0265f86d:
           EXE_DWORD(0x7a2fe4) = internal_rand(iVar3);
         }
       }
-      EXE_DWORD(0x60a550) = selection.candidates[EXE_DWORD(0x7a2fe4)].player;
-      iVar2 = selection.candidates[EXE_DWORD(0x7a2fe4)].card;
-      ret_tgt->player = selection.candidates[EXE_DWORD(0x7a2fe4)].player;
+      EXE_DWORD(0x60a550) = candidates[EXE_DWORD(0x7a2fe4)].player;
+      iVar2 = candidates[EXE_DWORD(0x7a2fe4)].card;
+      ret_tgt->player = candidates[EXE_DWORD(0x7a2fe4)].player;
       ret_tgt->card = iVar2;
       return 1;
     }
@@ -2511,19 +2500,17 @@ int real_select_target(int who_chooses, int allowed_controller, int preferred_co
       {
         flags = 2;
       }
-      iVar3 = has_subtype(iVar3, iVar1, SUBTYPE_EQUIPMENT);
-      if (iVar3 != 0)
+      if (has_subtype(iVar3, iVar1, SUBTYPE_EQUIPMENT) != 0)
       {
         flags = flags | 4;
       }
     }
   }
-  iVar1 = select_target_maybe_force(
+  return select_target_maybe_force(
       uStack_14, iVar1, who_chooses, allowed_controller, preferred_controller, zone, required_type,
       illegal_type, required_abilities, illegal_abilities, required_color, illegal_color, extra,
       required_subtype, power_requirement, toughness_requirement, special, required_state,
       illegal_state, flags, prompt, allow_cancel, ret_tgt);
-  return iVar1;
 }
 
 
@@ -2565,18 +2552,17 @@ int pick_next_target_arbitrary(target_definition_t *td, const char *prompt, int 
 /* ManalinkEh 2022: 0x2660930; original functions/targets.c:1447. */
 int choose_default_target(int player, int card, target_definition_t *td)
 {
+  int i;
   int32_t iVar1;
   int32_t iVar2;
   card_instance_t *instance;
   int iVar4;
   FILE *pFVar5;
-  int iVar6;
   int iVar7;
   char buffer[500];
 
   instance = get_card_instance(player, card);
-  iVar4 = get_setting(7);
-  if (iVar4 != 0)
+  if (get_setting(7) != 0)
   {
     if (read_auto_target_file == 0)
     {
@@ -2610,40 +2596,39 @@ int choose_default_target(int player, int card, target_definition_t *td)
     }
     iVar4 = get_id(player, card);
     iVar1 = td->allowed_controller;
-    iVar7 = 0;
+    i = 0;
     iVar2 = td->preferred_controller;
     do
     {
-      if ((auto_targets[iVar7] == iVar4) && (-1 < auto_targets[iVar7]))
+      if ((auto_targets[i] == iVar4) && (-1 < auto_targets[i]))
       {
-        iVar4 = auto_targets_target[iVar7];
+        iVar4 = auto_targets_target[i];
         td->allowed_controller = iVar4;
         td->preferred_controller = iVar4;
         break;
       }
-      iVar7 = iVar7 + 1;
-    } while (iVar7 != 500);
+      i = i + 1;
+    } while (i != 500);
     iVar4 = target_available(player, card, td);
     if (iVar4 == 1)
     {
       iVar4 = 0;
       do
       {
-        iVar7 = -1;
+        i = -1;
         if (-1 < active_cards_count[iVar4])
         {
           do
           {
             instance->targets[0].player = iVar4;
-            instance->targets[0].card = iVar7;
+            instance->targets[0].card = i;
             instance->number_of_targets = '\0';
-            iVar6 = would_validate_target(player, card, td, 0);
-            if (iVar6 != 0)
+            if (would_validate_target(player, card, td, 0) != 0)
             {
               return 1;
             }
-            iVar7 = iVar7 + 1;
-          } while (iVar7 < active_cards_count[iVar4]);
+            i = i + 1;
+          } while (i < active_cards_count[iVar4]);
         }
         iVar4 = iVar4 + 1;
       } while (iVar4 != 2);
@@ -2887,14 +2872,12 @@ int mark_up_to_n_targets_noload(target_definition_t *td, const char *prompt, int
   iVar4 = 0;
   while (true)
   {
-    iVar2 = can_target(td);
-    if (iVar2 == 0)
+    if (can_target(td) == 0)
     {
       bVar5 = false;
       goto LAB_026612a1;
     }
-    iVar2 = select_target(td->player, td->card + -1000, td, prompt, &tgt);
-    if (iVar2 == 0)
+    if (select_target(td->player, td->card + -1000, td, prompt, &tgt) == 0)
       break;
     iVar4 = iVar4 + 1;
     marked[tgt.player][tgt.card] = '\x01';

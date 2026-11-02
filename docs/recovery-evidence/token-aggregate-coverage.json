@@ -1,0 +1,129 @@
+{
+  "recovery": {
+    "restored_source_functions": 19,
+    "card_handlers": 17,
+    "helpers": 2,
+    "source_units": 17,
+    "restored_inline_helper_call": "ghireds_special_populate",
+    "changed_linker_objects": 17,
+    "unchanged_linker_objects": 149,
+    "scope": "Restore all18 remaining aggregate-token owners in17 original source units:17 cards andone sacrifice helper. Replace merged unions with actual typed target, token, test and prompt locals; preserve native sizes, member offsets, literal settings and dynamic expressions. EDH restores its three600-byte deck buffers, two100-byte activation prompts, two filters/tokens and two targets; its two existing error exits are expanded inside their original buffer scopes. Grand Ossuary moves its already-shared target-selection tail inside the actual loop-local scope and adds an explicit fallthrough jump preserving the original destinations. Ghired reconnects the already-recovered native ghireds_special_populate inline API. The sacrifice helper uses an actual eight-byte target and scoped76-byte token; its packed-choice expression is retained directly in the result scalar. Scalar events use complete partial-register lanes and explicit/implicit kills. Declaration geometry and scoped token event candidates are checked separately from arbitrary dynamic values, aliases, complete behavior and gameplay. Historical artifacts remain immutable and later source receipts explicitly supersede earlier merged-storage guards. Also restore the native Ghired helper itself: separate AI/human filters/targets and copy-token locals replace its merged post-selection token. This makes19 source definitions (17 cards andtwo helpers), with the native helper provenance retained from the earlier inline recovery."
+  },
+  "removed_merged_local_unions": 19,
+  "removed_unused_shared_union_typedefs": 1,
+  "checked_native_token_scopes": 21,
+  "exact_scoped_token_byte_event_matches": 21,
+  "checked_native_target_scopes": 23,
+  "checked_native_test_scopes": 5,
+  "checked_native_target_pairs": 2,
+  "checked_native_fixed_arrays": 10,
+  "native_current_geometry_counts": [
+    {
+      "kind": "DW_TAG_array_type",
+      "bytes": 12,
+      "count": 1
+    },
+    {
+      "kind": "DW_TAG_array_type",
+      "bytes": 100,
+      "count": 4
+    },
+    {
+      "kind": "DW_TAG_array_type",
+      "bytes": 151,
+      "count": 1
+    },
+    {
+      "kind": "DW_TAG_array_type",
+      "bytes": 200,
+      "count": 1
+    },
+    {
+      "kind": "DW_TAG_array_type",
+      "bytes": 600,
+      "count": 3
+    },
+    {
+      "kind": "DW_TAG_structure_type",
+      "bytes": 8,
+      "count": 2
+    },
+    {
+      "kind": "DW_TAG_structure_type",
+      "bytes": 76,
+      "count": 21
+    },
+    {
+      "kind": "DW_TAG_structure_type",
+      "bytes": 84,
+      "count": 23
+    },
+    {
+      "kind": "DW_TAG_structure_type",
+      "bytes": 216,
+      "count": 5
+    }
+  ],
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 83839,
+    "exit_code": 0,
+    "terminal_chunk_id": "581da4",
+    "setup_log": ".recovery/token-aggregates-setup-c71.log",
+    "setup_log_sha256": "a14d40356175dc1c8a48d3c9686f5029e39f521b9dcb286a0b251294931c1d23",
+    "build_exit_code": 0,
+    "build_chunk_id": "1683e3",
+    "build_log": ".recovery/token-aggregates-final-build-c71.log",
+    "build_log_sha256": "da867bca3975fc837055a510a8c42484d80369dbfd606001b50c2cfc8aff9dca",
+    "focused_session_id": 76987,
+    "focused_exit_code": 0,
+    "focused_terminal_chunk_id": "c7ef01",
+    "prior_checks_session_id": 75214,
+    "prior_checks_exit_code": 0,
+    "prior_checks_terminal_chunk_id": "43f5cc",
+    "prior_checks_result_path": ".recovery/token-aggregate-prior-results-c71.json",
+    "prior_checks_result_sha256": "d2f002d3746d152a283969eb5cb1c506c4238ba0fcbe8007b5e54da81b7951b3"
+  },
+  "refreshed_token_discovery": {
+    "path": ".recovery/token-write-screen-c72.json",
+    "sha256": "c7d0e585c4ab3321344df09efef61b7a506709c1816e9ce43d7f7faec33172e7",
+    "counts": {
+      "exact_scoped_byte_events": 688,
+      "requires_value_or_scope_review": 2,
+      "same_events_different_multiplicity": 1,
+      "unsupported_or_unbound": 1
+    },
+    "store_collector": {
+      "path": "tools/recovery/scalar_frame_analysis.py",
+      "sha256": "7cc738e3b1ad156a26262324bdfdc0528b1b4a4d810bda9bf94e6f949f9480c0"
+    },
+    "scope": "Read-only discovery screen of fixed native token locals. Collects direct scalar EBP writes within declared token scopes, with basic-block constant tracking, complete16-bit index-register lanes, all explicit/implicit register-definition kills and call-clobbered caller-save registers; complete callback words at60/64 are normalized by COFF/CSV identity. Unknown dynamic stores stay unknown. Union views can include other reused locals; multiple current scopes are candidate-matched by byte events rather than claimed semantic identity. Indexed/indirect stores, REP copies, nonfixed/split/nonstandard frames and other-helper inline scopes are not complete here. Equal event sets do not prove full token contents, initializer equivalence, value provenance or gameplay. Different events are review candidates, not automatically missing code."
+  },
+  "independent_residual_reviews": {
+    "path": "docs/recovery-evidence/token-scalar-followup-review.json",
+    "sha256": "57679d5daa3d3198a8222b59c9b6f6e7703cb1d7dcdd270fae15c0c6e054be42"
+  },
+  "next_array_discovery": {
+    "path": ".recovery/remaining-array-geometry-c72.json",
+    "sha256": "ae853237439108dc6307d53d08ccdcd34d320fe9bbd20b32245297e9ddee859b",
+    "counts": {
+      "restored_direct_array": 5,
+      "nested_array_geometry_candidates": 15
+    },
+    "remaining_flags": 15,
+    "remaining_source_functions": 7,
+    "scope": "Read-only next-pass array inventory. Direct source-name matches or recursively nested array members with equal dimensions/element width/extent are declaration candidates only. Geometry does not prove role identity, dynamic values, buffer safety or complete semantics. Five EDH arrays were restored by C71; the other fifteen flags require scope/API review before changing source."
+  },
+  "limits": "Direct scoped scalar events, callback identities and declaration geometry are bounded evidence. Equal unknown values do not prove value provenance. Typed source replay retains the original expressions and explicitly records the Ghired helper reconstruction, EDH exit expansion and Grand Ossuary shared-tail placement. API input provenance, indirect/indexed writes, all constructor/helper effects and complete gameplay remain separate. No fresh whole-DLL reccmp comparison score is claimed.",
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "08079b3ba78937c372d8e154595cdfbe8d5e3dc06d7a6ffe331abf9ad27c60e6",
+    "docs/recovery-evidence/token-aggregate-recovery.json": "13a31aaf5b44cdb2f0d999432bb1306d782f4d1a01976836e463222abe1166fe",
+    "tools/recovery/token_aggregate_source.py": "84ccb693380b6b25957abbcd00c55e98e36d2d7183c273e34b9e7f2b51fd7e30",
+    "tools/recovery/token_aggregate_analysis.py": "53238f23cbf1f31a560872614338bbf35978a9c841c7f3eabb3ae09b1d4398d1",
+    "tools/recovery/scalar_frame_analysis.py": "7cc738e3b1ad156a26262324bdfdc0528b1b4a4d810bda9bf94e6f949f9480c0",
+    "tools/recovery/verify_token_aggregate_recovery.py": "42a0ce0e5664c290ef86d76a3e4327446f7006ac5e2e4016f174d6e819b71844",
+    "ManalinkEh.dll": "89f9889d7deed1054f4cfcba84803fa9fe63404797b958c74c13c3d6477d9883",
+    "ManalinkEh.dbg": "00504f1617cf3346c63833070562a9c15e57001828fdbcb5bb69e36fbb9920f4",
+    "docs/recovery-evidence/token-scalar-followup-review.json": "57679d5daa3d3198a8222b59c9b6f6e7703cb1d7dcdd270fae15c0c6e054be42"
+  }
+}

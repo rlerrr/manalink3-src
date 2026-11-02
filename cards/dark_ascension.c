@@ -1638,9 +1638,8 @@ int card_falkenrath_torturer(int player, int card, event_t event)
     }
     return 0;
   }
-  result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x200, 0, 0, 0, 0, 0, 0, 0,
+  return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x200, 0, 0, 0, 0, 0, 0, 0,
                                      NULL, NULL);
-  return result;
 }
 
 int card_farbog_boneflinger(int player, int card, event_t event){
@@ -1983,6 +1982,7 @@ static int mikaeus_the_unhallowed_effect(int player, int card, event_t event)
 
 int card_mikaeus_the_unhallowed(int player, int card, event_t event)
 {
+  card_instance_t *instance;
   int card_00;
   card_instance_t *pcVar1;
   int iVar2;
@@ -2010,10 +2010,10 @@ int card_mikaeus_the_unhallowed(int player, int card, event_t event)
     }
     iVar2 =
         create_targetted_legacy_effect(player, card, mikaeus_the_unhallowed_effect, player, card);
-    pcVar1 = get_card_instance(player, iVar2);
-    pcVar1->targets[0].player = player;
-    pcVar1->targets[0].card = card;
-    pcVar1->number_of_targets = '\x01';
+    instance = get_card_instance(player, iVar2);
+    instance->targets[0].player = player;
+    instance->targets[0].card = card;
+    instance->number_of_targets = '\x01';
     add_status(player, iVar2, 0x10000);
   }
 LAB_02110892:
@@ -2043,8 +2043,8 @@ LAB_02110892:
       pcVar4->targets[iVar2].card = pcVar1->damage_source_card;
       pcVar4->info_slot = iVar2 + 1;
     }
-    pcVar1 = get_card_instance(player, card);
-    if (((0 < pcVar1->info_slot) && (trigger_condition == 0xd7)) &&
+    instance = get_card_instance(player, card);
+    if (((0 < instance->info_slot) && (trigger_condition == 0xd7)) &&
         ((card == affected_card &&
           ((player == affected_card_controller && (reason_for_trigger_controller == player))))))
     {
@@ -2054,27 +2054,27 @@ LAB_02110892:
       }
       else if (event == EVENT_RESOLVE_TRIGGER)
       {
-        pcVar1 = get_card_instance(player, card);
-        if (0 < pcVar1->info_slot)
+        instance = get_card_instance(player, card);
+        if (0 < instance->info_slot)
         {
           iVar2 = 0;
           do
           {
-            iVar3 = pcVar1->targets[iVar2].player;
-            if (((iVar3 != -1) && (card_00 = pcVar1->targets[iVar2].card, card_00 != -1)) &&
+            iVar3 = instance->targets[iVar2].player;
+            if (((iVar3 != -1) && (card_00 = instance->targets[iVar2].card, card_00 != -1)) &&
                 (pcVar4 = in_play(iVar3, card_00), pcVar4 != NULL))
             {
-              kill_card(pcVar1->targets[iVar2].player, pcVar1->targets[iVar2].card, KILL_DESTROY);
+              kill_card(instance->targets[iVar2].player, instance->targets[iVar2].card, KILL_DESTROY);
             }
             iVar2 = iVar2 + 1;
-          } while (iVar2 < pcVar1->info_slot);
+          } while (iVar2 < instance->info_slot);
         }
-        pcVar1->info_slot = 0;
+        instance->info_slot = 0;
       }
     }
   }
-  pcVar1 = in_play(player, card);
-  if (((pcVar1 != NULL) &&
+  instance = in_play(player, card);
+  if (((instance != NULL) &&
        (iVar2 = is_humiliated(player, card, AL_STATIC), iVar2 == 0)) &&
       ((((event - EVENT_POWER < 2 &&
           ((affected_card_controller == player && (card != affected_card)))) &&
@@ -3260,7 +3260,7 @@ At the beginning of each upkeep, if a player cast two or more spells last turn, 
 int card_lost_in_the_woods(int player, int card, event_t event)
 {
   int result;
-  card_instance_t *pcVar2;
+  card_instance_t *instance;
   card_instance_t *pcVar3;
   int attacker_index;
   uint8_t *attackers;
@@ -3268,9 +3268,9 @@ int card_lost_in_the_woods(int player, int card, event_t event)
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
   if (event == EVENT_DAT_ABILITY)
   {
-    pcVar2 = get_card_instance(player, card);
-    attacker_index = pcVar2->info_slot - 1;
-    attackers = (uint8_t *)&pcVar2->targets[2].player;
+    instance = get_card_instance(player, card);
+    attacker_index = instance->info_slot - 1;
+    attackers = (uint8_t *)&instance->targets[2].player;
     if (attacker_index >= 0)
     {
       do
@@ -3293,8 +3293,7 @@ int card_lost_in_the_woods(int player, int card, event_t event)
       } while (attacker_index != -1);
     }
   }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 int card_predator_ooze(int player, int card, event_t event){

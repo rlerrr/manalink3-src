@@ -1197,11 +1197,11 @@ int card_jeleva_nephalias_scourge(int player, int card, event_t event ){
 
 int card_marath_will_of_the_wild(int player, int card, event_t event)
 {
+  int choice;
   unsigned int uVar1;
-  card_instance_t *pcVar2;
+  card_instance_t *instance;
   int iVar3;
   int iVar4;
-  int iVar5;
   int iVar6;
   int32_t number;
   unsigned int num;
@@ -1216,12 +1216,12 @@ int card_marath_will_of_the_wild(int player, int card, event_t event)
   target_definition_t td2;
   check_legend_rule(player, card, event);
   store_mana_paid_to_play_this(player, card, event);
-  pcVar2 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   number = 0;
-  if (0 < pcVar2->targets[3].card)
+  if (0 < instance->targets[3].card)
   {
-    pcVar2 = get_card_instance(player, card);
-    number = pcVar2->targets[3].card;
+    instance = get_card_instance(player, card);
+    number = instance->targets[3].card;
   }
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, number);
   if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
@@ -1244,9 +1244,8 @@ int card_marath_will_of_the_wild(int player, int card, event_t event)
   td2.zone = 0x1200;
   if (event == EVENT_CAN_ACTIVATE)
   {
-    iVar6 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0, 0,
+    return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0, 0,
                                       0x1000100, NULL, NULL);
-    return iVar6;
   }
   pcStack_108->number_of_targets = '\0';
   pcStack_108->targets[1].player = 0;
@@ -1285,60 +1284,58 @@ int card_marath_will_of_the_wild(int player, int card, event_t event)
   ptStack_110 = &td2;
   pcStack_108->number_of_targets = '\0';
   pcStack_108->info_slot = 0;
-  iVar6 = charge_mana_for_activated_ability(player, card, iVar3, 0, 0, 0, 0, 0);
-  if (iVar6 == 0)
-    goto LAB_023c4244;
-  if (current_phase == 0x18)
+  if (!(charge_mana_for_activated_ability(player, card, iVar3, 0, 0, 0, 0, 0) == 0))
   {
-    uStack_118 = 8;
-    uStack_120 = 1;
-    iVar6 = 5;
-  }
-  else
-  {
-    if ((current_phase == 0x14) || (current_phase == 0x1e))
+    if (current_phase == 0x18)
     {
-      uStack_120 = 10;
+      uStack_118 = 8;
+      uStack_120 = 1;
+      iVar6 = 5;
     }
     else
     {
-      uStack_120 = 1;
+      if ((current_phase == 0x14) || (current_phase == 0x1e))
+      {
+        uStack_120 = 10;
+      }
+      else
+      {
+        uStack_120 = 1;
+      }
+      uStack_118 = 1;
+      iVar6 = (unsigned int)(current_phase == 0x16) * 3 + 5;
     }
-    uStack_118 = 1;
-    iVar6 = (unsigned int)(current_phase == 0x16) * 3 + 5;
-  }
-  iVar4 = can_target(ptStack_110);
-  iVar5 = can_target(ptStack_10c);
-  iVar6 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Pass +1/+1 counters",
-                      iVar5, uStack_118, "Damage creature or player", iVar4, uStack_120,
-                      "Generate an Elemental", 1, iVar6, 0, 0, 0, 0);
-  if (iVar6 == 0)
-  {
-    spell_fizzled = 1;
-    return 0;
-  }
-  if (iVar6 == 2)
-  {
-    prompt = "TARGET_ANY";
-    ptStack_10c = ptStack_110;
-  LAB_023c4707:
-    iVar4 = pick_target(ptStack_10c, prompt);
-    if (iVar4 != 0)
+    iVar4 = can_target(ptStack_110);
+    choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Pass +1/+1 counters",
+                        can_target(ptStack_10c), uStack_118, "Damage creature or player", iVar4, uStack_120,
+                        "Generate an Elemental", 1, iVar6, 0, 0, 0, 0);
+    if (choice == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == 2)
+    {
+      prompt = "TARGET_ANY";
+      ptStack_10c = ptStack_110;
+    LAB_023c4707:
+      if (pick_target(ptStack_10c, prompt) != 0)
+      {
+        remove_counters(player, card, player, card, COUNTER_P1_P1, iVar3);
+      }
+    }
+    else if (choice == 3)
     {
       remove_counters(player, card, player, card, COUNTER_P1_P1, iVar3);
     }
+    else if (choice == 1)
+    {
+      prompt = "TARGET_CREATURE";
+      goto LAB_023c4707;
+    }
+    *(char *)&pcStack_108->info_slot = (char)choice;
+    *(char *)((int)&pcStack_108->info_slot + 1) = (char)iVar3;
   }
-  else if (iVar6 == 3)
-  {
-    remove_counters(player, card, player, card, COUNTER_P1_P1, iVar3);
-  }
-  else if (iVar6 == 1)
-  {
-    prompt = "TARGET_CREATURE";
-    goto LAB_023c4707;
-  }
-  *(char *)&pcStack_108->info_slot = (char)iVar6;
-  *(char *)((int)&pcStack_108->info_slot + 1) = (char)iVar3;
 LAB_023c4244:
   ptStack_10c = &td1;
   ptStack_110 = &td2;
@@ -1348,8 +1345,7 @@ LAB_023c4244:
     num = uVar1 >> 8 & 0xff;
     if ((char)uVar1 == '\x01')
     {
-      iVar6 = valid_target(ptStack_10c);
-      if (iVar6 != 0)
+      if (valid_target(ptStack_10c) != 0)
       {
         add_counters(player, card, pcStack_108->targets[0].player,
                                  pcStack_108->targets[0].card, COUNTER_P1_P1, num);
@@ -1357,8 +1353,7 @@ LAB_023c4244:
     }
     else if ((uVar1 & 0xff) == 2)
     {
-      iVar6 = valid_target(ptStack_110);
-      if (iVar6 != 0)
+      if (valid_target(ptStack_110) != 0)
       {
         damage_target0(player, card, num);
       }
@@ -1710,6 +1705,8 @@ Legendary Creature — Goblin Artificer 3/3
 
 int card_eye_of_doom(int player, int card, event_t event)
 {
+  int p;
+  int c;
   int iVar1;
   card_instance_t *instance;
   int iVar3;
@@ -1718,7 +1715,7 @@ int card_eye_of_doom(int player, int card, event_t event)
   int iVar6;
   target_definition_t td;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  iVar1 = current_turn;
+  p = current_turn;
   if (event == EVENT_ETB)
   {
 
@@ -1752,9 +1749,9 @@ int card_eye_of_doom(int player, int card, event_t event)
       iVar4 = current_turn;
       do
       {
-        while (((instance = in_play(iVar1, iVar6),
-                 instance == NULL || (iVar3 = is_what(iVar1, iVar6, 0x47), iVar3 == 0)) ||
-                (iVar3 = count_counters(iVar1, iVar6, COUNTER_DOOM), iVar3 < 1)))
+        while (((instance = in_play(p, iVar6),
+                 instance == NULL || (iVar3 = is_what(p, iVar6, 0x47), iVar3 == 0)) ||
+                (iVar3 = count_counters(p, iVar6, COUNTER_DOOM), iVar3 < 1)))
         {
           iVar6 = iVar6 + -1;
           if (iVar6 == -1)
@@ -1766,22 +1763,22 @@ int card_eye_of_doom(int player, int card, event_t event)
     }
   LAB_023c5d79:
     iVar4 = 1 - current_turn;
-    iVar1 = active_cards_count[iVar4] + -1;
-    if (-1 < iVar1)
+    c = active_cards_count[iVar4] + -1;
+    if (-1 < c)
     {
       do
       {
-        while (((instance = in_play(iVar4, iVar1),
-                 instance == NULL || (iVar6 = is_what(iVar4, iVar1, 0x47), iVar6 == 0)) ||
-                (iVar6 = count_counters(iVar4, iVar1, COUNTER_DOOM), iVar6 < 1)))
+        while (((instance = in_play(iVar4, c),
+                 instance == NULL || (iVar6 = is_what(iVar4, c, 0x47), iVar6 == 0)) ||
+                (iVar6 = count_counters(iVar4, c, COUNTER_DOOM), iVar6 < 1)))
         {
-          iVar1 = iVar1 + -1;
-          if (iVar1 == -1)
+          c = c + -1;
+          if (c == -1)
             goto LAB_023c5df9;
         }
-        marked[iVar4][iVar1] = 1;
-        iVar1 = iVar1 + -1;
-      } while (iVar1 != -1);
+        marked[iVar4][c] = 1;
+        c = c + -1;
+      } while (c != -1);
     }
   LAB_023c5df9:
     iVar4 = current_turn;
@@ -1801,18 +1798,17 @@ int card_eye_of_doom(int player, int card, event_t event)
     } while (iVar3 != -1);
   LAB_023c5e3f:
     uVar5 = current_turn ^ 1;
-    iVar1 = 0x96;
+    c = 0x96;
     do
     {
-      if (marked[uVar5][iVar1] != 0)
+      if (marked[uVar5][c] != 0)
       {
-        kill_card(uVar5, iVar1, KILL_DESTROY);
+        kill_card(uVar5, c, KILL_DESTROY);
       }
-      iVar1 = iVar1 + -1;
-    } while (iVar1 != -1);
+      c = c + -1;
+    } while (c != -1);
   }
-  iVar1 = generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
-  return iVar1;
+  return generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
 int card_surveyors_scope(int player, int card, event_t event){

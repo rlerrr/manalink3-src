@@ -1,0 +1,16 @@
+{
+  "status": "Original1924-statement direct-call return queue resolved; broader recovery remains open.",
+  "counts": {
+    "pending_statements": 0
+  },
+  "rows": [],
+  "original_discovery": {
+    "path": ".recovery/call-return-candidates-c111.json",
+    "sha256": "730a4238eadae5733bdcd96e0f54265b77b4e83c2464b8321cdb31f6777a1efd",
+    "candidate_assignments": 1924,
+    "candidate_functions": 1519
+  },
+  "resolved_batch": "docs/recovery-evidence/call-return-cleanup.json",
+  "coverage": "docs/recovery-evidence/call-return-cleanup-coverage.json",
+  "scope": "All originally screened direct-call/return pairs are applied. This queue does not cover every variable type, parser failure, macro-generated/C++ function or code path, and does not count unrecovered native functions."
+}

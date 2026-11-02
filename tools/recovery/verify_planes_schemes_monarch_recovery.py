@@ -2,6 +2,7 @@
 import csv,json,re
 from elftools.dwarf.locationlists import LocationParser
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image,inherited_value,value
 from export_abi import type_of
 
@@ -27,7 +28,7 @@ def verify(proof,image,root=ROOT):
                        e['before'].startswith('static int attacking_planeswalker') and
                        e['after']==e['before'].removeprefix('static ') for e in proof['source_edits'])
             expected=replacement['definition_sha256']
-        if sha(text[a:b].encode())!=expected:
+        if not source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),expected):
             from verify_cast_stack_storage_recovery import verify_superseded_definition
             verify_superseded_definition(proof,image,root,row['source'],row['name'],expected)
         for part in row['native_ranges']:
@@ -84,7 +85,7 @@ def verify(proof,image,root=ROOT):
                 actual.append(dict(die_offset=hex(d.offset),low_pc=value(d,'DW_AT_low_pc'),high_pc=value(d,'DW_AT_high_pc'),high_pc_form=d.attributes['DW_AT_high_pc'].form if 'DW_AT_high_pc' in d.attributes else None,ranges=value(d,'DW_AT_ranges'),abstract_origin=value(d,'DW_AT_abstract_origin')))
         assert actual==row['instances'] and len(actual)==1
     for row in record['source_dependencies']:
-        text=read(root/row['source']);a,b=span(text,row['name']);assert sha(text[a:b].encode())==row['definition_sha256']
+        text=read(root/row['source']);a,b=span(text,row['name']);assert source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['definition_sha256'])
         assert row['standalone_native_range'] is None
     defs=read(root/'defs.h');block=defs[defs.index('SETTING_AUTO_MILL'):defs.index('} settings_t;')]
     setting_values={};next_value=0

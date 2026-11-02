@@ -18,7 +18,10 @@ def verify(proof,image,root=ROOT):
         d=dw.get_DIE_from_refaddr(int(row['die_offset'],16))
         assert inherited_value(d,'DW_AT_name')==row['name'] and contract(dw,d)==row['contract']
         assert native_ranges(dw,d)==[(int(p['address'],16),int(p['end'],16)) for p in row['native_ranges']]
-        t=read(root/row['source']);a,b=span(t,row['name']);assert sha(t[a:b].encode())==row['definition_sha256'],row['name']
+        t=read(root/row['source']);a,b=span(t,row['name'])
+        if sha(t[a:b].encode())!=row['definition_sha256']:
+            from verify_token_aggregate_recovery import verify_superseded_definition
+            verify_superseded_definition(proof,image,root,row['source'],row['name'],row['definition_sha256'])
         assert (row['source'],row['name'],row['definition_sha256']) in receipts,row['name']
         for part in row['native_ranges']:
             lo=int(part['address'],16);hi=int(part['end'],16);data=image.pe.get_data(lo-0x2000000,hi-lo)

@@ -1,0 +1,1752 @@
+{
+  "rows": [
+    {
+      "source": "cards/ice_age.c",
+      "name": "effect_breath_dream",
+      "before_definition": "static void effect_breath_dream(int player, int card, event_t event, kill_t kill_mode)\n{\n  int iVar1, iVar2, iVar3;\n  card_instance_t *instance;\n  unsigned int uVar5;\n  char *pcVar6;\n  bool bVar7;\n  unsigned char bVar8 = 0;\n  char marked[151];\n  test_definition_t this_test;\n  iVar3 = current_turn;\n  pcVar6 = marked + 5;\n  marked[0] = '\\0';\n  marked[1] = '\\0';\n  marked[2] = '\\0';\n  marked[3] = '\\0';\n  marked[4] = '\\0';\n  uVar5 = 0x92;\n  bVar7 = ((unsigned int)pcVar6 & 2) != 0;\n  if (bVar7)\n  {\n    marked[5] = '\\0';\n    marked[6] = '\\0';\n    uVar5 = 0x90;\n    pcVar6 = marked + 7;\n  }\n  for (uVar5 = uVar5 >> 2; uVar5 != 0; uVar5 = uVar5 - 1)\n  {\n    pcVar6[0] = '\\0';\n    pcVar6[1] = '\\0';\n    pcVar6[2] = '\\0';\n    pcVar6[3] = '\\0';\n    pcVar6 = pcVar6 + (unsigned int)bVar8 * -8 + 4;\n  }\n  if (!bVar7)\n  {\n    pcVar6[0] = '\\0';\n    pcVar6[1] = '\\0';\n  }\n  iVar1 = 0;\n  if (0 < active_cards_count[current_turn])\n  {\n    do\n    {\n      instance = in_play(iVar3, iVar1);\n      if ((instance != NULL) && (iVar2 = is_what(iVar3, iVar1, 2), iVar2 != 0))\n      {\n        marked[iVar1] = '\\x01';\n      }\n      iVar1 = iVar1 + 1;\n    } while (iVar1 < active_cards_count[iVar3]);\n  }\n  default_test_definition(&this_test, 2);\n  iVar1 = 0;\n  this_test.color = get_sleighted_color_test(player, card, 8);\n  if (0 < active_cards_count[iVar3])\n  {\n    do\n    {\n      if ((((marked[iVar1] != '\\0') && (instance = in_play(iVar3, iVar1), instance != NULL)) &&\n           ((instance->token_status & 0x80) == 0)) &&\n          ((iVar2 = new_make_test_in_play(iVar3, iVar1, -1, &this_test),\n            iVar2 != 0 &&\n                (iVar2 = cumulative_upkeep_arbitrary(\n                     player, card, iVar3, iVar1, event, 1, 0, 0, 0, 0, 0),\n                 iVar2 != 0))))\n      {\n        kill_card(iVar3, iVar1, kill_mode);\n      }\n      iVar1 = iVar1 + 1;\n    } while (iVar1 < active_cards_count[iVar3]);\n  }\n}",
+      "after_definition": "static void effect_breath_dream(int player, int card, event_t event, kill_t kill_mode)\n{\n  int iVar1, iVar2, iVar3;\n  card_instance_t *instance;\n  unsigned int uVar5;\n  char *pcVar6;\n  bool bVar7;\n  char marked[151];\n  test_definition_t this_test;\n  iVar3 = current_turn;\n  pcVar6 = marked + 5;\n  marked[0] = '\\0';\n  marked[1] = '\\0';\n  marked[2] = '\\0';\n  marked[3] = '\\0';\n  marked[4] = '\\0';\n  uVar5 = 0x92;\n  bVar7 = ((unsigned int)pcVar6 & 2) != 0;\n  if (bVar7)\n  {\n    marked[5] = '\\0';\n    marked[6] = '\\0';\n    uVar5 = 0x90;\n    pcVar6 = marked + 7;\n  }\n  for (uVar5 = uVar5 >> 2; uVar5 != 0; uVar5 = uVar5 - 1)\n  {\n    pcVar6[0] = '\\0';\n    pcVar6[1] = '\\0';\n    pcVar6[2] = '\\0';\n    pcVar6[3] = '\\0';\n    pcVar6 = pcVar6 + 4u;\n  }\n  if (!bVar7)\n  {\n    pcVar6[0] = '\\0';\n    pcVar6[1] = '\\0';\n  }\n  iVar1 = 0;\n  if (0 < active_cards_count[current_turn])\n  {\n    do\n    {\n      instance = in_play(iVar3, iVar1);\n      if ((instance != NULL) && (iVar2 = is_what(iVar3, iVar1, 2), iVar2 != 0))\n      {\n        marked[iVar1] = '\\x01';\n      }\n      iVar1 = iVar1 + 1;\n    } while (iVar1 < active_cards_count[iVar3]);\n  }\n  default_test_definition(&this_test, 2);\n  iVar1 = 0;\n  this_test.color = get_sleighted_color_test(player, card, 8);\n  if (0 < active_cards_count[iVar3])\n  {\n    do\n    {\n      if ((((marked[iVar1] != '\\0') && (instance = in_play(iVar3, iVar1), instance != NULL)) &&\n           ((instance->token_status & 0x80) == 0)) &&\n          ((iVar2 = new_make_test_in_play(iVar3, iVar1, -1, &this_test),\n            iVar2 != 0 &&\n                (iVar2 = cumulative_upkeep_arbitrary(\n                     player, card, iVar3, iVar1, event, 1, 0, 0, 0, 0, 0),\n                 iVar2 != 0))))\n      {\n        kill_card(iVar3, iVar1, kill_mode);\n      }\n      iVar1 = iVar1 + 1;\n    } while (iVar1 < active_cards_count[iVar3]);\n  }\n}",
+      "before_sha256": "c13478086fd49cfb48e3ffbf7798234ca9eb5973c7fbfd6cae7f76e12301e7cb",
+      "after_sha256": "5dff9c7cfc0540c603c2d61ee32b66f328beef9ad2663089b77fa8549a3043dc",
+      "facts": {
+        "folded_strides": 1,
+        "removed_flags": 1,
+        "removed_initializations": 1,
+        "renamed_role_locals": 0,
+        "source_candidates": [
+          {
+            "variable": "bVar8",
+            "stride_uses": [
+              {
+                "flag_offset": 775,
+                "expression_start": 761,
+                "expression_end": 789,
+                "fold_start": 761,
+                "fold_end": 789,
+                "fold_literal": "4u",
+                "scale": 8,
+                "forward_step": 4,
+                "kind": "linear",
+                "old_expression": "(pcVar6 + (((unsigned int) bVar8) * (-8))) + 4",
+                "new_expression": "pcVar6 + 4u",
+                "base_expression": "pcVar6",
+                "constant_zero_expression": "(unsigned int)0 * -8 + 4"
+              }
+            ],
+            "initialization_start": 197,
+            "initialization_end": 224,
+            "initialization_is_declaration": true,
+            "removed_declaration": null,
+            "remove_object": true,
+            "rename_to": null,
+            "reaching_zero": {
+              "reachable_nodes": 51,
+              "updates": 50,
+              "stride_nodes": [
+                {
+                  "flag_offset": 775,
+                  "node": 22,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 44,
+            "syntax_adapters": []
+          }
+        ]
+      },
+      "expanded_before_definition": "static void effect_breath_dream(int player, int card, event_t event, kill_t kill_mode)\n{\n  int iVar1, iVar2, iVar3;\n  card_instance_t *instance;\n  unsigned int uVar5;\n  char *pcVar6;\n  \n\n _Bool \n\n      bVar7;\n  unsigned char bVar8 = 0;\n  char marked[151];\n  test_definition_t this_test;\n  iVar3 = current_turn;\n  pcVar6 = marked + 5;\n  marked[0] = '\\0';\n  marked[1] = '\\0';\n  marked[2] = '\\0';\n  marked[3] = '\\0';\n  marked[4] = '\\0';\n  uVar5 = 0x92;\n  bVar7 = ((unsigned int)pcVar6 & 2) != 0;\n  if (bVar7)\n  {\n    marked[5] = '\\0';\n    marked[6] = '\\0';\n    uVar5 = 0x90;\n    pcVar6 = marked + 7;\n  }\n  for (uVar5 = uVar5 >> 2; uVar5 != 0; uVar5 = uVar5 - 1)\n  {\n    pcVar6[0] = '\\0';\n    pcVar6[1] = '\\0';\n    pcVar6[2] = '\\0';\n    pcVar6[3] = '\\0';\n    pcVar6 = pcVar6 + (unsigned int)bVar8 * -8 + 4;\n  }\n  if (!bVar7)\n  {\n    pcVar6[0] = '\\0';\n    pcVar6[1] = '\\0';\n  }\n  iVar1 = 0;\n  if (0 < active_cards_count[current_turn])\n  {\n    do\n    {\n      instance = in_play(iVar3, iVar1);\n      if ((instance != \n\n                      ((void *)0)\n\n                          ) && (iVar2 = is_what(iVar3, iVar1, 2), iVar2 != 0))\n      {\n        marked[iVar1] = '\\x01';\n      }\n      iVar1 = iVar1 + 1;\n    } while (iVar1 < active_cards_count[iVar3]);\n  }\n  default_test_definition(&this_test, 2);\n  iVar1 = 0;\n  this_test.color = get_sleighted_color_test(player, card, 8);\n  if (0 < active_cards_count[iVar3])\n  {\n    do\n    {\n      if ((((marked[iVar1] != '\\0') && (instance = in_play(iVar3, iVar1), instance != \n\n                                                                                     ((void *)0)\n\n                                                                                         )) &&\n           ((instance->token_status & 0x80) == 0)) &&\n          ((iVar2 = new_make_test_in_play(iVar3, iVar1, -1, &this_test),\n            iVar2 != 0 &&\n                (iVar2 = cumulative_upkeep_arbitrary(\n                     player, card, iVar3, iVar1, event, 1, 0, 0, 0, 0, 0),\n                 iVar2 != 0))))\n      {\n        kill_card(iVar3, iVar1, kill_mode);\n      }\n      iVar1 = iVar1 + 1;\n    } while (iVar1 < active_cards_count[iVar3]);\n  }\n}",
+      "expanded_projected_definition": "static void effect_breath_dream(int player, int card, event_t event, kill_t kill_mode)\n{\n  int iVar1, iVar2, iVar3;\n  card_instance_t *instance;\n  unsigned int uVar5;\n  char *pcVar6;\n  \n\n _Bool \n\n      bVar7;\n  char marked[151];\n  test_definition_t this_test;\n  iVar3 = current_turn;\n  pcVar6 = marked + 5;\n  marked[0] = '\\0';\n  marked[1] = '\\0';\n  marked[2] = '\\0';\n  marked[3] = '\\0';\n  marked[4] = '\\0';\n  uVar5 = 0x92;\n  bVar7 = ((unsigned int)pcVar6 & 2) != 0;\n  if (bVar7)\n  {\n    marked[5] = '\\0';\n    marked[6] = '\\0';\n    uVar5 = 0x90;\n    pcVar6 = marked + 7;\n  }\n  for (uVar5 = uVar5 >> 2; uVar5 != 0; uVar5 = uVar5 - 1)\n  {\n    pcVar6[0] = '\\0';\n    pcVar6[1] = '\\0';\n    pcVar6[2] = '\\0';\n    pcVar6[3] = '\\0';\n    pcVar6 = pcVar6 + 4u;\n  }\n  if (!bVar7)\n  {\n    pcVar6[0] = '\\0';\n    pcVar6[1] = '\\0';\n  }\n  iVar1 = 0;\n  if (0 < active_cards_count[current_turn])\n  {\n    do\n    {\n      instance = in_play(iVar3, iVar1);\n      if ((instance != \n\n                      ((void *)0)\n\n                          ) && (iVar2 = is_what(iVar3, iVar1, 2), iVar2 != 0))\n      {\n        marked[iVar1] = '\\x01';\n      }\n      iVar1 = iVar1 + 1;\n    } while (iVar1 < active_cards_count[iVar3]);\n  }\n  default_test_definition(&this_test, 2);\n  iVar1 = 0;\n  this_test.color = get_sleighted_color_test(player, card, 8);\n  if (0 < active_cards_count[iVar3])\n  {\n    do\n    {\n      if ((((marked[iVar1] != '\\0') && (instance = in_play(iVar3, iVar1), instance != \n\n                                                                                     ((void *)0)\n\n                                                                                         )) &&\n           ((instance->token_status & 0x80) == 0)) &&\n          ((iVar2 = new_make_test_in_play(iVar3, iVar1, -1, &this_test),\n            iVar2 != 0 &&\n                (iVar2 = cumulative_upkeep_arbitrary(\n                     player, card, iVar3, iVar1, event, 1, 0, 0, 0, 0, 0),\n                 iVar2 != 0))))\n      {\n        kill_card(iVar3, iVar1, kill_mode);\n      }\n      iVar1 = iVar1 + 1;\n    } while (iVar1 < active_cards_count[iVar3]);\n  }\n}",
+      "expanded_facts": {
+        "folded_strides": 1,
+        "removed_flags": 1,
+        "removed_initializations": 1,
+        "renamed_role_locals": 0,
+        "source_candidates": [
+          {
+            "variable": "bVar8",
+            "stride_uses": [
+              {
+                "flag_offset": 787,
+                "expression_start": 773,
+                "expression_end": 801,
+                "fold_start": 773,
+                "fold_end": 801,
+                "fold_literal": "4u",
+                "scale": 8,
+                "forward_step": 4,
+                "kind": "linear",
+                "old_expression": "(pcVar6 + (((unsigned int) bVar8) * (-8))) + 4",
+                "new_expression": "pcVar6 + 4u",
+                "base_expression": "pcVar6",
+                "constant_zero_expression": "(unsigned int)0 * -8 + 4"
+              }
+            ],
+            "initialization_start": 209,
+            "initialization_end": 236,
+            "initialization_is_declaration": true,
+            "removed_declaration": null,
+            "remove_object": true,
+            "rename_to": null,
+            "reaching_zero": {
+              "reachable_nodes": 51,
+              "updates": 50,
+              "stride_nodes": [
+                {
+                  "flag_offset": 787,
+                  "node": 22,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 44,
+            "syntax_adapters": []
+          }
+        ]
+      },
+      "checks": [
+        {
+          "source_stride_lines": [
+            12856
+          ],
+          "expanded_fact": {
+            "variable": "bVar8",
+            "stride_uses": [
+              {
+                "flag_offset": 787,
+                "expression_start": 773,
+                "expression_end": 801,
+                "fold_start": 773,
+                "fold_end": 801,
+                "fold_literal": "4u",
+                "scale": 8,
+                "forward_step": 4,
+                "kind": "linear",
+                "old_expression": "(pcVar6 + (((unsigned int) bVar8) * (-8))) + 4",
+                "new_expression": "pcVar6 + 4u",
+                "base_expression": "pcVar6",
+                "constant_zero_expression": "(unsigned int)0 * -8 + 4"
+              }
+            ],
+            "initialization_start": 209,
+            "initialization_end": 236,
+            "initialization_is_declaration": true,
+            "removed_declaration": null,
+            "remove_object": true,
+            "rename_to": null,
+            "reaching_zero": {
+              "reachable_nodes": 51,
+              "updates": 50,
+              "stride_nodes": [
+                {
+                  "flag_offset": 787,
+                  "node": 22,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 44,
+            "syntax_adapters": []
+          }
+        }
+      ],
+      "residual_direction_cleanup": true
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "card_bloodletter",
+      "before_definition": "int card_bloodletter(int player, int card, event_t event)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  unsigned char *pbVar4;\n  int card_00;\n  int *piVar5;\n  static const unsigned char native_name_fold[256] = {\n      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,\n      0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,\n      0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c,\n      0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,\n      0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a,\n      0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,\n      0x7a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,\n      0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,\n      0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x2c, 0x66, 0x84, 0x85, 0x86,\n      0x87, 0x5e, 0x25, 0x73, 0x3c, 0x8c, 0x8d, 0x7a, 0x8f, 0x90, 0x27, 0x27, 0x22, 0x22, 0x95,\n      0x2d, 0x2d, 0x7e, 0x99, 0x73, 0x3e, 0x9c, 0x9d, 0x7a, 0x79, 0x5f, 0x21, 0x24, 0x24, 0x24,\n      0x24, 0x7c, 0x25, 0x22, 0x40, 0x5e, 0x3c, 0x7e, 0x2d, 0x40, 0x7e, 0x5e, 0x2b, 0x32, 0x33,\n      0x27, 0x75, 0x26, 0x2e, 0x2c, 0x31, 0x5e, 0x3e, 0x31, 0x32, 0x33, 0x3f, 0x61, 0x61, 0x61,\n      0x61, 0x61, 0x61, 0xc6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69, 0x64, 0x6e,\n      0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2a, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xde, 0xdf, 0x61,\n      0x61, 0x61, 0x61, 0x61, 0x61, 0xe6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,\n      0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2f, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xfe,\n      0x79,\n  };\n  unsigned char bVar6;\n  int letter[26];\n  bVar6 = 0;\n  if (((event == EVENT_STATIC_EFFECTS) && (instance = in_play(player, card), instance != NULL)) &&\n      (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))\n  {\n    piVar5 = letter;\n    for (iVar2 = 0x1a; iVar2 != 0; iVar2 = iVar2 + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + (unsigned int)bVar6 * -2 + 1;\n    }\n    iVar2 = 0;\n    do\n    {\n      card_00 = 0;\n      if (0 < active_cards_count[iVar2])\n      {\n        do\n        {\n          instance = in_play(iVar2, card_00);\n          if (((instance != NULL) && (iVar3 = is_what(iVar2, card_00, 1), iVar3 == 0)) &&\n              (iVar3 = is_what(iVar2, card_00, 0x47), iVar3 != 0))\n          {\n            iVar3 = get_card_name(iVar2, card_00);\n            pbVar4 = (unsigned char *)get_card_name_by_id(iVar3);\n            bVar6 = native_name_fold[*pbVar4];\n            if ((bVar6 & 0xdf) == 0xc6)\n            {\n              letter[0] = letter[0] + 1;\n              if (2 < letter[0])\n                goto LAB_023051a0;\n              letter[4] = letter[4] + 1;\n              iVar3 = letter[4];\n            }\n            else\n            {\n              if (0x19 < (unsigned char)(bVar6 + 0x9f))\n                goto LAB_02305108;\n              iVar3 = letter[bVar6 - 0x61];\n              letter[bVar6 - 0x61] = iVar3 + 1;\n              iVar3 = iVar3 + 1;\n            }\n            if (2 < iVar3)\n            {\n            LAB_023051a0:\n              if (can_sacrifice_this_as_cost(player, card) == 0)\n              {\n                return 0;\n              }\n              kill_card(player, card, KILL_SACRIFICE);\n              new_damage_all(player, card, 2, 2, 3, NULL);\n              return 0;\n            }\n          }\n        LAB_02305108:\n          card_00 = card_00 + 1;\n        } while (card_00 < active_cards_count[iVar2]);\n      }\n      iVar2 = iVar2 + 1;\n    } while (iVar2 != 2);\n  }\n  return 0;\n}",
+      "after_definition": "int card_bloodletter(int player, int card, event_t event)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  unsigned char *pbVar4;\n  int card_00;\n  int *piVar5;\n  static const unsigned char native_name_fold[256] = {\n      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,\n      0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,\n      0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c,\n      0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,\n      0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a,\n      0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,\n      0x7a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,\n      0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,\n      0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x2c, 0x66, 0x84, 0x85, 0x86,\n      0x87, 0x5e, 0x25, 0x73, 0x3c, 0x8c, 0x8d, 0x7a, 0x8f, 0x90, 0x27, 0x27, 0x22, 0x22, 0x95,\n      0x2d, 0x2d, 0x7e, 0x99, 0x73, 0x3e, 0x9c, 0x9d, 0x7a, 0x79, 0x5f, 0x21, 0x24, 0x24, 0x24,\n      0x24, 0x7c, 0x25, 0x22, 0x40, 0x5e, 0x3c, 0x7e, 0x2d, 0x40, 0x7e, 0x5e, 0x2b, 0x32, 0x33,\n      0x27, 0x75, 0x26, 0x2e, 0x2c, 0x31, 0x5e, 0x3e, 0x31, 0x32, 0x33, 0x3f, 0x61, 0x61, 0x61,\n      0x61, 0x61, 0x61, 0xc6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69, 0x64, 0x6e,\n      0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2a, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xde, 0xdf, 0x61,\n      0x61, 0x61, 0x61, 0x61, 0x61, 0xe6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,\n      0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2f, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xfe,\n      0x79,\n  };\n  unsigned char ltr;\n  int letter[26];\n  if (((event == EVENT_STATIC_EFFECTS) && (instance = in_play(player, card), instance != NULL)) &&\n      (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))\n  {\n    piVar5 = letter;\n    for (iVar2 = 0x1a; iVar2 != 0; iVar2 = iVar2 + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + 1u;\n    }\n    iVar2 = 0;\n    do\n    {\n      card_00 = 0;\n      if (0 < active_cards_count[iVar2])\n      {\n        do\n        {\n          instance = in_play(iVar2, card_00);\n          if (((instance != NULL) && (iVar3 = is_what(iVar2, card_00, 1), iVar3 == 0)) &&\n              (iVar3 = is_what(iVar2, card_00, 0x47), iVar3 != 0))\n          {\n            iVar3 = get_card_name(iVar2, card_00);\n            pbVar4 = (unsigned char *)get_card_name_by_id(iVar3);\n            ltr = native_name_fold[*pbVar4];\n            if ((ltr & 0xdf) == 0xc6)\n            {\n              letter[0] = letter[0] + 1;\n              if (2 < letter[0])\n                goto LAB_023051a0;\n              letter[4] = letter[4] + 1;\n              iVar3 = letter[4];\n            }\n            else\n            {\n              if (0x19 < (unsigned char)(ltr + 0x9f))\n                goto LAB_02305108;\n              iVar3 = letter[ltr - 0x61];\n              letter[ltr - 0x61] = iVar3 + 1;\n              iVar3 = iVar3 + 1;\n            }\n            if (2 < iVar3)\n            {\n            LAB_023051a0:\n              if (can_sacrifice_this_as_cost(player, card) == 0)\n              {\n                return 0;\n              }\n              kill_card(player, card, KILL_SACRIFICE);\n              new_damage_all(player, card, 2, 2, 3, NULL);\n              return 0;\n            }\n          }\n        LAB_02305108:\n          card_00 = card_00 + 1;\n        } while (card_00 < active_cards_count[iVar2]);\n      }\n      iVar2 = iVar2 + 1;\n    } while (iVar2 != 2);\n  }\n  return 0;\n}",
+      "before_sha256": "8ca465a132d942a250ec585dceb05d0bcf4fd07fd5df8f0f269d7de3bcb466ff",
+      "after_sha256": "25707baab2c54a66c9d5939573ffb122db82676e37999595892e01b2761be8db",
+      "facts": {
+        "folded_strides": 1,
+        "removed_flags": 0,
+        "removed_initializations": 1,
+        "renamed_role_locals": 1,
+        "source_candidates": [
+          {
+            "variable": "bVar6",
+            "stride_uses": [
+              {
+                "flag_offset": 2236,
+                "expression_start": 2222,
+                "expression_end": 2250,
+                "fold_start": 2222,
+                "fold_end": 2250,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar5 + (((unsigned int) bVar6) * (-2))) + 1",
+                "new_expression": "piVar5 + 1u",
+                "base_expression": "piVar5",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              }
+            ],
+            "initialization_start": 1915,
+            "initialization_end": 1928,
+            "initialization_is_declaration": false,
+            "removed_declaration": null,
+            "remove_object": false,
+            "rename_to": "ltr",
+            "reaching_zero": {
+              "reachable_nodes": 49,
+              "updates": 61,
+              "stride_nodes": [
+                {
+                  "flag_offset": 2236,
+                  "node": 36,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 41,
+            "syntax_adapters": []
+          }
+        ]
+      },
+      "expanded_before_definition": "int card_bloodletter(int player, int card, event_t event)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  unsigned char *pbVar4;\n  int card_00;\n  int *piVar5;\n  static const unsigned char native_name_fold[256] = {\n      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,\n      0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,\n      0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c,\n      0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,\n      0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a,\n      0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,\n      0x7a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,\n      0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,\n      0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x2c, 0x66, 0x84, 0x85, 0x86,\n      0x87, 0x5e, 0x25, 0x73, 0x3c, 0x8c, 0x8d, 0x7a, 0x8f, 0x90, 0x27, 0x27, 0x22, 0x22, 0x95,\n      0x2d, 0x2d, 0x7e, 0x99, 0x73, 0x3e, 0x9c, 0x9d, 0x7a, 0x79, 0x5f, 0x21, 0x24, 0x24, 0x24,\n      0x24, 0x7c, 0x25, 0x22, 0x40, 0x5e, 0x3c, 0x7e, 0x2d, 0x40, 0x7e, 0x5e, 0x2b, 0x32, 0x33,\n      0x27, 0x75, 0x26, 0x2e, 0x2c, 0x31, 0x5e, 0x3e, 0x31, 0x32, 0x33, 0x3f, 0x61, 0x61, 0x61,\n      0x61, 0x61, 0x61, 0xc6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69, 0x64, 0x6e,\n      0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2a, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xde, 0xdf, 0x61,\n      0x61, 0x61, 0x61, 0x61, 0x61, 0xe6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,\n      0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2f, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xfe,\n      0x79,\n  };\n  unsigned char bVar6;\n  int letter[26];\n  bVar6 = 0;\n  if (((event == EVENT_STATIC_EFFECTS) && (instance = in_play(player, card), instance != \n\n                                                                                        ((void *)0)\n\n                                                                                            )) &&\n      (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))\n  {\n    piVar5 = letter;\n    for (iVar2 = 0x1a; iVar2 != 0; iVar2 = iVar2 + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + (unsigned int)bVar6 * -2 + 1;\n    }\n    iVar2 = 0;\n    do\n    {\n      card_00 = 0;\n      if (0 < active_cards_count[iVar2])\n      {\n        do\n        {\n          instance = in_play(iVar2, card_00);\n          if (((instance != \n\n                           ((void *)0)\n\n                               ) && (iVar3 = is_what(iVar2, card_00, 1), iVar3 == 0)) &&\n              (iVar3 = is_what(iVar2, card_00, 0x47), iVar3 != 0))\n          {\n            iVar3 = get_card_name(iVar2, card_00);\n            pbVar4 = (unsigned char *)get_card_name_by_id(iVar3);\n            bVar6 = native_name_fold[*pbVar4];\n            if ((bVar6 & 0xdf) == 0xc6)\n            {\n              letter[0] = letter[0] + 1;\n              if (2 < letter[0])\n                goto LAB_023051a0;\n              letter[4] = letter[4] + 1;\n              iVar3 = letter[4];\n            }\n            else\n            {\n              if (0x19 < (unsigned char)(bVar6 + 0x9f))\n                goto LAB_02305108;\n              iVar3 = letter[bVar6 - 0x61];\n              letter[bVar6 - 0x61] = iVar3 + 1;\n              iVar3 = iVar3 + 1;\n            }\n            if (2 < iVar3)\n            {\n            LAB_023051a0:\n              if (can_sacrifice_this_as_cost(player, card) == 0)\n              {\n                return 0;\n              }\n              kill_card(player, card, KILL_SACRIFICE);\n              new_damage_all(player, card, 2, 2, 3, \n\n                                                   ((void *)0)\n\n                                                       );\n              return 0;\n            }\n          }\n        LAB_02305108:\n          card_00 = card_00 + 1;\n        } while (card_00 < active_cards_count[iVar2]);\n      }\n      iVar2 = iVar2 + 1;\n    } while (iVar2 != 2);\n  }\n  return 0;\n}",
+      "expanded_projected_definition": "int card_bloodletter(int player, int card, event_t event)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  unsigned char *pbVar4;\n  int card_00;\n  int *piVar5;\n  static const unsigned char native_name_fold[256] = {\n      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,\n      0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,\n      0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c,\n      0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,\n      0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a,\n      0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,\n      0x7a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,\n      0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,\n      0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x2c, 0x66, 0x84, 0x85, 0x86,\n      0x87, 0x5e, 0x25, 0x73, 0x3c, 0x8c, 0x8d, 0x7a, 0x8f, 0x90, 0x27, 0x27, 0x22, 0x22, 0x95,\n      0x2d, 0x2d, 0x7e, 0x99, 0x73, 0x3e, 0x9c, 0x9d, 0x7a, 0x79, 0x5f, 0x21, 0x24, 0x24, 0x24,\n      0x24, 0x7c, 0x25, 0x22, 0x40, 0x5e, 0x3c, 0x7e, 0x2d, 0x40, 0x7e, 0x5e, 0x2b, 0x32, 0x33,\n      0x27, 0x75, 0x26, 0x2e, 0x2c, 0x31, 0x5e, 0x3e, 0x31, 0x32, 0x33, 0x3f, 0x61, 0x61, 0x61,\n      0x61, 0x61, 0x61, 0xc6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69, 0x64, 0x6e,\n      0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2a, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xde, 0xdf, 0x61,\n      0x61, 0x61, 0x61, 0x61, 0x61, 0xe6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,\n      0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2f, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xfe,\n      0x79,\n  };\n  unsigned char ltr;\n  int letter[26];\n  if (((event == EVENT_STATIC_EFFECTS) && (instance = in_play(player, card), instance != \n\n                                                                                        ((void *)0)\n\n                                                                                            )) &&\n      (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))\n  {\n    piVar5 = letter;\n    for (iVar2 = 0x1a; iVar2 != 0; iVar2 = iVar2 + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + 1u;\n    }\n    iVar2 = 0;\n    do\n    {\n      card_00 = 0;\n      if (0 < active_cards_count[iVar2])\n      {\n        do\n        {\n          instance = in_play(iVar2, card_00);\n          if (((instance != \n\n                           ((void *)0)\n\n                               ) && (iVar3 = is_what(iVar2, card_00, 1), iVar3 == 0)) &&\n              (iVar3 = is_what(iVar2, card_00, 0x47), iVar3 != 0))\n          {\n            iVar3 = get_card_name(iVar2, card_00);\n            pbVar4 = (unsigned char *)get_card_name_by_id(iVar3);\n            ltr = native_name_fold[*pbVar4];\n            if ((ltr & 0xdf) == 0xc6)\n            {\n              letter[0] = letter[0] + 1;\n              if (2 < letter[0])\n                goto LAB_023051a0;\n              letter[4] = letter[4] + 1;\n              iVar3 = letter[4];\n            }\n            else\n            {\n              if (0x19 < (unsigned char)(ltr + 0x9f))\n                goto LAB_02305108;\n              iVar3 = letter[ltr - 0x61];\n              letter[ltr - 0x61] = iVar3 + 1;\n              iVar3 = iVar3 + 1;\n            }\n            if (2 < iVar3)\n            {\n            LAB_023051a0:\n              if (can_sacrifice_this_as_cost(player, card) == 0)\n              {\n                return 0;\n              }\n              kill_card(player, card, KILL_SACRIFICE);\n              new_damage_all(player, card, 2, 2, 3, \n\n                                                   ((void *)0)\n\n                                                       );\n              return 0;\n            }\n          }\n        LAB_02305108:\n          card_00 = card_00 + 1;\n        } while (card_00 < active_cards_count[iVar2]);\n      }\n      iVar2 = iVar2 + 1;\n    } while (iVar2 != 2);\n  }\n  return 0;\n}",
+      "expanded_facts": {
+        "folded_strides": 1,
+        "removed_flags": 0,
+        "removed_initializations": 1,
+        "renamed_role_locals": 1,
+        "source_candidates": [
+          {
+            "variable": "bVar6",
+            "stride_uses": [
+              {
+                "flag_offset": 2427,
+                "expression_start": 2413,
+                "expression_end": 2441,
+                "fold_start": 2413,
+                "fold_end": 2441,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar5 + (((unsigned int) bVar6) * (-2))) + 1",
+                "new_expression": "piVar5 + 1u",
+                "base_expression": "piVar5",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              }
+            ],
+            "initialization_start": 1915,
+            "initialization_end": 1928,
+            "initialization_is_declaration": false,
+            "removed_declaration": null,
+            "remove_object": false,
+            "rename_to": "ltr",
+            "reaching_zero": {
+              "reachable_nodes": 49,
+              "updates": 61,
+              "stride_nodes": [
+                {
+                  "flag_offset": 2427,
+                  "node": 36,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 41,
+            "syntax_adapters": []
+          }
+        ]
+      },
+      "checks": [
+        {
+          "source_stride_lines": [
+            1691
+          ],
+          "expanded_fact": {
+            "variable": "bVar6",
+            "stride_uses": [
+              {
+                "flag_offset": 2427,
+                "expression_start": 2413,
+                "expression_end": 2441,
+                "fold_start": 2413,
+                "fold_end": 2441,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar5 + (((unsigned int) bVar6) * (-2))) + 1",
+                "new_expression": "piVar5 + 1u",
+                "base_expression": "piVar5",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              }
+            ],
+            "initialization_start": 1915,
+            "initialization_end": 1928,
+            "initialization_is_declaration": false,
+            "removed_declaration": null,
+            "remove_object": false,
+            "rename_to": "ltr",
+            "reaching_zero": {
+              "reachable_nodes": 49,
+              "updates": 61,
+              "stride_nodes": [
+                {
+                  "flag_offset": 2427,
+                  "node": 36,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 41,
+            "syntax_adapters": []
+          }
+        }
+      ],
+      "residual_direction_cleanup": true
+    },
+    {
+      "source": "functions/engine.c",
+      "name": "charge_spell_cost",
+      "before_definition": "int charge_spell_cost(card_data_t *cd, int player, int card)\n{\n  uint8_t uVar1;\n  int8_t sVar2;\n  uint32_t uVar3;\n  bool bVar4;\n  char *pcVar5;\n  int iVar6;\n  unsigned char bVar7;\n  int8_t *psVar8;\n  unsigned int uVar9;\n  int *piVar10;\n  int *piVar11;\n  int (*paiVar12)[8];\n  unsigned char bVar13;\n  int iVar14;\n  int iVar15;\n  int v7[8];\n\n  bVar13 = 0;\n  pcVar5 = EXE_BYTE_PTR(0x55cf18);\n  uVar1 = cd->cc[1];\n  do\n  {\n    pay_mana_xbugrwaU[(uintptr_t)pcVar5 - 0x55cf18] = (int)*pcVar5;\n    iVar15 = pay_mana_xbugrwaU[0];\n    pcVar5 = pcVar5 + 1;\n  } while (pcVar5 != (char *)0x55cf1e);\n  if ((cd->type & 0x40) != 0)\n  {\n    pay_mana_xbugrwaU[0] = 0;\n    pay_mana_xbugrwaU[6] = iVar15;\n  }\n  iVar15 = pay_mana_xbugrwaU[6];\n  if (((player == 0) || (((unsigned char)trace_mode & 2) != 0)) && (ai_is_speculating != 1))\n  {\n    iVar15 = 0;\n    iVar14 = 0;\n    if (uVar1 != 0xff)\n    {\n    LAB_026afa15:\n      iVar15 = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, iVar14, iVar15);\n      return iVar15;\n    }\n    if (EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, 0, 0) == 0)\n    {\n      return 0;\n    }\n    piVar10 = mana_paid;\n    piVar11 = (int *)((int8_t *)0x55cef0);\n    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)\n    {\n      *piVar11 = *piVar10;\n      piVar10 = piVar10 + (unsigned int)bVar13 * -2 + 1;\n      piVar11 = piVar11 + (unsigned int)bVar13 * -2 + 1;\n    }\n    psVar8 = ((int8_t *)0x55cf20);\n    do\n    {\n      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;\n      psVar8 = psVar8 + 1;\n    } while (psVar8 != (int8_t *)0x55cf28);\n    if (((int8_t *)0x55cf20)[0] < 0)\n    {\n      pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);\n      psVar8 = ((int8_t *)0x55cf20);\n      sVar2 = ((int8_t *)0x55cf20)[0];\n      while (true)\n      {\n        psVar8 = psVar8 + 1;\n        uVar3 = (uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];\n        mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] =\n            mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] - (int)sVar2;\n        *pcVar5 = *pcVar5 - (char)uVar3;\n        if (psVar8 == (int8_t *)0x55cf28)\n          break;\n        sVar2 = *psVar8;\n      }\n    }\n    charge_mana(player, COLOR_COLORLESS, -1);\n  }\n  else\n  {\n    if ((cd->type & 0x40) != 0)\n    {\n      iVar14 = 6;\n      pay_mana_xbugrwaU[6] = 0;\n      goto LAB_026afa15;\n    }\n    iVar15 = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, 0, 0);\n    if (uVar1 != 0xff)\n    {\n      return iVar15;\n    }\n    if (iVar15 == 0)\n    {\n      return 0;\n    }\n    piVar10 = mana_paid;\n    piVar11 = (int *)((int8_t *)0x55cef0);\n    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)\n    {\n      *piVar11 = *piVar10;\n      piVar10 = piVar10 + (unsigned int)bVar13 * -2 + 1;\n      piVar11 = piVar11 + (unsigned int)bVar13 * -2 + 1;\n    }\n    psVar8 = ((int8_t *)0x55cf20);\n    do\n    {\n      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;\n      psVar8 = psVar8 + 1;\n    } while (psVar8 != (int8_t *)0x55cf28);\n    if (((int8_t *)0x55cf20)[0] < 0)\n    {\n      pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);\n      psVar8 = ((int8_t *)0x55cf20);\n      sVar2 = ((int8_t *)0x55cf20)[0];\n      while (true)\n      {\n        psVar8 = psVar8 + 1;\n        piVar10 = &mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];\n        *piVar10 = *piVar10 - (int)sVar2;\n        *pcVar5 = *pcVar5 - (char)(uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];\n        if (psVar8 == (int8_t *)0x55cf28)\n          break;\n        sVar2 = *psVar8;\n      }\n    }\n    iVar15 = max_x_value;\n    if (player == 0)\n    {\n      max_x_value = has_mana(0, 7, 1);\n      charge_mana(0, COLOR_COLORLESS, -1);\n      max_x_value = iVar15;\n    }\n    else\n    {\n      if (ai_is_speculating == 1)\n      {\n        if (internal_rand(2) == 0)\n        {\n          iVar6 = has_mana(player, 7, 1);\n          iVar15 = 0;\n          iVar14 = iVar15;\n          if (iVar6 != 0)\n          {\n            iVar15 = internal_rand(iVar6);\n            iVar15 = iVar15 + 1;\n            iVar14 = iVar15;\n          }\n        }\n        else\n        {\n          iVar15 = has_mana(player, 7, 1);\n          EXE_DWORD(0x7a2fe4) = iVar15;\n          if ((life[0] < iVar15) && (iVar14 = internal_rand(3), iVar14 == 0))\n          {\n            EXE_DWORD(0x7a2fe4) = life[0];\n            iVar15 = life[0];\n          }\n          iVar14 = EXE_DWORD(0x7a2fe4);\n          if ((max_x_value != -1) && (max_x_value < EXE_DWORD(0x7a2fe4)))\n          {\n            EXE_DWORD(0x7a2fe4) = max_x_value;\n            iVar15 = max_x_value;\n            iVar14 = EXE_DWORD(0x7a2fe4);\n          }\n        }\n        EXE_DWORD(0x7a2fe4) = iVar14;\n        EXE_FN(void, 0x498f20, void)();\n      }\n      else\n      {\n        EXE_FN(int, 0x499050, void)();\n        iVar15 = EXE_DWORD(0x7a2fe4);\n      }\n      iVar14 = max_x_value;\n      max_x_value = iVar15;\n      charge_mana(player, COLOR_COLORLESS, -1);\n      max_x_value = iVar14;\n    }\n  }\n  sVar2 = ((int8_t *)0x55cf20)[0];\n  iVar15 = (int)((int8_t *)0x55cf20)[0];\n  if (((int8_t *)0x55cf20)[7] != 0)\n  {\n    psVar8 = ((int8_t *)0x55cf20);\n    bVar4 = false;\n    iVar14 = iVar15;\n    while (true)\n    {\n      psVar8 = psVar8 + 1;\n      iVar6 = mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];\n      if (iVar14 != iVar6 >> 0x1f)\n      {\n        bVar4 = true;\n      }\n      mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] = iVar14 + iVar6;\n      if (psVar8 == (int8_t *)0x55cf28)\n        break;\n      iVar14 = (int)*psVar8;\n    }\n    if (bVar4)\n    {\n      uVar9 = 0;\n      iVar15 = 0;\n      do\n      {\n        piVar10 = mana_pool[player] + iVar15;\n        bVar7 = (unsigned char)iVar15;\n        iVar15 = iVar15 + 1;\n        uVar9 = uVar9 | (unsigned int)(0 < *piVar10) << (bVar7 & 0x1f);\n      } while (iVar15 != 8);\n      iVar15 = (int)(char)uVar9;\n      EXE_FN(int, 0x4301a0, int, int)(0, iVar15);\n      paiVar12 = mana_pool + player;\n      for (iVar14 = 8; iVar14 != 0; iVar14 = iVar14 + -1)\n      {\n        (*paiVar12)[0] = 0;\n        paiVar12 = (int (*)[8])((int)paiVar12 + ((unsigned int)bVar13 * -2 + 1) * 4);\n      }\n    }\n    else\n    {\n      *(int8_t *)(EXE_BYTE_PTR(0x4ef4fc) + player) =\n          *(char *)(EXE_BYTE_PTR(0x4ef4fc) + player) + sVar2;\n    }\n  }\n  if (x_value == 0)\n  {\n    ai_modifier = ai_modifier + -100;\n  }\n  if (spell_fizzled == 1)\n  {\n    EXE_FN(int, 0x430260, int *)((int *)(int)((int8_t *)0x55cef0)[0]);\n    psVar8 = ((int8_t *)0x55cef0);\n    pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);\n    do\n    {\n      sVar2 = *psVar8;\n      iVar15 = (int)sVar2;\n      mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] =\n          mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] + iVar15;\n      psVar8 = psVar8 + 1;\n      *pcVar5 = *pcVar5 + sVar2;\n    } while (psVar8 != (int8_t *)0x55cef8);\n  }\n  return iVar15;\n}",
+      "after_definition": "int charge_spell_cost(card_data_t *cd, int player, int card)\n{\n  uint8_t uVar1;\n  int8_t sVar2;\n  uint32_t uVar3;\n  bool bVar4;\n  char *pcVar5;\n  int iVar6;\n  unsigned char bVar7;\n  int8_t *psVar8;\n  unsigned int uVar9;\n  int *piVar10;\n  int *piVar11;\n  int (*paiVar12)[8];\n  int iVar14;\n  int iVar15;\n  int v7[8];\n\n  pcVar5 = EXE_BYTE_PTR(0x55cf18);\n  uVar1 = cd->cc[1];\n  do\n  {\n    pay_mana_xbugrwaU[(uintptr_t)pcVar5 - 0x55cf18] = (int)*pcVar5;\n    iVar15 = pay_mana_xbugrwaU[0];\n    pcVar5 = pcVar5 + 1;\n  } while (pcVar5 != (char *)0x55cf1e);\n  if ((cd->type & 0x40) != 0)\n  {\n    pay_mana_xbugrwaU[0] = 0;\n    pay_mana_xbugrwaU[6] = iVar15;\n  }\n  iVar15 = pay_mana_xbugrwaU[6];\n  if (((player == 0) || (((unsigned char)trace_mode & 2) != 0)) && (ai_is_speculating != 1))\n  {\n    iVar15 = 0;\n    iVar14 = 0;\n    if (uVar1 != 0xff)\n    {\n    LAB_026afa15:\n      iVar15 = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, iVar14, iVar15);\n      return iVar15;\n    }\n    if (EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, 0, 0) == 0)\n    {\n      return 0;\n    }\n    piVar10 = mana_paid;\n    piVar11 = (int *)((int8_t *)0x55cef0);\n    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)\n    {\n      *piVar11 = *piVar10;\n      piVar10 = piVar10 + 1u;\n      piVar11 = piVar11 + 1u;\n    }\n    psVar8 = ((int8_t *)0x55cf20);\n    do\n    {\n      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;\n      psVar8 = psVar8 + 1;\n    } while (psVar8 != (int8_t *)0x55cf28);\n    if (((int8_t *)0x55cf20)[0] < 0)\n    {\n      pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);\n      psVar8 = ((int8_t *)0x55cf20);\n      sVar2 = ((int8_t *)0x55cf20)[0];\n      while (true)\n      {\n        psVar8 = psVar8 + 1;\n        uVar3 = (uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];\n        mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] =\n            mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] - (int)sVar2;\n        *pcVar5 = *pcVar5 - (char)uVar3;\n        if (psVar8 == (int8_t *)0x55cf28)\n          break;\n        sVar2 = *psVar8;\n      }\n    }\n    charge_mana(player, COLOR_COLORLESS, -1);\n  }\n  else\n  {\n    if ((cd->type & 0x40) != 0)\n    {\n      iVar14 = 6;\n      pay_mana_xbugrwaU[6] = 0;\n      goto LAB_026afa15;\n    }\n    iVar15 = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, 0, 0);\n    if (uVar1 != 0xff)\n    {\n      return iVar15;\n    }\n    if (iVar15 == 0)\n    {\n      return 0;\n    }\n    piVar10 = mana_paid;\n    piVar11 = (int *)((int8_t *)0x55cef0);\n    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)\n    {\n      *piVar11 = *piVar10;\n      piVar10 = piVar10 + 1u;\n      piVar11 = piVar11 + 1u;\n    }\n    psVar8 = ((int8_t *)0x55cf20);\n    do\n    {\n      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;\n      psVar8 = psVar8 + 1;\n    } while (psVar8 != (int8_t *)0x55cf28);\n    if (((int8_t *)0x55cf20)[0] < 0)\n    {\n      pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);\n      psVar8 = ((int8_t *)0x55cf20);\n      sVar2 = ((int8_t *)0x55cf20)[0];\n      while (true)\n      {\n        psVar8 = psVar8 + 1;\n        piVar10 = &mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];\n        *piVar10 = *piVar10 - (int)sVar2;\n        *pcVar5 = *pcVar5 - (char)(uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];\n        if (psVar8 == (int8_t *)0x55cf28)\n          break;\n        sVar2 = *psVar8;\n      }\n    }\n    iVar15 = max_x_value;\n    if (player == 0)\n    {\n      max_x_value = has_mana(0, 7, 1);\n      charge_mana(0, COLOR_COLORLESS, -1);\n      max_x_value = iVar15;\n    }\n    else\n    {\n      if (ai_is_speculating == 1)\n      {\n        if (internal_rand(2) == 0)\n        {\n          iVar6 = has_mana(player, 7, 1);\n          iVar15 = 0;\n          iVar14 = iVar15;\n          if (iVar6 != 0)\n          {\n            iVar15 = internal_rand(iVar6);\n            iVar15 = iVar15 + 1;\n            iVar14 = iVar15;\n          }\n        }\n        else\n        {\n          iVar15 = has_mana(player, 7, 1);\n          EXE_DWORD(0x7a2fe4) = iVar15;\n          if ((life[0] < iVar15) && (iVar14 = internal_rand(3), iVar14 == 0))\n          {\n            EXE_DWORD(0x7a2fe4) = life[0];\n            iVar15 = life[0];\n          }\n          iVar14 = EXE_DWORD(0x7a2fe4);\n          if ((max_x_value != -1) && (max_x_value < EXE_DWORD(0x7a2fe4)))\n          {\n            EXE_DWORD(0x7a2fe4) = max_x_value;\n            iVar15 = max_x_value;\n            iVar14 = EXE_DWORD(0x7a2fe4);\n          }\n        }\n        EXE_DWORD(0x7a2fe4) = iVar14;\n        EXE_FN(void, 0x498f20, void)();\n      }\n      else\n      {\n        EXE_FN(int, 0x499050, void)();\n        iVar15 = EXE_DWORD(0x7a2fe4);\n      }\n      iVar14 = max_x_value;\n      max_x_value = iVar15;\n      charge_mana(player, COLOR_COLORLESS, -1);\n      max_x_value = iVar14;\n    }\n  }\n  sVar2 = ((int8_t *)0x55cf20)[0];\n  iVar15 = (int)((int8_t *)0x55cf20)[0];\n  if (((int8_t *)0x55cf20)[7] != 0)\n  {\n    psVar8 = ((int8_t *)0x55cf20);\n    bVar4 = false;\n    iVar14 = iVar15;\n    while (true)\n    {\n      psVar8 = psVar8 + 1;\n      iVar6 = mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];\n      if (iVar14 != iVar6 >> 0x1f)\n      {\n        bVar4 = true;\n      }\n      mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] = iVar14 + iVar6;\n      if (psVar8 == (int8_t *)0x55cf28)\n        break;\n      iVar14 = (int)*psVar8;\n    }\n    if (bVar4)\n    {\n      uVar9 = 0;\n      iVar15 = 0;\n      do\n      {\n        piVar10 = mana_pool[player] + iVar15;\n        bVar7 = (unsigned char)iVar15;\n        iVar15 = iVar15 + 1;\n        uVar9 = uVar9 | (unsigned int)(0 < *piVar10) << (bVar7 & 0x1f);\n      } while (iVar15 != 8);\n      iVar15 = (int)(char)uVar9;\n      EXE_FN(int, 0x4301a0, int, int)(0, iVar15);\n      paiVar12 = mana_pool + player;\n      for (iVar14 = 8; iVar14 != 0; iVar14 = iVar14 + -1)\n      {\n        (*paiVar12)[0] = 0;\n        paiVar12 = (int (*)[8])((int)paiVar12 + 4u);\n      }\n    }\n    else\n    {\n      *(int8_t *)(EXE_BYTE_PTR(0x4ef4fc) + player) =\n          *(char *)(EXE_BYTE_PTR(0x4ef4fc) + player) + sVar2;\n    }\n  }\n  if (x_value == 0)\n  {\n    ai_modifier = ai_modifier + -100;\n  }\n  if (spell_fizzled == 1)\n  {\n    EXE_FN(int, 0x430260, int *)((int *)(int)((int8_t *)0x55cef0)[0]);\n    psVar8 = ((int8_t *)0x55cef0);\n    pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);\n    do\n    {\n      sVar2 = *psVar8;\n      iVar15 = (int)sVar2;\n      mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] =\n          mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] + iVar15;\n      psVar8 = psVar8 + 1;\n      *pcVar5 = *pcVar5 + sVar2;\n    } while (psVar8 != (int8_t *)0x55cef8);\n  }\n  return iVar15;\n}",
+      "before_sha256": "095d056f5016d3f86643370d530b8a1ce89205f8a4ff129eb2885269ff32bae6",
+      "after_sha256": "0b1c69e3078c2387eaef2a744f1ea9da48652fbeda95c841b36b97a590aa0f62",
+      "facts": {
+        "folded_strides": 5,
+        "removed_flags": 1,
+        "removed_initializations": 1,
+        "renamed_role_locals": 0,
+        "source_candidates": [
+          {
+            "variable": "bVar13",
+            "stride_uses": [
+              {
+                "flag_offset": 1315,
+                "expression_start": 1301,
+                "expression_end": 1330,
+                "fold_start": 1301,
+                "fold_end": 1330,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar10 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar10 + 1u",
+                "base_expression": "piVar10",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 1372,
+                "expression_start": 1358,
+                "expression_end": 1387,
+                "fold_start": 1358,
+                "fold_end": 1387,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar11 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar11 + 1u",
+                "base_expression": "piVar11",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 2691,
+                "expression_start": 2677,
+                "expression_end": 2706,
+                "fold_start": 2677,
+                "fold_end": 2706,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar10 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar10 + 1u",
+                "base_expression": "piVar10",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 2748,
+                "expression_start": 2734,
+                "expression_end": 2763,
+                "fold_start": 2734,
+                "fold_end": 2763,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar11 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar11 + 1u",
+                "base_expression": "piVar11",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 5979,
+                "expression_start": 5965,
+                "expression_end": 5994,
+                "fold_start": 5964,
+                "fold_end": 5999,
+                "fold_literal": "4u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "constant",
+                "old_expression": "((((unsigned int) bVar13) * (-2)) + 1) * 4",
+                "new_expression": "4u",
+                "base_expression": null,
+                "constant_zero_expression": "((unsigned int)0 * -2 + 1) * 4"
+              }
+            ],
+            "initialization_start": 340,
+            "initialization_end": 354,
+            "initialization_is_declaration": false,
+            "removed_declaration": [
+              274,
+              298
+            ],
+            "remove_object": true,
+            "rename_to": null,
+            "reaching_zero": {
+              "reachable_nodes": 171,
+              "updates": 170,
+              "stride_nodes": [
+                {
+                  "flag_offset": 1315,
+                  "node": 67,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 1372,
+                  "node": 66,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 2691,
+                  "node": 131,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 2748,
+                  "node": 130,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 5979,
+                  "node": 17,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 156,
+            "syntax_adapters": [
+              {
+                "start": 914,
+                "end": 955,
+                "original": "EXE_FN(int, 0x4302c0, int, int, int, int)",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 1022,
+                "end": 1063,
+                "original": "EXE_FN(int, 0x4302c0, int, int, int, int)",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 2326,
+                "end": 2367,
+                "original": "EXE_FN(int, 0x4302c0, int, int, int, int)",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 4589,
+                "end": 4617,
+                "original": "EXE_FN(void, 0x498f20, void)",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 4656,
+                "end": 4683,
+                "original": "EXE_FN(int, 0x499050, void)",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 5741,
+                "end": 5772,
+                "original": "EXE_FN(int, 0x4301a0, int, int)",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 6256,
+                "end": 6284,
+                "original": "EXE_FN(int, 0x430260, int *)",
+                "analysis_spelling": "exe_call_stub"
+              }
+            ]
+          }
+        ]
+      },
+      "expanded_before_definition": "int charge_spell_cost(card_data_t *cd, int player, int card)\n{\n  uint8_t uVar1;\n  int8_t sVar2;\n  uint32_t uVar3;\n  \n\n _Bool \n\n      bVar4;\n  char *pcVar5;\n  int iVar6;\n  unsigned char bVar7;\n  int8_t *psVar8;\n  unsigned int uVar9;\n  int *piVar10;\n  int *piVar11;\n  int (*paiVar12)[8];\n  unsigned char bVar13;\n  int iVar14;\n  int iVar15;\n  int v7[8];\n\n  bVar13 = 0;\n  pcVar5 = ((char*)(0x55cf18));\n  uVar1 = cd->cc[1];\n  do\n  {\n    pay_mana_xbugrwaU[(uintptr_t)pcVar5 - 0x55cf18] = (int)*pcVar5;\n    iVar15 = pay_mana_xbugrwaU[0];\n    pcVar5 = pcVar5 + 1;\n  } while (pcVar5 != (char *)0x55cf1e);\n  if ((cd->type & 0x40) != 0)\n  {\n    pay_mana_xbugrwaU[0] = 0;\n    pay_mana_xbugrwaU[6] = iVar15;\n  }\n  iVar15 = pay_mana_xbugrwaU[6];\n  if (((player == 0) || (((unsigned char)trace_mode & 2) != 0)) && (ai_is_speculating != 1))\n  {\n    iVar15 = 0;\n    iVar14 = 0;\n    if (uVar1 != 0xff)\n    {\n    LAB_026afa15:\n      iVar15 = ((int (*)(int, int, int, int))(0x4302c0))(player, card, iVar14, iVar15);\n      return iVar15;\n    }\n    if (((int (*)(int, int, int, int))(0x4302c0))(player, card, 0, 0) == 0)\n    {\n      return 0;\n    }\n    piVar10 = mana_paid;\n    piVar11 = (int *)((int8_t *)0x55cef0);\n    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)\n    {\n      *piVar11 = *piVar10;\n      piVar10 = piVar10 + (unsigned int)bVar13 * -2 + 1;\n      piVar11 = piVar11 + (unsigned int)bVar13 * -2 + 1;\n    }\n    psVar8 = ((int8_t *)0x55cf20);\n    do\n    {\n      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;\n      psVar8 = psVar8 + 1;\n    } while (psVar8 != (int8_t *)0x55cf28);\n    if (((int8_t *)0x55cf20)[0] < 0)\n    {\n      pcVar5 = (char *)(((char*)(0x4ef4fc)) + player);\n      psVar8 = ((int8_t *)0x55cf20);\n      sVar2 = ((int8_t *)0x55cf20)[0];\n      while (\n\n            1\n\n                )\n      {\n        psVar8 = psVar8 + 1;\n        uVar3 = (uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];\n        mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] =\n            mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] - (int)sVar2;\n        *pcVar5 = *pcVar5 - (char)uVar3;\n        if (psVar8 == (int8_t *)0x55cf28)\n          break;\n        sVar2 = *psVar8;\n      }\n    }\n    charge_mana(player, COLOR_COLORLESS, -1);\n  }\n  else\n  {\n    if ((cd->type & 0x40) != 0)\n    {\n      iVar14 = 6;\n      pay_mana_xbugrwaU[6] = 0;\n      goto LAB_026afa15;\n    }\n    iVar15 = ((int (*)(int, int, int, int))(0x4302c0))(player, card, 0, 0);\n    if (uVar1 != 0xff)\n    {\n      return iVar15;\n    }\n    if (iVar15 == 0)\n    {\n      return 0;\n    }\n    piVar10 = mana_paid;\n    piVar11 = (int *)((int8_t *)0x55cef0);\n    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)\n    {\n      *piVar11 = *piVar10;\n      piVar10 = piVar10 + (unsigned int)bVar13 * -2 + 1;\n      piVar11 = piVar11 + (unsigned int)bVar13 * -2 + 1;\n    }\n    psVar8 = ((int8_t *)0x55cf20);\n    do\n    {\n      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;\n      psVar8 = psVar8 + 1;\n    } while (psVar8 != (int8_t *)0x55cf28);\n    if (((int8_t *)0x55cf20)[0] < 0)\n    {\n      pcVar5 = (char *)(((char*)(0x4ef4fc)) + player);\n      psVar8 = ((int8_t *)0x55cf20);\n      sVar2 = ((int8_t *)0x55cf20)[0];\n      while (\n\n            1\n\n                )\n      {\n        psVar8 = psVar8 + 1;\n        piVar10 = &mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];\n        *piVar10 = *piVar10 - (int)sVar2;\n        *pcVar5 = *pcVar5 - (char)(uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];\n        if (psVar8 == (int8_t *)0x55cf28)\n          break;\n        sVar2 = *psVar8;\n      }\n    }\n    iVar15 = max_x_value;\n    if (player == 0)\n    {\n      max_x_value = has_mana(0, 7, 1);\n      charge_mana(0, COLOR_COLORLESS, -1);\n      max_x_value = iVar15;\n    }\n    else\n    {\n      if (ai_is_speculating == 1)\n      {\n        if (internal_rand(2) == 0)\n        {\n          iVar6 = has_mana(player, 7, 1);\n          iVar15 = 0;\n          iVar14 = iVar15;\n          if (iVar6 != 0)\n          {\n            iVar15 = internal_rand(iVar6);\n            iVar15 = iVar15 + 1;\n            iVar14 = iVar15;\n          }\n        }\n        else\n        {\n          iVar15 = has_mana(player, 7, 1);\n          (*((int*)(0x7a2fe4))) = iVar15;\n          if ((life[0] < iVar15) && (iVar14 = internal_rand(3), iVar14 == 0))\n          {\n            (*((int*)(0x7a2fe4))) = life[0];\n            iVar15 = life[0];\n          }\n          iVar14 = (*((int*)(0x7a2fe4)));\n          if ((max_x_value != -1) && (max_x_value < (*((int*)(0x7a2fe4)))))\n          {\n            (*((int*)(0x7a2fe4))) = max_x_value;\n            iVar15 = max_x_value;\n            iVar14 = (*((int*)(0x7a2fe4)));\n          }\n        }\n        (*((int*)(0x7a2fe4))) = iVar14;\n        ((void (*)(void))(0x498f20))();\n      }\n      else\n      {\n        ((int (*)(void))(0x499050))();\n        iVar15 = (*((int*)(0x7a2fe4)));\n      }\n      iVar14 = max_x_value;\n      max_x_value = iVar15;\n      charge_mana(player, COLOR_COLORLESS, -1);\n      max_x_value = iVar14;\n    }\n  }\n  sVar2 = ((int8_t *)0x55cf20)[0];\n  iVar15 = (int)((int8_t *)0x55cf20)[0];\n  if (((int8_t *)0x55cf20)[7] != 0)\n  {\n    psVar8 = ((int8_t *)0x55cf20);\n    bVar4 = \n\n           0\n\n                ;\n    iVar14 = iVar15;\n    while (\n\n          1\n\n              )\n    {\n      psVar8 = psVar8 + 1;\n      iVar6 = mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];\n      if (iVar14 != iVar6 >> 0x1f)\n      {\n        bVar4 = \n\n               1\n\n                   ;\n      }\n      mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] = iVar14 + iVar6;\n      if (psVar8 == (int8_t *)0x55cf28)\n        break;\n      iVar14 = (int)*psVar8;\n    }\n    if (bVar4)\n    {\n      uVar9 = 0;\n      iVar15 = 0;\n      do\n      {\n        piVar10 = mana_pool[player] + iVar15;\n        bVar7 = (unsigned char)iVar15;\n        iVar15 = iVar15 + 1;\n        uVar9 = uVar9 | (unsigned int)(0 < *piVar10) << (bVar7 & 0x1f);\n      } while (iVar15 != 8);\n      iVar15 = (int)(char)uVar9;\n      ((int (*)(int, int))(0x4301a0))(0, iVar15);\n      paiVar12 = mana_pool + player;\n      for (iVar14 = 8; iVar14 != 0; iVar14 = iVar14 + -1)\n      {\n        (*paiVar12)[0] = 0;\n        paiVar12 = (int (*)[8])((int)paiVar12 + ((unsigned int)bVar13 * -2 + 1) * 4);\n      }\n    }\n    else\n    {\n      *(int8_t *)(((char*)(0x4ef4fc)) + player) =\n          *(char *)(((char*)(0x4ef4fc)) + player) + sVar2;\n    }\n  }\n  if (x_value == 0)\n  {\n    ai_modifier = ai_modifier + -100;\n  }\n  if (spell_fizzled == 1)\n  {\n    ((int (*)(int *))(0x430260))((int *)(int)((int8_t *)0x55cef0)[0]);\n    psVar8 = ((int8_t *)0x55cef0);\n    pcVar5 = (char *)(((char*)(0x4ef4fc)) + player);\n    do\n    {\n      sVar2 = *psVar8;\n      iVar15 = (int)sVar2;\n      mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] =\n          mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] + iVar15;\n      psVar8 = psVar8 + 1;\n      *pcVar5 = *pcVar5 + sVar2;\n    } while (psVar8 != (int8_t *)0x55cef8);\n  }\n  return iVar15;\n}",
+      "expanded_projected_definition": "int charge_spell_cost(card_data_t *cd, int player, int card)\n{\n  uint8_t uVar1;\n  int8_t sVar2;\n  uint32_t uVar3;\n  \n\n _Bool \n\n      bVar4;\n  char *pcVar5;\n  int iVar6;\n  unsigned char bVar7;\n  int8_t *psVar8;\n  unsigned int uVar9;\n  int *piVar10;\n  int *piVar11;\n  int (*paiVar12)[8];\n  int iVar14;\n  int iVar15;\n  int v7[8];\n\n  pcVar5 = ((char*)(0x55cf18));\n  uVar1 = cd->cc[1];\n  do\n  {\n    pay_mana_xbugrwaU[(uintptr_t)pcVar5 - 0x55cf18] = (int)*pcVar5;\n    iVar15 = pay_mana_xbugrwaU[0];\n    pcVar5 = pcVar5 + 1;\n  } while (pcVar5 != (char *)0x55cf1e);\n  if ((cd->type & 0x40) != 0)\n  {\n    pay_mana_xbugrwaU[0] = 0;\n    pay_mana_xbugrwaU[6] = iVar15;\n  }\n  iVar15 = pay_mana_xbugrwaU[6];\n  if (((player == 0) || (((unsigned char)trace_mode & 2) != 0)) && (ai_is_speculating != 1))\n  {\n    iVar15 = 0;\n    iVar14 = 0;\n    if (uVar1 != 0xff)\n    {\n    LAB_026afa15:\n      iVar15 = ((int (*)(int, int, int, int))(0x4302c0))(player, card, iVar14, iVar15);\n      return iVar15;\n    }\n    if (((int (*)(int, int, int, int))(0x4302c0))(player, card, 0, 0) == 0)\n    {\n      return 0;\n    }\n    piVar10 = mana_paid;\n    piVar11 = (int *)((int8_t *)0x55cef0);\n    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)\n    {\n      *piVar11 = *piVar10;\n      piVar10 = piVar10 + 1u;\n      piVar11 = piVar11 + 1u;\n    }\n    psVar8 = ((int8_t *)0x55cf20);\n    do\n    {\n      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;\n      psVar8 = psVar8 + 1;\n    } while (psVar8 != (int8_t *)0x55cf28);\n    if (((int8_t *)0x55cf20)[0] < 0)\n    {\n      pcVar5 = (char *)(((char*)(0x4ef4fc)) + player);\n      psVar8 = ((int8_t *)0x55cf20);\n      sVar2 = ((int8_t *)0x55cf20)[0];\n      while (\n\n            1\n\n                )\n      {\n        psVar8 = psVar8 + 1;\n        uVar3 = (uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];\n        mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] =\n            mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] - (int)sVar2;\n        *pcVar5 = *pcVar5 - (char)uVar3;\n        if (psVar8 == (int8_t *)0x55cf28)\n          break;\n        sVar2 = *psVar8;\n      }\n    }\n    charge_mana(player, COLOR_COLORLESS, -1);\n  }\n  else\n  {\n    if ((cd->type & 0x40) != 0)\n    {\n      iVar14 = 6;\n      pay_mana_xbugrwaU[6] = 0;\n      goto LAB_026afa15;\n    }\n    iVar15 = ((int (*)(int, int, int, int))(0x4302c0))(player, card, 0, 0);\n    if (uVar1 != 0xff)\n    {\n      return iVar15;\n    }\n    if (iVar15 == 0)\n    {\n      return 0;\n    }\n    piVar10 = mana_paid;\n    piVar11 = (int *)((int8_t *)0x55cef0);\n    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)\n    {\n      *piVar11 = *piVar10;\n      piVar10 = piVar10 + 1u;\n      piVar11 = piVar11 + 1u;\n    }\n    psVar8 = ((int8_t *)0x55cf20);\n    do\n    {\n      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;\n      psVar8 = psVar8 + 1;\n    } while (psVar8 != (int8_t *)0x55cf28);\n    if (((int8_t *)0x55cf20)[0] < 0)\n    {\n      pcVar5 = (char *)(((char*)(0x4ef4fc)) + player);\n      psVar8 = ((int8_t *)0x55cf20);\n      sVar2 = ((int8_t *)0x55cf20)[0];\n      while (\n\n            1\n\n                )\n      {\n        psVar8 = psVar8 + 1;\n        piVar10 = &mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];\n        *piVar10 = *piVar10 - (int)sVar2;\n        *pcVar5 = *pcVar5 - (char)(uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];\n        if (psVar8 == (int8_t *)0x55cf28)\n          break;\n        sVar2 = *psVar8;\n      }\n    }\n    iVar15 = max_x_value;\n    if (player == 0)\n    {\n      max_x_value = has_mana(0, 7, 1);\n      charge_mana(0, COLOR_COLORLESS, -1);\n      max_x_value = iVar15;\n    }\n    else\n    {\n      if (ai_is_speculating == 1)\n      {\n        if (internal_rand(2) == 0)\n        {\n          iVar6 = has_mana(player, 7, 1);\n          iVar15 = 0;\n          iVar14 = iVar15;\n          if (iVar6 != 0)\n          {\n            iVar15 = internal_rand(iVar6);\n            iVar15 = iVar15 + 1;\n            iVar14 = iVar15;\n          }\n        }\n        else\n        {\n          iVar15 = has_mana(player, 7, 1);\n          (*((int*)(0x7a2fe4))) = iVar15;\n          if ((life[0] < iVar15) && (iVar14 = internal_rand(3), iVar14 == 0))\n          {\n            (*((int*)(0x7a2fe4))) = life[0];\n            iVar15 = life[0];\n          }\n          iVar14 = (*((int*)(0x7a2fe4)));\n          if ((max_x_value != -1) && (max_x_value < (*((int*)(0x7a2fe4)))))\n          {\n            (*((int*)(0x7a2fe4))) = max_x_value;\n            iVar15 = max_x_value;\n            iVar14 = (*((int*)(0x7a2fe4)));\n          }\n        }\n        (*((int*)(0x7a2fe4))) = iVar14;\n        ((void (*)(void))(0x498f20))();\n      }\n      else\n      {\n        ((int (*)(void))(0x499050))();\n        iVar15 = (*((int*)(0x7a2fe4)));\n      }\n      iVar14 = max_x_value;\n      max_x_value = iVar15;\n      charge_mana(player, COLOR_COLORLESS, -1);\n      max_x_value = iVar14;\n    }\n  }\n  sVar2 = ((int8_t *)0x55cf20)[0];\n  iVar15 = (int)((int8_t *)0x55cf20)[0];\n  if (((int8_t *)0x55cf20)[7] != 0)\n  {\n    psVar8 = ((int8_t *)0x55cf20);\n    bVar4 = \n\n           0\n\n                ;\n    iVar14 = iVar15;\n    while (\n\n          1\n\n              )\n    {\n      psVar8 = psVar8 + 1;\n      iVar6 = mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];\n      if (iVar14 != iVar6 >> 0x1f)\n      {\n        bVar4 = \n\n               1\n\n                   ;\n      }\n      mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] = iVar14 + iVar6;\n      if (psVar8 == (int8_t *)0x55cf28)\n        break;\n      iVar14 = (int)*psVar8;\n    }\n    if (bVar4)\n    {\n      uVar9 = 0;\n      iVar15 = 0;\n      do\n      {\n        piVar10 = mana_pool[player] + iVar15;\n        bVar7 = (unsigned char)iVar15;\n        iVar15 = iVar15 + 1;\n        uVar9 = uVar9 | (unsigned int)(0 < *piVar10) << (bVar7 & 0x1f);\n      } while (iVar15 != 8);\n      iVar15 = (int)(char)uVar9;\n      ((int (*)(int, int))(0x4301a0))(0, iVar15);\n      paiVar12 = mana_pool + player;\n      for (iVar14 = 8; iVar14 != 0; iVar14 = iVar14 + -1)\n      {\n        (*paiVar12)[0] = 0;\n        paiVar12 = (int (*)[8])((int)paiVar12 + 4u);\n      }\n    }\n    else\n    {\n      *(int8_t *)(((char*)(0x4ef4fc)) + player) =\n          *(char *)(((char*)(0x4ef4fc)) + player) + sVar2;\n    }\n  }\n  if (x_value == 0)\n  {\n    ai_modifier = ai_modifier + -100;\n  }\n  if (spell_fizzled == 1)\n  {\n    ((int (*)(int *))(0x430260))((int *)(int)((int8_t *)0x55cef0)[0]);\n    psVar8 = ((int8_t *)0x55cef0);\n    pcVar5 = (char *)(((char*)(0x4ef4fc)) + player);\n    do\n    {\n      sVar2 = *psVar8;\n      iVar15 = (int)sVar2;\n      mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] =\n          mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] + iVar15;\n      psVar8 = psVar8 + 1;\n      *pcVar5 = *pcVar5 + sVar2;\n    } while (psVar8 != (int8_t *)0x55cef8);\n  }\n  return iVar15;\n}",
+      "expanded_facts": {
+        "folded_strides": 5,
+        "removed_flags": 1,
+        "removed_initializations": 1,
+        "renamed_role_locals": 0,
+        "source_candidates": [
+          {
+            "variable": "bVar13",
+            "stride_uses": [
+              {
+                "flag_offset": 1324,
+                "expression_start": 1310,
+                "expression_end": 1339,
+                "fold_start": 1310,
+                "fold_end": 1339,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar10 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar10 + 1u",
+                "base_expression": "piVar10",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 1381,
+                "expression_start": 1367,
+                "expression_end": 1396,
+                "fold_start": 1367,
+                "fold_end": 1396,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar11 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar11 + 1u",
+                "base_expression": "piVar11",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 2726,
+                "expression_start": 2712,
+                "expression_end": 2741,
+                "fold_start": 2712,
+                "fold_end": 2741,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar10 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar10 + 1u",
+                "base_expression": "piVar10",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 2783,
+                "expression_start": 2769,
+                "expression_end": 2798,
+                "fold_start": 2769,
+                "fold_end": 2798,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar11 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar11 + 1u",
+                "base_expression": "piVar11",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 6143,
+                "expression_start": 6129,
+                "expression_end": 6158,
+                "fold_start": 6128,
+                "fold_end": 6163,
+                "fold_literal": "4u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "constant",
+                "old_expression": "((((unsigned int) bVar13) * (-2)) + 1) * 4",
+                "new_expression": "4u",
+                "base_expression": null,
+                "constant_zero_expression": "((unsigned int)0 * -2 + 1) * 4"
+              }
+            ],
+            "initialization_start": 352,
+            "initialization_end": 366,
+            "initialization_is_declaration": false,
+            "removed_declaration": [
+              286,
+              310
+            ],
+            "remove_object": true,
+            "rename_to": null,
+            "reaching_zero": {
+              "reachable_nodes": 171,
+              "updates": 170,
+              "stride_nodes": [
+                {
+                  "flag_offset": 1324,
+                  "node": 67,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 1381,
+                  "node": 66,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 2726,
+                  "node": 131,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 2783,
+                  "node": 130,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 6143,
+                  "node": 17,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 156,
+            "syntax_adapters": [
+              {
+                "start": 923,
+                "end": 964,
+                "original": "((int (*)(int, int, int, int))(0x4302c0))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 1031,
+                "end": 1072,
+                "original": "((int (*)(int, int, int, int))(0x4302c0))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 2361,
+                "end": 2402,
+                "original": "((int (*)(int, int, int, int))(0x4302c0))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 4664,
+                "end": 4692,
+                "original": "((void (*)(void))(0x498f20))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 4731,
+                "end": 4758,
+                "original": "((int (*)(void))(0x499050))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 5905,
+                "end": 5936,
+                "original": "((int (*)(int, int))(0x4301a0))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 6414,
+                "end": 6442,
+                "original": "((int (*)(int *))(0x430260))",
+                "analysis_spelling": "exe_call_stub"
+              }
+            ]
+          }
+        ]
+      },
+      "checks": [
+        {
+          "source_stride_lines": [
+            480,
+            481,
+            530,
+            531,
+            646
+          ],
+          "expanded_fact": {
+            "variable": "bVar13",
+            "stride_uses": [
+              {
+                "flag_offset": 1324,
+                "expression_start": 1310,
+                "expression_end": 1339,
+                "fold_start": 1310,
+                "fold_end": 1339,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar10 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar10 + 1u",
+                "base_expression": "piVar10",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 1381,
+                "expression_start": 1367,
+                "expression_end": 1396,
+                "fold_start": 1367,
+                "fold_end": 1396,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar11 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar11 + 1u",
+                "base_expression": "piVar11",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 2726,
+                "expression_start": 2712,
+                "expression_end": 2741,
+                "fold_start": 2712,
+                "fold_end": 2741,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar10 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar10 + 1u",
+                "base_expression": "piVar10",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 2783,
+                "expression_start": 2769,
+                "expression_end": 2798,
+                "fold_start": 2769,
+                "fold_end": 2798,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar11 + (((unsigned int) bVar13) * (-2))) + 1",
+                "new_expression": "piVar11 + 1u",
+                "base_expression": "piVar11",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              },
+              {
+                "flag_offset": 6143,
+                "expression_start": 6129,
+                "expression_end": 6158,
+                "fold_start": 6128,
+                "fold_end": 6163,
+                "fold_literal": "4u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "constant",
+                "old_expression": "((((unsigned int) bVar13) * (-2)) + 1) * 4",
+                "new_expression": "4u",
+                "base_expression": null,
+                "constant_zero_expression": "((unsigned int)0 * -2 + 1) * 4"
+              }
+            ],
+            "initialization_start": 352,
+            "initialization_end": 366,
+            "initialization_is_declaration": false,
+            "removed_declaration": [
+              286,
+              310
+            ],
+            "remove_object": true,
+            "rename_to": null,
+            "reaching_zero": {
+              "reachable_nodes": 171,
+              "updates": 170,
+              "stride_nodes": [
+                {
+                  "flag_offset": 1324,
+                  "node": 67,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 1381,
+                  "node": 66,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 2726,
+                  "node": 131,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 2783,
+                  "node": 130,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                },
+                {
+                  "flag_offset": 6143,
+                  "node": 17,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 156,
+            "syntax_adapters": [
+              {
+                "start": 923,
+                "end": 964,
+                "original": "((int (*)(int, int, int, int))(0x4302c0))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 1031,
+                "end": 1072,
+                "original": "((int (*)(int, int, int, int))(0x4302c0))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 2361,
+                "end": 2402,
+                "original": "((int (*)(int, int, int, int))(0x4302c0))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 4664,
+                "end": 4692,
+                "original": "((void (*)(void))(0x498f20))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 4731,
+                "end": 4758,
+                "original": "((int (*)(void))(0x499050))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 5905,
+                "end": 5936,
+                "original": "((int (*)(int, int))(0x4301a0))",
+                "analysis_spelling": "exe_call_stub"
+              },
+              {
+                "start": 6414,
+                "end": 6442,
+                "original": "((int (*)(int *))(0x430260))",
+                "analysis_spelling": "exe_call_stub"
+              }
+            ]
+          }
+        }
+      ],
+      "residual_direction_cleanup": true
+    },
+    {
+      "source": "functions/token_generation.c",
+      "name": "copy_all_tokens_both_players",
+      "before_definition": "void copy_all_tokens_both_players(int player, int card, int type, test_definition_t *test)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  int c;\n  int *piVar5;\n  unsigned char bVar6;\n  int marked[151];\n\n  iVar3 = current_turn;\n\n  bVar6 = 0;\n  iVar2 = active_cards_count[current_turn];\n  if (0 < iVar2)\n  {\n    piVar5 = marked;\n    for (c = 0x97; c != 0; c = c + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + 1;\n    }\n    if (0 < iVar2)\n    {\n      c = 0;\n      do\n      {\n        instance = in_play(iVar3, c);\n        if (((instance != NULL) && (iVar2 = is_token(iVar3, c), iVar2 != 0)) &&\n            (((type != 0 && (iVar2 = is_what(iVar3, c, type), iVar2 != 0)) ||\n              ((test != NULL &&\n                (iVar2 = new_make_test_in_play(iVar3, c, -1, test), iVar2 != 0))))))\n        {\n          marked[c] = 1;\n        }\n        c = c + 1;\n        iVar2 = active_cards_count[iVar3];\n      } while (c < iVar2);\n    }\n    iVar2 = iVar2 + -1;\n    if (-1 < iVar2)\n    {\n      do\n      {\n\n        if ((marked[iVar2] != 0) && (-1 < iVar3))\n        {\n          copy_token(iVar3, iVar2, iVar3, iVar2);\n        }\n        iVar2 = iVar2 + -1;\n      } while (iVar2 != -1);\n    }\n  }\n  iVar3 = 1 - current_turn;\n  iVar2 = active_cards_count[iVar3];\n  if (0 < iVar2)\n  {\n    piVar5 = marked;\n    for (c = 0x97; c != 0; c = c + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + (unsigned int)bVar6 * -2 + 1;\n    }\n    if (0 < iVar2)\n    {\n      c = 0;\n      do\n      {\n        instance = in_play(iVar3, c);\n        if (((instance != NULL) && (iVar2 = is_token(iVar3, c), iVar2 != 0)) &&\n            (((type != 0 && (iVar2 = is_what(iVar3, c, type), iVar2 != 0)) ||\n              ((test != NULL &&\n                (iVar2 = new_make_test_in_play(iVar3, c, -1, test), iVar2 != 0))))))\n        {\n          marked[c] = 1;\n        }\n        c = c + 1;\n        iVar2 = active_cards_count[iVar3];\n      } while (c < iVar2);\n    }\n    iVar2 = iVar2 + -1;\n    if (-1 < iVar2)\n    {\n      do\n      {\n\n        if ((marked[iVar2] != 0) && (-1 < iVar3))\n        {\n          copy_token(iVar3, iVar2, iVar3, iVar2);\n        }\n        iVar2 = iVar2 + -1;\n      } while (iVar2 != -1);\n    }\n  }\n  return;\n}",
+      "after_definition": "void copy_all_tokens_both_players(int player, int card, int type, test_definition_t *test)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  int c;\n  int *piVar5;\n  int marked[151];\n\n  iVar3 = current_turn;\n\n  iVar2 = active_cards_count[current_turn];\n  if (0 < iVar2)\n  {\n    piVar5 = marked;\n    for (c = 0x97; c != 0; c = c + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + 1;\n    }\n    if (0 < iVar2)\n    {\n      c = 0;\n      do\n      {\n        instance = in_play(iVar3, c);\n        if (((instance != NULL) && (iVar2 = is_token(iVar3, c), iVar2 != 0)) &&\n            (((type != 0 && (iVar2 = is_what(iVar3, c, type), iVar2 != 0)) ||\n              ((test != NULL &&\n                (iVar2 = new_make_test_in_play(iVar3, c, -1, test), iVar2 != 0))))))\n        {\n          marked[c] = 1;\n        }\n        c = c + 1;\n        iVar2 = active_cards_count[iVar3];\n      } while (c < iVar2);\n    }\n    iVar2 = iVar2 + -1;\n    if (-1 < iVar2)\n    {\n      do\n      {\n\n        if ((marked[iVar2] != 0) && (-1 < iVar3))\n        {\n          copy_token(iVar3, iVar2, iVar3, iVar2);\n        }\n        iVar2 = iVar2 + -1;\n      } while (iVar2 != -1);\n    }\n  }\n  iVar3 = 1 - current_turn;\n  iVar2 = active_cards_count[iVar3];\n  if (0 < iVar2)\n  {\n    piVar5 = marked;\n    for (c = 0x97; c != 0; c = c + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + 1u;\n    }\n    if (0 < iVar2)\n    {\n      c = 0;\n      do\n      {\n        instance = in_play(iVar3, c);\n        if (((instance != NULL) && (iVar2 = is_token(iVar3, c), iVar2 != 0)) &&\n            (((type != 0 && (iVar2 = is_what(iVar3, c, type), iVar2 != 0)) ||\n              ((test != NULL &&\n                (iVar2 = new_make_test_in_play(iVar3, c, -1, test), iVar2 != 0))))))\n        {\n          marked[c] = 1;\n        }\n        c = c + 1;\n        iVar2 = active_cards_count[iVar3];\n      } while (c < iVar2);\n    }\n    iVar2 = iVar2 + -1;\n    if (-1 < iVar2)\n    {\n      do\n      {\n\n        if ((marked[iVar2] != 0) && (-1 < iVar3))\n        {\n          copy_token(iVar3, iVar2, iVar3, iVar2);\n        }\n        iVar2 = iVar2 + -1;\n      } while (iVar2 != -1);\n    }\n  }\n  return;\n}",
+      "before_sha256": "fe2db6c038a7f90e19ba412c629b74a0b6c2c664469676835a74c203b6bbc994",
+      "after_sha256": "0fde03692613501e17f327acd391e91b9e233fb6b186fa5ebfaf3ee0461c1bfe",
+      "facts": {
+        "folded_strides": 1,
+        "removed_flags": 1,
+        "removed_initializations": 1,
+        "renamed_role_locals": 0,
+        "source_candidates": [
+          {
+            "variable": "bVar6",
+            "stride_uses": [
+              {
+                "flag_offset": 1408,
+                "expression_start": 1394,
+                "expression_end": 1422,
+                "fold_start": 1394,
+                "fold_end": 1422,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar5 + (((unsigned int) bVar6) * (-2))) + 1",
+                "new_expression": "piVar5 + 1u",
+                "base_expression": "piVar5",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              }
+            ],
+            "initialization_start": 240,
+            "initialization_end": 253,
+            "initialization_is_declaration": false,
+            "removed_declaration": [
+              172,
+              195
+            ],
+            "remove_object": true,
+            "rename_to": null,
+            "reaching_zero": {
+              "reachable_nodes": 55,
+              "updates": 54,
+              "stride_nodes": [
+                {
+                  "flag_offset": 1408,
+                  "node": 19,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 48,
+            "syntax_adapters": []
+          }
+        ]
+      },
+      "expanded_before_definition": "void copy_all_tokens_both_players(int player, int card, int type, test_definition_t *test)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  int c;\n  int *piVar5;\n  unsigned char bVar6;\n  int marked[151];\n\n  iVar3 = current_turn;\n\n  bVar6 = 0;\n  iVar2 = active_cards_count[current_turn];\n  if (0 < iVar2)\n  {\n    piVar5 = marked;\n    for (c = 0x97; c != 0; c = c + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + 1;\n    }\n    if (0 < iVar2)\n    {\n      c = 0;\n      do\n      {\n        instance = in_play(iVar3, c);\n        if (((instance != \n\n                         ((void *)0)\n\n                             ) && (iVar2 = is_token(iVar3, c), iVar2 != 0)) &&\n            (((type != 0 && (iVar2 = is_what(iVar3, c, type), iVar2 != 0)) ||\n              ((test != \n\n                       ((void *)0) \n\n                            &&\n                (iVar2 = new_make_test_in_play(iVar3, c, -1, test), iVar2 != 0))))))\n        {\n          marked[c] = 1;\n        }\n        c = c + 1;\n        iVar2 = active_cards_count[iVar3];\n      } while (c < iVar2);\n    }\n    iVar2 = iVar2 + -1;\n    if (-1 < iVar2)\n    {\n      do\n      {\n\n        if ((marked[iVar2] != 0) && (-1 < iVar3))\n        {\n          copy_token(iVar3, iVar2, iVar3, iVar2);\n        }\n        iVar2 = iVar2 + -1;\n      } while (iVar2 != -1);\n    }\n  }\n  iVar3 = 1 - current_turn;\n  iVar2 = active_cards_count[iVar3];\n  if (0 < iVar2)\n  {\n    piVar5 = marked;\n    for (c = 0x97; c != 0; c = c + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + (unsigned int)bVar6 * -2 + 1;\n    }\n    if (0 < iVar2)\n    {\n      c = 0;\n      do\n      {\n        instance = in_play(iVar3, c);\n        if (((instance != \n\n                         ((void *)0)\n\n                             ) && (iVar2 = is_token(iVar3, c), iVar2 != 0)) &&\n            (((type != 0 && (iVar2 = is_what(iVar3, c, type), iVar2 != 0)) ||\n              ((test != \n\n                       ((void *)0) \n\n                            &&\n                (iVar2 = new_make_test_in_play(iVar3, c, -1, test), iVar2 != 0))))))\n        {\n          marked[c] = 1;\n        }\n        c = c + 1;\n        iVar2 = active_cards_count[iVar3];\n      } while (c < iVar2);\n    }\n    iVar2 = iVar2 + -1;\n    if (-1 < iVar2)\n    {\n      do\n      {\n\n        if ((marked[iVar2] != 0) && (-1 < iVar3))\n        {\n          copy_token(iVar3, iVar2, iVar3, iVar2);\n        }\n        iVar2 = iVar2 + -1;\n      } while (iVar2 != -1);\n    }\n  }\n  return;\n}",
+      "expanded_projected_definition": "void copy_all_tokens_both_players(int player, int card, int type, test_definition_t *test)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  int c;\n  int *piVar5;\n  int marked[151];\n\n  iVar3 = current_turn;\n\n  iVar2 = active_cards_count[current_turn];\n  if (0 < iVar2)\n  {\n    piVar5 = marked;\n    for (c = 0x97; c != 0; c = c + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + 1;\n    }\n    if (0 < iVar2)\n    {\n      c = 0;\n      do\n      {\n        instance = in_play(iVar3, c);\n        if (((instance != \n\n                         ((void *)0)\n\n                             ) && (iVar2 = is_token(iVar3, c), iVar2 != 0)) &&\n            (((type != 0 && (iVar2 = is_what(iVar3, c, type), iVar2 != 0)) ||\n              ((test != \n\n                       ((void *)0) \n\n                            &&\n                (iVar2 = new_make_test_in_play(iVar3, c, -1, test), iVar2 != 0))))))\n        {\n          marked[c] = 1;\n        }\n        c = c + 1;\n        iVar2 = active_cards_count[iVar3];\n      } while (c < iVar2);\n    }\n    iVar2 = iVar2 + -1;\n    if (-1 < iVar2)\n    {\n      do\n      {\n\n        if ((marked[iVar2] != 0) && (-1 < iVar3))\n        {\n          copy_token(iVar3, iVar2, iVar3, iVar2);\n        }\n        iVar2 = iVar2 + -1;\n      } while (iVar2 != -1);\n    }\n  }\n  iVar3 = 1 - current_turn;\n  iVar2 = active_cards_count[iVar3];\n  if (0 < iVar2)\n  {\n    piVar5 = marked;\n    for (c = 0x97; c != 0; c = c + -1)\n    {\n      *piVar5 = 0;\n      piVar5 = piVar5 + 1u;\n    }\n    if (0 < iVar2)\n    {\n      c = 0;\n      do\n      {\n        instance = in_play(iVar3, c);\n        if (((instance != \n\n                         ((void *)0)\n\n                             ) && (iVar2 = is_token(iVar3, c), iVar2 != 0)) &&\n            (((type != 0 && (iVar2 = is_what(iVar3, c, type), iVar2 != 0)) ||\n              ((test != \n\n                       ((void *)0) \n\n                            &&\n                (iVar2 = new_make_test_in_play(iVar3, c, -1, test), iVar2 != 0))))))\n        {\n          marked[c] = 1;\n        }\n        c = c + 1;\n        iVar2 = active_cards_count[iVar3];\n      } while (c < iVar2);\n    }\n    iVar2 = iVar2 + -1;\n    if (-1 < iVar2)\n    {\n      do\n      {\n\n        if ((marked[iVar2] != 0) && (-1 < iVar3))\n        {\n          copy_token(iVar3, iVar2, iVar3, iVar2);\n        }\n        iVar2 = iVar2 + -1;\n      } while (iVar2 != -1);\n    }\n  }\n  return;\n}",
+      "expanded_facts": {
+        "folded_strides": 1,
+        "removed_flags": 1,
+        "removed_initializations": 1,
+        "renamed_role_locals": 0,
+        "source_candidates": [
+          {
+            "variable": "bVar6",
+            "stride_uses": [
+              {
+                "flag_offset": 1535,
+                "expression_start": 1521,
+                "expression_end": 1549,
+                "fold_start": 1521,
+                "fold_end": 1549,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar5 + (((unsigned int) bVar6) * (-2))) + 1",
+                "new_expression": "piVar5 + 1u",
+                "base_expression": "piVar5",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              }
+            ],
+            "initialization_start": 240,
+            "initialization_end": 253,
+            "initialization_is_declaration": false,
+            "removed_declaration": [
+              172,
+              195
+            ],
+            "remove_object": true,
+            "rename_to": null,
+            "reaching_zero": {
+              "reachable_nodes": 55,
+              "updates": 54,
+              "stride_nodes": [
+                {
+                  "flag_offset": 1535,
+                  "node": 19,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 48,
+            "syntax_adapters": []
+          }
+        ]
+      },
+      "checks": [
+        {
+          "source_stride_lines": [
+            288
+          ],
+          "expanded_fact": {
+            "variable": "bVar6",
+            "stride_uses": [
+              {
+                "flag_offset": 1535,
+                "expression_start": 1521,
+                "expression_end": 1549,
+                "fold_start": 1521,
+                "fold_end": 1549,
+                "fold_literal": "1u",
+                "scale": 2,
+                "forward_step": 1,
+                "kind": "linear",
+                "old_expression": "(piVar5 + (((unsigned int) bVar6) * (-2))) + 1",
+                "new_expression": "piVar5 + 1u",
+                "base_expression": "piVar5",
+                "constant_zero_expression": "(unsigned int)0 * -2 + 1"
+              }
+            ],
+            "initialization_start": 240,
+            "initialization_end": 253,
+            "initialization_is_declaration": false,
+            "removed_declaration": [
+              172,
+              195
+            ],
+            "remove_object": true,
+            "rename_to": null,
+            "reaching_zero": {
+              "reachable_nodes": 55,
+              "updates": 54,
+              "stride_nodes": [
+                {
+                  "flag_offset": 1535,
+                  "node": 19,
+                  "incoming_states": [
+                    "zero"
+                  ]
+                }
+              ]
+            },
+            "initial_value_dead_after_folding": true,
+            "liveness_initializer_node": 48,
+            "syntax_adapters": []
+          }
+        }
+      ],
+      "residual_direction_cleanup": true
+    }
+  ],
+  "pending": [],
+  "counts": {
+    "functions": 4,
+    "source_units": 4,
+    "removed_flags": 3,
+    "folded_strides": 8,
+    "removed_initializations": 4,
+    "renamed_role_locals": 1,
+    "source_lines_removed": 6,
+    "pending": 0
+  },
+  "preprocess_before_record": ".recovery/residual-direction-before-pp-c185.json",
+  "preprocess_before_record_sha256": "aebe44c2d9df6aba63ceac6fc240ac66982c7dbb5ede1b723ef12c2dfc5f3a29",
+  "source_state_sha256": "93c93fc2e06337ce6733cf08a1a170cdc2199d78a55e861a45270f07f854c2ce",
+  "status": "Applied and verified:8 unsigned stride folds,3 obsolete byte objects removed,4 dead initializers removed and one native ltr name restored in4 functions/4 source units;6 source lines removed.",
+  "files": [
+    {
+      "source": "cards/ice_age.c",
+      "before_path": ".recovery/residual-directions-before-c189/cards/ice_age.c",
+      "before_bytes_sha256": "ffd2c553a28fb57832c3ffcc1ab5960d4e7d485e7b2b7d06b07b1bb1e49931b5",
+      "after_source_sha256": "709a7c2951b6902c3675d3f4b79dad186f76979f0dc7ad63c20d64dfd8b32c00",
+      "preprocess_after": {
+        "archive_path": ".recovery/residual-directions-after-pp-c190/cards_ice_age.c.i.gz",
+        "archive_sha256": "4ce9de089048a7c441de929dfdd942506b7ff4ff7f0516fa6198ffe5931ba5bb",
+        "raw_sha256": "baa13ad61a8da1302958e66332cdd815eaa795b2be341a34b00b05b2ac450078",
+        "source_bytes_sha256": "d30a83f7dce6a83bdb007be1732fbfe16e5e18643b5a3401dd5436311e3b5146",
+        "argv": [
+          "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+          "-m32",
+          "-O2",
+          "-ggdb2",
+          "-march=i586",
+          "-mpreferred-stack-boundary=2",
+          "-fno-omit-frame-pointer",
+          "-fno-tree-vrp",
+          "-Wall",
+          "-Wextra",
+          "-Wpointer-arith",
+          "-Wcast-qual",
+          "-Wcast-align",
+          "-Wwrite-strings",
+          "-Wshadow",
+          "-W",
+          "-Winline",
+          "-Wno-unused-parameter",
+          "-I..",
+          "-I.",
+          "-Wbad-function-cast",
+          "-Wstrict-prototypes",
+          "-Wnested-externs",
+          "-E",
+          "-dD",
+          "cards/ice_age.c",
+          "-o",
+          ".recovery\\residual-directions-after-pp-c190\\cards_ice_age.c.i"
+        ]
+      }
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "before_path": ".recovery/residual-directions-before-c189/cards/unglued_unhinged.c",
+      "before_bytes_sha256": "b2f19ef4c960e08f875778632f042bbc1848173c8f41562abc2a6b193d97265b",
+      "after_source_sha256": "f7af4a6d63c5b71f315c0ce578f71fb480b713a2ee8568ceffacbd9131175b92",
+      "preprocess_after": {
+        "archive_path": ".recovery/residual-directions-after-pp-c190/cards_unglued_unhinged.c.i.gz",
+        "archive_sha256": "3d1bc3b04dba5f5c1d4813ea038222eedeec1bdadfdb86e794c283a56589effa",
+        "raw_sha256": "83654ebe8d93eaa4e40da40b6b45735a248d370b4b8e5053edb9344ac22a5a61",
+        "source_bytes_sha256": "0d678b9c72a20d11ff16fa9d571e7252d0e6607b4d0e72f830fb415ad63b85b8",
+        "argv": [
+          "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+          "-m32",
+          "-O2",
+          "-ggdb2",
+          "-march=i586",
+          "-mpreferred-stack-boundary=2",
+          "-fno-omit-frame-pointer",
+          "-fno-tree-vrp",
+          "-Wall",
+          "-Wextra",
+          "-Wpointer-arith",
+          "-Wcast-qual",
+          "-Wcast-align",
+          "-Wwrite-strings",
+          "-Wshadow",
+          "-W",
+          "-Winline",
+          "-Wno-unused-parameter",
+          "-I..",
+          "-I.",
+          "-Wbad-function-cast",
+          "-Wstrict-prototypes",
+          "-Wnested-externs",
+          "-E",
+          "-dD",
+          "cards/unglued_unhinged.c",
+          "-o",
+          ".recovery\\residual-directions-after-pp-c190\\cards_unglued_unhinged.c.i"
+        ]
+      }
+    },
+    {
+      "source": "functions/engine.c",
+      "before_path": ".recovery/residual-directions-before-c189/functions/engine.c",
+      "before_bytes_sha256": "1fbbfe7acd801f70993ef837083f37765475a2fbcfb5813ce2305a6bf7cc801c",
+      "after_source_sha256": "6dff4c47f162059deefc4c79c1b0c0078c8b20abaff93b010e5a0473ac4bda3d",
+      "preprocess_after": {
+        "archive_path": ".recovery/residual-directions-after-pp-c190/functions_engine.c.i.gz",
+        "archive_sha256": "43ee12aab1282788b9ab652c1064860ddcbbdb859665eefbbf8d6bc86ebf64f5",
+        "raw_sha256": "47ecbb2f4c35dc1173345150761ebc4ba82d17b473a585ee5657623b5ba9510c",
+        "source_bytes_sha256": "0a2a8fbe4f00492de33a3e8c588b8da2ee54cbdaabefee2cada75772b06834f2",
+        "argv": [
+          "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+          "-m32",
+          "-O2",
+          "-ggdb2",
+          "-march=i586",
+          "-mpreferred-stack-boundary=2",
+          "-fno-omit-frame-pointer",
+          "-fno-tree-vrp",
+          "-Wall",
+          "-Wextra",
+          "-Wpointer-arith",
+          "-Wcast-qual",
+          "-Wcast-align",
+          "-Wwrite-strings",
+          "-Wshadow",
+          "-W",
+          "-Winline",
+          "-Wno-unused-parameter",
+          "-I..",
+          "-I.",
+          "-Wbad-function-cast",
+          "-Wstrict-prototypes",
+          "-Wnested-externs",
+          "-E",
+          "-dD",
+          "functions/engine.c",
+          "-o",
+          ".recovery\\residual-directions-after-pp-c190\\functions_engine.c.i"
+        ]
+      }
+    },
+    {
+      "source": "functions/token_generation.c",
+      "before_path": ".recovery/residual-directions-before-c189/functions/token_generation.c",
+      "before_bytes_sha256": "cd4ff0a690d3fd7c892d6131fe9b898ff1f92fe850785b1b9e8922fc6c2b4780",
+      "after_source_sha256": "bad71be9d3091e1a4bd389dc8a100df08ee4a8c9072204286f9490a276063dd9",
+      "preprocess_after": {
+        "archive_path": ".recovery/residual-directions-after-pp-c190/functions_token_generation.c.i.gz",
+        "archive_sha256": "b533b5aaca756ac2845c808598e763d78624f1bc3615a49c9f7a938c7b2f42f6",
+        "raw_sha256": "5954215797fc1eac75ce0df9f8eba60368282a043a1d4dd606b84fa853fab551",
+        "source_bytes_sha256": "27595e8d4b1341c0c69cac90fbdb16583566fbd5b1ba53212cdcd88b1420ee97",
+        "argv": [
+          "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+          "-m32",
+          "-O2",
+          "-ggdb2",
+          "-march=i586",
+          "-mpreferred-stack-boundary=2",
+          "-fno-omit-frame-pointer",
+          "-fno-tree-vrp",
+          "-Wall",
+          "-Wextra",
+          "-Wpointer-arith",
+          "-Wcast-qual",
+          "-Wcast-align",
+          "-Wwrite-strings",
+          "-Wshadow",
+          "-W",
+          "-Winline",
+          "-Wno-unused-parameter",
+          "-I..",
+          "-I.",
+          "-Wbad-function-cast",
+          "-Wstrict-prototypes",
+          "-Wnested-externs",
+          "-E",
+          "-dD",
+          "functions/token_generation.c",
+          "-o",
+          ".recovery\\residual-directions-after-pp-c190\\functions_token_generation.c.i"
+        ]
+      }
+    }
+  ],
+  "compiler_type_record": ".recovery/residual-direction-types-c188.json",
+  "compiler_type_record_sha256": "4b6815c24a1f7e4e93bff0e285f792bc9efbd750b8b281186514e97ef45fd669",
+  "preflight_record": ".recovery/residual-direction-preflight-c188.json",
+  "preflight_record_sha256": "a342d5714dfd4c8cb246739099804a3ae8415b2980f9b38af3852d6b310471f2",
+  "runtime_before": {
+    "path": ".recovery/residual-directions-before-c189.dll",
+    "sha256": "34b2537de7e559591d529940af93a37fde1a9d675804924106bcecd3230b4b38",
+    "sections": {
+      ".text": {
+        "rva": 4096,
+        "virtual_size": 7425376,
+        "raw_size": 7425536,
+        "characteristics": 1616904288,
+        "normalized_bytes_sha256": "c7b1161ee6ff20cd9efc6cd758248efe4e50625685198963b948c22abb5cc542",
+        "volatile_fields": []
+      },
+      ".text.unlikely": {
+        "rva": 7430144,
+        "virtual_size": 208,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "e771dc75548f6e44cdfb00c86ab6b7ea3df3b75c7a3d7336ed4f046c1e8ef1b6",
+        "volatile_fields": []
+      },
+      ".text.startup": {
+        "rva": 7434240,
+        "virtual_size": 64,
+        "raw_size": 512,
+        "characteristics": 1615855648,
+        "normalized_bytes_sha256": "4af01c1946e2dfd8d76b4eb6e758c3d80f5c91449c9864723b58ac980bf7bf38",
+        "volatile_fields": []
+      },
+      ".text.startup._GLOBAL__sub_I___cxa_get_globals_fast": {
+        "rva": 7438336,
+        "virtual_size": 64,
+        "raw_size": 512,
+        "characteristics": 1615855648,
+        "normalized_bytes_sha256": "c290fe942507775e004fa067ecd4c37cad78dd6fa77383aadb8c14f541871da7",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt21__throw_bad_exceptionv": {
+        "rva": 7442432,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "8a2f3c27b86162139bcbd5162ebb5da746f83f90950f65a85c25d39bf69432fd",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt17__throw_bad_allocv": {
+        "rva": 7446528,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "0390b05fa3c03abff7f4971bcd09bfef5de8079486e8e252cb58d0206a977076",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt16__throw_bad_castv": {
+        "rva": 7450624,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "cfdd6dd31bd2589d8b60a9fc1b46fa358310590b1b41530d90c50864598fab30",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt18__throw_bad_typeidv": {
+        "rva": 7454720,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "928353a6d8b44b17f7dc746c1cec2eaa1c0cdea657c36002f45aa7958f3945a3",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt19__throw_logic_errorPKc": {
+        "rva": 7458816,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "7df549bc86bd16cfb4cbfacb0adb2a4cd0ebff5c92328280058a9e4cba01d222",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt20__throw_domain_errorPKc": {
+        "rva": 7462912,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "ae2488b3c5260825a3d33a61ec2a3fb3487847e8946432a57ab0ed01c8afa85e",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt24__throw_invalid_argumentPKc": {
+        "rva": 7467008,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "1dd2bc210ba88fddc8a2989d744ee1d97832682f5a62d627eef0e90f0f7abc36",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt20__throw_length_errorPKc": {
+        "rva": 7471104,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "f5d7b78b95dd389fa095485f3fb3a7b343f6d511995f39f98366b7b276738cac",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt20__throw_out_of_rangePKc": {
+        "rva": 7475200,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "c1abe13532611a33dcffc031092bc3ecb616fa918b683f12a65215625e4829ba",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt21__throw_runtime_errorPKc": {
+        "rva": 7479296,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "91115449449feb050d3daa4b719f5b13d4978b8bf1eb17aa40c91d52c569a60c",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt19__throw_range_errorPKc": {
+        "rva": 7483392,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "2495eaf473994c081c68c3553e82ce7f9c4970e675b6760b63c03fac28052524",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt22__throw_overflow_errorPKc": {
+        "rva": 7487488,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "079a3c675449db289db28cf53754311635cf42315d36365968fb7b4f596ca7ba",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt23__throw_underflow_errorPKc": {
+        "rva": 7491584,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "2472d2f947f24e25cb71e03fd20cc20f3c646f631ef1e32ebd3296dfae206ac6",
+        "volatile_fields": []
+      },
+      ".text.startup._GLOBAL__sub_I__ZN9__gnu_cxx9__freeresEv": {
+        "rva": 7495680,
+        "virtual_size": 112,
+        "raw_size": 512,
+        "characteristics": 1615855648,
+        "normalized_bytes_sha256": "d5e9fa8a5bfbc777f65cbe29718ebddfb66b04cbbe464ddc1b7d4a83280ae89c",
+        "volatile_fields": []
+      },
+      ".data": {
+        "rva": 7499776,
+        "virtual_size": 4148,
+        "raw_size": 4608,
+        "characteristics": 3227516992,
+        "normalized_bytes_sha256": "dc7fa01b12e5a5c624e2bb4a5a64b9e6838113d63cd45f5c56b4393c46cc6a70",
+        "volatile_fields": []
+      },
+      ".rdata": {
+        "rva": 7507968,
+        "virtual_size": 321868,
+        "raw_size": 322048,
+        "characteristics": 1080033344,
+        "normalized_bytes_sha256": "e1f178d9da2b6e59ec24d1893d90ddf065c0ebc388b1e581b1176f863f2afb3f",
+        "volatile_fields": []
+      },
+      ".bss": {
+        "rva": 7831552,
+        "virtual_size": 260092,
+        "raw_size": 0,
+        "characteristics": 3227517056,
+        "normalized_bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "volatile_fields": []
+      },
+      ".edata": {
+        "rva": 8093696,
+        "virtual_size": 98,
+        "raw_size": 512,
+        "characteristics": 1076887616,
+        "normalized_bytes_sha256": "ed1fec81a1622f424a3d0ccadfa7a2050e5a6fb6ebdac1ed6bb60592e348ae5f",
+        "volatile_fields": [
+          {
+            "offset": 4,
+            "size": 4,
+            "reason": "IMAGE_EXPORT_DIRECTORY.TimeDateStamp",
+            "value": "75bae76a"
+          }
+        ]
+      },
+      ".idata": {
+        "rva": 8097792,
+        "virtual_size": 5596,
+        "raw_size": 5632,
+        "characteristics": 3224371264,
+        "normalized_bytes_sha256": "c4b13f7c1d739f7a61cdb71de22a88e15ea999b30597fd9377f2aeff7fe93794",
+        "volatile_fields": []
+      },
+      ".CRT": {
+        "rva": 8105984,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "characteristics": 3224371264,
+        "normalized_bytes_sha256": "1651ea99d30e4e7bcb8f86b97cc9b86c99625ead1495c56acefb223c60ca6d26",
+        "volatile_fields": []
+      },
+      ".tls": {
+        "rva": 8110080,
+        "virtual_size": 8,
+        "raw_size": 512,
+        "characteristics": 3224371264,
+        "normalized_bytes_sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560",
+        "volatile_fields": []
+      },
+      ".reloc": {
+        "rva": 8114176,
+        "virtual_size": 178828,
+        "raw_size": 179200,
+        "characteristics": 1110442048,
+        "normalized_bytes_sha256": "3a413b1e978f33f702a2c94f788f8e356554a6c9ab7b33c582d3602b80a8368a",
+        "volatile_fields": []
+      }
+    }
+  },
+  "scope": "Statement CFG reaching-zero checks bind each folded read and liveness proves the removed zero initializer dead. Bloodletter retains its later character role under native name ltr. Fold to unsigned forward-step literals with actual GCC value/type/base checks. Memory actions and clear/copy loops stay in place. No library-call replacement, native function coverage or gameplay claim.",
+  "native_name_record": ".recovery/residual-direction-native-name-c188.json",
+  "native_name_record_sha256": "25a5facd57e7efb535b88d8ce0bab1ecf82928b3745d76a369077708df0da0f6",
+  "runtime_after": {
+    "path": ".recovery/residual-directions-after-c190.dll",
+    "sha256": "58ab8a6ec695e7a394a3d86f103797fd47f0af813972fe9eea6450d5b15cc9a0",
+    "sections": {
+      ".text": {
+        "rva": 4096,
+        "virtual_size": 7425376,
+        "raw_size": 7425536,
+        "characteristics": 1616904288,
+        "normalized_bytes_sha256": "c7b1161ee6ff20cd9efc6cd758248efe4e50625685198963b948c22abb5cc542",
+        "volatile_fields": []
+      },
+      ".text.unlikely": {
+        "rva": 7430144,
+        "virtual_size": 208,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "e771dc75548f6e44cdfb00c86ab6b7ea3df3b75c7a3d7336ed4f046c1e8ef1b6",
+        "volatile_fields": []
+      },
+      ".text.startup": {
+        "rva": 7434240,
+        "virtual_size": 64,
+        "raw_size": 512,
+        "characteristics": 1615855648,
+        "normalized_bytes_sha256": "4af01c1946e2dfd8d76b4eb6e758c3d80f5c91449c9864723b58ac980bf7bf38",
+        "volatile_fields": []
+      },
+      ".text.startup._GLOBAL__sub_I___cxa_get_globals_fast": {
+        "rva": 7438336,
+        "virtual_size": 64,
+        "raw_size": 512,
+        "characteristics": 1615855648,
+        "normalized_bytes_sha256": "c290fe942507775e004fa067ecd4c37cad78dd6fa77383aadb8c14f541871da7",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt21__throw_bad_exceptionv": {
+        "rva": 7442432,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "8a2f3c27b86162139bcbd5162ebb5da746f83f90950f65a85c25d39bf69432fd",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt17__throw_bad_allocv": {
+        "rva": 7446528,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "0390b05fa3c03abff7f4971bcd09bfef5de8079486e8e252cb58d0206a977076",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt16__throw_bad_castv": {
+        "rva": 7450624,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "cfdd6dd31bd2589d8b60a9fc1b46fa358310590b1b41530d90c50864598fab30",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt18__throw_bad_typeidv": {
+        "rva": 7454720,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "928353a6d8b44b17f7dc746c1cec2eaa1c0cdea657c36002f45aa7958f3945a3",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt19__throw_logic_errorPKc": {
+        "rva": 7458816,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "7df549bc86bd16cfb4cbfacb0adb2a4cd0ebff5c92328280058a9e4cba01d222",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt20__throw_domain_errorPKc": {
+        "rva": 7462912,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "ae2488b3c5260825a3d33a61ec2a3fb3487847e8946432a57ab0ed01c8afa85e",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt24__throw_invalid_argumentPKc": {
+        "rva": 7467008,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "1dd2bc210ba88fddc8a2989d744ee1d97832682f5a62d627eef0e90f0f7abc36",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt20__throw_length_errorPKc": {
+        "rva": 7471104,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "f5d7b78b95dd389fa095485f3fb3a7b343f6d511995f39f98366b7b276738cac",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt20__throw_out_of_rangePKc": {
+        "rva": 7475200,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "c1abe13532611a33dcffc031092bc3ecb616fa918b683f12a65215625e4829ba",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt21__throw_runtime_errorPKc": {
+        "rva": 7479296,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "91115449449feb050d3daa4b719f5b13d4978b8bf1eb17aa40c91d52c569a60c",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt19__throw_range_errorPKc": {
+        "rva": 7483392,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "2495eaf473994c081c68c3553e82ce7f9c4970e675b6760b63c03fac28052524",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt22__throw_overflow_errorPKc": {
+        "rva": 7487488,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "079a3c675449db289db28cf53754311635cf42315d36365968fb7b4f596ca7ba",
+        "volatile_fields": []
+      },
+      ".text.unlikely._ZSt23__throw_underflow_errorPKc": {
+        "rva": 7491584,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "characteristics": 1613758496,
+        "normalized_bytes_sha256": "2472d2f947f24e25cb71e03fd20cc20f3c646f631ef1e32ebd3296dfae206ac6",
+        "volatile_fields": []
+      },
+      ".text.startup._GLOBAL__sub_I__ZN9__gnu_cxx9__freeresEv": {
+        "rva": 7495680,
+        "virtual_size": 112,
+        "raw_size": 512,
+        "characteristics": 1615855648,
+        "normalized_bytes_sha256": "d5e9fa8a5bfbc777f65cbe29718ebddfb66b04cbbe464ddc1b7d4a83280ae89c",
+        "volatile_fields": []
+      },
+      ".data": {
+        "rva": 7499776,
+        "virtual_size": 4148,
+        "raw_size": 4608,
+        "characteristics": 3227516992,
+        "normalized_bytes_sha256": "dc7fa01b12e5a5c624e2bb4a5a64b9e6838113d63cd45f5c56b4393c46cc6a70",
+        "volatile_fields": []
+      },
+      ".rdata": {
+        "rva": 7507968,
+        "virtual_size": 321868,
+        "raw_size": 322048,
+        "characteristics": 1080033344,
+        "normalized_bytes_sha256": "e1f178d9da2b6e59ec24d1893d90ddf065c0ebc388b1e581b1176f863f2afb3f",
+        "volatile_fields": []
+      },
+      ".bss": {
+        "rva": 7831552,
+        "virtual_size": 260092,
+        "raw_size": 0,
+        "characteristics": 3227517056,
+        "normalized_bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "volatile_fields": []
+      },
+      ".edata": {
+        "rva": 8093696,
+        "virtual_size": 98,
+        "raw_size": 512,
+        "characteristics": 1076887616,
+        "normalized_bytes_sha256": "ed1fec81a1622f424a3d0ccadfa7a2050e5a6fb6ebdac1ed6bb60592e348ae5f",
+        "volatile_fields": [
+          {
+            "offset": 4,
+            "size": 4,
+            "reason": "IMAGE_EXPORT_DIRECTORY.TimeDateStamp",
+            "value": "2ac4e76a"
+          }
+        ]
+      },
+      ".idata": {
+        "rva": 8097792,
+        "virtual_size": 5596,
+        "raw_size": 5632,
+        "characteristics": 3224371264,
+        "normalized_bytes_sha256": "c4b13f7c1d739f7a61cdb71de22a88e15ea999b30597fd9377f2aeff7fe93794",
+        "volatile_fields": []
+      },
+      ".CRT": {
+        "rva": 8105984,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "characteristics": 3224371264,
+        "normalized_bytes_sha256": "1651ea99d30e4e7bcb8f86b97cc9b86c99625ead1495c56acefb223c60ca6d26",
+        "volatile_fields": []
+      },
+      ".tls": {
+        "rva": 8110080,
+        "virtual_size": 8,
+        "raw_size": 512,
+        "characteristics": 3224371264,
+        "normalized_bytes_sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560",
+        "volatile_fields": []
+      },
+      ".reloc": {
+        "rva": 8114176,
+        "virtual_size": 178828,
+        "raw_size": 179200,
+        "characteristics": 1110442048,
+        "normalized_bytes_sha256": "3a413b1e978f33f702a2c94f788f8e356554a6c9ab7b33c582d3602b80a8368a",
+        "volatile_fields": []
+      }
+    }
+  },
+  "runtime_comparison": {
+    "identical_sections": 26,
+    "changed_sections": [],
+    "scope": "Recorded compiler-output comparison only; source/control-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_residual_directions": {
+        "cleaned_definitions": 4,
+        "source_units": 4,
+        "folded_strides": 8,
+        "removed_flags": 3,
+        "removed_initializations": 4,
+        "renamed_role_locals": 1,
+        "replayed_stride_type_assertions": 8,
+        "native_name_bindings": 1,
+        "assertion_sites": 0,
+        "pending_candidates": 0,
+        "scope": "Statement-CFG reaching states prove zero at every folded read with no same-node flag write. Whole-function liveness proves the initializer value dead after folding; a later character role remains and uses native unsigned-byte vocabulary. Offset-preserving views retain all real engine-call descriptors in compiler/product input. GCC type/value/base checks and complete actual expansions pass. No new native function coverage or gameplay claim."
+      },
+      "prior_source_input_hashes": {
+        "previous_direction_source_units": 31,
+        "previous_loop_source_units": 17,
+        "previous_comparison_source_units": 31,
+        "previous_comma_source_units": 61,
+        "extended_spell_source_units": 15,
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Current residual-direction validation and exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/residual-directions-readers-c191.log",
+      "sha256": "1c805620194a1de7cc02a3a476516eca18de7592446388c8a5f2d436c63c4d45",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/residual-directions-build-c190.log",
+      "log_sha256": "dd207a8fdd628da8d3441e2c84212243f33b2500ddef9408fc278a9e6dc5b264",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "58ab8a6ec695e7a394a3d86f103797fd47f0af813972fe9eea6450d5b15cc9a0",
+      "dbg_sha256": "346819cd3581963fb34e39e868fbca96c0ffde048efc1ebd15711f0f7ad3075b"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/residual-directions-proof-before-c189.json.gz",
+      "archive_sha256": "65476ab3bed25759d6ae5bee0af64dc30483d24be7a62d0852c31a510c385684",
+      "raw_sha256": "93c93fc2e06337ce6733cf08a1a170cdc2199d78a55e861a45270f07f854c2ce",
+      "verified_source_pin_successions": 4
+    },
+    "limits": "Readability recovery of accepted bodies, not new function coverage. Reaching-zero/liveness, actual expanded source and GCC type/value checks validate the edited sites. All26 normalized runtime sections identical. Prior source-reader compatibility checked without rerunning old semantic audits. No gameplay tests."
+  }
+}

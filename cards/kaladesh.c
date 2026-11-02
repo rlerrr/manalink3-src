@@ -1943,55 +1943,53 @@ int card_aetherborn_marauder(int player, int card, event_t event)
   int iVar2;
   int iVar3;
   int argument3;
-  int iVar4;
+  int c;
   int *piVar5;
-  unsigned char bVar6;
   int num_counters[151];
-  bVar6 = 0;
   lifelink(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     piVar5 = num_counters;
-    for (iVar4 = 0x97; iVar4 != 0; iVar4 = iVar4 + -1)
+    for (c = 0x97; c != 0; c = c + -1)
     {
       *piVar5 = 0;
-      piVar5 = piVar5 + (unsigned int)bVar6 * -2 + 1;
+      piVar5 = piVar5 + 1u;
     }
     if (0 < active_cards_count[player])
     {
-      iVar4 = 0;
+      c = 0;
       do
       {
-        while ((instance = in_play(player, iVar4),
-                instance == NULL || (iVar2 = is_what(player, iVar4, 0x47), iVar2 == 0)))
+        while ((instance = in_play(player, c),
+                instance == NULL || (iVar2 = is_what(player, c, 0x47), iVar2 == 0)))
         {
-          iVar4 = iVar4 + 1;
+          c = c + 1;
           iVar2 = active_cards_count[player];
-          if (iVar2 <= iVar4)
+          if (iVar2 <= c)
             goto LAB_023a1068;
         }
-        iVar2 = count_counters(player, iVar4, COUNTER_P1_P1);
-        num_counters[iVar4] = iVar2;
-        iVar4 = iVar4 + 1;
+        iVar2 = count_counters(player, c, COUNTER_P1_P1);
+        num_counters[c] = iVar2;
+        c = c + 1;
         iVar2 = active_cards_count[player];
-      } while (iVar4 < iVar2);
+      } while (c < iVar2);
     LAB_023a1068:
       num_counters[card] = 0;
       if (0 < iVar2)
       {
-        iVar4 = 0;
+        c = 0;
         do
         {
-          iVar2 = num_counters[iVar4];
+          iVar2 = num_counters[c];
           if (iVar2 != 0)
           {
-            iVar3 = is_what(player, iVar4, 2);
+            iVar3 = is_what(player, c, 2);
             argument3 = iVar2;
             if (iVar3 != 0)
             {
-              iVar3 = get_toughness(player, iVar4);
-              instance = get_card_instance(player, iVar4);
+              iVar3 = get_toughness(player, c);
+              instance = get_card_instance(player, c);
               iVar3 = iVar3 - (unsigned int)instance->damage_on_card;
               if (iVar3 == iVar2 || iVar3 - iVar2 < 0)
               {
@@ -2003,7 +2001,7 @@ int card_aetherborn_marauder(int player, int card, event_t event)
                     if ((player == 1) ||
                         (iVar3 =
                              dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\003",
-                                         "\001\007", player, iVar4, "Move +1/+1 counters from this",
+                                         "\001\007", player, c, "Move +1/+1 counters from this",
                                          1, 1, "Decline", 1, 1, 0, 0, 0, 0),
                          iVar3 != 1))
                       goto LAB_023a1088;
@@ -2014,7 +2012,7 @@ int card_aetherborn_marauder(int player, int card, event_t event)
             }
             if ((player != 1) &&
                 (iVar3 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\003",
-                                     "\001\007", player, iVar4, "Move +1/+1 counters from this", 1,
+                                     "\001\007", player, c, "Move +1/+1 counters from this", 1,
                                      1, "Decline", 1, 1, 0, 0, 0, 0),
                  iVar3 == 1))
             {
@@ -2024,13 +2022,13 @@ int card_aetherborn_marauder(int player, int card, event_t event)
             }
             if ((argument3 <= iVar2) && (0 < argument3))
             {
-              move_counters(player, card, player, card, player, iVar4, COUNTER_P1_P1,
+              move_counters(player, card, player, card, player, c, COUNTER_P1_P1,
                                         argument3);
             }
           }
         LAB_023a1088:
-          iVar4 = iVar4 + 1;
-        } while (iVar4 < active_cards_count[player]);
+          c = c + 1;
+        } while (c < active_cards_count[player]);
       }
     }
   }
@@ -4583,8 +4581,7 @@ int card_durable_handicraft(int player, int card, event_t event)
   {
     if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
     {
-      iVar1 = global_enchantment(player, card, event);
-      return iVar1;
+      return global_enchantment(player, card, event);
     }
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
@@ -4592,8 +4589,7 @@ int card_durable_handicraft(int player, int card, event_t event)
       new_manipulate_all(player, card, player, &test, ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
     }
   }
-  iVar1 = generic_activated_ability(player, card, event, 8, 5, 0, 0, 1, 0, 0, 0, NULL, NULL);
-  return iVar1;
+  return generic_activated_ability(player, card, event, 8, 5, 0, 0, 1, 0, 0, 0, NULL, NULL);
 }
 
 int card_elegant_edgecrafters(int player, int card, event_t event){

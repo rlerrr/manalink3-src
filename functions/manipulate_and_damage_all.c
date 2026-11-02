@@ -66,7 +66,7 @@ int new_damage_all(int player, int card, int targ_player, int dmg, int mode,
                         test_definition_t *this_test)
 {
   int player_00;
-  int iVar1;
+  int i;
   card_instance_t *instance;
   int iVar3;
   int iStack_1c;
@@ -86,41 +86,40 @@ int new_damage_all(int player, int card, int targ_player, int dmg, int mode,
   iStack_1c = 0;
   player_00 = current_turn;
 LAB_0266787a:
-  if ((targ_player != player_00) && (iVar1 = 1, targ_player != 2))
+  if ((targ_player != player_00) && (i = 1, targ_player != 2))
     goto LAB_02667870;
   do
   {
-    iVar1 = active_cards_count[player_00] + -1;
-    if (-1 < iVar1)
+    i = active_cards_count[player_00] + -1;
+    if (-1 < i)
     {
     LAB_026678e2:
       do
       {
-        instance = in_play(player_00, iVar1);
+        instance = in_play(player_00, i);
         if (instance != NULL)
         {
           if (this_test == NULL)
           {
-            iVar3 = is_what(player_00, iVar1, 2);
+            iVar3 = is_what(player_00, i, 2);
             if (((iVar3 != 0) && ((mode & 1U) != 0)) ||
-                ((iVar3 = is_what(player_00, iVar1, 0x100), iVar3 != 0 && ((mode & 0x20U) != 0))))
+                ((iVar3 = is_what(player_00, i, 0x100), iVar3 != 0 && ((mode & 0x20U) != 0))))
               goto LAB_02667915;
           }
           else
           {
-            iVar3 = new_make_test_in_play(player_00, iVar1, iStack_18, this_test);
-            if (iVar3 == 0)
+            if (new_make_test_in_play(player_00, i, iStack_18, this_test) == 0)
             {
-              is_what(player_00, iVar1, 2);
-              is_what(player_00, iVar1, 0x100);
+              is_what(player_00, i, 2);
+              is_what(player_00, i, 0x100);
             }
             else
             {
             LAB_02667915:
-              if (((card != iVar1) || (player != player_00)) ||
+              if (((card != i) || (player != player_00)) ||
                   (((mode & 4U) == 0 && ((this_test == NULL || (this_test->not_me != 1))))))
               {
-                iVar3 = damage_creature(player_00, iVar1, dmg, player, card);
+                iVar3 = damage_creature(player_00, i, dmg, player, card);
                 if (-1 < iVar3)
                 {
                   instance = get_card_instance(player, iVar3);
@@ -134,16 +133,16 @@ LAB_0266787a:
                   }
                 }
                 iStack_1c = iStack_1c + dmg;
-                iVar1 = iVar1 + -1;
-                if (iVar1 == -1)
+                i = i + -1;
+                if (i == -1)
                   break;
                 goto LAB_026678e2;
               }
             }
           }
         }
-        iVar1 = iVar1 + -1;
-      } while (iVar1 != -1);
+        i = i + -1;
+      } while (i != -1);
     }
     if ((mode & 2U) != 0)
     {
@@ -152,15 +151,15 @@ LAB_0266787a:
     do
     {
       player_00 = current_turn;
-      iVar1 = iStack_14 + 1;
+      i = iStack_14 + 1;
       current_turn = player_00;
-      if (1 < iVar1)
+      if (1 < i)
       {
         return iStack_1c;
       }
     LAB_02667870:
-      iStack_14 = iVar1;
-      if (iVar1 == 0)
+      iStack_14 = i;
+      if (i == 0)
         goto LAB_0266787a;
       player_00 = 1 - player_00;
     } while ((player_00 != targ_player) && (targ_player != 2));
@@ -385,12 +384,12 @@ int action_on_card(int player, int card, int t_player, int t_card, actions_t raw
 int new_manipulate_all(int player, int card, int t_player, test_definition_t *this_test,
                             actions_t raw_action)
 {
+  int i;
   unsigned int uVar1;
   int iVar2;
   actions_t action;
   card_instance_t *instance;
   int iVar4;
-  int iVar5;
   int *piVar6;
   int iVar7;
   int iVar8;
@@ -509,8 +508,7 @@ LAB_02667426:
             goto LAB_026674f8;
         }
         iVar7 = piVar10[1];
-        iVar5 = has_subtype(iStack_344, iVar7, SUBTYPE_AURA);
-        if (iVar5 == 0)
+        if (has_subtype(iStack_344, iVar7, SUBTYPE_AURA) == 0)
           goto LAB_02667450;
         piVar6 = piVar10;
         if (0 < iVar4)
@@ -552,12 +550,12 @@ LAB_02667172:
       if (((iVar9 == t_player) || (bVar11)) && (iStack_350 = mc[iVar9], 0 < iStack_350))
       {
       LAB_026671d9:
-        iVar4 = 0;
+        i = 0;
         do
         {
           counter_type = COUNTER_invalid;
           counter_num = 0;
-          iVar2 = marked[iVar9][iVar4];
+          iVar2 = marked[iVar9][i];
           action = cook_action(iVar9, iVar2, raw_action, &counter_type, &counter_num);
           if (action == 0xffffffff)
           {
@@ -569,8 +567,8 @@ LAB_02667172:
                                              counter_num);
             iStack_354 = iStack_354 + iVar2;
           }
-          iVar4 = iVar4 + 1;
-        } while (iVar4 != iStack_350);
+          i = i + 1;
+        } while (i != iStack_350);
       }
       iVar4 = current_turn;
       iVar2 = current_turn;

@@ -1,0 +1,110 @@
+{
+  "status": "Resolved: all4 residual contexts and8 unsigned stride expressions handled with reaching-zero/liveness evidence;3 obsolete byte objects removed and native Bloodletter ltr name restored.",
+  "counts": {
+    "functions": 4,
+    "source_units": 4,
+    "stride_expressions": 8
+  },
+  "source_state_sha256": "93c93fc2e06337ce6733cf08a1a170cdc2199d78a55e861a45270f07f854c2ce",
+  "syntax_adapter": "tools/recovery/special_call_condition_source.py:analysis_view",
+  "rows": [
+    {
+      "source": "cards/ice_age.c",
+      "name": "effect_breath_dream",
+      "variable": "bVar8",
+      "definition_sha256": "c13478086fd49cfb48e3ffbf7798234ca9eb5973c7fbfd6cae7f76e12301e7cb",
+      "stride_uses": [
+        {
+          "flag_offset": 775,
+          "expression_start": 761,
+          "expression_end": 789,
+          "scale": 8,
+          "forward_step": 4
+        }
+      ],
+      "review_reason": "Declaration initializer, private inline helper outside the earlier tracked-body census."
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "card_bloodletter",
+      "variable": "bVar6",
+      "definition_sha256": "8ca465a132d942a250ec585dceb05d0bcf4fd07fd5df8f0f269d7de3bcb466ff",
+      "stride_uses": [
+        {
+          "flag_offset": 2236,
+          "expression_start": 2222,
+          "expression_end": 2250,
+          "scale": 2,
+          "forward_step": 1
+        }
+      ],
+      "review_reason": "The byte is reused for name-folded characters after the stride. Requires reaching-zero and dead-initializer analysis rather than whole-function constant substitution."
+    },
+    {
+      "source": "functions/engine.c",
+      "name": "charge_spell_cost",
+      "variable": "bVar13",
+      "definition_sha256": "095d056f5016d3f86643370d530b8a1ce89205f8a4ff129eb2885269ff32bae6",
+      "stride_uses": [
+        {
+          "flag_offset": 1315,
+          "expression_start": 1301,
+          "expression_end": 1330,
+          "scale": 2,
+          "forward_step": 1
+        },
+        {
+          "flag_offset": 1372,
+          "expression_start": 1358,
+          "expression_end": 1387,
+          "scale": 2,
+          "forward_step": 1
+        },
+        {
+          "flag_offset": 2691,
+          "expression_start": 2677,
+          "expression_end": 2706,
+          "scale": 2,
+          "forward_step": 1
+        },
+        {
+          "flag_offset": 2748,
+          "expression_start": 2734,
+          "expression_end": 2763,
+          "scale": 2,
+          "forward_step": 1
+        },
+        {
+          "flag_offset": 5979,
+          "expression_start": 5965,
+          "expression_end": 5994,
+          "scale": 2,
+          "forward_step": 1
+        }
+      ],
+      "review_reason": "Use the existing offset-preserving charge_spell_cost syntax adapter for literal engine-call casts; keep real C and compiler inputs unchanged."
+    },
+    {
+      "source": "functions/token_generation.c",
+      "name": "copy_all_tokens_both_players",
+      "variable": "bVar6",
+      "definition_sha256": "fe2db6c038a7f90e19ba412c629b74a0b6c2c664469676835a74c203b6bbc994",
+      "stride_uses": [
+        {
+          "flag_offset": 1408,
+          "expression_start": 1394,
+          "expression_end": 1422,
+          "scale": 2,
+          "forward_step": 1
+        }
+      ],
+      "review_reason": "A straight-line current_turn assignment precedes the zero setter. Prove zero initialization reaches all stride reads."
+    }
+  ],
+  "limits": "Discovery rows retain their predecessor source state. Completed source, type/value, native-name, build and comparison evidence is in the resolution batch. Memory-library replacement needs separate memory/alias evidence.",
+  "resolution": {
+    "batch": "docs/recovery-evidence/residual-direction-cleanup.json",
+    "batch_sha256": "5424a3a5c373474b26cf02a15501c9ad982fbadca88590ca82245d35c3ac2879",
+    "pending_candidates": 0
+  }
+}

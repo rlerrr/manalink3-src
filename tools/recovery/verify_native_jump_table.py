@@ -6,7 +6,7 @@ from canonicalize_helpers import ROOT,read,sha,span
 from inspect_release import Image,value,inherited_value
 
 
-def verify(proof,image=None,root=ROOT,binary_only=False):
+def verify(proof,image=None,root=ROOT,binary_only=False,*,rebuilt_path=None,rebuilt_debug_path=None):
     path=proof.get('native_jump_table_recovery')
     if not path:return {}
     record=json.loads((root/path).read_text())
@@ -16,8 +16,8 @@ def verify(proof,image=None,root=ROOT,binary_only=False):
         assert sha(native.data)==record['dll_sha256']=='52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5'
         nd=Image(Path('G:/Manalink/ManalinkEh_10_22_Hotfix.dbg').read_bytes())
         assert sha(nd.data)==record['dbg_sha256']
-    current=Image((root/'ManalinkEh.dll').read_bytes())
-    rebuilt=Image((root/'ManalinkEh.dbg').read_bytes())
+    current=Image(Path(rebuilt_path if rebuilt_path is not None else root/'ManalinkEh.dll').read_bytes())
+    rebuilt=Image(Path(rebuilt_debug_path if rebuilt_debug_path is not None else root/'ManalinkEh.dbg').read_bytes())
     def symbols(binary):
         out=collections.defaultdict(set)
         for name,offset,section,kind,storage in binary.symbols:

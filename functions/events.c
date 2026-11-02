@@ -1040,58 +1040,47 @@ int get_abilities(int player, int card, event_t event, int new_attacking_card)
       {
         if (((cards_data[uVar5].type & 0x47) != 0) && (-1 < (char)cards_data[uVar5].type))
         {
-          iVar7 = count_counters(player, card, COUNTER_DEATHTOUCH);
-          if (iVar7 != 0)
+          if (count_counters(player, card, COUNTER_DEATHTOUCH) != 0)
           {
             (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x200;
           }
-          iVar7 = count_counters(player, card, COUNTER_HEXPROOF);
-          if (iVar7 != 0)
+          if (count_counters(player, card, COUNTER_HEXPROOF) != 0)
           {
             (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800000;
           }
-          iVar7 = count_counters(player, card, COUNTER_INDESTRUCTIBLE);
-          if (iVar7 != 0)
+          if (count_counters(player, card, COUNTER_INDESTRUCTIBLE) != 0)
           {
             (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800;
           }
-          iVar7 = count_counters(player, card, COUNTER_LIFELINK);
-          if (iVar7 != 0)
+          if (count_counters(player, card, COUNTER_LIFELINK) != 0)
           {
             (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 2;
           }
-          iVar7 = count_counters(player, card, COUNTER_MENACE);
-          if (iVar7 != 0)
+          if (count_counters(player, card, COUNTER_MENACE) != 0)
           {
             (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x10000;
           }
-          iVar7 = count_counters(player, card, COUNTER_VIGILANCE);
-          if (iVar7 != 0)
+          if (count_counters(player, card, COUNTER_VIGILANCE) != 0)
           {
             (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 8;
           }
-          iVar7 = count_counters(player, card, COUNTER_DOUBLE_STRIKE);
-          if (iVar7 != 0)
+          if (count_counters(player, card, COUNTER_DOUBLE_STRIKE) != 0)
           {
             event_result = event_result | 0x40000000;
           }
-          iVar7 = count_counters(player, card, COUNTER_FIRST_STRIKE);
-          if (iVar7 != 0)
+          if (count_counters(player, card, COUNTER_FIRST_STRIKE) != 0)
           {
             event_result = event_result | 0x100;
           }
-          iVar7 = count_counters(player, card, COUNTER_FLYING);
-          if (iVar7 != 0)
+          if (count_counters(player, card, COUNTER_FLYING) != 0)
           {
             event_result = event_result | 0x20;
           }
-          iVar7 = count_counters(player, card, COUNTER_REACH);
-          if (iVar7 != 0)
+          if (count_counters(player, card, COUNTER_REACH) != 0)
           {
             event_result = event_result | 0x400;
           }
-          iVar7 = count_counters(player, card, COUNTER_TRAMPLE);
-          if (iVar7 != 0)
+          if (count_counters(player, card, COUNTER_TRAMPLE) != 0)
           {
             event_result = event_result | 0x80;
           }
@@ -1132,16 +1121,13 @@ int get_abilities(int player, int card, event_t event, int new_attacking_card)
           }
         }
       }
-      iVar7 = is_humiliated(player, card, AL_KEY);
-      if (iVar7 != 0)
+      if (is_humiliated(player, card, AL_KEY) != 0)
       {
-        iVar7 = is_humiliated(player, card, AL_DEFENDER);
-        if (iVar7 != 0)
+        if (is_humiliated(player, card, AL_DEFENDER) != 0)
         {
           event_result = event_result | 0x800000;
         }
-        iVar7 = is_humiliated(player, card, AL_INDESTRUCTIBLE);
-        if (iVar7 != 0)
+        if (is_humiliated(player, card, AL_INDESTRUCTIBLE) != 0)
         {
           (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800;
         }
@@ -1192,8 +1178,7 @@ int get_abilities(int player, int card, event_t event, int new_attacking_card)
         inst->mana_color = uVar1;
         inst->token_status = inst->token_status & 0xffffefff;
         remove_special_flags2(player, card, 0x484);
-        iVar7 = is_what(player, card, 0x80);
-        if (iVar7 == 0)
+        if (is_what(player, card, 0x80) == 0)
         {
           reset_subtypes_from_instance(inst, uVar5);
         }
@@ -1231,8 +1216,7 @@ int get_abilities(int player, int card, event_t event, int new_attacking_card)
         uVar5 = (unsigned int)(uint8_t)cards_ptr[uVar2]->mana_source_colors;
       }
       inst->mana_color = (uint8_t)uVar5;
-      iVar4 = is_what(player, card, 1);
-      if (iVar4 != 0)
+      if (is_what(player, card, 1) != 0)
       {
         inst->mana_color = inst->mana_color | (uint8_t)mana_colors_added[player];
       }

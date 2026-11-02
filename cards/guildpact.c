@@ -3771,6 +3771,7 @@ static void replicate(int player, int card, int cless, int blue, int red)
 /* ManalinkEh 2022: 0x252f1a0; original cards/guildpact.c:1298. */
 int card_ink_treader_nephilim(int player, int card, event_t event)
 {
+  int c;
   int *piVar1;
   card_instance_t *pcVar2;
   card_instance_t *pcVar3;
@@ -3809,23 +3810,23 @@ int card_ink_treader_nephilim(int player, int card, event_t event)
       player_00 = current_turn ^ uVar6;
       if (0 < active_cards_count[player_00])
       {
-        iVar5 = 0;
+        c = 0;
         do
         {
           targ.player = player_00;
-          targ.card = iVar5;
-          pcVar3 = in_play(player_00, iVar5);
-          if ((((pcVar3 != NULL) && (iVar4 = is_what(player_00, iVar5, 2), iVar4 != 0)) &&
-               ((player != player_00 || (card != iVar5)))) &&
+          targ.card = c;
+          pcVar3 = in_play(player_00, c);
+          if ((((pcVar3 != NULL) && (iVar4 = is_what(player_00, c, 2), iVar4 != 0)) &&
+               ((player != player_00 || (card != c)))) &&
               (iVar4 = can_legally_target(trigger_cause_controller, trigger_cause, &targ),
                iVar4 != 0))
           {
             iVar4 = mc[player_00];
             mc[player_00] = iVar4 + 1;
-            marked[player_00][iVar4] = iVar5;
+            marked[player_00][iVar4] = c;
           }
-          iVar5 = iVar5 + 1;
-        } while (iVar5 < active_cards_count[player_00]);
+          c = c + 1;
+        } while (c < active_cards_count[player_00]);
       }
       uVar6 = uVar6 + 1;
     } while (uVar6 != 2);

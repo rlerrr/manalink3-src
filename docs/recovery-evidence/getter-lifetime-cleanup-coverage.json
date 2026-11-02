@@ -1,0 +1,127 @@
+{
+  "batch": "docs/recovery-evidence/getter-lifetime-cleanup.json",
+  "batch_sha256": "0737bf5eb9381fd440b58b03b75d9cca3923d899460844896f27f88df77bad6d",
+  "counts": {
+    "functions": 26,
+    "source_units": 20,
+    "value_groups": 31,
+    "named_bindings": 31,
+    "identifier_occurrences": 79,
+    "removed_placeholder_declarations": 4,
+    "added_int_declarations": 27,
+    "card_handlers": 15,
+    "helpers": 11,
+    "source_lines_added": 27,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 26,
+    "changed_sections": [],
+    "scope": "Compiler output comparison; export timestamp normalized, debug sections excluded. Source/value-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_getter_lifetimes": {
+        "cleaned_definitions": 26,
+        "source_units": 20,
+        "value_groups": 31,
+        "named_bindings": 31,
+        "renamed_identifier_occurrences": 79,
+        "reused_placeholder_declarations": 4,
+        "added_int_declarations": 27,
+        "native_local_references": 39,
+        "assertion_sites": 17,
+        "scope": "Conservative reaching definitions separate nonescaping ordinary int value groups. Shared reads and read/modify/write uses merge groups; entry/uninitialized and opaque-write groups cannot acquire names. Each renamed group has compatible call/field roles and direct non-inline native int32 local vocabulary. C member names retain their separate namespace and ordinary identifiers cannot be captured. Merging the new bindings reproduces every predecessor byte. All actual expanded units match. Native optimized-variable identity and new function coverage are not claimed; no gameplay tests."
+      },
+      "prior_source_input_hashes": {
+        "previous_lifetime_source_units": 77,
+        "previous_guard_source_units": 23,
+        "previous_tail_source_units": 90,
+        "previous_residual_source_units": 4,
+        "previous_direction_source_units": 31,
+        "previous_loop_source_units": 17,
+        "previous_comparison_source_units": 31,
+        "previous_comma_source_units": 61,
+        "extended_spell_source_units": 15,
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Fresh focused getter/field lifetime validation and exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/getter-fields-readers-c225.log",
+      "sha256": "f781cf5f0de17c36147ee084ad9e9c27c75a0aaec9949ae54734e3fb967eb5b4",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/getter-fields-build-c224.log",
+      "log_sha256": "2e6b0b73207bbf1e615c0351ba566103b7ebee79d112f1f7611f03642b712d9a",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "9cd632b758d7fc24e2e13967a1641cea111962f240c5d6e5c0bc8972f0bcbc4c",
+      "dbg_sha256": "bae14fad4bf7430bacc3396d9f78281869c2417e6b1880ddfc647a2370696889"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/getter-fields-proof-before-c223.json.gz",
+      "archive_sha256": "56ac0ee6824bc0d65b0e837303da0587f372711b57da6a29889e969fd0574ec9",
+      "raw_sha256": "933d8da688e93f45ecc8a5baed725e3dd9a2d065c9335e96405b6268d11be0e8",
+      "verified_source_pin_successions": 20
+    },
+    "limits": "Readability recovery of accepted bodies, not new function coverage. Conservative reaching-definition components preserve every old int value read and merge shared/opaque/uninitialized states. Stable getter/field roles use39 direct native int32 local references; optimized variable identity is not asserted. C member names remain separate and ordinary identifiers cannot be captured. Exact inverse merging reproduces all predecessor bytes. All20 actual expansions checked with17 ASSERT sites;26 normalized runtime sections identical. Code/layout changes recorded without requiring byte matching. Prior source-reader inputs checked without old semantic replay; no gameplay tests.",
+    "lifetime_controls": {
+      "path": ".recovery/getter-field-controls-c223.json",
+      "sha256": "af38fd1b0d9b6b1e6ce5702649a6acab9641efe0efe4999ab068eee23340567a",
+      "results": {
+        "member_names_preserved": true,
+        "ordinary_parameter_capture_rejected": true,
+        "exact_inverse_merge_checked": true,
+        "old_default_regression": ".recovery/getter-extension-default-regression-c222.json"
+      },
+      "default_regression": {
+        "path": ".recovery/getter-extension-default-regression-c222.json",
+        "sha256": "a5545028bd80cfbccebc253337eea840a1a37c009f75d3c4a543559dd79d4553",
+        "results": {
+          "prior_raw_definitions": 233,
+          "prior_expanded_definitions": 233,
+          "projections_and_facts_identical": true,
+          "original_helper": ".recovery/scalar-lifetime-source-before-getter-fields-c221.py"
+        }
+      }
+    }
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/getter-fields-setup-final-c227.log",
+    "log_sha256": "beecd54128faec40c316c5466f400f300cabed4b93e1d59ab22feb243344ed0f",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "csv_functions": 18725,
+    "metadata_sha256": "14cebac13de45f725450a546a6edcc8f328a5ab644336ceb7a6b50c4a9a2d565",
+    "mapping_identities_unchanged": true,
+    "only_csv_changes": "Rebuilt public COFF address annotations",
+    "changed_annotations": [],
+    "prior_csv_reconstructed_sha256": "14cebac13de45f725450a546a6edcc8f328a5ab644336ceb7a6b50c4a9a2d565"
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c227.json",
+    "sha256": "c77ca661a8e89df3bcc34fbc9de389e33cb6aa53209104002b6bd6124b8b5cdb",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1026,
+      "lab_gotos": 4135,
+      "functions_with_placeholders": 2128,
+      "distinct_function_local_placeholder_spellings": 6835,
+      "placeholder_identifier_occurrences": 60033,
+      "union_keywords": 0
+    }
+  },
+  "limits": "Readability recovery of accepted bodies, not new function coverage. Conservative reaching-definition components preserve every old int value read and merge shared/opaque/uninitialized states. Stable getter/field roles use39 direct native int32 local references; optimized variable identity is not asserted. C member names remain separate and ordinary identifiers cannot be captured. Exact inverse merging reproduces all predecessor bytes. All20 actual expansions checked with17 ASSERT sites;26 normalized runtime sections identical. Code/layout changes recorded without requiring byte matching. Prior source-reader inputs checked without old semantic replay; no gameplay tests."
+}

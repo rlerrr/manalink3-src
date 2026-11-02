@@ -85,8 +85,7 @@ static int hatchling(int player, int card, event_t event, int c1, int c2)
                                 (unsigned int)((uVar3 & uVar5) != 0) +
                                     (unsigned int)((uVar2 & uVar4) != 0));
   }
-  result = hybrid(player, card, event);
-  return result;
+  return hybrid(player, card, event);
 }
 
 int retrace(int player, int card, event_t event, int id)
@@ -2045,9 +2044,8 @@ int card_gilder_bairn(int player, int card, event_t event)
       {
         return 0;
       }
-      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x80804, 0, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x80804, 0, 0, 0, 0, 0,
                                          0, 0, &td, NULL);
-      return result;
     }
     if (event == EVENT_ACTIVATE)
     {
@@ -2058,9 +2056,8 @@ int card_gilder_bairn(int player, int card, event_t event)
       {
         return 0;
       }
-      result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0x80804, 0, 0, 0, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_ACTIVATE, 0x80804, 0, 0, 0, 0, 0, 0, 0,
                                          &td, "TARGET_PERMANENT");
-      return result;
     }
   }
   else
@@ -4470,7 +4467,7 @@ Wither (This deals damage to creatures in the form of -1/-1 counters.)
 
 int card_umbra_stalker(int player, int card, event_t event)
 {
-  int result;
+  int count;
   int card_00;
   int *piVar2;
   int newval;
@@ -4490,9 +4487,9 @@ int card_umbra_stalker(int player, int card, event_t event)
       do
       {
         piVar2 = piVar2 + 1;
-        result = count_chroma(-1, card_00, 1, 0, 0);
+        count = count_chroma(-1, card_00, 1, 0, 0);
         card_00 = *piVar2;
-        newval = newval + result;
+        newval = newval + count;
       } while (card_00 != -1);
     }
     set_characteristic_pt(newval);

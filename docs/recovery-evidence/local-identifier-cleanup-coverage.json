@@ -1,0 +1,44 @@
+{
+  "result": {
+    "renamed_function_locals": 123,
+    "source_units": 54,
+    "identifier_occurrences": 1477,
+    "unchanged_runtime_sections": 26,
+    "scope": "Function-local identifier spelling only:123 unique card_instance_t pointer locals assigned only get_card_instance(player, card) become instance, with no destination collision, address-taking, field-name occurrence or other assignment role. The native300-byte pointer locals supply the spelling and vocabulary; no one-to-one optimized-variable identity or original naming claim is made. Every nonidentifier byte and line count is retained by token-aware replay. All normalized runtime sections must remain identical; only export-directory timestamps are masked, and debug sections/debuglink are outside runtime. No control-flow or union cleanup is claimed for this naming batch."
+  },
+  "verification": {
+    "build_session_id": 30976,
+    "build_exit_code": 0,
+    "build_terminal_chunk_id": "0c920c",
+    "build_log": ".recovery/instance-names-build-c75.log",
+    "source_projection_session_id": 77304,
+    "source_projection_exit_code": 0,
+    "source_projection_terminal_chunk_id": "e7ba4e",
+    "source_projection_log": ".recovery/instance-names-source-c75.log",
+    "source_projection": {
+      "exact_projected_source_units": 54,
+      "supporting_input_hashes": 325,
+      "master_sha256": "b8169e0a51fd12383ed6cc30ca4856948780c97b316d18885502fb631b275837",
+      "scope": "Exact original predecessor projection through all recorded edits for every naming-touched source unit. This is a source and input-hash check; the full native/provenance setup audit was run on the preceding C73 runtime, which is independently required to have identical runtime sections."
+    },
+    "seal_exit_code": 0,
+    "seal_chunk_id": "19d43e",
+    "focused_exit_code": 0,
+    "focused_chunk_id": "a89556",
+    "focused_log": ".recovery/instance-names-focused-c75.log",
+    "full_setup": "Not rerun for identifier-only edits. Preceding C73 full setup passed; all26 normalized runtime sections are unchanged and all54 touched source units replay exactly.",
+    "preceding_full_setup": ".recovery/final-array-locals-setup-observed-c74.json"
+  },
+  "changed_object_files": 54,
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "d9ab5bbf21ae7efa44b553e47507f868e265fb4bd2eb5c88c0ef9dc5799848f4",
+    "docs/recovery-evidence/local-identifier-cleanup.json": "37307e8660c793f75b99b7eabb7fc335c4ae6f2ab66f00fd3005cd3c5762ac88",
+    "tools/recovery/verify_local_identifier_cleanup.py": "0a426488cfc40bb9a8dee695bd1272e2bdcf37146228fd0dce47ef423b2ae8cc",
+    "ManalinkEh.dll": "b37c1cc8baffa478c705ee6ee7d7fbb849aeb72d1bc322999586d509b1833474",
+    "ManalinkEh.dbg": "4570da5218a7c9bb9e5197a344f9ef7c01e9fe0dcf55c65b51063a8c789d4981",
+    ".recovery/instance-names-focused-c75.log": "d9d313260ec0509063e97be85ab65f15bfc9f23f9109a52a961ad40e3cb76216",
+    ".recovery/instance-names-source-c75.log": "de87c5d1030024971d5c5821bad2f58fd3f8f1a88d9fa16e4cca4ee346262587",
+    ".recovery/instance-names-build-c75.log": "7f5b08cffc4d2b6335bebf317e1d39b11b561c43babeaca0af145b8c1d76050b"
+  },
+  "scope": "Pure function-local token substitutions, exact source projection, native spelling/type vocabulary and complete normalized runtime-section identity. This batch does not reconstruct any control flow, split additional unions, infer optimized-variable identity or establish new gameplay coverage."
+}

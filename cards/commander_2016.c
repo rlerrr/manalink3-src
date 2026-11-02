@@ -216,7 +216,7 @@ int card_deepglow_skate(int player, int card, event_t event)
   target_t *ptVar2;
   card_instance_t *instance;
   int iVar4;
-  int iVar5;
+  int i;
   target_definition_t td;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
@@ -227,31 +227,29 @@ int card_deepglow_skate(int player, int card, event_t event)
   td.preferred_controller = player;
   td.allow_cancel = 2;
   instance = get_card_instance(player, card);
-  iVar5 = 0;
+  i = 0;
   do
   {
-    iVar4 = can_target(&td);
-    if (iVar4 == 0)
+    if (can_target(&td) == 0)
       break;
-    iVar4 = new_pick_target(&td, "TARGET_PERMANENT", iVar5, 0);
-    if (iVar4 == 0)
+    if (new_pick_target(&td, "TARGET_PERMANENT", i, 0) == 0)
       break;
-    ptVar2 = instance->targets + iVar5;
-    ptVar1 = instance->targets + iVar5;
-    iVar5 = iVar5 + 1;
+    ptVar2 = instance->targets + i;
+    ptVar1 = instance->targets + i;
+    i = i + 1;
     state_untargettable(ptVar1->player, ptVar2->card, 1);
-  } while (iVar5 != 10);
-  iVar5 = 0;
+  } while (i != 10);
+  i = 0;
   if (instance->number_of_targets != '\0')
   {
     do
     {
-      state_untargettable(instance->targets[iVar5].player, instance->targets[iVar5].card, 0);
-      iVar4 = instance->targets[iVar5].player;
-      t_card = instance->targets[iVar5].card;
+      state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
+      iVar4 = instance->targets[i].player;
+      t_card = instance->targets[i].card;
       copy_counters(player, card, iVar4, t_card, iVar4, t_card, 0);
-      iVar5 = iVar5 + 1;
-    } while (iVar5 < (int)(unsigned int)instance->number_of_targets);
+      i = i + 1;
+    } while (i < (int)(unsigned int)instance->number_of_targets);
   }
   instance->number_of_targets = '\0';
   return 0;
@@ -491,7 +489,7 @@ Destroy target creature. You draw X cards and you lose X life, where X is the nu
 int card_charging_cinderhorn(int player, int card, event_t event)
 {
   card_instance_t *pcVar1;
-  card_instance_t *pcVar2;
+  card_instance_t *instance;
   int result;
   haste(player, card, event);
   if (event == EVENT_DECLARE_ATTACKERS)
@@ -500,7 +498,7 @@ int card_charging_cinderhorn(int player, int card, event_t event)
     {
       return 0;
     }
-    pcVar2 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     if (0 < active_cards_count[current_turn])
     {
       result = 0;
@@ -509,7 +507,7 @@ int card_charging_cinderhorn(int player, int card, event_t event)
         pcVar1 = in_play_and_attacking(current_turn, result);
         if (pcVar1 != NULL)
         {
-          pcVar2->info_slot = pcVar2->info_slot + 1;
+          instance->info_slot = instance->info_slot + 1;
         }
         result = result + 1;
       } while (result < active_cards_count[current_turn]);
@@ -519,9 +517,9 @@ int card_charging_cinderhorn(int player, int card, event_t event)
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
-    pcVar2 = get_card_instance(player, card);
-    result = pcVar2->info_slot;
-    pcVar2->info_slot = 0;
+    instance = get_card_instance(player, card);
+    result = instance->info_slot;
+    instance->info_slot = 0;
     if ((result == 0) && (result = eot_trigger(player, card, event), result != 0))
     {
       add_counters(player, card, player, card, COUNTER_FURY, 1);
@@ -800,7 +798,7 @@ Return up to two target cards from your graveyard to your hand. Exile Seeds of R
 
 int card_stonehoof_chieftain(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   card_instance_t *pcVar2;
   int pcVar3;
   test_definition_t test;
@@ -816,20 +814,20 @@ int card_stonehoof_chieftain(int player, int card, event_t event)
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
   if (event == EVENT_DAT_ABILITY)
   {
-    pcVar1 = get_card_instance(player, card);
-    pcVar3 = pcVar1->info_slot + -1;
+    instance = get_card_instance(player, card);
+    pcVar3 = instance->info_slot + -1;
     if (-1 < (int)pcVar3)
     {
       do
       {
         pcVar2 =
             in_play(current_turn,
-                    (unsigned int)(unsigned char)((uint8_t *)&pcVar1->targets[2].player)[pcVar3]);
+                    (unsigned int)(unsigned char)((uint8_t *)&instance->targets[2].player)[pcVar3]);
         if (pcVar2 != NULL)
         {
           pump_ability_until_eot(
               player, card, current_turn,
-              (unsigned int)(unsigned char)((uint8_t *)&pcVar1->targets[2].player)[pcVar3], 0, 0,
+              (unsigned int)(unsigned char)((uint8_t *)&instance->targets[2].player)[pcVar3], 0, 0,
               0x80, 0x800);
         }
         pcVar3 = pcVar3 + -1;
@@ -1058,53 +1056,27 @@ int card_grave_upheaval(int player, int card, event_t event)
   test_definition_t this_test;
   if (event - EVENT_CAN_ACTIVATE_FROM_HAND < 3)
   {
-    result = commander_basic_landcycling(player, card, event);
-    return result;
+    return commander_basic_landcycling(player, card, event);
   }
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        new_default_test_definition(&this_test, 2, "Select target creature card.");
-        this_test.ai_selection_mode = 2;
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          instance = get_card_instance(player, card);
-          result = validate_target_from_grave_source(player, card, instance->targets[0].player, 1);
-          if (result != -1)
-          {
-            result = reanimate_permanent(player, card, instance->targets[0].player, result,
-                                         REANIMATE_NO_CONTROL_LEGACY);
-            pump_ability_until_eot(player, card, player, result, 0, 0, 0, 4);
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_023e9481;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   new_default_test_definition(&this_test, 2, "Select target creature card.");
   this_test.ai_selection_mode = 2;
-LAB_023e9481:
-  result = generic_spell(player, card, event, 0x1000, NULL, NULL, 1, &this_test);
-  return result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    instance = get_card_instance(player, card);
+    result = validate_target_from_grave_source(player, card, instance->targets[0].player, 1);
+    if (result != -1)
+    {
+      result = reanimate_permanent(player, card, instance->targets[0].player, result,
+                                   REANIMATE_NO_CONTROL_LEGACY);
+      pump_ability_until_eot(player, card, player, result, 0, 0, 0, 4);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 0x1000, NULL, NULL, 1, &this_test);
 }
 
 int card_ikra_shidiqi_the_usurper(int player, int card, event_t event){
@@ -1700,65 +1672,40 @@ int card_sylvan_reclamation(int player, int card, event_t event)
   target_t *ptVar1;
   target_t *ptVar2;
   card_instance_t *instance;
-  int iVar4;
-  int iVar5;
+  int i;
   target_definition_t td;
 
   if (event - EVENT_CAN_ACTIVATE_FROM_HAND < 3)
   {
-    iVar5 = commander_basic_landcycling(player, card, event);
-    return iVar5;
+    return commander_basic_landcycling(player, card, event);
   }
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card != affected_card) || (player != affected_card_controller))
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 0x44);
-        instance = get_card_instance(player, card);
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          if (instance->number_of_targets != '\0')
-          {
-            iVar5 = 0;
-            do
-            {
-              while (iVar4 = validate_target(player, card, &td, iVar5), iVar4 == 0)
-              {
-                iVar5 = iVar5 + 1;
-                if ((int)(unsigned int)instance->number_of_targets <= iVar5)
-                  goto LAB_023ea74e;
-              }
-              ptVar2 = instance->targets + iVar5;
-              ptVar1 = instance->targets + iVar5;
-              iVar5 = iVar5 + 1;
-              kill_card(ptVar1->player, ptVar2->card, KILL_EXILE);
-            } while (iVar5 < (int)(unsigned int)instance->number_of_targets);
-          }
-        LAB_023ea74e:
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_023ea7d0;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   default_target_definition(player, card, &td, 0x44);
-  get_card_instance(player, card);
-LAB_023ea7d0:
-  iVar5 = generic_spell(player, card, event, 0x20, &td, "DISENCHANT", 2, NULL);
-  return iVar5;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (instance->number_of_targets != '\0')
+    {
+      i = 0;
+      do
+      {
+        if (validate_target(player, card, &td, i) == 0)
+        {
+          i = i + 1;
+          continue;
+        }
+        ptVar2 = instance->targets + i;
+        ptVar1 = instance->targets + i;
+        i = i + 1;
+        kill_card(ptVar1->player, ptVar2->card, KILL_EXILE);
+      } while (i < (int)(unsigned int)instance->number_of_targets);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 0x20, &td, "DISENCHANT", 2, NULL);
 }
 
 int card_tana_the_bloodsower(int player, int card, event_t event){

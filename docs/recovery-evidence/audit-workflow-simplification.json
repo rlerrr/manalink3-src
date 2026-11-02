@@ -1,0 +1,131 @@
+{
+  "routine_command": "python tools/reccmp_project.py setup",
+  "full_history_command": null,
+  "default_scope": "Current source-file hashes, canonical name/ledger references, native binary hashes, rebuilt DLL/debug CRC, native equivalent-name bindings and15169 built veneer/COFF/hook checks. Historical source-edit replay, supporting proof files, old compiler outputs and native per-batch semantic audits are outside routine setup.",
+  "baseline": {
+    "exit_code": 0,
+    "terminal_chunk_id": "1fdcd1",
+    "log": ".recovery/audit-stage-profile-setup-c86.log",
+    "log_sha256": "89ebee801b6e93a71c6ee5ab2bea88118b8f60676e63b28364a5b72f0d9e449f",
+    "approximate_seconds": 532.7671372890472,
+    "timing_method": "Successful setup log creation-to-last-write span; approximate process wall time.",
+    "native_audit_invocations": 127,
+    "unique_audit_entrypoints": 126,
+    "exclusive_native_audit_seconds": 412.1406100994209,
+    "slowest_stages": [
+      {
+        "stage": "verify_header_name_recovery.verify",
+        "seconds": 62.93701659992803,
+        "exclusive_seconds": 62.93701659992803,
+        "ok": true
+      },
+      {
+        "stage": "verify_target_storage_recovery.verify",
+        "seconds": 31.528293000068516,
+        "exclusive_seconds": 31.528293000068516,
+        "ok": true
+      },
+      {
+        "stage": "verify_local_enum_values_recovery.verify",
+        "seconds": 13.573531599948183,
+        "exclusive_seconds": 13.573531599948183,
+        "ok": true
+      },
+      {
+        "stage": "verify_other_stack_record_recovery.verify",
+        "seconds": 12.986425000010058,
+        "exclusive_seconds": 12.986425000010058,
+        "ok": true
+      },
+      {
+        "stage": "verify_wide_stack_test_recovery.verify",
+        "seconds": 10.632802400039509,
+        "exclusive_seconds": 10.632802400039509,
+        "ok": true
+      },
+      {
+        "stage": "verify_global_index_recovery.verify",
+        "seconds": 7.906545000034384,
+        "exclusive_seconds": 7.906545000034384,
+        "ok": true
+      },
+      {
+        "stage": "verify_card_array_locals_recovery.verify",
+        "seconds": 6.7115203000139445,
+        "exclusive_seconds": 6.7115203000139445,
+        "ok": true
+      },
+      {
+        "stage": "verify_final_helper_locals.verify",
+        "seconds": 6.589507299941033,
+        "exclusive_seconds": 6.589507299941033,
+        "ok": true
+      }
+    ],
+    "timings_path": ".recovery/audit-stage-timings-c86.jsonl",
+    "timings_sha256": "f6ebe0a8a428dc9c76ea695d17025d12b2f432696fb4de9a7c0ebbe187fa68d6"
+  },
+  "routine_setup": {
+    "seconds": 68.31000910000876,
+    "exit_code": 0,
+    "metadata_identical": true,
+    "binary_inputs_identical": true,
+    "verified_built_slots": 15169,
+    "mode": "current_inputs",
+    "baseline": ".recovery/audit-stage-profile-setup-c86.log",
+    "log": ".recovery/audit-current-setup-c87.log",
+    "log_sha256": "0d5658a3b680438fc47773d7f8adb47363e0bc3075b96ed3eacc046a2b6243dd",
+    "terminal_chunk_id": "954c59",
+    "metadata_sha256": "75a64807d4c874d63f763f82fa6fea26a2dbda10edd735decf119eeb2961e508",
+    "csv_functions": 18725,
+    "preserved_mapping_results": [
+      "csv_functions",
+      "original_functions",
+      "ledger_mappings",
+      "stubs",
+      "excluded_reasons",
+      "resolved_duplicate_names",
+      "resolved_public_entries",
+      "folded_recovered_helpers"
+    ]
+  },
+  "source_guard_checks": {
+    "exit_code": 0,
+    "terminal_chunk_id": "fa5cb5",
+    "tool": ".recovery/check-current-source-guards-c87.py",
+    "tool_sha256": "d1058cb037ba5a27e9efe5339adc8600f59462a63324a2d9fb4aee4656cfa4d1",
+    "rejected": [
+      "changed source body",
+      "changed accepted ledger record",
+      "changed projection recipe"
+    ],
+    "scope": "Isolated fixture; production source and binary files were not altered."
+  },
+  "legacy_verify_function_unchanged": true,
+  "changes": [
+    {
+      "path": "tools/recovery/canonicalize_helpers.py",
+      "before_sha256": "48d04d541d4f9bf5c92ae5d582466b0c126a0d80271a3a431af1b85c1a16ec5e",
+      "after_sha256": "d2f6293582c809bc2a1ed28b464fa82fe292322141f8b4c6127ca793b15cdecb"
+    },
+    {
+      "path": "tools/reccmp_project.py",
+      "before_sha256": "92497bed00ca3d12f1e0c598a42b58cdf2b16012a5b6b206d72614b60ff6c720",
+      "after_sha256": "7b1a0f552edda45543a60e61f3705c8bc04132fed480191be732f9dd78e208cc"
+    },
+    {
+      "path": "tools/recovery/verify_native_jump_table.py",
+      "before_sha256": "9c223bef0e0f7becdf25d8285588db2a0000bca4807edbdd053321cb779008e9",
+      "after_sha256": "7bb01adc84c18248e5c8eced3e72950edd8aa772eb2cd9d922bfac24d0c9e8a3"
+    },
+    {
+      "path": "docs/reccmp.md",
+      "before_sha256": "467fd1037910f338ac33bc32d7c8b9802a9f7567f5878ef54a4e09b6c0228ccd",
+      "after_sha256": "44c508206c4c0bc21691c18e197fe051677ed9e997bd27ad1dcbf8a73ecd30b5"
+    }
+  ],
+  "current_proof_sha256": "f3ce4943208659e8652296edce7bcea9a06972488c57cb4c378c18a6f537e24b",
+  "limits": "Routine setup checks current recovery inputs, not historical recovery replay or gameplay. Historical compiler/runtime replay is retired. Current-source checks and focused current-batch comparisons remain supported; archived per-batch checkers may refer to deliberately deleted artifacts.",
+  "historical_full_history_command": "python tools/reccmp_project.py setup --audit-recovery",
+  "full_history_status": "Retired; --audit-recovery refuses to run. See historical-artifact-retirement.json. Historical timing records below describe the earlier workflow."
+}

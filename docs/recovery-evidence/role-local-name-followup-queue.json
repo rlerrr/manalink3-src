@@ -1,0 +1,105 @@
+{
+  "status": "Rejected naming proposals, not unrecovered native functions or approved source edits.",
+  "counts": {
+    "proposals": 12
+  },
+  "rows": [
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_ferocity",
+      "old_name": "iVar3",
+      "new_name": "t_card",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "889d227f8e0a04fbf29d53be2f61a8fea770300c9930cf19bc4d351fe56f5df4"
+    },
+    {
+      "source": "cards/m19.c",
+      "name": "patient_rebuilding_legacy",
+      "old_name": "iVar4",
+      "new_name": "i",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "8ff8441b79e8a873507de439cb0619778e30d0417e8b91e8872b6c53ef70de3a"
+    },
+    {
+      "source": "cards/m19.c",
+      "name": "liliana_mill_legacy",
+      "old_name": "iVar5",
+      "new_name": "i",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "5a7f250e84c0c7633d40e8959d759f89c761308cbe3fb1528e9fa0963075bb53"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_exiled_with_void_counter",
+      "old_name": "iVar2",
+      "new_name": "count",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "86d340b9a6a6c75b42d7af231df09e24734badf9ac7e2273b634506d86326a36"
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "name": "lilianas_indignation_legacy",
+      "old_name": "iVar4",
+      "new_name": "i",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "4dcfe262e2d5673c21898c5fbe0962a814681cbaddbf5164effdb36853bcd641"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "party_size",
+      "old_name": "iVar6",
+      "new_name": "i",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "736ff94db2bd44f4ee6f7f6fc8cde7d81e1521e8bab62dd9735ce8ef16bafcee"
+    },
+    {
+      "source": "cards/mirage.c",
+      "name": "phase_out_impl",
+      "old_name": "iVar3",
+      "new_name": "c",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "4b3e714dba73aecb757f72d0d92a8d1c8cda13b85d363068dab596a8432586a5"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_exiled_with_study_counter",
+      "old_name": "iVar2",
+      "new_name": "count",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "f80c96805d27431eb67b2672564cb8008c3514132310d1b8dd33e2389f6d09a2"
+    },
+    {
+      "source": "cards/commander_2018.c",
+      "name": "card_mask",
+      "old_name": "iVar4",
+      "new_name": "t_card",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "81212dbf17e48b9df3e58401b5c3b9e5e1428e5754671f9925718b0e19e755eb"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_exiled_with_aegis_counter",
+      "old_name": "iVar2",
+      "new_name": "count",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "38cf2fc98da4d1df256192af42fdd713f5d6a47db1498528a8beffe7eefabfc3"
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "mnemonic_betrayal_legacy",
+      "old_name": "iVar1",
+      "new_name": "c",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "07c03d30a718758bb25424fce4dfdc17c6357f004a3c48f30b63dbe724d462f2"
+    },
+    {
+      "source": "functions/load_text.c",
+      "name": "load_text_nocopy",
+      "old_name": "iVar4",
+      "new_name": "i",
+      "reason": "no_direct_native_local",
+      "definition_sha256": "8670a62135fff0a7426dc27144dc0623c928723d4ca744ede1af741cefc570d2"
+    }
+  ],
+  "scope": "The initially chosen native name had no concrete non-inline local in its owning function. A parameter or inline-helper name alone is insufficient; another spelling or stronger value/scope evidence may still be found."
+}

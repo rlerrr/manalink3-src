@@ -8,17 +8,17 @@ void support(int player, int card, int max_targets);
 /***** Functions *****/
 int player_has_generic_and_colorless_available(int player, int generic_needed, int colorless_needed)
 {
-  int iVar1;
+  int i;
   unsigned int uVar2;
   int iVar3;
   unsigned int uVar4;
 
   uVar4 = raw_mana_available[player][0] + mana_pool[player][0];
   iVar3 = raw_mana_available[player][7] + mana_pool[player][7];
-  iVar1 = 0;
+  i = 0;
   do
   {
-    uVar2 = raw_mana_available_hex[player][iVar1];
+    uVar2 = raw_mana_available_hex[player][i];
     if (uVar2 == 0xffffffff)
       break;
     iVar3 = iVar3 + (uVar2 >> 0x10);
@@ -26,8 +26,8 @@ int player_has_generic_and_colorless_available(int player, int generic_needed, i
     {
       uVar4 = uVar4 + (uVar2 >> 0x10);
     }
-    iVar1 = iVar1 + 1;
-  } while (iVar1 != 0x32);
+    i = i + 1;
+  } while (i != 0x32);
   uVar2 = 0;
   if ((colorless_needed <= (int)uVar4) && (generic_needed <= iVar3 - colorless_needed))
   {
@@ -678,13 +678,6 @@ int card_thought_knot_seer(int player, int card, event_t event)
   int tgt_player;
   target_definition_t td;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    test_definition_t test;
-    uint8_t bytes[216];
-  } recovered_stack_test;
 
   has_colorless_only_mana_in_casting_cost(player, card, event, 3, 1);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -693,12 +686,10 @@ int card_thought_knot_seer(int player, int card, event_t event)
     leaves_play(player, card, event, 1, 1);
     if (event == EVENT_LEAVES_PLAY_ABILITY)
     {
-      default_target_definition(player, card, &recovered_stack_test.target, 0);
-      recovered_stack_test.test.message[0xc] = '\0';
-      recovered_stack_test.test.message[0xd] = '\x10';
-      recovered_stack_test.test.message[0xe] = '\0';
-      recovered_stack_test.test.message[0xf] = '\0';
-      result = would_validate_arbitrary_target(&recovered_stack_test.target, 1 - player, -1);
+      target_definition_t td2;
+      default_target_definition(player, card, &td2, 0);
+      td2.zone = 4096;
+      result = would_validate_arbitrary_target(&td2, 1 - player, -1);
       if (result != 0)
       {
         draw_cards(1 - player, 1);
@@ -712,9 +703,10 @@ int card_thought_knot_seer(int player, int card, event_t event)
   result = would_validate_arbitrary_target(&td, tgt_player, -1);
   if ((result != 0) && (0 < hand_count[tgt_player]))
   {
-    default_test_definition(&recovered_stack_test.test, 1);
-    recovered_stack_test.test.type_flag = 1;
-    new_global_tutor(player, tgt_player, 4, 6, 0, 2, &recovered_stack_test.test);
+    test_definition_t test;
+    default_test_definition(&test, 1);
+    test.type_flag = 1;
+    new_global_tutor(player, tgt_player, 4, 6, 0, 2, &test);
   }
   leaves_play(player, card, EVENT_ETB, 1, 1);
   return 0;
@@ -1470,29 +1462,29 @@ static int stone_haven_outfitter_effect(int player, int card, event_t event)
 
 int card_stone_haven_outfitter(int player, int card, event_t event)
 {
+  int c;
   card_instance_t *instance;
   int iVar2;
   unsigned int uVar3;
-  int iVar4;
   if (event == EVENT_STATIC_EFFECTS)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
       if (0 < active_cards_count[player])
       {
-        iVar2 = 0;
+        c = 0;
         do
         {
-          instance = in_play(player, iVar2);
-          if ((((instance != NULL) && (iVar4 = is_what(player, iVar2, 0x80), iVar4 != 0)) &&
-               (instance = get_card_instance(player, iVar2),
+          instance = in_play(player, c);
+          if ((((instance != NULL) && (is_what(player, c, 0x80) != 0)) &&
+               (instance = get_card_instance(player, c),
                 instance->info_slot_fn == stone_haven_outfitter_effect)) &&
               (((instance->damage_target_player == player &&
                  (instance->damage_target_card == card)) ||
                 ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
             goto LAB_0225e27c;
-          iVar2 = iVar2 + 1;
-        } while (iVar2 < active_cards_count[player]);
+          c = c + 1;
+        } while (c < active_cards_count[player]);
       }
       iVar2 =
           create_targetted_legacy_effect(player, card, stone_haven_outfitter_effect, player, card);
@@ -6218,17 +6210,16 @@ int card_needles_spires(int player, int card, event_t event){
 
 int card_ruins_of_oran_rief(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   int iVar2;
   card_instance_t *pcVar3;
-  int iVar4;
   unsigned int uVar5;
   int card_00;
   int player_00;
   int mana_result;
   target_definition_t td;
 
-  pcVar1 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   iVar2 = is_humiliated(player, card, AL_TRIG);
   if (iVar2 == 0)
   {
@@ -6246,7 +6237,7 @@ int card_ruins_of_oran_rief(int player, int card, event_t event)
       default_target_definition(player, card, &td, 2);
       td.illegal_color = 0x3e;
       td.preferred_controller = player;
-      pcVar1->info_slot = 0;
+      instance->info_slot = 0;
       iVar2 = can_use_activated_abilities(player, card);
       if ((((iVar2 == 0) || (iVar2 = paying_mana(), iVar2 != 0)) ||
            (iVar2 = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0), iVar2 == 0)) ||
@@ -6255,17 +6246,15 @@ int card_ruins_of_oran_rief(int player, int card, event_t event)
                                              " Get mana\n Pump target creature\n Cancel", 1),
                            iVar2 == 0))))
       {
-        iVar2 = mana_producer(player, card, EVENT_ACTIVATE);
-        return iVar2;
+        return mana_producer(player, card, EVENT_ACTIVATE);
       }
       if (iVar2 == 1)
       {
-        iVar2 = generic_activated_ability(player, card, EVENT_ACTIVATE, 7, 0, 0, 0, 0, 0, 0, 0, &td,
-                                          "Select target colorless creature.");
-        if (iVar2 != 0)
+        if (generic_activated_ability(player, card, EVENT_ACTIVATE, 7, 0, 0, 0, 0, 0, 0, 0, &td,
+                                          "Select target colorless creature.") != 0)
         {
           add_state(player, card, 0x10);
-          pcVar1->info_slot = 1;
+          instance->info_slot = 1;
         }
       }
       else
@@ -6281,9 +6270,9 @@ int card_ruins_of_oran_rief(int player, int card, event_t event)
       td.illegal_color = 0x3e;
       td.preferred_controller = player;
       if ((event == EVENT_RESOLVE_ACTIVATION) &&
-          ((pcVar1->info_slot == 1 && (iVar2 = valid_target(&td), iVar2 != 0))))
+          ((instance->info_slot == 1 && (iVar2 = valid_target(&td), iVar2 != 0))))
       {
-        iVar2 = pcVar1->parent_card;
+        iVar2 = instance->parent_card;
         player_00 = 0;
         do
         {
@@ -6292,15 +6281,15 @@ int card_ruins_of_oran_rief(int player, int card, event_t event)
           {
             do
             {
-              pcVar1 = get_card_instance(player, iVar2);
+              instance = get_card_instance(player, iVar2);
               pcVar3 = in_play(player_00, card_00);
-              if ((((pcVar3 != NULL) && (iVar4 = is_what(player_00, card_00, 2), iVar4 != 0)) &&
-                   (iVar4 = check_special_flags(player_00, card_00, 0x1000), iVar4 != 0)) &&
-                  (uVar5 = get_color(pcVar1->targets[0].player, pcVar1->targets[0].card),
+              if ((((pcVar3 != NULL) && (is_what(player_00, card_00, 2) != 0)) &&
+                   (check_special_flags(player_00, card_00, 0x1000) != 0)) &&
+                  (uVar5 = get_color(instance->targets[0].player, instance->targets[0].card),
                    (uVar5 & 0x3e) == 0))
               {
-                add_counters(player, iVar2, pcVar1->targets[0].player,
-                                         pcVar1->targets[0].card, COUNTER_P1_P1, 1);
+                add_counters(player, iVar2, instance->targets[0].player,
+                                         instance->targets[0].card, COUNTER_P1_P1, 1);
               }
               card_00 = card_00 + -1;
             } while (card_00 != -1);

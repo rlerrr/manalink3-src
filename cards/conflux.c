@@ -768,6 +768,7 @@ Devour 1 (As this enters the battlefield, you may sacrifice any number of creatu
 
 int card_goblin_razerunners(int player, int card, event_t event)
 {
+  int c;
   card_instance_t *instance;
   int iVar2;
   resolve_trigger_t trig_mode;
@@ -775,24 +776,15 @@ int card_goblin_razerunners(int player, int card, event_t event)
   int cless;
   int iStack_ec;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    test_definition_t test;
-    uint8_t bytes[216];
-  } recovered_stack_this_test;
 
   if ((trigger_condition == 0xcd) && (current_turn == player))
   {
-    default_target_definition(player, card, &recovered_stack_this_test.target, 0x100);
-    recovered_stack_this_test.test.message[0xc] = '\0';
-    recovered_stack_this_test.test.message[0xd] = '\x12';
-    recovered_stack_this_test.test.message[0xe] = '\0';
-    recovered_stack_this_test.test.message[0xf] = '\0';
+    target_definition_t td;
+    default_target_definition(player, card, &td, 0x100);
+    td.zone = 4608;
     instance = get_card_instance(player, card);
     iVar2 = count_counters(player, card, COUNTER_P1_P1);
-    if ((iVar2 < 1) || (iVar2 = can_target(&recovered_stack_this_test.target), iVar2 == 0))
+    if ((iVar2 < 1) || (iVar2 = can_target(&td), iVar2 == 0))
     {
       trig_mode = RESOLVE_TRIGGER_0;
     }
@@ -803,7 +795,7 @@ int card_goblin_razerunners(int player, int card, event_t event)
     }
     iVar2 = eot_trigger_mode(player, card, event, player, trig_mode);
     if ((iVar2 != 0) &&
-        (iVar2 = pick_target(&recovered_stack_this_test.target, "TARGET_PLAYER_OR_PLANESWALKER"),
+        (iVar2 = pick_target(&td, "TARGET_PLAYER_OR_PLANESWALKER"),
          iVar2 != 0))
     {
       iVar2 = count_counters(player, card, COUNTER_P1_P1);
@@ -813,25 +805,24 @@ int card_goblin_razerunners(int player, int card, event_t event)
   }
   if (event - EVENT_POW_BOOST < 2)
   {
-    iVar2 = generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_CAN_ACTIVATE,
+    if (generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_CAN_ACTIVATE,
                                                              GAA_NONE, 1, 0, 0, 0, 1, 0, 0, NULL,
-                                                             NULL, TYPE_LAND, NULL, SARV_0);
-    if (iVar2 != 0)
+                                                             NULL, TYPE_LAND, NULL, SARV_0) != 0)
     {
-      iVar2 = 0;
+      c = 0;
       iStack_ec = 0;
       if (0 < active_cards_count[player])
       {
         do
         {
-          instance = in_play(player, iVar2);
-          if ((instance != NULL) && (iVar3 = is_what(player, iVar2, 1), iVar3 != 0))
+          instance = in_play(player, c);
+          if ((instance != NULL) && (iVar3 = is_what(player, c, 1), iVar3 != 0))
           {
-            iVar3 = check_special_flags2(player, iVar2, 0x400000);
+            iVar3 = check_special_flags2(player, c, 0x400000);
             iStack_ec = iStack_ec + (unsigned int)(iVar3 == 0);
           }
-          iVar2 = iVar2 + 1;
-        } while (iVar2 < active_cards_count[player]);
+          c = c + 1;
+        } while (c < active_cards_count[player]);
         if (0 < iStack_ec)
         {
           iVar2 = 0;
@@ -839,8 +830,7 @@ int card_goblin_razerunners(int player, int card, event_t event)
           do
           {
             cless = iVar2;
-            iVar2 = has_mana_for_activated_ability(player, card, cless, 0, 0, 0, cless, 0);
-            if (iVar2 == 0)
+            if (has_mana_for_activated_ability(player, card, cless, 0, 0, 0, cless, 0) == 0)
             {
               return iVar3;
             }
@@ -856,7 +846,8 @@ int card_goblin_razerunners(int player, int card, event_t event)
             (event == EVENT_RESOLVE_ACTIVATION)) ||
            (event == EVENT_CLEANUP))
   {
-    new_default_test_definition(&recovered_stack_this_test.test, 1,
+    test_definition_t this_test;
+    new_default_test_definition(&this_test, 1,
                                 "Select a land card to sacrifice.");
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_ACTIVATION)
@@ -864,10 +855,9 @@ int card_goblin_razerunners(int player, int card, event_t event)
       add_counters(player, card, instance->parent_controller, instance->parent_card,
                                COUNTER_P1_P1, 1);
     }
-    iVar2 = generic_activated_ability_with_sacrifice_as_cost(
+    return generic_activated_ability_with_sacrifice_as_cost(
         player, card, event, GAA_NONE, 1, 0, 0, 0, 1, 0, 0, NULL, NULL, TYPE_NONE,
-        &recovered_stack_this_test.test, SARV_0);
-    return iVar2;
+        &this_test, SARV_0);
   }
   return 0;
 }
@@ -2363,8 +2353,7 @@ int card_elder_mastery(int player, int card, event_t event)
       new_multidiscard(uVar1 ^ 1, 2, 0, player);
     }
   }
-  result = generic_aura(player, card, event, player, 3, 3, 0x20, 0, 0, 0, 0);
-  return result;
+  return generic_aura(player, card, event, player, 3, 3, 0x20, 0, 0, 0, 0);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -2404,7 +2393,7 @@ int card_unstable_frontier(int player, int card, event_t event)
             return 0;
           }
           if (result == 1)
-            goto LAB_021e9163;
+            return mana_producer(player, card, EVENT_ACTIVATE);
           if (result != 2)
           {
             return 0;
@@ -2421,9 +2410,7 @@ int card_unstable_frontier(int player, int card, event_t event)
         return 0;
       }
       instance->info_slot = 1;
-    LAB_021e9163:
-      result = mana_producer(player, card, EVENT_ACTIVATE);
-      return result;
+      return mana_producer(player, card, EVENT_ACTIVATE);
     }
     if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
     {
@@ -2450,6 +2437,5 @@ int card_unstable_frontier(int player, int card, event_t event)
       return 0;
     }
   }
-  result = mana_producer(player, card, event);
-  return result;
+  return mana_producer(player, card, event);
 }

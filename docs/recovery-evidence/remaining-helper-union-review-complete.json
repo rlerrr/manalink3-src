@@ -1,0 +1,123 @@
+{
+  "native": {
+    "dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+    "rows": [
+      {
+        "source": "functions/windows.c",
+        "name": "time_in_ms",
+        "variable": "ticks",
+        "variable_die": "0x5ef19ef",
+        "owner_die": "0x5ef19cd",
+        "bytes": 8,
+        "members": [
+          {
+            "name": null,
+            "kind": "DW_TAG_structure_type",
+            "bytes": 8
+          },
+          {
+            "name": "u",
+            "kind": "DW_TAG_structure_type",
+            "bytes": 8
+          },
+          {
+            "name": "QuadPart",
+            "kind": "DW_TAG_base_type",
+            "bytes": 8
+          }
+        ]
+      },
+      {
+        "source": "functions/windows.c",
+        "name": "time_in_ms",
+        "variable": "frequency",
+        "variable_die": "0x5ef1a01",
+        "owner_die": "0x5ef19cd",
+        "bytes": 8,
+        "members": [
+          {
+            "name": null,
+            "kind": "DW_TAG_structure_type",
+            "bytes": 8
+          },
+          {
+            "name": "u",
+            "kind": "DW_TAG_structure_type",
+            "bytes": 8
+          },
+          {
+            "name": "QuadPart",
+            "kind": "DW_TAG_base_type",
+            "bytes": 8
+          }
+        ]
+      }
+    ],
+    "local_declarations": 2,
+    "owners": 1
+  },
+  "current": {
+    "dbg_sha256": "81958682dc1be218c3de11aae059b4c01be52c43e8c1ac9415bd1b99ec5e6f48",
+    "rows": [
+      {
+        "source": "functions/windows.c",
+        "name": "time_in_ms",
+        "variable": "ticks",
+        "variable_die": "0x5ddd498",
+        "owner_die": "0x5ddd45e",
+        "bytes": 8,
+        "members": [
+          {
+            "name": null,
+            "kind": "DW_TAG_structure_type",
+            "bytes": 8
+          },
+          {
+            "name": "u",
+            "kind": "DW_TAG_structure_type",
+            "bytes": 8
+          },
+          {
+            "name": "QuadPart",
+            "kind": "DW_TAG_base_type",
+            "bytes": 8
+          }
+        ]
+      },
+      {
+        "source": "functions/windows.c",
+        "name": "time_in_ms",
+        "variable": "frequency",
+        "variable_die": "0x5ddd4aa",
+        "owner_die": "0x5ddd45e",
+        "bytes": 8,
+        "members": [
+          {
+            "name": null,
+            "kind": "DW_TAG_structure_type",
+            "bytes": 8
+          },
+          {
+            "name": "u",
+            "kind": "DW_TAG_structure_type",
+            "bytes": 8
+          },
+          {
+            "name": "QuadPart",
+            "kind": "DW_TAG_base_type",
+            "bytes": 8
+          }
+        ]
+      }
+    ],
+    "local_declarations": 2,
+    "owners": 1
+  },
+  "synthetic_union_locals": 0,
+  "compiled_card_union_locals": 0,
+  "compiled_helper_union_locals": 2,
+  "genuine_native_union_locals": 2,
+  "scope": "All concrete top-level function owners in cards/ and functions/ CUs, traversing named local variables including nested inline scopes. Unions reached through pointer/structure members are not counted as union-valued locals. No syntax prefilter; genuine union roles still require review. Native/source owner names and compiler clones may differ. Both remaining declarations are the native LARGE_INTEGER timer values ticks/frequency; names, sizes and member geometry match. No synthetic union-valued local remains in these compiled CUs. Pointed-to unions, aggregate members and unbuilt configurations are outside the census.",
+  "census_tool": ".recovery/remaining-union-census-c81.py",
+  "census_tool_sha256": "70065fe9883f3a82f31386b13db007c8522a1834fe48d2e2f94223cd6b12146b"
+}

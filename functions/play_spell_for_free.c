@@ -725,22 +725,19 @@ int check_for_special_effect_card(int player, int csvid){
 /* ManalinkEh 2022: 0x2669160; original functions/play_spell_for_free.c:277. */
 int escape_spell(int player, int g_pos)
 {
-  int iVar1;
   int iVar2;
 
   iVar2 = graveyard_ptr_mutable[player][g_pos];
-  if ((iVar2 != -1) && (iVar1 = can_legally_play_iid(player, iVar2), iVar1 != 0))
+  if ((iVar2 != -1) && (can_legally_play_iid(player, iVar2) != 0))
   {
     remove_card_from_grave(player, g_pos);
     iVar2 = add_card_to_hand(player, iVar2);
     set_special_flags3(player, iVar2, 0x80000);
-    iVar1 = is_what(player, iVar2, 1);
-    if (iVar1 != 0)
+    if (is_what(player, iVar2, 1) != 0)
     {
       set_special_flags3(player, iVar2, 0x20000);
     }
-    iVar1 = real_play_spell_for_free(player, iVar2, 0x10000000);
-    if (iVar1 != 0)
+    if (real_play_spell_for_free(player, iVar2, 0x10000000) != 0)
     {
       return iVar2;
     }
@@ -759,7 +756,7 @@ static int real_copy_spell(int player, int internal_id, int special_flags, int s
   int32_t iVar2;
   int card;
   card_instance_t *instance;
-  int iVar4;
+  int i;
   unsigned int uVar5;
 
   card = add_card_to_hand(player, internal_id);
@@ -772,14 +769,14 @@ static int real_copy_spell(int player, int internal_id, int special_flags, int s
   {
     instance->info_slot = copied->info_slot;
     instance->eot_toughness = copied->eot_toughness;
-    iVar4 = 0;
+    i = 0;
     do
     {
-      iVar2 = copied->targets[iVar4].player;
-      instance->targets[iVar4].card = copied->targets[iVar4].card;
-      instance->targets[iVar4].player = iVar2;
-      iVar4 = iVar4 + 1;
-    } while (iVar4 != 0x13);
+      iVar2 = copied->targets[i].player;
+      instance->targets[i].card = copied->targets[i].card;
+      instance->targets[i].player = iVar2;
+      i = i + 1;
+    } while (i != 0x13);
     uVar5 = get_special_flags_by_instance(copied);
     set_special_flags(player, card, uVar5 | special_flags);
     uVar5 = get_special_flags2_by_instance(copied);
@@ -797,11 +794,9 @@ static int real_copy_spell(int player, int internal_id, int special_flags, int s
   free_spell_player = player;
   free_spell_card = card;
   convert_to_token(player, card);
-  iVar4 = put_card_on_stack(player, card, 0);
-  if (iVar4 == 0)
+  if (put_card_on_stack(player, card, 0) == 0)
   {
-    iVar4 = can_legally_play_iid(player, internal_id);
-    if (iVar4 == 0)
+    if (can_legally_play_iid(player, internal_id) == 0)
     {
       obliterate_card(player, card);
       free_spell_card = -1;
@@ -887,9 +882,9 @@ int copy_spell_from_stack_set_target0(int player, int iid, card_instance_t *copi
 /* ManalinkEh 2022: 0x26695a0; original functions/play_spell_for_free.c:535. */
 int effect_may_play_card_from_exile(int player, int card, event_t event)
 {
+  int cmc;
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
   int iVar4;
   int iVar5;
   unsigned int uVar6;
@@ -910,8 +905,7 @@ int effect_may_play_card_from_exile(int player, int card, event_t event)
     {
       return 0;
     }
-    iVar5 = check_rfg(iVar5, iVar4);
-    if (iVar5 != 0)
+    if (check_rfg(iVar5, iVar4) != 0)
     {
       return 0;
     }
@@ -1027,8 +1021,8 @@ int effect_may_play_card_from_exile(int player, int card, event_t event)
         goto LAB_02669a30;
       goto LAB_02669704;
     }
-    iVar2 = get_cmc_by_id(iVar4);
-    iStack_100 = get_updated_casting_cost(player, -1, iid, event, iVar2);
+    cmc = get_cmc_by_id(iVar4);
+    iStack_100 = get_updated_casting_cost(player, -1, iid, event, cmc);
     iVar2 = is_what(-1, iid, 0x40);
     iVar2 = has_mana(player, (-(unsigned int)(iVar2 == 0) ^ 0xffffffff) & 6, iStack_100);
     if ((iVar2 == 0) || (iVar2 = has_no_mana_cost(-1, iid), iVar2 != 0))
@@ -1105,8 +1099,7 @@ LAB_02669717:
   else
   {
     iVar2 = get_internal_card_id_from_csv_id(iVar4);
-    iVar3 = can_legally_play_iid(player, iVar2);
-    if (iVar3 != 0)
+    if (can_legally_play_iid(player, iVar2) != 0)
     {
       remove_card_from_rfg(iVar5, iVar4);
       iVar4 = add_card_to_hand(player, iVar2);
@@ -1122,8 +1115,7 @@ LAB_02669717:
           remove_state(player, iVar4, 0x1000);
         }
       }
-      iVar5 = real_play_spell_for_free(player, iVar4, -0x80000000);
-      if (iVar5 == 0)
+      if (real_play_spell_for_free(player, iVar4, -0x80000000) == 0)
       {
         obliterate_card(player, iVar4);
       }

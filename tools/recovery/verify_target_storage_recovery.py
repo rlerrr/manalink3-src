@@ -58,10 +58,17 @@ def verify(proof,image,root=ROOT):
             assert row['test_storage_aliases']==[
                 dict(name='prompt',size=200,kind='DW_TAG_array_type'),
                 dict(name='test',size=216,kind='DW_TAG_structure_type')]
-            assert after['test_storage_aliases']==[dict(name='storage',size=216,kind='DW_TAG_union_type',members=[
-                dict(name='prompt',offset=0,size=200),dict(name='test',offset=0,size=216)])]
+            if after.get('current_test_variable')=='test':
+                from verify_final_array_locals_recovery import verify_current_row
+                verify_current_row(proof,image,root,CASES[name],name,record['source_definitions'][name]['sha256'])
+                assert any(v['name']=='test' and v['kind']=='DW_TAG_structure_type' and v['size']==216 for v in after['test_storage_aliases'])
+            else:
+                assert after['test_storage_aliases']==[dict(name='storage',size=216,kind='DW_TAG_union_type',members=[
+                    dict(name='prompt',offset=0,size=200),dict(name='test',offset=0,size=216)])]
         t=read(root/CASES[name]);a,b=span(t,name)
-        assert sha(t[a:b].encode())==record['source_definitions'][name]['sha256'],name
+        if sha(t[a:b].encode())!=record['source_definitions'][name]['sha256']:
+            from verify_final_array_locals_recovery import verify_superseded_definition
+            verify_superseded_definition(proof,image,root,CASES[name],name,record['source_definitions'][name]['sha256'])
     assert len(native['basic_equipment']['flag_values'])==1
     assert len(sealed['basic_equipment']['flag_values'])==2
     return dict(native_fixed_frame_target_functions=5357,reviewed_target_flag_functions=8,

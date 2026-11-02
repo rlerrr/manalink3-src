@@ -72,47 +72,23 @@ int card_bake_into_a_pie(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   target_definition_t td;
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 2);
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          result = valid_target(&td);
-          if (result != 0)
-          {
-            instance = get_card_instance(player, card);
-            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-            generate_token_by_id(player, card, 0x5077);
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_025cb2f5;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   default_target_definition(player, card, &td, 2);
-LAB_025cb2f5:
-  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
-  return result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      generate_token_by_id(player, card, 0x5077);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x25cb780; original cards/throne_of_eldraine.c:619. */
@@ -222,8 +198,7 @@ int card_claim_the_firstborn(int player, int card, event_t event)
   td.special = 0x800;
   get_card_instance(player, card);
 LAB_025cce32:
-  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
-  return result;
+  return generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x25cd600; original cards/throne_of_eldraine.c:1377. */
@@ -303,9 +278,8 @@ LAB_025ce03d:
     }
     instance->number_of_targets = '\0';
   }
-  result = generic_activated_ability_with_target_in_grave(
+  return generic_activated_ability_with_target_in_grave(
       player, card, event, GAA_UNTAPPED, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, TYPE_NONE, &test, 8);
-  return result;
 }
 
 /* ManalinkEh 2022: 0x25ce1b0; original cards/throne_of_eldraine.c:1659. */
@@ -314,51 +288,25 @@ int card_epic_downfall(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   target_definition_t td;
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 2);
-        td.extra = 3;
-        td.special = 0x1000000;
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          result = valid_target(&td);
-          if (result != 0)
-          {
-            instance = get_card_instance(player, card);
-            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_025ce213;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   default_target_definition(player, card, &td, 2);
   td.extra = 3;
   td.special = 0x1000000;
-LAB_025ce213:
-  result = generic_spell(player, card, event, 0x81, &td,
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 0x81, &td,
                          "Select target creature with CMC 3 or greater.", 1, NULL);
-  return result;
 }
 
 /* ManalinkEh 2022: 0x25ce310; original cards/throne_of_eldraine.c:1686. */
@@ -387,8 +335,7 @@ int card_escape_to_the_wilds(int player, int card, event_t event)
     instance->targets[2].card = result;
     kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
-  return result;
+  return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
 /* ManalinkEh 2022: 0x25cf780; original cards/throne_of_eldraine.c:2229. */
@@ -588,7 +535,6 @@ int card_mirrormade(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25d2580; original cards/throne_of_eldraine.c:3492. */
 int card_mystical_dispute(int player, int card, event_t event)
 {
-  int result;
   unsigned int uVar2;
   unsigned int uVar3;
   if (event == EVENT_MODIFY_COST)
@@ -608,8 +554,7 @@ int card_mystical_dispute(int player, int card, event_t event)
     counterspell_resolve_unless_pay_x(player, card, NULL, 0, 3);
     kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 2, NULL, NULL, 1, NULL);
-  return result;
+  return generic_spell(player, card, event, 2, NULL, NULL, 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x25d2be0; original cards/throne_of_eldraine.c:3677. */
@@ -661,47 +606,23 @@ int card_redcap_melee(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   target_definition_t td;
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 0x102);
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          result = valid_target(&td);
-          if (result != 0)
-          {
-            result = damage_target0(player, card, 4);
-            instance = get_card_instance(player, result);
-            instance->targets[10].card = 0x50eb;
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        goto LAB_025d37b5;
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
+    return 0;
   }
   default_target_definition(player, card, &td, 0x102);
-LAB_025d37b5:
-  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE_OR_PLANESWALKER", 1, NULL);
-  return result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      result = damage_target0(player, card, 4);
+      instance = get_card_instance(player, result);
+      instance->targets[10].card = 0x50eb;
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_CREATURE_OR_PLANESWALKER", 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x25d3c30; original cards/throne_of_eldraine.c:4331. */
@@ -733,7 +654,7 @@ int card_specters_shriek(int player, int card, event_t event)
         default_target_definition(player, card, &td, 0);
         td.zone = 0x1000;
         if (event != EVENT_RESOLVE_SPELL)
-          goto LAB_025d3c95;
+          return generic_spell(player, card, event, 0x40, &td, NULL, 1, NULL);
         result = valid_target(&td);
         if (result != 0)
         {
@@ -760,7 +681,7 @@ int card_specters_shriek(int player, int card, event_t event)
         }
       LAB_025d3d3c:
         kill_card(player, card, KILL_DESTROY);
-        goto LAB_025d3c95;
+        return generic_spell(player, card, event, 0x40, &td, NULL, 1, NULL);
       }
       if (event != EVENT_CHANGE_TARGET)
       {
@@ -770,9 +691,7 @@ int card_specters_shriek(int player, int card, event_t event)
   }
   default_target_definition(player, card, &td, 0);
   td.zone = 0x1000;
-LAB_025d3c95:
-  result = generic_spell(player, card, event, 0x40, &td, NULL, 1, NULL);
-  return result;
+  return generic_spell(player, card, event, 0x40, &td, NULL, 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x25d4820; original cards/throne_of_eldraine.c:4525. */
@@ -800,7 +719,7 @@ int card_the_cauldron_of_eternity(int player, int card, event_t event)
   int iVar1;
   card_instance_t *instance;
   int iVar3;
-  int iVar4;
+  int i;
   int owner;
   int position;
   test_definition_t test;
@@ -823,21 +742,21 @@ int card_the_cauldron_of_eternity(int player, int card, event_t event)
     iVar1 = 0xb;
   }
   instance = get_card_instance(player, card);
-  iVar4 = 0;
+  i = 0;
   do
   {
-    if ((iVar4 < iVar1) && (iVar3 = instance->targets[iVar4].player, iVar3 != -1))
+    if ((i < iVar1) && (iVar3 = instance->targets[i].player, iVar3 != -1))
     {
-      iVar3 = find_in_owners_graveyard(iVar3, instance->targets[iVar4].card, &owner, &position);
+      iVar3 = find_in_owners_graveyard(iVar3, instance->targets[i].card, &owner, &position);
       if (iVar3 != 0)
       {
         from_graveyard_to_deck(owner, position, 2);
       }
-      instance->targets[iVar4].card = -1;
-      instance->targets[iVar4].player = -1;
+      instance->targets[i].card = -1;
+      instance->targets[i].player = -1;
     }
-    iVar4 = iVar4 + 1;
-  } while (iVar4 != 10);
+    i = i + 1;
+  } while (i != 10);
 joined_r0x025d52fd:
   if (event == EVENT_ACTIVATE)
   {
@@ -856,20 +775,18 @@ joined_r0x025d52fd:
       reanimate_permanent(player, card, player, iVar1, REANIMATE_DEFAULT);
     }
   }
-  iVar1 = generic_activated_ability_with_target_in_grave(
+  return generic_activated_ability_with_target_in_grave(
       player, card, event, GAA_CAN_SORCERY_BE_PLAYED | GAA_UNTAPPED, 2, 1, 0, 0, 0, 0, 2, NULL,
       NULL, TYPE_NONE, &test, 8);
-  return iVar1;
 }
 
 /* ManalinkEh 2022: 0x25d5e90; original cards/throne_of_eldraine.c:5218. */
 int card_vantress_gargoyle(int player, int card, event_t event)
 {
-  int result;
   if (event == EVENT_ATTACK_LEGALITY)
   {
     if (((card == affected_card) && (player == affected_card_controller)) &&
-        (result = count_graveyard(1 - current_turn), result < 7))
+        (count_graveyard(1 - current_turn) < 7))
     {
       event_result = event_result | 1;
     }
@@ -906,13 +823,11 @@ int card_vantress_gargoyle(int player, int card, event_t event)
       goto LAB_025d5f50;
   LAB_025d5ecd:
     if (event != EVENT_RESOLVE_ACTIVATION)
-      goto LAB_025d5ed6;
+      return generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
   }
   mill(current_turn, 1);
   mill(current_turn ^ 1, 1);
-LAB_025d5ed6:
-  result = generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
 /* ManalinkEh 2022: 0x25d6280; original cards/throne_of_eldraine.c:5360. */
@@ -949,7 +864,6 @@ int card_wishclaw_talisman(int player, int card, event_t event)
 int card_ayara_first_of_locthwain(int player, int card, event_t event)
 {
   const char *msg;
-  int result;
   test_definition_t test;
 
   check_legend_rule(player, card, event);
@@ -986,9 +900,8 @@ LAB_025cb10e:
   new_default_test_definition(&test, 2, msg);
   test.color = get_sleighted_color_test(player, card, 2);
   test.not_me = 1;
-  result = generic_activated_ability_with_sacrifice_as_cost(
+  return generic_activated_ability_with_sacrifice_as_cost(
       player, card, event, GAA_UNTAPPED, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, TYPE_NONE, &test, SARV_0);
-  return result;
 }
 
 /* ManalinkEh 2022: 0x25cc840; original cards/throne_of_eldraine.c:1005. */
@@ -1050,8 +963,7 @@ int card_drown_in_the_loch(int player, int card, event_t event)
     result = counterspell(player, card, EVENT_CAN_CAST, &td1, 0);
     if (result == 0)
     {
-      result = generic_spell(player, card, EVENT_CAN_CAST, 0x81, &td, NULL, 1, NULL);
-      return result;
+      return generic_spell(player, card, EVENT_CAN_CAST, 0x81, &td, NULL, 1, NULL);
     }
     return 99;
   }
@@ -1073,8 +985,7 @@ int card_drown_in_the_loch(int player, int card, event_t event)
         if (result != 0)
         {
           instance->info_slot = 0x42;
-          result = counterspell(player, card, EVENT_CAST_SPELL, &td1, 0);
-          return result;
+          return counterspell(player, card, EVENT_CAST_SPELL, &td1, 0);
         }
         generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td,
                       "Select target creature with mana value less than or equal to the number of "
@@ -1150,22 +1061,19 @@ LAB_025cd8e1:
 int card_faeburrow_elder(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
+  int i;
   unsigned int uVar4;
   int *piVar5;
-  unsigned char bVar6;
   int iStack_80;
   int cols[6];
   target_definition_t td;
 
-  bVar6 = 0;
   vigilance(player, card, event);
   piVar5 = cols;
-  for (iVar3 = 6; iVar3 != 0; iVar3 = iVar3 + -1)
+  for (i = 6; i != 0; i = i + -1)
   {
     *piVar5 = 0;
-    piVar5 = piVar5 + (unsigned int)bVar6 * -2 + 1;
+    piVar5 = piVar5 + 1u;
   }
   if (event == EVENT_COUNT_MANA)
   {
@@ -1178,7 +1086,8 @@ int card_faeburrow_elder(int player, int card, event_t event)
       cols[4] = 0;
       cols[5] = 0;
       cols[3] = 0;
-      goto LAB_025cecc2;
+      return mana_producing_creature_multi(player, card, event, 0x18, 0, cols[1], cols[2], cols[3],
+                                        cols[4], cols[5]);
     }
   }
   else if (((event != EVENT_ACTIVATE) && ((event != EVENT_CAN_ACTIVATE || (player != 1)))) &&
@@ -1191,9 +1100,10 @@ int card_faeburrow_elder(int player, int card, event_t event)
     cols[3] = 0;
     cols[4] = 0;
     cols[5] = 0;
-    goto LAB_025cecc2;
+    return mana_producing_creature_multi(player, card, event, 0x18, 0, cols[1], cols[2], cols[3],
+                                        cols[4], cols[5]);
   }
-  iVar3 = 1;
+  i = 1;
   instance = get_card_instance(player, card);
   instance->info_slot = 0;
   default_target_definition(player, card, &td, 0x47);
@@ -1205,30 +1115,27 @@ int card_faeburrow_elder(int player, int card, event_t event)
   {
     while (true)
     {
-      uVar4 = 1 << ((unsigned char)iVar3 & 0x1f);
+      uVar4 = 1 << ((unsigned char)i & 0x1f);
       td.required_color = uVar4;
-      iVar2 = can_target(&td);
-      if (iVar2 == 0)
+      if (can_target(&td) == 0)
         break;
-      cols[iVar3] = 1;
+      cols[i] = 1;
       instance = get_card_instance(player, card);
-      iVar3 = iVar3 + 1;
+      i = i + 1;
       iStack_80 = iStack_80 + 1;
       instance->info_slot = instance->info_slot | uVar4;
-      if (iVar3 == 6)
+      if (i == 6)
         goto LAB_025cecad;
     }
-    iVar3 = iVar3 + 1;
-  } while (iVar3 != 6);
+    i = i + 1;
+  } while (i != 6);
 LAB_025cecad:
   if (event - EVENT_POWER < 2)
   {
     event_result = event_result + iStack_80;
   }
-LAB_025cecc2:
-  iVar3 = mana_producing_creature_multi(player, card, event, 0x18, 0, cols[1], cols[2], cols[3],
+  return mana_producing_creature_multi(player, card, event, 0x18, 0, cols[1], cols[2], cols[3],
                                         cols[4], cols[5]);
-  return iVar3;
 }
 
 /* ManalinkEh 2022: 0x25ced80; original cards/throne_of_eldraine.c:1910. */
@@ -1473,6 +1380,7 @@ int play_card_from_adventure(int player, int t_player, int iid)
 /* ManalinkEh 2022: 0x25c9b30; original cards/throne_of_eldraine.c:65. */
 static int adventure_effect(int player, int card, event_t event)
 {
+  int i;
   unsigned int uVar1;
   card_instance_t *instance;
   int iVar3;
@@ -1498,11 +1406,9 @@ static int adventure_effect(int player, int card, event_t event)
   target_t *ptVar23;
   int32_t *piVar24;
   int *piVar25;
-  unsigned char bVar26;
   unsigned int uStack_54;
   int castable[16];
 
-  bVar26 = 0;
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
     instance = get_card_instance(player, card);
@@ -1565,27 +1471,27 @@ joined_r0x025c9bd5:
   {
     piVar25 = castable;
 
-    for (iVar3 = 0x10; iVar3 != 0; iVar3 = iVar3 + -1)
+    for (i = 0x10; i != 0; i = i + -1)
     {
       *piVar25 = 0;
-      piVar25 = piVar25 + (unsigned int)bVar26 * -2 + 1;
+      piVar25 = piVar25 + 1u;
     }
-    iVar3 = 0;
+    i = 0;
     do
     {
-      if (((instance->targets[iVar3].player != -1) &&
-           (iVar4 = instance->targets[iVar3].card, iVar4 != -1)) &&
+      if (((instance->targets[i].player != -1) &&
+           (iVar4 = instance->targets[i].card, iVar4 != -1)) &&
           (((iVar4 = has_mana_to_cast_iid(player, EVENT_ACTIVATE, iVar4),
-             iVar4 != 0 && (iVar4 = find_iid_in_rfg(instance->targets[iVar3].player,
-                                                    instance->targets[iVar3].card),
+             iVar4 != 0 && (iVar4 = find_iid_in_rfg(instance->targets[i].player,
+                                                    instance->targets[i].card),
                             -1 < iVar4)) &&
-            ((iVar4 = instance->targets[iVar3].card,
+            ((iVar4 = instance->targets[i].card,
               uVar22 != 0 || (cards_data[iVar4].id == 0x5037))))))
       {
-        castable[iVar3] = iVar4;
+        castable[i] = iVar4;
       }
-      iVar3 = iVar3 + 1;
-    } while (iVar3 != 0x10);
+      i = i + 1;
+    } while (i != 0x10);
     pcVar5 = get_card_name_by_id((unsigned int)cards_data[castable[0xf]].id);
     pcVar6 = get_card_name_by_id((unsigned int)cards_data[castable[0xe]].id);
     pcVar7 = get_card_name_by_id((unsigned int)cards_data[castable[0xd]].id);
@@ -1645,7 +1551,6 @@ joined_r0x025c9bd5:
 int adventure(int player, int card, event_t event, int csvid_creature)
 {
   int iVar1;
-  int iVar2;
   card_instance_t *instance;
   target_t *slot;
 
@@ -1659,8 +1564,7 @@ int adventure(int player, int card, event_t event, int csvid_creature)
     {
       return 0;
     }
-    iVar1 = is_token(player, card);
-    if (iVar1 != 0)
+    if (is_token(player, card) != 0)
     {
       return 0;
     }
@@ -1671,8 +1575,7 @@ int adventure(int player, int card, event_t event, int csvid_creature)
   {
     return 0;
   }
-  iVar1 = is_token(player, card);
-  if (iVar1 != 0)
+  if (is_token(player, card) != 0)
   {
     return 0;
   }
@@ -1683,7 +1586,7 @@ int adventure(int player, int card, event_t event, int csvid_creature)
     do
     {
       instance = in_play(player, iVar1);
-      if ((((instance != NULL) && (iVar2 = is_what(player, iVar1, 0x80), iVar2 != 0)) &&
+      if ((((instance != NULL) && (is_what(player, iVar1, 0x80) != 0)) &&
            (instance->info_slot_fn == adventure_effect)) &&
           ((instance->targets[0xf].player == -1 && (instance->targets[0xf].card == -1))))
       {
@@ -1700,8 +1603,7 @@ int adventure(int player, int card, event_t event, int csvid_creature)
     } while (iVar1 < active_cards_count[player]);
   }
 
-  iVar1 = create_legacy_activate(player, card, adventure_effect);
-  instance = get_card_instance(player, iVar1);
+  instance = get_card_instance(player, create_legacy_activate(player, card, adventure_effect));
   instance->display_pic_csv_id = 0x616c;
   instance->display_pic_num = 0;
   slot = instance->targets;
@@ -1723,8 +1625,7 @@ LAB_025ca40b:
   }
 LAB_025ca420:
   obliterate_card(player, card);
-  iVar1 = get_owner(player, card);
-  add_csvid_to_rfg(iVar1, csvid_creature);
+  add_csvid_to_rfg(get_owner(player, card), csvid_creature);
   return 0;
 }
 
@@ -1735,7 +1636,6 @@ int generic_adventurer(int player, int card, event_t event, int priority_creatur
   int iVar1;
   unsigned int uVar2;
   card_instance_t *instance;
-  int iVar3;
   const char *pcVar4;
   const char *pcVar5;
   unsigned int csvid;
@@ -1824,8 +1724,7 @@ int generic_adventurer(int player, int card, event_t event, int priority_creatur
     {
       return 0;
     }
-    iVar1 = check_special_flags2(player, card, 0x800);
-    if (iVar1 == 0)
+    if (check_special_flags2(player, card, 0x800) == 0)
     {
       return 0;
     }
@@ -1840,24 +1739,20 @@ int generic_adventurer(int player, int card, event_t event, int priority_creatur
   {
     return 0;
   }
-  iVar1 = check_special_flags2(player, card, 0x800);
-  if (iVar1 != 0)
+  if (check_special_flags2(player, card, 0x800) != 0)
   {
     return 0;
   }
-  iVar1 = check_special_flags3(player, card, 1);
-  if (iVar1 != 0)
+  if (check_special_flags3(player, card, 1) != 0)
   {
     return 0;
   }
 
-  iVar1 = played_for_free(player, card);
-  if (iVar1 == 0)
+  if (played_for_free(player, card) == 0)
   {
     iVar1 = is_token(player, card);
     bVar6 = iVar1 != 0;
-    iVar3 = check_special_flags2(player, card, -0x80000000);
-    if (iVar3 != 0)
+    if (check_special_flags2(player, card, -0x80000000) != 0)
       goto LAB_025ca795;
     instance->info_slot = 0;
     instance->number_of_targets = '\0';
@@ -1866,8 +1761,7 @@ int generic_adventurer(int player, int card, event_t event, int priority_creatur
     iVar1 = has_mana_to_cast_id(player, EVENT_CAST_SPELL, csvid_adventure);
     if ((iVar1 != 0) && (uVar2 != 0))
     {
-      iVar1 = has_mana_to_cast_id(player, EVENT_CAST_SPELL, csvid);
-      if (iVar1 != 0)
+      if (has_mana_to_cast_id(player, EVENT_CAST_SPELL, csvid) != 0)
         goto LAB_025ca955;
       goto LAB_025ca94b;
     }
@@ -1913,8 +1807,7 @@ LAB_025ca795:
     if (!bVar6)
     {
       charge_mana_from_id(player, card, EVENT_CAST_SPELL, csvid);
-      iVar1 = is_x_spell(player, card);
-      if (iVar1 != 0)
+      if (is_x_spell(player, card) != 0)
       {
         instance->targets[1].card = x_value;
       }
@@ -1956,9 +1849,7 @@ int card_alter_fate(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     new_default_test_definition(&this_test, 2, "Select a creature card.");
-  LAB_025caeee:
-    result = generic_spell(player, card, event, 8, NULL, NULL, 1, &this_test);
-    return result;
+    return generic_spell(player, card, event, 8, NULL, NULL, 1, &this_test);
   }
   if (event == EVENT_CAST_SPELL)
   {
@@ -1982,7 +1873,7 @@ int card_alter_fate(int player, int card, event_t event)
     }
   LAB_025cad50:
     if ((card == affected_card) && (player == affected_card_controller))
-      goto LAB_025cad19;
+      return adventure(player, card, event, 0x50d7);
   }
   else
   {
@@ -1990,7 +1881,7 @@ int card_alter_fate(int player, int card, event_t event)
     {
       new_default_test_definition(&this_test, 2, "Select a creature card.");
       if (event == EVENT_CAN_CHANGE_TARGET)
-        goto LAB_025caeee;
+        return generic_spell(player, card, event, 8, NULL, NULL, 1, &this_test);
 
       result = validate_target_from_grave_source(player, card, player, 0);
       if (result != -1)
@@ -2006,27 +1897,24 @@ int card_alter_fate(int player, int card, event_t event)
     }
     if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
         ((event & ~EVENT_SET_LEGACY_EFFECT_TEXT) == EVENT_CHANGE_TARGET))
-      goto LAB_025cad19;
+      return adventure(player, card, event, 0x50d7);
   }
   if ((event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
   {
     return 0;
   }
-LAB_025cad19:
-  result = adventure(player, card, event, 0x50d7);
-  return result;
+  return adventure(player, card, event, 0x50d7);
 }
 
 /* ManalinkEh 2022: 0x25caf40; original cards/throne_of_eldraine.c:394. */
 int card_arcane_signet(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   int iVar2;
   card_instance_t *pcVar3;
-  int iVar4;
   unsigned int uVar5;
 
-  pcVar1 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   if (event == EVENT_CAST_SPELL)
   {
 
@@ -2037,21 +1925,21 @@ int card_arcane_signet(int player, int card, event_t event)
       do
       {
         pcVar3 = in_play(player, iVar2);
-        if ((pcVar3 != NULL) && (iVar4 = get_id(player, iVar2), iVar4 == 0x3953))
+        if ((pcVar3 != NULL) && (get_id(player, iVar2) == 0x3953))
         {
 
           pcVar3 = get_card_instance(player, iVar2);
           iVar2 = pcVar3->targets[2].player;
-          pcVar1->info_slot = cards_data[iVar2].color & 0x3e;
+          instance->info_slot = cards_data[iVar2].color & 0x3e;
           uVar5 = get_color_from_remainder_text((unsigned int)cards_data[iVar2].id);
-          uVar5 = uVar5 & 0x3e | pcVar1->info_slot;
-          pcVar1->info_slot = uVar5;
+          uVar5 = uVar5 & 0x3e | instance->info_slot;
+          instance->info_slot = uVar5;
           iVar2 = pcVar3->targets[2].card;
           if (-1 < iVar2)
           {
-            pcVar1->info_slot = cards_data[iVar2].color & 0x3e | uVar5;
+            instance->info_slot = cards_data[iVar2].color & 0x3e | uVar5;
             uVar5 = get_color_from_remainder_text((unsigned int)cards_data[iVar2].id);
-            pcVar1->info_slot = pcVar1->info_slot | uVar5 & 0x3e;
+            instance->info_slot = instance->info_slot | uVar5 & 0x3e;
           }
           break;
         }
@@ -2061,16 +1949,14 @@ int card_arcane_signet(int player, int card, event_t event)
   }
   else if (event == EVENT_RESOLVE_SPELL)
   {
-    play_land_sound_effect_force_color(player, card, pcVar1->info_slot);
+    play_land_sound_effect_force_color(player, card, instance->info_slot);
   }
-  iVar2 = plain_mana_producer(player, card, event);
-  return iVar2;
+  return plain_mana_producer(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25cb400; original cards/throne_of_eldraine.c:554. */
 int card_battle_display(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t td;
 
@@ -2086,7 +1972,7 @@ int card_battle_display(int player, int card, event_t event)
     default_target_definition(player, card, &td, 0x40);
   LAB_025cb53d:
     if ((card != affected_card) || (player != affected_card_controller))
-      goto LAB_025cb469;
+      return adventure(player, card, event, 0x505b);
   }
   else
   {
@@ -2099,7 +1985,7 @@ int card_battle_display(int player, int card, event_t event)
       if (event == EVENT_CHANGE_TARGET)
       {
         default_target_definition(player, card, &td, 0x40);
-        goto LAB_025cb469;
+        return adventure(player, card, event, 0x505b);
       }
     LAB_025cb4fc:
       if ((event != EVENT_COUNTERSPELL && event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
@@ -2112,20 +1998,17 @@ int card_battle_display(int player, int card, event_t event)
     }
     if (event != EVENT_CAN_CHANGE_TARGET)
     {
-      if ((event == EVENT_RESOLVE_SPELL) && (result = valid_target(&td), result != 0))
+      if ((event == EVENT_RESOLVE_SPELL) && (valid_target(&td) != 0))
       {
 
         instance = get_card_instance(player, card);
         kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
       }
-    LAB_025cb469:
-      result = adventure(player, card, event, 0x505b);
-      return result;
+      return adventure(player, card, event, 0x505b);
     }
   }
 LAB_025cb4ae:
-  result = generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
-  return result;
+  return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x25cb600; original cards/throne_of_eldraine.c:578. */
@@ -2142,28 +2025,26 @@ int card_beanstalk_giant(int player, int card, event_t event)
     }
   LAB_025cb688:
     if (event == EVENT_CHANGE_TARGET)
-      goto LAB_025cb650;
+      return generic_adventurer(player, card, event, 5, 5, 0x502d);
   }
   else
   {
     if (event == EVENT_CAN_CAST)
-      goto LAB_025cb650;
+      return generic_adventurer(player, card, event, 5, 5, 0x502d);
     if (event != EVENT_CAST_SPELL)
     {
       if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-        goto LAB_025cb650;
+        return generic_adventurer(player, card, event, 5, 5, 0x502d);
       goto LAB_025cb688;
     }
     if ((card == affected_card) && (player == affected_card_controller))
-      goto LAB_025cb650;
+      return generic_adventurer(player, card, event, 5, 5, 0x502d);
   }
   if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
   {
     return 0;
   }
-LAB_025cb650:
-  result = generic_adventurer(player, card, event, 5, 5, 0x502d);
-  return result;
+  return generic_adventurer(player, card, event, 5, 5, 0x502d);
 }
 
 /* ManalinkEh 2022: 0x25cb6f0; original cards/throne_of_eldraine.c:601. */
@@ -2191,7 +2072,6 @@ int card_beloved_princess(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25cb920; original cards/throne_of_eldraine.c:683. */
 int card_boulder_rush(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t td;
 
@@ -2207,7 +2087,7 @@ int card_boulder_rush(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
   LAB_025cba5d:
     if ((card != affected_card) || (player != affected_card_controller))
-      goto LAB_025cb989;
+      return adventure(player, card, event, 0x50f0);
   }
   else
   {
@@ -2220,7 +2100,7 @@ int card_boulder_rush(int player, int card, event_t event)
       if (event == EVENT_CHANGE_TARGET)
       {
         default_target_definition(player, card, &td, 2);
-        goto LAB_025cb989;
+        return adventure(player, card, event, 0x50f0);
       }
     LAB_025cba1c:
       if ((event != EVENT_COUNTERSPELL && event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
@@ -2233,32 +2113,28 @@ int card_boulder_rush(int player, int card, event_t event)
     }
     if (event != EVENT_CAN_CHANGE_TARGET)
     {
-      if ((event == EVENT_RESOLVE_SPELL) && (result = valid_target(&td), result != 0))
+      if ((event == EVENT_RESOLVE_SPELL) && (valid_target(&td) != 0))
       {
 
         instance = get_card_instance(player, card);
         pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 2, 0);
       }
-    LAB_025cb989:
-      result = adventure(player, card, event, 0x50f0);
-      return result;
+      return adventure(player, card, event, 0x50f0);
     }
   }
 LAB_025cb9ce:
-  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
-  return result;
+  return generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x25cbb30; original cards/throne_of_eldraine.c:714. */
 int card_brazen_borrower(int player, int card, event_t event)
 {
-  int result;
 
   if (event == EVENT_BLOCK_LEGALITY)
   {
     if ((((card == affected_card) && (player == affected_card_controller)) &&
-         (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
-        (result = check_for_ability(attacking_card_controller, attacking_card, 0x20), result == 0))
+         (is_humiliated(player, card, AL_STATIC) == 0)) &&
+        (check_for_ability(attacking_card_controller, attacking_card, 0x20) == 0))
     {
       event_result = 1;
     }
@@ -2266,33 +2142,30 @@ int card_brazen_borrower(int player, int card, event_t event)
   else
   {
     if (event == EVENT_CAN_CAST)
-      goto LAB_025cbb68;
+      return generic_adventurer(player, card, event, 5, 5, 0x5038);
     if (event == EVENT_CAST_SPELL)
     {
       if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_025cbb68;
+        return generic_adventurer(player, card, event, 5, 5, 0x5038);
     }
     else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
              (event == EVENT_CHANGE_TARGET))
-      goto LAB_025cbb68;
+      return generic_adventurer(player, card, event, 5, 5, 0x5038);
   }
   if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
   {
     return 0;
   }
-LAB_025cbb68:
-  result = generic_adventurer(player, card, event, 5, 5, 0x5038);
-  return result;
+  return generic_adventurer(player, card, event, 5, 5, 0x5038);
 }
 
 /* ManalinkEh 2022: 0x25cbc30; original cards/throne_of_eldraine.c:766. */
 int card_cast_off(int player, int card, event_t event)
 {
-  int result;
   test_definition_t test;
 
   if (event == EVENT_CAN_CAST)
-    goto LAB_025cbc64;
+    return basic_spell(player, card, event);
   if (event == EVENT_CAST_SPELL)
   {
     if ((card != affected_card) || (player != affected_card_controller))
@@ -2300,9 +2173,7 @@ int card_cast_off(int player, int card, event_t event)
   LAB_025cbcb3:
     if (player != affected_card_controller)
     {
-    LAB_025cbcbb:
-      result = adventure(player, card, event, 0x50e7);
-      return result;
+      return adventure(player, card, event, 0x50e7);
     }
   }
   else
@@ -2310,9 +2181,9 @@ int card_cast_off(int player, int card, event_t event)
     if (event != EVENT_RESOLVE_SPELL)
     {
       if (event == EVENT_CAN_CHANGE_TARGET)
-        goto LAB_025cbc64;
+        return basic_spell(player, card, event);
       if (event == EVENT_CHANGE_TARGET)
-        goto LAB_025cbcbb;
+        return adventure(player, card, event, 0x50e7);
     LAB_025cbc8c:
       if ((event != EVENT_COUNTERSPELL && event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
       {
@@ -2321,7 +2192,7 @@ int card_cast_off(int player, int card, event_t event)
       if (event == EVENT_CAST_SPELL)
       {
         if (affected_card != card)
-          goto LAB_025cbcbb;
+          return adventure(player, card, event, 0x50e7);
         goto LAB_025cbcb3;
       }
     }
@@ -2334,12 +2205,10 @@ int card_cast_off(int player, int card, event_t event)
         test.subtype_flag = 1;
         new_manipulate_all(player, card, 2, &test, ACT_KILL_DESTROY);
       }
-      goto LAB_025cbcbb;
+      return adventure(player, card, event, 0x50e7);
     }
   }
-LAB_025cbc64:
-  result = basic_spell(player, card, event);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25cca30; original cards/throne_of_eldraine.c:1064. */
@@ -2390,26 +2259,16 @@ int card_charming_prince(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25ccfe0; original cards/throne_of_eldraine.c:1233. */
 int card_curious_pair(int player, int card, event_t event)
 {
-  int result;
 
-  if (event != EVENT_CAN_CAST)
+  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||
+      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||
+      (event == EVENT_CAST_SPELL && card == affected_card &&
+       player == affected_card_controller) ||
+      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_025cd008;
-    }
-    else if ((event == EVENT_RESOLVE_SPELL) ||
-             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      goto LAB_025cd008;
-    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
-    {
-      return 0;
-    }
+    return generic_adventurer(player, card, event, 4, 5, 0x504e);
   }
-LAB_025cd008:
-  result = generic_adventurer(player, card, event, 4, 5, 0x504e);
-  return result;
+  return 0;
 }
 
 /* ManalinkEh 2022: 0x25cd560; original cards/throne_of_eldraine.c:1353. */
@@ -2420,11 +2279,9 @@ int card_deafening_silence(int player, int card, event_t event)
 
   if (event == EVENT_MODIFY_COST_GLOBAL)
   {
-    iVar1 = is_humiliated(player, card, AL_STATIC);
-    if (iVar1 == 0)
+    if (is_humiliated(player, card, AL_STATIC) == 0)
     {
-      iVar1 = is_what(affected_card_controller, affected_card, 3);
-      if (iVar1 == 0)
+      if (is_what(affected_card_controller, affected_card, 3) == 0)
       {
         iVar1 = get_specific_storm_count(affected_card_controller);
         iVar2 = get_stormcreature_count(affected_card_controller);
@@ -2435,41 +2292,29 @@ int card_deafening_silence(int player, int card, event_t event)
       }
     }
   }
-  iVar1 = global_enchantment(player, card, event);
-  return iVar1;
+  return global_enchantment(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25cdf30; original cards/throne_of_eldraine.c:1596. */
 int card_embereth_shieldbreaker(int player, int card, event_t event)
 {
-  int result;
 
-  if (event != EVENT_CAN_CAST)
+  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||
+      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||
+      (event == EVENT_CAST_SPELL && card == affected_card &&
+       player == affected_card_controller) ||
+      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_025cdf58;
-    }
-    else if ((event == EVENT_RESOLVE_SPELL) ||
-             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      goto LAB_025cdf58;
-    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
-    {
-      return 0;
-    }
+    return generic_adventurer(player, card, event, 1, 8, 0x505c);
   }
-LAB_025cdf58:
-  result = generic_adventurer(player, card, event, 1, 8, 0x505c);
-  return result;
+  return 0;
 }
 
 /* ManalinkEh 2022: 0x25ce960; original cards/throne_of_eldraine.c:1812. */
 int card_fae_of_wishes(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *pcVar2;
-  card_instance_t *pcVar3;
+  card_instance_t *instance;
 
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
@@ -2485,20 +2330,19 @@ int card_fae_of_wishes(int player, int card, event_t event)
     }
     if (1 < hand_count[player])
     {
-      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 1, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 1, 0, 0, 0, 0,
                                          NULL, NULL);
-      return result;
     }
   LAB_025ce9a0:
     if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
         (event == EVENT_CHANGE_TARGET))
-      goto LAB_025ce9b5;
+      return generic_adventurer(player, card, event, 5, 10, 0x5065);
   }
   else if (((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP)) &&
            (pcVar2 = get_card_instance(player, card), event == EVENT_RESOLVE_ACTIVATION))
   {
-    pcVar3 = in_play(pcVar2->parent_controller, pcVar2->parent_card);
-    if (pcVar3 != NULL)
+    instance = in_play(pcVar2->parent_controller, pcVar2->parent_card);
+    if (instance != NULL)
     {
       bounce_permanent(pcVar2->parent_controller, pcVar2->parent_card);
     }
@@ -2508,19 +2352,17 @@ int card_fae_of_wishes(int player, int card, event_t event)
   LAB_025ce996:
 
     if (event == EVENT_CAN_CAST)
-      goto LAB_025ce9b5;
+      return generic_adventurer(player, card, event, 5, 10, 0x5065);
     if (event != EVENT_CAST_SPELL)
       goto LAB_025ce9a0;
     if ((card == affected_card) && (player == affected_card_controller))
-      goto LAB_025ce9b5;
+      return generic_adventurer(player, card, event, 5, 10, 0x5065);
   }
   if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
   {
     return 0;
   }
-LAB_025ce9b5:
-  result = generic_adventurer(player, card, event, 5, 10, 0x5065);
-  return result;
+  return generic_adventurer(player, card, event, 5, 10, 0x5065);
 }
 
 /* ManalinkEh 2022: 0x25cf040; original cards/throne_of_eldraine.c:1968. */
@@ -2530,8 +2372,7 @@ int card_fertile_footsteps(int player, int card, event_t event)
 
   if (event == EVENT_CAN_CAST)
   {
-    result = basic_spell(player, card, EVENT_CAN_CAST);
-    return result;
+    return basic_spell(player, card, EVENT_CAN_CAST);
   }
   if (event == EVENT_CAST_SPELL)
   {
@@ -2545,7 +2386,7 @@ int card_fertile_footsteps(int player, int card, event_t event)
       if (event != EVENT_CAST_SPELL)
         goto LAB_025cf075;
       if (affected_card != card)
-        goto LAB_025cf07e;
+        return adventure(player, card, event, 0x502c);
     }
 
     if ((player == affected_card_controller) &&
@@ -2561,44 +2402,32 @@ int card_fertile_footsteps(int player, int card, event_t event)
       if (event != EVENT_CAN_CHANGE_TARGET)
       {
         if (event == EVENT_CHANGE_TARGET)
-          goto LAB_025cf07e;
+          return adventure(player, card, event, 0x502c);
         goto LAB_025cf0a8;
       }
     LAB_025cf075:
       if (event != EVENT_RESOLVE_SPELL)
-        goto LAB_025cf07e;
+        return adventure(player, card, event, 0x502c);
     }
     global_tutor(player, player, 1, 4, 0, 4, 1, 0, 0x2000, 0, 0, 0, 0, 0, -1, 0);
   }
-LAB_025cf07e:
-  result = adventure(player, card, event, 0x502c);
-  return result;
+  return adventure(player, card, event, 0x502c);
 }
 
 /* ManalinkEh 2022: 0x25cf6c0; original cards/throne_of_eldraine.c:2171. */
 int card_foulmire_knight(int player, int card, event_t event)
 {
-  int result;
 
   deathtouch(player, card, event);
-  if (event != EVENT_CAN_CAST)
+  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||
+      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||
+      (event == EVENT_CAST_SPELL && card == affected_card &&
+       player == affected_card_controller) ||
+      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_025cf6f9;
-    }
-    else if ((event == EVENT_RESOLVE_SPELL) ||
-             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      goto LAB_025cf6f9;
-    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
-    {
-      return 0;
-    }
+    return generic_adventurer(player, card, event, 5, 5, 0x507c);
   }
-LAB_025cf6f9:
-  result = generic_adventurer(player, card, event, 5, 5, 0x507c);
-  return result;
+  return 0;
 }
 
 /* ManalinkEh 2022: 0x25cf800; original cards/throne_of_eldraine.c:2245. */
@@ -2633,13 +2462,13 @@ int card_garruk_cursed_huntsman(int player, int card, event_t event)
       {
         new_pick_target(&td, "TARGET_CREATURE", 0, 1);
       }
-      goto LAB_025cf875;
+      return planeswalker(player, card, event, 5);
     }
   }
   else
   {
     if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-      goto LAB_025cf875;
+      return planeswalker(player, card, event, 5);
     default_target_definition(player, card, &td, 2);
     instance = get_card_instance(player, card);
   }
@@ -2672,9 +2501,7 @@ int card_garruk_cursed_huntsman(int player, int card, event_t event)
       generate_token_by_id(player, card, 0x5085);
     }
   }
-LAB_025cf875:
-  result = planeswalker(player, card, event, 5);
-  return result;
+  return planeswalker(player, card, event, 5);
 }
 
 /* ManalinkEh 2022: 0x25d0770; original cards/throne_of_eldraine.c:2606. */
@@ -2685,13 +2512,12 @@ int card_haggle(int player, int card, event_t event)
 
   if (event == EVENT_CAN_CAST)
   {
-    result = basic_spell(player, card, EVENT_CAN_CAST);
-    return result;
+    return basic_spell(player, card, EVENT_CAN_CAST);
   }
   if (event == EVENT_CAST_SPELL)
   {
     if ((card == affected_card) && (player == affected_card_controller))
-      goto LAB_025d07a6;
+      return adventure(player, card, event, 0x50bd);
   }
   else
   {
@@ -2708,28 +2534,25 @@ int card_haggle(int player, int card, event_t event)
           draw_a_card(player);
         }
       }
-      goto LAB_025d07a6;
+      return adventure(player, card, event, 0x50bd);
     }
     if ((event == EVENT_CAN_CHANGE_TARGET) ||
         ((event & ~EVENT_SET_LEGACY_EFFECT_TEXT) == EVENT_CHANGE_TARGET))
-      goto LAB_025d07a6;
+      return adventure(player, card, event, 0x50bd);
   }
   if ((event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
   {
     return 0;
   }
-LAB_025d07a6:
-  result = adventure(player, card, event, 0x50bd);
-  return result;
+  return adventure(player, card, event, 0x50bd);
 }
 
 /* ManalinkEh 2022: 0x25d08c0; original cards/throne_of_eldraine.c:2658. */
 int card_hearts_desire(int player, int card, event_t event)
 {
-  int result;
 
   if (event == EVENT_CAN_CAST)
-    goto LAB_025d08f1;
+    return basic_spell(player, card, event);
   if (event == EVENT_CAST_SPELL)
   {
     if ((card != affected_card) || (player != affected_card_controller))
@@ -2737,9 +2560,7 @@ int card_hearts_desire(int player, int card, event_t event)
   LAB_025d093d:
     if (player == affected_card_controller)
     {
-    LAB_025d08f1:
-      result = basic_spell(player, card, event);
-      return result;
+      return basic_spell(player, card, event);
     }
   }
   else
@@ -2747,9 +2568,9 @@ int card_hearts_desire(int player, int card, event_t event)
     if (event != EVENT_RESOLVE_SPELL)
     {
       if (event == EVENT_CAN_CHANGE_TARGET)
-        goto LAB_025d08f1;
+        return basic_spell(player, card, event);
       if (event == EVENT_CHANGE_TARGET)
-        goto LAB_025d0948;
+        return adventure(player, card, event, 0x50b3);
     LAB_025d0914:
       if ((event != EVENT_COUNTERSPELL && event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
       {
@@ -2758,26 +2579,24 @@ int card_hearts_desire(int player, int card, event_t event)
       if (event == EVENT_CAST_SPELL)
       {
         if (affected_card != card)
-          goto LAB_025d0948;
+          return adventure(player, card, event, 0x50b3);
         goto LAB_025d093d;
       }
     }
     if (event == EVENT_CAN_CHANGE_TARGET)
-      goto LAB_025d08f1;
+      return basic_spell(player, card, event);
     if (event == EVENT_RESOLVE_SPELL)
     {
       generate_token_by_id(player, card, 0x494c);
     }
   }
-LAB_025d0948:
-  result = adventure(player, card, event, 0x50b3);
-  return result;
+  return adventure(player, card, event, 0x50b3);
 }
 
 /* ManalinkEh 2022: 0x25c9120; original cards/throne_of_eldraine.c:2972. */
 static int korvold_fae_cursed_king_effect(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   unsigned int uVar2;
   int result;
   card_instance_t *pcVar4;
@@ -2788,16 +2607,16 @@ static int korvold_fae_cursed_king_effect(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
-      pcVar1 = get_card_instance(player, card);
-      if ((-1 < pcVar1->damage_target_player) &&
-          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
            result != 0x50a9))
       {
         kill_card(player, card, KILL_EXILE);
       }
     }
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
     {
       return 0;
@@ -2809,8 +2628,8 @@ static int korvold_fae_cursed_king_effect(int player, int card, event_t event)
   }
   else
   {
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, event), result != 0))
     {
       return 0;
@@ -2818,28 +2637,28 @@ static int korvold_fae_cursed_king_effect(int player, int card, event_t event)
     if (event != EVENT_GRAVEYARD_FROM_PLAY)
       goto LAB_025c915c;
 
-    pcVar1 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     pcVar4 = in_play(affected_card_controller, affected_card);
     if ((pcVar4 != NULL) && (pcVar4 = get_card_instance(affected_card_controller, affected_card),
                              pcVar4->kill_code != '\0'))
     {
 
-      if ((-1 < pcVar1->damage_target_player) &&
-          ((pcVar1->damage_target_card == affected_card &&
-            (pcVar1->damage_target_player == affected_card_controller))))
+      if ((-1 < instance->damage_target_player) &&
+          ((instance->damage_target_card == affected_card &&
+            (instance->damage_target_player == affected_card_controller))))
       {
-        pcVar1->damage_target_card = -1;
-        pcVar1->damage_target_player = -1;
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
         remove_status(player, card, 0x10000);
-        if (pcVar1->targets[0xb].player < 0)
+        if (instance->targets[0xb].player < 0)
         {
-          pcVar1->targets[0xb].player = 0;
+          instance->targets[0xb].player = 0;
         }
-        *(char *)((int)&pcVar1->targets[0xb].player + 1) =
-            *(char *)((int)&pcVar1->targets[0xb].player + 1) + '\x01';
+        *(char *)((int)&instance->targets[0xb].player + 1) =
+            *(char *)((int)&instance->targets[0xb].player + 1) + '\x01';
       }
-      pcVar1 = get_card_instance(affected_card_controller, affected_card);
-      if (pcVar1->kill_code == '\x03')
+      instance = get_card_instance(affected_card_controller, affected_card);
+      if (instance->kill_code == '\x03')
       {
         default_test_definition(&test, 0x47);
         count_for_gfp_ability(player, card, 0x77, player, 0, &test);
@@ -2914,29 +2733,26 @@ int card_lovestruck_beast(int player, int card, event_t event)
   else
   {
     if (event == EVENT_CAN_CAST)
-      goto LAB_025d1f3d;
+      return generic_adventurer(player, card, event, 5, 8, 0x50b4);
     if (event == EVENT_CAST_SPELL)
     {
       if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_025d1f3d;
+        return generic_adventurer(player, card, event, 5, 8, 0x50b4);
     }
     else if ((event == EVENT_RESOLVE_SPELL) ||
              ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      goto LAB_025d1f3d;
+      return generic_adventurer(player, card, event, 5, 8, 0x50b4);
   }
   if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
   {
     return 0;
   }
-LAB_025d1f3d:
-  result = generic_adventurer(player, card, event, 5, 8, 0x50b4);
-  return result;
+  return generic_adventurer(player, card, event, 5, 8, 0x50b4);
 }
 
 /* ManalinkEh 2022: 0x25d2110; original cards/throne_of_eldraine.c:3350. */
 int card_merchant_of_the_vale(int player, int card, event_t event)
 {
-  int result;
 
   if (event != EVENT_ACTIVATE)
   {
@@ -2947,27 +2763,24 @@ int card_merchant_of_the_vale(int player, int card, event_t event)
         if (event == EVENT_CAST_SPELL)
         {
           if ((card == affected_card) && (player == affected_card_controller))
-            goto LAB_025d215b;
+            return generic_adventurer(player, card, event, 5, 7, 0x50be);
         }
         else if ((event == EVENT_RESOLVE_SPELL) ||
                  ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-          goto LAB_025d215b;
+          return generic_adventurer(player, card, event, 5, 7, 0x50be);
         if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
         {
           return 0;
         }
       }
-    LAB_025d215b:
-      result = generic_adventurer(player, card, event, 5, 7, 0x50be);
-      return result;
+      return generic_adventurer(player, card, event, 5, 7, 0x50be);
     }
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
       draw_cards(player, 1);
     }
   }
-  result = generic_activated_ability(player, card, event, 0x20, 2, 0, 0, 0, 1, 0, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 0x20, 2, 0, 0, 0, 1, 0, 0, NULL, NULL);
 }
 
 /* ManalinkEh 2022: 0x25d22c0; original cards/throne_of_eldraine.c:3419. */
@@ -2987,30 +2800,21 @@ int card_murderous_rider(int player, int card, event_t event)
     remove_card_from_grave(owner, position);
     put_iid_under_the_first_x_cards_of_library(owner, result, 500);
   }
-  if (event != EVENT_CAN_CAST)
+  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||
+      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||
+      (event == EVENT_CAST_SPELL && card == affected_card &&
+       player == affected_card_controller) ||
+      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_025d231d;
-    }
-    else if ((event == EVENT_RESOLVE_SPELL) ||
-             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      goto LAB_025d231d;
-    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
-    {
-      return 0;
-    }
+    return generic_adventurer(player, card, event, 5, 10, 0x50c7);
   }
-LAB_025d231d:
-  result = generic_adventurer(player, card, event, 5, 10, 0x50c7);
-  return result;
+  return 0;
 }
 
 /* ManalinkEh 2022: 0x25d2410; original cards/throne_of_eldraine.c:3450. */
 int card_mystic_sanctuary(int player, int card, event_t event)
 {
-  int iVar1;
+  int i;
   card_instance_t *instance;
   subtype_t subtype;
   int iVar3;
@@ -3019,27 +2823,26 @@ int card_mystic_sanctuary(int player, int card, event_t event)
 
   if (((event != EVENT_CAST_SPELL) || (card != affected_card)) ||
       (player != affected_card_controller))
-    goto LAB_025d2428;
-  iVar1 = check_state(player, card, 0x10);
-  if (iVar1 == 0)
+    return mana_producer(player, card, event);
+  if (check_state(player, card, 0x10) == 0)
   {
 
-    iVar1 = 0;
+    i = 0;
     iStack_ec = 0;
     if (0 < active_cards_count[player])
     {
       do
       {
-        instance = in_play(player, iVar1);
+        instance = in_play(player, i);
         if (instance != NULL)
         {
           subtype = get_hacked_subtype(player, card, 0x5002);
-          iVar3 = has_subtype(player, iVar1, subtype);
+          iVar3 = has_subtype(player, i, subtype);
           if ((iVar3 != 0) && (iStack_ec = iStack_ec + 1, iStack_ec == 3))
             goto LAB_025d2508;
         }
-        iVar1 = iVar1 + 1;
-      } while (iVar1 < active_cards_count[player]);
+        i = i + 1;
+      } while (i < active_cards_count[player]);
       if (2 < iStack_ec)
         goto LAB_025d2508;
     }
@@ -3050,19 +2853,15 @@ int card_mystic_sanctuary(int player, int card, event_t event)
   {
   LAB_025d2508:
     new_default_test_definition(&this_test, 0x38, "Select target instant or sorcery card.");
-    iVar1 = new_special_count_grave(player, &this_test);
-    if (iVar1 != 0)
+    if (new_special_count_grave(player, &this_test) != 0)
     {
-      iVar1 = graveyard_has_shroud(player);
-      if (iVar1 == 0)
+      if (graveyard_has_shroud(player) == 0)
       {
         new_global_tutor(player, player, 2, 2, 0, 1, &this_test);
       }
     }
   }
-LAB_025d2428:
-  iVar1 = mana_producer(player, card, event);
-  return iVar1;
+  return mana_producer(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25d2680; original cards/throne_of_eldraine.c:3566. */
@@ -3131,13 +2930,13 @@ int card_oko_thief_of_crowns(int player, int card, event_t event)
           instance->number_of_targets = '\x02';
         }
       }
-      goto LAB_025d2761;
+      return planeswalker(player, card, event, 4);
     }
   }
   else
   {
     if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-      goto LAB_025d2761;
+      return planeswalker(player, card, event, 4);
     default_target_definition(player, card, &td_elk, 0x42);
     default_target_definition(player, card, &td_player, 0x42);
     td_player.allowed_controller = player;
@@ -3185,42 +2984,29 @@ int card_oko_thief_of_crowns(int player, int card, event_t event)
       instance->number_of_targets = '\0';
     }
   }
-LAB_025d2761:
-  result = planeswalker(player, card, event, 4);
-  return result;
+  return planeswalker(player, card, event, 4);
 }
 
 /* ManalinkEh 2022: 0x25d2d30; original cards/throne_of_eldraine.c:3717. */
 int card_order_of_midnight(int player, int card, event_t event)
 {
-  int result;
 
   cannot_block(player, card, event);
-  if (event != EVENT_CAN_CAST)
+  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||
+      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||
+      (event == EVENT_CAST_SPELL && card == affected_card &&
+       player == affected_card_controller) ||
+      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_025d2d69;
-    }
-    else if ((event == EVENT_RESOLVE_SPELL) ||
-             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      goto LAB_025d2d69;
-    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
-    {
-      return 0;
-    }
+    return generic_adventurer(player, card, event, 5, 8, 0x50d8);
   }
-LAB_025d2d69:
-  result = generic_adventurer(player, card, event, 5, 8, 0x50d8);
-  return result;
+  return 0;
 }
 
 /* ManalinkEh 2022: 0x25d2df0; original cards/throne_of_eldraine.c:3763. */
 int card_petty_theft(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   target_definition_t td;
 
   if (event == EVENT_CAN_CAST)
@@ -3243,7 +3029,7 @@ int card_petty_theft(int player, int card, event_t event)
     get_card_instance(player, card);
   LAB_025d2fa2:
     if ((card != affected_card) || (player != affected_card_controller))
-      goto LAB_025d2e8f;
+      return adventure(player, card, event, 0x5037);
   }
   else
   {
@@ -3264,7 +3050,7 @@ int card_petty_theft(int player, int card, event_t event)
         td.illegal_type = 1;
         td.preferred_controller = td.allowed_controller;
         get_card_instance(player, card);
-        goto LAB_025d2e8f;
+        return adventure(player, card, event, 0x5037);
       }
     LAB_025d2f3c:
       if ((event != EVENT_COUNTERSPELL && event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
@@ -3281,28 +3067,23 @@ int card_petty_theft(int player, int card, event_t event)
     }
     if (event != EVENT_CAN_CHANGE_TARGET)
     {
-      if ((event == EVENT_RESOLVE_SPELL) && (result = valid_target(&td), result != 0))
+      if ((event == EVENT_RESOLVE_SPELL) && (valid_target(&td) != 0))
       {
         bounce_permanent(instance->targets[0].player, instance->targets[0].card);
       }
-    LAB_025d2e8f:
-      result = adventure(player, card, event, 0x5037);
-      return result;
+      return adventure(player, card, event, 0x5037);
     }
   }
 LAB_025d2ef1:
-  result =
-      generic_spell(player, card, event, 0x81, &td, "Select target nonland permanent.", 1, NULL);
-  return result;
+  return generic_spell(player, card, event, 0x81, &td, "Select target nonland permanent.", 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x25d3080; original cards/throne_of_eldraine.c:3807. */
 int card_profane_insight(int player, int card, event_t event)
 {
-  int result;
 
   if (event == EVENT_CAN_CAST)
-    goto LAB_025d30b1;
+    return basic_spell(player, card, event);
   if (event == EVENT_CAST_SPELL)
   {
     if ((card != affected_card) || (player != affected_card_controller))
@@ -3310,9 +3091,7 @@ int card_profane_insight(int player, int card, event_t event)
   LAB_025d30fd:
     if (player == affected_card_controller)
     {
-    LAB_025d30b1:
-      result = basic_spell(player, card, event);
-      return result;
+      return basic_spell(player, card, event);
     }
   }
   else
@@ -3320,9 +3099,9 @@ int card_profane_insight(int player, int card, event_t event)
     if (event != EVENT_RESOLVE_SPELL)
     {
       if (event == EVENT_CAN_CHANGE_TARGET)
-        goto LAB_025d30b1;
+        return basic_spell(player, card, event);
       if (event == EVENT_CHANGE_TARGET)
-        goto LAB_025d3108;
+        return adventure(player, card, event, 0x507b);
     LAB_025d30d4:
       if ((event != EVENT_COUNTERSPELL && event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
       {
@@ -3331,21 +3110,19 @@ int card_profane_insight(int player, int card, event_t event)
       if (event == EVENT_CAST_SPELL)
       {
         if (affected_card != card)
-          goto LAB_025d3108;
+          return adventure(player, card, event, 0x507b);
         goto LAB_025d30fd;
       }
     }
     if (event == EVENT_CAN_CHANGE_TARGET)
-      goto LAB_025d30b1;
+      return basic_spell(player, card, event);
     if (event == EVENT_RESOLVE_SPELL)
     {
       draw_a_card(player);
       lose_life(player, 1);
     }
   }
-LAB_025d3108:
-  result = adventure(player, card, event, 0x507b);
-  return result;
+  return adventure(player, card, event, 0x507b);
 }
 
 /* ManalinkEh 2022: 0x25d3180; original cards/throne_of_eldraine.c:3839. */
@@ -3354,7 +3131,6 @@ int card_questing_beast(int player, int card, event_t event)
   unsigned int uVar1;
   int iVar2;
   card_instance_t *instance;
-  int iVar4;
   int times_damaged[2];
   int damages[2];
   target_definition_t td;
@@ -3386,10 +3162,9 @@ int card_questing_beast(int player, int card, event_t event)
       state_untargettable(affected_card_controller, affected_card, 1);
     }
   }
-  iVar2 = damage_dealt_by_me(player, card, event,
+  if (damage_dealt_by_me(player, card, event,
                              DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
-                                 DDBM_REPORT_DAMAGE_DEALT | DDBM_MUST_BE_COMBAT_DAMAGE);
-  if (iVar2 != 0)
+                                 DDBM_REPORT_DAMAGE_DEALT | DDBM_MUST_BE_COMBAT_DAMAGE) != 0)
   {
 
     instance = get_card_instance(player, card);
@@ -3407,11 +3182,9 @@ int card_questing_beast(int player, int card, event_t event)
     td.allowed_controller = iVar2;
     if (times_damaged[iVar2] != 0)
     {
-      iVar4 = can_target(&td);
-      if (iVar4 != 0)
+      if (can_target(&td) != 0)
       {
-        iVar4 = new_pick_target(&td, "Select target planeswalker an opponent controls.", 0, 0x80);
-        if (iVar4 != 0)
+        if (new_pick_target(&td, "Select target planeswalker an opponent controls.", 0, 0x80) != 0)
         {
           damage_target0(player, card, damages[iVar2]);
           instance->number_of_targets = '\0';
@@ -3496,53 +3269,33 @@ int card_rankle_master_of_pranks(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25d36a0; original cards/throne_of_eldraine.c:3969. */
 int card_realm_cloaked_giant(int player, int card, event_t event)
 {
-  int result;
 
   vigilance(player, card, event);
-  if (event != EVENT_CAN_CAST)
+  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||
+      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||
+      (event == EVENT_CAST_SPELL && card == affected_card &&
+       player == affected_card_controller) ||
+      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_025d36d9;
-    }
-    else if ((event == EVENT_RESOLVE_SPELL) ||
-             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      goto LAB_025d36d9;
-    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
-    {
-      return 0;
-    }
+    return generic_adventurer(player, card, event, 5, 8, 0x50e8);
   }
-LAB_025d36d9:
-  result = generic_adventurer(player, card, event, 5, 8, 0x50e8);
-  return result;
+  return 0;
 }
 
 /* ManalinkEh 2022: 0x25d38b0; original cards/throne_of_eldraine.c:4051. */
 int card_rimrock_knight(int player, int card, event_t event)
 {
-  int result;
 
   cannot_block(player, card, event);
-  if (event != EVENT_CAN_CAST)
+  if (event == EVENT_CAN_CAST || event == EVENT_RESOLVE_SPELL ||
+      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ||
+      (event == EVENT_CAST_SPELL && card == affected_card &&
+       player == affected_card_controller) ||
+      event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE || event == EVENT_QUERY)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_025d38e9;
-    }
-    else if ((event == EVENT_RESOLVE_SPELL) ||
-             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      goto LAB_025d38e9;
-    if ((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) && (event != EVENT_QUERY))
-    {
-      return 0;
-    }
+    return generic_adventurer(player, card, event, 3, 5, 0x50f1);
   }
-LAB_025d38e9:
-  result = generic_adventurer(player, card, event, 3, 5, 0x50f1);
-  return result;
+  return 0;
 }
 
 /* ManalinkEh 2022: 0x25d3a50; original cards/throne_of_eldraine.c:4105. */
@@ -3572,11 +3325,9 @@ int card_roving_keep(int player, int card, event_t event)
            (((event == EVENT_CHECK_ABILITIES && (card == affected_card)) &&
              (player == affected_card_controller))))
   {
-    result = generic_shade(player, card, event, 0, 7, 0, 0, 0, 0, 0, 2, 0, 0x80, 0);
-    return result;
+    return generic_shade(player, card, event, 0, 7, 0, 0, 0, 0, 0, 2, 0, 0x80, 0);
   }
-  result = generic_activated_ability(player, card, event, 0, 7, 0, 0, 0, 0, 0, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 0, 7, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
 /* ManalinkEh 2022: 0x25d3ec0; original cards/throne_of_eldraine.c:4389. */
@@ -3584,7 +3335,7 @@ int card_steelclaw_lance(int player, int card, event_t event)
 {
   card_instance_t *pcVar1;
   int result;
-  card_instance_t *pcVar3;
+  card_instance_t *instance;
   unsigned int uVar4;
   unsigned int uVar5;
   target_definition_t *td_00;
@@ -3596,8 +3347,8 @@ int card_steelclaw_lance(int player, int card, event_t event)
   pcVar1 = get_card_instance(player, card);
   if (event - EVENT_POWER < 2)
   {
-    pcVar3 = in_play(player, card);
-    if ((((pcVar3 != NULL) && (pcVar1->damage_target_card == affected_card)) &&
+    instance = in_play(player, card);
+    if ((((instance != NULL) && (pcVar1->damage_target_card == affected_card)) &&
          (pcVar1->damage_target_player == affected_card_controller)) &&
         (pcVar1 = is_equipping(player, card), pcVar1 != NULL))
     {
@@ -3623,9 +3374,8 @@ int card_steelclaw_lance(int player, int card, event_t event)
       {
         return 1;
       }
-      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x100, 1, 0, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x100, 1, 0, 0, 0, 0, 0,
                                          0, &td1, NULL);
-      return result;
     }
     if (event == EVENT_ACTIVATE)
     {
@@ -3657,17 +3407,16 @@ int card_steelclaw_lance(int player, int card, event_t event)
       {
         prompt = "Select target creature you control.";
         result = 3;
-      LAB_025d4208:
-        result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0x102, result, 0, 0, 0, 0,
+        return generic_activated_ability(player, card, EVENT_ACTIVATE, 0x102, result, 0, 0, 0, 0,
                                            0, 0, td_00, prompt);
-        return result;
       }
       if (result == 2)
       {
         prompt = "Select target Knight you control.";
         result = 1;
         td_00 = &td1;
-        goto LAB_025d4208;
+        return generic_activated_ability(player, card, EVENT_ACTIVATE, 0x102, result, 0, 0, 0, 0,
+                                           0, 0, td_00, prompt);
       }
       goto LAB_025d3f79;
     }
@@ -3687,36 +3436,35 @@ int card_steelclaw_lance(int player, int card, event_t event)
   td1.allowed_controller = player;
   td1.required_subtype = 0x67;
   td1.preferred_controller = td1.allowed_controller;
-  if (event != EVENT_RESOLVE_ACTIVATION)
-    goto LAB_025d3f79;
-  result = pcVar1->info_slot;
-  if (result == 1)
+  if (!(event != EVENT_RESOLVE_ACTIVATION))
   {
-    result = validate_target(player, card, &td, 0);
-    if (result == 0)
+    result = pcVar1->info_slot;
+    if (result == 1)
     {
-      result = pcVar1->info_slot;
-      goto LAB_025d436a;
+      result = validate_target(player, card, &td, 0);
+      if (result == 0)
+      {
+        result = pcVar1->info_slot;
+        goto LAB_025d436a;
+      }
     }
+    else
+    {
+    LAB_025d436a:
+      if ((result != 2) || (result = validate_target(player, card, ptStack_c0, 0), result == 0))
+        goto LAB_025d3f79;
+    }
+    equip_target_creature(pcVar1->parent_controller, pcVar1->parent_card, pcVar1->targets[0].player,
+                          pcVar1->targets[0].card);
   }
-  else
-  {
-  LAB_025d436a:
-    if ((result != 2) || (result = validate_target(player, card, ptStack_c0, 0), result == 0))
-      goto LAB_025d3f79;
-  }
-  equip_target_creature(pcVar1->parent_controller, pcVar1->parent_card, pcVar1->targets[0].player,
-                        pcVar1->targets[0].card);
 LAB_025d3f79:
-  result = generic_activated_ability(player, card, event, 0x102, 3, 0, 0, 0, 0, 0, 0, &td,
+  return generic_activated_ability(player, card, event, 0x102, 3, 0, 0, 0, 0, 0, 0, &td,
                                      "Select target creature you control.");
-  return result;
 }
 
 /* ManalinkEh 2022: 0x25d44d0; original cards/throne_of_eldraine.c:4469. */
 int card_stomp(int player, int card, event_t event)
 {
-  int result;
   target_definition_t td;
 
   if (event == EVENT_CAN_CAST)
@@ -3732,7 +3480,7 @@ int card_stomp(int player, int card, event_t event)
   LAB_025d4624:
     td.zone = 0x1200;
     if ((card != affected_card) || (player != affected_card_controller))
-      goto LAB_025d4544;
+      return adventure(player, card, event, 0x5034);
   }
   else
   {
@@ -3746,7 +3494,7 @@ int card_stomp(int player, int card, event_t event)
       {
         default_target_definition(player, card, &td, 0x102);
         td.zone = 0x1200;
-        goto LAB_025d4544;
+        return adventure(player, card, event, 0x5034);
       }
     LAB_025d45dc:
       if ((event != EVENT_COUNTERSPELL && event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
@@ -3760,26 +3508,22 @@ int card_stomp(int player, int card, event_t event)
     td.zone = 0x1200;
     if (event != EVENT_CAN_CHANGE_TARGET)
     {
-      if ((event == EVENT_RESOLVE_SPELL) && (result = valid_target(&td), result != 0))
+      if ((event == EVENT_RESOLVE_SPELL) && (valid_target(&td) != 0))
       {
         damage_cannot_be_prevented_until_eot(player, card);
         damage_target0(player, card, 2);
       }
-    LAB_025d4544:
-      result = adventure(player, card, event, 0x5034);
-      return result;
+      return adventure(player, card, event, 0x5034);
     }
   }
 LAB_025d458d:
   td.zone = 0x1200;
-  result = generic_spell(player, card, event, 1, &td, "TARGET_ANY", 1, NULL);
-  return result;
+  return generic_spell(player, card, event, 1, &td, "TARGET_ANY", 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x25d48b0; original cards/throne_of_eldraine.c:4547. */
 int card_swift_end(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t td;
 
@@ -3795,7 +3539,7 @@ int card_swift_end(int player, int card, event_t event)
     default_target_definition(player, card, &td, 0x102);
   LAB_025d49ed:
     if ((card != affected_card) || (player != affected_card_controller))
-      goto LAB_025d4919;
+      return adventure(player, card, event, 0x50c6);
   }
   else
   {
@@ -3808,7 +3552,7 @@ int card_swift_end(int player, int card, event_t event)
       if (event == EVENT_CHANGE_TARGET)
       {
         default_target_definition(player, card, &td, 0x102);
-        goto LAB_025d4919;
+        return adventure(player, card, event, 0x50c6);
       }
     LAB_025d49ac:
       if ((event != EVENT_COUNTERSPELL && event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
@@ -3821,21 +3565,18 @@ int card_swift_end(int player, int card, event_t event)
     }
     if (event != EVENT_CAN_CHANGE_TARGET)
     {
-      if ((event == EVENT_RESOLVE_SPELL) && (result = valid_target(&td), result != 0))
+      if ((event == EVENT_RESOLVE_SPELL) && (valid_target(&td) != 0))
       {
 
         instance = get_card_instance(player, card);
         kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
         lose_life(player, 2);
       }
-    LAB_025d4919:
-      result = adventure(player, card, event, 0x50c6);
-      return result;
+      return adventure(player, card, event, 0x50c6);
     }
   }
 LAB_025d495e:
-  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE_OR_PLANESWALKER", 1, NULL);
-  return result;
+  return generic_spell(player, card, event, 1, &td, "TARGET_CREATURE_OR_PLANESWALKER", 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x25d4ac0; original cards/throne_of_eldraine.c:4572. */
@@ -3920,10 +3661,9 @@ int card_torbran_thane_of_red_fell(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25d5d90; original cards/throne_of_eldraine.c:5164. */
 int card_treats_to_share(int player, int card, event_t event)
 {
-  int result;
 
   if (event == EVENT_CAN_CAST)
-    goto LAB_025d5dc1;
+    return basic_spell(player, card, event);
   if (event == EVENT_CAST_SPELL)
   {
     if ((card != affected_card) || (player != affected_card_controller))
@@ -3931,9 +3671,7 @@ int card_treats_to_share(int player, int card, event_t event)
   LAB_025d5e0d:
     if (player == affected_card_controller)
     {
-    LAB_025d5dc1:
-      result = basic_spell(player, card, event);
-      return result;
+      return basic_spell(player, card, event);
     }
   }
   else
@@ -3941,9 +3679,9 @@ int card_treats_to_share(int player, int card, event_t event)
     if (event != EVENT_RESOLVE_SPELL)
     {
       if (event == EVENT_CAN_CHANGE_TARGET)
-        goto LAB_025d5dc1;
+        return basic_spell(player, card, event);
       if (event == EVENT_CHANGE_TARGET)
-        goto LAB_025d5e18;
+        return adventure(player, card, event, 0x504d);
     LAB_025d5de4:
       if ((event != EVENT_COUNTERSPELL && event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
       {
@@ -3952,20 +3690,18 @@ int card_treats_to_share(int player, int card, event_t event)
       if (event == EVENT_CAST_SPELL)
       {
         if (affected_card != card)
-          goto LAB_025d5e18;
+          return adventure(player, card, event, 0x504d);
         goto LAB_025d5e0d;
       }
     }
     if (event == EVENT_CAN_CHANGE_TARGET)
-      goto LAB_025d5dc1;
+      return basic_spell(player, card, event);
     if (event == EVENT_RESOLVE_SPELL)
     {
       generate_token_by_id(player, card, 0x5077);
     }
   }
-LAB_025d5e18:
-  result = adventure(player, card, event, 0x504d);
-  return result;
+  return adventure(player, card, event, 0x504d);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -4019,7 +3755,7 @@ int card_lochmere_serpent(int player, int card, event_t event)
         } while (ret_location != instance->targets + 5);
         return 1;
       }
-      goto LAB_025d1c84;
+      return flash(player, card, event);
     }
     if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
       goto LAB_025d18fc;
@@ -4099,9 +3835,7 @@ int card_lochmere_serpent(int player, int card, event_t event)
     }
     return 0;
   }
-LAB_025d1c84:
-  iVar4 = flash(player, card, event);
-  return iVar4;
+  return flash(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -4109,6 +3843,7 @@ LAB_025d1c84:
 /* ManalinkEh 2022: 0x25d0d20; original cards/throne_of_eldraine.c:2845. */
 int card_kenrith_the_returned_king(int player, int card, event_t event)
 {
+  int p;
   int iVar1;
   int iVar2;
   int iVar3;
@@ -4215,7 +3950,7 @@ int card_kenrith_the_returned_king(int player, int card, event_t event)
     goto LAB_025d0d5c;
 
   instance = get_card_instance(player, card);
-  iVar2 = instance->targets[0].player;
+  p = instance->targets[0].player;
   instance = get_card_instance(player, card);
   switch (iVar1)
   {
@@ -4223,20 +3958,20 @@ int card_kenrith_the_returned_king(int player, int card, event_t event)
     pump_creatures_until_eot(player, card, 2, 0, 0, 0, 0x80, 4, NULL);
     break;
   case 2:
-    add_counters(player, card, iVar2, instance->targets[0].card, COUNTER_P1_P1, 1);
+    add_counters(player, card, p, instance->targets[0].card, COUNTER_P1_P1, 1);
     break;
   case 3:
-    gain_life(iVar2, 5);
+    gain_life(p, 5);
     break;
   case 4:
-    draw_a_card(iVar2);
+    draw_a_card(p);
     break;
   case 5:
 
-    iVar1 = validate_target_from_grave_source(player, card, iVar2, 1);
+    iVar1 = validate_target_from_grave_source(player, card, p, 1);
     if (iVar1 != -1)
     {
-      reanimate_permanent(player, card, iVar2, iVar1, REANIMATE_UNDER_OWNER_CONTROL);
+      reanimate_permanent(player, card, p, iVar1, REANIMATE_UNDER_OWNER_CONTROL);
     }
   default:
   LAB_025d0d5c:
@@ -4248,9 +3983,9 @@ int card_kenrith_the_returned_king(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25d14b0; original cards/throne_of_eldraine.c:3028. */
 int card_korvold_fae_cursed_king(int player, int card, event_t event)
 {
+  int c;
   card_instance_t *instance;
   unsigned int uVar2;
-  int iVar3;
   int iVar4;
   test_definition_t test;
 
@@ -4263,20 +3998,20 @@ int card_korvold_fae_cursed_king(int player, int card, event_t event)
 
       if (0 < active_cards_count[player])
       {
-        iVar4 = 0;
+        c = 0;
         do
         {
-          instance = in_play(player, iVar4);
+          instance = in_play(player, c);
 
-          if ((((instance != NULL) && (iVar3 = is_what(player, iVar4, 0x80), iVar3 != 0)) &&
-               (instance = get_card_instance(player, iVar4),
+          if ((((instance != NULL) && (is_what(player, c, 0x80) != 0)) &&
+               (instance = get_card_instance(player, c),
                 instance->info_slot_fn == korvold_fae_cursed_king_effect)) &&
               (((instance->damage_target_player == player &&
                  (instance->damage_target_card == card)) ||
                 ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
             goto LAB_025d160c;
-          iVar4 = iVar4 + 1;
-        } while (iVar4 < active_cards_count[player]);
+          c = c + 1;
+        } while (c < active_cards_count[player]);
       }
 
       iVar4 = create_targetted_legacy_effect(player, card, korvold_fae_cursed_king_effect, player,
@@ -4331,7 +4066,7 @@ int card_the_great_henge(int player, int card, event_t event)
     result = get_highest_power(player);
     COST_COLORLESS = COST_COLORLESS - (char)result;
     if (trigger_condition != 0xdb)
-      goto LAB_025d580a;
+      return artifact_mana_all_one_color(player, card, event, 2, 0);
   LAB_025d5872:
     if ((card == affected_card) && (player == affected_card_controller))
     {
@@ -4353,9 +4088,7 @@ int card_the_great_henge(int player, int card, event_t event)
   {
     gain_life(player, 2);
   }
-LAB_025d580a:
-  result = artifact_mana_all_one_color(player, card, event, 2, 0);
-  return result;
+  return artifact_mana_all_one_color(player, card, event, 2, 0);
 }
 
 /* ManalinkEh 2022: 0x25d5920; original cards/throne_of_eldraine.c:4927. */
@@ -4692,6 +4425,7 @@ int card_castle_vantress(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25cfc20; original cards/throne_of_eldraine.c:2366. */
 int card_gilded_goose(int player, int card, event_t event)
 {
+  int choice;
   card_instance_t *instance;
   int iVar2;
   int iVar3;
@@ -4726,13 +4460,11 @@ int card_gilded_goose(int player, int card, event_t event)
     {
       return 0;
     }
-    iVar2 = mana_producer(player, card, EVENT_CAN_ACTIVATE);
-    if (iVar2 == 0)
+    if (mana_producer(player, card, EVENT_CAN_ACTIVATE) == 0)
     {
       return 0;
     }
-    iVar2 = new_can_sacrifice_as_cost(player, card, &test_food);
-    if (iVar2 == 0)
+    if (new_can_sacrifice_as_cost(player, card, &test_food) == 0)
     {
       return 0;
     }
@@ -4759,8 +4491,7 @@ int card_gilded_goose(int player, int card, event_t event)
     }
 
     instance->info_slot = 0;
-    iVar2 = paying_mana();
-    if (iVar2 == 0)
+    if (paying_mana() == 0)
     {
 
       iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 1, 0, 0, 1, 0, 0, 0,
@@ -4772,14 +4503,14 @@ int card_gilded_goose(int player, int card, event_t event)
         iVar3 = new_can_sacrifice_as_cost(player, card, &test_food);
         uVar4 = (unsigned int)(iVar3 != 0);
       }
-      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Make a Food", iVar2, 5,
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Make a Food", iVar2, 5,
                           "Get Mana", uVar4, 5, 0, 0, 0, 0);
-      if (iVar2 == 0)
+      if (choice == 0)
       {
         spell_fizzled = 1;
         return 0;
       }
-      if (iVar2 == 1)
+      if (choice == 1)
       {
         instance->state = instance->state | 0x10;
         generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 1, 0, 0, 0, NULL, NULL);
@@ -4790,14 +4521,13 @@ int card_gilded_goose(int player, int card, event_t event)
         instance->state = instance->state & 0xffffffef;
         return 0;
       }
-      if (iVar2 != 2)
+      if (choice != 2)
       {
         return 0;
       }
     }
     instance->state = instance->state | 0x10;
-    iVar2 = new_sacrifice(player, card, player, SAC_AS_COST, &test_food);
-    if (iVar2 != 0)
+    if (new_sacrifice(player, card, player, SAC_AS_COST, &test_food) != 0)
     {
       do
       {
@@ -4857,9 +4587,8 @@ int card_golden_egg(int player, int card, event_t event)
     {
       return 1;
     }
-    result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 9, 2, 0, 0, 0, 0, 0, 0,
+    return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 9, 2, 0, 0, 0, 0, 0, 0,
                                        NULL, NULL);
-    return result;
   }
   if (event != EVENT_ACTIVATE)
     goto LAB_025d0148;
@@ -4928,7 +4657,7 @@ LAB_025d036a:
 /* ManalinkEh 2022: 0x25c9450; original cards/throne_of_eldraine.c:5026. */
 static int trail_of_crumbs_effect(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   int result;
   unsigned int uVar3;
   card_instance_t *pcVar4;
@@ -4939,16 +4668,16 @@ static int trail_of_crumbs_effect(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
-      pcVar1 = get_card_instance(player, card);
-      if ((-1 < pcVar1->damage_target_player) &&
-          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
            result != 0x5130))
       {
         kill_card(player, card, KILL_EXILE);
       }
     }
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
     {
       return 0;
@@ -4956,8 +4685,8 @@ static int trail_of_crumbs_effect(int player, int card, event_t event)
   }
   else
   {
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, event), result != 0))
     {
       return 0;
@@ -4965,26 +4694,26 @@ static int trail_of_crumbs_effect(int player, int card, event_t event)
     if (event == EVENT_GRAVEYARD_FROM_PLAY)
     {
 
-      pcVar1 = get_card_instance(player, card);
+      instance = get_card_instance(player, card);
       pcVar4 = in_play(affected_card_controller, affected_card);
       if ((pcVar4 != NULL) &&
           (result = is_this_dying(affected_card_controller, affected_card), result != 0))
       {
 
-        if ((pcVar1->damage_target_card == affected_card) &&
-            (affected_card_controller == pcVar1->damage_target_player))
+        if ((instance->damage_target_card == affected_card) &&
+            (affected_card_controller == instance->damage_target_player))
         {
-          pcVar1->damage_target_card = -1;
-          pcVar1->damage_target_player = -1;
+          instance->damage_target_card = -1;
+          instance->damage_target_player = -1;
           remove_status(player, card, 0x10000);
-          if (pcVar1->targets[0xb].player < 0)
+          if (instance->targets[0xb].player < 0)
           {
-            pcVar1->targets[0xb].player = 0;
+            instance->targets[0xb].player = 0;
           }
-          *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+          *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
         }
-        pcVar1 = get_card_instance(affected_card_controller, affected_card);
-        if (pcVar1->kill_code == '\x03')
+        instance = get_card_instance(affected_card_controller, affected_card);
+        if (instance->kill_code == '\x03')
         {
           default_test_definition(&test_food, 0xff);
           test_food.subtype = 0x3008;
@@ -5020,9 +4749,9 @@ static int trail_of_crumbs_effect(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25d5a80; original cards/throne_of_eldraine.c:5089. */
 int card_trail_of_crumbs(int player, int card, event_t event)
 {
+  int c;
   card_instance_t *instance;
   int iVar2;
-  int iVar3;
   unsigned int uVar4;
   test_definition_t test_food;
 
@@ -5038,20 +4767,20 @@ int card_trail_of_crumbs(int player, int card, event_t event)
 
       if (0 < active_cards_count[player])
       {
-        iVar2 = 0;
+        c = 0;
         do
         {
-          instance = in_play(player, iVar2);
+          instance = in_play(player, c);
 
-          if ((((instance != NULL) && (iVar3 = is_what(player, iVar2, 0x80), iVar3 != 0)) &&
-               (instance = get_card_instance(player, iVar2),
+          if ((((instance != NULL) && (is_what(player, c, 0x80) != 0)) &&
+               (instance = get_card_instance(player, c),
                 instance->info_slot_fn == trail_of_crumbs_effect)) &&
               (((instance->damage_target_player == player &&
                  (instance->damage_target_card == card)) ||
                 ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
             goto LAB_025d5acd;
-          iVar2 = iVar2 + 1;
-        } while (iVar2 < active_cards_count[player]);
+          c = c + 1;
+        } while (c < active_cards_count[player]);
       }
 
       iVar2 = create_targetted_legacy_effect(player, card, trail_of_crumbs_effect, player, card);
@@ -5088,8 +4817,7 @@ LAB_025d5acd:
       uVar4 = uVar4 - 1;
     }
   }
-  iVar2 = global_enchantment(player, card, event);
-  return iVar2;
+  return global_enchantment(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -5137,25 +4865,20 @@ int card_alela_artful_provocateur(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25ccbf0; original cards/throne_of_eldraine.c:1118. */
 int card_chulane_teller_of_tales(int player, int card, event_t event)
 {
+  target_definition_t td;
   card_instance_t *instance;
   int result;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    test_definition_t test;
-    uint8_t bytes[216];
-  } recovered_stack_td;
 
   check_legend_rule(player, card, event);
   vigilance(player, card, event);
   sp_ability_trigger(player, event, 2, TYPE_CREATURE, NULL, player, card);
   if (event == EVENT_SPA)
   {
+    test_definition_t test2;
     draw_a_card(player);
-    new_default_test_definition(&recovered_stack_td.test, 1, "Select a land card.");
-    new_global_tutor(player, player, 4, 4, 0, 1, &recovered_stack_td.test);
+    new_default_test_definition(&test2, 1, "Select a land card.");
+    new_global_tutor(player, player, 4, 4, 0, 1, &test2);
     return 0;
   }
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -5177,11 +4900,10 @@ int card_chulane_teller_of_tales(int player, int card, event_t event)
   instance = get_card_instance(player, card);
   bounce_permanent(instance->targets[0].player, result);
 LAB_025cccb6:
-  default_target_definition(player, card, &recovered_stack_td.target, 2);
-  recovered_stack_td.target.allowed_controller = player;
-  result = generic_activated_ability(player, card, event, 5, 3, 0, 0, 0, 0, 0, 0,
-                                     &recovered_stack_td.target, "TARGET_CREATURE_YOU_CONTROL");
-  return result;
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = player;
+  return generic_activated_ability(player, card, event, 5, 3, 0, 0, 0, 0, 0, 0,
+                                     &td, "TARGET_CREATURE_YOU_CONTROL");
 }
 
 /* ManalinkEh 2022: 0x25d2040; original cards/throne_of_eldraine.c:3275. */
@@ -5255,7 +4977,7 @@ int card_the_circle_of_loyalty(int player, int card, event_t event)
       goto LAB_025d56b6;
   LAB_025d55d3:
     if (event != EVENT_RESOLVE_ACTIVATION)
-      goto LAB_025d55dc;
+      return generic_activated_ability(player, card, event, 1, 3, 0, 0, 0, 0, 1, 0, NULL, NULL);
   }
   {
   token_generation_t token;
@@ -5263,9 +4985,7 @@ int card_the_circle_of_loyalty(int player, int card, event_t event)
   token.s_key_plus = SP_KEYWORD_VIGILANCE;
   generate_token(&token);
   }
-LAB_025d55dc:
-  result = generic_activated_ability(player, card, event, 1, 3, 0, 0, 0, 0, 1, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 1, 3, 0, 0, 0, 0, 1, 0, NULL, NULL);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -5471,15 +5191,13 @@ int card_edgewall_innkeeper(int player, int card, event_t event)
 int card_bonecrusher_giant(int player, int card, event_t event)
 {
   const target_t *ptVar1;
-  int result;
 
   ptVar1 = becomes_target_of_spell(player, card, event, player, card, 2, RESOLVE_TRIGGER_MANDATORY);
   if (ptVar1 != NULL)
   {
     damage_player(ptVar1->player, 2, player, card);
   }
-  result = generic_adventurer(player, card, event, 5, 10, 0x5035);
-  return result;
+  return generic_adventurer(player, card, event, 5, 10, 0x5035);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -5488,18 +5206,17 @@ int card_bonecrusher_giant(int player, int card, event_t event)
 int card_syr_konrad_the_grim(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   unsigned int uVar3;
   test_definition_t this_test;
 
   check_legend_rule(player, card, event);
   instance = in_play(player, card);
   if ((instance == NULL) ||
-      (result = is_humiliated(player, card, AL_TRIG), result != 0))
+      (is_humiliated(player, card, AL_TRIG) != 0))
   {
   LAB_025d4f71:
     if (event == EVENT_ACTIVATE)
-      goto LAB_025d4fbb;
+      return generic_activated_ability(player, card, event, 0, 1, 1, 0, 0, 0, 0, 0, NULL, NULL);
   }
   else
   {
@@ -5534,35 +5251,28 @@ int card_syr_konrad_the_grim(int player, int card, event_t event)
     mill(current_turn, 1);
     mill(current_turn ^ 1, 1);
   }
-LAB_025d4fbb:
-  result = generic_activated_ability(player, card, event, 0, 1, 1, 0, 0, 0, 0, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 0, 1, 1, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
 /* ManalinkEh 2022: 0x25d6010; original cards/throne_of_eldraine.c:5299. */
 int card_wicked_wolf(int player, int card, event_t event)
 {
+  test_definition_t test_food;
   int t_card;
   int result;
   card_instance_t *instance;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    test_definition_t test;
-    uint8_t bytes[216];
-  } recovered_stack_test_food;
 
   result = duh_mode(player);
   etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_ETB)
   {
-    default_target_definition(player, card, &recovered_stack_test_food.target, 2);
-    recovered_stack_test_food.target.allowed_controller = (int32_t)(1 - player);
-    result = can_target(&recovered_stack_test_food.target);
+    target_definition_t td;
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = (int32_t)(1 - player);
+    result = can_target(&td);
     if ((result != 0) &&
-        (result = new_pick_target(&recovered_stack_test_food.target,
+        (result = new_pick_target(&td,
                                   "Select target creature you don\'t control.", 0, 0x80),
          result != 0))
     {
@@ -5595,24 +5305,24 @@ int card_wicked_wolf(int player, int card, event_t event)
   pump_ability_until_eot_no_repeat(player, card, result, t_card, 0, 0x800);
   tap_card(result, t_card);
 LAB_025d612a:
-  new_default_test_definition(&recovered_stack_test_food.test, 0xff, "Select a Food to sacrifice");
-  recovered_stack_test_food.test.subtype = 0x3008;
-  result = generic_activated_ability_with_sacrifice_as_cost(
+  new_default_test_definition(&test_food, 0xff, "Select a Food to sacrifice");
+  test_food.subtype = 0x3008;
+  return generic_activated_ability_with_sacrifice_as_cost(
       player, card, event, GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, TYPE_NONE,
-      &recovered_stack_test_food.test, SARV_0);
-  return result;
+      &test_food, SARV_0);
 }
 
 /* ManalinkEh 2022: 0x25d4b90; original cards/throne_of_eldraine.c:4592. */
 /* The prefix at 0x738f34 is an engine-owned runtime string buffer. */
 int card_syr_carah_the_bold(int player, int card, event_t event)
 {
+  int i;
   target_t *ptVar1;
   int32_t *piVar2;
   int32_t iVar3;
   target_t *ptVar4;
   card_instance_t *pcVar5;
-  card_instance_t *pcVar6;
+  card_instance_t *instance;
   int iVar7;
   int iVar8;
   int amts[10];
@@ -5625,13 +5335,13 @@ int card_syr_carah_the_bold(int player, int card, event_t event)
       ((pcVar5->damage_target_card == -1 &&
         (iVar8 = damage_is_to_planeswalker(pcVar5), iVar8 == 0))))
   {
-    pcVar6 = get_card_instance(player, card);
-    iVar8 = pcVar6->info_slot;
-    pcVar6->number_of_targets = '\0';
+    instance = get_card_instance(player, card);
+    iVar8 = instance->info_slot;
+    instance->number_of_targets = '\0';
     if (iVar8 < 10)
     {
-      pcVar6->info_slot = iVar8 + 1;
-      pcVar6->targets[iVar8].card = pcVar5->info_slot;
+      instance->info_slot = iVar8 + 1;
+      instance->targets[iVar8].card = pcVar5->info_slot;
     }
   }
   if ((((trigger_condition == 0xd7) && (card == affected_card)) &&
@@ -5645,7 +5355,7 @@ int card_syr_carah_the_bold(int player, int card, event_t event)
     }
     else if (event == EVENT_RESOLVE_TRIGGER)
     {
-      iVar8 = 0;
+      i = 0;
       default_target_definition(player, card, &td, 2);
       td.allow_cancel = 0;
       td.allowed_controller = 1 - player;
@@ -5654,10 +5364,9 @@ int card_syr_carah_the_bold(int player, int card, event_t event)
       {
         do
         {
-          iVar7 = can_target(&td);
-          if (iVar7 == 0)
+          if (can_target(&td) == 0)
             break;
-          iVar3 = pcVar5->targets[iVar8].card;
+          iVar3 = pcVar5->targets[i].card;
           if (ai_is_speculating == 1)
           {
             prompt[0] = '\0';
@@ -5669,26 +5378,25 @@ int card_syr_carah_the_bold(int player, int card, event_t event)
             scnprintf(prompt, 200, "%s %s (%d): %s", (const char *)0x738f34,
                       cards_ptr[iVar7]->full_name, iVar3, text_lines[0]);
           }
-          iVar7 = pick_next_target_noload(&td, prompt);
-          if (iVar7 != 0)
+          if (pick_next_target_noload(&td, prompt) != 0)
           {
             amts[pcVar5->number_of_targets - 1] = iVar3;
           }
-          iVar8 = iVar8 + 1;
-        } while (iVar8 < pcVar5->info_slot);
+          i = i + 1;
+        } while (i < pcVar5->info_slot);
       }
-      iVar8 = 0;
+      i = 0;
       pcVar5->info_slot = 0;
       if (pcVar5->number_of_targets != '\0')
       {
         do
         {
-          piVar2 = amts + iVar8;
-          ptVar4 = pcVar5->targets + iVar8;
-          ptVar1 = pcVar5->targets + iVar8;
-          iVar8 = iVar8 + 1;
+          piVar2 = amts + i;
+          ptVar4 = pcVar5->targets + i;
+          ptVar1 = pcVar5->targets + i;
+          i = i + 1;
           damage_creature(ptVar1->player, ptVar4->card, *piVar2, player, card);
-        } while (iVar8 < (int)(unsigned int)pcVar5->number_of_targets);
+        } while (i < (int)(unsigned int)pcVar5->number_of_targets);
       }
     }
   }
@@ -5700,6 +5408,7 @@ int card_syr_carah_the_bold(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25ce410; original cards/throne_of_eldraine.c:1720. */
 int card_fabled_passage(int player, int card, event_t event)
 {
+  int choice;
   color_test_t col;
   unsigned int uVar1;
   card_instance_t *instance;
@@ -5726,8 +5435,7 @@ int card_fabled_passage(int player, int card, event_t event)
     {
       if (mana_colors_added[player] != 0)
       {
-        iVar4 = mana_producer(player, card, EVENT_CAN_ACTIVATE);
-        return iVar4;
+        return mana_producer(player, card, EVENT_CAN_ACTIVATE);
       }
       in_play(player, card);
     }
@@ -5738,9 +5446,8 @@ int card_fabled_passage(int player, int card, event_t event)
       if (mana_colors_added[player] == 0)
       {
         instance->info_slot = 2;
-        iVar4 = generic_activated_ability(player, card, EVENT_ACTIVATE, 9, 0, 0, 0, 0, 0, 0, 0,
+        return generic_activated_ability(player, card, EVENT_ACTIVATE, 9, 0, 0, 0, 0, 0, 0, 0,
                                           NULL, NULL);
-        return iVar4;
       }
       iVar4 = paying_mana();
       if ((iVar4 != 0) || (iVar4 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 9, 1,
@@ -5749,8 +5456,7 @@ int card_fabled_passage(int player, int card, event_t event)
       {
         instance->info_slot = 1;
       LAB_025ce4ce:
-        iVar4 = can_produce_mana(player, card);
-        if (iVar4 == 0)
+        if (can_produce_mana(player, card) == 0)
         {
           return 0;
         }
@@ -5776,16 +5482,16 @@ int card_fabled_passage(int player, int card, event_t event)
       instance->info_slot = 2;
       if ((bVar5) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
       {
-        iVar4 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
+        choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
                             "Use Ability", 1, 1, 0, 0, 0, 0);
-        if (iVar4 == 0)
+        if (choice == 0)
         {
           spell_fizzled = 1;
           return 0;
         }
-        if (iVar4 == 1)
+        if (choice == 1)
           goto LAB_025ce4ce;
-        if (iVar4 != 2)
+        if (choice != 2)
           goto LAB_025ce563;
       }
       generic_activated_ability(player, card, EVENT_ACTIVATE, 9, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -5880,11 +5586,10 @@ int card_doom_foretold(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25d04e0; original cards/throne_of_eldraine.c:2556. */
 int card_granted(int player, int card, event_t event)
 {
-  int result;
   test_definition_t test;
 
   if (event == EVENT_CAN_CAST)
-    goto LAB_025d0514;
+    return basic_spell(player, card, event);
   if (event == EVENT_CAST_SPELL)
   {
     if ((card != affected_card) || (player != affected_card_controller))
@@ -5892,9 +5597,7 @@ int card_granted(int player, int card, event_t event)
   LAB_025d0563:
     if (player != affected_card_controller)
     {
-    LAB_025d056b:
-      result = adventure(player, card, event, 0x5064);
-      return result;
+      return adventure(player, card, event, 0x5064);
     }
   }
   else
@@ -5902,9 +5605,9 @@ int card_granted(int player, int card, event_t event)
     if (event != EVENT_RESOLVE_SPELL)
     {
       if (event == EVENT_CAN_CHANGE_TARGET)
-        goto LAB_025d0514;
+        return basic_spell(player, card, event);
       if (event == EVENT_CHANGE_TARGET)
-        goto LAB_025d056b;
+        return adventure(player, card, event, 0x5064);
     LAB_025d053c:
       if ((event != EVENT_COUNTERSPELL && event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
       {
@@ -5913,7 +5616,7 @@ int card_granted(int player, int card, event_t event)
       if (event == EVENT_CAST_SPELL)
       {
         if (affected_card != card)
-          goto LAB_025d056b;
+          return adventure(player, card, event, 0x5064);
         goto LAB_025d0563;
       }
     }
@@ -5925,12 +5628,10 @@ int card_granted(int player, int card, event_t event)
         test.type_flag = 1;
         generic_wish_effect(player, card, &test, 0x50ca);
       }
-      goto LAB_025d056b;
+      return adventure(player, card, event, 0x5064);
     }
   }
-LAB_025d0514:
-  result = basic_spell(player, card, event);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 #endif
@@ -5953,21 +5654,19 @@ int card_embercleave(int player, int card, event_t event)
   {
     if (event == EVENT_CAN_CAST)
     {
-    LAB_025cde20:
-      iVar1 = flash(player, card, event);
-      return iVar1;
+      return flash(player, card, event);
     }
     if (event == EVENT_CAST_SPELL)
     {
       if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_025cde20;
+        return flash(player, card, event);
     }
     else if (event == EVENT_MODIFY_COST)
     {
       iVar1 = count_attackers(player);
       COST_COLORLESS = COST_COLORLESS - (char)iVar1;
     }
-    goto LAB_025cddce;
+    return vanilla_equipment(player, card, event, 3, 1, 1, (KEYWORD_DOUBLE_STRIKE | KEYWORD_TRAMPLE), 0);
   }
   default_target_definition(player, card, &td, 2);
   td.preferred_controller = player;
@@ -5979,8 +5678,7 @@ int card_embercleave(int player, int card, event_t event)
       (iVar1 = new_pick_target(&td, "Select target creature you control.", 0, 0x80),
        iVar1 != 0))
   {
-    iVar1 = is_sick(instance->targets[0].player, instance->targets[0].card);
-    if (iVar1 == 0)
+    if (is_sick(instance->targets[0].player, instance->targets[0].card) == 0)
     {
       iVar3 = check_for_ability(instance->targets[0].player, instance->targets[0].card,
                                 KEYWORD_DEFENDER);
@@ -5997,10 +5695,7 @@ int card_embercleave(int player, int card, event_t event)
     equip_target_creature(player, card, instance->targets[0].player, instance->targets[0].card);
   }
   instance->number_of_targets = '\0';
-LAB_025cddce:
-  iVar1 =
-      vanilla_equipment(player, card, event, 3, 1, 1, (KEYWORD_DOUBLE_STRIKE | KEYWORD_TRAMPLE), 0);
-  return iVar1;
+  return vanilla_equipment(player, card, event, 3, 1, 1, (KEYWORD_DOUBLE_STRIKE | KEYWORD_TRAMPLE), 0);
 }
 
 #endif
@@ -6010,6 +5705,7 @@ LAB_025cddce:
 /* ManalinkEh 2022: 0x25cd080; original cards/throne_of_eldraine.c:1261. */
 int card_dance_of_the_manse(int player, int card, event_t event)
 {
+  int i;
   card_instance_t *instance;
   int iVar2;
   int iVar3;
@@ -6023,8 +5719,7 @@ int card_dance_of_the_manse(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     get_card_instance(player, card);
-    iVar3 = generic_spell(player, card, EVENT_CAN_CAST, 4, NULL, NULL, 0, NULL);
-    return iVar3;
+    return generic_spell(player, card, EVENT_CAN_CAST, 4, NULL, NULL, 0, NULL);
   }
   if (event != EVENT_CAST_SPELL)
   {
@@ -6043,23 +5738,23 @@ int card_dance_of_the_manse(int player, int card, event_t event)
       return 0;
     }
     iVar3 = instance->info_slot;
-    iVar4 = 0;
+    i = 0;
     if (0 < iVar3)
     {
       do
       {
-        while ((iVar2 = validate_target_from_grave(player, card, player, iVar4),
+        while ((iVar2 = validate_target_from_grave(player, card, player, i),
                 iVar2 == -1 || (iVar2 = reanimate_permanent(player, card, player, iVar2,
                                                                  REANIMATE_DEFAULT),
                                 iVar3 < 6)))
         {
-          iVar4 = iVar4 + 1;
-          if (iVar3 == iVar4)
+          i = i + 1;
+          if (iVar3 == i)
             goto LAB_025cd15c;
         }
-        iVar4 = iVar4 + 1;
+        i = i + 1;
         turn_into_creature(player, card, player, iVar2, 0, 4, 4);
-      } while (iVar3 != iVar4);
+      } while (iVar3 != i);
     }
   LAB_025cd15c:
     kill_card(player, card, KILL_DESTROY);
@@ -6082,8 +5777,7 @@ int card_dance_of_the_manse(int player, int card, event_t event)
   {
     return 0;
   }
-  iVar3 = check_special_flags2(player, card, -0x80000000);
-  if (iVar3 != 0)
+  if (check_special_flags2(player, card, -0x80000000) != 0)
   {
     return 0;
   }

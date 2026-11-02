@@ -1,0 +1,100 @@
+{
+  "recovery": {
+    "restored_card_functions": 28,
+    "source_units": 20,
+    "removed_card_unions": 28,
+    "restored_typed_locals": 83,
+    "typed_field_rewrites": 15,
+    "scalar_profile_comparison_kinds": {
+      "exact_exclusive_scope_scalar_events": 82,
+      "exclusive_compiled_store_copies": 1
+    },
+    "structured_event_handlers": 2,
+    "removed_lab_gotos": 4,
+    "changed_linker_objects": 20,
+    "unchanged_linker_objects": 146,
+    "scope": "Restore distinct typed records in all28 remaining card functions with synthetic unions. A conservative C statement CFG associates every reference with reaching initializer sites; all syntactic paths have a known constructor, without an event-satisfiability assumption. Same-kind initializers feeding a common use are grouped; three functions have several initializer paths for a single native local. Native common-frame declarations provide record counts and vocabulary. Record declarations cover all source uses, with function lifetime for any syntactic pointer alias. Exact offset/width projections replace cross-view fields and complete little-endian byte groups; other expressions, constants, calls and control flow are retained except for the recorded Najeela and Biomancer event dispatch rewrites. Native variable-name ordering is a candidate mapping that must be checked against scoped native/rebuilt stores. Geometry/event matches alone do not prove unknown values, all aliases or complete gameplay. Declaration geometry checks the unchanged baseline typed/array locals plus all83 restored native common-frame records. Five split-card functions already reuse other same-kind target locals across native inline scopes; their additional native declarations are outside this union pass, not falsely credited as restored. Scalar profiles exclude strictly contained same-frame record scopes from broader lexical profiles, and match all83 restored declaration profiles one-to-one; this is not a unique variable identity or initializer-argument provenance proof. Filter scalar checks cover offsets100..215. One duplicated compiled store group is accepted only after corresponding store sites are proven mutually unreachable."
+  },
+  "restored_typed_records": {
+    "target": 33,
+    "test": 42,
+    "token": 8
+  },
+  "source_constructor_sites": 90,
+  "source_record_references": 342,
+  "source_flow_unresolved_references": 0,
+  "source_flow_possible_uninitialized_references": 0,
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 8657,
+    "exit_code": 0,
+    "terminal_chunk_id": "c992c0",
+    "setup_log": ".recovery/multiphase-card-setup-c78.log",
+    "setup_log_sha256": "10a89a0a7ddae3850cbd49b99d802797efb70cf761325b27ca8222bceb22e457",
+    "build_session_id": 96148,
+    "build_exit_code": 0,
+    "build_terminal_chunk_id": "60a1a5",
+    "build_log": ".recovery/multiphase-card-build-c78.log",
+    "build_log_sha256": "1e03b65ce1093225b31dfdd428a6de43316254174abbd96959b8667108d6ee56",
+    "focused_session_id": 74884,
+    "focused_exit_code": 0,
+    "focused_terminal_chunk_id": "3f3fbb",
+    "focused_log": ".recovery/multiphase-card-focused-c78.log",
+    "prior_checks": [
+      {
+        "name": "shared_stack_test",
+        "exit_code": 0,
+        "terminal_chunk_id": "5a63be",
+        "log": ".recovery/multiphase-card-prior-shared_stack_test-c78.log"
+      },
+      {
+        "name": "wide_stack_test",
+        "exit_code": 0,
+        "terminal_chunk_id": "d5d7d4",
+        "log": ".recovery/multiphase-card-prior-wide_stack_test-c78.log"
+      },
+      {
+        "name": "other_stack_record",
+        "exit_code": 0,
+        "terminal_chunk_id": "6fad4f",
+        "log": ".recovery/multiphase-card-prior-other_stack_record-c78.log"
+      },
+      {
+        "name": "target_role",
+        "exit_code": 0,
+        "terminal_chunk_id": "58ec8b",
+        "log": ".recovery/multiphase-card-prior-target_role-c78.log"
+      },
+      {
+        "name": "mana_retarget_cards",
+        "exit_code": 0,
+        "terminal_chunk_id": "572670",
+        "log": ".recovery/multiphase-card-prior-mana_retarget_cards-c78.log"
+      },
+      {
+        "name": "khans_fate_oath",
+        "exit_code": 0,
+        "terminal_chunk_id": "227f6a",
+        "log": ".recovery/multiphase-card-prior-khans_fate_oath-c78.log"
+      }
+    ]
+  },
+  "independent_address_review": "docs/recovery-evidence/multiphase-card-address-review.json",
+  "concrete_event_review": "docs/recovery-evidence/multiphase-card-event-review.json",
+  "remaining_union_review": "docs/recovery-evidence/remaining-helper-union-review.json",
+  "limits": "Statement CFG discovery models every syntactic successor and known constructor site, with parser typedef stubs; it is not a complete C type/alias analysis. Store profiles exclude contained same-frame scopes; profile matching and equal unknown values do not prove unique variable identity or initializer argument provenance. Five split-card functions retain baseline reuse of other same-kind targets across inline scopes, outside this union queue. Unions in pointed-to objects/members, all indirect/indexed values, callee retention, arbitrary aliases, other compiler configurations and complete gameplay remain open. No fresh whole-DLL reccmp score is claimed.",
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "1f0822413a673a569c7df92e18f4989eb1a984d5b0197439fc0bdcd04d5adfd8",
+    "docs/recovery-evidence/multiphase-card-locals.json": "e383c9b4ec086803f86eef62998df70600a4f081741d2c88165488704d69d13d",
+    "tools/recovery/source_record_flow.py": "f727658d9a17439e8b075f20a683fa994c63970cab1558bb061f0d5f1b3d54d7",
+    "tools/recovery/multiphase_record_source.py": "ce37a1454d5d1d02e885992386001424bfeea4e47d7d78df0fe6c3f41a74146b",
+    "tools/recovery/multiphase_card_flow.py": "0801caa109a1a5c8538a22530fdf7b786c01b77d9dce4861acaea48f1ff68f63",
+    "tools/recovery/multiphase_record_analysis.py": "1614acb59f4bc369457261dcdc1c0f0eeb32d10b9392611a359a9d17aae104f2",
+    "tools/recovery/verify_multiphase_card_locals.py": "32c4cb00a0302e1b7392967b5211b74e22c1a7580a22448ce62d436750b8b66c",
+    "docs/recovery-evidence/multiphase-card-address-review.json": "f276bba52fd1f7bebe5bb3e040950fac78bab2759c3f645474615813207b66fb",
+    "docs/recovery-evidence/multiphase-card-event-review.json": "36862fa8474cdca078e51fb6f6b99f18925048abea4b6a3997baf84683473f7b",
+    "docs/recovery-evidence/remaining-helper-union-review.json": "1359662bc8c5d3592be0897666cc6c3c15b52ba413fc2807e1c500233efea11b",
+    "ManalinkEh.dll": "cc6c7d5987d39d45282f5e9c5c899ee7a626a807d7601c1c55cbda4a148bffac",
+    "ManalinkEh.dbg": "dce82af5197abb1ca17b3a4f0b87ea528ee6d91cc11280b0948f24a5921db34f"
+  }
+}

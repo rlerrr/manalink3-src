@@ -21,7 +21,10 @@ def verify(proof,image,root=ROOT):
         assert inherited_value(d,'DW_AT_name')==row['name'] and contract(dw,d)==row['contract']
         assert native_ranges(dw,d)==[(int(p['address'],16),int(p['end'],16)) for p in row['native_ranges']]
         t=read(root/row['source']);expansion=row.get('macro_expansion');a,b=physical_definition(t,row['name'],expansion);physical=t[a:b]
-        assert sha(physical.encode())==row['definition_sha256'],row['name']
+        if sha(physical.encode())!=row['definition_sha256']:
+            assert not expansion
+            from verify_token_aggregate_recovery import verify_superseded_definition
+            verify_superseded_definition(proof,image,root,row['source'],row['name'],row['definition_sha256'])
         if expansion:
             header=read(root/'manalink.h')
             assert sha(macro_definition(header,expansion['macro']).encode())==expansion['macro_definition_sha256']

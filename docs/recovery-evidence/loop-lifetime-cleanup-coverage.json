@@ -1,0 +1,137 @@
+{
+  "batch": "docs/recovery-evidence/loop-lifetime-cleanup.json",
+  "batch_sha256": "ea9d6419786bb9323703f1ece7852f2f9dd992cd76e6a52ac8cceeda314e0cf5",
+  "counts": {
+    "functions": 294,
+    "source_units": 87,
+    "value_groups": 391,
+    "named_bindings": 315,
+    "identifier_occurrences": 3214,
+    "removed_placeholder_declarations": 20,
+    "added_int_declarations": 295,
+    "card_handlers": 242,
+    "helpers": 52,
+    "source_lines_added": 295,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 24,
+    "changed_sections": [
+      ".rdata",
+      ".text"
+    ],
+    "scope": "Compiler output comparison; export timestamp normalized, debug sections excluded. Source/value-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_loop_lifetimes": {
+        "cleaned_definitions": 294,
+        "source_units": 87,
+        "value_groups": 391,
+        "named_bindings": 315,
+        "renamed_identifier_occurrences": 3214,
+        "reused_placeholder_declarations": 20,
+        "added_int_declarations": 295,
+        "native_local_references": 372,
+        "assertion_sites": 36,
+        "scope": "Conservative reaching definitions separate nonescaping ordinary int value groups. Shared reads and read/modify/write uses merge groups; entry/uninitialized and opaque-write groups cannot acquire names. Each renamed group has an induction role and direct non-inline native int32 local vocabulary. Independent induction components have explicit initialization, unit updates and loop comparison uses; player-index vocabulary is supported by player-argument uses. C member names retain their separate namespace and ordinary identifiers cannot be captured. Merging the new bindings reproduces every predecessor byte. All actual expanded units match. Native optimized-variable identity and new function coverage are not claimed; no gameplay tests."
+      },
+      "prior_source_input_hashes": {
+        "previous_getter_source_units": 20,
+        "previous_lifetime_source_units": 77,
+        "previous_guard_source_units": 23,
+        "previous_tail_source_units": 90,
+        "previous_residual_source_units": 4,
+        "previous_direction_source_units": 31,
+        "previous_loop_source_units": 17,
+        "previous_comparison_source_units": 31,
+        "previous_comma_source_units": 61,
+        "extended_spell_source_units": 15,
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Fresh focused loop-lifetime validation and exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/loop-lifetimes-readers-c234.log",
+      "sha256": "89d2bb114289f53aca5afeafbd5da8db945b416ac5a22c7e8fe4ffa8a42cef59",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/loop-lifetimes-build-c233.log",
+      "log_sha256": "9cd10f5d305784d3f11a7958e073794e4375ff88226ab38aa74f83c4987a967f",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "f1785e4b7a1d7c1dbf2e86fe07c09ef0631b5e35e6023c77c9b816fd1c022e4e",
+      "dbg_sha256": "0d0481dcedb9ecae5ae676bb7271d278677ea4cc281b5c580a57863177e6707e"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/loop-lifetimes-proof-before-c231.json.gz",
+      "archive_sha256": "798ed397f3007c7ca3234052e5f46d8b3b0dff77d0d1fb5b5f4a19ad635a78b1",
+      "raw_sha256": "84708082217f8cb3eacd827dcf1846a54236d1bcc20c8feee0d55992bbbab5db",
+      "verified_source_pin_successions": 87
+    },
+    "limits": "Readability recovery of accepted bodies, not new function coverage. Conservative reaching definitions preserve old int reads and keep read/modify/write values in one scalar component. Explicit initialization, unit updates and loop comparisons support induction roles; player-argument uses support player vocabulary. All87 actual expansions and36 ASSERT sites pass, with372 direct native int32 local references. Exact inverse merging reproduces predecessor bytes. Code/data differences are recorded without requiring byte matching. Historical compiler/runtime replay was retired during artifact pruning; current batch/source/build verification passes; no gameplay tests.",
+    "lifetime_controls": {
+      "path": ".recovery/loop-lifetime-controls-c231.json",
+      "sha256": "c39321d7e17b83e6188f16b22cb7bc66d860f04ce76b8b0d5d22f361be47428c",
+      "results": {
+        "rejected": [
+          "uninitialized_entry",
+          "address_escape",
+          "opaque_counter_write",
+          "mixed_role_join"
+        ],
+        "rmw_value_and_definition_kept_together": true,
+        "later_helper_result_preserved": true,
+        "player_argument_role_checked": true,
+        "exact_inverse_merge_checked": true
+      },
+      "default_regression": {
+        "path": ".recovery/loop-extension-default-regression-c231.json",
+        "sha256": "e2440fddc5452d18c8b17111c9d854cdbfa3ff147a7dcde480c034e3e8f5db11",
+        "results": {
+          "prior_raw_definitions": 259,
+          "prior_expanded_definitions": 259,
+          "projections_and_facts_identical": true,
+          "projection_checks": 518
+        }
+      }
+    }
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/loop-lifetimes-setup-c236.log",
+    "log_sha256": "cb0e812315b0b6814e48d0eb0071cf507f2056395aa18b5cef3e73cce92e45b5",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "csv_functions": 18725,
+    "metadata_sha256": "14cebac13de45f725450a546a6edcc8f328a5ab644336ceb7a6b50c4a9a2d565",
+    "mapping_identities_unchanged": true,
+    "only_csv_changes": "Rebuilt public COFF address annotations",
+    "changed_annotations": [],
+    "prior_csv_reconstructed_sha256": "14cebac13de45f725450a546a6edcc8f328a5ab644336ceb7a6b50c4a9a2d565"
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c236.json",
+    "sha256": "d0479f4029751be1082125a4bb134571a85cd2bfcfbf92b46b8de98077ef3a15",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1026,
+      "lab_gotos": 4135,
+      "functions_with_placeholders": 2128,
+      "distinct_function_local_placeholder_spellings": 6815,
+      "placeholder_identifier_occurrences": 56819,
+      "union_keywords": 0
+    }
+  },
+  "limits": "Readability recovery of accepted bodies, not new function coverage. Conservative reaching definitions preserve old int reads and keep read/modify/write values in one scalar component. Explicit initialization, unit updates and loop comparisons support induction roles; player-argument uses support player vocabulary. All87 actual expansions and36 ASSERT sites pass, with372 direct native int32 local references. Exact inverse merging reproduces predecessor bytes. Code/data differences are recorded without requiring byte matching. Historical compiler/runtime replay was retired during artifact pruning; current batch/source/build verification passes; no gameplay tests."
+}

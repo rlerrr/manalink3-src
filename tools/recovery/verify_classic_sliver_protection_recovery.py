@@ -2,6 +2,7 @@
 import csv,json,re
 from elftools.dwarf.locationlists import LocationParser
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image,inherited_value,value
 from export_abi import type_of
 
@@ -14,7 +15,7 @@ def verify(proof,image,root=ROOT):
     inventory={r['low_pc']:r for r in csv.DictReader((root/'.recovery/2022-functions.csv').open()) if r['low_pc']}
     for row in record['helpers']+record['card_callers']:
         assert (row['source'],row['name'],row['definition_sha256']) in receipts,row['name']
-        text=read(root/row['source']);a,b=span(text,row['name']);assert sha(text[a:b].encode())==row['definition_sha256'],row['name']
+        text=read(root/row['source']);a,b=span(text,row['name']);assert source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['definition_sha256']),row['name']
         for part in row['native_ranges']:
             lo=int(part['address'],16);hi=int(part['end'],16);native=inventory[part['address']]
             assert native['name']==row['name'] and native['high_pc']==part['end']
@@ -91,7 +92,7 @@ def verify(proof,image,root=ROOT):
             instances.append(dict(die_offset=hex(d.offset),low_pc=value(d,'DW_AT_low_pc'),high_pc=value(d,'DW_AT_high_pc'),high_pc_form=d.attributes['DW_AT_high_pc'].form,ranges=value(d,'DW_AT_ranges'),abstract_origin=value(d,'DW_AT_abstract_origin')))
     assert instances==inline['instances'] and len(instances)==1
     for row in record['source_dependencies']:
-        text=read(root/row['source']);a,b=span(text,row['name']);assert sha(text[a:b].encode())==row['definition_sha256']
+        text=read(root/row['source']);a,b=span(text,row['name']);assert source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['definition_sha256'])
         assert row['standalone_native_range'] is None and row['inline_owner']=='0x24fbd70'
     assert len(record['helpers'])==record['helper_definitions']==record['native_helper_ranges']==32
     assert sum(r['source_changed'] for r in record['helpers'])==record['changed_helper_definitions']==14

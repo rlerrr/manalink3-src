@@ -109,8 +109,14 @@ def cases(image,debug,*,native=False):
                     test_offset=frame_offset(dw,variables[0]);fields=test_layout(inherited_type(variables[0]))
                     row['native_test_variable']=inherited_value(variables[0],'DW_AT_name')
                 else:
-                    _,functions=compiled_functions(debug,[dict(source=source,name=name,storage=dict(storage='storage'),test_member='test')])
-                    test_offset=functions[name]['frame_offset'];fields=functions[name]['layout']
+                    typed=[v for v in walk(die) if v.tag=='DW_TAG_variable' and unqualify(inherited_type(v)).tag=='DW_TAG_structure_type' and sizeof(inherited_type(v))==216]
+                    if typed:
+                        assert len(typed)==1 and inherited_value(typed[0],'DW_AT_name')=='test'
+                        test_offset=frame_offset(dw,typed[0]);fields=test_layout(inherited_type(typed[0]))
+                        row['current_test_variable']='test'
+                    else:
+                        _,functions=compiled_functions(debug,[dict(source=source,name=name,storage=dict(storage='storage'),test_member='test')])
+                        test_offset=functions[name]['frame_offset'];fields=functions[name]['layout']
                 row['test_frame_offset']=test_offset;row['test_layout']=fields
                 aliases=[]
                 for variable in walk(die):

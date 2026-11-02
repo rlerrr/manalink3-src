@@ -725,15 +725,13 @@ int card_resupply(int player, int card, event_t event)
 
 int card_scale_blessing(int player, int card, event_t event)
 {
-  int iVar1;
+  int c;
   card_instance_t *instance;
   int iVar3;
   unsigned int uVar4;
   char *pcVar5;
   bool bVar6;
-  unsigned char bVar7;
   char has_counter[151];
-  bVar7 = 0;
   if (event == EVENT_RESOLVE_SPELL)
   {
     pcVar5 = has_counter + 5;
@@ -758,7 +756,7 @@ int card_scale_blessing(int player, int card, event_t event)
       pcVar5[1] = '\0';
       pcVar5[2] = '\0';
       pcVar5[3] = '\0';
-      pcVar5 = pcVar5 + (unsigned int)bVar7 * -8 + 4;
+      pcVar5 = pcVar5 + 4u;
     }
     if (!bVar6)
     {
@@ -772,46 +770,44 @@ int card_scale_blessing(int player, int card, event_t event)
       has_counter[1] = '\0';
       has_counter[2] = '\0';
       has_counter[3] = '\0';
-      iVar1 = 0;
+      c = 0;
       instance = in_play(player, 0);
       do
       {
-        if (((instance == NULL) || (iVar3 = is_what(player, iVar1, 2), iVar3 == 0)) ||
-            (iVar3 = count_counters(player, iVar1, COUNTER_P1_P1), iVar3 < 1))
+        if (((instance == NULL) || (iVar3 = is_what(player, c, 2), iVar3 == 0)) ||
+            (iVar3 = count_counters(player, c, COUNTER_P1_P1), iVar3 < 1))
         {
           iVar3 = active_cards_count[player];
-          if (iVar3 <= iVar1 + 1)
+          if (iVar3 <= c + 1)
             goto LAB_0231be18;
         }
         else
         {
-          has_counter[iVar1] = '\x01';
+          has_counter[c] = '\x01';
           iVar3 = active_cards_count[player];
-          if (iVar3 <= iVar1 + 1)
+          if (iVar3 <= c + 1)
             goto LAB_0231be18;
         }
-        iVar1 = iVar1 + 1;
-        instance = in_play(player, iVar1);
+        c = c + 1;
+        instance = in_play(player, c);
       } while (true);
     }
   }
-LAB_0231bd20:
-  iVar1 = basic_spell(player, card, event);
-  return iVar1;
+  return basic_spell(player, card, event);
 LAB_0231be18:
   if (0 < iVar3)
   {
-    iVar1 = 0;
+    c = 0;
     do
     {
-      if ((has_counter[iVar1] != '\0') && (instance = in_play(player, iVar1), instance != NULL))
+      if ((has_counter[c] != '\0') && (instance = in_play(player, c), instance != NULL))
       {
-        add_counters(player, card, player, iVar1, COUNTER_P1_P1, 1);
+        add_counters(player, card, player, c, COUNTER_P1_P1, 1);
       }
-      iVar1 = iVar1 + 1;
-    } while (iVar1 < active_cards_count[player]);
+      c = c + 1;
+    } while (c < active_cards_count[player]);
   }
-  goto LAB_0231bd20;
+  return basic_spell(player, card, event);
 }
 
 int card_secure_the_wastes(int player, int card, event_t event)
@@ -3696,8 +3692,7 @@ int card_den_protector(int player, int card, event_t event)
       iVar2 = get_power(player, card);
       if (iVar1 < iVar2)
       {
-        iVar1 = is_humiliated(player, card, AL_STATIC);
-        if (iVar1 == 0)
+        if (is_humiliated(player, card, AL_STATIC) == 0)
         {
           event_result = 1;
         }
@@ -3706,22 +3701,19 @@ int card_den_protector(int player, int card, event_t event)
   }
   else if (event == EVENT_TURNED_FACE_UP)
   {
-    iVar1 = is_humiliated(player, card, AL_TRIG);
-    if (iVar1 == 0)
+    if (is_humiliated(player, card, AL_TRIG) == 0)
     {
       new_default_test_definition(&test, 0xff, "Select target card.");
       if (*graveyard_ptr_mutable[player] != -1)
       {
-        iVar1 = graveyard_has_shroud(player);
-        if (iVar1 == 0)
+        if (graveyard_has_shroud(player) == 0)
         {
           new_global_tutor(player, player, 2, 1, 1, 1, &test);
         }
       }
     }
   }
-  iVar1 = megamorph(player, card, event, 1, 0, 0, 1, 0, 0);
-  return iVar1;
+  return megamorph(player, card, event, 1, 0, 0, 1, 0, 0);
 }
 
 /* Display of Dominance	|1|G	0x000000
@@ -5602,8 +5594,8 @@ static int display_of_dominance_effect(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2324920; original cards/dragons_of_tarkir.c:3670. */
 int card_display_of_dominance(int player, int card, event_t event)
 {
+  int choice;
   card_instance_t *instance;
-  int iVar2;
   const char *prompt;
   int iVar3;
   target_definition_t td;
@@ -5615,8 +5607,7 @@ int card_display_of_dominance(int player, int card, event_t event)
     td.required_color = get_sleighted_color_test(player, card, 6);
     td.preferred_controller = player;
     get_card_instance(player, card);
-    iVar3 = basic_spell(player, card, EVENT_CAN_CAST);
-    return iVar3;
+    return basic_spell(player, card, EVENT_CAN_CAST);
   }
   if (event == EVENT_CAST_SPELL)
   {
@@ -5667,24 +5658,22 @@ int card_display_of_dominance(int player, int card, event_t event)
 
   instance->number_of_targets = '\0';
   iVar3 = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
-  iVar2 = check_special_flags2(player, card, -0x80000000);
-  if (iVar2 != 0)
+  if (check_special_flags2(player, card, -0x80000000) != 0)
   {
     return 0;
   }
 
-  iVar3 = dialog_impl(player, card, event, "\001\002", "Destroy non-creature", iVar3, 5,
+  choice = dialog_impl(player, card, event, "\001\002", "Destroy non-creature", iVar3, 5,
                       "Permanents untargettable", 1, 10, 0, 0, 0, 0);
-  if (iVar3 == 0)
+  if (choice == 0)
   {
     spell_fizzled = 1;
     return 0;
   }
-  if (iVar3 == 1)
+  if (choice == 1)
   {
     prompt = get_sleighted_color_text2(player, card, "Select target %s or %s creature.", 2, 1);
-    iVar3 = generic_spell(player, card, event, 0x81, &td, prompt, 1, NULL);
-    return iVar3;
+    return generic_spell(player, card, event, 0x81, &td, prompt, 1, NULL);
   }
 LAB_023249b0:
   if (event == EVENT_RESOLVE_SPELL)
@@ -5692,8 +5681,7 @@ LAB_023249b0:
 
     if (instance->info_slot == 1)
     {
-      iVar3 = valid_target(&td);
-      if (iVar3 != 0)
+      if (valid_target(&td) != 0)
       {
         kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
       }

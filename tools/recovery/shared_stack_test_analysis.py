@@ -48,6 +48,10 @@ def compiled_functions(debug,records):
             assert name not in result
             variables=[v for v in walk(d) if v.tag=='DW_TAG_variable' and
                        inherited_value(v,'DW_AT_name')==wanted[name]['storage']['storage']]
+            if not variables:
+                from verify_disentangled_pair_locals import plain_test_record
+                result[name]=plain_test_record(dw,d,source,name)
+                continue
             assert len(variables)==1,(name,len(variables))
             union=unqualify(inherited_type(variables[0]))
             member_name=wanted[name].get('test_member','test')

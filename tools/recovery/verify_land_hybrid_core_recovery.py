@@ -1,6 +1,7 @@
 """Verify land/hybrid/core receipts and native payment/audio storage."""
 import json
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image,value,inherited_value
 from elftools.dwarf.dwarf_expr import DWARFExprParser
 
@@ -61,9 +62,9 @@ def verify(proof,image,root=ROOT):
     receipts={(e['source'],e.get('native_source_reconstruction',{}).get('function'),e['after_sha256']) for e in proof['source_edits']}
     for row in record['helpers']:
         assert (row['source'],row['name'],row['definition_sha256']) in receipts,row['name']
-        text=read(root/row['source']);a,b=span(text,row['name']);assert sha(text[a:b].encode())==row['definition_sha256'],row['name']
+        text=read(root/row['source']);a,b=span(text,row['name']);assert source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['definition_sha256']),row['name']
     for row in record['inline_support_helpers']:
-        text=read(root/row['source']);a,b=span(text,row['name']);assert sha(text[a:b].encode())==row['definition_sha256']
+        text=read(root/row['source']);a,b=span(text,row['name']);assert source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['definition_sha256'])
         assert any(e['source']==row['source'] and e['after_sha256']==row['definition_sha256'] and
                    e.get('native_inline_source_reconstruction',{}).get('owner')==row['native_owner'] for e in proof['source_edits'])
     original=Image((root/'G:/Manalink/ManalinkEh_10_22_Hotfix.dbg').read_bytes())

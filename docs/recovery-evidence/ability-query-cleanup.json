@@ -1,0 +1,1646 @@
+{
+  "rows": [
+    {
+      "source": "functions/abilities.c",
+      "name": "has_an_activated_ability",
+      "before_definition": "int has_an_activated_ability(iid_t iid)\n{\n  int iVar1;\n  char cVar2;\n  int iVar3;\n  unsigned int uVar4;\n  unsigned short uVar5;\n\n  iVar3 = 0;\n  if ((cards_data[iid].type & 0x47) != 0)\n  {\n    iVar1 = *(int *)&cards_data[iid].id;\n    uVar5 = (unsigned short)iVar1;\n    if (uVar5 != 0x2baa)\n    {\n      cVar2 = (char)iVar1;\n      if (uVar5 < 0x2bab)\n      {\n        if (uVar5 == 0x1710)\n        {\n          return 0;\n        }\n        if (uVar5 < 0x1711)\n        {\n          if (uVar5 == 0xed1)\n          {\n            return 0;\n          }\n          if (uVar5 < 0xed2)\n          {\n            if (uVar5 == 0xba8)\n            {\n              return 0;\n            }\n            if (uVar5 < 0xba9)\n            {\n              if (uVar5 == 0x7fd)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x7fe)\n              {\n                if (uVar5 == 0x2ad)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x789)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x50)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0xac6)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0xb84)\n                {\n                  return 0;\n                }\n              }\n            }\n            else\n            {\n              if (uVar5 == 0xcb7)\n              {\n                return 0;\n              }\n              if (uVar5 < 0xcb8)\n              {\n                if (uVar5 == 0xbcc)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0xc30)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0xbaa)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0xd57)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0xd72)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n          else\n          {\n            if (uVar5 == 0x1530)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x1531)\n            {\n              if (uVar5 == 0x1261)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x1262)\n              {\n                if (uVar5 == 0x11f2)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1227)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0xf7c)\n                {\n                  return 0;\n                }\n              }\n              else if (uVar5 < 0x1266)\n              {\n                if (0x1262 < uVar5)\n                {\n                  return 0;\n                }\n              }\n              else if (uVar5 == 0x144c)\n              {\n                return 0;\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x158a)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x158b)\n              {\n                if (uVar5 == 0x155c)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1580)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x161f)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1652)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n        }\n        else\n        {\n          if (uVar5 == 0x2532)\n          {\n            return 0;\n          }\n          if (uVar5 < 0x2533)\n          {\n            if (uVar5 == 0x1f18)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x1f19)\n            {\n              if (uVar5 == 0x1b7a)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x1b7b)\n              {\n                if (uVar5 == 0x1998)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1a6a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1805)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x1beb)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1ea3)\n                {\n                  return 0;\n                }\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x21f5)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x21f6)\n              {\n                if (uVar5 == 0x20bd)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x215c)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x20a0)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x230a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x238d)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n          else if (uVar5 < 0x298f)\n          {\n            if (uVar5 < 0x2982)\n            {\n              if (uVar5 == 0x2631)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x2632)\n              {\n                if (uVar5 == 0x259e)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x260a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x2544)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x2689)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x28bd)\n                {\n                  return 0;\n                }\n              }\n            }\n            else if ((1 << (cVar2 + 0x7eU & 0x1f) & 0x1201U) != 0)\n            {\n              return 0;\n            }\n          }\n          else\n          {\n            if (uVar5 == 0x2b2b)\n            {\n              return 0;\n            }\n            if (uVar5 == 0x2b83)\n            {\n              return 0;\n            }\n            if (uVar5 == 0x29af)\n            {\n              return 0;\n            }\n          }\n        }\n      }\n      else\n      {\n        if (uVar5 == 0x3471)\n        {\n          return 0;\n        }\n        if (uVar5 < 0x3472)\n        {\n          if (uVar5 == 0x3163)\n          {\n            return 0;\n          }\n          if (uVar5 < 0x3164)\n          {\n            if (uVar5 == 0x2f0b)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x2f0c)\n            {\n              if (uVar5 == 0x2d8e)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x2d8f)\n              {\n                if (uVar5 == 0x2c5e)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x2d02)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x2bd8)\n                {\n                  return 0;\n                }\n              }\n              else if ((iVar1 - 0x2ddeU & 0xffbf) == 0)\n              {\n                return 0;\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x3046)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x3047)\n              {\n                if (uVar5 == 0x2ff2)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x300a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x2f2f)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x307d)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x3136)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n          else\n          {\n            if (uVar5 == 0x323d)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x323e)\n            {\n              if (uVar5 < 0x320e)\n              {\n                if (uVar5 < 0x31f5)\n                {\n                  if (uVar5 == 0x31a1)\n                  {\n                    return 0;\n                  }\n                  if (uVar5 == 0x31cd)\n                  {\n                    return 0;\n                  }\n                }\n                else if ((1 << (cVar2 + 0xbU & 0x1f) & 0x1400005U) != 0)\n                {\n                  return 0;\n                }\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x330a)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x330b)\n              {\n                if (uVar5 == 0x327a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x32d9)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x331a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x337a)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n        }\n        else\n        {\n          if (uVar5 == 0x382e)\n          {\n            return 0;\n          }\n          if (uVar5 < 0x382f)\n          {\n            if (uVar5 == 0x35cd)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x35ce)\n            {\n              if (uVar5 < 0x358f)\n              {\n                if (uVar5 < 0x3570)\n                {\n                  if (uVar5 == 0x34d1)\n                  {\n                    return 0;\n                  }\n                  if (uVar5 == 0x3547)\n                  {\n                    return 0;\n                  }\n                }\n                else if ((1 << (cVar2 + 0x90U & 0x1f) & 0x40038003U) != 0)\n                {\n                  return 0;\n                }\n              }\n              else if (uVar5 == 0x35b2)\n              {\n                return 0;\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x3700)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x3701)\n              {\n                if (uVar5 == 0x35df)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x3681)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x3704)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x37e7)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n          else\n          {\n            if (uVar5 == 0x3f81)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x3f82)\n            {\n              if (uVar5 == 0x3d25)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x3d26)\n              {\n                if (uVar5 == 0x3bed)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x3c9c)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x3a4b)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x3e38)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x3f37)\n                {\n                  return 0;\n                }\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x4330)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x4331)\n              {\n                if (uVar5 < 0x4186)\n                {\n                  if (0x4183 < uVar5)\n                  {\n                    return 0;\n                  }\n                }\n                else if (uVar5 == 0x42a7)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x4837)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x4b9c)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n        }\n      }\n      if (((cards_data[iid].extra_ability & 0x1000) != 0) || (uVar5 == 0x36eb))\n      {\n        return 2;\n      }\n      iVar3 = 1;\n      if ((cards_data[iid].extra_ability & 3) == 0)\n      {\n        uVar4 = check_card_for_rules_engine(iid);\n        return uVar4 >> 0xc & 1;\n      }\n    }\n  }\n  return iVar3;\n}",
+      "after_definition": "int has_an_activated_ability(iid_t iid)\n{\n  if (!(cards_data[iid].type & (TYPE_LAND | TYPE_CREATURE | TYPE_ENCHANTMENT | TYPE_ARTIFACT)))\n    return 0;\n\n  int csvid = cards_data[iid].id;\n  switch (csvid)\n  {\n  case CARD_ID_FASTBOND:\n  case CARD_ID_INVOKE_PREJUDICE:\n  case CARD_ID_FORBIDDEN_LORE:\n  case CARD_ID_MYSTIC_MIGHT:\n  case CARD_ID_PYGMY_HIPPO:\n  case CARD_ID_BONE_DANCER:\n  case CARD_ID_GOBLIN_GRENADIERS:\n  case CARD_ID_GOBLIN_VANDAL:\n  case CARD_ID_OPHIDIAN:\n  case CARD_ID_DAUTHI_MINDRIPPER:\n  case CARD_ID_ROOTWATER_SHAMAN:\n  case CARD_ID_SAMITE_BLESSING:\n  case CARD_ID_THALAKOS_DECEIVER:\n  case CARD_ID_HERMETIC_STUDY:\n  case CARD_ID_YAWGMOTHS_WILL:\n  case CARD_ID_SAPRAZZAN_HEIR:\n  case CARD_ID_VERNAL_EQUINOX:\n  case CARD_ID_LACCOLITH_GRUNT:\n  case CARD_ID_LACCOLITH_TITAN:\n  case CARD_ID_LACCOLITH_WARRIOR:\n  case CARD_ID_LACCOLITH_WHELP:\n  case CARD_ID_YAWGMOTHS_AGENDA:\n  case CARD_ID_QUICKSILVER_DAGGER:\n  case CARD_ID_ANIMAL_BONEYARD:\n  case CARD_ID_CAUSTIC_TAR:\n  case CARD_ID_CHAMBER_OF_MANIPULATION:\n  case CARD_ID_PSIONIC_GIFT:\n  case CARD_ID_SQUIRREL_NEST:\n  case CARD_ID_ARCANE_TEACHINGS:\n  case CARD_ID_FUTURE_SIGHT:\n  case CARD_ID_MINDS_DESIRE:\n  case CARD_ID_PSYCHIC_MEMBRANE:\n  case CARD_ID_CRUCIBLE_OF_WORLDS:\n  case CARD_ID_VEDALKEN_ORRERY:\n  case CARD_ID_FLAME_FUSILLADE:\n  case CARD_ID_SINS_OF_THE_PAST:\n  case CARD_ID_COUNTERBALANCE:\n  case CARD_ID_HAAKON_STROMGALD_SCOURGE:\n  case CARD_ID_FALLEN_IDEAL:\n  case CARD_ID_TEFERI_MAGE_OF_ZHALFIR:\n  case CARD_ID_MAGUS_OF_THE_FUTURE:\n  case CARD_ID_COLFENORS_URN:\n  case CARD_ID_ELEMENTAL_MASTERY:\n  case CARD_ID_FURYSTOKE_GIANT:\n  case CARD_ID_POWER_OF_FIRE:\n  case CARD_ID_BANISHING_KNACK:\n  case CARD_ID_ENDLESS_HORIZONS:\n  case CARD_ID_SCOURGE_OF_THE_NOBILIS:\n  case CARD_ID_HIVE_MIND:\n  case CARD_ID_ORACLE_OF_MUL_DAYA:\n  case CARD_ID_PREDATORY_URGE:\n  case CARD_ID_PYROMANCER_ASCENSION:\n  case CARD_ID_SPHINX_OF_JWAR_ISLE:\n  case CARD_ID_SPLINTER_TWIN:\n  case CARD_ID_LEYLINE_OF_ANTICIPATION:\n  case CARD_ID_STORMTIDE_LEVIATHAN:\n  case CARD_ID_CLONE_SHELL:\n  case CARD_ID_SEMBLANCE_ANVIL:\n  case CARD_ID_SHIMMER_MYR:\n  case CARD_ID_PRAETORS_GRASP:\n  case CARD_ID_MANA_CHARGED_DRAGON:\n  case CARD_ID_GARRUKS_HORDE:\n  case CARD_ID_PAST_IN_FLAMES:\n  case CARD_ID_SNAPCASTER_MAGE:\n  case CARD_ID_TALONS_OF_FALKENRATH:\n  case CARD_ID_ABUNDANT_GROWTH:\n  case CARD_ID_DUAL_CASTING:\n  case CARD_ID_LIGHTNING_PROWESS:\n  case CARD_ID_OMNISCIENCE:\n  case CARD_ID_YEVA_NATURES_HERALD:\n  case CARD_ID_DEVIANT_GLEE:\n  case CARD_ID_HYPERSONIC_DRAGON:\n  case CARD_ID_PURSUIT_OF_FLIGHT:\n  case CARD_ID_RACECOURSE_FURY:\n  case CARD_ID_SEARCH_THE_CITY:\n  case CARD_ID_SECURITY_BLOCKADE:\n  case CARD_ID_UNDERWORLD_CONNECTIONS:\n  case CARD_ID_DEBTORS_PULPIT:\n  case CARD_ID_NIGHTVEIL_SPECTER:\n  case CARD_ID_SKYGAMES:\n  case CARD_ID_TIN_STREET_MARKET:\n  case CARD_ID_MELEK_IZZET_PARAGON:\n  case CARD_ID_DRAGON_MANTLE:\n  case CARD_ID_PROPHET_OF_KRUPHIX:\n  case CARD_ID_SPAWNING_GROUNDS:\n  case CARD_ID_CLAIM_OF_EREBOS:\n  case CARD_ID_COURSER_OF_KRUPHIX:\n  case CARD_ID_EPHARAS_RADIANCE:\n  case CARD_ID_EPIPHANY_STORM:\n  case CARD_ID_EVANESCENT_INTELLECT:\n  case CARD_ID_FEARSOME_TEMPER:\n  case CARD_ID_LIGHTNING_VOLLEY:\n  case CARD_ID_ORACLES_INSIGHT:\n  case CARD_ID_RETRACTION_HELIX:\n  case CARD_ID_PROPHETIC_FLAMESPEAKER:\n  case CARD_ID_BURNING_ANGER:\n  case CARD_ID_CHIEF_ENGINEER:\n  case CARD_ID_LENS_OF_CLARITY:\n  case CARD_ID_SINGING_BELL_STRIKE:\n  case CARD_ID_GLEAM_OF_AUTHORITY:\n  case CARD_ID_GRUESOME_SLAUGHTER:\n  case CARD_ID_GIGANTOPLASM:\n  case CARD_ID_OATH_OF_NISSA:\n  case CARD_ID_RATTLECHAINS:\n  case CARD_ID_SIGARDAS_AID:\n  case CARD_ID_CONSPIRACY_EMISSARYS_PLOY:\n  case CARD_ID_QUICKSMITH_REBEL:\n  case CARD_ID_QUICKSMITH_SPY:\n  case CARD_ID_VIZIER_OF_THE_MENAGERIE:\n  case CARD_ID_RAMUNAP_EXCAVATOR:\n  case CARD_ID_RAFF_CAPASHEN_SHIPS_MAGE:\n  case CARD_ID_EXPANSION_EXPLOSION:\n    return 0;\n  default:\n    break;\n  }\n\n  if ((cards_data[iid].extra_ability & EA_MANA_SOURCE) || csvid == CARD_ID_TREASONOUS_OGRE)\n    return 2;\n  if (cards_data[iid].extra_ability & (EA_ACT_ABILITY | EA_ACT_INTERRUPT))\n    return 1;\n  return ((unsigned int)check_card_for_rules_engine(iid) >> 12) & 1;\n}",
+      "before_sha256": "08394f9f02129b7f4b7f628e5e46231566eb376f741607375fbb6932866f2515",
+      "after_sha256": "04df9986977ed0906d84da5ee61eab4ca1627480d903716ce64c07e635552d8a",
+      "facts": {
+        "source_lines_removed": 467,
+        "removed_placeholder_occurrences": 149,
+        "removed_placeholder_names": 5
+      },
+      "ability_query_cleanup": true,
+      "expanded_before_definition": "int has_an_activated_ability(iid_t iid)\n{\n  int iVar1;\n  char cVar2;\n  int iVar3;\n  unsigned int uVar4;\n  unsigned short uVar5;\n\n  iVar3 = 0;\n  if ((cards_data[iid].type & 0x47) != 0)\n  {\n    iVar1 = *(int *)&cards_data[iid].id;\n    uVar5 = (unsigned short)iVar1;\n    if (uVar5 != 0x2baa)\n    {\n      cVar2 = (char)iVar1;\n      if (uVar5 < 0x2bab)\n      {\n        if (uVar5 == 0x1710)\n        {\n          return 0;\n        }\n        if (uVar5 < 0x1711)\n        {\n          if (uVar5 == 0xed1)\n          {\n            return 0;\n          }\n          if (uVar5 < 0xed2)\n          {\n            if (uVar5 == 0xba8)\n            {\n              return 0;\n            }\n            if (uVar5 < 0xba9)\n            {\n              if (uVar5 == 0x7fd)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x7fe)\n              {\n                if (uVar5 == 0x2ad)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x789)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x50)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0xac6)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0xb84)\n                {\n                  return 0;\n                }\n              }\n            }\n            else\n            {\n              if (uVar5 == 0xcb7)\n              {\n                return 0;\n              }\n              if (uVar5 < 0xcb8)\n              {\n                if (uVar5 == 0xbcc)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0xc30)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0xbaa)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0xd57)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0xd72)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n          else\n          {\n            if (uVar5 == 0x1530)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x1531)\n            {\n              if (uVar5 == 0x1261)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x1262)\n              {\n                if (uVar5 == 0x11f2)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1227)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0xf7c)\n                {\n                  return 0;\n                }\n              }\n              else if (uVar5 < 0x1266)\n              {\n                if (0x1262 < uVar5)\n                {\n                  return 0;\n                }\n              }\n              else if (uVar5 == 0x144c)\n              {\n                return 0;\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x158a)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x158b)\n              {\n                if (uVar5 == 0x155c)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1580)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x161f)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1652)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n        }\n        else\n        {\n          if (uVar5 == 0x2532)\n          {\n            return 0;\n          }\n          if (uVar5 < 0x2533)\n          {\n            if (uVar5 == 0x1f18)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x1f19)\n            {\n              if (uVar5 == 0x1b7a)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x1b7b)\n              {\n                if (uVar5 == 0x1998)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1a6a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1805)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x1beb)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x1ea3)\n                {\n                  return 0;\n                }\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x21f5)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x21f6)\n              {\n                if (uVar5 == 0x20bd)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x215c)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x20a0)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x230a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x238d)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n          else if (uVar5 < 0x298f)\n          {\n            if (uVar5 < 0x2982)\n            {\n              if (uVar5 == 0x2631)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x2632)\n              {\n                if (uVar5 == 0x259e)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x260a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x2544)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x2689)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x28bd)\n                {\n                  return 0;\n                }\n              }\n            }\n            else if ((1 << (cVar2 + 0x7eU & 0x1f) & 0x1201U) != 0)\n            {\n              return 0;\n            }\n          }\n          else\n          {\n            if (uVar5 == 0x2b2b)\n            {\n              return 0;\n            }\n            if (uVar5 == 0x2b83)\n            {\n              return 0;\n            }\n            if (uVar5 == 0x29af)\n            {\n              return 0;\n            }\n          }\n        }\n      }\n      else\n      {\n        if (uVar5 == 0x3471)\n        {\n          return 0;\n        }\n        if (uVar5 < 0x3472)\n        {\n          if (uVar5 == 0x3163)\n          {\n            return 0;\n          }\n          if (uVar5 < 0x3164)\n          {\n            if (uVar5 == 0x2f0b)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x2f0c)\n            {\n              if (uVar5 == 0x2d8e)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x2d8f)\n              {\n                if (uVar5 == 0x2c5e)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x2d02)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x2bd8)\n                {\n                  return 0;\n                }\n              }\n              else if ((iVar1 - 0x2ddeU & 0xffbf) == 0)\n              {\n                return 0;\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x3046)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x3047)\n              {\n                if (uVar5 == 0x2ff2)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x300a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x2f2f)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x307d)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x3136)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n          else\n          {\n            if (uVar5 == 0x323d)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x323e)\n            {\n              if (uVar5 < 0x320e)\n              {\n                if (uVar5 < 0x31f5)\n                {\n                  if (uVar5 == 0x31a1)\n                  {\n                    return 0;\n                  }\n                  if (uVar5 == 0x31cd)\n                  {\n                    return 0;\n                  }\n                }\n                else if ((1 << (cVar2 + 0xbU & 0x1f) & 0x1400005U) != 0)\n                {\n                  return 0;\n                }\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x330a)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x330b)\n              {\n                if (uVar5 == 0x327a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x32d9)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x331a)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x337a)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n        }\n        else\n        {\n          if (uVar5 == 0x382e)\n          {\n            return 0;\n          }\n          if (uVar5 < 0x382f)\n          {\n            if (uVar5 == 0x35cd)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x35ce)\n            {\n              if (uVar5 < 0x358f)\n              {\n                if (uVar5 < 0x3570)\n                {\n                  if (uVar5 == 0x34d1)\n                  {\n                    return 0;\n                  }\n                  if (uVar5 == 0x3547)\n                  {\n                    return 0;\n                  }\n                }\n                else if ((1 << (cVar2 + 0x90U & 0x1f) & 0x40038003U) != 0)\n                {\n                  return 0;\n                }\n              }\n              else if (uVar5 == 0x35b2)\n              {\n                return 0;\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x3700)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x3701)\n              {\n                if (uVar5 == 0x35df)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x3681)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x3704)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x37e7)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n          else\n          {\n            if (uVar5 == 0x3f81)\n            {\n              return 0;\n            }\n            if (uVar5 < 0x3f82)\n            {\n              if (uVar5 == 0x3d25)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x3d26)\n              {\n                if (uVar5 == 0x3bed)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x3c9c)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x3a4b)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x3e38)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x3f37)\n                {\n                  return 0;\n                }\n              }\n            }\n            else\n            {\n              if (uVar5 == 0x4330)\n              {\n                return 0;\n              }\n              if (uVar5 < 0x4331)\n              {\n                if (uVar5 < 0x4186)\n                {\n                  if (0x4183 < uVar5)\n                  {\n                    return 0;\n                  }\n                }\n                else if (uVar5 == 0x42a7)\n                {\n                  return 0;\n                }\n              }\n              else\n              {\n                if (uVar5 == 0x4837)\n                {\n                  return 0;\n                }\n                if (uVar5 == 0x4b9c)\n                {\n                  return 0;\n                }\n              }\n            }\n          }\n        }\n      }\n      if (((cards_data[iid].extra_ability & 0x1000) != 0) || (uVar5 == 0x36eb))\n      {\n        return 2;\n      }\n      iVar3 = 1;\n      if ((cards_data[iid].extra_ability & 3) == 0)\n      {\n        uVar4 = check_card_for_rules_engine(iid);\n        return uVar4 >> 0xc & 1;\n      }\n    }\n  }\n  return iVar3;\n}",
+      "expanded_projected_definition": "int has_an_activated_ability(iid_t iid)\n{\n  if (!(cards_data[iid].type & (TYPE_LAND | TYPE_CREATURE | TYPE_ENCHANTMENT | TYPE_ARTIFACT)))\n    return 0;\n\n  int csvid = cards_data[iid].id;\n  switch (csvid)\n  {\n  case CARD_ID_FASTBOND:\n  case CARD_ID_INVOKE_PREJUDICE:\n  case CARD_ID_FORBIDDEN_LORE:\n  case CARD_ID_MYSTIC_MIGHT:\n  case CARD_ID_PYGMY_HIPPO:\n  case CARD_ID_BONE_DANCER:\n  case CARD_ID_GOBLIN_GRENADIERS:\n  case CARD_ID_GOBLIN_VANDAL:\n  case CARD_ID_OPHIDIAN:\n  case CARD_ID_DAUTHI_MINDRIPPER:\n  case CARD_ID_ROOTWATER_SHAMAN:\n  case CARD_ID_SAMITE_BLESSING:\n  case CARD_ID_THALAKOS_DECEIVER:\n  case CARD_ID_HERMETIC_STUDY:\n  case CARD_ID_YAWGMOTHS_WILL:\n  case CARD_ID_SAPRAZZAN_HEIR:\n  case CARD_ID_VERNAL_EQUINOX:\n  case CARD_ID_LACCOLITH_GRUNT:\n  case CARD_ID_LACCOLITH_TITAN:\n  case CARD_ID_LACCOLITH_WARRIOR:\n  case CARD_ID_LACCOLITH_WHELP:\n  case CARD_ID_YAWGMOTHS_AGENDA:\n  case CARD_ID_QUICKSILVER_DAGGER:\n  case CARD_ID_ANIMAL_BONEYARD:\n  case CARD_ID_CAUSTIC_TAR:\n  case CARD_ID_CHAMBER_OF_MANIPULATION:\n  case CARD_ID_PSIONIC_GIFT:\n  case CARD_ID_SQUIRREL_NEST:\n  case CARD_ID_ARCANE_TEACHINGS:\n  case CARD_ID_FUTURE_SIGHT:\n  case CARD_ID_MINDS_DESIRE:\n  case CARD_ID_PSYCHIC_MEMBRANE:\n  case CARD_ID_CRUCIBLE_OF_WORLDS:\n  case CARD_ID_VEDALKEN_ORRERY:\n  case CARD_ID_FLAME_FUSILLADE:\n  case CARD_ID_SINS_OF_THE_PAST:\n  case CARD_ID_COUNTERBALANCE:\n  case CARD_ID_HAAKON_STROMGALD_SCOURGE:\n  case CARD_ID_FALLEN_IDEAL:\n  case CARD_ID_TEFERI_MAGE_OF_ZHALFIR:\n  case CARD_ID_MAGUS_OF_THE_FUTURE:\n  case CARD_ID_COLFENORS_URN:\n  case CARD_ID_ELEMENTAL_MASTERY:\n  case CARD_ID_FURYSTOKE_GIANT:\n  case CARD_ID_POWER_OF_FIRE:\n  case CARD_ID_BANISHING_KNACK:\n  case CARD_ID_ENDLESS_HORIZONS:\n  case CARD_ID_SCOURGE_OF_THE_NOBILIS:\n  case CARD_ID_HIVE_MIND:\n  case CARD_ID_ORACLE_OF_MUL_DAYA:\n  case CARD_ID_PREDATORY_URGE:\n  case CARD_ID_PYROMANCER_ASCENSION:\n  case CARD_ID_SPHINX_OF_JWAR_ISLE:\n  case CARD_ID_SPLINTER_TWIN:\n  case CARD_ID_LEYLINE_OF_ANTICIPATION:\n  case CARD_ID_STORMTIDE_LEVIATHAN:\n  case CARD_ID_CLONE_SHELL:\n  case CARD_ID_SEMBLANCE_ANVIL:\n  case CARD_ID_SHIMMER_MYR:\n  case CARD_ID_PRAETORS_GRASP:\n  case CARD_ID_MANA_CHARGED_DRAGON:\n  case CARD_ID_GARRUKS_HORDE:\n  case CARD_ID_PAST_IN_FLAMES:\n  case CARD_ID_SNAPCASTER_MAGE:\n  case CARD_ID_TALONS_OF_FALKENRATH:\n  case CARD_ID_ABUNDANT_GROWTH:\n  case CARD_ID_DUAL_CASTING:\n  case CARD_ID_LIGHTNING_PROWESS:\n  case CARD_ID_OMNISCIENCE:\n  case CARD_ID_YEVA_NATURES_HERALD:\n  case CARD_ID_DEVIANT_GLEE:\n  case CARD_ID_HYPERSONIC_DRAGON:\n  case CARD_ID_PURSUIT_OF_FLIGHT:\n  case CARD_ID_RACECOURSE_FURY:\n  case CARD_ID_SEARCH_THE_CITY:\n  case CARD_ID_SECURITY_BLOCKADE:\n  case CARD_ID_UNDERWORLD_CONNECTIONS:\n  case CARD_ID_DEBTORS_PULPIT:\n  case CARD_ID_NIGHTVEIL_SPECTER:\n  case CARD_ID_SKYGAMES:\n  case CARD_ID_TIN_STREET_MARKET:\n  case CARD_ID_MELEK_IZZET_PARAGON:\n  case CARD_ID_DRAGON_MANTLE:\n  case CARD_ID_PROPHET_OF_KRUPHIX:\n  case CARD_ID_SPAWNING_GROUNDS:\n  case CARD_ID_CLAIM_OF_EREBOS:\n  case CARD_ID_COURSER_OF_KRUPHIX:\n  case CARD_ID_EPHARAS_RADIANCE:\n  case CARD_ID_EPIPHANY_STORM:\n  case CARD_ID_EVANESCENT_INTELLECT:\n  case CARD_ID_FEARSOME_TEMPER:\n  case CARD_ID_LIGHTNING_VOLLEY:\n  case CARD_ID_ORACLES_INSIGHT:\n  case CARD_ID_RETRACTION_HELIX:\n  case CARD_ID_PROPHETIC_FLAMESPEAKER:\n  case CARD_ID_BURNING_ANGER:\n  case CARD_ID_CHIEF_ENGINEER:\n  case CARD_ID_LENS_OF_CLARITY:\n  case CARD_ID_SINGING_BELL_STRIKE:\n  case CARD_ID_GLEAM_OF_AUTHORITY:\n  case CARD_ID_GRUESOME_SLAUGHTER:\n  case CARD_ID_GIGANTOPLASM:\n  case CARD_ID_OATH_OF_NISSA:\n  case CARD_ID_RATTLECHAINS:\n  case CARD_ID_SIGARDAS_AID:\n  case CARD_ID_CONSPIRACY_EMISSARYS_PLOY:\n  case CARD_ID_QUICKSMITH_REBEL:\n  case CARD_ID_QUICKSMITH_SPY:\n  case CARD_ID_VIZIER_OF_THE_MENAGERIE:\n  case CARD_ID_RAMUNAP_EXCAVATOR:\n  case CARD_ID_RAFF_CAPASHEN_SHIPS_MAGE:\n  case CARD_ID_EXPANSION_EXPLOSION:\n    return 0;\n  default:\n    break;\n  }\n\n  if ((cards_data[iid].extra_ability & EA_MANA_SOURCE) || csvid == CARD_ID_TREASONOUS_OGRE)\n    return 2;\n  if (cards_data[iid].extra_ability & (EA_ACT_ABILITY | EA_ACT_INTERRUPT))\n    return 1;\n  return ((unsigned int)check_card_for_rules_engine(iid) >> 12) & 1;\n}",
+      "excluded_cards": [
+        80,
+        685,
+        1929,
+        2045,
+        2758,
+        2948,
+        2984,
+        2986,
+        3020,
+        3120,
+        3255,
+        3415,
+        3442,
+        3793,
+        3964,
+        4594,
+        4647,
+        4705,
+        4707,
+        4708,
+        4709,
+        5196,
+        5424,
+        5468,
+        5504,
+        5514,
+        5663,
+        5714,
+        5904,
+        6149,
+        6552,
+        6762,
+        7034,
+        7147,
+        7843,
+        7960,
+        8352,
+        8381,
+        8540,
+        8693,
+        8970,
+        9101,
+        9522,
+        9540,
+        9630,
+        9738,
+        9777,
+        9865,
+        10429,
+        10626,
+        10635,
+        10638,
+        10671,
+        11051,
+        11139,
+        11178,
+        11224,
+        11358,
+        11522,
+        11662,
+        11742,
+        11806,
+        12043,
+        12079,
+        12274,
+        12298,
+        12358,
+        12413,
+        12598,
+        12643,
+        12705,
+        12749,
+        12789,
+        12791,
+        12811,
+        12813,
+        12861,
+        12922,
+        13017,
+        13066,
+        13082,
+        13178,
+        13425,
+        13521,
+        13639,
+        13680,
+        13681,
+        13695,
+        13696,
+        13697,
+        13710,
+        13746,
+        13773,
+        13791,
+        13953,
+        14080,
+        14084,
+        14311,
+        14382,
+        14923,
+        15341,
+        15516,
+        15653,
+        15928,
+        16183,
+        16257,
+        16772,
+        16773,
+        17063,
+        17200,
+        18487,
+        19356
+      ],
+      "card_name_bindings": [
+        {
+          "csvid": 80,
+          "name": "CARD_ID_FASTBOND"
+        },
+        {
+          "csvid": 685,
+          "name": "CARD_ID_INVOKE_PREJUDICE"
+        },
+        {
+          "csvid": 1929,
+          "name": "CARD_ID_FORBIDDEN_LORE"
+        },
+        {
+          "csvid": 2045,
+          "name": "CARD_ID_MYSTIC_MIGHT"
+        },
+        {
+          "csvid": 2758,
+          "name": "CARD_ID_PYGMY_HIPPO"
+        },
+        {
+          "csvid": 2948,
+          "name": "CARD_ID_BONE_DANCER"
+        },
+        {
+          "csvid": 2984,
+          "name": "CARD_ID_GOBLIN_GRENADIERS"
+        },
+        {
+          "csvid": 2986,
+          "name": "CARD_ID_GOBLIN_VANDAL"
+        },
+        {
+          "csvid": 3020,
+          "name": "CARD_ID_OPHIDIAN"
+        },
+        {
+          "csvid": 3120,
+          "name": "CARD_ID_DAUTHI_MINDRIPPER"
+        },
+        {
+          "csvid": 3255,
+          "name": "CARD_ID_ROOTWATER_SHAMAN"
+        },
+        {
+          "csvid": 3415,
+          "name": "CARD_ID_SAMITE_BLESSING"
+        },
+        {
+          "csvid": 3442,
+          "name": "CARD_ID_THALAKOS_DECEIVER"
+        },
+        {
+          "csvid": 3793,
+          "name": "CARD_ID_HERMETIC_STUDY"
+        },
+        {
+          "csvid": 3964,
+          "name": "CARD_ID_YAWGMOTHS_WILL"
+        },
+        {
+          "csvid": 4594,
+          "name": "CARD_ID_SAPRAZZAN_HEIR"
+        },
+        {
+          "csvid": 4647,
+          "name": "CARD_ID_VERNAL_EQUINOX"
+        },
+        {
+          "csvid": 4705,
+          "name": "CARD_ID_LACCOLITH_GRUNT"
+        },
+        {
+          "csvid": 4707,
+          "name": "CARD_ID_LACCOLITH_TITAN"
+        },
+        {
+          "csvid": 4708,
+          "name": "CARD_ID_LACCOLITH_WARRIOR"
+        },
+        {
+          "csvid": 4709,
+          "name": "CARD_ID_LACCOLITH_WHELP"
+        },
+        {
+          "csvid": 5196,
+          "name": "CARD_ID_YAWGMOTHS_AGENDA"
+        },
+        {
+          "csvid": 5424,
+          "name": "CARD_ID_QUICKSILVER_DAGGER"
+        },
+        {
+          "csvid": 5468,
+          "name": "CARD_ID_ANIMAL_BONEYARD"
+        },
+        {
+          "csvid": 5504,
+          "name": "CARD_ID_CAUSTIC_TAR"
+        },
+        {
+          "csvid": 5514,
+          "name": "CARD_ID_CHAMBER_OF_MANIPULATION"
+        },
+        {
+          "csvid": 5663,
+          "name": "CARD_ID_PSIONIC_GIFT"
+        },
+        {
+          "csvid": 5714,
+          "name": "CARD_ID_SQUIRREL_NEST"
+        },
+        {
+          "csvid": 5904,
+          "name": "CARD_ID_ARCANE_TEACHINGS"
+        },
+        {
+          "csvid": 6149,
+          "name": "CARD_ID_FUTURE_SIGHT"
+        },
+        {
+          "csvid": 6552,
+          "name": "CARD_ID_MINDS_DESIRE"
+        },
+        {
+          "csvid": 6762,
+          "name": "CARD_ID_PSYCHIC_MEMBRANE"
+        },
+        {
+          "csvid": 7034,
+          "name": "CARD_ID_CRUCIBLE_OF_WORLDS"
+        },
+        {
+          "csvid": 7147,
+          "name": "CARD_ID_VEDALKEN_ORRERY"
+        },
+        {
+          "csvid": 7843,
+          "name": "CARD_ID_FLAME_FUSILLADE"
+        },
+        {
+          "csvid": 7960,
+          "name": "CARD_ID_SINS_OF_THE_PAST"
+        },
+        {
+          "csvid": 8352,
+          "name": "CARD_ID_COUNTERBALANCE"
+        },
+        {
+          "csvid": 8381,
+          "name": "CARD_ID_HAAKON_STROMGALD_SCOURGE"
+        },
+        {
+          "csvid": 8540,
+          "name": "CARD_ID_FALLEN_IDEAL"
+        },
+        {
+          "csvid": 8693,
+          "name": "CARD_ID_TEFERI_MAGE_OF_ZHALFIR"
+        },
+        {
+          "csvid": 8970,
+          "name": "CARD_ID_MAGUS_OF_THE_FUTURE"
+        },
+        {
+          "csvid": 9101,
+          "name": "CARD_ID_COLFENORS_URN"
+        },
+        {
+          "csvid": 9522,
+          "name": "CARD_ID_ELEMENTAL_MASTERY"
+        },
+        {
+          "csvid": 9540,
+          "name": "CARD_ID_FURYSTOKE_GIANT"
+        },
+        {
+          "csvid": 9630,
+          "name": "CARD_ID_POWER_OF_FIRE"
+        },
+        {
+          "csvid": 9738,
+          "name": "CARD_ID_BANISHING_KNACK"
+        },
+        {
+          "csvid": 9777,
+          "name": "CARD_ID_ENDLESS_HORIZONS"
+        },
+        {
+          "csvid": 9865,
+          "name": "CARD_ID_SCOURGE_OF_THE_NOBILIS"
+        },
+        {
+          "csvid": 10429,
+          "name": "CARD_ID_HIVE_MIND"
+        },
+        {
+          "csvid": 10626,
+          "name": "CARD_ID_ORACLE_OF_MUL_DAYA"
+        },
+        {
+          "csvid": 10635,
+          "name": "CARD_ID_PREDATORY_URGE"
+        },
+        {
+          "csvid": 10638,
+          "name": "CARD_ID_PYROMANCER_ASCENSION"
+        },
+        {
+          "csvid": 10671,
+          "name": "CARD_ID_SPHINX_OF_JWAR_ISLE"
+        },
+        {
+          "csvid": 11051,
+          "name": "CARD_ID_SPLINTER_TWIN"
+        },
+        {
+          "csvid": 11139,
+          "name": "CARD_ID_LEYLINE_OF_ANTICIPATION"
+        },
+        {
+          "csvid": 11178,
+          "name": "CARD_ID_STORMTIDE_LEVIATHAN"
+        },
+        {
+          "csvid": 11224,
+          "name": "CARD_ID_CLONE_SHELL"
+        },
+        {
+          "csvid": 11358,
+          "name": "CARD_ID_SEMBLANCE_ANVIL"
+        },
+        {
+          "csvid": 11522,
+          "name": "CARD_ID_SHIMMER_MYR"
+        },
+        {
+          "csvid": 11662,
+          "name": "CARD_ID_PRAETORS_GRASP"
+        },
+        {
+          "csvid": 11742,
+          "name": "CARD_ID_MANA_CHARGED_DRAGON"
+        },
+        {
+          "csvid": 11806,
+          "name": "CARD_ID_GARRUKS_HORDE"
+        },
+        {
+          "csvid": 12043,
+          "name": "CARD_ID_PAST_IN_FLAMES"
+        },
+        {
+          "csvid": 12079,
+          "name": "CARD_ID_SNAPCASTER_MAGE"
+        },
+        {
+          "csvid": 12274,
+          "name": "CARD_ID_TALONS_OF_FALKENRATH"
+        },
+        {
+          "csvid": 12298,
+          "name": "CARD_ID_ABUNDANT_GROWTH"
+        },
+        {
+          "csvid": 12358,
+          "name": "CARD_ID_DUAL_CASTING"
+        },
+        {
+          "csvid": 12413,
+          "name": "CARD_ID_LIGHTNING_PROWESS"
+        },
+        {
+          "csvid": 12598,
+          "name": "CARD_ID_OMNISCIENCE"
+        },
+        {
+          "csvid": 12643,
+          "name": "CARD_ID_YEVA_NATURES_HERALD"
+        },
+        {
+          "csvid": 12705,
+          "name": "CARD_ID_DEVIANT_GLEE"
+        },
+        {
+          "csvid": 12749,
+          "name": "CARD_ID_HYPERSONIC_DRAGON"
+        },
+        {
+          "csvid": 12789,
+          "name": "CARD_ID_PURSUIT_OF_FLIGHT"
+        },
+        {
+          "csvid": 12791,
+          "name": "CARD_ID_RACECOURSE_FURY"
+        },
+        {
+          "csvid": 12811,
+          "name": "CARD_ID_SEARCH_THE_CITY"
+        },
+        {
+          "csvid": 12813,
+          "name": "CARD_ID_SECURITY_BLOCKADE"
+        },
+        {
+          "csvid": 12861,
+          "name": "CARD_ID_UNDERWORLD_CONNECTIONS"
+        },
+        {
+          "csvid": 12922,
+          "name": "CARD_ID_DEBTORS_PULPIT"
+        },
+        {
+          "csvid": 13017,
+          "name": "CARD_ID_NIGHTVEIL_SPECTER"
+        },
+        {
+          "csvid": 13066,
+          "name": "CARD_ID_SKYGAMES"
+        },
+        {
+          "csvid": 13082,
+          "name": "CARD_ID_TIN_STREET_MARKET"
+        },
+        {
+          "csvid": 13178,
+          "name": "CARD_ID_MELEK_IZZET_PARAGON"
+        },
+        {
+          "csvid": 13425,
+          "name": "CARD_ID_DRAGON_MANTLE"
+        },
+        {
+          "csvid": 13521,
+          "name": "CARD_ID_PROPHET_OF_KRUPHIX"
+        },
+        {
+          "csvid": 13639,
+          "name": "CARD_ID_SPAWNING_GROUNDS"
+        },
+        {
+          "csvid": 13680,
+          "name": "CARD_ID_CLAIM_OF_EREBOS"
+        },
+        {
+          "csvid": 13681,
+          "name": "CARD_ID_COURSER_OF_KRUPHIX"
+        },
+        {
+          "csvid": 13695,
+          "name": "CARD_ID_EPHARAS_RADIANCE"
+        },
+        {
+          "csvid": 13696,
+          "name": "CARD_ID_EPIPHANY_STORM"
+        },
+        {
+          "csvid": 13697,
+          "name": "CARD_ID_EVANESCENT_INTELLECT"
+        },
+        {
+          "csvid": 13710,
+          "name": "CARD_ID_FEARSOME_TEMPER"
+        },
+        {
+          "csvid": 13746,
+          "name": "CARD_ID_LIGHTNING_VOLLEY"
+        },
+        {
+          "csvid": 13773,
+          "name": "CARD_ID_ORACLES_INSIGHT"
+        },
+        {
+          "csvid": 13791,
+          "name": "CARD_ID_RETRACTION_HELIX"
+        },
+        {
+          "csvid": 13953,
+          "name": "CARD_ID_PROPHETIC_FLAMESPEAKER"
+        },
+        {
+          "csvid": 14059,
+          "name": "CARD_ID_TREASONOUS_OGRE"
+        },
+        {
+          "csvid": 14080,
+          "name": "CARD_ID_BURNING_ANGER"
+        },
+        {
+          "csvid": 14084,
+          "name": "CARD_ID_CHIEF_ENGINEER"
+        },
+        {
+          "csvid": 14311,
+          "name": "CARD_ID_LENS_OF_CLARITY"
+        },
+        {
+          "csvid": 14382,
+          "name": "CARD_ID_SINGING_BELL_STRIKE"
+        },
+        {
+          "csvid": 14923,
+          "name": "CARD_ID_GLEAM_OF_AUTHORITY"
+        },
+        {
+          "csvid": 15341,
+          "name": "CARD_ID_GRUESOME_SLAUGHTER"
+        },
+        {
+          "csvid": 15516,
+          "name": "CARD_ID_GIGANTOPLASM"
+        },
+        {
+          "csvid": 15653,
+          "name": "CARD_ID_OATH_OF_NISSA"
+        },
+        {
+          "csvid": 15928,
+          "name": "CARD_ID_RATTLECHAINS"
+        },
+        {
+          "csvid": 16183,
+          "name": "CARD_ID_SIGARDAS_AID"
+        },
+        {
+          "csvid": 16257,
+          "name": "CARD_ID_CONSPIRACY_EMISSARYS_PLOY"
+        },
+        {
+          "csvid": 16772,
+          "name": "CARD_ID_QUICKSMITH_REBEL"
+        },
+        {
+          "csvid": 16773,
+          "name": "CARD_ID_QUICKSMITH_SPY"
+        },
+        {
+          "csvid": 17063,
+          "name": "CARD_ID_VIZIER_OF_THE_MENAGERIE"
+        },
+        {
+          "csvid": 17200,
+          "name": "CARD_ID_RAMUNAP_EXCAVATOR"
+        },
+        {
+          "csvid": 18487,
+          "name": "CARD_ID_RAFF_CAPASHEN_SHIPS_MAGE"
+        },
+        {
+          "csvid": 19356,
+          "name": "CARD_ID_EXPANSION_EXPLOSION"
+        }
+      ]
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "is_humiliated_by_instance",
+      "before_definition": "int is_humiliated_by_instance(card_instance_t *instance, ability_loss_t mode)\n{\n  ability_loss_t aVar1;\n  aVar1 = instance->targets[0x11].card;\n  if (0 < (int)aVar1)\n  {\n    return aVar1 & mode;\n  }\n  return 0;\n}",
+      "after_definition": "int is_humiliated_by_instance(card_instance_t *instance, ability_loss_t mode)\n{\n  int flags = instance->targets[17].card;\n  return flags > 0 ? flags & mode : 0;\n}",
+      "before_sha256": "fdaf2a3c20cec71a29997c43002c62c2dc5017988d659ddadac052e3ef350d8e",
+      "after_sha256": "8915de2cc854fbf11b9a6f61b9a5a8d87b3e0671f12365539df5c684a1e94284",
+      "facts": {
+        "source_lines_removed": 5,
+        "removed_placeholder_occurrences": 4,
+        "removed_placeholder_names": 1
+      },
+      "ability_query_cleanup": true,
+      "expanded_before_definition": "int is_humiliated_by_instance(card_instance_t *instance, ability_loss_t mode)\n{\n  ability_loss_t aVar1;\n  aVar1 = instance->targets[0x11].card;\n  if (0 < (int)aVar1)\n  {\n    return aVar1 & mode;\n  }\n  return 0;\n}",
+      "expanded_projected_definition": "int is_humiliated_by_instance(card_instance_t *instance, ability_loss_t mode)\n{\n  int flags = instance->targets[17].card;\n  return flags > 0 ? flags & mode : 0;\n}"
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "can_use_activated_abilities_by_instance",
+      "before_definition": "int can_use_activated_abilities_by_instance(card_instance_t *instance)\n{\n  unsigned int uVar1;\n  unsigned int uVar2;\n  uVar1 = instance->targets[0x11].card;\n  uVar2 = 1;\n  if (0 < (int)uVar1)\n  {\n    uVar2 = (unsigned int)((uVar1 & 0x28) == 0);\n  }\n  return uVar2;\n}",
+      "after_definition": "int can_use_activated_abilities_by_instance(card_instance_t *instance)\n{\n  int mode = instance->targets[17].card;\n  return mode <= 0 || !(mode & AL_NM_ACT);\n}",
+      "before_sha256": "d26386d05117eb9044840c37b1645f4fecfe79983cca22acfac74ae6445fae79",
+      "after_sha256": "d2b6e147e41e7f5fc99af4c322fde43b8ab1e143f5afa88de13815313fc02470",
+      "facts": {
+        "source_lines_removed": 7,
+        "removed_placeholder_occurrences": 8,
+        "removed_placeholder_names": 2
+      },
+      "ability_query_cleanup": true,
+      "expanded_before_definition": "int can_use_activated_abilities_by_instance(card_instance_t *instance)\n{\n  unsigned int uVar1;\n  unsigned int uVar2;\n  uVar1 = instance->targets[0x11].card;\n  uVar2 = 1;\n  if (0 < (int)uVar1)\n  {\n    uVar2 = (unsigned int)((uVar1 & 0x28) == 0);\n  }\n  return uVar2;\n}",
+      "expanded_projected_definition": "int can_use_activated_abilities_by_instance(card_instance_t *instance)\n{\n  int mode = instance->targets[17].card;\n  return mode <= 0 || !(mode & AL_NM_ACT);\n}"
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "can_use_activated_abilities",
+      "before_definition": "int can_use_activated_abilities(int player, int card)\n{\n  unsigned int uVar1;\n  card_instance_t *instance;\n  unsigned int uVar3;\n\n  instance = get_card_instance(player, card);\n  uVar1 = instance->targets[0x11].card;\n  uVar3 = 1;\n  if (0 < (int)uVar1)\n  {\n    uVar3 = (unsigned int)((uVar1 & 0x28) == 0);\n  }\n  return uVar3;\n}",
+      "after_definition": "int can_use_activated_abilities(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  int mode = instance->targets[17].card;\n  return mode <= 0 || !(mode & AL_NM_ACT);\n}",
+      "before_sha256": "c95e9eeb2462e9839024f27b215783f91af7b89e1c45aa99a04343363e202993",
+      "after_sha256": "145f9abccfdc4fa3a9297d81b2fddc43df884f203a89ca41f45b78d130f9957e",
+      "facts": {
+        "source_lines_removed": 9,
+        "removed_placeholder_occurrences": 8,
+        "removed_placeholder_names": 2
+      },
+      "ability_query_cleanup": true,
+      "expanded_before_definition": "int can_use_activated_abilities(int player, int card)\n{\n  unsigned int uVar1;\n  card_instance_t *instance;\n  unsigned int uVar3;\n\n  instance = get_card_instance(player, card);\n  uVar1 = instance->targets[0x11].card;\n  uVar3 = 1;\n  if (0 < (int)uVar1)\n  {\n    uVar3 = (unsigned int)((uVar1 & 0x28) == 0);\n  }\n  return uVar3;\n}",
+      "expanded_projected_definition": "int can_use_activated_abilities(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  int mode = instance->targets[17].card;\n  return mode <= 0 || !(mode & AL_NM_ACT);\n}"
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "can_produce_mana",
+      "before_definition": "int can_produce_mana(int player, int card)\n{\n  card_instance_t *instance;\n  unsigned int uVar2;\n  unsigned int uVar3;\n  unsigned char bVar4;\n\n  instance = get_card_instance(player, card);\n  uVar3 = instance->targets[0x11].card;\n  if ((int)uVar3 < 1)\n  {\n    bVar4 = 1;\n    uVar3 = 1;\n  }\n  else\n  {\n    uVar2 = uVar3 >> 4 ^ 1;\n    uVar3 = uVar2 & 1;\n    bVar4 = (unsigned char)uVar2 & 1;\n  }\n  if ((player == 1) && (bVar4 != 0))\n  {\n    uVar3 = (unsigned int)((instance->ext->special_flags & SF_MANA_PRODUCER_DISABLED_FOR_AI) == 0);\n  }\n  return uVar3;\n}",
+      "after_definition": "int can_produce_mana(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  int mode = instance->targets[17].card;\n  int result = mode <= 0 || !(mode & AL_MANA);\n  if (player == AI && result)\n  {\n    result = !(instance->ext->special_flags & SF_MANA_PRODUCER_DISABLED_FOR_AI);\n  }\n  return result;\n}",
+      "before_sha256": "6b135e5a28fb8b2b2dfd36d01fb661162bf899ef2aabe348271c7b18cc0fa8ee",
+      "after_sha256": "dd6c674564216e962f0cfe6077569611ec87cb8d3897c33c27e8bda24e4c9bc2",
+      "facts": {
+        "source_lines_removed": 15,
+        "removed_placeholder_occurrences": 16,
+        "removed_placeholder_names": 3
+      },
+      "ability_query_cleanup": true,
+      "expanded_before_definition": "int can_produce_mana(int player, int card)\n{\n  card_instance_t *instance;\n  unsigned int uVar2;\n  unsigned int uVar3;\n  unsigned char bVar4;\n\n  instance = get_card_instance(player, card);\n  uVar3 = instance->targets[0x11].card;\n  if ((int)uVar3 < 1)\n  {\n    bVar4 = 1;\n    uVar3 = 1;\n  }\n  else\n  {\n    uVar2 = uVar3 >> 4 ^ 1;\n    uVar3 = uVar2 & 1;\n    bVar4 = (unsigned char)uVar2 & 1;\n  }\n  if ((player == 1) && (bVar4 != 0))\n  {\n    uVar3 = (unsigned int)((instance->ext->special_flags & SF_MANA_PRODUCER_DISABLED_FOR_AI) == 0);\n  }\n  return uVar3;\n}",
+      "expanded_projected_definition": "int can_produce_mana(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  int mode = instance->targets[17].card;\n  int result = mode <= 0 || !(mode & AL_MANA);\n  if (player == AI && result)\n  {\n    result = !(instance->ext->special_flags & SF_MANA_PRODUCER_DISABLED_FOR_AI);\n  }\n  return result;\n}"
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "get_special_abilities_by_instance",
+      "before_definition": "int get_special_abilities_by_instance(card_instance_t *instance)\n{\n  unsigned int uVar1;\n  unsigned int uVar2;\n\n  uVar2 = instance->ext->sp_keywords;\n  if ((instance->state & 0x2000) != 0)\n  {\n    uVar2 = uVar2 | 8;\n    instance->ext->sp_keywords = uVar2;\n  }\n  uVar1 = instance->targets[0x11].card;\n  if (0 < (int)uVar1)\n  {\n    if ((uVar1 & 0x40) != 0)\n    {\n      uVar2 = 0;\n    }\n    if ((uVar1 & 0x80) != 0)\n    {\n      uVar2 = uVar2 | 0x800;\n    }\n  }\n  return uVar2;\n}",
+      "after_definition": "int get_special_abilities_by_instance(card_instance_t *instance)\n{\n  unsigned int keyword = instance->ext->sp_keywords;\n  if (instance->state & STATE_VIGILANCE)\n  {\n    keyword |= SP_KEYWORD_VIGILANCE;\n    instance->ext->sp_keywords = keyword;\n  }\n  int mode = instance->targets[17].card;\n  if (mode > 0)\n  {\n    if (mode & AL_KEY)\n      keyword = 0;\n    if (mode & AL_INDESTRUCTIBLE)\n      keyword |= SP_KEYWORD_INDESTRUCTIBLE;\n  }\n  return keyword;\n}",
+      "before_sha256": "9e9b2e5439e7b0fdd044ee4ea4b3a3a96ae6a83db962cee5a2453c25882350e1",
+      "after_sha256": "ace3746a8fae1e82ee4241a1ee940077eee86cfdca5f6ca0ab021b9c365e8202",
+      "facts": {
+        "source_lines_removed": 7,
+        "removed_placeholder_occurrences": 14,
+        "removed_placeholder_names": 2
+      },
+      "ability_query_cleanup": true,
+      "expanded_before_definition": "int get_special_abilities_by_instance(card_instance_t *instance)\n{\n  unsigned int uVar1;\n  unsigned int uVar2;\n\n  uVar2 = instance->ext->sp_keywords;\n  if ((instance->state & 0x2000) != 0)\n  {\n    uVar2 = uVar2 | 8;\n    instance->ext->sp_keywords = uVar2;\n  }\n  uVar1 = instance->targets[0x11].card;\n  if (0 < (int)uVar1)\n  {\n    if ((uVar1 & 0x40) != 0)\n    {\n      uVar2 = 0;\n    }\n    if ((uVar1 & 0x80) != 0)\n    {\n      uVar2 = uVar2 | 0x800;\n    }\n  }\n  return uVar2;\n}",
+      "expanded_projected_definition": "int get_special_abilities_by_instance(card_instance_t *instance)\n{\n  unsigned int keyword = instance->ext->sp_keywords;\n  if (instance->state & STATE_VIGILANCE)\n  {\n    keyword |= SP_KEYWORD_VIGILANCE;\n    instance->ext->sp_keywords = keyword;\n  }\n  int mode = instance->targets[17].card;\n  if (mode > 0)\n  {\n    if (mode & AL_KEY)\n      keyword = 0;\n    if (mode & AL_INDESTRUCTIBLE)\n      keyword |= SP_KEYWORD_INDESTRUCTIBLE;\n  }\n  return keyword;\n}"
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "remove_abilities",
+      "before_definition": "void remove_abilities(int player, int card, event_t event, ability_loss_t mode)\n{\n  ability_loss_t aVar1;\n  card_instance_t *instance;\n\n  instance = in_play(affected_card_controller, affected_card);\n  if (instance != NULL)\n  {\n    aVar1 = instance->targets[0x11].card;\n    if (-1 < (int)aVar1)\n    {\n      mode = mode | aVar1;\n    }\n    instance->targets[0x11].card = mode;\n  }\n  return;\n}",
+      "after_definition": "void remove_abilities(int player, int card, event_t event, ability_loss_t mode)\n{\n  card_instance_t *instance = in_play(affected_card_controller, affected_card);\n  if (instance != NULL)\n  {\n    int flags = instance->targets[17].card;\n    if (flags >= 0)\n      mode |= flags;\n    instance->targets[17].card = mode;\n  }\n}",
+      "before_sha256": "8ba108284b510823d18c24757a6a9fe5a8672da9a20129814d540b9b5430cc0c",
+      "after_sha256": "a8d8a9bd4e104c14bf67c55ca60fa0da4d45f6567c499f6131c59048202a1c54",
+      "facts": {
+        "source_lines_removed": 6,
+        "removed_placeholder_occurrences": 4,
+        "removed_placeholder_names": 1
+      },
+      "ability_query_cleanup": true,
+      "expanded_before_definition": "void remove_abilities(int player, int card, event_t event, ability_loss_t mode)\n{\n  ability_loss_t aVar1;\n  card_instance_t *instance;\n\n  instance = in_play(affected_card_controller, affected_card);\n  if (instance != \n\n                 ((void *)0)\n\n                     )\n  {\n    aVar1 = instance->targets[0x11].card;\n    if (-1 < (int)aVar1)\n    {\n      mode = mode | aVar1;\n    }\n    instance->targets[0x11].card = mode;\n  }\n  return;\n}",
+      "expanded_projected_definition": "void remove_abilities(int player, int card, event_t event, ability_loss_t mode)\n{\n  card_instance_t *instance = in_play(affected_card_controller, affected_card);\n  if (instance != ((void *)0))\n  {\n    int flags = instance->targets[17].card;\n    if (flags >= 0)\n      mode |= flags;\n    instance->targets[17].card = mode;\n  }\n}"
+    }
+  ],
+  "cards": [
+    80,
+    685,
+    1929,
+    2045,
+    2758,
+    2948,
+    2984,
+    2986,
+    3020,
+    3120,
+    3255,
+    3415,
+    3442,
+    3793,
+    3964,
+    4594,
+    4647,
+    4705,
+    4707,
+    4708,
+    4709,
+    5196,
+    5424,
+    5468,
+    5504,
+    5514,
+    5663,
+    5714,
+    5904,
+    6149,
+    6552,
+    6762,
+    7034,
+    7147,
+    7843,
+    7960,
+    8352,
+    8381,
+    8540,
+    8693,
+    8970,
+    9101,
+    9522,
+    9540,
+    9630,
+    9738,
+    9777,
+    9865,
+    10429,
+    10626,
+    10635,
+    10638,
+    10671,
+    11051,
+    11139,
+    11178,
+    11224,
+    11358,
+    11522,
+    11662,
+    11742,
+    11806,
+    12043,
+    12079,
+    12274,
+    12298,
+    12358,
+    12413,
+    12598,
+    12643,
+    12705,
+    12749,
+    12789,
+    12791,
+    12811,
+    12813,
+    12861,
+    12922,
+    13017,
+    13066,
+    13082,
+    13178,
+    13425,
+    13521,
+    13639,
+    13680,
+    13681,
+    13695,
+    13696,
+    13697,
+    13710,
+    13746,
+    13773,
+    13791,
+    13953,
+    14080,
+    14084,
+    14311,
+    14382,
+    14923,
+    15341,
+    15516,
+    15653,
+    15928,
+    16183,
+    16257,
+    16772,
+    16773,
+    17063,
+    17200,
+    18487,
+    19356
+  ],
+  "card_names": [
+    {
+      "csvid": 80,
+      "name": "CARD_ID_FASTBOND"
+    },
+    {
+      "csvid": 685,
+      "name": "CARD_ID_INVOKE_PREJUDICE"
+    },
+    {
+      "csvid": 1929,
+      "name": "CARD_ID_FORBIDDEN_LORE"
+    },
+    {
+      "csvid": 2045,
+      "name": "CARD_ID_MYSTIC_MIGHT"
+    },
+    {
+      "csvid": 2758,
+      "name": "CARD_ID_PYGMY_HIPPO"
+    },
+    {
+      "csvid": 2948,
+      "name": "CARD_ID_BONE_DANCER"
+    },
+    {
+      "csvid": 2984,
+      "name": "CARD_ID_GOBLIN_GRENADIERS"
+    },
+    {
+      "csvid": 2986,
+      "name": "CARD_ID_GOBLIN_VANDAL"
+    },
+    {
+      "csvid": 3020,
+      "name": "CARD_ID_OPHIDIAN"
+    },
+    {
+      "csvid": 3120,
+      "name": "CARD_ID_DAUTHI_MINDRIPPER"
+    },
+    {
+      "csvid": 3255,
+      "name": "CARD_ID_ROOTWATER_SHAMAN"
+    },
+    {
+      "csvid": 3415,
+      "name": "CARD_ID_SAMITE_BLESSING"
+    },
+    {
+      "csvid": 3442,
+      "name": "CARD_ID_THALAKOS_DECEIVER"
+    },
+    {
+      "csvid": 3793,
+      "name": "CARD_ID_HERMETIC_STUDY"
+    },
+    {
+      "csvid": 3964,
+      "name": "CARD_ID_YAWGMOTHS_WILL"
+    },
+    {
+      "csvid": 4594,
+      "name": "CARD_ID_SAPRAZZAN_HEIR"
+    },
+    {
+      "csvid": 4647,
+      "name": "CARD_ID_VERNAL_EQUINOX"
+    },
+    {
+      "csvid": 4705,
+      "name": "CARD_ID_LACCOLITH_GRUNT"
+    },
+    {
+      "csvid": 4707,
+      "name": "CARD_ID_LACCOLITH_TITAN"
+    },
+    {
+      "csvid": 4708,
+      "name": "CARD_ID_LACCOLITH_WARRIOR"
+    },
+    {
+      "csvid": 4709,
+      "name": "CARD_ID_LACCOLITH_WHELP"
+    },
+    {
+      "csvid": 5196,
+      "name": "CARD_ID_YAWGMOTHS_AGENDA"
+    },
+    {
+      "csvid": 5424,
+      "name": "CARD_ID_QUICKSILVER_DAGGER"
+    },
+    {
+      "csvid": 5468,
+      "name": "CARD_ID_ANIMAL_BONEYARD"
+    },
+    {
+      "csvid": 5504,
+      "name": "CARD_ID_CAUSTIC_TAR"
+    },
+    {
+      "csvid": 5514,
+      "name": "CARD_ID_CHAMBER_OF_MANIPULATION"
+    },
+    {
+      "csvid": 5663,
+      "name": "CARD_ID_PSIONIC_GIFT"
+    },
+    {
+      "csvid": 5714,
+      "name": "CARD_ID_SQUIRREL_NEST"
+    },
+    {
+      "csvid": 5904,
+      "name": "CARD_ID_ARCANE_TEACHINGS"
+    },
+    {
+      "csvid": 6149,
+      "name": "CARD_ID_FUTURE_SIGHT"
+    },
+    {
+      "csvid": 6552,
+      "name": "CARD_ID_MINDS_DESIRE"
+    },
+    {
+      "csvid": 6762,
+      "name": "CARD_ID_PSYCHIC_MEMBRANE"
+    },
+    {
+      "csvid": 7034,
+      "name": "CARD_ID_CRUCIBLE_OF_WORLDS"
+    },
+    {
+      "csvid": 7147,
+      "name": "CARD_ID_VEDALKEN_ORRERY"
+    },
+    {
+      "csvid": 7843,
+      "name": "CARD_ID_FLAME_FUSILLADE"
+    },
+    {
+      "csvid": 7960,
+      "name": "CARD_ID_SINS_OF_THE_PAST"
+    },
+    {
+      "csvid": 8352,
+      "name": "CARD_ID_COUNTERBALANCE"
+    },
+    {
+      "csvid": 8381,
+      "name": "CARD_ID_HAAKON_STROMGALD_SCOURGE"
+    },
+    {
+      "csvid": 8540,
+      "name": "CARD_ID_FALLEN_IDEAL"
+    },
+    {
+      "csvid": 8693,
+      "name": "CARD_ID_TEFERI_MAGE_OF_ZHALFIR"
+    },
+    {
+      "csvid": 8970,
+      "name": "CARD_ID_MAGUS_OF_THE_FUTURE"
+    },
+    {
+      "csvid": 9101,
+      "name": "CARD_ID_COLFENORS_URN"
+    },
+    {
+      "csvid": 9522,
+      "name": "CARD_ID_ELEMENTAL_MASTERY"
+    },
+    {
+      "csvid": 9540,
+      "name": "CARD_ID_FURYSTOKE_GIANT"
+    },
+    {
+      "csvid": 9630,
+      "name": "CARD_ID_POWER_OF_FIRE"
+    },
+    {
+      "csvid": 9738,
+      "name": "CARD_ID_BANISHING_KNACK"
+    },
+    {
+      "csvid": 9777,
+      "name": "CARD_ID_ENDLESS_HORIZONS"
+    },
+    {
+      "csvid": 9865,
+      "name": "CARD_ID_SCOURGE_OF_THE_NOBILIS"
+    },
+    {
+      "csvid": 10429,
+      "name": "CARD_ID_HIVE_MIND"
+    },
+    {
+      "csvid": 10626,
+      "name": "CARD_ID_ORACLE_OF_MUL_DAYA"
+    },
+    {
+      "csvid": 10635,
+      "name": "CARD_ID_PREDATORY_URGE"
+    },
+    {
+      "csvid": 10638,
+      "name": "CARD_ID_PYROMANCER_ASCENSION"
+    },
+    {
+      "csvid": 10671,
+      "name": "CARD_ID_SPHINX_OF_JWAR_ISLE"
+    },
+    {
+      "csvid": 11051,
+      "name": "CARD_ID_SPLINTER_TWIN"
+    },
+    {
+      "csvid": 11139,
+      "name": "CARD_ID_LEYLINE_OF_ANTICIPATION"
+    },
+    {
+      "csvid": 11178,
+      "name": "CARD_ID_STORMTIDE_LEVIATHAN"
+    },
+    {
+      "csvid": 11224,
+      "name": "CARD_ID_CLONE_SHELL"
+    },
+    {
+      "csvid": 11358,
+      "name": "CARD_ID_SEMBLANCE_ANVIL"
+    },
+    {
+      "csvid": 11522,
+      "name": "CARD_ID_SHIMMER_MYR"
+    },
+    {
+      "csvid": 11662,
+      "name": "CARD_ID_PRAETORS_GRASP"
+    },
+    {
+      "csvid": 11742,
+      "name": "CARD_ID_MANA_CHARGED_DRAGON"
+    },
+    {
+      "csvid": 11806,
+      "name": "CARD_ID_GARRUKS_HORDE"
+    },
+    {
+      "csvid": 12043,
+      "name": "CARD_ID_PAST_IN_FLAMES"
+    },
+    {
+      "csvid": 12079,
+      "name": "CARD_ID_SNAPCASTER_MAGE"
+    },
+    {
+      "csvid": 12274,
+      "name": "CARD_ID_TALONS_OF_FALKENRATH"
+    },
+    {
+      "csvid": 12298,
+      "name": "CARD_ID_ABUNDANT_GROWTH"
+    },
+    {
+      "csvid": 12358,
+      "name": "CARD_ID_DUAL_CASTING"
+    },
+    {
+      "csvid": 12413,
+      "name": "CARD_ID_LIGHTNING_PROWESS"
+    },
+    {
+      "csvid": 12598,
+      "name": "CARD_ID_OMNISCIENCE"
+    },
+    {
+      "csvid": 12643,
+      "name": "CARD_ID_YEVA_NATURES_HERALD"
+    },
+    {
+      "csvid": 12705,
+      "name": "CARD_ID_DEVIANT_GLEE"
+    },
+    {
+      "csvid": 12749,
+      "name": "CARD_ID_HYPERSONIC_DRAGON"
+    },
+    {
+      "csvid": 12789,
+      "name": "CARD_ID_PURSUIT_OF_FLIGHT"
+    },
+    {
+      "csvid": 12791,
+      "name": "CARD_ID_RACECOURSE_FURY"
+    },
+    {
+      "csvid": 12811,
+      "name": "CARD_ID_SEARCH_THE_CITY"
+    },
+    {
+      "csvid": 12813,
+      "name": "CARD_ID_SECURITY_BLOCKADE"
+    },
+    {
+      "csvid": 12861,
+      "name": "CARD_ID_UNDERWORLD_CONNECTIONS"
+    },
+    {
+      "csvid": 12922,
+      "name": "CARD_ID_DEBTORS_PULPIT"
+    },
+    {
+      "csvid": 13017,
+      "name": "CARD_ID_NIGHTVEIL_SPECTER"
+    },
+    {
+      "csvid": 13066,
+      "name": "CARD_ID_SKYGAMES"
+    },
+    {
+      "csvid": 13082,
+      "name": "CARD_ID_TIN_STREET_MARKET"
+    },
+    {
+      "csvid": 13178,
+      "name": "CARD_ID_MELEK_IZZET_PARAGON"
+    },
+    {
+      "csvid": 13425,
+      "name": "CARD_ID_DRAGON_MANTLE"
+    },
+    {
+      "csvid": 13521,
+      "name": "CARD_ID_PROPHET_OF_KRUPHIX"
+    },
+    {
+      "csvid": 13639,
+      "name": "CARD_ID_SPAWNING_GROUNDS"
+    },
+    {
+      "csvid": 13680,
+      "name": "CARD_ID_CLAIM_OF_EREBOS"
+    },
+    {
+      "csvid": 13681,
+      "name": "CARD_ID_COURSER_OF_KRUPHIX"
+    },
+    {
+      "csvid": 13695,
+      "name": "CARD_ID_EPHARAS_RADIANCE"
+    },
+    {
+      "csvid": 13696,
+      "name": "CARD_ID_EPIPHANY_STORM"
+    },
+    {
+      "csvid": 13697,
+      "name": "CARD_ID_EVANESCENT_INTELLECT"
+    },
+    {
+      "csvid": 13710,
+      "name": "CARD_ID_FEARSOME_TEMPER"
+    },
+    {
+      "csvid": 13746,
+      "name": "CARD_ID_LIGHTNING_VOLLEY"
+    },
+    {
+      "csvid": 13773,
+      "name": "CARD_ID_ORACLES_INSIGHT"
+    },
+    {
+      "csvid": 13791,
+      "name": "CARD_ID_RETRACTION_HELIX"
+    },
+    {
+      "csvid": 13953,
+      "name": "CARD_ID_PROPHETIC_FLAMESPEAKER"
+    },
+    {
+      "csvid": 14059,
+      "name": "CARD_ID_TREASONOUS_OGRE"
+    },
+    {
+      "csvid": 14080,
+      "name": "CARD_ID_BURNING_ANGER"
+    },
+    {
+      "csvid": 14084,
+      "name": "CARD_ID_CHIEF_ENGINEER"
+    },
+    {
+      "csvid": 14311,
+      "name": "CARD_ID_LENS_OF_CLARITY"
+    },
+    {
+      "csvid": 14382,
+      "name": "CARD_ID_SINGING_BELL_STRIKE"
+    },
+    {
+      "csvid": 14923,
+      "name": "CARD_ID_GLEAM_OF_AUTHORITY"
+    },
+    {
+      "csvid": 15341,
+      "name": "CARD_ID_GRUESOME_SLAUGHTER"
+    },
+    {
+      "csvid": 15516,
+      "name": "CARD_ID_GIGANTOPLASM"
+    },
+    {
+      "csvid": 15653,
+      "name": "CARD_ID_OATH_OF_NISSA"
+    },
+    {
+      "csvid": 15928,
+      "name": "CARD_ID_RATTLECHAINS"
+    },
+    {
+      "csvid": 16183,
+      "name": "CARD_ID_SIGARDAS_AID"
+    },
+    {
+      "csvid": 16257,
+      "name": "CARD_ID_CONSPIRACY_EMISSARYS_PLOY"
+    },
+    {
+      "csvid": 16772,
+      "name": "CARD_ID_QUICKSMITH_REBEL"
+    },
+    {
+      "csvid": 16773,
+      "name": "CARD_ID_QUICKSMITH_SPY"
+    },
+    {
+      "csvid": 17063,
+      "name": "CARD_ID_VIZIER_OF_THE_MENAGERIE"
+    },
+    {
+      "csvid": 17200,
+      "name": "CARD_ID_RAMUNAP_EXCAVATOR"
+    },
+    {
+      "csvid": 18487,
+      "name": "CARD_ID_RAFF_CAPASHEN_SHIPS_MAGE"
+    },
+    {
+      "csvid": 19356,
+      "name": "CARD_ID_EXPANSION_EXPLOSION"
+    }
+  ],
+  "predicate": {
+    "exhaustive_uint16_inputs": 65536,
+    "upper_word_unobserved": true,
+    "predicate_conditions": 132,
+    "excluded_cards": 112,
+    "semantics": "32-bit native integer bit tests, including signed-left-shift bit31 idioms; the resulting switch has no such shifts. All decision dependencies are confined to the low16 bits, which are exhaustively classified. Native comparisons separately validate the complete helper and opaque rules-engine call trace."
+  },
+  "enum_values": {
+    "AL_NM_ACT": 40,
+    "AL_MANA": 16,
+    "AL_KEY": 64,
+    "AL_INDESTRUCTIBLE": 128,
+    "STATE_VIGILANCE": 8192,
+    "SP_KEYWORD_VIGILANCE": 8,
+    "SP_KEYWORD_INDESTRUCTIBLE": 2048,
+    "SF_MANA_PRODUCER_DISABLED_FOR_AI": 4194304,
+    "AI": 1,
+    "EA_MANA_SOURCE": 4096,
+    "EA_ACT_ABILITY": 1,
+    "EA_ACT_INTERRUPT": 2
+  },
+  "enum_probe_text": "_Static_assert(AL_NM_ACT == 40U, \"ability_flag_value\");\n_Static_assert(AL_MANA == 16U, \"ability_flag_value\");\n_Static_assert(AL_KEY == 64U, \"ability_flag_value\");\n_Static_assert(AL_INDESTRUCTIBLE == 128U, \"ability_flag_value\");\n_Static_assert(STATE_VIGILANCE == 8192U, \"ability_flag_value\");\n_Static_assert(SP_KEYWORD_VIGILANCE == 8U, \"ability_flag_value\");\n_Static_assert(SP_KEYWORD_INDESTRUCTIBLE == 2048U, \"ability_flag_value\");\n_Static_assert(SF_MANA_PRODUCER_DISABLED_FOR_AI == 4194304U, \"ability_flag_value\");\n_Static_assert(AI == 1U, \"ability_flag_value\");\n_Static_assert(EA_MANA_SOURCE == 4096U, \"ability_flag_value\");\n_Static_assert(EA_ACT_ABILITY == 1U, \"ability_flag_value\");\n_Static_assert(EA_ACT_INTERRUPT == 2U, \"ability_flag_value\");\n_Static_assert(CARD_ID_FASTBOND == 80, \"activation_card_id\");\n_Static_assert(CARD_ID_INVOKE_PREJUDICE == 685, \"activation_card_id\");\n_Static_assert(CARD_ID_FORBIDDEN_LORE == 1929, \"activation_card_id\");\n_Static_assert(CARD_ID_MYSTIC_MIGHT == 2045, \"activation_card_id\");\n_Static_assert(CARD_ID_PYGMY_HIPPO == 2758, \"activation_card_id\");\n_Static_assert(CARD_ID_BONE_DANCER == 2948, \"activation_card_id\");\n_Static_assert(CARD_ID_GOBLIN_GRENADIERS == 2984, \"activation_card_id\");\n_Static_assert(CARD_ID_GOBLIN_VANDAL == 2986, \"activation_card_id\");\n_Static_assert(CARD_ID_OPHIDIAN == 3020, \"activation_card_id\");\n_Static_assert(CARD_ID_DAUTHI_MINDRIPPER == 3120, \"activation_card_id\");\n_Static_assert(CARD_ID_ROOTWATER_SHAMAN == 3255, \"activation_card_id\");\n_Static_assert(CARD_ID_SAMITE_BLESSING == 3415, \"activation_card_id\");\n_Static_assert(CARD_ID_THALAKOS_DECEIVER == 3442, \"activation_card_id\");\n_Static_assert(CARD_ID_HERMETIC_STUDY == 3793, \"activation_card_id\");\n_Static_assert(CARD_ID_YAWGMOTHS_WILL == 3964, \"activation_card_id\");\n_Static_assert(CARD_ID_SAPRAZZAN_HEIR == 4594, \"activation_card_id\");\n_Static_assert(CARD_ID_VERNAL_EQUINOX == 4647, \"activation_card_id\");\n_Static_assert(CARD_ID_LACCOLITH_GRUNT == 4705, \"activation_card_id\");\n_Static_assert(CARD_ID_LACCOLITH_TITAN == 4707, \"activation_card_id\");\n_Static_assert(CARD_ID_LACCOLITH_WARRIOR == 4708, \"activation_card_id\");\n_Static_assert(CARD_ID_LACCOLITH_WHELP == 4709, \"activation_card_id\");\n_Static_assert(CARD_ID_YAWGMOTHS_AGENDA == 5196, \"activation_card_id\");\n_Static_assert(CARD_ID_QUICKSILVER_DAGGER == 5424, \"activation_card_id\");\n_Static_assert(CARD_ID_ANIMAL_BONEYARD == 5468, \"activation_card_id\");\n_Static_assert(CARD_ID_CAUSTIC_TAR == 5504, \"activation_card_id\");\n_Static_assert(CARD_ID_CHAMBER_OF_MANIPULATION == 5514, \"activation_card_id\");\n_Static_assert(CARD_ID_PSIONIC_GIFT == 5663, \"activation_card_id\");\n_Static_assert(CARD_ID_SQUIRREL_NEST == 5714, \"activation_card_id\");\n_Static_assert(CARD_ID_ARCANE_TEACHINGS == 5904, \"activation_card_id\");\n_Static_assert(CARD_ID_FUTURE_SIGHT == 6149, \"activation_card_id\");\n_Static_assert(CARD_ID_MINDS_DESIRE == 6552, \"activation_card_id\");\n_Static_assert(CARD_ID_PSYCHIC_MEMBRANE == 6762, \"activation_card_id\");\n_Static_assert(CARD_ID_CRUCIBLE_OF_WORLDS == 7034, \"activation_card_id\");\n_Static_assert(CARD_ID_VEDALKEN_ORRERY == 7147, \"activation_card_id\");\n_Static_assert(CARD_ID_FLAME_FUSILLADE == 7843, \"activation_card_id\");\n_Static_assert(CARD_ID_SINS_OF_THE_PAST == 7960, \"activation_card_id\");\n_Static_assert(CARD_ID_COUNTERBALANCE == 8352, \"activation_card_id\");\n_Static_assert(CARD_ID_HAAKON_STROMGALD_SCOURGE == 8381, \"activation_card_id\");\n_Static_assert(CARD_ID_FALLEN_IDEAL == 8540, \"activation_card_id\");\n_Static_assert(CARD_ID_TEFERI_MAGE_OF_ZHALFIR == 8693, \"activation_card_id\");\n_Static_assert(CARD_ID_MAGUS_OF_THE_FUTURE == 8970, \"activation_card_id\");\n_Static_assert(CARD_ID_COLFENORS_URN == 9101, \"activation_card_id\");\n_Static_assert(CARD_ID_ELEMENTAL_MASTERY == 9522, \"activation_card_id\");\n_Static_assert(CARD_ID_FURYSTOKE_GIANT == 9540, \"activation_card_id\");\n_Static_assert(CARD_ID_POWER_OF_FIRE == 9630, \"activation_card_id\");\n_Static_assert(CARD_ID_BANISHING_KNACK == 9738, \"activation_card_id\");\n_Static_assert(CARD_ID_ENDLESS_HORIZONS == 9777, \"activation_card_id\");\n_Static_assert(CARD_ID_SCOURGE_OF_THE_NOBILIS == 9865, \"activation_card_id\");\n_Static_assert(CARD_ID_HIVE_MIND == 10429, \"activation_card_id\");\n_Static_assert(CARD_ID_ORACLE_OF_MUL_DAYA == 10626, \"activation_card_id\");\n_Static_assert(CARD_ID_PREDATORY_URGE == 10635, \"activation_card_id\");\n_Static_assert(CARD_ID_PYROMANCER_ASCENSION == 10638, \"activation_card_id\");\n_Static_assert(CARD_ID_SPHINX_OF_JWAR_ISLE == 10671, \"activation_card_id\");\n_Static_assert(CARD_ID_SPLINTER_TWIN == 11051, \"activation_card_id\");\n_Static_assert(CARD_ID_LEYLINE_OF_ANTICIPATION == 11139, \"activation_card_id\");\n_Static_assert(CARD_ID_STORMTIDE_LEVIATHAN == 11178, \"activation_card_id\");\n_Static_assert(CARD_ID_CLONE_SHELL == 11224, \"activation_card_id\");\n_Static_assert(CARD_ID_SEMBLANCE_ANVIL == 11358, \"activation_card_id\");\n_Static_assert(CARD_ID_SHIMMER_MYR == 11522, \"activation_card_id\");\n_Static_assert(CARD_ID_PRAETORS_GRASP == 11662, \"activation_card_id\");\n_Static_assert(CARD_ID_MANA_CHARGED_DRAGON == 11742, \"activation_card_id\");\n_Static_assert(CARD_ID_GARRUKS_HORDE == 11806, \"activation_card_id\");\n_Static_assert(CARD_ID_PAST_IN_FLAMES == 12043, \"activation_card_id\");\n_Static_assert(CARD_ID_SNAPCASTER_MAGE == 12079, \"activation_card_id\");\n_Static_assert(CARD_ID_TALONS_OF_FALKENRATH == 12274, \"activation_card_id\");\n_Static_assert(CARD_ID_ABUNDANT_GROWTH == 12298, \"activation_card_id\");\n_Static_assert(CARD_ID_DUAL_CASTING == 12358, \"activation_card_id\");\n_Static_assert(CARD_ID_LIGHTNING_PROWESS == 12413, \"activation_card_id\");\n_Static_assert(CARD_ID_OMNISCIENCE == 12598, \"activation_card_id\");\n_Static_assert(CARD_ID_YEVA_NATURES_HERALD == 12643, \"activation_card_id\");\n_Static_assert(CARD_ID_DEVIANT_GLEE == 12705, \"activation_card_id\");\n_Static_assert(CARD_ID_HYPERSONIC_DRAGON == 12749, \"activation_card_id\");\n_Static_assert(CARD_ID_PURSUIT_OF_FLIGHT == 12789, \"activation_card_id\");\n_Static_assert(CARD_ID_RACECOURSE_FURY == 12791, \"activation_card_id\");\n_Static_assert(CARD_ID_SEARCH_THE_CITY == 12811, \"activation_card_id\");\n_Static_assert(CARD_ID_SECURITY_BLOCKADE == 12813, \"activation_card_id\");\n_Static_assert(CARD_ID_UNDERWORLD_CONNECTIONS == 12861, \"activation_card_id\");\n_Static_assert(CARD_ID_DEBTORS_PULPIT == 12922, \"activation_card_id\");\n_Static_assert(CARD_ID_NIGHTVEIL_SPECTER == 13017, \"activation_card_id\");\n_Static_assert(CARD_ID_SKYGAMES == 13066, \"activation_card_id\");\n_Static_assert(CARD_ID_TIN_STREET_MARKET == 13082, \"activation_card_id\");\n_Static_assert(CARD_ID_MELEK_IZZET_PARAGON == 13178, \"activation_card_id\");\n_Static_assert(CARD_ID_DRAGON_MANTLE == 13425, \"activation_card_id\");\n_Static_assert(CARD_ID_PROPHET_OF_KRUPHIX == 13521, \"activation_card_id\");\n_Static_assert(CARD_ID_SPAWNING_GROUNDS == 13639, \"activation_card_id\");\n_Static_assert(CARD_ID_CLAIM_OF_EREBOS == 13680, \"activation_card_id\");\n_Static_assert(CARD_ID_COURSER_OF_KRUPHIX == 13681, \"activation_card_id\");\n_Static_assert(CARD_ID_EPHARAS_RADIANCE == 13695, \"activation_card_id\");\n_Static_assert(CARD_ID_EPIPHANY_STORM == 13696, \"activation_card_id\");\n_Static_assert(CARD_ID_EVANESCENT_INTELLECT == 13697, \"activation_card_id\");\n_Static_assert(CARD_ID_FEARSOME_TEMPER == 13710, \"activation_card_id\");\n_Static_assert(CARD_ID_LIGHTNING_VOLLEY == 13746, \"activation_card_id\");\n_Static_assert(CARD_ID_ORACLES_INSIGHT == 13773, \"activation_card_id\");\n_Static_assert(CARD_ID_RETRACTION_HELIX == 13791, \"activation_card_id\");\n_Static_assert(CARD_ID_PROPHETIC_FLAMESPEAKER == 13953, \"activation_card_id\");\n_Static_assert(CARD_ID_TREASONOUS_OGRE == 14059, \"activation_card_id\");\n_Static_assert(CARD_ID_BURNING_ANGER == 14080, \"activation_card_id\");\n_Static_assert(CARD_ID_CHIEF_ENGINEER == 14084, \"activation_card_id\");\n_Static_assert(CARD_ID_LENS_OF_CLARITY == 14311, \"activation_card_id\");\n_Static_assert(CARD_ID_SINGING_BELL_STRIKE == 14382, \"activation_card_id\");\n_Static_assert(CARD_ID_GLEAM_OF_AUTHORITY == 14923, \"activation_card_id\");\n_Static_assert(CARD_ID_GRUESOME_SLAUGHTER == 15341, \"activation_card_id\");\n_Static_assert(CARD_ID_GIGANTOPLASM == 15516, \"activation_card_id\");\n_Static_assert(CARD_ID_OATH_OF_NISSA == 15653, \"activation_card_id\");\n_Static_assert(CARD_ID_RATTLECHAINS == 15928, \"activation_card_id\");\n_Static_assert(CARD_ID_SIGARDAS_AID == 16183, \"activation_card_id\");\n_Static_assert(CARD_ID_CONSPIRACY_EMISSARYS_PLOY == 16257, \"activation_card_id\");\n_Static_assert(CARD_ID_QUICKSMITH_REBEL == 16772, \"activation_card_id\");\n_Static_assert(CARD_ID_QUICKSMITH_SPY == 16773, \"activation_card_id\");\n_Static_assert(CARD_ID_VIZIER_OF_THE_MENAGERIE == 17063, \"activation_card_id\");\n_Static_assert(CARD_ID_RAMUNAP_EXCAVATOR == 17200, \"activation_card_id\");\n_Static_assert(CARD_ID_RAFF_CAPASHEN_SHIPS_MAGE == 18487, \"activation_card_id\");\n_Static_assert(CARD_ID_EXPANSION_EXPLOSION == 19356, \"activation_card_id\");\n_Static_assert((TYPE_LAND|TYPE_CREATURE|TYPE_ENCHANTMENT|TYPE_ARTIFACT)==0x47, \"activation_type_mask\");\n_Static_assert(sizeof(int)==4 && sizeof(ability_loss_t)==4 && (char)0xff==-1 && sizeof(void*)==4, \"ability_integer_model\");\n_Static_assert(sizeof(card_data_t)==72 && offsetof(card_data_t,id)==36 && offsetof(card_data_t,reserved2)==38 && offsetof(card_data_t,type)==40 && offsetof(card_data_t,extra_ability)==60, \"native_card_data_layout\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&((card_data_t*)0)->id), uint16_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->targets[17].card), int32_t*), \"native_card_data_types\");\n_Static_assert(sizeof(card_instance_t)==300 && offsetof(card_instance_t,ext)==44 && offsetof(card_instance_t,state)==8 && offsetof(card_instance_t,targets)+17*sizeof(target_t)+offsetof(target_t,card)==256, \"native_instance_layout\");\n_Static_assert(offsetof(card_ext_t,sp_keywords)==0 && offsetof(card_ext_t,special_flags)==180, \"native_extension_layout\");\n",
+  "native_comparison": {
+    "result": {
+      "all_equal": true,
+      "classifier_cases": 16777216,
+      "query_cases": 16435984,
+      "three_way_comparisons": 33213200,
+      "triplet_function_invocations": 99639600,
+      "uint16_card_ids": 65536,
+      "type_feature_combinations": 16,
+      "extra_feature_combinations": 8,
+      "rules_result_bit_values": 2,
+      "rules_call_trace_checked": true,
+      "instance_and_extension_writes_checked": true
+    },
+    "source_path": ".recovery/ability-query-native-check-c282.c",
+    "source_sha256": "94976cbc301ee95b67fba2e2b53022690809e216ca5db8b643aaa2950545a601",
+    "executable_path": ".recovery/ability-query-native-check-c282.exe",
+    "executable_sha256": "2fa6d93eb88b666460e37578fca3bf9ea6d521c045cf733c9cc6bbe3a0c22aec",
+    "compile_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-static-libgcc",
+      "-Wl,--image-base,0x10000000",
+      "-I.",
+      ".recovery\\ability-query-native-check-c282.c",
+      "-o",
+      ".recovery\\ability-query-native-check-c282.exe"
+    ],
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "compile_log": ".recovery/ability-query-native-check-c282.compile.log",
+    "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_path": ".recovery/2022-ManalinkEh.dll",
+    "native_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "functions": [
+      {
+        "name": "has_an_activated_ability",
+        "address": "0x26ddb60",
+        "size": 2135,
+        "sha256": "11587e7b6cf2ae359563cce943052844fb061df3ea2cbe42d108153c3e5cb0ed",
+        "stubbed_call_targets": [
+          "0x26c8340"
+        ]
+      },
+      {
+        "name": "is_humiliated_by_instance",
+        "address": "0x26dd410",
+        "size": 28,
+        "sha256": "56c9aef8b17bfd32fa7842fc1fd8db4ed0062e96eaabceba37996036e069caaf",
+        "stubbed_call_targets": []
+      },
+      {
+        "name": "can_use_activated_abilities_by_instance",
+        "address": "0x26dd380",
+        "size": 31,
+        "sha256": "43d14442f48383a794bb1779effb8b37ee1039cee218080da701032d09b88d72",
+        "stubbed_call_targets": []
+      },
+      {
+        "name": "can_use_activated_abilities",
+        "address": "0x26dd340",
+        "size": 49,
+        "sha256": "e86da1e2a7937b04acbc093ed8390bdce9b52e233d835259ccc544beff628c4b",
+        "stubbed_call_targets": [
+          "0x26b2ab0"
+        ]
+      },
+      {
+        "name": "can_produce_mana",
+        "address": "0x26dd3a0",
+        "size": 97,
+        "sha256": "9a471847a4aaf46227720c2dbce0949d056d7b0d5b77c30a7f0f31500f1b4262",
+        "stubbed_call_targets": [
+          "0x26b2ab0"
+        ]
+      },
+      {
+        "name": "get_special_abilities_by_instance",
+        "address": "0x26df800",
+        "size": 52,
+        "sha256": "840ebfc82caee3d08586d7388628d4a8f4d911826c290d51938513d9caefeca7",
+        "stubbed_call_targets": []
+      },
+      {
+        "name": "remove_abilities",
+        "address": "0x26ddb20",
+        "size": 59,
+        "sha256": "b1021948eb5ab3b6eefa1822d861e094b1110e5ddbea18d9d299290fd4efe093",
+        "stubbed_call_targets": [
+          "0x26b32d0"
+        ]
+      }
+    ],
+    "external_data_bindings": [
+      {
+        "instruction": "0x26ddb6d",
+        "patch_address": "0x26ddb70",
+        "original": "0x7e7038",
+        "target": "(uintptr_t)cards_data+40"
+      },
+      {
+        "instruction": "0x26ddb7b",
+        "patch_address": "0x26ddb7e",
+        "original": "0x7e7010",
+        "target": "(uintptr_t)cards_data+0"
+      },
+      {
+        "instruction": "0x26de1af",
+        "patch_address": "0x26de1b2",
+        "original": "0x7e704c",
+        "target": "(uintptr_t)cards_data+60"
+      },
+      {
+        "instruction": "0x26ddb27",
+        "patch_address": "0x26ddb28",
+        "original": "0x7a398c",
+        "target": "(uintptr_t)&affected_card"
+      },
+      {
+        "instruction": "0x26ddb33",
+        "patch_address": "0x26ddb34",
+        "original": "0x738c84",
+        "target": "(uintptr_t)&affected_card_controller"
+      }
+    ],
+    "limits": "The original seven function bodies run against synthetic records. Five absolute data operands are redirected to the equivalent test arrays/globals; branch logic is unchanged. Rules-engine, get-instance and in-play callees are replaced by shared deterministic C stubs; call arguments/order and modified instance/extension bytes are compared with predecessor and reconstructed C. Classification exhausts all65536 IDs and256 relevant flag/result combinations with poisoned upper ID words and irrelevant bits. Other complete32-bit query state combinations and actual gameplay are not exhausted."
+  },
+  "source_state_sha256": "27bc088ec3db6fb5c6e0b003ed0c74cdd4645b3a8527b13765acaf63e66adf5e",
+  "counts": {
+    "functions": 7,
+    "source_units": 1,
+    "excluded_cards": 112,
+    "source_lines_removed": 516,
+    "removed_placeholder_occurrences": 203,
+    "removed_placeholder_names": 16
+  },
+  "preprocess_before": {
+    "compiler_path": "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "rows": [
+      {
+        "archive_path": ".recovery/ability-query-pp-c283/before.i.gz",
+        "archive_sha256": "95fab626b6e05b9e689da5cc1a4ac91194a5055b5ab78be2828ea1dece8fd943",
+        "raw_sha256": "0f0d367e00fe294d361ad366e7ff36ae8e7b03f9155c37367322fa52b3713442",
+        "source": "functions/abilities.c",
+        "source_bytes_sha256": "e9b3c12a7b3a88e0e225472b7ea0b72564ab281e519e52d61e4922ffba74c386",
+        "argv": [
+          "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+          "-m32",
+          "-O2",
+          "-ggdb2",
+          "-march=i586",
+          "-mpreferred-stack-boundary=2",
+          "-fno-omit-frame-pointer",
+          "-fno-tree-vrp",
+          "-Wall",
+          "-Wextra",
+          "-Wpointer-arith",
+          "-Wcast-qual",
+          "-Wcast-align",
+          "-Wwrite-strings",
+          "-Wshadow",
+          "-W",
+          "-Winline",
+          "-Wno-unused-parameter",
+          "-I..",
+          "-I.",
+          "-Wbad-function-cast",
+          "-Wstrict-prototypes",
+          "-Wnested-externs",
+          "-E",
+          "-dD",
+          "functions/abilities.c"
+        ]
+      }
+    ]
+  },
+  "enum_probe": {
+    "archive_path": ".recovery/ability-query-pp-c283/enum-type-probes.i.gz",
+    "archive_sha256": "1c3874ab99edb04167a960a8130392cea2214e75f4de923f44d42bb9bfa809e7",
+    "raw_sha256": "fc13b585333b3e716b3131d30769ef91081c501ea127dc7b3fabe163438d10ba",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-fsyntax-only",
+      "-x",
+      "c",
+      "-"
+    ],
+    "exit_code": 0,
+    "log_path": ".recovery/ability-query-pp-c283/enum-type-probes.log",
+    "log_sha256": "cdefa4cfb2afe42886f4f51fed178fa29dc97693d16e40c18be84ac2e8e22ba4"
+  },
+  "preflight": {
+    "status": "passed",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-E",
+      "-dD",
+      "-x",
+      "c",
+      "-"
+    ],
+    "stdin_sha256": "75b1e739cfb0ce7eb00674660eb3abc911c8859d23d41075e380c103acf9395e",
+    "projected_source_sha256": "3f67905ff4d13673839c19320a41a75190486805847564eb1ce45214924b180f",
+    "archive_path": ".recovery/ability-query-pp-c283/projected.i.gz",
+    "archive_sha256": "0c0dbf9dd1cd670bf5dbb49a7779885cbd6470deb474228d95fb79405b44c94d",
+    "raw_sha256": "31ce0ede440eacb0a6b12044e194df364cc8f0f4fafb4ec25b939ed0d4e0d35f"
+  },
+  "raw_source_bytes_sha256": "e9b3c12a7b3a88e0e225472b7ea0b72564ab281e519e52d61e4922ffba74c386",
+  "files": [
+    {
+      "source": "functions/abilities.c",
+      "before_path": ".recovery/ability-queries-before-c284/functions/abilities.c",
+      "before_bytes_sha256": "e9b3c12a7b3a88e0e225472b7ea0b72564ab281e519e52d61e4922ffba74c386",
+      "after_source_sha256": "3f67905ff4d13673839c19320a41a75190486805847564eb1ce45214924b180f",
+      "preprocess_after": {
+        "archive_path": ".recovery/ability-query-after-c285.i.gz",
+        "archive_sha256": "1a6a47cfa26975e20daf7dd65e34e4d2b8e770c5dd4922107ae671367d99d00f",
+        "raw_sha256": "43a7ed3e79a63be4f8fb8cfc51d2073d39b26fc048c4e0cb8c7f6e2e45cf1e10",
+        "source_bytes_sha256": "9ea0c1e69096f71be600a751e76b76ea4c2eccfaf11f2895c1bb1ed073397963",
+        "argv": [
+          "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+          "-m32",
+          "-O2",
+          "-ggdb2",
+          "-march=i586",
+          "-mpreferred-stack-boundary=2",
+          "-fno-omit-frame-pointer",
+          "-fno-tree-vrp",
+          "-Wall",
+          "-Wextra",
+          "-Wpointer-arith",
+          "-Wcast-qual",
+          "-Wcast-align",
+          "-Wwrite-strings",
+          "-Wshadow",
+          "-W",
+          "-Winline",
+          "-Wno-unused-parameter",
+          "-I..",
+          "-I.",
+          "-Wbad-function-cast",
+          "-Wstrict-prototypes",
+          "-Wnested-externs",
+          "-E",
+          "-dD",
+          "functions/abilities.c"
+        ]
+      }
+    }
+  ],
+  "index_before_sha256": "c1924b91f666e6c673ce508281ac488faf07f9a50b2377ed27fdc1b6315d6e93",
+  "status": "Applied and verified seven ability helpers:112-card exclusion switch and structured flag queries;516 lines,203 placeholder references and16 placeholder names removed.",
+  "scope": "Finite112-card activation exclusion switch and structured ability-mode queries. Native, predecessor and reconstructed results/call traces/writes agree on33213200 synthetic cases. ABI/enumerator probes bind the names and records. No new native coverage or gameplay claim.",
+  "validation": {
+    "focused": {
+      "current_ability_queries": {
+        "cleaned_definitions": 7,
+        "source_units": 1,
+        "excluded_cards": 112,
+        "source_lines_removed": 516,
+        "removed_placeholder_occurrences": 203,
+        "removed_placeholder_names": 16,
+        "native_three_way_comparisons": 33213200,
+        "classifier_feature_cases": 16777216,
+        "query_cases": 16435984,
+        "enum_and_layout_assertions": 131,
+        "scope": "Complete uint16 exclusion classification with proven low16-bit dependencies; source flag/control-flow reconstruction and actual enum/record probes. Original native branch bodies use five relocated data operands and three shared opaque callees. Native, predecessor and reconstructed results, call traces and instance/extension writes match on33213200 cases. Other complete32-bit query states and gameplay are not exhausted; no new native coverage claimed."
+      },
+      "current_inputs": {
+        "canonical_functions": 738,
+        "accepted_function_names": 735,
+        "auxiliary_functions": [
+          {
+            "recovery_name": "exile_at_end_of_combat_2022",
+            "canonical_name": "innistrad_exile_at_end_of_combat_legacy",
+            "kind": "retained_public_native_helper",
+            "native_ranges": 1
+          },
+          {
+            "recovery_name": "reset_storm_count_2022",
+            "canonical_name": "reset_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 14
+          },
+          {
+            "recovery_name": "keep_storm_count_2022",
+            "canonical_name": "keep_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 21
+          }
+        ],
+        "changed_files": 169,
+        "verification": "current source hashes and canonical name/ledger references",
+        "historical_provenance_replayed": false,
+        "historical_artifacts_retired": true,
+        "scope": "Current configuration inputs only. Historical source-edit replay, archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json."
+      },
+      "predecessor_source_units_checked": 1,
+      "reader_restoration_verified": true,
+      "physical_sources_unchanged": true,
+      "source_successor_chain_checked": true,
+      "index_unchanged": true
+    },
+    "focused_record": {
+      "path": ".recovery/ability-queries-focused-c286.json",
+      "sha256": "a41d2cc7474ec63801bab77f8b8e8db7a92b5885601fdd493814f48a5124f416",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/ability-queries-build-c285.log",
+      "log_sha256": "0fc172a97f816c7180e263262c69f71555b82c6762e4c615ed9f03051ad1532d",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "b5b01345fde1f97f74f90adc62dbf1a24a578fc78fbcf7949d8012b58f86ea09",
+      "dbg_sha256": "2634869dfd73f176eb6df625f1d92fed67f7ea78c0f1cd78a2658202c7bf30b1"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/ability-query-proof-before-c284.json.gz",
+      "archive_sha256": "ef9f20faaa533789cfa2afb9f84d56f5e5eae0054d13129d1d4deb589369f2c1",
+      "raw_sha256": "27bc088ec3db6fb5c6e0b003ed0c74cdd4645b3a8527b13765acaf63e66adf5e",
+      "verified_source_pin_successions": 1
+    },
+    "limits": "The ID tree has132 pure conditions. Bit dependency analysis proves that every decision observes only the loaded word low16 bits; all65536 values are classified. The normal uint16 ID field replaces the wide aliased read and signed-shift idioms. Native branch bodies are rehosted with five explicit absolute-data relocations and three shared opaque callees. Native, predecessor C and new C match on33213200 result/trace/write cases, including the complete uint16 classification feature matrix and sampled full-width query states. All131 actual compiler enum/layout assertions, complete source expansion, build and15169 fixed slots pass. Full32-bit query state and gameplay are not exhausted; no new native coverage claimed. Historical replay remains retired."
+  }
+}

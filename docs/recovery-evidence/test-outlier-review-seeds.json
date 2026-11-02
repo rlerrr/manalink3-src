@@ -1,0 +1,184 @@
+[
+  {
+    "source": "cards/judgement.c",
+    "name": "card_stitch_together",
+    "native_variables": [
+      "0x48f707"
+    ]
+  },
+  {
+    "source": "cards/hour_of_devastation.c",
+    "name": "card_abandoned_sarcophagus",
+    "native_variables": [
+      "0xb714ba",
+      "0xb7169b"
+    ]
+  },
+  {
+    "source": "cards/conspiracy.c",
+    "name": "card_ignition_team",
+    "native_variables": [
+      "0xf50732"
+    ]
+  },
+  {
+    "source": "cards/tempest.c",
+    "name": "card_spirit_mirror",
+    "native_variables": [
+      "0x1263c96"
+    ]
+  },
+  {
+    "source": "cards/coldsnap.c",
+    "name": "card_soul_spike",
+    "native_variables": [
+      "0x13dd75d"
+    ]
+  },
+  {
+    "source": "cards/rivals_of_ixalan.c",
+    "name": "card_path_of_mettle",
+    "native_variables": [
+      "0x163214e",
+      "0x16321bb"
+    ]
+  },
+  {
+    "source": "cards/m19.c",
+    "name": "card_sai_master_thopterist",
+    "native_variables": [
+      "0x1c6952f"
+    ]
+  },
+  {
+    "source": "cards/modern_horizons_2.c",
+    "name": "card_tavern_scoundrel",
+    "native_variables": [
+      "0x1f65b76"
+    ]
+  },
+  {
+    "source": "cards/modern_horizons_2.c",
+    "name": "card_combine_chrysalis",
+    "native_variables": [
+      "0x1f79366"
+    ]
+  },
+  {
+    "source": "cards/alara_reborn.c",
+    "name": "card_deathbringer_thoctar",
+    "native_variables": [
+      "0x2ba5b11"
+    ]
+  },
+  {
+    "source": "cards/mirrodin_besieged.c",
+    "name": "card_phyrexian_revoker",
+    "native_variables": [
+      "0x2f62a20",
+      "0x2f62c81"
+    ]
+  },
+  {
+    "source": "cards/modern_horizons.c",
+    "name": "card_etchings_of_the_chosen",
+    "native_variables": [
+      "0x302cf56"
+    ]
+  },
+  {
+    "source": "cards/avacyn_restored.c",
+    "name": "miracle",
+    "native_variables": [
+      "0x30fb173"
+    ]
+  },
+  {
+    "source": "cards/mirage.c",
+    "name": "card_uktabi_wildcats",
+    "native_variables": [
+      "0x34b7b84"
+    ]
+  },
+  {
+    "source": "cards/kaladesh.c",
+    "name": "card_saheeli_rai",
+    "native_variables": [
+      "0x3642f5a"
+    ]
+  },
+  {
+    "source": "cards/strixhaven.c",
+    "name": "card_silverquill_command",
+    "native_variables": [
+      "0x3944777"
+    ]
+  },
+  {
+    "source": "cards/strixhaven.c",
+    "name": "card_mercurial_transformation",
+    "native_variables": [
+      "0x394f147"
+    ]
+  },
+  {
+    "source": "cards/fallen_empires.c",
+    "name": "card_raiding_party",
+    "native_variables": [
+      "0x3dde2ce"
+    ]
+  },
+  {
+    "source": "cards/the_dark.c",
+    "name": "card_goblin_shrine",
+    "native_variables": [
+      "0x3eafff5"
+    ]
+  },
+  {
+    "source": "cards/eldritch_moon.c",
+    "name": "card_blessed_alliance",
+    "native_variables": [
+      "0x41e67f8"
+    ]
+  },
+  {
+    "source": "cards/gatecrash.c",
+    "name": "card_orzhov_charm",
+    "native_variables": [
+      "0x4b054e6"
+    ]
+  },
+  {
+    "source": "cards/throne_of_eldraine.c",
+    "name": "card_tempting_witch",
+    "native_variables": [
+      "0x56741b2"
+    ]
+  },
+  {
+    "source": "cards/prophecy.c",
+    "name": "card_abolish",
+    "native_variables": [
+      "0x59919fb",
+      "0x5991a28"
+    ]
+  },
+  {
+    "source": "cards/guilds_of_ravnica.c",
+    "name": "card_guild_summit",
+    "native_variables": [
+      "0x5b13f0f"
+    ]
+  },
+  {
+    "source": "functions/tutors.c",
+    "name": "scrylike_effect",
+    "native_variables": [
+      "0x5e34d8f",
+      "0x5e34dd4",
+      "0x5e34e5b",
+      "0x5e34e9c"
+    ]
+  }
+]

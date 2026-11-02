@@ -1,0 +1,91 @@
+{
+  "recovery": {
+    "cleaned_definitions": 718,
+    "source_units": 110,
+    "inlined_call_results": 1515,
+    "removed_unused_int_locals": 131,
+    "pending_candidates": 158,
+    "codegen": {
+      "identical_normalized_runtime_sections": 24,
+      "different_runtime_sections": [
+        ".text",
+        ".reloc"
+      ],
+      "changed_code_owners": 2,
+      "unchanged_cleaned_code_owners": 716,
+      "differing_text_bytes": 176,
+      "all_function_addresses_unchanged": true,
+      "relocation_targets_unchanged": true,
+      "scope": "All bytes outside two reviewed function ranges are identical. Their instruction snapshots bind a manual review: Atlas reschedules the same14 dialog arguments (including20-5*first_count and5*second_count) and retains its calls/branches; Liliana reschedules the same player/card-id/Zombie arguments before an unchanged subtype call. Relocation-site motion is confined to those ranges and preserves target words. This is bounded codegen corroboration; source/expanded CFG and compiler-type checks establish the local rewrite, not a general machine-code equivalence proof."
+    },
+    "scope": "Inline1515 adjacent plain-int call-result assignments into their sole zero/nonzero condition, in718 current definitions across110 original units. Every selected result is dead at both condition successors in source and GCC-expanded statement CFGs, with a unique nonvolatile int declaration and no direct address escape. Actual GCC original-tree call types are signed32-bit integers, so removing the assignment adds no narrowing/conversion difference. Shared helper arguments and branch admission are retained.131 now-unused declarations disappear.154 cases in line-sensitive-macro units and four other source/expanded parse/shape cases remain pending. This is readability cleanup of reviewed source, not newly recovered native functions or a gameplay-equivalence claim."
+  },
+  "code_lines_removed": 1672,
+  "placeholder_identifier_uses_removed": 3161,
+  "card_handler_definitions": 576,
+  "other_helper_definitions": 142,
+  "newly_recovered_native_functions": 0,
+  "followup_queue": "docs/recovery-evidence/call-condition-followup-queue.json",
+  "observed": {
+    "build": {
+      "session_id": 36536,
+      "exit_code": 0,
+      "terminal_chunk_id": "efe327",
+      "log": ".recovery/call-conditions-build-c92.log",
+      "log_sha256": "a80a7960253594f70f8a5a4aac565e978a019d473604d251754da53631a627ad"
+    },
+    "focused": {
+      "session_id": 74934,
+      "exit_code": 0,
+      "terminal_chunk_id": "84be7d",
+      "log": ".recovery/call-conditions-focused-final-c97.log",
+      "log_sha256": "134711db60efc4c70d513df5172bb1b34a75691872d0de8a7659c5d5437bb96e"
+    },
+    "historical_reader_checks": {
+      "session_id": 65755,
+      "exit_code": 0,
+      "terminal_chunk_id": "e993ce",
+      "log": ".recovery/call-conditions-history-final-c96.log",
+      "checked_modules": [
+        "verify_disentangled_pair_locals",
+        "verify_multiphase_card_locals",
+        "verify_shared_stack_test_recovery",
+        "verify_additional_local_names",
+        "verify_local_identifier_cleanup",
+        "verify_inline_wrapper_recovery"
+      ],
+      "reader_restoration_verified": true,
+      "unreviewed_live_source_rejected": true,
+      "log_sha256": "aefb75486e33f2519ead023adc1bf7c3816dbf8d0d74e7d8a7e585d68a5e3a97"
+    },
+    "routine_setup": {
+      "session_id": 6705,
+      "exit_code": 0,
+      "terminal_chunk_id": "6aa010",
+      "log": ".recovery/call-conditions-setup-final-c97.log",
+      "audit_mode": "current_inputs",
+      "verified_built_slots": 15169,
+      "metadata_sha256": "75a64807d4c874d63f763f82fa6fea26a2dbda10edd735decf119eeb2961e508",
+      "log_sha256": "df93d85a679dcb48e24bf73910410d70fb9ce1e06deafc113b9a2e641ef9fed0"
+    },
+    "automatic_local_inspection": {
+      "exit_code": 0,
+      "terminal_chunk_id": "e181d7",
+      "nonautomatic_or_parameter_selected_declarations": 0
+    }
+  },
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "0bf6cfc53eb8900b02be866e4bb691579c0871f47e0b8808d723fe2258c2b563",
+    "docs/recovery-evidence/call-condition-cleanup.json": "5ffae3d8e8bb328eb2d2cea38fb20eaf08b9b1d11877f0228e8e646a15636a87",
+    "tools/recovery/call_condition_source.py": "b4fe0d94c5fbcc14c1267b571738c3c35816848f2583bf37c7b96762ff2dafad",
+    "tools/recovery/preprocessed_conditions.py": "fed9fb2125fdb56f6ed214ddde4799ac74ea091094be1d087f0cd07ece0af526",
+    "tools/recovery/call_result_types.py": "c9a5b698c292f5b9c985c069c2c6056699776bd34e8fb9f67ccbb56a8e9e0e30",
+    "tools/recovery/call_condition_codegen.py": "e807f26989ab7206859d8e579f1adc80267873e3a1318eeca772da3430b0f5f7",
+    "tools/recovery/verify_call_condition_cleanup.py": "bfd97c47566b4fb0e567ca60596df417d4a434aec0a38de01eeb71f7269d8dd3",
+    "docs/recovery-evidence/call-condition-followup-queue.json": "84a7a80a0df0534e9b9f20119f771dd32d4cd0f84a1d296db62caf60897232c7",
+    "ManalinkEh.dll": "e95bcb2fb1459be3d0853cbba06cd6af9e53fe2a43f404909b6840345cff909a",
+    "ManalinkEh.dbg": "020b38c34e7940aeefdee23e5dd3d28a24677d8d20c185545718ca67e6b6e671"
+  },
+  "storage": "Compiler expansions and current transaction snapshots were losslessly compressed after a disk-full write. Raw SHA-256 identities are retained; original release inputs and earlier recovery archives were not modified.",
+  "limits": "The transformation is supported for the reviewed GCC9.3 x86 configuration and ordinary defined C behavior. Parser typedef stubs support syntax/flow analysis, while actual GCC call-expression types independently check signed32-bit results. Two bounded scheduling differences received manual argument/control review and exact instruction/relocation snapshot checks; this is not a general machine-code equivalence proof or gameplay validation. Six affected historical checkers were exercised in the checked predecessor source view against current compiled binaries; the complete historical suite was not rerun. Routine metadata setup is labeled current_inputs."
+}

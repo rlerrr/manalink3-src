@@ -1,0 +1,1930 @@
+{
+  "status": "Read-only candidates; no edits applied for these65 functions.",
+  "counts": {
+    "remaining_role_candidates": 65,
+    "completed": 123,
+    "initial_role_candidates": 188,
+    "source_units": 37
+  },
+  "rows": [
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_aerial_modification",
+      "line": 142,
+      "before_sha256": "eb6e016111662c779a491d55cfe7e88e3b56a7da0d470048cf9d669e8a42e2b3",
+      "after_sha256": "8777fdd8d82bda55881f06080448862fb416aa69875fee20fecdfcb9e8f0c9e1",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 8,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0xab9586",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_siege_modification",
+      "line": 5220,
+      "before_sha256": "dbbad49dfa3d265b1838fee6d892d3c50a51493767aac14fec40abdd756996bf",
+      "after_sha256": "6a4c5e0f531598ecb6242cbe0ee927267a21c10dd4c78cc166553bd8d03d7074",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 10,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0xaa7499",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/alliances.c",
+      "name": "effect_scars_of_the_veteran",
+      "line": 2938,
+      "before_sha256": "aeccc2e1385c7f6d3b606e03344f0a1c12d96be993251cce34b98f95927e9ea5",
+      "after_sha256": "7b955be01c4a097082ae70e5855c0d7a0dd4d0a24364d40aa1526c19a4d1ed14",
+      "substitutions": {
+        "pcVar5": "instance"
+      },
+      "occurrences": 16,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x9223ac",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        },
+        {
+          "name": "instance",
+          "die": "0x9224a2",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_nissa_steward_of_elements",
+      "line": 5995,
+      "before_sha256": "0a32cf6e7b94670f8efbc1879109209498a99a5857ba4fea0d3964a57c07ad9a",
+      "after_sha256": "aef542c649292cd4b25388c8bb4d8c3fb36d51b384e959814a731a860309dca2",
+      "substitutions": {
+        "pcVar3": "instance"
+      },
+      "occurrences": 18,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x2a10b13",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/commander_2013.c",
+      "name": "card_marath_will_of_the_wild",
+      "line": 1198,
+      "before_sha256": "37328c9bb757211316a004691be24187aafa4b6a6e162250021a86cdcfb4fd8b",
+      "after_sha256": "52cf95e6d4aba3ce3aa86a3b889c20455431bbcb76c242a0d37ad031c7e47c2d",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 5,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x3886441",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/commander_2018.c",
+      "name": "card_aminatou_the_fateshifter",
+      "line": 468,
+      "before_sha256": "eeadffeb8890bedbf5e58a83bc38962abc82a57bc8cc1d209e545b0be6873882",
+      "after_sha256": "61d24a21756f58bdda1f98614801cc03469f1d7a40f688fd9fa062e53d02888c",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 13,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x4e32684",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/commander_2018.c",
+      "name": "card_mask",
+      "line": 1487,
+      "before_sha256": "071c7b6998452d86d58f366887efc0d07162803bb663fe0bee0796e5238822ed",
+      "after_sha256": "0f411c8cff4fd24925acc793f38f61b7d1916fec9f1db6aa22e2be4c24fe8488",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 7,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x4e30859",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_merchant_raiders",
+      "line": 252,
+      "before_sha256": "562b51c52c471bca7f3f6369ac5ea608c095fd6d8e5e09a6b1607f8bd4521412",
+      "after_sha256": "60f5fd006a3813d11dc1ed9f9b7e93e94389ec0015233c385cd0992b7d38393e",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 7,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x536b8e5",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_rock_token",
+      "line": 2063,
+      "before_sha256": "97602d4f62017a542230cbef900a32e5cd39ea54aabc91b8a054742bb4c46ba0",
+      "after_sha256": "f4b7e20c23a18302df3ee3fb211a1f19b7ba685d49b9e7bafa897e6e8c3d8063",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 13,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x5368056",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_plague_reaver",
+      "line": 8415,
+      "before_sha256": "34d7b85c786ac677d645fffb100ec4c484ee19eedab74679a1eaae9e55f6cc0c",
+      "after_sha256": "0681557b609f9e070b665e9866d068336b7de607111779695bc608037a64ccbe",
+      "substitutions": {
+        "pcVar3": "instance"
+      },
+      "occurrences": 7,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x536963b",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/dissension.c",
+      "name": "card_evolution_vat",
+      "line": 1672,
+      "before_sha256": "737cf1196d3f16b77dc8df00938698437fc8b4df9c8a4c57a6c1210edc630e56",
+      "after_sha256": "1d705a0c7a38bede530843614e67257005c9dabd73e972062c621700a551f6de",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 14,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x1ea7296",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/dissension.c",
+      "name": "card_rakdos_riteknife",
+      "line": 4019,
+      "before_sha256": "1d4b0beb932fc5ee69689d03d658b2f4c478d1125f74ebb19cf6f92c95d4fbe3",
+      "after_sha256": "e1516424c650c464c27e3d9e218d11e7e8b73a866e082b892637604c030db738",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 23,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x1e9e296",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_time_of_ice",
+      "line": 4891,
+      "before_sha256": "70efb2c0a50a522af12763e085822f99dc153978d7d3cc5088ff2484828cb97b",
+      "after_sha256": "6ae56ea208a9fea06168429b288ffa0df757ddcfa80a778d3e53e9c0aca82f99",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 7,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x2946823",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "name": "bolster",
+      "line": 6,
+      "before_sha256": "992be5c6415f50f74a95c7c0a58e42fd9e35d16a04fe2c4fb3aaf819228fc3c4",
+      "after_sha256": "f3e4040217b996b8e38697436794168b347b876bca80f5d173ba9818b4b358cb",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 5,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x5bdea0b",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "name": "card_crucible_of_worlds",
+      "line": 1308,
+      "before_sha256": "ab59215ac21384af5e2bf963885cf9996f0c56a67a8d4739dc38efe50f10d255",
+      "after_sha256": "46ac27f51c6763cac5b1913dd24d01080bb9a53400e5e58871019cca2310147c",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 5,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x240bc9",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/future_sight.c",
+      "name": "card_delay",
+      "line": 908,
+      "before_sha256": "64dc158ea7b46fb92024d390cb2cb762024919b3604f3728362046121e227677",
+      "after_sha256": "1d5f8b2d2a53d557936ddfcf1d4852deef4a466807310a6588fc367828925bda",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 6,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x4fb478f",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/homelands.c",
+      "name": "hom_clockwork",
+      "line": 4,
+      "before_sha256": "171203a7c5db4ec3c69f7ffbdbe9a3a828525e034b0abd344199f7c4c834a941",
+      "after_sha256": "8d92dd683229064dc3993b8e03cdb025303a49cd62b15bc83cd9b0cdd5a8319a",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 9,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x10149fb",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/homelands.c",
+      "name": "card_memory_lapse",
+      "line": 2224,
+      "before_sha256": "d15d1e37a4869962d9c36d0ec8430668ce11c33dfdf2150896b8ffa1715bf6df",
+      "after_sha256": "4de5728f744d4c6657ca5dec5a0799acc1b36f73d18b7b00dacd84f3d78f38b6",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 6,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x100c5fc",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "card_samut_the_tested",
+      "line": 2925,
+      "before_sha256": "b2b312fb411470fbad2253770fe29cf39954a1208a65e62c5b6a1480c97f6584",
+      "after_sha256": "9a2a492a435178b0473018e7dfdb4888d86d0914574758053597961f63167cd5",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 20,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0xb74e40",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "card_khero_spellsnatcher",
+      "line": 936,
+      "before_sha256": "df94a930a41a7a10e15980fc52a91161f63c962e6341cf4c38a364d11198229c",
+      "after_sha256": "5fa159cdba73c2a81bb08a3b5617eff9b17caa341e139b9c6f2d08e9374261d7",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 16,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x1708c60",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/legions.c",
+      "name": "crypt_sliver_shared_ability",
+      "line": 383,
+      "before_sha256": "cadec3a6be8d092f2678623d30dddd427d14ee6640db32ac9eea7fe1cc2a5c47",
+      "after_sha256": "066271515c32b1277b133b91956ba56d4ed3e9de5bcd88618530f55db9b4a489",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 10,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x44e21c1",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/legions.c",
+      "name": "magma_sliver_shared_ability",
+      "line": 1261,
+      "before_sha256": "4b74547933160f673e494757c3b88493ad123bb2c5931637b24b66679b030024",
+      "after_sha256": "fc0916a914f144364a6d73fd6f692bb118b98c265063ab3e23f9af7193eaa250",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 10,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x44deed9",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/lorwyn.c",
+      "name": "card_ajani_goldmane",
+      "line": 582,
+      "before_sha256": "922dffaf5b1e325f85ebb9e296eb49c1b87f676869c6dd2869d1a2f1884c5d4c",
+      "after_sha256": "0598e9529815a58edd7bc56bf832e431f53f12b5bc08c43870d77f00e658a9d7",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 4,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x52accb1",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/lorwyn.c",
+      "name": "effect_aquitects_will",
+      "line": 738,
+      "before_sha256": "afeabf5c3c213f281a5959e2cf12c42ac07348b12d8dd9b21b0962f517e05ba6",
+      "after_sha256": "01b9417dced2d3441b5df3b760bfad26565789d3090adadaf65c428a2bd8f81c",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 8,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x52ac728",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/m20.c",
+      "name": "card_mu_yanling_sky_dancer",
+      "line": 2689,
+      "before_sha256": "2356a11adabd68f1727d5bb802456b10158c1f26d014e0440a1ac15a75200935",
+      "after_sha256": "5a23369560c0c5ca5331e833f20130c7550959b1fc74d6eea5aa5ca2802e4c98",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 15,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x3583834",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/m20.c",
+      "name": "card_chandra_acolyte_of_flame",
+      "line": 2951,
+      "before_sha256": "cc3e0df01e56984360ae3baff62e8e263bddaf90ba2a5f078f6ad6ad45b2d3c3",
+      "after_sha256": "91f417c185390b791a1db630247157cbf050af6439d3f7c22d78e1d2aeb02dbd",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 8,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x3586c3a",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_blood_oath",
+      "line": 380,
+      "before_sha256": "8c28b357a9eeacb2f28e48bae577a65696372d88f3ef014dcae45c86e821f46c",
+      "after_sha256": "a2377c6e91cf2bff6cb706fc812c013cee50a9664f085ad54546decf5e1f8493",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 5,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x14bcb2f",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_mercadian_lift",
+      "line": 2802,
+      "before_sha256": "99fa939b70cc9c5702633f9604641d93f3e0135b58661e73af7c6d73fc0c27a7",
+      "after_sha256": "f6e2067af6123282d7732dd104319b3d6b2921033782988051a1d1e54866d643",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 9,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x14b3a44",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "flailing_manticore_legacy",
+      "line": 8655,
+      "before_sha256": "22e01a6fd5014159a04649b7140bbb27719e983b464a94e8a2c97a7df3de9090",
+      "after_sha256": "c07e155443e322cb9e30fe0bd72a1d2cf8684dbd57a1496c8f3a33fb7131976d",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 18,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x14a7682",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        },
+        {
+          "name": "instance",
+          "die": "0x14a7767",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "flailing_ogre_legacy",
+      "line": 8768,
+      "before_sha256": "5b4edf33c31a17e8e50721f3ec771c854e35a0e5498663bccad6157adef9627a",
+      "after_sha256": "e10b9be997079e18c0eaa9face9a3836c8f3f86e9e8b574784d60ef925997ae2",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 18,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x14a6e51",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        },
+        {
+          "name": "instance",
+          "die": "0x14a6f36",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "flailing_soldier_legacy",
+      "line": 8881,
+      "before_sha256": "09fe1786a8095dd01d2febe0caa6720d162ff0213e3762ab4087d581aafaf68d",
+      "after_sha256": "565dcf40bb8b89c0b38aabcc1c6de3b4ab5f2143e557e2e7a0421a95660b314b",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 18,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x14a662a",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        },
+        {
+          "name": "instance",
+          "die": "0x14a670f",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/mirage.c",
+      "name": "acidic_dagger_effect",
+      "line": 556,
+      "before_sha256": "cf8e1ff9f1ef31f4bae67f60c398b917fa372330ff5e432e16701b6d37bf23a3",
+      "after_sha256": "b96b6b3ee2714a4f79b23cb641aa537e826367b40332978e0924e3c410de8ea1",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 23,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x34ca91b",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/mirage.c",
+      "name": "card_dissipate",
+      "line": 1973,
+      "before_sha256": "09d832d4d79f2bd1b3bd513643ad340d80580542767f05e7bd03f4622918b31b",
+      "after_sha256": "94c23e7ac004a32e8549ea78063cadb94478f3b04003f0f939229aec8721aaa2",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 9,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x34c5ebb",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/mirage.c",
+      "name": "card_sapphire_charm",
+      "line": 10699,
+      "before_sha256": "5618d0aa87f78f0fe16e959c950b6e362f623f271bed3143607c8c677ea26a1a",
+      "after_sha256": "82d485317fadbd52994f2e72f11d71ff486d7cceb55bb363d5ac7da06d890c73",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 12,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x34ab180",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_grist_the_hunger_tide",
+      "line": 8780,
+      "before_sha256": "b8e78f2b395f0cfc8cba19833fe83dad306437a86521fad224b3b579112734ba",
+      "after_sha256": "8cb5d0c47793f81f5716b914c22cfbd75ab1f2e146155253c8753c888acb9a4e",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 12,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x1f71219",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/planar_chaos.c",
+      "name": "frenetic_sliver_shared_ability",
+      "line": 1654,
+      "before_sha256": "16a2baf84314a703ace1f306424ac76d239f0b753d4a548aad1b85a4a147a719",
+      "after_sha256": "13898418832b8ef338043cbafc27f95fadae31647bfd7621400aad95d33474f8",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 14,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x37d18d5",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/planar_chaos.c",
+      "name": "necrotic_sliver_shared_ability",
+      "line": 2358,
+      "before_sha256": "ce0751c83ca4c12175c5307cdaefb7898dec13ea1023e87618faee9096363e61",
+      "after_sha256": "8f067834994afc4dee07e7bd20a4fb92e12a597e4063126ba35b67cb7d340094",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 8,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x37c9094",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/ravnica.c",
+      "name": "card_remand",
+      "line": 5157,
+      "before_sha256": "c49910107b90d7c91b295d0552807bcff530530fb40a5d4054baa954fe4a7f21",
+      "after_sha256": "68d0c80056643ab1e3d7847248fa12f1e56ee243b47b175713d052394d65305e",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 8,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x47f974d",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_tomb_of_the_dusk_rose",
+      "line": 2438,
+      "before_sha256": "3cc498c605821326c3c8ffbf8f956c9348d294050e572340bcee4d5387f5f868",
+      "after_sha256": "f44c942ee38fa765b08d4cfb4cc578581216fb5b7e1f5d85ca2a8f4a9c6b8e35",
+      "substitutions": {
+        "pcVar3": "instance"
+      },
+      "occurrences": 10,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x1631564",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_slaughter_the_strong",
+      "line": 4169,
+      "before_sha256": "11b2302ca852b62a861093061566a1617fcb1603f476b04b588e378fd8cb65a0",
+      "after_sha256": "8f1b7f5ae6adeda73a761d53bccf72dc89de290077ed2e1aff61758ce359e01d",
+      "substitutions": {
+        "pcVar3": "instance"
+      },
+      "occurrences": 8,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x163908f",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "name": "card_deny_existence",
+      "line": 1733,
+      "before_sha256": "66b672ee304bc1257488244fb51158c78ab6424cee6ba9ffd04fdd42ba4a5a53",
+      "after_sha256": "012e937c5ac78a2f1dd9aaf9db363c263c94c0d9fe6c2d9e7e9df17a5e9f2125",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 9,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x2658da8",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/shards_of_alara.c",
+      "name": "realm_razer_legacy",
+      "line": 3714,
+      "before_sha256": "c5326eff85780de59136b023e765c8c28b11bed169a5dc12e0c0d3144cc74bf7",
+      "after_sha256": "66080b8b92c329f4082fe58e814e82c2c00786f6805066812f86b722e16b6d07",
+      "substitutions": {
+        "pcVar4": "instance"
+      },
+      "occurrences": 15,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x1197e28",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "hofri_effect",
+      "line": 9530,
+      "before_sha256": "913a89dc77552028a17dd64cbfc553f517f06038747fdc2f48dbfc9a5285ec08",
+      "after_sha256": "8f735a1092e4cb1d93cda0bfde1d83116eaca504f852f3ced23a4f5742894ac9",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 18,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x3954342",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        },
+        {
+          "name": "instance",
+          "die": "0x39543a6",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/stronghold.c",
+      "name": "acidic_sliver_shared_ability",
+      "line": 32,
+      "before_sha256": "89045af1c8b80ec0949a698442dae8255dfc18c8e3d9e7decf4315650c9b8202",
+      "after_sha256": "66f74cbb94ec53ed7341caed0e18184afbca9705dd7ec77f5f89a3e798e2b69b",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 8,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x10d6a6f",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/stronghold.c",
+      "name": "hybernating_sliver_shared_ability",
+      "line": 922,
+      "before_sha256": "48dc3a4c1d7a3cb54c7b5e7189ef821cb945321e9a77b2fdbd470cfa0fd39f94",
+      "after_sha256": "88a9ecc7a05a54f44bb27592da3200abe001f21b1b99e00da6857c3fda21ad43",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 8,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x10d2e12",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/tempest.c",
+      "name": "mindwhip_sliver_shared_ability",
+      "line": 3212,
+      "before_sha256": "e7a3b2c87b503a6905d3946a9fe2db366ade7b4a28bd7d7524109819f627d8c3",
+      "after_sha256": "8e7b20af47d3a8d4b7fbc4c638562d9b17d4f089cfc5e6b7ec31981bdb5abd8f",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 7,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x126a0fd",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/the_dark.c",
+      "name": "change_lands_into_new_land_type",
+      "line": 233,
+      "before_sha256": "5529310e1396b540e83fa8c7fc4e43a2950b7281fadf07a23f05cfa9ddc4f352",
+      "after_sha256": "5a697b9d1ae9e02c097e88fba7f02b92870833395f023a92b228c960a23475f4",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 8,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x3eb51b9",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_soul_guide_lantern",
+      "line": 979,
+      "before_sha256": "5abd6145cad4df27939c53f485ea5b6e4c5aedc827317fb9cad3f31bda3f2ac1",
+      "after_sha256": "ef87e15b06367b3b1771a9d9663a16213b225ecd96f2579c35a04ec966fb0073",
+      "substitutions": {
+        "pcVar3": "instance"
+      },
+      "occurrences": 4,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x326c24d",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        },
+        {
+          "name": "instance",
+          "die": "0x326c2e4",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "name": "firewake_sliver_shared_ability",
+      "line": 2182,
+      "before_sha256": "655574d84e83b974329db5abcd80f7efdac9d4894d084a2723543b7ae39f8d19",
+      "after_sha256": "d41afcd4092c74b996c16b0a67ab54b3499f3c03543af9a2e3b5628bd900e51e",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 10,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0xd0c7c6",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "name": "psionic_sliver_shared_ability",
+      "line": 4885,
+      "before_sha256": "35ceaa4b040963161df1c201f0d958b582b170d18a6b9aacd70312ce6f73838d",
+      "after_sha256": "d9310e7479e307d09c054d2d3f006e193656471fc12f7afafad5704a4c86400d",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 12,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0xd02674",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "name": "quilled_sliver_shared_ability",
+      "line": 5191,
+      "before_sha256": "ca71c13e5bf921eff9a8a04a3da56d82ab1fabee18689f96efbe0222b0ea7f4b",
+      "after_sha256": "c3252f1e4330bfb3160529ac2c300aa3f3a73f6f470d2b056a9e3db1ae63d084",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 10,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0xd0148c",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "name": "screeching_sliver_shared_ability",
+      "line": 5744,
+      "before_sha256": "b49ea5f5a271e31afadd2f50c2bc303f41c6a7162b840f4eb2f8d3865d3838be",
+      "after_sha256": "3923bef59297c0fd0d67b1862d14de6c5f320eeb4d68604d39adbf47183a2896",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 7,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0xcff32f",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "name": "telekinetik_sliver_shared_ability",
+      "line": 6842,
+      "before_sha256": "5890c0e75d399f07ad2e20fda96a258149a2d3a1a74e381d1a7e3aa35e21cfd8",
+      "after_sha256": "82ac4823437b6b8d90486b41d918446f951418fc6962aa2b4df248cef36f1df8",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 8,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0xcfb226",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_island_sanctuary",
+      "line": 3351,
+      "before_sha256": "c8da92d1bc724a6fc9119c912df06d013075f163763f38f0005b3eceb643773f",
+      "after_sha256": "8887d5dbae25b11500d16d9d5d14cb4f9ee5851ba051283c2ebb70ea3f9937bd",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 13,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x466a231",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "legacy_edh_general",
+      "line": 1765,
+      "before_sha256": "babe65817e1e5a6714a13581ee69d2ac759a3d84a9095cb3b42c6b081cc58e0e",
+      "after_sha256": "5a43236e11da8bda7c138e790c39a0cc00b6f25e376133c5ad115bba84275507",
+      "substitutions": {
+        "pcVar4": "instance"
+      },
+      "occurrences": 23,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x288cac0",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_kayas_ghostform",
+      "line": 1935,
+      "before_sha256": "b25e8f56c29c4d093534491456c939db80823b9dbad40dbfb523655b4b20b078",
+      "after_sha256": "65cd205e868097fece511d0f95b5a694bc2eb1559b5b02066e6780951243924f",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 10,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x1956e2e",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        },
+        {
+          "name": "instance",
+          "die": "0x1956f82",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_single_combat",
+      "line": 6338,
+      "before_sha256": "df94959ebab519cfdaddebd92af6edebc47a1a71a12a65048d99e7fb034795cd",
+      "after_sha256": "b72c9df2889f30f5baf0c5d5131626bebf84af420ceb4421d9a9b31c37b4a949",
+      "substitutions": {
+        "pcVar3": "instance"
+      },
+      "occurrences": 8,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x194f322",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "functions/auras.c",
+      "name": "end_of_stealing_aura_effect",
+      "line": 1343,
+      "before_sha256": "a545af7137e48a059718a74c9a6e3405951019cc65ca6fd1df7c758c3d302e7a",
+      "after_sha256": "536077f36f4fa14a6d8e9d698acd6881de460fd3eae3cf47db1edfb921e8fac3",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 17,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x6e74c1b",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "functions/exiledby.c",
+      "name": "return_auras_and_counters_to_play",
+      "line": 432,
+      "before_sha256": "faafab67bf76899ce110286af4492ede10f185b5030ec1da86ee0a45dbe73f77",
+      "after_sha256": "416b0c003cbcd96d384c69100b6e2753f6a91fd6740aba03461ed544283d2297",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 11,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x6af2f33",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "remove_until_eot_legacy",
+      "line": 925,
+      "before_sha256": "5c75884a61f242e9dae1e36d066cea53d6cf857160237d768be894943e30446a",
+      "after_sha256": "6690396d4e00626d17e8d445bfff650d964f5c311a21cdd80590d2b468a9e1bc",
+      "substitutions": {
+        "pcVar4": "instance"
+      },
+      "occurrences": 25,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x65b0164",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "cast_counter_triggered_ability",
+      "line": 10287,
+      "before_sha256": "654afd88ee034c856b5b96f4ba8079149a93194ddb159ed1a78ef44fd4755823",
+      "after_sha256": "0c991aec9d0f3f9911197aed36056847570291a43206bb33a3cc3d142360359e",
+      "substitutions": {
+        "pcVar3": "instance"
+      },
+      "occurrences": 12,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x658991d",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "deflect_one_target",
+      "line": 10497,
+      "before_sha256": "572b7b21f8ad7e81e46706c4d1f58430cd8194c040140463031f6c68d0b3f555",
+      "after_sha256": "ce0e6a100d1143e31894678fc4526b0628e097d5b7460a91760182968b898c7c",
+      "substitutions": {
+        "pcVar2": "instance"
+      },
+      "occurrences": 13,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x6589091",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "deflect_multi_targets",
+      "line": 10561,
+      "before_sha256": "a3b90cdc85447319aaeca7022aa5ce595c486b545123db5896fb97304935bd4f",
+      "after_sha256": "25ed7f8ccf8e013b0d081d3bef779ad79489a59722251559f4b270e7b1be5bf0",
+      "substitutions": {
+        "pcVar4": "instance"
+      },
+      "occurrences": 14,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x6588d9c",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "equipment_granting_activated_ability",
+      "line": 17845,
+      "before_sha256": "f05b67fa0770373fb74ae000d812c433232d2263869e827bfbdc3a51de8e9f5c",
+      "after_sha256": "64cecbad3dee2ef113c386544f4d2d85431ed5ec1f6f3a5c113816d4a0c50b48",
+      "substitutions": {
+        "pcVar1": "instance"
+      },
+      "occurrences": 3,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x658eabd",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_lexical_block"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "deflect_away_from_me",
+      "line": 19576,
+      "before_sha256": "4342c4d6a9ff9ab6a66264da47b3db2e9158bb735bb1a4ec8625ba4d07ec1a99",
+      "after_sha256": "87f075e984b75c7ffb28d1cf5d328b77b2f53c47de2d2ad1a23b36e66b2ec7b5",
+      "substitutions": {
+        "pcVar3": "instance"
+      },
+      "occurrences": 9,
+      "native_candidates": [
+        {
+          "name": "instance",
+          "die": "0x65887de",
+          "type": {
+            "kind": "DW_TAG_pointer_type",
+            "name": null,
+            "bytes": 4,
+            "pointee_kind": "DW_TAG_structure_type",
+            "pointee_name": "card_instance_struct",
+            "pointee_bytes": 300
+          },
+          "has_location": true,
+          "parent_kind": "DW_TAG_subprogram"
+        }
+      ],
+      "mapping_basis": "Unique source card_instance_t pointer assigned only get_card_instance(player, card); destination spelling exists for a 300-byte card-instance pointer in native DWARF. This establishes a sensible role-based spelling, not optimized-variable identity."
+    }
+  ],
+  "scope": "These candidates have older native/body-specific receipts that must be carried forward explicitly before applying even identifier-only edits. Native names support vocabulary, not unique optimized-variable identity. Definitions and source hashes must be rechecked; no remaining source repair is credited by this queue."
+}

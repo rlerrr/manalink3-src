@@ -4836,7 +4836,6 @@ int card_alhammarrets_archive(int player, int card, event_t event)
   unsigned short uVar1;
   xtrigger_t xVar2;
   card_instance_t *instance;
-  int result;
   check_legend_rule(player, card, event);
   xVar2 = trigger_condition;
   if (trigger_condition == 0xe5)
@@ -4847,13 +4846,13 @@ int card_alhammarrets_archive(int player, int card, event_t event)
         (player == affected_card_controller)) &&
        ((reason_for_trigger_controller == player && (trigger_cause_controller == player)))) &&
       ((0 < life_gained &&
-        (result = is_humiliated(player, card, AL_TRIG), result == 0))))
+        (is_humiliated(player, card, AL_TRIG) == 0))))
   {
     life_gained = life_gained << 1;
   }
   instance = in_play(player, card);
   if ((instance != NULL) &&
-      (result = is_humiliated(player, card, AL_STATIC), result == 0))
+      (is_humiliated(player, card, AL_STATIC) == 0))
   {
     if ((event == EVENT_DRAW_PHASE) && (current_phase == 10))
     {
@@ -4875,8 +4874,7 @@ int card_alhammarrets_archive(int player, int card, event_t event)
               ((suppress_draw == 0 &&
                 ((instance = get_card_instance(player, card),
                   instance->info_slot != 1 &&
-                      (result = is_humiliated(player, card, AL_STATIC),
-                       result == 0))))))))))
+                      (is_humiliated(player, card, AL_STATIC) == 0))))))))))
       {
         if (event == EVENT_TRIGGER)
         {
@@ -5261,6 +5259,7 @@ int card_foundry_of_the_consuls(int player, int card, event_t event)
 
 int card_mage_ring_network(int player, int card, event_t event)
 {
+  int choice;
   int iVar1;
   card_instance_t *instance;
   int iVar3;
@@ -5288,8 +5287,7 @@ int card_mage_ring_network(int player, int card, event_t event)
       {
         return 0;
       }
-      iVar1 = mana_producer(player, card, EVENT_CAN_ACTIVATE);
-      if (iVar1 == 0)
+      if (mana_producer(player, card, EVENT_CAN_ACTIVATE) == 0)
       {
         return 0;
       }
@@ -5312,9 +5310,7 @@ int card_mage_ring_network(int player, int card, event_t event)
         return 1;
       }
       event = EVENT_CAN_ACTIVATE;
-    LAB_020e7cdf:
-      iVar1 = mana_producer(player, card, event);
-      return iVar1;
+      return mana_producer(player, card, event);
     }
     if (event != EVENT_ACTIVATE)
       goto LAB_020e7c0c;
@@ -5329,23 +5325,21 @@ int card_mage_ring_network(int player, int card, event_t event)
                                         NULL, NULL);
       uVar4 = (unsigned int)(iVar3 != 0);
     }
-    iVar3 = mana_producer(player, card, EVENT_CAN_ACTIVATE);
-    iVar3 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "Produce mana", iVar3,
+    choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "Produce mana", mana_producer(player, card, EVENT_CAN_ACTIVATE),
                         2, "Add a counter", uVar4, 5, "Remove X and produce X", iVar1,
                         (unsigned int)(1 < iVar1) * 9 + 1, 0, 0, 0, 0);
-    if (iVar3 == 0)
+    if (choice == 0)
     {
       spell_fizzled = 1;
       return 0;
     }
-    if (iVar3 == 1)
-      goto LAB_020e7cdf;
-    if (iVar3 == 2)
+    if (choice == 1)
+      return mana_producer(player, card, event);
+    if (choice == 2)
     {
       add_state(player, card, 0x10);
-      iVar1 = generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 0, 0, 0, 0, NULL,
-                                        NULL);
-      if (iVar1 != 0)
+      if (generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 0, 0, 0, 0, NULL,
+                                        NULL) != 0)
       {
         instance = get_card_instance(player, card);
         instance->info_slot = 2;
@@ -5355,7 +5349,7 @@ int card_mage_ring_network(int player, int card, event_t event)
         untap_card_no_event(player, card);
       }
     }
-    else if (iVar3 == 3)
+    else if (choice == 3)
     {
       do
       {
@@ -5592,7 +5586,7 @@ int card_pyromancers_goggles(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x20d9630; original cards/origins.c:2861. */
 static int shadows_of_the_past_effect(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   unsigned int uVar2;
   card_instance_t *pcVar3;
   int result;
@@ -5602,16 +5596,16 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
-      pcVar1 = get_card_instance(player, card);
-      if ((-1 < pcVar1->damage_target_player) &&
-          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
            result != 0x3b6f))
       {
         kill_card(player, card, KILL_EXILE);
       }
     }
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
     {
       return 0;
@@ -5623,8 +5617,8 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
   }
   else
   {
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, event), result != 0))
     {
       return 0;
@@ -5632,23 +5626,23 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
     if (event != EVENT_GRAVEYARD_FROM_PLAY)
       goto LAB_020d9664;
 
-    pcVar1 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     pcVar3 = in_play(affected_card_controller, affected_card);
     if ((pcVar3 != NULL) &&
         (result = is_this_dying(affected_card_controller, affected_card), result != 0))
     {
 
-      if ((pcVar1->damage_target_card == affected_card) &&
-          (pcVar1->damage_target_player == affected_card_controller))
+      if ((instance->damage_target_card == affected_card) &&
+          (instance->damage_target_player == affected_card_controller))
       {
-        pcVar1->damage_target_card = -1;
-        pcVar1->damage_target_player = -1;
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
         remove_status(player, card, 0x10000);
-        if (pcVar1->targets[0xb].player < 0)
+        if (instance->targets[0xb].player < 0)
         {
-          pcVar1->targets[0xb].player = 0;
+          instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
       }
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }

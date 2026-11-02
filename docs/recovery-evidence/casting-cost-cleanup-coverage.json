@@ -1,0 +1,618 @@
+{
+  "status": "Casting-cost calculator reconstructed as 100 named card cases and ordinary battlefield loops.",
+  "batch": "docs/recovery-evidence/casting-cost-cleanup.json",
+  "batch_sha256": "77cc3fcbd0c660e5a531d65b2ef38fd6ae79e4839f9eed70d187cd3e4c9d6a84",
+  "counts": {
+    "helpers": 1,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 84,
+    "removed_lab_gotos": 83,
+    "source_lines_removed": 184,
+    "removed_placeholder_occurrences": 605,
+    "removed_placeholder_names": 13
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "three_way_comparisons": 905664,
+    "entry_invocations": 2716992,
+    "helpers": 1,
+    "all_uint16_modifier_ids": 65536,
+    "stateful_random_inputs": 30000,
+    "mutation_modes": 2,
+    "assertion_failures_checked": true,
+    "exact_call_traces_and_full_state": true
+  },
+  "original_code_regions": [
+    {
+      "name": "true_get_updated_casting_cost",
+      "address": "0x2689830",
+      "size": 7139,
+      "sha256": "227e7b74fb96c30362328c2069d21f71f327710b0ca2e322c7a2dcbcdf9b84be",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x2689846",
+          "target": "0x26c11b0",
+          "callee": "backtrace_and_abort"
+        },
+        {
+          "instruction": "0x2689865",
+          "target": "0x26c11b0",
+          "callee": "backtrace_and_abort"
+        },
+        {
+          "instruction": "0x26898c9",
+          "target": "0x26804d0",
+          "callee": "get_color_by_internal_id"
+        },
+        {
+          "instruction": "0x2689907",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x2689925",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268993d",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x268994d",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x2689ac7",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x2689ba6",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x2689c49",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x2689c5c",
+          "target": "0x267ee00",
+          "callee": "get_cmc_by_id"
+        },
+        {
+          "instruction": "0x2689c93",
+          "target": "0x4e81fe",
+          "callee": "is_tapped"
+        },
+        {
+          "instruction": "0x2689cbf",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x2689d23",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x2689d46",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x2689d69",
+          "target": "0x26828d0",
+          "callee": "count_subtype"
+        },
+        {
+          "instruction": "0x2689da1",
+          "target": "0x26e5cd0",
+          "callee": "count_graveyard_by_id"
+        },
+        {
+          "instruction": "0x2689e45",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x2689e81",
+          "target": "0x2679b40",
+          "callee": "can_sorcery_be_played"
+        },
+        {
+          "instruction": "0x2689ed1",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x2689f0e",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        },
+        {
+          "instruction": "0x2689f66",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x2689fbc",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268a06b",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a0b1",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a0d4",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a1ca",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a1e9",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x268a23b",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a27e",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        },
+        {
+          "instruction": "0x268a2c2",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a2e1",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        },
+        {
+          "instruction": "0x268a333",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a352",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        },
+        {
+          "instruction": "0x268a389",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a412",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a45b",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a4a9",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268a58c",
+          "target": "0x26caff0",
+          "callee": "call_card_function"
+        },
+        {
+          "instruction": "0x268a602",
+          "target": "0x25a8610",
+          "callee": "count_creatures_with_p1_p1_counter"
+        },
+        {
+          "instruction": "0x268a641",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268a68a",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a6a9",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        },
+        {
+          "instruction": "0x268a6ef",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a702",
+          "target": "0x267ecb0",
+          "callee": "get_cmc_by_internal_id"
+        },
+        {
+          "instruction": "0x268a7f9",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a85c",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x268a871",
+          "target": "0x267bbb0",
+          "callee": "count_cards_by_id"
+        },
+        {
+          "instruction": "0x268a888",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x268a8d3",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x268a9da",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268a9fd",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268aae7",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268ab03",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        },
+        {
+          "instruction": "0x268ab3e",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268ab8e",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268abb1",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268abc4",
+          "target": "0x267ee00",
+          "callee": "get_cmc_by_id"
+        },
+        {
+          "instruction": "0x268abf7",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268ac33",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        },
+        {
+          "instruction": "0x268ac6e",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268acae",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268ad27",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268ad49",
+          "target": "0x26c8f90",
+          "callee": "get_trap_condition"
+        },
+        {
+          "instruction": "0x268ad7f",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268ad92",
+          "target": "0x267ee00",
+          "callee": "get_cmc_by_id"
+        },
+        {
+          "instruction": "0x268adcf",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268adee",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        },
+        {
+          "instruction": "0x268ae20",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        },
+        {
+          "instruction": "0x268aea6",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268aee6",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268af04",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268af20",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x268af77",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268afdf",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x268affe",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x268b02e",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268b067",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268b0b0",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268b0c0",
+          "target": "0x26c8240",
+          "callee": "get_stormcreature_count"
+        },
+        {
+          "instruction": "0x268b0fe",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268b170",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268b1bd",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x268b227",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268b254",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268b27a",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        },
+        {
+          "instruction": "0x268b2db",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x268b2f0",
+          "target": "0x267bbb0",
+          "callee": "count_cards_by_id"
+        },
+        {
+          "instruction": "0x268b307",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x268b33d",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268b364",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268b38b",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268b3b2",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        },
+        {
+          "instruction": "0x268b3da",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x268b401",
+          "target": "0x26736e0",
+          "callee": "has_subtype_by_id"
+        }
+      ]
+    }
+  ],
+  "external_data_bindings": 62,
+  "external_callee_bindings": 95,
+  "native_entry_abis": {
+    "true_get_updated_casting_cost": "cdecl"
+  },
+  "native_tested_helpers": 1,
+  "register_adapters": {
+    "native_core": "regparm(3)",
+    "native_remove": "regparm(3)",
+    "native_clear": "regparm(2)",
+    "native_name": "regparm(3)"
+  },
+  "whole_unit_net_lines_removed": 184,
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 119,
+  "focused": {
+    "path": ".recovery/casting-cost-focused-c348.json",
+    "sha256": "52a6499a9b7641946c76ed9adc11f59e69c642d19fc7dddb981e46cc4c2a696b",
+    "source_succession_links": 2
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/casting-cost-build-c349.log",
+    "log_sha256": "b60da9b559604f6cd35e61b91afc5feb528e97d75f026bb005b753460553eb14",
+    "verified_built_slots": 15169,
+    "dll_sha256": "27184f6aafd947481349a957d91bf8e8ce3b8c126a090681dbc1eedc70b24d24",
+    "dbg_sha256": "071512ae064ee94827d34749edbecd4167042ae9d9253a8c1310e8814de4d1b3"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/casting-cost-setup-c349.log",
+    "log_sha256": "72d67d86f5d3ade485fe47db02958d30b44dfa27d2934c706ee395fb6e6a5908",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4817,
+    "stubs": 0,
+    "metadata_sha256": "1285e25d3fc1a5020f66a6790439b6d17847c037ca13f0f26826553aeef17a40",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e5b20",
+        "after": "public COFF entry 0x26e5260"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26edf90",
+        "after": "public COFF entry 0x26ed6d0"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e46a0",
+        "after": "public COFF entry 0x26e3de0"
+      },
+      {
+        "name": "new_damage_all",
+        "native_address": "0x26677f0",
+        "before": "public COFF entry 0x26c3bb0",
+        "after": "public COFF entry 0x26c32f0"
+      },
+      {
+        "name": "mana_doublers",
+        "native_address": "0x266c040",
+        "before": "public COFF entry 0x26cad40",
+        "after": "public COFF entry 0x26ca480"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "public COFF entry 0x26dc420",
+        "after": "public COFF entry 0x26dbb60"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "public COFF entry 0x26dc450",
+        "after": "public COFF entry 0x26dbb90"
+      }
+    ]
+  },
+  "index_unchanged": true,
+  "limits": "Native casting-cost branch body compared with predecessor and structured named switch; all uint16 modifier IDs, two battlefield controllers, live count changes, card metadata/pointer mutation, cost-byte/global context, assertions and two opaque-callback mutation modes. All public callees are controlled; infinite_casting_cost is the separately pinned pure six-byte writer. Original source provides structure only; native2022 and predecessor establish behavior. Valid allocated records, bounded helper arithmetic, non-INT_MIN original-cost boundaries; full native32 state, actual card rules and gameplay not exhausted.",
+  "whole_unit_readability": {
+    "source": "functions/functions.c",
+    "source_sha256": "30fe28e79df62c3f3f23b4b7b788eee125513fd0c0bdbe5144ae893b9486e573",
+    "lab_gotos": 118,
+    "known_placeholder_occurrences": 3225
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c350.json",
+    "sha256": "0dc45587e323826b317d7e6cc3cf31b279d2879961a62aa852e0fad69a6e3b82",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1004,
+      "lab_gotos": 2744,
+      "functions_with_placeholders": 2086,
+      "distinct_function_local_placeholder_spellings": 6379,
+      "placeholder_identifier_occurrences": 49964,
+      "union_keywords": 0
+    }
+  }
+}

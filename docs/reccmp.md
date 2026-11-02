@@ -38,6 +38,39 @@ The matching original sidecar is
 tool. The recompiled inputs are the root `ManalinkEh.dll` and `ManalinkEh.dbg`.
 Setup verifies their GNU debuglink CRC when present.
 
+Routine setup checks the current source-file hashes and canonical ledger/name
+references, original binary hashes, the rebuilt debuglink CRC, and all 15,169
+built jump-table slots against their COFF targets. It does not replay archived
+source edits, old compiler outputs, or the historical per-batch semantic audits.
+Archived compiler/runtime snapshots have now been deliberately retired to free
+disk space. Full historical replay (`setup --audit-recovery` or
+`canonicalize_helpers.py --verify`) reports that retirement immediately. The
+[retirement record](recovery-evidence/historical-artifact-retirement.json)
+lists the retained inputs and deleted artifacts. The setup report's
+`recovery_audit_mode` reports `current_inputs`; historical receipts may contain
+`full_history`. Routine setup must not be described as a full recovery audit.
+
+After changing recovery code, build and run the focused checker for the
+affected behavior or representation. Regenerating the comparison CSV does not
+require rerunning every earlier reconstruction experiment. Historical evidence
+and its standalone audit tools remain records of the completed work; old
+standalone verifiers may reference retired snapshots. Moving forward, use current
+input checks, the current batch checker and a current build.
+
+For a source-only checkpoint, use
+`python tools/recovery/canonicalize_helpers.py --verify-current`; it checks the
+live source hashes and canonical ledger/name references without replaying old
+experiments. `audit_compiler_parts.py` also uses this current-input check by
+default. Its historical `--audit-recovery` option is retired with the archived
+compiler/runtime inputs.
+
+The old alias/layout reconstruction audits, archived compiler probes, and
+predecessor-source replay are historical evidence. Do not run them after every
+readability batch. `audit_source.py`, `check_source.py`, and
+`inventory_helper_pairs.py` retain that historical scope and are investigation
+tools, rather than routine recovery gates. For normal work, check the changed
+functions, build once per batch, and regenerate comparison metadata when needed.
+
 Setup writes two ignored, machine-specific files at the repository root:
 
 - `reccmp-user.yml`: original DLL path.
@@ -85,9 +118,11 @@ accuracy percentages are matching statistics, not source-recovery coverage.
 The fork currently imports function and line information, but no DWARF global
 variables or complete type/stack layouts. Global comparison and type-aware
 `datacmp`/`stackcmp` are therefore outside this initial setup. Uniquely mapped
-Wish chooser placeholders are marked `stub`, rather than recovered code; a
-chooser optimized into an alias may have no separate DWARF body. The chooser
-dialogs remain [out of scope](recovery-scope.md). Nothing here executes or
+Unresolved source placeholders are marked `stub`, rather than recovered code;
+a chooser optimized into an alias may have no separate DWARF body. The current
+C++ picker recovery retires its resolved Wish chooser stubs. Current recovery
+coverage and remaining runtime limits are recorded in
+[recovery-scope.md](recovery-scope.md). Nothing here executes or
 deploys either DLL.
 
 ## Initial validation

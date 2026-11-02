@@ -1,0 +1,164 @@
+{
+  "batch": "docs/recovery-evidence/ability-query-cleanup.json",
+  "batch_sha256": "edfea0723e0c4f90b40087cc062164679c312a5e26290241bcaec11cc375a74e",
+  "counts": {
+    "functions": 7,
+    "source_units": 1,
+    "excluded_cards": 112,
+    "source_lines_removed": 516,
+    "removed_placeholder_occurrences": 203,
+    "removed_placeholder_names": 16,
+    "card_handlers": 0,
+    "helpers": 7,
+    "new_native_function_coverage": 0
+  },
+  "validation": {
+    "focused": {
+      "current_ability_queries": {
+        "cleaned_definitions": 7,
+        "source_units": 1,
+        "excluded_cards": 112,
+        "source_lines_removed": 516,
+        "removed_placeholder_occurrences": 203,
+        "removed_placeholder_names": 16,
+        "native_three_way_comparisons": 33213200,
+        "classifier_feature_cases": 16777216,
+        "query_cases": 16435984,
+        "enum_and_layout_assertions": 131,
+        "scope": "Complete uint16 exclusion classification with proven low16-bit dependencies; source flag/control-flow reconstruction and actual enum/record probes. Original native branch bodies use five relocated data operands and three shared opaque callees. Native, predecessor and reconstructed results, call traces and instance/extension writes match on33213200 cases. Other complete32-bit query states and gameplay are not exhausted; no new native coverage claimed."
+      },
+      "current_inputs": {
+        "canonical_functions": 738,
+        "accepted_function_names": 735,
+        "auxiliary_functions": [
+          {
+            "recovery_name": "exile_at_end_of_combat_2022",
+            "canonical_name": "innistrad_exile_at_end_of_combat_legacy",
+            "kind": "retained_public_native_helper",
+            "native_ranges": 1
+          },
+          {
+            "recovery_name": "reset_storm_count_2022",
+            "canonical_name": "reset_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 14
+          },
+          {
+            "recovery_name": "keep_storm_count_2022",
+            "canonical_name": "keep_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 21
+          }
+        ],
+        "changed_files": 169,
+        "verification": "current source hashes and canonical name/ledger references",
+        "historical_provenance_replayed": false,
+        "historical_artifacts_retired": true,
+        "scope": "Current configuration inputs only. Historical source-edit replay, archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json."
+      },
+      "predecessor_source_units_checked": 1,
+      "reader_restoration_verified": true,
+      "physical_sources_unchanged": true,
+      "source_successor_chain_checked": true,
+      "index_unchanged": true
+    },
+    "focused_record": {
+      "path": ".recovery/ability-queries-focused-c286.json",
+      "sha256": "a41d2cc7474ec63801bab77f8b8e8db7a92b5885601fdd493814f48a5124f416",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/ability-queries-build-c285.log",
+      "log_sha256": "0fc172a97f816c7180e263262c69f71555b82c6762e4c615ed9f03051ad1532d",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "b5b01345fde1f97f74f90adc62dbf1a24a578fc78fbcf7949d8012b58f86ea09",
+      "dbg_sha256": "2634869dfd73f176eb6df625f1d92fed67f7ea78c0f1cd78a2658202c7bf30b1"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/ability-query-proof-before-c284.json.gz",
+      "archive_sha256": "ef9f20faaa533789cfa2afb9f84d56f5e5eae0054d13129d1d4deb589369f2c1",
+      "raw_sha256": "27bc088ec3db6fb5c6e0b003ed0c74cdd4645b3a8527b13765acaf63e66adf5e",
+      "verified_source_pin_successions": 1
+    },
+    "limits": "The ID tree has132 pure conditions. Bit dependency analysis proves that every decision observes only the loaded word low16 bits; all65536 values are classified. The normal uint16 ID field replaces the wide aliased read and signed-shift idioms. Native branch bodies are rehosted with five explicit absolute-data relocations and three shared opaque callees. Native, predecessor C and new C match on33213200 result/trace/write cases, including the complete uint16 classification feature matrix and sampled full-width query states. All131 actual compiler enum/layout assertions, complete source expansion, build and15169 fixed slots pass. Full32-bit query state and gameplay are not exhausted; no new native coverage claimed. Historical replay remains retired."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/ability-queries-setup-c288.log",
+    "log_sha256": "8a9ca999c337c8765459b9499640cd9d7bdc8e78ba7fa1f6506e9177c9a62726",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "csv_functions": 18725,
+    "metadata_sha256": "8f95ffb3362b0a85e7d025a5c4834811ab8ffa95402f2753444af96c174913d7",
+    "mapping_identities_unchanged": true,
+    "only_csv_changes": "Eight rebuilt public COFF entry address annotations",
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e6380",
+        "after": "public COFF entry 0x26e6590"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ee7f0",
+        "after": "public COFF entry 0x26eea00"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e4f00",
+        "after": "public COFF entry 0x26e5110"
+      },
+      {
+        "name": "new_damage_all",
+        "native_address": "0x26677f0",
+        "before": "public COFF entry 0x26c4190",
+        "after": "public COFF entry 0x26c43a0"
+      },
+      {
+        "name": "mana_doublers",
+        "native_address": "0x266c040",
+        "before": "public COFF entry 0x26cb360",
+        "after": "public COFF entry 0x26cb570"
+      },
+      {
+        "name": "etb_ability",
+        "native_address": "0x26a5370",
+        "before": "public COFF entry 0x26a1950",
+        "after": "public COFF entry 0x26a1b60"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "public COFF entry 0x26dcc80",
+        "after": "public COFF entry 0x26dce90"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "public COFF entry 0x26dccb0",
+        "after": "public COFF entry 0x26dcec0"
+      }
+    ]
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c288.json",
+    "sha256": "2359ef5955f7aaf90e6fba37889c37b1233046d761fd08b1dbf98c1eff0d27a3",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1025,
+      "lab_gotos": 3037,
+      "functions_with_placeholders": 2116,
+      "distinct_function_local_placeholder_spellings": 6522,
+      "placeholder_identifier_occurrences": 51859,
+      "union_keywords": 0
+    }
+  },
+  "index_unchanged": true,
+  "limits": "The ID tree has132 pure conditions. Bit dependency analysis proves that every decision observes only the loaded word low16 bits; all65536 values are classified. The normal uint16 ID field replaces the wide aliased read and signed-shift idioms. Native branch bodies are rehosted with five explicit absolute-data relocations and three shared opaque callees. Native, predecessor C and new C match on33213200 result/trace/write cases, including the complete uint16 classification feature matrix and sampled full-width query states. All131 actual compiler enum/layout assertions, complete source expansion, build and15169 fixed slots pass. Full32-bit query state and gameplay are not exhausted; no new native coverage claimed. Historical replay remains retired."
+}

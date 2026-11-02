@@ -1174,8 +1174,7 @@ int select_card_from_zone(int player, int targ_player, const int *s_location, in
         break;
       if (iVar2 != -1)
       {
-        iVar5 = new_make_test(targ_player, s_location[iVar2], test_type, this_test);
-        if (iVar5 != 0)
+        if (new_make_test(targ_player, s_location[iVar2], test_type, this_test) != 0)
         {
           return iVar2;
         }
@@ -1185,8 +1184,7 @@ int select_card_from_zone(int player, int targ_player, const int *s_location, in
     {
       return -1;
     }
-    iVar5 = new_make_test(targ_player, s_location[iVar2], test_type, this_test);
-    if (iVar5 != 0)
+    if (new_make_test(targ_player, s_location[iVar2], test_type, this_test) != 0)
     {
       return iVar2;
     }
@@ -1210,8 +1208,7 @@ int select_card_from_zone(int player, int targ_player, const int *s_location, in
     {
       while (true)
       {
-        iVar1 = new_make_test(targ_player, s_location[iVar5], test_type, this_test);
-        if (iVar1 != 0)
+        if (new_make_test(targ_player, s_location[iVar5], test_type, this_test) != 0)
           break;
       LAB_02650f20:
         iVar5 = iVar5 + 1;
@@ -1238,8 +1235,7 @@ int select_card_from_zone(int player, int targ_player, const int *s_location, in
       if (ai_selection_mode == 6)
       {
         iVar1 = s_location[iVar5];
-        iVar1 = good_to_put_in_grave(-1, iVar1);
-        if (iVar1 != 0)
+        if (good_to_put_in_grave(-1, iVar1) != 0)
           goto LAB_0265112d;
         cStack_11 = '\x01';
         iVar1 = -1;
@@ -1257,8 +1253,7 @@ int select_card_from_zone(int player, int targ_player, const int *s_location, in
               goto LAB_02650fa8;
             iStack_2c = cVar4;
             iStack_34 = -1;
-            iVar1 = get_cmc_by_internal_id(s_location[iVar5]);
-            iVar3 = has_mana(1, 0, iVar1);
+            iVar3 = has_mana(1, 0, get_cmc_by_internal_id(s_location[iVar5]));
             iVar1 = iStack_34;
             cVar4 = (char)iStack_2c;
             if (iVar3 == 0)
@@ -1284,8 +1279,7 @@ int select_card_from_zone(int player, int targ_player, const int *s_location, in
       else if (this_test->has_mana_to_pay_cmc == '\x01')
       {
         iStack_2c = iVar1;
-        iVar1 = get_cmc_by_internal_id(s_location[iVar5]);
-        iVar3 = has_mana(1, 0, iVar1);
+        iVar3 = has_mana(1, 0, get_cmc_by_internal_id(s_location[iVar5]));
         iVar1 = iStack_2c;
         if (iVar3 != 0)
           goto LAB_026510b0;
@@ -1395,6 +1389,7 @@ int get_tutoring_denial(int player)
 int new_select_a_card(int player, int targ_player, int search_location, int must_select,
                            int ai_selection_mode, int test_type, test_definition_t *this_test)
 {
+  int count;
   unsigned short uVar1;
   int *piVar2;
   card_instance_t *instance;
@@ -1413,8 +1408,7 @@ int new_select_a_card(int player, int targ_player, int search_location, int must
   {
     if (uVar1 == 0)
     {
-      iVar5 = get_tutoring_denial(targ_player);
-      if (iVar5 != 0)
+      if (get_tutoring_denial(targ_player) != 0)
       {
         return -1;
       }
@@ -1422,12 +1416,11 @@ int new_select_a_card(int player, int targ_player, int search_location, int must
     }
     uVar6 = (unsigned int)uVar1;
     piVar2 = deck_ptr[targ_player];
-    iVar5 = check_battlefield_for_id(1 - targ_player, 0x22b9);
-    if (iVar5 != 0)
+    if (check_battlefield_for_id(1 - targ_player, 0x22b9) != 0)
     {
-      iVar5 = count_deck(targ_player);
+      count = count_deck(targ_player);
       uVar6 = 4;
-      if (iVar5 < 4)
+      if (count < 4)
       {
         uVar6 = count_deck(targ_player);
       }
@@ -1437,8 +1430,7 @@ int new_select_a_card(int player, int targ_player, int search_location, int must
   uVar6 = (unsigned int)uVar1;
   if (search_location == 2)
   {
-    iVar5 = graveyard_has_shroud(targ_player);
-    if (iVar5 != 0)
+    if (graveyard_has_shroud(targ_player) != 0)
     {
       return -1;
     }
@@ -1737,6 +1729,7 @@ int select_multiple_cards_from_either_graveyard(int player, int card, select_gra
                                                      test_definition_t *this_test,
                                                      int max_targets, target_t *ret_location)
 {
+  int i;
   bool bVar1;
   int iVar2;
   int32_t iVar3;
@@ -1825,8 +1818,7 @@ int select_multiple_cards_from_either_graveyard(int player, int card, select_gra
   {
 
     sStack_150 = iVar6;
-    iVar6 = graveyard_has_shroud(0);
-    if (iVar6 == 0)
+    if (graveyard_has_shroud(0) == 0)
     {
       uStack_15c = 1;
       bVar1 = (int)sStack_150 <= (int)minimum_or_other_count;
@@ -1853,8 +1845,7 @@ int select_multiple_cards_from_either_graveyard(int player, int card, select_gra
     minimum_or_other_count = iVar6;
   LAB_02652f78:
 
-    iVar6 = graveyard_has_shroud(1);
-    if (iVar6 == 0)
+    if (graveyard_has_shroud(1) == 0)
     {
       uVar8 = uStack_15c;
       if (uStack_15c == 0)
@@ -1934,15 +1925,15 @@ int select_multiple_cards_from_either_graveyard(int player, int card, select_gra
       LAB_02652fd8:
         psVar5 = psStack_14c;
         iStack_148 = iVar11;
-        iVar11 = 0;
+        i = 0;
         do
         {
-          uVar8 = ret_location[iVar11].player;
+          uVar8 = ret_location[i].player;
 
-          iVar11 = iVar11 + 1;
+          i = i + 1;
 
-          turn_card_in_grave_face_up((int)uVar8 >> 16, uVar8 & 0xffff, psVar5[iVar11 - 1]);
-        } while (iVar11 < iStack_148);
+          turn_card_in_grave_face_up((int)uVar8 >> 16, uVar8 & 0xffff, psVar5[i - 1]);
+        } while (i < iStack_148);
       LAB_02653015:
         if (sStack_158 == SFG_0)
         {
@@ -2342,12 +2333,6 @@ int global_tutor(int player, int targ_player, int search_location, int destinati
 
 #ifndef SHANDALAR
 /* Recovered October 2022 library reveal and selection logic. */
-typedef union
-{
-  char display[100];
-  char diagnostic[200];
-} library_reveal_text_t;
-
 /* ManalinkEh 2022: 0x26526c0; original functions/tutors.c:757.
  * Native behavior: the 50-byte local is passed with a formatting bound of 100. */
 int reveal_top_cards_of_library(int player, int num_cards)
@@ -2391,7 +2376,6 @@ int reveal_top_cards_of_library_and_choose_fn_who_chooses(
     tutor_t destination_rest, int reveal_rest, test_definition_t *test,
     library_reveal_callback_t fn)
 {
-  library_reveal_text_t text;
   if (reveal_rest)
     num_cards = reveal_top_cards_of_library(t_player, num_cards);
   else
@@ -2408,11 +2392,12 @@ int reveal_top_cards_of_library_and_choose_fn_who_chooses(
     num_to_pick = num_cards;
   if (num_to_pick <= 0)
   {
-    scnprintf(text.display, 100,
+    char buffer[100];
+    scnprintf(buffer, 100,
               " %s reveals:", cards_ptr[get_id(src_player, src_card)]->name);
     call_sub_437E20_unless_ai_is_speculating();
     hack_show_deck_force_expansion = 0;
-    show_deck_exe(who_chooses, deck_ptr[t_player], num_cards, text.display, 0, 0x7375b0);
+    show_deck_exe(who_chooses, deck_ptr[t_player], num_cards, buffer, 0, 0x7375b0);
     return -1;
   }
 
@@ -2475,9 +2460,10 @@ int reveal_top_cards_of_library_and_choose_fn_who_chooses(
     case TUTOR_GET_POSITION:
       if (num_to_pick > 1)
       {
-        sprintf(text.diagnostic, "%s:%d\012illegal destination_chosen: %d with qty=%d",
+        char buf[200];
+        sprintf(buf, "%s:%d\012illegal destination_chosen: %d with qty=%d",
                 "functions/tutors.c", 884, (int)destination_chosen, num_to_pick);
-        backtrace_and_abort(text.diagnostic);
+        backtrace_and_abort(buf);
       }
       break;
     case TUTOR_BOTTOM_OF_DECK:
@@ -2488,10 +2474,13 @@ int reveal_top_cards_of_library_and_choose_fn_who_chooses(
       selected = add_card_to_hand(t_player, iid);
       break;
     case TUTOR_BOTTOM_OF_DECK_RANDOM:
-      sprintf(text.diagnostic, "%s:%d\012illegal destination_chosen: %d", "functions/tutors.c", 902,
+    {
+      char buf[200];
+      sprintf(buf, "%s:%d\012illegal destination_chosen: %d", "functions/tutors.c", 902,
               (int)destination_chosen);
-      backtrace_and_abort(text.diagnostic);
+      backtrace_and_abort(buf);
       break;
+    }
     }
   }
 
@@ -2533,10 +2522,13 @@ int reveal_top_cards_of_library_and_choose_fn_who_chooses(
     case TUTOR_GET_ID:
     case TUTOR_PLAY_ATTACKING:
     case TUTOR_GET_POSITION:
-      sprintf(text.diagnostic, "%s:%d\012illegal destination_rest: %d", "functions/tutors.c", 945,
+    {
+      char buf[200];
+      sprintf(buf, "%s:%d\012illegal destination_rest: %d", "functions/tutors.c", 945,
               (int)destination_rest);
-      backtrace_and_abort(text.diagnostic);
+      backtrace_and_abort(buf);
       break;
+    }
     }
 
   if (num_chosen <= 0)
@@ -2578,10 +2570,13 @@ int reveal_top_cards_of_library_and_choose_fn_who_chooses(
     }
     return result;
   }
-  sprintf(text.diagnostic, "%s:%d\012illegal destination_chosen: %d with num_chosen=%d",
+  {
+  char buf[200];
+  sprintf(buf, "%s:%d\012illegal destination_chosen: %d with num_chosen=%d",
           "functions/tutors.c", 999, (int)destination_chosen, num_chosen);
-  backtrace_and_abort(text.diagnostic);
+  backtrace_and_abort(buf);
   return num_chosen;
+  }
 }
 
 

@@ -1817,6 +1817,8 @@ static int effect_infinite_reflection(int player, int card, event_t event)
 
 int card_infinite_reflection(int player, int card, event_t event)
 {
+  card_instance_t *instance;
+  int c;
   card_instance_t *pcVar1;
   int iVar2;
   card_instance_t *pcVar3;
@@ -1827,12 +1829,12 @@ int card_infinite_reflection(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    pcVar1 = get_card_instance(player, card);
-    if (pcVar1->damage_target_card < 0)
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_card < 0)
     {
       return 0;
     }
-    pcVar3 = in_play((int)pcVar1->damage_target_player, pcVar1->damage_target_card);
+    pcVar3 = in_play((int)instance->damage_target_player, instance->damage_target_card);
     if (pcVar3 == NULL)
     {
       return 0;
@@ -1847,29 +1849,29 @@ int card_infinite_reflection(int player, int card, event_t event)
     {
       iStack_18 = -1;
       iStack_1c = -1;
-      iVar2 = 0;
+      c = 0;
       do
       {
-        pcVar3 = in_play(player, iVar2);
+        pcVar3 = in_play(player, c);
         if (pcVar3 != NULL)
         {
-          iVar4 = is_what(player, iVar2, 2);
-          if (((iVar4 != 0) && (iVar4 = is_token(player, iVar2), iVar4 == 0)) &&
-              ((pcVar1->damage_target_card != iVar2 || (pcVar1->damage_target_player != player))))
+          iVar4 = is_what(player, c, 2);
+          if (((iVar4 != 0) && (iVar4 = is_token(player, c), iVar4 == 0)) &&
+              ((instance->damage_target_card != c || (instance->damage_target_player != player))))
           {
-            set_special_flags2(player, iVar2, 0x200);
-            cloning(player, iVar2, (int)pcVar1->damage_target_player, pcVar1->damage_target_card);
-            iStack_1c = iVar2;
+            set_special_flags2(player, c, 0x200);
+            cloning(player, c, (int)instance->damage_target_player, instance->damage_target_card);
+            iStack_1c = c;
           }
-          iVar4 = is_what(player, iVar2, 0x80);
+          iVar4 = is_what(player, c, 0x80);
           if ((iVar4 != 0) && (pcVar3 = get_card_instance(player, card),
                                pcVar3->info_slot_fn == effect_infinite_reflection))
           {
-            iStack_18 = iVar2;
+            iStack_18 = c;
           }
         }
-        iVar2 = iVar2 + 1;
-      } while (iVar2 < active_cards_count[player]);
+        c = c + 1;
+      } while (c < active_cards_count[player]);
       if (iStack_18 == -1)
         goto LAB_023458df;
     }
@@ -1883,20 +1885,20 @@ int card_infinite_reflection(int player, int card, event_t event)
            ((((unsigned int)player_bits[player] >> 24 & 0xff) & 8) == 0)) &&
           (0 < active_cards_count[player]))
       {
-        iVar2 = 0;
+        c = 0;
         do
         {
-          pcVar1 = in_play(player, iVar2);
-          if (((pcVar1 != NULL) && (iVar4 = is_what(player, iVar2, 2), iVar4 != 0)) &&
-              ((iVar4 = is_legendary(player, iVar2),
+          instance = in_play(player, c);
+          if (((instance != NULL) && (iVar4 = is_what(player, c, 2), iVar4 != 0)) &&
+              ((iVar4 = is_legendary(player, c),
                 iVar4 != 0 ||
-                    ((iStack_14 != 0 && (iVar4 = is_what(player, iVar2, 1), iVar4 == 0))))))
+                    ((iStack_14 != 0 && (iVar4 = is_what(player, c, 1), iVar4 == 0))))))
           {
-            iVar4 = get_id(player, iVar2);
-            true_verify_legend_rule(player, iVar2, iVar4);
+            iVar4 = get_id(player, c);
+            true_verify_legend_rule(player, c, iVar4);
           }
-          iVar2 = iVar2 + 1;
-        } while (iVar2 < active_cards_count[player]);
+          c = c + 1;
+        } while (c < active_cards_count[player]);
       }
     }
     pcVar1 = in_play(player, card);
@@ -1910,11 +1912,11 @@ int card_infinite_reflection(int player, int card, event_t event)
     {
     LAB_0234542f:
       if (event == EVENT_CAN_CAST)
-        goto LAB_02345452;
+        return vanilla_aura(player, card, event, player);
       if (event == EVENT_CAST_SPELL)
         goto LAB_023456ed;
       if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-        goto LAB_02345452;
+        return vanilla_aura(player, card, event, player);
     }
     else
     {
@@ -1933,8 +1935,8 @@ int card_infinite_reflection(int player, int card, event_t event)
           cloning(affected_card_controller, affected_card, (int)pcVar1->damage_target_player,
                   pcVar1->damage_target_card);
           set_special_flags2(affected_card_controller, affected_card, 0x200);
-          pcVar1 = get_card_instance(affected_card_controller, affected_card);
-          pcVar1->regen_status = pcVar1->regen_status | 0x1f000000;
+          instance = get_card_instance(affected_card_controller, affected_card);
+          instance->regen_status = instance->regen_status | 0x1f000000;
           get_abilities(affected_card_controller, affected_card, EVENT_CHANGE_TYPE, -1);
           get_abilities(affected_card_controller, affected_card, EVENT_SET_COLOR, -1);
           get_abilities(affected_card_controller, affected_card, EVENT_POWER, -1);
@@ -1945,10 +1947,10 @@ int card_infinite_reflection(int player, int card, event_t event)
           goto LAB_023456f1;
       }
       if (player == affected_card_controller)
-        goto LAB_02345452;
+        return vanilla_aura(player, card, event, player);
     }
     if (event == EVENT_CHANGE_TARGET)
-      goto LAB_02345452;
+      return vanilla_aura(player, card, event, player);
   }
 LAB_023456f1:
   if ((((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
@@ -1959,9 +1961,7 @@ LAB_023456f1:
   {
     return 0;
   }
-LAB_02345452:
-  iVar2 = vanilla_aura(player, card, event, player);
-  return iVar2;
+  return vanilla_aura(player, card, event, player);
 }
 
 int card_into_the_void(int player, int card, event_t event){
@@ -3050,8 +3050,7 @@ int card_descent_into_madness(int player, int card, event_t event)
       iStack_c4 = iStack_c4 + 1;
     } while (iStack_c4 != 2);
   }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 int card_driver_of_the_dead(int player, int card, event_t event){
@@ -4778,8 +4777,7 @@ int card_champion_of_lambholt(int player, int card, event_t event)
       instance = in_play(player, card);
       if (instance != NULL)
       {
-        iVar2 = is_humiliated(player, card, AL_STATIC);
-        if (iVar2 == 0)
+        if (is_humiliated(player, card, AL_STATIC) == 0)
         {
           iVar2 = get_power(affected_card_controller, affected_card);
           iVar3 = get_power(player, card);
@@ -5981,6 +5979,7 @@ Artifact Creature - Construct 3/3
 
 int card_otherworld_atlas(int player, int card, event_t event)
 {
+  int p;
   card_instance_t *instance;
   int iVar2;
   int iVar3;
@@ -5991,26 +5990,23 @@ int card_otherworld_atlas(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0,
                                         NULL, NULL);
-      return iVar2;
     }
     if (event == EVENT_ACTIVATE)
     {
       iVar2 = count_counters(player, card, COUNTER_CHARGE);
       instance->info_slot = 0;
       ai_modifier = ai_modifier + iVar2 * -5 + 0x14;
-      iVar2 = generic_activated_ability(player, card, EVENT_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0, NULL,
-                                        NULL);
-      if (iVar2 == 0)
+      if (generic_activated_ability(player, card, EVENT_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0, NULL,
+                                        NULL) == 0)
       {
         return 0;
       }
       iVar2 = count_counters(player, card, COUNTER_CHARGE);
       iVar3 = count_counters(player, card, COUNTER_CHARGE);
-      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Add a counter", 1,
-                          iVar2 * -5 + 0x14, "Both players draw", 1, iVar3 * 5, 0, 0, 0, 0);
-      if (iVar2 != 0)
+      if (dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Add a counter", 1,
+                          iVar2 * -5 + 0x14, "Both players draw", 1, iVar3 * 5, 0, 0, 0, 0) != 0)
       {
         return 0;
       }
@@ -6036,14 +6032,12 @@ int card_otherworld_atlas(int player, int card, event_t event)
                                COUNTER_CHARGE, 1);
       iVar2 = instance->info_slot;
     }
-    iVar3 = current_turn;
+    p = current_turn;
     if (iVar2 == 2)
     {
-      iVar2 = count_counters(instance->parent_controller, instance->parent_card, COUNTER_CHARGE);
-      draw_cards(iVar3, iVar2);
+      draw_cards(p, count_counters(instance->parent_controller, instance->parent_card, COUNTER_CHARGE));
       player_00 = current_turn ^ 1;
-      iVar2 = count_counters(instance->parent_controller, instance->parent_card, COUNTER_CHARGE);
-      draw_cards(player_00, iVar2);
+      draw_cards(player_00, count_counters(instance->parent_controller, instance->parent_card, COUNTER_CHARGE));
     }
   }
   return 0;
@@ -6388,13 +6382,15 @@ int card_slayers_stronghold(int player, int card, event_t event){
 /* ManalinkEh 2022: 0x2347c00; original cards/avacyn_restored.c:2759. */
 int card_dark_impostor(int player, int card, event_t event)
 {
+  card_instance_t *parent;
+  int iid;
+  int choice;
   int16_t *piVar1;
   short sVar2;
   unsigned short uVar3;
   unsigned int uVar4;
   int iVar5;
   card_instance_t *pcVar6;
-  int iVar7;
   int16_t *piVar8;
   unsigned int uVar9;
   inst_info_t iVar10;
@@ -6420,8 +6416,7 @@ int card_dark_impostor(int player, int card, event_t event)
     {
       int can_activate;
       int16_t iids[12];
-      iVar5 = can_use_activated_abilities(player, card);
-      if (iVar5 == 0)
+      if (can_use_activated_abilities(player, card) == 0)
       {
         return 0;
       }
@@ -6487,9 +6482,8 @@ int card_dark_impostor(int player, int card, event_t event)
           {
 
             sVar2 = *piVar8;
-            iVar5 = dispatch_event_to_single_card_overriding_function(
-                player, card, EVENT_CAN_ACTIVATE, (int)sVar2);
-            if (iVar5 == 0)
+            if (dispatch_event_to_single_card_overriding_function(
+                player, card, EVENT_CAN_ACTIVATE, (int)sVar2) == 0)
               break;
             piVar8 = piVar8 + 1;
             uVar3 = cards_data[sVar2].id;
@@ -6518,27 +6512,27 @@ int card_dark_impostor(int player, int card, event_t event)
       }
       iVar5 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 4, 2, 0, 0, 0, 0, 0,
                                         &td, NULL);
-      iVar5 = dialog_impl(
+      choice = dialog_impl(
           player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\004", "Kill & steal ability",
           iVar5, 5, stolen_abilities_name[0], uVar4, 1, stolen_abilities_name[1], uStack_578, 1, stolen_abilities_name[2], uStack_574, 1,
           stolen_abilities_name[3], uStack_570, 1, stolen_abilities_name[4], uStack_56c, 1, stolen_abilities_name[5], uStack_568, 1,
           stolen_abilities_name[6], uStack_564, 1, stolen_abilities_name[7], uStack_560, 1, stolen_abilities_name[8], uStack_55c, 1,
           stolen_abilities_name[9], uStack_550, 1, stolen_abilities_name[10], uStack_548, 1, stolen_abilities_name[11], uVar9, 1, 0, 0, 0, 0);
-      if (iVar5 == 0)
+      if (choice == 0)
       {
         spell_fizzled = 1;
         return 0;
       }
-      if (iVar5 != 1)
+      if (choice != 1)
       {
 
-        sVar2 = stolen_abilities[iVar5 - 2];
+        sVar2 = stolen_abilities[choice - 2];
         dispatch_event_to_single_card_overriding_function(player, card, EVENT_ACTIVATE, (int)sVar2);
         if (spell_fizzled == 1)
         {
           return 0;
         }
-        set_inst_info(pcVar6, 0x3032, (int)sVar2, (uint16_t)iVar5);
+        set_inst_info(pcVar6, 0x3032, (int)sVar2, (uint16_t)choice);
         return 0;
       }
 
@@ -6569,20 +6563,18 @@ int card_dark_impostor(int player, int card, event_t event)
     uVar4 = ((uint32_t)iVar10.id | ((uint32_t)iVar10.data2 << 16)) >> 0x10;
     if (uVar4 == 1)
     {
-      iVar5 = valid_target(ptStack_554);
-      if (iVar5 != 0)
+      if (valid_target(ptStack_554) != 0)
       {
 
-        pcVar6 = get_card_instance(pcStack_54c->parent_controller, pcStack_54c->parent_card);
-        iVar5 = get_original_internal_card_id(pcStack_54c->targets[0].player,
+        parent = get_card_instance(pcStack_54c->parent_controller, pcStack_54c->parent_card);
+        iid = get_original_internal_card_id(pcStack_54c->targets[0].player,
                                               pcStack_54c->targets[0].card);
         kill_target0(player, card, KILL_EXILE);
         add_counters(player, card, pcStack_54c->parent_controller,
                                  pcStack_54c->parent_card, COUNTER_P1_P1, 1);
-        iVar7 = has_an_activated_ability(iVar5);
-        if (iVar7 != 0)
+        if (has_an_activated_ability(iid) != 0)
         {
-          store_iid(pcVar6, 0x3032, (int16_t)iVar5);
+          store_iid(parent, 0x3032, (int16_t)iid);
         }
       }
     }

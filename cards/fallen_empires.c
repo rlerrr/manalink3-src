@@ -1191,7 +1191,7 @@ int card_tidal_influence(int player, int card, event_t event)
     {
       add_counters(player, card, player, card, COUNTER_TIDE, 1);
       is_humiliated(player, card, AL_STATIC);
-      goto LAB_0241ff60;
+      return global_enchantment(player, card, event);
     }
   }
   result = is_humiliated(player, card, AL_STATIC);
@@ -1223,9 +1223,7 @@ int card_tidal_influence(int player, int card, event_t event)
       }
     }
   }
-LAB_0241ff60:
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 int card_vodalian_mage(int player, int card, event_t event){
@@ -1675,11 +1673,9 @@ int card_soul_exchange(int player, int card, event_t event)
     memcpy(msg, "Select a creature card.\000", 24);
     iVar3 = 0;
     new_default_test_definition(&this_test, 2, msg);
-    iVar3 = can_target(&td);
-    if (iVar3 != 0)
+    if (can_target(&td) != 0)
     {
-      iVar3 = generic_spell(player, card, EVENT_CAN_CAST, 8, NULL, NULL, 0, &this_test);
-      return iVar3;
+      return generic_spell(player, card, EVENT_CAN_CAST, 8, NULL, NULL, 0, &this_test);
     }
   }
   else if (event == EVENT_CAST_SPELL)
@@ -1699,8 +1695,7 @@ int card_soul_exchange(int player, int card, event_t event)
       {
         instance->number_of_targets = '\0';
         instance->info_slot = 0;
-        iVar3 = new_pick_target(&td, "Select a creature you control to exile.", 0, 0x81);
-        if (iVar3 != 0)
+        if (new_pick_target(&td, "Select a creature you control to exile.", 0, 0x81) != 0)
         {
           iVar3 = instance->targets[0].card;
           iVar2 = select_target_from_grave_source(player, card, player, SFG_0, 2, &this_test, 0);
@@ -1710,8 +1705,7 @@ int card_soul_exchange(int player, int card, event_t event)
           }
           else
           {
-            iVar2 = has_creature_type(player, iVar3, SUBTYPE_THRULL);
-            if (iVar2 != 0)
+            if (has_creature_type(player, iVar3, SUBTYPE_THRULL) != 0)
             {
               instance->info_slot = 1;
             }
@@ -1847,22 +1841,16 @@ Whenever a player puts |Ha Forest onto the battlefield, ~ deals 3 damage to that
 
 int card_tourachs_gate(int player, int card, event_t event)
 {
+  int choice;
+  target_definition_t td;
   card_instance_t *instance;
   int iVar2;
   int argument1;
   int iVar3;
   int iVar4;
-  int iVar5;
   unsigned int uVar6;
   unsigned int uStack_f8;
 
-  /* DWARF locals share this frame offset; keep every typed view. */
-  union
-  {
-    target_definition_t target;
-    test_definition_t test;
-    uint8_t bytes[216];
-  } recovered_stack_td;
 
   upkeep_trigger_ability(player, card, event, player);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
@@ -1933,10 +1921,11 @@ int card_tourachs_gate(int player, int card, event_t event)
             }
             if ((iVar2 == 2) && (current_turn == player))
             {
-              default_test_definition(&recovered_stack_td.test, 2);
-              recovered_stack_td.test.state = STATE_ATTACKING;
+              test_definition_t this_test;
+              default_test_definition(&this_test, 2);
+              this_test.state = STATE_ATTACKING;
               pump_creatures_until_eot(instance->parent_controller, instance->parent_card,
-                                       current_turn, 0, 2, -1, 0, 0, &recovered_stack_td.test);
+                                       current_turn, 0, 2, -1, 0, 0, &this_test);
             }
             goto LAB_02421d54;
           }
@@ -1956,22 +1945,21 @@ int card_tourachs_gate(int player, int card, event_t event)
         {
           uVar6 = (current_phase != 0x18) - 1 & 10;
         }
-        if ((iVar3 != 0) && (iVar5 = count_counters(player, card, COUNTER_TIME), iVar5 < 1))
+        if ((iVar3 != 0) && (count_counters(player, card, COUNTER_TIME) < 1))
         {
           ai_modifier = ai_modifier + 0x19;
         }
-        iVar3 =
+        choice =
             dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Sac a Thrull", iVar3,
                         iVar4 * -5 + 0xf, "Pump attacking creatures", uStack_f8, uVar6, 0, 0, 0, 0);
-        if (iVar3 == 0)
+        if (choice == 0)
         {
           spell_fizzled = 1;
           return 0;
         }
-        if (iVar3 == 1)
+        if (choice == 1)
         {
-          iVar2 = sacrifice(player, card, player, 0, 0x47, 0, 199, 0, 0, 0, 0, 0, -1, 0);
-          if (iVar2 == 0)
+          if (sacrifice(player, card, player, 0, 0x47, 0, 199, 0, 0, 0, 0, 0, -1, 0) == 0)
           {
             spell_fizzled = 1;
           }
@@ -1980,7 +1968,7 @@ int card_tourachs_gate(int player, int card, event_t event)
             instance->info_slot = 1;
           }
         }
-        else if (iVar3 == 2)
+        else if (choice == 2)
         {
           tap_card(argument1, iVar2);
           instance->info_slot = 2;
@@ -2003,12 +1991,11 @@ LAB_02421d54:
     return 0;
   }
 LAB_02421cf0:
-  default_target_definition(player, card, &recovered_stack_td.target, 1);
-  recovered_stack_td.target.allowed_controller = player;
-  recovered_stack_td.target.preferred_controller = player;
-  iVar2 = targeted_aura_custom_prompt(player, card, event, &recovered_stack_td.target,
+  default_target_definition(player, card, &td, 1);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  return targeted_aura_custom_prompt(player, card, event, &td,
                                       "Select target land you control");
-  return iVar2;
 }
 
 
@@ -2054,9 +2041,7 @@ int card_dwarven_armorer(int player, int card, event_t event)
     {
       iVar2 = get_power(instance->targets[0].player, instance->targets[0].card);
       iVar3 = get_toughness(instance->targets[0].player, instance->targets[0].card);
-      iVar2 =
-          do_dialog(player, player, card, -1, -1, " +1/+0\n +0/+1", (unsigned int)(iVar3 < iVar2));
-      if (iVar2 == 0)
+      if (do_dialog(player, player, card, -1, -1, " +1/+0\n +0/+1", (unsigned int)(iVar3 < iVar2)) == 0)
       {
         type = COUNTER_P1_P0;
       }
@@ -2068,9 +2053,8 @@ int card_dwarven_armorer(int player, int card, event_t event)
                                type, 1);
     }
   }
-  iVar2 = generic_activated_ability(player, card, event, 0x25, 0, 0, 0, 0, 1, 0, 0, &td,
+  return generic_activated_ability(player, card, event, 0x25, 0, 0, 0, 0, 1, 0, 0, &td,
                                     "TARGET_CREATURE");
-  return iVar2;
 }
 
 int card_dwarven_catapult(int player, int card, event_t event){
@@ -3254,8 +3238,7 @@ static int storage_land(int player, int card, event_t event, int color)
   int iVar2;
   int iVar3;
   color_test_t cStack_14;
-  iVar2 = is_humiliated(player, card, AL_TRIG);
-  if (iVar2 == 0)
+  if (is_humiliated(player, card, AL_TRIG) == 0)
   {
     comes_into_play_tapped(player, card, event);
     iVar2 = is_tapped(player, card);
@@ -3275,13 +3258,11 @@ static int storage_land(int player, int card, event_t event, int color)
     {
       if (event == EVENT_CAN_ACTIVATE)
       {
-        iVar2 = is_tapped(player, card);
-        if (iVar2 != 0)
+        if (is_tapped(player, card) != 0)
         {
           return 0;
         }
-        iVar2 = is_animated_and_sick(player, card);
-        if (iVar2 != 0)
+        if (is_animated_and_sick(player, card) != 0)
         {
           return 0;
         }
@@ -3352,16 +3333,14 @@ static int storage_land(int player, int card, event_t event, int color)
                 ((iVar2 == 1 && (iVar2 = check_battlefield_for_id(player, 0x2579), iVar2 != 0))))))
           {
             iVar2 = multi_mana_transmutation[player][1];
-            iVar3 = single_color_test_bit_to_color(multi_mana_transmutation[player][0]);
-            declare_mana_available(player, iVar3, iVar2 + -1);
+            declare_mana_available(player, single_color_test_bit_to_color(multi_mana_transmutation[player][0]), iVar2 + -1);
             declare_mana_available(player, color, 1);
             return 0;
           }
           if ((mana_colors_added[player] == 0) ||
               (iVar2 = count_counters(player, card, COUNTER_STORAGE), 1 < iVar2))
           {
-            iVar2 = count_counters(player, card, COUNTER_STORAGE);
-            declare_mana_available(player, color, iVar2);
+            declare_mana_available(player, color, count_counters(player, card, COUNTER_STORAGE));
           }
           else
           {
@@ -3386,8 +3365,7 @@ static int storage_land(int player, int card, event_t event, int color)
                 ((iVar2 == 1 && (iVar3 = check_battlefield_for_id(player, 0x2579), iVar3 != 0))))))
           {
             iVar2 = multi_mana_transmutation[player][1];
-            iVar3 = single_color_test_bit_to_color(multi_mana_transmutation[player][0]);
-            declare_mana_available(player, iVar3, iVar2 + -1);
+            declare_mana_available(player, single_color_test_bit_to_color(multi_mana_transmutation[player][0]), iVar2 + -1);
             declare_mana_available(player, mana_color_override[player][color], 1);
             return 0;
           }
@@ -3398,8 +3376,7 @@ static int storage_land(int player, int card, event_t event, int color)
   }
   else
   {
-    iVar2 = is_humiliated(player, card, AL_TRIG);
-    if (iVar2 == 0)
+    if (is_humiliated(player, card, AL_TRIG) == 0)
     {
       add_counters(player, card, player, card, COUNTER_STORAGE, 1);
     }

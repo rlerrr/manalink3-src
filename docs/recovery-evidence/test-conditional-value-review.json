@@ -1,0 +1,773 @@
+{
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "current_dll_sha256": "ed075c0e38a6fd39ff273e3edcab9889a83e85cf7bd11d58b2b8023087203455",
+  "current_dbg_sha256": "908430b7db63bd6de509473d5b020fdff40938973cdfab500ed23a5cf9db83d2",
+  "source_review": {
+    "path": "docs/recovery-evidence/test-outlier-scope-review.json",
+    "sha256": "9f91e20de770c351cb13b8db98446e99daf4c9885745d11f5da42c6578d69bfc"
+  },
+  "tool_sha256": "469094e38c0e94abe2cfb09e8ff3e91e4d83a866aace5cf3ec569094aec16d40",
+  "rows": [
+    {
+      "source": "cards/judgement.c",
+      "name": "card_stitch_together",
+      "source_definition_sha256": "359db753d7b9196bd55f2e2326f5b76fa65bae282aac60d45e33abfc6a2d8d1a",
+      "native": {
+        "view": {
+          "address": "0x205f5e0",
+          "end": "0x205f800",
+          "bytes_sha256": "830092c2ad0a6fa24aed1392dbe110e9e75eb150bba504e3dad5664fa99f4883"
+        },
+        "field_offset": 172,
+        "cases": [
+          {
+            "call": "0x205f636",
+            "opaque_return": "zero32",
+            "stores": [
+              {
+                "address": "0x205f6e2",
+                "bytes": 2,
+                "value": 1,
+                "instruction": [
+                  "mov",
+                  "word ptr [ebp - 0x38], ax"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -264,
+            "local_instructions": [
+              [
+                "0x205f63b",
+                "mov",
+                "edx, eax"
+              ],
+              [
+                "0x205f63d",
+                "mov",
+                "eax, 2"
+              ],
+              [
+                "0x205f642",
+                "test",
+                "edx, edx"
+              ],
+              [
+                "0x205f644",
+                "je",
+                "0x205f6da"
+              ],
+              [
+                "0x205f6da",
+                "mov",
+                "eax, 1"
+              ],
+              [
+                "0x205f6df",
+                "cmp",
+                "ebx, 0x71"
+              ],
+              [
+                "0x205f6e2",
+                "mov",
+                "word ptr [ebp - 0x38], ax"
+              ]
+            ]
+          },
+          {
+            "call": "0x205f636",
+            "opaque_return": "nonzero32",
+            "stores": [
+              {
+                "address": "0x205f64a",
+                "bytes": 2,
+                "value": 2,
+                "instruction": [
+                  "mov",
+                  "word ptr [ebp - 0x38], ax"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -264,
+            "local_instructions": [
+              [
+                "0x205f63b",
+                "mov",
+                "edx, eax"
+              ],
+              [
+                "0x205f63d",
+                "mov",
+                "eax, 2"
+              ],
+              [
+                "0x205f642",
+                "test",
+                "edx, edx"
+              ],
+              [
+                "0x205f644",
+                "je",
+                "0x205f6da"
+              ],
+              [
+                "0x205f64a",
+                "mov",
+                "word ptr [ebp - 0x38], ax"
+              ]
+            ]
+          },
+          {
+            "call": "0x205f6cd",
+            "opaque_return": "zero32",
+            "stores": [
+              {
+                "address": "0x205f6e2",
+                "bytes": 2,
+                "value": 1,
+                "instruction": [
+                  "mov",
+                  "word ptr [ebp - 0x38], ax"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -264,
+            "local_instructions": [
+              [
+                "0x205f6d2",
+                "test",
+                "eax, eax"
+              ],
+              [
+                "0x205f6d4",
+                "jne",
+                "0x205f7d0"
+              ],
+              [
+                "0x205f6da",
+                "mov",
+                "eax, 1"
+              ],
+              [
+                "0x205f6df",
+                "cmp",
+                "ebx, 0x71"
+              ],
+              [
+                "0x205f6e2",
+                "mov",
+                "word ptr [ebp - 0x38], ax"
+              ]
+            ]
+          },
+          {
+            "call": "0x205f6cd",
+            "opaque_return": "nonzero32",
+            "stores": [
+              {
+                "address": "0x205f7d0",
+                "bytes": 2,
+                "value": 2,
+                "instruction": [
+                  "mov",
+                  "word ptr [ebp - 0x38], 2"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -264,
+            "local_instructions": [
+              [
+                "0x205f6d2",
+                "test",
+                "eax, eax"
+              ],
+              [
+                "0x205f6d4",
+                "jne",
+                "0x205f7d0"
+              ],
+              [
+                "0x205f7d0",
+                "mov",
+                "word ptr [ebp - 0x38], 2"
+              ]
+            ]
+          },
+          {
+            "call": "0x205f7b1",
+            "opaque_return": "zero32",
+            "stores": [
+              {
+                "address": "0x205f7c1",
+                "bytes": 2,
+                "value": 1,
+                "instruction": [
+                  "mov",
+                  "word ptr [ebp - 0x38], ax"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -264,
+            "local_instructions": [
+              [
+                "0x205f7b6",
+                "test",
+                "eax, eax"
+              ],
+              [
+                "0x205f7b8",
+                "setne",
+                "al"
+              ],
+              [
+                "0x205f7bb",
+                "and",
+                "eax, 0xff"
+              ],
+              [
+                "0x205f7c0",
+                "inc",
+                "eax"
+              ],
+              [
+                "0x205f7c1",
+                "mov",
+                "word ptr [ebp - 0x38], ax"
+              ]
+            ]
+          },
+          {
+            "call": "0x205f7b1",
+            "opaque_return": "nonzero32",
+            "stores": [
+              {
+                "address": "0x205f7c1",
+                "bytes": 2,
+                "value": 2,
+                "instruction": [
+                  "mov",
+                  "word ptr [ebp - 0x38], ax"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -264,
+            "local_instructions": [
+              [
+                "0x205f7b6",
+                "test",
+                "eax, eax"
+              ],
+              [
+                "0x205f7b8",
+                "setne",
+                "al"
+              ],
+              [
+                "0x205f7bb",
+                "and",
+                "eax, 0xff"
+              ],
+              [
+                "0x205f7c0",
+                "inc",
+                "eax"
+              ],
+              [
+                "0x205f7c1",
+                "mov",
+                "word ptr [ebp - 0x38], ax"
+              ]
+            ]
+          }
+        ],
+        "excluded_resolution_only_calls": [
+          {
+            "call": "0x205f715",
+            "reason": "No AI-setting store reachable before another call/exit in the complete direct CFG."
+          }
+        ]
+      },
+      "current": {
+        "view": {
+          "address": "0x228f450",
+          "end": "0x228f606",
+          "bytes_sha256": "ef590c7ea31918bd0e5974a2c40ee21c55340ea88756f7ee94cadcab34310848"
+        },
+        "field_offset": 172,
+        "cases": [
+          {
+            "call": "0x228f4ac",
+            "opaque_return": "zero32",
+            "stores": [
+              {
+                "address": "0x228f4bf",
+                "bytes": 2,
+                "value": 1,
+                "instruction": [
+                  "mov",
+                  "word ptr [ebp - 0x38], ax"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -264,
+            "local_instructions": [
+              [
+                "0x228f4b1",
+                "test",
+                "eax, eax"
+              ],
+              [
+                "0x228f4b3",
+                "setne",
+                "al"
+              ],
+              [
+                "0x228f4b6",
+                "and",
+                "eax, 0xff"
+              ],
+              [
+                "0x228f4bb",
+                "inc",
+                "eax"
+              ],
+              [
+                "0x228f4bc",
+                "cmp",
+                "ebx, 0x71"
+              ],
+              [
+                "0x228f4bf",
+                "mov",
+                "word ptr [ebp - 0x38], ax"
+              ]
+            ]
+          },
+          {
+            "call": "0x228f4ac",
+            "opaque_return": "nonzero32",
+            "stores": [
+              {
+                "address": "0x228f4bf",
+                "bytes": 2,
+                "value": 2,
+                "instruction": [
+                  "mov",
+                  "word ptr [ebp - 0x38], ax"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -264,
+            "local_instructions": [
+              [
+                "0x228f4b1",
+                "test",
+                "eax, eax"
+              ],
+              [
+                "0x228f4b3",
+                "setne",
+                "al"
+              ],
+              [
+                "0x228f4b6",
+                "and",
+                "eax, 0xff"
+              ],
+              [
+                "0x228f4bb",
+                "inc",
+                "eax"
+              ],
+              [
+                "0x228f4bc",
+                "cmp",
+                "ebx, 0x71"
+              ],
+              [
+                "0x228f4bf",
+                "mov",
+                "word ptr [ebp - 0x38], ax"
+              ]
+            ]
+          },
+          {
+            "call": "0x228f559",
+            "opaque_return": "zero32",
+            "stores": [
+              {
+                "address": "0x228f569",
+                "bytes": 2,
+                "value": 1,
+                "instruction": [
+                  "mov",
+                  "word ptr [ebp - 0x38], ax"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -264,
+            "local_instructions": [
+              [
+                "0x228f55e",
+                "test",
+                "eax, eax"
+              ],
+              [
+                "0x228f560",
+                "setne",
+                "al"
+              ],
+              [
+                "0x228f563",
+                "and",
+                "eax, 0xff"
+              ],
+              [
+                "0x228f568",
+                "inc",
+                "eax"
+              ],
+              [
+                "0x228f569",
+                "mov",
+                "word ptr [ebp - 0x38], ax"
+              ]
+            ]
+          },
+          {
+            "call": "0x228f559",
+            "opaque_return": "nonzero32",
+            "stores": [
+              {
+                "address": "0x228f569",
+                "bytes": 2,
+                "value": 2,
+                "instruction": [
+                  "mov",
+                  "word ptr [ebp - 0x38], ax"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -264,
+            "local_instructions": [
+              [
+                "0x228f55e",
+                "test",
+                "eax, eax"
+              ],
+              [
+                "0x228f560",
+                "setne",
+                "al"
+              ],
+              [
+                "0x228f563",
+                "and",
+                "eax, 0xff"
+              ],
+              [
+                "0x228f568",
+                "inc",
+                "eax"
+              ],
+              [
+                "0x228f569",
+                "mov",
+                "word ptr [ebp - 0x38], ax"
+              ]
+            ]
+          }
+        ],
+        "excluded_resolution_only_calls": [
+          {
+            "call": "0x228f5a1",
+            "reason": "No AI-setting store reachable before another call/exit in the complete direct CFG."
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_mercurial_transformation",
+      "source_definition_sha256": "c4b4ac645df49d849043ac1b6df71273d13286452f1cf5ba9f8c653fc2fd2ab5",
+      "native": {
+        "view": {
+          "address": "0x23d4290",
+          "end": "0x23d4838",
+          "bytes_sha256": "cd23b763504b7c415fd99549f56692ed6097212acbc44552666518a979b3267a"
+        },
+        "field_offset": 104,
+        "cases": [
+          {
+            "initializer": "0x23d467f",
+            "selector_frame_displacement": -316,
+            "selector_bytes": 4,
+            "opaque_selector": "one",
+            "stores": [
+              {
+                "address": "0x23d46bf",
+                "bytes": 4,
+                "value": 68,
+                "instruction": [
+                  "mov",
+                  "dword ptr [ebp - 0x7c], eax"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -380,
+            "local_instructions": [
+              [
+                "0x23d4684",
+                "mov",
+                "edx, dword ptr [ebp - 0x140]"
+              ],
+              [
+                "0x23d468a",
+                "cmp",
+                "dword ptr [ebp - 0x13c], 1"
+              ],
+              [
+                "0x23d4691",
+                "je",
+                "0x23d477a"
+              ],
+              [
+                "0x23d46aa",
+                "mov",
+                "dword ptr [esp + 8], 4"
+              ],
+              [
+                "0x23d46b2",
+                "mov",
+                "dword ptr [esp + 4], esi"
+              ],
+              [
+                "0x23d46b6",
+                "mov",
+                "dword ptr [esp], edi"
+              ],
+              [
+                "0x23d46b9",
+                "mov",
+                "dword ptr [ebp - 0x13c], edx"
+              ],
+              [
+                "0x23d46bf",
+                "mov",
+                "dword ptr [ebp - 0x7c], eax"
+              ],
+              [
+                "0x23d477a",
+                "mov",
+                "dword ptr [ebp - 0x4c], 1"
+              ],
+              [
+                "0x23d4781",
+                "mov",
+                "dword ptr [ebp - 0x50], 1"
+              ],
+              [
+                "0x23d4788",
+                "mov",
+                "eax, 0x44"
+              ],
+              [
+                "0x23d478d",
+                "jmp",
+                "0x23d46aa"
+              ]
+            ]
+          },
+          {
+            "initializer": "0x23d467f",
+            "selector_frame_displacement": -316,
+            "selector_bytes": 4,
+            "opaque_selector": "not_one",
+            "stores": [
+              {
+                "address": "0x23d46bf",
+                "bytes": 4,
+                "value": 134,
+                "instruction": [
+                  "mov",
+                  "dword ptr [ebp - 0x7c], eax"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -380,
+            "local_instructions": [
+              [
+                "0x23d4684",
+                "mov",
+                "edx, dword ptr [ebp - 0x140]"
+              ],
+              [
+                "0x23d468a",
+                "cmp",
+                "dword ptr [ebp - 0x13c], 1"
+              ],
+              [
+                "0x23d4691",
+                "je",
+                "0x23d477a"
+              ],
+              [
+                "0x23d4697",
+                "mov",
+                "dword ptr [ebp - 0x4c], 4"
+              ],
+              [
+                "0x23d469e",
+                "mov",
+                "dword ptr [ebp - 0x50], 4"
+              ],
+              [
+                "0x23d46a5",
+                "mov",
+                "eax, 0x86"
+              ],
+              [
+                "0x23d46aa",
+                "mov",
+                "dword ptr [esp + 8], 4"
+              ],
+              [
+                "0x23d46b2",
+                "mov",
+                "dword ptr [esp + 4], esi"
+              ],
+              [
+                "0x23d46b6",
+                "mov",
+                "dword ptr [esp], edi"
+              ],
+              [
+                "0x23d46b9",
+                "mov",
+                "dword ptr [ebp - 0x13c], edx"
+              ],
+              [
+                "0x23d46bf",
+                "mov",
+                "dword ptr [ebp - 0x7c], eax"
+              ]
+            ]
+          }
+        ],
+        "excluded_resolution_only_calls": []
+      },
+      "current": {
+        "view": {
+          "address": "0x25192e0",
+          "end": "0x251988a",
+          "bytes_sha256": "2f57bed586a0d8327422a396b49258ab576d67a7896094efdf481c5515698458"
+        },
+        "field_offset": 104,
+        "cases": [
+          {
+            "initializer": "0x25196eb",
+            "selector_frame_displacement": -317,
+            "selector_bytes": 1,
+            "opaque_selector": "one",
+            "stores": [
+              {
+                "address": "0x25197fb",
+                "bytes": 4,
+                "value": 68,
+                "instruction": [
+                  "mov",
+                  "dword ptr [ebp - 0x7c], 0x44"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -380,
+            "local_instructions": [
+              [
+                "0x25196f0",
+                "mov",
+                "edx, dword ptr [ebp - 0x13c]"
+              ],
+              [
+                "0x25196f6",
+                "cmp",
+                "byte ptr [ebp - 0x13d], 1"
+              ],
+              [
+                "0x25196fd",
+                "je",
+                "0x25197ed"
+              ],
+              [
+                "0x25197ed",
+                "mov",
+                "dword ptr [ebp - 0x4c], 1"
+              ],
+              [
+                "0x25197f4",
+                "mov",
+                "dword ptr [ebp - 0x50], 1"
+              ],
+              [
+                "0x25197fb",
+                "mov",
+                "dword ptr [ebp - 0x7c], 0x44"
+              ]
+            ]
+          },
+          {
+            "initializer": "0x25196eb",
+            "selector_frame_displacement": -317,
+            "selector_bytes": 1,
+            "opaque_selector": "not_one",
+            "stores": [
+              {
+                "address": "0x2519711",
+                "bytes": 4,
+                "value": 134,
+                "instruction": [
+                  "mov",
+                  "dword ptr [ebp - 0x7c], 0x86"
+                ]
+              }
+            ],
+            "esp_ebp_displacement": -380,
+            "local_instructions": [
+              [
+                "0x25196f0",
+                "mov",
+                "edx, dword ptr [ebp - 0x13c]"
+              ],
+              [
+                "0x25196f6",
+                "cmp",
+                "byte ptr [ebp - 0x13d], 1"
+              ],
+              [
+                "0x25196fd",
+                "je",
+                "0x25197ed"
+              ],
+              [
+                "0x2519703",
+                "mov",
+                "dword ptr [ebp - 0x4c], 4"
+              ],
+              [
+                "0x251970a",
+                "mov",
+                "dword ptr [ebp - 0x50], 4"
+              ],
+              [
+                "0x2519711",
+                "mov",
+                "dword ptr [ebp - 0x7c], 0x86"
+              ]
+            ]
+          }
+        ],
+        "excluded_resolution_only_calls": []
+      }
+    }
+  ],
+  "scope": "Independent bounded conditional-expression proof. Stitch assigns AI selection1 for zero and2 for nonzero opaque has_threshold returns; every AI-setting store is covered. Mercurial assigns subtype68 (Frog) for an opaque selector equal to1, otherwise134 (Octopus); encountered power/toughness stores agree with1/4. Every direct path from the credited call return to its first field store is explored; intervening calls, exits, cycles or unsupported values fail. Partial bit lanes and unsupported definitions are conservative. These proofs are conditional on the same opaque helper return/selector input: argument provenance, selector origin, full dispatch/control semantics, arbitrary aliases and gameplay are not established."
+}

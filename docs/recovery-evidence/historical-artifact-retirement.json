@@ -1,0 +1,45 @@
+{
+  "status": "Obsolete generated artifacts deleted; full historical compiler/runtime replay retired",
+  "plan": ".recovery/artifact-prune-plan-c232.json",
+  "plan_sha256": "3e54696b760f4eee04e443fa0fc7dddacda32d846d7f9b14d5c2aff5ceb3711f",
+  "counts": {
+    "files": 2222,
+    "logical_bytes": 5658632570,
+    "allocated_bytes": 3036488388
+  },
+  "kept": [
+    "All 2020/2022 release and analysis input DLLs",
+    "Current root DLL/DBG and current compiler objects",
+    "Active loop-lifetime batch artifacts",
+    "Ghidra projects and raw decompilation exports",
+    "All recovered source, source backups and canonical predecessor archive",
+    "JSON evidence, address/name maps and current reccmp setup caches"
+  ],
+  "retired_capability": "Full replay of archived compiler/runtime recovery proofs. Existing JSON receipts and source history remain review evidence; current-source, current-build and current-batch verification remain supported.",
+  "free_before": 304517120,
+  "deleted_files": 2224,
+  "free_after": 4875587584,
+  "deletion_verified": true,
+  "build_backup_policy": "Current builds no longer recreate the retired initial artifact backup directory. Current root DLL/DBG and compiler objects remain active.",
+  "additional_deleted_artifacts": [
+    {
+      "path": ".recovery/recovery-progress-before-encoding-repair.md",
+      "bytes": 1699370017,
+      "reason": "Obsolete generated progress-document snapshot; current journal and implementation source retained"
+    },
+    {
+      "path": ".recovery/batch136-before/docs/recovery-progress.md",
+      "bytes": 69669495,
+      "reason": "Obsolete generated progress-document snapshot; current journal and implementation source retained"
+    }
+  ],
+  "additional_deletion_record": ".recovery/pruned-progress-snapshots-c234.json",
+  "additional_deletion_record_sha256": "82611da215bada735253e98709c57c568ea6f3af3cbcc4d877214cd480668ea6",
+  "obsolete_ledger_followup": {
+    "record": "docs/recovery-evidence/obsolete-ledger-artifact-pruning.json",
+    "files": 166,
+    "logical_bytes": 8576854051,
+    "freed_bytes": 3238387712,
+    "scope": "Superseded full-ledger rollback/candidate JSON and completed-batch rebuilt DLL/DBG snapshots. Current inputs, published ledgers, source snapshots, Ghidra projects and reusable tools retained."
+  }
+}

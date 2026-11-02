@@ -1,0 +1,250 @@
+{
+  "rows": [
+    {
+      "source": "functions/functions.c",
+      "name": "total_playable_lands",
+      "before_definition": "int total_playable_lands(int player)\n{\n  uint16_t uVar1;\n  uint16_t uVar2;\n  card_instance_t *instance;\n  int iVar4;\n  int c;\n  int p;\n  int iVar7;\n  bool bVar8;\n\n  p = current_turn;\n  c = active_cards_count[current_turn] + -1;\n  if (c < 0)\n  {\n    iVar7 = 1;\n    p = 1 - current_turn;\n    c = active_cards_count[p] + -1;\n    if (c < 0)\n      goto LAB_02684c4c;\n  LAB_02684965:\n    do\n    {\n      while ((instance = in_play(p, c),\n              instance == NULL ||\n                  ((iVar4 = is_what(p, c, 0x80),\n                    iVar4 == 0 &&\n                        (iVar4 = is_humiliated(p, c, AL_STATIC), iVar4 != 0)))))\n      {\n      joined_r0x02684acf:\n        c = c + -1;\n        if (c < 0)\n          goto LAB_02684a0f;\n      }\n      iVar4 = get_id(p, c);\n      if (iVar4 == 0x1bf9)\n      {\n      LAB_02684ba0:\n        iVar7 = iVar7 + (unsigned int)(p == player) * 2;\n        goto joined_r0x02684acf;\n      }\n      if (iVar4 < 0x1bfa)\n      {\n        if (iVar4 == 0x387)\n        {\n          instance = get_card_instance(p, c);\n          if ((instance->internal_card_id == LEGACY_EFFECT_CUSTOM) &&\n              (instance->info_slot_fn == check_playable_lands_legacy))\n          {\n            uVar1 = instance->display_pic_csv_id;\n            if (uVar1 == 0x1a24)\n              goto LAB_02684ba0;\n            if ((unsigned short)uVar1 < 0x1a25)\n            {\n              if (uVar1 == 0xae2)\n              {\n                iVar7 = iVar7 + (unsigned int)(p == player) * 3;\n              }\n            }\n            else\n            {\n              if (uVar1 == 0x35ad)\n                goto LAB_02684a48;\n              if ((unsigned short)uVar1 < 0x35ae)\n              {\n                if ((uVar1 == 0x2a08) || (uVar1 == 0x3323))\n                  goto LAB_02684a48;\n              }\n              else if ((uVar1 == 0x437d) || (uVar1 == 0x55cb))\n                goto LAB_02684a48;\n            }\n          }\n        }\n        else if (0x386 < iVar4)\n        {\n          if (iVar4 == 0x937)\n            goto LAB_02684b73;\n          if (iVar4 == 0xeb3)\n            goto LAB_02684a48;\n        }\n        goto joined_r0x02684acf;\n      }\n      if (iVar4 != 0x4008)\n      {\n        if (iVar4 < 0x4009)\n        {\n          if (iVar4 != 0x2982)\n          {\n            if (iVar4 < 0x2983)\n            {\n              if (iVar4 == 0x232c)\n                goto LAB_02684b73;\n            }\n            else if ((iVar4 == 0x3d19) || (iVar4 == 0x3e70))\n              goto LAB_02684a48;\n            goto joined_r0x02684acf;\n          }\n        }\n        else if ((iVar4 != 0x5202) && ((iVar4 != 0x562d && (iVar4 != 0x479c))))\n          goto joined_r0x02684acf;\n      LAB_02684a48:\n        iVar7 = iVar7 + (unsigned int)(p == player);\n        goto joined_r0x02684acf;\n      }\n    LAB_02684b73:\n      iVar7 = iVar7 + 1;\n      c = c + -1;\n    } while (-1 < c);\n  }\n  else\n  {\n    bVar8 = current_turn == player;\n    iVar7 = 1;\n    do\n    {\n      while ((instance = in_play(p, c),\n              instance == NULL ||\n                  ((iVar4 = is_what(p, c, 0x80),\n                    iVar4 == 0 &&\n                        (iVar4 = is_humiliated(p, c, AL_STATIC), iVar4 != 0)))))\n      {\n      joined_r0x02684b06:\n        c = c + -1;\n        if (c == -1)\n          goto LAB_0268494a;\n      }\n      iVar4 = get_id(p, c);\n      if (iVar4 == 0x1bf9)\n      {\n      LAB_02684bb8:\n        iVar7 = iVar7 + (unsigned int)bVar8 * 2;\n        goto joined_r0x02684b06;\n      }\n      if (iVar4 < 0x1bfa)\n      {\n        if (iVar4 == 0x387)\n        {\n          instance = get_card_instance(p, c);\n          if ((instance->internal_card_id == LEGACY_EFFECT_CUSTOM) &&\n              (instance->info_slot_fn == check_playable_lands_legacy))\n          {\n            uVar2 = instance->display_pic_csv_id;\n            if (uVar2 == 0x1a24)\n              goto LAB_02684bb8;\n            if ((unsigned short)uVar2 < 0x1a25)\n            {\n              if (uVar2 == 0xae2)\n              {\n                iVar7 = iVar7 + (unsigned int)bVar8 * 3;\n              }\n            }\n            else\n            {\n              if (uVar2 == 0x35ad)\n                goto LAB_02684a88;\n              if ((unsigned short)uVar2 < 0x35ae)\n              {\n                if ((uVar2 == 0x2a08) || (uVar2 == 0x3323))\n                  goto LAB_02684a88;\n              }\n              else if ((uVar2 == 0x437d) || (uVar2 == 0x55cb))\n                goto LAB_02684a88;\n            }\n          }\n        }\n        else if (0x386 < iVar4)\n        {\n          if (iVar4 == 0x937)\n            goto LAB_02684b8b;\n          if (iVar4 == 0xeb3)\n            goto LAB_02684a88;\n        }\n        goto joined_r0x02684b06;\n      }\n      if (iVar4 != 0x4008)\n      {\n        if (iVar4 < 0x4009)\n        {\n          if (iVar4 != 0x2982)\n          {\n            if (iVar4 < 0x2983)\n            {\n              if (iVar4 == 0x232c)\n                goto LAB_02684b8b;\n            }\n            else if ((iVar4 == 0x3d19) || (iVar4 == 0x3e70))\n              goto LAB_02684a88;\n            goto joined_r0x02684b06;\n          }\n        }\n        else if ((iVar4 != 0x5202) && ((iVar4 != 0x562d && (iVar4 != 0x479c))))\n          goto joined_r0x02684b06;\n      LAB_02684a88:\n        iVar7 = iVar7 + (unsigned int)(p == player);\n        goto joined_r0x02684b06;\n      }\n    LAB_02684b8b:\n      c = c + -1;\n      iVar7 = iVar7 + 1;\n    } while (c != -1);\n  LAB_0268494a:\n    p = 1 - current_turn;\n    c = active_cards_count[p] + -1;\n    if (-1 < c)\n      goto LAB_02684965;\n  }\nLAB_02684a0f:\n  if (iVar7 != 1)\n  {\n    return iVar7;\n  }\nLAB_02684c4c:\n  player_bits[player] &= ~PB_COUNT_TOTAL_PLAYABLE_LANDS;\n  return 1;\n}",
+      "after_definition": "int total_playable_lands(int player)\n{\n  int total = 1;\n  int pass;\n  for (pass = 0; pass < 2; ++pass)\n  {\n    int p = pass == 0 ? current_turn : 1 - current_turn;\n    int c;\n    for (c = active_cards_count[p] - 1; c >= 0; --c)\n    {\n      card_instance_t *instance = in_play(p, c);\n      if (instance == NULL ||\n          (!is_what(p, c, TYPE_EFFECT) && is_humiliated(p, c, AL_STATIC)))\n        continue;\n\n      switch (get_id(p, c))\n      {\n        case CARD_ID_STORM_CAULDRON:\n        case CARD_ID_RITES_OF_FLOURISHING:\n        case CARD_ID_GHIRAPUR_ORRERY:\n          ++total;\n          break;\n\n        case CARD_ID_AZUSA_LOST_BUT_SEEKING:\n          total += (p == player) * 2;\n          break;\n\n        case CARD_ID_EXPLORATION:\n        case CARD_ID_ORACLE_OF_MUL_DAYA:\n        case CARD_ID_MINA_AND_DENN_WILDBORN:\n        case CARD_ID_THE_GITROG_MONSTER:\n        case CARD_ID_WAYWARD_SWORDTOOTH:\n        case CARD_ID_DRYAD_OF_THE_ILYSIAN_GROVE:\n        case CARD_ID_AESI_TYRANT_OF_GYRE_STRAIT:\n          total += p == player;\n          break;\n\n        case 903: // Custom legacy effects use this shared card ID.\n          instance = get_card_instance(p, c);\n          if (instance->internal_card_id != LEGACY_EFFECT_CUSTOM ||\n              instance->info_slot_fn != check_playable_lands_legacy)\n            break;\n\n          switch (instance->display_pic_csv_id)\n          {\n            case CARD_ID_JOURNEY_OF_DISCOVERY:\n              total += (p == player) * 2;\n              break;\n            case CARD_ID_SUMMER_BLOOM:\n              total += (p == player) * 3;\n              break;\n            case CARD_ID_EXPLORE:\n            case CARD_ID_URBAN_EVOLUTION:\n            case CARD_ID_KIORA_THE_CRASHING_WAVE:\n            case CARD_ID_THIS_WORLD_BELONGS_TO_ME:\n            case CARD_ID_SCALE_THE_HEIGHTS:\n              total += p == player;\n              break;\n          }\n          break;\n      }\n    }\n  }\n\n  if (total == 1)\n    player_bits[player] &= ~PB_COUNT_TOTAL_PLAYABLE_LANDS;\n  return total;\n}",
+      "before_sha256": "47ff99a6e1a892a9785290d7a8d28f75107f6e89cd1c79f02a1af9c5dcf89000",
+      "after_sha256": "2132d7a0412de62a2237a6aba8e6633b4b3bfacb77f20f68e521c62977189265",
+      "land_allowance_cleanup": true,
+      "facts": {
+        "source_lines_removed": 147,
+        "removed_lab_gotos": 20,
+        "removed_gotos": 30,
+        "removed_placeholder_occurrences": 90,
+        "removed_placeholder_names": 5
+      },
+      "expanded_before_definition": "int total_playable_lands(int player)\n{\n  uint16_t uVar1;\n  uint16_t uVar2;\n  card_instance_t *instance;\n  int iVar4;\n  int c;\n  int p;\n  int iVar7;\n  \n\n _Bool \n\n      bVar8;\n\n  p = current_turn;\n  c = active_cards_count[current_turn] + -1;\n  if (c < 0)\n  {\n    iVar7 = 1;\n    p = 1 - current_turn;\n    c = active_cards_count[p] + -1;\n    if (c < 0)\n      goto LAB_02684c4c;\n  LAB_02684965:\n    do\n    {\n      while ((instance = in_play(p, c),\n              instance == \n\n                         ((void *)0) \n\n                              ||\n                  ((iVar4 = is_what(p, c, 0x80),\n                    iVar4 == 0 &&\n                        (iVar4 = is_humiliated(p, c, AL_STATIC), iVar4 != 0)))))\n      {\n      joined_r0x02684acf:\n        c = c + -1;\n        if (c < 0)\n          goto LAB_02684a0f;\n      }\n      iVar4 = get_id(p, c);\n      if (iVar4 == 0x1bf9)\n      {\n      LAB_02684ba0:\n        iVar7 = iVar7 + (unsigned int)(p == player) * 2;\n        goto joined_r0x02684acf;\n      }\n      if (iVar4 < 0x1bfa)\n      {\n        if (iVar4 == 0x387)\n        {\n          instance = get_card_instance(p, c);\n          if ((instance->internal_card_id == LEGACY_EFFECT_CUSTOM) &&\n              (instance->info_slot_fn == check_playable_lands_legacy))\n          {\n            uVar1 = instance->display_pic_csv_id;\n            if (uVar1 == 0x1a24)\n              goto LAB_02684ba0;\n            if ((unsigned short)uVar1 < 0x1a25)\n            {\n              if (uVar1 == 0xae2)\n              {\n                iVar7 = iVar7 + (unsigned int)(p == player) * 3;\n              }\n            }\n            else\n            {\n              if (uVar1 == 0x35ad)\n                goto LAB_02684a48;\n              if ((unsigned short)uVar1 < 0x35ae)\n              {\n                if ((uVar1 == 0x2a08) || (uVar1 == 0x3323))\n                  goto LAB_02684a48;\n              }\n              else if ((uVar1 == 0x437d) || (uVar1 == 0x55cb))\n                goto LAB_02684a48;\n            }\n          }\n        }\n        else if (0x386 < iVar4)\n        {\n          if (iVar4 == 0x937)\n            goto LAB_02684b73;\n          if (iVar4 == 0xeb3)\n            goto LAB_02684a48;\n        }\n        goto joined_r0x02684acf;\n      }\n      if (iVar4 != 0x4008)\n      {\n        if (iVar4 < 0x4009)\n        {\n          if (iVar4 != 0x2982)\n          {\n            if (iVar4 < 0x2983)\n            {\n              if (iVar4 == 0x232c)\n                goto LAB_02684b73;\n            }\n            else if ((iVar4 == 0x3d19) || (iVar4 == 0x3e70))\n              goto LAB_02684a48;\n            goto joined_r0x02684acf;\n          }\n        }\n        else if ((iVar4 != 0x5202) && ((iVar4 != 0x562d && (iVar4 != 0x479c))))\n          goto joined_r0x02684acf;\n      LAB_02684a48:\n        iVar7 = iVar7 + (unsigned int)(p == player);\n        goto joined_r0x02684acf;\n      }\n    LAB_02684b73:\n      iVar7 = iVar7 + 1;\n      c = c + -1;\n    } while (-1 < c);\n  }\n  else\n  {\n    bVar8 = current_turn == player;\n    iVar7 = 1;\n    do\n    {\n      while ((instance = in_play(p, c),\n              instance == \n\n                         ((void *)0) \n\n                              ||\n                  ((iVar4 = is_what(p, c, 0x80),\n                    iVar4 == 0 &&\n                        (iVar4 = is_humiliated(p, c, AL_STATIC), iVar4 != 0)))))\n      {\n      joined_r0x02684b06:\n        c = c + -1;\n        if (c == -1)\n          goto LAB_0268494a;\n      }\n      iVar4 = get_id(p, c);\n      if (iVar4 == 0x1bf9)\n      {\n      LAB_02684bb8:\n        iVar7 = iVar7 + (unsigned int)bVar8 * 2;\n        goto joined_r0x02684b06;\n      }\n      if (iVar4 < 0x1bfa)\n      {\n        if (iVar4 == 0x387)\n        {\n          instance = get_card_instance(p, c);\n          if ((instance->internal_card_id == LEGACY_EFFECT_CUSTOM) &&\n              (instance->info_slot_fn == check_playable_lands_legacy))\n          {\n            uVar2 = instance->display_pic_csv_id;\n            if (uVar2 == 0x1a24)\n              goto LAB_02684bb8;\n            if ((unsigned short)uVar2 < 0x1a25)\n            {\n              if (uVar2 == 0xae2)\n              {\n                iVar7 = iVar7 + (unsigned int)bVar8 * 3;\n              }\n            }\n            else\n            {\n              if (uVar2 == 0x35ad)\n                goto LAB_02684a88;\n              if ((unsigned short)uVar2 < 0x35ae)\n              {\n                if ((uVar2 == 0x2a08) || (uVar2 == 0x3323))\n                  goto LAB_02684a88;\n              }\n              else if ((uVar2 == 0x437d) || (uVar2 == 0x55cb))\n                goto LAB_02684a88;\n            }\n          }\n        }\n        else if (0x386 < iVar4)\n        {\n          if (iVar4 == 0x937)\n            goto LAB_02684b8b;\n          if (iVar4 == 0xeb3)\n            goto LAB_02684a88;\n        }\n        goto joined_r0x02684b06;\n      }\n      if (iVar4 != 0x4008)\n      {\n        if (iVar4 < 0x4009)\n        {\n          if (iVar4 != 0x2982)\n          {\n            if (iVar4 < 0x2983)\n            {\n              if (iVar4 == 0x232c)\n                goto LAB_02684b8b;\n            }\n            else if ((iVar4 == 0x3d19) || (iVar4 == 0x3e70))\n              goto LAB_02684a88;\n            goto joined_r0x02684b06;\n          }\n        }\n        else if ((iVar4 != 0x5202) && ((iVar4 != 0x562d && (iVar4 != 0x479c))))\n          goto joined_r0x02684b06;\n      LAB_02684a88:\n        iVar7 = iVar7 + (unsigned int)(p == player);\n        goto joined_r0x02684b06;\n      }\n    LAB_02684b8b:\n      c = c + -1;\n      iVar7 = iVar7 + 1;\n    } while (c != -1);\n  LAB_0268494a:\n    p = 1 - current_turn;\n    c = active_cards_count[p] + -1;\n    if (-1 < c)\n      goto LAB_02684965;\n  }\nLAB_02684a0f:\n  if (iVar7 != 1)\n  {\n    return iVar7;\n  }\nLAB_02684c4c:\n  player_bits[player] &= ~PB_COUNT_TOTAL_PLAYABLE_LANDS;\n  return 1;\n}",
+      "expanded_after_definition": "int total_playable_lands(int player)\n{\n  int total = 1;\n  int pass;\n  for (pass = 0; pass < 2; ++pass)\n  {\n    int p = pass == 0 ? current_turn : 1 - current_turn;\n    int c;\n    for (c = active_cards_count[p] - 1; c >= 0; --c)\n    {\n      card_instance_t *instance = in_play(p, c);\n      if (instance == \n\n                     ((void *)0) \n\n                          ||\n          (!is_what(p, c, TYPE_EFFECT) && is_humiliated(p, c, AL_STATIC)))\n        continue;\n\n      switch (get_id(p, c))\n      {\n        case CARD_ID_STORM_CAULDRON:\n        case CARD_ID_RITES_OF_FLOURISHING:\n        case CARD_ID_GHIRAPUR_ORRERY:\n          ++total;\n          break;\n\n        case CARD_ID_AZUSA_LOST_BUT_SEEKING:\n          total += (p == player) * 2;\n          break;\n\n        case CARD_ID_EXPLORATION:\n        case CARD_ID_ORACLE_OF_MUL_DAYA:\n        case CARD_ID_MINA_AND_DENN_WILDBORN:\n        case CARD_ID_THE_GITROG_MONSTER:\n        case CARD_ID_WAYWARD_SWORDTOOTH:\n        case CARD_ID_DRYAD_OF_THE_ILYSIAN_GROVE:\n        case CARD_ID_AESI_TYRANT_OF_GYRE_STRAIT:\n          total += p == player;\n          break;\n\n        case 903:\n          instance = get_card_instance(p, c);\n          if (instance->internal_card_id != LEGACY_EFFECT_CUSTOM ||\n              instance->info_slot_fn != check_playable_lands_legacy)\n            break;\n\n          switch (instance->display_pic_csv_id)\n          {\n            case CARD_ID_JOURNEY_OF_DISCOVERY:\n              total += (p == player) * 2;\n              break;\n            case CARD_ID_SUMMER_BLOOM:\n              total += (p == player) * 3;\n              break;\n            case CARD_ID_EXPLORE:\n            case CARD_ID_URBAN_EVOLUTION:\n            case CARD_ID_KIORA_THE_CRASHING_WAVE:\n            case CARD_ID_THIS_WORLD_BELONGS_TO_ME:\n            case CARD_ID_SCALE_THE_HEIGHTS:\n              total += p == player;\n              break;\n          }\n          break;\n      }\n    }\n  }\n\n  if (total == 1)\n    player_bits[player] &= ~PB_COUNT_TOTAL_PLAYABLE_LANDS;\n  return total;\n}"
+    }
+  ],
+  "constants": {
+    "TYPE_EFFECT": 128,
+    "AL_STATIC": 4,
+    "PB_COUNT_TOTAL_PLAYABLE_LANDS": 8,
+    "CARD_ID_AESI_TYRANT_OF_GYRE_STRAIT": 22061,
+    "CARD_ID_AZUSA_LOST_BUT_SEEKING": 7161,
+    "CARD_ID_DRYAD_OF_THE_ILYSIAN_GROVE": 20994,
+    "CARD_ID_EXPLORATION": 3763,
+    "CARD_ID_EXPLORE": 10760,
+    "CARD_ID_GHIRAPUR_ORRERY": 16392,
+    "CARD_ID_JOURNEY_OF_DISCOVERY": 6692,
+    "CARD_ID_KIORA_THE_CRASHING_WAVE": 13741,
+    "CARD_ID_MINA_AND_DENN_WILDBORN": 15641,
+    "CARD_ID_ORACLE_OF_MUL_DAYA": 10626,
+    "CARD_ID_RITES_OF_FLOURISHING": 9004,
+    "CARD_ID_SCALE_THE_HEIGHTS": 21963,
+    "CARD_ID_STORM_CAULDRON": 2359,
+    "CARD_ID_SUMMER_BLOOM": 2786,
+    "CARD_ID_THE_GITROG_MONSTER": 15984,
+    "CARD_ID_THIS_WORLD_BELONGS_TO_ME": 17277,
+    "CARD_ID_URBAN_EVOLUTION": 13091,
+    "CARD_ID_WAYWARD_SWORDTOOTH": 18332
+  },
+  "native_comparison": {
+    "result": {
+      "all_equal": true,
+      "three_way_comparisons": 3031440,
+      "helper_invocations": 9094320,
+      "all_uint16_card_ids": 65536,
+      "all_uint16_legacy_pictures": 65536,
+      "random_boards": 100000,
+      "mutation_modes": 4,
+      "exact_call_traces_and_full_state": true
+    },
+    "native_path": ".recovery/2022-ManalinkEh.dll",
+    "native_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "address": "0x2684870",
+    "size": 1147,
+    "code_sha256": "1fa1d48a69549b60d7454a95fab79dced5a12b7bb006e8d08f7469f05605f6ff",
+    "bindings": [
+      {
+        "patch_address": "0x268487b",
+        "original": "0x628670",
+        "target": "(uintptr_t)&current_turn",
+        "kind": "data"
+      },
+      {
+        "patch_address": "0x2684882",
+        "original": "0x4ef520",
+        "target": "(uintptr_t)active_cards_count",
+        "kind": "data"
+      },
+      {
+        "patch_address": "0x268492e",
+        "original": "0x735ed0",
+        "target": "(uintptr_t)&LEGACY_EFFECT_CUSTOM",
+        "kind": "data"
+      },
+      {
+        "patch_address": "0x2684951",
+        "original": "0x628670",
+        "target": "(uintptr_t)&current_turn",
+        "kind": "data"
+      },
+      {
+        "patch_address": "0x268495a",
+        "original": "0x4ef520",
+        "target": "(uintptr_t)active_cards_count",
+        "kind": "data"
+      },
+      {
+        "patch_address": "0x26849fa",
+        "original": "0x735ed0",
+        "target": "(uintptr_t)&LEGACY_EFFECT_CUSTOM",
+        "kind": "data"
+      },
+      {
+        "patch_address": "0x2684bd3",
+        "original": "0x2683350",
+        "target": "(uintptr_t)check_playable_lands_legacy",
+        "kind": "function_identity"
+      },
+      {
+        "patch_address": "0x2684c03",
+        "original": "0x2683350",
+        "target": "(uintptr_t)check_playable_lands_legacy",
+        "kind": "function_identity"
+      },
+      {
+        "patch_address": "0x2684c41",
+        "original": "0x4ef520",
+        "target": "(uintptr_t)active_cards_count",
+        "kind": "data"
+      },
+      {
+        "patch_address": "0x2684c57",
+        "original": "0x4ef1a4",
+        "target": "(uintptr_t)player_bits",
+        "kind": "data"
+      },
+      {
+        "patch_address": "0x2684c61",
+        "original": "0x4ef1a4",
+        "target": "(uintptr_t)player_bits",
+        "kind": "data"
+      }
+    ],
+    "call_targets": {
+      "0x26b32d0": 2,
+      "0x2681ca0": 2,
+      "0x26dd430": 2,
+      "0x26b35a0": 2,
+      "0x26b2ab0": 2
+    },
+    "source_path": ".recovery/land-allowance-native-check-c302.c",
+    "source_sha256": "db237a3f5701284233b0cdbdf5b34f3ecd093c684569c7da04f5c3d951214a54",
+    "executable_path": ".recovery/land-allowance-native-check-c302.exe",
+    "executable_sha256": "f42f0d72d657f71d27254e15b2349a5ed31c62b84f97cbac6ec300f4c4f23b0a",
+    "compile_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-static-libgcc",
+      "-Wl,--image-base,0x10000000",
+      "-I.",
+      ".recovery\\land-allowance-native-check-c302.c",
+      "-o",
+      ".recovery\\land-allowance-native-check-c302.exe"
+    ],
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "compile_log": ".recovery/land-allowance-native-check-c302.compile.log"
+  },
+  "raw_source_bytes_sha256": "6dcd0db3dd679217b13dd391d00c6f38087d0150d53c7d2525e49b562273e0b8",
+  "source_state_sha256": "4e7e58235261d72ea94555a46a5770dcdcd729d0bc83ea5a7cca6b9515d8cfe8",
+  "index_sha256": "c1924b91f666e6c673ce508281ac488faf07f9a50b2377ed27fdc1b6315d6e93",
+  "scope": "Original release branch body, predecessor and reconstruction compared across every uint16 card ID and legacy picture, controller/visibility/suppression/legacy-identity cases, signed32 random IDs, and stateful boards with callback mutations. Exact traces, instance bytes, predicates, RNG, player flags, counts, current turn and custom-legacy global compared. Engine callees are controlled stubs. Valid players and allocated 0..8 slot counts; not exhaustive native32 state or gameplay.",
+  "files": [
+    {
+      "source": "functions/functions.c",
+      "before_path": ".recovery/land-allowance-before-c303/functions/functions.c",
+      "before_bytes_sha256": "6dcd0db3dd679217b13dd391d00c6f38087d0150d53c7d2525e49b562273e0b8",
+      "after_source_sha256": "b874f725b35c3b697829bcc8de0e5403a6ea29a02ee0298dd9610469d269b087"
+    }
+  ],
+  "compiler_expansion": {
+    "compiler_path": "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-E",
+      "-dD",
+      "functions/functions.c"
+    ],
+    "preflight_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-E",
+      "-dD",
+      "-x",
+      "c",
+      "-"
+    ],
+    "before_sha256": "159ff9905d1db9b78caed224a3b1c8245a02236a04523a0ffa048ab3f4e0964e",
+    "projected_sha256": "4d692b6958a1a74e82862cdbf7400c238b2a2de9781e53c95cc568016eab71ba",
+    "unrelated_expanded_tokens_unchanged": true,
+    "ordinary_storage_and_enum_probe": "\n#include <stddef.h>\n_Static_assert(__builtin_types_compatible_p(__typeof__(&current_turn), int *), \"ordinary_turn\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&active_cards_count[0]), int *), \"ordinary_counts\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&LEGACY_EFFECT_CUSTOM), int *), \"ordinary_legacy_id\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&player_bits[0]), player_bits_t *), \"ordinary_player_bits\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->display_pic_csv_id), uint16_t *), \"legacy_picture_type\");\n_Static_assert(sizeof(void*)==4 && sizeof(int)==4 && sizeof(card_instance_t)==300 && offsetof(card_instance_t,info_slot_fn)==56 && offsetof(card_instance_t,internal_card_id)==108, \"native_layout\");\n_Static_assert(TYPE_EFFECT==128, \"native_enum\");\n_Static_assert(AL_STATIC==4, \"native_enum\");\n_Static_assert(PB_COUNT_TOTAL_PLAYABLE_LANDS==8, \"native_enum\");\n_Static_assert(CARD_ID_AESI_TYRANT_OF_GYRE_STRAIT==22061, \"native_enum\");\n_Static_assert(CARD_ID_AZUSA_LOST_BUT_SEEKING==7161, \"native_enum\");\n_Static_assert(CARD_ID_DRYAD_OF_THE_ILYSIAN_GROVE==20994, \"native_enum\");\n_Static_assert(CARD_ID_EXPLORATION==3763, \"native_enum\");\n_Static_assert(CARD_ID_EXPLORE==10760, \"native_enum\");\n_Static_assert(CARD_ID_GHIRAPUR_ORRERY==16392, \"native_enum\");\n_Static_assert(CARD_ID_JOURNEY_OF_DISCOVERY==6692, \"native_enum\");\n_Static_assert(CARD_ID_KIORA_THE_CRASHING_WAVE==13741, \"native_enum\");\n_Static_assert(CARD_ID_MINA_AND_DENN_WILDBORN==15641, \"native_enum\");\n_Static_assert(CARD_ID_ORACLE_OF_MUL_DAYA==10626, \"native_enum\");\n_Static_assert(CARD_ID_RITES_OF_FLOURISHING==9004, \"native_enum\");\n_Static_assert(CARD_ID_SCALE_THE_HEIGHTS==21963, \"native_enum\");\n_Static_assert(CARD_ID_STORM_CAULDRON==2359, \"native_enum\");\n_Static_assert(CARD_ID_SUMMER_BLOOM==2786, \"native_enum\");\n_Static_assert(CARD_ID_THE_GITROG_MONSTER==15984, \"native_enum\");\n_Static_assert(CARD_ID_THIS_WORLD_BELONGS_TO_ME==17277, \"native_enum\");\n_Static_assert(CARD_ID_URBAN_EVOLUTION==13091, \"native_enum\");\n_Static_assert(CARD_ID_WAYWARD_SWORDTOOTH==18332, \"native_enum\");\n",
+    "probe_exit_code": 0,
+    "before_archive": {
+      "path": ".recovery/land-allowance-before-c303.i.gz",
+      "sha256": "742678b11ba7791b2647e707edba1286a2b0398cccbc264c8cc4e6dda073c6db"
+    },
+    "projected_archive": {
+      "path": ".recovery/land-allowance-projected-c303.i.gz",
+      "sha256": "127f587f4c3032577858604d8bd79dd2f2fa0ac3cf641471892c45d5d22ee3e9"
+    },
+    "actual_sha256": "15444f37763baee8a91577ba5027cd98ea9f83dc1e060a7811879d98dffec81b",
+    "actual_unit_matches_preflight": true
+  },
+  "status": "Applied; native comparison and actual-unit preflight pass. Build/current metadata pending."
+}

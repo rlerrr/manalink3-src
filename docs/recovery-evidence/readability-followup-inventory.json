@@ -1,0 +1,107 @@
+{
+  "status": "Historical C85 discovery snapshot; source-screen counts below predate later cleanup. Current adjacent-call queue completion is recorded separately.",
+  "current_dbg_sha256": "d9e46e32ac2954ffe63e65a979234f53ef0a9f10977c517ec5bdba37344c7b07",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "source_screen_counts": {
+    "source_definitions_with_compiled_owner": 2604,
+    "conditional_ambiguities": 0,
+    "functions_with_lab_gotos": 1422,
+    "lab_gotos": 5256,
+    "functions_with_placeholders": 2147,
+    "distinct_function_local_placeholder_spellings": 7364,
+    "functions_with_union_locals": 0,
+    "compiled_union_locals": 0,
+    "functions_with_native_local_names": 2577
+  },
+  "simple_instance_pointer_candidates_remaining": 0,
+  "simple_instance_pointer_candidates_completed": 188,
+  "source_census": {
+    "path": ".recovery/readability-census-c85.json",
+    "sha256": "77a45cab6557421ed5d4e5b624a4279b3bc7089a2e5d3114ed08df87487f30ab",
+    "scope": "Read-only syntax and DWARF inventory. Source definitions are associated by CU/name with concrete compiled owners; conditional duplicate definitions are explicitly marked. Optimized locals include nested and inline scopes. Native names are available vocabulary, not a value/lifetime identity match. Genuine unions and intentional cleanup gotos require review."
+  },
+  "next_call_condition_queue": {
+    "path": ".recovery/call-condition-candidates-c85.json",
+    "sha256": "cfc26fa98507d6863bda75bbf79753b7165979413f95f503ee502259037c6328",
+    "candidate_assignments": 1673,
+    "candidate_functions": 783,
+    "parsed_functions": 2113,
+    "parse_failures": 29,
+    "skipped": {
+      "body_over_25000_bytes": 5
+    },
+    "header_int_candidates": 1659,
+    "scope": "Plain nonvolatile int placeholder locals with unique declarations and no direct address-taking. A direct call assignment is immediately followed by its sole successor if(var ==/!= 0); the assigned value is dead at both condition successors in the conservative statement CFG. Header return spelling is preliminary evidence only; macro expansion, precise function binding/types, nested scope/alias behavior, native evidence and source receipt successors must be reviewed before applying any rewrite. Parser typedef stubs are syntactic, not ABI evidence."
+  },
+  "limits": "Counts cover the regular C definitions associated with concrete compiled owners by this syntax screen. They do not count every source configuration, macro-generated function, C++ function or pointed-to/aggregate-member union. The all-CU native timer union review is separate. Old naming/remaining-union queues are historical snapshots. No new whole-DLL similarity score is claimed.",
+  "current_call_condition_cleanup": {
+    "inlined_assignments": 1673,
+    "distinct_definitions": 783,
+    "source_units": 125,
+    "removed_unused_int_locals": 151,
+    "source_lines_removed": 1853,
+    "pending_original_queue_statements": 0,
+    "new_native_function_coverage": 0,
+    "queue": "docs/recovery-evidence/call-condition-followup-queue.json",
+    "coverage": "docs/recovery-evidence/special-call-condition-cleanup-coverage.json"
+  },
+  "next_call_return_queue": {
+    "path": "docs/recovery-evidence/call-return-candidate-queue.json",
+    "sha256": "1f53705f3853a0a81b34c0d1fcf3bb7f24d1f7c2c19f14b0d5e8f7fcd0f37787",
+    "status": "Resolved original1924-statement queue.",
+    "pending_statements": 0,
+    "coverage": "docs/recovery-evidence/call-return-cleanup-coverage.json"
+  },
+  "simple_guard_screen": {
+    "path": ".recovery/guard-plan-c110.json",
+    "sha256": "525eb5505cef4b5b32bd4d23dcd2808a62afd8ce5b37b13e7feda9d8b597554a",
+    "candidate_functions": 1,
+    "candidate_gotos": 1,
+    "status": "Read-only exploratory screen. Simple inversion of one forward jump has limited coverage; broader shared dispatchers require a different reconstruction."
+  },
+  "current_call_return_cleanup": {
+    "cleaned_definitions": 1519,
+    "card_handlers": 1421,
+    "other_definitions": 98,
+    "source_units": 125,
+    "inlined_assignments": 1924,
+    "removed_unused_int_locals": 83,
+    "source_lines_removed": 2081,
+    "identifier_uses_removed": 3931,
+    "pending_statements": 0,
+    "new_native_function_coverage": 0
+  },
+  "cumulative_adjacent_call_cleanup": {
+    "inlined_assignments": 3597,
+    "distinct_definitions": 1834,
+    "source_units": 140,
+    "removed_unused_int_locals": 234,
+    "source_lines_removed": 3934
+  },
+  "current_source_screen": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c130.json",
+    "sha256": "ae58b5dfc9f371f53501c6aca6a72fd4bb0a4c417b7344385f7e159663400efe",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1422,
+      "lab_gotos": 5256,
+      "functions_with_placeholders": 2132,
+      "distinct_function_local_placeholder_spellings": 7050,
+      "placeholder_identifier_occurrences": 61716,
+      "union_keywords": 0
+    }
+  },
+  "native_role_local_names": {
+    "functions": 163,
+    "card_handlers": 119,
+    "other_definitions": 44,
+    "renamed_locals": 164,
+    "source_units": 76,
+    "identifier_occurrences": 1930,
+    "native_local_references": 190,
+    "new_native_function_coverage": 0,
+    "coverage": "docs/recovery-evidence/role-local-names-coverage.json",
+    "rejected_proposals": 12,
+    "followup_queue": "docs/recovery-evidence/role-local-name-followup-queue.json"
+  }
+}

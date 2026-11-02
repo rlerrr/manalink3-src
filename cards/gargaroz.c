@@ -212,7 +212,7 @@ int card_imps_mischief(int player, int card, event_t event)
       {
         ai_modifier = ai_modifier + -0x19;
       }
-      goto LAB_02427d86;
+      return deflect_one_target(player, card, event, &td_spell);
     }
     if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
     {
@@ -222,17 +222,15 @@ int card_imps_mischief(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       if (event == EVENT_RESOLVE_SPELL)
       {
-        iVar1 = counterspell_validate(player, card, &td_spell, 0);
-        if (iVar1 != 0)
+        if (counterspell_validate(player, card, &td_spell, 0) != 0)
         {
           deflect_one_target(player, card, EVENT_RESOLVE_SPELL, &td_spell);
-          iVar1 = get_cmc(instance->targets[0].player, instance->targets[0].card);
-          lose_life(player, iVar1);
+          lose_life(player, get_cmc(instance->targets[0].player, instance->targets[0].card));
         }
         kill_card(player, card, KILL_DESTROY);
         return 0;
       }
-      goto LAB_02427d86;
+      return deflect_one_target(player, card, event, &td_spell);
     }
     if (event != EVENT_CHANGE_TARGET)
     {
@@ -243,9 +241,7 @@ int card_imps_mischief(int player, int card, event_t event)
   td_spell.special = td_spell.special | 0x8000;
   td_spell.extra = (int32_t)has_only_1_target_and_could_legally_change_target;
   get_card_instance(player, card);
-LAB_02427d86:
-  iVar1 = deflect_one_target(player, card, event, &td_spell);
-  return iVar1;
+  return deflect_one_target(player, card, event, &td_spell);
 }
 
 /* ManalinkEh 2022: 0x2428450; original cards/gargaroz.c:199. */
@@ -307,8 +303,7 @@ int card_ricochet_trap(int player, int card, event_t event)
   td_spell.special = td_spell.special | 0x8000;
 LAB_024284b5:
   td_spell.extra = (int32_t)has_only_1_target_and_could_legally_change_target;
-  result = deflect_one_target(player, card, event, &td_spell);
-  return result;
+  return deflect_one_target(player, card, event, &td_spell);
 }
 
 /* ManalinkEh 2022: 0x24287b0; original cards/gargaroz.c:279. */
@@ -366,7 +361,7 @@ int card_wild_ricochet(int player, int card, event_t event)
       {
         counterspell_target_definition(player, card, &td, 0x38);
         if ((card == affected_card) && (player == affected_card_controller))
-          goto LAB_02428993;
+          return deflect_multi_targets(player, card, event, &td);
       }
     }
     else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
@@ -392,9 +387,7 @@ int card_wild_ricochet(int player, int card, event_t event)
     return 0;
   }
   counterspell_target_definition(player, card, &td, 0x38);
-LAB_02428993:
-  result = deflect_multi_targets(player, card, event, &td);
-  return result;
+  return deflect_multi_targets(player, card, event, &td);
 }
 
 /* ManalinkEh 2022: 0x2428a20; original cards/gargaroz.c:325. */
@@ -501,16 +494,15 @@ int card_willbender(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x24294b0; original cards/gargaroz.c:665. */
 int card_aethersnatch(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   int result;
   card_instance_t *pcVar3;
   int card_00;
 
-  pcVar1 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   if (event == EVENT_CAN_CAST)
   {
-    result = counterspell(player, card, EVENT_CAN_CAST, NULL, -1);
-    return result;
+    return counterspell(player, card, EVENT_CAN_CAST, NULL, -1);
   }
   if (event == EVENT_CAST_SPELL)
   {
@@ -519,45 +511,42 @@ int card_aethersnatch(int player, int card, event_t event)
       pcVar3 = get_card_instance(card_on_stack_controller, card_on_stack);
       if (pcVar3->number_of_targets == '\x01')
       {
-        pcVar1->info_slot = 1;
-        result = deflect_one_target(player, card, EVENT_CAST_SPELL, NULL);
-        return result;
+        instance->info_slot = 1;
+        return deflect_one_target(player, card, EVENT_CAST_SPELL, NULL);
       }
       pcVar3 = get_card_instance(card_on_stack_controller, card_on_stack);
       if (1 < pcVar3->number_of_targets)
       {
-        pcVar1->info_slot = 2;
-        result = deflect_multi_targets(player, card, EVENT_CAST_SPELL, NULL);
-        return result;
+        instance->info_slot = 2;
+        return deflect_multi_targets(player, card, EVENT_CAST_SPELL, NULL);
       }
-      result = counterspell(player, card, EVENT_CAST_SPELL, NULL, 0);
-      return result;
+      return counterspell(player, card, EVENT_CAST_SPELL, NULL, 0);
     }
   }
   else if ((event == EVENT_RESOLVE_SPELL) &&
            (result = counterspell_validate(player, card, NULL, 0), result != 0))
   {
-    result = pcVar1->info_slot;
+    result = instance->info_slot;
     if (result == 1)
     {
       deflect_one_target(player, card, EVENT_RESOLVE_SPELL, NULL);
-      result = pcVar1->info_slot;
+      result = instance->info_slot;
     }
     if (result == 2)
     {
       deflect_multi_targets(player, card, EVENT_RESOLVE_SPELL, NULL);
     }
-    result = is_what(pcVar1->targets[0].player, pcVar1->targets[0].card, 0x47);
+    result = is_what(instance->targets[0].player, instance->targets[0].card, 0x47);
     if (result != 0)
     {
-      pcVar3 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
+      pcVar3 = get_card_instance(instance->targets[0].player, instance->targets[0].card);
       result = pcVar3->internal_card_id;
       if (-1 < result)
       {
-        obliterate_card(pcVar1->targets[0].player, pcVar1->targets[0].card);
+        obliterate_card(instance->targets[0].player, instance->targets[0].card);
         card_00 = add_card_to_hand(player, result);
         put_into_play(player, card_00);
-        result = pcVar1->targets[0].player;
+        result = instance->targets[0].player;
         if (result != player)
         {
           if (result == 1)
@@ -720,15 +709,15 @@ static char *has_only_1_target_and_can_legally_change_target_to_attached(
 int card_captured_by_the_consulate(int player, int card, event_t event)
 {
   int32_t iVar1;
-  card_instance_t *pcVar2;
+  card_instance_t *instance;
   int iVar3;
   unsigned int uVar4;
   card_instance_t *pcVar5;
   target_definition_t td;
 
-  pcVar2 = in_play(player, card);
-  if (((((((pcVar2 == NULL) || (pcVar2->damage_target_player == -1)) ||
-          (cannot_attack((int)pcVar2->damage_target_player, pcVar2->damage_target_card, event),
+  instance = in_play(player, card);
+  if (((((((instance == NULL) || (instance->damage_target_player == -1)) ||
+          (cannot_attack((int)instance->damage_target_player, instance->damage_target_card, event),
            trigger_condition != 0xd3)) ||
          ((card != affected_card || (player != affected_card_controller)))) ||
         ((reason_for_trigger_controller != player ||
@@ -756,10 +745,10 @@ int card_captured_by_the_consulate(int player, int card, event_t event)
       td.illegal_abilities = 0;
       td.extra = (int32_t)has_only_1_target_and_can_legally_change_target_to_attached;
       td.special = 0x8000;
-      pcVar2->targets[0].player = trigger_cause_controller;
+      instance->targets[0].player = trigger_cause_controller;
       iVar3 = trigger_cause;
-      pcVar2->number_of_targets = '\x01';
-      pcVar2->targets[0].card = iVar3;
+      instance->number_of_targets = '\x01';
+      instance->targets[0].card = iVar3;
       iVar3 = valid_target(&td);
       uVar4 = 0;
       if (iVar3 != 0)
@@ -767,9 +756,9 @@ int card_captured_by_the_consulate(int player, int card, event_t event)
         uVar4 = event_result | 2;
       }
       event_result = uVar4;
-      pcVar2->targets[0].card = -1;
-      pcVar2->targets[0].player = -1;
-      pcVar2->number_of_targets = '\0';
+      instance->targets[0].card = -1;
+      instance->targets[0].player = -1;
+      instance->number_of_targets = '\0';
     }
     else
     {
@@ -777,15 +766,15 @@ int card_captured_by_the_consulate(int player, int card, event_t event)
       {
         if (event != EVENT_END_TRIGGER)
           goto LAB_024291ec;
-        pcVar2->targets[0].card = -1;
-        pcVar2->targets[0].player = -1;
-        pcVar2->number_of_targets = '\0';
+        instance->targets[0].card = -1;
+        instance->targets[0].player = -1;
+        instance->number_of_targets = '\0';
         goto LAB_02429378;
       }
 
       pcVar5 = get_card_instance(trigger_cause_controller, trigger_cause);
-      iVar1 = pcVar2->damage_target_card;
-      pcVar5->targets[0].player = (int)pcVar2->damage_target_player;
+      iVar1 = instance->damage_target_card;
+      pcVar5->targets[0].player = (int)instance->damage_target_player;
       pcVar5->targets[0].card = iVar1;
     }
   LAB_024291fa:
@@ -806,9 +795,8 @@ LAB_02429210:
   default_target_definition(player, card, &td, 2);
   td.allowed_controller = 1 - player;
   td.preferred_controller = td.allowed_controller;
-  iVar3 = disabling_targeted_aura(player, card, event, &td,
+  return disabling_targeted_aura(player, card, event, &td,
                                   "Select target creature you don\'t control.", 0);
-  return iVar3;
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -871,20 +859,16 @@ int card_spelljack(int player, int card, event_t event)
 {
   int iVar1;
   card_instance_t *instance;
-  int iVar3;
 
   if (event == EVENT_RESOLVE_SPELL)
   {
 
-    iVar1 = counterspell_validate(player, card, NULL, 0);
-    if (iVar1 != 0)
+    if (counterspell_validate(player, card, NULL, 0) != 0)
     {
 
       instance = get_card_instance(player, card);
       iVar1 = get_id(instance->targets[0].player, instance->targets[0].card);
-      iVar3 =
-          pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card);
-      if (iVar3 == 0)
+      if (pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card) == 0)
       {
         kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
       }
@@ -901,8 +885,7 @@ int card_spelljack(int player, int card, event_t event)
     }
     kill_card(player, card, KILL_DESTROY);
   }
-  iVar1 = generic_spell(player, card, event, 2, NULL, NULL, 1, NULL);
-  return iVar1;
+  return generic_spell(player, card, event, 2, NULL, NULL, 1, NULL);
 }
 
 #ifndef SHANDALAR
@@ -960,7 +943,7 @@ static char *can_legally_change_target_to_me(int who_chooses, int player, int ca
 int card_mizzium_meddler(int player, int card, event_t event)
 {
   int player_00;
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   int result;
   card_instance_t *pcVar3;
   target_definition_t td_spell;
@@ -968,7 +951,7 @@ int card_mizzium_meddler(int player, int card, event_t event)
   counterspell_target_definition(player, card, &td_spell, 0xff);
   td_spell.special = td_spell.special | 0x8000;
   td_spell.extra = (int32_t)can_legally_change_target_to_me;
-  pcVar1 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   result = duh_mode(player);
   etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   player_00 = card_on_stack_controller;
@@ -978,10 +961,10 @@ int card_mizzium_meddler(int player, int card, event_t event)
     result = counterspell(player, card, EVENT_CAN_CAST, &td_spell, 0);
     if (result == 0)
     {
-      pcVar1->info_slot = 0;
+      instance->info_slot = 0;
       return 1;
     }
-    pcVar1->info_slot = 1;
+    instance->info_slot = 1;
     result = 99;
   }
   else
@@ -994,30 +977,30 @@ int card_mizzium_meddler(int player, int card, event_t event)
         ai_modifier = ai_modifier + -10;
       }
     }
-    else if ((event == EVENT_ETB) && (pcVar1->info_slot == 1))
+    else if ((event == EVENT_ETB) && (instance->info_slot == 1))
     {
 
-      pcVar1->targets[0].card = card_on_stack;
-      pcVar1->targets[0].player = player_00;
-      pcVar1->number_of_targets = '\x01';
+      instance->targets[0].card = card_on_stack;
+      instance->targets[0].player = player_00;
+      instance->number_of_targets = '\x01';
       set_special_flags2(player_00, result, 0x10000);
-      result = call_card_function(pcVar1->targets[0].player, pcVar1->targets[0].card,
+      result = call_card_function(instance->targets[0].player, instance->targets[0].card,
                                   EVENT_CHANGE_TARGET);
-      remove_special_flags2(pcVar1->targets[0].player, pcVar1->targets[0].card, 0x10000);
+      remove_special_flags2(instance->targets[0].player, instance->targets[0].card, 0x10000);
       if (result == -1)
       {
         spell_fizzled = 1;
       }
       else
       {
-        pcVar1->info_slot = result;
+        instance->info_slot = result;
       }
       result = counterspell_validate(player, card, &td_spell, 0);
       if (result != 0)
       {
 
-        pcVar3 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
-        result = pcVar1->info_slot;
+        pcVar3 = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+        result = instance->info_slot;
         pcVar3->targets[result].player = player;
         pcVar3->targets[result].card = card;
         return 0;

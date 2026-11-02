@@ -1,0 +1,90 @@
+{
+  "batch": "docs/recovery-evidence/call-return-cleanup.json",
+  "batch_sha256": "4b37ed09e5a6c5aede99f03fd7ae959b01524ce62b6615cad887debddf1d7395",
+  "counts": {
+    "cleaned_definitions": 1519,
+    "card_handlers": 1421,
+    "other_definitions": 98,
+    "source_units": 125,
+    "inlined_assignments": 1924,
+    "removed_unused_int_locals": 83,
+    "source_lines_removed": 2081,
+    "identifier_uses_removed": 3931,
+    "pending_statements": 0,
+    "new_native_function_coverage": 0
+  },
+  "validation": {
+    "focused": {
+      "current_call_returns": {
+        "cleaned_definitions": 1519,
+        "source_units": 125,
+        "inlined_call_results": 1924,
+        "removed_unused_int_locals": 83,
+        "assertion_sites": 38,
+        "pending_statements": 0,
+        "scope": "Both actual GCC-expanded caller and private automatic result object have plain int type. C return converts its expression as assignment to the function return type: the same single conversion to int happens in return helper(...). No assumption that the helper itself returns int is needed; argument evaluation and the call remain source-identical. sizeof(int)==4 is bound by the actual m32 compiler expansion. Raw and expanded CFGs bind the sole adjacent return and private nonvolatile automatic int object; complete expanded units admit only projected edits, whitespace and independently checked ASSERT line literals. No gameplay or whole-DLL byte-identity claim."
+      },
+      "prior_call_conditions": {
+        "inlined_assignments": 1673,
+        "pending": 0
+      },
+      "reader_restoration_verified": true,
+      "physical_source_bytes_unchanged": true,
+      "unreviewed_source_rejected": true
+    },
+    "focused_log": {
+      "path": ".recovery/call-returns-focused-c117.log",
+      "sha256": "646a02fc12c1ddbf348e8ccefae10c5f4c9242c9c82cfc71ce5e6cc5cf0ec63b",
+      "exit_code": 0
+    },
+    "predecessor_proof": {
+      "path": ".recovery/call-returns-proof-before-c115.json.gz",
+      "archive_sha256": "1c5246f374e673d35d81d9fd77bdc28b7591ad7bc229d4506c8522e29cc4bb92",
+      "raw_sha256": "e73c99a715f526542cafd0ae7e7b44cafe28891def7056d5ad885d1d37dc8812",
+      "source_pin_successions_verified": 125
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/call-returns-build-c116.log",
+      "log_sha256": "8a5fee2fed7b1bba60c3406f6571c1d6bf339f12f558129a4eeeb229d9ee4cfb",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "a51d123f7b04b16b6199e7a94755c06886175d54060008b6264b93d1a51b02f3",
+      "dbg_sha256": "c73090033cd0fe4f8d01ba4cbb5c9865b89de02d03bc20b7fe7f5f1d17f92ec5"
+    },
+    "source_lines_removed": 2081,
+    "identifier_uses_removed": 3931,
+    "limits": "Current defined-C source equivalence for the selected local rewrites, not gameplay validation, new native coverage, a fresh whole-DLL similarity score or a full historical audit. Historical Python C readers alone see validated predecessor spellings/bytes; filesystem, compiler, binary and debug I/O remain physical."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/call-returns-setup-c118.log",
+    "log_sha256": "52283b8038e1aa0211fed95fc03f2acf677a45554b9fc6b61c6aa2bb283d0a33",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "metadata_sha256": "75a64807d4c874d63f763f82fa6fea26a2dbda10edd735decf119eeb2961e508",
+    "csv_functions": 18725
+  },
+  "cumulative_adjacent_call_cleanup": {
+    "inlined_assignments": 3597,
+    "distinct_definitions": 1834,
+    "source_units": 140,
+    "removed_unused_int_locals": 234,
+    "source_lines_removed": 3934
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c119.json",
+    "sha256": "b92abbd7a6a0a14ea5fd0a57f3108994ae602d51f6c2763dfa3d672da0e7ba01",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1422,
+      "lab_gotos": 5256,
+      "functions_with_placeholders": 2142,
+      "distinct_function_local_placeholder_spellings": 7204,
+      "placeholder_identifier_occurrences": 63592,
+      "union_keywords": 0
+    }
+  },
+  "limits": "Readability of existing reconstructed source, not new native card/helper coverage. Whole-unit expanded C and matching int conversions support the local rewrites. No full historical suite, fresh whole-DLL byte/similarity comparison, gameplay testing or other compiler configuration validation."
+}

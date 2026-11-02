@@ -123,6 +123,8 @@ def bind_native_function_names(native, accepted, stubs, canonical_names, auxilia
 
 
 def setup(args):
+    if args.audit_recovery and (ROOT/'docs/recovery-evidence/historical-artifact-retirement.json').exists():
+        raise ValueError('Historical recovery replay was retired with its obsolete compiler/runtime snapshots. Run setup without --audit-recovery; see docs/recovery-evidence/historical-artifact-retirement.json.')
     from reccmp.project.config import ProjectFile, UserFile, BuildFile
 
     local = ROOT / ".recovery" / "reccmp"
@@ -171,12 +173,16 @@ def setup(args):
                {"sha256": digest(rebuilt_debug), "functions": current})
     manifest = json.loads((ROOT / "docs/recovery-evidence/recovered-functions.json").read_text())
     accepted = {int(row["address"], 16): row for row in manifest["accepted_functions"]}
-    from canonicalize_helpers import names as canonical_helper_names,verify as verify_canonical_helpers
-    canonical_helpers=verify_canonical_helpers(ROOT)
+    from canonicalize_helpers import names as canonical_helper_names,verify as verify_canonical_helpers,verify_current
+    canonical_helpers=(verify_canonical_helpers if args.audit_recovery else verify_current)(ROOT)
     canonical_names=canonical_helper_names(ROOT)
     from canonicalize_helpers import load as load_canonical,verify_native_equivalences
     canonical_data=load_canonical(ROOT)
-    equivalent_helpers=verify_native_equivalences(canonical_data,ROOT) if canonical_data else []
+    equivalent_helpers=(canonical_helpers['equivalent_native_helpers'] if args.audit_recovery else
+                        verify_native_equivalences(canonical_data,ROOT)) if canonical_data else []
+    from verify_native_jump_table import verify as verify_fixed_slots
+    fixed_slots=(canonical_helpers['native_interfaces']['native_jump_table'] if args.audit_recovery else
+                 verify_fixed_slots(canonical_data or {},root=ROOT,binary_only=True,rebuilt_path=rebuilt,rebuilt_debug_path=rebuilt_debug))
     equivalent_addresses={int(e['duplicate_address'],16) for e in equivalent_helpers}
     stubs = {int(row["native_address"], 16): row for row in
              manifest["source_stubs"] + (canonical_data or {}).get("additional_source_stubs", [])}
@@ -319,12 +325,14 @@ def setup(args):
         raise ValueError("Source name mappings changed during setup; rerun setup")
     metadata = ROOT / "config" / "reccmp" / "functions.csv"
     metadata.parent.mkdir(parents=True, exist_ok=True)
-    with metadata.open("w", newline="", encoding="utf-8") as stream:
+    temporary_metadata = metadata.with_suffix(".pending.csv")
+    with temporary_metadata.open("w", newline="", encoding="utf-8") as stream:
         writer = csv.writer(stream, lineterminator="\n")
         writer.writerow(["address", "type", "name", "size", "native_name", "source", "mapping"])
         for row in sorted(included, key=lambda r: r["address"]):
             writer.writerow([hex(row["address"]), "stub" if row["address"] in stubs else "function",
                              row["match_name"], row["size"], row["name"], row["source"], row["mapping"]])
+    temporary_metadata.replace(metadata)
     write_json(local / "excluded-functions.json", excluded)
 
     # JSON is a YAML subset; the public project uses the hand-maintained YAML file.
@@ -335,7 +343,9 @@ def setup(args):
     for model, filename in ((ProjectFile, "reccmp-project.yml"), (UserFile, "reccmp-user.yml"),
                             (BuildFile, "reccmp-build.yml")):
         model.from_file(ROOT / filename)
-    summary = dict(target=TARGET, canonical_helpers=canonical_helpers,native_equivalent_helpers=equivalent_helpers, original_functions=len(native), csv_functions=len(included),
+    summary = dict(target=TARGET, canonical_helpers=canonical_helpers,native_equivalent_helpers=equivalent_helpers,
+                   recovery_audit_mode='full_history' if args.audit_recovery else 'current_inputs',fixed_jump_table=fixed_slots,
+                   original_functions=len(native), csv_functions=len(included),
                    ledger_mappings=sum(r["mapping"] == "recovery ledger" for r in included),
                    stubs=sum(r["address"] in stubs for r in included),
                    folded_recovered_helpers=folded_recovered_helpers,
@@ -355,6 +365,8 @@ def main():
     parser.add_argument("--reccmp-root", type=Path, default=Path("C:/dev/reccmp"))
     subparsers = parser.add_subparsers(dest="command", required=True)
     init = subparsers.add_parser("setup", help="Generate function CSV and local path configuration")
+    init.add_argument("--audit-recovery", action="store_true",
+                      help="Also replay all historical recovery/native audits (slow; not needed to regenerate metadata)")
     init.add_argument("--library", type=Path, default=Path("G:/Manalink"))
     init.add_argument("--original", type=Path, default=ROOT / ".recovery/2022-ManalinkEh.dll")
     init.add_argument("--original-debug", type=Path, default=Path("G:/Manalink/ManalinkEh_10_22_Hotfix.dbg"))

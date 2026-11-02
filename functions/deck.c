@@ -1727,8 +1727,7 @@ int rfg_card_from_grave(int player, int grave_id)
 {
   int card;
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
+  int c;
 
   if ((unsigned int)grave_id < 500)
   {
@@ -1743,28 +1742,26 @@ int rfg_card_from_grave(int player, int grave_id)
     card = rfg_card_from_deck_impl(player, graveyard_ptr_mutable[player], grave_id);
     if (0 < active_cards_count[player])
     {
-      iVar3 = 0;
+      c = 0;
       do
       {
-        instance = in_play(player, iVar3);
+        instance = in_play(player, c);
         if (instance != NULL)
         {
-          instance = get_card_instance(player, iVar3);
+          instance = get_card_instance(player, c);
           if ((cards_data[instance->original_internal_card_id].id != 0x1e33) &&
               (cards_data[instance->internal_card_id].id == 0x380a))
           {
-            iVar2 = is_humiliated(player, iVar3, AL_TRIG);
-            if (iVar2 == 0)
+            if (is_humiliated(player, c, AL_TRIG) == 0)
             {
-              add_counters(player, iVar3, player, iVar3, COUNTER_P1_P1, 1);
+              add_counters(player, c, player, c, COUNTER_P1_P1, 1);
             }
           }
         }
-        iVar3 = iVar3 + 1;
-      } while (iVar3 < active_cards_count[player]);
+        c = c + 1;
+      } while (c < active_cards_count[player]);
     }
-    iVar3 = is_what(-1, card, 2);
-    if (iVar3 != 0)
+    if (is_what(-1, card, 2) != 0)
     {
       ereboss_titan_effect(1 - player);
       return card;
@@ -1818,51 +1815,49 @@ static int rfg_whole_deck_impl(int player, int* deck)
 // Exile player's entire graveyard.
 int rfg_whole_graveyard(int player)
 {
+  int c;
+  int num_cards;
   int *deck;
   int iVar1;
   int iVar2;
   unsigned int uVar3;
   card_instance_t *instance;
-  int iVar5;
   int (*paiVar6)[500];
-  unsigned char bVar7;
 
-  bVar7 = 0;
-  iVar1 = count_graveyard_by_type(player, 2);
+  num_cards = count_graveyard_by_type(player, 2);
   iVar2 = count_graveyard_by_type(player, 0x38);
   uVar3 = count_graveyard(player);
   dispatch_event_with_initial_event_result(player, graveyard_source[player][0],
                                            EVENT_REMOVED_FROM_GRAVEYARD,
-                                           iVar2 << 8 | iVar1 << 0x10 | uVar3);
+                                           iVar2 << 8 | num_cards << 0x10 | uVar3);
   deck = graveyard_ptr_mutable[player];
   paiVar6 = graveyard_source;
   for (iVar1 = 1000; iVar1 != 0; iVar1 = iVar1 + -1)
   {
     (*paiVar6)[0] = -1;
-    paiVar6 = (int (*)[500])((int)paiVar6 + ((unsigned int)bVar7 * -2 + 1) * 4);
+    paiVar6 = (int (*)[500])((int)paiVar6 + 4u);
   }
   iVar1 = rfg_whole_deck_impl(player, deck);
   if (0 < active_cards_count[player])
   {
-    iVar2 = 0;
+    c = 0;
     do
     {
-      instance = in_play(player, iVar2);
+      instance = in_play(player, c);
       if (instance != NULL)
       {
-        instance = get_card_instance(player, iVar2);
+        instance = get_card_instance(player, c);
         if ((cards_data[instance->original_internal_card_id].id != 0x1e33) &&
             (cards_data[instance->internal_card_id].id == 0x380a))
         {
-          iVar5 = is_humiliated(player, iVar2, AL_TRIG);
-          if (iVar5 == 0)
+          if (is_humiliated(player, c, AL_TRIG) == 0)
           {
-            add_counters(player, iVar2, player, iVar2, COUNTER_P1_P1, iVar1);
+            add_counters(player, c, player, c, COUNTER_P1_P1, iVar1);
           }
         }
       }
-      iVar2 = iVar2 + 1;
-    } while (iVar2 < active_cards_count[player]);
+      c = c + 1;
+    } while (c < active_cards_count[player]);
   }
   return iVar1;
 }
@@ -2726,13 +2721,14 @@ int good_to_put_in_grave(int player, int card){
 int seek_grave_for_id_to_reanimate(int player, int card, int t_player, int id,
                                         reanimate_mode_t mode)
 {
+  int count;
   int *piVar1;
   int iVar2;
   int iVar3;
 
   piVar1 = graveyard_ptr_mutable[t_player];
-  iVar2 = count_graveyard(t_player);
-  iVar2 = iVar2 + -1;
+  count = count_graveyard(t_player);
+  iVar2 = count + -1;
   if (iVar2 < 0)
   {
   LAB_026b97e9:
@@ -2746,8 +2742,7 @@ int seek_grave_for_id_to_reanimate(int player, int card, int t_player, int id,
       {
         if (REANIMATEXTRA_RETURN_TO_HAND2 < mode)
         {
-          iVar2 = reanimate_permanent(player, card, t_player, iVar2, mode);
-          return iVar2;
+          return reanimate_permanent(player, card, t_player, iVar2, mode);
         }
         if (mode == REANIMATEXTRA_RETURN_TO_HAND2)
         {
@@ -2859,8 +2854,7 @@ int select_target_from_either_grave(int player, int card, select_grave_t mode,
       td.zone = 0x1000;
       td.allow_cancel = (mode ^ SFG_CANNOT_CANCEL) & SFG_CANNOT_CANCEL;
       load_text(NULL, "TARGET_GRAVEYARD");
-      iVar3 = select_target(player, card + -1000, &td, text_lines[0], &tgt_gy);
-      if (iVar3 == 0)
+      if (select_target(player, card + -1000, &td, text_lines[0], &tgt_gy) == 0)
       {
         spell_fizzled = 1;
         return -1;
@@ -3457,6 +3451,7 @@ int pre_counterspell(int player, int card, int to_counter_player, int to_counter
 /* ManalinkEh 2022: 0x26b5e90; original functions/deck.c:1615. */
 int pre_counterspell(int player, int card, int to_counter_player, int to_counter_card)
 {
+  int owner;
   unsigned char bVar1;
   card_instance_t *pcVar2;
   card_instance_t *pcVar3;
@@ -3496,11 +3491,11 @@ int pre_counterspell(int player, int card, int to_counter_player, int to_counter
                          " Return Commander to commander\'s zone\n Decline", 0),
        iVar6 == 0))
   {
-    iVar6 = get_owner(to_counter_player, to_counter_card);
-    card_00 = locate_edh_card(iVar6);
+    owner = get_owner(to_counter_player, to_counter_card);
+    card_00 = locate_edh_card(owner);
     if (-1 < card_00)
     {
-      pcVar3 = get_card_instance(iVar6, card_00);
+      pcVar3 = get_card_instance(owner, card_00);
       if (pcVar3->targets[2].player == pcVar2->original_internal_card_id)
       {
         *(uint8_t *)&pcVar3->targets[3].player = 1;
@@ -3518,8 +3513,7 @@ int pre_counterspell(int player, int card, int to_counter_player, int to_counter
     {
       kill_card_impl(to_counter_player, to_counter_card, KILL_EXILE, 0);
     }
-    iVar6 = can_legally_play_iid(player, iVar4);
-    if (iVar6 == 0)
+    if (can_legally_play_iid(player, iVar4) == 0)
     {
       return -1;
     }
@@ -3534,8 +3528,7 @@ int pre_counterspell(int player, int card, int to_counter_player, int to_counter
   }
   dispatch_event_with_attacker(to_counter_player, to_counter_card, EVENT_COUNTERSPELL, player,
                                card);
-  iVar4 = is_what(player, card, 0x20);
-  if (iVar4 == 0)
+  if (is_what(player, card, 0x20) == 0)
   {
     play_sound_effect(WAV_INTERUPT);
   }
@@ -3544,8 +3537,7 @@ int pre_counterspell(int player, int card, int to_counter_player, int to_counter
   {
     increase_trap_condition(to_counter_player, 0x608, 1);
   }
-  iVar4 = check_special_flags(to_counter_player, to_counter_card, 0x100000);
-  if (iVar4 == 0)
+  if (check_special_flags(to_counter_player, to_counter_card, 0x100000) == 0)
   {
     return 1;
   }

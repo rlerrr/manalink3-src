@@ -1,0 +1,50 @@
+{
+  "reviewed_old_outlier_owners": 25,
+  "previously_repaired_owners": 6,
+  "whole_frame_counts": {
+    "dynamic_value_or_other_difference": 2,
+    "mutually_exclusive_store_clones": 15,
+    "exact_whole_frame_scalar_events": 7,
+    "store_clones_and_idempotent_repeats": 1
+  },
+  "classified_remaining_discovery_owners": 19,
+  "conditional_expression_owners": 2,
+  "new_source_repairs": 0,
+  "independent_read_only_commands": [
+    {
+      "command": "python -X utf8 tools/recovery/review_test_outliers.py --output .recovery/test-outlier-review-c70-final.json",
+      "exit_code": 0,
+      "terminal_chunk_id": "b5e928",
+      "log": ".recovery/test-outlier-review-c70-final.log",
+      "log_sha256": "2e772c09f8a15aa94e825c92970d12424f33f06ef0a8e397819c9675d01634fb",
+      "output": ".recovery/test-outlier-review-c70-final.json",
+      "output_sha256": "9f91e20de770c351cb13b8db98446e99daf4c9885745d11f5da42c6578d69bfc"
+    },
+    {
+      "command": "python -X utf8 tools/recovery/test_conditional_value_proof.py --output .recovery/test-conditional-value-review-c70-final.json",
+      "exit_code": 0,
+      "terminal_chunk_id": "9ac62d",
+      "log": ".recovery/test-conditional-value-review-c70-final.log",
+      "log_sha256": "cb921714bcaa53bbc624e7369c5676c88336ff233a9a34238a8bed22a8303f4d",
+      "output": ".recovery/test-conditional-value-review-c70-final.json",
+      "output_sha256": "e94e16b976fb751eac0ee2eb2bbd740d3f1740832fa9acc35a9858e43c6440be"
+    }
+  ],
+  "source_build": "Unchanged from the successful C68 Mirror Match build and full source/provenance audit. No new C/C++/header/assembly/linker edits or fresh full build/setup/whole-DLL reccmp score are claimed for this read-only review.",
+  "result": "All19 remaining rows from the old25-owner discovery list have bounded field/store-shape explanations: fifteen exclusive compiler clones, one idempotent-repeat case, one combined-frame exact match, and two locally equivalent conditional expressions. This is not proof of full function equivalence or zero undiscovered defects.",
+  "limits": [
+    "The older basic-block collector omitted SI/DI/BP/SP16 lanes and did not invalidate every implicit register definition. A concrete Soul Spike SI load could therefore retain a stale whole-ESI zero. This independent collector handles all these lanes and explicit/implicit kills; prior artifacts stay immutable. Its selected25 rows supersede the old discovery inferences for those owners only. Broader old screens have not been replayed with this corrected model.",
+    "The conditional expressions agree given the same opaque threshold return/selector input; argument and selector provenance still require separate evidence.",
+    "Unknown dynamic values, indirect/indexed stores, aliases, broader multi-frame/unbound cases, complete function behavior and gameplay remain outside these proofs."
+  ],
+  "inputs": {
+    "docs/recovery-evidence/test-outlier-scope-review.json": "9f91e20de770c351cb13b8db98446e99daf4c9885745d11f5da42c6578d69bfc",
+    "docs/recovery-evidence/test-conditional-value-review.json": "e94e16b976fb751eac0ee2eb2bbd740d3f1740832fa9acc35a9858e43c6440be",
+    "docs/recovery-evidence/test-outlier-review-seeds.json": "1ebbe9b8856453c9c72ff8584988363b6be8deaa0739b52bd12815fc78bc3244",
+    "tools/recovery/review_test_outliers.py": "23745295632e6f7608909d2e5c38bdfea66d60c6ddd33c8645c113e6a7919861",
+    "tools/recovery/test_conditional_value_proof.py": "469094e38c0e94abe2cfb09e8ff3e91e4d83a866aace5cf3ec569094aec16d40",
+    "docs/recovery-evidence/helper-canonicalization.json": "a2ade46ce81c80d8efbcd72c0a4180e0a318d8e094f124575d298c74333dffe5",
+    "ManalinkEh.dll": "ed075c0e38a6fd39ff273e3edcab9889a83e85cf7bd11d58b2b8023087203455",
+    "ManalinkEh.dbg": "908430b7db63bd6de509473d5b020fdff40938973cdfab500ed23a5cf9db83d2"
+  }
+}

@@ -736,15 +736,13 @@ int card_nightmare_token(int player, int card, event_t event)
       {
         result = blocking(player, card, event);
         if (result == 0)
-          goto LAB_0258326b;
+          return generic_token(player, card, event);
       }
       rfg_top_card_of_deck(1 - player);
       rfg_top_card_of_deck(1 - player);
     }
   }
-LAB_0258326b:
-  result = generic_token(player, card, event);
-  return result;
+  return generic_token(player, card, event);
 }
 
 

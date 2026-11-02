@@ -1,0 +1,2534 @@
+{
+  "status": "Resolved: all196 discovered call-result zero-test pairs applied;163 private int locals removed after raw/expanded checks and exact GCC int-result assertions.",
+  "counts": {
+    "functions": 163,
+    "source_units": 61,
+    "call_result_pairs": 196,
+    "private_int_locals": 163,
+    "parse_skips": 21
+  },
+  "rows": [
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_ajanis_comrade",
+      "definition_sha256": "27d0557b53045478957931322e74cc15d224b63c5682d6d0efee97849fbc39bc",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_planeswalker",
+          "expression_offset": 611,
+          "call_offset": 619,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "has_subtype",
+          "expression_offset": 680,
+          "call_offset": 688,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_illusionists_strategem",
+      "definition_sha256": "12c22fa49de44442d246d1792db049d5cd7becc52e4fec22f8d71288259eb758",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "validate_target",
+          "expression_offset": 897,
+          "call_offset": 905,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_midnight_entourage",
+      "definition_sha256": "8b8a66b43b420cfcba2f1c317e26a6e82d49fd0232cd165537df7068f5349058",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 472,
+          "call_offset": 480,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_sly_requisitioner",
+      "definition_sha256": "7d9399954d49c7c0342cb8143ae753c840c2c911ed30d7ee26535ea3bd218245",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 471,
+          "call_offset": 479,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_lifecrafters_gift",
+      "definition_sha256": "9ca67a9f246dfdca3eff7d0153c54551f6d9c897d55e204fb74179c306cb06ee",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 676,
+          "call_offset": 684,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "count_counters",
+          "expression_offset": 736,
+          "call_offset": 744,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 1081,
+          "call_offset": 1089,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "count_counters",
+          "expression_offset": 1141,
+          "call_offset": 1149,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_tezzerets_simulacrum",
+      "definition_sha256": "8113fdc47bdd5c47b8ca0e5b3dafa9709b868ba1df143b2583a2137748092583",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_planeswalker",
+          "expression_offset": 668,
+          "call_offset": 676,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar2",
+          "callee": "has_subtype",
+          "expression_offset": 735,
+          "call_offset": 743,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_exquisite_archangel",
+      "definition_sha256": "6e772b2bf7556ee1420007c5fb82a4bb59569d93b4dbaec578576fa4e6b2a7fd",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 868,
+          "call_offset": 876,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 1401,
+          "call_offset": 1409,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/alliances.c",
+      "name": "card_natures_blessing",
+      "definition_sha256": "ad7140dfe146ca81ad5d1b2aea574ac29ad9616f80c808800deb3a649ce7a932",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 1762,
+          "call_offset": 1770,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/alliances.c",
+      "name": "card_storm_elemental",
+      "definition_sha256": "0b4ef59ee78f61ffd8a670b56c0725d6c2ce97fdba96f85aa4d4913a41a5f9d2",
+      "candidates": [
+        {
+          "variable": "iVar1",
+          "callee": "is_what",
+          "expression_offset": 1431,
+          "call_offset": 1439,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_synchronized_strike",
+      "definition_sha256": "27ae6f77d47b610dd402610fdd695bd63dde4b288b132fdf38803c44c3b84859",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "validate_target",
+          "expression_offset": 1593,
+          "call_offset": 1601,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_plague_belcher",
+      "definition_sha256": "7e6a93bd93809216c7e009219a167791e57ebc82e7c71973ee5a8e1d0601f82f",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 1140,
+          "call_offset": 1148,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_splendid_agony",
+      "definition_sha256": "0c3446a686b8c82a9183e0531b0e7d714c44216238c75c33b843cf31e969f9b8",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "validate_target",
+          "expression_offset": 1529,
+          "call_offset": 1537,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_gate_to_the_afterlife",
+      "definition_sha256": "0148f4a49597f5a10abcae6e228d652fd464bbc0dd983652c2a74b812aacabe6",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 473,
+          "call_offset": 481,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/battlebond.c",
+      "name": "get_random_permanent",
+      "definition_sha256": "1b6873fe14fe464fdc4a681f1ac284261e9cd489419b6af016d4f78c874d9605",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "new_make_test_in_play",
+          "expression_offset": 942,
+          "call_offset": 950,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2016.c",
+      "name": "card_sylvan_reclamation",
+      "definition_sha256": "ab83e2c4455988f27ef9b969e7a8afade7e91d95a8ada1e5921b7b5f42a46a0a",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "validate_target",
+          "expression_offset": 601,
+          "call_offset": 609,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2018.c",
+      "name": "card_coveted_jewel",
+      "definition_sha256": "bd17d3a0374809a7560b0283b62620d6d32e0f837fb57a08110833aa5374f266",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 1538,
+          "call_offset": 1546,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar5",
+          "callee": "check_special_flags",
+          "expression_offset": 1834,
+          "call_offset": 1842,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2019.c",
+      "name": "card_marisi_breaker_of_the_coil",
+      "definition_sha256": "f33ecd03fbbbbcac4f887062a07d1cf104dcabbbcb91fa870f11063cb2c9a48b",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 1586,
+          "call_offset": 1594,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2019.c",
+      "name": "card_atla_palani_nest_tender",
+      "definition_sha256": "5824c6da8f86a356d8cdf521f6baa1db01a3253f70523a1783d9e843c9950bdc",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 476,
+          "call_offset": 484,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_bladegriff_prototype",
+      "definition_sha256": "e0a8f234f1fbc60929ea90ba674816261e2fd4e54f7b99f76dc62420c50ffa1b",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "can_target",
+          "expression_offset": 1017,
+          "call_offset": 1025,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_blim_comedic_genius",
+      "definition_sha256": "f6a0c1dc78f865b57f89a4c18dd25c307a28e23f935d6d13418d7395365aa869",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "can_target",
+          "expression_offset": 928,
+          "call_offset": 936,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_horizon_stone",
+      "definition_sha256": "13e0574af0a36fd66a43f18b0f3d721496fba1b9c87aa5d6917b6701fdf5db44",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "call_card_function_i",
+          "expression_offset": 1434,
+          "call_offset": 1442,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_ich_tekik_salvage_splicer",
+      "definition_sha256": "230dfed8cc237c1e6818f0ced71f365ef0dd5f9e56d816563699a252c6a6565d",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 490,
+          "call_offset": 498,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_juri_master_of_the_revue",
+      "definition_sha256": "644f57cf8ca73bef6adf421985f4fc556578b03a5f5cba16db30138935f9c05c",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 489,
+          "call_offset": 497,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_slurrk_all_ingesting",
+      "definition_sha256": "4868c7c3a2cf5c719cd7535cb2dec754da55c5fb72e70254c8521411b2931c21",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 485,
+          "call_offset": 493,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_laboratory_drudge",
+      "definition_sha256": "ab20cecee445e1a2053f952f3d558b7a55cc8a29b1aae8dc69086fe87408b16b",
+      "candidates": [
+        {
+          "variable": "iVar1",
+          "callee": "check_special_flags",
+          "expression_offset": 319,
+          "call_offset": 327,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_miara_thorn_of_the_glade",
+      "definition_sha256": "36b421175e184e39f66b30c8b49f6cf2f5e952012f54da4c346419db75700e5d",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 520,
+          "call_offset": 528,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_sakashima_of_a_thousand_faces",
+      "definition_sha256": "19f513b7f2bb63a3881b754b5bd45aa5be4ae3efee8688a15a5e8471dc4d8cd9",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 685,
+          "call_offset": 693,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/conspiracy.c",
+      "name": "card_marchesa_the_black_rose",
+      "definition_sha256": "21d5763b69a945b09a05841727e16199461130e597852655fda08693425c684d",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 1553,
+          "call_offset": 1561,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_jayas_immolating_inferno",
+      "definition_sha256": "9d41efb9f15e8fd74102ef9bd0be69d1c8b42fc6f440e6e25e49be503643fa55",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "validate_target",
+          "expression_offset": 546,
+          "call_offset": 554,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_slimefoot_the_stowaway",
+      "definition_sha256": "c445e02b91595fb1f1730fe992c58616d06709a601aaa45e3edbf555716a8b5d",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 511,
+          "call_offset": 519,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_oath_of_teferi",
+      "definition_sha256": "ca5ffc1b4faacc855183db393eb20ae674c634412cb0eaaaedae7761e680bded",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 1142,
+          "call_offset": 1150,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 1896,
+          "call_offset": 1904,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_fade_away",
+      "definition_sha256": "0e057b1e1fca78e5a64c6508448e1fcda21b0eb8792133a4a43a9a781ee41cab",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 635,
+          "call_offset": 643,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar4",
+          "callee": "do_dialog",
+          "expression_offset": 730,
+          "call_offset": 738,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_dizzying_gaze",
+      "definition_sha256": "554ca2727f01d096f18ea7c95b68c5a3057a3129900240471412e17cb73f67ab",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "validate_target",
+          "expression_offset": 975,
+          "call_offset": 983,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "name": "bolster",
+      "definition_sha256": "1a922bcfecb467d7d71def23d29f2fb1bf9b23f1c66a4dfafd02dfb9d40e3a53",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 621,
+          "call_offset": 629,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "name": "card_fearsome_awakening",
+      "definition_sha256": "6aaf55cb859d11dccbda0fcb6f8413ea596fc14baf4e5c54b59e39c330702071",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "has_subtype",
+          "expression_offset": 561,
+          "call_offset": 569,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/gatecrash.c",
+      "name": "card_armored_transport",
+      "definition_sha256": "ec76b10fe3bf0a4344c4c06549258bb688415ef23dd7a15ac29ce4404c6540ee",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 1404,
+          "call_offset": 1412,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "card_selective_snare",
+      "definition_sha256": "df476c24df73dd972d8acdf04c0cd38bc97f35932c761b63d179e2f35e38d2e1",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "validate_target",
+          "expression_offset": 1148,
+          "call_offset": 1156,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "card_midnight_reaper",
+      "definition_sha256": "901bc1e91a8160c079d315e695b3d8943a5614c4dda0e1df223848e377b2659b",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 464,
+          "call_offset": 472,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "card_the_scorpion_god",
+      "definition_sha256": "09d299821e2139924e7789b0c1d68c2cf612c7b07a58b86f377392144472a148",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 1026,
+          "call_offset": 1034,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/ice_age.c",
+      "name": "card_wiitigo",
+      "definition_sha256": "3cf310603e56d59643feb9eee4282ba20277231849e037fd29db5766047bd717",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 970,
+          "call_offset": 978,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/ice_age.c",
+      "name": "card_lim_duls_cohort",
+      "definition_sha256": "41474e15f05929aedcdd20d6a3c8d42afc44efddb87e0ff8d3b9718888b4211e",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 507,
+          "call_offset": 515,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/innistrad.c",
+      "name": "card_gutter_grime",
+      "definition_sha256": "80cfaa85fb9340d484cfbe7e32b1c1bd81c0bfa72baf6c684aa57343c212aa8d",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 434,
+          "call_offset": 442,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/innistrad.c",
+      "name": "card_travel_preparations",
+      "definition_sha256": "9ecd45e9d34b4f3dd5ccf7217e1daff8d36ce806e2bd12967014390cab921a3c",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "validate_target",
+          "expression_offset": 707,
+          "call_offset": 715,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/invasion.c",
+      "name": "card_sway_of_llusion",
+      "definition_sha256": "622f678fb861bc4b0b6fea053a2c52dac65d686124240711a9a4e27a97506145",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "validate_target",
+          "expression_offset": 2335,
+          "call_offset": 2343,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/invasion.c",
+      "name": "effect_defiling_tears",
+      "definition_sha256": "60c7fb0123b46cc1e7b10b5e199c73b59807182b2c1dd869e425b8d5dcc79ed2",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "can_regenerate",
+          "expression_offset": 1783,
+          "call_offset": 1791,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/ixalan.c",
+      "name": "card_revel_in_riches",
+      "definition_sha256": "639ff9337cdbd9a2961ace6ba0004916a06bb03f6da3dbaf5da69ebd2f847eb3",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 422,
+          "call_offset": 430,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/judgement.c",
+      "name": "card_soulcatchers_aerie",
+      "definition_sha256": "e238255c31cd8cc94ccb45a73db1fb42e8d211229a044e27db0f4d763624a3ef",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 496,
+          "call_offset": 504,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/jumpstart.c",
+      "name": "card_kels_fight_fixer",
+      "definition_sha256": "0d7d150b97081f3e401d9c49e440f67548cc5b2b8f536a9b55f64ddb7c18f4c1",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 490,
+          "call_offset": 498,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/jumpstart.c",
+      "name": "card_spiteful_prankster",
+      "definition_sha256": "e17d339625bca024b5be0e6903bd5e3193bc13eacb9837bb8c5223cb23152bd7",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 653,
+          "call_offset": 661,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "card_sultai_flayer",
+      "definition_sha256": "2d6b5746fa2c036cc348ccfb401a3d27f4e9dd303ce0bb0d2dd02d8e1360f367",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 484,
+          "call_offset": 492,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/legends.c",
+      "name": "lands_edge_effect",
+      "definition_sha256": "f8673ebeb91d892ce4ad71e8779765aa6d3ee915e3d05c1fdaf2ff14e1cc466f",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "validate_target",
+          "expression_offset": 3784,
+          "call_offset": 3792,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/legends.c",
+      "name": "card_venarian_gold",
+      "definition_sha256": "682fe56ae3c7e6347a914e7a18a8f59a6fafd8eda49ab149533bd4c2b0de583b",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "count_counters",
+          "expression_offset": 1440,
+          "call_offset": 1448,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/m14.c",
+      "name": "savage_summonings_effect",
+      "definition_sha256": "52660802303ccf43c560ef7ae30cc5b5abda8913b4ec3ff0a1752d0befe9cf06",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 1007,
+          "call_offset": 1015,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar2",
+          "callee": "check_state",
+          "expression_offset": 1091,
+          "call_offset": 1099,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/m15.c",
+      "name": "card_eternal_thirst",
+      "definition_sha256": "65cb8806bbd1ce467bf70551ae208cdc4363ce11f45dc64413e7c127e8df021d",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 418,
+          "call_offset": 426,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/m19.c",
+      "name": "card_open_the_graves",
+      "definition_sha256": "95c19c2ae74b6d3b8e571ff3e59772fb10a23f604a3e03b13225a6e8c38c6cb1",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 428,
+          "call_offset": 436,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/m19.c",
+      "name": "card_poison_tip_archer",
+      "definition_sha256": "e0751c14c256bb30768540dad311c5332f7b7a0039478df0bdde8b4ae8d24ddb",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 473,
+          "call_offset": 481,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/m19.c",
+      "name": "card_lilianas_contract",
+      "definition_sha256": "4ae53236828214e477a6993586995848bcd4137925fcdde00829996eeb65d403",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "new_make_test_in_play",
+          "expression_offset": 1121,
+          "call_offset": 1129,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "new_make_test_in_play",
+          "expression_offset": 1666,
+          "call_offset": 1674,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/m20.c",
+      "name": "card_moldervine_reclamation",
+      "definition_sha256": "932fd7925ac24580f56ffd68e10f31a2aefeb29a34fed2be6eea2190747d639a",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 429,
+          "call_offset": 437,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_sailmonger",
+      "definition_sha256": "a2f1df5da8cc3fd8be5edc7432f0da0da947987cbadb6d79aa52df098891365b",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 661,
+          "call_offset": 669,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_flailing_manticore",
+      "definition_sha256": "ec7a9cc855cc4b8bd60847a336215d142c3492433588054e86b503db9b2a84fc",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 656,
+          "call_offset": 664,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_flailing_ogre",
+      "definition_sha256": "d27e1d9a717dfe1080e12e607652b20e7f25bdb5daad4b188fcb05a63271294b",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 651,
+          "call_offset": 659,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_flailing_soldier",
+      "definition_sha256": "059c5f0a6f76bacea578a98c649eb4ca0e1e35446e9915f1e3b62cb8299ac10c",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 654,
+          "call_offset": 662,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_soul_channeling",
+      "definition_sha256": "9a7d98c15f83fc303d582ccc586f8be5890cc6e924678d52c8544f1e89f77697",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "can_be_regenerated",
+          "expression_offset": 1553,
+          "call_offset": 1561,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/mirage.c",
+      "name": "phase_in_impl",
+      "definition_sha256": "7a4a085cbcbeabf72ede1c213ef65ddda0066cf406ff3e8fb4471b4ba920fc70",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "check_special_flags",
+          "expression_offset": 1129,
+          "call_offset": 1137,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/mirage.c",
+      "name": "acidic_dagger_effect",
+      "definition_sha256": "b96b6b3ee2714a4f79b23cb641aa537e826367b40332978e0924e3c410de8ea1",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "has_subtype",
+          "expression_offset": 2449,
+          "call_offset": 2457,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/mirrodin.c",
+      "name": "card_quicksilver_fountain",
+      "definition_sha256": "b163c9bcdbed3fa865f768605ff795508b1bdeb8e11f7ec641a48710400b8902",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 2302,
+          "call_offset": 2310,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "has_subtype",
+          "expression_offset": 2367,
+          "call_offset": 2375,
+          "operator": "=="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 2877,
+          "call_offset": 2885,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 3443,
+          "call_offset": 3451,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 4041,
+          "call_offset": 4049,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/mirrodin_besieged.c",
+      "name": "card_chocking_fumes",
+      "definition_sha256": "4311e134bfa168c228bea2eef80598ce670e4d6676b293d9691db6d7d8b27f92",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 666,
+          "call_offset": 674,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar2",
+          "callee": "is_attacking",
+          "expression_offset": 736,
+          "call_offset": 744,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_ghost_lit_drifter",
+      "definition_sha256": "b36236122800c102523d2fead0f0eef548a6619c3958db00e6e0385cb54e79c0",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "new_pick_target",
+          "expression_offset": 1180,
+          "call_offset": 1188,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_blessed_respite",
+      "definition_sha256": "a66b5bc39fbac05bf41785ac912029417649afc79940f8fda6807e8d9ff05f60",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_attacking",
+          "expression_offset": 1287,
+          "call_offset": 1295,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_carth_the_lion",
+      "definition_sha256": "cf30ccfd179bd7c7fbb5e2187950f35c8a0bf9aaa443e5c81265a23c5fd07cb8",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 614,
+          "call_offset": 622,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_obsidian_charmaw",
+      "definition_sha256": "3a18beb162fac72f30db5d0d2621f01e0089400d9569114c163a256d07dbeb39",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 566,
+          "call_offset": 574,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_magus_of_the_bridge",
+      "definition_sha256": "9362f46a0a5a2ac2a53fa2d07378f0eef3efa8fbe445104908be90e818f524fc",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 421,
+          "call_offset": 429,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_unbounded_potential",
+      "definition_sha256": "5bde4c20d671805059bb532b1023143947005aac5541a5073e25fea9fa0c21ea",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "validate_target",
+          "expression_offset": 2340,
+          "call_offset": 2348,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_geyadrone_dihada",
+      "definition_sha256": "dfcc30d32fa497bc1724ca2de6640c061745e530369f977a80db0751d570ea44",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 3620,
+          "call_offset": 3628,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar4",
+          "callee": "count_counters",
+          "expression_offset": 3688,
+          "call_offset": 3696,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 4209,
+          "call_offset": 4217,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar4",
+          "callee": "count_counters",
+          "expression_offset": 4277,
+          "call_offset": 4285,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_out_of_time",
+      "definition_sha256": "953a0b7638a9d24301b2c009079a4161818c723d0e52d0d426faf7f913626dcf",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 1178,
+          "call_offset": 1186,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 1608,
+          "call_offset": 1616,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_vectis_gloves",
+      "definition_sha256": "efe9ac6f650e19d619a99969ac8259a1dc2b4fed6b3a437c2c338e73f2fc105a",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 808,
+          "call_offset": 816,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 873,
+          "call_offset": 881,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_rise_and_shine",
+      "definition_sha256": "bede82089b1a55c3d970a4d7871ddcc4e2066efd79d3afc5dc0df50da0bb7e58",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 2517,
+          "call_offset": 2525,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 2592,
+          "call_offset": 2600,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "card_bludgeon_brawl",
+      "definition_sha256": "09fa2d7f0741ebb225483d3f9ea1a5eb4633b5b14020ca07b037f69a978beb40",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 842,
+          "call_offset": 850,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/oath_of_the_gatewatch.c",
+      "name": "card_stone_haven_outfitter",
+      "definition_sha256": "2158c7dea4ce1b061c57ab29bd26762c8f732312cef8c33ae7dedbb24cad4ca0",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 441,
+          "call_offset": 449,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/oath_of_the_gatewatch.c",
+      "name": "card_ruins_of_oran_rief",
+      "definition_sha256": "0752da077326c138a111a409c6d913dc57555a6ef2c90e69437fc7830113d6c2",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 2392,
+          "call_offset": 2400,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar4",
+          "callee": "check_special_flags",
+          "expression_offset": 2468,
+          "call_offset": 2476,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/onslaught.c",
+      "name": "effect_target_gains_trample_and_regenerate_for_g",
+      "definition_sha256": "910ae847a259303f75fe3cb6600df5e8f97408dc9a331593769703a2973f4264",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "can_regenerate",
+          "expression_offset": 1122,
+          "call_offset": 1130,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/planechase.c",
+      "name": "card_mount_keralia",
+      "definition_sha256": "6fe0f77e5627320f76395b416b0471f0cc7ef77af92545f87c8aecceb146a208",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 784,
+          "call_offset": 792,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/planechase.c",
+      "name": "card_stensia",
+      "definition_sha256": "2f5c428087a88cbe1bdd5012065d7ceaa668138ebd04ba637e6f7ce1a0b7e5f9",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 1017,
+          "call_offset": 1025,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_tidal_surge",
+      "definition_sha256": "07828ee1032e28cafa1ffd27ff5278feba033e38f62d6feb48bda1a33c244926",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "validate_target",
+          "expression_offset": 551,
+          "call_offset": 559,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_wind_sail",
+      "definition_sha256": "dfee065d4480ad2132a04153ff2ddcd88d2ffeaaa6c3cffd529d102894b77b68",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "validate_target",
+          "expression_offset": 1633,
+          "call_offset": 1641,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_counterintelligence",
+      "definition_sha256": "150608a2750473a130de5343ad6ab545855540fd3ae8721ad9cd2abf85dd5c25",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "validate_target",
+          "expression_offset": 1654,
+          "call_offset": 1662,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_assassins_blade",
+      "definition_sha256": "f7e6ee803c0236de4ff1e365539ad309cac7cfecbefc61fffa7923148f47aba0",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "check_special_flags",
+          "expression_offset": 895,
+          "call_offset": 903,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_treetop_defense",
+      "definition_sha256": "e551d2e0c06b2a70474c4d7a2c4bb1e550cea665139abd9621d2a03f6d68e72c",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "check_special_flags",
+          "expression_offset": 535,
+          "call_offset": 543,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_scorching_winds",
+      "definition_sha256": "b4c7d1fb102739b34efeb19fb238c4bdee0608f3d4f860d9ff447abb3ae2c9ae",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "check_special_flags",
+          "expression_offset": 566,
+          "call_offset": 574,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_defiant_stand",
+      "definition_sha256": "3bbdaf871525715ad43461523d7aa4797dd5dacad5862604bc000709dca9d47b",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "check_special_flags",
+          "expression_offset": 976,
+          "call_offset": 984,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_just_fate",
+      "definition_sha256": "89abebcb533c1691db9845a5a0f6be217c0b47dd6477be2182d8be265a4e7ebc",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "check_special_flags",
+          "expression_offset": 690,
+          "call_offset": 698,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_rally_the_troops",
+      "definition_sha256": "02fb16cb48ddc9859bbcc42744d6b978cec22176383da8aee48233eec017bd20",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "check_special_flags",
+          "expression_offset": 567,
+          "call_offset": 575,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_warriors_stand",
+      "definition_sha256": "b09cb285e8682d63df5676d3622ef92ba44e4468a079ee5d3916203be4885608",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "check_special_flags",
+          "expression_offset": 534,
+          "call_offset": 542,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_broken_dam",
+      "definition_sha256": "944da4211a6dcc13499d55ad3f0fd46458a747d486404b01ea669d79c32794ef",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "validate_target",
+          "expression_offset": 1959,
+          "call_offset": 1967,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_endbringers_revel",
+      "definition_sha256": "2d35d3d8994be2c87f62c86f98045eb0210b6cbb3ffc58510afbc7fbf324e794",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 669,
+          "call_offset": 677,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_excavation",
+      "definition_sha256": "6ebd43fc9d13a58c1c07049dd767dd367485b7fba88e57a977d445773a02694c",
+      "candidates": [
+        {
+          "variable": "iVar6",
+          "callee": "is_what",
+          "expression_offset": 1997,
+          "call_offset": 2005,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_quicksilver_wall",
+      "definition_sha256": "6126d14486cda81cdd25fa77f2b6c4ee9fb1e64f2d4c4de50f92332db3c4da34",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 642,
+          "call_offset": 650,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_ribbon_snake",
+      "definition_sha256": "13ec3898fa6e535e676b1aa647a846e7bbf525e482aeab518400b2161ef5ce9f",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 638,
+          "call_offset": 646,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_samite_sanctuary",
+      "definition_sha256": "aac3d7e8efe4c0f5db382ea366423be8aaa0d9aeda21cd2dc6b4d9c44e6da6ae",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 669,
+          "call_offset": 677,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_task_mage_assembly",
+      "definition_sha256": "569d82bdb565a3595a377b06cc30cdfddd148a4ea0d193e42f23904c7a7a7243",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 776,
+          "call_offset": 784,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_vintara_elephant",
+      "definition_sha256": "85b1527082b875eb6adf66090bb75cf5f6c6c383678b8d1c5f7441939167f7e3",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 642,
+          "call_offset": 650,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_wall_of_vipers",
+      "definition_sha256": "b72a407f4271ed3660b4ad990a1c11d4eaeaeeaf1829e818c3ccdd36d0cbfb5a",
+      "candidates": [
+        {
+          "variable": "iVar6",
+          "callee": "is_what",
+          "expression_offset": 795,
+          "call_offset": 803,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_zerapa_minotaur",
+      "definition_sha256": "4c7d437b7ef4b88d63f4719bc271ddf73904272a5d13666057ad6a75823d3902",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 641,
+          "call_offset": 649,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_mana_vapors",
+      "definition_sha256": "62366e019afcdcb4b8e7500592cb01d1ee04e3e726c6c5e63c46c40da1d26f17",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 757,
+          "call_offset": 765,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "is_tapped",
+          "expression_offset": 818,
+          "call_offset": 826,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 1589,
+          "call_offset": 1597,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_glittering_lion",
+      "definition_sha256": "563b18459ebc9c087b1c2518f21461a0b4d3ede051fefd591455fa749bdd9b21",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 1733,
+          "call_offset": 1741,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_glittering_lynx",
+      "definition_sha256": "637305de256aa9c933691efbbdb2e3e71201f8d5c2698552c34fb14cb29badbe",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 1733,
+          "call_offset": 1741,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/ravnica.c",
+      "name": "land_pay_life_or_etb_tapped",
+      "definition_sha256": "59f5569548cb12eff08ba93ffb3ebb4d2e0d7c58def3694beffaecf7cd61edec",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "has_mana_to_cast_iid",
+          "expression_offset": 1368,
+          "call_offset": 1376,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "card_judith_the_scourge_diva",
+      "definition_sha256": "268b3035bc4984916a2110229342f3ff1f2f15ee99f601bbd7c1bb14d720100b",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 456,
+          "call_offset": 464,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "card_priest_of_forgotten_gods",
+      "definition_sha256": "1ee9a39a7eaa7ed4e41344b2a93eec8a63aa8bad82db5f28ed492ae4fc383a81",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "validate_target",
+          "expression_offset": 2644,
+          "call_offset": 2652,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "card_vindictive_vampire",
+      "definition_sha256": "658a5ba04f4983a07da4c066479d226c8a2e8d76534b5d1fc04fa10b445b0af8",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 470,
+          "call_offset": 478,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_etali_primal_storm",
+      "definition_sha256": "401ae82ce3ee81309ac2bdb9ee35c01394534919b624e2562ad86dbe4a687dd6",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "can_legally_play_iid",
+          "expression_offset": 590,
+          "call_offset": 598,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_azor_the_lawbringer",
+      "definition_sha256": "ae5b57ffc058e5efe70f9a1d04a681fa2418ee753241b35f28bbd2cd38b8aa80",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 484,
+          "call_offset": 492,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_winged_temple_of_orazca",
+      "definition_sha256": "45650ec63838ed86e05abb3e0b531bd2cfe78d6a420234f3cd5fcd5ae21fb2e7",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "paying_mana",
+          "expression_offset": 661,
+          "call_offset": 669,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_atzal_cave_of_eternity",
+      "definition_sha256": "64ce190248cc975def492712f42b8df234aeebf50a6a5b88b2f4ca77cad1d93a",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "paying_mana",
+          "expression_offset": 745,
+          "call_offset": 753,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_gold_forge_garrison",
+      "definition_sha256": "c31c959e993eb707b92476f43d15246351f2e011583a83a7e84c785cc524ee42",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "paying_mana",
+          "expression_offset": 910,
+          "call_offset": 918,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_pitiless_plunderer",
+      "definition_sha256": "8d956a55553a90184d17b02c8ebe81093e6c81e254fedbd5031458125480bd5a",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 420,
+          "call_offset": 428,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_kumena_tyrant_of_orazca",
+      "definition_sha256": "c0f5c7afbdb024bcacf27550dc320b4984a8e87963d44e40be2a46a8977f0b26",
+      "candidates": [
+        {
+          "variable": "iVar7",
+          "callee": "check_for_special_ability",
+          "expression_offset": 1943,
+          "call_offset": 1951,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/shadowmoor.c",
+      "name": "card_blowfly_infestation",
+      "definition_sha256": "7350c81d75a6e1900aeb6cebf4ac9680b940244684f6497531e881e6e27b12bf",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 467,
+          "call_offset": 475,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/shadowmoor.c",
+      "name": "card_witherscale_wurm",
+      "definition_sha256": "b9520d6e3488f09cc1c7654a1cd1bf8ecc64b1c24f1a6a5d891b3e1b46b44409",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 499,
+          "call_offset": 507,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "name": "damage_my_blockers",
+      "definition_sha256": "add32710234ea55820f4bf629f9991aee2054814946fb3fdfb3c3a769646752f",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 485,
+          "call_offset": 493,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_semesters_end",
+      "definition_sha256": "12a1af6cd4c41fa669572e68387a4c70d34c0dd830161c1a04bd6f68f2a9548c",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "validate_target",
+          "expression_offset": 608,
+          "call_offset": 616,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_crackle_with_power",
+      "definition_sha256": "e17df0965c84c34c067de31f50502fbd3933eb237f5ba5c6277d787a510bb8f7",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "validate_target",
+          "expression_offset": 1482,
+          "call_offset": 1490,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_deadly_vanity",
+      "definition_sha256": "1a35fa1af9333d669735ef0bd44ab2984a3d795b6cf42423b6041ac4efb2275b",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 852,
+          "call_offset": 860,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_shadewing_laureate",
+      "definition_sha256": "5282469c710018c392af6a3c96030a7fdda9d3caf6ffb625f0dc674486c49269",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 467,
+          "call_offset": 475,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_embrose_dean_of_shadow",
+      "definition_sha256": "df171688b27f8f8fcd84f336c3b1b32b21a9cdea53615a5c8db9b9761e64fc52",
+      "candidates": [
+        {
+          "variable": "iVar6",
+          "callee": "is_what",
+          "expression_offset": 582,
+          "call_offset": 590,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "rushed_rebirth_legacy",
+      "definition_sha256": "1564edf57846a4672620825bab92550efe72dd02a6fffded609fe71a918bfeba",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "check_for_death_trigger_removal",
+          "expression_offset": 511,
+          "call_offset": 519,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_dramatic_finale",
+      "definition_sha256": "a676bf48ebcfbe8c6132973337c92b172683f4251ed51f56a3e99bb7ba18eb68",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 932,
+          "call_offset": 940,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_echoing_equation",
+      "definition_sha256": "449ed189c615441cc73e1d817ee358e04b1c2f59edabcff7da5714feaf2e74bf",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 735,
+          "call_offset": 743,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/stronghold.c",
+      "name": "card_elven_rite",
+      "definition_sha256": "eec90f2f8145208e093c0e5e39136fb1135fea7516d43691fcd904a732895a66",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "validate_target",
+          "expression_offset": 1804,
+          "call_offset": 1812,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/tempest.c",
+      "name": "card_flowstone_sculpture",
+      "definition_sha256": "7746e8d1608d6f64a1052489f2e6141dba06d141bc4680ecc1c555bfc65681e2",
+      "candidates": [
+        {
+          "variable": "iVar6",
+          "callee": "is_what",
+          "expression_offset": 2404,
+          "call_offset": 2412,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/tempest.c",
+      "name": "card_thalakos_dreamsower",
+      "definition_sha256": "e8301db0e1fe487a4987ac02e3541d3bb7bffb7a9102f7cef1e058525568c7d6",
+      "candidates": [
+        {
+          "variable": "iVar6",
+          "callee": "can_target",
+          "expression_offset": 695,
+          "call_offset": 703,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar6",
+          "callee": "new_pick_target",
+          "expression_offset": 749,
+          "call_offset": 757,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/theros.c",
+      "name": "monstrosity",
+      "definition_sha256": "8b13be30ca4d9d943758cc2e26d58736ddb67bf3562c247fb106c94fd51e54ef",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "check_special_flags2",
+          "expression_offset": 646,
+          "call_offset": 654,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_purphoross_intervention",
+      "definition_sha256": "a384c12d0f9a8c7333fba1743fb8a681769a5c0c6f0ed97c96c264105a7af225",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "valid_target",
+          "expression_offset": 1845,
+          "call_offset": 1853,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_daxos_blessed_by_the_sun",
+      "definition_sha256": "35eb2ca63e516af04340c29f668cde65af4d745a19fc89dad2b9f34e79c5a17e",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 1082,
+          "call_offset": 1090,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_erebos_bleak_hearted",
+      "definition_sha256": "00d8b92ebc28978830847f75430a535fb5379c1dce1ff271935ddcf451867b65",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 554,
+          "call_offset": 562,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_anax_hardened_in_the_forge",
+      "definition_sha256": "abc7c74e457a199aa59357da2598c4b5df9641f260ab7457e8af4f3c5c210173",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 696,
+          "call_offset": 704,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_underworld_breach",
+      "definition_sha256": "8707766cf095706d78460badd64e4d52e4a8ca6e46666a62a65155f13e5f4672",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 399,
+          "call_offset": 407,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "adventure",
+      "definition_sha256": "453a55e684387455bf4b54962044fb02ced7533db8e64bbf0b4410fbad08b4e0",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 715,
+          "call_offset": 723,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_korvold_fae_cursed_king",
+      "definition_sha256": "8852b40c00fcf9515dcc977c87457b8b30f6bcb121f028b3c649a8371fcf03d5",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 577,
+          "call_offset": 585,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_trail_of_crumbs",
+      "definition_sha256": "4097fa81ca06556383d78ccc9d9c95a1081aa43ce6d776f83727b11a68e8ab2f",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 619,
+          "call_offset": 627,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_island_sanctuary",
+      "definition_sha256": "4650d189a0b5e1197dd92209c8d77c9932486e7662a13f8475dabce3347612fb",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "is_what",
+          "expression_offset": 1786,
+          "call_offset": 1794,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "name": "card_bereavement",
+      "definition_sha256": "94746ad6a678499ccd756ad7b31d0ee5e3818e1fa9442a77ea134e5db919ca13",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 509,
+          "call_offset": 517,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "name": "card_bravado",
+      "definition_sha256": "1da3264ab380e1b28af97008749ce7094edde43cd85a262fe6f19ba295977e9b",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 759,
+          "call_offset": 767,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "name": "card_fortitude",
+      "definition_sha256": "d875cff45c3011fc46057958016d0567f22a77db7a9d409e6fe182bab571b4b3",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "can_be_regenerated",
+          "expression_offset": 1794,
+          "call_offset": 1802,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/visions.c",
+      "name": "card_vampirism",
+      "definition_sha256": "394db71e72ce35205f2834f1df67803fe37d29df309982c9b7d700d990198cff",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 1072,
+          "call_offset": 1080,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_finale_of_eternity",
+      "definition_sha256": "f30cefb74cd2f4155e0d363dfbed1d61ed49d322b5f39e630a5cf073e10914f2",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "validate_target",
+          "expression_offset": 679,
+          "call_offset": 687,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "massacre_girl_legacy",
+      "definition_sha256": "a7decb5cf3ed7ff7763732ac43e30551a2482f4942ef82d2b5bed32dcf511668",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_this_dying",
+          "expression_offset": 846,
+          "call_offset": 854,
+          "operator": "=="
+        },
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 921,
+          "call_offset": 929,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_massacre_girl",
+      "definition_sha256": "8cdd5f9a6394b5b86727fa28888fdd6df93a37d2effdc9cc3832b0f173d3a8c4",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_what",
+          "expression_offset": 987,
+          "call_offset": 995,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_cruel_celebrant",
+      "definition_sha256": "62bfb4c6706fe50a527fde10da0ece1dee3e7b3f7c0832faf06c97cd12e760a3",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 511,
+          "call_offset": 519,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_mayhem_devil",
+      "definition_sha256": "d1fe1d1611a746878c65dacd70b3d7de1061ac16d7c61430d68d09f836393fa0",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 461,
+          "call_offset": 469,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_the_elderspell",
+      "definition_sha256": "bcbecbe4a798851ef7e295e86250e798094b66ecf42471e2abb3f52988617bf1",
+      "candidates": [
+        {
+          "variable": "iVar6",
+          "callee": "can_target",
+          "expression_offset": 552,
+          "call_offset": 560,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar6",
+          "callee": "new_pick_target",
+          "expression_offset": 602,
+          "call_offset": 610,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar6",
+          "callee": "validate_target",
+          "expression_offset": 1223,
+          "call_offset": 1231,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "amass",
+      "definition_sha256": "7eaad443e0c7f90f90b95d84057b1790082ad95169212f0a04213f07c29ef635",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 325,
+          "call_offset": 333,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar2",
+          "callee": "has_subtype",
+          "expression_offset": 389,
+          "call_offset": 397,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/weatherlight.c",
+      "name": "card_well_of_knowledge",
+      "definition_sha256": "c880f297d82650356d1ff1ec4c7919de87a163bc7f75a2ea5556667331eb1b0e",
+      "candidates": [
+        {
+          "variable": "iVar4",
+          "callee": "is_what",
+          "expression_offset": 643,
+          "call_offset": 651,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "cards/worldwake.c",
+      "name": "card_avenger_of_zendikar",
+      "definition_sha256": "d531169ba2e1eb7c8b47b1b67db7eec3666f45211e36fa5edcf43da6158ba5dc",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "has_subtype",
+          "expression_offset": 1205,
+          "call_offset": 1213,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar2",
+          "callee": "is_what",
+          "expression_offset": 1287,
+          "call_offset": 1295,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "functions/abilities.c",
+      "name": "lure_effect_part",
+      "definition_sha256": "aba01c04ec89be19bf790f17eafab1755eb7f5f7dcad7e2130388ae319ed31fc",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "is_unblocked",
+          "expression_offset": 791,
+          "call_offset": 799,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "functions/auras.c",
+      "name": "end_of_stealing_aura_effect",
+      "definition_sha256": "536077f36f4fa14a6d8e9d698acd6881de460fd3eae3cf47db1edfb921e8fac3",
+      "candidates": [
+        {
+          "variable": "iVar6",
+          "callee": "is_what",
+          "expression_offset": 896,
+          "call_offset": 904,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar6",
+          "callee": "has_subtype",
+          "expression_offset": 967,
+          "call_offset": 975,
+          "operator": "!="
+        },
+        {
+          "variable": "iVar6",
+          "callee": "check_special_flags3",
+          "expression_offset": 1235,
+          "call_offset": 1243,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "store_attackers",
+      "definition_sha256": "ed13341cad167bd086d957bc623fb5a8dc055b7bbd97815c7d7616511ca63278",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "new_make_test_in_play",
+          "expression_offset": 3161,
+          "call_offset": 3169,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "trigger_gain_life",
+      "definition_sha256": "827294a00831c6cbed841b11fe3d0385b7d9a5a6cc246e7c9b0f5fb5410b13d0",
+      "candidates": [
+        {
+          "variable": "iVar1",
+          "callee": "is_humiliated",
+          "expression_offset": 466,
+          "call_offset": 474,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "reveal_cards_from_your_hand",
+      "definition_sha256": "1064a2a14362c076f7dcc119d5b1d1039b268ed5e758b971ef3c043777d8df1b",
+      "candidates": [
+        {
+          "variable": "iVar3",
+          "callee": "new_make_test",
+          "expression_offset": 1095,
+          "call_offset": 1103,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "name": "escape_spell",
+      "definition_sha256": "f8b4b5162492fe77397a80068ace0876283c8c55476bcfc6cd79ff63d56945aa",
+      "candidates": [
+        {
+          "variable": "iVar1",
+          "callee": "can_legally_play_iid",
+          "expression_offset": 141,
+          "call_offset": 149,
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "source": "functions/produce_mana.c",
+      "name": "produce_mana_tapped_any_combination_of_colors_impl",
+      "definition_sha256": "5b5279e98cdf1fd71a26c6b02ebe0d7162cf6ed34f1337186ea652849b8244c7",
+      "candidates": [
+        {
+          "variable": "iVar5",
+          "callee": "check_special_flags2",
+          "expression_offset": 3173,
+          "call_offset": 3181,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "functions/produce_mana.c",
+      "name": "produce_mana_tapped_all_different_colors_impl",
+      "definition_sha256": "c6334d19922ad53f21f79a392eded7358449783c8d48e4177c05499ba865a63b",
+      "candidates": [
+        {
+          "variable": "iVar6",
+          "callee": "check_special_flags2",
+          "expression_offset": 4612,
+          "call_offset": 4620,
+          "operator": "=="
+        }
+      ]
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "check_battlefield_for_sacrifice",
+      "definition_sha256": "3ab0a8460778aec932f5b7bbf9e31d384136351024738de59bcae1ceeee6186f",
+      "candidates": [
+        {
+          "variable": "iVar2",
+          "callee": "make_test_in_play",
+          "expression_offset": 964,
+          "call_offset": 972,
+          "operator": "!="
+        }
+      ]
+    }
+  ],
+  "source_state_sha256": "30e8cf3541f4110c6aa3d071fffe14330baf3a8dae953f2c7612a16a2cb2d1cb",
+  "scope": "Source-only screen of the2604 definitions tracked by the earlier native census. Each selected variable is a unique private uninitialized function-scope int; every identifier reference is an assignment LHS or the matching zero comparison in a two-element comma expression. Calls and macro types are not yet approved; this is not a remaining-function count.",
+  "resolution": {
+    "batch": "docs/recovery-evidence/comma-call-cleanup.json",
+    "batch_sha256": "4a813185fd899a64311b1efc20fa5ef8b1e20973e0ffb94b8bd38d8f5c9236e6",
+    "applied_pairs": 196,
+    "removed_declarations": 163,
+    "pending_candidates": 0
+  }
+}

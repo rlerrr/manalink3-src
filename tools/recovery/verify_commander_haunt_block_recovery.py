@@ -1,6 +1,7 @@
 """Audit Commander/haunt/multiblock source receipts and native part boundaries."""
 import json
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image
 
 
@@ -13,7 +14,7 @@ def verify(proof,image,root=ROOT):
         assert (row['source'],row['name'],row['definition_sha256']) in receipts,row['name']
         text=read(root/row['source']);a,b=span(text,row['name'])
         current_hash=sha(text[a:b].encode())
-        if current_hash!=row['definition_sha256']:
+        if not source_hash_matches(proof,root,row['source'],row['name'],current_hash,row['definition_sha256']):
             # Preserve the older receipt when a later audit restores external linkage only.
             refinements=[e for e in proof['source_edits'] if e['source']==row['source'] and
                 e.get('native_linkage_refinement',{}).get('function')==row['name'] and
@@ -24,7 +25,7 @@ def verify(proof,image,root=ROOT):
             assert change['after']==change['before'].removeprefix('static ')
     for row in record['inline_support_helpers']:
         text=read(root/row['source']);a,b=span(text,row['name'])
-        assert sha(text[a:b].encode())==row['definition_sha256'],row['name']
+        assert source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['definition_sha256']),row['name']
         assert any(e['source']==row['source'] and e['after_sha256']==row['definition_sha256'] and
                    e.get('native_inline_source_reconstruction',{}).get('owner')==row['native_owner'] for e in proof['source_edits'])
     from capstone import Cs,CS_ARCH_X86,CS_MODE_32

@@ -300,7 +300,6 @@ int roll_2d6t_difference(int player, int src_player, int src_card, int tgt_playe
 /* ManalinkEh 2022: 0x2650a70; original functions/dice.c:219. */
 int roll_xd6t(int player, int x, int src_player, int src_card, int tgt_player, int tgt_card)
 {
-  int result;
   bool bVar2;
 
   if (x < 1)
@@ -312,7 +311,6 @@ int roll_xd6t(int player, int x, int src_player, int src_card, int tgt_player, i
   {
     x = 1;
   }
-  result = roll_xdy(player, src_player, src_card, tgt_player, tgt_card, x, 6, NULL, 0, NULL,
+  return roll_xdy(player, src_player, src_card, tgt_player, tgt_card, x, 6, NULL, 0, NULL,
                     (unsigned int)!bVar2);
-  return result;
 }

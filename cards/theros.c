@@ -256,29 +256,28 @@ int is_monstrous(int player, int card){
 int monstrosity(int player, int card, event_t event, int colorless, int black, int blue, int green,
                 int red, int white, int c_amount)
 {
+  int p;
   int iVar1;
   card_instance_t *instance;
-  int iVar3;
   int iVar4;
   if (event != EVENT_ACTIVATE)
   {
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar1 = check_special_flags2(player, card, 0x800);
-      if (iVar1 == 0)
+      if (check_special_flags2(player, card, 0x800) == 0)
         goto LAB_02631323;
     }
     else if (event == EVENT_RESOLVE_ACTIVATION)
     {
       instance = get_card_instance(player, card);
-      iVar1 = instance->parent_controller;
+      p = instance->parent_controller;
       iVar4 = instance->parent_card;
-      instance = in_play(iVar1, iVar4);
-      if ((instance != NULL) && (iVar3 = check_special_flags2(iVar1, iVar4, 0x800), iVar3 == 0))
+      instance = in_play(p, iVar4);
+      if ((instance != NULL) && (check_special_flags2(p, iVar4, 0x800) == 0))
       {
-        set_special_flags2(iVar1, iVar4, 0x800);
-        add_counters(player, card, iVar1, iVar4, COUNTER_P1_P1, c_amount);
-        call_card_function(iVar1, iVar4, EVENT_BECAME_MONSTROUS);
+        set_special_flags2(p, iVar4, 0x800);
+        add_counters(player, card, p, iVar4, COUNTER_P1_P1, c_amount);
+        call_card_function(p, iVar4, EVENT_BECAME_MONSTROUS);
       }
     }
     else if ((event - EVENT_POW_BOOST < 2) &&
@@ -288,8 +287,7 @@ int monstrosity(int player, int card, event_t event, int colorless, int black, i
       {
         iVar1 =
             get_cost_mod_for_activated_abilities(player, card, 0, black, blue, green, red, white);
-        iVar4 = has_mana_multi(player, iVar1, black, blue, green, red, white);
-        if (iVar4 != 0)
+        if (has_mana_multi(player, iVar1, black, blue, green, red, white) != 0)
         {
           iVar4 = has_mana(player, 7, -1);
           iVar4 = iVar4 - (black + iVar1 + blue + green + red + white);
@@ -303,8 +301,7 @@ int monstrosity(int player, int card, event_t event, int colorless, int black, i
       {
         iVar1 =
             get_cost_mod_for_activated_abilities(player, card, 0, black, blue, green, red, white);
-        iVar4 = has_mana_multi(player, iVar1, black, blue, green, red, white);
-        if (iVar4 != 0)
+        if (has_mana_multi(player, iVar1, black, blue, green, red, white) != 0)
         {
           iVar4 = has_mana(player, 7, -1);
           return iVar4 - (black + iVar1 + blue + green + red + white);
@@ -336,9 +333,8 @@ LAB_02631323:
       iVar1 = (unsigned int)(((unsigned char)trace_mode & 2) == 0) << 0xd;
     }
   }
-  iVar1 = generic_activated_ability(player, card, event, iVar1, colorless, black, blue, green, red,
+  return generic_activated_ability(player, card, event, iVar1, colorless, black, blue, green, red,
                                     white, 0, NULL, NULL);
-  return iVar1;
 }
 
 static int ordeal(int player, int card, event_t event)
@@ -3764,8 +3760,7 @@ LAB_0263bcb8:
   default_target_definition(player, card, &td, 1);
   td.allowed_controller = player;
   td.preferred_controller = player;
-  iVar2 = targeted_aura(player, card, event, &td, "TARGET_LAND");
-  return iVar2;
+  return targeted_aura(player, card, event, &td, "TARGET_LAND");
 }
 
 int card_ordeal_of_nylea(int player, int card, event_t event){
@@ -5030,8 +5025,7 @@ int card_underworld_cerberus(int player, int card, event_t event)
   int num_returned[2];
   test_definition_t test;
   minblockers_3(player, card, event);
-  iVar1 = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (iVar1 == 0)
+  if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) == 0)
   {
     return 0;
   }
@@ -6093,14 +6087,14 @@ int new_creature_with_targeted_bestow(int player, int card, event_t event, targe
 {
   unsigned short uVar1;
   unsigned int uVar2;
-  card_instance_t *pcVar3;
+  card_instance_t *instance;
   card_instance_t *pcVar4;
   int iVar5;
   int iVar6;
   unsigned char bVar7;
   int iStack_14;
 
-  pcVar3 = get_card_instance(player, card);
+  instance = get_card_instance(player, card);
   if (event == EVENT_CAN_CAST)
   {
     return 1;
@@ -6108,24 +6102,24 @@ int new_creature_with_targeted_bestow(int player, int card, event_t event, targe
   bestow(player, card, event, colorless, black, blue, green, red, white);
   if (event == EVENT_CAN_SKIP_TURN)
   {
-    pcVar3->regen_status = pcVar3->regen_status | 0x9000000;
+    instance->regen_status = instance->regen_status | 0x9000000;
     get_abilities(player, card, EVENT_CHANGE_TYPE, -1);
     get_abilities(player, card, EVENT_ABILITIES, -1);
   }
   else if (event == EVENT_CHANGE_TYPE)
   {
     if (((card == affected_card) && (player == affected_card_controller)) &&
-        (pcVar3->info_slot == 0x42))
+        (instance->info_slot == 0x42))
     {
 
-      iVar5 = pcVar3->internal_card_id;
+      iVar5 = instance->internal_card_id;
       bVar7 = cards_data[iVar5].type & 0xfd;
       if ((cards_data[iVar5].type & 2) == 0)
       {
         return 0;
       }
-      if ((pcVar3->targets[0xd].player != iVar5) ||
-          (iStack_14 = pcVar3->dummy3, cards_data[iStack_14].type != bVar7))
+      if ((instance->targets[0xd].player != iVar5) ||
+          (iStack_14 = instance->dummy3, cards_data[iStack_14].type != bVar7))
       {
 
         iStack_14 = create_a_card_type(iVar5);
@@ -6136,10 +6130,10 @@ int new_creature_with_targeted_bestow(int player, int card, event_t event, targe
         uVar1 = cards_data[iStack_14].id;
         cards_data[iStack_14].type = bVar7;
         cards_ptr[uVar1]->subtype1 = 0x4000;
-        pcVar3->dummy3 = iStack_14;
-        uVar2 = pcVar3->regen_status;
-        pcVar3->targets[0xd].player = iVar5;
-        pcVar3->regen_status = uVar2 | 0x1000000;
+        instance->dummy3 = iStack_14;
+        uVar2 = instance->regen_status;
+        instance->targets[0xd].player = iVar5;
+        instance->regen_status = uVar2 | 0x1000000;
       }
       event_result = iStack_14;
     }
@@ -6153,10 +6147,10 @@ int new_creature_with_targeted_bestow(int player, int card, event_t event, targe
     {
 
       iVar5 = get_id(player, card);
-      pcVar3->targets[0xd].player = iVar5;
+      instance->targets[0xd].player = iVar5;
       iVar6 = get_id(player, card);
-      iVar5 = pcVar3->info_slot;
-      pcVar3->targets[0xd].card = iVar6;
+      iVar5 = instance->info_slot;
+      instance->targets[0xd].card = iVar6;
       if (iVar5 == 1)
       {
         iVar5 =
@@ -6168,11 +6162,11 @@ int new_creature_with_targeted_bestow(int player, int card, event_t event, targe
         else if ((iVar5 == 2) && (iVar5 = pick_target(td, "TARGET_CREATURE"), iVar5 != 0))
         {
 
-          iVar5 = pcVar3->internal_card_id;
-          pcVar3->number_of_targets = '\x01';
-          pcVar3->info_slot = 0x42;
+          iVar5 = instance->internal_card_id;
+          instance->number_of_targets = '\x01';
+          instance->info_slot = 0x42;
           iVar6 = get_id(player, card);
-          cards_data[pcVar3->internal_card_id].rarity = (uint8_t)cards_ptr[iVar6]->subtype2;
+          cards_data[instance->internal_card_id].rarity = (uint8_t)cards_ptr[iVar6]->subtype2;
           bVar7 = cards_data[iVar5].type;
           iVar5 = create_a_card_type(iVar5);
           if (iVar5 == -1)
@@ -6180,11 +6174,11 @@ int new_creature_with_targeted_bestow(int player, int card, event_t event, targe
             return 0;
           }
           cards_data[iVar5].type = bVar7 & 0xfd;
-          pcVar3->targets[0xd].player = iVar5;
-          pcVar3->regen_status = pcVar3->regen_status | 0x1000000;
-          pcVar3->dummy3 = iVar5;
-          pcVar3->internal_card_id = iVar5;
-          pcVar3->backup_internal_card_id = (uint16_t)iVar5;
+          instance->targets[0xd].player = iVar5;
+          instance->regen_status = instance->regen_status | 0x1000000;
+          instance->dummy3 = iVar5;
+          instance->internal_card_id = iVar5;
+          instance->backup_internal_card_id = (uint16_t)iVar5;
           add_a_subtype_permanently(player, card, player, card, SUBTYPE_AURA_CREATURE);
         }
       }
@@ -6194,23 +6188,22 @@ int new_creature_with_targeted_bestow(int player, int card, event_t event, targe
   {
     if (event != EVENT_RESOLVE_SPELL)
       goto LAB_02630ad4;
-    if (pcVar3->number_of_targets != '\0')
+    if (instance->number_of_targets != '\0')
     {
-      iVar5 = valid_target(td);
-      if (iVar5 == 0)
+      if (valid_target(td) == 0)
       {
-        iVar5 = pcVar3->targets[0xd].card;
+        iVar5 = instance->targets[0xd].card;
         if (iVar5 != -1)
         {
-          pcVar3->targets[0xd].player = iVar5;
-          pcVar3->internal_card_id = iVar5;
-          pcVar3->backup_internal_card_id = (uint16_t)iVar5;
+          instance->targets[0xd].player = iVar5;
+          instance->internal_card_id = iVar5;
+          instance->backup_internal_card_id = (uint16_t)iVar5;
         }
       }
       else
       {
-        pcVar3->damage_target_player = (int8_t)pcVar3->targets[0].player;
-        pcVar3->damage_target_card = pcVar3->targets[0].card;
+        instance->damage_target_player = (int8_t)instance->targets[0].player;
+        instance->damage_target_card = instance->targets[0].card;
       }
     }
   }
@@ -6220,24 +6213,24 @@ int new_creature_with_targeted_bestow(int player, int card, event_t event, targe
   }
 LAB_02630adf:
   pcVar4 = in_play(player, card);
-  if ((pcVar4 != NULL) && (-1 < pcVar3->damage_target_player))
+  if ((pcVar4 != NULL) && (-1 < instance->damage_target_player))
   {
-    modify_pt_and_abilities((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event,
+    modify_pt_and_abilities((int)instance->damage_target_player, instance->damage_target_card, event,
                             pow, tou, key);
-    special_abilities((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event, s_key,
+    special_abilities((int)instance->damage_target_player, instance->damage_target_card, event, s_key,
                       player, card);
-    other_leaves_play(player, card, (int)pcVar3->damage_target_player,
-                           pcVar3->damage_target_card, event, 0, 0);
-    if ((event == EVENT_LEAVES_PLAY_ABILITY) && (pcVar3->info_slot == 0x42))
+    other_leaves_play(player, card, (int)instance->damage_target_player,
+                           instance->damage_target_card, event, 0, 0);
+    if ((event == EVENT_LEAVES_PLAY_ABILITY) && (instance->info_slot == 0x42))
     {
-      iVar5 = pcVar3->targets[0xd].card;
-      pcVar3->info_slot = 2;
-      pcVar3->damage_target_card = -1;
-      pcVar3->damage_target_player = -1;
+      iVar5 = instance->targets[0xd].card;
+      instance->info_slot = 2;
+      instance->damage_target_card = -1;
+      instance->damage_target_player = -1;
       if (iVar5 != -1)
       {
-        pcVar3->internal_card_id = iVar5;
-        pcVar3->backup_internal_card_id = (uint16_t)iVar5;
+        instance->internal_card_id = iVar5;
+        instance->backup_internal_card_id = (uint16_t)iVar5;
       }
     }
   }

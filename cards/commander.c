@@ -339,17 +339,15 @@ int card_crescendo_of_war(int player, int card, event_t event)
     if (result == 0)
     {
       if ((affected_card_controller != player) || (current_turn == player))
-        goto LAB_023e2157;
+        return global_enchantment(player, card, event);
       instance = get_card_instance(player, affected_card);
       if (((instance->state & 8) == 0) || (instance->blocking == 0xff))
-        goto LAB_023e2157;
+        return global_enchantment(player, card, event);
     }
     result = count_counters(player, card, COUNTER_STRIFE);
     event_result = event_result + result;
   }
-LAB_023e2157:
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 int card_damia_sage_of_stone(int player, int card, event_t event ){
@@ -1236,8 +1234,7 @@ int card_sewer_nemesis(int player, int card, event_t event)
         else if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
                  (player == affected_card_controller))
         {
-          iVar3 = count_graveyard(iVar3);
-          set_characteristic_pt(iVar3);
+          set_characteristic_pt(count_graveyard(iVar3));
         }
       }
     }
@@ -1268,6 +1265,8 @@ static int effect_skullbriar_the_walking_grave(int player, int card, event_t eve
 }
 int card_skullbriar_the_walking_grave(int player, int card, event_t event)
 {
+  int p;
+  int c;
   int iVar1;
   card_instance_t *instance;
   int iVar3;
@@ -1276,21 +1275,21 @@ int card_skullbriar_the_walking_grave(int player, int card, event_t event)
   haste(player, card, event);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    iVar1 = get_owner(player, card);
-    if (0 < active_cards_count[iVar1])
+    p = get_owner(player, card);
+    if (0 < active_cards_count[p])
     {
-      iVar3 = 0;
+      c = 0;
       do
       {
-        instance = in_play(iVar1, iVar3);
+        instance = in_play(p, c);
         if (((instance != NULL) && (instance->internal_card_id == LEGACY_EFFECT_CUSTOM)) &&
             (instance->info_slot_fn == effect_skullbriar_the_walking_grave))
         {
-          copy_counters(player, card, player, card, iVar1, iVar3, 1);
-          kill_card(iVar1, iVar3, KILL_EXILE);
+          copy_counters(player, card, player, card, p, c, 1);
+          kill_card(p, c, KILL_EXILE);
         }
-        iVar3 = iVar3 + 1;
-      } while (iVar3 < active_cards_count[iVar1]);
+        c = c + 1;
+      } while (c < active_cards_count[p]);
     }
     leaves_play(player, card, EVENT_RESOLVE_SPELL, 0, 0);
   }
@@ -1319,8 +1318,7 @@ int card_skullbriar_the_walking_grave(int player, int card, event_t event)
       }
     }
   }
-  iVar1 = card_slith_predator(player, card, event);
-  return iVar1;
+  return card_slith_predator(player, card, event);
 }
 
 
@@ -1482,8 +1480,7 @@ int card_the_mimeoplasm(int player, int card, event_t event)
       if (iVar3 == -1)
         goto LAB_023e4fa8;
       hack_silent_counters = hack_silent_counters + 1;
-      iVar3 = get_base_power_iid(instance->targets[2].player, iVar3);
-      add_counters(player, card, player, card, COUNTER_P1_P1, iVar3);
+      add_counters(player, card, player, card, COUNTER_P1_P1, get_base_power_iid(instance->targets[2].player, iVar3));
       iVar3 = instance->targets[0].player;
       hack_silent_counters = hack_silent_counters + -1;
       if (iVar3 == instance->targets[2].player)
@@ -1548,8 +1545,7 @@ int card_trench_gorger(int player, int card, event_t event)
   } while ((iVar1 != 4) || (player != 1));
   iVar1 = 4;
 LAB_023e52e4:
-  iVar1 = real_set_pt(player, card, player, card, iVar1, iVar1, 8);
-  add_status(player, iVar1, 0x10000);
+  add_status(player, real_set_pt(player, card, player, card, iVar1, iVar1, 8), 0x10000);
   shuffle(player);
   return 0;
 }

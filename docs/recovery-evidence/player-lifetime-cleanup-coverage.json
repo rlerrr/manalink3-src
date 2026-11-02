@@ -1,0 +1,137 @@
+{
+  "batch": "docs/recovery-evidence/player-lifetime-cleanup.json",
+  "batch_sha256": "8e72ef5d4a9ee5f09522403a1640160c8c1d3b5d95f1f104070ad8ef92a93d95",
+  "counts": {
+    "functions": 97,
+    "source_units": 53,
+    "value_groups": 120,
+    "named_bindings": 97,
+    "identifier_occurrences": 740,
+    "removed_placeholder_declarations": 16,
+    "added_int_declarations": 81,
+    "card_handlers": 62,
+    "helpers": 35,
+    "source_lines_added": 81,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 25,
+    "changed_sections": [
+      ".rdata"
+    ],
+    "scope": "Compiler output comparison; export timestamp normalized, debug sections excluded. Source/value-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_player_lifetimes": {
+        "cleaned_definitions": 97,
+        "source_units": 53,
+        "value_groups": 120,
+        "named_bindings": 97,
+        "renamed_identifier_occurrences": 740,
+        "reused_placeholder_declarations": 16,
+        "added_int_declarations": 81,
+        "native_local_references": 106,
+        "assertion_sites": 12,
+        "scope": "Conservative reaching definitions separate nonescaping ordinary int value groups. Shared reads and read/modify/write uses merge groups; entry/uninitialized and opaque-write groups cannot acquire names. Each renamed group has a player-selection role and direct non-inline native int32 local vocabulary. Every definition has a player-valued origin and a player-argument or per-player array use supports its domain. C member names retain their separate namespace and ordinary identifiers cannot be captured. Merging the new bindings reproduces every predecessor byte. All actual expanded units match. Native optimized-variable identity and new function coverage are not claimed; no gameplay tests."
+      },
+      "prior_source_input_hashes": {
+        "previous_loop_lifetime_source_units": 87,
+        "previous_getter_source_units": 20,
+        "previous_lifetime_source_units": 77,
+        "previous_guard_source_units": 23,
+        "previous_tail_source_units": 90,
+        "previous_residual_source_units": 4,
+        "previous_direction_source_units": 31,
+        "previous_loop_source_units": 17,
+        "previous_comparison_source_units": 31,
+        "previous_comma_source_units": 61,
+        "extended_spell_source_units": 15,
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Fresh focused player-lifetime validation and exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/player-lifetimes-readers-final-c242.log",
+      "sha256": "5eaf625c4e0054babebb4d4f6f96dccac996d7b27620f0421042e2a7ab3da8f0",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/player-lifetimes-build-c241.log",
+      "log_sha256": "3699549f1092b43826df478f628a2b8b2e71a84e8e0fb532489a47cc72fa36d1",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "8a01be352ddcddab2247c86a46fa93d7c937c91146627aa5a0a94516fae11dbd",
+      "dbg_sha256": "8f01f498e186ea90349fc62b288cbefc5ffc0b9fe5d6dcb27ed7bedfc9574ea4"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/player-lifetimes-proof-before-c240.json.gz",
+      "archive_sha256": "e091640ec7b781afbafec68368de7082741e05afbc24e3531358d0e187f88910",
+      "raw_sha256": "bb1d07261760943a0eed8e06890a886117c09bc60990e699aee83daf68997aa3",
+      "verified_source_pin_successions": 53
+    },
+    "player_controls": {
+      "path": ".recovery/player-lifetime-controls-c239.json",
+      "sha256": "23bcb2c354a7d4a3d3d3f3f79f13291c8ccef1a449a99b90a84715b5b0f930b7",
+      "results": {
+        "rejected": [
+          "mixed_domain_join",
+          "address_escape",
+          "opaque_write",
+          "no_player_use"
+        ],
+        "player_toggle_preserved": true,
+        "later_helper_result_preserved": true,
+        "opponent_relative_to_player_checked": true,
+        "literal_player_not_assumed_opponent": true,
+        "exact_inverse_merge_checked": true
+      }
+    },
+    "default_regression": {
+      "path": ".recovery/player-extension-default-regression-c241.json",
+      "sha256": "febc8276e2a5a9ec3e054f2bc2c3b29bd757421b9da74ff35f066f40a6d97c9c",
+      "results": {
+        "representative_projection_checks": 24,
+        "projections_and_facts_identical": true,
+        "scope": "Representative scalar, getter/member and induction raw/expanded projections; no historical compiler/runtime replay."
+      }
+    },
+    "limits": "Player-valued origins and explicit player uses support native local vocabulary; exact optimized-variable identity is not claimed. Conservative reaching definitions exclude opaque, mixed-domain and uninitialized components and all address escapes. Exact inverse merging preserves predecessor expressions/actions. All53 actual expansions,12 ASSERT sites and106 native local references pass. Source/build/current-batch verification only; full historical artifact replay is retired. No new native coverage or gameplay tests."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/player-lifetimes-setup-c244.log",
+    "log_sha256": "8ecd8eae8adb027eb5fb8d40671791480b1ca06d93615bab22f659286e516a4a",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "csv_functions": 18725,
+    "metadata_sha256": "14cebac13de45f725450a546a6edcc8f328a5ab644336ceb7a6b50c4a9a2d565",
+    "mapping_identities_unchanged": true,
+    "only_csv_changes": "Rebuilt public COFF address annotations",
+    "changed_annotations": [],
+    "prior_csv_reconstructed_sha256": "14cebac13de45f725450a546a6edcc8f328a5ab644336ceb7a6b50c4a9a2d565"
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c244.json",
+    "sha256": "6b4da5b08767b56087671eb08067d65325620caf4c3942246892f132ee3b4195",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1026,
+      "lab_gotos": 4135,
+      "functions_with_placeholders": 2127,
+      "distinct_function_local_placeholder_spellings": 6799,
+      "placeholder_identifier_occurrences": 56079,
+      "union_keywords": 0
+    }
+  },
+  "limits": "Player-valued origins and explicit player uses support native local vocabulary; exact optimized-variable identity is not claimed. Conservative reaching definitions exclude opaque, mixed-domain and uninitialized components and all address escapes. Exact inverse merging preserves predecessor expressions/actions. All53 actual expansions,12 ASSERT sites and106 native local references pass. Source/build/current-batch verification only; full historical artifact replay is retired. No new native coverage or gameplay tests."
+}

@@ -2423,7 +2423,7 @@ then puts that card on the top or bottom. A player wins if his or her card had a
 int card_reveillark(int player, int card, event_t event)
 {
   int result;
-  int iStack_ec;
+  int i;
   test_definition_t this_test;
   leaves_play(player, card, event, 1, 1);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
@@ -2431,7 +2431,7 @@ int card_reveillark(int player, int card, event_t event)
     result = graveyard_has_shroud(player);
     if (result == 0)
     {
-      iStack_ec = 2;
+      i = 2;
       do
       {
         default_test_definition(&this_test, 2);
@@ -2442,8 +2442,8 @@ int card_reveillark(int player, int card, event_t event)
         {
           new_global_tutor(player, player, 2, 4, 0, 2, &this_test);
         }
-        iStack_ec = iStack_ec + -1;
-      } while (iStack_ec != 0);
+        i = i + -1;
+      } while (i != 0);
     }
     etb_ability(player, card, EVENT_LEAVES_PLAY_ABILITY, RESOLVE_TRIGGER_MANDATORY);
   }
@@ -2459,8 +2459,7 @@ int card_reveillark(int player, int card, event_t event)
       }
     }
   }
-  result = evoke(player, card, event, 5, 0, 0, 0, 0, 1);
-  return result;
+  return evoke(player, card, event, 5, 0, 0, 0, 0, 1);
 }
 
 int card_revive_the_fallen(int player, int card, event_t event){
@@ -3076,8 +3075,7 @@ int card_shared_animosity(int player, int card, event_t event)
       iVar1 = iVar1 + -1;
     } while (iVar1 != -1);
   }
-  iVar1 = global_enchantment(player, card, event);
-  return iVar1;
+  return global_enchantment(player, card, event);
 }
 
 int card_shinewed(int player, int card, event_t event){
@@ -3641,7 +3639,7 @@ int card_veterans_armaments(int player, int card, event_t event)
     }
     instance = is_equipping(player, card);
     if (instance == NULL)
-      goto LAB_02287bfd;
+      return basic_equipment(player, card, event, 2);
     instance = get_card_instance(player, card);
     store_attackers(player, card, EVENT_ACTIVATE, 0, (int)instance->damage_target_player,
                     instance->damage_target_card, NULL);
@@ -3649,17 +3647,17 @@ int card_veterans_armaments(int player, int card, event_t event)
   LAB_02287bdc:
     result = blocking((int)instance->damage_target_player, instance->damage_target_card, event);
     if (result == 0)
-      goto LAB_02287bfd;
+      return basic_equipment(player, card, event, 2);
     result = is_humiliated((int)instance->damage_target_player,
                                        instance->damage_target_card, AL_TRIG);
     if (result != 0)
-      goto LAB_02287bfd;
+      return basic_equipment(player, card, event, 2);
   }
   else
   {
     instance = is_equipping(player, card);
     if (instance == NULL)
-      goto LAB_02287bfd;
+      return basic_equipment(player, card, event, 2);
     instance = get_card_instance(player, card);
     store_attackers(player, card, event, 0, (int)instance->damage_target_player,
                     instance->damage_target_card, NULL);
@@ -3670,9 +3668,7 @@ int card_veterans_armaments(int player, int card, event_t event)
   result = count_attackers(player);
   pump_until_eot((int)instance->damage_target_player, instance->damage_target_card,
                  (int)instance->damage_target_player, instance->damage_target_card, result, result);
-LAB_02287bfd:
-  result = basic_equipment(player, card, event, 2);
-  return result;
+  return basic_equipment(player, card, event, 2);
 }
 
 
@@ -3781,7 +3777,7 @@ int card_burrenton_bombardier(int player, int card, event_t event)
 static int thornbite_staff_effect(int player, int card, event_t event)
 {
   int card_00;
-  card_instance_t *pcVar1;
+  card_instance_t *instance;
   int result;
   card_instance_t *pcVar3;
 
@@ -3790,16 +3786,16 @@ static int thornbite_staff_effect(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
-      pcVar1 = get_card_instance(player, card);
-      if ((-1 < pcVar1->damage_target_player) &&
-          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
            result != 0x24e9))
       {
         kill_card(player, card, KILL_EXILE);
       }
     }
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
     {
       return 0;
@@ -3811,8 +3807,8 @@ static int thornbite_staff_effect(int player, int card, event_t event)
   }
   else
   {
-    pcVar1 = get_card_instance(player, card);
-    if ((-1 < pcVar1->damage_target_player) &&
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
         (result = effect_follows_control_of_attachment(player, card, event), result != 0))
     {
       return 0;
@@ -3820,23 +3816,23 @@ static int thornbite_staff_effect(int player, int card, event_t event)
     if (event != EVENT_GRAVEYARD_FROM_PLAY)
       goto LAB_0227dd25;
 
-    pcVar1 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     pcVar3 = in_play(affected_card_controller, affected_card);
     if ((pcVar3 != NULL) &&
         (result = is_this_dying(affected_card_controller, affected_card), result != 0))
     {
 
-      if ((pcVar1->damage_target_card == affected_card) &&
-          (pcVar1->damage_target_player == affected_card_controller))
+      if ((instance->damage_target_card == affected_card) &&
+          (instance->damage_target_player == affected_card_controller))
       {
-        pcVar1->damage_target_card = -1;
-        pcVar1->damage_target_player = -1;
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
         remove_status(player, card, 0x10000);
-        if (pcVar1->targets[0xb].player < 0)
+        if (instance->targets[0xb].player < 0)
         {
-          pcVar1->targets[0xb].player = 0;
+          instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
       }
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }
@@ -3851,10 +3847,10 @@ static int thornbite_staff_effect(int player, int card, event_t event)
   if (result == 0)
   {
 
-    pcVar1 = get_card_instance(player, card);
-    pcVar1 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
-    result = pcVar1->targets[0].player;
-    card_00 = pcVar1->targets[0].card;
+    instance = get_card_instance(player, card);
+    instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+    result = instance->targets[0].player;
+    card_00 = instance->targets[0].card;
     if ((-1 < result) && (-1 < card_00))
     {
       untap_card(result, card_00);

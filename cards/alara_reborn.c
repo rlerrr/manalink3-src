@@ -3126,12 +3126,10 @@ static int sen_triplets_effect(int player, int card, event_t event)
         if (instance != NULL)
         {
 
-          iVar2 = get_id(iVar5, iVar1);
-          iVar2 = can_legally_play_csvid_now(player, iVar2, EVENT_CAN_ACTIVATE);
+          iVar2 = can_legally_play_csvid_now(player, get_id(iVar5, iVar1), EVENT_CAN_ACTIVATE);
           if (iVar2 != 0)
           {
-            iVar4 = get_original_internal_card_id(iVar5, iVar1);
-            iVar4 = has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, iVar4);
+            iVar4 = has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, get_original_internal_card_id(iVar5, iVar1));
             if (((iVar4 != 0) && (iStack_ec = iVar2, iVar2 == 99)) &&
                 ((iVar2 = is_what(iVar5, iVar1, 0x20),
                   iVar2 != 0 || (iVar2 = is_what(iVar5, iVar1, 0x22), iVar2 != 0))))
@@ -3159,8 +3157,7 @@ static int sen_triplets_effect(int player, int card, event_t event)
           iVar2 != 0 || (iVar2 = can_sorcery_be_played(player, EVENT_ACTIVATE), iVar2 != 0))))
     {
       iVar2 = get_id(iVar5, iVar1);
-      iVar2 = has_mana_to_cast_id(player, EVENT_ACTIVATE, iVar2);
-      if (iVar2 != 0)
+      if (has_mana_to_cast_id(player, EVENT_ACTIVATE, iVar2) != 0)
       {
         iVar2 = get_id(iVar5, iVar1);
         charge_mana_from_id(player, -1, EVENT_ACTIVATE, iVar2);
@@ -3232,6 +3229,7 @@ void multicascade(int player, int card, event_t event, int amount);
 /* ManalinkEh 2022: 0x22fa680; original cards/alara_reborn.c:4. */
 void do_multicascade(int player, int card, int override, int amount)
 {
+  int count;
   unsigned short uVar1;
   int *piVar2;
   card_instance_t *instance;
@@ -3242,7 +3240,7 @@ void do_multicascade(int player, int card, int override, int amount)
   int *piVar8;
   int iVar9;
   int *piVar10;
-  int iStack_bd8;
+  int i;
   int iStack_bd4;
   int iStack_bd0;
   int iStack_bcc;
@@ -3254,7 +3252,7 @@ void do_multicascade(int player, int card, int override, int amount)
     iStack_bd0 = override;
   }
   piVar2 = deck_ptr[player];
-  iStack_bd8 = 0;
+  i = 0;
   if (0 < amount)
   {
     do
@@ -3377,8 +3375,7 @@ void do_multicascade(int player, int card, int override, int amount)
 
         uVar1 = cards_data[iVar4].id;
         scnprintf(buffer, 1000, " Play %s\n Do not play", cards_ptr[uVar1]->name);
-        iVar4 = do_dialog(player, player, card, -1, -1, buffer, 0);
-        if (iVar4 == 0)
+        if (do_dialog(player, player, card, -1, -1, buffer, 0) == 0)
         {
           iVar9 = iVar9 + -1;
           play_card_in_exile_for_free(player, player, (unsigned int)uVar1);
@@ -3389,13 +3386,13 @@ void do_multicascade(int player, int card, int override, int amount)
       if (iVar9 != 0)
         goto LAB_022fa9bf;
     LAB_022fa7c4:
-      iStack_bd8 = iStack_bd8 + 1;
-    } while (amount != iStack_bd8);
+      i = i + 1;
+    } while (amount != i);
   }
   piVar2 = graveyard_ptr_mutable[player];
-  iVar4 = count_graveyard(player);
-  iVar9 = iVar4 + -1;
-  if (-1 < iVar4 + -1)
+  count = count_graveyard(player);
+  iVar9 = count + -1;
+  if (-1 < count + -1)
   {
     do
     {

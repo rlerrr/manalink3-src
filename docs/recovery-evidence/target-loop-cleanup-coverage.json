@@ -1,0 +1,138 @@
+{
+  "batch": "docs/recovery-evidence/target-loop-cleanup.json",
+  "batch_sha256": "d744c3f6b5537b82ffccd654e12cd38c11354bfea8d8e12bd210b503336bb1b5",
+  "counts": {
+    "functions": 24,
+    "source_units": 17,
+    "structured_loops": 24,
+    "removed_gotos": 24,
+    "removed_labels": 23,
+    "source_lines_removed": 47,
+    "raw_cfg_state_pairs": 1051,
+    "expanded_cfg_state_pairs": 1051,
+    "pending": 0,
+    "card_handlers": 21,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 4,
+    "changed_sections": [
+      ".CRT",
+      ".data",
+      ".rdata",
+      ".reloc",
+      ".text",
+      ".text.startup",
+      ".text.startup._GLOBAL__sub_I__ZN9__gnu_cxx9__freeresEv",
+      ".text.startup._GLOBAL__sub_I___cxa_get_globals_fast",
+      ".text.unlikely",
+      ".text.unlikely._ZSt16__throw_bad_castv",
+      ".text.unlikely._ZSt17__throw_bad_allocv",
+      ".text.unlikely._ZSt18__throw_bad_typeidv",
+      ".text.unlikely._ZSt19__throw_logic_errorPKc",
+      ".text.unlikely._ZSt19__throw_range_errorPKc",
+      ".text.unlikely._ZSt20__throw_domain_errorPKc",
+      ".text.unlikely._ZSt20__throw_length_errorPKc",
+      ".text.unlikely._ZSt20__throw_out_of_rangePKc",
+      ".text.unlikely._ZSt21__throw_bad_exceptionv",
+      ".text.unlikely._ZSt21__throw_runtime_errorPKc",
+      ".text.unlikely._ZSt22__throw_overflow_errorPKc",
+      ".text.unlikely._ZSt23__throw_underflow_errorPKc",
+      ".text.unlikely._ZSt24__throw_invalid_argumentPKc"
+    ],
+    "scope": "Recorded compiler-output comparison only; source/control-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_target_loops": {
+        "cleaned_definitions": 24,
+        "source_units": 17,
+        "structured_loops": 24,
+        "removed_lab_gotos": 24,
+        "removed_lab_labels": 23,
+        "raw_cfg_state_pairs": 1051,
+        "expanded_cfg_state_pairs": 1051,
+        "replayed_integer_bound_assertions": 24,
+        "assertion_sites": 12,
+        "pending_candidates": 0,
+        "scope": "Nested retry loops become skip/continue branches of the same outer do/while. Complete raw and expanded statement CFGs are bisimilar after integer bound complementation and silent jumps; counters are private ordinary ints, bounds are readonly expressions, and valid payloads/counter updates remain in place. GCC proves actual integer operand types and complete actual units match their projections. No fixed-bound or helper-purity assumption, new native coverage, whole-DLL identity or gameplay claim."
+      },
+      "prior_source_input_hashes": {
+        "previous_comparison_source_units": 31,
+        "previous_comma_source_units": 61,
+        "extended_spell_source_units": 15,
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Current comma-call validation and exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/target-loops-readers-c171.log",
+      "sha256": "f536a5c4496985cdd60034ff6420e5440d1299e85a138e5f259229921700d71b",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/target-loops-build-c170.log",
+      "log_sha256": "3305a0a709cca6e709a4fb79e438c6494ee8971af84f5ca2f0a934f84cfd1b3f",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "96396b0c10c55fcaba857f8668896095b01e51985868a5fc34b6c749f947329a",
+      "dbg_sha256": "99994f2d4eff2e501eb545dac5572751c59789d381e8ec72ad1d8e1b9e150587"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/target-loops-proof-before-c169.json.gz",
+      "archive_sha256": "bba6574369adb3fc031025d998759155ccc60007962ffd0251a8aafc10b30cbe",
+      "raw_sha256": "f96641824132af544be1213f46fbd76c5f468cc994ddc12bbabe577d642ff45a",
+      "verified_source_pin_successions": 17
+    },
+    "negative_controls": {
+      "path": ".recovery/target-loop-negative-c166.json",
+      "sha256": "9d4ac4206424026f2b4b3f2de8f4ba6efb6b07b887b0137e601d091805c583b0",
+      "results": {
+        "rejected": [
+          "break_instead_of_continue",
+          "drop_counter_increment",
+          "different_valid_action",
+          "wrong_loop_bound"
+        ],
+        "scope": "In-memory negative controls for complete-function action/branch comparison; production C source untouched."
+      }
+    },
+    "limits": "Preserves the accepted reconstruction. Full raw and expanded statement CFG bisimulations each cover1051 state pairs. Actual GCC assertions prove integer bound operands; complete17 actual units match their projections, including checked ASSERT diagnostic lines. Build and predecessor input compatibility pass. Compiler output changes; no byte matching, new native coverage, full historical semantic replay or gameplay tests."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/target-loops-setup-c173.log",
+    "log_sha256": "385bb1eca10451de1fa9457914ce60971d107bb15284c0503d566838502130dc",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "metadata_sha256": "143739317a2445c100bf30a0e5b72cface06c0a9c71d79c1ddc1c97ccab7857a",
+    "csv_functions": 18725,
+    "metadata_identical": false,
+    "other_mapping_fields_unchanged": true,
+    "changed_rebuilt_coff_annotations_vs_index": 14,
+    "comparison_input": "Git index functions.csv; index untouched"
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c173.json",
+    "sha256": "1e7abcd503dc4f7172682750062cb4e91844544dad5a88fcc9a2e941bca5498e",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1246,
+      "lab_gotos": 5061,
+      "functions_with_placeholders": 2129,
+      "distinct_function_local_placeholder_spellings": 6879,
+      "placeholder_identifier_occurrences": 61116,
+      "union_keywords": 0
+    }
+  },
+  "limits": "Preserves the accepted reconstruction. Full raw and expanded statement CFG bisimulations each cover1051 state pairs. Actual GCC assertions prove integer bound operands; complete17 actual units match their projections, including checked ASSERT diagnostic lines. Build and predecessor input compatibility pass. Compiler output changes; no byte matching, new native coverage, full historical semantic replay or gameplay tests."
+}

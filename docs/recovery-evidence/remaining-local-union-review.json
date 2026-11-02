@@ -1,0 +1,930 @@
+{
+  "current_dbg_sha256": "7d21e91a6bfee1ef7acc6121848885a0660d6676c33b9a63e80244b1cd843c4f",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "current_union_declarations": 34,
+  "genuine_native_union_declarations": 2,
+  "synthetic_union_declarations": 32,
+  "synthetic_union_owners": 30,
+  "genuine_native_rows": [
+    {
+      "source": "functions/windows.c",
+      "name": "time_in_ms",
+      "variable": "ticks",
+      "variable_die": "0x5ddd673",
+      "owner_die": "0x5ddd639",
+      "bytes": 8,
+      "members": [
+        {
+          "name": null,
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "u",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "QuadPart",
+          "kind": "DW_TAG_base_type",
+          "bytes": 8
+        }
+      ]
+    },
+    {
+      "source": "functions/windows.c",
+      "name": "time_in_ms",
+      "variable": "frequency",
+      "variable_die": "0x5ddd685",
+      "owner_die": "0x5ddd639",
+      "bytes": 8,
+      "members": [
+        {
+          "name": null,
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "u",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "QuadPart",
+          "kind": "DW_TAG_base_type",
+          "bytes": 8
+        }
+      ]
+    }
+  ],
+  "remaining_synthetic_rows": [
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_rhonas_the_indomitable",
+      "variable": "recovered_stack_td",
+      "variable_die": "0x30e378",
+      "owner_die": "0x30e2b4",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/battlebond.c",
+      "name": "card_najeela_the_blade_blossom",
+      "variable": "recovered_stack_test",
+      "variable_die": "0x859262",
+      "owner_die": "0x859171",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "token",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 76
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "name": "card_arahbo_roar_of_the_world",
+      "variable": "recovered_stack_td",
+      "variable_die": "0xf1a902",
+      "owner_die": "0xf1a80d",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "name": "card_edgar_markov",
+      "variable": "recovered_stack_test",
+      "variable_die": "0xf1b14d",
+      "owner_die": "0xf1b0c0",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "token",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 76
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_2018.c",
+      "name": "card_varina_lich_queen",
+      "variable": "recovered_stack_test",
+      "variable_die": "0xf2b129",
+      "owner_die": "0xf2b05c",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "token",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 76
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_plague_reaver",
+      "variable": "recovered_stack_td",
+      "variable_die": "0xffc6ff",
+      "owner_die": "0xffc5ee",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/dissension.c",
+      "name": "card_rise_fall",
+      "variable": "recovered_stack_td2_1",
+      "variable_die": "0x147a3e6",
+      "owner_die": "0x147a2b0",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/dissension.c",
+      "name": "card_pure_simple",
+      "variable": "recovered_stack_td_1",
+      "variable_die": "0x1481305",
+      "owner_die": "0x1481213",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/dissension.c",
+      "name": "card_hide_seek",
+      "variable": "recovered_stack_td2_1",
+      "variable_die": "0x14863fc",
+      "owner_die": "0x1486274",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_torgaar_famine_incarnate",
+      "variable": "recovered_stack_td",
+      "variable_die": "0x14a39ad",
+      "owner_die": "0x14a38ac",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/dragons_maze.c",
+      "name": "card_turn_burn",
+      "variable": "recovered_stack_td2_1",
+      "variable_die": "0x1566d73",
+      "owner_die": "0x1566c59",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/dragons_maze.c",
+      "name": "card_flesh_blood",
+      "variable": "recovered_stack_td3",
+      "variable_die": "0x15685e0",
+      "owner_die": "0x1568499",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/dragons_maze.c",
+      "name": "card_down_dirty",
+      "variable": "recovered_stack_td",
+      "variable_die": "0x1569122",
+      "owner_die": "0x1568ffa",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/dragons_maze.c",
+      "name": "card_breaking_entering",
+      "variable": "recovered_stack_td_1",
+      "variable_die": "0x1569ab8",
+      "owner_die": "0x1569977",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/ikoria.c",
+      "name": "card_zirda_the_dawnwaker",
+      "variable": "recovered_stack_td",
+      "variable_die": "0x1fc6210",
+      "owner_die": "0x1fc610d",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/m20.c",
+      "name": "card_kykar_winds_fury",
+      "variable": "recovered_stack_token",
+      "variable_die": "0x2b9422e",
+      "owner_die": "0x2b94188",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "token",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 76
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/mirrodin.c",
+      "name": "card_glissa_sunseeker",
+      "variable": "recovered_stack_td",
+      "variable_die": "0x2df92bb",
+      "owner_die": "0x2df91b5",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_dermotaxi",
+      "variable": "recovered_stack_td",
+      "variable_die": "0x2efa65b",
+      "owner_die": "0x2efa493",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_junk_winder",
+      "variable": "recovered_stack_test",
+      "variable_die": "0x2efcaff",
+      "owner_die": "0x2efca46",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_breyas_apprentice",
+      "variable": "recovered_stack_test",
+      "variable_die": "0x2f094c8",
+      "owner_die": "0x2f093a8",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "token",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 76
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/planar_chaos.c",
+      "name": "card_boom_bust",
+      "variable": "recovered_stack_td2_1",
+      "variable_die": "0x354ba62",
+      "owner_die": "0x354b923",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_noxious_field",
+      "variable": "recovered_stack_td",
+      "variable_die": "0x390219f",
+      "owner_die": "0x39020cf",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "card_biomancers_familiar",
+      "variable": "recovered_stack_td",
+      "variable_die": "0x39f306c",
+      "owner_die": "0x39f2fab",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_forerunner_of_the_legion",
+      "variable": "recovered_stack_test",
+      "variable_die": "0x3b9c09d",
+      "owner_die": "0x3b9bfd7",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_awaken_the_blood_avatar",
+      "variable": "recovered_stack_test",
+      "variable_die": "0x407ca6d",
+      "owner_die": "0x407c93f",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "token",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 76
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_ashiok_nightmare_muse",
+      "variable": "recovered_stack_token",
+      "variable_die": "0x43c2e8f",
+      "owner_die": "0x43c2d34",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "token",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 76
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_kiora_behemoth_beckoner",
+      "variable": "recovered_stack_td",
+      "variable_die": "0x4c4acec",
+      "owner_die": "0x4c4ac27",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 216
+        }
+      ]
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_jace_mirror_mage",
+      "variable": "recovered_stack_td",
+      "variable_die": "0x4eadee1",
+      "owner_die": "0x4eade23",
+      "bytes": 84,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "token",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 76
+        },
+        {
+          "name": "bytes",
+          "kind": "DW_TAG_array_type",
+          "bytes": 84
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "granted_generic_activated_ability",
+      "variable": "storage",
+      "variable_die": "0x56df212",
+      "owner_die": "0x56def6a",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "selected",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "generic_spell",
+      "variable": "pcStack_fc",
+      "variable_die": "0x56e2448",
+      "owner_die": "0x56e20ba",
+      "bytes": 4,
+      "members": [
+        {
+          "name": "instance",
+          "kind": "DW_TAG_pointer_type",
+          "bytes": 4
+        },
+        {
+          "name": "number",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "bits",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "low",
+          "kind": "DW_TAG_base_type",
+          "bytes": 1
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "generic_spell",
+      "variable": "pcStack_f8",
+      "variable_die": "0x56e2464",
+      "owner_die": "0x56e20ba",
+      "bytes": 4,
+      "members": [
+        {
+          "name": "instance",
+          "kind": "DW_TAG_pointer_type",
+          "bytes": 4
+        },
+        {
+          "name": "number",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "bits",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "low",
+          "kind": "DW_TAG_base_type",
+          "bytes": 1
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "generic_spell",
+      "variable": "pcStack_f4",
+      "variable_die": "0x56e2480",
+      "owner_die": "0x56e20ba",
+      "bytes": 4,
+      "members": [
+        {
+          "name": "instance",
+          "kind": "DW_TAG_pointer_type",
+          "bytes": 4
+        },
+        {
+          "name": "number",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "bits",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "low",
+          "kind": "DW_TAG_base_type",
+          "bytes": 1
+        }
+      ]
+    }
+  ],
+  "native_union_rows": [
+    {
+      "source": "functions/windows.c",
+      "name": "time_in_ms",
+      "variable": "ticks",
+      "variable_die": "0x5ef19ef",
+      "owner_die": "0x5ef19cd",
+      "bytes": 8,
+      "members": [
+        {
+          "name": null,
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "u",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "QuadPart",
+          "kind": "DW_TAG_base_type",
+          "bytes": 8
+        }
+      ]
+    },
+    {
+      "source": "functions/windows.c",
+      "name": "time_in_ms",
+      "variable": "frequency",
+      "variable_die": "0x5ef1a01",
+      "owner_die": "0x5ef19cd",
+      "bytes": 8,
+      "members": [
+        {
+          "name": null,
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "u",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "QuadPart",
+          "kind": "DW_TAG_base_type",
+          "bytes": 8
+        }
+      ]
+    }
+  ],
+  "scope": "All concrete top-level function owners in cards/ and functions/ CUs, traversing named local variables including nested inline scopes. Unions reached through pointer/structure members are not counted as union-valued locals. No syntax prefilter; genuine union roles still require review. Native/source owner names and compiler clones may differ. The two timer unions are the native Win32 LARGE_INTEGER locals ticks and frequency. Their native/current member geometry agrees. The other32 are the remaining synthetic source-model union locals in these CUs. This does not cover union members inside other records or unbuilt source configurations."
+}

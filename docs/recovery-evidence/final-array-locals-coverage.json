@@ -1,0 +1,60 @@
+{
+  "recovery": {
+    "recovered_helper_definitions": 7,
+    "source_units": 5,
+    "reviewed_native_fixed_arrays": 19,
+    "reviewed_native_filter_scopes": 7,
+    "restored_array_name_flags": 15,
+    "removed_shared_storage_typedefs": 6,
+    "sacrifice_parameter_stores": 9,
+    "sacrifice_parameter_bits": 208,
+    "changed_linker_objects": 5,
+    "unchanged_linker_objects": 161,
+    "scope": "Restore all15 remaining array-name discovery flags across seven original helpers in five source units. Actual100/200/208-byte prompts and diagnostics and60 target pairs replace merged unions/test-message aliases. Separate native filter and target declarations retain their proper typed fields; six unused storage typedefs andtwo obsolete assertions are removed. Native array dimensions/element widths, scoped formatter/consumer frame operands, filter scalar events and readonly switch guards are recorded. All formats, diagnostic source-line constants, conditions, costs, flags, callback operands, capacity limits and control-flow destinations are preserved by exact source replay. The two pre-existing enclosing-scope filter records in each specialized activation helper remain enclosing-scope records because their test pointer is consumed after type selection; optimized native initializer windows alone do not uniquely establish their C lifetime. The generic-spell four-byte reused-word model and existing extra two-word temporary are outside this array queue. This does not establish arbitrary index bounds, aliases, every dynamic value, complete function behavior or gameplay. Physical frame-operand observations do not uniquely attribute reused slots to one variable, and optimized private callees can use register parameters. The selector error buffer formatter-source reload remains unknown to the call-memory model and is not credited as proven. The sacrifice chooser additionally retains an exhaustive bit-slice check of allnine filter stores/all208 incoming parameter bits."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 16189,
+    "exit_code": 0,
+    "terminal_chunk_id": "eba4d0",
+    "setup_log": ".recovery/final-array-locals-setup-c74.log",
+    "setup_log_sha256": "5a6233772be869a86d2780a2cdf894e6719529d1f1b84c2a98fe119c11965647",
+    "build_session_id": 24873,
+    "build_exit_code": 0,
+    "build_terminal_chunk_id": "27926f",
+    "build_log": ".recovery/final-array-locals-build-c73.log",
+    "build_log_sha256": "7f5b08cffc4d2b6335bebf317e1d39b11b561c43babeaca0af145b8c1d76050b",
+    "focused_session_id": 70412,
+    "focused_exit_code": 0,
+    "focused_terminal_chunk_id": "365afb",
+    "focused_log": ".recovery/final-array-locals-focused-c73.log",
+    "focused_log_sha256": "46913eef39b8a47f37a84e4b916217adaf27b20d65b46fdfff1cea6e7b31df70",
+    "prior_session_id": 12435,
+    "prior_exit_code": 0,
+    "prior_terminal_chunk_id": "8bd7da",
+    "historical_union_successor_session_id": 35582,
+    "historical_union_successor_exit_code": 0,
+    "historical_union_successor_terminal_chunk_id": "006171",
+    "superseded_setup_log": ".recovery/final-array-locals-setup-c73.log",
+    "superseded_setup_result": "Failed old shared-union expectation; current typed successor now checked explicitly, historical snapshots unchanged."
+  },
+  "refreshed_array_discovery": {
+    "path": ".recovery/remaining-array-geometry-c74.json",
+    "sha256": "f0e9a6a771a340857e0f6339467443b02a1d94db089e03c4234bafd099334b92",
+    "counts": {
+      "restored_direct_array": 20
+    },
+    "remaining_flags": 0
+  },
+  "limits": "Named-array queue completion is limited to these 20 earlier discovery flags. Physical stack operands do not uniquely identify optimized source variables; private callees can use register arguments. The select_target_impl error-buffer sprintf source reload is unknown in the conservative call-memory model and is uncredited. Other indirect/indexed values, full input provenance, all lifetimes, existing native capacity bugs and complete gameplay remain separate. No fresh whole-DLL comparison score.",
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "a6f899e2052757e76ffdcf973367cacb53916d6d6db55fd1adfda7a3e8a8bfe3",
+    "docs/recovery-evidence/final-array-locals-recovery.json": "5de7a0815399e985e9b74cd205c6f027f6ed6d4e34fd98185a8023b39718eda2",
+    "tools/recovery/final_array_locals_source.py": "83c02456efb323c214c9552041668e43f2e5f8a94b6bb153003e65812846cc11",
+    "tools/recovery/final_array_locals_analysis.py": "bc7f7b4528d5f0637e408fa0d072bb781e52dc930ddf4eb05d4da7e3c1450cd9",
+    "tools/recovery/bounded_switch_analysis.py": "bf01335f3018d24522707902ca0703bfc3bd27fd9da96db320366ab0ea7c264d",
+    "tools/recovery/verify_final_array_locals_recovery.py": "762f5f6ba62b7296fe56e348eed2dceb47c86038f80d157fdfebc1945a0dc666",
+    "ManalinkEh.dll": "c8254f98b802559cc36b20526bd69896406fac06917dfc4ca4e0214cf2604b8d",
+    "ManalinkEh.dbg": "65ae66813c7ba04d86c0bb6656e4909b90f1840f3b58a620fa9f59c71c3a850c"
+  }
+}

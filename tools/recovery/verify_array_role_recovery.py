@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image
 from array_role_analysis import snapshots
 from verify_wide_stack_test_recovery import symbol_at
@@ -98,7 +99,7 @@ def verify(proof,image,root=ROOT):
         assert replay(row['before_definition'],row['changes'])==row['after_definition']
         assert sha(row['before_definition'].encode())==row['before_sha256']
         text=read(root/row['source']);a,b=span(text,row['name'])
-        assert text[a:b]==row['after_definition'] and sha(text[a:b].encode())==row['after_sha256']
+        assert source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['after_sha256']) and sha(row['after_definition'].encode())==row['after_sha256']
         assert '(test_definition_t *)' not in row['after_definition']
         edits=[e for e in proof['source_edits'] if e.get('native_array_role_extension')==path and e['source']==row['source'] and e['before_sha256']==row['before_sha256']]
         assert len(edits)==1 and edits[0]['after_sha256']==row['after_sha256']

@@ -1,0 +1,223 @@
+{
+  "batch": "docs/recovery-evidence/scalar-lifetime-cleanup.json",
+  "batch_sha256": "52ec4b2f9d4d8d4ed94bbb9721b13fa91af10d9564908a08d15d502b3709f7fc",
+  "counts": {
+    "functions": 233,
+    "source_units": 77,
+    "value_groups": 248,
+    "named_bindings": 240,
+    "identifier_occurrences": 926,
+    "removed_placeholder_declarations": 1,
+    "added_int_declarations": 239,
+    "card_handlers": 201,
+    "helpers": 32,
+    "source_lines_added": 239,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 4,
+    "changed_sections": [
+      ".CRT",
+      ".data",
+      ".rdata",
+      ".reloc",
+      ".text",
+      ".text.startup",
+      ".text.startup._GLOBAL__sub_I__ZN9__gnu_cxx9__freeresEv",
+      ".text.startup._GLOBAL__sub_I___cxa_get_globals_fast",
+      ".text.unlikely",
+      ".text.unlikely._ZSt16__throw_bad_castv",
+      ".text.unlikely._ZSt17__throw_bad_allocv",
+      ".text.unlikely._ZSt18__throw_bad_typeidv",
+      ".text.unlikely._ZSt19__throw_logic_errorPKc",
+      ".text.unlikely._ZSt19__throw_range_errorPKc",
+      ".text.unlikely._ZSt20__throw_domain_errorPKc",
+      ".text.unlikely._ZSt20__throw_length_errorPKc",
+      ".text.unlikely._ZSt20__throw_out_of_rangePKc",
+      ".text.unlikely._ZSt21__throw_bad_exceptionv",
+      ".text.unlikely._ZSt21__throw_runtime_errorPKc",
+      ".text.unlikely._ZSt22__throw_overflow_errorPKc",
+      ".text.unlikely._ZSt23__throw_underflow_errorPKc",
+      ".text.unlikely._ZSt24__throw_invalid_argumentPKc"
+    ],
+    "scope": "Compiler output comparison; export timestamp normalized, debug sections excluded. Source/value-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_scalar_lifetimes": {
+        "cleaned_definitions": 233,
+        "source_units": 77,
+        "value_groups": 248,
+        "named_bindings": 240,
+        "renamed_identifier_occurrences": 926,
+        "reused_placeholder_declarations": 1,
+        "added_int_declarations": 239,
+        "native_local_references": 336,
+        "assertion_sites": 30,
+        "scope": "Conservative reaching definitions separate nonescaping ordinary int value groups. Shared reads and read/modify/write uses merge groups; entry/uninitialized and opaque-write groups cannot acquire names. Each renamed group has compatible call/field roles and direct non-inline native int32 local vocabulary. Merging the new bindings reproduces every predecessor byte. All actual expanded units match. Native optimized-variable identity and new function coverage are not claimed; no gameplay tests."
+      },
+      "prior_source_input_hashes": {
+        "previous_guard_source_units": 23,
+        "previous_tail_source_units": 90,
+        "previous_residual_source_units": 4,
+        "previous_direction_source_units": 31,
+        "previous_loop_source_units": 17,
+        "previous_comparison_source_units": 31,
+        "previous_comma_source_units": 61,
+        "extended_spell_source_units": 15,
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Fresh focused scalar-lifetime validation and exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/scalar-lifetimes-readers-c216.log",
+      "sha256": "d91aeccb7ec901de7f142c1471b923ef33534f79302f607455cb8dcf90ac5aac",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/scalar-lifetimes-build-c215.log",
+      "log_sha256": "ebda1935755cb8615eb12b82473877968859adae00b272558c039a7e24c5f10c",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "3ef448131ea94fb8305f3b1f80186383a0e883366dcf1062b5cd376fa898313f",
+      "dbg_sha256": "8c0906aa59aec4e25219935d7347285b0ff30d003f60ca880a6b21708fcc8a60"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/scalar-lifetimes-proof-before-c214.json.gz",
+      "archive_sha256": "5fe5cb27a247ac2b7814828e7459c3117e9e62e6e5789c8a607bfea67ee445b7",
+      "raw_sha256": "e21d37f71766632d09c8f1143c60a0d4fea609ec6639c7e72cc287631d3926af",
+      "verified_source_pin_successions": 77
+    },
+    "limits": "Readability recovery of accepted bodies, not new function coverage. Conservative reaching-definition components preserve every old int value read and merge shared/opaque/uninitialized states. Stable call/field roles use336 direct native int32 local references; optimized variable identity is not asserted. Exact inverse merging reproduces all predecessor bytes. All77 actual expansions checked with30 ASSERT sites. Code/layout changes recorded without requiring byte matching. Prior source-reader inputs checked without old semantic replay; no gameplay tests.",
+    "lifetime_controls": {
+      "path": ".recovery/scalar-lifetime-controls-c214.json",
+      "sha256": "3d5ea6cd27ad67f6af31688c40bc8e07d7cb365b794e1b72d81385582aaa7e4c",
+      "results": {
+        "rejected": [
+          "mixed_role_phi",
+          "uninitialized_path",
+          "address_escape",
+          "opaque_conditional_write"
+        ],
+        "rhs_old_value_preserved": true,
+        "compatible_branch_values_merged": true,
+        "exact_inverse_merge_checked": true
+      }
+    }
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/scalar-lifetimes-setup-c218.log",
+    "log_sha256": "af57e7a31ee81d2a4a147a2bb398c6b1da12f1343c26a18856fee1d786466683",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "csv_functions": 18725,
+    "metadata_sha256": "14cebac13de45f725450a546a6edcc8f328a5ab644336ceb7a6b50c4a9a2d565",
+    "mapping_identities_unchanged": true,
+    "only_csv_changes": "Rebuilt public COFF address annotations",
+    "changed_annotations": [
+      {
+        "name": "target_must_be_permanent_or_suspend",
+        "native_address": "0x20e7ea0",
+        "before": "0x258e950",
+        "after": "0x258e940"
+      },
+      {
+        "name": "count_type_in_hand",
+        "native_address": "0x21d4b10",
+        "before": "0x26209f0",
+        "after": "0x26209d0"
+      },
+      {
+        "name": "locate_edh_card",
+        "native_address": "0x22c64f0",
+        "before": "0x25fd420",
+        "after": "0x25fd400"
+      },
+      {
+        "name": "breach_effect",
+        "native_address": "0x2359bb0",
+        "before": "0x2575cb0",
+        "after": "0x2575ca0"
+      },
+      {
+        "name": "find_attached_legacy_effect_not_full",
+        "native_address": "0x235b430",
+        "before": "0x25794d0",
+        "after": "0x25794c0"
+      },
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "0x26e91d0",
+        "after": "0x26e91b0"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "0x26f1640",
+        "after": "0x26f1620"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "0x26e7d50",
+        "after": "0x26e7d30"
+      },
+      {
+        "name": "new_damage_all",
+        "native_address": "0x26677f0",
+        "before": "0x26c6fe0",
+        "after": "0x26c6fc0"
+      },
+      {
+        "name": "mana_doublers",
+        "native_address": "0x266c040",
+        "before": "0x26ce1b0",
+        "after": "0x26ce190"
+      },
+      {
+        "name": "etb_ability",
+        "native_address": "0x26a5370",
+        "before": "0x26a47a0",
+        "after": "0x26a4780"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "0x26dfb00",
+        "after": "0x26dfae0"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "0x26dfad0",
+        "after": "0x26dfab0"
+      }
+    ],
+    "prior_csv_reconstructed_sha256": "6205d6b097648b46a067b25b3d61eca1d3a5e0a1c293ac24c2ca5ce76dec9f3a"
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c218.json",
+    "sha256": "90f64fd626b530e23de0ae785c59b58b95657b81cb76c64435632863c1b778ca",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1026,
+      "lab_gotos": 4135,
+      "functions_with_placeholders": 2129,
+      "distinct_function_local_placeholder_spellings": 6839,
+      "placeholder_identifier_occurrences": 60112,
+      "union_keywords": 0
+    }
+  },
+  "limits": "Readability recovery of accepted bodies, not new function coverage. Conservative reaching-definition components preserve every old int value read and merge shared/opaque/uninitialized states. Stable call/field roles use336 direct native int32 local references; optimized variable identity is not asserted. Exact inverse merging reproduces all predecessor bytes. All77 actual expansions checked with30 ASSERT sites. Code/layout changes recorded without requiring byte matching. Prior source-reader inputs checked without old semantic replay; no gameplay tests."
+}

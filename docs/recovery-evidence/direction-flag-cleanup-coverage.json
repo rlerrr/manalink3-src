@@ -1,0 +1,199 @@
+{
+  "batch": "docs/recovery-evidence/direction-flag-cleanup.json",
+  "batch_sha256": "0816a233284ec152161455b645047a1fb9a46c289a56cb0a2805fd6c49f73a89",
+  "counts": {
+    "functions": 36,
+    "source_units": 31,
+    "removed_flags": 36,
+    "folded_strides": 49,
+    "source_lines_removed": 72,
+    "pending": 0,
+    "card_handlers": 26,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 25,
+    "changed_sections": [
+      ".rdata"
+    ],
+    "scope": "Recorded compiler-output comparison only; source/control-flow proof does not require byte matching."
+  },
+  "runtime_diagnostic_review": {
+    "path": ".recovery/direction-runtime-review-c183.json",
+    "sha256": "269036c8395a900da072b63fe0b5b51a5eb80243cdb6e6b3b08c2b2d67b34a17",
+    "result": {
+      "executable_sections_byte_identical": true,
+      "other_normalized_runtime_sections_identical": 25,
+      "rdata_only_assert_line_numbers_changed": true,
+      "changed_rdata_bytes": 10,
+      "assertion_strings": 8,
+      "rows": [
+        {
+          "source": "functions/functions.c",
+          "before_line": 7171,
+          "after_line": 7169,
+          "string_rva": "0x7691a8",
+          "before_string_sha256": "3b6f2ca0195307a404dab1b6cafefb849943c291672f879ca62b24fc2f05154a",
+          "after_string_sha256": "ec012dd9b9ab2e0e18f6f6e9164e35e90737d7c3c9d006a586b111e9270aafa1",
+          "source_assertion": "ASSERT(!(mode & DDBM_MUST_DAMAGE_OPPONENT) && \"unimplemented for damage_dealt_to_me_arbitrary\");"
+        },
+        {
+          "source": "functions/functions.c",
+          "before_line": 7172,
+          "after_line": 7170,
+          "string_rva": "0x76921c",
+          "before_string_sha256": "2198e7700fd9c976861845bb7c89bc71731d4e2c9a359cbfc60619310ab82969",
+          "after_string_sha256": "4d0e958a6cd6773f1e95e0fbac026fcef870158ee489ac78d71e966078739556",
+          "source_assertion": "ASSERT(!(mode & DDBM_REPORT_DAMAGE_DEALT) && \"unimplemented for damage_dealt_to_me_arbitrary\");"
+        },
+        {
+          "source": "functions/functions.c",
+          "before_line": 7173,
+          "after_line": 7171,
+          "string_rva": "0x769290",
+          "before_string_sha256": "cc62662a851aa1f8d4ed20fbe4a4a4b6a675f93f9579231d2a637d08da61758b",
+          "after_string_sha256": "8fb141757019114483fae079c0608e688a239780a3e5511c4513f90910a6ae46",
+          "source_assertion": "ASSERT(!(mode & DDBM_MUST_DAMAGE_PLAYER) && \"unimplemented for damage_dealt_to_me_arbitrary\");"
+        },
+        {
+          "source": "functions/functions.c",
+          "before_line": 7174,
+          "after_line": 7172,
+          "string_rva": "0x769304",
+          "before_string_sha256": "63a91fd136dbab8745556243c7f419e312c32ef6bca2dc557f95c23d0973663e",
+          "after_string_sha256": "837854a6d3bb43b6d1e16f57b063234d1e89721cf5ed45822de524b4b15fe4e5",
+          "source_assertion": "ASSERT(!(mode & DDBM_MUST_DAMAGE_CREATURE) && \"unimplemented for damage_dealt_to_me_arbitrary\");"
+        },
+        {
+          "source": "functions/functions.c",
+          "before_line": 7175,
+          "after_line": 7173,
+          "string_rva": "0x769378",
+          "before_string_sha256": "4aeb2fb8cfa3d42d9a732b21ad7418dde2acf1f1ac04cd4f2ed8ff089b764366",
+          "after_string_sha256": "3d7520771328ac6fb8fc8e0081d763afc40f9d11c6f97ad750f3d29451043c97",
+          "source_assertion": "ASSERT(!(mode & DDBM_MAY_DAMAGE_PLANESWALKER) &&"
+        },
+        {
+          "source": "functions/functions.c",
+          "before_line": 7178,
+          "after_line": 7176,
+          "string_rva": "0x7693f0",
+          "before_string_sha256": "1544c18d7ba596fb6a063eec27275022b8b22bb0e1f67c4a1c261b93156659a5",
+          "after_string_sha256": "882e1c0e8ecb3d8d05438a5986bf53e2a914ca0d6081eb71349ad444bdea43a2",
+          "source_assertion": "ASSERT(!(mode & DDBM_TRACE_DAMAGED_CREATURES) &&"
+        },
+        {
+          "source": "functions/functions.c",
+          "before_line": 7180,
+          "after_line": 7178,
+          "string_rva": "0x769468",
+          "before_string_sha256": "9cef7def083998c4e9402ff3296b16eb99acaf75d72b567008ab57e9205cb413",
+          "after_string_sha256": "ef928d8c8f2b58eb200acac6554b250c1599b8e2437fb4d24455b327011b2931",
+          "source_assertion": "ASSERT(!(mode & DDBM_STORE_IN_TARGETS_9) && \"unimplemented for damage_dealt_to_me_arbitrary\");"
+        },
+        {
+          "source": "functions/functions.c",
+          "before_line": 7063,
+          "after_line": 7061,
+          "string_rva": "0x769c34",
+          "before_string_sha256": "f6f3b6a41c55226c8ea0a92e6573c463448ebee1eecab245fddfa7df62365f77",
+          "after_string_sha256": "fc3836aed5156ed331064cb6c68b314d4052dd3674859f5a109dde859fdd8118",
+          "source_assertion": "ASSERT(!(mode & DDBM_TRACE_DAMAGED_CREATURES) &&"
+        }
+      ],
+      "scope": "Both DLL snapshots are pinned. Complete raw executable sections are equal; every differing rdata byte is an ASSERT source-line digit with unchanged source assertion/message. Other normalized runtime sections are identical. Debug metadata/DLL-header identity and gameplay are not claimed."
+    }
+  },
+  "validation": {
+    "focused": {
+      "current_direction_flags": {
+        "cleaned_definitions": 36,
+        "source_units": 31,
+        "removed_direction_flags": 36,
+        "folded_stride_expressions": 49,
+        "replayed_stride_type_assertions": 49,
+        "assertion_sites": 28,
+        "pending_candidates": 0,
+        "scope": "Private ordinary integer flags are zero at function entry and referenced only by recognized stride math. Unsigned literals preserve conversions; GCC checks nonvolatile primitive flag storage, old/new expression-type identity, constant-zero values, integer/pointer bases and the32-bit model. Raw/expanded projections and complete actual units match; clear/copy loops and memory actions remain in place. No new native coverage, whole-DLL identity or gameplay claim."
+      },
+      "prior_source_input_hashes": {
+        "previous_loop_source_units": 17,
+        "previous_comparison_source_units": 31,
+        "previous_comma_source_units": 61,
+        "extended_spell_source_units": 15,
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Current direction-state validation and exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/direction-flags-readers-final-c182.log",
+      "sha256": "f52b96b24fb37a74e3d275789d432caae5163424891a581b17ee81fd1588086e",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/direction-flags-build-c181.log",
+      "log_sha256": "b2f77a64699d34c1299e9fa51e00a0203a035e4667706cf323e14cb0b25ea517",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "34b2537de7e559591d529940af93a37fde1a9d675804924106bcecd3230b4b38",
+      "dbg_sha256": "da0f4a1cff42fdb1522cc3585f3ba8eb8caed2ff6fb257b318dbd514691a789d"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/direction-flags-proof-before-c180.json.gz",
+      "archive_sha256": "1a18f876554eaad8eb85dbbd543ae39a628f1e32d85fddf25740086fe1f00ee4",
+      "raw_sha256": "e437de22917fa2484ad64ce7d8683e1c6b1c99301608640da79d31fd290b0a56",
+      "verified_source_pin_successions": 31
+    },
+    "negative_controls": {
+      "path": ".recovery/direction-flag-negative-c182.json",
+      "sha256": "674e8a62d3c397d64f52a208e940841b397e8684475d4f52f90eefc5852e2d04",
+      "results": {
+        "source": "cards/aether_revolt.c",
+        "name": "card_ironclad_revolutionary",
+        "before_definition_sha256": "e67d0dd0e1b7b8a2f88a3554bbfdf3db87bd9e55045737cb2e4e1054a28fcad3",
+        "rejected": [
+          "later_write",
+          "address_escape",
+          "volatile_flag"
+        ],
+        "scope": "Reanalyzed each mutated in-memory function independently; unsafe flag states produce no candidate. Production C source untouched."
+      }
+    },
+    "limits": "Preserves the accepted reconstruction. Private entry-zero primitive bytes, complete use coverage, actual old/new expression types, unsigned arithmetic, constant values and integer/pointer bases are checked. Complete31 actual units, build and predecessor compatibility pass. Raw executable sections are identical; all remaining runtime differences are8 checked ASSERT source-line strings. No library-call replacement, new native coverage, full historical semantic replay or gameplay tests."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/direction-flags-setup-c184.log",
+    "log_sha256": "fc1c906726d4ce53fd9150bd21d420db0c900ea38da6a853994e20e8541fb8fe",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "metadata_sha256": "143739317a2445c100bf30a0e5b72cface06c0a9c71d79c1ddc1c97ccab7857a",
+    "csv_functions": 18725,
+    "metadata_identical": true,
+    "mapping_results_identical": true
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c184.json",
+    "sha256": "357e594b75dfc3e378801a1573f57d119f5bb4c043d87fa7277196e2073d1485",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1246,
+      "lab_gotos": 5061,
+      "functions_with_placeholders": 2129,
+      "distinct_function_local_placeholder_spellings": 6843,
+      "placeholder_identifier_occurrences": 60995,
+      "union_keywords": 0
+    }
+  },
+  "followup_queue": "docs/recovery-evidence/direction-flag-followup-queue.json",
+  "limits": "Preserves the accepted reconstruction. Private entry-zero primitive bytes, complete use coverage, actual old/new expression types, unsigned arithmetic, constant values and integer/pointer bases are checked. Complete31 actual units, build and predecessor compatibility pass. Raw executable sections are identical; all remaining runtime differences are8 checked ASSERT source-line strings. No library-call replacement, new native coverage, full historical semantic replay or gameplay tests."
+}

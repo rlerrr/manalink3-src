@@ -1,0 +1,177 @@
+{
+  "current_dbg_sha256": "dce82af5197abb1ca17b3a4f0b87ea528ee6d91cc11280b0948f24a5921db34f",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "compiled_card_union_locals": 0,
+  "remaining_synthetic_helper_union_locals": 4,
+  "remaining_helper_functions": 2,
+  "synthetic_rows": [
+    {
+      "source": "functions/functions.c",
+      "name": "granted_generic_activated_ability",
+      "variable": "storage",
+      "variable_die": "0x56def21",
+      "owner_die": "0x56dec79",
+      "bytes": 216,
+      "members": [
+        {
+          "name": "target",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 84
+        },
+        {
+          "name": "test",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 216
+        },
+        {
+          "name": "selected",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "generic_spell",
+      "variable": "pcStack_fc",
+      "variable_die": "0x56e2157",
+      "owner_die": "0x56e1dc9",
+      "bytes": 4,
+      "members": [
+        {
+          "name": "instance",
+          "kind": "DW_TAG_pointer_type",
+          "bytes": 4
+        },
+        {
+          "name": "number",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "bits",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "low",
+          "kind": "DW_TAG_base_type",
+          "bytes": 1
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "generic_spell",
+      "variable": "pcStack_f8",
+      "variable_die": "0x56e2173",
+      "owner_die": "0x56e1dc9",
+      "bytes": 4,
+      "members": [
+        {
+          "name": "instance",
+          "kind": "DW_TAG_pointer_type",
+          "bytes": 4
+        },
+        {
+          "name": "number",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "bits",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "low",
+          "kind": "DW_TAG_base_type",
+          "bytes": 1
+        }
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "generic_spell",
+      "variable": "pcStack_f4",
+      "variable_die": "0x56e218f",
+      "owner_die": "0x56e1dc9",
+      "bytes": 4,
+      "members": [
+        {
+          "name": "instance",
+          "kind": "DW_TAG_pointer_type",
+          "bytes": 4
+        },
+        {
+          "name": "number",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "bits",
+          "kind": "DW_TAG_base_type",
+          "bytes": 4
+        },
+        {
+          "name": "low",
+          "kind": "DW_TAG_base_type",
+          "bytes": 1
+        }
+      ]
+    }
+  ],
+  "genuine_rows": [
+    {
+      "source": "functions/windows.c",
+      "name": "time_in_ms",
+      "variable": "ticks",
+      "variable_die": "0x5ddd382",
+      "owner_die": "0x5ddd348",
+      "bytes": 8,
+      "members": [
+        {
+          "name": null,
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "u",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "QuadPart",
+          "kind": "DW_TAG_base_type",
+          "bytes": 8
+        }
+      ]
+    },
+    {
+      "source": "functions/windows.c",
+      "name": "time_in_ms",
+      "variable": "frequency",
+      "variable_die": "0x5ddd394",
+      "owner_die": "0x5ddd348",
+      "bytes": 8,
+      "members": [
+        {
+          "name": null,
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "u",
+          "kind": "DW_TAG_structure_type",
+          "bytes": 8
+        },
+        {
+          "name": "QuadPart",
+          "kind": "DW_TAG_base_type",
+          "bytes": 8
+        }
+      ]
+    }
+  ],
+  "scope": "All concrete top-level function owners in cards/ and functions/ CUs, traversing named local variables including nested inline scopes. Unions reached through pointer/structure members are not counted as union-valued locals. No syntax prefilter; genuine union roles still require review. Native/source owner names and compiler clones may differ. The two timer LARGE_INTEGER locals are genuine native unions. The remaining synthetic unions are the granted-activation storage object and three generic-spell register-word views. No union-valued local remains in the compiled cards/ CUs; unions inside aggregate members, pointed-to types and unbuilt configurations are outside this census."
+}

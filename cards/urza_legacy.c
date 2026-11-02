@@ -50,8 +50,7 @@ int card_anthroplasm(int player, int card, event_t event)
       do
       {
         iVar1 = iVar3;
-        iVar3 = has_mana_for_activated_ability(player, card, iVar1, 0, 0, 0, 0, 0);
-        if (iVar3 == 0)
+        if (has_mana_for_activated_ability(player, card, iVar1, 0, 0, 0, 0, 0) == 0)
         {
           return iVar2;
         }
@@ -1063,6 +1062,7 @@ int card_miscalculation(int player, int card, event_t event){
 
 int card_molten_hydra(int player, int card, event_t event)
 {
+  int choice;
   card_instance_t *instance;
   int iVar2;
   int iVar3;
@@ -1076,8 +1076,7 @@ int card_molten_hydra(int player, int card, event_t event)
     {
       return 0;
     }
-    iVar2 = generic_shade(player, card, event, 0, 1, 0, 0, 0, 2, 0, 1, 1, 0, 0);
-    return iVar2;
+    return generic_shade(player, card, event, 0, 1, 0, 0, 0, 2, 0, 1, 1, 0, 0);
   }
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
@@ -1123,8 +1122,7 @@ int card_molten_hydra(int player, int card, event_t event)
     {
       return 0;
     }
-    iVar2 = valid_target(&td);
-    if (iVar2 == 0)
+    if (valid_target(&td) == 0)
     {
       return 0;
     }
@@ -1145,17 +1143,17 @@ int card_molten_hydra(int player, int card, event_t event)
   }
   uVar4 = 1;
 LAB_025b5b05:
-  iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\016",
+  choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\016",
                       "Add +1/+1 counter", iVar2, 5, "Damage target", iVar3, uVar4, 0, 0, 0, 0);
-  if (iVar2 == 0)
+  if (choice == 0)
   {
     spell_fizzled = 1;
     return 0;
   }
-  *(char *)&instance->info_slot = (char)iVar2;
-  if (iVar2 != 1)
+  *(char *)&instance->info_slot = (char)choice;
+  if (choice != 1)
   {
-    if ((iVar2 == 2) && (generic_activated_ability(player, card, EVENT_ACTIVATE, 5, 0, 0, 0, 0, 0,
+    if ((choice == 2) && (generic_activated_ability(player, card, EVENT_ACTIVATE, 5, 0, 0, 0, 0, 0,
                                                    0, 0, &td, "TARGET_ANY"),
                          spell_fizzled != 1))
     {
@@ -1165,9 +1163,7 @@ LAB_025b5b05:
     }
     return 0;
   }
-  iVar2 =
-      generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 0, 2, 0, 0, NULL, NULL);
-  return iVar2;
+  return generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 0, 2, 0, 0, NULL, NULL);
 }
 
 int card_mother_of_runes(int player, int card, event_t event){
@@ -2339,7 +2335,6 @@ static int debuff_for_T_sac(int player, int card, event_t event, int powmod, int
 /* ManalinkEh 2022: 0x25b6b40; original cards/urza_legacy.c:1488. */
 int card_phyrexian_denouncer(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t tStack_64;
   if (event == EVENT_ACTIVATE)
@@ -2353,21 +2348,19 @@ int card_phyrexian_denouncer(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &tStack_64, 2);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&tStack_64), result != 0))
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&tStack_64) != 0))
     {
       instance = get_card_instance(player, card);
       pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -1, -1);
     }
   }
-  result = generic_activated_ability(player, card, event, 0xd, 0, 0, 0, 0, 0, 0, 0, &tStack_64,
+  return generic_activated_ability(player, card, event, 0xd, 0, 0, 0, 0, 0, 0, 0, &tStack_64,
                                      "TARGET_CREATURE");
-  return result;
 }
 
 /* ManalinkEh 2022: 0x25b6b60; original cards/urza_legacy.c:1497. */
 int card_phyrexian_debaser(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t tStack_64;
   if (event == EVENT_ACTIVATE)
@@ -2381,21 +2374,19 @@ int card_phyrexian_debaser(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &tStack_64, 2);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&tStack_64), result != 0))
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&tStack_64) != 0))
     {
       instance = get_card_instance(player, card);
       pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -2, -2);
     }
   }
-  result = generic_activated_ability(player, card, event, 0xd, 0, 0, 0, 0, 0, 0, 0, &tStack_64,
+  return generic_activated_ability(player, card, event, 0xd, 0, 0, 0, 0, 0, 0, 0, &tStack_64,
                                      "TARGET_CREATURE");
-  return result;
 }
 
 /* ManalinkEh 2022: 0x25b6b80; original cards/urza_legacy.c:1507. */
 int card_phyrexian_defiler(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t tStack_64;
   if (event == EVENT_ACTIVATE)
@@ -2409,15 +2400,14 @@ int card_phyrexian_defiler(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &tStack_64, 2);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&tStack_64), result != 0))
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&tStack_64) != 0))
     {
       instance = get_card_instance(player, card);
       pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -3, -3);
     }
   }
-  result = generic_activated_ability(player, card, event, 0xd, 0, 0, 0, 0, 0, 0, 0, &tStack_64,
+  return generic_activated_ability(player, card, event, 0xd, 0, 0, 0, 0, 0, 0, 0, &tStack_64,
                                      "TARGET_CREATURE");
-  return result;
 }
 
 /* ManalinkEh 2022: 0x25b9bb0; original cards/urza_legacy.c:2547. */
@@ -2664,12 +2654,11 @@ int card_intervene(int player, int card, event_t event)
   card_instance_t *pcVar2;
   card_instance_t *pcVar3;
   int iVar4;
-  int iVar5;
+  int i;
 
   if (event != EVENT_CAN_CAST)
   {
-    iVar1 = card_counterspell(player, card, event);
-    return iVar1;
+    return card_counterspell(player, card, event);
   }
 
   iVar1 = card_counterspell(player, card, EVENT_CAN_CAST);
@@ -2677,26 +2666,26 @@ int card_intervene(int player, int card, event_t event)
   if ((0 < iVar1) && (pcVar2 = get_card_instance(card_on_stack_controller, card_on_stack),
                       pcVar2->number_of_targets != '\0'))
   {
-    iVar5 = 0;
+    i = 0;
     do
     {
-      while (((pcVar2->targets[iVar5].player == player &&
-               (iVar4 = pcVar2->targets[iVar5].card, iVar4 != -1)) &&
+      while (((pcVar2->targets[i].player == player &&
+               (iVar4 = pcVar2->targets[i].card, iVar4 != -1)) &&
               (pcVar3 = in_play(player, iVar4), pcVar3 != NULL)))
       {
-        iVar4 = is_what(pcVar2->targets[iVar5].player, pcVar2->targets[iVar5].card, 2);
+        iVar4 = is_what(pcVar2->targets[i].player, pcVar2->targets[i].card, 2);
         if (iVar4 != 0)
         {
           return iVar1;
         }
-        iVar5 = iVar5 + 1;
-        if ((int)(unsigned int)pcVar2->number_of_targets <= iVar5)
+        i = i + 1;
+        if ((int)(unsigned int)pcVar2->number_of_targets <= i)
         {
           return 0;
         }
       }
-      iVar5 = iVar5 + 1;
-    } while (iVar5 < (int)(unsigned int)pcVar2->number_of_targets);
+      i = i + 1;
+    } while (i < (int)(unsigned int)pcVar2->number_of_targets);
   }
   return 0;
 }
@@ -2704,8 +2693,8 @@ int card_intervene(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25ba340; original cards/urza_legacy.c:2727. */
 int card_parch(int player, int card, event_t event)
 {
+  int choice;
   card_instance_t *instance;
-  int iVar2;
   const char *prompt;
   int iVar3;
   target_definition_t td;
@@ -2718,13 +2707,11 @@ int card_parch(int player, int card, event_t event)
     default_target_definition(player, card, &td1, 2);
     td1.required_color = get_sleighted_color_test(player, card, 4);
     get_card_instance(player, card);
-    iVar3 = generic_spell(player, card, EVENT_CAN_CAST, 1, &td1, NULL, 1, NULL);
-    if (iVar3 != 0)
+    if (generic_spell(player, card, EVENT_CAN_CAST, 1, &td1, NULL, 1, NULL) != 0)
     {
       return 1;
     }
-    iVar3 = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
-    return iVar3;
+    return generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
   }
   if (event == EVENT_CAST_SPELL)
   {
@@ -2738,30 +2725,26 @@ int card_parch(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        iVar3 = check_special_flags2(player, card, -0x80000000);
-        if (iVar3 == 0)
+        if (check_special_flags2(player, card, -0x80000000) == 0)
         {
 
           iVar3 = can_target(&td1);
-          iVar2 = can_target(&td);
-          iVar3 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\016",
-                              "Damage any target ", iVar2, 5, "Damage blue target", iVar3, 5, 0, 0,
+          choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\016",
+                              "Damage any target ", can_target(&td), 5, "Damage blue target", iVar3, 5, 0, 0,
                               0, 0);
-          if (iVar3 == 0)
+          if (choice == 0)
           {
             spell_fizzled = 1;
             return 0;
           }
-          if (iVar3 == 1)
+          if (choice == 1)
           {
-            iVar3 = generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ANY", 1, NULL);
-            return iVar3;
+            return generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ANY", 1, NULL);
           }
-          if (iVar3 == 2)
+          if (choice == 2)
           {
             prompt = get_sleighted_color_text(player, card, "Select target %s creature.", 2);
-            iVar3 = generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td1, prompt, 1, NULL);
-            return iVar3;
+            return generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td1, prompt, 1, NULL);
           }
         }
       }
@@ -2779,8 +2762,7 @@ int card_parch(int player, int card, event_t event)
 
       if (instance->info_slot == 1)
       {
-        iVar3 = valid_target(&td);
-        if (iVar3 != 0)
+        if (valid_target(&td) != 0)
         {
           damage_target0(player, card, 2);
         }
@@ -2807,10 +2789,11 @@ int card_parch(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25b22e0; original cards/urza_legacy.c:2968. */
 static void destroy_auras_attached(int player, int card, int t_player, int t_card)
 {
+  int p;
   card_instance_t *instance;
   int iVar2;
   int iVar3;
-  int iVar4;
+  int c;
   int (*paiVar5)[151];
   int *piVar6;
   int marked[2][151];
@@ -2822,49 +2805,47 @@ static void destroy_auras_attached(int player, int card, int t_player, int t_car
     *piVar6 = 0;
     piVar6 = piVar6 + 1;
   }
-  iVar3 = 0;
+  p = 0;
   do
   {
-    if (0 < active_cards_count[iVar3])
+    if (0 < active_cards_count[p])
     {
-      iVar4 = 0;
+      c = 0;
       do
       {
-        while ((((instance = in_play(iVar3, iVar4),
-                  instance == NULL || (iVar2 = is_what(iVar3, iVar4, 4), iVar2 == 0)) ||
-                 (iVar2 = has_subtype(iVar3, iVar4, SUBTYPE_AURA), iVar2 == 0)) ||
+        if ((((instance = in_play(p, c),
+                  instance == NULL || (iVar2 = is_what(p, c, 4), iVar2 == 0)) ||
+                 (iVar2 = has_subtype(p, c, SUBTYPE_AURA), iVar2 == 0)) ||
                 ((instance->damage_target_player != t_player ||
                   (instance->damage_target_card != t_card)))))
         {
-          iVar4 = iVar4 + 1;
-          if (active_cards_count[iVar3] <= iVar4)
-            goto LAB_025b23a0;
+          c = c + 1;
+          continue;
         }
-        marked[iVar3][iVar4] = 1;
-        iVar4 = iVar4 + 1;
-      } while (iVar4 < active_cards_count[iVar3]);
+        marked[p][c] = 1;
+        c = c + 1;
+      } while (c < active_cards_count[p]);
     }
-  LAB_025b23a0:
-    iVar3 = iVar3 + 1;
-  } while (iVar3 != 2);
+    p = p + 1;
+  } while (p != 2);
   paiVar5 = marked;
   iVar3 = 0;
   do
   {
-    iVar4 = 0;
+    c = 0;
     if (0 < active_cards_count[iVar3])
     {
       do
       {
-        while (((*paiVar5)[iVar4] == 0 || (instance = in_play(iVar3, iVar4), instance == NULL)))
+        while (((*paiVar5)[c] == 0 || (instance = in_play(iVar3, c), instance == NULL)))
         {
-          iVar4 = iVar4 + 1;
-          if (active_cards_count[iVar3] <= iVar4)
+          c = c + 1;
+          if (active_cards_count[iVar3] <= c)
             goto LAB_025b2408;
         }
-        iVar2 = iVar4 + 1;
-        kill_card(iVar3, iVar4, KILL_DESTROY);
-        iVar4 = iVar2;
+        iVar2 = c + 1;
+        kill_card(iVar3, c, KILL_DESTROY);
+        c = iVar2;
       } while (iVar2 < active_cards_count[iVar3]);
     }
   LAB_025b2408:
@@ -2919,8 +2900,7 @@ int card_rivalry(int player, int card, event_t event)
       damage_player(1 - current_turn, 2, player, card);
     }
   }
-  iVar1 = global_enchantment(player, card, event);
-  return iVar1;
+  return global_enchantment(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25bb020; original cards/urza_legacy.c:3002. */
@@ -3074,7 +3054,7 @@ int card_slow_motion(int player, int card, event_t event)
             charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER,
                                         (int)instance->damage_target_player, COLOR_ANY, 2);
             if (spell_fizzled != 1)
-              goto LAB_025baad4;
+              return aura(player, card, event, NULL, NULL);
           }
         }
         kill_card((int)instance->damage_target_player, instance->damage_target_card,
@@ -3082,9 +3062,7 @@ int card_slow_motion(int player, int card, event_t event)
       }
     }
   }
-LAB_025baad4:
-  result = aura(player, card, event, NULL, NULL);
-  return result;
+  return aura(player, card, event, NULL, NULL);
 }
 
 /* ManalinkEh 2022: 0x25bac70; original cards/urza_legacy.c:2892. */
@@ -3128,8 +3106,7 @@ int card_treacherous_link(int player, int card, event_t event)
       }
     }
   }
-  result = aura(player, card, event, NULL, NULL);
-  return result;
+  return aura(player, card, event, NULL, NULL);
 }
 #endif
 

@@ -1,0 +1,405 @@
+{
+  "status": "Quarry chooser, suspend removal and counter moves reconstructed and verified.",
+  "batch": "docs/recovery-evidence/counter-tail-cleanup.json",
+  "batch_sha256": "18f4e471fe70fba157c96095ea7777040a1704494928d137df1f8d2de62c45aa",
+  "counts": {
+    "helpers": 3,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 15,
+    "removed_lab_gotos": 15,
+    "source_lines_removed": 284,
+    "removed_placeholder_occurrences": 287,
+    "removed_placeholder_names": 40
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "three_way_comparisons": 552736,
+    "entry_invocations": 1658208,
+    "helpers": 3,
+    "original_quarry_name_error_negative_control": true,
+    "human_slot_masks": 512,
+    "ai_defined_priority_domain_only": true,
+    "opaque_dialog_protocol_checked": true,
+    "stateful_random_inputs": 30000,
+    "exact_call_traces_and_full_records": true
+  },
+  "original_code_regions": [
+    {
+      "name": "quarry_hauler_helper",
+      "address": "0x26d51e0",
+      "size": 1825,
+      "sha256": "58ab2b68d3711c5e44526c2deb263e54876a8daa59a562f98a88307b7a16eccf",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26d51f9",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26d5367",
+          "target": "0x26cebf0",
+          "callee": "native_name"
+        },
+        {
+          "instruction": "0x26d55a2",
+          "target": "0x26e9c50",
+          "callee": "dialog_impl"
+        },
+        {
+          "instruction": "0x26d5652",
+          "target": "0x26e9c50",
+          "callee": "dialog_impl"
+        },
+        {
+          "instruction": "0x26d57a5",
+          "target": "0x26d48d0",
+          "callee": "native_remove"
+        },
+        {
+          "instruction": "0x26d57db",
+          "target": "0x26d4840",
+          "callee": "add_counters"
+        },
+        {
+          "instruction": "0x26d5814",
+          "target": "0x26d1950",
+          "callee": "raw_counter_value"
+        },
+        {
+          "instruction": "0x26d583e",
+          "target": "0x26d1950",
+          "callee": "raw_counter_value"
+        },
+        {
+          "instruction": "0x26d58b3",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        }
+      ]
+    },
+    {
+      "name": "remove_counters_impl",
+      "address": "0x26d48d0",
+      "size": 818,
+      "sha256": "ccfcf08c1cbdd96147e7942f7c1ddb061cfe38c75e5a194c2ee3cef584c62a19",
+      "entry_abi": "regparm(3)",
+      "external_branches": [
+        {
+          "instruction": "0x26d48eb",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26d4916",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26d4939",
+          "target": "0x26d0e90",
+          "callee": "native_core"
+        },
+        {
+          "instruction": "0x26d4957",
+          "target": "0x20eaa90",
+          "callee": "is_suspend_legacy"
+        },
+        {
+          "instruction": "0x26d49c5",
+          "target": "0x2660240",
+          "callee": "default_target_definition"
+        },
+        {
+          "instruction": "0x26d49f9",
+          "target": "0x26604c0",
+          "callee": "can_target"
+        },
+        {
+          "instruction": "0x26d4a0d",
+          "target": "0x2660d50",
+          "callee": "pick_target"
+        },
+        {
+          "instruction": "0x26d4a24",
+          "target": "0x268f1b0",
+          "callee": "lose_life"
+        },
+        {
+          "instruction": "0x26d4a37",
+          "target": "0x268f900",
+          "callee": "gain_life"
+        },
+        {
+          "instruction": "0x26d4a5f",
+          "target": "0x2660240",
+          "callee": "default_target_definition"
+        },
+        {
+          "instruction": "0x26d4a8d",
+          "target": "0x26604c0",
+          "callee": "can_target"
+        },
+        {
+          "instruction": "0x26d4aa1",
+          "target": "0x2660d50",
+          "callee": "pick_target"
+        },
+        {
+          "instruction": "0x26d4ad5",
+          "target": "0x26d4840",
+          "callee": "add_counters"
+        },
+        {
+          "instruction": "0x26d4b09",
+          "target": "0x2660240",
+          "callee": "default_target_definition"
+        },
+        {
+          "instruction": "0x26d4b4d",
+          "target": "0x26604c0",
+          "callee": "can_target"
+        },
+        {
+          "instruction": "0x26d4b71",
+          "target": "0x2660db0",
+          "callee": "new_pick_target"
+        },
+        {
+          "instruction": "0x26d4b8f",
+          "target": "0x26b5a00",
+          "callee": "kill_card"
+        },
+        {
+          "instruction": "0x26d4bc6",
+          "target": "0x2665470",
+          "callee": "default_token_definition"
+        },
+        {
+          "instruction": "0x26d4bd7",
+          "target": "0x26659d0",
+          "callee": "generate_token"
+        },
+        {
+          "instruction": "0x26d4bf2",
+          "target": "0x26b4050",
+          "callee": "draw_cards"
+        }
+      ]
+    },
+    {
+      "name": "move_counters",
+      "address": "0x26d5a00",
+      "size": 731,
+      "sha256": "d69010dbe4659353fe9edf7dd5456ba4ba8e879d54c285a05b4cfab4f412be7d",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26d5a47",
+          "target": "0x26d44d0",
+          "callee": "can_have_counters_placed_on_it"
+        },
+        {
+          "instruction": "0x26d5a65",
+          "target": "0x2681910",
+          "callee": "check_battlefield_for_id"
+        },
+        {
+          "instruction": "0x26d5a86",
+          "target": "0x2681910",
+          "callee": "check_battlefield_for_id"
+        },
+        {
+          "instruction": "0x26d5ab3",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26d5adc",
+          "target": "0x26d48d0",
+          "callee": "native_remove"
+        },
+        {
+          "instruction": "0x26d5b03",
+          "target": "0x26d5970",
+          "callee": "add_counters_predoubled"
+        },
+        {
+          "instruction": "0x26d5b08",
+          "target": "0x2681910",
+          "callee": "check_battlefield_for_id"
+        },
+        {
+          "instruction": "0x26d5b27",
+          "target": "0x2681910",
+          "callee": "check_battlefield_for_id"
+        },
+        {
+          "instruction": "0x26d5b49",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26d5b6f",
+          "target": "0x26d48d0",
+          "callee": "native_remove"
+        },
+        {
+          "instruction": "0x26d5baa",
+          "target": "0x26d4ca0",
+          "callee": "copy_counters"
+        },
+        {
+          "instruction": "0x26d5bb9",
+          "target": "0x26ceef0",
+          "callee": "native_clear"
+        },
+        {
+          "instruction": "0x26d5bdf",
+          "target": "0x26d4840",
+          "callee": "add_counters"
+        },
+        {
+          "instruction": "0x26d5c30",
+          "target": "0x26d4ca0",
+          "callee": "copy_counters"
+        },
+        {
+          "instruction": "0x26d5c3a",
+          "target": "0x26ceef0",
+          "callee": "native_clear"
+        },
+        {
+          "instruction": "0x26d5c65",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26d5cb2",
+          "target": "0x26d4ca0",
+          "callee": "copy_counters"
+        },
+        {
+          "instruction": "0x26d5cbd",
+          "target": "0x26ceef0",
+          "callee": "native_clear"
+        }
+      ]
+    }
+  ],
+  "external_data_bindings": 14,
+  "external_callee_bindings": 47,
+  "native_entry_abis": {
+    "quarry_hauler_helper": "cdecl",
+    "remove_counters_impl": "regparm(3)",
+    "move_counters": "cdecl"
+  },
+  "native_tested_helpers": 3,
+  "register_adapters": {
+    "native_core": "regparm(3)",
+    "native_remove": "regparm(3)",
+    "native_clear": "regparm(2)",
+    "native_name": "regparm(3)"
+  },
+  "whole_unit_net_lines_removed": 284,
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 20,
+  "focused": {
+    "path": ".recovery/counter-tail-focused-c336.json",
+    "sha256": "53a1f6ff8b784609f3a5a9fdb47c9e8f44b3679a3f03ba45584cfe06fe982bd1",
+    "source_succession_links": 5
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/counter-tail-build-c337.log",
+    "log_sha256": "cc894a33a3fda16fbd7ae0c482876617127b46b52d23bd8538f14fc5023c7f22",
+    "verified_built_slots": 15169,
+    "dll_sha256": "e36743043e615f170249a27dd2b8965cbbe867f4519ed7f49e937546df7eae5e",
+    "dbg_sha256": "59297826c1322f8137a83488ad450841adf715b0fc1cf184c31091bd632e9ee3"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/counter-tail-setup-c337.log",
+    "log_sha256": "7280c99a586dac71afc0f85d47f581cdb6a84e16fdd1028975962aedf5fc28c0",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4817,
+    "stubs": 0,
+    "metadata_sha256": "14db6ec8eb444dde7e45538a6f562ec60301127dd7f75259c9e1709eeb89d34b",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e5e50",
+        "after": "public COFF entry 0x26e5c00"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ee2c0",
+        "after": "public COFF entry 0x26ee070"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e49d0",
+        "after": "public COFF entry 0x26e4780"
+      },
+      {
+        "name": "new_damage_all",
+        "native_address": "0x26677f0",
+        "before": "public COFF entry 0x26c3ee0",
+        "after": "public COFF entry 0x26c3c90"
+      },
+      {
+        "name": "mana_doublers",
+        "native_address": "0x266c040",
+        "before": "public COFF entry 0x26cb070",
+        "after": "public COFF entry 0x26cae20"
+      },
+      {
+        "name": "etb_ability",
+        "native_address": "0x26a5370",
+        "before": "public COFF entry 0x26a16a0",
+        "after": "public COFF entry 0x26a1450"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "public COFF entry 0x26dc750",
+        "after": "public COFF entry 0x26dc500"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "public COFF entry 0x26dc780",
+        "after": "public COFF entry 0x26dc530"
+      }
+    ]
+  },
+  "index_unchanged": true,
+  "limits": "Three native branch bodies compared with reconstruction and decompiled reference; Quarry reference explicitly corrects prior formatter arguments and models native adjacent choices[0] access at index nine. Original formatter error rejected by negative control. Exact calls/full card records/globals with callback mutations; opaque dialog protocol, legal choices and visible text checked without executing UI. AI inputs restricted to defined priority-index states (all nine entries, or a trailing occupied invalid slot); native indeterminate shorter-list behavior is documented, not exhaustively reproduced. Counter types/counts and operation lengths bounded where signed arithmetic/lifetimes require it. Remove/move dependencies are opaque stubs, not composed engine behavior. No gameplay testing claimed.",
+  "whole_unit_readability": {
+    "source": "functions/counters.c",
+    "source_sha256": "f327cfbac85c3a27f3c22d3648583a219372d5579d57bd0950d53432c3d61322",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c338.json",
+    "sha256": "0c3add4de742d6e461fd48bb99a4e52a81ba9ac066e33a6facd21b57a279e45c",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1009,
+      "lab_gotos": 2838,
+      "functions_with_placeholders": 2092,
+      "distinct_function_local_placeholder_spellings": 6407,
+      "placeholder_identifier_occurrences": 50713,
+      "union_keywords": 0
+    }
+  }
+}

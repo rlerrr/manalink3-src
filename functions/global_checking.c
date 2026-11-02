@@ -424,6 +424,7 @@ void default_test_definition(test_definition_t *this_test, int type)
 int new_make_test_in_play(int player, int to_examine, int test_type,
                                test_definition_t *this_test)
 {
+  int cmc;
   uint16_t uVar1;
   uint16_t uVar2;
   short sVar3;
@@ -489,8 +490,7 @@ int new_make_test_in_play(int player, int to_examine, int test_type,
     }
     if (sVar13 == 2)
     {
-      iVar26 = is_what(player, to_examine, this_test->type);
-      if (iVar26 == 0)
+      if (is_what(player, to_examine, this_test->type) == 0)
       {
         return 0;
       }
@@ -504,8 +504,7 @@ int new_make_test_in_play(int player, int to_examine, int test_type,
     }
     if (sVar13 == 3)
     {
-      iVar26 = is_what(player, to_examine, this_test->type);
-      if (iVar26 == 0)
+      if (is_what(player, to_examine, this_test->type) == 0)
       {
         return 0;
       }
@@ -519,8 +518,7 @@ int new_make_test_in_play(int player, int to_examine, int test_type,
     }
     if (sVar13 == 4)
     {
-      iVar26 = is_what(player, to_examine, this_test->type);
-      if (iVar26 == 0)
+      if (is_what(player, to_examine, this_test->type) == 0)
       {
         return 0;
       }
@@ -534,8 +532,7 @@ int new_make_test_in_play(int player, int to_examine, int test_type,
     }
     if (sVar13 == 6)
     {
-      iVar26 = is_what(player, to_examine, this_test->type);
-      if (iVar26 == 0)
+      if (is_what(player, to_examine, this_test->type) == 0)
       {
         return 0;
       }
@@ -549,8 +546,7 @@ int new_make_test_in_play(int player, int to_examine, int test_type,
     }
     if (sVar13 == 9)
     {
-      iVar26 = is_what(player, to_examine, 2);
-      if (iVar26 == 0)
+      if (is_what(player, to_examine, 2) == 0)
       {
         return 0;
       }
@@ -712,8 +708,7 @@ LAB_026becb9:
     uVar27 = this_test->id_flag;
     if (uVar27 == 3)
     {
-      iVar26 = is_token(player, to_examine);
-      if (iVar26 == 0)
+      if (is_token(player, to_examine) == 0)
       {
         return 0;
       }
@@ -937,9 +932,8 @@ LAB_026bed5b:
   }
   if (this_test->has_mana_to_pay_cmc == '\x01')
   {
-    iVar21 = get_cmc(player, to_examine);
-    iVar21 = has_mana(player, 0, iVar21);
-    if (iVar21 == 0)
+    cmc = get_cmc(player, to_examine);
+    if (has_mana(player, 0, cmc) == 0)
     {
       return 0;
     }

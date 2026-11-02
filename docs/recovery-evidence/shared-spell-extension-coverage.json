@@ -1,0 +1,119 @@
+{
+  "batch": "docs/recovery-evidence/shared-spell-extension.json",
+  "batch_sha256": "efa4155e08eed5260d348baf778d6cc8bbec377071a19d12d80934d1d25719ef",
+  "counts": {
+    "functions": 22,
+    "source_units": 15,
+    "private_pointer_captures": 16,
+    "removed_gotos": 23,
+    "removed_labels": 22,
+    "source_lines_removed": 521,
+    "trace_cases": 4224,
+    "pending": 0,
+    "card_handlers": 22,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 4,
+    "changed_sections": [
+      ".CRT",
+      ".data",
+      ".rdata",
+      ".reloc",
+      ".text",
+      ".text.startup",
+      ".text.startup._GLOBAL__sub_I__ZN9__gnu_cxx9__freeresEv",
+      ".text.startup._GLOBAL__sub_I___cxa_get_globals_fast",
+      ".text.unlikely",
+      ".text.unlikely._ZSt16__throw_bad_castv",
+      ".text.unlikely._ZSt17__throw_bad_allocv",
+      ".text.unlikely._ZSt18__throw_bad_typeidv",
+      ".text.unlikely._ZSt19__throw_logic_errorPKc",
+      ".text.unlikely._ZSt19__throw_range_errorPKc",
+      ".text.unlikely._ZSt20__throw_domain_errorPKc",
+      ".text.unlikely._ZSt20__throw_length_errorPKc",
+      ".text.unlikely._ZSt20__throw_out_of_rangePKc",
+      ".text.unlikely._ZSt21__throw_bad_exceptionv",
+      ".text.unlikely._ZSt21__throw_runtime_errorPKc",
+      ".text.unlikely._ZSt22__throw_overflow_errorPKc",
+      ".text.unlikely._ZSt23__throw_underflow_errorPKc",
+      ".text.unlikely._ZSt24__throw_invalid_argumentPKc"
+    ],
+    "scope": "Recorded compiler-output comparison only; source/control-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_extension": {
+        "structured_handlers": 22,
+        "source_units": 15,
+        "removed_lab_gotos": 23,
+        "removed_lab_labels": 22,
+        "source_lines_removed": 521,
+        "parsed_trace_cases": 4224,
+        "private_pointer_captures": 16,
+        "native_owner_bindings": 22,
+        "compiled_event_bindings": 22,
+        "scope": "Shared constructor/setup executes once on the same supported events; source-identical resolution blocks and tail calls retain their bindings. Five native event values, affinity/global-read order, arbitrary setup global changes and payload return/fallthrough are checked. The pure inline affinity predicate is compiler-bound. An extra private pointer assignment is permitted only when unread outside resolution. This preserves the accepted reconstruction, not a full native/gameplay equivalence proof."
+      },
+      "prior_source_input_hashes": {
+        "shared_source_units": 44,
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Current structural proof plus exact predecessor input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/shared-extension-readers-c145.log",
+      "sha256": "c43f75a667182dcfaee64c5f0dbc49ac94d695b64b42f46ad6aa230c16508a94",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/shared-extension-build-c144.log",
+      "log_sha256": "8a443e5b6856d1202a192b581fad31f8becc6b15abaef55ab56f13acdc70cd8c",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "dcbba9168f31a7526fa1133380e6be0bdf89cc951d36677f07d91971ef898b3c",
+      "dbg_sha256": "2cc3021d488d8ab282ca733a3fafdb3c29e431aabe3f9b88875e17bd06851ad7"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/shared-extension-proof-before-c143.json.gz",
+      "archive_sha256": "b7a2b18cdd4af7f6acb55f764db16acd09428194d561227c19a01faa060ffd8a",
+      "raw_sha256": "99f451100d6abc3c31f036eb14fb1e4ad8fe9d5e786a6f4cab0b0b077c62b21c",
+      "verified_source_pin_successions": 15
+    },
+    "limits": "Checks preserve the accepted reconstruction within the shared spell dispatch family, including varied branch layouts, internal resolution jumps and straight-line common tails. Native identities/event values, actual compiler expansions, action/guard traces and unchanged payload/tail bindings are checked. Compiler output changes. No new native coverage, byte matching requirement, full historical semantic replay or gameplay tests."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/shared-extension-setup-c147.log",
+    "log_sha256": "82718866fc6f475cba4069ef14dd848b4e22d6a08a17c7ae5a749f87b1374575",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "metadata_sha256": "b08ca14ef43b64bffc4fd64a170f4000ed129752d56092a918b6a474f86134e0",
+    "csv_functions": 18725,
+    "changed_rebuilt_coff_address_annotations": 14,
+    "other_mapping_fields_unchanged": true,
+    "comparison_input": "Git index functions.csv; index untouched"
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c147.json",
+    "sha256": "1fa42a89b2e17cda3d92e4a4807a34efee72f30a998dba91dc155301c75f0271",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1262,
+      "lab_gotos": 5085,
+      "functions_with_placeholders": 2132,
+      "distinct_function_local_placeholder_spellings": 7050,
+      "placeholder_identifier_occurrences": 61716,
+      "union_keywords": 0
+    }
+  },
+  "limits": "Checks preserve the accepted reconstruction within the shared spell dispatch family, including varied branch layouts, internal resolution jumps and straight-line common tails. Native identities/event values, actual compiler expansions, action/guard traces and unchanged payload/tail bindings are checked. Compiler output changes. No new native coverage, byte matching requirement, full historical semantic replay or gameplay tests."
+}

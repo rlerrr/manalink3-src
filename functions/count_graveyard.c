@@ -176,7 +176,6 @@ int count_graveyard_by_subtype(int player, subtype_t subtype)
 
 int any_in_graveyard_by_subtype(int player, subtype_t subtype)
 {
-  int iVar1;
   int iVar2;
   int iVar3;
 
@@ -190,11 +189,10 @@ int any_in_graveyard_by_subtype(int player, subtype_t subtype)
       {
         if (*(int *)((int)graveyard_ptr_mutable[iVar2] + iVar3) == -1)
           break;
-        iVar1 = has_subtype_by_id(
+        if (has_subtype_by_id(
             player,
             (unsigned int)cards_data[*(int *)((int)graveyard_ptr_mutable[iVar2] + iVar3)].id,
-            subtype);
-        if (iVar1 != 0)
+            subtype) != 0)
         {
           return 1;
         }
@@ -218,17 +216,17 @@ int new_special_count_grave(int player, test_definition_t *this_test)
   int test_type;
   int iVar1;
   int *piVar2;
-  int iVar3;
+  int i;
   int iStack_14;
 
   test_type = new_get_test_score(this_test);
   iStack_14 = 0;
-  iVar3 = 0;
+  i = 0;
   do
   {
-    if ((player == iVar3) || (player == 2))
+    if ((player == i) || (player == 2))
     {
-      piVar2 = graveyard_ptr_mutable[iVar3];
+      piVar2 = graveyard_ptr_mutable[i];
       iVar1 = *piVar2;
       while (iVar1 != -1)
       {
@@ -238,8 +236,8 @@ int new_special_count_grave(int player, test_definition_t *this_test)
         iVar1 = *piVar2;
       }
     }
-    iVar3 = iVar3 + 1;
-  } while (iVar3 != 2);
+    i = i + 1;
+  } while (i != 2);
   return iStack_14;
 }
 

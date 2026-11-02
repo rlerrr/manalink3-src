@@ -1,0 +1,59 @@
+{
+  "batch": "docs/recovery-evidence/special-call-condition-cleanup.json",
+  "batch_sha256": "1a51e7adb6c7b9ab01600b03b4bba8841e8366687701674cfb727a775a8a3c1f",
+  "counts": {
+    "functions": 3,
+    "inlined_assignments": 4,
+    "removed_declarations": 0
+  },
+  "cumulative_call_condition_cleanup": {
+    "inlined_assignments": 1673,
+    "distinct_definitions": 783,
+    "source_units": 125,
+    "removed_unused_int_locals": 151,
+    "source_lines_removed": 1853,
+    "pending_original_queue_statements": 0,
+    "new_native_function_coverage": 0
+  },
+  "validation": {
+    "focused": {
+      "cleaned_definitions": 3,
+      "inlined_call_results": 4,
+      "removed_unused_int_locals": 0,
+      "pending_candidates": 0,
+      "scope": "Offset-preserving analysis adapters for one pure GNU minimum expression, one compile-time offsetof and seven literal-address callee casts. Raw/expanded CFG and result-type checks cover four rewrites. Whole-unit GCC expansion matches the projected rewrites; real compiler inputs retain every original construct. No gameplay or whole-DLL byte-identity claim."
+    },
+    "combined_focused_log": {
+      "path": ".recovery/special-conditions-combined-focused-c106.log",
+      "sha256": "5d608175cc2f87e8c3ad50b019037f4ed7a476477d08c0e4efeab1af58d2716e",
+      "exit_code": 0
+    },
+    "projection_log": {
+      "path": ".recovery/special-conditions-projection-c107.log",
+      "sha256": "178aa3f1b81fc4b1fe9a33a36ec943c95001ea6ff2462c577be889f037a67909",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "exit_code": 0,
+      "log": ".recovery/special-conditions-build-c106.log",
+      "log_sha256": "f33445120a569e7d9ee75385b14ae450f253c8fcbf820074e1792c8fa7b95315",
+      "verified_built_slots": 15169,
+      "dll_sha256": "35f5586c182061793137d6ba926bf0cb8e3135502a4cdfbaf0c05b6af889dd35",
+      "dbg_sha256": "99740c0c5d57d7a6563605c31ffb9879925a4dcec17d8b6e51ec9fd17c6ee4ec"
+    },
+    "source_lines_removed": 5,
+    "limits": "No full historical suite, whole-DLL byte identity comparison or gameplay test. All1673 queued adjacent call-result statements are now resolved; this does not close broader source recovery."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/special-conditions-setup-c108.log",
+    "log_sha256": "2bcd5f8a4327357500bef9d155a8e9b459b9c869da5303a292e35e1f0834e510",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "metadata_sha256": "75a64807d4c874d63f763f82fa6fea26a2dbda10edd735decf119eeb2961e508",
+    "csv_functions": 18725
+  },
+  "limits": "Original adjacent-call queue complete; broader placeholder/control-flow cleanup and recovery of modified retained semantics remain open. No full historical suite, fresh whole-DLL similarity score or gameplay tests."
+}

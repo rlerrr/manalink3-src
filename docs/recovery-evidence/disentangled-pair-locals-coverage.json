@@ -1,0 +1,109 @@
+{
+  "recovery": {
+    "restored_functions": 66,
+    "source_units": 36,
+    "removed_synthetic_unions": 66,
+    "typed_field_rewrites": 74,
+    "scalar_comparison_kinds": {
+      "exact_scoped_scalar_events": 139,
+      "mutually_exclusive_identical_store_copies": 3
+    },
+    "removed_lab_gotos": 7,
+    "structured_card_handlers": 1,
+    "changed_linker_objects": 36,
+    "unchanged_linker_objects": 130,
+    "scope": "Remove66 synthetic two-record local unions in36 original source units. Native common-frame declarations identify the distinct records and supply original local names; one collision uses td2. Each typed local is declared in the lowest lexical compound containing all of its source uses, including consumers after a branch. Full-width same-offset aliases and complete little-endian byte groups become typed field assignments. One four-byte extraction sequence reconstructs its original32-bit expression. Other expressions, constants, calls and control flow are unchanged, apart from the explicitly recorded Guild Summit structured rewrite and count spelling. Native declaration geometry and scoped scalar byte events are checked separately; unknown values, aliases and complete behavior/gameplay are not inferred from event equality. Filter scalar-event comparisons intentionally cover offsets100..215; broad optimized lexical ranges and reused physical slots can include unrelated prompt-region stores. Three doubled store groups are accepted only after checking identical byte-event copies and mutual CFG unreachability at every matching field site. The native/current variable binding uses the recorded native DIE and restored source spelling, including the td2 collision. Event matches do not establish unknown dynamic-value provenance."
+  },
+  "restored_record_locals": {
+    "target": 38,
+    "test": 65,
+    "token": 29
+  },
+  "record_scalar_comparisons": 142,
+  "exact_scalar_event_records": 139,
+  "exclusive_clone_records": 3,
+  "rewritten_message_byte_assignments": 236,
+  "typed_field_rewrites": 74,
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "session_id": 71871,
+    "exit_code": 0,
+    "terminal_chunk_id": "2430cd",
+    "setup_log": ".recovery/disentangled-pairs-setup-c76.log",
+    "setup_log_sha256": "6116f7d8c31caec023e4e07c8ef79c80cec4d066aa45d7e9c172999698487cc9",
+    "build_session_id": 74261,
+    "build_exit_code": 0,
+    "build_terminal_chunk_id": "33d525",
+    "build_log": ".recovery/disentangled-pairs-build-c76.log",
+    "build_log_sha256": "1610d7273c21fdb62c456d1c8bd507f77d02a562271fcdc2be50e30d63b6233a",
+    "focused_session_id": 79169,
+    "focused_exit_code": 0,
+    "focused_terminal_chunk_id": "0f0ca1",
+    "focused_log": ".recovery/disentangled-pairs-focused-c76.log",
+    "prior_checks": [
+      {
+        "name": "shared_stack_test",
+        "exit_code": 0,
+        "terminal_chunk_id": "9bc059",
+        "log": ".recovery/disentangled-pairs-prior-shared_stack_test-c76.log"
+      },
+      {
+        "name": "wide_stack_test",
+        "exit_code": 0,
+        "terminal_chunk_id": "e96ba0",
+        "log": ".recovery/disentangled-pairs-prior-wide_stack_test-c76.log"
+      },
+      {
+        "name": "other_stack_record",
+        "exit_code": 0,
+        "terminal_chunk_id": "fcec21",
+        "log": ".recovery/disentangled-pairs-prior-other_stack_record-c76.log"
+      },
+      {
+        "name": "grave_library_target",
+        "exit_code": 0,
+        "terminal_chunk_id": "7b8dab",
+        "log": ".recovery/disentangled-pairs-prior-grave_library_target-c76.log"
+      },
+      {
+        "name": "counterspell_aura_cards",
+        "exit_code": 0,
+        "terminal_chunk_id": "d23188",
+        "log": ".recovery/disentangled-pairs-prior-counterspell_aura_cards-c76.log"
+      },
+      {
+        "name": "land_deflection_cards",
+        "exit_code": 0,
+        "terminal_chunk_id": "03cbcb",
+        "log": ".recovery/disentangled-pairs-prior-land_deflection_cards-c76.log"
+      },
+      {
+        "name": "inline_wrapper",
+        "exit_code": 0,
+        "terminal_chunk_id": "861d34",
+        "log": ".recovery/disentangled-pairs-prior-inline_wrapper-c76.log"
+      },
+      {
+        "name": "plain_test_parameter",
+        "exit_code": 0,
+        "terminal_chunk_id": "098e69",
+        "log": ".recovery/disentangled-pairs-prior-plain_test_parameter-c76.log"
+      }
+    ]
+  },
+  "independent_address_review": "docs/recovery-evidence/disentangled-pair-address-review.json",
+  "remaining_union_review": "docs/recovery-evidence/remaining-local-union-review.json",
+  "limits": "Filter scalar comparisons cover bytes100..215; the prompt region can contain unrelated stores when physical frames/scopes overlap. Equal unknown store values do not prove dynamic provenance. All29 token instances have exact native scalar-byte events. The142 scalar-record comparisons include pre-existing records as well as the132 restored locals. Three doubled groups have identical event values and mutually unreachable corresponding stores; this does not establish arbitrary call side effects, pointer retention, all aliases, indexed values or full gameplay. No fresh whole-DLL reccmp score is claimed.",
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "686b215be5d73fa40b53117e050b5447fc1867800c880b85c607c4cb4c557645",
+    "docs/recovery-evidence/disentangled-pair-locals.json": "b0c2f30d02352dec35e522d98ed76875971df0fd466c69b3f00bf309579f0605",
+    "tools/recovery/disentangle_union_source.py": "92d63236e4ea6a143757e209115411f1589f5557b4666202cc15058b1049c6eb",
+    "tools/recovery/structured_flow_source.py": "de7071f0f789566c349295f8021fe66745ce1dd544a07142560cedf9a0702400",
+    "tools/recovery/disentangled_pair_analysis.py": "a04cbc2f2f14a1f6dc58d18dfd3bd324f7202a69bf50cf871b599993323a46e2",
+    "tools/recovery/verify_disentangled_pair_locals.py": "9bd5e8f98e890493f259873dbe575ba879d8c1f091049a388d2d90d3c4bf2aac",
+    "docs/recovery-evidence/disentangled-pair-address-review.json": "428e9d26d8018b2dcbed63de0a29832b63293b379e0d52e01e30d2abc7573953",
+    "docs/recovery-evidence/remaining-local-union-review.json": "b5f08c8d11448439dd0a05ec266827fedb854e9be25490cedc5b9c9c3cd55330",
+    "ManalinkEh.dll": "ee487f55f791804276f83b27470626c4e488d56e24550a4533eeb3766d7e0f19",
+    "ManalinkEh.dbg": "7d21e91a6bfee1ef7acc6121848885a0660d6676c33b9a63e80244b1cd843c4f"
+  }
+}

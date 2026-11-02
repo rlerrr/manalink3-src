@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 from capstone import Cs,CS_ARCH_X86,CS_MODE_32
 from canonicalize_helpers import ROOT,read,sha,span
+from verify_additional_local_names import source_hash_matches
 from inspect_release import Image,value
 from global_initializers import inherited_type
 from shared_stack_test_analysis import collect,test_layout,frame_offset,compiled_functions,compare_parameter_stores,dynamic_value_flow
@@ -11,9 +12,10 @@ from shared_stack_test_analysis import collect,test_layout,frame_offset,compiled
 def verify_source(row,root,proof=None):
     text=read(root/row['source']);a,b=span(text,row['name'])
     assert sha(row['after_definition'].encode())==row['after_sha256']
-    if text[a:b]!=row['after_definition']:
+    if not source_hash_matches(proof,root,row['source'],row['name'],sha(text[a:b].encode()),row['after_sha256']):
         from verify_token_scope_recovery import has_source_repair
-        assert proof is not None and has_source_repair(proof,root,row['source'],row['name'],row['after_sha256'])
+        from verify_token_aggregate_recovery import has_source_repair as aggregate_repair
+        assert proof is not None and (has_source_repair(proof,root,row['source'],row['name'],row['after_sha256']) or aggregate_repair(proof,root,row['source'],row['name'],row['after_sha256']))
     assert sha(row['before_definition'].encode())==row['before_sha256']
     assert row['before_definition']!=row['after_definition']
     return True
@@ -26,7 +28,7 @@ def verify_superseded_definition(proof,image,root,source,name,old_hash):
     record=json.loads((root/path).read_bytes());assert sha(image.data)==record['native_dll_sha256']
     rows=[r for r in record['repairs'] if (r['source'],r['name'])==(source,name)]
     assert len(rows)==1 and rows[0]['before_sha256']==old_hash
-    verify_source(rows[0],root)
+    verify_source(rows[0],root,proof)
     native=next(r for r in record['audit_rows'] if r['name']==name)['native']
     lo,hi=int(native['address'],16),int(native['end'],16)
     assert sha(image.pe.get_data(lo-0x2000000,hi-lo))==native['bytes_sha256']
@@ -82,12 +84,20 @@ def verify(proof,image,root=ROOT):
         plain.extend(r for r in record['audit_rows'] if r['name']=='card_gusthas_scepter')
     if proof.get('native_token_scope_recovery'):
         plain.extend(r for r in record['audit_rows'] if r['name']=='card_shark_typhoon')
+    if proof.get('native_token_aggregate_recovery'):
+        plain.extend(r for r in record['audit_rows'] if r['name'] in ['card_inalla_archmage_ritualist','card_ghired_conclave_exile'])
     current_dw,current_functions=compiled_functions(current_debug,[r for r in record['audit_rows'] if r not in plain])
     if plain:
         from scoped_array_analysis import plain_test_record
         from verify_scoped_array_recovery import has_source_repair
         for row in plain:
-            if row['name']=='card_shark_typhoon':
+            if row['name'] in ['card_inalla_archmage_ritualist','card_ghired_conclave_exile']:
+                from token_aggregate_analysis import plain_test_record as aggregate_test
+                from verify_token_aggregate_recovery import has_source_repair as aggregate_repair
+                old=repairs[row['name']]['after_sha256'] if row['name'] in repairs else row['retained_definition_sha256']
+                assert aggregate_repair(proof,root,row['source'],row['name'],old)
+                current_functions[row['name']]=aggregate_test(current_dw,row)
+            elif row['name']=='card_shark_typhoon':
                 from token_scope_analysis import plain_test_record as scoped_test
                 from verify_token_scope_recovery import has_source_repair as scope_repair
                 assert scope_repair(proof,root,row['source'],row['name'],repairs[row['name']]['after_sha256'])
@@ -131,10 +141,11 @@ def verify(proof,image,root=ROOT):
         else:
             assert row['before_compiled']['byte_events']==native['byte_events']
             t=read(root/row['source']);a,b=span(t,row['name'])
-            if sha(t[a:b].encode())!=row['retained_definition_sha256']:
+            if not source_hash_matches(proof,root,row['source'],row['name'],sha(t[a:b].encode()),row['retained_definition_sha256']):
                 from verify_scoped_array_recovery import has_source_repair
                 from verify_card_array_locals_recovery import has_source_repair as card_repair
-                assert has_source_repair(proof,root,row['source'],row['name'],row['retained_definition_sha256']) or card_repair(proof,root,row['source'],row['name'],row['retained_definition_sha256'])
+                from verify_token_aggregate_recovery import has_source_repair as aggregate_repair
+                assert aggregate_repair(proof,root,row['source'],row['name'],row['retained_definition_sha256']) or has_source_repair(proof,root,row['source'],row['name'],row['retained_definition_sha256']) or card_repair(proof,root,row['source'],row['name'],row['retained_definition_sha256'])
             matched_before+=1
     assert missing_stores==43 and matched_before==13
     verify_dynamic_value_flows(record)

@@ -1,0 +1,101 @@
+{
+  "recovery": {
+    "helper_definitions": 2,
+    "removed_synthetic_union_locals": 4,
+    "removed_unused_union_typedefs": 2,
+    "scalar_profile_comparison_kinds": {
+      "exact_exclusive_scope_scalar_events": 6
+    },
+    "union_word_writes": 23,
+    "union_word_reads": 40,
+    "event_classes": 6,
+    "native_chooser_field_corrections": 1,
+    "changed_linker_objects": 1,
+    "unchanged_linker_objects": 165,
+    "scope": "Remove allfour remaining synthetic helper union locals and their two unused typedefs. The granted-activation helper has distinct native target definitions, a filter and an output target pair with scopes covering pointer consumers. Generic-spell words become separate aura/graveyard flags, target limit, storage-instance pointer, caller player/card and target-count values. Artificial saved-pointer roles and caller-clobber-style copies disappear when loop candidates/cleanup targets stop overwriting the main instance pointer. Can-cast aura/grave searches retain their predicate/call order and dynamic loop bounds; other control flow and call arguments are retained. The two-word aiStack temporary becomes scalar rv/min_targets; the graveyard player dialog uses a typed old_t0 snapshot and old_nt, retaining field restore order. Native event-specialized source CFG checks all23 union writes and40 reads for partial-word and cross-type dependencies. Native names are vocabulary rather than a claim of unique optimized-variable identity. Complete call effects, dynamic-value provenance and gameplay remain separate. Both helpers restore the native four-byte old_number_of_targets local, loaded from an unsigned byte and restored to that same byte. Explicit native correction: generic_spell now writes caller-context p to td9.who_chooses (offset0), rather than the previously recovered td9.player (offset72). Six native record scalar-event profiles match exactly after the explicit chooser correction. Local liveness and48 aura/720 grave-search predicate classes corroborate the removed copies and loop changes; they do not establish whole-function equivalence. The native chooser load/store window and DWARF location establish p-to-who_chooses dataflow."
+  },
+  "verified_fixed_slots": 15169,
+  "source_provenance_setup": {
+    "setup_session_id": 86724,
+    "setup_exit_code": 0,
+    "setup_terminal_chunk_id": "34e606",
+    "setup_log": ".recovery/final-helper-locals-setup-c82.log",
+    "setup_log_sha256": "282b0190e4479fae6d3a3be6b3853908230eaac7d5fd9244e667472f712e2739",
+    "prior_attempt": {
+      "session_id": 89179,
+      "exit_code": 1,
+      "terminal_chunk_id": "91f3ee",
+      "log": ".recovery/final-helper-locals-setup-c81.log",
+      "reason": "Historical counterspell/aura source dependency required an explicit link to the checked granted-activation successor. Source and compiled artifacts were unchanged by the adapter fix."
+    },
+    "build_log": ".recovery/final-helper-locals-corrected-build-c81.log",
+    "build_log_sha256": "7f5b08cffc4d2b6335bebf317e1d39b11b561c43babeaca0af145b8c1d76050b",
+    "focused_checks": [
+      {
+        "name": "final_helper_locals",
+        "exit_code": 0,
+        "terminal_chunk_id": "c1be64",
+        "log": ".recovery/final-helper-locals-focused-c81.log",
+        "log_sha256": "a9423fd9d39e9bb7be94ae2f9a4383bfd8fe967a060e2c6d0b53530fe0bb8686"
+      },
+      {
+        "name": "final_array_locals",
+        "exit_code": 0,
+        "terminal_chunk_id": "f26d23",
+        "log": ".recovery/final-helper-locals-prior-array-c81.log",
+        "log_sha256": "46913eef39b8a47f37a84e4b916217adaf27b20d65b46fdfff1cea6e7b31df70"
+      },
+      {
+        "name": "multiphase_card_locals",
+        "exit_code": 0,
+        "terminal_chunk_id": "405341",
+        "log": ".recovery/final-helper-locals-prior-cards-c81.log",
+        "log_sha256": "1af0dc22d1ddb75baf5cc31b09e7a79b7c5ba963d76ca6a64b8458ce0a3d134d"
+      },
+      {
+        "name": "counterspell_aura_cards",
+        "exit_code": 0,
+        "terminal_chunk_id": "b86df6",
+        "log": ".recovery/final-helper-locals-prior-counterspell-c82.log",
+        "log_sha256": "ccca7f3212261e77bd24a3a61a470ef946a15bf0e912460c42a17fe6eff08a23"
+      }
+    ]
+  },
+  "remaining_union_review": "docs/recovery-evidence/remaining-helper-union-review-complete.json",
+  "loop_predicate_proofs": {
+    "aura_predicate_classes": 48,
+    "graveyard_predicate_classes": 720,
+    "loop_invariant": "Both aura loops start p/c at zero, advance by one and reload active_cards_count[p] at each inner-loop admission. The same ordered helper calls can therefore change the next bound in the same way. No bound snapshot or callee purity assumption is introduced.",
+    "scope": "Complete zero/nonzero/null and handled-ID predicate classes for one aura iteration, and grave-search player/opponent/both/count-sign/shroud classes. Player representatives cover0/1/2/other and the1-player mapping; undefined signed overflow is outside the C model. These are local relational checks, not gameplay fixtures or whole-function equivalence."
+  },
+  "native_chooser_value_proof": {
+    "variable_die": "0x6586621",
+    "location_range": [
+      "0x26a121e",
+      "0x26a130c"
+    ],
+    "p_cfa_offset": -248,
+    "load_address": "0x26a1242",
+    "store_address": "0x26a125c",
+    "instruction_window_hex": "8b8510ffffffc78528ffffff00100000c78538ffffff0000000089851cffffff",
+    "target_cfa_offset": -236,
+    "field": "who_chooses",
+    "field_offset": 0,
+    "scope": "Native p-to-who_chooses dataflow and exact destination. Caller-input origin of p and opaque values are separate."
+  },
+  "inputs": {
+    "docs/recovery-evidence/helper-canonicalization.json": "0bfffea4b80b0513e143b577579f30a425f434e61a48106f6afdc2bb9b9480db",
+    "docs/recovery-evidence/final-helper-locals.json": "7a18e67b25a62e65ac964459d65ad485d1efafdc91ac0c7c1dfbb05d5a401f38",
+    "tools/recovery/helper_local_source.py": "646bb367fae357a4ce2b48a5e5978eea5f215c2909c91f5c625a0c30e6830375",
+    "tools/recovery/helper_word_flow.py": "d149ba44de33a998478e3673c49b544c834dea5c90010f0e467819262cb1c1bc",
+    "tools/recovery/helper_local_proofs.py": "9cc0e29fde2827020b6063c5225019454ef3c71e76bf6606b66ea4d9b71c72ea",
+    "tools/recovery/final_helper_local_analysis.py": "e6691f898fdaf58d08a5f9f2862cad5fbb13bbc5e093a24271a30ce807e0b415",
+    "tools/recovery/verify_final_helper_locals.py": "e941ce80b30ef3cdc88d1b8d6e86aba12d379f120e3f4262c74613b4dd058af5",
+    "tools/recovery/source_record_flow.py": "41642821c285925a7d9a81f58eabc6bfbef1f3f9e93702d93977b17c6ebb19ab",
+    "tools/recovery/verify_counterspell_aura_cards_recovery.py": "52e0313cbead0c92325ca6ca2a7f91dfe26ba699d6b41aced31d33f8e647a9cc",
+    "docs/recovery-evidence/remaining-helper-union-review-complete.json": "410f066debf27664f2dc88c1ed0ca2014d1ae2be3c9303b651bcb5beec2a7e38",
+    "ManalinkEh.dll": "851325187e63e6cb03e59cc4438efb1c684b4b4b175967f4a90994892cf3df28",
+    "ManalinkEh.dbg": "81958682dc1be218c3de11aae059b4c01be52c43e8c1ac9415bd1b99ec5e6f48"
+  },
+  "limits": "Scalar event profiles and local type/geometry checks are bounded corroboration, not unique optimized-variable identity or complete behavior. Byte-lane CFG checks retain all non-event branch successors. Native p-to-chooser dataflow is checked in a concrete instruction window; full caller-input provenance, arbitrary aliases, indirect/indexed values, callee retention, other build configurations and gameplay remain separate. No new whole-DLL comparison score is claimed."
+}

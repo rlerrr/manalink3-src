@@ -860,6 +860,9 @@ static int necrotic_plague_legacy(int player, int card, event_t event){
 
 int card_necrotic_plague(int player, int card, event_t event)
 {
+  card_instance_t *instance;
+  int t_player;
+  int t_card;
   int32_t iVar1;
   card_instance_t *pcVar2;
   int iVar3;
@@ -873,39 +876,39 @@ int card_necrotic_plague(int player, int card, event_t event)
        (iVar3 = is_humiliated(player, card, AL_TRIG), iVar3 != 0)) ||
       (pcVar2 = get_card_instance(player, card), event != EVENT_GRAVEYARD_FROM_PLAY))
   {
-    pcVar2 = get_card_instance(player, card);
-    if (-1 < pcVar2->damage_target_player)
+    instance = get_card_instance(player, card);
+    if (-1 < instance->damage_target_player)
     {
     LAB_020899c0:
-      pcVar2 = in_play(player, card);
-      if ((pcVar2 != NULL) &&
+      instance = in_play(player, card);
+      if ((instance != NULL) &&
           (iVar3 = is_humiliated(player, card, AL_STATIC), iVar3 == 0))
       {
-        pcVar2 = get_card_instance(player, card);
-        iVar3 = (int)pcVar2->damage_target_player;
-        if (current_turn == iVar3)
+        instance = get_card_instance(player, card);
+        t_player = (int)instance->damage_target_player;
+        if (current_turn == t_player)
         {
-          iVar5 = pcVar2->damage_target_card;
+          t_card = instance->damage_target_card;
           iVar4 = upkeep_trigger(player, card, event);
-          if ((((iVar4 != 0) && (iVar4 = can_cause_sacrifice(player, iVar3), iVar4 != 0)) &&
-               (iVar4 = check_special_flags2(iVar3, iVar5, 0x400000), iVar4 == 0)) &&
-              (iVar4 = is_humiliated(iVar3, iVar5, AL_TRIG), iVar4 == 0))
+          if ((((iVar4 != 0) && (iVar4 = can_cause_sacrifice(player, t_player), iVar4 != 0)) &&
+               (iVar4 = check_special_flags2(t_player, t_card, 0x400000), iVar4 == 0)) &&
+              (iVar4 = is_humiliated(t_player, t_card, AL_TRIG), iVar4 == 0))
           {
-            kill_card(iVar3, iVar5, KILL_SACRIFICE);
+            kill_card(t_player, t_card, KILL_SACRIFICE);
           }
         }
       }
     }
     if (event == EVENT_CAN_CAST)
-      goto LAB_02089940;
+      return disabling_aura(player, card, event);
     if (event == EVENT_CAST_SPELL)
     {
       if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_02089940;
+        return disabling_aura(player, card, event);
     }
     else if ((event == EVENT_RESOLVE_SPELL) ||
              ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      goto LAB_02089940;
+      return disabling_aura(player, card, event);
   }
   else
   {
@@ -922,8 +925,7 @@ int card_necrotic_plague(int player, int card, event_t event)
       iVar3 = can_target(&td);
       if ((iVar3 != 0) && (iVar3 = pick_target(&td, "TARGET_CREATURE"), iVar3 != 0))
       {
-        iVar3 = create_legacy_effect(player, card, necrotic_plague_legacy);
-        pcVar6 = get_card_instance(player, iVar3);
+        pcVar6 = get_card_instance(player, create_legacy_effect(player, card, necrotic_plague_legacy));
         iVar1 = pcVar2->targets[0].player;
         pcVar6->targets[0].card = pcVar2->targets[0].card;
         pcVar6->targets[0].player = iVar1;
@@ -934,8 +936,8 @@ int card_necrotic_plague(int player, int card, event_t event)
         pcVar6->targets[1].card = iVar3;
       }
     }
-    pcVar2 = get_card_instance(player, card);
-    if (-1 < pcVar2->damage_target_player)
+    instance = get_card_instance(player, card);
+    if (-1 < instance->damage_target_player)
       goto LAB_020899c0;
   }
   if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
@@ -946,9 +948,7 @@ int card_necrotic_plague(int player, int card, event_t event)
   {
     return 0;
   }
-LAB_02089940:
-  iVar3 = disabling_aura(player, card, event);
-  return iVar3;
+  return disabling_aura(player, card, event);
 }
 
 int card_nightwing_shade(int player, int card, event_t event){
@@ -2131,8 +2131,7 @@ int card_steel_overseer(int player, int card, event_t event)
       iVar1 = iVar1 + -1;
     } while (iVar1 != -1);
   }
-  iVar1 = generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
-  return iVar1;
+  return generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
 int card_sword_of_vengeance(int player, int card, event_t event){
@@ -2456,7 +2455,7 @@ int card_leyline_of_vitality(int player, int card, event_t event)
     {
       gain_life(player, 1);
       is_humiliated(player, card, AL_STATIC);
-      goto LAB_0208e066;
+      return global_enchantment(player, card, event);
     }
   }
   result = is_humiliated(player, card, AL_STATIC);
@@ -2464,9 +2463,7 @@ int card_leyline_of_vitality(int player, int card, event_t event)
   {
     event_result = event_result + 1;
   }
-LAB_0208e066:
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 // This is the version for Limited

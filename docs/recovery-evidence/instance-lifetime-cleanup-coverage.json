@@ -1,0 +1,162 @@
+{
+  "batch": "docs/recovery-evidence/instance-lifetime-cleanup.json",
+  "batch_sha256": "9b26f347ae1fc0e158947aff3f989aa594260c3dddc4152a886b7a66f54c5743",
+  "counts": {
+    "functions": 216,
+    "source_units": 78,
+    "value_groups": 590,
+    "named_bindings": 223,
+    "identifier_occurrences": 2994,
+    "removed_placeholder_declarations": 183,
+    "added_typed_declarations": 40,
+    "card_handlers": 138,
+    "helpers": 78,
+    "source_lines_added": 40,
+    "new_native_function_coverage": 0
+  },
+  "validation": {
+    "focused": {
+      "current_instance_lifetimes": {
+        "cleaned_definitions": 216,
+        "source_units": 78,
+        "value_groups": 590,
+        "named_bindings": 223,
+        "renamed_identifier_occurrences": 2994,
+        "reused_placeholder_declarations": 183,
+        "added_typed_declarations": 40,
+        "native_local_references": 332,
+        "assertion_sites": 25,
+        "scope": "Conservative reaching definitions separate nonescaping ordinary card-instance pointer value groups. Shared reads and read/modify/write uses merge groups; entry/uninitialized and opaque-write groups cannot acquire names. Each renamed group has a card-instance lookup role and direct non-inline native pointer local vocabulary. Every definition preserves its exact card_instance_t pointer type; actual compiler probes check the record and pointer identity. C member names retain their separate namespace and ordinary identifiers cannot be captured. Merging the new bindings reproduces every predecessor byte. All actual expanded units match. Native optimized-variable identity and new function coverage are not claimed; no gameplay tests."
+      },
+      "current_inputs": {
+        "canonical_functions": 738,
+        "accepted_function_names": 735,
+        "auxiliary_functions": [
+          {
+            "recovery_name": "exile_at_end_of_combat_2022",
+            "canonical_name": "innistrad_exile_at_end_of_combat_legacy",
+            "kind": "retained_public_native_helper",
+            "native_ranges": 1
+          },
+          {
+            "recovery_name": "reset_storm_count_2022",
+            "canonical_name": "reset_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 14
+          },
+          {
+            "recovery_name": "keep_storm_count_2022",
+            "canonical_name": "keep_storm_count",
+            "kind": "native_inline_fragment",
+            "native_ranges": 21
+          }
+        ],
+        "changed_files": 169,
+        "verification": "current source hashes and canonical name/ledger references",
+        "historical_provenance_replayed": false,
+        "historical_artifacts_retired": true,
+        "scope": "Current configuration inputs only. Historical source-edit replay, archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json."
+      },
+      "predecessor_source_units_checked": 84,
+      "reader_restoration_verified": true,
+      "physical_sources_unchanged": true,
+      "source_successor_chain_checked": true,
+      "index_unchanged": true,
+      "controls": {
+        "path": ".recovery/instance-lifetime-controls-c261.json",
+        "sha256": "ef9f1d32139950d512c4acb7a45f5920e77b3536b1acaece8898fd34caee20fb",
+        "results": {
+          "rejected": [
+            "address_escape",
+            "volatile_pointer",
+            "const_record",
+            "static_pointer",
+            "mixed_origin_join",
+            "uninitialized_path",
+            "pointer_arithmetic"
+          ],
+          "whole_pointer_declaration_reused": true,
+          "later_null_lifetime_preserved": true,
+          "added_pointer_type_preserved": true,
+          "ordinary_identifier_capture_rejected": true
+        }
+      }
+    },
+    "focused_record": {
+      "path": ".recovery/instance-lifetimes-focused-c264.json",
+      "sha256": "1ba88f1e4dfcb1bfef61e2ea10d6b38041717e9e39a0f066613ffe90a8611faf",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/instance-lifetimes-build-c263.log",
+      "log_sha256": "3305a0a709cca6e709a4fb79e438c6494ee8971af84f5ca2f0a934f84cfd1b3f",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "b757a251576b01846b4e3c3453f368d73c500e8aba737752f530be22762a3cf2",
+      "dbg_sha256": "37932f1b94e2e2cec2841a5c2ef96ca11a1bcf5f416085ded8ef2c3afb4e3d63"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/instance-lifetimes-proof-before-c262.json.gz",
+      "archive_sha256": "bffca7a4ee15d6fb669c0ac1f53ce195aedbce58afe563e24686bdedb84499cc",
+      "raw_sha256": "4ddd3170cb1de4855d908fe18c83f95e260a74fc0fa7ace833e8629fe780c643",
+      "verified_source_pin_successions": 78
+    },
+    "pointer_controls": {
+      "path": ".recovery/instance-lifetime-controls-c261.json",
+      "sha256": "ef9f1d32139950d512c4acb7a45f5920e77b3536b1acaece8898fd34caee20fb",
+      "results": {
+        "rejected": [
+          "address_escape",
+          "volatile_pointer",
+          "const_record",
+          "static_pointer",
+          "mixed_origin_join",
+          "uninitialized_path",
+          "pointer_arithmetic"
+        ],
+        "whole_pointer_declaration_reused": true,
+        "later_null_lifetime_preserved": true,
+        "added_pointer_type_preserved": true,
+        "ordinary_identifier_capture_rejected": true
+      }
+    },
+    "default_regression": {
+      "path": ".recovery/instance-extension-default-regression-c256.json",
+      "sha256": "6b60932ac7f2596e20b087e31a140e8950f94f92d9411623b62cccce8ff4c570",
+      "results": {
+        "representative_projection_checks": 24,
+        "projections_and_facts_identical": true
+      }
+    },
+    "limits": "Actual source and expanded reaching definitions preserve every observed pointer value. Seven unsafe cases are rejected; later null assignments stay separate. Direct native non-inline pointer names supply vocabulary, with no optimized-variable identity claim. Exact inverse merging recovers every predecessor byte. Actual GCC probes preserve the original card_instance_t pointer and 300-byte record identity; all78 complete expansions and25 ASSERT sites pass. Current build/batch checks only; historical replay remains retired. No new native function coverage or gameplay validation."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/instance-lifetimes-setup-c266.log",
+    "log_sha256": "efed544533daa54b7726cd7b510970ab3bd1b3046e9f0fe461c62068e348f100",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "csv_functions": 18725,
+    "metadata_sha256": "14cebac13de45f725450a546a6edcc8f328a5ab644336ceb7a6b50c4a9a2d565",
+    "mapping_identities_unchanged": true,
+    "changed_public_entry_annotations": [],
+    "prior_csv_reconstructed_sha256": "14cebac13de45f725450a546a6edcc8f328a5ab644336ceb7a6b50c4a9a2d565"
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c266.json",
+    "sha256": "53efb76f4ea9496f60d7903428e24ae2c021217efc7510753035116bad13c9b4",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1026,
+      "lab_gotos": 4135,
+      "functions_with_placeholders": 2124,
+      "distinct_function_local_placeholder_spellings": 6541,
+      "placeholder_identifier_occurrences": 52294,
+      "union_keywords": 0
+    }
+  },
+  "index_unchanged": true,
+  "limits": "Actual source and expanded reaching definitions preserve every observed pointer value. Seven unsafe cases are rejected; later null assignments stay separate. Direct native non-inline pointer names supply vocabulary, with no optimized-variable identity claim. Exact inverse merging recovers every predecessor byte. Actual GCC probes preserve the original card_instance_t pointer and 300-byte record identity; all78 complete expansions and25 ASSERT sites pass. Current build/batch checks only; historical replay remains retired. No new native function coverage or gameplay validation."
+}

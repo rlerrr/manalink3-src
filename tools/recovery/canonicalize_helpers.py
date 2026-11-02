@@ -387,6 +387,14 @@ def verify_interface_evidence(proof,root=ROOT):
     from verify_card_array_locals_recovery import verify as verify_card_array_locals_recovery
     from verify_token_scope_recovery import verify as verify_token_scope_recovery
     from verify_token_callback_recovery import verify as verify_token_callback_recovery
+    from verify_token_aggregate_recovery import verify as verify_token_aggregate_recovery
+    from verify_final_array_locals_recovery import verify as verify_final_array_locals_recovery
+    from verify_local_identifier_cleanup import verify as verify_local_identifier_cleanup
+    from verify_disentangled_pair_locals import verify as verify_disentangled_pair_locals
+    from verify_multiphase_card_locals import verify as verify_multiphase_card_locals
+    from verify_final_helper_locals import verify as verify_final_helper_locals
+    from verify_additional_local_names import verify as verify_additional_local_names
+    from verify_spell_dispatch_cleanup import verify as verify_spell_dispatch_cleanup
     from verify_aura_animation_cards_recovery import verify as verify_aura_animation_cards_recovery
     from verify_spell_death_cards_recovery import verify as verify_spell_death_cards_recovery
     from verify_aura_activation_cards_recovery import verify as verify_aura_activation_cards_recovery
@@ -398,124 +406,138 @@ def verify_interface_evidence(proof,root=ROOT):
     from verify_counterspell_aura_cards_recovery import verify as verify_counterspell_aura_cards_recovery
     from verify_combat_ai_cards_recovery import verify as verify_combat_ai_cards_recovery
     from verify_damage_dispatch_cards_recovery import verify as verify_damage_dispatch_cards_recovery
-    return dict(native_domains=domains,caller_ranges=len(ranges),argument_edits=verify_argument_edits(proof,image,root),
-                constant_argument_edits=verify_constant_edits(proof,image,root),
-                inline_counter_arguments=verify_inline_counters(proof,image,root),
-                counter_trigger_domains=verify_counter_domains(proof,root),
-                counter_argument_blocks=verify_counter_blocks(proof,image,root),
-                absolute_global_arrays=verify_global_arrays(proof,root),
-                source_identifier_spellings=verify_spelling_edits(proof,root),
-                executable_fallbacks=verify_engine_boundaries(proof,root),
-                deck_foundation=verify_deck_recovery(proof,image,root),
-                events_and_damage=verify_events_damage_recovery(proof,image,root),
-                counter_foundation=verify_counter_foundation_recovery(proof,image,root),
-                ability_foundation=verify_ability_foundation_recovery(proof,image,root),
-                damage_token_tutor=verify_damage_token_tutor_recovery(proof,image,root),
-                control_legend=verify_control_legend_recovery(proof,image,root),
-                legacy_lifecycle=verify_legacy_lifecycle_recovery(proof,image,root),
-                subtype_foundation=verify_subtype_foundation_recovery(proof,image,root),
-                cost_phase_life=verify_cost_phase_life_recovery(proof,image,root),
-                free_cast_discard=verify_free_cast_discard_recovery(proof,image,root),
-                commander_haunt_block=verify_commander_haunt_block_recovery(proof,image,root),
-                land_hybrid_core=verify_land_hybrid_core_recovery(proof,image,root),
-                convoke_suspend_upkeep=verify_convoke_suspend_upkeep_recovery(proof,image,root),
-                board_phase_grave=verify_board_phase_grave_recovery(proof,image,root),
-                energy_ice_unlimited=verify_energy_ice_unlimited_recovery(proof,image,root),
-                guild_spirit_tribal=verify_guild_spirit_tribal_recovery(proof,image,root),
-                grave_flashback_stronghold=verify_grave_flashback_stronghold_recovery(proof,image,root),
-                khans_fate_oath=verify_khans_fate_oath_recovery(proof,image,root),
-                classic_lands_slivers=verify_classic_lands_slivers_recovery(proof,image,root),
-                innistrad_theros_gods=verify_innistrad_theros_gods_recovery(proof,image,root),
-                journey_avacyn_tribal=verify_journey_avacyn_tribal_recovery(proof,image,root),
-                transform_awaken_exile=verify_transform_awaken_exile_recovery(proof,image,root),
-                artifact_sunburst_phyrexia=verify_artifact_sunburst_phyrexia_recovery(proof,image,root),
-                classic_death_land=verify_classic_death_land_recovery(proof,image,root),
-                kamigawa_sliver_delve=verify_kamigawa_sliver_delve_recovery(proof,image,root),
-                death_tribal_return=verify_death_tribal_return_recovery(proof,image,root),
-                classic_sliver_protection=verify_classic_sliver_protection_recovery(proof,image,root),
-                grave_library_target=verify_grave_library_target_recovery(proof,image,root),
-                planes_schemes_monarch=verify_planes_schemes_monarch_recovery(proof,image,root),
-                remaining_card_helpers=verify_remaining_card_helpers_recovery(proof,image,root),
-                rules_challenge=verify_rules_challenge_recovery(proof,image,root),
-                windows_general=verify_windows_general_recovery(proof,image,root),
-                compiler_cpp=verify_compiler_cpp_recovery(proof,image,root),
-                cpp_chooser=verify_cpp_chooser_recovery(proof,image,root),
-                native_jump_table=verify_native_jump_table(proof,image,root),
-                split_helpers_changed_cards=verify_split_cards_recovery(proof,image,root),
-                short_changed_cards=verify_short_cards_recovery(proof,image,root),
-                trigger_changed_cards=verify_trigger_cards_recovery(proof,image,root),
-                mana_changed_cards=verify_mana_cards_recovery(proof,image,root),
-                shared_changed_cards=verify_shared_cards_recovery(proof,image,root),
-                small_difference_cards=verify_small_diff_cards_recovery(proof,image,root),
-                control_cycling_cards=verify_control_cycling_cards_recovery(proof,image,root),
-                animation_tutor_cards=verify_animation_tutor_cards_recovery(proof,image,root),
-                pump_graveyard_cards=verify_pump_graveyard_cards_recovery(proof,image,root),
-                activation_mana_cards=verify_activation_mana_cards_recovery(proof,image,root),
-                legend_target_cards=verify_legend_target_cards_recovery(proof,image,root),
-                short_wrapper_cards=verify_short_wrapper_cards_recovery(proof,image,root),
-                mass_trigger_cards=verify_mass_trigger_cards_recovery(proof,image,root),
-                attack_graveyard_cards=verify_attack_graveyard_cards_recovery(proof,image,root),
-                mana_combat_cards=verify_mana_combat_cards_recovery(proof,image,root),
-                attack_token_cards=verify_attack_token_cards_recovery(proof,image,root),
-                combat_aura_cards=verify_combat_aura_cards_recovery(proof,image,root),
-                attack_aura_cards=verify_attack_aura_cards_recovery(proof,image,root),
-                storm_token_cards=verify_storm_token_cards_recovery(proof,image,root),
-                damage_history_cards=verify_damage_history_cards_recovery(proof,image,root),
-                attack_mana_cards=verify_attack_mana_cards_recovery(proof,image,root),
-                storm_protection_cards=verify_storm_protection_cards_recovery(proof,image,root),
-                spell_combat_cards=verify_spell_combat_cards_recovery(proof,image,root),
-                mana_legacy_cards=verify_mana_legacy_cards_recovery(proof,image,root),
-                mana_choice_cards=verify_mana_choice_cards_recovery(proof,image,root),
-                mana_imprint_cards=verify_mana_imprint_cards_recovery(proof,image,root),
-                mana_retarget_cards=verify_mana_retarget_cards_recovery(proof,image,root),
-                imprint_protection_cards=verify_imprint_protection_cards_recovery(proof,image,root),
-                modal_imprint_cards=verify_modal_imprint_cards_recovery(proof,image,root),
-                retained_reference_cards=verify_retained_reference_cards_recovery(proof,image,root),
-                odyssey_modal_cards=verify_odyssey_modal_cards_recovery(proof,image,root),
-                arcane_command_cards=verify_arcane_command_cards_recovery(proof,image,root),
-                reference_token_cards=verify_reference_token_cards_recovery(proof,image,root),
-                reference_exception_cards=verify_reference_exception_cards_recovery(proof,image,root),
-                coff_card_forwarders=verify_coff_card_forwarders(proof,image,root),
-                native_absolute_bindings=verify_native_absolute_bindings(proof,image,root),
-                native_header_enums=verify_native_header_enums(proof,image,root),
-                native_header_names=verify_header_name_recovery(proof,image,root),
-                native_header_inline=verify_header_inline_recovery(proof,image,root),
-                native_inline_predicates=verify_inline_predicate_recovery(proof,image,root),
-                native_inline_wrappers=verify_inline_wrapper_recovery(proof,image,root),
-                native_inline_mechanics=verify_inline_mechanics_recovery(proof,image,root),
-                native_inline_card_mechanics=verify_inline_card_mechanics_recovery(proof,image,root),
-                native_shared_stack_tests=verify_shared_stack_test_recovery(proof,image,root),
-                native_wide_stack_tests=verify_wide_stack_test_recovery(proof,image,root),
-                native_inline_final_definitions=verify_inline_final_definitions_recovery(proof,image,root),
-                native_header_types=verify_header_type_recovery(proof,image,root),
-                native_other_stack_records=verify_other_stack_record_recovery(proof,image,root),
-                native_target_storage=verify_target_storage_recovery(proof,image,root),
-                native_local_enum_values=verify_local_enum_values_recovery(proof,image,root),
-                native_plain_test_parameters=verify_plain_test_parameter_recovery(proof,image,root),
-                native_cast_stack_storage=verify_cast_stack_storage_recovery(proof,image,root),
-                native_array_roles=verify_array_role_recovery(proof,image,root),
-                native_target_roles=verify_target_role_recovery(proof,image,root),
-                native_ability_storage=verify_ability_storage_recovery(proof,image,root),
-                native_selection_storage=verify_selection_storage_recovery(proof,image,root),
-                native_global_indexing=verify_global_index_recovery(proof,image,root),
-                native_reverse_arrays=verify_reverse_array_recovery(proof,image,root),
-                native_array_census=verify_array_census_recovery(proof,image,root),
-                native_scoped_arrays=verify_scoped_array_recovery(proof,image,root),
-                native_card_array_locals=verify_card_array_locals_recovery(proof,image,root),
-                native_token_scopes=verify_token_scope_recovery(proof,image,root),
-                native_token_callbacks=verify_token_callback_recovery(proof,image,root),
-                aura_animation_cards=verify_aura_animation_cards_recovery(proof,image,root),
-                spell_death_cards=verify_spell_death_cards_recovery(proof,image,root),
-                aura_activation_cards=verify_aura_activation_cards_recovery(proof,image,root),
-                trigger_replacement_cards=verify_trigger_replacement_cards_recovery(proof,image,root),
-                grave_mana_cards=verify_grave_mana_cards_recovery(proof,image,root),
-                land_deflection_cards=verify_land_deflection_cards_recovery(proof,image,root),
-                grave_trigger_cards=verify_grave_trigger_cards_recovery(proof,image,root),
-                damage_subtype_cards=verify_damage_subtype_cards_recovery(proof,image,root),
-                counterspell_aura_cards=verify_counterspell_aura_cards_recovery(proof,image,root),
-                combat_ai_cards=verify_combat_ai_cards_recovery(proof,image,root),
-                damage_dispatch_cards=verify_damage_dispatch_cards_recovery(proof,image,root),
-                scope='Reviewed interface edits only; retained custom callers explicitly distinguished from native caller ranges.')
+    from verify_call_condition_cleanup import historical_readers
+    with historical_readers(proof,image,root) as cleanup:
+        result=dict(native_domains=domains,caller_ranges=len(ranges),argument_edits=verify_argument_edits(proof,image,root),
+                    constant_argument_edits=verify_constant_edits(proof,image,root),
+                    inline_counter_arguments=verify_inline_counters(proof,image,root),
+                    counter_trigger_domains=verify_counter_domains(proof,root),
+                    counter_argument_blocks=verify_counter_blocks(proof,image,root),
+                    absolute_global_arrays=verify_global_arrays(proof,root),
+                    source_identifier_spellings=verify_spelling_edits(proof,root),
+                    executable_fallbacks=verify_engine_boundaries(proof,root),
+                    deck_foundation=verify_deck_recovery(proof,image,root),
+                    events_and_damage=verify_events_damage_recovery(proof,image,root),
+                    counter_foundation=verify_counter_foundation_recovery(proof,image,root),
+                    ability_foundation=verify_ability_foundation_recovery(proof,image,root),
+                    damage_token_tutor=verify_damage_token_tutor_recovery(proof,image,root),
+                    control_legend=verify_control_legend_recovery(proof,image,root),
+                    legacy_lifecycle=verify_legacy_lifecycle_recovery(proof,image,root),
+                    subtype_foundation=verify_subtype_foundation_recovery(proof,image,root),
+                    cost_phase_life=verify_cost_phase_life_recovery(proof,image,root),
+                    free_cast_discard=verify_free_cast_discard_recovery(proof,image,root),
+                    commander_haunt_block=verify_commander_haunt_block_recovery(proof,image,root),
+                    land_hybrid_core=verify_land_hybrid_core_recovery(proof,image,root),
+                    convoke_suspend_upkeep=verify_convoke_suspend_upkeep_recovery(proof,image,root),
+                    board_phase_grave=verify_board_phase_grave_recovery(proof,image,root),
+                    energy_ice_unlimited=verify_energy_ice_unlimited_recovery(proof,image,root),
+                    guild_spirit_tribal=verify_guild_spirit_tribal_recovery(proof,image,root),
+                    grave_flashback_stronghold=verify_grave_flashback_stronghold_recovery(proof,image,root),
+                    khans_fate_oath=verify_khans_fate_oath_recovery(proof,image,root),
+                    classic_lands_slivers=verify_classic_lands_slivers_recovery(proof,image,root),
+                    innistrad_theros_gods=verify_innistrad_theros_gods_recovery(proof,image,root),
+                    journey_avacyn_tribal=verify_journey_avacyn_tribal_recovery(proof,image,root),
+                    transform_awaken_exile=verify_transform_awaken_exile_recovery(proof,image,root),
+                    artifact_sunburst_phyrexia=verify_artifact_sunburst_phyrexia_recovery(proof,image,root),
+                    classic_death_land=verify_classic_death_land_recovery(proof,image,root),
+                    kamigawa_sliver_delve=verify_kamigawa_sliver_delve_recovery(proof,image,root),
+                    death_tribal_return=verify_death_tribal_return_recovery(proof,image,root),
+                    classic_sliver_protection=verify_classic_sliver_protection_recovery(proof,image,root),
+                    grave_library_target=verify_grave_library_target_recovery(proof,image,root),
+                    planes_schemes_monarch=verify_planes_schemes_monarch_recovery(proof,image,root),
+                    remaining_card_helpers=verify_remaining_card_helpers_recovery(proof,image,root),
+                    rules_challenge=verify_rules_challenge_recovery(proof,image,root),
+                    windows_general=verify_windows_general_recovery(proof,image,root),
+                    compiler_cpp=verify_compiler_cpp_recovery(proof,image,root),
+                    cpp_chooser=verify_cpp_chooser_recovery(proof,image,root),
+                    native_jump_table=verify_native_jump_table(proof,image,root),
+                    split_helpers_changed_cards=verify_split_cards_recovery(proof,image,root),
+                    short_changed_cards=verify_short_cards_recovery(proof,image,root),
+                    trigger_changed_cards=verify_trigger_cards_recovery(proof,image,root),
+                    mana_changed_cards=verify_mana_cards_recovery(proof,image,root),
+                    shared_changed_cards=verify_shared_cards_recovery(proof,image,root),
+                    small_difference_cards=verify_small_diff_cards_recovery(proof,image,root),
+                    control_cycling_cards=verify_control_cycling_cards_recovery(proof,image,root),
+                    animation_tutor_cards=verify_animation_tutor_cards_recovery(proof,image,root),
+                    pump_graveyard_cards=verify_pump_graveyard_cards_recovery(proof,image,root),
+                    activation_mana_cards=verify_activation_mana_cards_recovery(proof,image,root),
+                    legend_target_cards=verify_legend_target_cards_recovery(proof,image,root),
+                    short_wrapper_cards=verify_short_wrapper_cards_recovery(proof,image,root),
+                    mass_trigger_cards=verify_mass_trigger_cards_recovery(proof,image,root),
+                    attack_graveyard_cards=verify_attack_graveyard_cards_recovery(proof,image,root),
+                    mana_combat_cards=verify_mana_combat_cards_recovery(proof,image,root),
+                    attack_token_cards=verify_attack_token_cards_recovery(proof,image,root),
+                    combat_aura_cards=verify_combat_aura_cards_recovery(proof,image,root),
+                    attack_aura_cards=verify_attack_aura_cards_recovery(proof,image,root),
+                    storm_token_cards=verify_storm_token_cards_recovery(proof,image,root),
+                    damage_history_cards=verify_damage_history_cards_recovery(proof,image,root),
+                    attack_mana_cards=verify_attack_mana_cards_recovery(proof,image,root),
+                    storm_protection_cards=verify_storm_protection_cards_recovery(proof,image,root),
+                    spell_combat_cards=verify_spell_combat_cards_recovery(proof,image,root),
+                    mana_legacy_cards=verify_mana_legacy_cards_recovery(proof,image,root),
+                    mana_choice_cards=verify_mana_choice_cards_recovery(proof,image,root),
+                    mana_imprint_cards=verify_mana_imprint_cards_recovery(proof,image,root),
+                    mana_retarget_cards=verify_mana_retarget_cards_recovery(proof,image,root),
+                    imprint_protection_cards=verify_imprint_protection_cards_recovery(proof,image,root),
+                    modal_imprint_cards=verify_modal_imprint_cards_recovery(proof,image,root),
+                    retained_reference_cards=verify_retained_reference_cards_recovery(proof,image,root),
+                    odyssey_modal_cards=verify_odyssey_modal_cards_recovery(proof,image,root),
+                    arcane_command_cards=verify_arcane_command_cards_recovery(proof,image,root),
+                    reference_token_cards=verify_reference_token_cards_recovery(proof,image,root),
+                    reference_exception_cards=verify_reference_exception_cards_recovery(proof,image,root),
+                    coff_card_forwarders=verify_coff_card_forwarders(proof,image,root),
+                    native_absolute_bindings=verify_native_absolute_bindings(proof,image,root),
+                    native_header_enums=verify_native_header_enums(proof,image,root),
+                    native_header_names=verify_header_name_recovery(proof,image,root),
+                    native_header_inline=verify_header_inline_recovery(proof,image,root),
+                    native_inline_predicates=verify_inline_predicate_recovery(proof,image,root),
+                    native_inline_wrappers=verify_inline_wrapper_recovery(proof,image,root),
+                    native_inline_mechanics=verify_inline_mechanics_recovery(proof,image,root),
+                    native_inline_card_mechanics=verify_inline_card_mechanics_recovery(proof,image,root),
+                    native_shared_stack_tests=verify_shared_stack_test_recovery(proof,image,root),
+                    native_wide_stack_tests=verify_wide_stack_test_recovery(proof,image,root),
+                    native_inline_final_definitions=verify_inline_final_definitions_recovery(proof,image,root),
+                    native_header_types=verify_header_type_recovery(proof,image,root),
+                    native_other_stack_records=verify_other_stack_record_recovery(proof,image,root),
+                    native_target_storage=verify_target_storage_recovery(proof,image,root),
+                    native_local_enum_values=verify_local_enum_values_recovery(proof,image,root),
+                    native_plain_test_parameters=verify_plain_test_parameter_recovery(proof,image,root),
+                    native_cast_stack_storage=verify_cast_stack_storage_recovery(proof,image,root),
+                    native_array_roles=verify_array_role_recovery(proof,image,root),
+                    native_target_roles=verify_target_role_recovery(proof,image,root),
+                    native_ability_storage=verify_ability_storage_recovery(proof,image,root),
+                    native_selection_storage=verify_selection_storage_recovery(proof,image,root),
+                    native_global_indexing=verify_global_index_recovery(proof,image,root),
+                    native_reverse_arrays=verify_reverse_array_recovery(proof,image,root),
+                    native_array_census=verify_array_census_recovery(proof,image,root),
+                    native_scoped_arrays=verify_scoped_array_recovery(proof,image,root),
+                    native_card_array_locals=verify_card_array_locals_recovery(proof,image,root),
+                    native_token_scopes=verify_token_scope_recovery(proof,image,root),
+                    native_token_callbacks=verify_token_callback_recovery(proof,image,root),
+                    native_token_aggregates=verify_token_aggregate_recovery(proof,image,root),
+                    native_final_array_locals=verify_final_array_locals_recovery(proof,image,root),
+                    native_local_identifier_cleanup=verify_local_identifier_cleanup(proof,image,root),
+                    native_disentangled_pair_locals=verify_disentangled_pair_locals(proof,image,root),
+                    native_multiphase_card_locals=verify_multiphase_card_locals(proof,image,root),
+                    native_final_helper_locals=verify_final_helper_locals(proof,image,root),
+                    native_additional_local_names=verify_additional_local_names(proof,image,root),
+                    native_spell_dispatch_cleanup=verify_spell_dispatch_cleanup(proof,image,root),
+                    aura_animation_cards=verify_aura_animation_cards_recovery(proof,image,root),
+                    spell_death_cards=verify_spell_death_cards_recovery(proof,image,root),
+                    aura_activation_cards=verify_aura_activation_cards_recovery(proof,image,root),
+                    trigger_replacement_cards=verify_trigger_replacement_cards_recovery(proof,image,root),
+                    grave_mana_cards=verify_grave_mana_cards_recovery(proof,image,root),
+                    land_deflection_cards=verify_land_deflection_cards_recovery(proof,image,root),
+                    grave_trigger_cards=verify_grave_trigger_cards_recovery(proof,image,root),
+                    damage_subtype_cards=verify_damage_subtype_cards_recovery(proof,image,root),
+                    counterspell_aura_cards=verify_counterspell_aura_cards_recovery(proof,image,root),
+                    combat_ai_cards=verify_combat_ai_cards_recovery(proof,image,root),
+                    damage_dispatch_cards=verify_damage_dispatch_cards_recovery(proof,image,root),
+                    scope='Reviewed interface edits only; retained custom callers explicitly distinguished from native caller ranges.')
+    result['native_call_condition_cleanup']=cleanup
+    result['historical_source_view']='Checked pre-call-temporary spelling for old Python receipt readers; compiled binaries and live cleanup checks use current files.' if cleanup else 'current source'
+    return result
+
 
 def predecessor_bytes(row,archive,root=ROOT):
     """Read a checked later-added source without rewriting the original archive."""
@@ -527,7 +549,34 @@ def predecessor_bytes(row,archive,root=ROOT):
     return archive.read(row['source'])
 
 
+def verify_current(root=ROOT):
+    """Check the live source/name inputs used by routine comparison setup.
+
+    Historical source projection and archived build audits are separate from
+    this check. Their artifacts may have been explicitly retired.
+    """
+    proof=load(root)
+    if not proof:return {}
+    assert proof['recipe_sha256']==recipe_sha(),'Canonical projection recipe changed'
+    for row in proof['files']:
+        assert sha(read(root/row['source']).encode())==row['canonical_sha256'],('Current source differs from recovery record',row['source'])
+    ledger=json.loads((root/'docs/recovery-evidence/recovered-functions.json').read_bytes())
+    accepted={f['name']:f for f in ledger['accepted_functions']}
+    for e in proof['functions']:
+        assert sha(json.dumps(accepted[e['recovery_name']],sort_keys=True).encode())==e['accepted_recovery_record_sha256'],e['recovery_name']
+    for e in proof.get('source_annotations',[]):
+        assert sha(json.dumps(accepted[e['recovery_name']],sort_keys=True).encode())==e['accepted_recovery_record_sha256'],e['recovery_name']
+    return dict(canonical_functions=len(names(root)),accepted_function_names=len(proof['functions']),
+                auxiliary_functions=verify_auxiliary_functions(proof,root),changed_files=len(proof['files']),
+                verification='current source hashes and canonical name/ledger references',
+                historical_provenance_replayed=False,
+                historical_artifacts_retired=(root/'docs/recovery-evidence/historical-artifact-retirement.json').exists(),
+                scope='Current configuration inputs only. Historical source-edit replay, archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json.')
+
+
 def verify(root=ROOT):
+    if (root/'docs/recovery-evidence/historical-artifact-retirement.json').exists():
+        raise RuntimeError('Historical compiler/runtime snapshots were deliberately retired to free disk space. Use --verify-current, the current batch checker and a current build; see docs/recovery-evidence/historical-artifact-retirement.json.')
     proof=load(root)
     if not proof:return {}
     assert proof['recipe_sha256']==recipe_sha(),'Canonical projection recipe changed'
@@ -771,8 +820,12 @@ def prepare():
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(__doc__)
-    parser.add_argument('--apply',action='store_true');parser.add_argument('--verify',action='store_true')
+    mode=parser.add_mutually_exclusive_group()
+    mode.add_argument('--apply',action='store_true')
+    mode.add_argument('--verify',action='store_true',help='Replay the complete historical recovery audit (slow)')
+    mode.add_argument('--verify-current',action='store_true',help='Check current source hashes and canonical ledger/name references only')
     args=parser.parse_args()
     if args.apply:apply()
+    elif args.verify_current:print(json.dumps(verify_current(),indent=2))
     elif args.verify:print(json.dumps(verify(),indent=2))
     else:prepare()

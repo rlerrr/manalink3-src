@@ -1,0 +1,132 @@
+{
+  "batch": "docs/recovery-evidence/shared-spell-cleanup.json",
+  "batch_sha256": "a36c6d9cf99ff3d45dcf9965a9734bcb88701c2ce443237979cab89858960358",
+  "counts": {
+    "functions": 148,
+    "source_units": 44,
+    "private_pointer_captures": 83,
+    "removed_gotos": 148,
+    "removed_labels": 148,
+    "source_lines_removed": 3596,
+    "trace_cases": 28416,
+    "pending": 0,
+    "card_handlers": 148,
+    "new_native_function_coverage": 0
+  },
+  "runtime_comparison": {
+    "identical_sections": 4,
+    "changed_sections": [
+      ".CRT",
+      ".data",
+      ".rdata",
+      ".reloc",
+      ".text",
+      ".text.startup",
+      ".text.startup._GLOBAL__sub_I__ZN9__gnu_cxx9__freeresEv",
+      ".text.startup._GLOBAL__sub_I___cxa_get_globals_fast",
+      ".text.unlikely",
+      ".text.unlikely._ZSt16__throw_bad_castv",
+      ".text.unlikely._ZSt17__throw_bad_allocv",
+      ".text.unlikely._ZSt18__throw_bad_typeidv",
+      ".text.unlikely._ZSt19__throw_logic_errorPKc",
+      ".text.unlikely._ZSt19__throw_range_errorPKc",
+      ".text.unlikely._ZSt20__throw_domain_errorPKc",
+      ".text.unlikely._ZSt20__throw_length_errorPKc",
+      ".text.unlikely._ZSt20__throw_out_of_rangePKc",
+      ".text.unlikely._ZSt21__throw_bad_exceptionv",
+      ".text.unlikely._ZSt21__throw_runtime_errorPKc",
+      ".text.unlikely._ZSt22__throw_overflow_errorPKc",
+      ".text.unlikely._ZSt23__throw_underflow_errorPKc",
+      ".text.unlikely._ZSt24__throw_invalid_argumentPKc"
+    ],
+    "scope": "Recorded compiler-output comparison only; source/control-flow proof does not require byte matching."
+  },
+  "validation": {
+    "focused": {
+      "current_shared_spells": {
+        "structured_handlers": 148,
+        "source_units": 44,
+        "removed_lab_gotos": 148,
+        "removed_lab_labels": 148,
+        "source_lines_removed": 3596,
+        "parsed_trace_cases": 28416,
+        "private_pointer_captures": 83,
+        "native_owner_bindings": 148,
+        "compiled_event_bindings": 148,
+        "scope": "Shared constructor/setup executes once on the same supported events; source-identical resolution blocks and tail calls retain their bindings. Five native event values, affinity/global-read order, arbitrary setup global changes and payload return/fallthrough are checked. The pure inline affinity predicate is compiler-bound. An extra private pointer assignment is permitted only when unread outside resolution. This preserves the accepted reconstruction, not a full native/gameplay equivalence proof."
+      },
+      "prior_source_input_hashes": {
+        "role_source_units": 76,
+        "return_source_units": 125,
+        "assertion_special_source_units": 18
+      },
+      "reader_restoration_verified": true,
+      "unreviewed_source_rejected": true,
+      "physical_source_unchanged": true,
+      "source_successor_chain_checked": true,
+      "scope": "Current structural proof plus exact historical input compatibility. Earlier semantic checkers and the full historical suite were not rerun."
+    },
+    "focused_log": {
+      "path": ".recovery/shared-spells-readers-c136.log",
+      "sha256": "4abe94e1d73b55d57fc1e19849d4541b102e3b01da807574cc2baacf507b4a49",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+      "log": ".recovery/shared-spells-build-c135.log",
+      "log_sha256": "984e89d5234ef01c193af98acd1db618aee1381f79870bf493ad10ff31638ed8",
+      "exit_code": 0,
+      "verified_built_slots": 15169,
+      "dll_sha256": "8f5f1a0f53c30273f730b6e191c460ce95b4484e7612d1db008deaf04413c500",
+      "dbg_sha256": "43be6cbd82fed870fefccff3162dce4e59e51db18af22aa51d5534f373b256a6"
+    },
+    "predecessor_proof": {
+      "path": ".recovery/shared-spells-proof-before-c134.json.gz",
+      "archive_sha256": "021ed7a4670defdcbe3e9fc4843c9f0a921e83decf8d0dba6f9e4a6e65a55fa2",
+      "raw_sha256": "24917a197c38cdf93d9c173e5c217ed0e64e69cea5d5f18f6643e46055388a30",
+      "verified_source_pin_successions": 44
+    },
+    "negative_cases": {
+      "path": ".recovery/shared-spell-negative-c133.json",
+      "sha256": "467ad17d260c62a8a13529c4e30abbb5e36a6cc5c96a9fb092f51612d4a5a3d7",
+      "results": {
+        "rejected": [
+          "admit_unaffected_casts",
+          "duplicate_setup",
+          "wrong_payload_event",
+          "escaped_private_pointer",
+          "aliased_event_constants"
+        ],
+        "physical_source_unchanged": true
+      }
+    },
+    "limits": "Checks preserve the accepted reconstruction within this closed dispatch family. Native function identities/event values, actual compiler expansions, action/guard traces and unchanged payload/tail bindings are checked. Compiler output changes; no byte matching requirement, new native coverage, full historical semantic replay or gameplay tests."
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/shared-spells-setup-c138.log",
+    "log_sha256": "c6dfbb19ca561b2d3ea15f9ce26ae871c04ec43322b6e390b5a34bd4f4819c06",
+    "recovery_audit_mode": "current_inputs",
+    "verified_built_slots": 15169,
+    "metadata_sha256": "46577f8e519f309dcf5e9c98d10938173227e0d096b291fd68602257408d532c",
+    "csv_functions": 18725,
+    "changed_rebuilt_coff_address_annotations": 14,
+    "other_mapping_fields_unchanged": true,
+    "comparison_input": "Git index functions.csv; index untouched"
+  },
+  "current_source_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c138.json",
+    "sha256": "542eb731b6065d76d2da43cca2db155f317d90fcf3d1133d1e208252a13daac2",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 1274,
+      "lab_gotos": 5108,
+      "functions_with_placeholders": 2132,
+      "distinct_function_local_placeholder_spellings": 7050,
+      "placeholder_identifier_occurrences": 61716,
+      "union_keywords": 0
+    }
+  },
+  "limits": "Checks preserve the accepted reconstruction within this closed dispatch family. Native function identities/event values, actual compiler expansions, action/guard traces and unchanged payload/tail bindings are checked. Compiler output changes; no byte matching requirement, new native coverage, full historical semantic replay or gameplay tests."
+}

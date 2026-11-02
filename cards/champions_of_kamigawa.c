@@ -3547,8 +3547,7 @@ int card_night_dealings(int player, int card, event_t event)
       generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 2, 2, 0, 0, 0, 0, 0, NULL, NULL);
       if ((spell_fizzled != 1) && (iVar2 = count_counters(player, card, COUNTER_THEFT), iVar2 != 0))
       {
-        iVar2 = count_counters(player, card, COUNTER_THEFT);
-        argument3 = internal_rand(iVar2);
+        argument3 = internal_rand(count_counters(player, card, COUNTER_THEFT));
         iVar2 = argument3;
         if ((player == 0) && ((iVar2 = choose_a_number(0, "Remove how many counters?", argument3),
                                iVar2 < 1 || (argument3 < iVar2))))
@@ -3571,12 +3570,10 @@ int card_night_dealings(int player, int card, event_t event)
       scnprintf(test.message, 100, "Select target nonland card with CMC %d", iVar1);
       new_global_tutor(player, player, 1, 1, 0, 1, &test);
     }
-    iVar2 = global_enchantment(player, card, event);
-    return iVar2;
+    return global_enchantment(player, card, event);
   }
-  iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 2, 2, 0, 0, 0, 0, 0, NULL,
+  return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 2, 2, 0, 0, 0, 0, 0, NULL,
                                     NULL);
-  return iVar2;
 }
 
 int card_night_of_souls_betrayal(int player, int card, event_t event)
@@ -5410,7 +5407,6 @@ int card_kitsune_riftwalker(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2609e40; original cards/champions_of_kamigawa.c:5023. */
 static int card_swallowing_plague_impl(int player, int card, event_t event)
 {
-  int result;
   target_definition_t td;
   if (event != EVENT_CAN_CAST)
   {
@@ -5430,7 +5426,7 @@ static int card_swallowing_plague_impl(int player, int card, event_t event)
       if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
       {
         default_target_definition(player, card, &td, 2);
-        if ((event == EVENT_RESOLVE_SPELL) && (result = valid_target(&td), result != 0))
+        if ((event == EVENT_RESOLVE_SPELL) && (valid_target(&td) != 0))
         {
           damage_target0(player, card, x_value);
           gain_life(player, x_value);
@@ -5445,8 +5441,7 @@ static int card_swallowing_plague_impl(int player, int card, event_t event)
   }
   default_target_definition(player, card, &td, 2);
 LAB_02609e91:
-  result = generic_spell(player, card, event, 5, &td, "TARGET_CREATURE", 1, NULL);
-  return result;
+  return generic_spell(player, card, event, 5, &td, "TARGET_CREATURE", 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x2618300; original cards/champions_of_kamigawa.c:5256. */
@@ -5576,7 +5571,7 @@ static int card_petals_of_insight_impl(int player, int card, event_t event)
   int num_cards;
 
   if (event != EVENT_RESOLVE_SPELL)
-    goto LAB_0260a857;
+    return basic_spell(player, card, event);
 
   iVar1 = count_deck(player);
   if (iVar1 < 1)
@@ -5608,9 +5603,7 @@ static int card_petals_of_insight_impl(int player, int card, event_t event)
     }
     bounce_permanent(player, card);
   }
-LAB_0260a857:
-  iVar1 = basic_spell(player, card, event);
-  return iVar1;
+  return basic_spell(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -5835,8 +5828,7 @@ static int card_cranial_extraction_impl(int player, int card, event_t event)
   default_target_definition(player, card, &td, 2);
   td.zone = 0x1000;
 LAB_02609a3c:
-  result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
-  return result;
+  return generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */

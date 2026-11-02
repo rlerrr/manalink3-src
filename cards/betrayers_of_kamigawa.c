@@ -457,14 +457,12 @@ int card_blademane_baku(int player, int card, event_t event)
   int iVar3;
   if (event - EVENT_POW_BOOST < 2)
   {
-    iVar1 = has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0);
-    if (iVar1 != 0)
+    if (has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) != 0)
     {
       iVar1 = count_counters(player, card, COUNTER_KI);
       pumpable_power[player] = pumpable_power[player] + iVar1 * 2;
     }
-    iVar1 = duh_mode(player);
-    if (iVar1 != 0)
+    if (duh_mode(player) != 0)
     {
       arcane_spirit_spell_trigger(player, card, event, 2);
       if (event != EVENT_RESOLVE_ACTIVATION)
@@ -487,22 +485,19 @@ int card_blademane_baku(int player, int card, event_t event)
   }
   if (event == EVENT_CAN_ACTIVATE)
   {
-    iVar1 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0, 0, 0,
+    return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0, 0, 0,
                                       NULL, NULL);
-    return iVar1;
   }
   if (event == EVENT_ACTIVATE)
   {
     instance = get_card_instance(player, card);
     instance->info_slot = 0;
-    iVar1 = charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0);
-    if (iVar1 != 0)
+    if (charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) != 0)
     {
       iVar1 = count_counters(player, card, COUNTER_KI);
       if (player != 1)
       {
-        iVar1 = count_counters(player, card, COUNTER_KI);
-        iVar1 = choose_a_number(player, "Remove how many counters?", iVar1);
+        iVar1 = choose_a_number(player, "Remove how many counters?", count_counters(player, card, COUNTER_KI));
         if ((iVar1 < 1) || (iVar3 = count_counters(player, card, COUNTER_KI), iVar3 < iVar1))
         {
           spell_fizzled = 1;
@@ -1413,6 +1408,7 @@ int card_kentaro_the_smiling_cat(int player, int card, event_t event){
 /* This is just an approximation */
 int card_kira_great_glass_spinner(int player, int card, event_t event)
 {
+  int i;
   int iVar1;
   card_instance_t *instance;
   int iVar3;
@@ -1449,23 +1445,22 @@ int card_kira_great_glass_spinner(int player, int card, event_t event)
       {
         instance = get_card_instance(trigger_cause_controller, trigger_cause);
         bVar4 = instance->number_of_targets;
-        iVar1 = 0;
-        while (iVar1 < (int)(unsigned int)bVar4)
+        i = 0;
+        while (i < (int)(unsigned int)bVar4)
         {
-          iVar3 = instance->targets[iVar1].card;
-          if ((iVar3 == -1) || (instance->targets[iVar1].player != player))
+          iVar3 = instance->targets[i].card;
+          if ((iVar3 == -1) || (instance->targets[i].player != player))
           {
-            iVar1 = iVar1 + 1;
+            i = i + 1;
           }
           else
           {
-            iVar3 = is_what(player, iVar3, 2);
-            if (iVar3 != 0)
+            if (is_what(player, iVar3, 2) != 0)
             {
-              set_special_flags2(instance->targets[iVar1].player, instance->targets[iVar1].card, 1);
+              set_special_flags2(instance->targets[i].player, instance->targets[i].card, 1);
             }
             bVar4 = instance->number_of_targets;
-            iVar1 = iVar1 + 1;
+            i = i + 1;
           }
         }
         kill_card(trigger_cause_controller, trigger_cause, KILL_SACRIFICE);
@@ -1499,20 +1494,20 @@ int card_kira_great_glass_spinner(int player, int card, event_t event)
           goto LAB_0256c0b8;
         if (instance->number_of_targets != '\0')
         {
-          iVar1 = 0;
+          i = 0;
           do
           {
-            iVar3 = instance->targets[iVar1].card;
-            if (((iVar3 != -1) && (instance->targets[iVar1].player == player)) &&
+            iVar3 = instance->targets[i].card;
+            if (((iVar3 != -1) && (instance->targets[i].player == player)) &&
                 ((iVar3 = is_what(player, iVar3, 2),
-                  iVar3 != 0 && (iVar3 = check_special_flags2(instance->targets[iVar1].player,
-                                                              instance->targets[iVar1].card, 1),
+                  iVar3 != 0 && (iVar3 = check_special_flags2(instance->targets[i].player,
+                                                              instance->targets[i].card, 1),
                                  iVar3 == 0))))
             {
-              set_special_flags2(instance->targets[iVar1].player, instance->targets[iVar1].card, 1);
+              set_special_flags2(instance->targets[i].player, instance->targets[i].card, 1);
             }
-            iVar1 = iVar1 + 1;
-          } while (iVar1 < (int)(unsigned int)instance->number_of_targets);
+            i = i + 1;
+          } while (i < (int)(unsigned int)instance->number_of_targets);
         }
         instance->internal_card_id = -1;
       }
@@ -2371,8 +2366,7 @@ int card_petalmane_baku(int player, int card, event_t event)
     {
       return 0;
     }
-    iVar2 = can_produce_mana(player, card);
-    if (iVar2 == 0)
+    if (can_produce_mana(player, card) == 0)
     {
       return 0;
     }
@@ -2381,20 +2375,17 @@ int card_petalmane_baku(int player, int card, event_t event)
     {
       return 0;
     }
-    iVar2 = has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0);
-    if (iVar2 == 0)
+    if (has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) == 0)
     {
       return 0;
     }
-    iVar2 = count_counters(player, card, COUNTER_KI);
-    declare_mana_available_hex(player, 0x3e, iVar2);
+    declare_mana_available_hex(player, 0x3e, count_counters(player, card, COUNTER_KI));
     declare_mana_available(player, 0, -1);
     return 0;
   }
   if (event == EVENT_CAN_ACTIVATE)
   {
-    iVar2 = can_produce_mana(player, card);
-    if (iVar2 == 0)
+    if (can_produce_mana(player, card) == 0)
     {
       return 0;
     }
@@ -2408,8 +2399,7 @@ int card_petalmane_baku(int player, int card, event_t event)
     {
       return 0;
     }
-    iVar2 = has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0);
-    return iVar2;
+    return has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0);
   }
   if (event != EVENT_ACTIVATE)
   {
@@ -2422,8 +2412,7 @@ int card_petalmane_baku(int player, int card, event_t event)
   {
     if (ldoubleclicked != 0)
       goto LAB_0256e62a;
-    iVar2 = count_counters(player, card, COUNTER_KI);
-    iVar2 = choose_a_number(player, "Remove how many counters?", iVar2);
+    iVar2 = choose_a_number(player, "Remove how many counters?", count_counters(player, card, COUNTER_KI));
     if ((iVar2 == 0) || (iVar3 = count_counters(player, card, COUNTER_KI), iVar3 < iVar2))
     {
       spell_fizzled = 1;
@@ -3293,12 +3282,11 @@ int card_umezawas_jitte(int player, int card, event_t event)
   unsigned int uVar3;
   int32_t t_card;
   int iVar4;
-  card_instance_t *pcStack_70;
+  card_instance_t *instance;
   target_definition_t *ptStack_6c;
   target_definition_t td;
 
-  iVar1 = is_unlocked(player, card, event, 0x1a);
-  if (iVar1 == 0)
+  if (is_unlocked(player, card, event, 0x1a) == 0)
   {
     return 0;
   }
@@ -3314,38 +3302,33 @@ int card_umezawas_jitte(int player, int card, event_t event)
   }
   if (event == EVENT_CAN_ACTIVATE)
   {
-    iVar1 = can_use_activated_abilities(player, card);
-    if (iVar1 == 0)
+    if (can_use_activated_abilities(player, card) == 0)
     {
       return 0;
     }
-    iVar1 = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
-    if (iVar1 == 0)
+    if (has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) == 0)
     {
       return 0;
     }
-    pcStack_70 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     iVar1 = count_counters(player, card, COUNTER_CHARGE);
     default_target_definition(player, card, &td, 2);
     uVar3 = (unsigned int)(0 < iVar1);
     if (iVar1 < 1)
     {
-      iVar1 = can_activate_basic_equipment(player, card, EVENT_CAN_ACTIVATE, 2);
-      iVar1 = dialog_impl(player, card, EVENT_CAN_ACTIVATE, "\001\002", "Equip", iVar1, 1, "+2/+2",
+      return dialog_impl(player, card, EVENT_CAN_ACTIVATE, "\001\002", "Equip", can_activate_basic_equipment(player, card, EVENT_CAN_ACTIVATE, 2), 1, "+2/+2",
                           0, 10, "-1/-1", 0, 10, "Gain 2 life", uVar3, 5, 0, 0, 0, 0);
-      return iVar1;
     }
   }
   else
   {
-    pcStack_70 = get_card_instance(player, card);
+    instance = get_card_instance(player, card);
     iVar1 = count_counters(player, card, COUNTER_CHARGE);
     default_target_definition(player, card, &td, 2);
     uVar3 = (unsigned int)(0 < iVar1);
     if (iVar1 < 1)
     {
-      iVar1 = can_activate_basic_equipment(player, card, event, 2);
-      iVar1 = dialog_impl(player, card, event, "\001\002", "Equip", iVar1, 1, "+2/+2", 0, 10,
+      iVar1 = dialog_impl(player, card, event, "\001\002", "Equip", can_activate_basic_equipment(player, card, event, 2), 1, "+2/+2", 0, 10,
                           "-1/-1", 0, 10, "Gain 2 life", uVar3, 5, 0, 0, 0, 0);
       goto LAB_02570aec;
     }
@@ -3365,16 +3348,14 @@ LAB_02570aec:
   ptStack_6c = &td;
   if (event == EVENT_ACTIVATE)
   {
-    pcStack_70->number_of_targets = '\0';
+    instance->number_of_targets = '\0';
     if (iVar1 == 3)
     {
-      iVar1 = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
-      if (iVar1 == 0)
+      if (charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) == 0)
       {
         return 0;
       }
-      iVar1 = pick_target(ptStack_6c, "TARGET_CREATURE");
-      if (iVar1 == 0)
+      if (pick_target(ptStack_6c, "TARGET_CREATURE") == 0)
       {
         return 0;
       }
@@ -3407,8 +3388,7 @@ LAB_02570aec:
     {
       return 0;
     }
-    iVar1 = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
-    if (iVar1 != 0)
+    if (charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) != 0)
     {
       remove_counters(player, card, player, card, COUNTER_CHARGE, 1);
     }
@@ -3425,16 +3405,15 @@ LAB_02570aec:
   }
   if (iVar1 == 3)
   {
-    iVar1 = valid_target(ptStack_6c);
-    if (iVar1 == 0)
+    if (valid_target(ptStack_6c) == 0)
     {
       spell_fizzled = 1;
       return 0;
     }
     iVar4 = -1;
     iVar1 = -1;
-    t_card = pcStack_70->targets[0].card;
-    t_player = pcStack_70->targets[0].player;
+    t_card = instance->targets[0].card;
+    t_player = instance->targets[0].player;
   }
   else
   {
@@ -3463,8 +3442,8 @@ LAB_02570aec:
     }
     iVar4 = 2;
     iVar1 = 2;
-    t_card = pcStack_70->damage_target_card;
-    t_player = (int32_t)pcStack_70->damage_target_player;
+    t_card = instance->damage_target_card;
+    t_player = (int32_t)instance->damage_target_player;
   }
   pump_until_eot(player, card, t_player, t_card, iVar1, iVar4);
   return 0;
@@ -3503,6 +3482,7 @@ Target creature gets +4/+4 until end of turn. If it's a Spirit, it gains trample
 
 int card_waxmane_baku(int player, int card, event_t event)
 {
+  int i;
   target_t *ptVar1;
   int iVar2;
   card_instance_t *instance;
@@ -3530,9 +3510,8 @@ int card_waxmane_baku(int player, int card, event_t event)
         {
           return 0;
         }
-        iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 1, 0, 0, 0, 0, 0, 0,
+        return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 1, 0, 0, 0, 0, 0, 0,
                                           &td, NULL);
-        return iVar2;
       }
     }
     else
@@ -3548,51 +3527,50 @@ int card_waxmane_baku(int player, int card, event_t event)
     if (event == EVENT_ACTIVATE)
     {
       instance->number_of_targets = '\0';
-      iVar2 = charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0);
-      if (iVar2 != 0)
+      if (charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) != 0)
       {
-        iVar2 = 0;
+        i = 0;
         while (((iVar4 = can_target(ptStack_68),
-                 iVar4 != 0 && (iVar4 = count_counters(player, card, COUNTER_KI), iVar2 < iVar4)) &&
-                (iVar4 = new_pick_target(ptStack_68, "TARGET_CREATURE", iVar2, 0), iVar4 != 0)))
+                 iVar4 != 0 && (iVar4 = count_counters(player, card, COUNTER_KI), i < iVar4)) &&
+                (iVar4 = new_pick_target(ptStack_68, "TARGET_CREATURE", i, 0), iVar4 != 0)))
         {
-          ptVar1 = instance->targets + iVar2;
-          ptVar5 = instance->targets + iVar2;
-          iVar2 = iVar2 + 1;
+          ptVar1 = instance->targets + i;
+          ptVar5 = instance->targets + i;
+          i = i + 1;
           state_untargettable(ptVar5->player, ptVar1->card, 1);
         }
-        if (0 < iVar2)
+        if (0 < i)
         {
           ptVar5 = instance->targets;
           do
           {
             state_untargettable(ptVar5->player, ptVar5->card, 0);
             ptVar5 = ptVar5 + 1;
-          } while (ptVar5 != instance->targets + iVar2);
+          } while (ptVar5 != instance->targets + i);
         }
-        remove_counters(player, card, player, card, COUNTER_KI, iVar2);
+        remove_counters(player, card, player, card, COUNTER_KI, i);
       }
     }
     else
     {
       if ((event == EVENT_RESOLVE_ACTIVATION) && (instance->number_of_targets != '\0'))
       {
-        iVar2 = 0;
+        i = 0;
         do
         {
-          while (iVar4 = validate_target(player, card, ptStack_68, iVar2), iVar4 != 0)
+          while (iVar4 = validate_target(player, card, ptStack_68, i), iVar4 != 0)
           {
-            ptVar1 = instance->targets + iVar2;
-            ptVar5 = instance->targets + iVar2;
-            iVar2 = iVar2 + 1;
+            ptVar1 = instance->targets + i;
+            ptVar5 = instance->targets + i;
+            i = i + 1;
             tap_card(ptVar5->player, ptVar1->card);
-            if ((int)(unsigned int)instance->number_of_targets <= iVar2)
+            if ((int)(unsigned int)instance->number_of_targets <= i)
             {
               return 0;
             }
           }
-          iVar2 = iVar2 + 1;
-        } while (iVar2 < (int)(unsigned int)instance->number_of_targets);
+          i = i + 1;
+        } while (i < (int)(unsigned int)instance->number_of_targets);
       }
     }
   }
