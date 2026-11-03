@@ -538,7 +538,7 @@ int card_conspiracy_summoners_bond(int player, int card, event_t event){
 
 int card_liutenants_of_the_guard(int player, int card, event_t event)
 {
-  unsigned int uVar1;
+  unsigned int vote_counts;
   int result;
 
   int ai_priorities[2];
@@ -558,10 +558,10 @@ int card_liutenants_of_the_guard(int player, int card, event_t event)
   result = 0;
   ai_priorities[0] = 10;
   ai_priorities[1] = 5;
-  uVar1 = will_of_the_council(player, card, pos1, pos2, ai_priorities);
-  add_counters(player, card, player, card, COUNTER_P1_P1, uVar1 & 0xff);
+  vote_counts = will_of_the_council(player, card, pos1, pos2, ai_priorities);
+  add_counters(player, card, player, card, COUNTER_P1_P1, vote_counts & 0xff);
   default_token_definition(player, card, 0x4986, &token);
-  token.qty = (unsigned char)(uVar1 >> 8);
+  token.qty = (unsigned char)(vote_counts >> 8);
   token.tou = 1;
   token.pow = 1;
   token.color_forced = ' ';
@@ -881,7 +881,7 @@ int card_keeper_of_keys(int player, int card, event_t event){
 
 int card_messenger_jays(int player, int card, event_t event)
 {
-  unsigned int uVar1;
+  unsigned int vote_counts_or_quill_votes;
   int result;
 
   int ai_priorities[2];
@@ -900,11 +900,11 @@ int card_messenger_jays(int player, int card, event_t event)
   result = 0;
   ai_priorities[0] = 10;
   ai_priorities[1] = 5;
-  uVar1 = will_of_the_council(player, card, pos1, pos2, ai_priorities);
-  add_counters(player, card, player, card, COUNTER_P1_P1, uVar1 & 0xff);
-  uVar1 = uVar1 >> 8 & 0xff;
-  draw_cards(player, uVar1);
-  new_multidiscard(player, uVar1, 0, player);
+  vote_counts_or_quill_votes = will_of_the_council(player, card, pos1, pos2, ai_priorities);
+  add_counters(player, card, player, card, COUNTER_P1_P1, vote_counts_or_quill_votes & 0xff);
+  vote_counts_or_quill_votes = vote_counts_or_quill_votes >> 8 & 0xff;
+  draw_cards(player, vote_counts_or_quill_votes);
+  new_multidiscard(player, vote_counts_or_quill_votes, 0, player);
   return 0;
 }
 
@@ -1432,7 +1432,7 @@ int card_domesticated_hydra(int player, int card, event_t event){
 
 int card_orchard_elemental(int player, int card, event_t event)
 {
-  unsigned int uVar1;
+  unsigned int vote_counts;
   int result;
 
   int ai_priorities[2];
@@ -1454,9 +1454,9 @@ int card_orchard_elemental(int player, int card, event_t event)
   pos2[0x12] = '\0';
   pos2[0x13] = '\0';
   ai_priorities[1] = life[1 - player] * 3;
-  uVar1 = will_of_the_council(player, card, pos1, pos2, ai_priorities);
-  add_counters(player, card, player, card, COUNTER_P1_P1, (uVar1 & 0xff) * 2);
-  gain_life(player, (uVar1 >> 8 & 0xff) * 3);
+  vote_counts = will_of_the_council(player, card, pos1, pos2, ai_priorities);
+  add_counters(player, card, player, card, COUNTER_P1_P1, (vote_counts & 0xff) * 2);
+  gain_life(player, (vote_counts >> 8 & 0xff) * 3);
   return 0;
 }
 
@@ -1612,8 +1612,8 @@ int card_selvalas_stampede(int player, int card, event_t event){
 					remove_card_from_deck(player, 0);
 					dcc++;
 			}
-			show_deck( player, deck_copy, dcc, "Cards revealed by Selvala's Stampede", 0, 0x7375B0 );
-			show_deck( 1-player, deck_copy, dcc, "Cards revealed by Selvala's Stampede", 0, 0x7375B0 );
+			show_deck( player, deck_copy, dcc, "Cards revealed by Selvala's Stampede", 0, EXE_STR(ENGINE_DONE_LABEL) );
+			show_deck( 1-player, deck_copy, dcc, "Cards revealed by Selvala's Stampede", 0, EXE_STR(ENGINE_DONE_LABEL) );
 
 			if( dcc ){
 				int added[dcc];
@@ -1950,7 +1950,7 @@ int card_leovold_emissary_of_trest(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  const target_t *ptVar3;
+  const target_t *targeting_spell_or_effect;
   check_legend_rule(player, card, event);
   if (((((trigger_condition == 0xcf) && (card == affected_card)) &&
         (affected_card_controller == player)) &&
@@ -1974,14 +1974,16 @@ int card_leovold_emissary_of_trest(int player, int card, event_t event)
     if (result == 0)
     {
       result = duh_mode(player);
-      ptVar3 = any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, -1, TYPE_ANY,
-                                  1 - player, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
-      if (ptVar3 != NULL)
+      targeting_spell_or_effect =
+          any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, -1, TYPE_ANY,
+                             1 - player, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+      if (targeting_spell_or_effect != NULL)
       {
         draw_cards(player, 1);
       }
-      ptVar3 = becomes_target_of_spell_or_effect(player, card, event, player, -1, 1 - player);
-      if (ptVar3 != NULL)
+      targeting_spell_or_effect =
+          becomes_target_of_spell_or_effect(player, card, event, player, -1, 1 - player);
+      if (targeting_spell_or_effect != NULL)
       {
         draw_cards(player, 1);
         return 0;

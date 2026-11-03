@@ -5,6 +5,7 @@ from canonicalize_helpers import ROOT,sha
 from inspect_release import Image,value,inherited_value
 from local_enum_analysis import validate_native,current_enums,source_declaration,match_compiled
 from verify_inline_helpers import ranges
+from verify_assertion_call_conditions import normalized_expansion
 
 
 def verify(proof,image,root=ROOT):
@@ -18,6 +19,13 @@ def verify(proof,image,root=ROOT):
     assert sha(sealed_debug.data)==artifact['dbg_sha256']
     _,sealed=current_enums(sealed_debug,rows)
     _,current=current_enums(Image((root/'ManalinkEh.dbg').read_bytes()),rows)
+    restoration_path=proof.get('native_local_enum_restoration')
+    restoration=json.loads((root/restoration_path).read_bytes()) if restoration_path else {}
+    corrections={(r['source'],r['name']):r for r in restoration.get('rows',[])
+                 if r.get('native_enum_alias_correction')}
+    restored={e['native_enum_die']:e for r in restoration.get('rows',[])
+              for e in r.get('native_local_enums',[])}
+    emitted=unemitted=0
     initial=collections.Counter();fresh=collections.Counter();cache={}
     for row in rows:
         _,owner=validate_native(dw,row)
@@ -29,15 +37,34 @@ def verify(proof,image,root=ROOT):
         initial[row['source_review']['kind']]+=1
         frozen=match_compiled(row,sealed[row['source'],row['name']])
         assert frozen==row['compiled_enum']
-        current_source=source_declaration(root,row,cache)
-        checked=match_compiled(row,current[row['source'],row['name']])
+        current_row=row
+        correction=corrections.get((row['source'],row['name']))
+        if correction:
+            assert correction['local_enum_restoration']
+            assert correction['native_enum_alias_correction']==row
+            assert correction['renames']=={old:native for native,old in row['source_name_alias'].items()}
+            current_row={k:v for k,v in row.items() if k!='source_name_alias'}
+        current_source=source_declaration(root,current_row,cache)
+        checked=match_compiled(current_row,current[row['source'],row['name']])
         if row['source_review']['kind']=='missing_local_enum':
-            # This receipt describes the baseline queue. A later restoration
-            # may close it, but must emit the exact native names and values.
-            assert (checked is None)==(current_source['kind']=='missing_local_enum')
+            # Later restorations retain exact native source values. GCC can
+            # omit unused enums; independently check those it does emit.
+            if checked is None and current_source['kind']=='existing_native_names':
+                witness=restored[row['native_enum_die']]
+                assert witness['source']==row['source'] and witness['name']==row['name']
+                assert witness['enumerators']==row['enumerators']
+                expected='enum { '+', '.join(n+' = '+str(v) for n,v in row['enumerators'])+' }'
+                declaration=current_source['declaration']
+                assert normalized_expansion(declaration,row['source'],declaration)==normalized_expansion(expected,row['source'],expected)
+                unemitted+=1
+            else:
+                assert (checked is None)==(current_source['kind']=='missing_local_enum')
+        elif correction:
+            assert current_source['kind']=='existing_native_names' and checked is not None
         else:
             assert current_source==row['source_review'] and checked is not None
         fresh[current_source['kind']]+=1
+        emitted+=checked is not None
     assert dict(initial)==dict(existing_native_names=486,missing_local_enum=290,existing_name_alias=1)
     alias=[r for r in rows if r.get('source_name_alias')]
     assert len(alias)==1 and alias[0]['name']=='select_a_subtype_impl'
@@ -46,9 +73,10 @@ def verify(proof,image,root=ROOT):
     missing=[r for r in rows if r['source_review']['kind']=='missing_local_enum']
     return dict(native_local_enum_declarations=777,retained_exact_native_declarations=486,
         retained_enumerator_values=sum(len(r['enumerators']) for r in rows if r['source_review']['kind']=='existing_native_names'),
-        existing_name_aliases=1,baseline_missing_enum_declarations=290,
+        existing_name_aliases=fresh.get('existing_name_alias',0),restored_name_aliases=len(corrections),baseline_missing_enum_declarations=290,
         baseline_missing_enumerators=sum(len(r['enumerators']) for r in missing),
-        current_source_counts=dict(fresh),scope=record['scope'])
+        current_source_counts=dict(fresh),current_emitted_declarations=emitted,
+        restored_source_declarations_omitted_from_debug=unemitted,scope=record['scope'])
 
 
 if __name__=='__main__':

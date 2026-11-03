@@ -730,10 +730,16 @@ int card_geist_honored_monk(int player, int card, event_t event)
 
 int card_garruk_relentless(int player, int card, event_t event)
 {
-  int iVar1;
+  enum
+  {
+    CHOICE_FIGHT = 1,
+    CHOICE_WOLF = 2
+  };
+
+  int loyalty_or_source_card;
   card_instance_t *instance;
   int amt;
-  int iVar3;
+  int target_power_or_source_player;
   target_definition_t td;
   check_legend_rule(player, card, event);
   double_faced_card(player, card, event);
@@ -741,19 +747,20 @@ int card_garruk_relentless(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     default_target_definition(player, card, &td, 2);
-    iVar1 = dialog_impl(player, card, event, "Fight a creature", can_target(&td), 2, "Make a Wolf", 1, 1, 0,
-                        0, 0, 0);
+    loyalty_or_source_card = dialog_impl(player, card, event, "Fight a creature", can_target(&td),
+                                         2, "Make a Wolf", 1, 1, 0, 0, 0, 0);
     if (event == EVENT_ACTIVATE)
     {
       instance->number_of_targets = '\0';
-      if (iVar1 == 1)
+      if (loyalty_or_source_card == CHOICE_FIGHT)
       {
         pick_target(&td, "TARGET_CREATURE");
         if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
         {
-          iVar1 = count_counters(player, card, COUNTER_LOYALTY);
-          iVar3 = get_power(instance->targets[0].player, instance->targets[0].card);
-          if (iVar3 < iVar1)
+          loyalty_or_source_card = count_counters(player, card, COUNTER_LOYALTY);
+          target_power_or_source_player =
+              get_power(instance->targets[0].player, instance->targets[0].card);
+          if (target_power_or_source_player < loyalty_or_source_card)
           {
             ai_modifier = ai_modifier + 0x40;
           }
@@ -765,31 +772,32 @@ int card_garruk_relentless(int player, int card, event_t event)
       }
       return planeswalker(player, card, event, 3);
     }
-    if (iVar1 == 1)
+    if (loyalty_or_source_card == CHOICE_FIGHT)
     {
       if (valid_target(&td) != 0)
       {
         amt = get_power(instance->targets[0].player, instance->targets[0].card);
         damage_creature(instance->targets[0].player, instance->targets[0].card, 3, player, card);
-        iVar1 = instance->parent_card;
-        iVar3 = instance->parent_controller;
-        instance->targets[1].card = iVar1;
-        instance->targets[1].player = iVar3;
-        damage_creature(iVar3, iVar1, amt, instance->targets[0].player, instance->targets[0].card);
+        loyalty_or_source_card = instance->parent_card;
+        target_power_or_source_player = instance->parent_controller;
+        instance->targets[1].card = loyalty_or_source_card;
+        instance->targets[1].player = target_power_or_source_player;
+        damage_creature(target_power_or_source_player, loyalty_or_source_card, amt,
+                        instance->targets[0].player, instance->targets[0].card);
       }
     }
-    else if (iVar1 == 2)
+    else if (loyalty_or_source_card == CHOICE_WOLF)
     {
       generate_token_by_id(player, card, 0x49a8);
     }
   }
   if (event == EVENT_STATIC_EFFECTS)
   {
-    iVar1 = count_counters(player, card, COUNTER_LOYALTY);
-    if (iVar1 < 3)
+    loyalty_or_source_card = count_counters(player, card, COUNTER_LOYALTY);
+    if (loyalty_or_source_card < 3)
     {
-      iVar1 = count_counters(player, card, COUNTER_LOYALTY);
-      if (0 < iVar1)
+      loyalty_or_source_card = count_counters(player, card, COUNTER_LOYALTY);
+      if (0 < loyalty_or_source_card)
       {
         instance = get_card_instance(player, card);
         if (instance->targets[7].card != 0x42)
@@ -1289,10 +1297,10 @@ int card_moans_of_the_unhallowed(int player, int card, event_t event){
 int card_moonmist(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar2;
+  int human_or_type_match;
   int i;
   int p;
-  int *piVar5;
+  int *marked_cursor;
   int marked[151];
   p = current_turn;
   if (event == EVENT_CAN_CAST)
@@ -1303,21 +1311,16 @@ int card_moonmist(int player, int card, event_t event)
   {
     return 0;
   }
-  piVar5 = marked;
-  for (i = 0x97; i != 0; i = i + -1)
-  {
-    *piVar5 = 0;
-    piVar5 = piVar5 + 1;
-  }
+  memset(marked, 0, sizeof(marked));
   i = active_cards_count[current_turn] + -1;
   if (-1 < i)
   {
     do
     {
       if ((((p == player) && (instance = in_play(p, i), instance != NULL)) &&
-           (iVar2 = is_what(p, i, 2), iVar2 != 0)) &&
-          ((iVar2 = has_subtype(p, i, SUBTYPE_HUMAN),
-            iVar2 != 0 &&
+           (human_or_type_match = is_what(p, i, 2), human_or_type_match != 0)) &&
+          ((human_or_type_match = has_subtype(p, i, SUBTYPE_HUMAN),
+            human_or_type_match != 0 &&
                 (instance = get_card_instance(p, i), instance->targets[0xd].player != -1))))
       {
         marked[i] = 1;
@@ -1332,26 +1335,27 @@ int card_moonmist(int player, int card, event_t event)
     do
     {
       if (((p == player) && (instance = in_play(p, i), instance != NULL)) &&
-          ((iVar2 = is_what(p, i, 2),
-            iVar2 != 0 && ((iVar2 = has_subtype(p, i, SUBTYPE_HUMAN),
-                            iVar2 != 0 && (instance = get_card_instance(p, i),
-                                           instance->targets[0xd].player != -1))))))
+          ((human_or_type_match = is_what(p, i, 2),
+            human_or_type_match != 0 &&
+                ((human_or_type_match = has_subtype(p, i, SUBTYPE_HUMAN),
+                  human_or_type_match != 0 &&
+                      (instance = get_card_instance(p, i), instance->targets[0xd].player != -1))))))
       {
         marked[i] = 1;
       }
       i = i + -1;
     } while (i != -1);
   }
-  piVar5 = marked + 0x96;
+  marked_cursor = marked + 0x96;
   while (true)
   {
-    if (*piVar5 != 0)
+    if (*marked_cursor != 0)
     {
-      transform(player, *piVar5);
+      transform(player, *marked_cursor);
     }
-    if (marked == piVar5)
+    if (marked == marked_cursor)
       break;
-    piVar5 = piVar5 + -1;
+    marked_cursor = marked_cursor + -1;
   }
   fog_effect(player, card);
   kill_card(player, card, KILL_DESTROY);
@@ -1468,30 +1472,30 @@ int card_past_in_flames(int player, int card, event_t event ){
 
 int card_rakish_heir(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int source_card_offset;
+  int source_player_offset;
   card_instance_t *instance;
-  card_instance_t *pcVar4;
+  card_instance_t *combat_damage;
   int i;
 
   instance = get_card_instance(player, card);
-  pcVar4 = combat_damage_being_dealt(event);
-  if ((((pcVar4 != NULL) && (pcVar4->damage_source_player == player)) &&
-       (pcVar4->damage_source_card != -1)) &&
-      (pcVar4->damage_target_card == -1))
+  combat_damage = combat_damage_being_dealt(event);
+  if ((((combat_damage != NULL) && (combat_damage->damage_source_player == player)) &&
+       (combat_damage->damage_source_card != -1)) &&
+      (combat_damage->damage_target_card == -1))
   {
-    if (check_special_flags(player, pcVar4->damage_source_card, 0x40) == 0)
+    if (check_special_flags(player, combat_damage->damage_source_card, 0x40) == 0)
     {
-      if (has_subtype((int)pcVar4->damage_source_player, pcVar4->damage_source_card,
-                          SUBTYPE_VAMPIRE) != 0)
+      if (has_subtype((int)combat_damage->damage_source_player, combat_damage->damage_source_card,
+                      SUBTYPE_VAMPIRE) != 0)
       {
         if (instance->info_slot < 0x28)
         {
           *(int8_t *)((int)&instance->targets[0].player + instance->info_slot * 2) =
-              pcVar4->damage_source_player;
+              combat_damage->damage_source_player;
           *(char *)((int)&instance->targets[0].player + instance->info_slot * 2 + 1) =
-              (char)pcVar4->damage_source_card;
-          instance->info_slot_fn = instance->info_slot_fn + 1;
+              (char)combat_damage->damage_source_card;
+          instance->info_slot = instance->info_slot + 1;
         }
       }
     }
@@ -1509,13 +1513,15 @@ int card_rakish_heir(int player, int card, event_t event)
       i = 0;
       do
       {
-        iVar1 = i * 2;
-        iVar2 = i * 2;
+        source_card_offset = i * 2;
+        source_player_offset = i * 2;
         i = i + 1;
-        add_counters(
-            player, card, (unsigned int)*(unsigned char *)((int)&instance->targets[0].player + iVar2),
-            (unsigned int)*(unsigned char *)((int)&instance->targets[0].player + iVar1 + 1),
-            COUNTER_P1_P1, 1);
+        add_counters(player, card,
+                     (unsigned int)*(unsigned char *)((int)&instance->targets[0].player +
+                                                      source_player_offset),
+                     (unsigned int)*(unsigned char *)((int)&instance->targets[0].player +
+                                                      source_card_offset + 1),
+                     COUNTER_P1_P1, 1);
       } while (i < instance->info_slot);
       instance->info_slot = 0;
     }
@@ -2679,14 +2685,14 @@ int card_gutter_grime(int player, int card, event_t event)
 {
   int c;
   card_instance_t *instance;
-  int iVar2;
-  unsigned int uVar4;
-
+  int legacy_card;
+  unsigned int death_count;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
+      bool legacy_found = false;
       if (0 < active_cards_count[player])
       {
         c = 0;
@@ -2699,16 +2705,23 @@ int card_gutter_grime(int player, int card, event_t event)
               (((instance->damage_target_player == player &&
                  (instance->damage_target_card == card)) ||
                 ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
-            goto LAB_0207b7c5;
+          {
+            legacy_found = true;
+            break;
+          }
           c = c + 1;
         } while (c < active_cards_count[player]);
       }
-      iVar2 = create_targetted_legacy_effect(player, card, gutter_grime_effect, player, card);
-      instance = get_card_instance(player, iVar2);
-      instance->targets[0].player = player;
-      instance->targets[0].card = card;
-      instance->number_of_targets = '\x01';
-      add_status(player, iVar2, 0x10000);
+      if (!legacy_found)
+      {
+        legacy_card =
+            create_targetted_legacy_effect(player, card, gutter_grime_effect, player, card);
+        instance = get_card_instance(player, legacy_card);
+        instance->targets[0].player = player;
+        instance->targets[0].card = card;
+        instance->number_of_targets = '\x01';
+        add_status(player, legacy_card, 0x10000);
+      }
     }
   }
   else if (event == EVENT_GRAVEYARD_FROM_PLAY)
@@ -2718,15 +2731,15 @@ int card_gutter_grime(int player, int card, event_t event)
     this_test.type_flag = 3;
     count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
   }
-LAB_0207b7c5:
   instance = get_card_instance(player, card);
   if ((instance->kill_code == '\0') &&
-      (uVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY), uVar4 != 0))
+      (death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY),
+       death_count != 0))
   {
     token_generation_t token;
-    add_counters(player, card, player, card, COUNTER_SLIME, uVar4 & 0xff);
+    add_counters(player, card, player, card, COUNTER_SLIME, death_count & 0xff);
     default_token_definition(player, card, 0x496c, &token);
-    token.qty = (char)uVar4;
+    token.qty = (char)death_count;
     token.tou = 16384;
     token.pow = 16384;
     token.special_infos = 66;
@@ -3815,7 +3828,7 @@ At the beginning of your upkeep, look at the top card of your library. You may r
 			ai_choice = 0;
 		}
 		if( player != AI ){
-			show_deck( player, deck, 1, "Here's the first card of your deck", 0, 0x7375B0 );
+			show_deck( player, deck, 1, "Here's the first card of your deck", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			if( ai_choice == 0 ){
 				int choice = do_dialog(player, player, card, -1, -1, " Reveal this card\n Pass", 0);
 				if( choice == 0 ){
@@ -3825,7 +3838,7 @@ At the beginning of your upkeep, look at the top card of your library. You may r
 		}
 		else{
 			 if( ai_choice == 0 ){
-				show_deck( 1-player, deck, 1, "Here's the first card of opponent's deck", 0, 0x7375B0 );
+				show_deck( 1-player, deck, 1, "Here's the first card of opponent's deck", 0, EXE_STR(ENGINE_DONE_LABEL) );
 				transform(player, card);
 			}
 		}
@@ -4478,37 +4491,37 @@ int card_ghoulcallers_chant(int player, int card, event_t event)
 
 int card_ghoulraiser(int player, int card, event_t event)
 {
-  int *piVar1;
-  int iVar2;
+  int *graveyard;
+  int grave_count_or_selection;
   int i;
-  int iStack_104;
+  int zombie_count;
   int zombie_array[60];
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if ((event == EVENT_ETB) && (piVar1 = graveyard_ptr_mutable[player], *piVar1 != -1))
+  if ((event == EVENT_ETB) && (graveyard = graveyard_ptr_mutable[player], *graveyard != -1))
   {
-    iStack_104 = 0;
-    iVar2 = count_graveyard(player);
+    zombie_count = 0;
+    grave_count_or_selection = count_graveyard(player);
     i = 0;
-    if (0 < iVar2)
+    if (0 < grave_count_or_selection)
     {
       do
       {
-        if (has_subtype_by_id(player, (unsigned int)cards_data[piVar1[i]].id,
-                                       SUBTYPE_ZOMBIE) != 0)
+        if (has_subtype_by_id(player, (unsigned int)cards_data[graveyard[i]].id, SUBTYPE_ZOMBIE) !=
+            0)
         {
-          zombie_array[iStack_104] = i;
-          iStack_104 = iStack_104 + 1;
+          zombie_array[zombie_count] = i;
+          zombie_count = zombie_count + 1;
         }
         i = i + 1;
-        iVar2 = count_graveyard(player);
-      } while (i < iVar2);
+        grave_count_or_selection = count_graveyard(player);
+      } while (i < grave_count_or_selection);
     }
-    if (0 < iStack_104)
+    if (0 < zombie_count)
     {
-      iVar2 = internal_rand(iStack_104);
-      iVar2 = zombie_array[iVar2];
-      add_card_to_hand(player, piVar1[iVar2]);
-      remove_card_from_grave(player, iVar2);
+      grave_count_or_selection = internal_rand(zombie_count);
+      grave_count_or_selection = zombie_array[grave_count_or_selection];
+      add_card_to_hand(player, graveyard[grave_count_or_selection]);
+      remove_card_from_grave(player, grave_count_or_selection);
     }
   }
   return 0;
@@ -5219,7 +5232,7 @@ Reveal the top four cards of your library. Put all land cards revealed this way 
 		int amount = MIN(4, count_deck(player));
 		if( amount ){
 			int *deck = deck_ptr[player];
-			APNAP(p, { show_deck(p, deck, amount, "Mulch revealed these cards.", 0, 0x7375B0); };);
+			APNAP(p, { show_deck(p, deck, amount, "Mulch revealed these cards.", 0, EXE_STR(ENGINE_DONE_LABEL)); };);
 			int i;
 			for(i=0; i<amount; i++){
 				if( is_what(-1, deck[0], TYPE_LAND) ){
@@ -6659,7 +6672,7 @@ Whenever ~ deals combat damage to a player, put a +1/+1 counter on it. */
 
 int card_sturmgeist(int player, int card, event_t event)
 {
-  unsigned int uVar1;
+  unsigned int damage_triggers;
 
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
@@ -6667,12 +6680,13 @@ int card_sturmgeist(int player, int card, event_t event)
   {
     set_characteristic_pt(hand_count[player]);
   }
-  uVar1 = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE);
-  if (uVar1 == 0)
+  damage_triggers =
+      whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (damage_triggers == 0)
   {
     return 0;
   }
-  draw_cards(player, (uVar1 & 0xff) + (uVar1 >> 8 & 0xff));
+  draw_cards(player, (damage_triggers & 0xff) + (damage_triggers >> 8 & 0xff));
   return 0;
 }
 
@@ -6747,11 +6761,11 @@ Gain control of target creature until end of turn. Untap it. It gains trample an
 
 int card_travel_preparations(int player, int card, event_t event)
 {
-  target_t *ptVar1;
-  target_t *ptVar2;
+  target_t *target_player_entry;
+  target_t *target_card_entry;
   card_instance_t *instance;
   int i;
-  target_definition_t *ptStack_68;
+  target_definition_t *creature_target_definition;
   target_definition_t td;
 
   if ((event == EVENT_GRAVEYARD_ABILITY) || (event == EVENT_PAY_FLASHBACK_COSTS))
@@ -6777,11 +6791,11 @@ int card_travel_preparations(int player, int card, event_t event)
           i = i + 1;
           continue;
         }
-        ptVar2 = instance->targets + i;
-        ptVar1 = instance->targets + i;
+        target_card_entry = instance->targets + i;
+        target_player_entry = instance->targets + i;
         i = i + 1;
-        add_counters(player, card, ptVar1->player, ptVar2->card, COUNTER_P1_P1,
-                                 1);
+        add_counters(player, card, target_player_entry->player, target_card_entry->card,
+                     COUNTER_P1_P1, 1);
       } while (i < (int)(unsigned int)instance->number_of_targets);
     }
     if (get_flashback(player, card) == 0)
@@ -6793,8 +6807,9 @@ int card_travel_preparations(int player, int card, event_t event)
       kill_card(player, card, KILL_EXILE);
     }
   }
-  ptStack_68 = &td;
-  return generic_spell(player, card, event, 0x20, ptStack_68, "TARGET_CREATURE", 2, NULL);
+  creature_target_definition = &td;
+  return generic_spell(player, card, event, 0x20, creature_target_definition, "TARGET_CREATURE", 2,
+                       NULL);
 }
 
 int card_travelers_amulet(int player, int card, event_t event){
@@ -6832,7 +6847,7 @@ Equip |2 */
 			pump++;
 		}
 		if (pump > 0){
-			show_deck(player, deck, pump, "Cards revealed with Trepan. Blade", 0, 0x7375B0);
+			show_deck(player, deck, pump, "Cards revealed with Trepan. Blade", 0, EXE_STR(ENGINE_DONE_LABEL));
 			if (in_play(current_turn, BYTE0(instance->targets[2].player))){
 				pump_until_eot(player, card, current_turn, BYTE0(instance->targets[2].player), pump, 0);
 			}
@@ -7208,22 +7223,22 @@ Spells with the chosen name can't be cast. */
 static int turn_card_in_grave_face_up_src(int player, int source, int position_hint, int iid)
 {
   int result;
-  int *piStack_14;
+  int *grave_card;
 
   if ((iid == -1) || (iid_draw_a_card == iid))
   {
     backtrace_and_abort("cards/innistrad.c:39\niid != -1 && iid != iid_draw_a_card");
   }
   result = find_in_graveyard_by_source(player, source, position_hint);
-  piStack_14 = graveyard_ptr_mutable[player] + result;
-  if (*piStack_14 != iid_draw_a_card)
+  grave_card = graveyard_ptr_mutable[player] + result;
+  if (*grave_card != iid_draw_a_card)
   {
     backtrace_and_abort(
         "cards/innistrad.c:41\ngraveyard_ptr_mutable[player][position] == iid_draw_a_card");
-    piStack_14 = graveyard_ptr_mutable[player] + result;
+    grave_card = graveyard_ptr_mutable[player] + result;
   }
   types_of_cards_in_graveyard[player] =
       types_of_cards_in_graveyard[player] | (unsigned int)cards_data[iid].type;
-  *piStack_14 = iid;
+  *grave_card = iid;
   return result;
 }

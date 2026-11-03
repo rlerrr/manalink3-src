@@ -1722,36 +1722,36 @@ int card_chocking_fumes(int player, int card, event_t event)
 {
   int count;
   card_instance_t *instance;
-  int iVar3;
+  int attacker_card_or_priority;
   if (event == EVENT_CAST_SPELL)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      iVar3 = -0x60;
+      attacker_card_or_priority = -0x60;
       if (current_turn != player)
       {
         count = count_attackers(current_turn);
-        iVar3 = count * 0xc;
+        attacker_card_or_priority = count * 0xc;
       }
-      ai_modifier = ai_modifier + iVar3;
+      ai_modifier = ai_modifier + attacker_card_or_priority;
     }
   }
   else if (event == EVENT_RESOLVE_SPELL)
   {
-    iVar3 = active_cards_count[current_turn] + -1;
-    if (-1 < iVar3)
+    attacker_card_or_priority = active_cards_count[current_turn] + -1;
+    if (-1 < attacker_card_or_priority)
     {
       while (true)
       {
-        instance = in_play(current_turn, iVar3);
-        if (((instance != NULL) && (is_what(current_turn, iVar3, 2) != 0)) &&
-            (is_attacking(current_turn, iVar3) != 0))
+        instance = in_play(current_turn, attacker_card_or_priority);
+        if (((instance != NULL) && (is_what(current_turn, attacker_card_or_priority, 2) != 0)) &&
+            (is_attacking(current_turn, attacker_card_or_priority) != 0))
         {
-          add_counters(player, card, current_turn, iVar3, COUNTER_M1_M1, 1);
+          add_counters(player, card, current_turn, attacker_card_or_priority, COUNTER_M1_M1, 1);
         }
-        if (iVar3 == 0)
+        if (attacker_card_or_priority == 0)
           break;
-        iVar3 = iVar3 + -1;
+        attacker_card_or_priority = attacker_card_or_priority + -1;
       }
     }
     kill_card(player, card, KILL_DESTROY);
@@ -2194,9 +2194,9 @@ int card_gore_vassal(int player, int card, event_t event)
 {
   int card_00;
   card_instance_t *instance;
-  unsigned int uVar2;
+  unsigned int favorable_target;
   int result;
-  card_instance_t *pcVar4;
+  card_instance_t *surviving_target;
   target_definition_t td;
 
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -2235,7 +2235,7 @@ int card_gore_vassal(int player, int card, event_t event)
       result = instance->targets[0].player;
       if ((((unsigned int)land_can_be_played >> 8 & 0xff) & 2) == 0)
       {
-        uVar2 = (unsigned int)(player != result);
+        favorable_target = (unsigned int)(player != result);
       }
       else
       {
@@ -2243,15 +2243,15 @@ int card_gore_vassal(int player, int card, event_t event)
         if (player == result)
         {
           result = get_toughness(player, card_00);
-          uVar2 = (unsigned int)(1 < result);
+          favorable_target = (unsigned int)(1 < result);
         }
         else
         {
           result = get_toughness(result, card_00);
-          uVar2 = (unsigned int)(result < 2);
+          favorable_target = (unsigned int)(result < 2);
         }
       }
-      ai_modifier = ai_modifier + (uVar2 - 1 & 0xffffffa0) + 0x30;
+      ai_modifier = ai_modifier + (favorable_target - 1 & 0xffffffa0) + 0x30;
       return 0;
     }
   }
@@ -2268,10 +2268,11 @@ int card_gore_vassal(int player, int card, event_t event)
   if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
     add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
-                             COUNTER_M1_M1, 1);
-    pcVar4 = in_play(instance->targets[0].player, instance->targets[0].card);
-    if ((pcVar4 != NULL) &&
-        (result = get_toughness(instance->targets[0].player, instance->targets[0].card), 0 < result))
+                 COUNTER_M1_M1, 1);
+    surviving_target = in_play(instance->targets[0].player, instance->targets[0].card);
+    if ((surviving_target != NULL) &&
+        (result = get_toughness(instance->targets[0].player, instance->targets[0].card),
+         0 < result))
     {
       regenerate_or_shield(instance->parent_controller, instance->parent_card,
                            instance->targets[0].player, instance->targets[0].card);
@@ -3682,8 +3683,8 @@ int card_phyrexian_revoker(int player, int card, event_t event)
 {
   int choice;
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
+  int chosen_csv_id;
+  int target_selected;
   target_definition_t td;
   test_definition_t test;
   if (event != EVENT_RESOLVE_SPELL)
@@ -3702,109 +3703,58 @@ int card_phyrexian_revoker(int player, int card, event_t event)
   td.illegal_type = 1;
   td.illegal_abilities = 0;
   td.allow_cancel = 0;
-  if (ai_is_speculating == 1)
-  {
+  if (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0))
     td.special = 0x4000;
-    instance = get_card_instance(player, card);
-    if (ai_is_speculating == 1)
-      goto LAB_02334992;
-    if (player == 1)
-      goto LAB_02334985;
-  LAB_0233489b:
+  instance = get_card_instance(player, card);
+  bool automatic = ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0);
+  choice = 0;
+  if (automatic)
+  {
+    target_selected = can_target(&td);
+    if (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0))
+      choice = target_selected != 0 ? 1 : 2;
+  }
+  if (choice == 0)
     choice =
         dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014", "\001\003",
                     "Select a card in play", 1, 1, "Choose a card from a list", 1, 1, 0, 0, 0, 0);
-    if (choice == 1)
-    {
-    LAB_02334a90:
-      iVar3 = new_pick_target(&td, "Select a nonland permanent in play.", 0, 0x80);
-      iVar2 = -1;
-      if (iVar3 != 0)
-      {
-        iVar2 = get_card_name(instance->targets[0].player, instance->targets[0].card);
-      }
-      instance->number_of_targets = '\0';
-      goto LAB_0233492f;
-    }
-    if (choice != 2)
-    {
-      iVar2 = -1;
-      goto LAB_0233492f;
-    }
-  LAB_02334b08:
+  chosen_csv_id = -1;
+  if (choice == 1)
+  {
+    target_selected = new_pick_target(&td, "Select a nonland permanent in play.", 0, 0x80);
+    if (target_selected != 0)
+      chosen_csv_id = get_card_name(instance->targets[0].player, instance->targets[0].card);
+    instance->number_of_targets = '\0';
+  }
+  else if (choice == 2)
+  {
     new_default_test_definition(&test, 1, "Select a nonland card.");
     test.type_flag = 1;
+    bool random_choice = false;
     if (ai_is_speculating == 1)
-      goto LAB_02334b43;
-    if (player == 1)
     {
-    LAB_023349f6:
+      test.special_selection_function = is_nonland_permanent_by_iid;
+      chosen_csv_id = ai_name_a_random_csvid(player, card, 1 - player, TYPE_NONE, &test);
+      random_choice = true;
+    }
+    else if (player == 1)
+    {
       test.type_flag = 1;
       if (((unsigned char)trace_mode & 2) == 0)
       {
         test.special_selection_function = is_nonland_permanent_by_iid;
-        iVar2 = ai_name_a_random_csvid(player, card, 0, TYPE_NONE, &test);
-        if (ai_is_speculating == 1)
-          goto LAB_0233492f;
-        goto LAB_02334a36;
+        chosen_csv_id = ai_name_a_random_csvid(player, card, 0, TYPE_NONE, &test);
+        random_choice = true;
       }
     }
+    if (!random_choice ||
+        (ai_is_speculating != 1 && (player != 1 || ((unsigned char)trace_mode & 2) != 0)))
+      chosen_csv_id = choose_a_card_test_ct("Select a nonland card.", &test, COLOR_TEST_ANY,
+                                            TARGET_TYPE_PLANESWALKER | TYPE_EFFECT | TYPE_ARTIFACT |
+                                                TYPE_SPELL | TYPE_ENCHANTMENT | TYPE_CREATURE);
   }
-  else
-  {
-    if (player == 1)
-    {
-      if (((unsigned char)trace_mode & 2) == 0)
-      {
-        td.special = 0x4000;
-      }
-      instance = get_card_instance(1, card);
-      if (ai_is_speculating != 1)
-      {
-      LAB_02334985:
-        if (((unsigned char)trace_mode & 2) != 0)
-          goto LAB_0233489b;
-      }
-    }
-    else
-    {
-      instance = get_card_instance(player, card);
-      if (ai_is_speculating != 1)
-        goto LAB_0233489b;
-    }
-  LAB_02334992:
-    if (can_target(&td) != 0)
-    {
-      if ((ai_is_speculating != 1) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
-        goto LAB_0233489b;
-      goto LAB_02334a90;
-    }
-    if (ai_is_speculating == 1)
-      goto LAB_02334b08;
-    if ((player != 1) || (((unsigned char)trace_mode & 2) != 0))
-      goto LAB_0233489b;
-    new_default_test_definition(&test, 1, "Select a nonland card.");
-    if (ai_is_speculating != 1)
-      goto LAB_023349f6;
-  LAB_02334b43:
-    test.type_flag = 1;
-    test.special_selection_function = is_nonland_permanent_by_iid;
-    iVar2 = ai_name_a_random_csvid(player, card, 1 - player, TYPE_NONE, &test);
-    if (ai_is_speculating == 1)
-      goto LAB_0233492f;
-    if (player == 1)
-    {
-    LAB_02334a36:
-      if (((unsigned char)trace_mode & 2) == 0)
-        goto LAB_0233492f;
-    }
-  }
-  iVar2 = choose_a_card_test_ct("Select a nonland card.", &test, COLOR_TEST_ANY,
-                                TARGET_TYPE_PLANESWALKER | TYPE_EFFECT | TYPE_ARTIFACT |
-                                    TYPE_SPELL | TYPE_ENCHANTMENT | TYPE_CREATURE);
-LAB_0233492f:
-  instance->info_slot = iVar2;
-  create_card_name_legacy(player, card, iVar2);
+  instance->info_slot = chosen_csv_id;
+  create_card_name_legacy(player, card, chosen_csv_id);
   return 0;
 }
 
@@ -3815,8 +3765,8 @@ static int fangren_marauder_effect(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  unsigned int uVar3;
-  card_instance_t *pcVar4;
+  unsigned int death_count;
+  card_instance_t *dying_permanent;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -3850,8 +3800,8 @@ static int fangren_marauder_effect(int player, int card, event_t event)
     {
 
       instance = get_card_instance(player, card);
-      pcVar4 = in_play(affected_card_controller, affected_card);
-      if ((pcVar4 != NULL) &&
+      dying_permanent = in_play(affected_card_controller, affected_card);
+      if ((dying_permanent != NULL) &&
           (result = is_this_dying(affected_card_controller, affected_card), result != 0))
       {
 
@@ -3872,18 +3822,18 @@ static int fangren_marauder_effect(int player, int card, event_t event)
     }
   }
   result = duh_mode(player);
-  uVar3 = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
-  if ((uVar3 != 0) && (result = check_status(player, card, 0x10000), result == 0))
+  death_count = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if ((death_count != 0) && (result = check_status(player, card, 0x10000), result == 0))
   {
 
-    uVar3 = uVar3 & 0xff;
-    if (uVar3 != 0)
+    death_count = death_count & 0xff;
+    if (death_count != 0)
     {
       do
       {
-        uVar3 = uVar3 - 1;
+        death_count = death_count - 1;
         gain_life(player, 5);
-      } while (0 < (int)uVar3);
+      } while (0 < (int)death_count);
     }
     kill_card(player, card, KILL_EXILE);
   }

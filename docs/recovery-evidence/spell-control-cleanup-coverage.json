@@ -1,0 +1,97 @@
+{
+  "status": "Final three spell/activation/pump handlers reconstructed with reviewed control flow and a successful target build.",
+  "batch": "docs/recovery-evidence/spell-control-cleanup.json",
+  "batch_sha256": "35c199077b39ccd3717fd6fda5c8ac2ab8cb4a3d17948ef1719bfb04a133d766",
+  "counts": {
+    "helpers": 3,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 36,
+    "removed_lab_gotos": 33,
+    "source_lines_removed": 95,
+    "removed_placeholder_occurrences": 427
+  },
+  "verification_policy": "Lighter readability workflow: review callback order, cached/live reads and cleanup paths; target syntax preflight, one build and current mapping refresh. No new native semantic harness or historical replay.",
+  "compiler_preflight": {
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-fsyntax-only",
+      "-x",
+      "c",
+      "-"
+    ],
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "exit_code": 0,
+    "log": ".recovery/spell-control-preflight-c417.log"
+  },
+  "review_notes": [
+    "Keep generic_spell availability queries, redirection UI, X setup, both sacrifice selectors, retarget storage/minimums, duplicate marks, aura rejection, cleanup bounds and counter/graveyard ordering.",
+    "Keep granted activation eligibility, equip targeting, mana payment, packed counter/life costs, target selection, payment order, cancellation rollback and zero-choice cleanup.",
+    "Keep pump legacy keyword/type/color handling, reciprocal source/target leaves-play effects, timed expiry, end-of-combat/source/untap removal, disable-state restoration and final result clamp.",
+    "Opaque UI calls remain out of scope. This is reviewed readability reconstruction, not new native semantic coverage."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/spell-control-build-c418.log",
+    "log_sha256": "2f87608c60f716eb90658444989a45ed04f7a3980e489bfa605e0477fb305fe8",
+    "verified_built_slots": 15169,
+    "dll_sha256": "31c8cce39e5740523a224647a6d8589fa563de211ce538541a9fc552e235221e",
+    "dbg_sha256": "8f69e4b707946f505c8e220e773502a777485c4af1719e2413139b2aac76cbf1"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/spell-control-setup-c418.log",
+    "log_sha256": "7348ec379020567a923bcd53c7342d617c24604791f5bf699b09160b28861f87",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4819,
+    "metadata_sha256": "804b56176ea8f4a968da51d05cea484daaf6b367dfbdf46213a6495c3891623a",
+    "mapping_identities_unchanged": true
+  },
+  "whole_unit_readability": {
+    "source": "functions/functions.c",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of three existing spell/activation/pump handlers. No new native-function coverage or gameplay-equivalence claim. Preserve packed sacrifice choices, cancellation cleanup including zero-choice handling, retarget storage/bounds, duplicate marks, and native/decompiled edge cases. UI children remain opaque.",
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c419.json",
+    "sha256": "c0b2ef4de518cbf4d98df0026a5d765e9367cc2282ec22809c7b9c3462dc9f55",
+    "counts": {
+      "tracked_source_definitions": 2605,
+      "functions_with_lab_gotos": 939,
+      "lab_gotos": 2436,
+      "functions_with_placeholders": 1941,
+      "distinct_function_local_placeholder_spellings": 5752,
+      "placeholder_identifier_occurrences": 43575,
+      "union_keywords": 0
+    }
+  }
+}

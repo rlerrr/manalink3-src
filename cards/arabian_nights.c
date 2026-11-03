@@ -273,6 +273,12 @@ At the beginning of your upkeep, you may pay |1. If you do, untap ~. */
 // camel --> hardcoded. Does the ability work at all ?
 
 int card_bazaar_of_baghdad(int player, int card, event_t event){
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_ABILITY = 2
+  };
+
 /* CARD_ID_BAZAAR_OF_BAGHDAD	398
 Bazaar of Baghdad	""
 Land
@@ -286,29 +292,29 @@ Land
 	if (event == EVENT_ACTIVATE){
 	    if (mana_colors_added[player]){
 	        if (paying_mana() || !generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_X(1), 0, NULL, NULL)){
-	            instance->info_slot = 1;
+	            instance->info_slot = CHOICE_MANA;
 	            mana_producer(player, card, event);
 	        }else{
-	            instance->info_slot = 2;
-	            int choice = 2;
+	            instance->info_slot = CHOICE_ABILITY;
+	            int choice = CHOICE_ABILITY;
 	            if (!IS_AI(player)){
 	                int priority = count_deck(player) <= 10 ? -100 : 0;
 	                if (count_graveyard(player) <= 29){ priority += 25; }
 	                choice = DIALOG(player, card, event, DLG_RANDOM, "Get mana", 1, 1, "Use Ability", 1, priority);
 	                if (!choice){ spell_fizzled = 1; return 0; }
 	            }
-	            if (choice == 1){ mana_producer(player, card, event); }
-	            if (choice == 2){ generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL); }
+	            if (choice == CHOICE_MANA){ mana_producer(player, card, event); }
+	            if (choice == CHOICE_ABILITY){ generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL); }
 	        }
 	    }
 	    if (player == AI){
 	        if (deck_ptr[AI][10] == -1){ ai_modifier -= 100; }
 	        else if (graveyard_ptr_mutable[AI][29] == -1){ ai_modifier += 25; }
 	    }
-	    instance->info_slot = 2;
+	    instance->info_slot = CHOICE_ABILITY;
 	    return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL);
 	}
-	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == 2){
+	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == CHOICE_ABILITY){
 	    draw_cards(player, 2);
 	    multidiscard(player, 3, 0);
 	}
@@ -586,6 +592,12 @@ Destroy target permanent. */
 }
 
 int card_diamond_valley(int player, int card, event_t event){
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_ABILITY = 2
+  };
+
 /* CARD_ID_DIAMOND_VALLEY	410
 Diamond Valley	""
 Land
@@ -603,25 +615,25 @@ Land
 	card_instance_t* instance = get_card_instance(player, card);
 	if (event == EVENT_ACTIVATE){
 	    if (!mana_colors_added[player]){
-	        instance->info_slot = 2;
+	        instance->info_slot = CHOICE_ABILITY;
 	        return altar_basic(player, card, event, 4, TYPE_CREATURE);
 	    }
 	    if (!paying_mana() && has_mana_for_activated_ability(player, card, MANACOST_X(1))
 	        && altar_basic(player, card, event, 4, TYPE_CREATURE)){
-	        instance->info_slot = 2;
-	        int choice = 2;
+	        instance->info_slot = CHOICE_ABILITY;
+	        int choice = CHOICE_ABILITY;
 	        if (!IS_AI(player)){
 	            choice = DIALOG(player, card, event, DLG_RANDOM, "Get mana", 1, 1, "Use Ability", 1, 1);
 	        }
 	        if (!choice){ spell_fizzled = 1; return 0; }
-	        if (choice == 1){ mana_producer(player, card, event); }
-	        else if (choice == 2){ altar_basic(player, card, event, 4, TYPE_CREATURE); }
+	        if (choice == CHOICE_MANA){ mana_producer(player, card, event); }
+	        else if (choice == CHOICE_ABILITY){ altar_basic(player, card, event, 4, TYPE_CREATURE); }
 	    } else {
-	        instance->info_slot = 1;
+	        instance->info_slot = CHOICE_MANA;
 	        mana_producer(player, card, event);
 	    }
 	}
-	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == 2){ gain_life(player, instance->targets[1].card); }
+	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == CHOICE_ABILITY){ gain_life(player, instance->targets[1].card); }
 	return altar_basic(player, card, event, 4, TYPE_CREATURE);
 }
 
@@ -862,19 +874,21 @@ Land
 
 int card_erg_raiders(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int attacking;
+  int turn_player_or_trigger;
   card_instance_t *instance;
   if ((event == EVENT_RESOLVE_SPELL) ||
-      ((iVar2 = current_turn,
+      ((turn_player_or_trigger = current_turn,
         event == EVENT_DECLARE_ATTACKERS &&
-            (iVar1 = is_attacking(player, card), iVar2 = current_turn, iVar1 != 0))))
+            (attacking = is_attacking(player, card), turn_player_or_trigger = current_turn,
+             attacking != 0))))
   {
     instance = get_card_instance(player, card);
-    iVar2 = current_turn;
+    turn_player_or_trigger = current_turn;
     instance->info_slot = 0x42;
   }
-  if ((iVar2 == player) && (iVar2 = eot_trigger(player, card, event), iVar2 != 0))
+  if ((turn_player_or_trigger == player) &&
+      (turn_player_or_trigger = eot_trigger(player, card, event), turn_player_or_trigger != 0))
   {
     instance = get_card_instance(player, card);
     if (instance->info_slot != 0x42)
@@ -1328,6 +1342,12 @@ When you control no |H1Islands, sacrifice ~. */
 }
 
 int card_island_of_wak_wak(int player, int card, event_t event){
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_ABILITY = 2
+  };
+
 /* CARD_ID_ISLAND_OF_WAK_WAK	428
 Island of Wak-Wak	""
 Land
@@ -1369,24 +1389,24 @@ Land
 
 	if (event == EVENT_ACTIVATE){
         if (!mana_colors_added[player]){
-            instance->info_slot = 2;
+            instance->info_slot = CHOICE_ABILITY;
         } else if (paying_mana() || !generic_activated_ability(player, card, EVENT_CAN_ACTIVATE,
                        GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_X(1), 0, &td, "TARGET_FLYING")){
-            instance->info_slot = 1;
+            instance->info_slot = CHOICE_MANA;
             mana_producer(player, card, event);
         } else {
-            instance->info_slot = 2;
-            int choice = IS_AI(player) ? 2 : DIALOG(player, card, event, DLG_RANDOM,
+            instance->info_slot = CHOICE_ABILITY;
+            int choice = IS_AI(player) ? CHOICE_ABILITY : DIALOG(player, card, event, DLG_RANDOM,
                 "Get mana", 1, 1, "Use Ability", 1, 1);
             if (!choice){ spell_fizzled = 1; return 0; }
-            if (choice == 1){ mana_producer(player, card, event); }
-            else if (choice == 2){
+            if (choice == CHOICE_MANA){ mana_producer(player, card, event); }
+            else if (choice == CHOICE_ABILITY){
                 generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET,
                                           MANACOST0, 0, &td, "TARGET_FLYING");
             }
         }
     }
-	if( event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == 2 ){
+	if( event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == CHOICE_ABILITY ){
 		if( validate_target(player, card, &td, 0) ){
 			real_set_pt(instance->parent_controller, instance->parent_card,
                         instance->targets[0].player, instance->targets[0].card, 0, -1, 1);
@@ -1903,6 +1923,12 @@ Whenever ~ deals damage to a player, that player loses 1 life at the beginning o
 }
 
 int card_oasis(int player, int card, event_t event){
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_ABILITY = 2
+  };
+
 /* CARD_ID_OASIS	445
 Oasis	""
 Land
@@ -1921,24 +1947,24 @@ Land
 	card_instance_t *instance = get_card_instance(player, card);
 	if (event == EVENT_ACTIVATE){
 	    if (!mana_colors_added[player]){
-	        instance->info_slot = 2;
+	        instance->info_slot = CHOICE_ABILITY;
 	        return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_DAMAGE_PREVENTION | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_DAMAGE");
 	    }
 	    if (paying_mana() || !generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_DAMAGE_PREVENTION | GAA_CAN_TARGET, MANACOST_X(1), 0, &td, "TARGET_DAMAGE")){
-	        instance->info_slot = 1;
+	        instance->info_slot = CHOICE_MANA;
 	        mana_producer(player, card, event);
 	    }else{
-	        instance->info_slot = 2;
-	        int choice = 2;
+	        instance->info_slot = CHOICE_ABILITY;
+	        int choice = CHOICE_ABILITY;
 	        if (!IS_AI(player)){
 	            choice = DIALOG(player, card, event, DLG_RANDOM, "Get mana", 1, 1, "Use Ability", 1, 1);
 	            if (!choice){ spell_fizzled = 1; return 0; }
 	        }
-	        if (choice == 1){ mana_producer(player, card, event); }
-	        if (choice == 2){ generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_DAMAGE_PREVENTION | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_DAMAGE"); }
+	        if (choice == CHOICE_MANA){ mana_producer(player, card, event); }
+	        if (choice == CHOICE_ABILITY){ generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_DAMAGE_PREVENTION | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_DAMAGE"); }
 	    }
 	}
-	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == 2 && validate_target(player, card, &td, 0)){
+	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == CHOICE_ABILITY && validate_target(player, card, &td, 0)){
 	    prevent_damage(instance->targets[0].player, instance->targets[0].card, 1);
 	}
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_DAMAGE_PREVENTION | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_DAMAGE");

@@ -1,0 +1,92 @@
+{
+  "status": "77 definitions cleaned up; one combined target build passed. Reccmp refresh deliberately deferred.",
+  "batch": "docs/recovery-evidence/invasion-hou-control-cleanup.json",
+  "batch_sha256": "7c59bd2450c3797471867dc482b3ad23199b19dc8575106313b7f17d9f0f78d7",
+  "counts": {
+    "definitions": 77,
+    "card_handlers": 66,
+    "local_helpers": 11,
+    "alpha_only_definitions": 49,
+    "structured_definitions": 28,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 55,
+    "removed_lab_gotos": 54,
+    "source_lines_removed": 115,
+    "removed_placeholder_occurrences": 1083
+  },
+  "verification_policy": "Batched readability workflow: exact token substitution for alpha-only edits; review event routing, callback order and live/cached reads for structured edits. One target build. Native comparisons reserved for uncertain behavior; reccmp refresh deferred to a larger checkpoint.",
+  "review_notes": [
+    "49 alpha-only definitions preserve exact tokens after declared substitutions; 28 structured definitions receive focused source review and one combined target build.",
+    "Split-card helper preserves cost-query order, free/token and override paths, availability versus dialog selection, saved/current mode flags, fuse legality and costs, first/second callback order, X storage, post-payment mode reads and low-bit cleanup on fizzle. Split handlers preserve cached records, mode rereads, target differences and common calls after resolution.",
+    "Keep Lightning Dart target-based sleight queries and damage/death order; Manipulate Fate filter/AI paths; Slimy Kavu targeting; Exotic Curse PT/aura routing; Blind Seer mode refresh; Archaeological Dig sacrifice, mana-color and temporary-state handling; and Defiling Tears phase-dependent cleanup.",
+    "Desert families retain repeated payment checks, availability versus payment cost/flag differences, sorcery gates, state rollback, chosen-color life loss and native info_slot=2 when the human chooses mana from the ability dialog.",
+    "Leave/Chance retains live target count and selection index before bounce, discard/draw limits and both exile/destroy calls. Samut retains cancellation cleanup and live target unmarking. Nimble Obstructionist retains stack-position checks, post-dialog stack-size rechecks, cycling cost and counter mode paths.",
+    "Scorpion God death helpers retain source/control checks, detach/status writes, counter counting after detach callbacks, pending low-byte counts and cleanup. Duplicate-legacy detection still runs the following trigger/god work.",
+    "Native inspection confirms Torment sacrifice also loses 3 life, and Hour Devastation uses separate reverse player scans with a fresh current-turn lookup between them and a planeswalker check after creature-damage callbacks. These quirks/orderings are retained.",
+    "The unused private cycling worker is also cleaned up using the matching Nimble control flow, with generic mana colors/costs and its original non-flash return. It lies outside the prior native-definition census.",
+    "No new gameplay tests, historical replay, broad native semantic harness or reccmp refresh for this readability batch."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/invasion-hou-control-build-c495.log",
+    "log_sha256": "e31a17b52e2e648f3cd177648455945ade2c0061e94c395b957614a0afb387b5",
+    "verified_built_slots": 15169,
+    "dll_sha256": "98eede7819d84ef9f7855eb53eb500aea787aacec93a1ebc54eda8c95cc49456",
+    "dbg_sha256": "74751d40d1e0094202fc49df9b066d7dc60ded4c06457608bbc507dd9b9f8b5b"
+  },
+  "reccmp": {
+    "refreshed": false,
+    "reason": "Readability batch with unchanged public function identities; refresh at a major comparison/commit checkpoint.",
+    "unchanged_checkpoint_inputs": {
+      "config/reccmp/functions.csv": "a0b5791a8d98ec9acba6141138040223317f44dbbf094cf0f977e6a5a9a5a274",
+      ".recovery/reccmp/setup.json": "445df382fefd673e63073a46afddf81c1727dc097b184f8e971c82f2748786d9"
+    }
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c496.json",
+    "sha256": "284abd718efaf267511ee5e2491fc1ab00e5aa55cdcdb8491d28a16595503a78",
+    "counts": {
+      "tracked_source_definitions": 2607,
+      "functions_with_lab_gotos": 566,
+      "lab_gotos": 1391,
+      "functions_with_placeholders": 1163,
+      "distinct_function_local_placeholder_spellings": 3406,
+      "placeholder_identifier_occurrences": 25865,
+      "union_keywords": 0
+    }
+  },
+  "native_review": {
+    "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "artifacts": [
+      {
+        "path": ".recovery/torment-native-c493.txt",
+        "sha256": "acd5a4368782ae0d09d1ac5af09fe59aeaba21893d5657283b401724a10e04aa"
+      },
+      {
+        "path": ".recovery/hour-devastation-native-c493.txt",
+        "sha256": "cb1f4b8bfbff668cfdb85f6b7f4e8b5e09f472c972c75181a361d6b88bdd0aaf"
+      }
+    ],
+    "notes": [
+      "Torment: 0x020d08fb sacrifice call branches to 0x020d06d0, which loses 3 life.",
+      "Hour: 0x020d1218-0x020d1248 controls the two scans and refreshes current_turn; 0x020d12f6 returns to the post-creature planeswalker query."
+    ]
+  },
+  "whole_unit_readability": [
+    {
+      "source": "cards/invasion.c",
+      "lab_gotos": 0,
+      "known_placeholder_occurrences": 0,
+      "existing_descriptive_label_gotos": 5
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "lab_gotos": 0,
+      "known_placeholder_occurrences": 0,
+      "existing_descriptive_label_gotos": 0
+    }
+  ],
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of existing Invasion and Hour of Devastation definitions. No new native-function coverage or gameplay-equivalence claim."
+}

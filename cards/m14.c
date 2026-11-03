@@ -1793,7 +1793,7 @@ int card_chandra_pyromaster(int player, int card, event_t event){
 				int count = MIN(10, count_deck(player));
 				if( count ){
 					int *deck = deck_ptr[player];
-					show_deck( player, deck, count, "Chandra will exile these cards.", 0, 0x7375B0 );
+					show_deck( player, deck, count, "Chandra will exile these cards.", 0, EXE_STR(ENGINE_DONE_LABEL) );
 					int reveal_array[count];
 					int rac = 0;
 					int i;
@@ -2295,7 +2295,7 @@ int card_into_the_wilds(int player, int card, event_t event){
 		int *deck = deck_ptr[player];
 		if( deck[0] != -1 ){
 			if( player != AI ){
-				show_deck( player, deck, 1, "Card revealed by Into the Wilds", 0, 0x7375B0 );
+				show_deck( player, deck, 1, "Card revealed by Into the Wilds", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			}
 			if( is_what(-1, deck[0], TYPE_LAND) ){
 				put_into_play_a_card_from_deck(player, player, 0);
@@ -2435,62 +2435,38 @@ int card_primeval_bounty(int player, int card, event_t event){
 
 static int savage_summonings_effect(int player, int card, event_t event)
 {
-  int iVar1;
+  int trigger_player_or_creature_check;
   if (event == EVENT_CAST_SPELL)
   {
-    if (card != affected_card)
+    if (card != affected_card && player == affected_card_controller &&
+        (trigger_player_or_creature_check = is_what(player, affected_card, 2),
+         trigger_player_or_creature_check != 0))
+      state_untargettable(affected_card_controller, affected_card, 1);
+    if (trigger_condition != 0xdb || card != affected_card)
+      return 0;
+  }
+  if (trigger_condition == 0xdb && card == affected_card && affected_card_controller == player)
+  {
+    trigger_player_or_creature_check = affected_card_controller;
+    if (((reason_for_trigger_controller == affected_card_controller) &&
+         (is_what(trigger_cause_controller, trigger_cause, 2) != 0)) &&
+        (check_state(trigger_cause_controller, trigger_cause, 0x100000) != 0))
     {
-      if ((player == affected_card_controller) &&
-          (iVar1 = is_what(player, affected_card, 2), iVar1 != 0))
+      if (event == EVENT_TRIGGER)
       {
-        state_untargettable(affected_card_controller, affected_card, 1);
-      }
-    LAB_0206a856:
-      if (trigger_condition != 0xdb)
-      {
+        event_result = event_result | 2;
         return 0;
       }
-      if (card != affected_card)
+      if (event == EVENT_RESOLVE_TRIGGER)
       {
+        state_untargettable(trigger_cause_controller, trigger_cause, 0);
+        add_counters(trigger_player_or_creature_check, card, trigger_cause_controller,
+                     trigger_cause, COUNTER_P1_P1, 1);
+        kill_card(trigger_player_or_creature_check, card, KILL_EXILE);
         return 0;
       }
-      goto LAB_0206a822;
-    }
-    if (player != affected_card_controller)
-      goto LAB_0206a856;
-    if (trigger_condition != 0xdb)
-    {
-      return 0;
     }
   }
-  else
-  {
-    if ((trigger_condition != 0xdb) || (card != affected_card))
-      goto LAB_0206a809;
-  LAB_0206a822:
-    if (affected_card_controller != player)
-      goto LAB_0206a809;
-  }
-  iVar1 = affected_card_controller;
-  if (((reason_for_trigger_controller == affected_card_controller) &&
-       (is_what(trigger_cause_controller, trigger_cause, 2) != 0)) &&
-      (check_state(trigger_cause_controller, trigger_cause, 0x100000) != 0))
-  {
-    if (event == EVENT_TRIGGER)
-    {
-      event_result = event_result | 2;
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_TRIGGER)
-    {
-      state_untargettable(trigger_cause_controller, trigger_cause, 0);
-      add_counters(iVar1, card, trigger_cause_controller, trigger_cause, COUNTER_P1_P1,
-                               1);
-      kill_card(iVar1, card, KILL_EXILE);
-      return 0;
-    }
-  }
-LAB_0206a809:
   if (event != EVENT_CLEANUP)
   {
     return 0;

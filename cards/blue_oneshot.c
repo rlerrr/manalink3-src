@@ -225,7 +225,7 @@ int card_gifts_ungiven2(int player, int card, event_t event){
                      int selected = -1;
                      if( 1-player != AI ){
                          while( selected == -1 ){
-                                selected = show_deck(1-player, chosen, cards, "Choose a card", 0, 0x7375B0 );
+                                selected = show_deck(1-player, chosen, cards, "Choose a card", 0, EXE_STR(ENGINE_DONE_LABEL) );
 								if( cards_data[chosen[selected]].id == CARD_ID_RULES_ENGINE ){
 									selected = -1;
 								}

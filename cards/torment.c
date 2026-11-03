@@ -1549,7 +1549,7 @@ int card_laquatus_champion(int player, int card, event_t event)
     if (result != 0)
     {
       result = lose_life(instance->targets[0].player, 6);
-      instance->info_slot_fn = instance->info_slot_fn + result;
+      instance->info_slot = instance->info_slot + result;
     }
     leaves_play(player, card, EVENT_ETB, 1, 1);
   }
@@ -2276,8 +2276,8 @@ Prevent all damage a source of your choice would deal this turn. */
 
 int card_petradon(int player, int card, event_t event)
 {
-  target_t *ptVar1;
-  target_t *ptVar2;
+  target_t *chosen_player_record;
+  target_t *chosen_card_record;
   int i;
   card_instance_t *instance;
   int csvid;
@@ -2295,10 +2295,10 @@ int card_petradon(int player, int card, event_t event)
         break;
       if (new_pick_target(&td, "TARGET_LAND", i, 0) != 0)
       {
-        ptVar2 = instance->targets + i;
-        ptVar1 = instance->targets + i;
+        chosen_card_record = instance->targets + i;
+        chosen_player_record = instance->targets + i;
         i = i + 1;
-        state_untargettable(ptVar1->player, ptVar2->card, 1);
+        state_untargettable(chosen_player_record->player, chosen_card_record->card, 1);
       }
     }
     i = 0;
@@ -2307,10 +2307,11 @@ int card_petradon(int player, int card, event_t event)
       do
       {
         csvid = get_id(instance->targets[i].player, instance->targets[i].card);
-        ptVar2 = instance->targets + i;
-        ptVar1 = instance->targets + i;
+        chosen_card_record = instance->targets + i;
+        chosen_player_record = instance->targets + i;
         i = i + 1;
-        exile_card_and_remember_it_on_exiledby(player, card, ptVar1->player, ptVar2->card);
+        exile_card_and_remember_it_on_exiledby(player, card, chosen_player_record->player,
+                                               chosen_card_record->card);
         create_card_name_legacy(player, card, csvid);
       } while (i < (int)(unsigned int)instance->number_of_targets);
     }
@@ -2325,7 +2326,8 @@ int card_petradon(int player, int card, event_t event)
     }
     else if (event == EVENT_RESOLVE_ACTIVATION)
     {
-      return generic_shade_merge_pt(player, card, EVENT_RESOLVE_ACTIVATION, 0, 0, 0, 0, 0, 1, 0, 1, 0);
+      return generic_shade_merge_pt(player, card, EVENT_RESOLVE_ACTIVATION, 0, 0, 0, 0, 0, 1, 0, 1,
+                                    0);
     }
   }
   return generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
@@ -2640,14 +2642,13 @@ static int remove_counters_at_eot(int player, int card, event_t event)
 int card_shambling_swarm(int player, int card, event_t event)
 {
   uint32_t num;
-  int iVar1;
-  int iVar2;
+  int chosen_card;
+  int target_or_card_index;
   card_instance_t *instance;
-  int iVar4;
-  card_instance_t *pcVar5;
-  int (*paiVar6)[151];
+  int chosen_player_or_next_card;
+  card_instance_t *counter_effect;
   unsigned int target_player_id;
-  unsigned int uStack_528;
+  unsigned int turn_order_index;
   target_definition_t td;
   int marked[2][151];
   if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) == 0)
@@ -2657,49 +2658,46 @@ int card_shambling_swarm(int player, int card, event_t event)
   default_target_definition(player, card, &td, 2);
   td.allow_cancel = 0;
   instance = get_card_instance(player, card);
-  paiVar6 = marked;
-  for (iVar2 = 0x12e; iVar2 != 0; iVar2 = iVar2 + -1)
-  {
-    (*paiVar6)[0] = 0;
-    paiVar6 = (int (*)[151])((int)paiVar6 + 4u);
-  }
-  iVar2 = 0;
+  memset(marked, 0, sizeof(marked));
+  target_or_card_index = 0;
   do
   {
     if (can_target(&td) == 0)
       break;
-    if (new_pick_target(&td, "TARGET_CREATURE", iVar2, 0) != 0)
+    if (new_pick_target(&td, "TARGET_CREATURE", target_or_card_index, 0) != 0)
     {
-      add_state(instance->targets[iVar2].player, instance->targets[iVar2].card, 0x200000);
-      iVar4 = instance->targets[iVar2].player;
-      iVar1 = instance->targets[iVar2].card;
-      marked[iVar4][iVar1] = marked[iVar4][iVar1] + 1;
+      add_state(instance->targets[target_or_card_index].player,
+                instance->targets[target_or_card_index].card, 0x200000);
+      chosen_player_or_next_card = instance->targets[target_or_card_index].player;
+      chosen_card = instance->targets[target_or_card_index].card;
+      marked[chosen_player_or_next_card][chosen_card] =
+          marked[chosen_player_or_next_card][chosen_card] + 1;
     }
-    iVar2 = iVar2 + 1;
-  } while (iVar2 != 3);
-  uStack_528 = 0;
+    target_or_card_index = target_or_card_index + 1;
+  } while (target_or_card_index != 3);
+  turn_order_index = 0;
   do
   {
-    target_player_id = uStack_528 ^ current_turn;
-    iVar2 = 0x96;
+    target_player_id = turn_order_index ^ current_turn;
+    target_or_card_index = 0x96;
     do
     {
-      while (num = marked[target_player_id][iVar2], num != 0)
+      num = marked[target_player_id][target_or_card_index];
+      if (num != 0)
       {
-        pcVar5 = get_card_instance(player, create_targetted_legacy_effect(player, card, remove_counters_at_eot,
-                                               target_player_id, iVar2));
-        pcVar5->eot_toughness = num;
-        iVar4 = iVar2 + -1;
-        add_counters(player, card, target_player_id, iVar2, COUNTER_M1_M1, num);
-        iVar2 = iVar4;
-        if (iVar4 == -1)
-          goto LAB_02318744;
+        counter_effect = get_card_instance(
+            player, create_targetted_legacy_effect(player, card, remove_counters_at_eot,
+                                                   target_player_id, target_or_card_index));
+        counter_effect->eot_toughness = num;
+        chosen_player_or_next_card = target_or_card_index - 1;
+        add_counters(player, card, target_player_id, target_or_card_index, COUNTER_M1_M1, num);
+        target_or_card_index = chosen_player_or_next_card;
       }
-      iVar2 = iVar2 + -1;
-    } while (iVar2 != -1);
-  LAB_02318744:
-    uStack_528 = uStack_528 + 1;
-    if (uStack_528 == 2)
+      else
+        target_or_card_index = target_or_card_index - 1;
+    } while (target_or_card_index != -1);
+    turn_order_index = turn_order_index + 1;
+    if (turn_order_index == 2)
     {
       instance->number_of_targets = '\0';
       return 0;
@@ -3093,17 +3091,17 @@ int card_violent_eruption(int player, int card, event_t event){
 /* ManalinkEh 2022: 0x23102a0; original cards/torment.c:493. */
 static int effect_prevent_combat_damage_to_or_from(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
-  card_instance_t *pcVar2;
+  card_instance_t *damage;
+  card_instance_t *prevention;
 
-  pcVar1 = combat_damage_being_prevented(event);
-  if (((pcVar1 != NULL) && (pcVar2 = get_card_instance(player, card), pcVar2 != NULL)) &&
-      (((pcVar1->damage_source_card == pcVar2->damage_target_card &&
-         (pcVar1->damage_source_player == pcVar2->damage_target_player)) ||
-        ((pcVar2->damage_target_card == pcVar1->damage_target_card &&
-          (pcVar1->damage_target_player == pcVar2->damage_target_player))))))
+  damage = combat_damage_being_prevented(event);
+  if (((damage != NULL) && (prevention = get_card_instance(player, card), prevention != NULL)) &&
+      (((damage->damage_source_card == prevention->damage_target_card &&
+         (damage->damage_source_player == prevention->damage_target_player)) ||
+        ((prevention->damage_target_card == damage->damage_target_card &&
+          (damage->damage_target_player == prevention->damage_target_player))))))
   {
-    prevent_damage(affected_card_controller, affected_card, pcVar1->info_slot);
+    prevent_damage(affected_card_controller, affected_card, damage->info_slot);
   }
   if (event == EVENT_CLEANUP)
   {
@@ -3118,21 +3116,23 @@ static int effect_prevent_combat_damage_to_or_from(int player, int card, event_t
 /* ManalinkEh 2022: 0x2310350; original cards/torment.c:2258. */
 static int prevent_all_damage_of_a_source_until_eot_legacy(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int prevented_source_player;
+  int prevented_source_card;
   card_instance_t *instance;
 
   if (event == EVENT_PREVENT_DAMAGE)
   {
     instance = in_play(player, card);
-    if ((instance != NULL) && (iVar1 = instance->targets[0].player, iVar1 != -1))
+    if ((instance != NULL) &&
+        (prevented_source_player = instance->targets[0].player, prevented_source_player != -1))
     {
 
-      iVar2 = instance->targets[0].card;
+      prevented_source_card = instance->targets[0].card;
       instance = get_card_instance(affected_card_controller, affected_card);
       if ((instance->internal_card_id == damage_card) &&
-          (((0 < instance->info_slot && (iVar1 == instance->damage_source_player)) &&
-            (instance->damage_source_card == iVar2))))
+          (((0 < instance->info_slot &&
+             (prevented_source_player == instance->damage_source_player)) &&
+            (instance->damage_source_card == prevented_source_card))))
       {
         prevent_damage(affected_card_controller, affected_card, -1);
       }
@@ -3153,14 +3153,14 @@ int card_cephalid_illusionist(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  const target_t *ptVar3;
+  const target_t *targeting_spell_or_effect;
   target_definition_t td;
 
   instance = in_play(player, card);
-  if (((instance != NULL) &&
-       (result = is_humiliated(player, card, AL_TRIG), result == 0)) &&
-      (ptVar3 = becomes_target_of_spell_or_effect(player, card, event, player, card, 2),
-       ptVar3 != NULL))
+  if (((instance != NULL) && (result = is_humiliated(player, card, AL_TRIG), result == 0)) &&
+      (targeting_spell_or_effect =
+           becomes_target_of_spell_or_effect(player, card, event, player, card, 2),
+       targeting_spell_or_effect != NULL))
   {
     mill(player, 3);
   }
@@ -3172,7 +3172,7 @@ int card_cephalid_illusionist(int player, int card, event_t event)
     if (event == EVENT_CAN_ACTIVATE)
     {
       return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 2, 0, 1, 0, 0, 0, 0,
-                                         &td, NULL);
+                                       &td, NULL);
     }
     if (event == EVENT_ACTIVATE)
     {

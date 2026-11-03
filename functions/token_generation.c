@@ -226,97 +226,26 @@ static int legacy_negate_static_abilities(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x26668f0; original functions/token_generation.c:680. */
 void copy_all_tokens_both_players(int player, int card, int type, test_definition_t *test)
 {
-  card_instance_t *instance;
-  int iVar2;
-  int p;
-  int c;
-  int *piVar5;
-  int marked[151];
-
-  p = current_turn;
-
-  iVar2 = active_cards_count[current_turn];
-  if (0 < iVar2)
+  for (int pass = 0; pass < 2; ++pass)
   {
-    piVar5 = marked;
-    for (c = 0x97; c != 0; c = c + -1)
+    int p = pass ? 1 - current_turn : current_turn;
+    int limit = active_cards_count[p];
+    if (limit > 0)
     {
-      *piVar5 = 0;
-      piVar5 = piVar5 + 1;
-    }
-    if (0 < iVar2)
-    {
-      c = 0;
-      do
+      int marked[151] = {0};
+      for (int c = 0; c < limit; ++c)
       {
-        instance = in_play(p, c);
-        if (((instance != NULL) && (iVar2 = is_token(p, c), iVar2 != 0)) &&
-            (((type != 0 && (iVar2 = is_what(p, c, type), iVar2 != 0)) ||
-              ((test != NULL &&
-                (iVar2 = new_make_test_in_play(p, c, -1, test), iVar2 != 0))))))
-        {
+        card_instance_t *instance = in_play(p, c);
+        if (instance && is_token(p, c) &&
+            ((type && is_what(p, c, type)) || (test && new_make_test_in_play(p, c, -1, test))))
           marked[c] = 1;
-        }
-        c = c + 1;
-        iVar2 = active_cards_count[p];
-      } while (c < iVar2);
-    }
-    iVar2 = iVar2 + -1;
-    if (-1 < iVar2)
-    {
-      do
-      {
-
-        if ((marked[iVar2] != 0) && (-1 < p))
-        {
-          copy_token(p, iVar2, p, iVar2);
-        }
-        iVar2 = iVar2 + -1;
-      } while (iVar2 != -1);
+        limit = active_cards_count[p];
+      }
+      for (int c = limit - 1; c >= 0; --c)
+        if (marked[c] && p >= 0)
+          copy_token(p, c, p, c);
     }
   }
-  p = 1 - current_turn;
-  iVar2 = active_cards_count[p];
-  if (0 < iVar2)
-  {
-    piVar5 = marked;
-    for (c = 0x97; c != 0; c = c + -1)
-    {
-      *piVar5 = 0;
-      piVar5 = piVar5 + 1u;
-    }
-    if (0 < iVar2)
-    {
-      c = 0;
-      do
-      {
-        instance = in_play(p, c);
-        if (((instance != NULL) && (iVar2 = is_token(p, c), iVar2 != 0)) &&
-            (((type != 0 && (iVar2 = is_what(p, c, type), iVar2 != 0)) ||
-              ((test != NULL &&
-                (iVar2 = new_make_test_in_play(p, c, -1, test), iVar2 != 0))))))
-        {
-          marked[c] = 1;
-        }
-        c = c + 1;
-        iVar2 = active_cards_count[p];
-      } while (c < iVar2);
-    }
-    iVar2 = iVar2 + -1;
-    if (-1 < iVar2)
-    {
-      do
-      {
-
-        if ((marked[iVar2] != 0) && (-1 < p))
-        {
-          copy_token(p, iVar2, p, iVar2);
-        }
-        iVar2 = iVar2 + -1;
-      } while (iVar2 != -1);
-    }
-  }
-  return;
 }
 
 
@@ -335,779 +264,456 @@ int generic_token(int player, int card, event_t event);
 /* ManalinkEh 2022: 0x26659d0; original functions/token_generation.c:503. */
 void generate_token(token_generation_t *token)
 {
-  int i;
-  uint16_t uVar1;
-  uint16_t uVar2;
-  int32_t iVar3;
-  int32_t iVar4;
-  bool bVar5;
-  bool bVar6;
-  uint8_t uVar7;
-  int iVar8;
-  card_instance_t *pcVar9;
-  token_action_t tVar10;
-  int iVar11;
-  card_instance_t *pcVar12;
-  int iVar13;
-  int card;
-  int iVar14;
-  unsigned int uVar15;
-  unsigned int uStack_ac;
-  int iStack_9c;
-  card_instance_t *pcStack_98;
-  int iStack_94;
-  int iStack_90;
-  iid_t iStack_8c;
-  int iStack_88;
-  int aiStack_84[8];
-  target_definition_t td;
-
-  iVar8 = get_internal_card_id_from_csv_id(token->id);
-  uStack_ac = (unsigned int)token->qty;
-  if (is_what(-1, iVar8, 0x80) == 0)
+  int iid = get_internal_card_id_from_csv_id(token->id);
+  unsigned int quantity = token->qty;
+  if (!is_what(-1, iid, TYPE_EFFECT))
   {
-    iVar8 = token->t_player;
-    iVar14 = 0;
-    do
-    {
-      i = 0;
-      if (0 < active_cards_count[iVar14])
+    int recipient = token->t_player;
+    for (int p = 0; p < 2; ++p)
+      for (int c = 0; c < active_cards_count[p]; ++c)
       {
-      LAB_026664f0:
-        do
+        card_instance_t *instance = in_play(p, c);
+        if (instance)
         {
-          pcVar9 = in_play(iVar14, i);
-          if (pcVar9 != NULL)
-          {
-            uVar2 = cards_data[pcVar9->internal_card_id].id;
-            if (uVar2 != 0x3541)
-            {
-              if ((unsigned short)uVar2 < 0x3542)
-              {
-                if ((uVar2 != 0x1e90) && (uVar2 != 0x2f09))
-                {
-                  i = i + 1;
-                  if (active_cards_count[iVar14] <= i)
-                    break;
-                  goto LAB_026664f0;
-                }
-              }
-              else
-              {
-                if (uVar2 == 0x39ba)
-                  goto LAB_02666529;
-                if (uVar2 != 0x41c4)
-                  goto LAB_0266652b;
-              }
-              if (iVar8 != iVar14)
-                goto LAB_0266652b;
-            }
-          LAB_02666529:
-            uStack_ac = uStack_ac * 2;
-          }
-        LAB_0266652b:
-          i = i + 1;
-        } while (i < active_cards_count[iVar14]);
+          int id = cards_data[instance->internal_card_id].id;
+          if (id == CARD_ID_PRIMAL_VIGOR || id == CARD_ID_SELESNYA_LOFT_GARDENS ||
+              (recipient == p && (id == CARD_ID_DOUBLING_SEASON || id == CARD_ID_PARALLEL_LIVES ||
+                                  id == CARD_ID_ANOINTED_PROCESSION)))
+            quantity *= 2;
+        }
       }
-      iVar14 = iVar14 + 1;
-    } while (iVar14 != 2);
   }
-  if ((int)uStack_ac < 1)
-  {
+  if ((int)quantity < 1)
     return;
-  }
-  iStack_94 = token->id;
-  aiStack_84[2] = 0xffffffff;
-  aiStack_84[0] = iStack_94;
-  aiStack_84[3] = 0;
-  aiStack_84[1] = uStack_ac;
-  iVar8 = token->t_player;
-  aiStack_84[4] = 0xffffffff;
-  aiStack_84[5] = 0;
-  aiStack_84[6] = 0xffffffff;
-  aiStack_84[7] = 0;
-  if (active_cards_count[iVar8] < 1)
+
+  int group_id = token->id;
+  struct
   {
-    bVar5 = false;
-  }
-  else
+    int id;
+    unsigned int quantity;
+  } groups[4] = {{group_id, quantity}, {-1, 0}, {-1, 0}, {-1, 0}};
+  int recipient = token->t_player;
+  int manufactors = 0, chatterfangs = 0, visitation = 0;
+  for (int c = 0; c < active_cards_count[recipient]; ++c)
   {
-    i = 0;
-    bVar5 = false;
-    iStack_88 = 0;
-    iVar14 = 0;
-  LAB_02665aa9:
-    do
+    if (in_play(recipient, c) && !is_humiliated(token->t_player, c, AL_STATIC))
     {
-      pcVar9 = in_play(iVar8, i);
-      if ((pcVar9 != NULL) &&
-          (iVar8 = is_humiliated(token->t_player, i, AL_STATIC), iVar8 == 0))
-      {
-        iVar8 = get_id(token->t_player, i);
-        iVar14 = iVar14 + (unsigned int)(iVar8 == 0x59a8);
-        iVar8 = get_id(token->t_player, i);
-        iStack_88 = iStack_88 + (unsigned int)(iVar8 == 0x59ce);
-        iVar8 = get_id(token->t_player, i);
-        if (iVar8 == 0x4b8f)
-        {
-          iVar8 = token->t_player;
-          i = i + 1;
-          bVar5 = true;
-          if (active_cards_count[iVar8] <= i)
-            break;
-          goto LAB_02665aa9;
-        }
-      }
-      iVar8 = token->t_player;
-      i = i + 1;
-    } while (i < active_cards_count[iVar8]);
-    for (; iVar14 != 0; iVar14 = iVar14 + -1)
-    {
-      while (iStack_94 != 0x4917)
-      {
-        if (iStack_94 == 0x5077)
-        {
-          if (1 < iVar14)
-          {
-            aiStack_84[1] = aiStack_84[1] + uStack_ac;
-          }
-          aiStack_84[2] = 0x4917;
-          aiStack_84[3] = aiStack_84[3] + uStack_ac;
-          aiStack_84[4] = 0x4998;
-          aiStack_84[5] = aiStack_84[5] + uStack_ac;
-        }
-        else if (iStack_94 == 0x4998)
-        {
-          if (1 < iVar14)
-          {
-            aiStack_84[1] = aiStack_84[1] + uStack_ac;
-          }
-          aiStack_84[2] = 0x5077;
-          aiStack_84[3] = aiStack_84[3] + uStack_ac;
-          aiStack_84[4] = 0x4917;
-          aiStack_84[5] = aiStack_84[5] + uStack_ac;
-        }
-        iVar14 = iVar14 + -1;
-        if (iVar14 == 0)
-          goto LAB_02665be0;
-      }
-      if (1 < iVar14)
-      {
-        aiStack_84[1] = aiStack_84[1] + uStack_ac;
-      }
-      aiStack_84[2] = 0x5077;
-      aiStack_84[3] = aiStack_84[3] + uStack_ac;
-      aiStack_84[4] = 0x4998;
-      aiStack_84[5] = aiStack_84[5] + uStack_ac;
+      manufactors += get_id(token->t_player, c) == CARD_ID_ACADEMY_MANUFACTOR;
+      chatterfangs += get_id(token->t_player, c) == CARD_ID_CHATTERFANG_SQUIRREL_GENERAL;
+      if (get_id(token->t_player, c) == CARD_ID_DIVINE_VISITATION)
+        visitation = 1;
     }
-  LAB_02665be0:
-    if (iStack_88 != 0)
-    {
-      aiStack_84[6] = 0x4991;
-      aiStack_84[7] = (iStack_88 + -1) * uStack_ac + uStack_ac;
-    }
+    recipient = token->t_player;
   }
-  iStack_90 = 0;
-  do
+  for (int remaining = manufactors; remaining > 0; --remaining)
   {
-    if (-1 < iStack_94)
+    switch (group_id)
     {
-      if (((bVar5) && (iVar8 = get_internal_card_id_from_csv_id(iStack_94),
-                       cards_data[iVar8].cc[2] != '\x03')) &&
-          (cards_data[iVar8].type != 0x80))
+    case CARD_ID_CLUE:
+      groups[1].id = CARD_ID_FOOD;
+      groups[2].id = CARD_ID_TREASURE;
+      break;
+    case CARD_ID_FOOD:
+      groups[1].id = CARD_ID_CLUE;
+      groups[2].id = CARD_ID_TREASURE;
+      break;
+    case CARD_ID_TREASURE:
+      groups[1].id = CARD_ID_FOOD;
+      groups[2].id = CARD_ID_CLUE;
+      break;
+    default:
+      continue;
+    }
+    if (remaining > 1)
+      groups[0].quantity += quantity;
+    groups[1].quantity += quantity;
+    groups[2].quantity += quantity;
+  }
+  if (chatterfangs)
+  {
+    groups[3].id = CARD_ID_SQUIRREL;
+    groups[3].quantity = (unsigned int)chatterfangs * quantity;
+  }
+  for (int group = 0; group < 4; ++group)
+  {
+    group_id = groups[group].id;
+    if (group_id < 0)
+      continue;
+    if (visitation)
+    {
+      int original_iid = get_internal_card_id_from_csv_id(group_id);
+      if (cards_data[original_iid].cc[2] != 3 && cards_data[original_iid].type != TYPE_EFFECT)
+        group_id = groups[group].id = CARD_ID_ANGEL;
+    }
+    iid = get_internal_card_id_from_csv_id(group_id);
+    int group_quantity = groups[group].quantity;
+    for (int n = 0; n < group_quantity; ++n)
+    {
+      if (group > 0)
       {
-        iStack_94 = 0x48ff;
-        aiStack_84[iStack_90 * 2] = 0x48ff;
-      }
-      iStack_8c = get_internal_card_id_from_csv_id(iStack_94);
-      iStack_88 = 0;
-      iVar8 = aiStack_84[iStack_90 * 2 + 1];
-      if (0 < iVar8)
-      {
-        do
+        default_token_definition(token->s_player, token->s_card, group_id, token);
+        if (group_id == CARD_ID_SQUIRREL)
         {
-          if ((0 < iStack_90) &&
-              (default_token_definition(token->s_player, token->s_card, iStack_94, token),
-               iStack_94 == 0x4991))
-          {
-            token->tou = 1;
-            token->pow = 1;
-            token->color_forced = '\b';
-          }
-          if (((bVar5) && (iVar14 = get_internal_card_id_from_csv_id(iStack_94),
-                           cards_data[iVar14].cc[2] != '\x03')) &&
-              (cards_data[iVar14].type != 0x80))
-          {
-            token->key_plus = 0x20;
-            token->s_key_plus = 8;
-            token->tou = 4;
-            token->pow = 4;
-            token->color_forced = ' ';
-            token->special_infos = 0;
-          }
-          iStack_8c = resolve_token_iid(iStack_8c, token);
-          if (token->eff_card == -1)
-          {
-            if (((token->keep_track_of_tokens_generated != 0) || (token->legacy == '\x01')) ||
-                ((token->action & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER |
-                                   TOKEN_ACTION_HASTE | TOKEN_ACTION_EQUIP)) != 0))
-            {
-              backtrace_and_abort("functions/token_generation.c:392\ntoken->eff_card != -1 || "
-                                  "!(token->keep_track_of_tokens_generated > 0 || token->legacy == "
-                                  "1 || (token->action & (TOKEN_ACTION_EQUIP | TOKEN_ACTION_HASTE "
-                                  "| TOKEN_ACTION_PUMP_POWER | TOKEN_ACTION_PUMP_TOUGHNESS)))");
-            }
-          LAB_02665cab:
-            pcStack_98 = NULL;
-          }
-          else
-          {
-            if (token->keep_track_of_tokens_generated == 0)
-              goto LAB_02665cab;
-            pcStack_98 = get_card_instance(token->eff_player, token->eff_card);
-          }
-          iVar14 = token->t_player;
-          iVar13 = add_card_to_hand(iVar14, iStack_8c);
-          set_token(iVar14, iVar13, token);
-          pcVar9 = get_card_instance(iVar14, iVar13);
-          pcVar9->state = pcVar9->state | 0x20;
-          hand_count[iVar14] = hand_count[iVar14] + -1;
-          pcVar9 = get_card_instance(token->t_player, iVar13);
-          if (token->legacy == '\x01')
-          {
-            iVar14 = create_targetted_legacy_effect(token->eff_player, token->eff_card,
+          token->tou = 1;
+          token->pow = 1;
+          token->color_forced = 8;
+        }
+      }
+      if (visitation)
+      {
+        int original_iid = get_internal_card_id_from_csv_id(group_id);
+        if (cards_data[original_iid].cc[2] != 3 && cards_data[original_iid].type != TYPE_EFFECT)
+        {
+          token->key_plus = 0x20;
+          token->s_key_plus = 8;
+          token->tou = 4;
+          token->pow = 4;
+          token->color_forced = 0x20;
+          token->special_infos = 0;
+        }
+      }
+      iid = resolve_token_iid(iid, token);
+      card_instance_t *effect_instance = NULL;
+      if (token->eff_card == -1)
+      {
+        if (token->keep_track_of_tokens_generated || token->legacy == 1 ||
+            (token->action & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER |
+                              TOKEN_ACTION_HASTE | TOKEN_ACTION_EQUIP)))
+          backtrace_and_abort("functions/token_generation.c:392\ntoken->eff_card != -1 || "
+                              "!(token->keep_track_of_tokens_generated > 0 || token->legacy == "
+                              "1 || (token->action & (TOKEN_ACTION_EQUIP | TOKEN_ACTION_HASTE "
+                              "| TOKEN_ACTION_PUMP_POWER | TOKEN_ACTION_PUMP_TOUGHNESS)))");
+      }
+      else if (token->keep_track_of_tokens_generated)
+        effect_instance = get_card_instance(token->eff_player, token->eff_card);
+
+      int token_player = token->t_player;
+      int created = add_card_to_hand(token_player, iid);
+      set_token(token_player, created, token);
+      card_instance_t *instance = get_card_instance(token_player, created);
+      instance->state |= STATE_INVISIBLE;
+      --hand_count[token_player];
+      instance = get_card_instance(token->t_player, created);
+      if (token->legacy == 1)
+      {
+        int legacy = create_targetted_legacy_effect(token->eff_player, token->eff_card,
                                                     token->special_code_for_legacy, token->t_player,
-                                                    iVar13);
-            pcVar12 = get_card_instance(token->eff_player, iVar14);
-            pcVar12->eot_toughness = 0x300;
-            uVar1 = cards_data[iStack_8c].id;
-            pcVar12->display_pic_csv_id = uVar1;
-          }
-          tVar10 = token->action;
-          if ((tVar10 & TOKEN_ACTION_TAPPED) != 0)
-          {
-            pcVar9->state = pcVar9->state | 0x10;
-          }
-          if (((tVar10 & TOKEN_ACTION_ATTACKING_UNTAPPED) != 0) &&
-              (pcVar9->state = pcVar9->state | 4,
-               (tVar10 & TOKEN_ACTION_SKIP_ATTACK_CHECK) == 0))
-          {
-            choose_who_attack(token->t_player, iVar13);
-            tVar10 = token->action;
-          }
-          if ((tVar10 & TOKEN_ACTION_BLOCKING) != 0)
-          {
-            pcVar12 = get_card_instance(1 - token->t_player, token->action_argument);
-            uVar7 = pcVar12->blocking;
-            if (uVar7 == 0xff)
-            {
-              uVar7 = (uint8_t)token->action_argument;
-            }
-            pcVar9->blocking = uVar7;
-            tVar10 = token->action;
-            pcVar9->state = pcVar9->state | 0x8008;
-          }
-          if (((tVar10 & TOKEN_ACTION_EQUIP) != 0) && (iStack_88 == 0))
-          {
-            equip_target_creature(token->eff_player, token->eff_card, token->t_player, iVar13);
-            tVar10 = token->action;
-          }
-          if (((tVar10 & TOKEN_ACTION_EQUIP_ANY) != 0) && (iStack_88 == 0))
-          {
-            default_target_definition(token->eff_player, token->eff_card, &td, 0xff);
-            td.required_subtype = 0x3001;
-            td.illegal_abilities = 0;
-            pcVar12 = get_card_instance(token->eff_player, token->eff_card);
-            iVar3 = pcVar12->targets[0].player;
-            iVar4 = pcVar12->targets[0].card;
-            iVar14 = can_target(&td);
-            if ((iVar14 != 0) &&
-                (iVar14 = new_pick_target(&td, "Select an equipment you control", 0, 0x80),
-                 iVar14 != 0))
-            {
-              equip_target_creature(pcVar12->targets[0].player, pcVar12->targets[0].card,
-                                    token->t_player, iVar13);
-            }
-            pcVar12->targets[0].player = iVar3;
-            pcVar12->targets[0].card = iVar4;
-            tVar10 = token->action;
-          }
-          if ((tVar10 & TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE) != 0)
-          {
-            set_special_flags(token->t_player, iVar13, 0x40000000);
-            tVar10 = token->action;
-          }
-          if ((tVar10 & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER |
-                         TOKEN_ACTION_HASTE)) != 0)
-          {
-            iStack_9c = 0;
-            if ((tVar10 & TOKEN_ACTION_PUMP_TOUGHNESS) != 0)
-            {
-              iStack_9c = token->action_argument;
-            }
-            iVar14 = 0;
-            if ((tVar10 & TOKEN_ACTION_PUMP_POWER) != 0)
-            {
-              iVar14 = token->action_argument;
-            }
-            pump_ability_until_eot(token->eff_player, token->eff_card, token->t_player, iVar13,
-                                   iVar14, iStack_9c, 0, tVar10 >> 2 & 4);
-            tVar10 = token->action;
-          }
-          if ((tVar10 & TOKEN_ACTION_ADD_SUBTYPE) != 0)
-          {
-            add_a_subtype_permanently(token->eff_player, token->eff_card, token->t_player, iVar13,
-                                      token->action_argument);
-            tVar10 = token->action;
-          }
-          if ((tVar10 & TOKEN_ACTION_RECORD_SOURCE_ID) != 0)
-          {
-            iVar14 = get_id(token->s_player, token->s_card);
-            pcVar9->damage_source_card = iVar14;
-          }
-          if (token->special_code_on_generation != NULL)
-          {
-            (*token->special_code_on_generation)(token, iVar13, iStack_88);
-          }
-          iVar14 = token->t_player;
-          if (iStack_88 < (int)token->keep_track_of_tokens_generated)
-          {
-            pcStack_98->targets[iStack_88].player = iVar14;
-            pcStack_98->targets[iStack_88].card = iVar13;
-          }
-          put_into_play(iVar14, iVar13);
-          tVar10 = token->action;
-          if ((tVar10 & TOKEN_ACTION_ADD_COUNTERS) != 0)
-          {
-            hack_silent_counters = hack_silent_counters + 1;
-            add_counters(token->s_player, token->s_card, token->t_player, iVar13,
-                                     (unsigned int)token->action_argument >> 0x10,
-                                     token->action_argument & 0xffff);
-            hack_silent_counters = hack_silent_counters + -1;
-            tVar10 = token->action;
-          }
-          if ((((tVar10 & TOKEN_ACTION_BLOCKING) == 0) ||
-               (pcVar9 = in_play(token->t_player, iVar13), pcVar9 == NULL)) ||
-              (play_sound_effect(WAV_BLOCK2),
-               (((unsigned int)event_flags >> 16 & 0xff) & 0x10) == 0))
-          {
-            uVar15 = token->special_infos;
-          }
-          else
-          {
-            dispatch_trigger2(current_turn, TRIGGER_BLOCKER_CHOSEN, EXE_STR(0x790074), 0,
-                              token->t_player, iVar13);
-            uVar15 = token->special_infos;
-          }
-          if (uVar15 == 99)
-          {
-            uVar15 = 0;
-            iVar14 = get_id(token->t_player, iVar13);
-            bVar6 = false;
-            do
-            {
-              card = active_cards_count[uVar15] + -1;
-              if (-1 < card)
-              {
-                do
-                {
-                  pcVar9 = in_play(uVar15, card);
-                  if ((((pcVar9 != NULL) && ((token->t_player != uVar15 || (iVar13 != card)))) &&
-                       (iVar11 = get_id(uVar15, card), iVar14 == iVar11)) &&
-                      (((int)(uVar15 ^ 0xffffffff) < 0 && (pcVar9 = get_card_instance(uVar15, card),
-                                                           pcVar9->targets[0xe].player == 99))))
-                  {
-                    kill_card(uVar15, card, KILL_SACRIFICE);
-                    bVar6 = true;
-                  }
-                  card = card + -1;
-                } while (card != -1);
-              }
-              uVar15 = uVar15 + 1;
-            } while (uVar15 != 2);
-            if (bVar6)
-            {
-              kill_card(token->t_player, iVar13, KILL_SACRIFICE);
-            }
-          }
-          if (iStack_88 < (int)token->keep_track_of_tokens_generated)
-          {
-            pcVar9 = get_card_instance(token->eff_player, token->eff_card);
-            pcVar9->targets[iStack_88].player = token->t_player;
-            pcVar9->targets[iStack_88].card = iVar13;
-          }
-          iStack_88 = iStack_88 + 1;
-        } while (iStack_88 != iVar8);
+                                                    created);
+        card_instance_t *legacy_instance = get_card_instance(token->eff_player, legacy);
+        legacy_instance->eot_toughness = 0x300;
+        legacy_instance->display_pic_csv_id = cards_data[iid].id;
       }
-      increase_trap_condition(token->t_player, 0x206, iVar8);
-    }
-    iStack_90 = iStack_90 + 1;
-    if (iStack_90 == 4)
-    {
-      uVar15 = token->keep_track_of_tokens_generated;
-      if (uVar15 == 0)
+      token_action_t action = token->action;
+      if (action & TOKEN_ACTION_TAPPED)
+        instance->state |= STATE_TAPPED;
+      if (action & TOKEN_ACTION_ATTACKING_UNTAPPED)
       {
-        return;
+        instance->state |= STATE_ATTACKING;
+        if (!(action & TOKEN_ACTION_SKIP_ATTACK_CHECK))
+        {
+          choose_who_attack(token->t_player, created);
+          action = token->action;
+        }
       }
-      if (uVar15 < uStack_ac)
+      if (action & TOKEN_ACTION_BLOCKING)
       {
-        uStack_ac = uVar15;
+        card_instance_t *attacker = get_card_instance(1 - token->t_player, token->action_argument);
+        uint8_t blocking = attacker->blocking;
+        if (blocking == 255)
+          blocking = (uint8_t)token->action_argument;
+        instance->blocking = blocking;
+        action = token->action;
+        instance->state |= STATE_BLOCKING | STATE_UNKNOWN8000;
       }
-      token->keep_track_of_tokens_generated = uStack_ac;
-      return;
+      if ((action & TOKEN_ACTION_EQUIP) && n == 0)
+      {
+        equip_target_creature(token->eff_player, token->eff_card, token->t_player, created);
+        action = token->action;
+      }
+      if ((action & TOKEN_ACTION_EQUIP_ANY) && n == 0)
+      {
+        target_definition_t td;
+        default_target_definition(token->eff_player, token->eff_card, &td, 0xff);
+        td.required_subtype = SUBTYPE_EQUIPMENT;
+        td.illegal_abilities = 0;
+        card_instance_t *source = get_card_instance(token->eff_player, token->eff_card);
+        target_t saved_target = source->targets[0];
+        if (can_target(&td) && new_pick_target(&td, "Select an equipment you control", 0, 0x80))
+          equip_target_creature(source->targets[0].player, source->targets[0].card, token->t_player,
+                                created);
+        source->targets[0] = saved_target;
+        action = token->action;
+      }
+      if (action & TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE)
+      {
+        set_special_flags(token->t_player, created, 0x40000000);
+        action = token->action;
+      }
+      if (action & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER | TOKEN_ACTION_HASTE))
+      {
+        int toughness = action & TOKEN_ACTION_PUMP_TOUGHNESS ? token->action_argument : 0;
+        int power = action & TOKEN_ACTION_PUMP_POWER ? token->action_argument : 0;
+        pump_ability_until_eot(token->eff_player, token->eff_card, token->t_player, created, power,
+                               toughness, 0, (action >> 2) & 4);
+        action = token->action;
+      }
+      if (action & TOKEN_ACTION_ADD_SUBTYPE)
+      {
+        add_a_subtype_permanently(token->eff_player, token->eff_card, token->t_player, created,
+                                  token->action_argument);
+        action = token->action;
+      }
+      if (action & TOKEN_ACTION_RECORD_SOURCE_ID)
+        instance->damage_source_card = get_id(token->s_player, token->s_card);
+      if (token->special_code_on_generation)
+        token->special_code_on_generation(token, created, n);
+      token_player = token->t_player;
+      if (n < (int)token->keep_track_of_tokens_generated)
+      {
+        effect_instance->targets[n].player = token_player;
+        effect_instance->targets[n].card = created;
+      }
+      put_into_play(token_player, created);
+      action = token->action;
+      if (action & TOKEN_ACTION_ADD_COUNTERS)
+      {
+        ++hack_silent_counters;
+        add_counters(token->s_player, token->s_card, token->t_player, created,
+                     (unsigned int)token->action_argument >> 16, token->action_argument & 0xffff);
+        --hack_silent_counters;
+        action = token->action;
+      }
+      if ((action & TOKEN_ACTION_BLOCKING) && in_play(token->t_player, created))
+      {
+        play_sound_effect(WAV_BLOCK2);
+        if (event_flags & 0x100000)
+          dispatch_trigger2(current_turn, TRIGGER_BLOCKER_CHOSEN, EXE_STR(0x790074), 0,
+                            token->t_player, created);
+      }
+      if (token->special_infos == 99)
+      {
+        int token_id = get_id(token->t_player, created);
+        int duplicate = 0;
+        for (int p = 0; p < 2; ++p)
+          for (int c = active_cards_count[p] - 1; c >= 0; --c)
+            if (in_play(p, c) && (token->t_player != p || created != c) &&
+                get_id(p, c) == token_id && get_card_instance(p, c)->targets[14].player == 99)
+            {
+              kill_card(p, c, KILL_SACRIFICE);
+              duplicate = 1;
+            }
+        if (duplicate)
+          kill_card(token->t_player, created, KILL_SACRIFICE);
+      }
+      if (n < (int)token->keep_track_of_tokens_generated)
+      {
+        card_instance_t *source = get_card_instance(token->eff_player, token->eff_card);
+        source->targets[n].player = token->t_player;
+        source->targets[n].card = created;
+      }
     }
-    iStack_94 = aiStack_84[iStack_90 * 2];
-  } while (true);
+    increase_trap_condition(token->t_player, 0x206, group_quantity);
+  }
+  if (token->keep_track_of_tokens_generated)
+    token->keep_track_of_tokens_generated = token->keep_track_of_tokens_generated < quantity
+                                                ? token->keep_track_of_tokens_generated
+                                                : quantity;
 }
 
 /* ManalinkEh 2022: 0x2664eb0; original functions/token_generation.c:150. */
 static void set_token(int player, int card, token_generation_t *token)
 {
-  uint32_t uVar1;
-  unsigned int uVar2;
+  uint32_t special_keywords;
+  unsigned int copied_infos;
   card_instance_t *instance;
 
   instance = get_card_instance(player, card);
   instance->damage_source_player = (int8_t)token->s_player;
   instance->damage_source_card = token->s_card;
-  uVar1 = token->s_key_plus;
-  instance->ext->sp_keywords = uVar1;
-  instance->token_special_keywords = uVar1;
+  special_keywords = token->s_key_plus;
+  instance->ext->sp_keywords = special_keywords;
+  instance->token_special_keywords = special_keywords;
   set_special_flags2(player, card, token->special_flags2);
   instance = get_card_instance(player, card);
-  uVar2 = token->special_infos;
+  copied_infos = token->special_infos;
   instance->token_status = instance->token_status | 0x10;
   instance = get_card_instance(player, card);
-  instance->targets[0xe].player = uVar2;
+  instance->targets[0xe].player = copied_infos;
   return;
 }
 
 /* ManalinkEh 2022: 0x2665470; original functions/token_generation.c:5. */
 void default_token_definition(int player, int card, int id, token_generation_t *token)
 {
-  int result;
-  card_instance_t *instance;
   token->id = id;
   token->eff_player = player;
   token->eff_card = card;
   token->t_player = player;
-  if ((player < 0) || (card < 0))
+  if (player >= 0 && card >= 0)
   {
-  LAB_02665498:
-    token->s_card = -1;
-    token->s_player = -1;
-    token->no_sleight = '\x01';
-  }
-  else
-  {
-    instance = get_card_instance(player, card);
-    result = instance->internal_card_id;
-    if (result == activation_card)
+    card_instance_t *instance = get_card_instance(player, card);
+    int source_iid = instance->internal_card_id;
+    if (source_iid == activation_card)
     {
       player = instance->parent_controller;
       card = instance->parent_card;
-    LAB_0266554c:
-      if ((player < 0) || (card < 0))
-        goto LAB_02665498;
     }
-    else
+    else if (source_iid >= 0 && (unsigned int)cards_data[source_iid].id - 901U < 8)
     {
-      if ((-1 < result) && (cards_data[result].id - 0x385 < 8))
-      {
-        player = (int)instance->damage_source_player;
-        card = instance->damage_source_card;
-        goto LAB_0266554c;
-      }
+      player = instance->damage_source_player;
+      card = instance->damage_source_card;
     }
+  }
+  if (player >= 0 && card >= 0)
+  {
     token->s_player = player;
     token->s_card = card;
-    token->no_sleight = '\0';
+    token->no_sleight = 0;
+  }
+  else
+  {
+    token->s_card = -1;
+    token->s_player = -1;
+    token->no_sleight = 1;
   }
   token->pow = -1;
   token->tou = -1;
   token->key_plus = 0;
   token->s_key_plus = 0;
-  token->color_forced = '\0';
+  token->color_forced = 0;
   token->special_code_for_legacy = empty;
   token->special_code_on_generation = NULL;
-  token->legacy = '\0';
-  token->qty = '\x01';
+  token->legacy = 0;
+  token->qty = 1;
   token->special_infos = 0;
   token->action = 0;
   token->action_argument = 0;
   token->keep_track_of_tokens_generated = 0;
   token->special_flags2 = 0;
   token->special_flags3 = 0;
-  return;
 }
 
 /* ManalinkEh 2022: 0x2664f30; original functions/token_generation.c:295. */
 static int resolve_token_iid(iid_t int_id, token_generation_t *token)
 {
-  unsigned char bVar1;
-  unsigned int uVar2;
-  int iVar3;
-  token_action_t tVar4;
-  unsigned char bVar5;
-  char cVar6;
-  char cVar7;
-  char cVar8;
-  int iVar9;
-  card_instance_t *instance;
-  int iVar11;
-  int iVar12;
-  uint32_t uVar13;
-  card_data_t *pcVar14;
-  int *piVar15;
-  card_data_t *pcVar16;
-  bool bVar17;
-  unsigned int uStack_6c;
-  unsigned int uStack_64;
-  unsigned int uStack_58;
-  int dynused[16];
+  int original_iid = get_internal_card_id_from_csv_id(cards_data[int_id].id);
+  int dynamic_start = engine_dynamic_iid_start;
+  if (cards_data[original_iid].cc[2] == 3 || cards_data[original_iid].type == TYPE_EFFECT)
+    return int_id;
 
-  iVar9 = get_internal_card_id_from_csv_id((unsigned int)cards_data[int_id].id);
-  iVar11 = engine_dynamic_iid_start;
-  if ((cards_data[iVar9].cc[2] != '\x03') && (cards_data[iVar9].type != 0x80))
+  int dynamic_end = engine_dynamic_iid_start + 16;
+  for (int candidate = engine_dynamic_iid_start; candidate < dynamic_end; ++candidate)
   {
-    iVar9 = engine_dynamic_iid_start + 0x10;
-    iVar3 = engine_dynamic_iid_start;
-    do
+    uint32_t id_word = cards_data[candidate].id | ((uint32_t)cards_data[candidate].reserved2 << 16);
+    if ((uint16_t)id_word == cards_data[int_id].id && token->id == (id_word & 0xffff) &&
+        (token->pow < 0 || token->pow == cards_data[candidate].power) &&
+        (token->tou < 0 || token->tou == cards_data[candidate].toughness) &&
+        (cards_data[candidate].static_ability & token->key_plus))
     {
-      iVar12 = iVar3;
-      uVar2 = (uint32_t)cards_data[iVar12].id | ((uint32_t)cards_data[iVar12].reserved2 << 16);
-      if (((((uint16_t)uVar2 == cards_data[int_id].id) && (token->id == (uVar2 & 0xffff))) &&
-           ((token->pow < 0 || (token->pow == (int)cards_data[iVar12].power)))) &&
-          (((token->tou < 0 || (token->tou == (int)cards_data[iVar12].toughness)) &&
-            ((cards_data[iVar12].static_ability & token->key_plus) != 0))))
+      int artifact_matches = !(token->action & TOKEN_ACTION_CONVERT_INTO_ARTIFACT) ||
+                             (cards_data[candidate].type & TYPE_ARTIFACT);
+      unsigned int existing_color = cards_data[candidate].color;
+      unsigned char desired_color =
+          token->color_forced ? token->color_forced : cards_data[candidate].color;
+      unsigned int color = desired_color;
+      if (token->s_player >= 0 && token->s_card >= 0 && !token->no_sleight)
       {
-        bVar1 = 1;
-        if ((token->action & TOKEN_ACTION_CONVERT_INTO_ARTIFACT) != 0)
-        {
-          bVar1 = cards_data[iVar12].type >> 6 & 1;
-        }
-        uStack_58 = (unsigned int)cards_data[iVar12].color;
-        bVar5 = token->color_forced;
-        if (token->color_forced == 0)
-        {
-          bVar5 = cards_data[iVar12].color;
-        }
-        uStack_6c = (unsigned int)bVar5;
-        if (((-1 < token->s_player) && (-1 < token->s_card)) && (token->no_sleight == '\0'))
-        {
-          uStack_6c = get_sleighted_color_test(token->s_player, token->s_card, bVar5 & 0x3e);
-          uStack_58 = (unsigned int)cards_data[iVar12].color;
-        }
-        if ((uStack_58 == uStack_6c) && (bVar1 != 0))
-        {
-          return iVar12;
-        }
+        color = get_sleighted_color_test(token->s_player, token->s_card, desired_color & 0x3e);
+        existing_color = cards_data[candidate].color;
       }
-      iVar3 = iVar12 + 1;
-    } while (iVar12 + 1 != iVar9);
-    bVar1 = cards_data[int_id].color;
-    if (token->color_forced != 0)
-    {
-      bVar1 = token->color_forced;
-    }
-    uStack_64 = (unsigned int)bVar1;
-    if (((-1 < token->s_player) && (-1 < token->s_card)) && (token->no_sleight == '\0'))
-    {
-      uStack_64 = get_sleighted_color_test(token->s_player, token->s_card, uStack_64 & 0x3e);
-    }
-    if (((((-1 < token->pow) && (token->pow != (int)cards_data[int_id].power)) ||
-          ((-1 < token->tou && (token->tou != (int)cards_data[int_id].toughness)))) ||
-         ((token->key_plus != 0 && (token->key_plus != cards_data[int_id].static_ability)))) ||
-        ((cards_data[int_id].color != uStack_64 ||
-          ((((cards_data[int_id].type & 0x40) == 0 &&
-             ((token->action & TOKEN_ACTION_CONVERT_INTO_ARTIFACT) != 0)) ||
-            ((token->action & TOKEN_ACTION_ISNT_LEGENDARY) != 0))))))
-    {
-      uStack_58 = 0;
-      piVar15 = dynused;
-      for (iVar9 = 0x10; iVar9 != 0; iVar9 = iVar9 + -1)
-      {
-        *piVar15 = 0;
-        piVar15 = piVar15 + 1u;
-      }
-      do
-      {
-        iVar9 = 0;
-        do
-        {
-          while (true)
-          {
-            instance = get_card_instance(uStack_58, iVar9);
-            uVar13 = instance->original_internal_card_id;
-            if (uVar13 == 0xffffffff)
-            {
-              uVar13 = (uint32_t)instance->backup_internal_card_id;
-            }
-            if ((iVar11 <= (int)uVar13) && ((int)uVar13 <= iVar11 + 0xf))
-            {
-              dynused[uVar13 - iVar11] = 1;
-            }
-            iVar3 = instance->dummy3;
-            if ((iVar11 + 0xf < iVar3 || iVar3 < iVar11) || (uVar13 == 0))
-              break;
-            iVar9 = iVar9 + 1;
-            dynused[iVar3 - iVar11] = 1;
-            if (iVar9 == 0x96)
-              goto LAB_0266519c;
-          }
-          iVar9 = iVar9 + 1;
-        } while (iVar9 != 0x96);
-      LAB_0266519c:
-        uStack_58 = uStack_58 + 1;
-        iVar9 = iVar11;
-        if (uStack_58 == 2)
-        {
-          do
-          {
-            if (((dynused[iVar9 - iVar11] == 0) && (engine_dynamic_iid_start <= iVar9)) &&
-                (iVar9 <= engine_dynamic_iid_start + 0xf))
-            {
-              cards_data[iVar9].id = 0xffff;
-            }
-            bVar17 = iVar12 != iVar9;
-            iVar9 = iVar9 + 1;
-          } while (bVar17);
-          iVar11 = create_a_card_type(int_id);
-          cards_data[iVar11] = cards_data[int_id];
-          iVar9 = token->pow;
-          if ((-1 < iVar9) && (iVar9 != cards_data[int_id].power))
-          {
-            cards_data[iVar11].power = (int16_t)iVar9;
-          }
-          iVar9 = token->tou;
-          if ((-1 < iVar9) && (iVar9 != cards_data[int_id].toughness))
-          {
-            cards_data[iVar11].toughness = (int16_t)iVar9;
-          }
-          if (token->key_plus != 0)
-          {
-            cards_data[iVar11].static_ability = cards_data[iVar11].static_ability | token->key_plus;
-          }
-          tVar4 = token->action;
-          if (((cards_data[int_id].type & 0x40) == 0) &&
-              ((tVar4 & TOKEN_ACTION_CONVERT_INTO_ARTIFACT) != 0))
-          {
-            cards_data[iVar11].type = cards_data[iVar11].type | 0x40;
-          }
-          if ((tVar4 & TOKEN_ACTION_ISNT_LEGENDARY) != 0)
-          {
-            cards_data[iVar11].subtype = '\0';
-          }
-          cards_data[iVar11].color = (uint8_t)uStack_64;
-          return iVar11;
-        }
-      } while (true);
+      if (existing_color == color && artifact_matches)
+        return candidate;
     }
   }
-  return int_id;
+  unsigned int color = token->color_forced ? token->color_forced : cards_data[int_id].color;
+  if (token->s_player >= 0 && token->s_card >= 0 && !token->no_sleight)
+    color = get_sleighted_color_test(token->s_player, token->s_card, color & 0x3e);
+  if (!((token->pow >= 0 && token->pow != cards_data[int_id].power) ||
+        (token->tou >= 0 && token->tou != cards_data[int_id].toughness) ||
+        (token->key_plus && token->key_plus != cards_data[int_id].static_ability) ||
+        cards_data[int_id].color != color ||
+        (!(cards_data[int_id].type & TYPE_ARTIFACT) &&
+         (token->action & TOKEN_ACTION_CONVERT_INTO_ARTIFACT)) ||
+        (token->action & TOKEN_ACTION_ISNT_LEGENDARY)))
+    return int_id;
+
+  int used[16] = {0};
+  for (int p = 0; p < 2; ++p)
+    for (int c = 0; c < 150; ++c)
+    {
+      card_instance_t *instance = get_card_instance(p, c);
+      uint32_t iid = instance->original_internal_card_id;
+      if (iid == UINT32_MAX)
+        iid = instance->backup_internal_card_id;
+      if ((int)iid >= dynamic_start && (int)iid <= dynamic_start + 15)
+        used[iid - dynamic_start] = 1;
+      int animated_iid = instance->dummy3;
+      if (animated_iid >= dynamic_start && animated_iid <= dynamic_start + 15 && iid != 0)
+        used[animated_iid - dynamic_start] = 1;
+    }
+  for (int iid = dynamic_start; iid < dynamic_end; ++iid)
+    if (!used[iid - dynamic_start] && iid >= engine_dynamic_iid_start &&
+        iid <= engine_dynamic_iid_start + 15)
+      cards_data[iid].id = 0xffff;
+  int created = create_a_card_type(int_id);
+  cards_data[created] = cards_data[int_id];
+  int power = token->pow;
+  if (power >= 0 && power != cards_data[int_id].power)
+    cards_data[created].power = (int16_t)power;
+  int toughness = token->tou;
+  if (toughness >= 0 && toughness != cards_data[int_id].toughness)
+    cards_data[created].toughness = (int16_t)toughness;
+  if (token->key_plus)
+    cards_data[created].static_ability |= token->key_plus;
+  token_action_t action = token->action;
+  if (!(cards_data[int_id].type & TYPE_ARTIFACT) && (action & TOKEN_ACTION_CONVERT_INTO_ARTIFACT))
+    cards_data[created].type |= TYPE_ARTIFACT;
+  if (action & TOKEN_ACTION_ISNT_LEGENDARY)
+    cards_data[created].subtype = 0;
+  cards_data[created].color = (uint8_t)color;
+  return created;
 }
 
 /* ManalinkEh 2022: 0x2665380; original functions/token_generation.c:218. */
 static int get_copyable_special_infos(int t_player, int t_card)
 {
-  unsigned int uVar1;
-  card_instance_t *instance;
-  int result;
-  unsigned int uVar4;
-
-  instance = get_card_instance(t_player, t_card);
-  uVar1 = instance->targets[0xe].player;
-  uVar4 = (int)(uVar1 ^ 0xffffffff) >> 0x1f & uVar1;
-  if ((int)uVar1 < 1)
+  card_instance_t *instance = get_card_instance(t_player, t_card);
+  int infos = instance->targets[14].player;
+  if (infos <= 0)
+    return 0;
+  switch (get_backup_id(t_player, t_card))
   {
-    return uVar4;
+  case CARD_ID_ASSEMBLY_WORKER:
+  case CARD_ID_ASSASSIN:
+  case CARD_ID_BAT:
+  case CARD_ID_CLERIC:
+  case CARD_ID_ELDRAZI_SPAWN:
+  case CARD_ID_ILLUSION_TOKEN:
+  case CARD_ID_SAPROLING:
+  case CARD_ID_SPIRIT:
+  case CARD_ID_SCULPTURE:
+    return infos == 66 ? infos : 0;
+  case CARD_ID_ELEMENTAL:
+  case CARD_ID_GOBLIN:
+  case CARD_ID_INSECT:
+    return infos == 67 ? infos : 0;
+  case CARD_ID_DRAGON:
+  case CARD_ID_OOZE:
+  case CARD_ID_WOLF:
+    return infos == 66 || infos == 67 ? infos : 0;
+  default:
+    return 0;
   }
-  result = get_backup_id(t_player, t_card);
-  if (result < 0x493b)
-  {
-    if (0x4902 < result)
-    {
-      switch (result)
-      {
-      case 0x4903:
-      case 0x4905:
-      case 0x4916:
-      case 0x4925:
-        goto LAB_02665409;
-      default:
-        return 0;
-      case 0x491f:
-        goto LAB_0266545b;
-      case 0x4926:
-      case 0x493a:
-      code_r0x0266544e:
-        if (uVar1 != 0x43)
-        {
-          return 0;
-        }
-        return uVar4;
-      }
-    }
-    if (result != 0x38e)
-    {
-      return 0;
-    }
-  }
-  else
-  {
-    if (result == 0x496c)
-    {
-    LAB_0266545b:
-      if (1 < uVar4 - 0x42)
-      {
-        return 0;
-      }
-      return uVar4;
-    }
-    if (result < 0x496d)
-    {
-      if (result != 0x4951)
-      {
-        if (result != 0x4952)
-        {
-          return 0;
-        }
-        goto code_r0x0266544e;
-      }
-    }
-    else
-    {
-      if (result == 0x49a8)
-        goto LAB_0266545b;
-      if (result < 0x49a9)
-      {
-        if ((result - 0x497dU & 0xffffffef) != 0)
-        {
-          return 0;
-        }
-      }
-      else if (result != 0x500b)
-      {
-        return 0;
-      }
-    }
-  }
-LAB_02665409:
-  if (uVar1 == 0x42)
-  {
-    return uVar4;
-  }
-  return 0;
 }
 
 /* ManalinkEh 2022: 0x2665580; original functions/token_generation.c:62. */
 void copy_token_definition(int player, int card, token_generation_t *token, int t_player,
                                 int t_card)
 {
-  special_flags2_t sVar1;
+  special_flags2_t copied_flags;
   int result;
   card_instance_t *instance;
-  unsigned int uVar4;
+  unsigned int copyable_infos;
 
   result = get_id(t_player, t_card);
   default_token_definition(player, card, result, token);
@@ -1126,18 +732,18 @@ void copy_token_definition(int player, int card, token_generation_t *token, int 
       token->s_card = -1;
       token->s_player = -1;
     }
-    sVar1 = instance->ext->special_flags2;
+    copied_flags = instance->ext->special_flags2;
     token->s_key_plus = instance->ext->sp_keywords;
-    token->special_flags2 = sVar1;
+    token->special_flags2 = copied_flags;
     if ((t_player < 0) || (t_card < 0))
     {
-      uVar4 = 0;
+      copyable_infos = 0;
     }
     else
     {
-      uVar4 = get_copyable_special_infos(t_player, t_card);
+      copyable_infos = get_copyable_special_infos(t_player, t_card);
     }
-    token->special_infos = uVar4;
+    token->special_infos = copyable_infos;
     result = check_special_flags2(t_player, t_card, 0x80);
     if (result != 0)
     {
@@ -1202,7 +808,7 @@ int generate_reserved_token_by_id(int player, int csvid);
 /* ManalinkEh 2022: 0x2666580; original functions/token_generation.c:624. */
 static int generate_token_by_id_impl(int player, int card, int csvid, int number, int reserved)
 {
-  int iVar1;
+  int last_card;
   int iid;
   int i;
   token_generation_t token;
@@ -1210,7 +816,7 @@ static int generate_token_by_id_impl(int player, int card, int csvid, int number
   default_token_definition(player, card, csvid, &token);
   if (reserved == 0)
   {
-    iVar1 = -1;
+    last_card = -1;
     token.qty = (unsigned char)number;
     generate_token(&token);
   }
@@ -1226,12 +832,12 @@ static int generate_token_by_id_impl(int player, int card, int csvid, int number
     do
     {
       i = i + 1;
-      iVar1 = add_card_to_hand(player, iid);
-      set_token(player, iVar1, &token);
-      put_into_play(player, iVar1);
+      last_card = add_card_to_hand(player, iid);
+      set_token(player, last_card, &token);
+      put_into_play(player, last_card);
     } while (number != i);
   }
-  return iVar1;
+  return last_card;
 }
 
 /* ManalinkEh 2022: 0x2666640; original functions/token_generation.c:614. */
@@ -1316,63 +922,63 @@ int generate_reserved_token_by_id(int player, int csvid)
 int copy_token_characteristics_for_clone(int player, int card, int t_player, int t_card)
 {
   int csvid;
-  uint8_t uVar1;
-  int32_t iVar2;
-  unsigned char bVar3;
-  int iVar4;
+  uint8_t original_color;
+  int32_t saved_target_component;
+  unsigned char copied_color;
+  int copy_result;
   card_instance_t *instance;
-  card_instance_t *pcVar6;
-  uint32_t uStack_14;
+  card_instance_t *token_instance;
+  uint32_t copied_iid_or_result;
 
   csvid = get_id(t_player, t_card);
-  uStack_14 = 0;
+  copied_iid_or_result = 0;
   if (cards_ptr[csvid]->card_type == 8)
   {
     instance = get_card_instance(player, card);
-    pcVar6 = get_card_instance(t_player, t_card);
-    uStack_14 = pcVar6->original_internal_card_id;
-    if (uStack_14 == 0xffffffff)
+    token_instance = get_card_instance(t_player, t_card);
+    copied_iid_or_result = token_instance->original_internal_card_id;
+    if (copied_iid_or_result == 0xffffffff)
     {
-      uStack_14 = (uint32_t)pcVar6->backup_internal_card_id;
+      copied_iid_or_result = (uint32_t)token_instance->backup_internal_card_id;
     }
-    iVar2 = pcVar6->targets[7].player;
-    instance->targets[7].card = pcVar6->targets[7].card;
-    instance->targets[7].player = iVar2;
-    iVar2 = pcVar6->targets[8].card;
-    instance->targets[8].player = pcVar6->targets[8].player;
-    instance->targets[8].card = iVar2;
-    uVar1 = cards_data[uStack_14].color;
-    iVar4 = get_internal_card_id_from_csv_id(csvid);
-    if (uVar1 == cards_data[iVar4].color)
+    saved_target_component = token_instance->targets[7].player;
+    instance->targets[7].card = token_instance->targets[7].card;
+    instance->targets[7].player = saved_target_component;
+    saved_target_component = token_instance->targets[8].card;
+    instance->targets[8].player = token_instance->targets[8].player;
+    instance->targets[8].card = saved_target_component;
+    original_color = cards_data[copied_iid_or_result].color;
+    copy_result = get_internal_card_id_from_csv_id(csvid);
+    if (original_color == cards_data[copy_result].color)
     {
-      bVar3 = instance->initial_color & 0x3e;
+      copied_color = instance->initial_color & 0x3e;
     }
     else
     {
-      bVar3 = cards_data[uStack_14].color & 0x3e;
-      instance->initial_color = bVar3;
+      copied_color = cards_data[copied_iid_or_result].color & 0x3e;
+      instance->initial_color = copied_color;
     }
-    instance->color = bVar3;
+    instance->color = copied_color;
     instance->regen_status = instance->regen_status | 0x10000000;
     if ((t_player < 0) || (t_card < 0))
     {
-      iVar4 = 0;
+      copy_result = 0;
     }
     else
     {
-      iVar4 = get_copyable_special_infos(t_player, t_card);
+      copy_result = get_copyable_special_infos(t_player, t_card);
     }
     instance = get_card_instance(player, card);
-    instance->targets[0xe].player = iVar4;
-    iVar4 = check_special_flags2(t_player, t_card, 0x80);
-    uStack_14 = 1;
-    if (iVar4 != 0)
+    instance->targets[0xe].player = copy_result;
+    copy_result = check_special_flags2(t_player, t_card, 0x80);
+    copied_iid_or_result = 1;
+    if (copy_result != 0)
     {
-      uStack_14 = 1;
+      copied_iid_or_result = 1;
       set_special_flags2(player, card, 0x80);
     }
   }
-  return uStack_14;
+  return copied_iid_or_result;
 }
 
 #endif
@@ -1412,205 +1018,144 @@ static int compare_iid_token(iid_t int_id, token_generation_t *token)
 /* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
 static int generate_tokens_impl(token_generation_t *token, int int_id, int cycle_number)
 {
-  uint16_t uVar1;
-  int32_t iVar3, iVar4;
-  bool bVar6;
-  uint8_t uVar7;
-  card_instance_t *pcVar9, *pcVar12, *pcStack_98;
-  token_action_t tVar10;
-  int iVar11, iVar13, card, iVar14, iStack_9c;
-  unsigned int uVar15;
-  target_definition_t td;
+  card_instance_t *effect_instance = NULL;
   if (token->eff_card == -1)
   {
-    if (((token->keep_track_of_tokens_generated != 0) || (token->legacy == '\x01')) ||
-        ((token->action & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER |
-                           TOKEN_ACTION_HASTE | TOKEN_ACTION_EQUIP)) != 0))
-    {
+    if (token->keep_track_of_tokens_generated || token->legacy == 1 ||
+        (token->action & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER |
+                          TOKEN_ACTION_HASTE | TOKEN_ACTION_EQUIP)))
       backtrace_and_abort("functions/token_generation.c:392\ntoken->eff_card != -1 || "
                           "!(token->keep_track_of_tokens_generated > 0 || token->legacy == "
                           "1 || (token->action & (TOKEN_ACTION_EQUIP | TOKEN_ACTION_HASTE "
                           "| TOKEN_ACTION_PUMP_POWER | TOKEN_ACTION_PUMP_TOUGHNESS)))");
-    }
-  LAB_02665cab:
-    pcStack_98 = NULL;
   }
-  else
+  else if (token->keep_track_of_tokens_generated)
+    effect_instance = get_card_instance(token->eff_player, token->eff_card);
+
+  int token_player = token->t_player;
+  int created = add_card_to_hand(token_player, int_id);
+  set_token(token_player, created, token);
+  card_instance_t *instance = get_card_instance(token_player, created);
+  instance->state |= STATE_INVISIBLE;
+  --hand_count[token_player];
+  instance = get_card_instance(token->t_player, created);
+  if (token->legacy == 1)
   {
-    if (token->keep_track_of_tokens_generated == 0)
-      goto LAB_02665cab;
-    pcStack_98 = get_card_instance(token->eff_player, token->eff_card);
+    int legacy =
+        create_targetted_legacy_effect(token->eff_player, token->eff_card,
+                                       token->special_code_for_legacy, token->t_player, created);
+    card_instance_t *legacy_instance = get_card_instance(token->eff_player, legacy);
+    legacy_instance->eot_toughness = 0x300;
+    legacy_instance->display_pic_csv_id = cards_data[int_id].id;
   }
-  iVar14 = token->t_player;
-  iVar13 = add_card_to_hand(iVar14, int_id);
-  set_token(iVar14, iVar13, token);
-  pcVar9 = get_card_instance(iVar14, iVar13);
-  pcVar9->state = pcVar9->state | 0x20;
-  hand_count[iVar14] = hand_count[iVar14] + -1;
-  pcVar9 = get_card_instance(token->t_player, iVar13);
-  if (token->legacy == '\x01')
+  token_action_t action = token->action;
+  if (action & TOKEN_ACTION_TAPPED)
+    instance->state |= STATE_TAPPED;
+  if (action & TOKEN_ACTION_ATTACKING_UNTAPPED)
   {
-    iVar14 = create_targetted_legacy_effect(token->eff_player, token->eff_card,
-                                            token->special_code_for_legacy, token->t_player,
-                                            iVar13);
-    pcVar12 = get_card_instance(token->eff_player, iVar14);
-    pcVar12->eot_toughness = 0x300;
-    uVar1 = cards_data[int_id].id;
-    pcVar12->display_pic_csv_id = uVar1;
-  }
-  tVar10 = token->action;
-  if ((tVar10 & TOKEN_ACTION_TAPPED) != 0)
-  {
-    pcVar9->state = pcVar9->state | 0x10;
-  }
-  if (((tVar10 & TOKEN_ACTION_ATTACKING_UNTAPPED) != 0) &&
-      (pcVar9->state = pcVar9->state | 4,
-       (tVar10 & TOKEN_ACTION_SKIP_ATTACK_CHECK) == 0))
-  {
-    choose_who_attack(token->t_player, iVar13);
-    tVar10 = token->action;
-  }
-  if ((tVar10 & TOKEN_ACTION_BLOCKING) != 0)
-  {
-    pcVar12 = get_card_instance(1 - token->t_player, token->action_argument);
-    uVar7 = pcVar12->blocking;
-    if (uVar7 == 0xff)
+    instance->state |= STATE_ATTACKING;
+    if (!(action & TOKEN_ACTION_SKIP_ATTACK_CHECK))
     {
-      uVar7 = (uint8_t)token->action_argument;
+      choose_who_attack(token->t_player, created);
+      action = token->action;
     }
-    pcVar9->blocking = uVar7;
-    tVar10 = token->action;
-    pcVar9->state = pcVar9->state | 0x8008;
   }
-  if (((tVar10 & TOKEN_ACTION_EQUIP) != 0) && (cycle_number == 0))
+  if (action & TOKEN_ACTION_BLOCKING)
   {
-    equip_target_creature(token->eff_player, token->eff_card, token->t_player, iVar13);
-    tVar10 = token->action;
+    card_instance_t *attacker = get_card_instance(1 - token->t_player, token->action_argument);
+    uint8_t blocking = attacker->blocking;
+    if (blocking == 255)
+      blocking = (uint8_t)token->action_argument;
+    instance->blocking = blocking;
+    action = token->action;
+    instance->state |= STATE_BLOCKING | STATE_UNKNOWN8000;
   }
-  if (((tVar10 & TOKEN_ACTION_EQUIP_ANY) != 0) && (cycle_number == 0))
+  if ((action & TOKEN_ACTION_EQUIP) && cycle_number == 0)
   {
+    equip_target_creature(token->eff_player, token->eff_card, token->t_player, created);
+    action = token->action;
+  }
+  if ((action & TOKEN_ACTION_EQUIP_ANY) && cycle_number == 0)
+  {
+    target_definition_t td;
     default_target_definition(token->eff_player, token->eff_card, &td, 0xff);
-    td.required_subtype = 0x3001;
+    td.required_subtype = SUBTYPE_EQUIPMENT;
     td.illegal_abilities = 0;
-    pcVar12 = get_card_instance(token->eff_player, token->eff_card);
-    iVar3 = pcVar12->targets[0].player;
-    iVar4 = pcVar12->targets[0].card;
-    iVar14 = can_target(&td);
-    if ((iVar14 != 0) &&
-        (iVar14 = new_pick_target(&td, "Select an equipment you control", 0, 0x80),
-         iVar14 != 0))
-    {
-      equip_target_creature(pcVar12->targets[0].player, pcVar12->targets[0].card,
-                            token->t_player, iVar13);
-    }
-    pcVar12->targets[0].player = iVar3;
-    pcVar12->targets[0].card = iVar4;
-    tVar10 = token->action;
+    card_instance_t *source = get_card_instance(token->eff_player, token->eff_card);
+    target_t saved_target = source->targets[0];
+    if (can_target(&td) && new_pick_target(&td, "Select an equipment you control", 0, 0x80))
+      equip_target_creature(source->targets[0].player, source->targets[0].card, token->t_player,
+                            created);
+    source->targets[0] = saved_target;
+    action = token->action;
   }
-  if ((tVar10 & TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE) != 0)
+  if (action & TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE)
   {
-    set_special_flags(token->t_player, iVar13, 0x40000000);
-    tVar10 = token->action;
+    set_special_flags(token->t_player, created, 0x40000000);
+    action = token->action;
   }
-  if ((tVar10 & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER |
-                 TOKEN_ACTION_HASTE)) != 0)
+  if (action & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER | TOKEN_ACTION_HASTE))
   {
-    iStack_9c = 0;
-    if ((tVar10 & TOKEN_ACTION_PUMP_TOUGHNESS) != 0)
-    {
-      iStack_9c = token->action_argument;
-    }
-    iVar14 = 0;
-    if ((tVar10 & TOKEN_ACTION_PUMP_POWER) != 0)
-    {
-      iVar14 = token->action_argument;
-    }
-    pump_ability_until_eot(token->eff_player, token->eff_card, token->t_player, iVar13,
-                           iVar14, iStack_9c, 0, tVar10 >> 2 & 4);
-    tVar10 = token->action;
+    int toughness = action & TOKEN_ACTION_PUMP_TOUGHNESS ? token->action_argument : 0;
+    int power = action & TOKEN_ACTION_PUMP_POWER ? token->action_argument : 0;
+    pump_ability_until_eot(token->eff_player, token->eff_card, token->t_player, created, power,
+                           toughness, 0, (action >> 2) & 4);
+    action = token->action;
   }
-  if ((tVar10 & TOKEN_ACTION_ADD_SUBTYPE) != 0)
+  if (action & TOKEN_ACTION_ADD_SUBTYPE)
   {
-    add_a_subtype_permanently(token->eff_player, token->eff_card, token->t_player, iVar13,
+    add_a_subtype_permanently(token->eff_player, token->eff_card, token->t_player, created,
                               token->action_argument);
-    tVar10 = token->action;
+    action = token->action;
   }
-  if ((tVar10 & TOKEN_ACTION_RECORD_SOURCE_ID) != 0)
-  {
-    iVar14 = get_id(token->s_player, token->s_card);
-    pcVar9->damage_source_card = iVar14;
-  }
-  if (token->special_code_on_generation != NULL)
-  {
-    (*token->special_code_on_generation)(token, iVar13, cycle_number);
-  }
-  iVar14 = token->t_player;
+  if (action & TOKEN_ACTION_RECORD_SOURCE_ID)
+    instance->damage_source_card = get_id(token->s_player, token->s_card);
+  if (token->special_code_on_generation)
+    token->special_code_on_generation(token, created, cycle_number);
+  token_player = token->t_player;
   if (cycle_number < (int)token->keep_track_of_tokens_generated)
   {
-    pcStack_98->targets[cycle_number].player = iVar14;
-    pcStack_98->targets[cycle_number].card = iVar13;
+    effect_instance->targets[cycle_number].player = token_player;
+    effect_instance->targets[cycle_number].card = created;
   }
-  put_into_play(iVar14, iVar13);
-  tVar10 = token->action;
-  if ((tVar10 & TOKEN_ACTION_ADD_COUNTERS) != 0)
+  put_into_play(token_player, created);
+  action = token->action;
+  if (action & TOKEN_ACTION_ADD_COUNTERS)
   {
-    hack_silent_counters = hack_silent_counters + 1;
-    add_counters(token->s_player, token->s_card, token->t_player, iVar13,
-                             (unsigned int)token->action_argument >> 0x10,
-                             token->action_argument & 0xffff);
-    hack_silent_counters = hack_silent_counters + -1;
-    tVar10 = token->action;
+    ++hack_silent_counters;
+    add_counters(token->s_player, token->s_card, token->t_player, created,
+                 (unsigned int)token->action_argument >> 16, token->action_argument & 0xffff);
+    --hack_silent_counters;
+    action = token->action;
   }
-  if ((((tVar10 & TOKEN_ACTION_BLOCKING) == 0) ||
-       (pcVar9 = in_play(token->t_player, iVar13), pcVar9 == NULL)) ||
-      (play_sound_effect(WAV_BLOCK2),
-       (((unsigned int)event_flags >> 16 & 0xff) & 0x10) == 0))
+  if ((action & TOKEN_ACTION_BLOCKING) && in_play(token->t_player, created))
   {
-    uVar15 = token->special_infos;
+    play_sound_effect(WAV_BLOCK2);
+    if (event_flags & 0x100000)
+      dispatch_trigger2(current_turn, TRIGGER_BLOCKER_CHOSEN, EXE_STR(0x790074), 0, token->t_player,
+                        created);
   }
-  else
+  if (token->special_infos == 99)
   {
-    dispatch_trigger2(current_turn, TRIGGER_BLOCKER_CHOSEN, EXE_STR(0x790074), 0,
-                      token->t_player, iVar13);
-    uVar15 = token->special_infos;
-  }
-  if (uVar15 == 99)
-  {
-    uVar15 = 0;
-    iVar14 = get_id(token->t_player, iVar13);
-    bVar6 = false;
-    do
-    {
-      card = active_cards_count[uVar15] + -1;
-      if (-1 < card)
-      {
-        do
+    int token_id = get_id(token->t_player, created);
+    int duplicate = 0;
+    for (int p = 0; p < 2; ++p)
+      for (int c = active_cards_count[p] - 1; c >= 0; --c)
+        if (in_play(p, c) && (token->t_player != p || created != c) && get_id(p, c) == token_id &&
+            get_card_instance(p, c)->targets[14].player == 99)
         {
-          pcVar9 = in_play(uVar15, card);
-          if ((((pcVar9 != NULL) && ((token->t_player != uVar15 || (iVar13 != card)))) &&
-               (iVar11 = get_id(uVar15, card), iVar14 == iVar11)) &&
-              (((int)(uVar15 ^ 0xffffffff) < 0 && (pcVar9 = get_card_instance(uVar15, card),
-                                                   pcVar9->targets[0xe].player == 99))))
-          {
-            kill_card(uVar15, card, KILL_SACRIFICE);
-            bVar6 = true;
-          }
-          card = card + -1;
-        } while (card != -1);
-      }
-      uVar15 = uVar15 + 1;
-    } while (uVar15 != 2);
-    if (bVar6)
-    {
-      kill_card(token->t_player, iVar13, KILL_SACRIFICE);
-    }
+          kill_card(p, c, KILL_SACRIFICE);
+          duplicate = 1;
+        }
+    if (duplicate)
+      kill_card(token->t_player, created, KILL_SACRIFICE);
   }
   if (cycle_number < (int)token->keep_track_of_tokens_generated)
   {
-    pcVar9 = get_card_instance(token->eff_player, token->eff_card);
-    pcVar9->targets[cycle_number].player = token->t_player;
-    pcVar9->targets[cycle_number].card = iVar13;
+    card_instance_t *source = get_card_instance(token->eff_player, token->eff_card);
+    source->targets[cycle_number].player = token->t_player;
+    source->targets[cycle_number].card = created;
   }
-  return iVar13;
+  return created;
 }
 #endif

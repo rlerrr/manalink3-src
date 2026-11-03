@@ -2116,87 +2116,45 @@ int card_siege_behemoth(int player, int card, event_t event){
 
 int card_song_of_the_dryads(int player, int card, event_t event)
 {
-  card_instance_t *instance;
+  card_instance_t *instance = get_card_instance(player, card);
   int result;
   target_definition_t td;
-
-  instance = get_card_instance(player, card);
-  if ((instance->damage_target_player < '\0') || (event != EVENT_CHANGE_TYPE))
+  if (instance->damage_target_player >= 0 && event == EVENT_CHANGE_TYPE)
   {
-    if (event != EVENT_CAN_CAST)
-    {
-      if (event == EVENT_CAST_SPELL)
-      {
-        if ((card != affected_card) || (player != affected_card_controller))
-          goto LAB_021dfe14;
-      }
-      else
-      {
-        if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-          goto LAB_021dfda9;
-        if (event != EVENT_CHANGE_TARGET)
-          goto LAB_021dfe14;
-      }
-    }
-  }
-  else
-  {
-    if (!((instance->damage_target_card != affected_card) ||
-        (instance->damage_target_player != affected_card_controller)))
+    if (instance->damage_target_card == affected_card &&
+        instance->damage_target_player == affected_card_controller)
     {
       result = get_hacked_subtype(player, card, 0x5001);
       if (result == 0x5002)
-      {
         instance->dummy3 = 1;
-      LAB_021dfeca:
-        event_result = instance->dummy3;
-      }
+      else if (result == 0x5001)
+        instance->dummy3 = 2;
       else
       {
-        if (result == 0x5001)
-        {
-          instance->dummy3 = 2;
-          goto LAB_021dfeca;
-        }
         instance->dummy3 = 0;
         if (result == 0x5006)
-        {
           instance->dummy3 = 3;
-          event_result = 3;
-        }
-        else
-        {
-          if (result != 0x5007)
-            goto LAB_021dfeca;
+        else if (result == 0x5007)
           instance->dummy3 = 4;
-          event_result = 4;
-        }
       }
-    }
-  LAB_021dfe14:
-    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) == EVENT_CAN_MOVE_AURA) ||
-         (event - EVENT_POWER < 3)) ||
-        (event == EVENT_RESOLVE_MOVING_AURA))
-    {
-    LAB_021dfda9:
-      default_target_definition(player, card, &td, 0x47);
-      if (((event == EVENT_ABILITIES) && (instance->damage_target_card == affected_card)) &&
-          (instance->damage_target_player == affected_card_controller))
-      {
-        instance =
-            get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
-        instance->targets[0x11].card = instance->targets[0x11].card & 0x6e;
-      }
-      goto LAB_021dfddf;
-    }
-    if (((event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR)) &&
-        ((event != EVENT_GET_SELECTED_CARD && (event != EVENT_STATIC_EFFECTS))))
-    {
-      return 0;
+      event_result = instance->dummy3;
     }
   }
+  if (event != EVENT_CAN_CAST &&
+      !(event == EVENT_CAST_SPELL && card == affected_card && player == affected_card_controller) &&
+      event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET &&
+      event != EVENT_CHANGE_TARGET &&
+      (event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA && event - EVENT_POWER > 2 &&
+      event != EVENT_RESOLVE_MOVING_AURA && event != EVENT_CHANGE_TYPE &&
+      event != EVENT_SET_COLOR && event != EVENT_GET_SELECTED_CARD && event != EVENT_STATIC_EFFECTS)
+    return 0;
   default_target_definition(player, card, &td, 0x47);
-LAB_021dfddf:
+  if (event == EVENT_ABILITIES && instance->damage_target_card == affected_card &&
+      instance->damage_target_player == affected_card_controller)
+  {
+    instance = get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
+    instance->targets[0x11].card = instance->targets[0x11].card & 0x6e;
+  }
   return targeted_aura(player, card, event, &td, "TARGET_PERMANENT");
 }
 
@@ -3067,8 +3025,8 @@ int card_zoetic_cavern(int player, int card, event_t event){
 static int titania_effect(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar2;
-  card_instance_t *pcVar3;
+  int death_count_or_result;
+  card_instance_t *dying_permanent;
   token_generation_t token;
 
   if (event == EVENT_STATIC_EFFECTS)
@@ -3078,38 +3036,28 @@ static int titania_effect(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       if ((-1 < instance->damage_target_player) &&
-          (iVar2 = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           iVar2 != 0x389d))
+          (death_count_or_result =
+               get_id((int)instance->damage_target_player, instance->damage_target_card),
+           death_count_or_result != 0x389d))
       {
         kill_card(player, card, KILL_EXILE);
       }
     }
-    instance = get_card_instance(player, card);
-    if ((-1 < instance->damage_target_player) &&
-        (iVar2 = effect_follows_control_of_attachment(player, card, 0x4700), iVar2 != 0))
-    {
-      return 0;
-    }
-  LAB_021d9b25:
-    iVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if (iVar2 == 0)
-      goto LAB_021d9b47;
   }
-  else
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (death_count_or_result = effect_follows_control_of_attachment(player, card, event),
+       death_count_or_result != 0))
+  {
+    return 0;
+  }
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
     instance = get_card_instance(player, card);
-    if ((-1 < instance->damage_target_player) &&
-        (iVar2 = effect_follows_control_of_attachment(player, card, event), iVar2 != 0))
-    {
-      return 0;
-    }
-    if (event != EVENT_GRAVEYARD_FROM_PLAY)
-      goto LAB_021d9b25;
-
-    instance = get_card_instance(player, card);
-    pcVar3 = in_play(affected_card_controller, affected_card);
-    if ((pcVar3 != NULL) &&
-        (iVar2 = is_this_dying(affected_card_controller, affected_card), iVar2 != 0))
+    dying_permanent = in_play(affected_card_controller, affected_card);
+    if ((dying_permanent != NULL) &&
+        (death_count_or_result = is_this_dying(affected_card_controller, affected_card),
+         death_count_or_result != 0))
     {
 
       if ((instance->damage_target_card == affected_card) &&
@@ -3126,24 +3074,25 @@ static int titania_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, player, 1, NULL);
     }
-    iVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
-    if (iVar2 == 0)
+  }
+  death_count_or_result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (death_count_or_result == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+    return 0;
+  if (death_count_or_result != 0)
+  {
+    if (check_status(player, card, 0x10000) == 0)
     {
-      return 0;
+      default_token_definition(player, card, 0x4926, &token);
+      token.pow = 5;
+      token.tou = 3;
+      token.qty = (unsigned char)death_count_or_result;
+      token.color_forced = '\b';
+      generate_token(&token);
+      kill_card(player, card, KILL_EXILE);
     }
   }
-  if (check_status(player, card, 0x10000) == 0)
-  {
-    default_token_definition(player, card, 0x4926, &token);
-    token.pow = 5;
-    token.tou = 3;
-    token.qty = (unsigned char)iVar2;
-    token.color_forced = '\b';
-    generate_token(&token);
-    kill_card(player, card, KILL_EXILE);
-  }
-LAB_021d9b47:
-  if ((event == EVENT_CLEANUP) && (iVar2 = check_status(player, card, 0x10000), iVar2 == 0))
+  if ((event == EVENT_CLEANUP) &&
+      (death_count_or_result = check_status(player, card, 0x10000), death_count_or_result == 0))
   {
     kill_card(player, card, KILL_EXILE);
   }

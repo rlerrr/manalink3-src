@@ -107,7 +107,7 @@ static void ripple(int player, int card){
 			char buffer[100];
 			card_ptr_t* c = cards_ptr[ get_id(player, card)  ];
 			scnprintf(buffer, 100, "Cards revealed by %s", c->name);
-			show_deck(HUMAN, deck, max, buffer, 0, 0x7375B0 );
+			show_deck(HUMAN, deck, max, buffer, 0, EXE_STR(ENGINE_DONE_LABEL) );
 			int i;
 			for(i=max-1; i > -1; i--){
 				if( cards_data[deck[i]].id == get_id(player, card) ){
@@ -291,30 +291,14 @@ int card_allosaurus_rider(int player, int card, event_t event)
       set_characteristic_pt(landsofcolor_controlled[player][7] + 1);
     }
   }
-  else
+  if (event == EVENT_CAST_SPELL)
   {
-    if ((event == EVENT_CAN_CAST) || (event == EVENT_MODIFY_COST))
-      goto LAB_02161405;
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-      goto LAB_02161405;
-    }
-    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      goto LAB_02161405;
+    if (card != affected_card || player != affected_card_controller)
+      return 0;
   }
-  if (event != EVENT_CHANGE_TARGET)
-  {
+  else if (event != EVENT_CAN_CAST && event != EVENT_MODIFY_COST && event != EVENT_RESOLVE_SPELL &&
+           event != EVENT_CAN_CHANGE_TARGET && event != EVENT_CHANGE_TARGET)
     return 0;
-  }
-LAB_02161405:
   new_default_test_definition(&this_test, 0xff, "Select a green card to exile");
   this_test.color = 8;
   this_test.zone = 0x100;
@@ -709,6 +693,12 @@ int card_darien_king_of_kjeldor(int player, int card, event_t event){
 }
 
 int card_dark_depths(int player, int card, event_t event){
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_ABILITY = 2
+  };
+
 
 	/* Dark Depths	""
 	 * Legendary Snow Land
@@ -735,14 +725,14 @@ int card_dark_depths(int player, int card, event_t event){
 	        if (!IS_AI(player)){
 	            int choice = DIALOG(player, card, event, DLG_RANDOM, "Get mana", 1, 1, "Use Ability", 1, 1);
 	            if (!choice){ spell_fizzled = 1; return 0; }
-	            if (choice == 1){ return mana_producer(player, card, event); }
-	            if (choice != 2){ return generic_activated_ability(player, card, event, 0, MANACOST_X(3), 0, NULL, NULL); }
+	            if (choice == CHOICE_MANA){ return mana_producer(player, card, event); }
+	            if (choice != CHOICE_ABILITY){ return generic_activated_ability(player, card, event, 0, MANACOST_X(3), 0, NULL, NULL); }
 	        }
 	    }
-	    instance->info_slot = 2;
+	    instance->info_slot = CHOICE_ABILITY;
 	    return generic_activated_ability(player, card, event, 0, MANACOST_X(3), 0, NULL, NULL);
 	}
-	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == 2){
+	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == CHOICE_ABILITY){
 	    remove_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_ICE, 1);
 	}
 	if (IS_GAA_EVENT(event)){ return generic_activated_ability(player, card, event, 0, MANACOST_X(3), 0, NULL, NULL); }
@@ -1184,108 +1174,93 @@ Snow Creature - Zombie 2/2
 
 int card_haakon_stromgald_scourge(int player, int card, event_t event)
 {
-  int iVar1;
+  int grave_index_or_result;
   card_instance_t *instance;
-  int iVar3;
-  int *piVar4;
+  int knight_iid_or_timing;
+  int *grave_cursor;
   test_definition_t this_test;
   check_legend_rule(player, card, event);
   if (event == EVENT_MODIFY_COST)
   {
     instance = in_hand(player, card);
     if (instance != NULL)
-    {
       infinite_casting_cost();
-    }
-    if (this_dies_trigger(player, card, EVENT_MODIFY_COST, RESOLVE_TRIGGER_MANDATORY) != 0)
-      goto LAB_02164961;
-  LAB_02164865:
-    if (event == EVENT_CAN_ACTIVATE)
+  }
+  if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) != 0)
+    lose_life(player, 2);
+  if (event == EVENT_PAY_FLASHBACK_COSTS)
+  {
+    instance = get_card_instance(player, card);
+    charge_mana_multi(player,
+                      get_updated_casting_cost(player, -1, instance->internal_card_id,
+                                               EVENT_PAY_FLASHBACK_COSTS, 1),
+                      2, 0, 0, 0, 0);
+    if (spell_fizzled != 1)
     {
-      iVar3 = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
-      piVar4 = graveyard_ptr_mutable[player];
-      iVar1 = *piVar4;
-      while (true)
-      {
-        if (iVar1 == -1)
-        {
-          return 0;
-        }
-        iVar1 = has_subtype_by_id(player, (unsigned int)cards_data[iVar1].id, SUBTYPE_KNIGHT);
-        if ((iVar1 != 0) && (((iVar3 != 0 || ((cards_data[*piVar4].type & 0x30) != 0)) &&
-                              (iVar1 = has_mana_to_cast_id(player, EVENT_CAN_ACTIVATE,
-                                                           (unsigned int)cards_data[*piVar4].id),
-                               iVar1 != 0))))
-          break;
-        iVar1 = piVar4[1];
-        piVar4 = piVar4 + 1;
-      }
       return 1;
     }
-    if (event == EVENT_ACTIVATE)
-      goto LAB_02164880;
+    return 0;
   }
-  else
+  if (event == EVENT_GRAVEYARD_ABILITY)
   {
-    if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) != 0)
-    {
-    LAB_02164961:
-      lose_life(player, 2);
-    }
-    if (event != EVENT_GRAVEYARD_ABILITY)
-    {
-      if (event == EVENT_PAY_FLASHBACK_COSTS)
-      {
-        instance = get_card_instance(player, card);
-        charge_mana_multi(player, get_updated_casting_cost(player, -1, instance->internal_card_id,
-                                         EVENT_PAY_FLASHBACK_COSTS, 1), 2, 0, 0, 0, 0);
-        if (spell_fizzled != 1)
-        {
-          return 1;
-        }
-        return 0;
-      }
-      goto LAB_02164865;
-    }
     instance = get_card_instance(player, card);
-    iVar1 = get_updated_casting_cost(player, -1, instance->internal_card_id,
-                                     EVENT_GRAVEYARD_ABILITY, 1);
-    if (has_mana_multi(player, iVar1, 2, 0, 0, 0, 0) != 0)
+    grave_index_or_result = get_updated_casting_cost(player, -1, instance->internal_card_id,
+                                                     EVENT_GRAVEYARD_ABILITY, 1);
+    if (has_mana_multi(player, grave_index_or_result, 2, 0, 0, 0, 0) != 0)
     {
       return 2;
     }
-  }
-  if (event != EVENT_RESOLVE_ACTIVATION)
-  {
     return 0;
   }
-LAB_02164880:
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    knight_iid_or_timing = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
+    grave_cursor = graveyard_ptr_mutable[player];
+    grave_index_or_result = *grave_cursor;
+    while (true)
+    {
+      if (grave_index_or_result == -1)
+      {
+        return 0;
+      }
+      grave_index_or_result = has_subtype_by_id(
+          player, (unsigned int)cards_data[grave_index_or_result].id, SUBTYPE_KNIGHT);
+      if ((grave_index_or_result != 0) &&
+          (((knight_iid_or_timing != 0 || ((cards_data[*grave_cursor].type & 0x30) != 0)) &&
+            (grave_index_or_result = has_mana_to_cast_id(
+                 player, EVENT_CAN_ACTIVATE, (unsigned int)cards_data[*grave_cursor].id),
+             grave_index_or_result != 0))))
+        break;
+      grave_index_or_result = grave_cursor[1];
+      grave_cursor = grave_cursor + 1;
+    }
+    return 1;
+  }
   if (event != EVENT_ACTIVATE)
-  {
     return 0;
-  }
   new_default_test_definition(&this_test, 0, "Select a Knight card.");
   this_test.subtype = 0x67;
-  iVar1 = new_select_a_card(player, player, 2, 0, 1, -1, &this_test);
-  if (iVar1 != -1)
+  grave_index_or_result = new_select_a_card(player, player, 2, 0, 1, -1, &this_test);
+  if (grave_index_or_result != -1)
   {
-    piVar4 = graveyard_ptr_mutable[player] + iVar1;
-    iVar3 = *piVar4;
-    if ((cards_data[iVar3].type & 0x30) == 0)
+    grave_cursor = graveyard_ptr_mutable[player] + grave_index_or_result;
+    knight_iid_or_timing = *grave_cursor;
+    if ((cards_data[knight_iid_or_timing].type & 0x30) == 0)
     {
       if (can_sorcery_be_played(player, EVENT_ACTIVATE) == 0)
       {
         spell_fizzled = 1;
         return 0;
       }
-      iVar3 = *piVar4;
+      knight_iid_or_timing = *grave_cursor;
     }
-    if (has_mana_to_cast_id(player, EVENT_ACTIVATE, (unsigned int)cards_data[iVar3].id) != 0)
+    if (has_mana_to_cast_id(player, EVENT_ACTIVATE,
+                            (unsigned int)cards_data[knight_iid_or_timing].id) != 0)
     {
-      charge_mana_from_id(player, -1, EVENT_ACTIVATE, (unsigned int)cards_data[*piVar4].id);
+      charge_mana_from_id(player, -1, EVENT_ACTIVATE, (unsigned int)cards_data[*grave_cursor].id);
       if (spell_fizzled != 1)
       {
-        play_card_in_grave_for_free(player, player, iVar1);
+        play_card_in_grave_for_free(player, player, grave_index_or_result);
         cant_be_responded_to = 1;
         return 0;
       }
@@ -1359,8 +1334,8 @@ int card_herald_of_leshrac(int player, int card, event_t event)
 {
   int c;
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
+  int temporary_card;
+  int opponent;
   cumulative_upkeep_general(player, card, event, opponent_controls_lands, gain_control_of_lands);
   if (event - EVENT_POWER < 2)
   {
@@ -1393,10 +1368,10 @@ int card_herald_of_leshrac(int player, int card, event_t event)
     return 0;
   }
   instance = get_card_instance(player, card);
-  iVar3 = 1 - player;
-  iVar2 = add_card_to_hand(iVar3, instance->internal_card_id);
-  get_back_your_permanents(iVar3, iVar2, TYPE_LAND);
-  obliterate_card(iVar3, iVar2);
+  opponent = 1 - player;
+  temporary_card = add_card_to_hand(opponent, instance->internal_card_id);
+  get_back_your_permanents(opponent, temporary_card, TYPE_LAND);
+  obliterate_card(opponent, temporary_card);
   return 0;
 }
 
@@ -2751,7 +2726,7 @@ int card_scrying_sheets(int player, int card, event_t event)
       if ((event == EVENT_RESOLVE_ACTIVATION) && (instance->info_slot == 1))
       {
         deck = deck_ptr[player];
-        show_deck(player, deck, 1, "This is the first card of your library", 0, ENGINE_DONE_LABEL);
+        show_deck(player, deck, 1, "This is the first card of your library", 0, EXE_STR(ENGINE_DONE_LABEL));
         result = has_subtype_by_id(player, (unsigned int)cards_data[*deck].id, SUBTYPE_SNOW);
         if ((result != 0) && (*deck != -1))
         {
@@ -3643,7 +3618,7 @@ int card_wilderness_elemental(int player, int card, event_t event){
 
 int card_woolly_razorback(int player, int card, event_t event)
 {
-  char cVar1;
+  char damage_player;
   card_instance_t *instance;
   int result;
 
@@ -3656,27 +3631,18 @@ int card_woolly_razorback(int player, int card, event_t event)
     {
       event_result = event_result | 0x800000;
     }
-    instance = combat_damage_being_prevented(EVENT_ABILITIES);
-    if (instance == NULL)
+  }
+  instance = combat_damage_being_prevented(event);
+  if (instance != NULL)
+  {
+    damage_player = instance->damage_source_player;
+    if (((damage_player == player) && (instance->damage_source_card == card)) &&
+        ((result = count_counters(player, card, COUNTER_ICE),
+          0 < result && (result = is_humiliated(player, card, AL_STATIC), result == 0))))
     {
-      return 0;
+      prevent_damage(affected_card_controller, affected_card, instance->info_slot);
     }
-    cVar1 = instance->damage_source_player;
   }
-  else
-  {
-    instance = combat_damage_being_prevented(event);
-    if (instance == NULL)
-      goto LAB_0216b531;
-    cVar1 = instance->damage_source_player;
-  }
-  if (((cVar1 == player) && (instance->damage_source_card == card)) &&
-      ((result = count_counters(player, card, COUNTER_ICE),
-        0 < result && (result = is_humiliated(player, card, AL_STATIC), result == 0))))
-  {
-    prevent_damage(affected_card_controller, affected_card, instance->info_slot);
-  }
-LAB_0216b531:
   if (((event == EVENT_DECLARE_BLOCKERS) &&
        (result = count_counters(player, card, COUNTER_ICE), 0 < result)) &&
       ((result = blocking(player, card, EVENT_DECLARE_BLOCKERS),
@@ -3725,9 +3691,9 @@ int card_ronom_hulk(int player, int card, event_t event)
 int card_commandeer(int player, int card, event_t event)
 {
   int result;
-  card_instance_t *pcVar2;
+  card_instance_t *target_spell;
   int card_00;
-  target_definition_t *ptStack_144;
+  target_definition_t *spell_target_definition;
   card_instance_t *instance;
   target_definition_t td;
   test_definition_t this_test;
@@ -3747,8 +3713,6 @@ int card_commandeer(int player, int card, event_t event)
     {
       return counterspell(player, card, EVENT_CAN_CAST, &td, -1);
     }
-    if (event == EVENT_CAST_SPELL)
-      goto LAB_021622a0;
   }
   else
   {
@@ -3771,8 +3735,7 @@ int card_commandeer(int player, int card, event_t event)
       this_test.id_flag = 1;
       instance = get_card_instance(player, card);
       cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
-    LAB_021622a0:
-      ptStack_144 = &td;
+      spell_target_definition = &td;
       if (card != affected_card)
       {
         return 0;
@@ -3787,16 +3750,16 @@ int card_commandeer(int player, int card, event_t event)
         spell_fizzled = 1;
         return 0;
       }
-      pcVar2 = get_card_instance(card_on_stack_controller, card_on_stack);
-      if (pcVar2->number_of_targets == '\x01')
+      target_spell = get_card_instance(card_on_stack_controller, card_on_stack);
+      if (target_spell->number_of_targets == '\x01')
       {
         instance->info_slot = 1;
         return deflect_one_target(player, card, EVENT_CAST_SPELL, NULL);
       }
-      pcVar2 = get_card_instance(card_on_stack_controller, card_on_stack);
-      if (pcVar2->number_of_targets < 2)
+      target_spell = get_card_instance(card_on_stack_controller, card_on_stack);
+      if (target_spell->number_of_targets < 2)
       {
-        return counterspell(player, card, EVENT_CAST_SPELL, ptStack_144, 0);
+        return counterspell(player, card, EVENT_CAST_SPELL, spell_target_definition, 0);
       }
       instance->info_slot = 2;
       return deflect_multi_targets(player, card, EVENT_CAST_SPELL, NULL);
@@ -3848,8 +3811,8 @@ int card_commandeer(int player, int card, event_t event)
     result = is_what(instance->targets[0].player, instance->targets[0].card, 0x144);
     if (result != 0)
     {
-      pcVar2 = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-      result = pcVar2->internal_card_id;
+      target_spell = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      result = target_spell->internal_card_id;
       if (result != -1)
       {
         obliterate_card(instance->targets[0].player, instance->targets[0].card);
@@ -3895,8 +3858,6 @@ int card_fury_of_the_horde(int player, int card, event_t event)
     {
       return basic_spell(player, card, EVENT_CAN_CAST);
     }
-    if (event == EVENT_CAST_SPELL)
-      goto LAB_02163eaf;
   }
   else
   {
@@ -3916,7 +3877,6 @@ int card_fury_of_the_horde(int player, int card, event_t event)
       this_test.zone = 0x100;
       this_test.id_flag = 1;
       cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
-    LAB_02163eaf:
       if (card != affected_card)
       {
         return 0;
@@ -3999,15 +3959,15 @@ static char *can_have_counters_placed_on_it_shim(int who_chooses, int player, in
                                                  int targeting_player, int targeting_card)
 {
   int result;
-  char *pcVar2;
+  char *rejection;
 
   result = can_have_counters_placed_on_it(player, card);
-  pcVar2 = NULL;
+  rejection = NULL;
   if (result == 0)
   {
-    pcVar2 = "can\'t have counters";
+    rejection = "can\'t have counters";
   }
-  return pcVar2;
+  return rejection;
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -4039,7 +3999,7 @@ int card_mishras_bauble(int player, int card, event_t event)
       if (*deck_ptr[instance->targets[0].player] != -1)
       {
         show_deck(player, deck_ptr[instance->targets[0].player], 1,
-                  "Here\'s the first card of deck.", 0, ENGINE_DONE_LABEL);
+                  "Here\'s the first card of deck.", 0, EXE_STR(ENGINE_DONE_LABEL));
       }
       cantrip(player, card, 1);
     }
@@ -4088,13 +4048,14 @@ int card_drelnoch(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x216b6c0; original cards/coldsnap.c:3799. */
 int card_zombie_musher(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int mana_cost_or_result;
+  int abilities_available;
   if (event == EVENT_BLOCK_LEGALITY)
   {
-    iVar1 = is_humiliated(player, card, AL_STATIC);
-    if ((((iVar1 == 0) && (attacking_card_controller == player)) && (attacking_card == card)) &&
-        (iVar1 = control_a_snow_land(1 - current_turn, 0), iVar1 != 0))
+    mana_cost_or_result = is_humiliated(player, card, AL_STATIC);
+    if ((((mana_cost_or_result == 0) && (attacking_card_controller == player)) &&
+         (attacking_card == card)) &&
+        (mana_cost_or_result = control_a_snow_land(1 - current_turn, 0), mana_cost_or_result != 0))
     {
       event_result = 1;
     }
@@ -4103,16 +4064,19 @@ int card_zombie_musher(int player, int card, event_t event)
   {
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar1 = get_cost_mod_for_activated_abilities(player, card, 0, 0, 0, 0, 0, 0);
-      iVar2 = can_use_activated_abilities(player, card);
-      if ((iVar2 != 0) && (iVar1 = has_snow_mana(player, 1, iVar1), iVar1 != 0))
+      mana_cost_or_result = get_cost_mod_for_activated_abilities(player, card, 0, 0, 0, 0, 0, 0);
+      abilities_available = can_use_activated_abilities(player, card);
+      if ((abilities_available != 0) &&
+          (mana_cost_or_result = has_snow_mana(player, 1, mana_cost_or_result),
+           mana_cost_or_result != 0))
       {
         return can_regenerate(player, card);
       }
     }
     else if (event == EVENT_ACTIVATE)
     {
-      charge_snow_mana(player, card, 1, get_cost_mod_for_activated_abilities(player, card, 0, 0, 0, 0, 0, 0));
+      charge_snow_mana(player, card, 1,
+                       get_cost_mod_for_activated_abilities(player, card, 0, 0, 0, 0, 0, 0));
     }
     else if (event == EVENT_RESOLVE_ACTIVATION)
     {

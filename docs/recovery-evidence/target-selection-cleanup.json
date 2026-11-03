@@ -1,0 +1,1632 @@
+{
+  "rows": [
+    {
+      "source": "functions/targets.c",
+      "name": "can_legally_target",
+      "before_definition": "int can_legally_target(int targeting_player, int targeting_card, target_t *targeted)\n{\n  int32_t iVar1;\n  card_instance_t *instance;\n  int iVar3;\n\n  instance = get_card_instance(targeting_player, targeting_card);\n  iVar3 = 0;\n  if (instance->number_of_targets != '\\0')\n  {\n    iVar1 = targeted->card;\n    instance->targets[9].player = targeted->player;\n    instance->targets[9].card = iVar1;\n    set_special_flags2(targeting_player, targeting_card, 0x10000);\n    iVar3 = call_card_function(targeting_player, targeting_card, EVENT_CAN_CAST);\n    instance->targets[9].player = -1;\n    instance->targets[9].card = -1;\n    remove_special_flags2(targeting_player, targeting_card, 0x10000);\n  }\n  return iVar3;\n}",
+      "after_definition": "int can_legally_target(int targeting_player, int targeting_card, target_t *targeted)\n{\n  card_instance_t *instance = get_card_instance(targeting_player, targeting_card);\n  if (!instance->number_of_targets)\n    return 0;\n  int selected_card = targeted->card;\n  instance->targets[9].player = targeted->player;\n  instance->targets[9].card = selected_card;\n  set_special_flags2(targeting_player, targeting_card, SF2_SPELLSKITE);\n  int result = call_card_function(targeting_player, targeting_card, EVENT_CAN_CAST);\n  instance->targets[9].player = -1;\n  instance->targets[9].card = -1;\n  remove_special_flags2(targeting_player, targeting_card, SF2_SPELLSKITE);\n  return result;\n}",
+      "before_sha256": "037efe2ec762c52a2c1299ed409f6a9d37b4d836f24ebff83cc86a46f5048c27",
+      "after_sha256": "bb0ac4454dfb7897ba106d2c78fce2fdcc28abedaf30fed0e3811665ccda9e9a",
+      "target_selection_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 6,
+        "removed_placeholder_occurrences": 7,
+        "removed_placeholder_names": 2
+      },
+      "expanded_before_definition": "int can_legally_target(int targeting_player, int targeting_card, target_t *targeted)\n{\n  int32_t iVar1;\n  card_instance_t *instance;\n  int iVar3;\n\n  instance = get_card_instance(targeting_player, targeting_card);\n  iVar3 = 0;\n  if (instance->number_of_targets != '\\0')\n  {\n    iVar1 = targeted->card;\n    instance->targets[9].player = targeted->player;\n    instance->targets[9].card = iVar1;\n    set_special_flags2(targeting_player, targeting_card, 0x10000);\n    iVar3 = call_card_function(targeting_player, targeting_card, EVENT_CAN_CAST);\n    instance->targets[9].player = -1;\n    instance->targets[9].card = -1;\n    remove_special_flags2(targeting_player, targeting_card, 0x10000);\n  }\n  return iVar3;\n}",
+      "expanded_after_definition": "int can_legally_target(int targeting_player, int targeting_card, target_t *targeted)\n{\n  card_instance_t *instance = get_card_instance(targeting_player, targeting_card);\n  if (!instance->number_of_targets)\n    return 0;\n  int selected_card = targeted->card;\n  instance->targets[9].player = targeted->player;\n  instance->targets[9].card = selected_card;\n  set_special_flags2(targeting_player, targeting_card, SF2_SPELLSKITE);\n  int result = call_card_function(targeting_player, targeting_card, EVENT_CAN_CAST);\n  instance->targets[9].player = -1;\n  instance->targets[9].card = -1;\n  remove_special_flags2(targeting_player, targeting_card, SF2_SPELLSKITE);\n  return result;\n}"
+    },
+    {
+      "source": "functions/targets.c",
+      "name": "real_validate_target",
+      "before_definition": "int real_validate_target(int tgt_player, int tgt_card, char *return_error_str, int who_chooses,\n                              int allowed_controller, int preferred_controller, int zone,\n                              int required_type, int illegal_type, int required_abilities,\n                              int illegal_abilities, int required_color, int illegal_color,\n                              int extra, int required_subtype, int power_requirement,\n                              int toughness_requirement, int special, int required_state,\n                              int illegal_state)\n{\n  int iVar1;\n  int iVar2;\n  int iVar3;\n  unsigned int flags;\n  uint32_t uStack_14;\n  iVar3 = hack_gpf_player;\n  iVar1 = hack_gpf_card;\n  if ((illegal_abilities & 0x20000U) == 0)\n  {\n    iVar1 = -1;\n    uStack_14 = -1;\n    flags = 0;\n  }\n  else\n  {\n    uStack_14 = hack_gpf_player;\n    if ((hack_gpf_player < 0) || (hack_gpf_card < 0))\n    {\n      flags = 0;\n    }\n    else\n    {\n      iVar2 = has_subtype(hack_gpf_player, hack_gpf_card, SUBTYPE_AURA);\n      flags = 0;\n      if (iVar2 != 0)\n      {\n        flags = 2;\n      }\n      if (has_subtype(iVar3, iVar1, SUBTYPE_EQUIPMENT) != 0)\n      {\n        flags = flags | 4;\n      }\n    }\n  }\n  return validate_target_impl(\n      uStack_14, iVar1, tgt_player, tgt_card, return_error_str, who_chooses, allowed_controller,\n      preferred_controller, zone, required_type, illegal_type, required_abilities,\n      illegal_abilities, required_color, illegal_color, extra, required_subtype, power_requirement,\n      toughness_requirement, special, required_state, illegal_state, flags);\n}",
+      "after_definition": "int real_validate_target(int tgt_player, int tgt_card, char *return_error_str, int who_chooses,\n                         int allowed_controller, int preferred_controller, int zone,\n                         int required_type, int illegal_type, int required_abilities,\n                         int illegal_abilities, int required_color, int illegal_color, int extra,\n                         int required_subtype, int power_requirement, int toughness_requirement,\n                         int special, int required_state, int illegal_state)\n{\n  int source_player = hack_gpf_player;\n  int source_card = hack_gpf_card;\n  unsigned int flags = 0;\n  if (!(illegal_abilities & KEYWORD_SHROUD))\n    source_player = source_card = -1;\n  else if (source_player >= 0 && source_card >= 0)\n  {\n    if (has_subtype(source_player, source_card, SUBTYPE_AURA))\n      flags = 2;\n    if (has_subtype(source_player, source_card, SUBTYPE_EQUIPMENT))\n      flags |= 4;\n  }\n  return validate_target_impl(\n      source_player, source_card, tgt_player, tgt_card, return_error_str, who_chooses,\n      allowed_controller, preferred_controller, zone, required_type, illegal_type,\n      required_abilities, illegal_abilities, required_color, illegal_color, extra, required_subtype,\n      power_requirement, toughness_requirement, special, required_state, illegal_state, flags);\n}",
+      "before_sha256": "071cb08fde3448da9bd15c070faa8d0c4e858a482f0ac654bc405b01676c8b4c",
+      "after_sha256": "76dca2ae68e2ed4af5be150f0a8278d6ea641889cba9d3d5f119c5f8da97f36e",
+      "target_selection_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 23,
+        "removed_placeholder_occurrences": 15,
+        "removed_placeholder_names": 4
+      },
+      "expanded_before_definition": "int real_validate_target(int tgt_player, int tgt_card, char *return_error_str, int who_chooses,\n                              int allowed_controller, int preferred_controller, int zone,\n                              int required_type, int illegal_type, int required_abilities,\n                              int illegal_abilities, int required_color, int illegal_color,\n                              int extra, int required_subtype, int power_requirement,\n                              int toughness_requirement, int special, int required_state,\n                              int illegal_state)\n{\n  int iVar1;\n  int iVar2;\n  int iVar3;\n  unsigned int flags;\n  uint32_t uStack_14;\n  iVar3 = hack_gpf_player;\n  iVar1 = hack_gpf_card;\n  if ((illegal_abilities & 0x20000U) == 0)\n  {\n    iVar1 = -1;\n    uStack_14 = -1;\n    flags = 0;\n  }\n  else\n  {\n    uStack_14 = hack_gpf_player;\n    if ((hack_gpf_player < 0) || (hack_gpf_card < 0))\n    {\n      flags = 0;\n    }\n    else\n    {\n      iVar2 = has_subtype(hack_gpf_player, hack_gpf_card, SUBTYPE_AURA);\n      flags = 0;\n      if (iVar2 != 0)\n      {\n        flags = 2;\n      }\n      if (has_subtype(iVar3, iVar1, SUBTYPE_EQUIPMENT) != 0)\n      {\n        flags = flags | 4;\n      }\n    }\n  }\n  return validate_target_impl(\n      uStack_14, iVar1, tgt_player, tgt_card, return_error_str, who_chooses, allowed_controller,\n      preferred_controller, zone, required_type, illegal_type, required_abilities,\n      illegal_abilities, required_color, illegal_color, extra, required_subtype, power_requirement,\n      toughness_requirement, special, required_state, illegal_state, flags);\n}",
+      "expanded_after_definition": "int real_validate_target(int tgt_player, int tgt_card, char *return_error_str, int who_chooses,\n                         int allowed_controller, int preferred_controller, int zone,\n                         int required_type, int illegal_type, int required_abilities,\n                         int illegal_abilities, int required_color, int illegal_color, int extra,\n                         int required_subtype, int power_requirement, int toughness_requirement,\n                         int special, int required_state, int illegal_state)\n{\n  int source_player = hack_gpf_player;\n  int source_card = hack_gpf_card;\n  unsigned int flags = 0;\n  if (!(illegal_abilities & KEYWORD_SHROUD))\n    source_player = source_card = -1;\n  else if (source_player >= 0 && source_card >= 0)\n  {\n    if (has_subtype(source_player, source_card, SUBTYPE_AURA))\n      flags = 2;\n    if (has_subtype(source_player, source_card, SUBTYPE_EQUIPMENT))\n      flags |= 4;\n  }\n  return validate_target_impl(\n      source_player, source_card, tgt_player, tgt_card, return_error_str, who_chooses,\n      allowed_controller, preferred_controller, zone, required_type, illegal_type,\n      required_abilities, illegal_abilities, required_color, illegal_color, extra, required_subtype,\n      power_requirement, toughness_requirement, special, required_state, illegal_state, flags);\n}"
+    },
+    {
+      "source": "functions/targets.c",
+      "name": "real_target_available",
+      "before_definition": "int real_target_available(int *return_count, int test_damage_target_or_source, int who_chooses,\n                               int allowed_controller, int preferred_controller, int zone,\n                               int required_type, int illegal_type, int required_abilities,\n                               int illegal_abilities, int required_color, int illegal_color,\n                               int extra, int required_subtype, int power_requirement,\n                               int toughness_requirement, int special, int required_state,\n                               int illegal_state)\n{\n  int iVar1;\n  int iVar2;\n  unsigned int flags;\n  int iStack_14;\n  iStack_14 = hack_gpf_player;\n  iVar1 = hack_gpf_card;\n  if ((illegal_abilities & 0x20000U) == 0)\n  {\n    iVar1 = -1;\n    iStack_14 = -1;\n    flags = 0;\n  }\n  else if ((hack_gpf_player < 0) || (hack_gpf_card < 0))\n  {\n    flags = 0;\n  }\n  else\n  {\n    iVar2 = has_subtype(hack_gpf_player, hack_gpf_card, SUBTYPE_AURA);\n    flags = 0;\n    if (iVar2 != 0)\n    {\n      flags = 2;\n    }\n    if (has_subtype(iStack_14, iVar1, SUBTYPE_EQUIPMENT) != 0)\n    {\n      flags = flags | 4;\n    }\n  }\n  if ((unsigned int)test_damage_target_or_source < 3)\n  {\n    return target_available_impl(iStack_14, iVar1, return_count, test_damage_target_or_source,\n                                       who_chooses, allowed_controller, preferred_controller, zone,\n                                       required_type, illegal_type, required_abilities,\n                                       illegal_abilities, required_color, illegal_color, extra,\n                                       required_subtype, power_requirement, toughness_requirement,\n                                       special, required_state, illegal_state, flags);\n  }\n  return 0;\n}",
+      "after_definition": "int real_target_available(int *return_count, int test_damage_target_or_source, int who_chooses,\n                          int allowed_controller, int preferred_controller, int zone,\n                          int required_type, int illegal_type, int required_abilities,\n                          int illegal_abilities, int required_color, int illegal_color, int extra,\n                          int required_subtype, int power_requirement, int toughness_requirement,\n                          int special, int required_state, int illegal_state)\n{\n  int source_player = hack_gpf_player;\n  int source_card = hack_gpf_card;\n  unsigned int flags = 0;\n  if (!(illegal_abilities & KEYWORD_SHROUD))\n    source_player = source_card = -1;\n  else if (source_player >= 0 && source_card >= 0)\n  {\n    if (has_subtype(source_player, source_card, SUBTYPE_AURA))\n      flags = 2;\n    if (has_subtype(source_player, source_card, SUBTYPE_EQUIPMENT))\n      flags |= 4;\n  }\n  if ((unsigned int)test_damage_target_or_source < 3)\n  {\n    return target_available_impl(\n        source_player, source_card, return_count, test_damage_target_or_source, who_chooses,\n        allowed_controller, preferred_controller, zone, required_type, illegal_type,\n        required_abilities, illegal_abilities, required_color, illegal_color, extra,\n        required_subtype, power_requirement, toughness_requirement, special, required_state,\n        illegal_state, flags);\n  }\n  return 0;\n}",
+      "before_sha256": "e069afc1f4b38a5f93ac11c7085295ef6334e01f5c0d82040c8d2e62c286175a",
+      "after_sha256": "e4da9c4a892740e2bafa596158518fdc71ce762d91ee19f3aa09d758ee56b8a0",
+      "target_selection_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 18,
+        "removed_placeholder_occurrences": 13,
+        "removed_placeholder_names": 3
+      },
+      "expanded_before_definition": "int real_target_available(int *return_count, int test_damage_target_or_source, int who_chooses,\n                               int allowed_controller, int preferred_controller, int zone,\n                               int required_type, int illegal_type, int required_abilities,\n                               int illegal_abilities, int required_color, int illegal_color,\n                               int extra, int required_subtype, int power_requirement,\n                               int toughness_requirement, int special, int required_state,\n                               int illegal_state)\n{\n  int iVar1;\n  int iVar2;\n  unsigned int flags;\n  int iStack_14;\n  iStack_14 = hack_gpf_player;\n  iVar1 = hack_gpf_card;\n  if ((illegal_abilities & 0x20000U) == 0)\n  {\n    iVar1 = -1;\n    iStack_14 = -1;\n    flags = 0;\n  }\n  else if ((hack_gpf_player < 0) || (hack_gpf_card < 0))\n  {\n    flags = 0;\n  }\n  else\n  {\n    iVar2 = has_subtype(hack_gpf_player, hack_gpf_card, SUBTYPE_AURA);\n    flags = 0;\n    if (iVar2 != 0)\n    {\n      flags = 2;\n    }\n    if (has_subtype(iStack_14, iVar1, SUBTYPE_EQUIPMENT) != 0)\n    {\n      flags = flags | 4;\n    }\n  }\n  if ((unsigned int)test_damage_target_or_source < 3)\n  {\n    return target_available_impl(iStack_14, iVar1, return_count, test_damage_target_or_source,\n                                       who_chooses, allowed_controller, preferred_controller, zone,\n                                       required_type, illegal_type, required_abilities,\n                                       illegal_abilities, required_color, illegal_color, extra,\n                                       required_subtype, power_requirement, toughness_requirement,\n                                       special, required_state, illegal_state, flags);\n  }\n  return 0;\n}",
+      "expanded_after_definition": "int real_target_available(int *return_count, int test_damage_target_or_source, int who_chooses,\n                          int allowed_controller, int preferred_controller, int zone,\n                          int required_type, int illegal_type, int required_abilities,\n                          int illegal_abilities, int required_color, int illegal_color, int extra,\n                          int required_subtype, int power_requirement, int toughness_requirement,\n                          int special, int required_state, int illegal_state)\n{\n  int source_player = hack_gpf_player;\n  int source_card = hack_gpf_card;\n  unsigned int flags = 0;\n  if (!(illegal_abilities & KEYWORD_SHROUD))\n    source_player = source_card = -1;\n  else if (source_player >= 0 && source_card >= 0)\n  {\n    if (has_subtype(source_player, source_card, SUBTYPE_AURA))\n      flags = 2;\n    if (has_subtype(source_player, source_card, SUBTYPE_EQUIPMENT))\n      flags |= 4;\n  }\n  if ((unsigned int)test_damage_target_or_source < 3)\n  {\n    return target_available_impl(\n        source_player, source_card, return_count, test_damage_target_or_source, who_chooses,\n        allowed_controller, preferred_controller, zone, required_type, illegal_type,\n        required_abilities, illegal_abilities, required_color, illegal_color, extra,\n        required_subtype, power_requirement, toughness_requirement, special, required_state,\n        illegal_state, flags);\n  }\n  return 0;\n}"
+    },
+    {
+      "source": "functions/targets.c",
+      "name": "validate_arbitrary_target",
+      "before_definition": "int validate_arbitrary_target(target_definition_t *td, int tgt_player, int tgt_card)\n{\n  int32_t iVar1;\n  int iVar2;\n\n  iVar1 = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  iVar2 = would_validate_arbitrary_target(td, tgt_player, tgt_card);\n  td->preferred_controller = iVar1;\n  return iVar2;\n}",
+      "after_definition": "int validate_arbitrary_target(target_definition_t *td, int tgt_player, int tgt_card)\n{\n  int32_t saved_preferred;\n  int result;\n\n  saved_preferred = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  result = would_validate_arbitrary_target(td, tgt_player, tgt_card);\n  td->preferred_controller = saved_preferred;\n  return result;\n}",
+      "before_sha256": "283984dec94ed77cbe7575ad4a41ea8635db3e9d51d0bdc8acb663fdff02c2f2",
+      "after_sha256": "785810370c6f6d8110c2cbbb25f835c11d7c1f2e6ccdb2d821542024e693c077",
+      "target_selection_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 6,
+        "removed_placeholder_names": 2
+      },
+      "expanded_before_definition": "int validate_arbitrary_target(target_definition_t *td, int tgt_player, int tgt_card)\n{\n  int32_t iVar1;\n  int iVar2;\n\n  iVar1 = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  iVar2 = would_validate_arbitrary_target(td, tgt_player, tgt_card);\n  td->preferred_controller = iVar1;\n  return iVar2;\n}",
+      "expanded_after_definition": "int validate_arbitrary_target(target_definition_t *td, int tgt_player, int tgt_card)\n{\n  int32_t saved_preferred;\n  int result;\n\n  saved_preferred = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  result = would_validate_arbitrary_target(td, tgt_player, tgt_card);\n  td->preferred_controller = saved_preferred;\n  return result;\n}"
+    },
+    {
+      "source": "functions/targets.c",
+      "name": "validate_target",
+      "before_definition": "int validate_target(int player, int card, target_definition_t *td, int target_number)\n{\n  int32_t iVar1;\n  int iVar2;\n\n  iVar1 = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  iVar2 = would_validate_target(player, card, td, target_number);\n  td->preferred_controller = iVar1;\n  return iVar2;\n}",
+      "after_definition": "int validate_target(int player, int card, target_definition_t *td, int target_number)\n{\n  int32_t saved_preferred;\n  int result;\n\n  saved_preferred = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  result = would_validate_target(player, card, td, target_number);\n  td->preferred_controller = saved_preferred;\n  return result;\n}",
+      "before_sha256": "965a795f37482acd14322d5bf43b900d9baf9a6617172c6d3434da5c8f3e0cbd",
+      "after_sha256": "884452a47d02ff0b3251cbfa6073bc0d6826397340dbd83ed2dc624893733eea",
+      "target_selection_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 6,
+        "removed_placeholder_names": 2
+      },
+      "expanded_before_definition": "int validate_target(int player, int card, target_definition_t *td, int target_number)\n{\n  int32_t iVar1;\n  int iVar2;\n\n  iVar1 = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  iVar2 = would_validate_target(player, card, td, target_number);\n  td->preferred_controller = iVar1;\n  return iVar2;\n}",
+      "expanded_after_definition": "int validate_target(int player, int card, target_definition_t *td, int target_number)\n{\n  int32_t saved_preferred;\n  int result;\n\n  saved_preferred = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  result = would_validate_target(player, card, td, target_number);\n  td->preferred_controller = saved_preferred;\n  return result;\n}"
+    },
+    {
+      "source": "functions/targets.c",
+      "name": "valid_target",
+      "before_definition": "int valid_target(target_definition_t *td)\n{\n  int32_t iVar1;\n  int iVar2;\n\n  iVar1 = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  iVar2 = would_validate_target(td->player, td->card, td, 0);\n  td->preferred_controller = iVar1;\n  return iVar2;\n}",
+      "after_definition": "int valid_target(target_definition_t *td)\n{\n  int32_t saved_preferred;\n  int result;\n\n  saved_preferred = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  result = would_validate_target(td->player, td->card, td, 0);\n  td->preferred_controller = saved_preferred;\n  return result;\n}",
+      "before_sha256": "69618c423a6e43589747bf975d17a7cc8fca915c12f32a0c1b738d9e530b6a4f",
+      "after_sha256": "3a89fda4d2e3dfb469b66bd99edd39a5227b4be11315547a8a66e08ba2501ac6",
+      "target_selection_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 6,
+        "removed_placeholder_names": 2
+      },
+      "expanded_before_definition": "int valid_target(target_definition_t *td)\n{\n  int32_t iVar1;\n  int iVar2;\n\n  iVar1 = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  iVar2 = would_validate_target(td->player, td->card, td, 0);\n  td->preferred_controller = iVar1;\n  return iVar2;\n}",
+      "expanded_after_definition": "int valid_target(target_definition_t *td)\n{\n  int32_t saved_preferred;\n  int result;\n\n  saved_preferred = td->preferred_controller;\n  td->preferred_controller = td->allowed_controller;\n  result = would_validate_target(td->player, td->card, td, 0);\n  td->preferred_controller = saved_preferred;\n  return result;\n}"
+    },
+    {
+      "source": "functions/targets.c",
+      "name": "select_target_impl",
+      "before_definition": "static int select_target_impl(int player, int card, int who_chooses, int allowed_controller,\n                                   int preferred_controller, int zone, int required_type,\n                                   int illegal_type, int required_abilities, int illegal_abilities,\n                                   int required_color, int illegal_color, int extra,\n                                   int required_subtype, int power_requirement,\n                                   int toughness_requirement, int special, int required_state,\n                                   int illegal_state, int flags, const char *prompt,\n                                   int allow_cancel, target_t *ret_tgt)\n{\n  int32_t iVar2;\n  int iVar3;\n  card_instance_t *instance;\n  int iVar5;\n  int iVar6;\n  int iVar7;\n  unsigned int argument11;\n  unsigned int uStack_2d8;\n  unsigned int uStack_2d4;\n  int unknown_v44;\n  if (((who_chooses != 1) || (((unsigned char)trace_mode & 2) != 0)) && (ai_is_speculating != 1))\n  {\n    target_t tmp_tgt;\n    if (zone == 0)\n    {\n      if ((allowed_controller & 2U) == 0)\n      {\n        argument11 = allowed_controller & 1;\n        iVar7 = 0;\n        if (argument11 == 0)\n          goto LAB_0265f9e4;\n      }\n      else\n      {\n        argument11 = 1;\n        iVar7 = 1;\n      }\n    }\n    else\n    {\n      argument11 = 0;\n      iVar7 = 0;\n      if ((zone & 0x1000U) != 0)\n      {\n        argument11 = 1;\n        if ((allowed_controller & 2U) == 0)\n        {\n          argument11 = allowed_controller & 1;\n          iVar7 = 0;\n          if (argument11 != 0)\n            goto LAB_0265f41e;\n        }\n      LAB_0265f9e4:\n        iVar7 = 1;\n      }\n    LAB_0265f41e:\n      if ((zone & 0x4000U) != 0)\n      {\n        if (1 < stack_size)\n        {\n          uStack_2d4 = 1;\n          goto joined_r0x0265f8ae;\n        }\n        if ((stack_size == 1) &&\n            ((uStack_2d4 = 1, stack_cards[0].card != card || (stack_cards[0].player != player))))\n          goto joined_r0x0265f8ae;\n      }\n    }\n    uStack_2d4 = sub_45CEC0();\n  joined_r0x0265f8ae:\n    if (prompt == NULL)\n    {\n      prompt = EXE_STR(0x60a690);\n    }\n    else if ((hack_prepend_prompt != NULL) && (ai_is_speculating != 1))\n    {\n      sprintf((char *)EXE_STR(0x60a690), \"%s: %s\", hack_prepend_prompt, prompt);\n      prompt = EXE_STR(0x60a690);\n    }\n  LAB_0265f467:\n    while (iVar3 = sub_4378E0(who_chooses, -1, prompt, allow_cancel, -1, -1, -1, -1, &unknown_v44,\n                              &tmp_tgt, argument11, iVar7),\n           iVar3 == 0)\n    {\n      if (unknown_v44 == -2)\n      {\n        if ((EXE_DWORD(0x4ef1b0) == -1) && (EXE_DWORD(0x4ef1ac) == -1))\n          goto LAB_0265f930;\n        if ((zone & 0x2000U) != 0)\n        {\n          tmp_tgt.card = -3;\n          tmp_tgt.player = -1;\n        LAB_0265f930:\n          ret_tgt->player = tmp_tgt.player;\n          ret_tgt->card = tmp_tgt.card;\n          if (uStack_2d4 == 0)\n          {\n            sub_45CF00();\n          }\n        LAB_0265f5e0:\n          set_centerwindow_txt(\"\");\n          text_lines[0][0] = '\\0';\n          return iVar3;\n        }\n      }\n    }\n    if (-1 < tmp_tgt.card)\n    {\n      instance = get_card_instance(tmp_tgt.player, tmp_tgt.card);\n      if (((-1 < instance->internal_card_id) && ((special & 0x400U) == 0)) &&\n          (cards_at_7c7000[instance->internal_card_id]->code_pointer == (CardFunction)0x401010))\n      {\n        if (ai_is_speculating != 1)\n        {\n          char illegal_tgt[200];\n          sprintf(illegal_tgt, EXE_STR(0x73940c), EXE_STR(0x728f6c));\n          display_error_message(illegal_tgt);\n        }\n        goto LAB_0265f467;\n      }\n    }\n    char err_reason[208];\n    iVar5 = validate_target_impl(\n        player, card, tmp_tgt.player, tmp_tgt.card, err_reason, who_chooses,\n        allowed_controller, preferred_controller, zone, required_type, illegal_type,\n        required_abilities, illegal_abilities, required_color, illegal_color, extra,\n        required_subtype, power_requirement, toughness_requirement, special, required_state,\n        illegal_state, flags);\n    if (iVar5 != 0)\n    {\n      ret_tgt->player = tmp_tgt.player;\n      ret_tgt->card = tmp_tgt.card;\n      if (uStack_2d4 == 0)\n      {\n        sub_45CF00();\n      }\n      EXE_DWORD(0x60a530) = 0;\n      goto LAB_0265f5e0;\n    }\n    if (ai_is_speculating != 1)\n    {\n      if (err_reason[0] == '\\0')\n      {\n        display_error_message(EXE_STR(0x73732c));\n      }\n      else\n      {\n        char illegal_tgt[200];\n        sprintf(illegal_tgt, EXE_STR(0x73940c), err_reason);\n        display_error_message(illegal_tgt);\n      }\n    }\n    goto LAB_0265f467;\n  }\n  uStack_2d8 = EXE_DWORD(0x60e9fc) & 1;\n  if ((uStack_2d8 == 0) || ((allowed_controller & 2U) == 0))\n  {\n    if (zone != 0)\n      goto LAB_0265f62c;\n  }\n  else\n  {\n    preferred_controller = allowed_controller;\n    uStack_2d4 = uStack_2d8;\n    if (zone == 0)\n      goto joined_r0x0265f86d;\n  LAB_0265f62c:\n    uStack_2d8 = 0;\n    uStack_2d4 = 0;\n    if ((zone & 0x1000U) == 0)\n      goto joined_r0x0265f86d;\n  }\n  if ((preferred_controller & 2U) == 0)\n  {\n    uStack_2d8 = preferred_controller & 1;\n    uStack_2d4 = 0;\n    if (uStack_2d8 != 0)\n      goto joined_r0x0265f86d;\n  }\n  else\n  {\n    uStack_2d8 = 1;\n  }\n  uStack_2d4 = 1;\njoined_r0x0265f86d:\n  if (spell_fizzled != 1)\n  {\n    target_t candidates[60];\n    iVar7 = 0;\n    iVar3 = 0;\n    do\n    {\n      iVar5 = 0;\n      if (0 < active_cards_count[iVar7])\n      {\n        do\n        {\n          instance = get_card_instance(iVar7, iVar5);\n          if ((instance->internal_card_id != -1) &&\n              (iVar6 = validate_target_impl(\n                   player, card, iVar7, iVar5, NULL, who_chooses, allowed_controller,\n                   preferred_controller, zone, required_type, illegal_type, required_abilities,\n                   illegal_abilities, required_color, illegal_color, extra, required_subtype,\n                   power_requirement, toughness_requirement, special, required_state, illegal_state,\n                   flags),\n               iVar6 != 0))\n          {\n            candidates[iVar3].player = iVar7;\n            candidates[iVar3].card = iVar5;\n            iVar3 = iVar3 + 1;\n            if (0x39 < iVar3)\n              goto LAB_0265f755;\n          }\n          iVar5 = iVar5 + 1;\n        } while (iVar5 < active_cards_count[iVar7]);\n      }\n      iVar7 = iVar7 + 1;\n    } while (iVar7 != 2);\n  LAB_0265f755:\n    if (uStack_2d8 != 0)\n    {\n      candidates[iVar3].player = 1;\n      candidates[iVar3].card = -1;\n      iVar3 = iVar3 + 1;\n    }\n    if (uStack_2d4 != 0)\n    {\n      candidates[iVar3].player = 0;\n      candidates[iVar3].card = -1;\n      iVar3 = iVar3 + 1;\n    }\n    if (iVar3 != 0)\n    {\n      EXE_DWORD(0x4ed954) = 3;\n      if (ai_is_speculating == 1)\n      {\n        EXE_DWORD(0x7a2fe4) = internal_rand(iVar3);\n        EXE_DWORD(0x78fa30) = (candidates[EXE_DWORD(0x7a2fe4)].player < 1 ? 0 : 0x100) |\n                              (candidates[EXE_DWORD(0x7a2fe4)].card & 0xff) | 0x4000;\n        sub_498F20();\n      }\n      else\n      {\n        sub_499050();\n        if ((iVar3 <= EXE_DWORD(0x7a2fe4)) || (EXE_DWORD(0x7a2fe4) == 99))\n        {\n          EXE_DWORD(0x7a2fe4) = internal_rand(iVar3);\n        }\n      }\n      EXE_DWORD(0x60a550) = candidates[EXE_DWORD(0x7a2fe4)].player;\n      iVar2 = candidates[EXE_DWORD(0x7a2fe4)].card;\n      ret_tgt->player = candidates[EXE_DWORD(0x7a2fe4)].player;\n      ret_tgt->card = iVar2;\n      return 1;\n    }\n  }\n  return 0;\n}",
+      "after_definition": "static int select_target_impl(int player, int card, int who_chooses, int allowed_controller,\n                              int preferred_controller, int zone, int required_type,\n                              int illegal_type, int required_abilities, int illegal_abilities,\n                              int required_color, int illegal_color, int extra,\n                              int required_subtype, int power_requirement,\n                              int toughness_requirement, int special, int required_state,\n                              int illegal_state, int flags, const char *prompt, int allow_cancel,\n                              target_t *ret_tgt)\n{\n  if ((who_chooses != 1 || trace_mode & 2) && ai_is_speculating != 1)\n  {\n    int can_target_player_0, can_target_player_1, hwnd_SpellMinimized_is_visible, rval;\n\n    if (zone && !(zone & TARGET_ZONE_PLAYERS))\n      can_target_player_0 = can_target_player_1 = 0;\n    else if (allowed_controller & 2)\n      can_target_player_0 = can_target_player_1 = 1;\n    else if (allowed_controller & 1)\n    {\n      can_target_player_0 = 0;\n      can_target_player_1 = 1;\n    }\n    else\n    {\n      can_target_player_0 = 1;\n      can_target_player_1 = 0;\n    }\n\n    // If can target a spell or ability on the stack, and there's at least one there besides this,\n    // don't minimize the spellchain window.\n    if ((zone & TARGET_ZONE_ON_STACK) &&\n        (stack_size > 1 ||\n         (stack_size == 1 && !(stack_cards[0].card == card && stack_cards[0].player == player))))\n      hwnd_SpellMinimized_is_visible = 1;\n    else\n      hwnd_SpellMinimized_is_visible = sub_45CEC0();\n\n    target_t tgt = {-1, -3};\n    target_t tmp_tgt;\n    int selection_status;\n\n    if (prompt && hack_prepend_prompt && ai_is_speculating != 1)\n    {\n      sprintf((char *)EXE_STR(0x60A690), \"%s: %s\", hack_prepend_prompt, prompt);\n      prompt = EXE_STR(0x60A690);\n    }\n    else if (!prompt)\n      prompt = EXE_STR(0x60A690); // global_all_purpose_buffer\n\n    while (1)\n    {\n\n      rval = sub_4378E0(who_chooses, -1, prompt, allow_cancel, -1, -1, -1, -1, &selection_status,\n                        &tmp_tgt, can_target_player_1, can_target_player_0);\n      if (rval)\n      {\n        card_instance_t *instance;\n        if (tmp_tgt.card < 0 ||\n            (instance = get_card_instance(tmp_tgt.player, tmp_tgt.card))->internal_card_id < 0 ||\n            (special & TARGET_SPECIAL_ALLOW_MULTIBLOCKER) ||\n            cards_at_7c7000[instance->internal_card_id]->code_pointer !=\n                (CardFunction)0x401010) // multiblocker card\n        {\n          char err_reason[208];\n\n          if (validate_target_impl(player, card, tmp_tgt.player, tmp_tgt.card, err_reason,\n                                   who_chooses, allowed_controller, preferred_controller, zone,\n                                   required_type, illegal_type, required_abilities,\n                                   illegal_abilities, required_color, illegal_color, extra,\n                                   required_subtype, power_requirement, toughness_requirement,\n                                   special, required_state, illegal_state, flags))\n          {\n            tgt = tmp_tgt;\n            break;\n          }\n\n          if (ai_is_speculating != 1)\n          {\n            if (*err_reason)\n            {\n              char illegal_tgt[200];\n              sprintf(illegal_tgt, EXE_STR(0x73940C) /*\"Illegal target (%s).\"*/, err_reason);\n              display_error_message(illegal_tgt);\n            }\n            else\n              display_error_message(EXE_STR(0x73732C) /*\"Illegal target.\"*/);\n          }\n        }\n        else if (ai_is_speculating != 1)\n        {\n          char illegal_tgt[200];\n          sprintf(illegal_tgt, EXE_STR(0x73940C) /*\"Illegal target (%s).\"*/,\n                  EXE_STR(0x728F6C) /*\",type\"*/);\n          display_error_message(illegal_tgt);\n        }\n\n        continue;\n      }\n\n      if (selection_status != -2)\n        continue;\n\n      if (EXE_DWORD(0x4EF1B0) == -1 && EXE_DWORD(0x4EF1AC) == -1)\n      {\n        tgt = tmp_tgt;\n        break;\n      }\n\n      if (zone & TARGET_ZONE_0x2000)\n        break;\n    }\n\n    *ret_tgt = tgt;\n    if (!hwnd_SpellMinimized_is_visible)\n      sub_45CF00();\n    if (rval)\n      EXE_DWORD(0x60A530) = 0;\n    set_centerwindow_txt(\"\");\n    text_lines[0][0] = 0;\n    return rval;\n  }\n  else\n  {\n    int can_target_player_0, can_target_player_1, num_candidates, p, c;\n    target_t candidates[60];\n\n    if ((EXE_DWORD(0x60E9FC) & 1) && (allowed_controller & 2))\n      preferred_controller = allowed_controller;\n\n    if (zone && !(zone & TARGET_ZONE_PLAYERS))\n      can_target_player_0 = can_target_player_1 = 0;\n    else if (preferred_controller & 2)\n      can_target_player_0 = can_target_player_1 = 1;\n    else if (preferred_controller & 1)\n    {\n      can_target_player_0 = 0;\n      can_target_player_1 = 1;\n    }\n    else\n    {\n      can_target_player_0 = 1;\n      can_target_player_1 = 0;\n    }\n\n    if (spell_fizzled == 1)\n      return 0;\n\n    num_candidates = 0;\n\n    for (p = 0; p < 2 && num_candidates < 58; ++p)\n      for (c = 0; c < active_cards_count[p] && num_candidates < 58; ++c)\n      {\n        card_instance_t *instance = get_card_instance(p, c);\n        if (instance->internal_card_id != -1 &&\n            validate_target_impl(\n                player, card, p, c, NULL, who_chooses, allowed_controller, preferred_controller,\n                zone, required_type, illegal_type, required_abilities, illegal_abilities,\n                required_color, illegal_color, extra, required_subtype, power_requirement,\n                toughness_requirement, special, required_state, illegal_state, flags))\n        {\n          candidates[num_candidates].player = p;\n          candidates[num_candidates].card = c;\n          ++num_candidates;\n        }\n      }\n\n    if (can_target_player_1)\n    {\n      candidates[num_candidates].player = 1;\n      candidates[num_candidates].card = -1;\n      ++num_candidates;\n    }\n\n    if (can_target_player_0)\n    {\n      candidates[num_candidates].player = 0;\n      candidates[num_candidates].card = -1;\n      ++num_candidates;\n    }\n\n    if (num_candidates == 0)\n      return 0;\n\n    EXE_DWORD(0x4ED954) = 3;\n\n    if (ai_is_speculating == 1)\n    {\n      EXE_DWORD(0x7A2FE4) = internal_rand(num_candidates);\n      EXE_DWORD(0x78FA30) = (candidates[EXE_DWORD(0x7A2FE4)].player < 1 ? 0 : 0x100) |\n                            (candidates[EXE_DWORD(0x7A2FE4)].card & 0xff) | 0x4000;\n\n      sub_498F20();\n    }\n    else\n    {\n      sub_499050();\n\n      if (EXE_DWORD(0x7A2FE4) == 99 || num_candidates <= EXE_DWORD(0x7A2FE4))\n        EXE_DWORD(0x7A2FE4) = internal_rand(num_candidates);\n    }\n\n    EXE_DWORD(0x60A550) = candidates[EXE_DWORD(0x7A2FE4)].player;\n    *ret_tgt = candidates[EXE_DWORD(0x7A2FE4)];\n    return 1;\n  }\n}",
+      "before_sha256": "ef6b3bbcdcf4d77b53bbb72b95e5cdd91afea785c985f122e959ea0c64fd1f97",
+      "after_sha256": "458944e31c44ccb32a9e756392fc1f27ae5e926871097d2d1bf43328d600f59e",
+      "target_selection_cleanup": true,
+      "facts": {
+        "removed_gotos": 13,
+        "removed_lab_gotos": 8,
+        "source_lines_removed": 51,
+        "removed_placeholder_occurrences": 74,
+        "removed_placeholder_names": 7
+      },
+      "expanded_before_definition": "static int select_target_impl(int player, int card, int who_chooses, int allowed_controller,\n                                   int preferred_controller, int zone, int required_type,\n                                   int illegal_type, int required_abilities, int illegal_abilities,\n                                   int required_color, int illegal_color, int extra,\n                                   int required_subtype, int power_requirement,\n                                   int toughness_requirement, int special, int required_state,\n                                   int illegal_state, int flags, const char *prompt,\n                                   int allow_cancel, target_t *ret_tgt)\n{\n  int32_t iVar2;\n  int iVar3;\n  card_instance_t *instance;\n  int iVar5;\n  int iVar6;\n  int iVar7;\n  unsigned int argument11;\n  unsigned int uStack_2d8;\n  unsigned int uStack_2d4;\n  int unknown_v44;\n  if (((who_chooses != 1) || (((unsigned char)trace_mode & 2) != 0)) && (ai_is_speculating != 1))\n  {\n    target_t tmp_tgt;\n    if (zone == 0)\n    {\n      if ((allowed_controller & 2U) == 0)\n      {\n        argument11 = allowed_controller & 1;\n        iVar7 = 0;\n        if (argument11 == 0)\n          goto LAB_0265f9e4;\n      }\n      else\n      {\n        argument11 = 1;\n        iVar7 = 1;\n      }\n    }\n    else\n    {\n      argument11 = 0;\n      iVar7 = 0;\n      if ((zone & 0x1000U) != 0)\n      {\n        argument11 = 1;\n        if ((allowed_controller & 2U) == 0)\n        {\n          argument11 = allowed_controller & 1;\n          iVar7 = 0;\n          if (argument11 != 0)\n            goto LAB_0265f41e;\n        }\n      LAB_0265f9e4:\n        iVar7 = 1;\n      }\n    LAB_0265f41e:\n      if ((zone & 0x4000U) != 0)\n      {\n        if (1 < stack_size)\n        {\n          uStack_2d4 = 1;\n          goto joined_r0x0265f8ae;\n        }\n        if ((stack_size == 1) &&\n            ((uStack_2d4 = 1, stack_cards[0].card != card || (stack_cards[0].player != player))))\n          goto joined_r0x0265f8ae;\n      }\n    }\n    uStack_2d4 = sub_45CEC0();\n  joined_r0x0265f8ae:\n    if (prompt == \n\n                 ((void *)0)\n\n                     )\n    {\n      prompt = ((const char*)(0x60a690));\n    }\n    else if ((hack_prepend_prompt != \n\n                                    ((void *)0)\n\n                                        ) && (ai_is_speculating != 1))\n    {\n      sprintf((char *)((const char*)(0x60a690)), \"%s: %s\", hack_prepend_prompt, prompt);\n      prompt = ((const char*)(0x60a690));\n    }\n  LAB_0265f467:\n    while (iVar3 = sub_4378E0(who_chooses, -1, prompt, allow_cancel, -1, -1, -1, -1, &unknown_v44,\n                              &tmp_tgt, argument11, iVar7),\n           iVar3 == 0)\n    {\n      if (unknown_v44 == -2)\n      {\n        if (((*((int*)(0x4ef1b0))) == -1) && ((*((int*)(0x4ef1ac))) == -1))\n          goto LAB_0265f930;\n        if ((zone & 0x2000U) != 0)\n        {\n          tmp_tgt.card = -3;\n          tmp_tgt.player = -1;\n        LAB_0265f930:\n          ret_tgt->player = tmp_tgt.player;\n          ret_tgt->card = tmp_tgt.card;\n          if (uStack_2d4 == 0)\n          {\n            sub_45CF00();\n          }\n        LAB_0265f5e0:\n          set_centerwindow_txt(\"\");\n          text_lines[0][0] = '\\0';\n          return iVar3;\n        }\n      }\n    }\n    if (-1 < tmp_tgt.card)\n    {\n      instance = get_card_instance(tmp_tgt.player, tmp_tgt.card);\n      if (((-1 < instance->internal_card_id) && ((special & 0x400U) == 0)) &&\n          (cards_at_7c7000[instance->internal_card_id]->code_pointer == (CardFunction)0x401010))\n      {\n        if (ai_is_speculating != 1)\n        {\n          char illegal_tgt[200];\n          sprintf(illegal_tgt, ((const char*)(0x73940c)), ((const char*)(0x728f6c)));\n          display_error_message(illegal_tgt);\n        }\n        goto LAB_0265f467;\n      }\n    }\n    char err_reason[208];\n    iVar5 = validate_target_impl(\n        player, card, tmp_tgt.player, tmp_tgt.card, err_reason, who_chooses,\n        allowed_controller, preferred_controller, zone, required_type, illegal_type,\n        required_abilities, illegal_abilities, required_color, illegal_color, extra,\n        required_subtype, power_requirement, toughness_requirement, special, required_state,\n        illegal_state, flags);\n    if (iVar5 != 0)\n    {\n      ret_tgt->player = tmp_tgt.player;\n      ret_tgt->card = tmp_tgt.card;\n      if (uStack_2d4 == 0)\n      {\n        sub_45CF00();\n      }\n      (*((int*)(0x60a530))) = 0;\n      goto LAB_0265f5e0;\n    }\n    if (ai_is_speculating != 1)\n    {\n      if (err_reason[0] == '\\0')\n      {\n        display_error_message(((const char*)(0x73732c)));\n      }\n      else\n      {\n        char illegal_tgt[200];\n        sprintf(illegal_tgt, ((const char*)(0x73940c)), err_reason);\n        display_error_message(illegal_tgt);\n      }\n    }\n    goto LAB_0265f467;\n  }\n  uStack_2d8 = (*((int*)(0x60e9fc))) & 1;\n  if ((uStack_2d8 == 0) || ((allowed_controller & 2U) == 0))\n  {\n    if (zone != 0)\n      goto LAB_0265f62c;\n  }\n  else\n  {\n    preferred_controller = allowed_controller;\n    uStack_2d4 = uStack_2d8;\n    if (zone == 0)\n      goto joined_r0x0265f86d;\n  LAB_0265f62c:\n    uStack_2d8 = 0;\n    uStack_2d4 = 0;\n    if ((zone & 0x1000U) == 0)\n      goto joined_r0x0265f86d;\n  }\n  if ((preferred_controller & 2U) == 0)\n  {\n    uStack_2d8 = preferred_controller & 1;\n    uStack_2d4 = 0;\n    if (uStack_2d8 != 0)\n      goto joined_r0x0265f86d;\n  }\n  else\n  {\n    uStack_2d8 = 1;\n  }\n  uStack_2d4 = 1;\njoined_r0x0265f86d:\n  if (spell_fizzled != 1)\n  {\n    target_t candidates[60];\n    iVar7 = 0;\n    iVar3 = 0;\n    do\n    {\n      iVar5 = 0;\n      if (0 < active_cards_count[iVar7])\n      {\n        do\n        {\n          instance = get_card_instance(iVar7, iVar5);\n          if ((instance->internal_card_id != -1) &&\n              (iVar6 = validate_target_impl(\n                   player, card, iVar7, iVar5, \n\n                                              ((void *)0)\n\n                                                  , who_chooses, allowed_controller,\n                   preferred_controller, zone, required_type, illegal_type, required_abilities,\n                   illegal_abilities, required_color, illegal_color, extra, required_subtype,\n                   power_requirement, toughness_requirement, special, required_state, illegal_state,\n                   flags),\n               iVar6 != 0))\n          {\n            candidates[iVar3].player = iVar7;\n            candidates[iVar3].card = iVar5;\n            iVar3 = iVar3 + 1;\n            if (0x39 < iVar3)\n              goto LAB_0265f755;\n          }\n          iVar5 = iVar5 + 1;\n        } while (iVar5 < active_cards_count[iVar7]);\n      }\n      iVar7 = iVar7 + 1;\n    } while (iVar7 != 2);\n  LAB_0265f755:\n    if (uStack_2d8 != 0)\n    {\n      candidates[iVar3].player = 1;\n      candidates[iVar3].card = -1;\n      iVar3 = iVar3 + 1;\n    }\n    if (uStack_2d4 != 0)\n    {\n      candidates[iVar3].player = 0;\n      candidates[iVar3].card = -1;\n      iVar3 = iVar3 + 1;\n    }\n    if (iVar3 != 0)\n    {\n      (*((int*)(0x4ed954))) = 3;\n      if (ai_is_speculating == 1)\n      {\n        (*((int*)(0x7a2fe4))) = internal_rand(iVar3);\n        (*((int*)(0x78fa30))) = (candidates[(*((int*)(0x7a2fe4)))].player < 1 ? 0 : 0x100) |\n                              (candidates[(*((int*)(0x7a2fe4)))].card & 0xff) | 0x4000;\n        sub_498F20();\n      }\n      else\n      {\n        sub_499050();\n        if ((iVar3 <= (*((int*)(0x7a2fe4)))) || ((*((int*)(0x7a2fe4))) == 99))\n        {\n          (*((int*)(0x7a2fe4))) = internal_rand(iVar3);\n        }\n      }\n      (*((int*)(0x60a550))) = candidates[(*((int*)(0x7a2fe4)))].player;\n      iVar2 = candidates[(*((int*)(0x7a2fe4)))].card;\n      ret_tgt->player = candidates[(*((int*)(0x7a2fe4)))].player;\n      ret_tgt->card = iVar2;\n      return 1;\n    }\n  }\n  return 0;\n}",
+      "expanded_after_definition": "static int select_target_impl(int player, int card, int who_chooses, int allowed_controller,\n                              int preferred_controller, int zone, int required_type,\n                              int illegal_type, int required_abilities, int illegal_abilities,\n                              int required_color, int illegal_color, int extra,\n                              int required_subtype, int power_requirement,\n                              int toughness_requirement, int special, int required_state,\n                              int illegal_state, int flags, const char *prompt, int allow_cancel,\n                              target_t *ret_tgt)\n{\n  if ((who_chooses != 1 || trace_mode & 2) && ai_is_speculating != 1)\n  {\n    int can_target_player_0, can_target_player_1, hwnd_SpellMinimized_is_visible, rval;\n\n    if (zone && !(zone & TARGET_ZONE_PLAYERS))\n      can_target_player_0 = can_target_player_1 = 0;\n    else if (allowed_controller & 2)\n      can_target_player_0 = can_target_player_1 = 1;\n    else if (allowed_controller & 1)\n    {\n      can_target_player_0 = 0;\n      can_target_player_1 = 1;\n    }\n    else\n    {\n      can_target_player_0 = 1;\n      can_target_player_1 = 0;\n    }\n\n\n\n    if ((zone & TARGET_ZONE_ON_STACK) &&\n        (stack_size > 1 ||\n         (stack_size == 1 && !(stack_cards[0].card == card && stack_cards[0].player == player))))\n      hwnd_SpellMinimized_is_visible = 1;\n    else\n      hwnd_SpellMinimized_is_visible = sub_45CEC0();\n\n    target_t tgt = {-1, -3};\n    target_t tmp_tgt;\n    int selection_status;\n\n    if (prompt && hack_prepend_prompt && ai_is_speculating != 1)\n    {\n      sprintf((char *)((const char*)(0x60A690)), \"%s: %s\", hack_prepend_prompt, prompt);\n      prompt = ((const char*)(0x60A690));\n    }\n    else if (!prompt)\n      prompt = ((const char*)(0x60A690));\n\n    while (1)\n    {\n\n      rval = sub_4378E0(who_chooses, -1, prompt, allow_cancel, -1, -1, -1, -1, &selection_status,\n                        &tmp_tgt, can_target_player_1, can_target_player_0);\n      if (rval)\n      {\n        card_instance_t *instance;\n        if (tmp_tgt.card < 0 ||\n            (instance = get_card_instance(tmp_tgt.player, tmp_tgt.card))->internal_card_id < 0 ||\n            (special & TARGET_SPECIAL_ALLOW_MULTIBLOCKER) ||\n            cards_at_7c7000[instance->internal_card_id]->code_pointer !=\n                (CardFunction)0x401010)\n        {\n          char err_reason[208];\n\n          if (validate_target_impl(player, card, tmp_tgt.player, tmp_tgt.card, err_reason,\n                                   who_chooses, allowed_controller, preferred_controller, zone,\n                                   required_type, illegal_type, required_abilities,\n                                   illegal_abilities, required_color, illegal_color, extra,\n                                   required_subtype, power_requirement, toughness_requirement,\n                                   special, required_state, illegal_state, flags))\n          {\n            tgt = tmp_tgt;\n            break;\n          }\n\n          if (ai_is_speculating != 1)\n          {\n            if (*err_reason)\n            {\n              char illegal_tgt[200];\n              sprintf(illegal_tgt, ((const char*)(0x73940C)) , err_reason);\n              display_error_message(illegal_tgt);\n            }\n            else\n              display_error_message(((const char*)(0x73732C)) );\n          }\n        }\n        else if (ai_is_speculating != 1)\n        {\n          char illegal_tgt[200];\n          sprintf(illegal_tgt, ((const char*)(0x73940C)) ,\n                  ((const char*)(0x728F6C)) );\n          display_error_message(illegal_tgt);\n        }\n\n        continue;\n      }\n\n      if (selection_status != -2)\n        continue;\n\n      if ((*((int*)(0x4EF1B0))) == -1 && (*((int*)(0x4EF1AC))) == -1)\n      {\n        tgt = tmp_tgt;\n        break;\n      }\n\n      if (zone & TARGET_ZONE_0x2000)\n        break;\n    }\n\n    *ret_tgt = tgt;\n    if (!hwnd_SpellMinimized_is_visible)\n      sub_45CF00();\n    if (rval)\n      (*((int*)(0x60A530))) = 0;\n    set_centerwindow_txt(\"\");\n    text_lines[0][0] = 0;\n    return rval;\n  }\n  else\n  {\n    int can_target_player_0, can_target_player_1, num_candidates, p, c;\n    target_t candidates[60];\n\n    if (((*((int*)(0x60E9FC))) & 1) && (allowed_controller & 2))\n      preferred_controller = allowed_controller;\n\n    if (zone && !(zone & TARGET_ZONE_PLAYERS))\n      can_target_player_0 = can_target_player_1 = 0;\n    else if (preferred_controller & 2)\n      can_target_player_0 = can_target_player_1 = 1;\n    else if (preferred_controller & 1)\n    {\n      can_target_player_0 = 0;\n      can_target_player_1 = 1;\n    }\n    else\n    {\n      can_target_player_0 = 1;\n      can_target_player_1 = 0;\n    }\n\n    if (spell_fizzled == 1)\n      return 0;\n\n    num_candidates = 0;\n\n    for (p = 0; p < 2 && num_candidates < 58; ++p)\n      for (c = 0; c < active_cards_count[p] && num_candidates < 58; ++c)\n      {\n        card_instance_t *instance = get_card_instance(p, c);\n        if (instance->internal_card_id != -1 &&\n            validate_target_impl(\n                player, card, p, c, \n\n                                   ((void *)0)\n\n                                       , who_chooses, allowed_controller, preferred_controller,\n                zone, required_type, illegal_type, required_abilities, illegal_abilities,\n                required_color, illegal_color, extra, required_subtype, power_requirement,\n                toughness_requirement, special, required_state, illegal_state, flags))\n        {\n          candidates[num_candidates].player = p;\n          candidates[num_candidates].card = c;\n          ++num_candidates;\n        }\n      }\n\n    if (can_target_player_1)\n    {\n      candidates[num_candidates].player = 1;\n      candidates[num_candidates].card = -1;\n      ++num_candidates;\n    }\n\n    if (can_target_player_0)\n    {\n      candidates[num_candidates].player = 0;\n      candidates[num_candidates].card = -1;\n      ++num_candidates;\n    }\n\n    if (num_candidates == 0)\n      return 0;\n\n    (*((int*)(0x4ED954))) = 3;\n\n    if (ai_is_speculating == 1)\n    {\n      (*((int*)(0x7A2FE4))) = internal_rand(num_candidates);\n      (*((int*)(0x78FA30))) = (candidates[(*((int*)(0x7A2FE4)))].player < 1 ? 0 : 0x100) |\n                            (candidates[(*((int*)(0x7A2FE4)))].card & 0xff) | 0x4000;\n\n      sub_498F20();\n    }\n    else\n    {\n      sub_499050();\n\n      if ((*((int*)(0x7A2FE4))) == 99 || num_candidates <= (*((int*)(0x7A2FE4))))\n        (*((int*)(0x7A2FE4))) = internal_rand(num_candidates);\n    }\n\n    (*((int*)(0x60A550))) = candidates[(*((int*)(0x7A2FE4)))].player;\n    *ret_tgt = candidates[(*((int*)(0x7A2FE4)))];\n    return 1;\n  }\n}"
+    },
+    {
+      "source": "functions/targets.c",
+      "name": "real_select_target",
+      "before_definition": "int real_select_target(int who_chooses, int allowed_controller, int preferred_controller,\n                            int zone, int required_type, int illegal_type, int required_abilities,\n                            int illegal_abilities, int required_color, int illegal_color, int extra,\n                            int required_subtype, int power_requirement, int toughness_requirement,\n                            int special, int required_state, int illegal_state, const char *prompt,\n                            int allow_cancel, target_t *ret_tgt)\n{\n  int iVar1;\n  int iVar2;\n  int iVar3;\n  unsigned int flags;\n  uint32_t uStack_14;\n  iVar3 = hack_gpf_player;\n  iVar1 = hack_gpf_card;\n  if ((illegal_abilities & 0x20000U) == 0)\n  {\n    iVar1 = -1;\n    uStack_14 = -1;\n    flags = 0;\n  }\n  else\n  {\n    uStack_14 = hack_gpf_player;\n    if ((hack_gpf_player < 0) || (hack_gpf_card < 0))\n    {\n      flags = 0;\n    }\n    else\n    {\n      iVar2 = has_subtype(hack_gpf_player, hack_gpf_card, SUBTYPE_AURA);\n      flags = 0;\n      if (iVar2 != 0)\n      {\n        flags = 2;\n      }\n      if (has_subtype(iVar3, iVar1, SUBTYPE_EQUIPMENT) != 0)\n      {\n        flags = flags | 4;\n      }\n    }\n  }\n  return select_target_maybe_force(\n      uStack_14, iVar1, who_chooses, allowed_controller, preferred_controller, zone, required_type,\n      illegal_type, required_abilities, illegal_abilities, required_color, illegal_color, extra,\n      required_subtype, power_requirement, toughness_requirement, special, required_state,\n      illegal_state, flags, prompt, allow_cancel, ret_tgt);\n}",
+      "after_definition": "int real_select_target(int who_chooses, int allowed_controller, int preferred_controller, int zone,\n                       int required_type, int illegal_type, int required_abilities,\n                       int illegal_abilities, int required_color, int illegal_color, int extra,\n                       int required_subtype, int power_requirement, int toughness_requirement,\n                       int special, int required_state, int illegal_state, const char *prompt,\n                       int allow_cancel, target_t *ret_tgt)\n{\n  int source_player = hack_gpf_player;\n  int source_card = hack_gpf_card;\n  unsigned int flags = 0;\n  if (!(illegal_abilities & KEYWORD_SHROUD))\n    source_player = source_card = -1;\n  else if (source_player >= 0 && source_card >= 0)\n  {\n    if (has_subtype(source_player, source_card, SUBTYPE_AURA))\n      flags = 2;\n    if (has_subtype(source_player, source_card, SUBTYPE_EQUIPMENT))\n      flags |= 4;\n  }\n  return select_target_maybe_force(\n      source_player, source_card, who_chooses, allowed_controller, preferred_controller, zone,\n      required_type, illegal_type, required_abilities, illegal_abilities, required_color,\n      illegal_color, extra, required_subtype, power_requirement, toughness_requirement, special,\n      required_state, illegal_state, flags, prompt, allow_cancel, ret_tgt);\n}",
+      "before_sha256": "cd10aff4ab5d7e5fef928f99ac38176f5ddc4e054e7993cede6ff1db36cc3f0a",
+      "after_sha256": "b3fe2c380dc12517142e6ee707394dbbaaabca7d6153e5201eb61d8d5ab54b38",
+      "target_selection_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 22,
+        "removed_placeholder_occurrences": 15,
+        "removed_placeholder_names": 4
+      },
+      "expanded_before_definition": "int real_select_target(int who_chooses, int allowed_controller, int preferred_controller,\n                            int zone, int required_type, int illegal_type, int required_abilities,\n                            int illegal_abilities, int required_color, int illegal_color, int extra,\n                            int required_subtype, int power_requirement, int toughness_requirement,\n                            int special, int required_state, int illegal_state, const char *prompt,\n                            int allow_cancel, target_t *ret_tgt)\n{\n  int iVar1;\n  int iVar2;\n  int iVar3;\n  unsigned int flags;\n  uint32_t uStack_14;\n  iVar3 = hack_gpf_player;\n  iVar1 = hack_gpf_card;\n  if ((illegal_abilities & 0x20000U) == 0)\n  {\n    iVar1 = -1;\n    uStack_14 = -1;\n    flags = 0;\n  }\n  else\n  {\n    uStack_14 = hack_gpf_player;\n    if ((hack_gpf_player < 0) || (hack_gpf_card < 0))\n    {\n      flags = 0;\n    }\n    else\n    {\n      iVar2 = has_subtype(hack_gpf_player, hack_gpf_card, SUBTYPE_AURA);\n      flags = 0;\n      if (iVar2 != 0)\n      {\n        flags = 2;\n      }\n      if (has_subtype(iVar3, iVar1, SUBTYPE_EQUIPMENT) != 0)\n      {\n        flags = flags | 4;\n      }\n    }\n  }\n  return select_target_maybe_force(\n      uStack_14, iVar1, who_chooses, allowed_controller, preferred_controller, zone, required_type,\n      illegal_type, required_abilities, illegal_abilities, required_color, illegal_color, extra,\n      required_subtype, power_requirement, toughness_requirement, special, required_state,\n      illegal_state, flags, prompt, allow_cancel, ret_tgt);\n}",
+      "expanded_after_definition": "int real_select_target(int who_chooses, int allowed_controller, int preferred_controller, int zone,\n                       int required_type, int illegal_type, int required_abilities,\n                       int illegal_abilities, int required_color, int illegal_color, int extra,\n                       int required_subtype, int power_requirement, int toughness_requirement,\n                       int special, int required_state, int illegal_state, const char *prompt,\n                       int allow_cancel, target_t *ret_tgt)\n{\n  int source_player = hack_gpf_player;\n  int source_card = hack_gpf_card;\n  unsigned int flags = 0;\n  if (!(illegal_abilities & KEYWORD_SHROUD))\n    source_player = source_card = -1;\n  else if (source_player >= 0 && source_card >= 0)\n  {\n    if (has_subtype(source_player, source_card, SUBTYPE_AURA))\n      flags = 2;\n    if (has_subtype(source_player, source_card, SUBTYPE_EQUIPMENT))\n      flags |= 4;\n  }\n  return select_target_maybe_force(\n      source_player, source_card, who_chooses, allowed_controller, preferred_controller, zone,\n      required_type, illegal_type, required_abilities, illegal_abilities, required_color,\n      illegal_color, extra, required_subtype, power_requirement, toughness_requirement, special,\n      required_state, illegal_state, flags, prompt, allow_cancel, ret_tgt);\n}"
+    },
+    {
+      "source": "functions/targets.c",
+      "name": "choose_default_target",
+      "before_definition": "int choose_default_target(int player, int card, target_definition_t *td)\n{\n  int i;\n  int32_t iVar1;\n  int32_t iVar2;\n  card_instance_t *instance;\n  int iVar4;\n  FILE *pFVar5;\n  int iVar7;\n  char buffer[500];\n\n  instance = get_card_instance(player, card);\n  if (get_setting(7) != 0)\n  {\n    if (read_auto_target_file == 0)\n    {\n      pFVar5 = fopen(\"TargetsHuman.txt\", \"r\");\n      iVar4 = 0;\n      while (iVar7 = fscanf(pFVar5, \"%[.]\", buffer), iVar7 == 1)\n      {\n        fscanf(pFVar5, \"%[0-9]\", buffer);\n        iVar7 = atoi(buffer);\n        auto_targets[iVar4] = iVar7;\n        auto_targets_target[iVar4] = 0;\n        fscanf(pFVar5, \"%[^\\n]\", buffer);\n        fscanf(pFVar5, \"%[\\n]\", buffer);\n        iVar4 = iVar4 + 1;\n      }\n      fclose(pFVar5);\n      pFVar5 = fopen(\"TargetsAI.txt\", \"r\");\n      while (iVar7 = fscanf(pFVar5, \"%[.]\", buffer), iVar7 == 1)\n      {\n        fscanf(pFVar5, \"%[0-9]\", buffer);\n        iVar7 = atoi(buffer);\n        auto_targets[iVar4] = iVar7;\n        auto_targets_target[iVar4] = 1;\n        fscanf(pFVar5, \"%[^\\n]\", buffer);\n        fscanf(pFVar5, \"%[\\n]\", buffer);\n        iVar4 = iVar4 + 1;\n      }\n      fclose(pFVar5);\n      auto_targets[iVar4] = -1;\n      read_auto_target_file = 1;\n    }\n    iVar4 = get_id(player, card);\n    iVar1 = td->allowed_controller;\n    i = 0;\n    iVar2 = td->preferred_controller;\n    do\n    {\n      if ((auto_targets[i] == iVar4) && (-1 < auto_targets[i]))\n      {\n        iVar4 = auto_targets_target[i];\n        td->allowed_controller = iVar4;\n        td->preferred_controller = iVar4;\n        break;\n      }\n      i = i + 1;\n    } while (i != 500);\n    iVar4 = target_available(player, card, td);\n    if (iVar4 == 1)\n    {\n      iVar4 = 0;\n      do\n      {\n        i = -1;\n        if (-1 < active_cards_count[iVar4])\n        {\n          do\n          {\n            instance->targets[0].player = iVar4;\n            instance->targets[0].card = i;\n            instance->number_of_targets = '\\0';\n            if (would_validate_target(player, card, td, 0) != 0)\n            {\n              return 1;\n            }\n            i = i + 1;\n          } while (i < active_cards_count[iVar4]);\n        }\n        iVar4 = iVar4 + 1;\n      } while (iVar4 != 2);\n    }\n    else\n    {\n      td->allowed_controller = iVar1;\n      td->preferred_controller = iVar2;\n    }\n  }\n  return 0;\n}",
+      "after_definition": "int choose_default_target(int player, int card, target_definition_t *td)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n\n  // if there is only 1 target, then pick it\n  if (get_setting(SETTING_SMART_TARGET))\n  {\n\n    // read in which cards should auto target\n    if (read_auto_target_file == 0)\n    {\n      char buffer[500];\n      FILE *file = fopen(\"TargetsHuman.txt\", \"r\");\n      int count = 0;\n      while (fscanf(file, \"%[.]\", buffer) == 1)\n      {\n        fscanf(file, \"%[0-9]\", buffer);\n        int num = atoi(buffer);\n        auto_targets[count] = num;\n        auto_targets_target[count] = HUMAN;\n        fscanf(file, \"%[^\\n]\", buffer);\n        fscanf(file, \"%[\\n]\", buffer);\n        count++;\n      }\n      fclose(file);\n      file = fopen(\"TargetsAI.txt\", \"r\");\n      while (fscanf(file, \"%[.]\", buffer) == 1)\n      {\n        fscanf(file, \"%[0-9]\", buffer);\n        int num = atoi(buffer);\n        auto_targets[count] = num;\n        auto_targets_target[count] = AI;\n        fscanf(file, \"%[^\\n]\", buffer);\n        fscanf(file, \"%[\\n]\", buffer);\n        count++;\n      }\n      fclose(file);\n      auto_targets[count] = -1;\n      read_auto_target_file = 1;\n    }\n\n    // see if the card being used has a default target\n    int id = get_id(player, card);\n\n    int i;\n    int original_allowed_controller = td->allowed_controller;\n    int original_preferred_controller = td->preferred_controller;\n\n    for (i = 0; i < 500; i++)\n    {\n      if (auto_targets[i] >= 0 && auto_targets[i] == id)\n      {\n        td->allowed_controller = auto_targets_target[i];\n        td->preferred_controller = auto_targets_target[i];\n        break;\n      }\n    }\n\n    if (target_available(player, card, td) == 1)\n    {\n      int p;\n      for (p = 0; p < 2; p++)\n      {\n        for (i = -1; i < active_cards_count[p]; i++)\n        {\n          instance->targets[0].player = p;\n          instance->targets[0].card = i;\n          instance->number_of_targets = 0;\n          if (would_validate_target(player, card, td, 0))\n          {\n            return 1;\n          }\n        }\n      }\n    }\n    else\n    {\n      td->allowed_controller = original_allowed_controller;\n      td->preferred_controller = original_preferred_controller;\n    }\n  }\n  return 0;\n}",
+      "before_sha256": "e13defdfc34e4bc65e39ffe55e6c21fb2726739f6691e1484963853d70e7b801",
+      "after_sha256": "096f8fb45d43b6ae6a4ceda2e814558b4927c0b2449022e21fb2562d0eb1f9d9",
+      "target_selection_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 8,
+        "removed_placeholder_occurrences": 53,
+        "removed_placeholder_names": 5
+      },
+      "expanded_before_definition": "int choose_default_target(int player, int card, target_definition_t *td)\n{\n  int i;\n  int32_t iVar1;\n  int32_t iVar2;\n  card_instance_t *instance;\n  int iVar4;\n  FILE *pFVar5;\n  int iVar7;\n  char buffer[500];\n\n  instance = get_card_instance(player, card);\n  if (get_setting(7) != 0)\n  {\n    if (read_auto_target_file == 0)\n    {\n      pFVar5 = fopen(\"TargetsHuman.txt\", \"r\");\n      iVar4 = 0;\n      while (iVar7 = fscanf(pFVar5, \"%[.]\", buffer), iVar7 == 1)\n      {\n        fscanf(pFVar5, \"%[0-9]\", buffer);\n        iVar7 = atoi(buffer);\n        auto_targets[iVar4] = iVar7;\n        auto_targets_target[iVar4] = 0;\n        fscanf(pFVar5, \"%[^\\n]\", buffer);\n        fscanf(pFVar5, \"%[\\n]\", buffer);\n        iVar4 = iVar4 + 1;\n      }\n      fclose(pFVar5);\n      pFVar5 = fopen(\"TargetsAI.txt\", \"r\");\n      while (iVar7 = fscanf(pFVar5, \"%[.]\", buffer), iVar7 == 1)\n      {\n        fscanf(pFVar5, \"%[0-9]\", buffer);\n        iVar7 = atoi(buffer);\n        auto_targets[iVar4] = iVar7;\n        auto_targets_target[iVar4] = 1;\n        fscanf(pFVar5, \"%[^\\n]\", buffer);\n        fscanf(pFVar5, \"%[\\n]\", buffer);\n        iVar4 = iVar4 + 1;\n      }\n      fclose(pFVar5);\n      auto_targets[iVar4] = -1;\n      read_auto_target_file = 1;\n    }\n    iVar4 = get_id(player, card);\n    iVar1 = td->allowed_controller;\n    i = 0;\n    iVar2 = td->preferred_controller;\n    do\n    {\n      if ((auto_targets[i] == iVar4) && (-1 < auto_targets[i]))\n      {\n        iVar4 = auto_targets_target[i];\n        td->allowed_controller = iVar4;\n        td->preferred_controller = iVar4;\n        break;\n      }\n      i = i + 1;\n    } while (i != 500);\n    iVar4 = target_available(player, card, td);\n    if (iVar4 == 1)\n    {\n      iVar4 = 0;\n      do\n      {\n        i = -1;\n        if (-1 < active_cards_count[iVar4])\n        {\n          do\n          {\n            instance->targets[0].player = iVar4;\n            instance->targets[0].card = i;\n            instance->number_of_targets = '\\0';\n            if (would_validate_target(player, card, td, 0) != 0)\n            {\n              return 1;\n            }\n            i = i + 1;\n          } while (i < active_cards_count[iVar4]);\n        }\n        iVar4 = iVar4 + 1;\n      } while (iVar4 != 2);\n    }\n    else\n    {\n      td->allowed_controller = iVar1;\n      td->preferred_controller = iVar2;\n    }\n  }\n  return 0;\n}",
+      "expanded_after_definition": "int choose_default_target(int player, int card, target_definition_t *td)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n\n\n  if (get_setting(SETTING_SMART_TARGET))\n  {\n\n\n    if (read_auto_target_file == 0)\n    {\n      char buffer[500];\n      FILE *file = fopen(\"TargetsHuman.txt\", \"r\");\n      int count = 0;\n      while (fscanf(file, \"%[.]\", buffer) == 1)\n      {\n        fscanf(file, \"%[0-9]\", buffer);\n        int num = atoi(buffer);\n        auto_targets[count] = num;\n        auto_targets_target[count] = HUMAN;\n        fscanf(file, \"%[^\\n]\", buffer);\n        fscanf(file, \"%[\\n]\", buffer);\n        count++;\n      }\n      fclose(file);\n      file = fopen(\"TargetsAI.txt\", \"r\");\n      while (fscanf(file, \"%[.]\", buffer) == 1)\n      {\n        fscanf(file, \"%[0-9]\", buffer);\n        int num = atoi(buffer);\n        auto_targets[count] = num;\n        auto_targets_target[count] = AI;\n        fscanf(file, \"%[^\\n]\", buffer);\n        fscanf(file, \"%[\\n]\", buffer);\n        count++;\n      }\n      fclose(file);\n      auto_targets[count] = -1;\n      read_auto_target_file = 1;\n    }\n\n\n    int id = get_id(player, card);\n\n    int i;\n    int original_allowed_controller = td->allowed_controller;\n    int original_preferred_controller = td->preferred_controller;\n\n    for (i = 0; i < 500; i++)\n    {\n      if (auto_targets[i] >= 0 && auto_targets[i] == id)\n      {\n        td->allowed_controller = auto_targets_target[i];\n        td->preferred_controller = auto_targets_target[i];\n        break;\n      }\n    }\n\n    if (target_available(player, card, td) == 1)\n    {\n      int p;\n      for (p = 0; p < 2; p++)\n      {\n        for (i = -1; i < active_cards_count[p]; i++)\n        {\n          instance->targets[0].player = p;\n          instance->targets[0].card = i;\n          instance->number_of_targets = 0;\n          if (would_validate_target(player, card, td, 0))\n          {\n            return 1;\n          }\n        }\n      }\n    }\n    else\n    {\n      td->allowed_controller = original_allowed_controller;\n      td->preferred_controller = original_preferred_controller;\n    }\n  }\n  return 0;\n}"
+    },
+    {
+      "source": "functions/targets.c",
+      "name": "mark_up_to_n_targets_noload",
+      "before_definition": "int mark_up_to_n_targets_noload(target_definition_t *td, const char *prompt, int num,\n                                     char (*marked)[151])\n{\n  int iVar1;\n  int iVar2;\n  card_instance_t *instance;\n  int card;\n  int iVar4;\n  bool bVar5;\n  target_t tgt;\n\n  if (num == 0)\n  {\n    return 0;\n  }\n  if (num < 0)\n  {\n    num = 500;\n  }\n  iVar4 = 0;\n  while (true)\n  {\n    if (can_target(td) == 0)\n    {\n      bVar5 = false;\n      goto LAB_026612a1;\n    }\n    if (select_target(td->player, td->card + -1000, td, prompt, &tgt) == 0)\n      break;\n    iVar4 = iVar4 + 1;\n    marked[tgt.player][tgt.card] = '\\x01';\n    instance = get_card_instance(tgt.player, tgt.card);\n    instance->state = instance->state | 0x300000;\n    if (num <= iVar4)\n    {\n      bVar5 = false;\n    LAB_026612a1:\n      iVar2 = 0;\n      do\n      {\n        card = 0;\n        if (0 < active_cards_count[iVar2])\n        {\n          do\n          {\n            while ((*marked)[card] == '\\0')\n            {\n              card = card + 1;\n              if (active_cards_count[iVar2] <= card)\n                goto LAB_026612f2;\n            }\n            instance = get_card_instance(iVar2, card);\n            card = card + 1;\n            iVar1 = active_cards_count[iVar2];\n            instance->state = instance->state & 0xffcfffff;\n          } while (card < iVar1);\n        }\n      LAB_026612f2:\n        iVar2 = iVar2 + 1;\n        marked = marked + 1;\n        if (iVar2 == 2)\n        {\n          if (bVar5)\n          {\n            spell_fizzled = 1;\n            iVar4 = 0;\n          }\n          return iVar4;\n        }\n      } while (true);\n    }\n  }\n  bVar5 = tgt.card == -1;\n  goto LAB_026612a1;\n}",
+      "after_definition": "int mark_up_to_n_targets_noload(target_definition_t *td, const char *prompt, int num,\n                                char (*marked)[151])\n{\n  if (num == 0)\n    return 0;\n  if (num < 0)\n    num = 500;\n\n  target_t tgt;\n\n  int p, c, i, picked_cancel = 0, num_tgts = 0;\n  for (i = 0; i < num && can_target(td); ++i)\n    if (select_target(td->player, td->card - 1000, td, prompt, &tgt))\n    {\n      ++num_tgts;\n      marked[tgt.player][tgt.card] = 1;\n      get_card_instance(tgt.player, tgt.card)->state |= STATE_TARGETTED | STATE_CANNOT_TARGET;\n    }\n    else\n    {\n      picked_cancel = tgt.card == -1;\n      break;\n    }\n\n  for (p = 0; p <= 1; ++p)\n    for (c = 0; c < active_cards_count[p]; ++c)\n      if (marked[p][c])\n        get_card_instance(p, c)->state &= ~(STATE_TARGETTED | STATE_CANNOT_TARGET);\n\n  if (picked_cancel)\n  {\n    num_tgts = 0;\n    spell_fizzled = 1;\n  }\n\n  return num_tgts;\n}",
+      "before_sha256": "eebab7a1ab8ae13c245e05233264285a2c03c47b497b5afd8e63ba0b39c93d20",
+      "after_sha256": "1ca6b2f8900193180eda220c1f7825b5f2519fe9cadce3a8aa25b79564908585",
+      "target_selection_cleanup": true,
+      "facts": {
+        "removed_gotos": 3,
+        "removed_lab_gotos": 3,
+        "source_lines_removed": 38,
+        "removed_placeholder_occurrences": 24,
+        "removed_placeholder_names": 4
+      },
+      "expanded_before_definition": "int mark_up_to_n_targets_noload(target_definition_t *td, const char *prompt, int num,\n                                     char (*marked)[151])\n{\n  int iVar1;\n  int iVar2;\n  card_instance_t *instance;\n  int card;\n  int iVar4;\n  \n\n _Bool \n\n      bVar5;\n  target_t tgt;\n\n  if (num == 0)\n  {\n    return 0;\n  }\n  if (num < 0)\n  {\n    num = 500;\n  }\n  iVar4 = 0;\n  while (\n\n        1\n\n            )\n  {\n    if (can_target(td) == 0)\n    {\n      bVar5 = \n\n             0\n\n                  ;\n      goto LAB_026612a1;\n    }\n    if (select_target(td->player, td->card + -1000, td, prompt, &tgt) == 0)\n      break;\n    iVar4 = iVar4 + 1;\n    marked[tgt.player][tgt.card] = '\\x01';\n    instance = get_card_instance(tgt.player, tgt.card);\n    instance->state = instance->state | 0x300000;\n    if (num <= iVar4)\n    {\n      bVar5 = \n\n             0\n\n                  ;\n    LAB_026612a1:\n      iVar2 = 0;\n      do\n      {\n        card = 0;\n        if (0 < active_cards_count[iVar2])\n        {\n          do\n          {\n            while ((*marked)[card] == '\\0')\n            {\n              card = card + 1;\n              if (active_cards_count[iVar2] <= card)\n                goto LAB_026612f2;\n            }\n            instance = get_card_instance(iVar2, card);\n            card = card + 1;\n            iVar1 = active_cards_count[iVar2];\n            instance->state = instance->state & 0xffcfffff;\n          } while (card < iVar1);\n        }\n      LAB_026612f2:\n        iVar2 = iVar2 + 1;\n        marked = marked + 1;\n        if (iVar2 == 2)\n        {\n          if (bVar5)\n          {\n            spell_fizzled = 1;\n            iVar4 = 0;\n          }\n          return iVar4;\n        }\n      } while (\n\n              1\n\n                  );\n    }\n  }\n  bVar5 = tgt.card == -1;\n  goto LAB_026612a1;\n}",
+      "expanded_after_definition": "int mark_up_to_n_targets_noload(target_definition_t *td, const char *prompt, int num,\n                                char (*marked)[151])\n{\n  if (num == 0)\n    return 0;\n  if (num < 0)\n    num = 500;\n\n  target_t tgt;\n\n  int p, c, i, picked_cancel = 0, num_tgts = 0;\n  for (i = 0; i < num && can_target(td); ++i)\n    if (select_target(td->player, td->card - 1000, td, prompt, &tgt))\n    {\n      ++num_tgts;\n      marked[tgt.player][tgt.card] = 1;\n      get_card_instance(tgt.player, tgt.card)->state |= STATE_TARGETTED | STATE_CANNOT_TARGET;\n    }\n    else\n    {\n      picked_cancel = tgt.card == -1;\n      break;\n    }\n\n  for (p = 0; p <= 1; ++p)\n    for (c = 0; c < active_cards_count[p]; ++c)\n      if (marked[p][c])\n        get_card_instance(p, c)->state &= ~(STATE_TARGETTED | STATE_CANNOT_TARGET);\n\n  if (picked_cancel)\n  {\n    num_tgts = 0;\n    spell_fizzled = 1;\n  }\n\n  return num_tgts;\n}"
+    },
+    {
+      "source": "functions/targets.c",
+      "name": "opponent_is_valid_target",
+      "before_definition": "int opponent_is_valid_target(int player, int card)\n{\n  uint8_t uVar1;\n  int32_t iVar2;\n  int32_t iVar3;\n  card_instance_t *instance;\n  int iVar5;\n  target_definition_t td;\n\n  instance = get_card_instance(player, card);\n  default_target_definition(player, card, &td, 0);\n  td.allow_cancel = 0;\n  uVar1 = instance->number_of_targets;\n  td.preferred_controller = 1 - player;\n  instance->number_of_targets = '\\x01';\n  iVar2 = instance->targets[0].player;\n  iVar3 = instance->targets[0].card;\n  instance->targets[0].player = td.preferred_controller;\n  instance->targets[0].card = -1;\n  td.zone = 0x1000;\n  iVar5 = would_validate_target(td.player, td.card, &td, 0);\n  instance->targets[0].player = iVar2;\n  instance->targets[0].card = iVar3;\n  instance->number_of_targets = uVar1;\n  return iVar5;\n}",
+      "after_definition": "int opponent_is_valid_target(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  target_definition_t td;\n  default_target_definition(player, card, &td, 0);\n  td.allow_cancel = 0;\n  uint8_t saved_count = instance->number_of_targets;\n  td.preferred_controller = 1 - player;\n  instance->number_of_targets = 1;\n  target_t saved_target = instance->targets[0];\n  instance->targets[0].player = td.preferred_controller;\n  instance->targets[0].card = -1;\n  td.zone = TARGET_ZONE_PLAYERS;\n  int result = would_validate_target(td.player, td.card, &td, 0);\n  instance->targets[0] = saved_target;\n  instance->number_of_targets = saved_count;\n  return result;\n}",
+      "before_sha256": "743f11a9193fcd0df2a48046e929be9de559178016211a4a511352e373f75239",
+      "after_sha256": "2810ed4d4fa6be59db92e4b20ceade4534d52d46940cf501e106db7e95cd0ece",
+      "target_selection_cleanup": true,
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 8,
+        "removed_placeholder_occurrences": 12,
+        "removed_placeholder_names": 4
+      },
+      "expanded_before_definition": "int opponent_is_valid_target(int player, int card)\n{\n  uint8_t uVar1;\n  int32_t iVar2;\n  int32_t iVar3;\n  card_instance_t *instance;\n  int iVar5;\n  target_definition_t td;\n\n  instance = get_card_instance(player, card);\n  default_target_definition(player, card, &td, 0);\n  td.allow_cancel = 0;\n  uVar1 = instance->number_of_targets;\n  td.preferred_controller = 1 - player;\n  instance->number_of_targets = '\\x01';\n  iVar2 = instance->targets[0].player;\n  iVar3 = instance->targets[0].card;\n  instance->targets[0].player = td.preferred_controller;\n  instance->targets[0].card = -1;\n  td.zone = 0x1000;\n  iVar5 = would_validate_target(td.player, td.card, &td, 0);\n  instance->targets[0].player = iVar2;\n  instance->targets[0].card = iVar3;\n  instance->number_of_targets = uVar1;\n  return iVar5;\n}",
+      "expanded_after_definition": "int opponent_is_valid_target(int player, int card)\n{\n  card_instance_t *instance = get_card_instance(player, card);\n  target_definition_t td;\n  default_target_definition(player, card, &td, 0);\n  td.allow_cancel = 0;\n  uint8_t saved_count = instance->number_of_targets;\n  td.preferred_controller = 1 - player;\n  instance->number_of_targets = 1;\n  target_t saved_target = instance->targets[0];\n  instance->targets[0].player = td.preferred_controller;\n  instance->targets[0].card = -1;\n  td.zone = TARGET_ZONE_PLAYERS;\n  int result = would_validate_target(td.player, td.card, &td, 0);\n  instance->targets[0] = saved_target;\n  instance->number_of_targets = saved_count;\n  return result;\n}"
+    }
+  ],
+  "source_state_sha256": "42ee8b7b4de8f14ea2ed97b7c22ecde1b049dec856fb504d620277fd50ecf013",
+  "raw_source_bytes_sha256": "cba7f621801caaa4e977a568e5cd672b3d87fefdef82f33f51e6002cf7bc5b7a",
+  "index_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "native_comparison": {
+    "result": {
+      "all_equal": true,
+      "three_way_comparisons": 67712,
+      "entry_invocations": 203136,
+      "functions": {
+        "can_legally_target": 6144,
+        "real_validate_target": 6144,
+        "real_target_available": 6144,
+        "validate_arbitrary_target": 6144,
+        "validate_target": 6144,
+        "valid_target": 6144,
+        "select_target_impl": 6272,
+        "real_select_target": 6144,
+        "choose_default_target": 6144,
+        "mark_up_to_n_targets_noload": 6144,
+        "opponent_is_valid_target": 6144
+      }
+    },
+    "functions": [
+      {
+        "name": "can_legally_target",
+        "address": "0x2661860",
+        "size": 151,
+        "sha256": "ec21a40291031ebbacd6f2f95c38c38def0d8e55db3a0701f4c8a25563a847de",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x2661876",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26618a8",
+            "target": "0x267a160",
+            "callee": "set_special_flags2"
+          },
+          {
+            "instruction": "0x26618bc",
+            "target": "0x26caff0",
+            "callee": "call_card_function"
+          },
+          {
+            "instruction": "0x26618e7",
+            "target": "0x267a210",
+            "callee": "remove_special_flags2"
+          }
+        ]
+      },
+      {
+        "name": "real_validate_target",
+        "address": "0x265fcf0",
+        "size": 390,
+        "sha256": "9e10a60280beec6dc471b634dad15c0375096fb67e0e31e9da0fc63c0e9b37c2",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x265fe13",
+            "target": "0x265d720",
+            "callee": "native_validate"
+          },
+          {
+            "instruction": "0x265fe2d",
+            "target": "0x26738b0",
+            "callee": "has_subtype"
+          },
+          {
+            "instruction": "0x265fe5b",
+            "target": "0x26738b0",
+            "callee": "has_subtype"
+          }
+        ]
+      },
+      {
+        "name": "real_target_available",
+        "address": "0x265fe80",
+        "size": 398,
+        "sha256": "5b9ed2c38140d87f17212fd9f4a856a2fc584e6f5dd3123b6f060929aea1df9d",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x265ffaa",
+            "target": "0x265ef60",
+            "callee": "native_available"
+          },
+          {
+            "instruction": "0x265ffc5",
+            "target": "0x26738b0",
+            "callee": "has_subtype"
+          },
+          {
+            "instruction": "0x265fff3",
+            "target": "0x26738b0",
+            "callee": "has_subtype"
+          }
+        ]
+      },
+      {
+        "name": "validate_arbitrary_target",
+        "address": "0x2660810",
+        "size": 52,
+        "sha256": "9470c3b1c5fec4c7b16a3728a068675eec95b7326df60bcf4e6967ef0f330cd3",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x2660835",
+            "target": "0x2660750",
+            "callee": "would_validate_arbitrary_target"
+          }
+        ]
+      },
+      {
+        "name": "validate_target",
+        "address": "0x2661710",
+        "size": 59,
+        "sha256": "0ff988997513b5fa651aea3e28c1e3b8439d9cbb7bf28bccf9494564f1904da9",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x266173c",
+            "target": "0x2660850",
+            "callee": "would_validate_target"
+          }
+        ]
+      },
+      {
+        "name": "valid_target",
+        "address": "0x2661750",
+        "size": 60,
+        "sha256": "c1fefc537b65c2790dce5094e51ae6364329e8e5ccebcbea2e69881728b3f99e",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x266177d",
+            "target": "0x2660850",
+            "callee": "would_validate_target"
+          }
+        ]
+      },
+      {
+        "name": "select_target_impl",
+        "address": "0x265f3d0",
+        "size": 1863,
+        "sha256": "26a87d0ab2f0ae3ee38ead0cf0145faf35b4bccd52fd3a9640a7b31c7b96e5dd",
+        "entry_abi": "regparm(3)",
+        "external_branches": [
+          {
+            "instruction": "0x265f4c2",
+            "target": "0x4378e0",
+            "callee": "sub_4378E0"
+          },
+          {
+            "instruction": "0x265f4e8",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x265f5a7",
+            "target": "0x265d720",
+            "callee": "native_validate"
+          },
+          {
+            "instruction": "0x265f5e7",
+            "target": "0x4386f0",
+            "callee": "set_centerwindow_txt"
+          },
+          {
+            "instruction": "0x265f677",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x265f720",
+            "target": "0x265d720",
+            "callee": "native_validate"
+          },
+          {
+            "instruction": "0x265f7b6",
+            "target": "0x499050",
+            "callee": "sub_499050"
+          },
+          {
+            "instruction": "0x265f89e",
+            "target": "0x45cec0",
+            "callee": "sub_45CEC0"
+          },
+          {
+            "instruction": "0x265f8e8",
+            "target": "0x2701df0",
+            "callee": "sprintf"
+          },
+          {
+            "instruction": "0x265f946",
+            "target": "0x45cf00",
+            "callee": "sub_45CF00"
+          },
+          {
+            "instruction": "0x265f9ba",
+            "target": "0x2701df0",
+            "callee": "sprintf"
+          },
+          {
+            "instruction": "0x265f9c8",
+            "target": "0x26a0220",
+            "callee": "display_error_message"
+          },
+          {
+            "instruction": "0x265fa13",
+            "target": "0x44e050",
+            "callee": "internal_rand"
+          },
+          {
+            "instruction": "0x265fa47",
+            "target": "0x498f20",
+            "callee": "sub_498F20"
+          },
+          {
+            "instruction": "0x265fa95",
+            "target": "0x2701df0",
+            "callee": "sprintf"
+          },
+          {
+            "instruction": "0x265fa9d",
+            "target": "0x26a0220",
+            "callee": "display_error_message"
+          },
+          {
+            "instruction": "0x265faeb",
+            "target": "0x44e050",
+            "callee": "internal_rand"
+          },
+          {
+            "instruction": "0x265fb03",
+            "target": "0x26a0220",
+            "callee": "display_error_message"
+          },
+          {
+            "instruction": "0x265fb0d",
+            "target": "0x45cf00",
+            "callee": "sub_45CF00"
+          }
+        ]
+      },
+      {
+        "name": "real_select_target",
+        "address": "0x2660010",
+        "size": 390,
+        "sha256": "38b3af889380da29c166f8e1491fcee2c65c5b26129bb098f6c5365d58b288fe",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x2660133",
+            "target": "0x265fb20",
+            "callee": "native_maybe_force"
+          },
+          {
+            "instruction": "0x266014d",
+            "target": "0x26738b0",
+            "callee": "has_subtype"
+          },
+          {
+            "instruction": "0x266017b",
+            "target": "0x26738b0",
+            "callee": "has_subtype"
+          }
+        ]
+      },
+      {
+        "name": "choose_default_target",
+        "address": "0x2660930",
+        "size": 639,
+        "sha256": "cfdea7bee954557355b2dd1cc87779bce2d02725559d158729f4e699df8ef46e",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x2660949",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x266095b",
+            "target": "0x26c7810",
+            "callee": "get_setting"
+          },
+          {
+            "instruction": "0x2660983",
+            "target": "0x26b35a0",
+            "callee": "get_id"
+          },
+          {
+            "instruction": "0x26609d4",
+            "target": "0x2660570",
+            "callee": "target_available"
+          },
+          {
+            "instruction": "0x2660a0f",
+            "target": "0x2701e88",
+            "callee": "fake_fopen"
+          },
+          {
+            "instruction": "0x2660a2f",
+            "target": "0x2701e58",
+            "callee": "fake_fscanf"
+          },
+          {
+            "instruction": "0x2660a37",
+            "target": "0x2701eb0",
+            "callee": "atoi"
+          },
+          {
+            "instruction": "0x2660a5d",
+            "target": "0x2701e58",
+            "callee": "fake_fscanf"
+          },
+          {
+            "instruction": "0x2660a71",
+            "target": "0x2701e58",
+            "callee": "fake_fscanf"
+          },
+          {
+            "instruction": "0x2660a86",
+            "target": "0x2701e58",
+            "callee": "fake_fscanf"
+          },
+          {
+            "instruction": "0x2660a91",
+            "target": "0x2701ea0",
+            "callee": "fake_fclose"
+          },
+          {
+            "instruction": "0x2660aa5",
+            "target": "0x2701e88",
+            "callee": "fake_fopen"
+          },
+          {
+            "instruction": "0x2660abf",
+            "target": "0x2701e58",
+            "callee": "fake_fscanf"
+          },
+          {
+            "instruction": "0x2660ac7",
+            "target": "0x2701eb0",
+            "callee": "atoi"
+          },
+          {
+            "instruction": "0x2660aed",
+            "target": "0x2701e58",
+            "callee": "fake_fscanf"
+          },
+          {
+            "instruction": "0x2660b01",
+            "target": "0x2701e58",
+            "callee": "fake_fscanf"
+          },
+          {
+            "instruction": "0x2660b16",
+            "target": "0x2701e58",
+            "callee": "fake_fscanf"
+          },
+          {
+            "instruction": "0x2660b21",
+            "target": "0x2701ea0",
+            "callee": "fake_fclose"
+          },
+          {
+            "instruction": "0x2660b90",
+            "target": "0x2660850",
+            "callee": "would_validate_target"
+          }
+        ]
+      },
+      {
+        "name": "mark_up_to_n_targets_noload",
+        "address": "0x2661200",
+        "size": 343,
+        "sha256": "8ac323b81de7409b61ccb7a67c5ce856237719f474a9f9cad0763050cb234a77",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x266124c",
+            "target": "0x2660bb0",
+            "callee": "select_target"
+          },
+          {
+            "instruction": "0x2661279",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x2661296",
+            "target": "0x26604c0",
+            "callee": "can_target"
+          },
+          {
+            "instruction": "0x26612d7",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          }
+        ]
+      },
+      {
+        "name": "opponent_is_valid_target",
+        "address": "0x2661670",
+        "size": 159,
+        "sha256": "e5c21c5a46fbc02814f477d17bb1f3f7e6e86a9db9ae868d17527e9fd8411bbb",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x2661686",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26616a3",
+            "target": "0x2660240",
+            "callee": "default_target_definition"
+          },
+          {
+            "instruction": "0x26616f6",
+            "target": "0x2660850",
+            "callee": "would_validate_target"
+          }
+        ]
+      }
+    ],
+    "bindings": [
+      {
+        "kind": "callee",
+        "owner": "can_legally_target",
+        "patch_address": "0x2661877",
+        "original_word": "0x51235",
+        "target": "(uintptr_t)get_card_instance-0x266187bU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "can_legally_target",
+        "patch_address": "0x26618a9",
+        "original_word": "0x188b3",
+        "target": "(uintptr_t)set_special_flags2-0x26618adU",
+        "native_target": "0x267a160"
+      },
+      {
+        "kind": "callee",
+        "owner": "can_legally_target",
+        "patch_address": "0x26618bd",
+        "original_word": "0x6972f",
+        "target": "(uintptr_t)call_card_function-0x26618c1U",
+        "native_target": "0x26caff0"
+      },
+      {
+        "kind": "callee",
+        "owner": "can_legally_target",
+        "patch_address": "0x26618e8",
+        "original_word": "0x18924",
+        "target": "(uintptr_t)remove_special_flags2-0x26618ecU",
+        "native_target": "0x267a210"
+      },
+      {
+        "kind": "data",
+        "owner": "real_validate_target",
+        "patch_address": "0x265fd73",
+        "original_word": "0x2721288",
+        "target": "(uintptr_t)(&hack_gpf_player)"
+      },
+      {
+        "kind": "data",
+        "owner": "real_validate_target",
+        "patch_address": "0x265fd79",
+        "original_word": "0x2721284",
+        "target": "(uintptr_t)(&hack_gpf_card)"
+      },
+      {
+        "kind": "callee",
+        "owner": "real_validate_target",
+        "patch_address": "0x265fe14",
+        "original_word": "0xffffd908",
+        "target": "(uintptr_t)native_validate-0x265fe18U",
+        "native_target": "0x265d720"
+      },
+      {
+        "kind": "callee",
+        "owner": "real_validate_target",
+        "patch_address": "0x265fe2e",
+        "original_word": "0x13a7e",
+        "target": "(uintptr_t)has_subtype-0x265fe32U",
+        "native_target": "0x26738b0"
+      },
+      {
+        "kind": "callee",
+        "owner": "real_validate_target",
+        "patch_address": "0x265fe5c",
+        "original_word": "0x13a50",
+        "target": "(uintptr_t)has_subtype-0x265fe60U",
+        "native_target": "0x26738b0"
+      },
+      {
+        "kind": "data",
+        "owner": "real_target_available",
+        "patch_address": "0x265fefd",
+        "original_word": "0x2721288",
+        "target": "(uintptr_t)(&hack_gpf_player)"
+      },
+      {
+        "kind": "data",
+        "owner": "real_target_available",
+        "patch_address": "0x265ff03",
+        "original_word": "0x2721284",
+        "target": "(uintptr_t)(&hack_gpf_card)"
+      },
+      {
+        "kind": "callee",
+        "owner": "real_target_available",
+        "patch_address": "0x265ffab",
+        "original_word": "0xffffefb1",
+        "target": "(uintptr_t)native_available-0x265ffafU",
+        "native_target": "0x265ef60"
+      },
+      {
+        "kind": "callee",
+        "owner": "real_target_available",
+        "patch_address": "0x265ffc6",
+        "original_word": "0x138e6",
+        "target": "(uintptr_t)has_subtype-0x265ffcaU",
+        "native_target": "0x26738b0"
+      },
+      {
+        "kind": "callee",
+        "owner": "real_target_available",
+        "patch_address": "0x265fff4",
+        "original_word": "0x138b8",
+        "target": "(uintptr_t)has_subtype-0x265fff8U",
+        "native_target": "0x26738b0"
+      },
+      {
+        "kind": "callee",
+        "owner": "validate_arbitrary_target",
+        "patch_address": "0x2660836",
+        "original_word": "0xffffff16",
+        "target": "(uintptr_t)would_validate_arbitrary_target-0x266083aU",
+        "native_target": "0x2660750"
+      },
+      {
+        "kind": "callee",
+        "owner": "validate_target",
+        "patch_address": "0x266173d",
+        "original_word": "0xfffff10f",
+        "target": "(uintptr_t)would_validate_target-0x2661741U",
+        "native_target": "0x2660850"
+      },
+      {
+        "kind": "callee",
+        "owner": "valid_target",
+        "patch_address": "0x266177e",
+        "original_word": "0xfffff0ce",
+        "target": "(uintptr_t)would_validate_target-0x2661782U",
+        "native_target": "0x2660850"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f3f7",
+        "original_word": "0x728574",
+        "target": "(uintptr_t)(&ai_is_speculating)"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f42c",
+        "original_word": "0x5057a8",
+        "target": "(uintptr_t)(&stack_size)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f455",
+        "original_word": "0x60a690",
+        "target": "(uintptr_t)(engine_string(0x60a690))"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f4c3",
+        "original_word": "0xfddd8419",
+        "target": "(uintptr_t)sub_4378E0-0x265f4c7U",
+        "native_target": "0x4378e0"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f4e9",
+        "original_word": "0x535c3",
+        "target": "(uintptr_t)get_card_instance-0x265f4edU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f5a8",
+        "original_word": "0xffffe174",
+        "target": "(uintptr_t)native_validate-0x265f5acU",
+        "native_target": "0x265d720"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f5d8",
+        "original_word": "0x60a530",
+        "target": "(uintptr_t)(engine_word(0x60a530))"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f5e8",
+        "original_word": "0xfddd9104",
+        "target": "(uintptr_t)set_centerwindow_txt-0x265f5ecU",
+        "native_target": "0x4386f0"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f5ee",
+        "original_word": "0x715cac",
+        "target": "(uintptr_t)(text_lines)"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f602",
+        "original_word": "0x790640",
+        "target": "(uintptr_t)(&trace_mode)"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f60e",
+        "original_word": "0x60e9fc",
+        "target": "(uintptr_t)(engine_word(0x60e9fc))"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f64c",
+        "original_word": "0x4ef194",
+        "target": "(uintptr_t)(&spell_fizzled)"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f65e",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f678",
+        "original_word": "0x53434",
+        "target": "(uintptr_t)get_card_instance-0x265f67cU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f721",
+        "original_word": "0xffffdffb",
+        "target": "(uintptr_t)native_validate-0x265f725U",
+        "native_target": "0x265d720"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f741",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f7a1",
+        "original_word": "0x4ed954",
+        "target": "(uintptr_t)(engine_word(0x4ed954))"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f7ab",
+        "original_word": "0x728574",
+        "target": "(uintptr_t)(&ai_is_speculating)"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f7b7",
+        "original_word": "0xfde39895",
+        "target": "(uintptr_t)sub_499050-0x265f7bbU",
+        "native_target": "0x499050"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f7bd",
+        "original_word": "0x7a2fe4",
+        "target": "(uintptr_t)(engine_word(0x7a2fe4))"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f7df",
+        "original_word": "0x60a550",
+        "target": "(uintptr_t)(engine_word(0x60a550))"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f868",
+        "original_word": "0x4ef194",
+        "target": "(uintptr_t)(&spell_fizzled)"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f89f",
+        "original_word": "0xfddfd61d",
+        "target": "(uintptr_t)sub_45CEC0-0x265f8a3U",
+        "native_target": "0x45cec0"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f8b5",
+        "original_word": "0x2774804",
+        "target": "(uintptr_t)(&hack_prepend_prompt)"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f8c3",
+        "original_word": "0x728574",
+        "target": "(uintptr_t)(&ai_is_speculating)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f8e4",
+        "original_word": "0x60a690",
+        "target": "(uintptr_t)(engine_string(0x60a690))"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f8e9",
+        "original_word": "0xa2503",
+        "target": "(uintptr_t)sprintf-0x265f8edU",
+        "native_target": "0x2701df0"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f8f0",
+        "original_word": "0x60a690",
+        "target": "(uintptr_t)(engine_string(0x60a690))"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f90f",
+        "original_word": "0x4ef1b0",
+        "target": "(uintptr_t)(engine_word(0x4ef1b0))"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f947",
+        "original_word": "0xfddfd5b5",
+        "target": "(uintptr_t)sub_45CF00-0x265f94bU",
+        "native_target": "0x45cf00"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f95e",
+        "original_word": "0x5096b4",
+        "target": "(uintptr_t)((char*)stack_cards+4)"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f970",
+        "original_word": "0x5096b0",
+        "target": "(uintptr_t)(stack_cards)"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f983",
+        "original_word": "0x7c7000",
+        "target": "(uintptr_t)(cards_at_7c7000)"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f996",
+        "original_word": "0x728574",
+        "target": "(uintptr_t)(&ai_is_speculating)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f9ab",
+        "original_word": "0x728f6c",
+        "target": "(uintptr_t)(engine_string(0x728f6c))"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f9b3",
+        "original_word": "0x73940c",
+        "target": "(uintptr_t)(engine_string(0x73940c))"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f9bb",
+        "original_word": "0xa2431",
+        "target": "(uintptr_t)sprintf-0x265f9bfU",
+        "native_target": "0x2701df0"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265f9c9",
+        "original_word": "0x40853",
+        "target": "(uintptr_t)display_error_message-0x265f9cdU",
+        "native_target": "0x26a0220"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265fa14",
+        "original_word": "0xfddee638",
+        "target": "(uintptr_t)internal_rand-0x265fa18U",
+        "native_target": "0x44e050"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265fa1b",
+        "original_word": "0x7a2fe4",
+        "target": "(uintptr_t)(engine_word(0x7a2fe4))"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265fa43",
+        "original_word": "0x78fa30",
+        "target": "(uintptr_t)(engine_word(0x78fa30))"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265fa48",
+        "original_word": "0xfde394d4",
+        "target": "(uintptr_t)sub_498F20-0x265fa4cU",
+        "native_target": "0x498f20"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265fa4e",
+        "original_word": "0x7a2fe4",
+        "target": "(uintptr_t)(engine_word(0x7a2fe4))"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265fa62",
+        "original_word": "0x728574",
+        "target": "(uintptr_t)(&ai_is_speculating)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "select_target_impl",
+        "patch_address": "0x265fa8e",
+        "original_word": "0x73940c",
+        "target": "(uintptr_t)(engine_string(0x73940c))"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265fa96",
+        "original_word": "0xa2356",
+        "target": "(uintptr_t)sprintf-0x265fa9aU",
+        "native_target": "0x2701df0"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265fa9e",
+        "original_word": "0x4077e",
+        "target": "(uintptr_t)display_error_message-0x265faa2U",
+        "native_target": "0x26a0220"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265faca",
+        "original_word": "0x4ef1ac",
+        "target": "(uintptr_t)(engine_word(0x4ef1ac))"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265faec",
+        "original_word": "0xfddee560",
+        "target": "(uintptr_t)internal_rand-0x265faf0U",
+        "native_target": "0x44e050"
+      },
+      {
+        "kind": "data",
+        "owner": "select_target_impl",
+        "patch_address": "0x265faf1",
+        "original_word": "0x7a2fe4",
+        "target": "(uintptr_t)(engine_word(0x7a2fe4))"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "select_target_impl",
+        "patch_address": "0x265faff",
+        "original_word": "0x73732c",
+        "target": "(uintptr_t)(engine_string(0x73732c))"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265fb04",
+        "original_word": "0x40718",
+        "target": "(uintptr_t)display_error_message-0x265fb08U",
+        "native_target": "0x26a0220"
+      },
+      {
+        "kind": "callee",
+        "owner": "select_target_impl",
+        "patch_address": "0x265fb0e",
+        "original_word": "0xfddfd3ee",
+        "target": "(uintptr_t)sub_45CF00-0x265fb12U",
+        "native_target": "0x45cf00"
+      },
+      {
+        "kind": "data",
+        "owner": "real_select_target",
+        "patch_address": "0x2660093",
+        "original_word": "0x2721288",
+        "target": "(uintptr_t)(&hack_gpf_player)"
+      },
+      {
+        "kind": "data",
+        "owner": "real_select_target",
+        "patch_address": "0x2660099",
+        "original_word": "0x2721284",
+        "target": "(uintptr_t)(&hack_gpf_card)"
+      },
+      {
+        "kind": "callee",
+        "owner": "real_select_target",
+        "patch_address": "0x2660134",
+        "original_word": "0xfffff9e8",
+        "target": "(uintptr_t)native_maybe_force-0x2660138U",
+        "native_target": "0x265fb20"
+      },
+      {
+        "kind": "callee",
+        "owner": "real_select_target",
+        "patch_address": "0x266014e",
+        "original_word": "0x1375e",
+        "target": "(uintptr_t)has_subtype-0x2660152U",
+        "native_target": "0x26738b0"
+      },
+      {
+        "kind": "callee",
+        "owner": "real_select_target",
+        "patch_address": "0x266017c",
+        "original_word": "0x13730",
+        "target": "(uintptr_t)has_subtype-0x2660180U",
+        "native_target": "0x26738b0"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x266094a",
+        "original_word": "0x52162",
+        "target": "(uintptr_t)get_card_instance-0x266094eU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x266095c",
+        "original_word": "0x66eb0",
+        "target": "(uintptr_t)get_setting-0x2660960U",
+        "native_target": "0x26c7810"
+      },
+      {
+        "kind": "data",
+        "owner": "choose_default_target",
+        "patch_address": "0x266096a",
+        "original_word": "0x2774800",
+        "target": "(uintptr_t)(&read_auto_target_file)"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660984",
+        "original_word": "0x52c18",
+        "target": "(uintptr_t)get_id-0x2660988U",
+        "native_target": "0x26b35a0"
+      },
+      {
+        "kind": "data",
+        "owner": "choose_default_target",
+        "patch_address": "0x26609a4",
+        "original_word": "0x2796840",
+        "target": "(uintptr_t)(auto_targets)"
+      },
+      {
+        "kind": "data",
+        "owner": "choose_default_target",
+        "patch_address": "0x26609b6",
+        "original_word": "0x2796060",
+        "target": "(uintptr_t)(auto_targets_target)"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x26609d5",
+        "original_word": "0xfffffb97",
+        "target": "(uintptr_t)target_available-0x26609d9U",
+        "native_target": "0x2660570"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660a10",
+        "original_word": "0xa1474",
+        "target": "(uintptr_t)fake_fopen-0x2660a14U",
+        "native_target": "0x2701e88"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660a30",
+        "original_word": "0xa1424",
+        "target": "(uintptr_t)fake_fscanf-0x2660a34U",
+        "native_target": "0x2701e58"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660a38",
+        "original_word": "0xa1474",
+        "target": "(uintptr_t)atoi-0x2660a3cU",
+        "native_target": "0x2701eb0"
+      },
+      {
+        "kind": "data",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660a4e",
+        "original_word": "0x2796840",
+        "target": "(uintptr_t)(auto_targets)"
+      },
+      {
+        "kind": "data",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660a55",
+        "original_word": "0x2796060",
+        "target": "(uintptr_t)(auto_targets_target)"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660a5e",
+        "original_word": "0xa13f6",
+        "target": "(uintptr_t)fake_fscanf-0x2660a62U",
+        "native_target": "0x2701e58"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660a72",
+        "original_word": "0xa13e2",
+        "target": "(uintptr_t)fake_fscanf-0x2660a76U",
+        "native_target": "0x2701e58"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660a87",
+        "original_word": "0xa13cd",
+        "target": "(uintptr_t)fake_fscanf-0x2660a8bU",
+        "native_target": "0x2701e58"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660a92",
+        "original_word": "0xa140a",
+        "target": "(uintptr_t)fake_fclose-0x2660a96U",
+        "native_target": "0x2701ea0"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660aa6",
+        "original_word": "0xa13de",
+        "target": "(uintptr_t)fake_fopen-0x2660aaaU",
+        "native_target": "0x2701e88"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660ac0",
+        "original_word": "0xa1394",
+        "target": "(uintptr_t)fake_fscanf-0x2660ac4U",
+        "native_target": "0x2701e58"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660ac8",
+        "original_word": "0xa13e4",
+        "target": "(uintptr_t)atoi-0x2660accU",
+        "native_target": "0x2701eb0"
+      },
+      {
+        "kind": "data",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660ade",
+        "original_word": "0x2796840",
+        "target": "(uintptr_t)(auto_targets)"
+      },
+      {
+        "kind": "data",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660ae5",
+        "original_word": "0x2796060",
+        "target": "(uintptr_t)(auto_targets_target)"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660aee",
+        "original_word": "0xa1366",
+        "target": "(uintptr_t)fake_fscanf-0x2660af2U",
+        "native_target": "0x2701e58"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660b02",
+        "original_word": "0xa1352",
+        "target": "(uintptr_t)fake_fscanf-0x2660b06U",
+        "native_target": "0x2701e58"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660b17",
+        "original_word": "0xa133d",
+        "target": "(uintptr_t)fake_fscanf-0x2660b1bU",
+        "native_target": "0x2701e58"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660b22",
+        "original_word": "0xa137a",
+        "target": "(uintptr_t)fake_fclose-0x2660b26U",
+        "native_target": "0x2701ea0"
+      },
+      {
+        "kind": "data",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660b29",
+        "original_word": "0x2796840",
+        "target": "(uintptr_t)(auto_targets)"
+      },
+      {
+        "kind": "data",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660b33",
+        "original_word": "0x2774800",
+        "target": "(uintptr_t)(&read_auto_target_file)"
+      },
+      {
+        "kind": "data",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660b51",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "data",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660b64",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "callee",
+        "owner": "choose_default_target",
+        "patch_address": "0x2660b91",
+        "original_word": "0xfffffcbb",
+        "target": "(uintptr_t)would_validate_target-0x2660b95U",
+        "native_target": "0x2660850"
+      },
+      {
+        "kind": "callee",
+        "owner": "mark_up_to_n_targets_noload",
+        "patch_address": "0x266124d",
+        "original_word": "0xfffff95f",
+        "target": "(uintptr_t)select_target-0x2661251U",
+        "native_target": "0x2660bb0"
+      },
+      {
+        "kind": "callee",
+        "owner": "mark_up_to_n_targets_noload",
+        "patch_address": "0x266127a",
+        "original_word": "0x51832",
+        "target": "(uintptr_t)get_card_instance-0x266127eU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "mark_up_to_n_targets_noload",
+        "patch_address": "0x2661297",
+        "original_word": "0xfffff225",
+        "target": "(uintptr_t)can_target-0x266129bU",
+        "native_target": "0x26604c0"
+      },
+      {
+        "kind": "data",
+        "owner": "mark_up_to_n_targets_noload",
+        "patch_address": "0x26612b1",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "data",
+        "owner": "mark_up_to_n_targets_noload",
+        "patch_address": "0x26612c4",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "callee",
+        "owner": "mark_up_to_n_targets_noload",
+        "patch_address": "0x26612d8",
+        "original_word": "0x517d4",
+        "target": "(uintptr_t)get_card_instance-0x26612dcU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "mark_up_to_n_targets_noload",
+        "patch_address": "0x26612e9",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "data",
+        "owner": "mark_up_to_n_targets_noload",
+        "patch_address": "0x266130a",
+        "original_word": "0x4ef194",
+        "target": "(uintptr_t)(&spell_fizzled)"
+      },
+      {
+        "kind": "callee",
+        "owner": "opponent_is_valid_target",
+        "patch_address": "0x2661687",
+        "original_word": "0x51425",
+        "target": "(uintptr_t)get_card_instance-0x266168bU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "opponent_is_valid_target",
+        "patch_address": "0x26616a4",
+        "original_word": "0xffffeb98",
+        "target": "(uintptr_t)default_target_definition-0x26616a8U",
+        "native_target": "0x2660240"
+      },
+      {
+        "kind": "callee",
+        "owner": "opponent_is_valid_target",
+        "patch_address": "0x26616f7",
+        "original_word": "0xfffff155",
+        "target": "(uintptr_t)would_validate_target-0x26616fbU",
+        "native_target": "0x2660850"
+      }
+    ],
+    "native_path": ".recovery/2022-ManalinkEh.dll",
+    "native_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "source_path": ".recovery/selection-native-check-c369.c",
+    "source_sha256": "4f073948486380f8bd0378ecef4163cf0c9a42ab11332fde29199616648abccd",
+    "executable_path": ".recovery/selection-native-check-c369.exe",
+    "executable_sha256": "f83e09fafd65bb0d497debfffad4f8fc6317f1fdf814ae2c70e252fb7beacbb4",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "compile_argv": [
+      "C:/bin/gcc-9.3.0-no-debug/bin/gcc.exe",
+      "-m32",
+      "-O2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-static-libgcc",
+      "-Wl,--image-base,0x10000000",
+      "-I.",
+      ".recovery\\selection-native-check-c369.c",
+      "-o",
+      ".recovery\\selection-native-check-c369.exe"
+    ],
+    "compile_log": ".recovery/selection-native-check-c369.compile.log",
+    "compile_log_sha256": "b6c89dc5b1094a457bac9ffa81ebb76513d9a2ed92f347fcaad962cc880dd31d"
+  },
+  "constants": {
+    "TARGET_ZONE_PLAYERS": 4096,
+    "TARGET_ZONE_ON_STACK": 16384,
+    "TARGET_ZONE_0x2000": 8192,
+    "TARGET_SPECIAL_ALLOW_MULTIBLOCKER": 1024,
+    "KEYWORD_SHROUD": 131072,
+    "SF2_SPELLSKITE": 65536,
+    "STATE_TARGETTED": 2097152,
+    "STATE_CANNOT_TARGET": 1048576,
+    "SETTING_SMART_TARGET": 7,
+    "EVENT_CAN_CAST": 116
+  },
+  "scope": "Eleven native bodies compared independently with child queries, GUI and stdio callbacks substituted. Valid allocated records, bounded strings/file rows, finite human selection, and valid candidate indices; no native UI/file-runtime behavior or gameplay claim. Callback-boundary snapshots use 32-bit hashes and argument summaries; final fixture snapshots are compared byte for byte. Native and reconstruction additionally agree on borrowed GUI-local outputs during cleanup. The three-way predecessor comparison excludes those borrowed-local views: its synthetic cancellation assignment is absent from native register-only result writes. Includes live global/record/definition changes, 128 explicit 58-card plus two-player candidate fixtures with the observed random bound asserted as 60. No reads of callee-local pointers after the outer call returns.",
+  "files": [
+    {
+      "source": "functions/targets.c",
+      "before_path": ".recovery/target-selection-before-c370/functions/targets.c",
+      "before_bytes_sha256": "cba7f621801caaa4e977a568e5cd672b3d87fefdef82f33f51e6002cf7bc5b7a",
+      "after_source_sha256": "97e926c59871c8bbe31294c2c02d52ad475f1c8d756abe37bcd6c7451433070a"
+    }
+  ],
+  "whole_source_lines_removed": 174,
+  "compiler_expansion": {
+    "compiler_path": "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-E",
+      "-dD",
+      "functions/targets.c"
+    ],
+    "preflight_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-E",
+      "-dD",
+      "-x",
+      "c",
+      "-"
+    ],
+    "before_sha256": "0dc8a2ce05a2a724c0fba8ffc7bf8d011603c1c5f668d9adf9496188f801aded",
+    "projected_sha256": "7d28138524434dad05332a5b1c2ef15c70b7877d50708bc22140353cd96f4aea",
+    "unrelated_expanded_tokens_unchanged": true,
+    "ordinary_storage_enum_and_layout_probe": "\n#include <stddef.h>\n#include <limits.h>\n_Static_assert(sizeof(int)==4 && sizeof(void*)==4 && CHAR_BIT==8 && (char)255==-1, \"native_targeting_integer_model\");\n_Static_assert(sizeof(card_instance_t)==300 && offsetof(card_instance_t,ext)==44 && sizeof(card_data_t)==72 && offsetof(card_data_t,id)==36 && offsetof(card_data_t,reserved2)==38 && offsetof(card_data_t,type)==40 && offsetof(card_data_t,code_pointer)==52, \"native_targeting_layout\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&active_cards_count[0]),int*) && __builtin_types_compatible_p(__typeof__(&trace_mode),int*) && __builtin_types_compatible_p(__typeof__(&damage_card),int*) && __builtin_types_compatible_p(__typeof__(&activation_card),int*) && __builtin_types_compatible_p(__typeof__(&hack_gpf_player),int*) && __builtin_types_compatible_p(__typeof__(&hack_gpf_card),int*) && __builtin_types_compatible_p(__typeof__(&EXE_DWORD(0x60e9fc)),int*), \"ordinary_targeting_globals\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&cards_data[0].id),uint16_t*) && __builtin_types_compatible_p(__typeof__(&cards_data[0].reserved2),uint16_t*) && __builtin_types_compatible_p(__typeof__(&cards_data[0].type),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->state),uint32_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->token_status),uint32_t*) && __builtin_types_compatible_p(__typeof__(&((card_ext_t*)0)->sp_keywords2),uint32_t*), \"ordinary_targeting_records\");\n_Static_assert(sizeof(player_bits[0])==4 && sizeof(stack_cards[0])==8 && __builtin_types_compatible_p(__typeof__(&stack_size),int*) && __builtin_types_compatible_p(__typeof__(&card_on_stack),int*) && __builtin_types_compatible_p(__typeof__(&card_on_stack_controller),int*) && __builtin_types_compatible_p(__typeof__(&current_phase),int*) && __builtin_types_compatible_p(__typeof__(&current_turn),int*), \"ordinary_targeting_context\");\n\n_Static_assert(sizeof(target_t)==8 && sizeof(target_definition_t)==84 && offsetof(target_definition_t,player)==72 && offsetof(target_definition_t,card)==76, \"native_selection_definitions\");\n_Static_assert(sizeof(text_lines)==249*300 && sizeof(auto_targets)==500*4 && sizeof(auto_targets_target)==500*4, \"native_selection_tables\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->number_of_targets),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((target_definition_t*)0)->preferred_controller),int32_t*), \"native_selection_storage\");\n_Static_assert(TARGET_ZONE_PLAYERS==4096, \"native_counter_enum\");\n_Static_assert(TARGET_ZONE_ON_STACK==16384, \"native_counter_enum\");\n_Static_assert(TARGET_ZONE_0x2000==8192, \"native_counter_enum\");\n_Static_assert(TARGET_SPECIAL_ALLOW_MULTIBLOCKER==1024, \"native_counter_enum\");\n_Static_assert(KEYWORD_SHROUD==131072, \"native_counter_enum\");\n_Static_assert(SF2_SPELLSKITE==65536, \"native_counter_enum\");\n_Static_assert(STATE_TARGETTED==2097152, \"native_counter_enum\");\n_Static_assert(STATE_CANNOT_TARGET==1048576, \"native_counter_enum\");\n_Static_assert(SETTING_SMART_TARGET==7, \"native_counter_enum\");\n_Static_assert(EVENT_CAN_CAST==116, \"native_counter_enum\");\n",
+    "probe_exit_code": 0,
+    "before_archive": {
+      "path": ".recovery/target-selection-before-c370.i.gz",
+      "sha256": "6848f2092e375c48fe1b3b11a48f1bf68c67c15957530a9a32e3e6777b720c72"
+    },
+    "projected_archive": {
+      "path": ".recovery/target-selection-projected-c370.i.gz",
+      "sha256": "144e4973fa9cca3266f2633d449d0af406e245e90d5c0f27795baf0c081a7354"
+    },
+    "actual_sha256": "f310dce96598c8cec8607fc091db5d001d4d781557e4505a7c897a72e5a04bba",
+    "actual_unit_matches_preflight": true
+  },
+  "status": "Application-time snapshot: native comparisons and actual compiler-unit checks pass. Subsequent build/setup completion is published in target-selection-cleanup-coverage.json."
+}

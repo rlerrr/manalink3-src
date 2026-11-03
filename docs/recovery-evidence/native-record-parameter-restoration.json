@@ -1,0 +1,1204 @@
+{
+  "source_state_sha256": "614bdba0a0133f2f6e4f06191a4f3431174796b6f598af47626a5182dc4d3c80",
+  "index_sha256": "0547c2e2bb47bbf8cef9c80b39737cbc5c15e39bb5021a2e811b3c965efa1662",
+  "rows": [
+    {
+      "source": "functions/packs.c",
+      "name": "add_to_csvid_choices",
+      "before_definition": "static void add_to_csvid_choices(int *choice_num, int **choice_csvids, int csvid)\n{\n  int result;\n  int *csvids;\n  result = *choice_num;\n  if (result < 0)\n  {\n    backtrace_and_abort(\"functions/packs.c:652\\nchoices->num >= 0\");\n  }\n  if (*choice_csvids == NULL)\n  {\n    if (result != 0)\n    {\n      backtrace_and_abort(\"functions/packs.c:656\\nchoices->num == 0\");\n    }\n    csvids = malloc(800);\n    *choice_csvids = csvids;\n    if (csvids == NULL)\n    {\n      fatal(\"could not malloc %d bytes for choices->csvids\", 800);\n    }\n    result = *choice_num;\n  }\n  if (((result == 200 || result == 400) || result == 800) || (result == 0x640))\n  {\n    csvids = realloc(*choice_csvids, result << 3);\n    *choice_csvids = csvids;\n    result = *choice_num;\n    if (csvids == NULL)\n    {\n      fatal(\"could not realloc %d bytes for choices->csvids\", result << 3);\n    }\n  }\n  if (result != 0xc80)\n  {\n    csvids = *choice_csvids;\n    *choice_num = result + 1;\n    csvids[result] = csvid;\n    return;\n  }\n  fatal(\"Tried to insert 3200th card in csvid_t_choices_t\");\n}",
+      "after_definition": "static void add_to_csvid_choices(csvid_choices_t *choices, int csvid)\n{\n  int result;\n  card_id_t *csvids;\n  result = choices->num;\n  if (result < 0)\n  {\n    backtrace_and_abort(\"functions/packs.c:652\\nchoices->num >= 0\");\n  }\n  if (choices->csvids == NULL)\n  {\n    if (result != 0)\n    {\n      backtrace_and_abort(\"functions/packs.c:656\\nchoices->num == 0\");\n    }\n    csvids = malloc(800);\n    choices->csvids = csvids;\n    if (csvids == NULL)\n    {\n      fatal(\"could not malloc %d bytes for choices->csvids\", 800);\n    }\n    result = choices->num;\n  }\n  if (((result == 200 || result == 400) || result == 800) || (result == 0x640))\n  {\n    csvids = realloc(choices->csvids, result << 3);\n    choices->csvids = csvids;\n    result = choices->num;\n    if (csvids == NULL)\n    {\n      fatal(\"could not realloc %d bytes for choices->csvids\", result << 3);\n    }\n  }\n  if (result != 0xc80)\n  {\n    csvids = choices->csvids;\n    choices->num = result + 1;\n    csvids[result] = csvid;\n    return;\n  }\n  fatal(\"Tried to insert 3200th card in csvid_t_choices_t\");\n}",
+      "before_sha256": "6236153b6e3a3687fef86d70d4ed9fd078f6304b36a8b6f0e099b6b9a94ecc21",
+      "after_sha256": "d1f5a55ecb9e74a9e9877561b1a88dfb3728709f6151ec9d78e6e5a12fdeaa0f",
+      "native_parameter_restoration": true
+    },
+    {
+      "source": "functions/packs.c",
+      "name": "add_card_to_pack",
+      "before_definition": "static int add_card_to_pack(int *out_csvids, int pos, int *choice_num, int **choice_csvids, int num,\n                            int rarity, int expansion, int booster, int testing_mode)\n{\n  if (num < 1)\n    return 0;\n  int remaining = *choice_num;\n  if (remaining < 1)\n  {\n    if (testing_mode)\n      fprintf(stderr, \"Expansion #%d, booster=%d: no available cards of rarity %d\\012\", expansion,\n              booster, rarity);\n    return 0;\n  }\n  unsigned int bytes = remaining * 4U;\n  unsigned int *local_choices = malloc(bytes);\n  if (!local_choices)\n    fatal(\"could not malloc %d bytes for local_choices.csvids\", bytes);\n  memcpy(local_choices, *choice_csvids, bytes);\n  int written = 0;\n  do\n  {\n    int selected = internal_rand(remaining);\n    unsigned int csvid = local_choices[selected];\n    bool basic_land =\n        csvid == 0xef || csvid == 0xa4 || csvid == 0x5b || csvid == 0x7e || csvid == 0xbc;\n    if (basic_land)\n    {\n      out_csvids[pos++] = csvid;\n      ++written;\n    }\n    else\n    {\n      bool repeatable_snow_land = csvid - 0x834 < 5 && expansion == 0xc;\n      bool duplicate = false;\n      if (!repeatable_snow_land)\n        for (int i = 0; i < pos; ++i)\n          if (csvid == (unsigned int)out_csvids[i])\n          {\n            duplicate = true;\n            break;\n          }\n      if (remaining == 1 && !repeatable_snow_land)\n      {\n        if (!duplicate)\n        {\n          out_csvids[pos++] = csvid;\n          ++written;\n        }\n        if (written < num)\n        {\n          int *end = out_csvids + num + pos - written;\n          for (int *entry = out_csvids + pos; entry != end; ++entry)\n            *entry = local_choices[internal_rand(1)];\n          if (testing_mode)\n            fprintf(stderr, \"Expansion #%d, booster=%d: added duplicate cards of rarity %d\\012\",\n                    expansion, booster, rarity);\n        }\n        free(local_choices);\n        return num;\n      }\n      if (!repeatable_snow_land)\n      {\n        --remaining;\n        local_choices[selected] = local_choices[remaining];\n      }\n      if (!duplicate)\n      {\n        out_csvids[pos++] = csvid;\n        ++written;\n      }\n    }\n    if (written >= num)\n    {\n      free(local_choices);\n      return num;\n    }\n  } while (true);\n}",
+      "after_definition": "static int add_card_to_pack(int *out_csvids, int pos, csvid_choices_t *choice, int num,\n                            draftrarity_t rarity, EXPANSION_t expansion, int booster, int testing_mode)\n{\n  if (num < 1)\n    return 0;\n  int remaining = choice->num;\n  if (remaining < 1)\n  {\n    if (testing_mode)\n      fprintf(stderr, \"Expansion #%d, booster=%d: no available cards of rarity %d\\012\", expansion,\n              booster, rarity);\n    return 0;\n  }\n  unsigned int bytes = remaining * 4U;\n  unsigned int *local_choices = malloc(bytes);\n  if (!local_choices)\n    fatal(\"could not malloc %d bytes for local_choices.csvids\", bytes);\n  memcpy(local_choices, choice->csvids, bytes);\n  int written = 0;\n  do\n  {\n    int selected = internal_rand(remaining);\n    unsigned int csvid = local_choices[selected];\n    bool basic_land =\n        csvid == 0xef || csvid == 0xa4 || csvid == 0x5b || csvid == 0x7e || csvid == 0xbc;\n    if (basic_land)\n    {\n      out_csvids[pos++] = csvid;\n      ++written;\n    }\n    else\n    {\n      bool repeatable_snow_land = csvid - 0x834 < 5 && expansion == 0xc;\n      bool duplicate = false;\n      if (!repeatable_snow_land)\n        for (int i = 0; i < pos; ++i)\n          if (csvid == (unsigned int)out_csvids[i])\n          {\n            duplicate = true;\n            break;\n          }\n      if (remaining == 1 && !repeatable_snow_land)\n      {\n        if (!duplicate)\n        {\n          out_csvids[pos++] = csvid;\n          ++written;\n        }\n        if (written < num)\n        {\n          int *end = out_csvids + num + pos - written;\n          for (int *entry = out_csvids + pos; entry != end; ++entry)\n            *entry = local_choices[internal_rand(1)];\n          if (testing_mode)\n            fprintf(stderr, \"Expansion #%d, booster=%d: added duplicate cards of rarity %d\\012\",\n                    expansion, booster, rarity);\n        }\n        free(local_choices);\n        return num;\n      }\n      if (!repeatable_snow_land)\n      {\n        --remaining;\n        local_choices[selected] = local_choices[remaining];\n      }\n      if (!duplicate)\n      {\n        out_csvids[pos++] = csvid;\n        ++written;\n      }\n    }\n    if (written >= num)\n    {\n      free(local_choices);\n      return num;\n    }\n  } while (true);\n}",
+      "before_sha256": "2f4445d05ce560f8698d9e4477de21227a216fd7032969395b9870d56fcb8b7e",
+      "after_sha256": "2d6e9adef00ee9b1eec525212c3c81244942e49bc1cd8d62f5578c1a7569fe8f",
+      "native_parameter_restoration": true
+    },
+    {
+      "source": "functions/packs.c",
+      "name": "make_pack_normal",
+      "before_definition": "static int make_pack_normal(EXPANSION_t expansion, int booster, int *out_csvids, int testing_mode)\n{\n  draftrarity_t recipe_rarity;\n  int result, selected, value;\n  const Rarities *rarities;\n  const rarity_num_t *recipe_entry;\n  unsigned int copies_or_probability, rarity_or_count;\n  const rarity_num_t *contents =\n      booster ? pack_contents[expansion].booster : pack_contents[expansion].starter;\n  csvid_choices_t choices[44];\n  for (int index = 0; index < 44; ++index)\n  {\n    choices[index].num = -1;\n    choices[index].csvids = NULL;\n  }\n  for (const rarity_num_t *entry = contents; entry->rarity != XNONE; ++entry)\n  {\n    if (entry->rarity == MAX_RARITY_VAL_USED)\n    {\n      if (entry[1].rarity == XNONE || entry[1].rarity == MAX_RARITY_VAL_USED)\n        backtrace_and_abort(\n            \"functions/packs.c:3175\\nrn[i + 1].rarity != NONE && rn[i + 1].rarity != VAL_IFELSE\");\n      if (entry[2].rarity == XNONE || entry[2].rarity == MAX_RARITY_VAL_USED)\n        backtrace_and_abort(\n            \"functions/packs.c:3176\\nrn[i + 2].rarity != NONE && rn[i + 2].rarity != VAL_IFELSE\");\n    }\n    else\n    {\n      if (entry->rarity > MAX_RARITY_VAL_USED)\n        backtrace_and_abort(\"functions/packs.c:3180\\nrn[i].rarity <= MAX_RARITY_VAL_USED\");\n      choices[entry->rarity].num = 0;\n    }\n  }\n  get_csvid_choices(expansion, choices);\n  bool no_late_duplicates = true;\n  int attempts_left = (-(unsigned int)(testing_mode == 0) & 0x1863c) + 100;\n  unsigned int skip_dfc_check = expansion - EXPANSION_INNISTRAD_MIDNIGHT_HUNT & 0xfffffffd;\n  bool accepted = false;\n  do\n  {\n    recipe_rarity = contents->rarity;\n    rarity_or_count = 0;\n    if (recipe_rarity == XNONE)\n    {\n      if (skip_dfc_check)\n      {\n        accepted = true;\n        break;\n      }\n    }\n    else\n    {\n      value = 0;\n      rarity_or_count = 0;\n      recipe_entry = contents;\n      do\n      {\n        copies_or_probability = recipe_entry->num;\n        if (recipe_rarity == MAX_RARITY_VAL_USED)\n        {\n          if (contents[value + 1].num == contents[value + 2].num)\n          {\n            if (0 < contents[value + 1].num)\n            {\n              result = 0;\n              do\n              {\n                selected = internal_rand(copies_or_probability >> 0x10);\n                recipe_rarity =\n                    contents[((int)(copies_or_probability & 0xffff) <= selected) + 1 + value]\n                        .rarity;\n                selected =\n                    add_card_to_pack(out_csvids, rarity_or_count, &choices[recipe_rarity].num,\n                                     (int **)&choices[recipe_rarity].csvids, 1, recipe_rarity,\n                                     expansion, booster, testing_mode);\n                rarity_or_count = (rarity_or_count + 1) - (unsigned int)(selected == 0);\n                result = result + 1;\n              } while (result < contents[value + 1].num);\n            }\n          }\n          else\n          {\n            result = internal_rand(copies_or_probability >> 0x10);\n            recipe_entry = contents + ((int)(copies_or_probability & 0xffff) <= result) + 1 + value;\n            recipe_rarity = recipe_entry->rarity;\n            result = add_card_to_pack(out_csvids, rarity_or_count, &choices[recipe_rarity].num,\n                                      (int **)&choices[recipe_rarity].csvids, recipe_entry->num,\n                                      recipe_rarity, expansion, booster, testing_mode);\n            if (result != 0)\n            {\n              rarity_or_count = rarity_or_count + recipe_entry->num;\n            }\n          }\n          value = value + 2;\n        }\n        else\n        {\n          result = add_card_to_pack(out_csvids, rarity_or_count, &choices[recipe_rarity].num,\n                                    (int **)&choices[recipe_rarity].csvids, copies_or_probability,\n                                    recipe_rarity, expansion, booster, testing_mode);\n          if (result != 0)\n          {\n            rarity_or_count = rarity_or_count + recipe_entry->num;\n          }\n        }\n        value = value + 1;\n        recipe_entry = contents + value;\n        recipe_rarity = recipe_entry->rarity;\n      } while (recipe_rarity != XNONE);\n\n      bool duplicate = false;\n      for (int index = 0; index < (int)rarity_or_count - 1 && !duplicate; ++index)\n      {\n        int csvid = out_csvids[index];\n        if (csvid == 0xef || csvid == 0xa4 || csvid == 0x5b || csvid == 0x7e || csvid == 0xbc ||\n            ((unsigned int)csvid - 0x834 < 5 && expansion == EXPANSION_ICE_AGE))\n          continue;\n        for (int other = index + 1; other < (int)rarity_or_count; ++other)\n          if (csvid == out_csvids[other])\n          {\n            if (testing_mode)\n            {\n              fprintf(stderr,\n                      \"Expansion #%d, booster=%d: found a duplicate card late in \"\n                      \"make_pack_normal()\\012\",\n                      expansion, booster);\n              no_late_duplicates = false;\n            }\n            duplicate = true;\n            break;\n          }\n      }\n      if (!duplicate)\n      {\n        if (skip_dfc_check)\n        {\n          accepted = true;\n          break;\n        }\n        if ((int)rarity_or_count > 0)\n        {\n          int noncommon_dfcs = 0;\n          for (int *entry = out_csvids; entry != out_csvids + rarity_or_count; ++entry)\n          {\n            rarities = get_rarity(*entry);\n            if (rarities->dfc_symbol != 0xff)\n              noncommon_dfcs += (unsigned char)(rarities->rarity_in_expansion[expansion] - 2) < 3;\n          }\n          if (noncommon_dfcs == 1)\n          {\n            accepted = true;\n            break;\n          }\n        }\n      }\n    }\n  } while (--attempts_left != 0);\n  if (!accepted)\n    rarity_or_count = 0;\n  for (int index = 0; index < 44; ++index)\n    if (choices[index].csvids)\n      free(choices[index].csvids);\n  if (testing_mode && !no_late_duplicates)\n    rarity_or_count = 0;\n  return rarity_or_count;\n}",
+      "after_definition": "static int make_pack_normal(EXPANSION_t expansion, int booster, int *out_csvids, int testing_mode)\n{\n  draftrarity_t recipe_rarity;\n  int result, selected, value;\n  const Rarities *rarities;\n  const rarity_num_t *recipe_entry;\n  unsigned int copies_or_probability, rarity_or_count;\n  const rarity_num_t *contents =\n      booster ? pack_contents[expansion].booster : pack_contents[expansion].starter;\n  csvid_choices_t choices[44];\n  for (int index = 0; index < 44; ++index)\n  {\n    choices[index].num = -1;\n    choices[index].csvids = NULL;\n  }\n  for (const rarity_num_t *entry = contents; entry->rarity != XNONE; ++entry)\n  {\n    if (entry->rarity == MAX_RARITY_VAL_USED)\n    {\n      if (entry[1].rarity == XNONE || entry[1].rarity == MAX_RARITY_VAL_USED)\n        backtrace_and_abort(\n            \"functions/packs.c:3175\\nrn[i + 1].rarity != NONE && rn[i + 1].rarity != VAL_IFELSE\");\n      if (entry[2].rarity == XNONE || entry[2].rarity == MAX_RARITY_VAL_USED)\n        backtrace_and_abort(\n            \"functions/packs.c:3176\\nrn[i + 2].rarity != NONE && rn[i + 2].rarity != VAL_IFELSE\");\n    }\n    else\n    {\n      if (entry->rarity > MAX_RARITY_VAL_USED)\n        backtrace_and_abort(\"functions/packs.c:3180\\nrn[i].rarity <= MAX_RARITY_VAL_USED\");\n      choices[entry->rarity].num = 0;\n    }\n  }\n  get_csvid_choices(expansion, choices);\n  bool no_late_duplicates = true;\n  int attempts_left = (-(unsigned int)(testing_mode == 0) & 0x1863c) + 100;\n  unsigned int skip_dfc_check = expansion - EXPANSION_INNISTRAD_MIDNIGHT_HUNT & 0xfffffffd;\n  bool accepted = false;\n  do\n  {\n    recipe_rarity = contents->rarity;\n    rarity_or_count = 0;\n    if (recipe_rarity == XNONE)\n    {\n      if (skip_dfc_check)\n      {\n        accepted = true;\n        break;\n      }\n    }\n    else\n    {\n      value = 0;\n      rarity_or_count = 0;\n      recipe_entry = contents;\n      do\n      {\n        copies_or_probability = recipe_entry->num;\n        if (recipe_rarity == MAX_RARITY_VAL_USED)\n        {\n          if (contents[value + 1].num == contents[value + 2].num)\n          {\n            if (0 < contents[value + 1].num)\n            {\n              result = 0;\n              do\n              {\n                selected = internal_rand(copies_or_probability >> 0x10);\n                recipe_rarity =\n                    contents[((int)(copies_or_probability & 0xffff) <= selected) + 1 + value]\n                        .rarity;\n                selected =\n                    add_card_to_pack(out_csvids, rarity_or_count, &choices[recipe_rarity], 1,\n                                     recipe_rarity, expansion, booster, testing_mode);\n                rarity_or_count = (rarity_or_count + 1) - (unsigned int)(selected == 0);\n                result = result + 1;\n              } while (result < contents[value + 1].num);\n            }\n          }\n          else\n          {\n            result = internal_rand(copies_or_probability >> 0x10);\n            recipe_entry = contents + ((int)(copies_or_probability & 0xffff) <= result) + 1 + value;\n            recipe_rarity = recipe_entry->rarity;\n            result = add_card_to_pack(out_csvids, rarity_or_count, &choices[recipe_rarity], recipe_entry->num,\n                             recipe_rarity, expansion, booster, testing_mode);\n            if (result != 0)\n            {\n              rarity_or_count = rarity_or_count + recipe_entry->num;\n            }\n          }\n          value = value + 2;\n        }\n        else\n        {\n          result = add_card_to_pack(out_csvids, rarity_or_count, &choices[recipe_rarity], copies_or_probability,\n                           recipe_rarity, expansion, booster, testing_mode);\n          if (result != 0)\n          {\n            rarity_or_count = rarity_or_count + recipe_entry->num;\n          }\n        }\n        value = value + 1;\n        recipe_entry = contents + value;\n        recipe_rarity = recipe_entry->rarity;\n      } while (recipe_rarity != XNONE);\n\n      bool duplicate = false;\n      for (int index = 0; index < (int)rarity_or_count - 1 && !duplicate; ++index)\n      {\n        int csvid = out_csvids[index];\n        if (csvid == 0xef || csvid == 0xa4 || csvid == 0x5b || csvid == 0x7e || csvid == 0xbc ||\n            ((unsigned int)csvid - 0x834 < 5 && expansion == EXPANSION_ICE_AGE))\n          continue;\n        for (int other = index + 1; other < (int)rarity_or_count; ++other)\n          if (csvid == out_csvids[other])\n          {\n            if (testing_mode)\n            {\n              fprintf(stderr,\n                      \"Expansion #%d, booster=%d: found a duplicate card late in \"\n                      \"make_pack_normal()\\012\",\n                      expansion, booster);\n              no_late_duplicates = false;\n            }\n            duplicate = true;\n            break;\n          }\n      }\n      if (!duplicate)\n      {\n        if (skip_dfc_check)\n        {\n          accepted = true;\n          break;\n        }\n        if ((int)rarity_or_count > 0)\n        {\n          int noncommon_dfcs = 0;\n          for (int *entry = out_csvids; entry != out_csvids + rarity_or_count; ++entry)\n          {\n            rarities = get_rarity(*entry);\n            if (rarities->dfc_symbol != 0xff)\n              noncommon_dfcs += (unsigned char)(rarities->rarity_in_expansion[expansion] - 2) < 3;\n          }\n          if (noncommon_dfcs == 1)\n          {\n            accepted = true;\n            break;\n          }\n        }\n      }\n    }\n  } while (--attempts_left != 0);\n  if (!accepted)\n    rarity_or_count = 0;\n  for (int index = 0; index < 44; ++index)\n    if (choices[index].csvids)\n      free(choices[index].csvids);\n  if (testing_mode && !no_late_duplicates)\n    rarity_or_count = 0;\n  return rarity_or_count;\n}",
+      "before_sha256": "d85738019d65785606532df02dd065472e487d7afd78b22f658e52d2198bd306",
+      "after_sha256": "18609218a5f3e951c23d77d743d9bae801920aa3f2ee805368d40b6df9d0c64e",
+      "native_parameter_restoration": true
+    },
+    {
+      "source": "functions/packs.c",
+      "name": "get_csvid_choices",
+      "before_definition": "static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices)\n{\n  static const int contraption_copies[3] = {16, 7, 2};\n  _Static_assert(sizeof(Rarities) == 5 && offsetof(Rarities, rarity_in_expansion) == 5,\n                 \"native rarity byte tail\");\n  _Static_assert(offsetof(card_ptr_t, types) == 132 &&\n                     offsetof(card_ptr_t, mana_source_colors) == 146,\n                 \"native seven subtypes\");\n  uint8_t base_rarity;\n  unsigned char symbol_or_index;\n  bool more_copies;\n  csvid_choices_t *pool;\n  int16_t *subtype_ptr;\n  int value;\n  const Rarities *rarities;\n  int **choice_csvids;\n  unsigned int copies_or_probability, current_csvid, pool_value, rarity_or_count,\n      has_special_rarities;\n  varying_copies_entry_t varying_copies[19] = {\n      {7, copies_common_arabian_nights},\n      {8, copies_uncommon_arabian_nights},\n      {9, copies_common_antiquities},\n      {10, copies_uncommon_antiquities},\n      {13, copies_common_the_dark},\n      {14, copies_uncommon_the_dark},\n      {15, copies_common_fallen_empires},\n      {16, copies_uncommon_fallen_empires},\n      {17, copies_common_chronicles},\n      {18, copies_uncommon_chronicles},\n      {19, copies_common_homelands},\n      {20, copies_uncommon_homelands},\n      {21, copies_common_alliances},\n      {22, copies_uncommon_alliances},\n      {23, copies_rare_alliances},\n      {35, copies_guildgate_or_shockland},\n      {41, copies_mystical_archive},\n      {42, copies_neo_land},\n      {0, NULL},\n  };\n  if (((((expansion & ~EXPANSION_FUTURE_SIGHT) == EXPANSION_VINTAGE_MASTERS) ||\n        (expansion == EXPANSION_LEGENDS)) ||\n       (expansion == EXPANSION_PLANAR_CHAOS)) ||\n      (expansion == EXPANSION_UNSTABLE))\n  {\n    has_special_rarities = 1;\n  }\n  else\n  {\n    has_special_rarities = 1;\n    if (((expansion - EXPANSION_INNISTRAD & 0xfffffffd) != 0) &&\n        ((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) != EXPANSION_SHADOWS_OVER_INNISTRAD))\n    {\n      has_special_rarities =\n          (unsigned int)((expansion - EXPANSION_INNISTRAD_MIDNIGHT_HUNT & 0xfffffffb) == 0);\n    }\n  }\n\n  if (available_slots > 1)\n    for (current_csvid = 0; (int)current_csvid < available_slots - 1; ++current_csvid)\n    {\n      rarities = get_rarity(current_csvid);\n      rarity_or_count = rarities->rarity_in_expansion[expansion];\n      if (!rarity_or_count || !is_valid_card(current_csvid))\n        continue;\n      symbol_or_index = rarities->dfc_symbol;\n      if (symbol_or_index != 0xff && (symbol_or_index & 1))\n        continue;\n      if (has_special_rarities)\n      {\n        if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD || expansion == EXPANSION_ELDRITCH_MOON)\n        {\n          if (symbol_or_index != 0xff)\n          {\n            if (rarity_or_count - 1 < 2)\n              rarity_or_count = 0x1c;\n            else if (rarity_or_count - 3 < 2)\n              rarity_or_count = 0x1d;\n          }\n        }\n        else if (expansion == EXPANSION_INNISTRAD_MIDNIGHT_HUNT ||\n                 expansion == EXPANSION_INNISTRAD_CRIMSON_VOW)\n        {\n          if (rarity_or_count == 1 && symbol_or_index != 0xff)\n            rarity_or_count = 0x1e;\n        }\n        else if (expansion == EXPANSION_KAMIGAWA_NEON_DYNASTY)\n        {\n          if (symbol_or_index != 0xff && rarity_or_count - 1 < 2)\n            rarity_or_count = 0x1c;\n        }\n        else if (expansion == EXPANSION_UNSTABLE)\n        {\n          for (int index = 0; index < 7; ++index)\n            if (cards_ptr[current_csvid]->types[index] == 0x3000)\n            {\n              rarity_or_count = 0x1f;\n              break;\n            }\n        }\n        else if (expansion == EXPANSION_INNISTRAD || expansion == EXPANSION_DARK_ASCENSION)\n        {\n          if (symbol_or_index != 0xff)\n            rarity_or_count = 0x1b;\n        }\n        else if (expansion == EXPANSION_VINTAGE_MASTERS && rarity_or_count == 4)\n        {\n          if (((int)current_csvid < 0xaa &&\n               ((int)current_csvid > 0xa4 || (current_csvid & 0xffffffef) == 1)) ||\n              current_csvid - 0xf9 < 2)\n            rarity_or_count = 6;\n        }\n        else if (expansion == EXPANSION_PLANAR_CHAOS && rarity_or_count - 1 < 3 &&\n                 (rarities->flags & 1))\n          rarity_or_count += 0x17;\n        else if (expansion == EXPANSION_LEGENDS && rarity_or_count - 1 < 2)\n        {\n          copies_or_probability = has_special_rarities;\n          bool default_weight = false;\n          switch (current_csvid)\n          {\n          case 0x22d:\n          case 0x236:\n          case 0x23a:\n          case 0x240:\n          case 0x261:\n          case 0x270:\n          case 0x271:\n          case 0x273:\n          case 0x279:\n          case 0x285:\n          case 0x28b:\n          case 0x28f:\n          case 0x29b:\n          case 0x29d:\n          case 0x2a0:\n          case 0x2a7:\n          case 0x2e0:\n          case 0x2ee:\n          case 0x2f5:\n          case 0x301:\n          case 0x311:\n          case 0x31b:\n          case 800:\n          case 0x32d:\n          case 0x337:\n          case 0x344:\n          case 0x347:\n          case 0x348:\n          case 0x34b:\n            copies_or_probability = 0;\n            break;\n          default:\n            default_weight = true;\n            if (rarity_or_count == 1)\n            {\n              value = 0x58;\n            }\n            else\n            {\n              value = 0x60;\n              copies_or_probability = 0;\n            }\n            break;\n          case 0x299:\n          case 0x2b6:\n          case 0x2c9:\n          case 0x2e4:\n          case 0x2ff:\n          case 0x30c:\n          case 0x333:\n          case 0x33e:\n          case 0x341:;\n          }\n          if (!default_weight)\n            value = (unsigned int)(rarity_or_count != 1) * 8 + 0x58;\n          draftrarity_t munged = value / sizeof(csvid_choices_t);\n          if (choices[munged].num < 0 || choices[rarity_or_count].num >= 0)\n            backtrace_and_abort(\n                \"functions/packs.c:2636\\nchoices[munged].num >= 0 && choices[rar].num < 0\");\n          do\n          {\n            --copies_or_probability;\n            add_to_csvid_choices(&choices[munged].num, &choices[munged].csvids, current_csvid);\n          } while (copies_or_probability != 0xffffffff);\n          continue;\n        }\n      }\n      for (unsigned int pool_index = 1; pool_index < 0x2b; ++pool_index)\n      {\n        pool_value = pool_index;\n        pool = choices + pool_index;\n        if (pool->num < 0)\n          continue;\n        switch (pool_value)\n        {\n        case 1:\n        case 2:\n        case 3:\n        case 4:\n        case 5:\n        case 6:\n        case 0x18:\n        case 0x19:\n        case 0x1a:\n        case 0x1e:\n          if (rarity_or_count == pool_value)\n          {\n            add_to_csvid_choices(&pool->num, (int **)&choices[pool_value].csvids, current_csvid);\n            break;\n          }\n          break;\n        case 0x1b:\n          if (rarity_or_count == 0x1b)\n          {\n            pool_value = (unsigned int)rarities->rarity_in_expansion[expansion];\n            if (expansion == EXPANSION_INNISTRAD)\n            {\n              value = 0;\n              if (1 < pool_value - 3)\n              {\n                value = (unsigned int)(pool_value != 2) * 9 + 2;\n              }\n            }\n            else if (pool_value == 4)\n            {\n              value = 2;\n            }\n            else if (pool_value == 3)\n            {\n              value = 0xd;\n            }\n            else\n            {\n              value = ((pool_value != 2) - 1 & 0xffffffac) + 0x77;\n            }\n            do\n            {\n              value = value + -1;\n              add_to_csvid_choices(&pool->num, (int **)&choices[0x1b].csvids, current_csvid);\n            } while (value != -1);\n          }\n          break;\n        case 0x1c:\n          if (rarity_or_count == 0x1c)\n          {\n            if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)\n            {\n              pool_value = (rarities->rarity_in_expansion[expansion] != '\\x01') - 1 & 0xe;\n            }\n            else\n            {\n              pool_value = (unsigned int)(rarities->rarity_in_expansion[expansion] == '\\x01');\n              if (expansion == EXPANSION_ELDRITCH_MOON)\n              {\n                pool_value = (pool_value - 1 & 0xfffffff3) + 0xe;\n              }\n              else\n              {\n                pool_value = pool_value * 3;\n              }\n            }\n            do\n            {\n              pool_value = pool_value - 1;\n              add_to_csvid_choices(&pool->num, (int **)&choices[0x1c].csvids, current_csvid);\n            } while (pool_value != 0xffffffff);\n          }\n          break;\n        case 0x1d:\n          if (rarity_or_count == 0x1d)\n          {\n            if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)\n            {\n              value = (unsigned int)(rarities->rarity_in_expansion[expansion] == '\\x03') * 5 + 1;\n            }\n            else\n            {\n              value = (unsigned int)(rarities->rarity_in_expansion[expansion] == '\\x01') * 9 + 4;\n            }\n            do\n            {\n              value = value + -1;\n              add_to_csvid_choices(&pool->num, (int **)&choices[0x1d].csvids, current_csvid);\n            } while (value != -1);\n          }\n          break;\n        case 0x1f:\n          if (rarity_or_count == 0x1f)\n          {\n            symbol_or_index = rarities->rarity_in_expansion[expansion] - 2;\n            if (symbol_or_index < 3)\n            {\n              if (contraption_copies[(unsigned int)symbol_or_index] < 1)\n                break;\n              value = contraption_copies[(unsigned int)symbol_or_index] + -1;\n            }\n            else\n            {\n              value = 0x2a;\n            }\n            do\n            {\n              add_to_csvid_choices(&pool->num, (int **)&choices[0x1f].csvids, current_csvid);\n              more_copies = 0 < value;\n              value = value + -1;\n            } while (more_copies);\n          }\n          break;\n        case 0x20:\n          if (current_csvid == 0x7e)\n          {\n            add_to_csvid_choices(&pool->num, (int **)&choices[0x20].csvids, 0x7e);\n          }\n          break;\n        case 0x21:\n          if (rarity_or_count == 5)\n          {\n            choice_csvids = &choices[0x21].csvids;\n            add_to_csvid_choices(&pool->num, (int **)choice_csvids, current_csvid);\n            bool snow = false;\n            subtype_ptr = cards_ptr[current_csvid]->types;\n            do\n            {\n              if (*subtype_ptr == 0x2003)\n              {\n                snow = true;\n                break;\n              }\n              ++subtype_ptr;\n            } while (cards_ptr[current_csvid]->types + 7 != subtype_ptr);\n            if (!snow)\n            {\n              add_to_csvid_choices(&pool->num, (int **)choice_csvids, current_csvid);\n              add_to_csvid_choices(&pool->num, (int **)choice_csvids, current_csvid);\n            }\n          }\n          break;\n        case 0x22:\n          add_to_csvid_choices(&pool->num, (int **)&choices[0x22].csvids, current_csvid);\n          break;\n        case 0x24:\n        {\n          bool found_subtype = false;\n          for (int subtype_index = 0; subtype_index < 7; ++subtype_index)\n            if (cards_ptr[current_csvid]->types[subtype_index] == 0x500c)\n            {\n              found_subtype = true;\n              break;\n            }\n          if (!found_subtype)\n            break;\n          if (current_csvid != 0x4bac)\n          {\n            add_to_csvid_choices(&pool->num, (int **)&choices[0x24].csvids, current_csvid);\n          }\n          break;\n        }\n        case 0x25:\n        {\n          value = get_internal_card_id_from_csv_id(current_csvid);\n          if ((cards_data[value].type & 6) != 0)\n          {\n            bool found_subtype = false;\n            for (int subtype_index = 0; subtype_index < 7; ++subtype_index)\n              if (cards_ptr[current_csvid]->types[subtype_index] == 0x2001)\n              {\n                found_subtype = true;\n                break;\n              }\n            if (!found_subtype)\n              break;\n            base_rarity = rarities->rarity_in_expansion[expansion];\n            value = 0;\n            if (base_rarity != '\\x04')\n            {\n              if (base_rarity == '\\x03')\n              {\n                value = 7;\n              }\n              else\n              {\n                if (base_rarity == '\\x06')\n                  break;\n                value = 0x13;\n              }\n            }\n            do\n            {\n              value = value + -1;\n              add_to_csvid_choices(&pool->num, (int **)&choices[0x25].csvids, current_csvid);\n            } while (value != -1);\n          }\n          break;\n        }\n        case 0x26:\n        case 0x27:\n          if (pool_value == 0x26)\n          {\n            if (rarity_or_count != 3)\n              break;\n          }\n          else if (rarity_or_count != 4)\n            break;\n          bool legendary = false;\n          for (int subtype_index = 0; subtype_index < 7; ++subtype_index)\n            if (cards_ptr[current_csvid]->types[subtype_index] == 0x2001)\n            {\n              legendary = true;\n              break;\n            }\n          if (legendary)\n            break;\n          value = get_internal_card_id_from_csv_id(current_csvid);\n          if ((cards_data[value].type & 6) == 0)\n            add_to_csvid_choices(&pool->num, (int **)&choices[pool_value].csvids, current_csvid);\n          break;\n        case 0x28:\n        {\n          bool found_subtype = false;\n          for (int subtype_index = 0; subtype_index < 7; ++subtype_index)\n            if (cards_ptr[current_csvid]->types[subtype_index] == 0x6003)\n            {\n              found_subtype = true;\n              break;\n            }\n          if (!found_subtype)\n            break;\n          add_to_csvid_choices(&pool->num, (int **)&choices[0x28].csvids, current_csvid);\n          break;\n        }\n        }\n      }\n    }\n  for (varying_copies_entry_t *entry = varying_copies; entry->counts_and_cards; ++entry)\n  {\n    draftrarity_t rarity = entry->rarity;\n    const count_and_card_t *card = entry->counts_and_cards;\n    if (choices[rarity].num >= 0 && card->count > 0)\n      do\n      {\n        if (is_valid_card(card->csvid) && card->count > 0)\n        {\n          int count = 0;\n          do\n          {\n            ++count;\n            add_to_csvid_choices(&choices[rarity].num, &choices[rarity].csvids, card->csvid);\n          } while (count < card->count);\n        }\n        ++card;\n      } while (card->count > 0);\n  }\n  if ((choices[5].num == 0) &&\n      ((((((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) == EXPANSION_CONFLUX ||\n           (expansion == EXPANSION_WORLDWAKE)) ||\n          (expansion == EXPANSION_DARK_ASCENSION)) ||\n         (((expansion - EXPANSION_BORN_OF_THE_GODS & 0xfffffffd) == 0 ||\n           (expansion == EXPANSION_GATECRASH)))) ||\n        (((expansion - EXPANSION_OATH_OF_THE_GATEWATCH & 0xfffffffb) == 0 ||\n          (expansion == EXPANSION_AETHER_REVOLT))))))\n  {\n    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xbc);\n    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0x7e);\n    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xef);\n    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xa4);\n    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0x5b);\n  }\n}",
+      "after_definition": "static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices)\n{\n  static const int contraption_copies[3] = {16, 7, 2};\n  _Static_assert(sizeof(Rarities) == 5 && offsetof(Rarities, rarity_in_expansion) == 5,\n                 \"native rarity byte tail\");\n  _Static_assert(offsetof(card_ptr_t, types) == 132 &&\n                     offsetof(card_ptr_t, mana_source_colors) == 146,\n                 \"native seven subtypes\");\n  uint8_t base_rarity;\n  unsigned char symbol_or_index;\n  bool more_copies;\n  csvid_choices_t *pool;\n  int16_t *subtype_ptr;\n  int value;\n  const Rarities *rarities;\n  unsigned int copies_or_probability, current_csvid, pool_value, rarity_or_count,\n      has_special_rarities;\n  varying_copies_entry_t varying_copies[19] = {\n      {7, copies_common_arabian_nights},\n      {8, copies_uncommon_arabian_nights},\n      {9, copies_common_antiquities},\n      {10, copies_uncommon_antiquities},\n      {13, copies_common_the_dark},\n      {14, copies_uncommon_the_dark},\n      {15, copies_common_fallen_empires},\n      {16, copies_uncommon_fallen_empires},\n      {17, copies_common_chronicles},\n      {18, copies_uncommon_chronicles},\n      {19, copies_common_homelands},\n      {20, copies_uncommon_homelands},\n      {21, copies_common_alliances},\n      {22, copies_uncommon_alliances},\n      {23, copies_rare_alliances},\n      {35, copies_guildgate_or_shockland},\n      {41, copies_mystical_archive},\n      {42, copies_neo_land},\n      {0, NULL},\n  };\n  if (((((expansion & ~EXPANSION_FUTURE_SIGHT) == EXPANSION_VINTAGE_MASTERS) ||\n        (expansion == EXPANSION_LEGENDS)) ||\n       (expansion == EXPANSION_PLANAR_CHAOS)) ||\n      (expansion == EXPANSION_UNSTABLE))\n  {\n    has_special_rarities = 1;\n  }\n  else\n  {\n    has_special_rarities = 1;\n    if (((expansion - EXPANSION_INNISTRAD & 0xfffffffd) != 0) &&\n        ((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) != EXPANSION_SHADOWS_OVER_INNISTRAD))\n    {\n      has_special_rarities =\n          (unsigned int)((expansion - EXPANSION_INNISTRAD_MIDNIGHT_HUNT & 0xfffffffb) == 0);\n    }\n  }\n\n  if (available_slots > 1)\n    for (current_csvid = 0; (int)current_csvid < available_slots - 1; ++current_csvid)\n    {\n      rarities = get_rarity(current_csvid);\n      rarity_or_count = rarities->rarity_in_expansion[expansion];\n      if (!rarity_or_count || !is_valid_card(current_csvid))\n        continue;\n      symbol_or_index = rarities->dfc_symbol;\n      if (symbol_or_index != 0xff && (symbol_or_index & 1))\n        continue;\n      if (has_special_rarities)\n      {\n        if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD || expansion == EXPANSION_ELDRITCH_MOON)\n        {\n          if (symbol_or_index != 0xff)\n          {\n            if (rarity_or_count - 1 < 2)\n              rarity_or_count = 0x1c;\n            else if (rarity_or_count - 3 < 2)\n              rarity_or_count = 0x1d;\n          }\n        }\n        else if (expansion == EXPANSION_INNISTRAD_MIDNIGHT_HUNT ||\n                 expansion == EXPANSION_INNISTRAD_CRIMSON_VOW)\n        {\n          if (rarity_or_count == 1 && symbol_or_index != 0xff)\n            rarity_or_count = 0x1e;\n        }\n        else if (expansion == EXPANSION_KAMIGAWA_NEON_DYNASTY)\n        {\n          if (symbol_or_index != 0xff && rarity_or_count - 1 < 2)\n            rarity_or_count = 0x1c;\n        }\n        else if (expansion == EXPANSION_UNSTABLE)\n        {\n          for (int index = 0; index < 7; ++index)\n            if (cards_ptr[current_csvid]->types[index] == 0x3000)\n            {\n              rarity_or_count = 0x1f;\n              break;\n            }\n        }\n        else if (expansion == EXPANSION_INNISTRAD || expansion == EXPANSION_DARK_ASCENSION)\n        {\n          if (symbol_or_index != 0xff)\n            rarity_or_count = 0x1b;\n        }\n        else if (expansion == EXPANSION_VINTAGE_MASTERS && rarity_or_count == 4)\n        {\n          if (((int)current_csvid < 0xaa &&\n               ((int)current_csvid > 0xa4 || (current_csvid & 0xffffffef) == 1)) ||\n              current_csvid - 0xf9 < 2)\n            rarity_or_count = 6;\n        }\n        else if (expansion == EXPANSION_PLANAR_CHAOS && rarity_or_count - 1 < 3 &&\n                 (rarities->flags & 1))\n          rarity_or_count += 0x17;\n        else if (expansion == EXPANSION_LEGENDS && rarity_or_count - 1 < 2)\n        {\n          copies_or_probability = has_special_rarities;\n          bool default_weight = false;\n          switch (current_csvid)\n          {\n          case 0x22d:\n          case 0x236:\n          case 0x23a:\n          case 0x240:\n          case 0x261:\n          case 0x270:\n          case 0x271:\n          case 0x273:\n          case 0x279:\n          case 0x285:\n          case 0x28b:\n          case 0x28f:\n          case 0x29b:\n          case 0x29d:\n          case 0x2a0:\n          case 0x2a7:\n          case 0x2e0:\n          case 0x2ee:\n          case 0x2f5:\n          case 0x301:\n          case 0x311:\n          case 0x31b:\n          case 800:\n          case 0x32d:\n          case 0x337:\n          case 0x344:\n          case 0x347:\n          case 0x348:\n          case 0x34b:\n            copies_or_probability = 0;\n            break;\n          default:\n            default_weight = true;\n            if (rarity_or_count == 1)\n            {\n              value = 0x58;\n            }\n            else\n            {\n              value = 0x60;\n              copies_or_probability = 0;\n            }\n            break;\n          case 0x299:\n          case 0x2b6:\n          case 0x2c9:\n          case 0x2e4:\n          case 0x2ff:\n          case 0x30c:\n          case 0x333:\n          case 0x33e:\n          case 0x341:;\n          }\n          if (!default_weight)\n            value = (unsigned int)(rarity_or_count != 1) * 8 + 0x58;\n          draftrarity_t munged = value / sizeof(csvid_choices_t);\n          if (choices[munged].num < 0 || choices[rarity_or_count].num >= 0)\n            backtrace_and_abort(\n                \"functions/packs.c:2636\\nchoices[munged].num >= 0 && choices[rar].num < 0\");\n          do\n          {\n            --copies_or_probability;\n            add_to_csvid_choices(&choices[munged], current_csvid);\n          } while (copies_or_probability != 0xffffffff);\n          continue;\n        }\n      }\n      for (unsigned int pool_index = 1; pool_index < 0x2b; ++pool_index)\n      {\n        pool_value = pool_index;\n        pool = choices + pool_index;\n        if (pool->num < 0)\n          continue;\n        switch (pool_value)\n        {\n        case 1:\n        case 2:\n        case 3:\n        case 4:\n        case 5:\n        case 6:\n        case 0x18:\n        case 0x19:\n        case 0x1a:\n        case 0x1e:\n          if (rarity_or_count == pool_value)\n          {\n            add_to_csvid_choices(pool, current_csvid);\n            break;\n          }\n          break;\n        case 0x1b:\n          if (rarity_or_count == 0x1b)\n          {\n            pool_value = (unsigned int)rarities->rarity_in_expansion[expansion];\n            if (expansion == EXPANSION_INNISTRAD)\n            {\n              value = 0;\n              if (1 < pool_value - 3)\n              {\n                value = (unsigned int)(pool_value != 2) * 9 + 2;\n              }\n            }\n            else if (pool_value == 4)\n            {\n              value = 2;\n            }\n            else if (pool_value == 3)\n            {\n              value = 0xd;\n            }\n            else\n            {\n              value = ((pool_value != 2) - 1 & 0xffffffac) + 0x77;\n            }\n            do\n            {\n              value = value + -1;\n              add_to_csvid_choices(pool, current_csvid);\n            } while (value != -1);\n          }\n          break;\n        case 0x1c:\n          if (rarity_or_count == 0x1c)\n          {\n            if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)\n            {\n              pool_value = (rarities->rarity_in_expansion[expansion] != '\\x01') - 1 & 0xe;\n            }\n            else\n            {\n              pool_value = (unsigned int)(rarities->rarity_in_expansion[expansion] == '\\x01');\n              if (expansion == EXPANSION_ELDRITCH_MOON)\n              {\n                pool_value = (pool_value - 1 & 0xfffffff3) + 0xe;\n              }\n              else\n              {\n                pool_value = pool_value * 3;\n              }\n            }\n            do\n            {\n              pool_value = pool_value - 1;\n              add_to_csvid_choices(pool, current_csvid);\n            } while (pool_value != 0xffffffff);\n          }\n          break;\n        case 0x1d:\n          if (rarity_or_count == 0x1d)\n          {\n            if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)\n            {\n              value = (unsigned int)(rarities->rarity_in_expansion[expansion] == '\\x03') * 5 + 1;\n            }\n            else\n            {\n              value = (unsigned int)(rarities->rarity_in_expansion[expansion] == '\\x01') * 9 + 4;\n            }\n            do\n            {\n              value = value + -1;\n              add_to_csvid_choices(pool, current_csvid);\n            } while (value != -1);\n          }\n          break;\n        case 0x1f:\n          if (rarity_or_count == 0x1f)\n          {\n            symbol_or_index = rarities->rarity_in_expansion[expansion] - 2;\n            if (symbol_or_index < 3)\n            {\n              if (contraption_copies[(unsigned int)symbol_or_index] < 1)\n                break;\n              value = contraption_copies[(unsigned int)symbol_or_index] + -1;\n            }\n            else\n            {\n              value = 0x2a;\n            }\n            do\n            {\n              add_to_csvid_choices(pool, current_csvid);\n              more_copies = 0 < value;\n              value = value + -1;\n            } while (more_copies);\n          }\n          break;\n        case 0x20:\n          if (current_csvid == 0x7e)\n          {\n            add_to_csvid_choices(pool, 0x7e);\n          }\n          break;\n        case 0x21:\n          if (rarity_or_count == 5)\n          {\n            add_to_csvid_choices(pool, current_csvid);\n            bool snow = false;\n            subtype_ptr = cards_ptr[current_csvid]->types;\n            do\n            {\n              if (*subtype_ptr == 0x2003)\n              {\n                snow = true;\n                break;\n              }\n              ++subtype_ptr;\n            } while (cards_ptr[current_csvid]->types + 7 != subtype_ptr);\n            if (!snow)\n            {\n              add_to_csvid_choices(pool, current_csvid);\n              add_to_csvid_choices(pool, current_csvid);\n            }\n          }\n          break;\n        case 0x22:\n          add_to_csvid_choices(pool, current_csvid);\n          break;\n        case 0x24:\n        {\n          bool found_subtype = false;\n          for (int subtype_index = 0; subtype_index < 7; ++subtype_index)\n            if (cards_ptr[current_csvid]->types[subtype_index] == 0x500c)\n            {\n              found_subtype = true;\n              break;\n            }\n          if (!found_subtype)\n            break;\n          if (current_csvid != 0x4bac)\n          {\n            add_to_csvid_choices(pool, current_csvid);\n          }\n          break;\n        }\n        case 0x25:\n        {\n          value = get_internal_card_id_from_csv_id(current_csvid);\n          if ((cards_data[value].type & 6) != 0)\n          {\n            bool found_subtype = false;\n            for (int subtype_index = 0; subtype_index < 7; ++subtype_index)\n              if (cards_ptr[current_csvid]->types[subtype_index] == 0x2001)\n              {\n                found_subtype = true;\n                break;\n              }\n            if (!found_subtype)\n              break;\n            base_rarity = rarities->rarity_in_expansion[expansion];\n            value = 0;\n            if (base_rarity != '\\x04')\n            {\n              if (base_rarity == '\\x03')\n              {\n                value = 7;\n              }\n              else\n              {\n                if (base_rarity == '\\x06')\n                  break;\n                value = 0x13;\n              }\n            }\n            do\n            {\n              value = value + -1;\n              add_to_csvid_choices(pool, current_csvid);\n            } while (value != -1);\n          }\n          break;\n        }\n        case 0x26:\n        case 0x27:\n          if (pool_value == 0x26)\n          {\n            if (rarity_or_count != 3)\n              break;\n          }\n          else if (rarity_or_count != 4)\n            break;\n          bool legendary = false;\n          for (int subtype_index = 0; subtype_index < 7; ++subtype_index)\n            if (cards_ptr[current_csvid]->types[subtype_index] == 0x2001)\n            {\n              legendary = true;\n              break;\n            }\n          if (legendary)\n            break;\n          value = get_internal_card_id_from_csv_id(current_csvid);\n          if ((cards_data[value].type & 6) == 0)\n            add_to_csvid_choices(pool, current_csvid);\n          break;\n        case 0x28:\n        {\n          bool found_subtype = false;\n          for (int subtype_index = 0; subtype_index < 7; ++subtype_index)\n            if (cards_ptr[current_csvid]->types[subtype_index] == 0x6003)\n            {\n              found_subtype = true;\n              break;\n            }\n          if (!found_subtype)\n            break;\n          add_to_csvid_choices(pool, current_csvid);\n          break;\n        }\n        }\n      }\n    }\n  for (varying_copies_entry_t *entry = varying_copies; entry->counts_and_cards; ++entry)\n  {\n    draftrarity_t rarity = entry->rarity;\n    const count_and_card_t *card = entry->counts_and_cards;\n    if (choices[rarity].num >= 0 && card->count > 0)\n      do\n      {\n        if (is_valid_card(card->csvid) && card->count > 0)\n        {\n          int count = 0;\n          do\n          {\n            ++count;\n            add_to_csvid_choices(&choices[rarity], card->csvid);\n          } while (count < card->count);\n        }\n        ++card;\n      } while (card->count > 0);\n  }\n  if ((choices[5].num == 0) &&\n      ((((((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) == EXPANSION_CONFLUX ||\n           (expansion == EXPANSION_WORLDWAKE)) ||\n          (expansion == EXPANSION_DARK_ASCENSION)) ||\n         (((expansion - EXPANSION_BORN_OF_THE_GODS & 0xfffffffd) == 0 ||\n           (expansion == EXPANSION_GATECRASH)))) ||\n        (((expansion - EXPANSION_OATH_OF_THE_GATEWATCH & 0xfffffffb) == 0 ||\n          (expansion == EXPANSION_AETHER_REVOLT))))))\n  {\n    add_to_csvid_choices(&choices[5], 0xbc);\n    add_to_csvid_choices(&choices[5], 0x7e);\n    add_to_csvid_choices(&choices[5], 0xef);\n    add_to_csvid_choices(&choices[5], 0xa4);\n    add_to_csvid_choices(&choices[5], 0x5b);\n  }\n}",
+      "before_sha256": "1ff9c06019bfbfc6ac166e6eaca011cb21022d161e82e0bd2443b0f853e0e76a",
+      "after_sha256": "34167bad8f13b289cd106fda3a10d0ad39eb4187d86d2a2d311fa94fce0e2607",
+      "native_parameter_restoration": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "get_sacrifice_prompt_text",
+      "before_definition": "static void get_sacrifice_prompt_text(char *prompt, int type, int invert)\n{\n  const char *type_description;\n  char typetext[100];\n  if (ai_is_speculating == 1)\n  {\n    *prompt = '\\0';\n    return;\n  }\n  if (invert != 0)\n  {\n    type_description = type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT),\n                                 TYPETEXT_INVERT);\n    scnprintf(prompt, 200, \"Select %s permanent to sacrifice.\", type_description);\n    return;\n  }\n  type_description =\n      type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT), TYPETEXT_0);\n  scnprintf(prompt, 200, \"Select %s to sacrifice.\", type_description);\n  return;\n}",
+      "after_definition": "static void get_sacrifice_prompt_text(char *prompt, int maxlen, int type, int invert)\n{\n  const char *type_description;\n  char typetext[100];\n  if (ai_is_speculating == 1)\n  {\n    *prompt = '\\0';\n    return;\n  }\n  if (invert != 0)\n  {\n    type_description = type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT),\n                                 TYPETEXT_INVERT);\n    scnprintf(prompt, maxlen, \"Select %s permanent to sacrifice.\", type_description);\n    return;\n  }\n  type_description =\n      type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT), TYPETEXT_0);\n  scnprintf(prompt, maxlen, \"Select %s to sacrifice.\", type_description);\n  return;\n}",
+      "before_sha256": "2547ebb3c57d9618f07407c41b9b1be61c59e0391e7dc60b35a2f0ccdd3b2c17",
+      "after_sha256": "28422a8f6ab1331f4c452cce4479aa92addad728b067292bb9f20b543044ae44",
+      "native_parameter_restoration": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "new_sacrifice_impl",
+      "before_definition": "static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t options,\n                              test_definition_t *test, char *marked_for_sacrifice)\n{\n  int c;\n  int csvid;\n  uint8_t saved_target_count;\n  uint16_t requested_type_mode;\n  int32_t saved_target_player;\n  int32_t saved_target_card;\n  int saved_fizzle_or_scan;\n  card_instance_t *instance;\n  int available_card_or_result;\n  card_instance_t *selected_instance;\n  type_t prohibited_types;\n  unsigned int required_types_or_marking_state;\n  int scan_limit_card_or_result;\n  unsigned int requested_types;\n  int last_selected_player;\n  const char *prompt;\n  int last_selected_card;\n  unsigned int selection_limit;\n  int selected_count_or_packed_choice;\n  target_definition_t td;\n  char marked[151];\n  char default_prompt[200];\n\n  base_target_definition(player, card, &td, 0x47);\n  td.allow_cancel = options & (SAC_DONE | SAC_NO_CANCEL) ^ SAC_NO_CANCEL;\n  td.special = 0x8000;\n  td.extra = (int32_t)passes_test_definition_and_not_dying;\n  if (test->not_me == 1)\n  {\n    td.special = 0xc000;\n  }\n  requested_types = test->type & 0x147;\n  required_types_or_marking_state = td.required_type;\n  if (((requested_types != 0) &&\n       (requested_type_mode = test->type_flag, required_types_or_marking_state = requested_types,\n        requested_type_mode != 0)) &&\n      (required_types_or_marking_state = td.required_type, requested_type_mode == 1))\n  {\n    td.illegal_type = requested_types;\n  }\n  td.required_type = required_types_or_marking_state;\n  td.who_chooses = t_player;\n  td.allowed_controller = t_player;\n  td.preferred_controller = t_player;\n  if (((options & SAC_AS_COST) != 0) &&\n      (prohibited_types = types_cannot_sac(), prohibited_types != TYPE_NONE))\n  {\n    td.illegal_type = td.illegal_type | prohibited_types;\n  }\n  if ((((options & SAC_CAUSED) != 0) && (player != t_player)) &&\n      (saved_fizzle_or_scan = can_cause_sacrifice_part(t_player), saved_fizzle_or_scan == 0))\n  {\n    spell_fizzled = 1;\n    return 0;\n  }\n  instance = get_card_instance(player, card);\n  saved_fizzle_or_scan = spell_fizzled;\n  sacrifice_test = test;\n  if ((options & SAC_ALL_OR_NONE) == 0)\n  {\n    if (can_target(&td) == 0)\n    {\n      spell_fizzled = 1;\n      return 0;\n    }\n  }\n  else\n  {\n    available_card_or_result = target_available(player, card, &td);\n    if (available_card_or_result < (int)(unsigned int)test->qty)\n    {\n      spell_fizzled = 1;\n      return 0;\n    }\n  }\n  selection_limit = (unsigned int)test->qty;\n  available_card_or_result = target_available(player, card, &td);\n  if (available_card_or_result < (int)selection_limit)\n  {\n    selection_limit = target_available(player, card, &td);\n  }\n  if (test->message[0] == '\\0')\n  {\n    get_sacrifice_prompt_text(default_prompt, requested_types,\n                              (unsigned int)(test->type_flag == 1));\n    prompt = default_prompt;\n  }\n  else\n  {\n    prompt = test->message;\n  }\n  saved_target_count = instance->number_of_targets;\n  saved_target_player = instance->targets[0].player;\n  saved_target_card = instance->targets[0].card;\n  memset(marked, 0, sizeof(marked));\n  last_selected_player = -1;\n  last_selected_card = -1;\n  selected_count_or_packed_choice = 0;\n  bool accepted;\n  if ((int)selection_limit < 1)\n    accepted = spell_fizzled != 1 && (options & SAC_OPTIONAL) != 0;\n  else\n  {\n    available_card_or_result = -1;\n    if (player == t_player)\n      available_card_or_result = card;\n    bool ended_early = false;\n    bool cancelled = false;\n    do\n    {\n      target_t tgt;\n      spell_fizzled = 0;\n      tgt.player = -1;\n      tgt.card = -1;\n      bool use_dialog = true;\n      if (ai_is_speculating == 1 || (t_player == 1 && (trace_mode & 2U) == 0))\n      {\n        scan_limit_card_or_result =\n            new_get_special_permanent_for_sacrifice(t_player, available_card_or_result, test);\n        if (scan_limit_card_or_result != -1)\n        {\n          tgt.player = t_player;\n          tgt.card = scan_limit_card_or_result;\n          use_dialog = false;\n        }\n      }\n      if (use_dialog)\n      {\n        sacrifice_test = test;\n        instance->number_of_targets = 0;\n        select_target(player, card, &td, prompt, &tgt);\n      }\n      if (tgt.card >= 0)\n      {\n        if (marked[tgt.card] == '\\0')\n        {\n          selected_instance = get_card_instance(tgt.player, tgt.card);\n          if (ai_is_speculating == 1)\n          {\n            required_types_or_marking_state = 0x300000;\n          }\n          else\n          {\n            required_types_or_marking_state = 0x200000;\n            if (t_player == 1)\n            {\n              required_types_or_marking_state =\n                  (-(unsigned int)((trace_mode & 2U) == 0) & 0x100000) + 0x200000;\n            }\n          }\n          selected_instance->state = selected_instance->state | required_types_or_marking_state;\n          selected_count_or_packed_choice = selected_count_or_packed_choice + 1;\n          last_selected_card = tgt.card;\n          marked[tgt.card] = '\\x01';\n          last_selected_player = tgt.player;\n        }\n        else\n        {\n          selected_instance = get_card_instance(tgt.player, tgt.card);\n          selected_count_or_packed_choice = selected_count_or_packed_choice + -1;\n          selected_instance->state = selected_instance->state & 0xffdfffff;\n          marked[tgt.card] = '\\0';\n        }\n      }\n      else if ((options & (SAC_DONE | SAC_NO_CANCEL)) != SAC_NO_CANCEL)\n      {\n        ended_early = true;\n        cancelled = tgt.card == -1 ||\n                    (selected_count_or_packed_choice == 0 && (options & SAC_OPTIONAL) == 0);\n        break;\n      }\n    } while (selected_count_or_packed_choice < (int)selection_limit);\n    instance->number_of_targets = saved_target_count;\n    instance->targets[0].player = saved_target_player;\n    instance->targets[0].card = saved_target_card;\n    accepted = !cancelled && (ended_early || spell_fizzled != 1) &&\n               ((int)selection_limit <= selected_count_or_packed_choice ||\n                (options & SAC_ALL_OR_NONE) == 0);\n  }\n  if (accepted)\n  {\n    spell_fizzled = saved_fizzle_or_scan;\n    if ((options & SAC_SET_TARGETS) != 0)\n    {\n      instance->number_of_targets = '\\x01';\n      instance->targets[0].player = last_selected_player;\n      instance->targets[0].card = last_selected_card;\n      available_card_or_result = get_color(last_selected_player, last_selected_card);\n      instance->targets[1].player = available_card_or_result;\n      csvid = get_id(last_selected_player, last_selected_card);\n      instance->targets[1].card = csvid;\n      available_card_or_result = get_power(last_selected_player, last_selected_card);\n      instance->targets[2].player = available_card_or_result;\n      available_card_or_result = get_toughness(last_selected_player, last_selected_card);\n      instance->targets[2].card = available_card_or_result;\n      selected_instance = get_card_instance(last_selected_player, last_selected_card);\n      instance->targets[3].card = selected_instance->internal_card_id;\n      available_card_or_result = get_id(player, card);\n      if (available_card_or_result == 0x2f91)\n      {\n        available_card_or_result =\n            has_subtype(last_selected_player, last_selected_card, SUBTYPE_HUMAN);\n        instance->targets[3].player = available_card_or_result;\n      }\n      else if ((available_card_or_result == 0x24f3) &&\n               (available_card_or_result =\n                    has_subtype(last_selected_player, last_selected_card, SUBTYPE_GOBLIN),\n                available_card_or_result != 0))\n      {\n        token_generation_t token;\n        default_token_definition(player, card, 0x493b, &token);\n        token.t_player = last_selected_player;\n        token.qty = '\\x02';\n        token.action = TOKEN_ACTION_HASTE;\n        generate_token(&token);\n      }\n    }\n    c = 0;\n    if (0 < active_cards_count[t_player])\n    {\n      do\n      {\n        if (marked[c] != '\\0')\n        {\n          instance = get_card_instance(t_player, c);\n          c = c + 1;\n          instance->state = instance->state & 0xffdfffff | 0x100000;\n        }\n        else\n          c = c + 1;\n        scan_limit_card_or_result = active_cards_count[t_player];\n      } while (c < scan_limit_card_or_result);\n      if ((options & SAC_JUST_MARK) == 0 && scan_limit_card_or_result > 0)\n      {\n        c = 0;\n        do\n        {\n          if (marked[c] != '\\0')\n          {\n            instance = get_card_instance(t_player, c);\n            instance->state = instance->state & 0xffefffff;\n            instance = in_play(t_player, c);\n            if (instance != NULL)\n            {\n              scan_limit_card_or_result = c + 1;\n              kill_card(t_player, c, KILL_SACRIFICE);\n              c = scan_limit_card_or_result;\n              if (active_cards_count[t_player] <= scan_limit_card_or_result)\n                break;\n              continue;\n            }\n          }\n          c = c + 1;\n        } while (c < active_cards_count[t_player]);\n      }\n    }\n    if ((options & SAC_RETURN_CHOICE) != 0)\n    {\n      selected_count_or_packed_choice = (int32_t)((uint16_t)selected_count_or_packed_choice |\n                                                  ((uint32_t)(uint8_t)last_selected_player << 16) |\n                                                  ((uint32_t)(uint8_t)last_selected_card << 24));\n    }\n    if (marked_for_sacrifice == NULL)\n    {\n      spell_fizzled = saved_fizzle_or_scan;\n      return selected_count_or_packed_choice;\n    }\n    memcpy(marked_for_sacrifice, marked, sizeof(marked));\n    spell_fizzled = saved_fizzle_or_scan;\n    return selected_count_or_packed_choice;\n  }\n  saved_fizzle_or_scan = 0;\n  spell_fizzled = 1;\n  if (0 < active_cards_count[t_player])\n  {\n    do\n    {\n      while (marked[saved_fizzle_or_scan] == '\\0')\n      {\n        saved_fizzle_or_scan = saved_fizzle_or_scan + 1;\n        if (active_cards_count[t_player] <= saved_fizzle_or_scan)\n        {\n          return 0;\n        }\n      }\n      instance = get_card_instance(t_player, saved_fizzle_or_scan);\n      saved_fizzle_or_scan = saved_fizzle_or_scan + 1;\n      available_card_or_result = active_cards_count[t_player];\n      instance->state = instance->state & 0xffcfffff;\n    } while (saved_fizzle_or_scan < available_card_or_result);\n  }\n  return 0;\n}",
+      "after_definition": "static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t options,\n                              test_definition_t *test, char *marked_for_sacrifice)\n{\n  int c;\n  int csvid;\n  uint8_t saved_target_count;\n  uint16_t requested_type_mode;\n  int32_t saved_target_player;\n  int32_t saved_target_card;\n  int saved_fizzle_or_scan;\n  card_instance_t *instance;\n  int available_card_or_result;\n  card_instance_t *selected_instance;\n  type_t prohibited_types;\n  unsigned int required_types_or_marking_state;\n  int scan_limit_card_or_result;\n  unsigned int requested_types;\n  int last_selected_player;\n  const char *prompt;\n  int last_selected_card;\n  unsigned int selection_limit;\n  int selected_count_or_packed_choice;\n  target_definition_t td;\n  char marked[151];\n  char default_prompt[200];\n\n  base_target_definition(player, card, &td, 0x47);\n  td.allow_cancel = options & (SAC_DONE | SAC_NO_CANCEL) ^ SAC_NO_CANCEL;\n  td.special = 0x8000;\n  td.extra = (int32_t)passes_test_definition_and_not_dying;\n  if (test->not_me == 1)\n  {\n    td.special = 0xc000;\n  }\n  requested_types = test->type & 0x147;\n  required_types_or_marking_state = td.required_type;\n  if (((requested_types != 0) &&\n       (requested_type_mode = test->type_flag, required_types_or_marking_state = requested_types,\n        requested_type_mode != 0)) &&\n      (required_types_or_marking_state = td.required_type, requested_type_mode == 1))\n  {\n    td.illegal_type = requested_types;\n  }\n  td.required_type = required_types_or_marking_state;\n  td.who_chooses = t_player;\n  td.allowed_controller = t_player;\n  td.preferred_controller = t_player;\n  if (((options & SAC_AS_COST) != 0) &&\n      (prohibited_types = types_cannot_sac(), prohibited_types != TYPE_NONE))\n  {\n    td.illegal_type = td.illegal_type | prohibited_types;\n  }\n  if ((((options & SAC_CAUSED) != 0) && (player != t_player)) &&\n      (saved_fizzle_or_scan = can_cause_sacrifice_part(t_player), saved_fizzle_or_scan == 0))\n  {\n    spell_fizzled = 1;\n    return 0;\n  }\n  instance = get_card_instance(player, card);\n  saved_fizzle_or_scan = spell_fizzled;\n  sacrifice_test = test;\n  if ((options & SAC_ALL_OR_NONE) == 0)\n  {\n    if (can_target(&td) == 0)\n    {\n      spell_fizzled = 1;\n      return 0;\n    }\n  }\n  else\n  {\n    available_card_or_result = target_available(player, card, &td);\n    if (available_card_or_result < (int)(unsigned int)test->qty)\n    {\n      spell_fizzled = 1;\n      return 0;\n    }\n  }\n  selection_limit = (unsigned int)test->qty;\n  available_card_or_result = target_available(player, card, &td);\n  if (available_card_or_result < (int)selection_limit)\n  {\n    selection_limit = target_available(player, card, &td);\n  }\n  if (test->message[0] == '\\0')\n  {\n    get_sacrifice_prompt_text(default_prompt, 200, requested_types,\n                              (unsigned int)(test->type_flag == 1));\n    prompt = default_prompt;\n  }\n  else\n  {\n    prompt = test->message;\n  }\n  saved_target_count = instance->number_of_targets;\n  saved_target_player = instance->targets[0].player;\n  saved_target_card = instance->targets[0].card;\n  memset(marked, 0, sizeof(marked));\n  last_selected_player = -1;\n  last_selected_card = -1;\n  selected_count_or_packed_choice = 0;\n  bool accepted;\n  if ((int)selection_limit < 1)\n    accepted = spell_fizzled != 1 && (options & SAC_OPTIONAL) != 0;\n  else\n  {\n    available_card_or_result = -1;\n    if (player == t_player)\n      available_card_or_result = card;\n    bool ended_early = false;\n    bool cancelled = false;\n    do\n    {\n      target_t tgt;\n      spell_fizzled = 0;\n      tgt.player = -1;\n      tgt.card = -1;\n      bool use_dialog = true;\n      if (ai_is_speculating == 1 || (t_player == 1 && (trace_mode & 2U) == 0))\n      {\n        scan_limit_card_or_result =\n            new_get_special_permanent_for_sacrifice(t_player, available_card_or_result, test);\n        if (scan_limit_card_or_result != -1)\n        {\n          tgt.player = t_player;\n          tgt.card = scan_limit_card_or_result;\n          use_dialog = false;\n        }\n      }\n      if (use_dialog)\n      {\n        sacrifice_test = test;\n        instance->number_of_targets = 0;\n        select_target(player, card, &td, prompt, &tgt);\n      }\n      if (tgt.card >= 0)\n      {\n        if (marked[tgt.card] == '\\0')\n        {\n          selected_instance = get_card_instance(tgt.player, tgt.card);\n          if (ai_is_speculating == 1)\n          {\n            required_types_or_marking_state = 0x300000;\n          }\n          else\n          {\n            required_types_or_marking_state = 0x200000;\n            if (t_player == 1)\n            {\n              required_types_or_marking_state =\n                  (-(unsigned int)((trace_mode & 2U) == 0) & 0x100000) + 0x200000;\n            }\n          }\n          selected_instance->state = selected_instance->state | required_types_or_marking_state;\n          selected_count_or_packed_choice = selected_count_or_packed_choice + 1;\n          last_selected_card = tgt.card;\n          marked[tgt.card] = '\\x01';\n          last_selected_player = tgt.player;\n        }\n        else\n        {\n          selected_instance = get_card_instance(tgt.player, tgt.card);\n          selected_count_or_packed_choice = selected_count_or_packed_choice + -1;\n          selected_instance->state = selected_instance->state & 0xffdfffff;\n          marked[tgt.card] = '\\0';\n        }\n      }\n      else if ((options & (SAC_DONE | SAC_NO_CANCEL)) != SAC_NO_CANCEL)\n      {\n        ended_early = true;\n        cancelled = tgt.card == -1 ||\n                    (selected_count_or_packed_choice == 0 && (options & SAC_OPTIONAL) == 0);\n        break;\n      }\n    } while (selected_count_or_packed_choice < (int)selection_limit);\n    instance->number_of_targets = saved_target_count;\n    instance->targets[0].player = saved_target_player;\n    instance->targets[0].card = saved_target_card;\n    accepted = !cancelled && (ended_early || spell_fizzled != 1) &&\n               ((int)selection_limit <= selected_count_or_packed_choice ||\n                (options & SAC_ALL_OR_NONE) == 0);\n  }\n  if (accepted)\n  {\n    spell_fizzled = saved_fizzle_or_scan;\n    if ((options & SAC_SET_TARGETS) != 0)\n    {\n      instance->number_of_targets = '\\x01';\n      instance->targets[0].player = last_selected_player;\n      instance->targets[0].card = last_selected_card;\n      available_card_or_result = get_color(last_selected_player, last_selected_card);\n      instance->targets[1].player = available_card_or_result;\n      csvid = get_id(last_selected_player, last_selected_card);\n      instance->targets[1].card = csvid;\n      available_card_or_result = get_power(last_selected_player, last_selected_card);\n      instance->targets[2].player = available_card_or_result;\n      available_card_or_result = get_toughness(last_selected_player, last_selected_card);\n      instance->targets[2].card = available_card_or_result;\n      selected_instance = get_card_instance(last_selected_player, last_selected_card);\n      instance->targets[3].card = selected_instance->internal_card_id;\n      available_card_or_result = get_id(player, card);\n      if (available_card_or_result == 0x2f91)\n      {\n        available_card_or_result =\n            has_subtype(last_selected_player, last_selected_card, SUBTYPE_HUMAN);\n        instance->targets[3].player = available_card_or_result;\n      }\n      else if ((available_card_or_result == 0x24f3) &&\n               (available_card_or_result =\n                    has_subtype(last_selected_player, last_selected_card, SUBTYPE_GOBLIN),\n                available_card_or_result != 0))\n      {\n        token_generation_t token;\n        default_token_definition(player, card, 0x493b, &token);\n        token.t_player = last_selected_player;\n        token.qty = '\\x02';\n        token.action = TOKEN_ACTION_HASTE;\n        generate_token(&token);\n      }\n    }\n    c = 0;\n    if (0 < active_cards_count[t_player])\n    {\n      do\n      {\n        if (marked[c] != '\\0')\n        {\n          instance = get_card_instance(t_player, c);\n          c = c + 1;\n          instance->state = instance->state & 0xffdfffff | 0x100000;\n        }\n        else\n          c = c + 1;\n        scan_limit_card_or_result = active_cards_count[t_player];\n      } while (c < scan_limit_card_or_result);\n      if ((options & SAC_JUST_MARK) == 0 && scan_limit_card_or_result > 0)\n      {\n        c = 0;\n        do\n        {\n          if (marked[c] != '\\0')\n          {\n            instance = get_card_instance(t_player, c);\n            instance->state = instance->state & 0xffefffff;\n            instance = in_play(t_player, c);\n            if (instance != NULL)\n            {\n              scan_limit_card_or_result = c + 1;\n              kill_card(t_player, c, KILL_SACRIFICE);\n              c = scan_limit_card_or_result;\n              if (active_cards_count[t_player] <= scan_limit_card_or_result)\n                break;\n              continue;\n            }\n          }\n          c = c + 1;\n        } while (c < active_cards_count[t_player]);\n      }\n    }\n    if ((options & SAC_RETURN_CHOICE) != 0)\n    {\n      selected_count_or_packed_choice = (int32_t)((uint16_t)selected_count_or_packed_choice |\n                                                  ((uint32_t)(uint8_t)last_selected_player << 16) |\n                                                  ((uint32_t)(uint8_t)last_selected_card << 24));\n    }\n    if (marked_for_sacrifice == NULL)\n    {\n      spell_fizzled = saved_fizzle_or_scan;\n      return selected_count_or_packed_choice;\n    }\n    memcpy(marked_for_sacrifice, marked, sizeof(marked));\n    spell_fizzled = saved_fizzle_or_scan;\n    return selected_count_or_packed_choice;\n  }\n  saved_fizzle_or_scan = 0;\n  spell_fizzled = 1;\n  if (0 < active_cards_count[t_player])\n  {\n    do\n    {\n      while (marked[saved_fizzle_or_scan] == '\\0')\n      {\n        saved_fizzle_or_scan = saved_fizzle_or_scan + 1;\n        if (active_cards_count[t_player] <= saved_fizzle_or_scan)\n        {\n          return 0;\n        }\n      }\n      instance = get_card_instance(t_player, saved_fizzle_or_scan);\n      saved_fizzle_or_scan = saved_fizzle_or_scan + 1;\n      available_card_or_result = active_cards_count[t_player];\n      instance->state = instance->state & 0xffcfffff;\n    } while (saved_fizzle_or_scan < available_card_or_result);\n  }\n  return 0;\n}",
+      "before_sha256": "60e7dc5a7a53f485174f4fed618bf45f5bcaeb05b735a1b2fe6a28106ec30e2d",
+      "after_sha256": "c818f3c344eadc9831c91a970523e00be1006e3dbb99b3619e0ccd4cf8dbbb92",
+      "native_parameter_restoration": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "pick_permanent_for_sacrifice",
+      "before_definition": "int pick_permanent_for_sacrifice(int player, int card, int type, int cannot_cancel)\n{\n  card_instance_t *instance;\n  int result;\n  target_definition_t td;\n  char prompt[200];\n\n  default_target_definition(player, card, &td, type);\n  td.allow_cancel = 1 - cannot_cancel;\n  td.allowed_controller = player;\n  td.preferred_controller = player;\n  td.illegal_abilities = 0;\n  td.who_chooses = player;\n  td.extra = (int32_t)can_sacrifice_this;\n  td.special = 0x8000;\n  instance = get_card_instance(player, card);\n  result = can_target(&td);\n  if (result != 0)\n  {\n    if (player == 1)\n    {\n      result = get_best_permanent_for_sacrifice(1, type);\n      if (result != -1)\n      {\n        return result;\n      }\n    }\n    get_sacrifice_prompt_text(prompt, type, 0);\n    select_target(player, card, &td, prompt, instance->targets);\n    if (spell_fizzled != 1)\n    {\n      instance->number_of_targets = '\\x01';\n      return instance->targets[0].card;\n    }\n  }\n  return -1;\n}",
+      "after_definition": "int pick_permanent_for_sacrifice(int player, int card, int type, int cannot_cancel)\n{\n  card_instance_t *instance;\n  int result;\n  target_definition_t td;\n  char prompt[200];\n\n  default_target_definition(player, card, &td, type);\n  td.allow_cancel = 1 - cannot_cancel;\n  td.allowed_controller = player;\n  td.preferred_controller = player;\n  td.illegal_abilities = 0;\n  td.who_chooses = player;\n  td.extra = (int32_t)can_sacrifice_this;\n  td.special = 0x8000;\n  instance = get_card_instance(player, card);\n  result = can_target(&td);\n  if (result != 0)\n  {\n    if (player == 1)\n    {\n      result = get_best_permanent_for_sacrifice(1, type);\n      if (result != -1)\n      {\n        return result;\n      }\n    }\n    get_sacrifice_prompt_text(prompt, 200, type, 0);\n    select_target(player, card, &td, prompt, instance->targets);\n    if (spell_fizzled != 1)\n    {\n      instance->number_of_targets = '\\x01';\n      return instance->targets[0].card;\n    }\n  }\n  return -1;\n}",
+      "before_sha256": "ae9a7f0040878cfc41db74523e43058a520e5d93719859626cadc40622e42886",
+      "after_sha256": "0010a7dac4112c98748a091b8029d77bed923d0701f706995a3104469754c4d3",
+      "native_parameter_restoration": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "pick_special_permanent_for_sacrifice",
+      "before_definition": "int pick_special_permanent_for_sacrifice(int player, int card, int cannot_cancel, int type,\n                                              int flag1, int subtype, int flag2, int color,\n                                              int flag3, int id, int flag4, int cc, int flag5)\n{\n  card_instance_t *instance;\n  int result;\n  target_definition_t td;\n\n  default_target_definition(player, card, &td, type);\n  td.allow_cancel = 1 - cannot_cancel;\n  td.allowed_controller = player;\n  td.preferred_controller = player;\n  td.illegal_abilities = 0;\n  td.who_chooses = player;\n  td.extra = (int32_t)can_sacrifice_this;\n  td.special = 0x8000;\n  instance = get_card_instance(player, card);\n  result = can_target(&td);\n  if (result != 0)\n  {\n    if (player == 1)\n    {\n      test_definition_t test;\n      new_default_test_definition(&test, type, \"\");\n      test.type_flag = (uint16_t)flag1;\n      test.subtype = subtype;\n      test.subtype_flag = (uint16_t)flag2;\n      test.color = color;\n      test.color_flag = (uint16_t)flag3;\n      test.id = id;\n      test.id_flag = (uint16_t)flag4;\n      test.cmc = cc;\n      test.cmc_flag = (uint16_t)flag5;\n      result = new_get_special_permanent_for_sacrifice(1, -1, &test);\n      return result;\n    }\n    char prompt[200];\n    get_sacrifice_prompt_text(prompt, type, (unsigned int)(flag1 == 1));\n    select_target(player, card, &td, prompt, instance->targets);\n    if (spell_fizzled != 1)\n    {\n      result =\n          make_test_in_play(instance->targets[0].player, instance->targets[0].card, -1, type,\n                                 flag1, subtype, flag2, color, flag3, id, flag4, cc, flag5);\n      if (result != 0)\n      {\n        instance->number_of_targets = '\\x01';\n        return instance->targets[0].card;\n      }\n    }\n  }\n  return -1;\n}",
+      "after_definition": "int pick_special_permanent_for_sacrifice(int player, int card, int cannot_cancel, int type,\n                                              int flag1, int subtype, int flag2, int color,\n                                              int flag3, int id, int flag4, int cc, int flag5)\n{\n  card_instance_t *instance;\n  int result;\n  target_definition_t td;\n\n  default_target_definition(player, card, &td, type);\n  td.allow_cancel = 1 - cannot_cancel;\n  td.allowed_controller = player;\n  td.preferred_controller = player;\n  td.illegal_abilities = 0;\n  td.who_chooses = player;\n  td.extra = (int32_t)can_sacrifice_this;\n  td.special = 0x8000;\n  instance = get_card_instance(player, card);\n  result = can_target(&td);\n  if (result != 0)\n  {\n    if (player == 1)\n    {\n      test_definition_t test;\n      new_default_test_definition(&test, type, \"\");\n      test.type_flag = (uint16_t)flag1;\n      test.subtype = subtype;\n      test.subtype_flag = (uint16_t)flag2;\n      test.color = color;\n      test.color_flag = (uint16_t)flag3;\n      test.id = id;\n      test.id_flag = (uint16_t)flag4;\n      test.cmc = cc;\n      test.cmc_flag = (uint16_t)flag5;\n      result = new_get_special_permanent_for_sacrifice(1, -1, &test);\n      return result;\n    }\n    char prompt[200];\n    get_sacrifice_prompt_text(prompt, 200, type, (unsigned int)(flag1 == 1));\n    select_target(player, card, &td, prompt, instance->targets);\n    if (spell_fizzled != 1)\n    {\n      result =\n          make_test_in_play(instance->targets[0].player, instance->targets[0].card, -1, type,\n                                 flag1, subtype, flag2, color, flag3, id, flag4, cc, flag5);\n      if (result != 0)\n      {\n        instance->number_of_targets = '\\x01';\n        return instance->targets[0].card;\n      }\n    }\n  }\n  return -1;\n}",
+      "before_sha256": "8a2bb6b6b5fea17ac9c16c9c8340911b2949433465e2edbe15cb16a158867133",
+      "after_sha256": "3ecbaab913ccee1e213939312a8539c2ec0dbdd8941685d7854281f3f828d6f3",
+      "native_parameter_restoration": true
+    }
+  ],
+  "files": [
+    {
+      "source": "functions/packs.c",
+      "before_bytes_sha256": "2ab4e07c40eed1fcb9e9d6079832e0d2d7348f968665c511d27cb9d80da6678d",
+      "before_source_sha256": "e0b9e60703454b63e298f3f77a252a917b22730a7ca7d3150d51972c69b7b07f",
+      "after_source_sha256": "c0a21df8b13357ec472372eaedbaac58b1ccba19616bbf48292f8e0ac69dde33",
+      "before_path": ".recovery/native-record-parameter-restoration-before/packs.c"
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "before_bytes_sha256": "63021440941d7e20861ff07eea38d97768365749f6b18b4d9ca377ba6e22742e",
+      "before_source_sha256": "e1e73734038389707115fe980182a456945be62ff1a8dbc8b80679bbf2f4fed9",
+      "after_source_sha256": "b8d00217da010ab89b22846f6008569cc20fef0efb311d97c29662bab4ef0271",
+      "before_path": ".recovery/native-record-parameter-restoration-before/sacrifices.c"
+    }
+  ],
+  "calls": [
+    {
+      "source": "functions/packs.c",
+      "caller": "make_pack_normal",
+      "callee": "add_card_to_pack",
+      "before_arguments": [
+        "out_csvids",
+        "rarity_or_count",
+        "&choices[recipe_rarity].num",
+        "(int **)&choices[recipe_rarity].csvids",
+        "copies_or_probability",
+        "recipe_rarity",
+        "expansion",
+        "booster",
+        "testing_mode"
+      ],
+      "after_arguments": [
+        "out_csvids",
+        "rarity_or_count",
+        "&choices[recipe_rarity]",
+        "copies_or_probability",
+        "recipe_rarity",
+        "expansion",
+        "booster",
+        "testing_mode"
+      ],
+      "proof": "Both addresses are fields at offsets 0/4 of the same choices[recipe_rarity] record; argument expressions have no side effects."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "make_pack_normal",
+      "callee": "add_card_to_pack",
+      "before_arguments": [
+        "out_csvids",
+        "rarity_or_count",
+        "&choices[recipe_rarity].num",
+        "(int **)&choices[recipe_rarity].csvids",
+        "recipe_entry->num",
+        "recipe_rarity",
+        "expansion",
+        "booster",
+        "testing_mode"
+      ],
+      "after_arguments": [
+        "out_csvids",
+        "rarity_or_count",
+        "&choices[recipe_rarity]",
+        "recipe_entry->num",
+        "recipe_rarity",
+        "expansion",
+        "booster",
+        "testing_mode"
+      ],
+      "proof": "Both addresses are fields at offsets 0/4 of the same choices[recipe_rarity] record; argument expressions have no side effects."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "make_pack_normal",
+      "callee": "add_card_to_pack",
+      "before_arguments": [
+        "out_csvids",
+        "rarity_or_count",
+        "&choices[recipe_rarity].num",
+        "(int **)&choices[recipe_rarity].csvids",
+        "1",
+        "recipe_rarity",
+        "expansion",
+        "booster",
+        "testing_mode"
+      ],
+      "after_arguments": [
+        "out_csvids",
+        "rarity_or_count",
+        "&choices[recipe_rarity]",
+        "1",
+        "recipe_rarity",
+        "expansion",
+        "booster",
+        "testing_mode"
+      ],
+      "proof": "Both addresses are fields at offsets 0/4 of the same choices[recipe_rarity] record; argument expressions have no side effects."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&choices[5].num",
+        "(int **)&choices[5].csvids",
+        "0x5b"
+      ],
+      "after_arguments": [
+        "&choices[5]",
+        "0x5b"
+      ],
+      "proof": "Both arguments address the count and array-pointer members of the same choices element."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&choices[5].num",
+        "(int **)&choices[5].csvids",
+        "0xa4"
+      ],
+      "after_arguments": [
+        "&choices[5]",
+        "0xa4"
+      ],
+      "proof": "Both arguments address the count and array-pointer members of the same choices element."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&choices[5].num",
+        "(int **)&choices[5].csvids",
+        "0xef"
+      ],
+      "after_arguments": [
+        "&choices[5]",
+        "0xef"
+      ],
+      "proof": "Both arguments address the count and array-pointer members of the same choices element."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&choices[5].num",
+        "(int **)&choices[5].csvids",
+        "0x7e"
+      ],
+      "after_arguments": [
+        "&choices[5]",
+        "0x7e"
+      ],
+      "proof": "Both arguments address the count and array-pointer members of the same choices element."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&choices[5].num",
+        "(int **)&choices[5].csvids",
+        "0xbc"
+      ],
+      "after_arguments": [
+        "&choices[5]",
+        "0xbc"
+      ],
+      "proof": "Both arguments address the count and array-pointer members of the same choices element."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&choices[rarity].num",
+        "&choices[rarity].csvids",
+        "card->csvid"
+      ],
+      "after_arguments": [
+        "&choices[rarity]",
+        "card->csvid"
+      ],
+      "proof": "Both arguments address the count and array-pointer members of the same choices element."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)&choices[0x28].csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)&choices[pool_value].csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)&choices[0x25].csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)&choices[0x24].csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)&choices[0x22].csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)choice_csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)choice_csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)choice_csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)&choices[0x20].csvids",
+        "0x7e"
+      ],
+      "after_arguments": [
+        "pool",
+        "0x7e"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)&choices[0x1f].csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)&choices[0x1d].csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)&choices[0x1c].csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)&choices[0x1b].csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&pool->num",
+        "(int **)&choices[pool_value].csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "pool",
+        "current_csvid"
+      ],
+      "proof": "pool = choices + pool_index. Reviewed switch cases select that same element; pool_value stays equal to pool_index at variable-index calls. Constant-index fields use their matching cases. The three cached-pointer calls occur only in case 0x21."
+    },
+    {
+      "source": "functions/packs.c",
+      "caller": "get_csvid_choices",
+      "callee": "add_to_csvid_choices",
+      "before_arguments": [
+        "&choices[munged].num",
+        "&choices[munged].csvids",
+        "current_csvid"
+      ],
+      "after_arguments": [
+        "&choices[munged]",
+        "current_csvid"
+      ],
+      "proof": "Both arguments address the count and array-pointer members of the same choices element."
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "caller": "new_sacrifice_impl",
+      "callee": "get_sacrifice_prompt_text",
+      "before_arguments": [
+        "default_prompt",
+        "requested_types",
+        "(unsigned int)(test->type_flag == 1)"
+      ],
+      "after_arguments": [
+        "default_prompt",
+        "200",
+        "requested_types",
+        "(unsigned int)(test->type_flag == 1)"
+      ],
+      "proof": "Native constprop body has literal scnprintf length 200; restore its original maxlen formal with that witnessed constant in each caller."
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "caller": "pick_permanent_for_sacrifice",
+      "callee": "get_sacrifice_prompt_text",
+      "before_arguments": [
+        "prompt",
+        "type",
+        "0"
+      ],
+      "after_arguments": [
+        "prompt",
+        "200",
+        "type",
+        "0"
+      ],
+      "proof": "Native constprop body has literal scnprintf length 200; restore its original maxlen formal with that witnessed constant in each caller."
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "caller": "pick_special_permanent_for_sacrifice",
+      "callee": "get_sacrifice_prompt_text",
+      "before_arguments": [
+        "prompt",
+        "type",
+        "(unsigned int)(flag1 == 1)"
+      ],
+      "after_arguments": [
+        "prompt",
+        "200",
+        "type",
+        "(unsigned int)(flag1 == 1)"
+      ],
+      "proof": "Native constprop body has literal scnprintf length 200; restore its original maxlen formal with that witnessed constant in each caller."
+    }
+  ],
+  "source_declarations": [
+    {
+      "source": "functions/sacrifices.c",
+      "before": "static void get_sacrifice_prompt_text(char *prompt, int type, int invert);",
+      "after": "static void get_sacrifice_prompt_text(char *prompt, int maxlen, int type, int invert);"
+    },
+    {
+      "source": "functions/packs.c",
+      "before": "typedef struct csvid_choices_t { int num; int *csvids; } csvid_choices_t;",
+      "after": "typedef struct csvid_choices_t { int num; card_id_t *csvids; } csvid_choices_t;"
+    }
+  ],
+  "native_contracts": [
+    {
+      "source": "functions/sacrifices.c",
+      "name": "get_sacrifice_prompt_text",
+      "native_name": "get_sacrifice_prompt_text",
+      "address": "0x26e3a30",
+      "native": {
+        "result": [
+          "void"
+        ],
+        "parameters": [
+          [
+            "data_pointer",
+            4,
+            [
+              "scalar",
+              1,
+              6
+            ]
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "variadic": false,
+        "calling_convention": 1
+      },
+      "rebuilt": {
+        "result": [
+          "void"
+        ],
+        "parameters": [
+          [
+            "data_pointer",
+            4,
+            [
+              "scalar",
+              1,
+              6
+            ]
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "variadic": false,
+        "calling_convention": 1
+      },
+      "native_owner_die": "0x6d14fe3",
+      "native_abstract_die": "0x6d140ed",
+      "result_type": "void",
+      "parameters": [
+        {
+          "name": "prompt",
+          "type": "char *",
+          "die": "0x6d14110",
+          "location": "None"
+        },
+        {
+          "name": "maxlen",
+          "type": "int",
+          "die": "0x6d1411c",
+          "location": "None"
+        },
+        {
+          "name": "type",
+          "type": "int",
+          "die": "0x6d1412b",
+          "location": "None"
+        },
+        {
+          "name": "invert",
+          "type": "int",
+          "die": "0x6d14137",
+          "location": "None"
+        }
+      ]
+    },
+    {
+      "source": "functions/packs.c",
+      "name": "add_to_csvid_choices",
+      "native_name": "add_to_csvid_choices",
+      "address": "0x26eb550",
+      "native": {
+        "result": [
+          "void"
+        ],
+        "parameters": [
+          [
+            "data_pointer",
+            4,
+            [
+              "aggregate",
+              "DW_TAG_structure_type",
+              8
+            ]
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "variadic": false,
+        "calling_convention": 1
+      },
+      "rebuilt": {
+        "result": [
+          "void"
+        ],
+        "parameters": [
+          [
+            "data_pointer",
+            4,
+            [
+              "scalar",
+              4,
+              5
+            ]
+          ],
+          [
+            "data_pointer",
+            4,
+            [
+              "data_pointer",
+              4,
+              [
+                "scalar",
+                4,
+                5
+              ]
+            ]
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "variadic": false,
+        "calling_convention": 1
+      },
+      "native_owner_die": "0x6fee9b2",
+      "native_abstract_die": "0x6fee978",
+      "result_type": "void",
+      "parameters": [
+        {
+          "name": "choices",
+          "type": "csvid_choices_t *",
+          "die": "0x6fee997",
+          "location": "None"
+        },
+        {
+          "name": "csvid",
+          "type": "csvid_t",
+          "die": "0x6fee9a4",
+          "location": "None"
+        }
+      ]
+    },
+    {
+      "source": "functions/packs.c",
+      "name": "add_card_to_pack",
+      "native_name": "add_card_to_pack",
+      "address": "0x26eb660",
+      "native": {
+        "result": [
+          "scalar",
+          4,
+          5
+        ],
+        "parameters": [
+          [
+            "data_pointer",
+            4,
+            [
+              "scalar",
+              4,
+              5
+            ]
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ],
+          [
+            "data_pointer",
+            4,
+            [
+              "aggregate",
+              "DW_TAG_structure_type",
+              8
+            ]
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ],
+          [
+            "enum",
+            4
+          ],
+          [
+            "enum",
+            4
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "variadic": false,
+        "calling_convention": 1
+      },
+      "rebuilt": {
+        "result": [
+          "scalar",
+          4,
+          5
+        ],
+        "parameters": [
+          [
+            "data_pointer",
+            4,
+            [
+              "scalar",
+              4,
+              5
+            ]
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ],
+          [
+            "data_pointer",
+            4,
+            [
+              "scalar",
+              4,
+              5
+            ]
+          ],
+          [
+            "data_pointer",
+            4,
+            [
+              "data_pointer",
+              4,
+              [
+                "scalar",
+                4,
+                5
+              ]
+            ]
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "variadic": false,
+        "calling_convention": 1
+      },
+      "native_owner_die": "0x6feea78",
+      "native_abstract_die": "0x6fee552",
+      "result_type": "int",
+      "parameters": [
+        {
+          "name": "out_csvids",
+          "type": "csvid_t *",
+          "die": "0x6fee571",
+          "location": "None"
+        },
+        {
+          "name": "pos",
+          "type": "int",
+          "die": "0x6fee57e",
+          "location": "None"
+        },
+        {
+          "name": "choice",
+          "type": "csvid_choices_t *",
+          "die": "0x6fee58b",
+          "location": "None"
+        },
+        {
+          "name": "num",
+          "type": "int",
+          "die": "0x6fee598",
+          "location": "None"
+        },
+        {
+          "name": "rarity",
+          "type": "draftrarity_t",
+          "die": "0x6fee5a5",
+          "location": "None"
+        },
+        {
+          "name": "expansion",
+          "type": "expansion_t",
+          "die": "0x6fee5b2",
+          "location": "None"
+        },
+        {
+          "name": "booster",
+          "type": "int",
+          "die": "0x6fee5bf",
+          "location": "None"
+        },
+        {
+          "name": "testing_mode",
+          "type": "int",
+          "die": "0x6fee5cc",
+          "location": "None"
+        }
+      ]
+    }
+  ],
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_dbg_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "native_csvid_choices_layout": [
+    {
+      "function": "add_to_csvid_choices",
+      "record_die": "0x6fe9dba",
+      "size": 8,
+      "fields": [
+        {
+          "name": "num",
+          "offset": 0,
+          "size": 4,
+          "type": "int"
+        },
+        {
+          "name": "csvids",
+          "offset": 4,
+          "size": 4,
+          "type": "card_id_t *"
+        }
+      ]
+    },
+    {
+      "function": "add_card_to_pack",
+      "record_die": "0x6fe9dba",
+      "size": 8,
+      "fields": [
+        {
+          "name": "num",
+          "offset": 0,
+          "size": 4,
+          "type": "int"
+        },
+        {
+          "name": "csvids",
+          "offset": 4,
+          "size": 4,
+          "type": "card_id_t *"
+        }
+      ]
+    }
+  ],
+  "comparison_checkpoint": {
+    "dll_sha256": "3c2d8373aaa13632cce913b9f20269ed7f1981a54a493f4dfd84964af9e8032d",
+    "dbg_sha256": "d2329e5d280f3cb25d8cc3a9f5e9bf52b5228d532f5c64bdc4b573d196894a36",
+    "csv_functions": 18725,
+    "helper_pending": 0,
+    "card_pending": 0,
+    "helper_categories": {
+      "verified_retained_source": 951,
+      "reconstructed_source": 1242,
+      "reviewed_compiler_source": 34,
+      "reviewed_cpp_source": 17
+    },
+    "card_categories": {
+      "verified_retained_source": 6634,
+      "reconstructed_source": 5100
+    },
+    "inputs": {
+      "docs\\recovery-evidence\\helper-triage.json": "081b1b78ca38b13ac136744f2035ae7c0f37cadc5954cf8cbb565fff62c749d3",
+      "docs\\recovery-evidence\\card-triage.json": "ddc2f217850d126b91c05d386e708cd3510f47fcab7238d465272e237eea4e95",
+      ".recovery\\reccmp\\triage-current.json": "e1b852bcb7689c4b6fa6fb9eb3e94380fba39873be2233da85cc4258c7a09f59",
+      ".recovery\\reccmp\\triage-current.inputs.json": "5724e80171e495cafab82f092b814d9d035857edcc79afa63cfb64e0d770322d"
+    },
+    "scope": "Full comparison checkpoint immediately before this parameter restoration; not a post-edit comparison."
+  },
+  "review_notes": [
+    "Restore DWARF original parameters from GCC .isra/.constprop specializations. These findings do not by themselves indicate runtime ABI bugs in private workers.",
+    "csvid_choices_t is eight bytes with num at zero and card-id pointer at four. Restore the card_id_t pointer member and record parameters; every merged pair addresses the same reviewed record. Keep allocation thresholds, counter reloads, duplicates, random calls, fatal strings and native assertion text.",
+    "Restore draftrarity_t/EXPANSION_t parameter types in add_card_to_pack. Observed callers already supply those enum values.",
+    "Restore maxlen in get_sacrifice_prompt_text, with 200 at all three callers as witnessed in the native constprop body. No claim about unobserved specialization domains.",
+    "Comparison tooling uses current source/name checks instead of retired historical snapshots. Triage opts into unprefixed internal rel8/rel32 JMP/Jcc normalization after exact destination-ordinal checks. Historical fingerprint mode remains the default.",
+    "Five newly flagged card spans were exclusively short/near JE/JNE encodings at the identical destination ordinal. Source was not edited for those cards. Positive/negative checks cover changed condition, changed destination, loop opcodes, prefixes and historical default preservation."
+  ],
+  "scope": "Source interface reconstruction and current-comparison maintenance; no new native body coverage, runtime-byte identity or gameplay-equivalence claim.",
+  "post_edit_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "fa6fb68410135d6f2ec57f2ad325e0e4b863867fc22c5a3d704848fff907e965",
+    "dbg_sha256": "85807a720f741a4d05af2e9f9735e6f051e80efabb5cdbc4f66e53547acc19a5",
+    "compiled_native_signatures": [
+      {
+        "name": "add_card_to_pack",
+        "die": "0x5ab6632",
+        "contract": {
+          "result": [
+            "scalar",
+            4,
+            5
+          ],
+          "parameters": [
+            [
+              "data_pointer",
+              4,
+              [
+                "scalar",
+                4,
+                5
+              ]
+            ],
+            [
+              "scalar",
+              4,
+              5
+            ],
+            [
+              "data_pointer",
+              4,
+              [
+                "aggregate",
+                "DW_TAG_structure_type",
+                8
+              ]
+            ],
+            [
+              "scalar",
+              4,
+              5
+            ],
+            [
+              "enum",
+              4
+            ],
+            [
+              "enum",
+              4
+            ],
+            [
+              "scalar",
+              4,
+              5
+            ],
+            [
+              "scalar",
+              4,
+              5
+            ]
+          ],
+          "variadic": false,
+          "calling_convention": 1
+        }
+      },
+      {
+        "name": "add_to_csvid_choices",
+        "die": "0x5ab653f",
+        "contract": {
+          "result": [
+            "void"
+          ],
+          "parameters": [
+            [
+              "data_pointer",
+              4,
+              [
+                "aggregate",
+                "DW_TAG_structure_type",
+                8
+              ]
+            ],
+            [
+              "scalar",
+              4,
+              5
+            ]
+          ],
+          "variadic": false,
+          "calling_convention": 1
+        }
+      },
+      {
+        "name": "get_sacrifice_prompt_text",
+        "die": "0x5cebf54",
+        "contract": {
+          "result": [
+            "void"
+          ],
+          "parameters": [
+            [
+              "data_pointer",
+              4,
+              [
+                "scalar",
+                1,
+                6
+              ]
+            ],
+            [
+              "scalar",
+              4,
+              5
+            ],
+            [
+              "scalar",
+              4,
+              5
+            ],
+            [
+              "scalar",
+              4,
+              5
+            ]
+          ],
+          "variadic": false,
+          "calling_convention": 1
+        }
+      }
+    ],
+    "compiled_native_record_layouts": [
+      {
+        "die": "0x5aaebcd",
+        "size": 8,
+        "fields": [
+          {
+            "name": "num",
+            "offset": 0,
+            "size": 4,
+            "type": "int"
+          },
+          {
+            "name": "csvids",
+            "offset": 4,
+            "size": 4,
+            "type": "card_id_t *"
+          }
+        ]
+      },
+      {
+        "die": "0x5aaebcd",
+        "size": 8,
+        "fields": [
+          {
+            "name": "num",
+            "offset": 0,
+            "size": 4,
+            "type": "int"
+          },
+          {
+            "name": "csvids",
+            "offset": 4,
+            "size": 4,
+            "type": "card_id_t *"
+          }
+        ]
+      }
+    ],
+    "affected_source_evidence_checks": "passed",
+    "staging": "preserved",
+    "scope": "Focused post-edit build, original signature/record checks and source projections. The full comparison checkpoint predates this edit; no repeated full triage."
+  },
+  "comparison_branch_width_witnesses": [
+    {
+      "name": "card_graveyard_shovel",
+      "native_instruction_bytes": "751e",
+      "checkpoint_rebuilt_instruction_bytes": "0f851a000000",
+      "destination_instruction_ordinal": 110
+    },
+    {
+      "name": "card_panoptic_mirror",
+      "native_instruction_bytes": "7444",
+      "checkpoint_rebuilt_instruction_bytes": "0f8440000000",
+      "destination_instruction_ordinal": 383
+    },
+    {
+      "name": "card_kiora_master_of_the_depths_emblem",
+      "native_instruction_bytes": "7514",
+      "checkpoint_rebuilt_instruction_bytes": "0f8510000000",
+      "destination_instruction_ordinal": 40
+    },
+    {
+      "name": "card_serene_remembrance",
+      "native_instruction_bytes": "755f",
+      "checkpoint_rebuilt_instruction_bytes": "0f8563000000",
+      "destination_instruction_ordinal": 116
+    },
+    {
+      "name": "card_pucas_mischief",
+      "native_instruction_bytes": "7515",
+      "checkpoint_rebuilt_instruction_bytes": "0f8511000000",
+      "destination_instruction_ordinal": 65
+    }
+  ]
+}

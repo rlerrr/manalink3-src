@@ -52,7 +52,7 @@ typedef enum {
 
 typedef struct rarity_num_t { draftrarity_t rarity; int num; } rarity_num_t;
 typedef struct booster_t { EXPANSION_t expansion; const rarity_num_t *booster; const rarity_num_t *starter; } booster_t;
-typedef struct csvid_choices_t { int num; int *csvids; } csvid_choices_t;
+typedef struct csvid_choices_t { int num; card_id_t *csvids; } csvid_choices_t;
 _Static_assert(sizeof(rarity_num_t)==8 && sizeof(booster_t)==12 && sizeof(csvid_choices_t)==8, "native pack description layouts");
 
 static const rarity_num_t no_boosters[1] = {
@@ -660,44 +660,44 @@ static booster_t pack_contents[198] = {
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26eb550; original functions/packs.c:650. */
-static void add_to_csvid_choices(int *choice_num, int **choice_csvids, int csvid)
+static void add_to_csvid_choices(csvid_choices_t *choices, int csvid)
 {
   int result;
-  int *piVar2;
-  result = *choice_num;
+  card_id_t *csvids;
+  result = choices->num;
   if (result < 0)
   {
     backtrace_and_abort("functions/packs.c:652\nchoices->num >= 0");
   }
-  if (*choice_csvids == NULL)
+  if (choices->csvids == NULL)
   {
     if (result != 0)
     {
       backtrace_and_abort("functions/packs.c:656\nchoices->num == 0");
     }
-    piVar2 = malloc(800);
-    *choice_csvids = piVar2;
-    if (piVar2 == NULL)
+    csvids = malloc(800);
+    choices->csvids = csvids;
+    if (csvids == NULL)
     {
       fatal("could not malloc %d bytes for choices->csvids", 800);
     }
-    result = *choice_num;
+    result = choices->num;
   }
   if (((result == 200 || result == 400) || result == 800) || (result == 0x640))
   {
-    piVar2 = realloc(*choice_csvids, result << 3);
-    *choice_csvids = piVar2;
-    result = *choice_num;
-    if (piVar2 == NULL)
+    csvids = realloc(choices->csvids, result << 3);
+    choices->csvids = csvids;
+    result = choices->num;
+    if (csvids == NULL)
     {
       fatal("could not realloc %d bytes for choices->csvids", result << 3);
     }
   }
   if (result != 0xc80)
   {
-    piVar2 = *choice_csvids;
-    *choice_num = result + 1;
-    piVar2[result] = csvid;
+    csvids = choices->csvids;
+    choices->num = result + 1;
+    csvids[result] = csvid;
     return;
   }
   fatal("Tried to insert 3200th card in csvid_t_choices_t");
@@ -708,146 +708,82 @@ static void add_to_csvid_choices(int *choice_num, int **choice_csvids, int csvid
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26eb660; original functions/packs.c:3042. */
-static int add_card_to_pack(int *out_csvids, int pos, int *choice_num, int **choice_csvids, int num,
-                          int rarity, int expansion, int booster, int testing_mode)
+static int add_card_to_pack(int *out_csvids, int pos, csvid_choices_t *choice, int num,
+                            draftrarity_t rarity, EXPANSION_t expansion, int booster, int testing_mode)
 {
-  int i;
-  unsigned int *puVar1;
-  unsigned int uVar2;
-  bool bVar3;
-  void *argument1;
-  int iVar4;
-  FILE *pFVar5;
-  int iVar6;
-  int *piVar7;
-  int *piVar8;
-  bool bVar9;
-  bool bVar10;
-  int iStack_20;
-
   if (num < 1)
+    return 0;
+  int remaining = choice->num;
+  if (remaining < 1)
   {
+    if (testing_mode)
+      fprintf(stderr, "Expansion #%d, booster=%d: no available cards of rarity %d\012", expansion,
+              booster, rarity);
     return 0;
   }
-  iVar6 = *choice_num;
-  if (iVar6 < 1)
-  {
-    if (testing_mode == 0)
-    {
-      return 0;
-    }
-    pFVar5 = stderr;
-    fprintf(pFVar5, "Expansion #%d, booster=%d: no available cards of rarity %d\012", expansion,
-            booster, rarity);
-    return 0;
-  }
-  uVar2 = iVar6 * 4;
-  argument1 = malloc(uVar2);
-  if (argument1 == NULL)
-  {
-    fatal("could not malloc %d bytes for local_choices.csvids", uVar2);
-  }
-  memcpy(argument1, *choice_csvids, uVar2);
-  iStack_20 = 0;
+  unsigned int bytes = remaining * 4U;
+  unsigned int *local_choices = malloc(bytes);
+  if (!local_choices)
+    fatal("could not malloc %d bytes for local_choices.csvids", bytes);
+  memcpy(local_choices, choice->csvids, bytes);
+  int written = 0;
   do
   {
-    iVar4 = internal_rand(iVar6);
-    puVar1 = (unsigned int *)((int)argument1 + iVar4 * 4);
-    uVar2 = *puVar1;
-    if (uVar2 == 0xef)
+    int selected = internal_rand(remaining);
+    unsigned int csvid = local_choices[selected];
+    bool basic_land =
+        csvid == 0xef || csvid == 0xa4 || csvid == 0x5b || csvid == 0x7e || csvid == 0xbc;
+    if (basic_land)
     {
-    LAB_026eb7b2:
-      out_csvids[pos] = uVar2;
-      iStack_20 = iStack_20 + 1;
-      pos = pos + 1;
+      out_csvids[pos++] = csvid;
+      ++written;
     }
     else
     {
-      if (uVar2 < 0xf0)
-      {
-        if (uVar2 != 0xa4)
-        {
-          if (uVar2 < 0xa5)
+      bool repeatable_snow_land = csvid - 0x834 < 5 && expansion == 0xc;
+      bool duplicate = false;
+      if (!repeatable_snow_land)
+        for (int i = 0; i < pos; ++i)
+          if (csvid == (unsigned int)out_csvids[i])
           {
-            if ((uVar2 != 0x5b) && (uVar2 != 0x7e))
-              goto LAB_026eb757;
+            duplicate = true;
+            break;
           }
-          else if (uVar2 != 0xbc)
-          {
-          LAB_026eb757:
-            bVar10 = true;
-            bVar9 = false;
-            goto LAB_026eb762;
-          }
-        }
-        goto LAB_026eb7b2;
-      }
-      if (4 < uVar2 - 0x834)
-        goto LAB_026eb757;
-      bVar9 = expansion == 0xc;
-      bVar10 = expansion != 0xc;
-      if (bVar10)
+      if (remaining == 1 && !repeatable_snow_land)
       {
-      LAB_026eb762:
-        i = 0;
-        if (0 < pos)
+        if (!duplicate)
         {
-          do
-          {
-            if (uVar2 == out_csvids[i])
-            {
-              bVar3 = true;
-              goto LAB_026eb6f4;
-            }
-            i = i + 1;
-          } while (i != pos);
+          out_csvids[pos++] = csvid;
+          ++written;
         }
-      }
-      bVar3 = false;
-    LAB_026eb6f4:
-      if ((iVar6 == 1) && (bVar10))
-      {
-        if (!bVar3)
+        if (written < num)
         {
-          out_csvids[pos] = uVar2;
-          iStack_20 = iStack_20 + 1;
-          pos = pos + 1;
+          int *end = out_csvids + num + pos - written;
+          for (int *entry = out_csvids + pos; entry != end; ++entry)
+            *entry = local_choices[internal_rand(1)];
+          if (testing_mode)
+            fprintf(stderr, "Expansion #%d, booster=%d: added duplicate cards of rarity %d\012",
+                    expansion, booster, rarity);
         }
-        if (num <= iStack_20)
-          goto LAB_026eb7c9;
-        piVar7 = out_csvids + pos;
-        do
-        {
-          piVar8 = piVar7 + 1;
-          iVar6 = internal_rand(1);
-          *piVar7 = *(int *)((int)argument1 + iVar6 * 4);
-          piVar7 = piVar8;
-        } while (piVar8 != out_csvids + ((num + pos) - iStack_20));
-        if (testing_mode == 0)
-        {
-        LAB_026eb7c9:
-          free(argument1);
-        }
-        else
-        {
-          pFVar5 = stderr;
-          fprintf(pFVar5, "Expansion #%d, booster=%d: added duplicate cards of rarity %d\012",
-                  expansion, booster, rarity);
-          free(argument1);
-        }
+        free(local_choices);
         return num;
       }
-      if (!bVar9)
+      if (!repeatable_snow_land)
       {
-        iVar4 = iVar6 * 4;
-        iVar6 = iVar6 + -1;
-        *puVar1 = *(unsigned int *)((int)argument1 + iVar4 + -4);
+        --remaining;
+        local_choices[selected] = local_choices[remaining];
       }
-      if (!bVar3)
-        goto LAB_026eb7b2;
+      if (!duplicate)
+      {
+        out_csvids[pos++] = csvid;
+        ++written;
+      }
     }
-    if (num <= iStack_20)
-      goto LAB_026eb7c9;
+    if (written >= num)
+    {
+      free(local_choices);
+      return num;
+    }
   } while (true);
 }
 
@@ -858,7 +794,7 @@ static int add_card_to_pack(int *out_csvids, int pos, int *choice_num, int **cho
 /* ManalinkEh 2022: 0x26ec840; original functions/packs.c:3397. */
 int is_valid_pack(EXPANSION_t expansion, int booster)
 {
-  const rarity_num_t *prVar1;
+  const rarity_num_t *contents;
 
   if (((uint32_t)expansion < 198U) && (expansion != EXPANSION_UNHINGED))
   {
@@ -880,13 +816,13 @@ int is_valid_pack(EXPANSION_t expansion, int booster)
     default:
       if (booster == 0)
       {
-        prVar1 = pack_contents[expansion].starter;
+        contents = pack_contents[expansion].starter;
       }
       else
       {
-        prVar1 = pack_contents[expansion].booster;
+        contents = pack_contents[expansion].booster;
       }
-      return (unsigned int)(prVar1->rarity != XNONE);
+      return (unsigned int)(contents->rarity != XNONE);
     }
   }
   return 0;
@@ -899,72 +835,30 @@ int is_valid_pack(EXPANSION_t expansion, int booster)
 /* ManalinkEh 2022: 0x26ec8a0; original functions/packs.c:2989. */
 int pack_size(EXPANSION_t expansion, int booster)
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  const rarity_num_t *prVar4;
-  draftrarity_t dVar5;
-  int iVar6;
-  const rarity_num_t *prVar7;
-
-  iVar2 = is_valid_pack(expansion, booster);
-  iVar3 = 0;
-  if (iVar2 != 0)
+  if (!is_valid_pack(expansion, booster))
+    return 0;
+  const rarity_num_t *contents =
+      booster ? pack_contents[expansion].booster : pack_contents[expansion].starter;
+  if (!booster && contents == no_starters)
+    return 0;
+  int total = 0;
+  for (int index = 0; contents[index].rarity != XNONE;)
   {
-    if (booster == 0)
+    if (contents[index].rarity == MAX_RARITY_VAL_USED)
     {
-      prVar7 = pack_contents[expansion].starter;
-      if (prVar7 == no_starters)
-      {
-        return 0;
-      }
+      if (contents[index + 1].rarity == XNONE)
+        backtrace_and_abort("functions/packs.c:3007\nrn[i + 1].rarity != NONE");
+      if (contents[index + 2].rarity == XNONE)
+        backtrace_and_abort("functions/packs.c:3008\nrn[i + 2].rarity != NONE");
+      int second = contents[index + 2].num;
+      int first = contents[index + 1].num;
+      total += first < second ? second : first;
+      index += 3;
     }
     else
-    {
-      prVar7 = pack_contents[expansion].booster;
-    }
-    dVar5 = prVar7->rarity;
-    if (dVar5 == XNONE)
-    {
-      return 0;
-    }
-    iVar3 = 0;
-    iVar2 = 0;
-    prVar4 = prVar7;
-    do
-    {
-      while (dVar5 == MAX_RARITY_VAL_USED)
-      {
-        if (prVar7[iVar2 + 1].rarity == XNONE)
-        {
-          backtrace_and_abort("functions/packs.c:3007\nrn[i + 1].rarity != NONE");
-        }
-        if (prVar7[iVar2 + 2].rarity == XNONE)
-        {
-          backtrace_and_abort("functions/packs.c:3008\nrn[i + 2].rarity != NONE");
-        }
-        iVar1 = prVar7[iVar2 + 2].num;
-        iVar6 = prVar7[iVar2 + 1].num;
-        if (iVar6 < iVar1)
-        {
-          iVar6 = iVar1;
-        }
-        iVar3 = iVar3 + iVar6;
-        iVar2 = iVar2 + 3;
-        prVar4 = prVar7 + iVar2;
-        dVar5 = prVar4->rarity;
-        if (dVar5 == XNONE)
-        {
-          return iVar3;
-        }
-      }
-      iVar2 = iVar2 + 1;
-      iVar3 = iVar3 + prVar4->num;
-      prVar4 = prVar7 + iVar2;
-      dVar5 = prVar4->rarity;
-    } while (dVar5 != XNONE);
+      total += contents[index++].num;
   }
-  return iVar3;
+  return total;
 }
 
 #endif
@@ -974,7 +868,7 @@ int pack_size(EXPANSION_t expansion, int booster)
 /* ManalinkEh 2022: 0x26ed870; original functions/packs.c:3770. */
 void announce_expansion_choice(int player, int card, EXPANSION_t expansion)
 {
-  const char **ppcVar1;
+  const char **expansion_names;
   int num_textlines;
   if (ai_is_speculating == 1)
   {
@@ -982,12 +876,12 @@ void announce_expansion_choice(int player, int card, EXPANSION_t expansion)
   }
   if (player != 0)
   {
-    ppcVar1 = load_text_nocopy_from_file("Menus.txt", "EXPANSIONNAMES", &num_textlines);
+    expansion_names = load_text_nocopy_from_file("Menus.txt", "EXPANSIONNAMES", &num_textlines);
     if ((int)(expansion + EXPANSION_ANTIQUITIES) < num_textlines)
     {
       dialog_impl(player, card, EVENT_ACTIVATE, "\001\011",
-                  ppcVar1[expansion + EXPANSION_REVISED_EDITION], "\001\014", "\001\003", 0, 0, 0,
-                  0);
+                  expansion_names[expansion + EXPANSION_REVISED_EDITION], "\001\014", "\001\003", 0,
+                  0, 0, 0);
       return;
     }
   }
@@ -1939,756 +1833,170 @@ static const count_and_card_t copies_neo_land[16] = {
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26eb8e0; original functions/packs.c:3158. */
+static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices);
+
 static int make_pack_normal(EXPANSION_t expansion, int booster, int *out_csvids, int testing_mode)
 {
-  const count_and_card_t *pcVar1;
-  varying_copies_entry_t *paVar2;
-  static const int contraption_copies[3] = {16, 7, 2};
-  uint8_t uVar3;
-  short sVar4;
-  bool bVar5;
-  unsigned char bVar6;
-  csvid_choices_t *pcVar7;
-  int16_t *piVar8;
-  draftrarity_t dVar9;
-  int iVar10;
-  int iVar11;
-  const Rarities *pRVar12;
-  FILE *pFVar13;
-  int iVar14;
-  int iVar15;
-  const rarity_num_t *prVar16;
-  int *pcVar17;
-  unsigned int uVar18;
-  unsigned int uVar19;
-  const rarity_num_t *prVar21;
-  int **ppcVar22;
-  unsigned int uVar23;
-  varying_copies_entry_t *paVar24;
-  const count_and_card_t *pcVar25;
-  int *choice_num;
-  unsigned char bVar26;
-  _Static_assert(sizeof(Rarities) == 5 && offsetof(Rarities, rarity_in_expansion) == 5,
-                 "native rarity byte tail");
-  _Static_assert(offsetof(card_ptr_t, types) == 132 &&
-                     offsetof(card_ptr_t, mana_source_colors) == 146,
-                 "native seven subtypes");
-  int iStack_22c;
-  unsigned int uStack_220;
-  unsigned int uStack_21c;
-  const rarity_num_t *prStack_20c;
-  varying_copies_entry_t varying_copies[19] = {
-      {7, copies_common_arabian_nights},
-      {8, copies_uncommon_arabian_nights},
-      {9, copies_common_antiquities},
-      {10, copies_uncommon_antiquities},
-      {13, copies_common_the_dark},
-      {14, copies_uncommon_the_dark},
-      {15, copies_common_fallen_empires},
-      {16, copies_uncommon_fallen_empires},
-      {17, copies_common_chronicles},
-      {18, copies_uncommon_chronicles},
-      {19, copies_common_homelands},
-      {20, copies_uncommon_homelands},
-      {21, copies_common_alliances},
-      {22, copies_uncommon_alliances},
-      {23, copies_rare_alliances},
-      {35, copies_guildgate_or_shockland},
-      {41, copies_mystical_archive},
-      {42, copies_neo_land},
-      {0, NULL},
-  };
+  draftrarity_t recipe_rarity;
+  int result, selected, value;
+  const Rarities *rarities;
+  const rarity_num_t *recipe_entry;
+  unsigned int copies_or_probability, rarity_or_count;
+  const rarity_num_t *contents =
+      booster ? pack_contents[expansion].booster : pack_contents[expansion].starter;
   csvid_choices_t choices[44];
-
-  bVar26 = 0;
-  if (booster == 0)
+  for (int index = 0; index < 44; ++index)
   {
-    prStack_20c = pack_contents[expansion].starter;
+    choices[index].num = -1;
+    choices[index].csvids = NULL;
   }
-  else
+  for (const rarity_num_t *entry = contents; entry->rarity != XNONE; ++entry)
   {
-    prStack_20c = pack_contents[expansion].booster;
-  }
-  pcVar7 = choices;
-  do
-  {
-    pcVar7->num = -1;
-    pcVar7->csvids = NULL;
-    pcVar7 = pcVar7 + 1;
-  } while (choices + 44 != pcVar7);
-  dVar9 = prStack_20c->rarity;
-  prVar21 = prStack_20c;
-  while (dVar9 != XNONE)
-  {
-    prVar16 = prVar21 + 1;
-    if (dVar9 == MAX_RARITY_VAL_USED)
+    if (entry->rarity == MAX_RARITY_VAL_USED)
     {
-      if ((prVar16->rarity == XNONE) || (prVar16->rarity == MAX_RARITY_VAL_USED))
-      {
+      if (entry[1].rarity == XNONE || entry[1].rarity == MAX_RARITY_VAL_USED)
         backtrace_and_abort(
             "functions/packs.c:3175\nrn[i + 1].rarity != NONE && rn[i + 1].rarity != VAL_IFELSE");
-      }
-      if ((prVar21[2].rarity == XNONE) || (prVar21[2].rarity == MAX_RARITY_VAL_USED))
-      {
+      if (entry[2].rarity == XNONE || entry[2].rarity == MAX_RARITY_VAL_USED)
         backtrace_and_abort(
             "functions/packs.c:3176\nrn[i + 2].rarity != NONE && rn[i + 2].rarity != VAL_IFELSE");
-      }
     }
     else
     {
-      if (MAX_RARITY_VAL_USED < dVar9)
-      {
+      if (entry->rarity > MAX_RARITY_VAL_USED)
         backtrace_and_abort("functions/packs.c:3180\nrn[i].rarity <= MAX_RARITY_VAL_USED");
-      }
-      choices[prVar21->rarity].num = 0;
-    }
-    prVar21 = prVar16;
-    dVar9 = prVar16->rarity;
-  }
-  if (((((expansion & ~EXPANSION_FUTURE_SIGHT) == EXPANSION_VINTAGE_MASTERS) ||
-        (expansion == EXPANSION_LEGENDS)) ||
-       (expansion == EXPANSION_PLANAR_CHAOS)) ||
-      (expansion == EXPANSION_UNSTABLE))
-  {
-    uStack_21c = 1;
-  }
-  else
-  {
-    uStack_21c = 1;
-    if (((expansion - EXPANSION_INNISTRAD & 0xfffffffd) != 0) &&
-        ((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) != EXPANSION_SHADOWS_OVER_INNISTRAD))
-    {
-      uStack_21c =
-          (unsigned int)((expansion - EXPANSION_INNISTRAD_MIDNIGHT_HUNT & 0xfffffffb) == 0);
+      choices[entry->rarity].num = 0;
     }
   }
-
-  uVar19 = 0;
-  if (1 < available_slots)
-  {
-    do
-    {
-      while (true)
-      {
-        pRVar12 = get_rarity(uVar19);
-        uStack_220 = (unsigned int)pRVar12->rarity_in_expansion[expansion];
-        if (((uStack_220 != 0) && (iVar14 = is_valid_card(uVar19), iVar14 != 0)) &&
-            ((bVar6 = pRVar12->dfc_symbol, bVar6 == 0xff || ((bVar6 & 1) == 0))))
-          break;
-      LAB_026eba48:
-        uVar19 = uVar19 + 1;
-        if (available_slots + -1 <= (int)uVar19)
-          goto LAB_026ec0a8;
-      }
-      if (uStack_21c == 0)
-        goto LAB_026ebaf0;
-      if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
-      {
-      LAB_026ec676:
-        if (bVar6 != 0xff)
-        {
-          if (uStack_220 - 1 < 2)
-          {
-          LAB_026ebbb8:
-            uStack_220 = 0x1c;
-          }
-          else if (uStack_220 - 3 < 2)
-          {
-            uStack_220 = 0x1d;
-          }
-        }
-        goto LAB_026ebaf0;
-      }
-      if (EXPANSION_SHADOWS_OVER_INNISTRAD < expansion)
-      {
-        if (expansion == EXPANSION_INNISTRAD_MIDNIGHT_HUNT)
-        {
-        LAB_026ec6c2:
-          if ((uStack_220 == 1) && (bVar6 != 0xff))
-          {
-            uStack_220 = 0x1e;
-          }
-        }
-        else if (expansion < EXPANSION_INNISTRAD_MIDNIGHT_HUNT_COMMANDER)
-        {
-          if (expansion == EXPANSION_ELDRITCH_MOON)
-            goto LAB_026ec676;
-          if (expansion == EXPANSION_UNSTABLE)
-          {
-            piVar8 = cards_ptr[uVar19]->types;
-            do
-            {
-              if (*piVar8 == 0x3000)
-              {
-                uStack_220 = 0x1f;
-                break;
-              }
-              piVar8 = piVar8 + 1;
-            } while (cards_ptr[uVar19]->types + 7 != piVar8);
-          }
-        }
-        else
-        {
-          if (expansion == EXPANSION_INNISTRAD_CRIMSON_VOW)
-            goto LAB_026ec6c2;
-          if (((expansion == EXPANSION_KAMIGAWA_NEON_DYNASTY) && (bVar6 != 0xff)) &&
-              (uStack_220 - 1 < 2))
-            goto LAB_026ebbb8;
-        }
-        goto LAB_026ebaf0;
-      }
-      if (expansion != EXPANSION_INNISTRAD)
-      {
-        if (EXPANSION_INNISTRAD < expansion)
-        {
-          if (expansion == EXPANSION_DARK_ASCENSION)
-            goto LAB_026ec6ab;
-          if ((expansion == EXPANSION_VINTAGE_MASTERS) && (uStack_220 == 4))
-          {
-            if ((int)uVar19 < 0xaa)
-            {
-              if ((0xa4 < (int)uVar19) || ((uVar19 & 0xffffffef) == 1))
-              {
-              LAB_026ec7c9:
-                uStack_220 = 6;
-              }
-            }
-            else if (uVar19 - 0xf9 < 2)
-              goto LAB_026ec7c9;
-          }
-          goto LAB_026ebaf0;
-        }
-        if (expansion != EXPANSION_LEGENDS)
-        {
-          if (((expansion == EXPANSION_PLANAR_CHAOS) && (uStack_220 - 1 < 3)) &&
-              ((pRVar12->flags & 1) != 0))
-          {
-            uStack_220 = uStack_220 + 0x17;
-          }
-          goto LAB_026ebaf0;
-        }
-        if (1 < uStack_220 - 1)
-          goto LAB_026ebaf0;
-        uVar18 = uStack_21c;
-        switch (uVar19)
-        {
-        case 0x22d:
-        case 0x236:
-        case 0x23a:
-        case 0x240:
-        case 0x261:
-        case 0x270:
-        case 0x271:
-        case 0x273:
-        case 0x279:
-        case 0x285:
-        case 0x28b:
-        case 0x28f:
-        case 0x29b:
-        case 0x29d:
-        case 0x2a0:
-        case 0x2a7:
-        case 0x2e0:
-        case 0x2ee:
-        case 0x2f5:
-        case 0x301:
-        case 0x311:
-        case 0x31b:
-        case 800:
-        case 0x32d:
-        case 0x337:
-        case 0x344:
-        case 0x347:
-        case 0x348:
-        case 0x34b:
-          uVar18 = 0;
-          break;
-        default:
-          if (uStack_220 == 1)
-          {
-            iVar14 = 0x58;
-          }
-          else
-          {
-            iVar14 = 0x60;
-            uVar18 = 0;
-          }
-          goto LAB_026ec74e;
-        case 0x299:
-        case 0x2b6:
-        case 0x2c9:
-        case 0x2e4:
-        case 0x2ff:
-        case 0x30c:
-        case 0x333:
-        case 0x33e:
-        case 0x341:;
-        }
-        iVar14 = (unsigned int)(uStack_220 != 1) * 8 + 0x58;
-      LAB_026ec74e:
-        choice_num = (int *)((int)&choices[0].num + iVar14);
-        if ((*choice_num < 0) || (-1 < choices[uStack_220].num))
-        {
-          backtrace_and_abort(
-              "functions/packs.c:2636\nchoices[munged].num >= 0 && choices[rar].num < 0");
-        }
-        do
-        {
-          uVar18 = uVar18 - 1;
-          add_to_csvid_choices(choice_num, (int **)((int)&choices[0].csvids + iVar14), uVar19);
-        } while (uVar18 != 0xffffffff);
-        goto LAB_026eba48;
-      }
-    LAB_026ec6ab:
-      if (bVar6 != 0xff)
-      {
-        uStack_220 = 0x1b;
-      }
-    LAB_026ebaf0:
-      uVar18 = 1;
-    LAB_026ebb08:
-      do
-      {
-        uVar23 = uVar18;
-        pcVar7 = choices + uVar23;
-        uVar18 = uVar23 + 1;
-        if (choices[uVar23].num < 0)
-          goto LAB_026ebc75;
-        switch (uVar23)
-        {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 0x18:
-        case 0x19:
-        case 0x1a:
-        case 0x1e:
-          if (uStack_220 == uVar23)
-          {
-          code_r0x026ebc5e:
-            add_to_csvid_choices(&pcVar7->num, (int **)&choices[uVar23].csvids, uVar19);
-            break;
-          }
-          goto joined_r0x026ebf77;
-        case 0x1b:
-          if (uStack_220 == 0x1b)
-          {
-            uVar23 = (unsigned int)pRVar12->rarity_in_expansion[expansion];
-            if (expansion == EXPANSION_INNISTRAD)
-            {
-              iVar14 = 0;
-              if (1 < uVar23 - 3)
-              {
-                iVar14 = (unsigned int)(uVar23 != 2) * 9 + 2;
-              }
-            }
-            else if (uVar23 == 4)
-            {
-              iVar14 = 2;
-            }
-            else if (uVar23 == 3)
-            {
-              iVar14 = 0xd;
-            }
-            else
-            {
-              iVar14 = ((uVar23 != 2) - 1 & 0xffffffac) + 0x77;
-            }
-            do
-            {
-              iVar14 = iVar14 + -1;
-              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1b].csvids, uVar19);
-            } while (iVar14 != -1);
-          }
-          goto LAB_026ebb08;
-        case 0x1c:
-          if (uStack_220 == 0x1c)
-          {
-            if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
-            {
-              uVar23 = (pRVar12->rarity_in_expansion[expansion] != '\x01') - 1 & 0xe;
-            }
-            else
-            {
-              uVar23 = (unsigned int)(pRVar12->rarity_in_expansion[expansion] == '\x01');
-              if (expansion == EXPANSION_ELDRITCH_MOON)
-              {
-                uVar23 = (uVar23 - 1 & 0xfffffff3) + 0xe;
-              }
-              else
-              {
-                uVar23 = uVar23 * 3;
-              }
-            }
-            do
-            {
-              uVar23 = uVar23 - 1;
-              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1c].csvids, uVar19);
-            } while (uVar23 != 0xffffffff);
-          }
-          goto LAB_026ebb08;
-        case 0x1d:
-          if (uStack_220 == 0x1d)
-          {
-            if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
-            {
-              iVar14 = (unsigned int)(pRVar12->rarity_in_expansion[expansion] == '\x03') * 5 + 1;
-            }
-            else
-            {
-              iVar14 = (unsigned int)(pRVar12->rarity_in_expansion[expansion] == '\x01') * 9 + 4;
-            }
-            do
-            {
-              iVar14 = iVar14 + -1;
-              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1d].csvids, uVar19);
-            } while (iVar14 != -1);
-          }
-          goto LAB_026ebb08;
-        case 0x1f:
-          if (uStack_220 == 0x1f)
-          {
-            bVar6 = pRVar12->rarity_in_expansion[expansion] - 2;
-            if (bVar6 < 3)
-            {
-              if (contraption_copies[(unsigned int)bVar6] < 1)
-                goto LAB_026ebb08;
-              iVar14 = contraption_copies[(unsigned int)bVar6] + -1;
-            }
-            else
-            {
-              iVar14 = 0x2a;
-            }
-            do
-            {
-              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1f].csvids, uVar19);
-              bVar5 = 0 < iVar14;
-              iVar14 = iVar14 + -1;
-            } while (bVar5);
-          }
-          goto LAB_026ebb08;
-        case 0x20:
-          if (uVar19 == 0x7e)
-          {
-            add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x20].csvids, 0x7e);
-          }
-          goto LAB_026ebb08;
-        case 0x21:
-          if (uStack_220 == 5)
-          {
-            ppcVar22 = &choices[0x21].csvids;
-            add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
-            piVar8 = cards_ptr[uVar19]->types;
-            do
-            {
-              if (*piVar8 == 0x2003)
-                goto LAB_026ebb08;
-              piVar8 = piVar8 + 1;
-            } while (cards_ptr[uVar19]->types + 7 != piVar8);
-            add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
-            add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
-          }
-          goto LAB_026ebb08;
-        case 0x22:
-          add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x22].csvids, uVar19);
-          goto LAB_026ebb08;
-        case 0x24:
-          piVar8 = cards_ptr[uVar19]->types;
-          sVar4 = *piVar8;
-          while (sVar4 != 0x500c)
-          {
-            piVar8 = piVar8 + 1;
-            if (cards_ptr[uVar19]->types + 7 == piVar8)
-              goto LAB_026ebb08;
-            sVar4 = *piVar8;
-          }
-          if (uVar19 != 0x4bac)
-          {
-            add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x24].csvids, uVar19);
-          }
-          goto LAB_026ebb08;
-        case 0x25:
-          iVar14 = get_internal_card_id_from_csv_id(uVar19);
-          if ((cards_data[iVar14].type & 6) != 0)
-          {
-            piVar8 = cards_ptr[uVar19]->types;
-            sVar4 = *piVar8;
-            while (sVar4 != 0x2001)
-            {
-              piVar8 = piVar8 + 1;
-              if (cards_ptr[uVar19]->types + 7 == piVar8)
-                goto LAB_026ebb08;
-              sVar4 = *piVar8;
-            }
-            uVar3 = pRVar12->rarity_in_expansion[expansion];
-            iVar14 = 0;
-            if (uVar3 != '\x04')
-            {
-              if (uVar3 == '\x03')
-              {
-                iVar14 = 7;
-              }
-              else
-              {
-                if (uVar3 == '\x06')
-                  goto LAB_026ebb08;
-                iVar14 = 0x13;
-              }
-            }
-            do
-            {
-              iVar14 = iVar14 + -1;
-              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x25].csvids, uVar19);
-            } while (iVar14 != -1);
-          }
-          goto LAB_026ebb08;
-        case 0x26:
-        case 0x27:
-          if (uVar23 == 0x26)
-          {
-            if (uStack_220 != 3)
-              goto LAB_026ebb08;
-          }
-          else if (uStack_220 != 4)
-            goto joined_r0x026ebf77;
-          piVar8 = cards_ptr[uVar19]->types;
-          do
-          {
-            if (*piVar8 == 0x2001)
-              goto LAB_026ebc75;
-            piVar8 = piVar8 + 1;
-          } while (cards_ptr[uVar19]->types + 7 != piVar8);
-          iVar14 = get_internal_card_id_from_csv_id(uVar19);
-          if ((cards_data[iVar14].type & 6) == 0)
-            goto code_r0x026ebc5e;
-          break;
-        case 0x28:
-          piVar8 = cards_ptr[uVar19]->types;
-          sVar4 = *piVar8;
-          while (sVar4 != 0x6003)
-          {
-            piVar8 = piVar8 + 1;
-            if (cards_ptr[uVar19]->types + 7 == piVar8)
-              goto LAB_026ebb08;
-            sVar4 = *piVar8;
-          }
-          add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x28].csvids, uVar19);
-          goto LAB_026ebb08;
-        }
-      LAB_026ebc75:
-      joined_r0x026ebf77:;
-      } while (uVar18 < 0x2b);
-      uVar19 = uVar19 + 1;
-    } while ((int)uVar19 < available_slots + -1);
-  }
-LAB_026ec0a8:
-  paVar2 = varying_copies;
-  pcVar25 = paVar2->counts_and_cards;
-  while (pcVar25 != NULL)
-  {
-    dVar9 = paVar2->rarity;
-    if ((-1 < choices[dVar9].num) && (0 < pcVar25->count))
-    {
-      do
-      {
-        iVar14 = is_valid_card(pcVar25->csvid);
-        if ((iVar14 != 0) && (0 < pcVar25->count))
-        {
-          iVar14 = 0;
-          do
-          {
-            iVar14 = iVar14 + 1;
-            add_to_csvid_choices(&choices[dVar9].num, (int **)&choices[dVar9].csvids,
-                                      pcVar25->csvid);
-          } while (iVar14 < pcVar25->count);
-        }
-        pcVar1 = pcVar25 + 1;
-        pcVar25 = pcVar25 + 1;
-      } while (0 < pcVar1->count);
-    }
-    paVar24 = paVar2 + 1;
-    paVar2 = paVar2 + 1;
-    pcVar25 = paVar24->counts_and_cards;
-  }
-  if ((choices[5].num == 0) &&
-      ((((((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) == EXPANSION_CONFLUX ||
-           (expansion == EXPANSION_WORLDWAKE)) ||
-          (expansion == EXPANSION_DARK_ASCENSION)) ||
-         (((expansion - EXPANSION_BORN_OF_THE_GODS & 0xfffffffd) == 0 ||
-           (expansion == EXPANSION_GATECRASH)))) ||
-        (((expansion - EXPANSION_OATH_OF_THE_GATEWATCH & 0xfffffffb) == 0 ||
-          (expansion == EXPANSION_AETHER_REVOLT))))))
-  {
-    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xbc);
-    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0x7e);
-    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xef);
-    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xa4);
-    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0x5b);
-  }
-  bVar5 = true;
-  iStack_22c = (-(unsigned int)(testing_mode == 0) & 0x1863c) + 100;
-  uVar19 = expansion - EXPANSION_INNISTRAD_MIDNIGHT_HUNT & 0xfffffffd;
+  get_csvid_choices(expansion, choices);
+  bool no_late_duplicates = true;
+  int attempts_left = (-(unsigned int)(testing_mode == 0) & 0x1863c) + 100;
+  unsigned int skip_dfc_check = expansion - EXPANSION_INNISTRAD_MIDNIGHT_HUNT & 0xfffffffd;
+  bool accepted = false;
   do
   {
-    dVar9 = prStack_20c->rarity;
-    if (dVar9 == XNONE)
+    recipe_rarity = contents->rarity;
+    rarity_or_count = 0;
+    if (recipe_rarity == XNONE)
     {
-      if (uVar19 != 0)
+      if (skip_dfc_check)
       {
-        uStack_220 = 0;
-        goto LAB_026ec3e0;
+        accepted = true;
+        break;
       }
     }
     else
     {
-      iVar14 = 0;
-      uStack_220 = 0;
-      prVar21 = prStack_20c;
+      value = 0;
+      rarity_or_count = 0;
+      recipe_entry = contents;
       do
       {
-        uVar18 = prVar21->num;
-        if (dVar9 == MAX_RARITY_VAL_USED)
+        copies_or_probability = recipe_entry->num;
+        if (recipe_rarity == MAX_RARITY_VAL_USED)
         {
-          if (prStack_20c[iVar14 + 1].num == prStack_20c[iVar14 + 2].num)
+          if (contents[value + 1].num == contents[value + 2].num)
           {
-            if (0 < prStack_20c[iVar14 + 1].num)
+            if (0 < contents[value + 1].num)
             {
-              iVar10 = 0;
+              result = 0;
               do
               {
-                iVar11 = internal_rand(uVar18 >> 0x10);
-                dVar9 = prStack_20c[((int)(uVar18 & 0xffff) <= iVar11) + 1 + iVar14].rarity;
-                iVar11 = add_card_to_pack(out_csvids, uStack_220, &choices[dVar9].num,
-                                               (int **)&choices[dVar9].csvids, 1, dVar9, expansion,
-                                               booster, testing_mode);
-                uStack_220 = (uStack_220 + 1) - (unsigned int)(iVar11 == 0);
-                iVar10 = iVar10 + 1;
-              } while (iVar10 < prStack_20c[iVar14 + 1].num);
+                selected = internal_rand(copies_or_probability >> 0x10);
+                recipe_rarity =
+                    contents[((int)(copies_or_probability & 0xffff) <= selected) + 1 + value]
+                        .rarity;
+                selected =
+                    add_card_to_pack(out_csvids, rarity_or_count, &choices[recipe_rarity], 1,
+                                     recipe_rarity, expansion, booster, testing_mode);
+                rarity_or_count = (rarity_or_count + 1) - (unsigned int)(selected == 0);
+                result = result + 1;
+              } while (result < contents[value + 1].num);
             }
           }
           else
           {
-            iVar10 = internal_rand(uVar18 >> 0x10);
-            prVar21 = prStack_20c + ((int)(uVar18 & 0xffff) <= iVar10) + 1 + iVar14;
-            dVar9 = prVar21->rarity;
-            iVar10 = add_card_to_pack(out_csvids, uStack_220, &choices[dVar9].num,
-                                           (int **)&choices[dVar9].csvids, prVar21->num, dVar9,
-                                           expansion, booster, testing_mode);
-            if (iVar10 != 0)
+            result = internal_rand(copies_or_probability >> 0x10);
+            recipe_entry = contents + ((int)(copies_or_probability & 0xffff) <= result) + 1 + value;
+            recipe_rarity = recipe_entry->rarity;
+            result = add_card_to_pack(out_csvids, rarity_or_count, &choices[recipe_rarity], recipe_entry->num,
+                             recipe_rarity, expansion, booster, testing_mode);
+            if (result != 0)
             {
-              uStack_220 = uStack_220 + prVar21->num;
+              rarity_or_count = rarity_or_count + recipe_entry->num;
             }
           }
-          iVar14 = iVar14 + 2;
+          value = value + 2;
         }
         else
         {
-          iVar10 = add_card_to_pack(out_csvids, uStack_220, &choices[dVar9].num,
-                                         (int **)&choices[dVar9].csvids, uVar18, dVar9, expansion,
-                                         booster, testing_mode);
-          if (iVar10 != 0)
+          result = add_card_to_pack(out_csvids, rarity_or_count, &choices[recipe_rarity], copies_or_probability,
+                           recipe_rarity, expansion, booster, testing_mode);
+          if (result != 0)
           {
-            uStack_220 = uStack_220 + prVar21->num;
+            rarity_or_count = rarity_or_count + recipe_entry->num;
           }
         }
-        iVar14 = iVar14 + 1;
-        prVar21 = prStack_20c + iVar14;
-        dVar9 = prVar21->rarity;
-      } while (dVar9 != XNONE);
-      iVar14 = uStack_220 + -1;
-      if (0 < iVar14)
+        value = value + 1;
+        recipe_entry = contents + value;
+        recipe_rarity = recipe_entry->rarity;
+      } while (recipe_rarity != XNONE);
+
+      bool duplicate = false;
+      for (int index = 0; index < (int)rarity_or_count - 1 && !duplicate; ++index)
       {
-        iVar10 = 0;
-      LAB_026ec3b1:
-        do
-        {
-          iVar11 = out_csvids[iVar10];
-          iVar10 = iVar10 + 1;
-          if (iVar11 != 0xef)
+        int csvid = out_csvids[index];
+        if (csvid == 0xef || csvid == 0xa4 || csvid == 0x5b || csvid == 0x7e || csvid == 0xbc ||
+            ((unsigned int)csvid - 0x834 < 5 && expansion == EXPANSION_ICE_AGE))
+          continue;
+        for (int other = index + 1; other < (int)rarity_or_count; ++other)
+          if (csvid == out_csvids[other])
           {
-            if (0xef < iVar11)
+            if (testing_mode)
             {
-              if ((4 < iVar11 - 0x834U) || (expansion != EXPANSION_ICE_AGE))
-                goto LAB_026ec438;
-              if (iVar14 <= iVar10)
-                goto LAB_026ec3e0;
-              goto LAB_026ec3b1;
+              fprintf(stderr,
+                      "Expansion #%d, booster=%d: found a duplicate card late in "
+                      "make_pack_normal()\012",
+                      expansion, booster);
+              no_late_duplicates = false;
             }
-            if (iVar11 != 0xa4)
-            {
-              if (iVar11 < 0xa5)
-              {
-                if ((iVar11 != 0x5b) && (iVar11 != 0x7e))
-                  goto LAB_026ec438;
-              }
-              else if (iVar11 != 0xbc)
-              {
-              LAB_026ec438:
-                iVar15 = iVar10;
-                if (iVar10 < (int)uStack_220)
-                {
-                  do
-                  {
-                    if (iVar11 == out_csvids[iVar15])
-                    {
-                      if (testing_mode != 0)
-                      {
-                        pFVar13 = stderr;
-                        fprintf(pFVar13,
-                                "Expansion #%d, booster=%d: found a duplicate card late in "
-                                "make_pack_normal()\012",
-                                expansion, booster);
-                        bVar5 = false;
-                      }
-                      goto LAB_026ec455;
-                    }
-                    iVar15 = iVar15 + 1;
-                  } while (uStack_220 != iVar15);
-                }
-              }
-            }
+            duplicate = true;
+            break;
           }
-        } while (iVar10 < iVar14);
       }
-      if (uVar19 != 0)
-        goto LAB_026ec3e0;
-      if (0 < (int)uStack_220)
+      if (!duplicate)
       {
-        iVar14 = 0;
-        pcVar17 = out_csvids;
-        do
+        if (skip_dfc_check)
         {
-          pRVar12 = get_rarity(*pcVar17);
-          if (pRVar12->dfc_symbol != 0xff)
+          accepted = true;
+          break;
+        }
+        if ((int)rarity_or_count > 0)
+        {
+          int noncommon_dfcs = 0;
+          for (int *entry = out_csvids; entry != out_csvids + rarity_or_count; ++entry)
           {
-            iVar14 =
-                iVar14 +
-                (unsigned int)((unsigned char)(pRVar12->rarity_in_expansion[expansion] - 2) < 3);
+            rarities = get_rarity(*entry);
+            if (rarities->dfc_symbol != 0xff)
+              noncommon_dfcs += (unsigned char)(rarities->rarity_in_expansion[expansion] - 2) < 3;
           }
-          pcVar17 = pcVar17 + 1;
-        } while (out_csvids + uStack_220 != pcVar17);
-        if (iVar14 == 1)
-          goto LAB_026ec3e0;
+          if (noncommon_dfcs == 1)
+          {
+            accepted = true;
+            break;
+          }
+        }
       }
     }
-  LAB_026ec455:
-    iStack_22c = iStack_22c + -1;
-  } while (iStack_22c != 0);
-  uStack_220 = 0;
-LAB_026ec3e0:
-  for (iVar14 = 0; iVar14 < 44; ++iVar14)
-  {
-    if (choices[iVar14].csvids != NULL)
-      free(choices[iVar14].csvids);
-  }
-  if ((testing_mode != 0) && (!bVar5))
-  {
-    uStack_220 = 0;
-  }
-  return uStack_220;
+  } while (--attempts_left != 0);
+  if (!accepted)
+    rarity_or_count = 0;
+  for (int index = 0; index < 44; ++index)
+    if (choices[index].csvids)
+      free(choices[index].csvids);
+  if (testing_mode && !no_late_duplicates)
+    rarity_or_count = 0;
+  return rarity_or_count;
 }
 
 #endif
@@ -2698,35 +2006,35 @@ LAB_026ec3e0:
 /* ManalinkEh 2022: 0x26ec9b0; original functions/packs.c:3292. */
 int make_pack(EXPANSION_t expansion, int booster, int *out_csvids)
 {
-  int iVar1;
-  int iVar2;
+  int valid;
+  int count;
   int *out_csvids_00;
-  FILE *pFVar3;
+  FILE *output;
 
-  iVar1 = is_valid_pack(expansion, booster);
-  iVar2 = 0;
-  if (iVar1 != 0)
+  valid = is_valid_pack(expansion, booster);
+  count = 0;
+  if (valid != 0)
   {
     if (out_csvids != NULL)
     {
       return make_pack_normal(expansion, booster, out_csvids, 0);
     }
-    iVar2 = pack_size(expansion, booster);
-    out_csvids_00 = malloc(iVar2 * 4);
+    count = pack_size(expansion, booster);
+    out_csvids_00 = malloc(count * 4);
     if (out_csvids_00 == NULL)
     {
-      fatal("could not malloc %d bytes to test out_csvids", iVar2 * 4);
+      fatal("could not malloc %d bytes to test out_csvids", count * 4);
     }
-    iVar2 = make_pack_normal(expansion, booster, out_csvids_00, 1);
+    count = make_pack_normal(expansion, booster, out_csvids_00, 1);
     free(out_csvids_00);
-    if (iVar2 == 0)
+    if (count == 0)
     {
-      pFVar3 = stderr;
-      fprintf(pFVar3, "Expansion #%d, booster=%d: could not create valid pack.\012", expansion,
+      output = stderr;
+      fprintf(output, "Expansion #%d, booster=%d: could not create valid pack.\012", expansion,
               booster);
     }
   }
-  return iVar2;
+  return count;
 }
 
 #endif
@@ -2737,82 +2045,46 @@ int make_pack(EXPANSION_t expansion, int booster, int *out_csvids)
 int test_packs(int run_time_test)
 {
   static int once = 0;
-  EXPANSION_t eVar1;
-  float fVar2;
-  int iVar3;
-  int iVar5;
-  FILE *pFVar6;
-  int iVar7;
-  EXPANSION_t expansion;
-  int iStack_20;
-  int iStack_18;
-  int iStack_14;
-
-  if (once == 0)
+  if (once)
+    return 1;
+  once = 1;
+  int started = 0;
+  if (run_time_test > 0)
+    started = time_in_ms();
+  int packs_made = 0;
+  int all_valid = 1;
+  for (EXPANSION_t expansion = EXPANSION_PROMO;
+       expansion != (EXPANSION_STREETS_OF_NEW_CAPENNA | EXPANSION_LIMITED_EDITION_ALPHA);
+       expansion += EXPANSION_PROMO)
   {
-    once = 1;
-    iStack_18 = 0;
-    if (0 < run_time_test)
+    EXPANSION_t recorded = pack_contents[expansion].expansion;
+    if (recorded == expansion)
     {
-      iStack_18 = time_in_ms();
-    }
-    iVar5 = 0;
-    expansion = EXPANSION_PROMO;
-    iStack_14 = 1;
-    do
-    {
-      eVar1 = pack_contents[expansion].expansion;
-      if (eVar1 == expansion)
-      {
-        iVar7 = 0;
-        iVar3 = pack_size(expansion, 0);
-        while (true)
+      for (int booster = 0; booster < 2; ++booster)
+        if (pack_size(expansion, booster))
         {
-          if (iVar3 != 0)
+          int repetitions = run_time_test > 0 ? run_time_test : 1;
+          int remaining = repetitions;
+          do
           {
-            iStack_20 = run_time_test;
-            iVar3 = run_time_test;
-            if (run_time_test < 1)
-            {
-              iStack_20 = 1;
-              iVar3 = iStack_20;
-            }
-            do
-            {
-              if (make_pack(expansion, iVar7, NULL) == 0)
-              {
-                iStack_14 = 0;
-              }
-              iStack_20 = iStack_20 + -1;
-            } while (iStack_20 != 0);
-            iVar5 = iVar5 + iVar3;
-          }
-          iVar7 = iVar7 + 1;
-          if (iVar7 == 2)
-            break;
-          iVar3 = pack_size(expansion, iVar7);
+            if (!make_pack(expansion, booster, NULL))
+              all_valid = 0;
+          } while (--remaining != 0);
+          packs_made += repetitions;
         }
-      }
-      else
-      {
-        pFVar6 = stderr;
-        fprintf(pFVar6, "pack_contents[%d].expansion == %d\012", expansion, eVar1);
-      }
-      expansion = expansion + EXPANSION_PROMO;
-    } while (expansion != (EXPANSION_STREETS_OF_NEW_CAPENNA | EXPANSION_LIMITED_EDITION_ALPHA));
-    if (0 < run_time_test)
-    {
-      iVar7 = time_in_ms();
-      fVar2 = (float)(int32_t)((uint32_t)iVar7 - (uint32_t)iStack_18) / 1000.0;
-      pFVar6 = stderr;
-      fprintf(pFVar6, "Made %d packs in %f seconds (%f seconds each).\012", iVar5, (double)fVar2,
-              (double)(fVar2 / (float)iVar5));
     }
-    pFVar6 = stderr;
-    fflush(pFVar6);
-    return iStack_14;
+    else
+      fprintf(stderr, "pack_contents[%d].expansion == %d\012", expansion, recorded);
   }
-  return 1;
+  if (run_time_test > 0)
+  {
+    int finished = time_in_ms();
+    float elapsed = (float)(int32_t)((uint32_t)finished - (uint32_t)started) / 1000.0;
+    fprintf(stderr, "Made %d packs in %f seconds (%f seconds each).\012", packs_made,
+            (double)elapsed, (double)(elapsed / (float)packs_made));
+  }
+  fflush(stderr);
+  return all_valid;
 }
 
 #endif
@@ -2839,27 +2111,7 @@ typedef struct choose_a_pack_args_t {
 #define pack_draw_button EXE_FN(void, 0x4673c0, DRAWITEMSTRUCT *, HBRUSH, HPEN, HPEN, COLORREF, int)
 __attribute__((dllimport)) void blt_expansion_symbol(HDC hdc, const RECT *rect, int expansion, int rarity, int force_color);
 
-static unsigned char choose_a_pack_template[294] __attribute__((aligned(4))) = {
-  0x40, 0x08, 0x80, 0x90, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0xba, 0x00,
-  0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x4d, 0x00, 0x53, 0x00, 0x20, 0x00,
-  0x53, 0x00, 0x61, 0x00, 0x6e, 0x00, 0x73, 0x00, 0x20, 0x00, 0x53, 0x00, 0x65, 0x00, 0x72, 0x00,
-  0x69, 0x00, 0x66, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00,
-  0x07, 0x00, 0x05, 0x00, 0xac, 0x00, 0x48, 0x00, 0x4d, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x14, 0x00,
-  0xac, 0x00, 0x48, 0x00, 0x4e, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x23, 0x00, 0xac, 0x00, 0x48, 0x00,
-  0x4f, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50,
-  0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x32, 0x00, 0xac, 0x00, 0x48, 0x00, 0x50, 0x04, 0xff, 0xff,
-  0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00,
-  0x07, 0x00, 0x41, 0x00, 0xac, 0x00, 0x48, 0x00, 0x51, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x50, 0x00,
-  0xac, 0x00, 0x48, 0x00, 0x52, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x0b, 0x00, 0x01, 0x50, 0x00, 0x00, 0x00, 0x00, 0x26, 0x00, 0x5f, 0x00, 0x32, 0x00, 0x0e, 0x00,
-  0x01, 0x00, 0xff, 0xff, 0x80, 0x00, 0x4f, 0x00, 0x4b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x0b, 0x00, 0x01, 0x50, 0x00, 0x00, 0x00, 0x00, 0x63, 0x00, 0x5f, 0x00, 0x32, 0x00, 0x0e, 0x00,
-  0x02, 0x00, 0xff, 0xff, 0x80, 0x00, 0x43, 0x00, 0x61, 0x00, 0x6e, 0x00, 0x63, 0x00, 0x65, 0x00,
-  0x6c, 0x00, 0x00, 0x00, 0x00, 0x00,
-};
+
 #endif
 
 
@@ -3059,7 +2311,28 @@ static INT_PTR __stdcall dlgproc_choose_a_pack(HWND hwnd, UINT msg, WPARAM wpara
 /* ManalinkEh 2022: 0x26ed780; original functions/packs.c:3449. */
 LPCDLGTEMPLATE generate_choose_a_pack_dlg_template(void)
 {
-  return (LPCDLGTEMPLATE)choose_a_pack_template;
+  static unsigned char templ[294] __attribute__((aligned(4))) = {
+    0x40, 0x08, 0x80, 0x90, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0xba, 0x00,
+    0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x4d, 0x00, 0x53, 0x00, 0x20, 0x00,
+    0x53, 0x00, 0x61, 0x00, 0x6e, 0x00, 0x73, 0x00, 0x20, 0x00, 0x53, 0x00, 0x65, 0x00, 0x72, 0x00,
+    0x69, 0x00, 0x66, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00,
+    0x07, 0x00, 0x05, 0x00, 0xac, 0x00, 0x48, 0x00, 0x4d, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x14, 0x00,
+    0xac, 0x00, 0x48, 0x00, 0x4e, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x23, 0x00, 0xac, 0x00, 0x48, 0x00,
+    0x4f, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50,
+    0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x32, 0x00, 0xac, 0x00, 0x48, 0x00, 0x50, 0x04, 0xff, 0xff,
+    0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00,
+    0x07, 0x00, 0x41, 0x00, 0xac, 0x00, 0x48, 0x00, 0x51, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x50, 0x00,
+    0xac, 0x00, 0x48, 0x00, 0x52, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x0b, 0x00, 0x01, 0x50, 0x00, 0x00, 0x00, 0x00, 0x26, 0x00, 0x5f, 0x00, 0x32, 0x00, 0x0e, 0x00,
+    0x01, 0x00, 0xff, 0xff, 0x80, 0x00, 0x4f, 0x00, 0x4b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x0b, 0x00, 0x01, 0x50, 0x00, 0x00, 0x00, 0x00, 0x63, 0x00, 0x5f, 0x00, 0x32, 0x00, 0x0e, 0x00,
+    0x02, 0x00, 0xff, 0xff, 0x80, 0x00, 0x43, 0x00, 0x61, 0x00, 0x6e, 0x00, 0x63, 0x00, 0x65, 0x00,
+    0x6c, 0x00, 0x00, 0x00, 0x00, 0x00,
+  };
+  return (LPCDLGTEMPLATE)templ;
 }
 
 #endif
@@ -3137,32 +2410,21 @@ static int allow_duplicates(EXPANSION_t expansion, csvid_t csvid)
 /* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
 static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices)
 {
-  const count_and_card_t *pcVar1;
-  varying_copies_entry_t *paVar2;
   static const int contraption_copies[3] = {16, 7, 2};
-  uint8_t uVar3;
-  short sVar4;
-  bool bVar5;
-  unsigned char bVar6;
-  csvid_choices_t *pcVar7;
-  int16_t *piVar8;
-  draftrarity_t dVar9;
-  const Rarities *pRVar12;
-  int iVar14;
-  unsigned int uVar18;
-  unsigned int uVar19;
-  int **ppcVar22;
-  unsigned int uVar23;
-  varying_copies_entry_t *paVar24;
-  const count_and_card_t *pcVar25;
-  int *choice_num;
   _Static_assert(sizeof(Rarities) == 5 && offsetof(Rarities, rarity_in_expansion) == 5,
                  "native rarity byte tail");
   _Static_assert(offsetof(card_ptr_t, types) == 132 &&
                      offsetof(card_ptr_t, mana_source_colors) == 146,
                  "native seven subtypes");
-  unsigned int uStack_220;
-  unsigned int uStack_21c;
+  uint8_t base_rarity;
+  unsigned char symbol_or_index;
+  bool more_copies;
+  csvid_choices_t *pool;
+  int16_t *subtype_ptr;
+  int value;
+  const Rarities *rarities;
+  unsigned int copies_or_probability, current_csvid, pool_value, rarity_or_count,
+      has_special_rarities;
   varying_copies_entry_t varying_copies[19] = {
       {7, copies_common_arabian_nights},
       {8, copies_uncommon_arabian_nights},
@@ -3184,132 +2446,86 @@ static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices)
       {42, copies_neo_land},
       {0, NULL},
   };
-    if (((((expansion & ~EXPANSION_FUTURE_SIGHT) == EXPANSION_VINTAGE_MASTERS) ||
-          (expansion == EXPANSION_LEGENDS)) ||
-         (expansion == EXPANSION_PLANAR_CHAOS)) ||
-        (expansion == EXPANSION_UNSTABLE))
+  if (((((expansion & ~EXPANSION_FUTURE_SIGHT) == EXPANSION_VINTAGE_MASTERS) ||
+        (expansion == EXPANSION_LEGENDS)) ||
+       (expansion == EXPANSION_PLANAR_CHAOS)) ||
+      (expansion == EXPANSION_UNSTABLE))
+  {
+    has_special_rarities = 1;
+  }
+  else
+  {
+    has_special_rarities = 1;
+    if (((expansion - EXPANSION_INNISTRAD & 0xfffffffd) != 0) &&
+        ((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) != EXPANSION_SHADOWS_OVER_INNISTRAD))
     {
-      uStack_21c = 1;
+      has_special_rarities =
+          (unsigned int)((expansion - EXPANSION_INNISTRAD_MIDNIGHT_HUNT & 0xfffffffb) == 0);
     }
-    else
-    {
-      uStack_21c = 1;
-      if (((expansion - EXPANSION_INNISTRAD & 0xfffffffd) != 0) &&
-          ((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) != EXPANSION_SHADOWS_OVER_INNISTRAD))
-      {
-        uStack_21c =
-            (unsigned int)((expansion - EXPANSION_INNISTRAD_MIDNIGHT_HUNT & 0xfffffffb) == 0);
-      }
-    }
+  }
 
-    uVar19 = 0;
-    if (1 < available_slots)
+  if (available_slots > 1)
+    for (current_csvid = 0; (int)current_csvid < available_slots - 1; ++current_csvid)
     {
-      do
+      rarities = get_rarity(current_csvid);
+      rarity_or_count = rarities->rarity_in_expansion[expansion];
+      if (!rarity_or_count || !is_valid_card(current_csvid))
+        continue;
+      symbol_or_index = rarities->dfc_symbol;
+      if (symbol_or_index != 0xff && (symbol_or_index & 1))
+        continue;
+      if (has_special_rarities)
       {
-        while (true)
+        if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD || expansion == EXPANSION_ELDRITCH_MOON)
         {
-          pRVar12 = get_rarity(uVar19);
-          uStack_220 = (unsigned int)pRVar12->rarity_in_expansion[expansion];
-          if (((uStack_220 != 0) && (iVar14 = is_valid_card(uVar19), iVar14 != 0)) &&
-              ((bVar6 = pRVar12->dfc_symbol, bVar6 == 0xff || ((bVar6 & 1) == 0))))
-            break;
-        LAB_026eba48:
-          uVar19 = uVar19 + 1;
-          if (available_slots + -1 <= (int)uVar19)
-            goto LAB_026ec0a8;
+          if (symbol_or_index != 0xff)
+          {
+            if (rarity_or_count - 1 < 2)
+              rarity_or_count = 0x1c;
+            else if (rarity_or_count - 3 < 2)
+              rarity_or_count = 0x1d;
+          }
         }
-        if (uStack_21c == 0)
-          goto LAB_026ebaf0;
-        if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
+        else if (expansion == EXPANSION_INNISTRAD_MIDNIGHT_HUNT ||
+                 expansion == EXPANSION_INNISTRAD_CRIMSON_VOW)
         {
-        LAB_026ec676:
-          if (bVar6 != 0xff)
-          {
-            if (uStack_220 - 1 < 2)
-            {
-            LAB_026ebbb8:
-              uStack_220 = 0x1c;
-            }
-            else if (uStack_220 - 3 < 2)
-            {
-              uStack_220 = 0x1d;
-            }
-          }
-          goto LAB_026ebaf0;
+          if (rarity_or_count == 1 && symbol_or_index != 0xff)
+            rarity_or_count = 0x1e;
         }
-        if (EXPANSION_SHADOWS_OVER_INNISTRAD < expansion)
+        else if (expansion == EXPANSION_KAMIGAWA_NEON_DYNASTY)
         {
-          if (expansion == EXPANSION_INNISTRAD_MIDNIGHT_HUNT)
-          {
-          LAB_026ec6c2:
-            if ((uStack_220 == 1) && (bVar6 != 0xff))
-            {
-              uStack_220 = 0x1e;
-            }
-          }
-          else if (expansion < EXPANSION_INNISTRAD_MIDNIGHT_HUNT_COMMANDER)
-          {
-            if (expansion == EXPANSION_ELDRITCH_MOON)
-              goto LAB_026ec676;
-            if (expansion == EXPANSION_UNSTABLE)
-            {
-              piVar8 = cards_ptr[uVar19]->types;
-              do
-              {
-                if (*piVar8 == 0x3000)
-                {
-                  uStack_220 = 0x1f;
-                  break;
-                }
-                piVar8 = piVar8 + 1;
-              } while (cards_ptr[uVar19]->types + 7 != piVar8);
-            }
-          }
-          else
-          {
-            if (expansion == EXPANSION_INNISTRAD_CRIMSON_VOW)
-              goto LAB_026ec6c2;
-            if (((expansion == EXPANSION_KAMIGAWA_NEON_DYNASTY) && (bVar6 != 0xff)) &&
-                (uStack_220 - 1 < 2))
-              goto LAB_026ebbb8;
-          }
-          goto LAB_026ebaf0;
+          if (symbol_or_index != 0xff && rarity_or_count - 1 < 2)
+            rarity_or_count = 0x1c;
         }
-        if (expansion != EXPANSION_INNISTRAD)
+        else if (expansion == EXPANSION_UNSTABLE)
         {
-          if (EXPANSION_INNISTRAD < expansion)
-          {
-            if (expansion == EXPANSION_DARK_ASCENSION)
-              goto LAB_026ec6ab;
-            if ((expansion == EXPANSION_VINTAGE_MASTERS) && (uStack_220 == 4))
+          for (int index = 0; index < 7; ++index)
+            if (cards_ptr[current_csvid]->types[index] == 0x3000)
             {
-              if ((int)uVar19 < 0xaa)
-              {
-                if ((0xa4 < (int)uVar19) || ((uVar19 & 0xffffffef) == 1))
-                {
-                LAB_026ec7c9:
-                  uStack_220 = 6;
-                }
-              }
-              else if (uVar19 - 0xf9 < 2)
-                goto LAB_026ec7c9;
+              rarity_or_count = 0x1f;
+              break;
             }
-            goto LAB_026ebaf0;
-          }
-          if (expansion != EXPANSION_LEGENDS)
-          {
-            if (((expansion == EXPANSION_PLANAR_CHAOS) && (uStack_220 - 1 < 3)) &&
-                ((pRVar12->flags & 1) != 0))
-            {
-              uStack_220 = uStack_220 + 0x17;
-            }
-            goto LAB_026ebaf0;
-          }
-          if (1 < uStack_220 - 1)
-            goto LAB_026ebaf0;
-          uVar18 = uStack_21c;
-          switch (uVar19)
+        }
+        else if (expansion == EXPANSION_INNISTRAD || expansion == EXPANSION_DARK_ASCENSION)
+        {
+          if (symbol_or_index != 0xff)
+            rarity_or_count = 0x1b;
+        }
+        else if (expansion == EXPANSION_VINTAGE_MASTERS && rarity_or_count == 4)
+        {
+          if (((int)current_csvid < 0xaa &&
+               ((int)current_csvid > 0xa4 || (current_csvid & 0xffffffef) == 1)) ||
+              current_csvid - 0xf9 < 2)
+            rarity_or_count = 6;
+        }
+        else if (expansion == EXPANSION_PLANAR_CHAOS && rarity_or_count - 1 < 3 &&
+                 (rarities->flags & 1))
+          rarity_or_count += 0x17;
+        else if (expansion == EXPANSION_LEGENDS && rarity_or_count - 1 < 2)
+        {
+          copies_or_probability = has_special_rarities;
+          bool default_weight = false;
+          switch (current_csvid)
           {
           case 0x22d:
           case 0x236:
@@ -3340,19 +2556,20 @@ static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices)
           case 0x347:
           case 0x348:
           case 0x34b:
-            uVar18 = 0;
+            copies_or_probability = 0;
             break;
           default:
-            if (uStack_220 == 1)
+            default_weight = true;
+            if (rarity_or_count == 1)
             {
-              iVar14 = 0x58;
+              value = 0x58;
             }
             else
             {
-              iVar14 = 0x60;
-              uVar18 = 0;
+              value = 0x60;
+              copies_or_probability = 0;
             }
-            goto LAB_026ec74e;
+            break;
           case 0x299:
           case 0x2b6:
           case 0x2c9:
@@ -3363,309 +2580,298 @@ static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices)
           case 0x33e:
           case 0x341:;
           }
-          iVar14 = (unsigned int)(uStack_220 != 1) * 8 + 0x58;
-        LAB_026ec74e:
-          choice_num = (int *)((int)&choices[0].num + iVar14);
-          if ((*choice_num < 0) || (-1 < choices[uStack_220].num))
-          {
+          if (!default_weight)
+            value = (unsigned int)(rarity_or_count != 1) * 8 + 0x58;
+          draftrarity_t munged = value / sizeof(csvid_choices_t);
+          if (choices[munged].num < 0 || choices[rarity_or_count].num >= 0)
             backtrace_and_abort(
                 "functions/packs.c:2636\nchoices[munged].num >= 0 && choices[rar].num < 0");
-          }
           do
           {
-            uVar18 = uVar18 - 1;
-            add_to_csvid_choices(choice_num, (int **)((int)&choices[0].csvids + iVar14), uVar19);
-          } while (uVar18 != 0xffffffff);
-          goto LAB_026eba48;
+            --copies_or_probability;
+            add_to_csvid_choices(&choices[munged], current_csvid);
+          } while (copies_or_probability != 0xffffffff);
+          continue;
         }
-      LAB_026ec6ab:
-        if (bVar6 != 0xff)
+      }
+      for (unsigned int pool_index = 1; pool_index < 0x2b; ++pool_index)
+      {
+        pool_value = pool_index;
+        pool = choices + pool_index;
+        if (pool->num < 0)
+          continue;
+        switch (pool_value)
         {
-          uStack_220 = 0x1b;
-        }
-      LAB_026ebaf0:
-        uVar18 = 1;
-      LAB_026ebb08:
-        do
-        {
-          uVar23 = uVar18;
-          pcVar7 = choices + uVar23;
-          uVar18 = uVar23 + 1;
-          if (choices[uVar23].num < 0)
-            goto LAB_026ebc75;
-          switch (uVar23)
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 0x18:
+        case 0x19:
+        case 0x1a:
+        case 0x1e:
+          if (rarity_or_count == pool_value)
           {
-          case 1:
-          case 2:
-          case 3:
-          case 4:
-          case 5:
-          case 6:
-          case 0x18:
-          case 0x19:
-          case 0x1a:
-          case 0x1e:
-            if (uStack_220 == uVar23)
+            add_to_csvid_choices(pool, current_csvid);
+            break;
+          }
+          break;
+        case 0x1b:
+          if (rarity_or_count == 0x1b)
+          {
+            pool_value = (unsigned int)rarities->rarity_in_expansion[expansion];
+            if (expansion == EXPANSION_INNISTRAD)
             {
-            code_r0x026ebc5e:
-              add_to_csvid_choices(&pcVar7->num, (int **)&choices[uVar23].csvids, uVar19);
+              value = 0;
+              if (1 < pool_value - 3)
+              {
+                value = (unsigned int)(pool_value != 2) * 9 + 2;
+              }
+            }
+            else if (pool_value == 4)
+            {
+              value = 2;
+            }
+            else if (pool_value == 3)
+            {
+              value = 0xd;
+            }
+            else
+            {
+              value = ((pool_value != 2) - 1 & 0xffffffac) + 0x77;
+            }
+            do
+            {
+              value = value + -1;
+              add_to_csvid_choices(pool, current_csvid);
+            } while (value != -1);
+          }
+          break;
+        case 0x1c:
+          if (rarity_or_count == 0x1c)
+          {
+            if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
+            {
+              pool_value = (rarities->rarity_in_expansion[expansion] != '\x01') - 1 & 0xe;
+            }
+            else
+            {
+              pool_value = (unsigned int)(rarities->rarity_in_expansion[expansion] == '\x01');
+              if (expansion == EXPANSION_ELDRITCH_MOON)
+              {
+                pool_value = (pool_value - 1 & 0xfffffff3) + 0xe;
+              }
+              else
+              {
+                pool_value = pool_value * 3;
+              }
+            }
+            do
+            {
+              pool_value = pool_value - 1;
+              add_to_csvid_choices(pool, current_csvid);
+            } while (pool_value != 0xffffffff);
+          }
+          break;
+        case 0x1d:
+          if (rarity_or_count == 0x1d)
+          {
+            if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
+            {
+              value = (unsigned int)(rarities->rarity_in_expansion[expansion] == '\x03') * 5 + 1;
+            }
+            else
+            {
+              value = (unsigned int)(rarities->rarity_in_expansion[expansion] == '\x01') * 9 + 4;
+            }
+            do
+            {
+              value = value + -1;
+              add_to_csvid_choices(pool, current_csvid);
+            } while (value != -1);
+          }
+          break;
+        case 0x1f:
+          if (rarity_or_count == 0x1f)
+          {
+            symbol_or_index = rarities->rarity_in_expansion[expansion] - 2;
+            if (symbol_or_index < 3)
+            {
+              if (contraption_copies[(unsigned int)symbol_or_index] < 1)
+                break;
+              value = contraption_copies[(unsigned int)symbol_or_index] + -1;
+            }
+            else
+            {
+              value = 0x2a;
+            }
+            do
+            {
+              add_to_csvid_choices(pool, current_csvid);
+              more_copies = 0 < value;
+              value = value + -1;
+            } while (more_copies);
+          }
+          break;
+        case 0x20:
+          if (current_csvid == 0x7e)
+          {
+            add_to_csvid_choices(pool, 0x7e);
+          }
+          break;
+        case 0x21:
+          if (rarity_or_count == 5)
+          {
+            add_to_csvid_choices(pool, current_csvid);
+            bool snow = false;
+            subtype_ptr = cards_ptr[current_csvid]->types;
+            do
+            {
+              if (*subtype_ptr == 0x2003)
+              {
+                snow = true;
+                break;
+              }
+              ++subtype_ptr;
+            } while (cards_ptr[current_csvid]->types + 7 != subtype_ptr);
+            if (!snow)
+            {
+              add_to_csvid_choices(pool, current_csvid);
+              add_to_csvid_choices(pool, current_csvid);
+            }
+          }
+          break;
+        case 0x22:
+          add_to_csvid_choices(pool, current_csvid);
+          break;
+        case 0x24:
+        {
+          bool found_subtype = false;
+          for (int subtype_index = 0; subtype_index < 7; ++subtype_index)
+            if (cards_ptr[current_csvid]->types[subtype_index] == 0x500c)
+            {
+              found_subtype = true;
               break;
             }
-            goto joined_r0x026ebf77;
-          case 0x1b:
-            if (uStack_220 == 0x1b)
-            {
-              uVar23 = (unsigned int)pRVar12->rarity_in_expansion[expansion];
-              if (expansion == EXPANSION_INNISTRAD)
-              {
-                iVar14 = 0;
-                if (1 < uVar23 - 3)
-                {
-                  iVar14 = (unsigned int)(uVar23 != 2) * 9 + 2;
-                }
-              }
-              else if (uVar23 == 4)
-              {
-                iVar14 = 2;
-              }
-              else if (uVar23 == 3)
-              {
-                iVar14 = 0xd;
-              }
-              else
-              {
-                iVar14 = ((uVar23 != 2) - 1 & 0xffffffac) + 0x77;
-              }
-              do
-              {
-                iVar14 = iVar14 + -1;
-                add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1b].csvids, uVar19);
-              } while (iVar14 != -1);
-            }
-            goto LAB_026ebb08;
-          case 0x1c:
-            if (uStack_220 == 0x1c)
-            {
-              if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
-              {
-                uVar23 = (pRVar12->rarity_in_expansion[expansion] != '\x01') - 1 & 0xe;
-              }
-              else
-              {
-                uVar23 = (unsigned int)(pRVar12->rarity_in_expansion[expansion] == '\x01');
-                if (expansion == EXPANSION_ELDRITCH_MOON)
-                {
-                  uVar23 = (uVar23 - 1 & 0xfffffff3) + 0xe;
-                }
-                else
-                {
-                  uVar23 = uVar23 * 3;
-                }
-              }
-              do
-              {
-                uVar23 = uVar23 - 1;
-                add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1c].csvids, uVar19);
-              } while (uVar23 != 0xffffffff);
-            }
-            goto LAB_026ebb08;
-          case 0x1d:
-            if (uStack_220 == 0x1d)
-            {
-              if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
-              {
-                iVar14 = (unsigned int)(pRVar12->rarity_in_expansion[expansion] == '\x03') * 5 + 1;
-              }
-              else
-              {
-                iVar14 = (unsigned int)(pRVar12->rarity_in_expansion[expansion] == '\x01') * 9 + 4;
-              }
-              do
-              {
-                iVar14 = iVar14 + -1;
-                add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1d].csvids, uVar19);
-              } while (iVar14 != -1);
-            }
-            goto LAB_026ebb08;
-          case 0x1f:
-            if (uStack_220 == 0x1f)
-            {
-              bVar6 = pRVar12->rarity_in_expansion[expansion] - 2;
-              if (bVar6 < 3)
-              {
-                if (contraption_copies[(unsigned int)bVar6] < 1)
-                  goto LAB_026ebb08;
-                iVar14 = contraption_copies[(unsigned int)bVar6] + -1;
-              }
-              else
-              {
-                iVar14 = 0x2a;
-              }
-              do
-              {
-                add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1f].csvids, uVar19);
-                bVar5 = 0 < iVar14;
-                iVar14 = iVar14 + -1;
-              } while (bVar5);
-            }
-            goto LAB_026ebb08;
-          case 0x20:
-            if (uVar19 == 0x7e)
-            {
-              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x20].csvids, 0x7e);
-            }
-            goto LAB_026ebb08;
-          case 0x21:
-            if (uStack_220 == 5)
-            {
-              ppcVar22 = &choices[0x21].csvids;
-              add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
-              piVar8 = cards_ptr[uVar19]->types;
-              do
-              {
-                if (*piVar8 == 0x2003)
-                  goto LAB_026ebb08;
-                piVar8 = piVar8 + 1;
-              } while (cards_ptr[uVar19]->types + 7 != piVar8);
-              add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
-              add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
-            }
-            goto LAB_026ebb08;
-          case 0x22:
-            add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x22].csvids, uVar19);
-            goto LAB_026ebb08;
-          case 0x24:
-            piVar8 = cards_ptr[uVar19]->types;
-            sVar4 = *piVar8;
-            while (sVar4 != 0x500c)
-            {
-              piVar8 = piVar8 + 1;
-              if (cards_ptr[uVar19]->types + 7 == piVar8)
-                goto LAB_026ebb08;
-              sVar4 = *piVar8;
-            }
-            if (uVar19 != 0x4bac)
-            {
-              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x24].csvids, uVar19);
-            }
-            goto LAB_026ebb08;
-          case 0x25:
-            iVar14 = get_internal_card_id_from_csv_id(uVar19);
-            if ((cards_data[iVar14].type & 6) != 0)
-            {
-              piVar8 = cards_ptr[uVar19]->types;
-              sVar4 = *piVar8;
-              while (sVar4 != 0x2001)
-              {
-                piVar8 = piVar8 + 1;
-                if (cards_ptr[uVar19]->types + 7 == piVar8)
-                  goto LAB_026ebb08;
-                sVar4 = *piVar8;
-              }
-              uVar3 = pRVar12->rarity_in_expansion[expansion];
-              iVar14 = 0;
-              if (uVar3 != '\x04')
-              {
-                if (uVar3 == '\x03')
-                {
-                  iVar14 = 7;
-                }
-                else
-                {
-                  if (uVar3 == '\x06')
-                    goto LAB_026ebb08;
-                  iVar14 = 0x13;
-                }
-              }
-              do
-              {
-                iVar14 = iVar14 + -1;
-                add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x25].csvids, uVar19);
-              } while (iVar14 != -1);
-            }
-            goto LAB_026ebb08;
-          case 0x26:
-          case 0x27:
-            if (uVar23 == 0x26)
-            {
-              if (uStack_220 != 3)
-                goto LAB_026ebb08;
-            }
-            else if (uStack_220 != 4)
-              goto joined_r0x026ebf77;
-            piVar8 = cards_ptr[uVar19]->types;
-            do
-            {
-              if (*piVar8 == 0x2001)
-                goto LAB_026ebc75;
-              piVar8 = piVar8 + 1;
-            } while (cards_ptr[uVar19]->types + 7 != piVar8);
-            iVar14 = get_internal_card_id_from_csv_id(uVar19);
-            if ((cards_data[iVar14].type & 6) == 0)
-              goto code_r0x026ebc5e;
+          if (!found_subtype)
             break;
-          case 0x28:
-            piVar8 = cards_ptr[uVar19]->types;
-            sVar4 = *piVar8;
-            while (sVar4 != 0x6003)
-            {
-              piVar8 = piVar8 + 1;
-              if (cards_ptr[uVar19]->types + 7 == piVar8)
-                goto LAB_026ebb08;
-              sVar4 = *piVar8;
-            }
-            add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x28].csvids, uVar19);
-            goto LAB_026ebb08;
-          }
-        LAB_026ebc75:
-        joined_r0x026ebf77:;
-        } while (uVar18 < 0x2b);
-        uVar19 = uVar19 + 1;
-      } while ((int)uVar19 < available_slots + -1);
-    }
-  LAB_026ec0a8:
-    paVar2 = varying_copies;
-    pcVar25 = paVar2->counts_and_cards;
-    while (pcVar25 != NULL)
-    {
-      dVar9 = paVar2->rarity;
-      if ((-1 < choices[dVar9].num) && (0 < pcVar25->count))
-      {
-        do
-        {
-          iVar14 = is_valid_card(pcVar25->csvid);
-          if ((iVar14 != 0) && (0 < pcVar25->count))
+          if (current_csvid != 0x4bac)
           {
-            iVar14 = 0;
+            add_to_csvid_choices(pool, current_csvid);
+          }
+          break;
+        }
+        case 0x25:
+        {
+          value = get_internal_card_id_from_csv_id(current_csvid);
+          if ((cards_data[value].type & 6) != 0)
+          {
+            bool found_subtype = false;
+            for (int subtype_index = 0; subtype_index < 7; ++subtype_index)
+              if (cards_ptr[current_csvid]->types[subtype_index] == 0x2001)
+              {
+                found_subtype = true;
+                break;
+              }
+            if (!found_subtype)
+              break;
+            base_rarity = rarities->rarity_in_expansion[expansion];
+            value = 0;
+            if (base_rarity != '\x04')
+            {
+              if (base_rarity == '\x03')
+              {
+                value = 7;
+              }
+              else
+              {
+                if (base_rarity == '\x06')
+                  break;
+                value = 0x13;
+              }
+            }
             do
             {
-              iVar14 = iVar14 + 1;
-              add_to_csvid_choices(&choices[dVar9].num, (int **)&choices[dVar9].csvids,
-                                        pcVar25->csvid);
-            } while (iVar14 < pcVar25->count);
+              value = value + -1;
+              add_to_csvid_choices(pool, current_csvid);
+            } while (value != -1);
           }
-          pcVar1 = pcVar25 + 1;
-          pcVar25 = pcVar25 + 1;
-        } while (0 < pcVar1->count);
+          break;
+        }
+        case 0x26:
+        case 0x27:
+          if (pool_value == 0x26)
+          {
+            if (rarity_or_count != 3)
+              break;
+          }
+          else if (rarity_or_count != 4)
+            break;
+          bool legendary = false;
+          for (int subtype_index = 0; subtype_index < 7; ++subtype_index)
+            if (cards_ptr[current_csvid]->types[subtype_index] == 0x2001)
+            {
+              legendary = true;
+              break;
+            }
+          if (legendary)
+            break;
+          value = get_internal_card_id_from_csv_id(current_csvid);
+          if ((cards_data[value].type & 6) == 0)
+            add_to_csvid_choices(pool, current_csvid);
+          break;
+        case 0x28:
+        {
+          bool found_subtype = false;
+          for (int subtype_index = 0; subtype_index < 7; ++subtype_index)
+            if (cards_ptr[current_csvid]->types[subtype_index] == 0x6003)
+            {
+              found_subtype = true;
+              break;
+            }
+          if (!found_subtype)
+            break;
+          add_to_csvid_choices(pool, current_csvid);
+          break;
+        }
+        }
       }
-      paVar24 = paVar2 + 1;
-      paVar2 = paVar2 + 1;
-      pcVar25 = paVar24->counts_and_cards;
     }
-    if ((choices[5].num == 0) &&
-        ((((((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) == EXPANSION_CONFLUX ||
-             (expansion == EXPANSION_WORLDWAKE)) ||
-            (expansion == EXPANSION_DARK_ASCENSION)) ||
-           (((expansion - EXPANSION_BORN_OF_THE_GODS & 0xfffffffd) == 0 ||
-             (expansion == EXPANSION_GATECRASH)))) ||
-          (((expansion - EXPANSION_OATH_OF_THE_GATEWATCH & 0xfffffffb) == 0 ||
-            (expansion == EXPANSION_AETHER_REVOLT))))))
-    {
-      add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xbc);
-      add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0x7e);
-      add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xef);
-      add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xa4);
-      add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0x5b);
-    }
+  for (varying_copies_entry_t *entry = varying_copies; entry->counts_and_cards; ++entry)
+  {
+    draftrarity_t rarity = entry->rarity;
+    const count_and_card_t *card = entry->counts_and_cards;
+    if (choices[rarity].num >= 0 && card->count > 0)
+      do
+      {
+        if (is_valid_card(card->csvid) && card->count > 0)
+        {
+          int count = 0;
+          do
+          {
+            ++count;
+            add_to_csvid_choices(&choices[rarity], card->csvid);
+          } while (count < card->count);
+        }
+        ++card;
+      } while (card->count > 0);
+  }
+  if ((choices[5].num == 0) &&
+      ((((((expansion & ~EXPANSION_LIMITED_EDITION_ALPHA) == EXPANSION_CONFLUX ||
+           (expansion == EXPANSION_WORLDWAKE)) ||
+          (expansion == EXPANSION_DARK_ASCENSION)) ||
+         (((expansion - EXPANSION_BORN_OF_THE_GODS & 0xfffffffd) == 0 ||
+           (expansion == EXPANSION_GATECRASH)))) ||
+        (((expansion - EXPANSION_OATH_OF_THE_GATEWATCH & 0xfffffffb) == 0 ||
+          (expansion == EXPANSION_AETHER_REVOLT))))))
+  {
+    add_to_csvid_choices(&choices[5], 0xbc);
+    add_to_csvid_choices(&choices[5], 0x7e);
+    add_to_csvid_choices(&choices[5], 0xef);
+    add_to_csvid_choices(&choices[5], 0xa4);
+    add_to_csvid_choices(&choices[5], 0x5b);
+  }
 }
 #endif

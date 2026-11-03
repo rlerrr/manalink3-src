@@ -954,12 +954,19 @@ int card_healer_of_the_pride(int player, int card, event_t event)
 
 int card_hellion_crucible(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  int p_Var4;
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_COUNTER = 2,
+    CHOICE_HELLION = 3
+  };
+
+  int pressure_available_or_mode;
+  int hellion_available;
+  int creature_count;
+  int chosen_mode;
   card_instance_t *instance;
-  uint32_t uVar6;
+  uint32_t hellion_priority;
   token_generation_t token;
 
   if (event != EVENT_CAN_ACTIVATE)
@@ -970,28 +977,29 @@ int card_hellion_crucible(int player, int card, event_t event)
       instance->info_slot = 0;
       if (paying_mana() == 0)
       {
-        iVar1 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 2, 0, 0, 0, 1, 0, 0,
-                                          NULL, NULL);
-        iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 9, 2, 0, 0, 0, 1, 0,
-                                          0x15a0200, NULL, NULL);
-        iVar3 = count_subtype(player, 2, -1);
-        uVar6 = 0;
-        if (iVar3 < 2)
+        pressure_available_or_mode = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1,
+                                                               2, 0, 0, 0, 1, 0, 0, NULL, NULL);
+        hellion_available = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 9, 2, 0, 0,
+                                                      0, 1, 0, 0x15a0200, NULL, NULL);
+        creature_count = count_subtype(player, 2, -1);
+        hellion_priority = 0;
+        if (creature_count < 2)
         {
-          uVar6 = 0xf;
+          hellion_priority = 0xf;
         }
-        p_Var4 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Produce mana",
-                             1, 8, "Add Pressure counter", iVar1, 10, "Generate an Hellion", iVar2,
-                             uVar6, 0, 0, 0, 0);
-        if (p_Var4 == 0)
+        chosen_mode =
+            dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Produce mana", 1, 8,
+                        "Add Pressure counter", pressure_available_or_mode, 10,
+                        "Generate an Hellion", hellion_available, hellion_priority, 0, 0, 0, 0);
+        if (chosen_mode == 0)
         {
           spell_fizzled = 1;
           return 0;
         }
-        instance->info_slot = p_Var4;
-        if (p_Var4 != 1)
+        instance->info_slot = chosen_mode;
+        if (chosen_mode != CHOICE_MANA)
         {
-          if (1U < (unsigned int)p_Var4 - 2U)
+          if (1U < (unsigned int)chosen_mode - 2U)
           {
             return 0;
           }
@@ -1003,7 +1011,7 @@ int card_hellion_crucible(int player, int card, event_t event)
           else
           {
             tap_card(player, card);
-            if (p_Var4 == 3)
+            if (chosen_mode == CHOICE_HELLION)
             {
               remove_counters(player, card, player, card, COUNTER_PRESSURE, 2);
               kill_card(player, card, KILL_SACRIFICE);
@@ -1024,14 +1032,14 @@ int card_hellion_crucible(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       if (event == EVENT_RESOLVE_ACTIVATION)
       {
-        iVar1 = instance->info_slot;
-        if (iVar1 == 2)
+        pressure_available_or_mode = instance->info_slot;
+        if (pressure_available_or_mode == 2)
         {
           add_counters(player, card, instance->parent_controller, instance->parent_card,
-                                   COUNTER_PRESSURE, 1);
-          iVar1 = instance->info_slot;
+                       COUNTER_PRESSURE, 1);
+          pressure_available_or_mode = instance->info_slot;
         }
-        if (iVar1 == 3)
+        if (pressure_available_or_mode == 3)
         {
           default_token_definition(player, card, 0x4945, &token);
           token.color_forced = '\x10';
@@ -2388,16 +2396,16 @@ int card_rhox_faithmender(int player, int card, event_t event)
     XTRIGGER_REPLACE_GAIN_LIFE = 16778752
   };
 
-  xtrigger_t xVar1;
+  xtrigger_t current_xtrigger;
   int result;
 
   lifelink(player, card, event);
-  xVar1 = trigger_condition;
+  current_xtrigger = trigger_condition;
   if (trigger_condition == 0xe5)
   {
-    xVar1 = xtrigger_impl_value_dont_use_directly;
+    current_xtrigger = xtrigger_impl_value_dont_use_directly;
   }
-  if ((((xVar1 == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
+  if ((((current_xtrigger == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
         (0 < life_gained))))

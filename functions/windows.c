@@ -3,6 +3,8 @@
 
 #include "manalink.h"
 
+EXPANSION_t hack_show_deck_force_expansion;
+
 color_test_t debug_addcard_last_color = COLOR_TEST_ANY;
 type_t debug_addcard_last_type = TYPE_ANY;
 
@@ -2328,7 +2330,7 @@ int copy_to_display_end(int any_changes)
 /* ManalinkEh 2022: 0x265cf80; original functions/windows.c:3224. */
 char *localtime_date(void)
 {
-  static char date_buffer[18];
+  static char buf[18];
   SYSTEMTIME systime;
   _Static_assert(sizeof(SYSTEMTIME) == 16, "native SYSTEMTIME size");
   _Static_assert(offsetof(SYSTEMTIME, wYear) == 0 && offsetof(SYSTEMTIME, wMonth) == 2 &&
@@ -2336,9 +2338,9 @@ char *localtime_date(void)
                      offsetof(SYSTEMTIME, wMinute) == 10,
                  "native SYSTEMTIME field offsets");
   GetLocalTime(&systime);
-  sprintf(date_buffer, "%02d/%02d/%d", (unsigned int)systime.wMonth, (unsigned int)systime.wDay,
+  sprintf(buf, "%02d/%02d/%d", (unsigned int)systime.wMonth, (unsigned int)systime.wDay,
           (unsigned int)systime.wYear);
-  return date_buffer;
+  return buf;
 }
 
 #endif

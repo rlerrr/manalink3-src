@@ -792,7 +792,7 @@ int card_aerie_worshippers(int player, int card, event_t event)
 int card_arbiter_of_the_ideal(int player, int card, event_t event)
 {
   int result;
-  const char *puVar2;
+  const char *reveal_prompt;
 
   if (event != EVENT_UNTAP_CARD)
   {
@@ -821,13 +821,14 @@ int card_arbiter_of_the_ideal(int player, int card, event_t event)
       }
       else
       {
-        puVar2 = "You reveal:";
+        reveal_prompt = "You reveal:";
         if (player != 0)
         {
-          puVar2 = "Opponent reveals:";
+          reveal_prompt = "Opponent reveals:";
         }
-        result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\021", *deck_ptr[player],
-                             "\001\011", puVar2, "\001\014", "Put into play", 1, 1, 0, 0, 0, 0);
+        result =
+            dialog_impl(player, card, EVENT_ACTIVATE, "\001\021", *deck_ptr[player], "\001\011",
+                        reveal_prompt, "\001\014", "Put into play", 1, 1, 0, 0, 0, 0);
         if (result != 0)
         {
           result = add_card_to_hand(player, *deck_ptr[player]);
@@ -4230,11 +4231,11 @@ int card_ragemonger(int player, int card, event_t event)
 
 int card_reap_what_is_sown(int player, int card, event_t event)
 {
-  target_t *ptVar1;
-  target_t *ptVar2;
+  target_t *chosen_player_record;
+  target_t *chosen_card_record;
   int i;
   card_instance_t *instance;
-  target_definition_t *ptStack_68;
+  target_definition_t *creature_target_definition;
   target_definition_t td;
   if (!IS_GS_EVENT(player, card, event))
   {
@@ -4250,23 +4251,19 @@ int card_reap_what_is_sown(int player, int card, event_t event)
       i = 0;
       do
       {
-        while (true)
+        creature_target_definition = &td;
+        if (validate_target(player, card, creature_target_definition, i) != 0)
         {
-          ptStack_68 = &td;
-          if (validate_target(player, card, ptStack_68, i) == 0)
-            break;
-          ptVar2 = instance->targets + i;
-          ptVar1 = instance->targets + i;
+          chosen_card_record = instance->targets + i;
+          chosen_player_record = instance->targets + i;
           i = i + 1;
-          add_counters(player, card, ptVar1->player, ptVar2->card, COUNTER_P1_P1,
-                                   1);
-          if ((int)(unsigned int)instance->number_of_targets <= i)
-            goto LAB_020416bc;
+          add_counters(player, card, chosen_player_record->player, chosen_card_record->card,
+                       COUNTER_P1_P1, 1);
         }
-        i = i + 1;
+        else
+          i = i + 1;
       } while (i < (int)(unsigned int)instance->number_of_targets);
     }
-  LAB_020416bc:
     kill_card(player, card, KILL_DESTROY);
   }
   return generic_spell(player, card, event, 0x20, &td, "TARGET_CREATURE", 3, NULL);
@@ -4859,7 +4856,7 @@ int card_crypsis(int player, int card, event_t event)
           }
           kill_card(player, card, KILL_DESTROY);
         }
-        goto LAB_0203794b;
+        return generic_spell(player, card, event, 1, &td, "ASHNODS_BATTLEGEAR", 1, NULL);
       }
       if (event != EVENT_CHANGE_TARGET)
       {
@@ -4870,6 +4867,5 @@ int card_crypsis(int player, int card, event_t event)
   default_target_definition(player, card, &td, 2);
   td.allowed_controller = player;
   td.preferred_controller = player;
-LAB_0203794b:
   return generic_spell(player, card, event, 1, &td, "ASHNODS_BATTLEGEAR", 1, NULL);
 }

@@ -41,7 +41,7 @@ extern int stack_size;				// number of cards on the stack
 /* Packed card/player used by EVENT_GET_SELECTED_CARD; see original auras.c. */
 #ifndef SHANDALAR
 #define engine_selected_card EXE_DWORD(0x78fa30)
-/* show_deck uses integer addresses for localized Done/OK labels. */
+/* Fixed EXE addresses for localized Done/OK labels. */
 #define ENGINE_DONE_LABEL 0x7375b0
 #define ENGINE_OK_LABEL 0x78f0a8
 #endif
@@ -263,7 +263,7 @@ void cannot_block_exe(int, int, event_t);
 int check_hand_for_type(int, int, type_t);
 void check_legend_rule(int, int, event_t);
 int check_mana_multi(int);
-int choose_a_card(const char *, int, int );
+int choose_a_card(const char *, color_test_t, type_t);
 int choose_a_color_exe(int player, const char* prompt, int use_color_names_instead_of_land, int ai_choice, int color_tests);
 int choose_a_number(int, const char *, int );
 int coin_flip(int player, const char* dialog_title, int show_dialog_if_animation_is_off);	// Last parameter should always be 1 except during game startup
@@ -325,7 +325,7 @@ int regenerate_target_exe(int, int);
 int remove_card_from_deck(int, int);
 void remove_card_from_grave(int player, int position);
 int should_ai_play(int, int);	// equivalent to in_play(); has nothing to do with ai
-int show_deck(int player, const int* deck, int num_cards, const char* prompt, int suppress_done_label, /* const char* */int done_label);	// no desire to cast all the references to 0x7375B0 to const char* (they're the localized "Done" string in Text.res:DIALOGBUTTONS[3]).  See also show_bottom_of_deck() below.
+int show_deck(int player, const int* deck, int num_cards, const char* prompt, int suppress_done_label, const char* done_label);
 int signet(int, int, event_t, int, int);
 void target_player(int, int, event_t);
 int type_tutor(int, int, event_t, int, int, int, int);
@@ -1979,6 +1979,8 @@ int taunt_force_attack(int player, int card, event_t event);
 int triplecast_legacy_mana_value_2_or_less(int player, int card, event_t event);
 int triskelion_like_creature(int player, int card, event_t event, int amount_of_starting_counters,
                              int c, int b, int u, int g, int r, int w);
+extern const unsigned char lc_unaccent_map[256];
+extern const int txtfx_not_found;
 int txtfx(int player, int card, event_t event, card_id_t marker);
 keyword_t color_to_protection(color_t color);
 void adventure_transform(int player, int card, int csvid);
@@ -2764,7 +2766,7 @@ int make_test(int player, int to_examine, int test_type, int type, int flag1, in
 
 /* October 2022 graveyard/zone and counterspell consumers. */
 #ifndef SHANDALAR
-extern int32_t hack_show_deck_force_expansion;
+extern EXPANSION_t hack_show_deck_force_expansion;
 extern int hack_allow_sorcery_if_rules_engine_is_only_effect;
 int get_average_value_from_zone(int targ_player, const int *s_location, int zone_count,
                                      test_definition_t *this_test, int my_test, int mode);
@@ -2860,7 +2862,7 @@ int sacrifice_and_report_value(int player, int card, int t_player, int flags,
 int generic_spell(int player, int card, event_t event, int flags, target_definition_t *td,
                        const char *prompt, int max_targets, test_definition_t *this_test);
 int show_deck(int player, const int *deck, int num_cards, const char *prompt,
-                   int suppress_done_label, int done_label);
+                   int suppress_done_label, const char *done_label);
 #endif
 
 /* Interfaces recovered from October 2022 DWARF. */
@@ -3608,8 +3610,9 @@ int test_packs(int run_time_test);
 
 /* October 2022 native pack selection flags and chooser. */
 #ifndef SHANDALAR
-typedef int pack_flags_t;
-enum { PACK_0 = 0, PACK_ALLOW_BOOSTER = 1, PACK_ALLOW_STARTER = 2, PACK_ALLOW_CANCEL = 4 };
+typedef enum {
+  PACK_0 = 0, PACK_ALLOW_BOOSTER = 1, PACK_ALLOW_STARTER = 2, PACK_ALLOW_CANCEL = 4
+} pack_flags_t;
 int choose_packs(int num_packs, pack_flags_t flags, EXPANSION_t *expansions, int *is_booster);
 #endif
 
@@ -3636,7 +3639,7 @@ int effect_personal_incarnation(int player, int card, event_t event);
 #ifndef SHANDALAR
 int is_commander_in_command_zone(int player);
 int show_deck_force_expansion(int player, const int *deck, int num_cards, const char *prompt,
-                                   int suppress_done_label, const char *done_label, int expansion);
+                                   int suppress_done_label, const char *done_label, EXPANSION_t expansion);
 int mana_producer_fixed(int player, int card, event_t event, int base_color);
 int engine_mana_producer_fixed(int player, int card, event_t event, int base_color);
 #endif

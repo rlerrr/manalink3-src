@@ -582,8 +582,8 @@ Naya Soulbeast enters the battlefield with X +1/+1 counters on it, where X is th
 	{
 		APNAP(p,{
 					if( deck_ptr[p][0] != -1 ){
-						show_deck(p, deck_ptr[p], 1, "Here's the top card of your deck", 0, 0x7375B0 );
-						show_deck(1-p, deck_ptr[p], 1, "Here's the top card of opponent's deck", 0, 0x7375B0 );
+						show_deck(p, deck_ptr[p], 1, "Here's the top card of your deck", 0, EXE_STR(ENGINE_DONE_LABEL) );
+						show_deck(1-p, deck_ptr[p], 1, "Here's the top card of opponent's deck", 0, EXE_STR(ENGINE_DONE_LABEL) );
 						get_card_instance( player, card )->info_slot += get_cmc_by_internal_id(deck_ptr[p][0]);
 					}
 				};
@@ -1165,7 +1165,7 @@ int card_jeleva_nephalias_scourge(int player, int card, event_t event ){
 				int *deck = deck_ptr[p];
 				int to_remove = MIN(count_deck(p), amount);
 				if( to_remove > 0 ){
-					show_deck( player, deck, to_remove, "Cards exiled by Jeleva", 0, 0x7375B0 );
+					show_deck( player, deck, to_remove, "Cards exiled by Jeleva", 0, EXE_STR(ENGINE_DONE_LABEL) );
 					while( to_remove ){
 							if( is_what(-1, deck[0], TYPE_SPELL) && ! is_what(-1, deck[0], TYPE_CREATURE) ){
 								exiledby_remember(player, card, p, deck[0], &leg, &idx);
@@ -1197,20 +1197,27 @@ int card_jeleva_nephalias_scourge(int player, int card, event_t event ){
 
 int card_marath_will_of_the_wild(int player, int card, event_t event)
 {
+  enum
+  {
+    CHOICE_PASS_COUNTERS = 1,
+    CHOICE_DAMAGE = 2,
+    CHOICE_ELEMENTAL = 3
+  };
+
   int choice;
-  unsigned int uVar1;
+  unsigned int stored_mode_and_amount;
   card_instance_t *instance;
-  int iVar3;
-  int iVar4;
-  int iVar6;
+  int counters_to_remove_or_available;
+  int damage_target_available;
+  int counter_limit_or_token_priority;
   int32_t number;
   unsigned int num;
   const char *prompt;
-  uint32_t uStack_120;
-  uint32_t uStack_118;
-  target_definition_t *ptStack_110;
-  target_definition_t *ptStack_10c;
-  card_instance_t *pcStack_108;
+  uint32_t damage_priority;
+  uint32_t counter_priority;
+  target_definition_t *damage_target_definition;
+  target_definition_t *creature_or_selected_definition;
+  card_instance_t *ability_instance;
   token_generation_t token;
   target_definition_t td1;
   target_definition_t td2;
@@ -1224,20 +1231,10 @@ int card_marath_will_of_the_wild(int player, int card, event_t event)
     number = instance->targets[3].card;
   }
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, number);
-  if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
-  {
-    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    pcStack_108 = get_card_instance(player, card);
-    default_target_definition(player, card, &td1, 2);
-    td1.preferred_controller = player;
-    default_target_definition(player, card, &td2, 0x102);
-    td2.zone = 0x1200;
-    goto LAB_023c4244;
-  }
-  pcStack_108 = get_card_instance(player, card);
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
+      event != EVENT_CLEANUP)
+    return 0;
+  ability_instance = get_card_instance(player, card);
   default_target_definition(player, card, &td1, 2);
   td1.preferred_controller = player;
   default_target_definition(player, card, &td2, 0x102);
@@ -1245,120 +1242,122 @@ int card_marath_will_of_the_wild(int player, int card, event_t event)
   if (event == EVENT_CAN_ACTIVATE)
   {
     return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0, 0,
-                                      0x1000100, NULL, NULL);
+                                     0x1000100, NULL, NULL);
   }
-  pcStack_108->number_of_targets = '\0';
-  pcStack_108->targets[1].player = 0;
-  pcStack_108->targets[1].card = 0;
-  iVar6 = count_counters(player, card, COUNTER_P1_P1);
-  while ((iVar3 = has_mana(player, 7, iVar6), 0 < iVar6 && (iVar3 == 0)))
+  if (event == EVENT_ACTIVATE)
   {
-    iVar6 = iVar6 + -1;
-  }
-  iVar3 = get_toughness(player, card);
-  iVar3 = iVar6 - (unsigned int)(iVar3 <= iVar6);
-  if (player == 0)
-  {
-    iVar3 = choose_a_number(0, "Remove how many counters (you cannot choose 0) ?", iVar6);
-    iVar6 = count_counters(0, card, COUNTER_P1_P1);
-    if (iVar6 < iVar3)
+    ability_instance->number_of_targets = '\0';
+    ability_instance->targets[1].player = 0;
+    ability_instance->targets[1].card = 0;
+    counter_limit_or_token_priority = count_counters(player, card, COUNTER_P1_P1);
+    while ((counters_to_remove_or_available = has_mana(player, 7, counter_limit_or_token_priority),
+            0 < counter_limit_or_token_priority && (counters_to_remove_or_available == 0)))
     {
-      spell_fizzled = 1;
-      return 0;
+      counter_limit_or_token_priority = counter_limit_or_token_priority + -1;
     }
-    iVar6 = has_mana_for_activated_ability(0, card, iVar3, 0, 0, 0, 0, 0);
-    if (iVar3 < 1)
+    counters_to_remove_or_available = get_toughness(player, card);
+    counters_to_remove_or_available =
+        counter_limit_or_token_priority -
+        (unsigned int)(counters_to_remove_or_available <= counter_limit_or_token_priority);
+    if (player == 0)
     {
-      spell_fizzled = 1;
-      return 0;
-    }
-    if (iVar6 == 0)
-    {
-      spell_fizzled = 1;
-      return 0;
-    }
-  }
-  else if (iVar3 < 1)
-    goto LAB_023c4244;
-  ptStack_10c = &td1;
-  ptStack_110 = &td2;
-  pcStack_108->number_of_targets = '\0';
-  pcStack_108->info_slot = 0;
-  if (!(charge_mana_for_activated_ability(player, card, iVar3, 0, 0, 0, 0, 0) == 0))
-  {
-    if (current_phase == 0x18)
-    {
-      uStack_118 = 8;
-      uStack_120 = 1;
-      iVar6 = 5;
-    }
-    else
-    {
-      if ((current_phase == 0x14) || (current_phase == 0x1e))
+      counters_to_remove_or_available = choose_a_number(
+          0, "Remove how many counters (you cannot choose 0) ?", counter_limit_or_token_priority);
+      counter_limit_or_token_priority = count_counters(0, card, COUNTER_P1_P1);
+      if (counter_limit_or_token_priority < counters_to_remove_or_available)
       {
-        uStack_120 = 10;
+        spell_fizzled = 1;
+        return 0;
+      }
+      counter_limit_or_token_priority =
+          has_mana_for_activated_ability(0, card, counters_to_remove_or_available, 0, 0, 0, 0, 0);
+      if (counters_to_remove_or_available < 1)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (counter_limit_or_token_priority == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+    }
+    else if (counters_to_remove_or_available < 1)
+      return 0;
+    creature_or_selected_definition = &td1;
+    damage_target_definition = &td2;
+    ability_instance->number_of_targets = '\0';
+    ability_instance->info_slot = 0;
+    if (!(charge_mana_for_activated_ability(player, card, counters_to_remove_or_available, 0, 0, 0,
+                                            0, 0) == 0))
+    {
+      if (current_phase == 0x18)
+      {
+        counter_priority = 8;
+        damage_priority = 1;
+        counter_limit_or_token_priority = 5;
       }
       else
       {
-        uStack_120 = 1;
+        if ((current_phase == 0x14) || (current_phase == 0x1e))
+        {
+          damage_priority = 10;
+        }
+        else
+        {
+          damage_priority = 1;
+        }
+        counter_priority = 1;
+        counter_limit_or_token_priority = (unsigned int)(current_phase == 0x16) * 3 + 5;
       }
-      uStack_118 = 1;
-      iVar6 = (unsigned int)(current_phase == 0x16) * 3 + 5;
-    }
-    iVar4 = can_target(ptStack_110);
-    choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Pass +1/+1 counters",
-                        can_target(ptStack_10c), uStack_118, "Damage creature or player", iVar4, uStack_120,
-                        "Generate an Elemental", 1, iVar6, 0, 0, 0, 0);
-    if (choice == 0)
-    {
-      spell_fizzled = 1;
-      return 0;
-    }
-    if (choice == 2)
-    {
-      prompt = "TARGET_ANY";
-      ptStack_10c = ptStack_110;
-    LAB_023c4707:
-      if (pick_target(ptStack_10c, prompt) != 0)
+      damage_target_available = can_target(damage_target_definition);
+      choice =
+          dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Pass +1/+1 counters",
+                      can_target(creature_or_selected_definition), counter_priority,
+                      "Damage creature or player", damage_target_available, damage_priority,
+                      "Generate an Elemental", 1, counter_limit_or_token_priority, 0, 0, 0, 0);
+      if (choice == 0)
       {
-        remove_counters(player, card, player, card, COUNTER_P1_P1, iVar3);
+        spell_fizzled = 1;
+        return 0;
       }
+      if (choice == CHOICE_PASS_COUNTERS || choice == CHOICE_DAMAGE)
+      {
+        prompt = choice == CHOICE_DAMAGE ? "TARGET_ANY" : "TARGET_CREATURE";
+        if (choice == CHOICE_DAMAGE)
+          creature_or_selected_definition = damage_target_definition;
+        if (pick_target(creature_or_selected_definition, prompt) != 0)
+          remove_counters(player, card, player, card, COUNTER_P1_P1,
+                          counters_to_remove_or_available);
+      }
+      else if (choice == CHOICE_ELEMENTAL)
+        remove_counters(player, card, player, card, COUNTER_P1_P1, counters_to_remove_or_available);
+      *(char *)&ability_instance->info_slot = (char)choice;
+      *(char *)((int)&ability_instance->info_slot + 1) = (char)counters_to_remove_or_available;
     }
-    else if (choice == 3)
-    {
-      remove_counters(player, card, player, card, COUNTER_P1_P1, iVar3);
-    }
-    else if (choice == 1)
-    {
-      prompt = "TARGET_CREATURE";
-      goto LAB_023c4707;
-    }
-    *(char *)&pcStack_108->info_slot = (char)choice;
-    *(char *)((int)&pcStack_108->info_slot + 1) = (char)iVar3;
   }
-LAB_023c4244:
-  ptStack_10c = &td1;
-  ptStack_110 = &td2;
+  creature_or_selected_definition = &td1;
+  damage_target_definition = &td2;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    uVar1 = pcStack_108->info_slot;
-    num = uVar1 >> 8 & 0xff;
-    if ((char)uVar1 == '\x01')
+    stored_mode_and_amount = ability_instance->info_slot;
+    num = stored_mode_and_amount >> 8 & 0xff;
+    if ((char)stored_mode_and_amount == '\x01')
     {
-      if (valid_target(ptStack_10c) != 0)
+      if (valid_target(creature_or_selected_definition) != 0)
       {
-        add_counters(player, card, pcStack_108->targets[0].player,
-                                 pcStack_108->targets[0].card, COUNTER_P1_P1, num);
+        add_counters(player, card, ability_instance->targets[0].player,
+                     ability_instance->targets[0].card, COUNTER_P1_P1, num);
       }
     }
-    else if ((uVar1 & 0xff) == 2)
+    else if ((stored_mode_and_amount & 0xff) == 2)
     {
-      if (valid_target(ptStack_110) != 0)
+      if (valid_target(damage_target_definition) != 0)
       {
         damage_target0(player, card, num);
       }
     }
-    else if ((uVar1 & 0xff) == 3)
+    else if ((stored_mode_and_amount & 0xff) == 3)
     {
       default_token_definition(player, card, 0x4926, &token);
       token.color_forced = '\b';
@@ -1707,19 +1706,19 @@ int card_eye_of_doom(int player, int card, event_t event)
 {
   int p;
   int c;
-  int iVar1;
+  int target_or_marked_player;
   card_instance_t *instance;
-  int iVar3;
-  int iVar4;
-  unsigned int uVar5;
-  int iVar6;
+  int eligible_or_next_card;
+  int marked_player;
+  unsigned int turn_order_or_second_player;
+  int permanent_card_or_eligible;
   target_definition_t td;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   p = current_turn;
   if (event == EVENT_ETB)
   {
 
-    uVar5 = 0;
+    turn_order_or_second_player = 0;
     default_target_definition(player, card, &td, 0x47);
     td.illegal_type = 1;
     td.illegal_abilities = 0;
@@ -1727,83 +1726,77 @@ int card_eye_of_doom(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     do
     {
-      td.who_chooses = current_turn ^ uVar5;
+      td.who_chooses = current_turn ^ turn_order_or_second_player;
       td.preferred_controller = 1 - td.who_chooses;
-      iVar1 = can_target(&td);
-      if ((iVar1 != 0) && (iVar1 = pick_target(&td, "TARGET_NONLAND_PERMANENT"), iVar1 != 0))
+      target_or_marked_player = can_target(&td);
+      if ((target_or_marked_player != 0) &&
+          (target_or_marked_player = pick_target(&td, "TARGET_NONLAND_PERMANENT"),
+           target_or_marked_player != 0))
       {
         instance->number_of_targets = '\0';
-        add_counters(player, card, instance->targets[0].player,
-                                 instance->targets[0].card, COUNTER_DOOM, 1);
+        add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                     COUNTER_DOOM, 1);
       }
-      uVar5 = uVar5 + 1;
-    } while (uVar5 != 2);
+      turn_order_or_second_player = turn_order_or_second_player + 1;
+    } while (turn_order_or_second_player != 2);
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    iVar6 = active_cards_count[current_turn] + -1;
+    permanent_card_or_eligible = active_cards_count[current_turn] + -1;
     int marked[2][151];
     memset(marked, 0, sizeof(marked));
-    if (-1 < iVar6)
+    if (-1 < permanent_card_or_eligible)
     {
-      iVar4 = current_turn;
+      marked_player = current_turn;
       do
       {
-        while (((instance = in_play(p, iVar6),
-                 instance == NULL || (iVar3 = is_what(p, iVar6, 0x47), iVar3 == 0)) ||
-                (iVar3 = count_counters(p, iVar6, COUNTER_DOOM), iVar3 < 1)))
-        {
-          iVar6 = iVar6 + -1;
-          if (iVar6 == -1)
-            goto LAB_023c5d79;
-        }
-        marked[iVar4][iVar6] = 1;
-        iVar6 = iVar6 + -1;
-      } while (iVar6 != -1);
+        instance = in_play(p, permanent_card_or_eligible);
+        if (instance != NULL &&
+            (eligible_or_next_card = is_what(p, permanent_card_or_eligible, 0x47),
+             eligible_or_next_card != 0) &&
+            (eligible_or_next_card = count_counters(p, permanent_card_or_eligible, COUNTER_DOOM),
+             eligible_or_next_card >= 1))
+          marked[marked_player][permanent_card_or_eligible] = 1;
+        permanent_card_or_eligible = permanent_card_or_eligible - 1;
+      } while (permanent_card_or_eligible != -1);
     }
-  LAB_023c5d79:
-    iVar4 = 1 - current_turn;
-    c = active_cards_count[iVar4] + -1;
+    marked_player = 1 - current_turn;
+    c = active_cards_count[marked_player] + -1;
     if (-1 < c)
     {
       do
       {
-        while (((instance = in_play(iVar4, c),
-                 instance == NULL || (iVar6 = is_what(iVar4, c, 0x47), iVar6 == 0)) ||
-                (iVar6 = count_counters(iVar4, c, COUNTER_DOOM), iVar6 < 1)))
-        {
-          c = c + -1;
-          if (c == -1)
-            goto LAB_023c5df9;
-        }
-        marked[iVar4][c] = 1;
-        c = c + -1;
+        instance = in_play(marked_player, c);
+        if (instance != NULL &&
+            (permanent_card_or_eligible = is_what(marked_player, c, 0x47),
+             permanent_card_or_eligible != 0) &&
+            (permanent_card_or_eligible = count_counters(marked_player, c, COUNTER_DOOM),
+             permanent_card_or_eligible >= 1))
+          marked[marked_player][c] = 1;
+        c = c - 1;
       } while (c != -1);
     }
-  LAB_023c5df9:
-    iVar4 = current_turn;
-    iVar1 = current_turn;
-    iVar6 = 0x96;
+    marked_player = current_turn;
+    target_or_marked_player = current_turn;
+    permanent_card_or_eligible = 0x96;
     do
     {
-      while (marked[iVar1][iVar6] == 0)
+      if (marked[target_or_marked_player][permanent_card_or_eligible] != 0)
       {
-        iVar6 = iVar6 + -1;
-        if (iVar6 == -1)
-          goto LAB_023c5e3f;
+        eligible_or_next_card = permanent_card_or_eligible - 1;
+        kill_card(marked_player, permanent_card_or_eligible, KILL_DESTROY);
+        permanent_card_or_eligible = eligible_or_next_card;
       }
-      iVar3 = iVar6 + -1;
-      kill_card(iVar4, iVar6, KILL_DESTROY);
-      iVar6 = iVar3;
-    } while (iVar3 != -1);
-  LAB_023c5e3f:
-    uVar5 = current_turn ^ 1;
+      else
+        permanent_card_or_eligible = permanent_card_or_eligible - 1;
+    } while (permanent_card_or_eligible != -1);
+    turn_order_or_second_player = current_turn ^ 1;
     c = 0x96;
     do
     {
-      if (marked[uVar5][c] != 0)
+      if (marked[turn_order_or_second_player][c] != 0)
       {
-        kill_card(uVar5, c, KILL_DESTROY);
+        kill_card(turn_order_or_second_player, c, KILL_DESTROY);
       }
       c = c + -1;
     } while (c != -1);
@@ -1921,9 +1914,9 @@ static int opal_palace_legacy(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  unsigned int uVar3;
-  unsigned int uVar4;
-  bool bVar5;
+  unsigned int commander_color;
+  unsigned int spent_color_test;
+  bool used_palace_mana;
 
   if (event == EVENT_CAST_SPELL)
   {
@@ -1940,16 +1933,16 @@ static int opal_palace_legacy(int player, int card, event_t event)
       {
         result = get_updated_casting_cost(affected_card_controller, affected_card, -1,
                                           EVENT_CAST_SPELL, -1);
-        bVar5 = 0 < result;
+        used_palace_mana = 0 < result;
       }
       else
       {
-        uVar3 = get_color(affected_card_controller, affected_card);
+        commander_color = get_color(affected_card_controller, affected_card);
         instance = get_card_instance(player, card);
-        uVar4 = color_to_color_test(instance->targets[1].card);
-        bVar5 = (uVar3 & uVar4) != 0;
+        spent_color_test = color_to_color_test(instance->targets[1].card);
+        used_palace_mana = (commander_color & spent_color_test) != 0;
       }
-      if (bVar5)
+      if (used_palace_mana)
       {
         result = get_commander_storm_count(player);
         enters_the_battlefield_with_counters(affected_card_controller, affected_card,

@@ -863,83 +863,91 @@ int card_necrotic_plague(int player, int card, event_t event)
   card_instance_t *instance;
   int t_player;
   int t_card;
-  int32_t iVar1;
-  card_instance_t *pcVar2;
-  int iVar3;
-  int iVar4;
-  int iVar5;
-  card_instance_t *pcVar6;
+  int32_t chosen_target_player;
+  card_instance_t *plague;
+  int attachment_or_target_check;
+  int sacrifice_or_death_check;
+  int dying_controller;
+  card_instance_t *return_effect;
   target_definition_t td;
-  pcVar2 = get_card_instance(player, card);
-  if ((((pcVar2->damage_target_player < '\0') ||
-        (pcVar2 = in_play(player, card), pcVar2 == NULL)) ||
-       (iVar3 = is_humiliated(player, card, AL_TRIG), iVar3 != 0)) ||
-      (pcVar2 = get_card_instance(player, card), event != EVENT_GRAVEYARD_FROM_PLAY))
+  plague = get_card_instance(player, card);
+  if (!((((plague->damage_target_player < '\0') ||
+          (plague = in_play(player, card), plague == NULL)) ||
+         (attachment_or_target_check = is_humiliated(player, card, AL_TRIG),
+          attachment_or_target_check != 0)) ||
+        (plague = get_card_instance(player, card), event != EVENT_GRAVEYARD_FROM_PLAY)))
   {
-    instance = get_card_instance(player, card);
-    if (-1 < instance->damage_target_player)
+
+    attachment_or_target_check = plague->damage_target_card;
+    if (((attachment_or_target_check == affected_card) &&
+         (dying_controller = (int)plague->damage_target_player,
+          dying_controller == affected_card_controller)) &&
+        ((sacrifice_or_death_check = is_this_dying(dying_controller, attachment_or_target_check),
+          sacrifice_or_death_check != 0 &&
+              (sacrifice_or_death_check =
+                   check_for_death_trigger_removal(dying_controller, attachment_or_target_check),
+               sacrifice_or_death_check == 0))))
     {
-    LAB_020899c0:
-      instance = in_play(player, card);
-      if ((instance != NULL) &&
-          (iVar3 = is_humiliated(player, card, AL_STATIC), iVar3 == 0))
+      default_target_definition(dying_controller, attachment_or_target_check, &td, 2);
+      td.allowed_controller = 1 - dying_controller;
+      td.who_chooses = dying_controller;
+      td.preferred_controller = td.allowed_controller;
+      attachment_or_target_check = can_target(&td);
+      if ((attachment_or_target_check != 0) &&
+          (attachment_or_target_check = pick_target(&td, "TARGET_CREATURE"),
+           attachment_or_target_check != 0))
       {
-        instance = get_card_instance(player, card);
-        t_player = (int)instance->damage_target_player;
-        if (current_turn == t_player)
+        return_effect =
+            get_card_instance(player, create_legacy_effect(player, card, necrotic_plague_legacy));
+        chosen_target_player = plague->targets[0].player;
+        return_effect->targets[0].card = plague->targets[0].card;
+        return_effect->targets[0].player = chosen_target_player;
+        attachment_or_target_check = get_owner(player, card);
+        return_effect->targets[1].player = attachment_or_target_check;
+        attachment_or_target_check = get_original_internal_card_id(player, card);
+        return_effect->targets[0xb].player = 0x42;
+        return_effect->targets[1].card = attachment_or_target_check;
+      }
+    }
+  }
+
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    instance = in_play(player, card);
+    if ((instance != NULL) && (attachment_or_target_check = is_humiliated(player, card, AL_STATIC),
+                               attachment_or_target_check == 0))
+    {
+      instance = get_card_instance(player, card);
+      t_player = (int)instance->damage_target_player;
+      if (current_turn == t_player)
+      {
+        t_card = instance->damage_target_card;
+        sacrifice_or_death_check = upkeep_trigger(player, card, event);
+        if ((((sacrifice_or_death_check != 0) &&
+              (sacrifice_or_death_check = can_cause_sacrifice(player, t_player),
+               sacrifice_or_death_check != 0)) &&
+             (sacrifice_or_death_check = check_special_flags2(t_player, t_card, 0x400000),
+              sacrifice_or_death_check == 0)) &&
+            (sacrifice_or_death_check = is_humiliated(t_player, t_card, AL_TRIG),
+             sacrifice_or_death_check == 0))
         {
-          t_card = instance->damage_target_card;
-          iVar4 = upkeep_trigger(player, card, event);
-          if ((((iVar4 != 0) && (iVar4 = can_cause_sacrifice(player, t_player), iVar4 != 0)) &&
-               (iVar4 = check_special_flags2(t_player, t_card, 0x400000), iVar4 == 0)) &&
-              (iVar4 = is_humiliated(t_player, t_card, AL_TRIG), iVar4 == 0))
-          {
-            kill_card(t_player, t_card, KILL_SACRIFICE);
-          }
+          kill_card(t_player, t_card, KILL_SACRIFICE);
         }
       }
     }
-    if (event == EVENT_CAN_CAST)
-      return disabling_aura(player, card, event);
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-        return disabling_aura(player, card, event);
-    }
-    else if ((event == EVENT_RESOLVE_SPELL) ||
-             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      return disabling_aura(player, card, event);
   }
-  else
+  if (event == EVENT_CAN_CAST)
+    return disabling_aura(player, card, event);
+  if (event == EVENT_CAST_SPELL)
   {
-    iVar3 = pcVar2->damage_target_card;
-    if (((iVar3 == affected_card) &&
-         (iVar5 = (int)pcVar2->damage_target_player, iVar5 == affected_card_controller)) &&
-        ((iVar4 = is_this_dying(iVar5, iVar3),
-          iVar4 != 0 && (iVar4 = check_for_death_trigger_removal(iVar5, iVar3), iVar4 == 0))))
-    {
-      default_target_definition(iVar5, iVar3, &td, 2);
-      td.allowed_controller = 1 - iVar5;
-      td.who_chooses = iVar5;
-      td.preferred_controller = td.allowed_controller;
-      iVar3 = can_target(&td);
-      if ((iVar3 != 0) && (iVar3 = pick_target(&td, "TARGET_CREATURE"), iVar3 != 0))
-      {
-        pcVar6 = get_card_instance(player, create_legacy_effect(player, card, necrotic_plague_legacy));
-        iVar1 = pcVar2->targets[0].player;
-        pcVar6->targets[0].card = pcVar2->targets[0].card;
-        pcVar6->targets[0].player = iVar1;
-        iVar3 = get_owner(player, card);
-        pcVar6->targets[1].player = iVar3;
-        iVar3 = get_original_internal_card_id(player, card);
-        pcVar6->targets[0xb].player = 0x42;
-        pcVar6->targets[1].card = iVar3;
-      }
-    }
-    instance = get_card_instance(player, card);
-    if (-1 < instance->damage_target_player)
-      goto LAB_020899c0;
+    if ((card == affected_card) && (player == affected_card_controller))
+      return disabling_aura(player, card, event);
   }
+  else if ((event == EVENT_RESOLVE_SPELL) ||
+           ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+    return disabling_aura(player, card, event);
+
   if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
        (((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
          (event != EVENT_CHANGE_TYPE)))) &&
@@ -1291,6 +1299,12 @@ Land
 }
 
 int card_terramorphic_expanse(int player, int card, event_t event){
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_ABILITY = 2
+  };
+
 /* CARD_ID_TERRAMORPHIC_EXPANSE	1468
 Terramorphic Expanse	""
 Land
@@ -1305,22 +1319,22 @@ Land
 	if (event == EVENT_ACTIVATE){
 	    ai_modifier += 100;
 	    if (!mana_colors_added[player]){
-	        instance->info_slot = 2;
+	        instance->info_slot = CHOICE_ABILITY;
 	        return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL);
 	    }
 	    int choice;
 	    if (paying_mana() || !generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST_X(1), 0, NULL, NULL)){
-	        instance->info_slot = 1;
-	        choice = 1;
+	        instance->info_slot = CHOICE_MANA;
+	        choice = CHOICE_MANA;
 	    }else{
-	        instance->info_slot = 2;
-	        choice = 2;
+	        instance->info_slot = CHOICE_ABILITY;
+	        choice = CHOICE_ABILITY;
 	        if (!IS_AI(player)){
 	            choice = DIALOG(player, card, event, DLG_RANDOM, "Get mana", 1, 1, "Use Ability", 1, 1);
 	            if (!choice){ spell_fizzled = 1; return 0; }
 	        }
 	    }
-	    if (choice == 1){
+	    if (choice == CHOICE_MANA){
 	        if (!can_produce_mana(player, card)){ return 0; }
 	        if (check_special_flags2(player, card, SF2_CONTAMINATION) && is_what(player, card, TYPE_LAND)){
 	            produce_mana_tapped(player, card, COLOR_BLACK, 1);
@@ -1331,9 +1345,9 @@ Land
 	        }
 	        return 0;
 	    }
-	    if (choice == 2){ generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL); }
+	    if (choice == CHOICE_ABILITY){ generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL); }
 	}
-	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == 2){
+	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == CHOICE_ABILITY){
 	    test_definition_t test;
 	    new_default_test_definition(&test, TYPE_LAND, "Select a basic land card.");
 	    test.subtype = SUBTYPE_BASIC;
@@ -2113,23 +2127,25 @@ Artifact
 
 int card_steel_overseer(int player, int card, event_t event)
 {
-  int iVar1;
+  int artifact_creature;
   card_instance_t *instance;
-  int iVar3;
+  int type_match;
 
-  if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar1 = active_cards_count[player] + -1, -1 < iVar1))
+  if ((event == EVENT_RESOLVE_ACTIVATION) &&
+      (artifact_creature = active_cards_count[player] + -1, -1 < artifact_creature))
   {
     do
     {
-      instance = in_play(player, iVar1);
+      instance = in_play(player, artifact_creature);
       if ((instance != NULL) &&
-          ((iVar3 = is_what(player, iVar1, 2),
-            iVar3 != 0 && (iVar3 = is_what(player, iVar1, 0x40), iVar3 != 0))))
+          ((type_match = is_what(player, artifact_creature, 2),
+            type_match != 0 &&
+                (type_match = is_what(player, artifact_creature, 0x40), type_match != 0))))
       {
-        add_counters(player, card, player, iVar1, COUNTER_P1_P1, 1);
+        add_counters(player, card, player, artifact_creature, COUNTER_P1_P1, 1);
       }
-      iVar1 = iVar1 + -1;
-    } while (iVar1 != -1);
+      artifact_creature = artifact_creature + -1;
+    } while (artifact_creature != -1);
   }
   return generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
@@ -2961,7 +2977,7 @@ static void merfolk_spy_ability(int player, int card, int t_player){
 			}
 		}
 	}
-	show_deck(player, cards_array, 1, "Card Revealed at Random", 0, 0x7375B0 );
+	show_deck(player, cards_array, 1, "Card Revealed at Random", 0, EXE_STR(ENGINE_DONE_LABEL) );
 }
 
 int card_merfolk_spy(int player, int card, event_t event){

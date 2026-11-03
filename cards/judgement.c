@@ -1918,8 +1918,8 @@ static void scalpelexis_effect(int player, int t_player){
 				stop = 1;
 			}
 	}
-	show_deck(player, deck_ptr[t_player], pos, "Scalpelexis will exile these cards.", 0, 0x7375B0 );
-	show_deck(1-player, deck_ptr[t_player], pos, "Scalpelexis will exile these cards.", 0, 0x7375B0 );
+	show_deck(player, deck_ptr[t_player], pos, "Scalpelexis will exile these cards.", 0, EXE_STR(ENGINE_DONE_LABEL) );
+	show_deck(1-player, deck_ptr[t_player], pos, "Scalpelexis will exile these cards.", 0, EXE_STR(ENGINE_DONE_LABEL) );
 	int i;
 	for(i=0; i<pos; i++){
 		rfg_top_card_of_deck(t_player);
@@ -2024,8 +2024,8 @@ int card_soulcatchers_aerie(int player, int card, event_t event)
 {
   int c;
   int count;
-  int iVar1;
-  unsigned int uVar2;
+  int legacy_or_humiliation;
+  unsigned int death_count;
   card_instance_t *instance;
   test_definition_t this_test;
 
@@ -2035,6 +2035,7 @@ int card_soulcatchers_aerie(int player, int card, event_t event)
     {
       if (player == affected_card_controller)
       {
+        bool legacy_found = false;
         if (0 < active_cards_count[player])
         {
           c = 0;
@@ -2048,53 +2049,53 @@ int card_soulcatchers_aerie(int player, int card, event_t event)
                    (instance->damage_target_card == card)) ||
                   ((instance->targets[0].player == player &&
                     (instance->targets[0].card == card))))))
-              goto LAB_0205f0d8;
+            {
+              legacy_found = true;
+              break;
+            }
             c = c + 1;
           } while (c < active_cards_count[player]);
         }
-        iVar1 =
-            create_targetted_legacy_effect(player, card, soulcatchers_aerie_effect, player, card);
-        instance = get_card_instance(player, iVar1);
-        instance->targets[0].player = player;
-        instance->targets[0].card = card;
-        instance->number_of_targets = '\x01';
-        add_status(player, iVar1, 0x10000);
+        if (!legacy_found)
+        {
+          legacy_or_humiliation =
+              create_targetted_legacy_effect(player, card, soulcatchers_aerie_effect, player, card);
+          instance = get_card_instance(player, legacy_or_humiliation);
+          instance->targets[0].player = player;
+          instance->targets[0].card = card;
+          instance->number_of_targets = '\x01';
+          add_status(player, legacy_or_humiliation, 0x10000);
+        }
       }
-    LAB_0205f0d8:
-      is_humiliated(player, card, AL_STATIC);
     }
-    else
-    {
-      if (is_humiliated(player, card, AL_STATIC) == 0)
-        goto LAB_0205ef46;
-    }
+    is_humiliated(player, card, AL_STATIC);
     is_humiliated(player, card, AL_TRIG);
   }
   else
   {
-    iVar1 = is_humiliated(player, card, AL_STATIC);
-    if ((iVar1 == 0) && (event - EVENT_POWER < 2))
+    legacy_or_humiliation = is_humiliated(player, card, AL_STATIC);
+    if ((legacy_or_humiliation == 0) && (event - EVENT_POWER < 2))
     {
       count = count_counters(player, card, COUNTER_FEATHER);
       boost_creature_type(player, card, event, SUBTYPE_BIRD, count, count, 0,
                           BCT_INCLUDE_SELF | BCT_CONTROLLER_ONLY);
       is_humiliated(player, card, AL_TRIG);
-      goto LAB_0205ef68;
     }
-  LAB_0205ef46:
-    iVar1 = is_humiliated(player, card, AL_TRIG);
-    if ((event == EVENT_GRAVEYARD_FROM_PLAY) && (iVar1 == 0))
+    else
     {
-      default_test_definition(&this_test, 0x47);
-      this_test.subtype = 0x16;
-      count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
+      legacy_or_humiliation = is_humiliated(player, card, AL_TRIG);
+      if ((event == EVENT_GRAVEYARD_FROM_PLAY) && (legacy_or_humiliation == 0))
+      {
+        default_test_definition(&this_test, 0x47);
+        this_test.subtype = 0x16;
+        count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
+      }
     }
   }
-LAB_0205ef68:
-  uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (uVar2 != 0)
+  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (death_count != 0)
   {
-    for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
+    for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
     {
       add_counters(player, card, player, card, COUNTER_FEATHER, 1);
     }
@@ -2210,10 +2211,10 @@ int card_stitch_together(int player, int card, event_t event){
 
 int card_sutured_ghoul(int player, int card, event_t event)
 {
-  int *piVar1;
+  int *graveyard;
   card_instance_t *instance;
-  int iVar3;
-  int iVar4;
+  int remaining_creatures_or_stat;
+  int exiled_creature_stat;
   int grave_id;
   test_definition_t this_test;
   if (event == EVENT_RESOLVE_SPELL)
@@ -2222,8 +2223,10 @@ int card_sutured_ghoul(int player, int card, event_t event)
     add_state(player, card, 0x800000);
     instance->targets[1].card = 0;
     instance->targets[0].card = 0;
-    piVar1 = graveyard_ptr_mutable[player];
-    for (iVar3 = count_graveyard_by_type(player, 2); iVar3 != 0; iVar3 = iVar3 + -1)
+    graveyard = graveyard_ptr_mutable[player];
+    for (remaining_creatures_or_stat = count_graveyard_by_type(player, 2);
+         remaining_creatures_or_stat != 0;
+         remaining_creatures_or_stat = remaining_creatures_or_stat + -1)
     {
       new_default_test_definition(&this_test, 2, "Select a creature card to exile.");
       if (player == 1)
@@ -2234,10 +2237,10 @@ int card_sutured_ghoul(int player, int card, event_t event)
       grave_id = new_select_a_card(player, player, 2, 0, 2, -1, &this_test);
       if (grave_id == -1)
         break;
-      iVar4 = get_base_power_iid(player, piVar1[grave_id]);
-      instance->targets[0].card = instance->targets[0].card + iVar4;
-      iVar4 = get_base_toughness_iid(player, piVar1[grave_id]);
-      instance->targets[1].card = instance->targets[1].card + iVar4;
+      exiled_creature_stat = get_base_power_iid(player, graveyard[grave_id]);
+      instance->targets[0].card = instance->targets[0].card + exiled_creature_stat;
+      exiled_creature_stat = get_base_toughness_iid(player, graveyard[grave_id]);
+      instance->targets[1].card = instance->targets[1].card + exiled_creature_stat;
       rfg_card_from_grave(player, grave_id);
     }
     remove_state(player, card, 0x800000);
@@ -2255,7 +2258,7 @@ int card_sutured_ghoul(int player, int card, event_t event)
       {
         return 0;
       }
-      iVar3 = instance->targets[0].card;
+      remaining_creatures_or_stat = instance->targets[0].card;
     }
     else
     {
@@ -2271,11 +2274,11 @@ int card_sutured_ghoul(int player, int card, event_t event)
       {
         return 0;
       }
-      iVar3 = instance->targets[1].card;
+      remaining_creatures_or_stat = instance->targets[1].card;
     }
-    if (0 < iVar3)
+    if (0 < remaining_creatures_or_stat)
     {
-      set_characteristic_pt(iVar3);
+      set_characteristic_pt(remaining_creatures_or_stat);
     }
   }
   return 0;
@@ -2393,8 +2396,8 @@ Threshold - As long as seven or more cards are in your graveyard, ~ gets +1/+1 a
 static int soulcatchers_aerie_effect(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  unsigned int uVar2;
-  card_instance_t *pcVar3;
+  unsigned int death_count;
+  card_instance_t *dying_permanent;
   int result;
   test_definition_t this_test;
 
@@ -2411,31 +2414,18 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
         kill_card(player, card, KILL_EXILE);
       }
     }
-    instance = get_card_instance(player, card);
-    if ((-1 < instance->damage_target_player) &&
-        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
-    {
-      return 0;
-    }
-  LAB_02058d68:
-    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if (uVar2 == 0)
-      goto joined_r0x02058d8d;
   }
-  else
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+  {
+    return 0;
+  }
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
     instance = get_card_instance(player, card);
-    if ((-1 < instance->damage_target_player) &&
-        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
-    {
-      return 0;
-    }
-    if (event != EVENT_GRAVEYARD_FROM_PLAY)
-      goto LAB_02058d68;
-
-    instance = get_card_instance(player, card);
-    pcVar3 = in_play(affected_card_controller, affected_card);
-    if ((pcVar3 != NULL) &&
+    dying_permanent = in_play(affected_card_controller, affected_card);
+    if ((dying_permanent != NULL) &&
         (result = is_this_dying(affected_card_controller, affected_card), result != 0))
     {
 
@@ -2455,23 +2445,23 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
       this_test.subtype = 0x16;
       count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0, &this_test, 0x20, 0);
     }
-    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
-    if (uVar2 == 0)
-    {
-      return 0;
-    }
   }
-  result = check_status(player, card, 0x10000);
-  if (result == 0)
+  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (death_count == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+    return 0;
+  if (death_count != 0)
   {
-
-    for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
+    result = check_status(player, card, 0x10000);
+    if (result == 0)
     {
-      add_counters(player, card, player, card, COUNTER_FEATHER, 1);
+
+      for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
+      {
+        add_counters(player, card, player, card, COUNTER_FEATHER, 1);
+      }
+      kill_card(player, card, KILL_EXILE);
     }
-    kill_card(player, card, KILL_EXILE);
   }
-joined_r0x02058d8d:
   if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
   {
     kill_card(player, card, KILL_EXILE);

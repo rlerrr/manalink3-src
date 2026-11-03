@@ -1,0 +1,600 @@
+{
+  "format": 1,
+  "status": "Restored native identities; combined build and focused seven-object check passed.",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_objects": [
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "hack_current_event",
+      "die_offset": "0x194adbc",
+      "address": "0x2774010",
+      "shape": {
+        "kind": "integer",
+        "size": 4,
+        "encoding": 7
+      },
+      "size": 4,
+      "bytes": "00000000",
+      "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+      "scopes": []
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "lc_unaccent_map",
+      "die_offset": "0x2c5c3c6",
+      "address": "0x273f300",
+      "shape": {
+        "kind": "array",
+        "counts": [
+          256
+        ],
+        "element": {
+          "kind": "integer",
+          "size": 1,
+          "encoding": 8
+        },
+        "size": 256
+      },
+      "size": 256,
+      "bytes": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f406162636465666768696a6b6c6d6e6f707172737475767778797a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f80812c66848586875e25733c8c8d7a8f9027272222952d2d7e99733e9c9d7a795f21242424247c2522405e3c7e2d407e5e2b32332775262e2c315e3e3132333f616161616161c6636565656569696969646e6f6f6f6f6f2a6f7575757579dedf616161616161e6636565656569696969646e6f6f6f6f6f2f6f7575757579fe79",
+      "sha256": "42d69edda0ae98a56e89baccc482844fa72e4b6a8422bd0b79e4580ac826d466",
+      "scopes": []
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "txtfx_not_found",
+      "die_offset": "0x2c5c3e4",
+      "address": "0x273f2ec",
+      "shape": {
+        "kind": "integer",
+        "size": 4,
+        "encoding": 5
+      },
+      "size": 4,
+      "bytes": "ffffff7f",
+      "sha256": "a2c70538651a7e9296b097e8c3dfc1b195a945802ffe45aa471868fba6f1042e",
+      "scopes": []
+    },
+    {
+      "source": "functions/windows.c",
+      "name": "hack_show_deck_force_expansion",
+      "die_offset": "0x5ef1816",
+      "address": "0x2774164",
+      "shape": {
+        "kind": "integer",
+        "size": 4,
+        "encoding": 7
+      },
+      "size": 4,
+      "bytes": "00000000",
+      "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+      "scopes": []
+    },
+    {
+      "source": "functions/windows.c",
+      "name": "buf",
+      "die_offset": "0x5ef1aee",
+      "address": "0x2774470",
+      "shape": {
+        "kind": "array",
+        "counts": [
+          18
+        ],
+        "element": {
+          "kind": "integer",
+          "size": 1,
+          "encoding": 6
+        },
+        "size": 18
+      },
+      "size": 18,
+      "bytes": "000000000000000000000000000000000000",
+      "sha256": "60daa3a5f7dbfa200f8c82840ecf5b42640b70f3b7218a4c6bbd67db542e75a4",
+      "scopes": [
+        "localtime_date"
+      ]
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "hack_current_event",
+      "die_offset": "0x6577dbc",
+      "address": "0x2775a74",
+      "shape": {
+        "kind": "integer",
+        "size": 4,
+        "encoding": 7
+      },
+      "size": 4,
+      "bytes": "00000000",
+      "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+      "scopes": []
+    },
+    {
+      "source": "functions/packs.c",
+      "name": "templ",
+      "die_offset": "0x6fed677",
+      "address": "0x2721e20",
+      "shape": {
+        "kind": "array",
+        "counts": [
+          294
+        ],
+        "element": {
+          "kind": "integer",
+          "size": 1,
+          "encoding": 8
+        },
+        "size": 294
+      },
+      "size": 294,
+      "bytes": "4008809000000000080000000000ba0074000000000000000a004d0053002000530061006e00730020005300650072006900660000000000130223500000000007000500ac0048004d04ffff8500000000000000130223500000000007001400ac0048004e04ffff8500000000000000130223500000000007002300ac0048004f04ffff8500000000000000130223500000000007003200ac0048005004ffff8500000000000000130223500000000007004100ac0048005104ffff8500000000000000130223500000000007005000ac0048005204ffff85000000000000000b0001500000000026005f0032000e000100ffff80004f004b000000000000000b0001500000000063005f0032000e000200ffff8000430061006e00630065006c0000000000",
+      "sha256": "fde8089b95ff00970f4d552c922e33c5b401092ae3dc7784213033366e665404",
+      "scopes": [
+        "generate_choose_a_pack_dlg_template"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/unglued_unhinged.c",
+      "before_bytes_sha256": "75e62fbd17ee38fc396f67e5928250724cd9e0c9e10d68da8bfd4fc0727f20d2",
+      "before_source_sha256": "0e4925a58a4bbd7cea21dc037dea352721c807277c4e5074c2a66e3a0c238039",
+      "after_source_sha256": "0ac2e379f579fb1c4e143d175a2e36d6893ef7df731c4cc58654458c6ca139ba"
+    },
+    {
+      "source": "cards/unstable.c",
+      "before_bytes_sha256": "42a8eb74e26c118dd3ae62d22d7785f71d99a5e79abe701b9bc629eca191dab2",
+      "before_source_sha256": "eefd15f8d3b7272af2050180c9dfa83a9b18f20191161cc6443b1482a07332e5",
+      "after_source_sha256": "97006acc7845008ed4fab9c09cdd4b431afcdf461ce32b785302be9bedc44873"
+    },
+    {
+      "source": "manalink.h",
+      "before_bytes_sha256": "b73fdfd2f6a51b43822dd2ef107a4e78c19476ce6ba49cad80db5794d50b640b",
+      "before_source_sha256": "a02c4951958396da8a4cc73348891e2e1b093cc95fd6ae733ec391c51ccdbafd",
+      "after_source_sha256": "439e5dea2a450454b06ae8f009750bb31d69cd923d16f62d78bc7cab19038857"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "before_bytes_sha256": "a9d231953f440c8d4a7e40376ce7b6c55057036fb02ebe8cc70873b9d1021fc7",
+      "before_source_sha256": "107976a71bedcd364f675d0783d13507b694200751d990ddbb8e6c17c683e67f",
+      "after_source_sha256": "c3682bead5f173ae6fe66c77186cf883c63b828ad4c72bc224758ddec398d6a9"
+    },
+    {
+      "source": "functions/functions.c",
+      "before_bytes_sha256": "1de9dc69c45b70636130016eda249b0e7da2672ac9c8598536f65886d4c16327",
+      "before_source_sha256": "9e4beaeb8aa93aed3026a624a9b56a534d197125b0876bf74a504dce211a2a3e",
+      "after_source_sha256": "cbb71ba955c685f3013397d52148117c6286be8a04da984034b455a4f6e25e50"
+    },
+    {
+      "source": "functions/tutors.c",
+      "before_bytes_sha256": "d834cfc25186d331da0852784aa156c76d515412b6420e4acd0372adec8cd524",
+      "before_source_sha256": "3b600e7d66c5023f61598e93791e06f3aa794c26b198a188fe29b5db52228a3f",
+      "after_source_sha256": "a598d23b9105bcabc8c00173607bb44d6bf83e6f4234250dce83e2c70def0cc2"
+    },
+    {
+      "source": "functions/windows.c",
+      "before_bytes_sha256": "0801b37d4121cc3f257b0e634f56312bef012023763d89f146527e80e23e49bb",
+      "before_source_sha256": "6c7ac90a2eb62da59a0897d3959165bd7b467642e9ee032a34f97158687fb989",
+      "after_source_sha256": "bf8f1df2f398db25865edd2fa9e688ab93b4ceedcb5401b7cb41c9e247cf80aa"
+    },
+    {
+      "source": "functions/packs.c",
+      "before_bytes_sha256": "b0703b62aa73d378a18304be85a0c5ca8f2f37f289e35312bc0aaba118a55fcf",
+      "before_source_sha256": "c0a21df8b13357ec472372eaedbaac58b1ccba19616bbf48292f8e0ac69dde33",
+      "after_source_sha256": "45e92287361c61f7cbc79dc16c36f84e5918f86762be41d7b816ee68c27f8bf1"
+    }
+  ],
+  "changed_functions": [
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "num_letters_permanents_names_include",
+      "before_sha256": "2a7a781e3f9e6f6ff6a33933cd0d2b6e05b992bb88904d1bb6ff613ce4f3902d",
+      "after_sha256": "371eda5a24e5ec2a7668cc5abe54cf7962ffd89d0d30fb9db8ecbaf7d224bf8e",
+      "kind": "shared_native_folding_table"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "card_bloodletter",
+      "before_sha256": "8eea10e26b5de6f43b79b06ed1ae4e3d97dea22520dab31286217a888191df41",
+      "after_sha256": "948ac4536281640b6d4f9763bc0e304cc5bb324a266fbfb0ac8b920023583a34",
+      "kind": "shared_native_folding_table"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "three_nonland_permanents_start_with_same_letter",
+      "before_sha256": "cd7f84102853a7339f1b2134357e1b19197fb7195f94d204825709d586b7edb0",
+      "after_sha256": "aabb7940efffd17b615ef095ed18b5e6bc625341f9da7dd58a616e5068e92694",
+      "kind": "shared_native_folding_table"
+    },
+    {
+      "source": "cards/unstable.c",
+      "name": "card_staff_of_the_letter_magus",
+      "before_sha256": "7b4bdd65d9d717acefcbf02ba368f2aa0c87af1cde7616b9fabe0b427a020f5a",
+      "after_sha256": "352326729ca8ff740ab598e05c114aa96f8de75625ca8b45fefcf05d92e61c76",
+      "kind": "shared_native_folding_table"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "txtfx",
+      "before_sha256": "b63a38016009a1c9fac8fe6cd5f1d5847ff4ed3c70d63371e13e6f4e74917af8",
+      "after_sha256": "67e06b4065bb7518dd29600f0f04e36fd7d09c323153ffedccf1cdef47134be0",
+      "kind": "shared_native_text_sentinel"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "txtfx_name",
+      "before_sha256": "727ea93af35849b2d2b5f96e378f71c4ee2dc5b1909f86ff775994a00d595945",
+      "after_sha256": "edaeb20144c40f9bd9498d0a43aa818e8977fe5892dc3d2bc7168977c66045fe",
+      "kind": "shared_native_text_sentinel"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "fx_spark_fiend",
+      "before_sha256": "5f762b29c7df4b8424411244e5a14e7fc9257ebb5e243f79eb48fa4a371cbae9",
+      "after_sha256": "cffe7a6d939dd0b813b02af092595e7383aca453dab6fc630ce2984dd456f6f2",
+      "kind": "shared_native_text_sentinel"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "fx_togglodyte",
+      "before_sha256": "6dc5787d1e43c6cc116e598aa7749a8748cb5a613fce5d1fdfaec2a27741b1f2",
+      "after_sha256": "7614ec5cc3c2ee36428cc655069bbca8ffb18345a404a6fe4d5cce5d1dcc0cb0",
+      "kind": "shared_native_text_sentinel"
+    },
+    {
+      "source": "cards/unstable.c",
+      "name": "fx_ineffable_blessing_f",
+      "before_sha256": "97ee2909ea57ffe7f718010d20b61a8bb7312a4d4c213ef20af46267690c3233",
+      "after_sha256": "9af562d6cd38114af9d68c3162a44785946a11913236e12e721f75b57745507a",
+      "kind": "shared_native_text_sentinel"
+    },
+    {
+      "source": "cards/unstable.c",
+      "name": "fx_staff_of_the_letter_magus",
+      "before_sha256": "3ddb4f4534b278880cd47072accf9286e207eda963730da7c58f156ec16b4bcb",
+      "after_sha256": "a907c033a84dab26421640e8555d8f55b627b8a23f42d81d2c835da21b4f72e4",
+      "kind": "shared_native_text_sentinel"
+    },
+    {
+      "source": "cards/unstable.c",
+      "name": "fx_stamp_of_approval",
+      "before_sha256": "4082673b5287084712736a3556acb871e13091addda554c957a65782ecb15200",
+      "after_sha256": "1dff9bd455133a3adae0649835439f8f23305505271bffd1dff43393eec59624",
+      "kind": "shared_native_text_sentinel"
+    },
+    {
+      "source": "functions/windows.c",
+      "name": "localtime_date",
+      "before_sha256": "bd4e09fd628b3fa260337383a5816ec50797905e4e7c343c876161d6785fb230",
+      "after_sha256": "4f494e7bf13fc10187b74b9679373f62bba926d017d37540255bda48fbce56dc",
+      "kind": "restore_native_static_buffer_name"
+    },
+    {
+      "source": "functions/packs.c",
+      "name": "generate_choose_a_pack_dlg_template",
+      "before_sha256": "c306194f57c3d5018eb8f3c56539926a18879d21d35bee49c51f2a736419f4a7",
+      "after_sha256": "466e101e456c2e03e3c51fbc2710f4d75534367120fa0eec4d255147329b3106",
+      "kind": "native_pack_template_scope"
+    }
+  ],
+  "changes": [
+    {
+      "source": "cards/unglued_unhinged.c",
+      "kind": "shared_native_folding_table",
+      "before_sha256": "2a7a781e3f9e6f6ff6a33933cd0d2b6e05b992bb88904d1bb6ff613ce4f3902d",
+      "after_sha256": "371eda5a24e5ec2a7668cc5abe54cf7962ffd89d0d30fb9db8ecbaf7d224bf8e"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "kind": "shared_native_folding_table",
+      "before_sha256": "8eea10e26b5de6f43b79b06ed1ae4e3d97dea22520dab31286217a888191df41",
+      "after_sha256": "948ac4536281640b6d4f9763bc0e304cc5bb324a266fbfb0ac8b920023583a34"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "kind": "shared_native_folding_table",
+      "before_sha256": "cd7f84102853a7339f1b2134357e1b19197fb7195f94d204825709d586b7edb0",
+      "after_sha256": "aabb7940efffd17b615ef095ed18b5e6bc625341f9da7dd58a616e5068e92694"
+    },
+    {
+      "source": "cards/unstable.c",
+      "kind": "shared_native_folding_table",
+      "before_sha256": "7b4bdd65d9d717acefcbf02ba368f2aa0c87af1cde7616b9fabe0b427a020f5a",
+      "after_sha256": "352326729ca8ff740ab598e05c114aa96f8de75625ca8b45fefcf05d92e61c76"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "kind": "shared_native_text_sentinel",
+      "before_sha256": "b63a38016009a1c9fac8fe6cd5f1d5847ff4ed3c70d63371e13e6f4e74917af8",
+      "after_sha256": "67e06b4065bb7518dd29600f0f04e36fd7d09c323153ffedccf1cdef47134be0"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "kind": "shared_native_text_sentinel",
+      "before_sha256": "727ea93af35849b2d2b5f96e378f71c4ee2dc5b1909f86ff775994a00d595945",
+      "after_sha256": "edaeb20144c40f9bd9498d0a43aa818e8977fe5892dc3d2bc7168977c66045fe"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "kind": "shared_native_text_sentinel",
+      "before_sha256": "5f762b29c7df4b8424411244e5a14e7fc9257ebb5e243f79eb48fa4a371cbae9",
+      "after_sha256": "cffe7a6d939dd0b813b02af092595e7383aca453dab6fc630ce2984dd456f6f2"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "kind": "shared_native_text_sentinel",
+      "before_sha256": "6dc5787d1e43c6cc116e598aa7749a8748cb5a613fce5d1fdfaec2a27741b1f2",
+      "after_sha256": "7614ec5cc3c2ee36428cc655069bbca8ffb18345a404a6fe4d5cce5d1dcc0cb0"
+    },
+    {
+      "source": "cards/unstable.c",
+      "kind": "shared_native_text_sentinel",
+      "before_sha256": "97ee2909ea57ffe7f718010d20b61a8bb7312a4d4c213ef20af46267690c3233",
+      "after_sha256": "9af562d6cd38114af9d68c3162a44785946a11913236e12e721f75b57745507a"
+    },
+    {
+      "source": "cards/unstable.c",
+      "kind": "shared_native_text_sentinel",
+      "before_sha256": "3ddb4f4534b278880cd47072accf9286e207eda963730da7c58f156ec16b4bcb",
+      "after_sha256": "a907c033a84dab26421640e8555d8f55b627b8a23f42d81d2c835da21b4f72e4"
+    },
+    {
+      "source": "cards/unstable.c",
+      "kind": "shared_native_text_sentinel",
+      "before_sha256": "4082673b5287084712736a3556acb871e13091addda554c957a65782ecb15200",
+      "after_sha256": "1dff9bd455133a3adae0649835439f8f23305505271bffd1dff43393eec59624"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "kind": "native_external_object_definitions",
+      "before_sha256": "461b4c27a75298a6c4ce1037e8c70c919f469c2a4e18e649be99ffb298dc96ee",
+      "after_sha256": "fe0edee6feeb0832dd4143e82ec0dbe49e81631ee80a6cb2ef2b597b73d7d43c"
+    },
+    {
+      "source": "manalink.h",
+      "kind": "native_external_object_declarations",
+      "before_sha256": "598ec2448209a8f994d562507ef256890691666084ee49cca0e5326fea092766",
+      "after_sha256": "977f007f7f7b84f7b3d6c6a9605090311ffd03cdc4b1502ab7404c531720392e"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "kind": "restore_native_private_event_name",
+      "before_sha256": "32ae46c65e0eff53e39af2343e34eabacabace37e3a9502475840ef6fa19742d",
+      "after_sha256": "11dba57defd97b0b9d37b245dd71e7e6c1211bc9285e634ca458dd587ff7030e"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "kind": "restore_native_private_event_name",
+      "before_sha256": "874e10a0173b34c163ead5e3a55a5ca5d9cd90f76908a39e369d2eda1d7b5ce4",
+      "after_sha256": "74156bd2e266ff1ceda8ca6a1532a613d4e6a89cd3dbf55242dde2e5e32a0d02"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "kind": "restore_native_private_event_name",
+      "before_sha256": "043481731b1f6832d181f12d357ffbcff5ba8e1713d7343327b055a5dfd93cd0",
+      "after_sha256": "7a7b18d4c676a0726efac0975f6da58e806469810678656a74c857adee1766ba"
+    },
+    {
+      "source": "functions/functions.c",
+      "kind": "remove_duplicate_private_event_object",
+      "before_sha256": "a24f2623989865e4bb512fb3b8e1c5e60eab7b2b37cabfae77ffbac3a50b0d78",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "functions/functions.c",
+      "kind": "merge_unused_event_predecessor",
+      "before_sha256": "4bb7253118e672b1a90be2d6a0dca73a8e6bcd2ee5a905833157c63be684dfc9",
+      "after_sha256": "b34f17c780f9c8ed0f85385b00474b6cb1aece6d27cc9b6babc3140b3d20cebd"
+    },
+    {
+      "source": "functions/functions.c",
+      "kind": "merge_unused_event_predecessor",
+      "before_sha256": "99240b78290ec9cd8a1a0525d415792d00d2b6a2d60eb3f6c84138c0456f3c65",
+      "after_sha256": "7a7b18d4c676a0726efac0975f6da58e806469810678656a74c857adee1766ba"
+    },
+    {
+      "source": "functions/tutors.c",
+      "kind": "move_override_definition_to_native_unit",
+      "before_sha256": "4f1cf543d4060b0a60ad0b322a429f5d7a5c49d91da9eca4b19d4407809307da",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "functions/windows.c",
+      "kind": "native_override_owner_definition",
+      "before_sha256": "461b4c27a75298a6c4ce1037e8c70c919f469c2a4e18e649be99ffb298dc96ee",
+      "after_sha256": "b9ab1f68d023195f6fd5b1cdc59fc85f063acc55826f34140808bc119919d180"
+    },
+    {
+      "source": "functions/windows.c",
+      "kind": "restore_native_static_buffer_name",
+      "before_sha256": "bd4e09fd628b3fa260337383a5816ec50797905e4e7c343c876161d6785fb230",
+      "after_sha256": "4f494e7bf13fc10187b74b9679373f62bba926d017d37540255bda48fbce56dc"
+    },
+    {
+      "source": "functions/packs.c",
+      "kind": "move_pack_template_to_original_scope",
+      "before_sha256": "6650dcdb66abd12c282ba8d2f98741a9dff6d93c697cd376b13f5d94c312fea8",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "functions/packs.c",
+      "kind": "native_pack_template_scope",
+      "before_sha256": "c306194f57c3d5018eb8f3c56539926a18879d21d35bee49c51f2a736419f4a7",
+      "after_sha256": "466e101e456c2e03e3c51fbc2710f4d75534367120fa0eec4d255147329b3106"
+    },
+    {
+      "source": "functions/windows.c",
+      "before_sha256": "b079032b815d7c42be88c6274b34ac5df7e88c03f819006132bfb57d163d1e66",
+      "after_sha256": "ef517f4c769d230a70838d5bd6f8e309fe4b67eb1dd5477b74f7136ce946de38",
+      "kind": "restore_native_expansion_enum_type"
+    },
+    {
+      "source": "manalink.h",
+      "before_sha256": "00fc78c68410838bf04d6e9634f005b67723235013b06e39b6d0f53d347105cb",
+      "after_sha256": "f1a67bbdb14893956df51dcedf5e531181058d5e301ccc4f4be5287ee0945199",
+      "kind": "restore_native_expansion_enum_type"
+    }
+  ],
+  "scope": "Restore seven native source data identities, including readonly shared data, private event state, native CU ownership and function-local static scope. No new function-body coverage or gameplay-equivalence claim.",
+  "review": [
+    "Four identical unsigned-byte folding tables become the native external const unsigned char lc_unaccent_map[256]; every byte equals the native object. Consumer code changes only by removing each local copy and substituting the original object name.",
+    "Eight text-effect sentinel literals in seven functions become the native external const int txtfx_not_found, preserving signed-int type and 0x7fffffff value.",
+    "The two hack_current_event objects remain separate TU-local event_t state. functions.c reuses the unused original zero-initialized declaration and removes the duplicate recovery declaration.",
+    "The single external hack_show_deck_force_expansion definition returns to windows.c and restores its native unsigned expansion enum type (project spelling EXPANSION_t). Zero initialization and uses remain intact. The focused native check caught and corrected its prior int32_t reconstruction.",
+    "localtime_date restores the local static buf name. The 294-byte pack dialog template returns to function-local static templ; bytes, mutability, alignment and address lifetime are retained.",
+    "Compact batch record; exact edits are recorded once in helper-canonicalization.json. One combined build and focused native-object checks follow; full comparison and historical audit replay are deferred."
+  ],
+  "staged_diff_sha256": "0547c2e2bb47bbf8cef9c80b39737cbc5c15e39bb5021a2e811b3c965efa1662",
+  "verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "a79993f566c87eb61423640e1cb2d5b0c13d90e34b36598927a53cda12b73332",
+    "dbg_sha256": "e06aba39b1670e8414ea1a49d8b65742991fed8525877edd9f7edfba2fce9dfc",
+    "objects": [
+      {
+        "source": "cards/unglued_unhinged.c",
+        "name": "lc_unaccent_map",
+        "scopes": [],
+        "address": "0x2759820",
+        "die_offset": "0x477f158",
+        "bytes_sha256": "42d69edda0ae98a56e89baccc482844fa72e4b6a8422bd0b79e4580ac826d466",
+        "shape": {
+          "kind": "array",
+          "counts": [
+            256
+          ],
+          "element": {
+            "kind": "integer",
+            "size": 1,
+            "encoding": 8
+          },
+          "size": 256
+        },
+        "qualifiers": [
+          "DW_TAG_const_type"
+        ],
+        "external": true,
+        "writable": false
+      },
+      {
+        "source": "cards/unglued_unhinged.c",
+        "name": "txtfx_not_found",
+        "scopes": [],
+        "address": "0x2759808",
+        "die_offset": "0x477f166",
+        "bytes_sha256": "a2c70538651a7e9296b097e8c3dfc1b195a945802ffe45aa471868fba6f1042e",
+        "shape": {
+          "kind": "integer",
+          "size": 4,
+          "encoding": 5
+        },
+        "qualifiers": [
+          "DW_TAG_const_type"
+        ],
+        "external": true,
+        "writable": false
+      },
+      {
+        "source": "cards/war_of_the_spark.c",
+        "name": "hack_current_event",
+        "scopes": [],
+        "address": "0x277b104",
+        "die_offset": "0x4cee9f6",
+        "bytes_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+        "shape": {
+          "kind": "integer",
+          "size": 4,
+          "encoding": 7
+        },
+        "qualifiers": [],
+        "external": false,
+        "writable": true
+      },
+      {
+        "source": "functions/functions.c",
+        "name": "hack_current_event",
+        "scopes": [],
+        "address": "0x279ae14",
+        "die_offset": "0x58e6297",
+        "bytes_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+        "shape": {
+          "kind": "integer",
+          "size": 4,
+          "encoding": 7
+        },
+        "qualifiers": [],
+        "external": false,
+        "writable": true
+      },
+      {
+        "source": "functions/packs.c",
+        "name": "templ",
+        "scopes": [
+          "generate_choose_a_pack_dlg_template"
+        ],
+        "address": "0x2724c9c",
+        "die_offset": "0x5b8f6e9",
+        "bytes_sha256": "fde8089b95ff00970f4d552c922e33c5b401092ae3dc7784213033366e665404",
+        "shape": {
+          "kind": "array",
+          "counts": [
+            294
+          ],
+          "element": {
+            "kind": "integer",
+            "size": 1,
+            "encoding": 8
+          },
+          "size": 294
+        },
+        "qualifiers": [],
+        "external": false,
+        "writable": true
+      },
+      {
+        "source": "functions/windows.c",
+        "name": "hack_show_deck_force_expansion",
+        "scopes": [],
+        "address": "0x27ba7f0",
+        "die_offset": "0x615d41f",
+        "bytes_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+        "shape": {
+          "kind": "integer",
+          "size": 4,
+          "encoding": 7
+        },
+        "qualifiers": [],
+        "external": true,
+        "writable": true
+      },
+      {
+        "source": "functions/windows.c",
+        "name": "buf",
+        "scopes": [
+          "localtime_date"
+        ],
+        "address": "0x279bf54",
+        "die_offset": "0x615f6c7",
+        "bytes_sha256": "60daa3a5f7dbfa200f8c82840ecf5b42640b70f3b7218a4c6bbd67db542e75a4",
+        "shape": {
+          "kind": "array",
+          "counts": [
+            18
+          ],
+          "element": {
+            "kind": "integer",
+            "size": 1,
+            "encoding": 6
+          },
+          "size": 18
+        },
+        "qualifiers": [],
+        "external": false,
+        "writable": true
+      }
+    ],
+    "staging": "preserved",
+    "scope": "Seven changed native objects only: source name/scope, arithmetic shape, complete load-time bytes, top-level qualifiers, external linkage and PE writability. No full comparison or historical audits."
+  }
+}

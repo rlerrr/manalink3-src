@@ -63,106 +63,95 @@ int manipulate_auras_enchanting_target(int player, int card, int t_player, int t
 }
 
 int new_damage_all(int player, int card, int targ_player, int dmg, int mode,
-                        test_definition_t *this_test)
+                   test_definition_t *this_test)
 {
   int player_00;
   int i;
   card_instance_t *instance;
-  int iVar3;
-  int iStack_1c;
-  int iStack_18;
-  int iStack_14;
+  int damage_card_or_type_check;
+  int total_damage;
+  int test_score;
+  int turn_order_index;
 
   if (dmg < 1)
   {
     return 0;
   }
-  iStack_18 = 0;
+  test_score = 0;
   if (this_test != NULL)
   {
-    iStack_18 = new_get_test_score(this_test);
+    test_score = new_get_test_score(this_test);
   }
-  iStack_14 = 0;
-  iStack_1c = 0;
+  turn_order_index = 0;
+  total_damage = 0;
   player_00 = current_turn;
-LAB_0266787a:
-  if ((targ_player != player_00) && (i = 1, targ_player != 2))
-    goto LAB_02667870;
   do
   {
-    i = active_cards_count[player_00] + -1;
-    if (-1 < i)
+    bool process_player = targ_player == player_00 || targ_player == 2;
+    if (process_player)
     {
-    LAB_026678e2:
-      do
+      i = active_cards_count[player_00] - 1;
+      if (i >= 0)
       {
-        instance = in_play(player_00, i);
-        if (instance != NULL)
+        do
         {
-          if (this_test == NULL)
+          instance = in_play(player_00, i);
+          if (instance != NULL)
           {
-            iVar3 = is_what(player_00, i, 2);
-            if (((iVar3 != 0) && ((mode & 1U) != 0)) ||
-                ((iVar3 = is_what(player_00, i, 0x100), iVar3 != 0 && ((mode & 0x20U) != 0))))
-              goto LAB_02667915;
-          }
-          else
-          {
-            if (new_make_test_in_play(player_00, i, iStack_18, this_test) == 0)
+            bool damage_permanent = false;
+            if (this_test == NULL)
             {
-              is_what(player_00, i, 2);
-              is_what(player_00, i, 0x100);
+              damage_card_or_type_check = is_what(player_00, i, 2);
+              damage_permanent = (damage_card_or_type_check != 0 && (mode & 1U) != 0) ||
+                                 ((damage_card_or_type_check = is_what(player_00, i, 0x100),
+                                   damage_card_or_type_check != 0) &&
+                                  (mode & 0x20U) != 0);
             }
             else
             {
-            LAB_02667915:
-              if (((card != i) || (player != player_00)) ||
-                  (((mode & 4U) == 0 && ((this_test == NULL || (this_test->not_me != 1))))))
+              if (new_make_test_in_play(player_00, i, test_score, this_test) == 0)
               {
-                iVar3 = damage_creature(player_00, i, dmg, player, card);
-                if (-1 < iVar3)
-                {
-                  instance = get_card_instance(player, iVar3);
-                  if ((mode & 0x10U) != 0)
-                  {
-                    instance->targets[3].card = instance->targets[3].card | 0x20;
-                  }
-                  if ((mode & 8U) != 0)
-                  {
-                    instance->targets[3].card = instance->targets[3].card | 0x80;
-                  }
-                }
-                iStack_1c = iStack_1c + dmg;
-                i = i + -1;
-                if (i == -1)
-                  break;
-                goto LAB_026678e2;
+                is_what(player_00, i, 2);
+                is_what(player_00, i, 0x100);
               }
+              else
+                damage_permanent = true;
+            }
+            if (damage_permanent &&
+                (card != i || player != player_00 ||
+                 ((mode & 4U) == 0 && (this_test == NULL || this_test->not_me != 1))))
+            {
+              damage_card_or_type_check = damage_creature(player_00, i, dmg, player, card);
+              if (-1 < damage_card_or_type_check)
+              {
+                instance = get_card_instance(player, damage_card_or_type_check);
+                if ((mode & 0x10U) != 0)
+                {
+                  instance->targets[3].card = instance->targets[3].card | 0x20;
+                }
+                if ((mode & 8U) != 0)
+                {
+                  instance->targets[3].card = instance->targets[3].card | 0x80;
+                }
+              }
+              total_damage = total_damage + dmg;
             }
           }
-        }
-        i = i + -1;
-      } while (i != -1);
+          i = i - 1;
+        } while (i != -1);
+      }
+      if ((mode & 2U) != 0)
+        damage_player(player_00, dmg, player, card);
     }
-    if ((mode & 2U) != 0)
-    {
-      damage_player(player_00, dmg, player, card);
-    }
-    do
+    if (process_player || turn_order_index != 0)
     {
       player_00 = current_turn;
-      i = iStack_14 + 1;
       current_turn = player_00;
-      if (1 < i)
-      {
-        return iStack_1c;
-      }
-    LAB_02667870:
-      iStack_14 = i;
-      if (i == 0)
-        goto LAB_0266787a;
-      player_00 = 1 - player_00;
-    } while ((player_00 != targ_player) && (targ_player != 2));
+    }
+    turn_order_index = turn_order_index + 1;
+    if (turn_order_index == 2)
+      return total_damage;
+    player_00 = 1 - player_00;
   } while (true);
 }
 
@@ -188,7 +177,7 @@ void damage_all(int p, int c, int controller, int amount_damage, int all, int pl
 
 /* ManalinkEh 2022: 0x2666bc0; original functions/manipulate_and_damage_all.c:3. */
 static int action_on_card_impl(int player, int card, int p, int c, actions_t action,
-                                    counter_t counter_type, int counter_num)
+                               counter_t counter_type, int counter_num)
 {
   int result;
   if (ACT_DETAIN < action)
@@ -260,36 +249,20 @@ static int action_on_card_impl(int player, int card, int p, int c, actions_t act
     put_on_bottom_of_deck(p, c);
     break;
   case ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES:
-    result = 1;
-    goto code_r0x02666db9;
   case ACT_ENABLE_NONMANA_ACTIVATED_ABILITIES:
-    result = 0;
-  code_r0x02666db9:
-    disable_nonmana_activated_abilities(p, c, result);
+    disable_nonmana_activated_abilities(p, c, action == ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES);
     break;
   case ACT_HUMILIATE:
-    result = 2;
-    goto code_r0x02666d86;
   case ACT_DE_HUMILIATE:
-    result = 0;
-  code_r0x02666d86:
-    humiliate(player, card, p, c, result);
+    humiliate(player, card, p, c, action == ACT_HUMILIATE ? 2 : 0);
     break;
   case ACT_MAKE_UNTARGETTABLE:
-    result = 1;
-    goto code_r0x02666d5b;
   case ACT_REMOVE_UNTARGETTABLE:
-    result = 0;
-  code_r0x02666d5b:
-    state_untargettable(p, c, result);
+    state_untargettable(p, c, action == ACT_MAKE_UNTARGETTABLE);
     break;
   case ACT_DISABLE_ALL_ACTIVATED_ABILITIES:
-    result = 1;
-    goto code_r0x02666d30;
   case ACT_ENABLE_ALL_ACTIVATED_ABILITIES:
-    result = 0;
-  code_r0x02666d30:
-    disable_all_activated_abilities(p, c, result);
+    disable_all_activated_abilities(p, c, action == ACT_DISABLE_ALL_ACTIVATED_ABILITIES);
     break;
   case ACT_GET_COUNT:
     break;
@@ -313,18 +286,18 @@ static int action_on_card_impl(int player, int card, int p, int c, actions_t act
 
 
 /* ManalinkEh 2022: 0x2666f10; original functions/manipulate_and_damage_all.c:127. */
-static actions_t cook_action(int player, int card, actions_t raw_action,
-                                  counter_t *counter_type, int *counter_num)
+static actions_t cook_action(int player, int card, actions_t raw_action, counter_t *counter_type,
+                             int *counter_num)
 {
-  short sVar1;
+  short encoded_counter_count;
   int result;
-  actions_t aVar3;
-  aVar3 = raw_action & ACT_PARAMETERIZED_ACTIONS_MASK;
-  sVar1 = (short)raw_action;
-  if (aVar3 == ACT_ADD_COUNTERS_BASE)
+  actions_t parameterized_action;
+  parameterized_action = raw_action & ACT_PARAMETERIZED_ACTIONS_MASK;
+  encoded_counter_count = (short)raw_action;
+  if (parameterized_action == ACT_ADD_COUNTERS_BASE)
   {
     *counter_type = raw_action >> 0x10 & COUNTER_invalid;
-    result = (int)sVar1;
+    result = (int)encoded_counter_count;
     *counter_num = result;
     if (0 < result)
     {
@@ -339,9 +312,9 @@ static actions_t cook_action(int player, int card, actions_t raw_action,
   }
   else
   {
-    if (aVar3 != ACT_REMOVE_COUNTERS_BASE)
+    if (parameterized_action != ACT_REMOVE_COUNTERS_BASE)
     {
-      if (aVar3 == 0)
+      if (parameterized_action == 0)
       {
         return raw_action;
       }
@@ -349,8 +322,8 @@ static actions_t cook_action(int player, int card, actions_t raw_action,
           "functions/manipulate_and_damage_all.c:155\n!\"Unknown parameterized action\"");
     }
     *counter_type = raw_action >> 0x10 & COUNTER_invalid;
-    *counter_num = (int)sVar1;
-    if (0 < sVar1)
+    *counter_num = (int)encoded_counter_count;
+    if (0 < encoded_counter_count)
     {
       return ACT_REMOVE_COUNTERS_BASE;
     }
@@ -382,204 +355,149 @@ int action_on_card(int player, int card, int t_player, int t_card, actions_t raw
 
 /* ManalinkEh 2022: 0x26670c0; original functions/manipulate_and_damage_all.c:178. */
 int new_manipulate_all(int player, int card, int t_player, test_definition_t *this_test,
-                            actions_t raw_action)
+                       actions_t raw_action)
 {
   int i;
-  unsigned int uVar1;
-  int iVar2;
+  unsigned int test_zone;
+  int candidate_card_or_turn_player;
   actions_t action;
   card_instance_t *instance;
-  int iVar4;
-  int *piVar6;
-  int iVar7;
-  int iVar8;
-  int iVar9;
-  int *piVar10;
-  bool bVar11;
-  int *piStack_358;
-  int iStack_354;
-  int iStack_350;
-  int iStack_344;
+  int turn_player_or_test_result;
+  int *shift_cursor;
+  int pass_or_sort_result;
+  int candidate_card_or_next_index;
+  int scan_player_or_sort_limit;
+  int *sort_cursor;
+  bool both_players;
+  int *marked_row;
+  int effects_applied;
+  int marked_count;
+  int pass_or_sort_player;
   counter_t counter_type;
   int counter_num;
   int mc[2];
   int marked[2][100];
 
-  iStack_344 = 0;
-  bVar11 = t_player == 2;
+  both_players = t_player == 2;
   mc[0] = 0;
   mc[1] = 0;
-  iVar4 = current_turn;
-  iVar9 = current_turn;
-  do
+  for (pass_or_sort_player = 0; pass_or_sort_player < 2; ++pass_or_sort_player)
   {
-    if ((t_player == iVar4) || (bVar11))
+    scan_player_or_sort_limit = pass_or_sort_player == 0 ? current_turn : 1 - current_turn;
+    if (t_player != scan_player_or_sort_limit && !both_players)
+      continue;
+    candidate_card_or_next_index = active_cards_count[scan_player_or_sort_limit] - 1;
+    for (; candidate_card_or_next_index >= 0; --candidate_card_or_next_index)
     {
-      iVar7 = 1;
-      iVar8 = active_cards_count[iVar4] + -1;
-      iVar2 = iVar4;
-      if (-1 < iVar8)
-        goto LAB_026672f9;
-    }
-    else
-    {
-      iVar7 = 1;
-      iVar2 = iVar9;
-    }
-    while (iVar9 = iVar2, iStack_344 = iVar7, iVar7 != 0)
-    {
-      iVar9 = 1 - iVar4;
-      if (((t_player == iVar9) || (bVar11)) && (iVar8 = active_cards_count[iVar9] + -1, -1 < iVar8))
+      test_zone = this_test->zone;
+      bool matches_zone = false;
+      if (test_zone == 0x200)
       {
-      LAB_026672f9:
-        do
+        instance = in_play(scan_player_or_sort_limit, candidate_card_or_next_index);
+        if (instance != NULL &&
+            (turn_player_or_test_result =
+                 is_what(scan_player_or_sort_limit, candidate_card_or_next_index, 0x47),
+             turn_player_or_test_result != 0) &&
+            (turn_player_or_test_result =
+                 check_state(scan_player_or_sort_limit, candidate_card_or_next_index, 0x100000),
+             turn_player_or_test_result == 0))
+          matches_zone = true;
+        else
+          test_zone = this_test->zone;
+      }
+      if (!matches_zone && test_zone == 0x100)
+      {
+        instance = in_hand(scan_player_or_sort_limit, candidate_card_or_next_index);
+        matches_zone = instance != NULL;
+      }
+      if (matches_zone)
+      {
+        turn_player_or_test_result = new_make_test_in_play(
+            scan_player_or_sort_limit, candidate_card_or_next_index, -1, this_test);
+        if (turn_player_or_test_result != 0 &&
+            (this_test->not_me == 0 || player != scan_player_or_sort_limit ||
+             card != candidate_card_or_next_index))
         {
-          uVar1 = this_test->zone;
-          if (uVar1 == 0x200)
+          turn_player_or_test_result = mc[scan_player_or_sort_limit];
+          mc[scan_player_or_sort_limit] = turn_player_or_test_result + 1;
+          marked[scan_player_or_sort_limit][turn_player_or_test_result] =
+              candidate_card_or_next_index;
+          if (raw_action < ACT_BOUNCE || raw_action == ACT_KILL_STATE_BASED_ACTION)
           {
-            instance = in_play(iVar9, iVar8);
-            if (((instance == NULL) || (iVar4 = is_what(iVar9, iVar8, 0x47), iVar4 == 0)) ||
-                (iVar4 = check_state(iVar9, iVar8, 0x100000), iVar4 != 0))
+            instance->kill_code = (uint8_t)raw_action;
+            if (raw_action == ACT_KILL_STATE_BASED_ACTION)
+              set_special_flags(scan_player_or_sort_limit, candidate_card_or_next_index, 0x800);
+          }
+        }
+      }
+    }
+  }
+  if (raw_action == ACT_BOUNCE)
+  {
+    marked_row = marked[0];
+    for (pass_or_sort_player = 0; pass_or_sort_player < 2; ++pass_or_sort_player)
+    {
+      if (mc[pass_or_sort_player] > 1)
+      {
+        scan_player_or_sort_limit = mc[pass_or_sort_player] - 1;
+        sort_cursor = marked_row;
+        for (turn_player_or_test_result = 0; turn_player_or_test_result < scan_player_or_sort_limit;
+             ++turn_player_or_test_result, ++sort_cursor)
+        {
+          candidate_card_or_turn_player = *sort_cursor;
+          pass_or_sort_result =
+              has_subtype(pass_or_sort_player, candidate_card_or_turn_player, SUBTYPE_AURA);
+          if (pass_or_sort_result == 0)
+          {
+            pass_or_sort_result = sort_cursor[1];
+            if (has_subtype(pass_or_sort_player, pass_or_sort_result, SUBTYPE_AURA) != 0)
             {
-              uVar1 = this_test->zone;
-              goto joined_r0x026672ed;
-            }
-          LAB_02667362:
-            iVar4 = new_make_test_in_play(iVar9, iVar8, -1, this_test);
-            if ((iVar4 != 0) &&
-                (((this_test->not_me == 0 || (player != iVar9)) || (card != iVar8))))
-            {
-              iVar4 = mc[iVar9];
-              mc[iVar9] = iVar4 + 1;
-              marked[iVar9][iVar4] = iVar8;
-              if ((raw_action < ACT_BOUNCE) || (raw_action == ACT_KILL_STATE_BASED_ACTION))
+              shift_cursor = sort_cursor;
+              if (turn_player_or_test_result > 0)
               {
-                instance->kill_code = (uint8_t)raw_action;
-                if (raw_action == ACT_KILL_STATE_BASED_ACTION)
+                while (true)
                 {
-                  set_special_flags(iVar9, iVar8, 0x800);
+                  shift_cursor[1] = candidate_card_or_turn_player;
+                  --shift_cursor;
+                  if (shift_cursor == marked_row)
+                    break;
+                  candidate_card_or_turn_player = *shift_cursor;
                 }
               }
+              *marked_row = pass_or_sort_result;
             }
           }
-          else
-          {
-          joined_r0x026672ed:
-            if ((uVar1 == 0x100) && (instance = in_hand(iVar9, iVar8), instance != NULL))
-              goto LAB_02667362;
-          }
-          iVar8 = iVar8 + -1;
-        } while (iVar8 != -1);
-      }
-      iVar7 = iStack_344 + 1;
-      iVar4 = current_turn;
-      iVar2 = current_turn;
-      if (1 < iVar7)
-      {
-        if (raw_action != ACT_BOUNCE)
-          goto LAB_02667172;
-        piStack_358 = marked[0];
-        iStack_344 = 0;
-        goto LAB_02667426;
-      }
-    }
-  } while (true);
-LAB_02667426:
-  do
-  {
-    if (1 < mc[iStack_344])
-    {
-      iVar9 = mc[iStack_344] + -1;
-      iVar4 = 0;
-      piVar10 = piStack_358;
-      do
-      {
-        while (true)
-        {
-          iVar2 = *piVar10;
-          iVar7 = has_subtype(iStack_344, iVar2, SUBTYPE_AURA);
-          iVar8 = iVar4 + 1;
-          if (iVar7 == 0)
-            break;
-        LAB_02667450:
-          piVar10 = piVar10 + 1;
-          iVar4 = iVar8;
-          if (iVar9 == iVar8)
-            goto LAB_026674f8;
         }
-        iVar7 = piVar10[1];
-        if (has_subtype(iStack_344, iVar7, SUBTYPE_AURA) == 0)
-          goto LAB_02667450;
-        piVar6 = piVar10;
-        if (0 < iVar4)
-        {
-          while (true)
-          {
-            piVar6[1] = iVar2;
-            piVar6 = piVar6 + -1;
-            if (piStack_358 == piVar6)
-              break;
-            iVar2 = *piVar6;
-          }
-        }
-        piVar10 = piVar10 + 1;
-        *piStack_358 = iVar7;
-        iVar4 = iVar8;
-      } while (iVar9 != iVar8);
+      }
+      marked_row += 100;
     }
-  LAB_026674f8:
-    iStack_344 = iStack_344 + 1;
-    piStack_358 = piStack_358 + 100;
-  } while (iStack_344 != 2);
-LAB_02667172:
-  iStack_344 = 1;
-  iStack_354 = 0;
-  iVar4 = current_turn;
-  iVar9 = current_turn;
-  do
+  }
+  effects_applied = 0;
+  for (pass_or_sort_player = 0; pass_or_sort_player < 2; ++pass_or_sort_player)
   {
-    if (iStack_344 == 1)
+    scan_player_or_sort_limit = pass_or_sort_player == 0 ? current_turn : 1 - current_turn;
+    if (t_player != scan_player_or_sort_limit && !both_players)
+      continue;
+    marked_count = mc[scan_player_or_sort_limit];
+    for (i = 0; i < marked_count; ++i)
     {
-      if (((t_player == iVar4) || (iVar2 = iVar9, bVar11)) &&
-          (iStack_350 = mc[iVar4], iVar2 = iVar4, 0 < iStack_350))
-        goto LAB_026671d9;
-    }
-    else
-    {
-      iVar9 = 1 - iVar4;
-      if (((iVar9 == t_player) || (bVar11)) && (iStack_350 = mc[iVar9], 0 < iStack_350))
+      counter_type = COUNTER_invalid;
+      counter_num = 0;
+      candidate_card_or_turn_player = marked[scan_player_or_sort_limit][i];
+      action = cook_action(scan_player_or_sort_limit, candidate_card_or_turn_player, raw_action,
+                           &counter_type, &counter_num);
+      if (action == 0xffffffff)
+        return effects_applied;
+      if (action != ~ACT_KILL_BURY)
       {
-      LAB_026671d9:
-        i = 0;
-        do
-        {
-          counter_type = COUNTER_invalid;
-          counter_num = 0;
-          iVar2 = marked[iVar9][i];
-          action = cook_action(iVar9, iVar2, raw_action, &counter_type, &counter_num);
-          if (action == 0xffffffff)
-          {
-            return iStack_354;
-          }
-          if (action != ~ACT_KILL_BURY)
-          {
-            iVar2 = action_on_card_impl(player, card, iVar9, iVar2, action, counter_type,
-                                             counter_num);
-            iStack_354 = iStack_354 + iVar2;
-          }
-          i = i + 1;
-        } while (i != iStack_350);
-      }
-      iVar4 = current_turn;
-      iVar2 = current_turn;
-      if (1 < iStack_344)
-      {
-        return iStack_354;
+        candidate_card_or_turn_player =
+            action_on_card_impl(player, card, scan_player_or_sort_limit,
+                                candidate_card_or_turn_player, action, counter_type, counter_num);
+        effects_applied += candidate_card_or_turn_player;
       }
     }
-    iStack_344 = iStack_344 + 1;
-    iVar9 = iVar2;
-  } while (true);
+  }
+  return effects_applied;
 }
 
 

@@ -1,0 +1,72 @@
+{
+  "status": "71 definitions cleaned up; one combined target build passed. Reccmp refresh deliberately deferred.",
+  "batch": "docs/recovery-evidence/ice-nph-control-cleanup.json",
+  "batch_sha256": "12adb7e60ded5606eca50a825d38b4cff598c521580095a815537b8983dfed8a",
+  "counts": {
+    "definitions": 71,
+    "card_handlers": 59,
+    "local_helpers": 12,
+    "alpha_only_definitions": 28,
+    "structured_definitions": 43,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 112,
+    "removed_lab_gotos": 108,
+    "source_lines_removed": 560,
+    "removed_placeholder_occurrences": 1565
+  },
+  "verification_policy": "Batched readability workflow: exact token substitution for alpha-only edits; review event routing, callback order and live/cached reads for structured edits. One target build. Native comparisons reserved for uncertain behavior; reccmp refresh deferred to a larger checkpoint.",
+  "review_notes": [
+    "28 alpha-only definitions retain exact tokens after declared local substitutions; 43 structured definitions receive focused source review and one combined target build.",
+    "Preserve repeated mana/payment queries, direct-mana paths, info-slot writes, post-payment fizzle handling, parent/activation target-slot differences, charge colors and native AI decisions.",
+    "Land Cap retains untap/upkeep routing and trigger rechecks; Glacial Chasm retains separate trigger/static humiliation checks and ETB sacrifice order. Lim-Dul payment blocks retain fresh current-turn reads across callbacks.",
+    "Granted aura abilities retain attached-source snapshots, target-definition order, grantor selection, resolution queries and ordinary aura events. Soul Kiss keeps CHECK_ABILITIES separate from activation routing, including the original card-instance query count.",
+    "Mana override loops write seven entries and preserve the initial card-count snapshot plus live scan bounds. Marton retains two separate reverse scans and the attack query for self.",
+    "Hex Parasite retains post-selection max-X snapshot/restore, live counter queries, removal callbacks and post-callback info-slot decrement. Integer arithmetic replaces the decompiler function-pointer alias for the same 32-bit slot.",
+    "Batterskull retains ETB generation, equipment queries, target mismatch exits and bounce/equip routing. Bludgeon Brawl retains detach callbacks and source/control/static-event distinctions.",
+    "No historical replay, native semantic harness, new tests or reccmp refresh for this readability batch. Karn is deliberately unchanged."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/ice-nph-control-build-c479.log",
+    "log_sha256": "38fd560365cb91c4e7fe28d8f3032a14e0e5a084c52de7e59eb45e7e15e34d42",
+    "verified_built_slots": 15169,
+    "dll_sha256": "bf55221dc7c423e9c3bd884f966c5a67dd64cdba5a82308ce27275bb1be1fb1a",
+    "dbg_sha256": "f2ed9487b1b5124ba57a0f192027540166724f2f95d58dc80071d53694099dd4"
+  },
+  "reccmp": {
+    "refreshed": false,
+    "reason": "Readability batch with unchanged public function identities; refresh at a major comparison/commit checkpoint.",
+    "unchanged_checkpoint_inputs": {
+      "config/reccmp/functions.csv": "a0b5791a8d98ec9acba6141138040223317f44dbbf094cf0f977e6a5a9a5a274",
+      ".recovery/reccmp/setup.json": "445df382fefd673e63073a46afddf81c1727dc097b184f8e971c82f2748786d9"
+    }
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c480.json",
+    "sha256": "522e81db02244ba70aa8b27bc38ae02cc33f50d57fa55d0333def2602a8d2a6e",
+    "counts": {
+      "tracked_source_definitions": 2607,
+      "functions_with_lab_gotos": 658,
+      "lab_gotos": 1592,
+      "functions_with_placeholders": 1411,
+      "distinct_function_local_placeholder_spellings": 4073,
+      "placeholder_identifier_occurrences": 30496,
+      "union_keywords": 0
+    }
+  },
+  "whole_unit_readability": [
+    {
+      "source": "cards/ice_age.c",
+      "lab_gotos": 0,
+      "limits": "Unchanged legacy break2 jump and historical/disabled implementation outside the recovered-definition census remain."
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "remaining": "card_karn_liberated",
+      "limits": "Karn restart remains unchanged for focused follow-up; other recovered definitions have no LAB jumps or known placeholder locals."
+    }
+  ],
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of existing Ice Age and New Phyrexia definitions. No new native-function coverage or gameplay-equivalence claim. Karn restart remains unchanged for a focused follow-up."
+}

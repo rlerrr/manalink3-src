@@ -1,0 +1,2521 @@
+{
+  "rows": [
+    {
+      "source": "functions/events.c",
+      "name": "resolve_trigger",
+      "before_definition": "void resolve_trigger(int player, int card, int TENTATIVE_reason_for_trigger_controller)\n{\n  uint16_t uVar1;\n  uint32_t uVar2;\n  unsigned int uVar3;\n  xtrigger_t xVar4;\n  card_instance_t *pcVar5;\n  int iVar6;\n  int iVar7;\n  uint32_t uVar8;\n  card_instance_t *pcVar9;\n  unsigned int uVar10;\n  int iVar11;\n  bool bVar12;\n  card_instance_t *pcStack_218;\n  int iStack_214;\n  int iStack_208;\n\n  if (((uint8_t)trace_mode & 2) != 0)\n  {\n    char buf[500];\n    pcVar5 = get_card_instance(player, card);\n    iVar11 = EXE_DWORD(0x60ec40);\n    EXE_DWORD(0x60ec40) = EXE_DWORD(0x60ec40) + 1;\n    sprintf(buf, \"%d: Player #%d is processing %s(%d).\\n\", iVar11, player,\n            cards_data[pcVar5->internal_card_id].name, card);\n    EXE_FN(void, 0x4a7d80, const char *)(buf);\n  }\n  EXE_DWORD(0x60e9f8) = 0;\n  put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_TRIGGER,\n                                    TENTATIVE_reason_for_trigger_controller, 0);\n  if (spell_fizzled == 1)\n  {\n    obliterate_top_card_of_stack();\n    EXE_DWORD(0x60e9f8) = 0;\n    return;\n  }\n\n  if (ai_is_speculating != 1)\n  {\n    EXE_FN(void, 0x436700, void)();\n    if (reason_for_trigger_controller != 0)\n    {\n      char buf[300];\n      load_text((char *)0x0, \"PROMPT_PROC1\");\n      sprintf(buf, text_lines[0], opponent_name);\n      EXE_FN(int, 0x471b60, int, int, int, int, const char *, int)(player, card, -1, -1, buf, 0);\n    }\n    iVar11 = 0;\n    if (0 < active_cards_count[0])\n    {\n      do\n      {\n        pcVar5 = get_card_instance(0, iVar11);\n        iVar6 = active_cards_count[0];\n        iVar11 = iVar11 + 1;\n        pcVar5->state = pcVar5->state & 0xefffffff;\n      } while (iVar11 < iVar6);\n    }\n    iVar11 = 0;\n    if (0 < active_cards_count[1])\n    {\n      do\n      {\n        pcVar5 = get_card_instance(1, iVar11);\n        iVar6 = active_cards_count[1];\n        iVar11 = iVar11 + 1;\n        pcVar5->state = pcVar5->state & 0xefffffff;\n      } while (iVar11 < iVar6);\n    }\n  }\n  pcVar5 = get_card_instance(player, card);\n  uVar3 = trigger_condition;\n  pcVar5->state = pcVar5->state | 0x10000100;\n  xVar4 = xtrigger_impl_value_dont_use_directly;\n  iVar6 = trigger_cause;\n  iVar11 = trigger_cause_controller;\n  iStack_208 = trigger_cause;\n  if ((((pcVar5->token_status & 0x80) == 0) && (pcVar5->kill_code == '\\0')) &&\n      (-1 < (int)pcVar5->token_status))\n  {\n    pcVar9 = in_play(player, card);\n    uVar10 = trigger_condition;\n    if (pcVar9 == (card_instance_t *)0x0)\n    {\n      bVar12 = true;\n      iStack_214 = -1;\n      pcStack_218 = (card_instance_t *)0x0;\n    }\n    else\n    {\n      iVar7 = pcVar5->internal_card_id;\n      if (((((cards_data[iVar7].cc[2] == '\\x03') ||\n             (uVar1 = cards_data[iVar7].id, (uint16_t)(uVar1 - 0x385) < 8)) ||\n            (((uint16_t)(uVar1 - 0x38f) < 0x13 ||\n              (((trigger_condition & 0xfffffffb) == 0xd8 ||\n                ((unsigned int)trigger_condition - 0xd4 < 2)))))) ||\n           (cards_data[iVar7].type == 0x80)) ||\n          (((ai_is_speculating == 1 || (player == -1)) || (card == -1))))\n      {\n        bVar12 = true;\n        pcStack_218 = (card_instance_t *)0x0;\n        iStack_214 = -1;\n      }\n      else\n      {\n        iStack_214 = create_legacy_effect(player, card, empty);\n        if (iStack_214 == -1)\n        {\n          backtrace_and_abort(\"functions/events.c:633\\nstack_card != -1\");\n        }\n        pcStack_218 = get_card_instance(player, iStack_214);\n        pcStack_218->state = 0x800022;\n        pcStack_218->token_status = 0x80010000;\n        pcStack_218->damage_source_player = (int8_t)player;\n        pcStack_218->damage_source_card = card;\n        uVar8 = pcStack_218->timestamp;\n        memcpy(pcStack_218, pcVar5, 300);\n        pcStack_218->kill_code = '\\0';\n        pcStack_218->state = 0x800022;\n        uVar2 = pcVar5->internal_card_id;\n        pcStack_218->token_status = 0x80010000;\n        pcStack_218->original_internal_card_id = uVar2;\n        pcStack_218->unknown0x14 = 0;\n        if (uVar2 == 0xffffffff)\n        {\n          pcStack_218->original_internal_card_id = (unsigned int)pcVar5->backup_internal_card_id;\n        }\n        iVar7 = get_card_image_number((unsigned int)pcStack_218->display_pic_csv_id, player, card);\n        pcStack_218->parent_controller = player;\n        bVar12 = false;\n        pcStack_218->display_pic_num = (uint16_t)iVar7;\n        pcStack_218->parent_card = card;\n        pcStack_218->timestamp = uVar8;\n        uVar10 = trigger_condition;\n      }\n    }\n  }\n  else\n  {\n    bVar12 = true;\n    pcStack_218 = (card_instance_t *)0x0;\n    iStack_214 = -1;\n    uVar10 = uVar3;\n  }\n  cant_be_responded_to = (unsigned int)(uVar10 == 0xcd) | cant_be_responded_to;\n  if (cant_be_responded_to == 0)\n  {\n    allow_response_to_trigger(player, card);\n  }\n  trigger_cause_controller = iVar11;\n  trigger_cause = iVar6;\n  trigger_condition = uVar3;\n  xtrigger_impl_value_dont_use_directly = xVar4;\n  if ((pcVar5->kill_code == '\\0') &&\n      (pcVar9 = in_play(player, card), pcVar9 != (card_instance_t *)0x0))\n  {\n    uVar8 = pcVar5->state;\n    if ((uVar8 & 0x40000000) == 0)\n    {\n    LAB_026cc4fb:\n      if (bVar12)\n      {\n        EXE_FN(void, 0x436740, void)();\n        goto LAB_026cc50a;\n      }\n      bVar12 = iStack_214 != -1;\n      if ((pcStack_218->state & 0x40000000) == 0)\n      {\n        EXE_FN(void, 0x436740, void)();\n        if (iStack_214 == -1)\n          goto LAB_026cc50a;\n        goto LAB_026cc727;\n      }\n    }\n    else\n    {\n      bVar12 = !bVar12 && iStack_214 != -1;\n    }\n    if (!bVar12)\n      goto LAB_026cc2f2;\n  }\n  else\n  {\n    uVar8 = pcVar5->state;\n    if ((bVar12) || (iStack_214 == -1))\n    {\n      if ((uVar8 & 0x40000000) != 0)\n        goto LAB_026cc2f2;\n      goto LAB_026cc4fb;\n    }\n    pcVar5->state = uVar8 & 0xeffffeff;\n    pcStack_218->state = pcStack_218->state & 0xff7fffdd;\n    pcStack_218->token_status = pcStack_218->token_status & 0xfffeffff;\n    dispatch_event_to_single_card(player, iStack_214, EVENT_TRIGGER, player, iStack_214);\n    iVar6 = stack_size;\n    stack_data[stack_size].internal_card_id = (short)pcStack_218->internal_card_id;\n    stack_data[iVar6].generating_event = 0x7e;\n    stack_data[iVar6].unknown_sdt = (uint8_t)TENTATIVE_reason_for_trigger_controller;\n    stack_cards[iVar6].player = player;\n    stack_cards[iVar6].card = iStack_214;\n    stack_damage_targets[iVar6].player = (int)pcVar5->damage_target_player;\n    stack_damage_targets[iVar6].card = pcVar5->damage_target_card;\n    uVar10 = trigger_condition;\n    if (trigger_condition == 0xffffffff)\n    {\n      uVar10 = current_phase;\n    }\n    bVar12 = ai_is_speculating != 1;\n    stack_phase[iVar6] = uVar10;\n    if (bVar12)\n    {\n      EXE_DWORD_PTR(0x628674)[iVar6] = 0;\n      iVar6 = stack_size;\n    }\n    stack_size = iVar6 + 1;\n    stack_cards[stack_size].player = -1;\n    if (affected_card == card)\n    {\n      affected_card = iStack_214;\n    }\n    if (trigger_cause == card)\n    {\n      trigger_cause = iStack_214;\n      iStack_208 = trigger_cause;\n    }\n    bVar12 = cant_be_responded_to == 0;\n    pcStack_218->state = pcStack_218->state | 0x10000100;\n    if (bVar12)\n    {\n      allow_response_to_trigger(player, iStack_214);\n    }\n    trigger_cause = iStack_208;\n    trigger_cause_controller = iVar11;\n    trigger_condition = uVar3;\n    xtrigger_impl_value_dont_use_directly = xVar4;\n    if (((pcVar5->state & 0x40000000) == 0) && ((pcStack_218->state & 0x40000000) == 0))\n    {\n      EXE_FN(void, 0x436740, void)();\n    LAB_026cc727:\n      obliterate_card_and_recycle(player, iStack_214);\n    LAB_026cc50a:\n      xtrigger_impl_value_dont_use_directly = xVar4;\n      pcVar5->state = pcVar5->state & 0xefffffff;\n      trigger_cause = iStack_208;\n      EXE_DWORD(0x60e9f8) = 0;\n      trigger_cause_controller = iVar11;\n      trigger_condition = uVar3;\n      dispatch_event(player, card, EVENT_TRIGGER_RESOLVED);\n      trigger_condition = uVar3;\n      xtrigger_impl_value_dont_use_directly = xVar4;\n      trigger_cause = iStack_208;\n      trigger_cause_controller = iVar11;\n      return;\n    }\n  }\n  obliterate_card_and_recycle(player, iStack_214);\n  uVar8 = pcVar5->state;\nLAB_026cc2f2:\n  trigger_cause = iStack_208;\n  xtrigger_impl_value_dont_use_directly = xVar4;\n  pcVar5->state = uVar8 & 0xafffffff;\n  trigger_condition = uVar3;\n  trigger_cause_controller = iVar11;\n  return;\n}",
+      "after_definition": "void resolve_trigger(int player, int card, int TENTATIVE_reason_for_trigger_controller)\n{\n  if ((uint8_t)trace_mode & 2)\n  {\n    char buf[500];\n    card_instance_t *traced = get_card_instance(player, card);\n    int sequence = EXE_DWORD(0x60ec40);\n    EXE_DWORD(0x60ec40) = sequence + 1;\n    sprintf(buf, \"%d: Player #%d is processing %s(%d).\\n\", sequence, player,\n            cards_data[traced->internal_card_id].name, card);\n    EXE_FN(void, 0x4a7d80, const char *)(buf);\n  }\n  EXE_DWORD(0x60e9f8) = 0;\n  put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_TRIGGER,\n                                    TENTATIVE_reason_for_trigger_controller, 0);\n  if (spell_fizzled == 1)\n  {\n    obliterate_top_card_of_stack();\n    EXE_DWORD(0x60e9f8) = 0;\n    return;\n  }\n  if (ai_is_speculating != 1)\n  {\n    EXE_FN(void, 0x436700, void)();\n    if (reason_for_trigger_controller != 0)\n    {\n      char buf[300];\n      load_text(NULL, \"PROMPT_PROC1\");\n      sprintf(buf, text_lines[0], opponent_name);\n      EXE_FN(int, 0x471b60, int, int, int, int, const char *, int)(player, card, -1, -1, buf, 0);\n    }\n    for (int p = 0; p < 2; ++p)\n      for (int c = 0; c < active_cards_count[p]; ++c)\n      {\n        card_instance_t *instance = get_card_instance(p, c);\n        instance->state &= ~STATE_IS_TRIGGERING;\n      }\n  }\n  card_instance_t *source = get_card_instance(player, card);\n  unsigned int saved_condition = trigger_condition;\n  source->state |= STATE_IS_TRIGGERING | STATE_PROCESSING;\n  xtrigger_t saved_xtrigger = xtrigger_impl_value_dont_use_directly;\n  int saved_cause = trigger_cause;\n  int saved_cause_controller = trigger_cause_controller;\n\n  int proxy_card = -1;\n  card_instance_t *proxy = NULL;\n  unsigned int response_condition = saved_condition;\n  if (!(source->token_status & 0x80) && !source->kill_code && (int)source->token_status >= 0)\n  {\n    if (in_play(player, card))\n    {\n      int iid = source->internal_card_id;\n      uint16_t id = cards_data[iid].id;\n      if (cards_data[iid].cc[2] != 3 && (uint16_t)(id - 901) >= 8 && (uint16_t)(id - 911) >= 19 &&\n          (trigger_condition & ~4U) != 0xd8 && (unsigned int)trigger_condition - 0xd4 >= 2 &&\n          cards_data[iid].type != TYPE_EFFECT && ai_is_speculating != 1 && player != -1 &&\n          card != -1)\n      {\n        proxy_card = create_legacy_effect(player, card, empty);\n        if (proxy_card == -1)\n          backtrace_and_abort(\"functions/events.c:633\\nstack_card != -1\");\n        proxy = get_card_instance(player, proxy_card);\n        proxy->state = 0x800022;\n        proxy->token_status = 0x80010000;\n        proxy->damage_source_player = (int8_t)player;\n        proxy->damage_source_card = card;\n        unsigned int timestamp = proxy->timestamp;\n        memcpy(proxy, source, sizeof(*proxy));\n        proxy->kill_code = 0;\n        proxy->state = 0x800022;\n        unsigned int source_iid = source->internal_card_id;\n        proxy->token_status = 0x80010000;\n        proxy->original_internal_card_id = source_iid;\n        proxy->unknown0x14 = 0;\n        if (source_iid == UINT32_MAX)\n          proxy->original_internal_card_id = source->backup_internal_card_id;\n        int image = get_card_image_number(proxy->display_pic_csv_id, player, card);\n        proxy->parent_controller = player;\n        proxy->display_pic_num = (uint16_t)image;\n        proxy->parent_card = card;\n        proxy->timestamp = timestamp;\n      }\n    }\n    response_condition = trigger_condition;\n  }\n  cant_be_responded_to |= response_condition == 0xcd;\n  if (!cant_be_responded_to)\n    allow_response_to_trigger(player, card);\n  trigger_cause_controller = saved_cause_controller;\n  trigger_cause = saved_cause;\n  trigger_condition = saved_condition;\n  xtrigger_impl_value_dont_use_directly = saved_xtrigger;\n\n  int completed = 0;\n  if (!source->kill_code && in_play(player, card))\n  {\n    if (!(source->state & 0x40000000U) && (!proxy || !(proxy->state & 0x40000000U)))\n    {\n      EXE_FN(void, 0x436740, void)();\n      if (proxy)\n        obliterate_card_and_recycle(player, proxy_card);\n      completed = 1;\n    }\n    else if (proxy)\n      obliterate_card_and_recycle(player, proxy_card);\n  }\n  else if (!proxy)\n  {\n    if (!(source->state & 0x40000000U))\n    {\n      EXE_FN(void, 0x436740, void)();\n      completed = 1;\n    }\n  }\n  else\n  {\n    source->state &= ~(STATE_IS_TRIGGERING | STATE_PROCESSING);\n    proxy->state &= ~0x800022U;\n    proxy->token_status &= ~0x10000U;\n    dispatch_event_to_single_card(player, proxy_card, EVENT_TRIGGER, player, proxy_card);\n    int stack_index = stack_size;\n    stack_data[stack_index].internal_card_id = (int16_t)proxy->internal_card_id;\n    stack_data[stack_index].generating_event = EVENT_RESOLVE_TRIGGER;\n    stack_data[stack_index].unknown_sdt = (uint8_t)TENTATIVE_reason_for_trigger_controller;\n    stack_cards[stack_index].player = player;\n    stack_cards[stack_index].card = proxy_card;\n    stack_damage_targets[stack_index].player = source->damage_target_player;\n    stack_damage_targets[stack_index].card = source->damage_target_card;\n    unsigned int phase = trigger_condition;\n    if (phase == UINT32_MAX)\n      phase = current_phase;\n    stack_phase[stack_index] = phase;\n    if (ai_is_speculating != 1)\n    {\n      EXE_DWORD_PTR(0x628674)[stack_index] = 0;\n      stack_index = stack_size;\n    }\n    stack_size = stack_index + 1;\n    stack_cards[stack_size].player = -1;\n    if (affected_card == card)\n      affected_card = proxy_card;\n    if (trigger_cause == card)\n      trigger_cause = saved_cause = proxy_card;\n    proxy->state |= STATE_IS_TRIGGERING | STATE_PROCESSING;\n    if (!cant_be_responded_to)\n      allow_response_to_trigger(player, proxy_card);\n    trigger_cause = saved_cause;\n    trigger_cause_controller = saved_cause_controller;\n    trigger_condition = saved_condition;\n    xtrigger_impl_value_dont_use_directly = saved_xtrigger;\n    if (!(source->state & 0x40000000U) && !(proxy->state & 0x40000000U))\n    {\n      EXE_FN(void, 0x436740, void)();\n      completed = 1;\n    }\n    obliterate_card_and_recycle(player, proxy_card);\n  }\n  if (completed)\n  {\n    xtrigger_impl_value_dont_use_directly = saved_xtrigger;\n    source->state &= ~STATE_IS_TRIGGERING;\n    trigger_cause = saved_cause;\n    EXE_DWORD(0x60e9f8) = 0;\n    trigger_cause_controller = saved_cause_controller;\n    trigger_condition = saved_condition;\n    dispatch_event(player, card, EVENT_TRIGGER_RESOLVED);\n    trigger_condition = saved_condition;\n    xtrigger_impl_value_dont_use_directly = saved_xtrigger;\n    trigger_cause = saved_cause;\n    trigger_cause_controller = saved_cause_controller;\n  }\n  else\n  {\n    trigger_cause = saved_cause;\n    xtrigger_impl_value_dont_use_directly = saved_xtrigger;\n    source->state &= ~(STATE_IS_TRIGGERING | 0x40000000U);\n    trigger_condition = saved_condition;\n    trigger_cause_controller = saved_cause_controller;\n  }\n}",
+      "before_sha256": "95055d0ecaff273df033ddaa44cbd02e2ac158c824bb9710c4df0357656a777f",
+      "after_sha256": "9b5676ed0d0c00256b446a025d1e0c793a4ba44ef63c2aea6e3321d8db7b850f",
+      "event_core_cleanup": true,
+      "facts": {
+        "removed_gotos": 6,
+        "removed_lab_gotos": 6,
+        "source_lines_removed": 85,
+        "removed_placeholder_occurrences": 192,
+        "removed_placeholder_names": 15
+      },
+      "expanded_before_definition": "void resolve_trigger(int player, int card, int TENTATIVE_reason_for_trigger_controller)\n{\n  uint16_t uVar1;\n  uint32_t uVar2;\n  unsigned int uVar3;\n  xtrigger_t xVar4;\n  card_instance_t *pcVar5;\n  int iVar6;\n  int iVar7;\n  uint32_t uVar8;\n  card_instance_t *pcVar9;\n  unsigned int uVar10;\n  int iVar11;\n  \n\n _Bool \n\n      bVar12;\n  card_instance_t *pcStack_218;\n  int iStack_214;\n  int iStack_208;\n\n  if (((uint8_t)trace_mode & 2) != 0)\n  {\n    char buf[500];\n    pcVar5 = get_card_instance(player, card);\n    iVar11 = (*((int*)(0x60ec40)));\n    (*((int*)(0x60ec40))) = (*((int*)(0x60ec40))) + 1;\n    sprintf(buf, \"%d: Player #%d is processing %s(%d).\\n\", iVar11, player,\n            cards_data[pcVar5->internal_card_id].name, card);\n    ((void (*)(const char *))(0x4a7d80))(buf);\n  }\n  (*((int*)(0x60e9f8))) = 0;\n  put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_TRIGGER,\n                                    TENTATIVE_reason_for_trigger_controller, 0);\n  if (spell_fizzled == 1)\n  {\n    obliterate_top_card_of_stack();\n    (*((int*)(0x60e9f8))) = 0;\n    return;\n  }\n\n  if (ai_is_speculating != 1)\n  {\n    ((void (*)(void))(0x436700))();\n    if (reason_for_trigger_controller != 0)\n    {\n      char buf[300];\n      load_text((char *)0x0, \"PROMPT_PROC1\");\n      sprintf(buf, text_lines[0], opponent_name);\n      ((int (*)(int, int, int, int, const char *, int))(0x471b60))(player, card, -1, -1, buf, 0);\n    }\n    iVar11 = 0;\n    if (0 < active_cards_count[0])\n    {\n      do\n      {\n        pcVar5 = get_card_instance(0, iVar11);\n        iVar6 = active_cards_count[0];\n        iVar11 = iVar11 + 1;\n        pcVar5->state = pcVar5->state & 0xefffffff;\n      } while (iVar11 < iVar6);\n    }\n    iVar11 = 0;\n    if (0 < active_cards_count[1])\n    {\n      do\n      {\n        pcVar5 = get_card_instance(1, iVar11);\n        iVar6 = active_cards_count[1];\n        iVar11 = iVar11 + 1;\n        pcVar5->state = pcVar5->state & 0xefffffff;\n      } while (iVar11 < iVar6);\n    }\n  }\n  pcVar5 = get_card_instance(player, card);\n  uVar3 = trigger_condition;\n  pcVar5->state = pcVar5->state | 0x10000100;\n  xVar4 = xtrigger_impl_value_dont_use_directly;\n  iVar6 = trigger_cause;\n  iVar11 = trigger_cause_controller;\n  iStack_208 = trigger_cause;\n  if ((((pcVar5->token_status & 0x80) == 0) && (pcVar5->kill_code == '\\0')) &&\n      (-1 < (int)pcVar5->token_status))\n  {\n    pcVar9 = in_play(player, card);\n    uVar10 = trigger_condition;\n    if (pcVar9 == (card_instance_t *)0x0)\n    {\n      bVar12 = \n\n              1\n\n                  ;\n      iStack_214 = -1;\n      pcStack_218 = (card_instance_t *)0x0;\n    }\n    else\n    {\n      iVar7 = pcVar5->internal_card_id;\n      if (((((cards_data[iVar7].cc[2] == '\\x03') ||\n             (uVar1 = cards_data[iVar7].id, (uint16_t)(uVar1 - 0x385) < 8)) ||\n            (((uint16_t)(uVar1 - 0x38f) < 0x13 ||\n              (((trigger_condition & 0xfffffffb) == 0xd8 ||\n                ((unsigned int)trigger_condition - 0xd4 < 2)))))) ||\n           (cards_data[iVar7].type == 0x80)) ||\n          (((ai_is_speculating == 1 || (player == -1)) || (card == -1))))\n      {\n        bVar12 = \n\n                1\n\n                    ;\n        pcStack_218 = (card_instance_t *)0x0;\n        iStack_214 = -1;\n      }\n      else\n      {\n        iStack_214 = create_legacy_effect(player, card, empty);\n        if (iStack_214 == -1)\n        {\n          backtrace_and_abort(\"functions/events.c:633\\nstack_card != -1\");\n        }\n        pcStack_218 = get_card_instance(player, iStack_214);\n        pcStack_218->state = 0x800022;\n        pcStack_218->token_status = 0x80010000;\n        pcStack_218->damage_source_player = (int8_t)player;\n        pcStack_218->damage_source_card = card;\n        uVar8 = pcStack_218->timestamp;\n        memcpy(pcStack_218, pcVar5, 300);\n        pcStack_218->kill_code = '\\0';\n        pcStack_218->state = 0x800022;\n        uVar2 = pcVar5->internal_card_id;\n        pcStack_218->token_status = 0x80010000;\n        pcStack_218->original_internal_card_id = uVar2;\n        pcStack_218->unknown0x14 = 0;\n        if (uVar2 == 0xffffffff)\n        {\n          pcStack_218->original_internal_card_id = (unsigned int)pcVar5->backup_internal_card_id;\n        }\n        iVar7 = get_card_image_number((unsigned int)pcStack_218->display_pic_csv_id, player, card);\n        pcStack_218->parent_controller = player;\n        bVar12 = \n\n                0\n\n                     ;\n        pcStack_218->display_pic_num = (uint16_t)iVar7;\n        pcStack_218->parent_card = card;\n        pcStack_218->timestamp = uVar8;\n        uVar10 = trigger_condition;\n      }\n    }\n  }\n  else\n  {\n    bVar12 = \n\n            1\n\n                ;\n    pcStack_218 = (card_instance_t *)0x0;\n    iStack_214 = -1;\n    uVar10 = uVar3;\n  }\n  cant_be_responded_to = (unsigned int)(uVar10 == 0xcd) | cant_be_responded_to;\n  if (cant_be_responded_to == 0)\n  {\n    allow_response_to_trigger(player, card);\n  }\n  trigger_cause_controller = iVar11;\n  trigger_cause = iVar6;\n  trigger_condition = uVar3;\n  xtrigger_impl_value_dont_use_directly = xVar4;\n  if ((pcVar5->kill_code == '\\0') &&\n      (pcVar9 = in_play(player, card), pcVar9 != (card_instance_t *)0x0))\n  {\n    uVar8 = pcVar5->state;\n    if ((uVar8 & 0x40000000) == 0)\n    {\n    LAB_026cc4fb:\n      if (bVar12)\n      {\n        ((void (*)(void))(0x436740))();\n        goto LAB_026cc50a;\n      }\n      bVar12 = iStack_214 != -1;\n      if ((pcStack_218->state & 0x40000000) == 0)\n      {\n        ((void (*)(void))(0x436740))();\n        if (iStack_214 == -1)\n          goto LAB_026cc50a;\n        goto LAB_026cc727;\n      }\n    }\n    else\n    {\n      bVar12 = !bVar12 && iStack_214 != -1;\n    }\n    if (!bVar12)\n      goto LAB_026cc2f2;\n  }\n  else\n  {\n    uVar8 = pcVar5->state;\n    if ((bVar12) || (iStack_214 == -1))\n    {\n      if ((uVar8 & 0x40000000) != 0)\n        goto LAB_026cc2f2;\n      goto LAB_026cc4fb;\n    }\n    pcVar5->state = uVar8 & 0xeffffeff;\n    pcStack_218->state = pcStack_218->state & 0xff7fffdd;\n    pcStack_218->token_status = pcStack_218->token_status & 0xfffeffff;\n    dispatch_event_to_single_card(player, iStack_214, EVENT_TRIGGER, player, iStack_214);\n    iVar6 = stack_size;\n    stack_data[stack_size].internal_card_id = (short)pcStack_218->internal_card_id;\n    stack_data[iVar6].generating_event = 0x7e;\n    stack_data[iVar6].unknown_sdt = (uint8_t)TENTATIVE_reason_for_trigger_controller;\n    stack_cards[iVar6].player = player;\n    stack_cards[iVar6].card = iStack_214;\n    stack_damage_targets[iVar6].player = (int)pcVar5->damage_target_player;\n    stack_damage_targets[iVar6].card = pcVar5->damage_target_card;\n    uVar10 = trigger_condition;\n    if (trigger_condition == 0xffffffff)\n    {\n      uVar10 = current_phase;\n    }\n    bVar12 = ai_is_speculating != 1;\n    stack_phase[iVar6] = uVar10;\n    if (bVar12)\n    {\n      ((int*)(0x628674))[iVar6] = 0;\n      iVar6 = stack_size;\n    }\n    stack_size = iVar6 + 1;\n    stack_cards[stack_size].player = -1;\n    if (affected_card == card)\n    {\n      affected_card = iStack_214;\n    }\n    if (trigger_cause == card)\n    {\n      trigger_cause = iStack_214;\n      iStack_208 = trigger_cause;\n    }\n    bVar12 = cant_be_responded_to == 0;\n    pcStack_218->state = pcStack_218->state | 0x10000100;\n    if (bVar12)\n    {\n      allow_response_to_trigger(player, iStack_214);\n    }\n    trigger_cause = iStack_208;\n    trigger_cause_controller = iVar11;\n    trigger_condition = uVar3;\n    xtrigger_impl_value_dont_use_directly = xVar4;\n    if (((pcVar5->state & 0x40000000) == 0) && ((pcStack_218->state & 0x40000000) == 0))\n    {\n      ((void (*)(void))(0x436740))();\n    LAB_026cc727:\n      obliterate_card_and_recycle(player, iStack_214);\n    LAB_026cc50a:\n      xtrigger_impl_value_dont_use_directly = xVar4;\n      pcVar5->state = pcVar5->state & 0xefffffff;\n      trigger_cause = iStack_208;\n      (*((int*)(0x60e9f8))) = 0;\n      trigger_cause_controller = iVar11;\n      trigger_condition = uVar3;\n      dispatch_event(player, card, EVENT_TRIGGER_RESOLVED);\n      trigger_condition = uVar3;\n      xtrigger_impl_value_dont_use_directly = xVar4;\n      trigger_cause = iStack_208;\n      trigger_cause_controller = iVar11;\n      return;\n    }\n  }\n  obliterate_card_and_recycle(player, iStack_214);\n  uVar8 = pcVar5->state;\nLAB_026cc2f2:\n  trigger_cause = iStack_208;\n  xtrigger_impl_value_dont_use_directly = xVar4;\n  pcVar5->state = uVar8 & 0xafffffff;\n  trigger_condition = uVar3;\n  trigger_cause_controller = iVar11;\n  return;\n}",
+      "expanded_after_definition": "void resolve_trigger(int player, int card, int TENTATIVE_reason_for_trigger_controller)\n{\n  if ((uint8_t)trace_mode & 2)\n  {\n    char buf[500];\n    card_instance_t *traced = get_card_instance(player, card);\n    int sequence = (*((int*)(0x60ec40)));\n    (*((int*)(0x60ec40))) = sequence + 1;\n    sprintf(buf, \"%d: Player #%d is processing %s(%d).\\n\", sequence, player,\n            cards_data[traced->internal_card_id].name, card);\n    ((void (*)(const char *))(0x4a7d80))(buf);\n  }\n  (*((int*)(0x60e9f8))) = 0;\n  put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_TRIGGER,\n                                    TENTATIVE_reason_for_trigger_controller, 0);\n  if (spell_fizzled == 1)\n  {\n    obliterate_top_card_of_stack();\n    (*((int*)(0x60e9f8))) = 0;\n    return;\n  }\n  if (ai_is_speculating != 1)\n  {\n    ((void (*)(void))(0x436700))();\n    if (reason_for_trigger_controller != 0)\n    {\n      char buf[300];\n      load_text(\n\n               ((void *)0)\n\n                   , \"PROMPT_PROC1\");\n      sprintf(buf, text_lines[0], opponent_name);\n      ((int (*)(int, int, int, int, const char *, int))(0x471b60))(player, card, -1, -1, buf, 0);\n    }\n    for (int p = 0; p < 2; ++p)\n      for (int c = 0; c < active_cards_count[p]; ++c)\n      {\n        card_instance_t *instance = get_card_instance(p, c);\n        instance->state &= ~STATE_IS_TRIGGERING;\n      }\n  }\n  card_instance_t *source = get_card_instance(player, card);\n  unsigned int saved_condition = trigger_condition;\n  source->state |= STATE_IS_TRIGGERING | STATE_PROCESSING;\n  xtrigger_t saved_xtrigger = xtrigger_impl_value_dont_use_directly;\n  int saved_cause = trigger_cause;\n  int saved_cause_controller = trigger_cause_controller;\n\n  int proxy_card = -1;\n  card_instance_t *proxy = \n\n                          ((void *)0)\n\n                              ;\n  unsigned int response_condition = saved_condition;\n  if (!(source->token_status & 0x80) && !source->kill_code && (int)source->token_status >= 0)\n  {\n    if (in_play(player, card))\n    {\n      int iid = source->internal_card_id;\n      uint16_t id = cards_data[iid].id;\n      if (cards_data[iid].cc[2] != 3 && (uint16_t)(id - 901) >= 8 && (uint16_t)(id - 911) >= 19 &&\n          (trigger_condition & ~4U) != 0xd8 && (unsigned int)trigger_condition - 0xd4 >= 2 &&\n          cards_data[iid].type != TYPE_EFFECT && ai_is_speculating != 1 && player != -1 &&\n          card != -1)\n      {\n        proxy_card = create_legacy_effect(player, card, empty);\n        if (proxy_card == -1)\n          backtrace_and_abort(\"functions/events.c:633\\nstack_card != -1\");\n        proxy = get_card_instance(player, proxy_card);\n        proxy->state = 0x800022;\n        proxy->token_status = 0x80010000;\n        proxy->damage_source_player = (int8_t)player;\n        proxy->damage_source_card = card;\n        unsigned int timestamp = proxy->timestamp;\n        memcpy(proxy, source, sizeof(*proxy));\n        proxy->kill_code = 0;\n        proxy->state = 0x800022;\n        unsigned int source_iid = source->internal_card_id;\n        proxy->token_status = 0x80010000;\n        proxy->original_internal_card_id = source_iid;\n        proxy->unknown0x14 = 0;\n        if (source_iid == \n\n                         0xffffffffU\n\n                                   )\n          proxy->original_internal_card_id = source->backup_internal_card_id;\n        int image = get_card_image_number(proxy->display_pic_csv_id, player, card);\n        proxy->parent_controller = player;\n        proxy->display_pic_num = (uint16_t)image;\n        proxy->parent_card = card;\n        proxy->timestamp = timestamp;\n      }\n    }\n    response_condition = trigger_condition;\n  }\n  cant_be_responded_to |= response_condition == 0xcd;\n  if (!cant_be_responded_to)\n    allow_response_to_trigger(player, card);\n  trigger_cause_controller = saved_cause_controller;\n  trigger_cause = saved_cause;\n  trigger_condition = saved_condition;\n  xtrigger_impl_value_dont_use_directly = saved_xtrigger;\n\n  int completed = 0;\n  if (!source->kill_code && in_play(player, card))\n  {\n    if (!(source->state & 0x40000000U) && (!proxy || !(proxy->state & 0x40000000U)))\n    {\n      ((void (*)(void))(0x436740))();\n      if (proxy)\n        obliterate_card_and_recycle(player, proxy_card);\n      completed = 1;\n    }\n    else if (proxy)\n      obliterate_card_and_recycle(player, proxy_card);\n  }\n  else if (!proxy)\n  {\n    if (!(source->state & 0x40000000U))\n    {\n      ((void (*)(void))(0x436740))();\n      completed = 1;\n    }\n  }\n  else\n  {\n    source->state &= ~(STATE_IS_TRIGGERING | STATE_PROCESSING);\n    proxy->state &= ~0x800022U;\n    proxy->token_status &= ~0x10000U;\n    dispatch_event_to_single_card(player, proxy_card, EVENT_TRIGGER, player, proxy_card);\n    int stack_index = stack_size;\n    stack_data[stack_index].internal_card_id = (int16_t)proxy->internal_card_id;\n    stack_data[stack_index].generating_event = EVENT_RESOLVE_TRIGGER;\n    stack_data[stack_index].unknown_sdt = (uint8_t)TENTATIVE_reason_for_trigger_controller;\n    stack_cards[stack_index].player = player;\n    stack_cards[stack_index].card = proxy_card;\n    stack_damage_targets[stack_index].player = source->damage_target_player;\n    stack_damage_targets[stack_index].card = source->damage_target_card;\n    unsigned int phase = trigger_condition;\n    if (phase == \n\n                0xffffffffU\n\n                          )\n      phase = current_phase;\n    stack_phase[stack_index] = phase;\n    if (ai_is_speculating != 1)\n    {\n      ((int*)(0x628674))[stack_index] = 0;\n      stack_index = stack_size;\n    }\n    stack_size = stack_index + 1;\n    stack_cards[stack_size].player = -1;\n    if (affected_card == card)\n      affected_card = proxy_card;\n    if (trigger_cause == card)\n      trigger_cause = saved_cause = proxy_card;\n    proxy->state |= STATE_IS_TRIGGERING | STATE_PROCESSING;\n    if (!cant_be_responded_to)\n      allow_response_to_trigger(player, proxy_card);\n    trigger_cause = saved_cause;\n    trigger_cause_controller = saved_cause_controller;\n    trigger_condition = saved_condition;\n    xtrigger_impl_value_dont_use_directly = saved_xtrigger;\n    if (!(source->state & 0x40000000U) && !(proxy->state & 0x40000000U))\n    {\n      ((void (*)(void))(0x436740))();\n      completed = 1;\n    }\n    obliterate_card_and_recycle(player, proxy_card);\n  }\n  if (completed)\n  {\n    xtrigger_impl_value_dont_use_directly = saved_xtrigger;\n    source->state &= ~STATE_IS_TRIGGERING;\n    trigger_cause = saved_cause;\n    (*((int*)(0x60e9f8))) = 0;\n    trigger_cause_controller = saved_cause_controller;\n    trigger_condition = saved_condition;\n    dispatch_event(player, card, EVENT_TRIGGER_RESOLVED);\n    trigger_condition = saved_condition;\n    xtrigger_impl_value_dont_use_directly = saved_xtrigger;\n    trigger_cause = saved_cause;\n    trigger_cause_controller = saved_cause_controller;\n  }\n  else\n  {\n    trigger_cause = saved_cause;\n    xtrigger_impl_value_dont_use_directly = saved_xtrigger;\n    source->state &= ~(STATE_IS_TRIGGERING | 0x40000000U);\n    trigger_condition = saved_condition;\n    trigger_cause_controller = saved_cause_controller;\n  }\n}"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "get_abilities",
+      "before_definition": "int get_abilities(int player, int card, event_t event, int new_attacking_card)\n{\n  uint8_t uVar1;\n  uint16_t uVar2;\n  card_ext_t *pcVar3;\n  card_instance_t *inst;\n  int iVar4;\n  unsigned int uVar5;\n  unsigned int uVar6;\n  int iVar7;\n  card_instance_t *pcVar8;\n  unsigned int uVar9;\n  uint8_t bVar10;\n  uint32_t uVar11;\n  uint32_t uVar12;\n  unsigned int uVar13;\n  bool bVar14;\n  kill_t kill_mode;\n\n  while (true)\n  {\n    inst = get_card_instance(player, card);\n    uVar5 = inst->internal_card_id;\n    if (activation_card != uVar5)\n      break;\n    if (event == EVENT_CHANGE_TYPE)\n    {\n      return uVar5;\n    }\n    card = inst->parent_card;\n    player = inst->parent_controller;\n  }\n  if (EXE_DWORD(0x60a548) != 0)\n  {\n    push_affected_card_stack();\n  }\n  affected_card_controller = player;\n  affected_card = card;\n  if (uVar5 == 0xffffffff)\n  {\n    uVar5 = (unsigned int)inst->backup_internal_card_id;\n    inst->regen_status = inst->regen_status & 0xe0ffffff;\n  }\n  iVar4 = raw_base_pt;\n  attacking_card = new_attacking_card;\n  switch (event)\n  {\n  case EVENT_POWER:\n    if ((inst->regen_status & 0x4000000) != 0)\n    {\n      inst->regen_status = inst->regen_status & 0xfbffffff;\n      uVar6 = get_special_flags3_by_instance(inst);\n      if ((uVar6 & 0x100000) != 0)\n      {\n        uVar11 = inst->state;\n        raw_characteristic_pt = (int)cards_data[uVar5].toughness;\n        raw_base_pt = raw_characteristic_pt;\n        if (((uVar11 & 0x800002) == 2) && (0 < raw_characteristic_pt))\n        {\n          raw_base_pt = (int)(short)(cards_data[uVar5].toughness & 0xbfff);\n        }\n        event_result = raw_base_pt + inst->counter_toughness;\n        if (EXE_DWORD(0x60a548) == 0)\n          goto code_r0x026cc906;\n        event = EVENT_TOUGHNESS;\n      LAB_026ccfcf:\n        dispatch_event_raw(event);\n        if (((land_can_be_played & 0x10000U) != 0) && (event == EVENT_CHANGE_TYPE))\n        {\n        LAB_026ccbf2:\n          iVar7 = event_result;\n          inst->internal_card_id = event_result;\n          if (iVar7 != -1)\n          {\n            inst->backup_internal_card_id = (uint16_t)iVar7;\n          }\n          land_can_be_played = land_can_be_played & 0xfffeffffU | 0x20000;\n          dispatch_event_raw(EVENT_CHANGE_TYPE);\n          land_can_be_played = land_can_be_played & 0xfffdffff;\n          goto LAB_026cc8ef;\n        }\n        goto LAB_026cc8df;\n      }\n      raw_characteristic_pt = (int)cards_data[uVar5].power;\n      raw_base_pt = raw_characteristic_pt;\n      if (((inst->state & 0x800002) == 2) && (0 < raw_characteristic_pt))\n      {\n        raw_base_pt = (int)(short)(cards_data[uVar5].power & 0xbfff);\n      }\n      event_result = inst->counter_power + raw_base_pt;\n      if (EXE_DWORD(0x60a548) != 0)\n        goto LAB_026ccfcf;\n      goto LAB_026cd0d9;\n    }\n    uVar6 = (int)inst->power;\n    break;\n  case EVENT_TOUGHNESS:\n    if ((inst->regen_status & 0x2000000) != 0)\n    {\n      inst->regen_status = inst->regen_status & 0xfdffffff;\n      uVar6 = get_special_flags3_by_instance(inst);\n      if ((uVar6 & 0x100000) == 0)\n      {\n        raw_characteristic_pt = (int)cards_data[uVar5].toughness;\n        raw_base_pt = raw_characteristic_pt;\n        if (((inst->state & 0x800002) == 2) && (0 < raw_characteristic_pt))\n        {\n          raw_base_pt = (int)(short)(cards_data[uVar5].toughness & 0xbfff);\n        }\n        event_result = inst->counter_toughness + raw_base_pt;\n        if (EXE_DWORD(0x60a548) == 0)\n          goto code_r0x026cc8f9;\n      }\n      else\n      {\n        raw_characteristic_pt = (int)cards_data[uVar5].power;\n        raw_base_pt = raw_characteristic_pt;\n        if (((inst->state & 0x800002) == 2) && (0 < raw_characteristic_pt))\n        {\n          raw_base_pt = (int)(short)(cards_data[uVar5].power & 0xbfff);\n        }\n        event_result = inst->counter_power + raw_base_pt;\n        if (EXE_DWORD(0x60a548) == 0)\n          goto LAB_026cd0d9;\n        event = EVENT_POWER;\n      }\n      goto LAB_026ccfcf;\n    }\n    event_result = (int)inst->toughness;\n    uVar11 = inst->state;\n  code_r0x026cc906:\n    uVar12 = event_result;\n    if (((((uVar11 & 0x800022) == 2) && ((cards_data[uVar5].type & 2) != 0)) &&\n         ((event_result < 1 || (event_result <= (int)(unsigned int)inst->damage_on_card)))) &&\n        (((inst->token_status & 0x4000000) == 0 &&\n          ((land_can_be_played & 0x204U) == 0 && EXE_DWORD(0x785e60) == 0))))\n    {\n      if (event_result < 1)\n      {\n        kill_mode = KILL_STATE_BASED_ACTION;\n      }\n      else\n      {\n        kill_mode = KILL_DESTROY;\n      }\n      kill_card(player, card, kill_mode);\n      EXE_FN(void, 0x477a90, void)();\n    }\n    if (EXE_DWORD(0x60a548) != 0)\n    {\n      pop_affected_card_stack();\n    }\n    goto LAB_026cc92c;\n  case EVENT_ABILITIES:\n    uVar13 = inst->regen_status;\n    uVar6 = uVar13;\n    if ((uVar13 & 0x8000000) != 0)\n    {\n      bVar14 = damage_card != uVar5;\n      inst->regen_status = uVar13 & 0xf7ffffff;\n      uVar6 = uVar13 & 0xf7ffffff;\n      if (bVar14)\n      {\n        uVar6 = cards_data[uVar5].static_ability;\n        uVar13 = uVar13 & 0x17000000 | uVar6;\n        if ((uVar6 & 0xf81f) != 0)\n        {\n          if ((uVar6 & 0xf800) != 0)\n          {\n            uVar9 = get_sleighted_protection(player, card, uVar6 & 0xf800);\n            uVar13 = ((uVar13 & 0xffff0000U) | (uVar6 & 0xffffU)) & 0xffff07ff | uVar9;\n          }\n          if ((uVar13 & 0x1f) != 0)\n          {\n            uVar6 = get_hacked_walk(player, card, uVar13 & 0x1f);\n            uVar13 = uVar13 & 0xffffffe0 | uVar6;\n          }\n        }\n\n        if (((EXE_DWORD(0x60a548) != 0) && ((cards_data[uVar5].type & 0x47) != 0)) &&\n            (-1 < (char)cards_data[uVar5].type))\n        {\n          pcVar3 = inst->ext;\n          pcVar3->sp_keywords = 0;\n          pcVar3->sp_keywords2 = 0;\n          inst->targets[0x11].card = inst->targets[0x11].card & 0xffffff81;\n          inst->state = inst->state & 0xfffddfff;\n          inst->token_status = inst->token_status & 0xffff77ff;\n          remove_special_flags(player, card, 0x28000);\n          remove_special_flags2(player, card, 0x1000);\n          remove_special_flags2(player, card, 0x10);\n        }\n        event_result = uVar13;\n        if (EXE_DWORD(0x60a548) != 0)\n          goto LAB_026ccfcf;\n        goto LAB_026ccce2;\n      }\n    }\n    break;\n  case EVENT_RECALC_DAMAGE:\n    event_result = (unsigned int)inst->damage_on_card;\n    uVar6 = (unsigned int)inst->damage_on_card;\n    if (EXE_DWORD(0x60a548) != 0)\n      goto LAB_026ccfcf;\n    break;\n  case EVENT_SET_COLOR:\n    if (((inst->regen_status & 0x10000000) == 0) ||\n        (bVar14 = damage_card == uVar5, inst->regen_status = inst->regen_status & 0xefffffff,\n         bVar14))\n    {\n      uVar6 = (int)inst->color;\n    }\n    else\n    {\n      bVar10 = inst->initial_color;\n      if (bVar10 == 0)\n      {\n        if ((cards_data[uVar5].type & 1) == 0)\n        {\n          if (((((cards_data[uVar5].type & 0x40) == 0) ||\n                ((cards_data[uVar5].extra_ability & 0x1000) == 0)) ||\n               (iVar7 = get_internal_card_id_from_csv_id((unsigned int)cards_data[uVar5].id),\n                (cards_data[iVar7].type & 0x40) == 0)) ||\n              ((cards_data[iVar7].extra_ability & 0x1000) == 0))\n          {\n            bVar10 = cards_data[uVar5].color;\n            goto code_r0x026cd446;\n          }\n        }\n        else if (cards_data[uVar5].id == 0x22d4)\n        {\n          event_result = 8;\n          goto code_r0x026cc995;\n        }\n        event_result = 0;\n      }\n      else\n      {\n      code_r0x026cd446:\n        event_result = bVar10 & 0x3e;\n      }\n    code_r0x026cc995:\n      if (EXE_DWORD(0x60a548) != 0)\n        goto LAB_026ccfcf;\n    code_r0x026cc8f9:\n      uVar6 = event_result;\n      if (event == EVENT_TOUGHNESS)\n      {\n        uVar11 = inst->state;\n        goto code_r0x026cc906;\n      }\n    }\n    break;\n  default:\n    event_result = 0;\n    if (EXE_DWORD(0x60a548) != 0)\n      goto LAB_026ccfcf;\n  LAB_026cc8df:\n    if (event == EVENT_ABILITIES)\n    {\n    LAB_026ccce2:\n\n      pcVar8 = get_card_instance(player, card);\n      if (((((((uint8_t)(pcVar8->special_counter_type + 0x70) < 0xb) &&\n              (pcVar8->special_counters != '\\0')) ||\n             (((uint8_t)((char)pcVar8->targets[0x12].player + 0x70U) < 0xb &&\n               (pcVar8->counters2 != '\\0')))) ||\n            ((((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].player + 1) + 0x70U) < 0xb &&\n               (pcVar8->counters3 != '\\0')) ||\n              (((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].player + 2) + 0x70U) < 0xb &&\n                (pcVar8->counters4 != '\\0')))))) ||\n           ((((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].player + 3) + 0x70U) < 0xb &&\n              (pcVar8->counters5 != '\\0')) ||\n             (((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].card + 2) + 0x70U) < 0xb &&\n               ((char)pcVar8->targets[0x12].card != '\\0')))))) ||\n          (((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].card + 3) + 0x70U) < 0xb &&\n            (*(char *)((int)&pcVar8->targets[0x12].card + 1) != '\\0'))))\n      {\n        if (((cards_data[uVar5].type & 0x47) != 0) && (-1 < (char)cards_data[uVar5].type))\n        {\n          if (count_counters(player, card, COUNTER_DEATHTOUCH) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x200;\n          }\n          if (count_counters(player, card, COUNTER_HEXPROOF) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800000;\n          }\n          if (count_counters(player, card, COUNTER_INDESTRUCTIBLE) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800;\n          }\n          if (count_counters(player, card, COUNTER_LIFELINK) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 2;\n          }\n          if (count_counters(player, card, COUNTER_MENACE) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x10000;\n          }\n          if (count_counters(player, card, COUNTER_VIGILANCE) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 8;\n          }\n          if (count_counters(player, card, COUNTER_DOUBLE_STRIKE) != 0)\n          {\n            event_result = event_result | 0x40000000;\n          }\n          if (count_counters(player, card, COUNTER_FIRST_STRIKE) != 0)\n          {\n            event_result = event_result | 0x100;\n          }\n          if (count_counters(player, card, COUNTER_FLYING) != 0)\n          {\n            event_result = event_result | 0x20;\n          }\n          if (count_counters(player, card, COUNTER_REACH) != 0)\n          {\n            event_result = event_result | 0x400;\n          }\n          if (count_counters(player, card, COUNTER_TRAMPLE) != 0)\n          {\n            event_result = event_result | 0x80;\n          }\n          goto LAB_026ccd94;\n        }\n      }\n      else\n      {\n      LAB_026ccd94:\n        uVar6 = (unsigned int)player_bits[player];\n\n        if ((((uVar6 & 0x1001f0) != 0) && ((cards_data[uVar5].type & 0x47) != 0)) &&\n            (-1 < (char)cards_data[uVar5].type))\n        {\n          if ((uVar6 & 0x10) != 0)\n          {\n            event_result = event_result & 0xfffffeff;\n          }\n          if ((uVar6 & 0x20) != 0)\n          {\n            event_result = event_result & 0xffffffdf;\n          }\n          if ((uVar6 & 0x40) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords & 0xfffffdff;\n          }\n          if ((uVar6 & 0x80) != 0)\n          {\n            event_result = event_result & 0xffffff7f;\n          }\n          if ((uVar6 & 0x100000) != 0)\n          {\n            event_result = event_result & 0xfffdffff;\n          }\n          if ((uVar6 & 0x100) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords & 0xff7fffff;\n          }\n        }\n      }\n      if (is_humiliated(player, card, AL_KEY) != 0)\n      {\n        if (is_humiliated(player, card, AL_DEFENDER) != 0)\n        {\n          event_result = event_result | 0x800000;\n        }\n        if (is_humiliated(player, card, AL_INDESTRUCTIBLE) != 0)\n        {\n          (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800;\n        }\n      }\n      if (((inst->state & 0x10000) != 0) && (((inst->ext)->sp_keywords & 4) == 0))\n      {\n        inst->state = inst->state | 0x20000;\n      }\n      event = EVENT_ABILITIES;\n      uVar6 = event_result;\n    }\n    else\n    {\n    LAB_026cc8ef:\n      if (event != EVENT_POWER)\n        goto code_r0x026cc8f9;\n    LAB_026cd0d9:\n      if (event_result < 0)\n      {\n        event_result = 0;\n      }\n      event = EVENT_POWER;\n      uVar6 = event_result;\n      if ((inst->token_status & 0x4000) != 0)\n      {\n        uVar6 = event_result * 2;\n      }\n    }\n    break;\n  case EVENT_CHANGE_TYPE:\n    if (inst->internal_card_id == -1)\n    {\n      event_result = -1;\n      uVar6 = event_result;\n    }\n    else\n    {\n      uVar6 = uVar5;\n      if (((inst->regen_status & 0x1000000) != 0) &&\n          (((int)uVar5 < EXE_DWORD(0x628c64) || (EXE_DWORD(0x786d5c) < (int)uVar5))))\n      {\n        uVar12 = inst->original_internal_card_id;\n        inst->regen_status = inst->regen_status & 0xfeffffff;\n        inst->internal_card_id = uVar12;\n        inst->backup_internal_card_id = (uint16_t)uVar12;\n        uVar1 = cards_data[uVar12].color;\n        inst->destroys_if_blocked = '\\0';\n        inst->mana_color = uVar1;\n        inst->token_status = inst->token_status & 0xffffefff;\n        remove_special_flags2(player, card, 0x484);\n        if (is_what(player, card, 0x80) == 0)\n        {\n          reset_subtypes_from_instance(inst, uVar5);\n        }\n        event_result = uVar12;\n        if (EXE_DWORD(0x60a548) == 0)\n          goto code_r0x026cc9f0;\n        dispatch_event_raw(EVENT_CHANGE_TYPE);\n        if ((land_can_be_played & 0x10000U) != 0)\n          goto LAB_026ccbf2;\n        goto LAB_026cc8ef;\n      }\n    }\n  }\n  event_result = uVar6;\n  uVar12 = event_result;\n  if (EXE_DWORD(0x60a548) != 0)\n  {\n    pop_affected_card_stack();\n  }\n  if (event == EVENT_CHANGE_TYPE)\n  {\n  code_r0x026cc9f0:\n    inst->internal_card_id = uVar12;\n    if (uVar12 != 0xffffffff)\n    {\n      inst->backup_internal_card_id = (uint16_t)uVar12;\n    }\n    if (((cards_data[uVar12].extra_ability & 0x1000) != 0) ||\n        ((iVar4 = is_what(player, card, 1), iVar4 != 0 && (mana_colors_added[player] != 0))))\n    {\n      uVar2 = cards_data[uVar12].id;\n      uVar5 = get_color_of_mana_produced_by_id((unsigned int)uVar2, inst->info_slot, player);\n      if (uVar5 == 0xffffffff)\n      {\n        uVar5 = (unsigned int)(uint8_t)cards_ptr[uVar2]->mana_source_colors;\n      }\n      inst->mana_color = (uint8_t)uVar5;\n      if (is_what(player, card, 1) != 0)\n      {\n        inst->mana_color = inst->mana_color | (uint8_t)mana_colors_added[player];\n      }\n      iVar4 = check_special_flags2(player, card, 0x40);\n      bVar10 = inst->mana_color;\n      uVar5 = (unsigned int)bVar10;\n      if (iVar4 != 0)\n      {\n        iVar4 = 0;\n        do\n        {\n          uVar6 = color_to_color_test(iVar4);\n          if ((uVar5 & 0xff & uVar6) == 0)\n          {\n            uVar5 = (unsigned int)inst->mana_color;\n          }\n          else\n          {\n            iVar7 = color_to_color_test(iVar4);\n            inst->mana_color = inst->mana_color & ((uint8_t)iVar7 ^ 0xff);\n            uVar5 = color_to_color_test(mana_color_override[player][iVar4]);\n            uVar6 = (unsigned int)inst->mana_color | ((unsigned int)inst->card_color << 8) |\n                    ((unsigned int)inst->unk5a << 16) | ((unsigned int)inst->unk5b << 24);\n            uVar5 = uVar5 | uVar6;\n            inst->mana_color = (uint8_t)uVar5;\n          }\n          iVar4 = iVar4 + 1;\n        } while (iVar4 != 7);\n        bVar10 = (uint8_t)uVar5;\n      }\n      inst->card_color = bVar10;\n    }\n    if (((inst->token_status & 0x40) != 0) && ((cards_data[uVar12].type & 2) == 0))\n    {\n      iVar4 = 0;\n      do\n      {\n        iVar7 = 0;\n        if (-1 < active_cards_count[iVar4])\n        {\n          do\n          {\n            pcVar8 = in_play(iVar4, iVar7);\n\n            if ((((pcVar8 != (card_instance_t *)0x0) && (pcVar8 = get_card_instance(iVar4, iVar7),\n                                                         pcVar8->damage_target_player == player)) &&\n                 (pcVar8->damage_target_card == card)) &&\n                (((cards_data[pcVar8->internal_card_id].type & 4) != 0 &&\n                  (cards_ptr[cards_data[pcVar8->internal_card_id].id]->subtype1 == 0x2c))))\n            {\n              kill_card(iVar4, iVar7, KILL_STATE_BASED_ACTION);\n            }\n            iVar7 = iVar7 + 1;\n          } while (iVar7 <= active_cards_count[iVar4]);\n        }\n        iVar4 = iVar4 + 1;\n      } while (iVar4 != 2);\n    }\n    if ((inst->state & 2) == 0)\n    {\n      return uVar12;\n    }\n    event_flags = event_flags | cards_data[inst->internal_card_id].extra_ability & 0x1ffc0000;\n    return uVar12;\n  }\n  if (event == EVENT_ABILITIES)\n  {\n    inst->regen_status = uVar12;\n\n    if (((((inst->ext)->sp_keywords & 0x200) != 0) && ((cards_data[uVar5].type & 0x47) != 0)) &&\n        (-1 < (char)cards_data[uVar5].type))\n    {\n      inst->destroys_if_blocked = inst->destroys_if_blocked | 0x10;\n    }\n  }\n  else if (event < EVENT_RECALC_DAMAGE)\n  {\n    if (event == EVENT_POWER)\n    {\n      inst->power = (int16_t)uVar12;\n    }\n    else if (event == EVENT_TOUGHNESS)\n    {\n    LAB_026cc92c:\n      inst->toughness = (int16_t)uVar12;\n    }\n  }\n  else if (event == EVENT_SET_COLOR)\n  {\n    inst->color = (uint8_t)uVar12 & 0x3e;\n  }\n  raw_base_pt = iVar4;\n  return uVar12;\n}",
+      "after_definition": "int get_abilities(int player, int card, event_t event, int new_attacking_card)\n{\n  card_instance_t *inst;\n  unsigned int iid;\n  for (;;)\n  {\n    inst = get_card_instance(player, card);\n    iid = inst->internal_card_id;\n    if (iid != activation_card)\n      break;\n    if (event == EVENT_CHANGE_TYPE)\n      return iid;\n    card = inst->parent_card;\n    player = inst->parent_controller;\n  }\n  if (EXE_DWORD(0x60a548))\n    push_affected_card_stack();\n  affected_card_controller = player;\n  affected_card = card;\n  if (iid == UINT32_MAX)\n  {\n    iid = inst->backup_internal_card_id;\n    inst->regen_status &= ~KEYWORD_RECALC_ALL;\n  }\n  int saved_raw_base = raw_base_pt;\n  attacking_card = new_attacking_card;\n  int recalculate = 0;\n  switch (event)\n  {\n  case EVENT_POWER:\n    if (inst->regen_status & KEYWORD_RECALC_POWER)\n    {\n      inst->regen_status &= ~KEYWORD_RECALC_POWER;\n      int swap = get_special_flags3_by_instance(inst) & SF3_SWITCH_POW_TGH;\n      raw_characteristic_pt = swap ? cards_data[iid].toughness : cards_data[iid].power;\n      raw_base_pt = raw_characteristic_pt;\n      if ((inst->state & (STATE_OUBLIETTED | STATE_IN_PLAY)) == STATE_IN_PLAY &&\n          raw_characteristic_pt > 0)\n        raw_base_pt =\n            (int16_t)((swap ? cards_data[iid].toughness : cards_data[iid].power) & 0xbfff);\n      event_result = raw_base_pt + (swap ? inst->counter_toughness : inst->counter_power);\n      if (swap)\n        event = EVENT_TOUGHNESS;\n      recalculate = 1;\n    }\n    else\n      event_result = inst->power;\n    break;\n  case EVENT_TOUGHNESS:\n    if (inst->regen_status & KEYWORD_RECALC_TOUGHNESS)\n    {\n      inst->regen_status &= ~KEYWORD_RECALC_TOUGHNESS;\n      int swap = get_special_flags3_by_instance(inst) & SF3_SWITCH_POW_TGH;\n      raw_characteristic_pt = swap ? cards_data[iid].power : cards_data[iid].toughness;\n      raw_base_pt = raw_characteristic_pt;\n      if ((inst->state & (STATE_OUBLIETTED | STATE_IN_PLAY)) == STATE_IN_PLAY &&\n          raw_characteristic_pt > 0)\n        raw_base_pt =\n            (int16_t)((swap ? cards_data[iid].power : cards_data[iid].toughness) & 0xbfff);\n      event_result = raw_base_pt + (swap ? inst->counter_power : inst->counter_toughness);\n      if (swap)\n        event = EVENT_POWER;\n      recalculate = 1;\n    }\n    else\n      event_result = inst->toughness;\n    break;\n  case EVENT_ABILITIES:\n  {\n    unsigned int keywords = inst->regen_status;\n    if (keywords & KEYWORD_RECALC_ABILITIES)\n    {\n      inst->regen_status = keywords & ~KEYWORD_RECALC_ABILITIES;\n      if (damage_card == iid)\n        keywords &= ~KEYWORD_RECALC_ABILITIES;\n      else\n      {\n        unsigned int base_keywords = cards_data[iid].static_ability;\n        keywords = (keywords & 0x17000000U) | base_keywords;\n        if (base_keywords & 0xf81f)\n        {\n          if (base_keywords & KEYWORD_PROT_COLORED)\n          {\n            unsigned int protections =\n                get_sleighted_protection(player, card, base_keywords & KEYWORD_PROT_COLORED);\n            keywords =\n                (((keywords & 0xffff0000U) | (base_keywords & 0xffffU)) & ~KEYWORD_PROT_COLORED) |\n                protections;\n          }\n          if (keywords & KEYWORD_BASIC_LANDWALK)\n          {\n            unsigned int landwalk =\n                get_hacked_walk(player, card, keywords & KEYWORD_BASIC_LANDWALK);\n            keywords = (keywords & ~KEYWORD_BASIC_LANDWALK) | landwalk;\n          }\n        }\n        if (EXE_DWORD(0x60a548) && (cards_data[iid].type & TYPE_PERMANENT) &&\n            !(cards_data[iid].type & TYPE_EFFECT))\n        {\n          inst->ext->sp_keywords = 0;\n          inst->ext->sp_keywords2 = 0;\n          inst->targets[17].card &= 0xffffff81;\n          inst->state &= 0xfffddfff;\n          inst->token_status &= 0xffff77ff;\n          remove_special_flags(player, card, 0x28000);\n          remove_special_flags2(player, card, 0x1000);\n          remove_special_flags2(player, card, 0x10);\n        }\n        recalculate = 1;\n      }\n    }\n    event_result = keywords;\n    break;\n  }\n  case EVENT_RECALC_DAMAGE:\n    event_result = inst->damage_on_card;\n    recalculate = 1;\n    break;\n  case EVENT_SET_COLOR:\n    if (!(inst->regen_status & KEYWORD_RECALC_SET_COLOR))\n      event_result = inst->color;\n    else\n    {\n      int is_damage = damage_card == iid;\n      inst->regen_status &= ~KEYWORD_RECALC_SET_COLOR;\n      if (is_damage)\n        event_result = inst->color;\n      else\n      {\n        unsigned char color = inst->initial_color;\n        if (color)\n          event_result = color & COLOR_TEST_ANY_COLORED;\n        else if (cards_data[iid].type & TYPE_LAND)\n          event_result = cards_data[iid].id == CARD_ID_DRYAD_ARBOR ? COLOR_TEST_GREEN : 0;\n        else\n        {\n          int mana_artifact = 0;\n          if ((cards_data[iid].type & TYPE_ARTIFACT) &&\n              (cards_data[iid].extra_ability & EA_MANA_SOURCE))\n          {\n            int original_iid = get_internal_card_id_from_csv_id(cards_data[iid].id);\n            mana_artifact = (cards_data[original_iid].type & TYPE_ARTIFACT) &&\n                            (cards_data[original_iid].extra_ability & EA_MANA_SOURCE);\n          }\n          event_result = mana_artifact ? 0 : cards_data[iid].color & COLOR_TEST_ANY_COLORED;\n        }\n        recalculate = 1;\n      }\n    }\n    break;\n  case EVENT_CHANGE_TYPE:\n    if (inst->internal_card_id == -1)\n      event_result = -1;\n    else if ((inst->regen_status & KEYWORD_RECALC_CHANGE_TYPE) &&\n             ((int)iid < EXE_DWORD(0x628c64) || (int)iid > EXE_DWORD(0x786d5c)))\n    {\n      unsigned int original_iid = inst->original_internal_card_id;\n      inst->regen_status &= ~KEYWORD_RECALC_CHANGE_TYPE;\n      inst->internal_card_id = original_iid;\n      inst->backup_internal_card_id = (uint16_t)original_iid;\n      inst->mana_color = cards_data[original_iid].color;\n      inst->destroys_if_blocked = 0;\n      inst->token_status &= ~STATUS_LEGACY_TYPECHANGE;\n      remove_special_flags2(player, card, 0x484);\n      if (!is_what(player, card, TYPE_EFFECT))\n        reset_subtypes_from_instance(inst, iid);\n      event_result = original_iid;\n      recalculate = 1;\n    }\n    else\n      event_result = iid;\n    break;\n  default:\n    event_result = 0;\n    recalculate = 1;\n    break;\n  }\n\n  if (recalculate)\n  {\n    if (EXE_DWORD(0x60a548))\n    {\n      dispatch_event_raw(event);\n      if ((land_can_be_played & 0x10000) && event == EVENT_CHANGE_TYPE)\n      {\n        int second_pass_iid = event_result;\n        inst->internal_card_id = second_pass_iid;\n        if (second_pass_iid != -1)\n          inst->backup_internal_card_id = (uint16_t)second_pass_iid;\n        land_can_be_played = (land_can_be_played & ~0x10000U) | 0x20000;\n        dispatch_event_raw(EVENT_CHANGE_TYPE);\n        land_can_be_played &= ~0x20000U;\n      }\n    }\n    if (event == EVENT_ABILITIES)\n    {\n      card_instance_t *counter_instance = get_card_instance(player, card);\n      uint32_t packed_types = counter_instance->targets[18].player;\n      uint32_t packed_counts = counter_instance->targets[18].card;\n      uint8_t counter_types[7] = {counter_instance->special_counter_type,\n                                  packed_types,\n                                  packed_types >> 8,\n                                  packed_types >> 16,\n                                  packed_types >> 24,\n                                  packed_counts >> 16,\n                                  packed_counts >> 24};\n      uint8_t counter_counts[7] = {counter_instance->special_counters,\n                                   counter_instance->counters2,\n                                   counter_instance->counters3,\n                                   counter_instance->counters4,\n                                   counter_instance->counters5,\n                                   packed_counts,\n                                   packed_counts >> 8};\n      int has_ability_counter = 0;\n      for (int i = 0; i < 7; ++i)\n        if ((uint8_t)(counter_types[i] + 0x70U) < 11 && counter_counts[i])\n        {\n          has_ability_counter = 1;\n          break;\n        }\n      if (has_ability_counter && (cards_data[iid].type & TYPE_PERMANENT) &&\n          !(cards_data[iid].type & TYPE_EFFECT))\n      {\n        if (count_counters(player, card, COUNTER_DEATHTOUCH))\n          inst->ext->sp_keywords |= SP_KEYWORD_DEATHTOUCH;\n        if (count_counters(player, card, COUNTER_HEXPROOF))\n          inst->ext->sp_keywords |= SP_KEYWORD_HEXPROOF;\n        if (count_counters(player, card, COUNTER_INDESTRUCTIBLE))\n          inst->ext->sp_keywords |= SP_KEYWORD_INDESTRUCTIBLE;\n        if (count_counters(player, card, COUNTER_LIFELINK))\n          inst->ext->sp_keywords |= SP_KEYWORD_LIFELINK;\n        if (count_counters(player, card, COUNTER_MENACE))\n          inst->ext->sp_keywords |= SP_KEYWORD_MENACE;\n        if (count_counters(player, card, COUNTER_VIGILANCE))\n          inst->ext->sp_keywords |= SP_KEYWORD_VIGILANCE;\n        if (count_counters(player, card, COUNTER_DOUBLE_STRIKE))\n          event_result |= KEYWORD_DOUBLE_STRIKE;\n        if (count_counters(player, card, COUNTER_FIRST_STRIKE))\n          event_result |= KEYWORD_FIRST_STRIKE;\n        if (count_counters(player, card, COUNTER_FLYING))\n          event_result |= KEYWORD_FLYING;\n        if (count_counters(player, card, COUNTER_REACH))\n          event_result |= KEYWORD_REACH;\n        if (count_counters(player, card, COUNTER_TRAMPLE))\n          event_result |= KEYWORD_TRAMPLE;\n      }\n      unsigned int restrictions = player_bits[player];\n      if ((restrictions & 0x1001f0) && (cards_data[iid].type & TYPE_PERMANENT) &&\n          !(cards_data[iid].type & TYPE_EFFECT))\n      {\n        if (restrictions & 0x10)\n          event_result &= ~KEYWORD_FIRST_STRIKE;\n        if (restrictions & 0x20)\n          event_result &= ~KEYWORD_FLYING;\n        if (restrictions & 0x40)\n          inst->ext->sp_keywords &= ~SP_KEYWORD_DEATHTOUCH;\n        if (restrictions & 0x80)\n          event_result &= ~KEYWORD_TRAMPLE;\n        if (restrictions & 0x100000)\n          event_result &= ~KEYWORD_SHROUD;\n        if (restrictions & 0x100)\n          inst->ext->sp_keywords &= ~SP_KEYWORD_HEXPROOF;\n      }\n      if (is_humiliated(player, card, AL_KEY))\n      {\n        if (is_humiliated(player, card, AL_DEFENDER))\n          event_result |= KEYWORD_DEFENDER;\n        if (is_humiliated(player, card, AL_INDESTRUCTIBLE))\n          inst->ext->sp_keywords |= SP_KEYWORD_INDESTRUCTIBLE;\n      }\n      if ((inst->state & 0x10000) && !(inst->ext->sp_keywords & SP_KEYWORD_HASTE))\n        inst->state |= STATE_SUMMON_SICK;\n    }\n    else if (event == EVENT_POWER)\n    {\n      if (event_result < 0)\n        event_result = 0;\n      if (inst->token_status & STATUS_BERSERK)\n        event_result = (unsigned int)event_result * 2U;\n    }\n  }\n  unsigned int result = event_result;\n  if (event == EVENT_TOUGHNESS &&\n      (inst->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)) == STATE_IN_PLAY &&\n      (cards_data[iid].type & TYPE_CREATURE) &&\n      (event_result <= 0 || event_result <= inst->damage_on_card) &&\n      !(inst->token_status & STATUS_CANNOT_BE_DESTROYED) && !(land_can_be_played & 0x204) &&\n      !EXE_DWORD(0x785e60))\n  {\n    kill_card(player, card, event_result < 1 ? KILL_STATE_BASED_ACTION : KILL_DESTROY);\n    EXE_FN(void, 0x477a90, void)();\n  }\n  if (EXE_DWORD(0x60a548))\n    pop_affected_card_stack();\n  if (event == EVENT_CHANGE_TYPE)\n  {\n    inst->internal_card_id = result;\n    if (result != UINT32_MAX)\n      inst->backup_internal_card_id = (uint16_t)result;\n    if ((cards_data[result].extra_ability & EA_MANA_SOURCE) ||\n        (is_what(player, card, TYPE_LAND) && mana_colors_added[player]))\n    {\n      uint16_t id = cards_data[result].id;\n      unsigned int mana = get_color_of_mana_produced_by_id(id, inst->info_slot, player);\n      if (mana == UINT32_MAX)\n        mana = (uint8_t)cards_ptr[id]->mana_source_colors;\n      inst->mana_color = (uint8_t)mana;\n      if (is_what(player, card, TYPE_LAND))\n        inst->mana_color |= (uint8_t)mana_colors_added[player];\n      int override = check_special_flags2(player, card, 0x40);\n      uint8_t current_mana = inst->mana_color;\n      if (override)\n        for (int color = 0; color < 7; ++color)\n        {\n          unsigned int bit = color_to_color_test(color);\n          if (current_mana & bit)\n          {\n            int bit_to_remove = color_to_color_test(color);\n            inst->mana_color &= (uint8_t)bit_to_remove ^ 0xff;\n            unsigned int replacement = color_to_color_test(mana_color_override[player][color]);\n            current_mana = (uint8_t)(replacement | inst->mana_color);\n            inst->mana_color = current_mana;\n          }\n          else\n            current_mana = inst->mana_color;\n        }\n      inst->card_color = current_mana;\n    }\n    if ((inst->token_status & STATUS_ANIMATED) && !(cards_data[result].type & TYPE_CREATURE))\n      for (int p = 0; p < 2; ++p)\n        for (int c = 0; c <= active_cards_count[p]; ++c)\n          if (in_play(p, c))\n          {\n            card_instance_t *aura = get_card_instance(p, c);\n            if (aura->damage_target_player == player && aura->damage_target_card == card &&\n                (cards_data[aura->internal_card_id].type & TYPE_ENCHANTMENT) &&\n                cards_ptr[cards_data[aura->internal_card_id].id]->subtype1 == 44)\n              kill_card(p, c, KILL_STATE_BASED_ACTION);\n          }\n    if (inst->state & STATE_IN_PLAY)\n      event_flags |= cards_data[inst->internal_card_id].extra_ability & 0x1ffc0000;\n    return result;\n  }\n  if (event == EVENT_ABILITIES)\n  {\n    inst->regen_status = result;\n    if ((inst->ext->sp_keywords & SP_KEYWORD_DEATHTOUCH) &&\n        (cards_data[iid].type & TYPE_PERMANENT) && !(cards_data[iid].type & TYPE_EFFECT))\n      inst->destroys_if_blocked |= 0x10;\n  }\n  else if (event == EVENT_POWER)\n    inst->power = (int16_t)result;\n  else if (event == EVENT_TOUGHNESS)\n    inst->toughness = (int16_t)result;\n  else if (event == EVENT_SET_COLOR)\n    inst->color = (uint8_t)result & COLOR_TEST_ANY_COLORED;\n  raw_base_pt = saved_raw_base;\n  return result;\n}",
+      "before_sha256": "b06d6a8a57bd4ff5aacf225edb7f422b87d573390cf0194fa1c9f6b00195bffa",
+      "after_sha256": "925851bae97988cab515486e48a66b3a1908228b6d96b48fe98756513ce7d476",
+      "event_core_cleanup": true,
+      "facts": {
+        "removed_gotos": 22,
+        "removed_lab_gotos": 15,
+        "source_lines_removed": 192,
+        "removed_placeholder_occurrences": 217,
+        "removed_placeholder_names": 14
+      },
+      "expanded_before_definition": "int get_abilities(int player, int card, event_t event, int new_attacking_card)\n{\n  uint8_t uVar1;\n  uint16_t uVar2;\n  card_ext_t *pcVar3;\n  card_instance_t *inst;\n  int iVar4;\n  unsigned int uVar5;\n  unsigned int uVar6;\n  int iVar7;\n  card_instance_t *pcVar8;\n  unsigned int uVar9;\n  uint8_t bVar10;\n  uint32_t uVar11;\n  uint32_t uVar12;\n  unsigned int uVar13;\n  \n\n _Bool \n\n      bVar14;\n  kill_t kill_mode;\n\n  while (\n\n        1\n\n            )\n  {\n    inst = get_card_instance(player, card);\n    uVar5 = inst->internal_card_id;\n    if (activation_card != uVar5)\n      break;\n    if (event == EVENT_CHANGE_TYPE)\n    {\n      return uVar5;\n    }\n    card = inst->parent_card;\n    player = inst->parent_controller;\n  }\n  if ((*((int*)(0x60a548))) != 0)\n  {\n    ((void (*)(void))(0x435C80))();\n  }\n  affected_card_controller = player;\n  affected_card = card;\n  if (uVar5 == 0xffffffff)\n  {\n    uVar5 = (unsigned int)inst->backup_internal_card_id;\n    inst->regen_status = inst->regen_status & 0xe0ffffff;\n  }\n  iVar4 = raw_base_pt;\n  attacking_card = new_attacking_card;\n  switch (event)\n  {\n  case EVENT_POWER:\n    if ((inst->regen_status & 0x4000000) != 0)\n    {\n      inst->regen_status = inst->regen_status & 0xfbffffff;\n      uVar6 = get_special_flags3_by_instance(inst);\n      if ((uVar6 & 0x100000) != 0)\n      {\n        uVar11 = inst->state;\n        raw_characteristic_pt = (int)cards_data[uVar5].toughness;\n        raw_base_pt = raw_characteristic_pt;\n        if (((uVar11 & 0x800002) == 2) && (0 < raw_characteristic_pt))\n        {\n          raw_base_pt = (int)(short)(cards_data[uVar5].toughness & 0xbfff);\n        }\n        event_result = raw_base_pt + inst->counter_toughness;\n        if ((*((int*)(0x60a548))) == 0)\n          goto code_r0x026cc906;\n        event = EVENT_TOUGHNESS;\n      LAB_026ccfcf:\n        dispatch_event_raw(event);\n        if (((land_can_be_played & 0x10000U) != 0) && (event == EVENT_CHANGE_TYPE))\n        {\n        LAB_026ccbf2:\n          iVar7 = event_result;\n          inst->internal_card_id = event_result;\n          if (iVar7 != -1)\n          {\n            inst->backup_internal_card_id = (uint16_t)iVar7;\n          }\n          land_can_be_played = land_can_be_played & 0xfffeffffU | 0x20000;\n          dispatch_event_raw(EVENT_CHANGE_TYPE);\n          land_can_be_played = land_can_be_played & 0xfffdffff;\n          goto LAB_026cc8ef;\n        }\n        goto LAB_026cc8df;\n      }\n      raw_characteristic_pt = (int)cards_data[uVar5].power;\n      raw_base_pt = raw_characteristic_pt;\n      if (((inst->state & 0x800002) == 2) && (0 < raw_characteristic_pt))\n      {\n        raw_base_pt = (int)(short)(cards_data[uVar5].power & 0xbfff);\n      }\n      event_result = inst->counter_power + raw_base_pt;\n      if ((*((int*)(0x60a548))) != 0)\n        goto LAB_026ccfcf;\n      goto LAB_026cd0d9;\n    }\n    uVar6 = (int)inst->power;\n    break;\n  case EVENT_TOUGHNESS:\n    if ((inst->regen_status & 0x2000000) != 0)\n    {\n      inst->regen_status = inst->regen_status & 0xfdffffff;\n      uVar6 = get_special_flags3_by_instance(inst);\n      if ((uVar6 & 0x100000) == 0)\n      {\n        raw_characteristic_pt = (int)cards_data[uVar5].toughness;\n        raw_base_pt = raw_characteristic_pt;\n        if (((inst->state & 0x800002) == 2) && (0 < raw_characteristic_pt))\n        {\n          raw_base_pt = (int)(short)(cards_data[uVar5].toughness & 0xbfff);\n        }\n        event_result = inst->counter_toughness + raw_base_pt;\n        if ((*((int*)(0x60a548))) == 0)\n          goto code_r0x026cc8f9;\n      }\n      else\n      {\n        raw_characteristic_pt = (int)cards_data[uVar5].power;\n        raw_base_pt = raw_characteristic_pt;\n        if (((inst->state & 0x800002) == 2) && (0 < raw_characteristic_pt))\n        {\n          raw_base_pt = (int)(short)(cards_data[uVar5].power & 0xbfff);\n        }\n        event_result = inst->counter_power + raw_base_pt;\n        if ((*((int*)(0x60a548))) == 0)\n          goto LAB_026cd0d9;\n        event = EVENT_POWER;\n      }\n      goto LAB_026ccfcf;\n    }\n    event_result = (int)inst->toughness;\n    uVar11 = inst->state;\n  code_r0x026cc906:\n    uVar12 = event_result;\n    if (((((uVar11 & 0x800022) == 2) && ((cards_data[uVar5].type & 2) != 0)) &&\n         ((event_result < 1 || (event_result <= (int)(unsigned int)inst->damage_on_card)))) &&\n        (((inst->token_status & 0x4000000) == 0 &&\n          ((land_can_be_played & 0x204U) == 0 && (*((int*)(0x785e60))) == 0))))\n    {\n      if (event_result < 1)\n      {\n        kill_mode = KILL_STATE_BASED_ACTION;\n      }\n      else\n      {\n        kill_mode = KILL_DESTROY;\n      }\n      kill_card(player, card, kill_mode);\n      ((void (*)(void))(0x477a90))();\n    }\n    if ((*((int*)(0x60a548))) != 0)\n    {\n      ((void (*)(void))(0x435CD0))();\n    }\n    goto LAB_026cc92c;\n  case EVENT_ABILITIES:\n    uVar13 = inst->regen_status;\n    uVar6 = uVar13;\n    if ((uVar13 & 0x8000000) != 0)\n    {\n      bVar14 = damage_card != uVar5;\n      inst->regen_status = uVar13 & 0xf7ffffff;\n      uVar6 = uVar13 & 0xf7ffffff;\n      if (bVar14)\n      {\n        uVar6 = cards_data[uVar5].static_ability;\n        uVar13 = uVar13 & 0x17000000 | uVar6;\n        if ((uVar6 & 0xf81f) != 0)\n        {\n          if ((uVar6 & 0xf800) != 0)\n          {\n            uVar9 = get_sleighted_protection(player, card, uVar6 & 0xf800);\n            uVar13 = ((uVar13 & 0xffff0000U) | (uVar6 & 0xffffU)) & 0xffff07ff | uVar9;\n          }\n          if ((uVar13 & 0x1f) != 0)\n          {\n            uVar6 = get_hacked_walk(player, card, uVar13 & 0x1f);\n            uVar13 = uVar13 & 0xffffffe0 | uVar6;\n          }\n        }\n\n        if ((((*((int*)(0x60a548))) != 0) && ((cards_data[uVar5].type & 0x47) != 0)) &&\n            (-1 < (char)cards_data[uVar5].type))\n        {\n          pcVar3 = inst->ext;\n          pcVar3->sp_keywords = 0;\n          pcVar3->sp_keywords2 = 0;\n          inst->targets[0x11].card = inst->targets[0x11].card & 0xffffff81;\n          inst->state = inst->state & 0xfffddfff;\n          inst->token_status = inst->token_status & 0xffff77ff;\n          remove_special_flags(player, card, 0x28000);\n          remove_special_flags2(player, card, 0x1000);\n          remove_special_flags2(player, card, 0x10);\n        }\n        event_result = uVar13;\n        if ((*((int*)(0x60a548))) != 0)\n          goto LAB_026ccfcf;\n        goto LAB_026ccce2;\n      }\n    }\n    break;\n  case EVENT_RECALC_DAMAGE:\n    event_result = (unsigned int)inst->damage_on_card;\n    uVar6 = (unsigned int)inst->damage_on_card;\n    if ((*((int*)(0x60a548))) != 0)\n      goto LAB_026ccfcf;\n    break;\n  case EVENT_SET_COLOR:\n    if (((inst->regen_status & 0x10000000) == 0) ||\n        (bVar14 = damage_card == uVar5, inst->regen_status = inst->regen_status & 0xefffffff,\n         bVar14))\n    {\n      uVar6 = (int)inst->color;\n    }\n    else\n    {\n      bVar10 = inst->initial_color;\n      if (bVar10 == 0)\n      {\n        if ((cards_data[uVar5].type & 1) == 0)\n        {\n          if (((((cards_data[uVar5].type & 0x40) == 0) ||\n                ((cards_data[uVar5].extra_ability & 0x1000) == 0)) ||\n               (iVar7 = get_internal_card_id_from_csv_id((unsigned int)cards_data[uVar5].id),\n                (cards_data[iVar7].type & 0x40) == 0)) ||\n              ((cards_data[iVar7].extra_ability & 0x1000) == 0))\n          {\n            bVar10 = cards_data[uVar5].color;\n            goto code_r0x026cd446;\n          }\n        }\n        else if (cards_data[uVar5].id == 0x22d4)\n        {\n          event_result = 8;\n          goto code_r0x026cc995;\n        }\n        event_result = 0;\n      }\n      else\n      {\n      code_r0x026cd446:\n        event_result = bVar10 & 0x3e;\n      }\n    code_r0x026cc995:\n      if ((*((int*)(0x60a548))) != 0)\n        goto LAB_026ccfcf;\n    code_r0x026cc8f9:\n      uVar6 = event_result;\n      if (event == EVENT_TOUGHNESS)\n      {\n        uVar11 = inst->state;\n        goto code_r0x026cc906;\n      }\n    }\n    break;\n  default:\n    event_result = 0;\n    if ((*((int*)(0x60a548))) != 0)\n      goto LAB_026ccfcf;\n  LAB_026cc8df:\n    if (event == EVENT_ABILITIES)\n    {\n    LAB_026ccce2:\n\n      pcVar8 = get_card_instance(player, card);\n      if (((((((uint8_t)(pcVar8->special_counter_type + 0x70) < 0xb) &&\n              (pcVar8->special_counters != '\\0')) ||\n             (((uint8_t)((char)pcVar8->targets[0x12].player + 0x70U) < 0xb &&\n               (pcVar8->counters2 != '\\0')))) ||\n            ((((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].player + 1) + 0x70U) < 0xb &&\n               (pcVar8->counters3 != '\\0')) ||\n              (((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].player + 2) + 0x70U) < 0xb &&\n                (pcVar8->counters4 != '\\0')))))) ||\n           ((((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].player + 3) + 0x70U) < 0xb &&\n              (pcVar8->counters5 != '\\0')) ||\n             (((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].card + 2) + 0x70U) < 0xb &&\n               ((char)pcVar8->targets[0x12].card != '\\0')))))) ||\n          (((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].card + 3) + 0x70U) < 0xb &&\n            (*(char *)((int)&pcVar8->targets[0x12].card + 1) != '\\0'))))\n      {\n        if (((cards_data[uVar5].type & 0x47) != 0) && (-1 < (char)cards_data[uVar5].type))\n        {\n          if (count_counters(player, card, COUNTER_DEATHTOUCH) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x200;\n          }\n          if (count_counters(player, card, COUNTER_HEXPROOF) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800000;\n          }\n          if (count_counters(player, card, COUNTER_INDESTRUCTIBLE) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800;\n          }\n          if (count_counters(player, card, COUNTER_LIFELINK) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 2;\n          }\n          if (count_counters(player, card, COUNTER_MENACE) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x10000;\n          }\n          if (count_counters(player, card, COUNTER_VIGILANCE) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 8;\n          }\n          if (count_counters(player, card, COUNTER_DOUBLE_STRIKE) != 0)\n          {\n            event_result = event_result | 0x40000000;\n          }\n          if (count_counters(player, card, COUNTER_FIRST_STRIKE) != 0)\n          {\n            event_result = event_result | 0x100;\n          }\n          if (count_counters(player, card, COUNTER_FLYING) != 0)\n          {\n            event_result = event_result | 0x20;\n          }\n          if (count_counters(player, card, COUNTER_REACH) != 0)\n          {\n            event_result = event_result | 0x400;\n          }\n          if (count_counters(player, card, COUNTER_TRAMPLE) != 0)\n          {\n            event_result = event_result | 0x80;\n          }\n          goto LAB_026ccd94;\n        }\n      }\n      else\n      {\n      LAB_026ccd94:\n        uVar6 = (unsigned int)player_bits[player];\n\n        if ((((uVar6 & 0x1001f0) != 0) && ((cards_data[uVar5].type & 0x47) != 0)) &&\n            (-1 < (char)cards_data[uVar5].type))\n        {\n          if ((uVar6 & 0x10) != 0)\n          {\n            event_result = event_result & 0xfffffeff;\n          }\n          if ((uVar6 & 0x20) != 0)\n          {\n            event_result = event_result & 0xffffffdf;\n          }\n          if ((uVar6 & 0x40) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords & 0xfffffdff;\n          }\n          if ((uVar6 & 0x80) != 0)\n          {\n            event_result = event_result & 0xffffff7f;\n          }\n          if ((uVar6 & 0x100000) != 0)\n          {\n            event_result = event_result & 0xfffdffff;\n          }\n          if ((uVar6 & 0x100) != 0)\n          {\n            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords & 0xff7fffff;\n          }\n        }\n      }\n      if (is_humiliated(player, card, AL_KEY) != 0)\n      {\n        if (is_humiliated(player, card, AL_DEFENDER) != 0)\n        {\n          event_result = event_result | 0x800000;\n        }\n        if (is_humiliated(player, card, AL_INDESTRUCTIBLE) != 0)\n        {\n          (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800;\n        }\n      }\n      if (((inst->state & 0x10000) != 0) && (((inst->ext)->sp_keywords & 4) == 0))\n      {\n        inst->state = inst->state | 0x20000;\n      }\n      event = EVENT_ABILITIES;\n      uVar6 = event_result;\n    }\n    else\n    {\n    LAB_026cc8ef:\n      if (event != EVENT_POWER)\n        goto code_r0x026cc8f9;\n    LAB_026cd0d9:\n      if (event_result < 0)\n      {\n        event_result = 0;\n      }\n      event = EVENT_POWER;\n      uVar6 = event_result;\n      if ((inst->token_status & 0x4000) != 0)\n      {\n        uVar6 = event_result * 2;\n      }\n    }\n    break;\n  case EVENT_CHANGE_TYPE:\n    if (inst->internal_card_id == -1)\n    {\n      event_result = -1;\n      uVar6 = event_result;\n    }\n    else\n    {\n      uVar6 = uVar5;\n      if (((inst->regen_status & 0x1000000) != 0) &&\n          (((int)uVar5 < (*((int*)(0x628c64))) || ((*((int*)(0x786d5c))) < (int)uVar5))))\n      {\n        uVar12 = inst->original_internal_card_id;\n        inst->regen_status = inst->regen_status & 0xfeffffff;\n        inst->internal_card_id = uVar12;\n        inst->backup_internal_card_id = (uint16_t)uVar12;\n        uVar1 = cards_data[uVar12].color;\n        inst->destroys_if_blocked = '\\0';\n        inst->mana_color = uVar1;\n        inst->token_status = inst->token_status & 0xffffefff;\n        remove_special_flags2(player, card, 0x484);\n        if (is_what(player, card, 0x80) == 0)\n        {\n          reset_subtypes_from_instance(inst, uVar5);\n        }\n        event_result = uVar12;\n        if ((*((int*)(0x60a548))) == 0)\n          goto code_r0x026cc9f0;\n        dispatch_event_raw(EVENT_CHANGE_TYPE);\n        if ((land_can_be_played & 0x10000U) != 0)\n          goto LAB_026ccbf2;\n        goto LAB_026cc8ef;\n      }\n    }\n  }\n  event_result = uVar6;\n  uVar12 = event_result;\n  if ((*((int*)(0x60a548))) != 0)\n  {\n    ((void (*)(void))(0x435CD0))();\n  }\n  if (event == EVENT_CHANGE_TYPE)\n  {\n  code_r0x026cc9f0:\n    inst->internal_card_id = uVar12;\n    if (uVar12 != 0xffffffff)\n    {\n      inst->backup_internal_card_id = (uint16_t)uVar12;\n    }\n    if (((cards_data[uVar12].extra_ability & 0x1000) != 0) ||\n        ((iVar4 = is_what(player, card, 1), iVar4 != 0 && (mana_colors_added[player] != 0))))\n    {\n      uVar2 = cards_data[uVar12].id;\n      uVar5 = get_color_of_mana_produced_by_id((unsigned int)uVar2, inst->info_slot, player);\n      if (uVar5 == 0xffffffff)\n      {\n        uVar5 = (unsigned int)(uint8_t)cards_ptr[uVar2]->mana_source_colors;\n      }\n      inst->mana_color = (uint8_t)uVar5;\n      if (is_what(player, card, 1) != 0)\n      {\n        inst->mana_color = inst->mana_color | (uint8_t)mana_colors_added[player];\n      }\n      iVar4 = check_special_flags2(player, card, 0x40);\n      bVar10 = inst->mana_color;\n      uVar5 = (unsigned int)bVar10;\n      if (iVar4 != 0)\n      {\n        iVar4 = 0;\n        do\n        {\n          uVar6 = color_to_color_test(iVar4);\n          if ((uVar5 & 0xff & uVar6) == 0)\n          {\n            uVar5 = (unsigned int)inst->mana_color;\n          }\n          else\n          {\n            iVar7 = color_to_color_test(iVar4);\n            inst->mana_color = inst->mana_color & ((uint8_t)iVar7 ^ 0xff);\n            uVar5 = color_to_color_test(mana_color_override[player][iVar4]);\n            uVar6 = (unsigned int)inst->mana_color | ((unsigned int)inst->card_color << 8) |\n                    ((unsigned int)inst->unk5a << 16) | ((unsigned int)inst->unk5b << 24);\n            uVar5 = uVar5 | uVar6;\n            inst->mana_color = (uint8_t)uVar5;\n          }\n          iVar4 = iVar4 + 1;\n        } while (iVar4 != 7);\n        bVar10 = (uint8_t)uVar5;\n      }\n      inst->card_color = bVar10;\n    }\n    if (((inst->token_status & 0x40) != 0) && ((cards_data[uVar12].type & 2) == 0))\n    {\n      iVar4 = 0;\n      do\n      {\n        iVar7 = 0;\n        if (-1 < active_cards_count[iVar4])\n        {\n          do\n          {\n            pcVar8 = in_play(iVar4, iVar7);\n\n            if ((((pcVar8 != (card_instance_t *)0x0) && (pcVar8 = get_card_instance(iVar4, iVar7),\n                                                         pcVar8->damage_target_player == player)) &&\n                 (pcVar8->damage_target_card == card)) &&\n                (((cards_data[pcVar8->internal_card_id].type & 4) != 0 &&\n                  (cards_ptr[cards_data[pcVar8->internal_card_id].id]->subtype1 == 0x2c))))\n            {\n              kill_card(iVar4, iVar7, KILL_STATE_BASED_ACTION);\n            }\n            iVar7 = iVar7 + 1;\n          } while (iVar7 <= active_cards_count[iVar4]);\n        }\n        iVar4 = iVar4 + 1;\n      } while (iVar4 != 2);\n    }\n    if ((inst->state & 2) == 0)\n    {\n      return uVar12;\n    }\n    event_flags = event_flags | cards_data[inst->internal_card_id].extra_ability & 0x1ffc0000;\n    return uVar12;\n  }\n  if (event == EVENT_ABILITIES)\n  {\n    inst->regen_status = uVar12;\n\n    if (((((inst->ext)->sp_keywords & 0x200) != 0) && ((cards_data[uVar5].type & 0x47) != 0)) &&\n        (-1 < (char)cards_data[uVar5].type))\n    {\n      inst->destroys_if_blocked = inst->destroys_if_blocked | 0x10;\n    }\n  }\n  else if (event < EVENT_RECALC_DAMAGE)\n  {\n    if (event == EVENT_POWER)\n    {\n      inst->power = (int16_t)uVar12;\n    }\n    else if (event == EVENT_TOUGHNESS)\n    {\n    LAB_026cc92c:\n      inst->toughness = (int16_t)uVar12;\n    }\n  }\n  else if (event == EVENT_SET_COLOR)\n  {\n    inst->color = (uint8_t)uVar12 & 0x3e;\n  }\n  raw_base_pt = iVar4;\n  return uVar12;\n}",
+      "expanded_after_definition": "int get_abilities(int player, int card, event_t event, int new_attacking_card)\n{\n  card_instance_t *inst;\n  unsigned int iid;\n  for (;;)\n  {\n    inst = get_card_instance(player, card);\n    iid = inst->internal_card_id;\n    if (iid != activation_card)\n      break;\n    if (event == EVENT_CHANGE_TYPE)\n      return iid;\n    card = inst->parent_card;\n    player = inst->parent_controller;\n  }\n  if ((*((int*)(0x60a548))))\n    ((void (*)(void))(0x435C80))();\n  affected_card_controller = player;\n  affected_card = card;\n  if (iid == \n\n            0xffffffffU\n\n                      )\n  {\n    iid = inst->backup_internal_card_id;\n    inst->regen_status &= ~KEYWORD_RECALC_ALL;\n  }\n  int saved_raw_base = raw_base_pt;\n  attacking_card = new_attacking_card;\n  int recalculate = 0;\n  switch (event)\n  {\n  case EVENT_POWER:\n    if (inst->regen_status & KEYWORD_RECALC_POWER)\n    {\n      inst->regen_status &= ~KEYWORD_RECALC_POWER;\n      int swap = get_special_flags3_by_instance(inst) & SF3_SWITCH_POW_TGH;\n      raw_characteristic_pt = swap ? cards_data[iid].toughness : cards_data[iid].power;\n      raw_base_pt = raw_characteristic_pt;\n      if ((inst->state & (STATE_OUBLIETTED | STATE_IN_PLAY)) == STATE_IN_PLAY &&\n          raw_characteristic_pt > 0)\n        raw_base_pt =\n            (int16_t)((swap ? cards_data[iid].toughness : cards_data[iid].power) & 0xbfff);\n      event_result = raw_base_pt + (swap ? inst->counter_toughness : inst->counter_power);\n      if (swap)\n        event = EVENT_TOUGHNESS;\n      recalculate = 1;\n    }\n    else\n      event_result = inst->power;\n    break;\n  case EVENT_TOUGHNESS:\n    if (inst->regen_status & KEYWORD_RECALC_TOUGHNESS)\n    {\n      inst->regen_status &= ~KEYWORD_RECALC_TOUGHNESS;\n      int swap = get_special_flags3_by_instance(inst) & SF3_SWITCH_POW_TGH;\n      raw_characteristic_pt = swap ? cards_data[iid].power : cards_data[iid].toughness;\n      raw_base_pt = raw_characteristic_pt;\n      if ((inst->state & (STATE_OUBLIETTED | STATE_IN_PLAY)) == STATE_IN_PLAY &&\n          raw_characteristic_pt > 0)\n        raw_base_pt =\n            (int16_t)((swap ? cards_data[iid].power : cards_data[iid].toughness) & 0xbfff);\n      event_result = raw_base_pt + (swap ? inst->counter_power : inst->counter_toughness);\n      if (swap)\n        event = EVENT_POWER;\n      recalculate = 1;\n    }\n    else\n      event_result = inst->toughness;\n    break;\n  case EVENT_ABILITIES:\n  {\n    unsigned int keywords = inst->regen_status;\n    if (keywords & KEYWORD_RECALC_ABILITIES)\n    {\n      inst->regen_status = keywords & ~KEYWORD_RECALC_ABILITIES;\n      if (damage_card == iid)\n        keywords &= ~KEYWORD_RECALC_ABILITIES;\n      else\n      {\n        unsigned int base_keywords = cards_data[iid].static_ability;\n        keywords = (keywords & 0x17000000U) | base_keywords;\n        if (base_keywords & 0xf81f)\n        {\n          if (base_keywords & KEYWORD_PROT_COLORED)\n          {\n            unsigned int protections =\n                get_sleighted_protection(player, card, base_keywords & KEYWORD_PROT_COLORED);\n            keywords =\n                (((keywords & 0xffff0000U) | (base_keywords & 0xffffU)) & ~KEYWORD_PROT_COLORED) |\n                protections;\n          }\n          if (keywords & KEYWORD_BASIC_LANDWALK)\n          {\n            unsigned int landwalk =\n                get_hacked_walk(player, card, keywords & KEYWORD_BASIC_LANDWALK);\n            keywords = (keywords & ~KEYWORD_BASIC_LANDWALK) | landwalk;\n          }\n        }\n        if ((*((int*)(0x60a548))) && (cards_data[iid].type & TYPE_PERMANENT) &&\n            !(cards_data[iid].type & TYPE_EFFECT))\n        {\n          inst->ext->sp_keywords = 0;\n          inst->ext->sp_keywords2 = 0;\n          inst->targets[17].card &= 0xffffff81;\n          inst->state &= 0xfffddfff;\n          inst->token_status &= 0xffff77ff;\n          remove_special_flags(player, card, 0x28000);\n          remove_special_flags2(player, card, 0x1000);\n          remove_special_flags2(player, card, 0x10);\n        }\n        recalculate = 1;\n      }\n    }\n    event_result = keywords;\n    break;\n  }\n  case EVENT_RECALC_DAMAGE:\n    event_result = inst->damage_on_card;\n    recalculate = 1;\n    break;\n  case EVENT_SET_COLOR:\n    if (!(inst->regen_status & KEYWORD_RECALC_SET_COLOR))\n      event_result = inst->color;\n    else\n    {\n      int is_damage = damage_card == iid;\n      inst->regen_status &= ~KEYWORD_RECALC_SET_COLOR;\n      if (is_damage)\n        event_result = inst->color;\n      else\n      {\n        unsigned char color = inst->initial_color;\n        if (color)\n          event_result = color & COLOR_TEST_ANY_COLORED;\n        else if (cards_data[iid].type & TYPE_LAND)\n          event_result = cards_data[iid].id == CARD_ID_DRYAD_ARBOR ? COLOR_TEST_GREEN : 0;\n        else\n        {\n          int mana_artifact = 0;\n          if ((cards_data[iid].type & TYPE_ARTIFACT) &&\n              (cards_data[iid].extra_ability & EA_MANA_SOURCE))\n          {\n            int original_iid = get_internal_card_id_from_csv_id(cards_data[iid].id);\n            mana_artifact = (cards_data[original_iid].type & TYPE_ARTIFACT) &&\n                            (cards_data[original_iid].extra_ability & EA_MANA_SOURCE);\n          }\n          event_result = mana_artifact ? 0 : cards_data[iid].color & COLOR_TEST_ANY_COLORED;\n        }\n        recalculate = 1;\n      }\n    }\n    break;\n  case EVENT_CHANGE_TYPE:\n    if (inst->internal_card_id == -1)\n      event_result = -1;\n    else if ((inst->regen_status & KEYWORD_RECALC_CHANGE_TYPE) &&\n             ((int)iid < (*((int*)(0x628c64))) || (int)iid > (*((int*)(0x786d5c)))))\n    {\n      unsigned int original_iid = inst->original_internal_card_id;\n      inst->regen_status &= ~KEYWORD_RECALC_CHANGE_TYPE;\n      inst->internal_card_id = original_iid;\n      inst->backup_internal_card_id = (uint16_t)original_iid;\n      inst->mana_color = cards_data[original_iid].color;\n      inst->destroys_if_blocked = 0;\n      inst->token_status &= ~STATUS_LEGACY_TYPECHANGE;\n      remove_special_flags2(player, card, 0x484);\n      if (!is_what(player, card, TYPE_EFFECT))\n        reset_subtypes_from_instance(inst, iid);\n      event_result = original_iid;\n      recalculate = 1;\n    }\n    else\n      event_result = iid;\n    break;\n  default:\n    event_result = 0;\n    recalculate = 1;\n    break;\n  }\n\n  if (recalculate)\n  {\n    if ((*((int*)(0x60a548))))\n    {\n      dispatch_event_raw(event);\n      if ((land_can_be_played & 0x10000) && event == EVENT_CHANGE_TYPE)\n      {\n        int second_pass_iid = event_result;\n        inst->internal_card_id = second_pass_iid;\n        if (second_pass_iid != -1)\n          inst->backup_internal_card_id = (uint16_t)second_pass_iid;\n        land_can_be_played = (land_can_be_played & ~0x10000U) | 0x20000;\n        dispatch_event_raw(EVENT_CHANGE_TYPE);\n        land_can_be_played &= ~0x20000U;\n      }\n    }\n    if (event == EVENT_ABILITIES)\n    {\n      card_instance_t *counter_instance = get_card_instance(player, card);\n      uint32_t packed_types = counter_instance->targets[18].player;\n      uint32_t packed_counts = counter_instance->targets[18].card;\n      uint8_t counter_types[7] = {counter_instance->special_counter_type,\n                                  packed_types,\n                                  packed_types >> 8,\n                                  packed_types >> 16,\n                                  packed_types >> 24,\n                                  packed_counts >> 16,\n                                  packed_counts >> 24};\n      uint8_t counter_counts[7] = {counter_instance->special_counters,\n                                   counter_instance->counters2,\n                                   counter_instance->counters3,\n                                   counter_instance->counters4,\n                                   counter_instance->counters5,\n                                   packed_counts,\n                                   packed_counts >> 8};\n      int has_ability_counter = 0;\n      for (int i = 0; i < 7; ++i)\n        if ((uint8_t)(counter_types[i] + 0x70U) < 11 && counter_counts[i])\n        {\n          has_ability_counter = 1;\n          break;\n        }\n      if (has_ability_counter && (cards_data[iid].type & TYPE_PERMANENT) &&\n          !(cards_data[iid].type & TYPE_EFFECT))\n      {\n        if (count_counters(player, card, COUNTER_DEATHTOUCH))\n          inst->ext->sp_keywords |= SP_KEYWORD_DEATHTOUCH;\n        if (count_counters(player, card, COUNTER_HEXPROOF))\n          inst->ext->sp_keywords |= SP_KEYWORD_HEXPROOF;\n        if (count_counters(player, card, COUNTER_INDESTRUCTIBLE))\n          inst->ext->sp_keywords |= SP_KEYWORD_INDESTRUCTIBLE;\n        if (count_counters(player, card, COUNTER_LIFELINK))\n          inst->ext->sp_keywords |= SP_KEYWORD_LIFELINK;\n        if (count_counters(player, card, COUNTER_MENACE))\n          inst->ext->sp_keywords |= SP_KEYWORD_MENACE;\n        if (count_counters(player, card, COUNTER_VIGILANCE))\n          inst->ext->sp_keywords |= SP_KEYWORD_VIGILANCE;\n        if (count_counters(player, card, COUNTER_DOUBLE_STRIKE))\n          event_result |= KEYWORD_DOUBLE_STRIKE;\n        if (count_counters(player, card, COUNTER_FIRST_STRIKE))\n          event_result |= KEYWORD_FIRST_STRIKE;\n        if (count_counters(player, card, COUNTER_FLYING))\n          event_result |= KEYWORD_FLYING;\n        if (count_counters(player, card, COUNTER_REACH))\n          event_result |= KEYWORD_REACH;\n        if (count_counters(player, card, COUNTER_TRAMPLE))\n          event_result |= KEYWORD_TRAMPLE;\n      }\n      unsigned int restrictions = player_bits[player];\n      if ((restrictions & 0x1001f0) && (cards_data[iid].type & TYPE_PERMANENT) &&\n          !(cards_data[iid].type & TYPE_EFFECT))\n      {\n        if (restrictions & 0x10)\n          event_result &= ~KEYWORD_FIRST_STRIKE;\n        if (restrictions & 0x20)\n          event_result &= ~KEYWORD_FLYING;\n        if (restrictions & 0x40)\n          inst->ext->sp_keywords &= ~SP_KEYWORD_DEATHTOUCH;\n        if (restrictions & 0x80)\n          event_result &= ~KEYWORD_TRAMPLE;\n        if (restrictions & 0x100000)\n          event_result &= ~KEYWORD_SHROUD;\n        if (restrictions & 0x100)\n          inst->ext->sp_keywords &= ~SP_KEYWORD_HEXPROOF;\n      }\n      if (is_humiliated(player, card, AL_KEY))\n      {\n        if (is_humiliated(player, card, AL_DEFENDER))\n          event_result |= KEYWORD_DEFENDER;\n        if (is_humiliated(player, card, AL_INDESTRUCTIBLE))\n          inst->ext->sp_keywords |= SP_KEYWORD_INDESTRUCTIBLE;\n      }\n      if ((inst->state & 0x10000) && !(inst->ext->sp_keywords & SP_KEYWORD_HASTE))\n        inst->state |= STATE_SUMMON_SICK;\n    }\n    else if (event == EVENT_POWER)\n    {\n      if (event_result < 0)\n        event_result = 0;\n      if (inst->token_status & STATUS_BERSERK)\n        event_result = (unsigned int)event_result * 2U;\n    }\n  }\n  unsigned int result = event_result;\n  if (event == EVENT_TOUGHNESS &&\n      (inst->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)) == STATE_IN_PLAY &&\n      (cards_data[iid].type & TYPE_CREATURE) &&\n      (event_result <= 0 || event_result <= inst->damage_on_card) &&\n      !(inst->token_status & STATUS_CANNOT_BE_DESTROYED) && !(land_can_be_played & 0x204) &&\n      !(*((int*)(0x785e60))))\n  {\n    kill_card(player, card, event_result < 1 ? KILL_STATE_BASED_ACTION : KILL_DESTROY);\n    ((void (*)(void))(0x477a90))();\n  }\n  if ((*((int*)(0x60a548))))\n    ((void (*)(void))(0x435CD0))();\n  if (event == EVENT_CHANGE_TYPE)\n  {\n    inst->internal_card_id = result;\n    if (result != \n\n                 0xffffffffU\n\n                           )\n      inst->backup_internal_card_id = (uint16_t)result;\n    if ((cards_data[result].extra_ability & EA_MANA_SOURCE) ||\n        (is_what(player, card, TYPE_LAND) && mana_colors_added[player]))\n    {\n      uint16_t id = cards_data[result].id;\n      unsigned int mana = get_color_of_mana_produced_by_id(id, inst->info_slot, player);\n      if (mana == \n\n                 0xffffffffU\n\n                           )\n        mana = (uint8_t)cards_ptr[id]->mana_source_colors;\n      inst->mana_color = (uint8_t)mana;\n      if (is_what(player, card, TYPE_LAND))\n        inst->mana_color |= (uint8_t)mana_colors_added[player];\n      int override = check_special_flags2(player, card, 0x40);\n      uint8_t current_mana = inst->mana_color;\n      if (override)\n        for (int color = 0; color < 7; ++color)\n        {\n          unsigned int bit = color_to_color_test(color);\n          if (current_mana & bit)\n          {\n            int bit_to_remove = color_to_color_test(color);\n            inst->mana_color &= (uint8_t)bit_to_remove ^ 0xff;\n            unsigned int replacement = color_to_color_test(mana_color_override[player][color]);\n            current_mana = (uint8_t)(replacement | inst->mana_color);\n            inst->mana_color = current_mana;\n          }\n          else\n            current_mana = inst->mana_color;\n        }\n      inst->card_color = current_mana;\n    }\n    if ((inst->token_status & STATUS_ANIMATED) && !(cards_data[result].type & TYPE_CREATURE))\n      for (int p = 0; p < 2; ++p)\n        for (int c = 0; c <= active_cards_count[p]; ++c)\n          if (in_play(p, c))\n          {\n            card_instance_t *aura = get_card_instance(p, c);\n            if (aura->damage_target_player == player && aura->damage_target_card == card &&\n                (cards_data[aura->internal_card_id].type & TYPE_ENCHANTMENT) &&\n                cards_ptr[cards_data[aura->internal_card_id].id]->subtype1 == 44)\n              kill_card(p, c, KILL_STATE_BASED_ACTION);\n          }\n    if (inst->state & STATE_IN_PLAY)\n      event_flags |= cards_data[inst->internal_card_id].extra_ability & 0x1ffc0000;\n    return result;\n  }\n  if (event == EVENT_ABILITIES)\n  {\n    inst->regen_status = result;\n    if ((inst->ext->sp_keywords & SP_KEYWORD_DEATHTOUCH) &&\n        (cards_data[iid].type & TYPE_PERMANENT) && !(cards_data[iid].type & TYPE_EFFECT))\n      inst->destroys_if_blocked |= 0x10;\n  }\n  else if (event == EVENT_POWER)\n    inst->power = (int16_t)result;\n  else if (event == EVENT_TOUGHNESS)\n    inst->toughness = (int16_t)result;\n  else if (event == EVENT_SET_COLOR)\n    inst->color = (uint8_t)result & COLOR_TEST_ANY_COLORED;\n  raw_base_pt = saved_raw_base;\n  return result;\n}"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_event_arbitrary_to_one_card_with_initial_event_result",
+      "before_definition": "int dispatch_event_arbitrary_to_one_card_with_initial_event_result(\n    int player, int card, event_t event, int new_affected_card_controller, int new_affected_card,\n    int new_attacking_card_controller, int new_attacking_card, int initial_event_result)\n{\n  int result;\n  uint32_t uVar2;\n\n  push_affected_card_stack();\n  uVar2 = trigger_condition;\n  event_result = initial_event_result;\n  affected_card_controller = new_affected_card_controller;\n  affected_card = new_affected_card;\n  attacking_card_controller = new_attacking_card_controller;\n  attacking_card = new_attacking_card;\n  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))\n  {\n    trigger_condition = 0xffffffff;\n  }\n  event_rval = call_card_function(player, card, event);\n  result = event_result;\n  trigger_condition = uVar2;\n  pop_affected_card_stack();\n  return result;\n}",
+      "after_definition": "int dispatch_event_arbitrary_to_one_card_with_initial_event_result(\n    int player, int card, event_t event, int new_affected_card_controller, int new_affected_card,\n    int new_attacking_card_controller, int new_attacking_card, int initial_event_result)\n{\n  int result;\n  uint32_t saved_trigger_condition;\n\n  push_affected_card_stack();\n  saved_trigger_condition = trigger_condition;\n  event_result = initial_event_result;\n  affected_card_controller = new_affected_card_controller;\n  affected_card = new_affected_card;\n  attacking_card_controller = new_attacking_card_controller;\n  attacking_card = new_attacking_card;\n  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))\n  {\n    trigger_condition = 0xffffffff;\n  }\n  event_rval = call_card_function(player, card, event);\n  result = event_result;\n  trigger_condition = saved_trigger_condition;\n  pop_affected_card_stack();\n  return result;\n}",
+      "before_sha256": "639029c8e396b0a5d2d1684a42d02f1975a00e24f5a4b5f4e733fa24f621eef1",
+      "after_sha256": "d1aecb252468e9ca09abe3022b9f3d7f8151187c6bb398b9a9320b74634884a2",
+      "event_core_cleanup": true,
+      "local_identifier_projection": {
+        "uVar2": "saved_trigger_condition"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 3,
+        "removed_placeholder_names": 1
+      },
+      "expanded_local_identifier_projection_verified": true,
+      "expanded_projection_ignores_only_cpp_whitespace": true,
+      "expanded_before_definition": "int dispatch_event_arbitrary_to_one_card_with_initial_event_result(\n    int player, int card, event_t event, int new_affected_card_controller, int new_affected_card,\n    int new_attacking_card_controller, int new_attacking_card, int initial_event_result)\n{\n  int result;\n  uint32_t uVar2;\n\n  ((void (*)(void))(0x435C80))();\n  uVar2 = trigger_condition;\n  event_result = initial_event_result;\n  affected_card_controller = new_affected_card_controller;\n  affected_card = new_affected_card;\n  attacking_card_controller = new_attacking_card_controller;\n  attacking_card = new_attacking_card;\n  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))\n  {\n    trigger_condition = 0xffffffff;\n  }\n  event_rval = call_card_function(player, card, event);\n  result = event_result;\n  trigger_condition = uVar2;\n  ((void (*)(void))(0x435CD0))();\n  return result;\n}",
+      "expanded_after_definition": "int dispatch_event_arbitrary_to_one_card_with_initial_event_result(\n    int player, int card, event_t event, int new_affected_card_controller, int new_affected_card,\n    int new_attacking_card_controller, int new_attacking_card, int initial_event_result)\n{\n  int result;\n  uint32_t saved_trigger_condition;\n\n  ((void (*)(void))(0x435C80))();\n  saved_trigger_condition = trigger_condition;\n  event_result = initial_event_result;\n  affected_card_controller = new_affected_card_controller;\n  affected_card = new_affected_card;\n  attacking_card_controller = new_attacking_card_controller;\n  attacking_card = new_attacking_card;\n  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))\n  {\n    trigger_condition = 0xffffffff;\n  }\n  event_rval = call_card_function(player, card, event);\n  result = event_result;\n  trigger_condition = saved_trigger_condition;\n  ((void (*)(void))(0x435CD0))();\n  return result;\n}"
+    },
+    {
+      "source": "functions/events.c",
+      "name": "dispatch_event_with_attacker_and_initial_event_result",
+      "before_definition": "int dispatch_event_with_attacker_and_initial_event_result(int new_affected_card_controller,\n                                                          int new_affected_card, event_t event,\n                                                          int new_attacking_card_controller,\n                                                          int new_attacking_card,\n                                                          int initial_event_result)\n{\n  int result;\n  uint32_t uVar2;\n\n  push_affected_card_stack();\n  uVar2 = trigger_condition;\n  event_result = initial_event_result;\n  affected_card_controller = new_affected_card_controller;\n  affected_card = new_affected_card;\n  attacking_card_controller = new_attacking_card_controller;\n  attacking_card = new_attacking_card;\n  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))\n  {\n    trigger_condition = 0xffffffff;\n  }\n  dispatch_event_raw(event);\n  result = event_result;\n  trigger_condition = uVar2;\n  pop_affected_card_stack();\n  return result;\n}",
+      "after_definition": "int dispatch_event_with_attacker_and_initial_event_result(int new_affected_card_controller,\n                                                          int new_affected_card, event_t event,\n                                                          int new_attacking_card_controller,\n                                                          int new_attacking_card,\n                                                          int initial_event_result)\n{\n  int result;\n  uint32_t saved_trigger_condition;\n\n  push_affected_card_stack();\n  saved_trigger_condition = trigger_condition;\n  event_result = initial_event_result;\n  affected_card_controller = new_affected_card_controller;\n  affected_card = new_affected_card;\n  attacking_card_controller = new_attacking_card_controller;\n  attacking_card = new_attacking_card;\n  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))\n  {\n    trigger_condition = 0xffffffff;\n  }\n  dispatch_event_raw(event);\n  result = event_result;\n  trigger_condition = saved_trigger_condition;\n  pop_affected_card_stack();\n  return result;\n}",
+      "before_sha256": "3c3c3115d182f0dc8ed9f36e1f2586f2ee448dad9b034eb226d77f6a681e7f5e",
+      "after_sha256": "db8389e8d0ff3c71403e40465f39135a83431aa82537e43c1fd71992f3d28b54",
+      "event_core_cleanup": true,
+      "local_identifier_projection": {
+        "uVar2": "saved_trigger_condition"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 3,
+        "removed_placeholder_names": 1
+      },
+      "expanded_local_identifier_projection_verified": true,
+      "expanded_projection_ignores_only_cpp_whitespace": true,
+      "expanded_before_definition": "int dispatch_event_with_attacker_and_initial_event_result(int new_affected_card_controller,\n                                                          int new_affected_card, event_t event,\n                                                          int new_attacking_card_controller,\n                                                          int new_attacking_card,\n                                                          int initial_event_result)\n{\n  int result;\n  uint32_t uVar2;\n\n  ((void (*)(void))(0x435C80))();\n  uVar2 = trigger_condition;\n  event_result = initial_event_result;\n  affected_card_controller = new_affected_card_controller;\n  affected_card = new_affected_card;\n  attacking_card_controller = new_attacking_card_controller;\n  attacking_card = new_attacking_card;\n  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))\n  {\n    trigger_condition = 0xffffffff;\n  }\n  dispatch_event_raw(event);\n  result = event_result;\n  trigger_condition = uVar2;\n  ((void (*)(void))(0x435CD0))();\n  return result;\n}",
+      "expanded_after_definition": "int dispatch_event_with_attacker_and_initial_event_result(int new_affected_card_controller,\n                                                          int new_affected_card, event_t event,\n                                                          int new_attacking_card_controller,\n                                                          int new_attacking_card,\n                                                          int initial_event_result)\n{\n  int result;\n  uint32_t saved_trigger_condition;\n\n  ((void (*)(void))(0x435C80))();\n  saved_trigger_condition = trigger_condition;\n  event_result = initial_event_result;\n  affected_card_controller = new_affected_card_controller;\n  affected_card = new_affected_card;\n  attacking_card_controller = new_attacking_card_controller;\n  attacking_card = new_attacking_card;\n  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))\n  {\n    trigger_condition = 0xffffffff;\n  }\n  dispatch_event_raw(event);\n  result = event_result;\n  trigger_condition = saved_trigger_condition;\n  ((void (*)(void))(0x435CD0))();\n  return result;\n}"
+    }
+  ],
+  "source_state_sha256": "aa63d9eff5c93acc33339cb5ea48ff4fec58a296634983097e09ac786e4a7ebc",
+  "raw_source_bytes_sha256": "2273e48a8e411aeea90bbbba9cddc01546a898858cebbf8767791bcd0a715fd1",
+  "index_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "native_comparison": {
+    "result": {
+      "all_equal": true,
+      "three_way_comparisons": 162368,
+      "entry_invocations": 487104,
+      "functions": {
+        "resolve_trigger": 77888,
+        "get_abilities": 84480
+      },
+      "callback_kind_hits": [
+        [
+          0,
+          168475,
+          144127,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          77888,
+          4117,
+          71293,
+          2851,
+          2851,
+          6144,
+          67880,
+          1174,
+          66706,
+          69126,
+          69079,
+          66706,
+          69079,
+          313,
+          0,
+          0,
+          0,
+          0,
+          66706
+        ],
+        [
+          0,
+          92069,
+          561,
+          1907,
+          400,
+          401,
+          190,
+          589,
+          72966,
+          70229,
+          68901,
+          5698,
+          8722,
+          137,
+          128,
+          2625,
+          90,
+          6,
+          1457,
+          1457,
+          13585,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "functions": [
+      {
+        "name": "resolve_trigger",
+        "address": "0x26cbfe0",
+        "size": 2081,
+        "sha256": "df8bea8f4edd1fc9c0cd7e8e6d1e8f279d63973c9ecb6d0ce4e5118374f1519c",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x26cc027",
+            "target": "0x26ade00",
+            "callee": "put_card_or_activation_onto_stack"
+          },
+          {
+            "instruction": "0x26cc073",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26cc0ab",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26cc0cf",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26cc1d8",
+            "target": "0x26cb6e0",
+            "callee": "dispatch_event_to_single_card"
+          },
+          {
+            "instruction": "0x26cc2ea",
+            "target": "0x26b4660",
+            "callee": "obliterate_card_and_recycle"
+          },
+          {
+            "instruction": "0x26cc34c",
+            "target": "0x26b32d0",
+            "callee": "in_play"
+          },
+          {
+            "instruction": "0x26cc40b",
+            "target": "0x267aa10",
+            "callee": "create_legacy_effect"
+          },
+          {
+            "instruction": "0x26cc42a",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26cc46a",
+            "target": "0x2701e18",
+            "callee": "observed_memcpy"
+          },
+          {
+            "instruction": "0x26cc4ba",
+            "target": "0x26c79c0",
+            "callee": "get_card_image_number"
+          },
+          {
+            "instruction": "0x26cc55a",
+            "target": "0x4359b0",
+            "callee": "dispatch_event"
+          },
+          {
+            "instruction": "0x26cc5a8",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26cc5e6",
+            "target": "0x2701df0",
+            "callee": "sprintf"
+          },
+          {
+            "instruction": "0x26cc610",
+            "target": "0x26b32d0",
+            "callee": "in_play"
+          },
+          {
+            "instruction": "0x26cc668",
+            "target": "0x26cbf50",
+            "callee": "allow_response_to_trigger"
+          },
+          {
+            "instruction": "0x26cc678",
+            "target": "0x436930",
+            "callee": "obliterate_top_card_of_stack"
+          },
+          {
+            "instruction": "0x26cc6ad",
+            "target": "0x26765b0",
+            "callee": "load_text"
+          },
+          {
+            "instruction": "0x26cc6c5",
+            "target": "0x2701df0",
+            "callee": "sprintf"
+          },
+          {
+            "instruction": "0x26cc6f0",
+            "target": "0x471b60",
+            "callee": "raw_dialog"
+          },
+          {
+            "instruction": "0x26cc734",
+            "target": "0x26b4660",
+            "callee": "obliterate_card_and_recycle"
+          },
+          {
+            "instruction": "0x26cc7ae",
+            "target": "0x26cbf50",
+            "callee": "allow_response_to_trigger"
+          },
+          {
+            "instruction": "0x26cc7f7",
+            "target": "0x26c11b0",
+            "callee": "backtrace_and_abort"
+          }
+        ]
+      },
+      {
+        "name": "get_abilities",
+        "address": "0x26cc810",
+        "size": 3635,
+        "sha256": "59895686947bb965b7b3843de07d3d60d74f8664e0e341fd30e401b2620ed284",
+        "entry_abi": "cdecl",
+        "external_branches": [
+          {
+            "instruction": "0x26cc840",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26cca1d",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x26cca57",
+            "target": "0x266fd90",
+            "callee": "get_color_of_mana_produced_by_id"
+          },
+          {
+            "instruction": "0x26cca86",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x26ccab0",
+            "target": "0x267a130",
+            "callee": "check_special_flags2"
+          },
+          {
+            "instruction": "0x26ccae9",
+            "target": "0x2680da0",
+            "callee": "color_to_color_test"
+          },
+          {
+            "instruction": "0x26ccafd",
+            "target": "0x2680da0",
+            "callee": "color_to_color_test"
+          },
+          {
+            "instruction": "0x26ccb1a",
+            "target": "0x2680da0",
+            "callee": "color_to_color_test"
+          },
+          {
+            "instruction": "0x26ccb9a",
+            "target": "0x267a210",
+            "callee": "remove_special_flags2"
+          },
+          {
+            "instruction": "0x26ccbb1",
+            "target": "0x2681ca0",
+            "callee": "is_what"
+          },
+          {
+            "instruction": "0x26ccbdb",
+            "target": "0x26cba90",
+            "callee": "dispatch_event_raw"
+          },
+          {
+            "instruction": "0x26ccc1c",
+            "target": "0x26cba90",
+            "callee": "dispatch_event_raw"
+          },
+          {
+            "instruction": "0x26cccec",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26cce3d",
+            "target": "0x26dd430",
+            "callee": "is_humiliated"
+          },
+          {
+            "instruction": "0x26ccefd",
+            "target": "0x26b32d0",
+            "callee": "in_play"
+          },
+          {
+            "instruction": "0x26ccf0d",
+            "target": "0x26b2ab0",
+            "callee": "get_card_instance"
+          },
+          {
+            "instruction": "0x26ccf5c",
+            "target": "0x26b5a00",
+            "callee": "kill_card"
+          },
+          {
+            "instruction": "0x26ccf6e",
+            "target": "0x267a2d0",
+            "callee": "get_special_flags3_by_instance"
+          },
+          {
+            "instruction": "0x26ccfd5",
+            "target": "0x26cba90",
+            "callee": "dispatch_event_raw"
+          },
+          {
+            "instruction": "0x26cd167",
+            "target": "0x26b5a00",
+            "callee": "kill_card"
+          },
+          {
+            "instruction": "0x26cd1f3",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26cd218",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26cd240",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26cd265",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26cd28a",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26cd2b2",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26cd2d7",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26cd301",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26cd329",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26cd351",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26cd379",
+            "target": "0x26d1730",
+            "callee": "count_counters"
+          },
+          {
+            "instruction": "0x26cd3b1",
+            "target": "0x267a2d0",
+            "callee": "get_special_flags3_by_instance"
+          },
+          {
+            "instruction": "0x26cd460",
+            "target": "0x26dd430",
+            "callee": "is_humiliated"
+          },
+          {
+            "instruction": "0x26cd48d",
+            "target": "0x26dd430",
+            "callee": "is_humiliated"
+          },
+          {
+            "instruction": "0x26cd50a",
+            "target": "0x2672860",
+            "callee": "reset_subtypes_from_instance"
+          },
+          {
+            "instruction": "0x26cd52b",
+            "target": "0x2680af0",
+            "callee": "get_hacked_walk"
+          },
+          {
+            "instruction": "0x26cd54e",
+            "target": "0x26807a0",
+            "callee": "get_sleighted_protection"
+          },
+          {
+            "instruction": "0x26cd5b1",
+            "target": "0x267a050",
+            "callee": "remove_special_flags"
+          },
+          {
+            "instruction": "0x26cd5c8",
+            "target": "0x267a210",
+            "callee": "remove_special_flags2"
+          },
+          {
+            "instruction": "0x26cd5df",
+            "target": "0x267a210",
+            "callee": "remove_special_flags2"
+          },
+          {
+            "instruction": "0x26cd60a",
+            "target": "0x26b3410",
+            "callee": "get_internal_card_id_from_csv_id"
+          }
+        ]
+      }
+    ],
+    "bindings": [
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cbfee",
+        "original_word": "0x790640",
+        "target": "(uintptr_t)(&trace_mode)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cbffe",
+        "original_word": "0x60e9f8",
+        "target": "(uintptr_t)(&trigger_guard)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc028",
+        "original_word": "0xfffe1dd4",
+        "target": "(uintptr_t)put_card_or_activation_onto_stack-0x26cc02cU",
+        "native_target": "0x26ade00"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc02e",
+        "original_word": "0x4ef194",
+        "target": "(uintptr_t)(&spell_fizzled)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc03b",
+        "original_word": "0x728574",
+        "target": "(uintptr_t)(&ai_is_speculating)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc047",
+        "original_word": "0x436700",
+        "target": "(uintptr_t)(prepare_stack_targets)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc04e",
+        "original_word": "0x737e1c",
+        "target": "(uintptr_t)(&reason_for_trigger_controller)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc05c",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc074",
+        "original_word": "0xfffe6a38",
+        "target": "(uintptr_t)get_card_instance-0x26cc078U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc084",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc08f",
+        "original_word": "0x4ef524",
+        "target": "(uintptr_t)((char*)active_cards_count+4)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc0ac",
+        "original_word": "0xfffe6a00",
+        "target": "(uintptr_t)get_card_instance-0x26cc0b0U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc0bc",
+        "original_word": "0x4ef524",
+        "target": "(uintptr_t)((char*)active_cards_count+4)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc0d0",
+        "original_word": "0xfffe69dc",
+        "target": "(uintptr_t)get_card_instance-0x26cc0d4U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc0d6",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)(&trigger_condition)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc0e8",
+        "original_word": "0x2795284",
+        "target": "(uintptr_t)(&xtrigger_impl_value_dont_use_directly)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc0f3",
+        "original_word": "0x62c17c",
+        "target": "(uintptr_t)(&trigger_cause_controller)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc0fe",
+        "original_word": "0x739a20",
+        "target": "(uintptr_t)(&trigger_cause)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc13b",
+        "original_word": "0x628b34",
+        "target": "(uintptr_t)(&cant_be_responded_to)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc140",
+        "original_word": "0x628b34",
+        "target": "(uintptr_t)(&cant_be_responded_to)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc152",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)(&trigger_condition)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc157",
+        "original_word": "0x2795284",
+        "target": "(uintptr_t)(&xtrigger_impl_value_dont_use_directly)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc162",
+        "original_word": "0x739a20",
+        "target": "(uintptr_t)(&trigger_cause)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc171",
+        "original_word": "0x62c17c",
+        "target": "(uintptr_t)(&trigger_cause_controller)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc1d9",
+        "original_word": "0xfffff503",
+        "target": "(uintptr_t)dispatch_event_to_single_card-0x26cc1ddU",
+        "native_target": "0x26cb6e0"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc1e4",
+        "original_word": "0x5057a8",
+        "target": "(uintptr_t)(&stack_size)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc1f2",
+        "original_word": "0x509630",
+        "target": "(uintptr_t)(stack_data)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc1ff",
+        "original_word": "0x509632",
+        "target": "(uintptr_t)((char*)stack_data+2)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc207",
+        "original_word": "0x509633",
+        "target": "(uintptr_t)((char*)stack_data+3)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc20e",
+        "original_word": "0x5096b0",
+        "target": "(uintptr_t)(stack_cards)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc215",
+        "original_word": "0x5096b4",
+        "target": "(uintptr_t)((char*)stack_cards+4)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc220",
+        "original_word": "0x5097b0",
+        "target": "(uintptr_t)(stack_damage_targets)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc22a",
+        "original_word": "0x5097b4",
+        "target": "(uintptr_t)((char*)stack_damage_targets+4)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc230",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)(&trigger_condition)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc23f",
+        "original_word": "0x728574",
+        "target": "(uintptr_t)(&ai_is_speculating)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc247",
+        "original_word": "0x715700",
+        "target": "(uintptr_t)(stack_phase)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc250",
+        "original_word": "0x628674",
+        "target": "(uintptr_t)(stack_responses)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc259",
+        "original_word": "0x5057a8",
+        "target": "(uintptr_t)(&stack_size)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc25f",
+        "original_word": "0x5057a8",
+        "target": "(uintptr_t)(&stack_size)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc266",
+        "original_word": "0x5096b0",
+        "target": "(uintptr_t)(stack_cards)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc273",
+        "original_word": "0x7a398c",
+        "target": "(uintptr_t)(&affected_card)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc282",
+        "original_word": "0x739a20",
+        "target": "(uintptr_t)(&trigger_cause)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc294",
+        "original_word": "0x628b34",
+        "target": "(uintptr_t)(&cant_be_responded_to)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc2b7",
+        "original_word": "0x2795284",
+        "target": "(uintptr_t)(&xtrigger_impl_value_dont_use_directly)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc2c2",
+        "original_word": "0x739a20",
+        "target": "(uintptr_t)(&trigger_cause)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc2ce",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)(&trigger_condition)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc2d3",
+        "original_word": "0x62c17c",
+        "target": "(uintptr_t)(&trigger_cause_controller)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc2eb",
+        "original_word": "0xfffe8371",
+        "target": "(uintptr_t)obliterate_card_and_recycle-0x26cc2efU",
+        "native_target": "0x26b4660"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc2ff",
+        "original_word": "0x2795284",
+        "target": "(uintptr_t)(&xtrigger_impl_value_dont_use_directly)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc30a",
+        "original_word": "0x739a20",
+        "target": "(uintptr_t)(&trigger_cause)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc319",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)(&trigger_condition)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc31e",
+        "original_word": "0x62c17c",
+        "target": "(uintptr_t)(&trigger_cause_controller)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc34d",
+        "original_word": "0xfffe6f7f",
+        "target": "(uintptr_t)in_play-0x26cc351U",
+        "native_target": "0x26b32d0"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc364",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)(&trigger_condition)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc36e",
+        "original_word": "0x7e7010",
+        "target": "(uintptr_t)((char*)cards_data+0)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc375",
+        "original_word": "0x7e703d",
+        "target": "(uintptr_t)((char*)cards_data+45)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc3d9",
+        "original_word": "0x728574",
+        "target": "(uintptr_t)(&ai_is_speculating)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc400",
+        "original_word": "0x2677460",
+        "target": "(uintptr_t)(empty)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc40c",
+        "original_word": "0xfffae600",
+        "target": "(uintptr_t)create_legacy_effect-0x26cc410U",
+        "native_target": "0x267aa10"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc42b",
+        "original_word": "0xfffe6681",
+        "target": "(uintptr_t)get_card_instance-0x26cc42fU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc46b",
+        "original_word": "0x359a9",
+        "target": "(uintptr_t)observed_memcpy-0x26cc46fU",
+        "native_target": "0x2701e18"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc4bb",
+        "original_word": "0xffffb501",
+        "target": "(uintptr_t)get_card_image_number-0x26cc4bfU",
+        "native_target": "0x26c79c0"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc4e7",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)(&trigger_condition)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc504",
+        "original_word": "0x436740",
+        "target": "(uintptr_t)(resolve_stack_top)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc517",
+        "original_word": "0x2795284",
+        "target": "(uintptr_t)(&xtrigger_impl_value_dont_use_directly)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc52e",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)(&trigger_condition)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc534",
+        "original_word": "0x739a20",
+        "target": "(uintptr_t)(&trigger_cause)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc53a",
+        "original_word": "0x62c17c",
+        "target": "(uintptr_t)(&trigger_cause_controller)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc540",
+        "original_word": "0x60e9f8",
+        "target": "(uintptr_t)(&trigger_guard)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc55b",
+        "original_word": "0xfdd69451",
+        "target": "(uintptr_t)dispatch_event-0x26cc55fU",
+        "native_target": "0x4359b0"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc573",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)(&trigger_condition)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc578",
+        "original_word": "0x2795284",
+        "target": "(uintptr_t)(&xtrigger_impl_value_dont_use_directly)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc57e",
+        "original_word": "0x739a20",
+        "target": "(uintptr_t)(&trigger_cause)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc584",
+        "original_word": "0x62c17c",
+        "target": "(uintptr_t)(&trigger_cause_controller)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc5a9",
+        "original_word": "0xfffe6503",
+        "target": "(uintptr_t)get_card_instance-0x26cc5adU",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc5b6",
+        "original_word": "0x7e7011",
+        "target": "(uintptr_t)((char*)cards_data+1)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc5bb",
+        "original_word": "0x60ec40",
+        "target": "(uintptr_t)(&trace_sequence)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc5c4",
+        "original_word": "0x60ec40",
+        "target": "(uintptr_t)(&trace_sequence)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc5e7",
+        "original_word": "0x35805",
+        "target": "(uintptr_t)sprintf-0x26cc5ebU",
+        "native_target": "0x2701df0"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc5ef",
+        "original_word": "0x4a7d80",
+        "target": "(uintptr_t)(append_trace)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc611",
+        "original_word": "0xfffe6cbb",
+        "target": "(uintptr_t)in_play-0x26cc615U",
+        "native_target": "0x26b32d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc669",
+        "original_word": "0xfffff8e3",
+        "target": "(uintptr_t)allow_response_to_trigger-0x26cc66dU",
+        "native_target": "0x26cbf50"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc679",
+        "original_word": "0xfdd6a2b3",
+        "target": "(uintptr_t)obliterate_top_card_of_stack-0x26cc67dU",
+        "native_target": "0x436930"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc67f",
+        "original_word": "0x60e9f8",
+        "target": "(uintptr_t)(&trigger_guard)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc6ae",
+        "original_word": "0xfffa9efe",
+        "target": "(uintptr_t)load_text-0x26cc6b2U",
+        "native_target": "0x26765b0"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc6b9",
+        "original_word": "0x628b70",
+        "target": "(uintptr_t)(opponent_name)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc6c1",
+        "original_word": "0x715cac",
+        "target": "(uintptr_t)(text_lines)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc6c6",
+        "original_word": "0x35726",
+        "target": "(uintptr_t)sprintf-0x26cc6caU",
+        "native_target": "0x2701df0"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc6f1",
+        "original_word": "0xfdda546b",
+        "target": "(uintptr_t)raw_dialog-0x26cc6f5U",
+        "native_target": "0x471b60"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc6f7",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc721",
+        "original_word": "0x436740",
+        "target": "(uintptr_t)(resolve_stack_top)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc735",
+        "original_word": "0xfffe7f27",
+        "target": "(uintptr_t)obliterate_card_and_recycle-0x26cc739U",
+        "native_target": "0x26b4660"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc75b",
+        "original_word": "0x436740",
+        "target": "(uintptr_t)(resolve_stack_top)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc777",
+        "original_word": "0x7a398c",
+        "target": "(uintptr_t)(&affected_card)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc787",
+        "original_word": "0x739a20",
+        "target": "(uintptr_t)(&trigger_cause)"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc798",
+        "original_word": "0x4ef184",
+        "target": "(uintptr_t)(&current_phase)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc7af",
+        "original_word": "0xfffff79d",
+        "target": "(uintptr_t)allow_response_to_trigger-0x26cc7b3U",
+        "native_target": "0x26cbf50"
+      },
+      {
+        "kind": "data",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc7d8",
+        "original_word": "0x7a2d78",
+        "target": "(uintptr_t)(&trigger_condition)"
+      },
+      {
+        "kind": "callee",
+        "owner": "resolve_trigger",
+        "patch_address": "0x26cc7f8",
+        "original_word": "0xffff49b4",
+        "target": "(uintptr_t)backtrace_and_abort-0x26cc7fcU",
+        "native_target": "0x26c11b0"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc841",
+        "original_word": "0xfffe626b",
+        "target": "(uintptr_t)get_card_instance-0x26cc845U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc84a",
+        "original_word": "0x785f90",
+        "target": "(uintptr_t)(&activation_card)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc856",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc861",
+        "original_word": "0x435c80",
+        "target": "(uintptr_t)(push_context)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc86c",
+        "original_word": "0x738c84",
+        "target": "(uintptr_t)(&affected_card_controller)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc871",
+        "original_word": "0x7a398c",
+        "target": "(uintptr_t)(&affected_card)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc87e",
+        "original_word": "0x739198",
+        "target": "(uintptr_t)(&attacking_card)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc883",
+        "original_word": "0x2721d64",
+        "target": "(uintptr_t)(&raw_base_pt)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc8ca",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc8d3",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc8eb",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc917",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc923",
+        "original_word": "0x435cd0",
+        "target": "(uintptr_t)(pop_context)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc936",
+        "original_word": "0x2721d64",
+        "target": "(uintptr_t)(&raw_base_pt)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc959",
+        "original_word": "0x7904f8",
+        "target": "(uintptr_t)(&damage_card)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc977",
+        "original_word": "0x7e7010",
+        "target": "(uintptr_t)((char*)cards_data+0)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc996",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc99c",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc9b6",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc9be",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc9d1",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "get_abilities",
+        "patch_address": "0x26cc9dd",
+        "original_word": "0x435cd0",
+        "target": "(uintptr_t)(pop_context)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cca04",
+        "original_word": "0x7e704d",
+        "target": "(uintptr_t)((char*)cards_data+61)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cca1e",
+        "original_word": "0xfffb527e",
+        "target": "(uintptr_t)is_what-0x26cca22U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cca2d",
+        "original_word": "0x2797210",
+        "target": "(uintptr_t)(mana_colors_added)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cca46",
+        "original_word": "0x7e7034",
+        "target": "(uintptr_t)((char*)cards_data+36)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cca58",
+        "original_word": "0xfffa3334",
+        "target": "(uintptr_t)get_color_of_mana_produced_by_id-0x26cca5cU",
+        "native_target": "0x266fd90"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cca67",
+        "original_word": "0x73bb00",
+        "target": "(uintptr_t)(cards_ptr)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cca87",
+        "original_word": "0xfffb5215",
+        "target": "(uintptr_t)is_what-0x26cca8bU",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cca95",
+        "original_word": "0x2797210",
+        "target": "(uintptr_t)(mana_colors_added)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccab1",
+        "original_word": "0xfffad67b",
+        "target": "(uintptr_t)check_special_flags2-0x26ccab5U",
+        "native_target": "0x267a130"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccaea",
+        "original_word": "0xfffb42b2",
+        "target": "(uintptr_t)color_to_color_test-0x26ccaeeU",
+        "native_target": "0x2680da0"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccafe",
+        "original_word": "0xfffb429e",
+        "target": "(uintptr_t)color_to_color_test-0x26ccb02U",
+        "native_target": "0x2680da0"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccb13",
+        "original_word": "0x2797140",
+        "target": "(uintptr_t)(mana_color_override)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccb1b",
+        "original_word": "0xfffb4281",
+        "target": "(uintptr_t)color_to_color_test-0x26ccb1fU",
+        "native_target": "0x2680da0"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccb47",
+        "original_word": "0x628c64",
+        "target": "(uintptr_t)(&legacy_low)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccb4f",
+        "original_word": "0x786d5c",
+        "target": "(uintptr_t)(&legacy_high)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccb74",
+        "original_word": "0x7e703a",
+        "target": "(uintptr_t)((char*)cards_data+42)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccb9b",
+        "original_word": "0xfffad671",
+        "target": "(uintptr_t)remove_special_flags2-0x26ccb9fU",
+        "native_target": "0x267a210"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccbb2",
+        "original_word": "0xfffb50ea",
+        "target": "(uintptr_t)is_what-0x26ccbb6U",
+        "native_target": "0x2681ca0"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccbc3",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccbc8",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccbdc",
+        "original_word": "0xffffeeb0",
+        "target": "(uintptr_t)dispatch_event_raw-0x26ccbe0U",
+        "native_target": "0x26cba90"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccbe2",
+        "original_word": "0x4ef190",
+        "target": "(uintptr_t)(&land_can_be_played)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccbf3",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccc18",
+        "original_word": "0x4ef190",
+        "target": "(uintptr_t)(&land_can_be_played)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccc1d",
+        "original_word": "0xffffee6f",
+        "target": "(uintptr_t)dispatch_event_raw-0x26ccc21U",
+        "native_target": "0x26cba90"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccc22",
+        "original_word": "0x4ef190",
+        "target": "(uintptr_t)(&land_can_be_played)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccc28",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccc32",
+        "original_word": "0x4ef190",
+        "target": "(uintptr_t)(&land_can_be_played)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccc4f",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccc70",
+        "original_word": "0x7904f8",
+        "target": "(uintptr_t)(&damage_card)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccc89",
+        "original_word": "0x7e7048",
+        "target": "(uintptr_t)((char*)cards_data+56)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cccb1",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cccbf",
+        "original_word": "0x7e7038",
+        "target": "(uintptr_t)((char*)cards_data+40)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cccd1",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cccd6",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccced",
+        "original_word": "0xfffe5dbf",
+        "target": "(uintptr_t)get_card_instance-0x26cccf1U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccd97",
+        "original_word": "0x4ef1a4",
+        "target": "(uintptr_t)(player_bits)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccdac",
+        "original_word": "0x7e7038",
+        "target": "(uintptr_t)((char*)cards_data+40)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccdbf",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccdc8",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccdd2",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccddb",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccdf3",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccdfc",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cce09",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cce15",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cce3e",
+        "original_word": "0x105ee",
+        "target": "(uintptr_t)is_humiliated-0x26cce42U",
+        "native_target": "0x26dd430"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cce66",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cce8d",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cce9c",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccec0",
+        "original_word": "0x7e7038",
+        "target": "(uintptr_t)((char*)cards_data+40)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cced8",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cceec",
+        "original_word": "0x4ef520",
+        "target": "(uintptr_t)(active_cards_count)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccefe",
+        "original_word": "0xfffe63ce",
+        "target": "(uintptr_t)in_play-0x26ccf02U",
+        "native_target": "0x26b32d0"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccf0e",
+        "original_word": "0xfffe5b9e",
+        "target": "(uintptr_t)get_card_instance-0x26ccf12U",
+        "native_target": "0x26b2ab0"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccf2b",
+        "original_word": "0x7e7038",
+        "target": "(uintptr_t)((char*)cards_data+40)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccf33",
+        "original_word": "0x7e7010",
+        "target": "(uintptr_t)((char*)cards_data+0)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccf42",
+        "original_word": "0x73bb00",
+        "target": "(uintptr_t)(cards_ptr)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccf5d",
+        "original_word": "0xfffe8a9f",
+        "target": "(uintptr_t)kill_card-0x26ccf61U",
+        "native_target": "0x26b5a00"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccf6f",
+        "original_word": "0xfffad35d",
+        "target": "(uintptr_t)get_special_flags3_by_instance-0x26ccf73U",
+        "native_target": "0x267a2d0"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccf85",
+        "original_word": "0x7e703e",
+        "target": "(uintptr_t)((char*)cards_data+46)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccf96",
+        "original_word": "0x2721d60",
+        "target": "(uintptr_t)(&raw_characteristic_pt)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccfb1",
+        "original_word": "0x2721d64",
+        "target": "(uintptr_t)(&raw_base_pt)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccfb6",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccfbc",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccfd6",
+        "original_word": "0xffffeab6",
+        "target": "(uintptr_t)dispatch_event_raw-0x26ccfdaU",
+        "native_target": "0x26cba90"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26ccfdc",
+        "original_word": "0x4ef190",
+        "target": "(uintptr_t)(&land_can_be_played)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd01f",
+        "original_word": "0x4ef188",
+        "target": "(uintptr_t)(&event_flags)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd029",
+        "original_word": "0x7e704c",
+        "target": "(uintptr_t)((char*)cards_data+60)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd038",
+        "original_word": "0x4ef188",
+        "target": "(uintptr_t)(&event_flags)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd094",
+        "original_word": "0x7e703e",
+        "target": "(uintptr_t)((char*)cards_data+46)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd0a5",
+        "original_word": "0x2721d60",
+        "target": "(uintptr_t)(&raw_characteristic_pt)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd0c0",
+        "original_word": "0x2721d64",
+        "target": "(uintptr_t)(&raw_base_pt)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd0c5",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd0cb",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd0df",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd0fe",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd10d",
+        "original_word": "0x7e7038",
+        "target": "(uintptr_t)((char*)cards_data+40)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd135",
+        "original_word": "0x4ef190",
+        "target": "(uintptr_t)(&land_can_be_played)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd140",
+        "original_word": "0x785e60",
+        "target": "(uintptr_t)(&suppress_damage)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd168",
+        "original_word": "0xfffe8894",
+        "target": "(uintptr_t)kill_card-0x26cd16cU",
+        "native_target": "0x26b5a00"
+      },
+      {
+        "kind": "data_pointer_literal",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd16d",
+        "original_word": "0x477a90",
+        "target": "(uintptr_t)(regeneration_step)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd195",
+        "original_word": "0x7e7038",
+        "target": "(uintptr_t)((char*)cards_data+40)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd1cd",
+        "original_word": "0x7e7038",
+        "target": "(uintptr_t)((char*)cards_data+40)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd1f4",
+        "original_word": "0x4538",
+        "target": "(uintptr_t)count_counters-0x26cd1f8U",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd219",
+        "original_word": "0x4513",
+        "target": "(uintptr_t)count_counters-0x26cd21dU",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd241",
+        "original_word": "0x44eb",
+        "target": "(uintptr_t)count_counters-0x26cd245U",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd266",
+        "original_word": "0x44c6",
+        "target": "(uintptr_t)count_counters-0x26cd26aU",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd28b",
+        "original_word": "0x44a1",
+        "target": "(uintptr_t)count_counters-0x26cd28fU",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd2b3",
+        "original_word": "0x4479",
+        "target": "(uintptr_t)count_counters-0x26cd2b7U",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd2d8",
+        "original_word": "0x4454",
+        "target": "(uintptr_t)count_counters-0x26cd2dcU",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd2e1",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd2eb",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd302",
+        "original_word": "0x442a",
+        "target": "(uintptr_t)count_counters-0x26cd306U",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd30b",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd313",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd32a",
+        "original_word": "0x4402",
+        "target": "(uintptr_t)count_counters-0x26cd32eU",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd333",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd33b",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd352",
+        "original_word": "0x43da",
+        "target": "(uintptr_t)count_counters-0x26cd356U",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd35b",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd363",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd37a",
+        "original_word": "0x43b2",
+        "target": "(uintptr_t)count_counters-0x26cd37eU",
+        "native_target": "0x26d1730"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd387",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd38e",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd399",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd3b2",
+        "original_word": "0xfffacf1a",
+        "target": "(uintptr_t)get_special_flags3_by_instance-0x26cd3b6U",
+        "native_target": "0x267a2d0"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd3cb",
+        "original_word": "0x7e7040",
+        "target": "(uintptr_t)((char*)cards_data+48)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd3dc",
+        "original_word": "0x2721d60",
+        "target": "(uintptr_t)(&raw_characteristic_pt)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd3f5",
+        "original_word": "0x2721d64",
+        "target": "(uintptr_t)(&raw_base_pt)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd3fc",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd402",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd422",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd442",
+        "original_word": "0x7e703a",
+        "target": "(uintptr_t)((char*)cards_data+42)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd461",
+        "original_word": "0xffcb",
+        "target": "(uintptr_t)is_humiliated-0x26cd465U",
+        "native_target": "0x26dd430"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd46b",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd477",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd48e",
+        "original_word": "0xff9e",
+        "target": "(uintptr_t)is_humiliated-0x26cd492U",
+        "native_target": "0x26dd430"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd4ad",
+        "original_word": "0x7e7040",
+        "target": "(uintptr_t)((char*)cards_data+48)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd4be",
+        "original_word": "0x2721d60",
+        "target": "(uintptr_t)(&raw_characteristic_pt)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd4d9",
+        "original_word": "0x2721d64",
+        "target": "(uintptr_t)(&raw_base_pt)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd4de",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd4e4",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd4fa",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd50b",
+        "original_word": "0xfffa5351",
+        "target": "(uintptr_t)reset_subtypes_from_instance-0x26cd50fU",
+        "native_target": "0x2672860"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd52c",
+        "original_word": "0xfffb35c0",
+        "target": "(uintptr_t)get_hacked_walk-0x26cd530U",
+        "native_target": "0x2680af0"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd54f",
+        "original_word": "0xfffb324d",
+        "target": "(uintptr_t)get_sleighted_protection-0x26cd553U",
+        "native_target": "0x26807a0"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd5b2",
+        "original_word": "0xfffaca9a",
+        "target": "(uintptr_t)remove_special_flags-0x26cd5b6U",
+        "native_target": "0x267a050"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd5c9",
+        "original_word": "0xfffacc43",
+        "target": "(uintptr_t)remove_special_flags2-0x26cd5cdU",
+        "native_target": "0x267a210"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd5e0",
+        "original_word": "0xfffacc2c",
+        "target": "(uintptr_t)remove_special_flags2-0x26cd5e4U",
+        "native_target": "0x267a210"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd5e9",
+        "original_word": "0x6205b4",
+        "target": "(uintptr_t)(&event_result)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd5ee",
+        "original_word": "0x60a548",
+        "target": "(uintptr_t)(&dispatch_enabled)"
+      },
+      {
+        "kind": "callee",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd60b",
+        "original_word": "0xfffe5e01",
+        "target": "(uintptr_t)get_internal_card_id_from_csv_id-0x26cd60fU",
+        "native_target": "0x26b3410"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd615",
+        "original_word": "0x7e7038",
+        "target": "(uintptr_t)((char*)cards_data+40)"
+      },
+      {
+        "kind": "data",
+        "owner": "get_abilities",
+        "patch_address": "0x26cd61d",
+        "original_word": "0x7e7010",
+        "target": "(uintptr_t)((char*)cards_data+0)"
+      }
+    ],
+    "retained_switch_tables": [
+      {
+        "owner": "get_abilities",
+        "address": "0x2767f44",
+        "entries": 11,
+        "sha256": "880ee0115bfffc57240331f2828ac0ec373881b25987f007daddc3d185f98693",
+        "all_targets_within_function": true
+      }
+    ],
+    "native_path": ".recovery/2022-ManalinkEh.dll",
+    "native_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "source_path": ".recovery/event-native-check-c396.c",
+    "source_sha256": "a0f89c76fe597b33334c16de354ada2c75c42034f660df433f2dc1607636f87a",
+    "executable_path": ".recovery/event-native-check-c396.exe",
+    "executable_sha256": "58b6d08e416f35baaa65ec948d497604594dd030a0ab8dcb457a7604524ea257",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "compile_argv": [
+      "C:/bin/gcc-9.3.0-no-debug/bin/gcc.exe",
+      "-m32",
+      "-O2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-static-libgcc",
+      "-Wl,--image-base,0x10000000",
+      "-I.",
+      ".recovery\\event-native-check-c396.c",
+      "-o",
+      ".recovery\\event-native-check-c396.exe"
+    ],
+    "compile_log": ".recovery/event-native-check-c396.compile.log",
+    "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "constants": {
+    "TYPE_PERMANENT": 71,
+    "TYPE_EFFECT": 128,
+    "TYPE_CREATURE": 2,
+    "TYPE_ARTIFACT": 64,
+    "TYPE_LAND": 1,
+    "EA_MANA_SOURCE": 4096,
+    "SF3_SWITCH_POW_TGH": 1048576,
+    "STATE_IS_TRIGGERING": 268435456,
+    "STATE_PROCESSING": 256,
+    "EVENT_RESOLVE_TRIGGER": 126,
+    "KEYWORD_PROT_COLORED": 63488,
+    "KEYWORD_BASIC_LANDWALK": 31
+  },
+  "scope": "Two independent native bodies with controlled engine/event/ability/counter/mana/stack/GUI callbacks. Native switch table retained read-only with all eleven entries checked inside get_abilities. Cdecl entries; engine function-pointer literals and direct engine calls are explicitly rebound. Memcpy is observed without mutations and performs the complete 300-byte copy. Trace records use hashes for compound state/arguments; full declared fixture outputs are byte compared. Allocated 6-slot banks, acyclic activation parents, bounded stack/type indices and strings, nonoverlapping legacy/source records, and initialized packed counter storage are required. A controlled allocated type-table prefix models raw -1 result reads under the target 32-bit compiler behavior; no portable abstract-C or whole-engine memory claim. Two further functions change only exact source/expanded local identifier projections and claim no new native cases.",
+  "files": [
+    {
+      "source": "functions/events.c",
+      "before_path": ".recovery/event-core-before-c397/functions/events.c",
+      "before_bytes_sha256": "2273e48a8e411aeea90bbbba9cddc01546a898858cebbf8767791bcd0a715fd1",
+      "after_source_sha256": "4430a3606e1a011195b1f33954dd9bcaf63bc5895535a02b5af986c22ecd5899"
+    }
+  ],
+  "whole_source_lines_removed": 277,
+  "compiler_expansion": {
+    "compiler_path": "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-E",
+      "-dD",
+      "functions/events.c"
+    ],
+    "preflight_argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-E",
+      "-dD",
+      "-x",
+      "c",
+      "-"
+    ],
+    "before_sha256": "75bf5b43d283acdecf45d38a8721ce0535c846b2d6ba52338cc7c4c75df95247",
+    "projected_sha256": "7c1d5ff9e9e8746fe53647595ac54cf374f0973270a46edc3413b44f9716d3db",
+    "unrelated_expanded_tokens_unchanged": true,
+    "ordinary_storage_enum_and_layout_probe": "\n#include <stddef.h>\n#include <limits.h>\n_Static_assert(sizeof(int)==4 && sizeof(void*)==4 && CHAR_BIT==8 && (char)255==-1 && UINT_MAX==0xffffffffU, \"native_event_integer_model\");\n_Static_assert(sizeof(card_instance_t)==300 && offsetof(card_instance_t,ext)==44 && offsetof(card_instance_t,targets[18].player)==260 && offsetof(card_instance_t,targets[18].card)==264 && offsetof(card_instance_t,special_counter_type)==81, \"native_event_record_layout\");\n_Static_assert(sizeof(card_data_t)==72 && offsetof(card_data_t,name)==1 && sizeof(((card_data_t*)0)->name)==35 && offsetof(card_data_t,type)==40 && offsetof(card_data_t,power)==46 && offsetof(card_data_t,toughness)==48 && offsetof(card_data_t,extra_ability)==60, \"native_event_type_layout\");\n_Static_assert(sizeof(stack_data_t)==4 && offsetof(stack_data_t,generating_event)==2 && offsetof(stack_data_t,unknown_sdt)==3 && sizeof(stack_cards)==32*8 && sizeof(stack_data)==32*4 && sizeof(stack_phase)==32*4, \"native_event_stack_layout\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->special_counter_type),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->targets[18].player),int32_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->targets[18].card),int32_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->mana_color),uint8_t*) && __builtin_types_compatible_p(__typeof__(&((card_instance_t*)0)->card_color),uint8_t*), \"ordinary_event_packed_fields\");\n_Static_assert(__builtin_types_compatible_p(__typeof__(&raw_base_pt),int*) && __builtin_types_compatible_p(__typeof__(&raw_characteristic_pt),int*) && __builtin_types_compatible_p(__typeof__(&affected_card),int*) && __builtin_types_compatible_p(__typeof__(&affected_card_controller),int*) && __builtin_types_compatible_p(__typeof__(&event_result),int*) && __builtin_types_compatible_p(__typeof__(&land_can_be_played),int*) && __builtin_types_compatible_p(__typeof__(&EXE_DWORD(0x60a548)),int*), \"ordinary_event_globals\");\n_Static_assert(sizeof(trigger_condition)==4 && sizeof(xtrigger_impl_value_dont_use_directly)==4 && __builtin_types_compatible_p(__typeof__(&mana_color_override[0][0]),int*) && __builtin_types_compatible_p(__typeof__(&mana_colors_added[0]),int*) && __builtin_types_compatible_p(__typeof__(&cards_ptr[0]),card_ptr_t**), \"native_event_context_storage\");\n_Static_assert(TYPE_PERMANENT==71, \"native_counter_enum\");\n_Static_assert(TYPE_EFFECT==128, \"native_counter_enum\");\n_Static_assert(TYPE_CREATURE==2, \"native_counter_enum\");\n_Static_assert(TYPE_ARTIFACT==64, \"native_counter_enum\");\n_Static_assert(TYPE_LAND==1, \"native_counter_enum\");\n_Static_assert(EA_MANA_SOURCE==4096, \"native_counter_enum\");\n_Static_assert(SF3_SWITCH_POW_TGH==1048576, \"native_counter_enum\");\n_Static_assert(STATE_IS_TRIGGERING==268435456, \"native_counter_enum\");\n_Static_assert(STATE_PROCESSING==256, \"native_counter_enum\");\n_Static_assert(EVENT_RESOLVE_TRIGGER==126, \"native_counter_enum\");\n_Static_assert(KEYWORD_PROT_COLORED==63488, \"native_counter_enum\");\n_Static_assert(KEYWORD_BASIC_LANDWALK==31, \"native_counter_enum\");\n",
+    "probe_exit_code": 0,
+    "before_archive": {
+      "path": ".recovery/event-core-before-c397.i.gz",
+      "sha256": "2829cf32b9ab4584c2a3c714a9678a0928c3d32b29e7d749efe48c392c8dcb71"
+    },
+    "projected_archive": {
+      "path": ".recovery/event-core-projected-c397.i.gz",
+      "sha256": "df0f2b0c007ed06df4f1934bbf1bfcab336e1c9281fde670f4ef5ef395c2a901"
+    },
+    "actual_sha256": "9f46c398e1c6a1fe14193d37829cd7030cd3ec03a570a869cda41cda9007b0a6",
+    "actual_unit_matches_preflight": true
+  },
+  "status": "Application-time snapshot: native comparisons and actual compiler-unit checks pass. Subsequent build/setup completion is published in event-core-cleanup-coverage.json."
+}

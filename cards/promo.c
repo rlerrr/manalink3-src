@@ -41,6 +41,12 @@ static int ai_choice_for_arena(int player, int card, target_t* ret_tgt){
 }
 
 int card_arena(int player, int card, event_t event){
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_ABILITY = 2
+  };
+
 	/* Arena	""
 	 * Land
 	 * |3, |T: Tap target creature you control and target creature of an opponent's choice he or she controls. Those creatures fight each other. */
@@ -80,12 +86,12 @@ int card_arena(int player, int card, event_t event){
 	}
 
 	if (event == EVENT_ACTIVATE){
-		int choice = 2;
+		int choice = CHOICE_ABILITY;
 		if( mana_colors_added[player] ){
 			if( paying_mana() || is_tapped(player, card) || is_animated_and_sick(player, card) || paying_mana()
 				|| !can_use_activated_abilities(player, card) || !has_mana_for_activated_ability(player, card, MANACOST_X(4))
 				|| !can_target(&td_me) || !can_target(&td_opp) ){
-				choice = 1;
+				choice = CHOICE_MANA;
 			}else if( !IS_AI(player) ){
 				choice = DIALOG(player, card, event, DLG_RANDOM,
 					"Get mana", 1, 1,
@@ -97,7 +103,7 @@ int card_arena(int player, int card, event_t event){
 			}
 		}
 		instance->info_slot = choice;
-		if( choice == 1 ){
+		if( choice == CHOICE_MANA ){
 			mana_producer(player, card, event);
 			return 0;
 		}
@@ -163,7 +169,7 @@ int card_arena(int player, int card, event_t event){
 		return 0;
 	}
 
-	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == 2){
+	if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == CHOICE_ABILITY){
 		int target_0_valid = validate_target(player, card, &td_me, 0);
 		int target_1_valid = validate_target(player, card, &td_opp, 1);
 
@@ -741,12 +747,11 @@ Flying; banding
 int card_necropolis_of_azar(int player, int card, event_t event)
 {
   int parent_controller;
-  unsigned int uVar1;
-  int iVar2;
+  unsigned int death_count;
+  int activation_or_counter_count;
   card_instance_t *instance;
-  int iVar4;
-  int iVar5;
-
+  int random_power;
+  int random_toughness;
 
   if (event == EVENT_CAN_CAST)
   {
@@ -759,45 +764,29 @@ int card_necropolis_of_azar(int player, int card, event_t event)
     test.color = get_sleighted_color_test(player, card, 2);
     test.color_flag = 1;
     count_for_gfp_ability(player, card, 0x77, 2, 0, &test);
-    uVar1 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
-    if (uVar1 == 0)
-    {
-      return generic_activated_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, 0, 5, 0, 0, 0, 0,
-                                        0, 0, NULL, NULL);
-    }
-    uVar1 = uVar1 & 0xff;
-    if (uVar1 != 0)
-      goto LAB_0240f330;
   }
-  else
+  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (death_count != 0)
   {
-    uVar1 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if (uVar1 != 0)
-    {
-      for (uVar1 = uVar1 & 0xff; uVar1 != 0; uVar1 = uVar1 - 1)
-      {
-      LAB_0240f330:
-        add_counters(player, card, player, card, COUNTER_HUSK, 1);
-      }
-    }
-    if (event == EVENT_CAN_ACTIVATE)
-    {
-      iVar2 = count_counters(player, card, COUNTER_HUSK);
-      if (iVar2 < 1)
-      {
-        return 0;
-      }
-      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 5, 0, 0, 0, 0, 0, 0,
-                                        NULL, NULL);
-    }
+    for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
+      add_counters(player, card, player, card, COUNTER_HUSK, 1);
   }
-  iVar2 = generic_activated_ability(player, card, event, 0, 5, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    activation_or_counter_count = count_counters(player, card, COUNTER_HUSK);
+    if (activation_or_counter_count < 1)
+      return 0;
+    return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 5, 0, 0, 0, 0, 0, 0, NULL,
+                                     NULL);
+  }
+  activation_or_counter_count =
+      generic_activated_ability(player, card, event, 0, 5, 0, 0, 0, 0, 0, 0, NULL, NULL);
   if (event == EVENT_ACTIVATE)
   {
     if (spell_fizzled != 1)
     {
       remove_counters(player, card, player, card, COUNTER_HUSK, 1);
-      return iVar2;
+      return activation_or_counter_count;
     }
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
@@ -807,14 +796,14 @@ int card_necropolis_of_azar(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     parent_controller = instance->parent_controller;
     default_token_definition(player, card, 900, &token);
-    iVar4 = network_rand(parent_controller, 3);
-    token.pow = (int32_t)(iVar4 + 1);
-    iVar5 = network_rand(parent_controller, 3);
-    token.tou = (int32_t)(iVar5 + 1);
+    random_power = network_rand(parent_controller, 3);
+    token.pow = (int32_t)(random_power + 1);
+    random_toughness = network_rand(parent_controller, 3);
+    token.tou = (int32_t)(random_toughness + 1);
     generate_token(&token);
-    return iVar2;
+    return activation_or_counter_count;
   }
-  return iVar2;
+  return activation_or_counter_count;
 }
 
 int card_orcish_catapult(int player, int card, event_t event)
@@ -947,7 +936,7 @@ int card_pandoras_box(int player, int card, event_t event){
 			}
 		}
 		int revealed_by_pandoras_box[1] = {corpses[internal_rand(cc)]};
-		show_deck( player, revealed_by_pandoras_box, 1, "Pandora's Box chosen...", 0, 0x7375B0 );
+		show_deck( player, revealed_by_pandoras_box, 1, "Pandora's Box chosen...", 0, EXE_STR(ENGINE_DONE_LABEL) );
 
 		token_generation_t token;
 		default_token_definition(player, card, cards_data[revealed_by_pandoras_box[0]].id, &token);
@@ -1374,10 +1363,10 @@ int card_seasons_beatings(int player, int card, event_t event)
   int card_00;
   int p;
   card_instance_t *instance;
-  int iVar3;
+  int random_target_or_creature;
   int amt;
   int i;
-  int iVar5;
+  int damage_source_index;
   target_definition_t td;
   int creatures[151];
 
@@ -1402,7 +1391,8 @@ int card_seasons_beatings(int player, int card, event_t event)
         do
         {
           instance = in_play(p, c);
-          if ((instance != NULL) && (iVar3 = is_what(p, c, 2), iVar3 != 0))
+          if ((instance != NULL) &&
+              (random_target_or_creature = is_what(p, c, 2), random_target_or_creature != 0))
           {
             creatures[i] = c;
             i = i + 1;
@@ -1412,21 +1402,21 @@ int card_seasons_beatings(int player, int card, event_t event)
         if (1 < i)
         {
 
-          iVar5 = 0;
+          damage_source_index = 0;
           do
           {
 
-            iVar3 = network_rand(player, i + -1);
-            iVar3 = iVar3 + 1;
-            if (iVar3 == iVar5)
+            random_target_or_creature = network_rand(player, i + -1);
+            random_target_or_creature = random_target_or_creature + 1;
+            if (random_target_or_creature == damage_source_index)
             {
-              iVar3 = 0;
+              random_target_or_creature = 0;
             }
-            card_00 = creatures[iVar5];
+            card_00 = creatures[damage_source_index];
             amt = get_power(p, card_00);
-            iVar5 = iVar5 + 1;
-            damage_creature(p, creatures[iVar3], amt, p, card_00);
-          } while (i != iVar5);
+            damage_source_index = damage_source_index + 1;
+            damage_creature(p, creatures[random_target_or_creature], amt, p, card_00);
+          } while (i != damage_source_index);
         }
       }
     }
@@ -1440,70 +1430,67 @@ int card_yule_ooze(int player, int card, event_t event)
 {
   int p;
   int c;
-  int iVar1;
+  int scan_player_or_regeneration;
   card_instance_t *instance;
   int cmc;
-  int iVar4;
-  int iStack_4cc;
+  int chosen_card_or_index;
+  int nonland_count;
   target_t nlperms[151];
 
   upkeep_trigger_ability(player, card, event, player);
   if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    iVar1 = regeneration(player, card, event, 0, 0, 0, 1, 1, 0);
+    scan_player_or_regeneration = regeneration(player, card, event, 0, 0, 0, 1, 1, 0);
     if ((event == EVENT_ACTIVATE) && (spell_fizzled != 1))
     {
       play_sound_effect(WAV_DEVOUR);
-      return iVar1;
+      return scan_player_or_regeneration;
     }
-    return iVar1;
+    return scan_player_or_regeneration;
   }
 
-  iStack_4cc = 0;
-  iVar1 = 0;
+  nonland_count = 0;
+  scan_player_or_regeneration = 0;
   do
   {
 
-    if (0 < active_cards_count[iVar1])
+    if (0 < active_cards_count[scan_player_or_regeneration])
     {
       c = 0;
-    LAB_02411092:
       do
       {
-        if ((card != c) || (player != iVar1))
+        if ((card != c) || (player != scan_player_or_regeneration))
         {
-          instance = in_play(iVar1, c);
+          instance = in_play(scan_player_or_regeneration, c);
           if (instance != NULL)
           {
-            if (is_what(iVar1, c, 1) == 0)
+            if (is_what(scan_player_or_regeneration, c, 1) == 0)
             {
-              if (is_what(iVar1, c, 0x47) != 0)
+              if (is_what(scan_player_or_regeneration, c, 0x47) != 0)
               {
-                nlperms[iStack_4cc].card = c;
-                nlperms[iStack_4cc].player = iVar1;
+                nlperms[nonland_count].card = c;
+                nlperms[nonland_count].player = scan_player_or_regeneration;
                 c = c + 1;
-                iStack_4cc = iStack_4cc + 1;
-                if (active_cards_count[iVar1] <= c)
-                  break;
-                goto LAB_02411092;
+                nonland_count = nonland_count + 1;
+                continue;
               }
             }
           }
         }
         c = c + 1;
-      } while (c < active_cards_count[iVar1]);
+      } while (c < active_cards_count[scan_player_or_regeneration]);
     }
-    iVar1 = iVar1 + 1;
-    if (iVar1 == 2)
+    scan_player_or_regeneration = scan_player_or_regeneration + 1;
+    if (scan_player_or_regeneration == 2)
     {
-      if (0 < iStack_4cc)
+      if (0 < nonland_count)
       {
 
-        iVar4 = network_rand(player, iStack_4cc);
-        p = nlperms[iVar4].player;
-        iVar4 = nlperms[iVar4].card;
-        cmc = get_cmc(p, iVar4);
-        kill_card(p, iVar4, KILL_DESTROY);
+        chosen_card_or_index = network_rand(player, nonland_count);
+        p = nlperms[chosen_card_or_index].player;
+        chosen_card_or_index = nlperms[chosen_card_or_index].card;
+        cmc = get_cmc(p, chosen_card_or_index);
+        kill_card(p, chosen_card_or_index, KILL_DESTROY);
         add_counters(player, card, player, card, COUNTER_P1_P1, cmc);
       }
       return regeneration(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, 0, 0, 0, 1, 1, 0);
@@ -1516,35 +1503,38 @@ int card_yule_ooze(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2410b40; original cards/promo.c:1401. */
 int card_snow_mercy(int player, int card, event_t event)
 {
-  unsigned char bVar1;
-  card_instance_t *pcVar2;
+  unsigned char stored_source_count;
+  card_instance_t *damage_or_enchantment;
   int result;
   wav_t soundnum;
-  card_instance_t *pcVar4;
-  unsigned int uVar5;
+  card_instance_t *source_or_enchantment;
+  unsigned int tap_step_or_ability_flags;
   test_definition_t test;
 
-  pcVar2 = damage_being_dealt(event);
-  if (((((pcVar2 != NULL) && (pcVar2->damage_target_card == -1)) &&
-        (pcVar2->damage_target_player == player)) &&
-       ((result = damage_is_to_planeswalker(pcVar2),
-         result == 0 && ((pcVar2->targets[3].player & 2) != 0)))) &&
-      ((pcVar4 = in_play((int)pcVar2->damage_source_player, pcVar2->damage_source_card),
-        pcVar4 != NULL &&
+  damage_or_enchantment = damage_being_dealt(event);
+  if (((((damage_or_enchantment != NULL) && (damage_or_enchantment->damage_target_card == -1)) &&
+        (damage_or_enchantment->damage_target_player == player)) &&
+       ((result = damage_is_to_planeswalker(damage_or_enchantment),
+         result == 0 && ((damage_or_enchantment->targets[3].player & 2) != 0)))) &&
+      ((source_or_enchantment = in_play((int)damage_or_enchantment->damage_source_player,
+                                        damage_or_enchantment->damage_source_card),
+        source_or_enchantment != NULL &&
             (result = is_humiliated(player, card, AL_TRIG), result == 0))))
   {
-    pcVar4 = get_card_instance(player, card);
-    bVar1 = pcVar4->number_of_targets;
-    if (bVar1 < 10)
+    source_or_enchantment = get_card_instance(player, card);
+    stored_source_count = source_or_enchantment->number_of_targets;
+    if (stored_source_count < 10)
     {
-      pcVar4->targets[bVar1].player = (int)pcVar2->damage_source_player;
-      pcVar4->targets[bVar1].card = pcVar2->damage_source_card;
-      pcVar4->number_of_targets = bVar1 + 1;
+      source_or_enchantment->targets[stored_source_count].player =
+          (int)damage_or_enchantment->damage_source_player;
+      source_or_enchantment->targets[stored_source_count].card =
+          damage_or_enchantment->damage_source_card;
+      source_or_enchantment->number_of_targets = stored_source_count + 1;
     }
     else
     {
-      add_counters(player, card, (int)pcVar2->damage_source_player,
-                               pcVar2->damage_source_card, COUNTER_GLOBE, 1);
+      add_counters(player, card, (int)damage_or_enchantment->damage_source_player,
+                   damage_or_enchantment->damage_source_card, COUNTER_GLOBE, 1);
     }
   }
   if (((trigger_condition == 0xd7) && (card == affected_card)) &&
@@ -1552,100 +1542,70 @@ int card_snow_mercy(int player, int card, event_t event)
         ((reason_for_trigger_controller == player &&
           (result = is_humiliated(player, card, AL_TRIG), result == 0))))))
   {
-    pcVar2 = get_card_instance(player, card);
-    if (event != EVENT_TRIGGER)
+    damage_or_enchantment = get_card_instance(player, card);
+    if (event == EVENT_TRIGGER)
     {
-      if (event == EVENT_RESOLVE_TRIGGER)
-      {
-        if (pcVar2->number_of_targets != '\0')
-        {
-          result = 0;
-          do
-          {
-            add_counters(player, card, pcVar2->targets[result].player,
-                                     pcVar2->targets[result].card, COUNTER_GLOBE, 1);
-            result = result + 1;
-          } while (result < (int)(unsigned int)pcVar2->number_of_targets);
-        }
-        pcVar2->number_of_targets = '\0';
-        goto LAB_02410ec7;
-      }
-      goto LAB_02410b7a;
+      if (damage_or_enchantment->number_of_targets != '\0')
+        event_result = event_result | 2;
     }
-    if (pcVar2->number_of_targets != '\0')
+    else if (event == EVENT_RESOLVE_TRIGGER)
     {
-      event_result = event_result | 2;
-    }
-  }
-  else
-  {
-  LAB_02410b7a:
-    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
-    {
-      uVar5 = (unsigned int)(event != EVENT_ACTIVATE);
-      if (event == EVENT_ACTIVATE)
+
+      if (damage_or_enchantment->number_of_targets != '\0')
       {
-        pcVar2 = get_card_instance(player, card);
-        pcVar2->state = pcVar2->state | 0x10;
-        result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 0, 0, 0, 0, 0, 0,
-                                                0, NULL, NULL);
-        pcVar2 = get_card_instance(player, card);
-        pcVar2->state = pcVar2->state & 0xffffffef;
-        if (result == 0)
-        {
-          return 0;
-        }
-        if (spell_fizzled == 1)
-        {
-          return result;
-        }
-        uVar5 = 0;
+        result = 0;
         do
         {
-          if ((uVar5 & 1) == 0)
-          {
-            tap_card(player, card);
-            if (ai_is_speculating != 1)
-            {
-              EXE_FN(int, 0x437ec0, int, int)(0, 0xff);
-              soundnum = WAV_FASTFX;
-            LAB_02410d1d:
-              play_sound_effect(soundnum);
-              sleepms(0x15e);
-            }
-          }
-          else
-          {
-            untap_card(player, card);
-            if (ai_is_speculating != 1)
-            {
-              EXE_FN(int, 0x437ec0, int, int)(0, 0xff);
-              soundnum = WAV_UNTAP;
-              goto LAB_02410d1d;
-            }
-          }
-          uVar5 = uVar5 + 1;
-          if (uVar5 == 4)
-          {
-            pcVar2 = get_card_instance(player, card);
-            pcVar2->state = pcVar2->state | 0x10;
-            return result;
-          }
-        } while (true);
+          add_counters(player, card, damage_or_enchantment->targets[result].player,
+                       damage_or_enchantment->targets[result].card, COUNTER_GLOBE, 1);
+          result = result + 1;
+        } while (result < (int)(unsigned int)damage_or_enchantment->number_of_targets);
       }
-      goto LAB_02410ba4;
+      damage_or_enchantment->number_of_targets = '\0';
+      return global_enchantment(player, card, event);
     }
   }
-  if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+  if (event == EVENT_ACTIVATE)
   {
-  LAB_02410ec7:
-    result = global_enchantment(player, card, event);
+    damage_or_enchantment = get_card_instance(player, card);
+    damage_or_enchantment->state = damage_or_enchantment->state | 0x10;
+    result =
+        generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+    damage_or_enchantment = get_card_instance(player, card);
+    damage_or_enchantment->state = damage_or_enchantment->state & 0xffffffef;
+    if (result == 0)
+    {
+      return 0;
+    }
+    if (spell_fizzled == 1)
+    {
+      return result;
+    }
+    tap_step_or_ability_flags = 0;
+    do
+    {
+      if ((tap_step_or_ability_flags & 1) == 0)
+        tap_card(player, card);
+      else
+        untap_card(player, card);
+      if (ai_is_speculating != 1)
+      {
+        EXE_FN(int, 0x437ec0, int, int)(0, 0xff);
+        soundnum = (tap_step_or_ability_flags & 1) == 0 ? WAV_FASTFX : WAV_UNTAP;
+        play_sound_effect(soundnum);
+        sleepms(0x15e);
+      }
+      tap_step_or_ability_flags = tap_step_or_ability_flags + 1;
+    } while (tap_step_or_ability_flags != 4);
+    damage_or_enchantment = get_card_instance(player, card);
+    damage_or_enchantment->state = damage_or_enchantment->state | 0x10;
     return result;
   }
-  uVar5 = 1;
-LAB_02410ba4:
-  result =
-      generic_activated_ability(player, card, event, uVar5, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION && event != EVENT_CLEANUP)
+    return global_enchantment(player, card, event);
+  tap_step_or_ability_flags = 1;
+  result = generic_activated_ability(player, card, event, tap_step_or_ability_flags, 0, 0, 0, 0, 0,
+                                     0, 0, NULL, NULL);
   if (event != EVENT_RESOLVE_ACTIVATION)
   {
     return result;

@@ -1,0 +1,560 @@
+{
+  "status": "Trigger resolution and ability calculation reconstructed; two dispatcher local-name projections verified.",
+  "batch": "docs/recovery-evidence/event-core-cleanup.json",
+  "batch_sha256": "3464f32c443f2ffbf0e7a5dd89ad0df29cd1ee795a1709399a7e198972550430",
+  "counts": {
+    "helpers": 4,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 28,
+    "removed_lab_gotos": 21,
+    "source_lines_removed": 277,
+    "removed_placeholder_occurrences": 415,
+    "removed_placeholder_names": 31
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "three_way_comparisons": 162368,
+    "entry_invocations": 487104,
+    "functions": {
+      "resolve_trigger": 77888,
+      "get_abilities": 84480
+    },
+    "callback_kind_hits": [
+      [
+        0,
+        168475,
+        144127,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        77888,
+        4117,
+        71293,
+        2851,
+        2851,
+        6144,
+        67880,
+        1174,
+        66706,
+        69126,
+        69079,
+        66706,
+        69079,
+        313,
+        0,
+        0,
+        0,
+        0,
+        66706
+      ],
+      [
+        0,
+        92069,
+        561,
+        1907,
+        400,
+        401,
+        190,
+        589,
+        72966,
+        70229,
+        68901,
+        5698,
+        8722,
+        137,
+        128,
+        2625,
+        90,
+        6,
+        1457,
+        1457,
+        13585,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "original_code_regions": [
+    {
+      "name": "resolve_trigger",
+      "address": "0x26cbfe0",
+      "size": 2081,
+      "sha256": "df8bea8f4edd1fc9c0cd7e8e6d1e8f279d63973c9ecb6d0ce4e5118374f1519c",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26cc027",
+          "target": "0x26ade00",
+          "callee": "put_card_or_activation_onto_stack"
+        },
+        {
+          "instruction": "0x26cc073",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26cc0ab",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26cc0cf",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26cc1d8",
+          "target": "0x26cb6e0",
+          "callee": "dispatch_event_to_single_card"
+        },
+        {
+          "instruction": "0x26cc2ea",
+          "target": "0x26b4660",
+          "callee": "obliterate_card_and_recycle"
+        },
+        {
+          "instruction": "0x26cc34c",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26cc40b",
+          "target": "0x267aa10",
+          "callee": "create_legacy_effect"
+        },
+        {
+          "instruction": "0x26cc42a",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26cc46a",
+          "target": "0x2701e18",
+          "callee": "observed_memcpy"
+        },
+        {
+          "instruction": "0x26cc4ba",
+          "target": "0x26c79c0",
+          "callee": "get_card_image_number"
+        },
+        {
+          "instruction": "0x26cc55a",
+          "target": "0x4359b0",
+          "callee": "dispatch_event"
+        },
+        {
+          "instruction": "0x26cc5a8",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26cc5e6",
+          "target": "0x2701df0",
+          "callee": "sprintf"
+        },
+        {
+          "instruction": "0x26cc610",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26cc668",
+          "target": "0x26cbf50",
+          "callee": "allow_response_to_trigger"
+        },
+        {
+          "instruction": "0x26cc678",
+          "target": "0x436930",
+          "callee": "obliterate_top_card_of_stack"
+        },
+        {
+          "instruction": "0x26cc6ad",
+          "target": "0x26765b0",
+          "callee": "load_text"
+        },
+        {
+          "instruction": "0x26cc6c5",
+          "target": "0x2701df0",
+          "callee": "sprintf"
+        },
+        {
+          "instruction": "0x26cc6f0",
+          "target": "0x471b60",
+          "callee": "raw_dialog"
+        },
+        {
+          "instruction": "0x26cc734",
+          "target": "0x26b4660",
+          "callee": "obliterate_card_and_recycle"
+        },
+        {
+          "instruction": "0x26cc7ae",
+          "target": "0x26cbf50",
+          "callee": "allow_response_to_trigger"
+        },
+        {
+          "instruction": "0x26cc7f7",
+          "target": "0x26c11b0",
+          "callee": "backtrace_and_abort"
+        }
+      ]
+    },
+    {
+      "name": "get_abilities",
+      "address": "0x26cc810",
+      "size": 3635,
+      "sha256": "59895686947bb965b7b3843de07d3d60d74f8664e0e341fd30e401b2620ed284",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26cc840",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26cca1d",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x26cca57",
+          "target": "0x266fd90",
+          "callee": "get_color_of_mana_produced_by_id"
+        },
+        {
+          "instruction": "0x26cca86",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x26ccab0",
+          "target": "0x267a130",
+          "callee": "check_special_flags2"
+        },
+        {
+          "instruction": "0x26ccae9",
+          "target": "0x2680da0",
+          "callee": "color_to_color_test"
+        },
+        {
+          "instruction": "0x26ccafd",
+          "target": "0x2680da0",
+          "callee": "color_to_color_test"
+        },
+        {
+          "instruction": "0x26ccb1a",
+          "target": "0x2680da0",
+          "callee": "color_to_color_test"
+        },
+        {
+          "instruction": "0x26ccb9a",
+          "target": "0x267a210",
+          "callee": "remove_special_flags2"
+        },
+        {
+          "instruction": "0x26ccbb1",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x26ccbdb",
+          "target": "0x26cba90",
+          "callee": "dispatch_event_raw"
+        },
+        {
+          "instruction": "0x26ccc1c",
+          "target": "0x26cba90",
+          "callee": "dispatch_event_raw"
+        },
+        {
+          "instruction": "0x26cccec",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26cce3d",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x26ccefd",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26ccf0d",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26ccf5c",
+          "target": "0x26b5a00",
+          "callee": "kill_card"
+        },
+        {
+          "instruction": "0x26ccf6e",
+          "target": "0x267a2d0",
+          "callee": "get_special_flags3_by_instance"
+        },
+        {
+          "instruction": "0x26ccfd5",
+          "target": "0x26cba90",
+          "callee": "dispatch_event_raw"
+        },
+        {
+          "instruction": "0x26cd167",
+          "target": "0x26b5a00",
+          "callee": "kill_card"
+        },
+        {
+          "instruction": "0x26cd1f3",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26cd218",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26cd240",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26cd265",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26cd28a",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26cd2b2",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26cd2d7",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26cd301",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26cd329",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26cd351",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26cd379",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x26cd3b1",
+          "target": "0x267a2d0",
+          "callee": "get_special_flags3_by_instance"
+        },
+        {
+          "instruction": "0x26cd460",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x26cd48d",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x26cd50a",
+          "target": "0x2672860",
+          "callee": "reset_subtypes_from_instance"
+        },
+        {
+          "instruction": "0x26cd52b",
+          "target": "0x2680af0",
+          "callee": "get_hacked_walk"
+        },
+        {
+          "instruction": "0x26cd54e",
+          "target": "0x26807a0",
+          "callee": "get_sleighted_protection"
+        },
+        {
+          "instruction": "0x26cd5b1",
+          "target": "0x267a050",
+          "callee": "remove_special_flags"
+        },
+        {
+          "instruction": "0x26cd5c8",
+          "target": "0x267a210",
+          "callee": "remove_special_flags2"
+        },
+        {
+          "instruction": "0x26cd5df",
+          "target": "0x267a210",
+          "callee": "remove_special_flags2"
+        },
+        {
+          "instruction": "0x26cd60a",
+          "target": "0x26b3410",
+          "callee": "get_internal_card_id_from_csv_id"
+        }
+      ]
+    }
+  ],
+  "external_data_bindings": 192,
+  "external_callee_bindings": 64,
+  "native_entry_abis": {
+    "resolve_trigger": "cdecl",
+    "get_abilities": "cdecl"
+  },
+  "native_tested_helpers": 4,
+  "register_adapters": {},
+  "whole_unit_net_lines_removed": 277,
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 12,
+  "focused": {
+    "path": ".recovery/event-core-focused-c397.json",
+    "sha256": "836f2e4c0f5b2ac6c2a967747e71c8451e6085a6ddd0546a182a253d1bd58795",
+    "source_succession_links": 5,
+    "earlier_alpha_rename_bridges": 0
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/event-core-build-c398.log",
+    "log_sha256": "53edb8f8cc7f645760e234323b7591e953dec49ad8c5b0c62e7a2406b1fce3f1",
+    "verified_built_slots": 15169,
+    "dll_sha256": "7b792e0d11e7d47f9ade72af88c41ea3d7602541bac01c8c7543a910cf302ba4",
+    "dbg_sha256": "5eaff031e68a27654f55a2e0221502c851fb889f5b92399affd80f3c43bfb056"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/event-core-setup-c398.log",
+    "log_sha256": "5826e673b333c230475139ee5c36bcd1b5004763700e3e8c5d818f87f3620fe2",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4819,
+    "stubs": 0,
+    "metadata_sha256": "b79259b04abdc5c204805483ba07fd849a5d9ec54a794b98055fbf174f6bf2bc",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ed510",
+        "after": "public COFF entry 0x26ed380"
+      },
+      {
+        "name": "new_damage_all",
+        "native_address": "0x26677f0",
+        "before": "public COFF entry 0x26c3310",
+        "after": "public COFF entry 0x26c3180"
+      },
+      {
+        "name": "mana_doublers",
+        "native_address": "0x266c040",
+        "before": "public COFF entry 0x26ca4a0",
+        "after": "public COFF entry 0x26ca310"
+      },
+      {
+        "name": "etb_ability",
+        "native_address": "0x26a5370",
+        "before": "public COFF entry 0x26a1360",
+        "after": "public COFF entry 0x26a11d0"
+      },
+      {
+        "name": "get_best_permanent_for_sacrifice",
+        "native_address": "0x26e3ec0",
+        "before": "public COFF entry 0x26dbb80",
+        "after": "public COFF entry 0x26db9f0"
+      },
+      {
+        "name": "new_get_special_permanent_for_sacrifice",
+        "native_address": "0x26e3f70",
+        "before": "public COFF entry 0x26dbbb0",
+        "after": "public COFF entry 0x26dba20"
+      }
+    ]
+  },
+  "index_unchanged": true,
+  "limits": "Two independent native bodies with controlled engine/event/ability/counter/mana/stack/GUI callbacks. Native switch table retained read-only with all eleven entries checked inside get_abilities. Cdecl entries; engine function-pointer literals and direct engine calls are explicitly rebound. Memcpy is observed without mutations and performs the complete 300-byte copy. Trace records use hashes for compound state/arguments; full declared fixture outputs are byte compared. Allocated 6-slot banks, acyclic activation parents, bounded stack/type indices and strings, nonoverlapping legacy/source records, and initialized packed counter storage are required. A controlled allocated type-table prefix models raw -1 result reads under the target 32-bit compiler behavior; no portable abstract-C or whole-engine memory claim. Two further functions change only exact source/expanded local identifier projections and claim no new native cases.",
+  "retained_switch_tables": [
+    {
+      "owner": "get_abilities",
+      "address": "0x2767f44",
+      "entries": 11,
+      "sha256": "880ee0115bfffc57240331f2828ac0ec373881b25987f007daddc3d185f98693",
+      "all_targets_within_function": true
+    }
+  ],
+  "identifier_only_helpers": [
+    "dispatch_event_arbitrary_to_one_card_with_initial_event_result",
+    "dispatch_event_with_attacker_and_initial_event_result"
+  ],
+  "whole_unit_readability": {
+    "source": "functions/events.c",
+    "source_sha256": "4430a3606e1a011195b1f33954dd9bcaf63bc5895535a02b5af986c22ecd5899",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c399.json",
+    "sha256": "6f79459863bcf99d8a003dc01a8874dda8adb17d69fcd35a76d6277a8dfdc0e2",
+    "counts": {
+      "tracked_source_definitions": 2605,
+      "functions_with_lab_gotos": 980,
+      "lab_gotos": 2572,
+      "functions_with_placeholders": 2033,
+      "distinct_function_local_placeholder_spellings": 6116,
+      "placeholder_identifier_occurrences": 47510,
+      "union_keywords": 0
+    }
+  }
+}

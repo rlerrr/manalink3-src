@@ -1,0 +1,97 @@
+{
+  "status": "Four damage helpers reconstructed with reviewed control flow and a successful target build.",
+  "batch": "docs/recovery-evidence/damage-helpers-cleanup.json",
+  "batch_sha256": "c44c5e856d5c1935b80ae2f062904ee73686f4b0d45ad03e2573d0d85fd02e4e",
+  "counts": {
+    "helpers": 4,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 23,
+    "removed_lab_gotos": 23,
+    "source_lines_removed": 233,
+    "removed_placeholder_occurrences": 862
+  },
+  "verification_policy": "Lighter readability workflow: preserve call order and cached/live reads by review; one target build and reccmp refresh. No new native semantic harness or exhaustive historical replay.",
+  "compiler_preflight": {
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-fsyntax-only",
+      "-x",
+      "c",
+      "-"
+    ],
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "exit_code": 0,
+    "log": ".recovery/damage-cleanup-preflight-c405.log"
+  },
+  "review_notes": [
+    "damage_effects: retain all early returns, target-list caps, Greatbow damage storage, Dralnu fallback, repeated toughness call and post-effect continuation. Circle color query precedes reading info_slot.",
+    "damage_creature: retain allocation controller, activation/legacy source distinctions, cached source state/type, dynamic rereads after callbacks, picture/color ordering, combat/PW metadata and native record-prefix target scan.",
+    "effect_damage: only restructure four shared-label jumps and replace placeholder locals. Preserve prevention versus damage target selection, live target rereads, cached damage amount, infect/wither, PW overflow and player trap/life/token paths.",
+    "after_damage: preserve flag removal before death decisions, exile/bury/destroy precedence, unsigned damage comparison, deferred Archangel counters, live card counts and separate EVENT_AFTER_DAMAGE pass."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/damage-cleanup-build-c406.log",
+    "log_sha256": "b466f20ef4968d132ff83e383560ef141e8067b5232387060798500e9630e3da",
+    "verified_built_slots": 15169,
+    "dll_sha256": "d8edc3be271acb5dd67b2219e15b55f9a5a2d578aeccfbe6d290ad84d37bda8a",
+    "dbg_sha256": "8cb0866f65fe3bf51f5d0c7ba00afb08a480276a1d57b26bf65f1222e9ce859a"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/damage-cleanup-setup-c406.log",
+    "log_sha256": "7786f9927c82772e41dbd11c9cffcdf0489f94b6fb100dd12a56b57e0a9f2550",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4819,
+    "metadata_sha256": "5bbc89cc2c9cee733dcffe53515233c0d8545e7dbd4ecbf7bf28acdae88e906f",
+    "mapping_identities_unchanged": true
+  },
+  "whole_unit_readability": {
+    "source": "functions/damage_effects.c",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "index_unchanged": true,
+  "limits": "Readability recovery of four existing native-derived bodies. This batch adds no native-function coverage and makes no new gameplay-equivalence claim. Target build and existing fixed-veneer/source-name checks are the acceptance gate. Unusual native record-prefix scan and opaque engine calls are preserved.",
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c407.json",
+    "sha256": "58a46a306c61a165dd957f1ce18f16ce83ef041679e58c1f8b4d1125b6397153",
+    "counts": {
+      "tracked_source_definitions": 2605,
+      "functions_with_lab_gotos": 976,
+      "lab_gotos": 2549,
+      "functions_with_placeholders": 1975,
+      "distinct_function_local_placeholder_spellings": 5940,
+      "placeholder_identifier_occurrences": 45695,
+      "union_keywords": 0
+    }
+  }
+}

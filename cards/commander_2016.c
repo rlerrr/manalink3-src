@@ -90,37 +90,37 @@ int orzhov_advokist_legacy(int player, int card, event_t event){
 int card_orzhov_advokist(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  unsigned int uVar2;
+  unsigned int choosing_player;
   int result;
-  unsigned int uVar4;
+  unsigned int turn_offset;
   target_definition_t td;
   upkeep_trigger_ability(player, card, event, player);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    uVar4 = 0;
+    turn_offset = 0;
     instance = get_card_instance(player, card);
     do
     {
-      uVar2 = current_turn ^ uVar4;
+      choosing_player = current_turn ^ turn_offset;
       default_target_definition(player, card, &td, 2);
       td.illegal_abilities = 0;
-      td.who_chooses = uVar2;
-      td.allowed_controller = uVar2;
-      td.preferred_controller = uVar2;
+      td.who_chooses = choosing_player;
+      td.allowed_controller = choosing_player;
+      td.preferred_controller = choosing_player;
       result = can_target(&td);
       if (((result != 0) &&
            (result = new_pick_target(&td, "Select a creature you control.", 0, 0x80),
             result != 0)) &&
-          (add_counters(player, card, instance->targets[0].player,
-                                    instance->targets[0].card, COUNTER_P1_P1, 2),
+          (add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                        COUNTER_P1_P1, 2),
            instance->targets[0].player != player))
       {
         result = create_legacy_effect(player, card, orzhov_advokist_legacy);
         remove_state(player, result, 0x100);
       }
-      uVar4 = uVar4 + 1;
+      turn_offset = turn_offset + 1;
       instance->number_of_targets = '\0';
-    } while (uVar4 != 2);
+    } while (turn_offset != 2);
   }
   return 0;
 }
@@ -211,11 +211,11 @@ Return all nonland permanents to their owners' hands.
 
 int card_deepglow_skate(int player, int card, event_t event)
 {
-  target_t *ptVar1;
+  target_t *target_player_entry;
   int t_card;
-  target_t *ptVar2;
+  target_t *target_card_entry;
   card_instance_t *instance;
-  int iVar4;
+  int target_player;
   int i;
   target_definition_t td;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -234,10 +234,10 @@ int card_deepglow_skate(int player, int card, event_t event)
       break;
     if (new_pick_target(&td, "TARGET_PERMANENT", i, 0) == 0)
       break;
-    ptVar2 = instance->targets + i;
-    ptVar1 = instance->targets + i;
+    target_card_entry = instance->targets + i;
+    target_player_entry = instance->targets + i;
     i = i + 1;
-    state_untargettable(ptVar1->player, ptVar2->card, 1);
+    state_untargettable(target_player_entry->player, target_card_entry->card, 1);
   } while (i != 10);
   i = 0;
   if (instance->number_of_targets != '\0')
@@ -245,9 +245,9 @@ int card_deepglow_skate(int player, int card, event_t event)
     do
     {
       state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
-      iVar4 = instance->targets[i].player;
+      target_player = instance->targets[i].player;
       t_card = instance->targets[i].card;
-      copy_counters(player, card, iVar4, t_card, iVar4, t_card, 0);
+      copy_counters(player, card, target_player, t_card, target_player, t_card, 0);
       i = i + 1;
     } while (i < (int)(unsigned int)instance->number_of_targets);
   }
@@ -356,8 +356,8 @@ among them. Put the chosen cards into your hand and the rest on the bottom of yo
 	if( event == EVENT_RESOLVE_SPELL ){
 		int amount = MIN(10, count_deck(player));
 		if( amount ){
-			show_deck(0, deck_ptr[player], amount, "Cards revealed by Manifold Insights", 0, 0x7375B0 );
-			show_deck(1, deck_ptr[player], amount, "Cards revealed by Manifold Insights", 0, 0x7375B0 );
+			show_deck(0, deck_ptr[player], amount, "Cards revealed by Manifold Insights", 0, EXE_STR(ENGINE_DONE_LABEL) );
+			show_deck(1, deck_ptr[player], amount, "Cards revealed by Manifold Insights", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			int found_nonland = 0;
 			int i;
 			for(i=0; i<amount; i++){
@@ -488,7 +488,7 @@ Destroy target creature. You draw X cards and you lose X life, where X is the nu
 // Red
 int card_charging_cinderhorn(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *attacker;
   card_instance_t *instance;
   int result;
   haste(player, card, event);
@@ -504,8 +504,8 @@ int card_charging_cinderhorn(int player, int card, event_t event)
       result = 0;
       do
       {
-        pcVar1 = in_play_and_attacking(current_turn, result);
-        if (pcVar1 != NULL)
+        attacker = in_play_and_attacking(current_turn, result);
+        if (attacker != NULL)
         {
           instance->info_slot = instance->info_slot + 1;
         }
@@ -799,8 +799,8 @@ Return up to two target cards from your graveyard to your hand. Exile Seeds of R
 int card_stonehoof_chieftain(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  card_instance_t *pcVar2;
-  int pcVar3;
+  card_instance_t *attacking_creature;
+  int attacker_index;
   test_definition_t test;
   indestructible(player, card, event);
   if (event == EVENT_DECLARE_ATTACKERS)
@@ -815,23 +815,23 @@ int card_stonehoof_chieftain(int player, int card, event_t event)
   if (event == EVENT_DAT_ABILITY)
   {
     instance = get_card_instance(player, card);
-    pcVar3 = instance->info_slot + -1;
-    if (-1 < (int)pcVar3)
+    attacker_index = instance->info_slot + -1;
+    if (-1 < (int)attacker_index)
     {
       do
       {
-        pcVar2 =
-            in_play(current_turn,
-                    (unsigned int)(unsigned char)((uint8_t *)&instance->targets[2].player)[pcVar3]);
-        if (pcVar2 != NULL)
+        attacking_creature = in_play(
+            current_turn,
+            (unsigned int)(unsigned char)((uint8_t *)&instance->targets[2].player)[attacker_index]);
+        if (attacking_creature != NULL)
         {
-          pump_ability_until_eot(
-              player, card, current_turn,
-              (unsigned int)(unsigned char)((uint8_t *)&instance->targets[2].player)[pcVar3], 0, 0,
-              0x80, 0x800);
+          pump_ability_until_eot(player, card, current_turn,
+                                 (unsigned int)(unsigned char)((uint8_t *)&instance->targets[2]
+                                                                   .player)[attacker_index],
+                                 0, 0, 0x80, 0x800);
         }
-        pcVar3 = pcVar3 + -1;
-      } while (pcVar3 != -1);
+        attacker_index = attacker_index + -1;
+      } while (attacker_index != -1);
       return 0;
     }
   }
@@ -1669,8 +1669,8 @@ Partner (You can have two commanders if both have partner.)
 
 int card_sylvan_reclamation(int player, int card, event_t event)
 {
-  target_t *ptVar1;
-  target_t *ptVar2;
+  target_t *target_player_entry;
+  target_t *target_card_entry;
   card_instance_t *instance;
   int i;
   target_definition_t td;
@@ -1697,10 +1697,10 @@ int card_sylvan_reclamation(int player, int card, event_t event)
           i = i + 1;
           continue;
         }
-        ptVar2 = instance->targets + i;
-        ptVar1 = instance->targets + i;
+        target_card_entry = instance->targets + i;
+        target_player_entry = instance->targets + i;
         i = i + 1;
-        kill_card(ptVar1->player, ptVar2->card, KILL_EXILE);
+        kill_card(target_player_entry->player, target_card_entry->card, KILL_EXILE);
       } while (i < (int)(unsigned int)instance->number_of_targets);
     }
     kill_card(player, card, KILL_DESTROY);

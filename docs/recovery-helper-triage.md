@@ -1,5 +1,7 @@
 # Helper recovery triage
 
+This inventory records the post-enum comparison checkpoint before the later native record/parameter restoration; its binary and source hashes identify that snapshot. The subsequent focused build is recorded separately in [recovery scope](recovery-scope.md).
+
 Remaining manual review: **0 native helper ranges**. Separately tracked: **1,242 explicitly reviewed/reconstructed ranges** and **951 verified retained ranges**. The classifier does not edit C source or recovery records. Narrow argument/interface edits do not close whole-body review.
 
 | Review queue | Ranges |

@@ -1940,93 +1940,93 @@ Whenever an artifact enters the battlefield under your control, Weldfast Wingsmi
 int card_aetherborn_marauder(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
-  int argument3;
+  int counter_count_or_card_limit;
+  int remaining_toughness_or_choice;
+  int counters_to_move;
   int c;
-  int *piVar5;
   int num_counters[151];
   lifelink(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    piVar5 = num_counters;
-    for (c = 0x97; c != 0; c = c + -1)
-    {
-      *piVar5 = 0;
-      piVar5 = piVar5 + 1u;
-    }
+    memset(num_counters, 0, sizeof(num_counters));
     if (0 < active_cards_count[player])
     {
       c = 0;
       do
       {
-        while ((instance = in_play(player, c),
-                instance == NULL || (iVar2 = is_what(player, c, 0x47), iVar2 == 0)))
+        instance = in_play(player, c);
+        if (instance != NULL && (counter_count_or_card_limit = is_what(player, c, 0x47),
+                                 counter_count_or_card_limit != 0))
         {
-          c = c + 1;
-          iVar2 = active_cards_count[player];
-          if (iVar2 <= c)
-            goto LAB_023a1068;
+          counter_count_or_card_limit = count_counters(player, c, COUNTER_P1_P1);
+          num_counters[c] = counter_count_or_card_limit;
         }
-        iVar2 = count_counters(player, c, COUNTER_P1_P1);
-        num_counters[c] = iVar2;
         c = c + 1;
-        iVar2 = active_cards_count[player];
-      } while (c < iVar2);
-    LAB_023a1068:
+        counter_count_or_card_limit = active_cards_count[player];
+      } while (c < counter_count_or_card_limit);
       num_counters[card] = 0;
-      if (0 < iVar2)
+      if (0 < counter_count_or_card_limit)
       {
         c = 0;
         do
         {
-          iVar2 = num_counters[c];
-          if (iVar2 != 0)
+          counter_count_or_card_limit = num_counters[c];
+          if (counter_count_or_card_limit != 0)
           {
-            iVar3 = is_what(player, c, 2);
-            argument3 = iVar2;
-            if (iVar3 != 0)
+            remaining_toughness_or_choice = is_what(player, c, 2);
+            counters_to_move = counter_count_or_card_limit;
+            bool choose_amount = false;
+            bool skip_move = false;
+            if (remaining_toughness_or_choice != 0)
             {
-              iVar3 = get_toughness(player, c);
+              remaining_toughness_or_choice = get_toughness(player, c);
               instance = get_card_instance(player, c);
-              iVar3 = iVar3 - (unsigned int)instance->damage_on_card;
-              if (iVar3 == iVar2 || iVar3 - iVar2 < 0)
+              remaining_toughness_or_choice =
+                  remaining_toughness_or_choice - (unsigned int)instance->damage_on_card;
+              if (remaining_toughness_or_choice == counter_count_or_card_limit ||
+                  remaining_toughness_or_choice - counter_count_or_card_limit < 0)
               {
                 do
                 {
-                  argument3 = argument3 + -1;
-                  if (argument3 == 0)
+                  counters_to_move = counters_to_move + -1;
+                  if (counters_to_move == 0)
                   {
                     if ((player == 1) ||
-                        (iVar3 =
+                        (remaining_toughness_or_choice =
                              dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\003",
-                                         "\001\007", player, c, "Move +1/+1 counters from this",
-                                         1, 1, "Decline", 1, 1, 0, 0, 0, 0),
-                         iVar3 != 1))
-                      goto LAB_023a1088;
-                    goto LAB_023a1298;
+                                         "\001\007", player, c, "Move +1/+1 counters from this", 1,
+                                         1, "Decline", 1, 1, 0, 0, 0, 0),
+                         remaining_toughness_or_choice != 1))
+                      skip_move = true;
+                    else
+                      choose_amount = true;
+                    break;
                   }
-                } while (iVar3 == argument3 || iVar3 - argument3 < 0);
+                } while (remaining_toughness_or_choice == counters_to_move ||
+                         remaining_toughness_or_choice - counters_to_move < 0);
               }
             }
-            if ((player != 1) &&
-                (iVar3 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\003",
-                                     "\001\007", player, c, "Move +1/+1 counters from this", 1,
-                                     1, "Decline", 1, 1, 0, 0, 0, 0),
-                 iVar3 == 1))
+            if (!skip_move)
             {
-            LAB_023a1298:
-              argument3 =
-                  choose_a_number(player, "How many +1/+1 counters you\'ll move?", argument3);
-            }
-            if ((argument3 <= iVar2) && (0 < argument3))
-            {
-              move_counters(player, card, player, card, player, c, COUNTER_P1_P1,
-                                        argument3);
+              if (!choose_amount && (player != 1) &&
+                  (remaining_toughness_or_choice = dialog_impl(
+                       player, card, EVENT_CAST_SPELL, "\001\014", "\001\003", "\001\007", player,
+                       c, "Move +1/+1 counters from this", 1, 1, "Decline", 1, 1, 0, 0, 0, 0),
+                   remaining_toughness_or_choice == 1))
+                choose_amount = true;
+              if (choose_amount)
+              {
+                counters_to_move = choose_a_number(player, "How many +1/+1 counters you\'ll move?",
+                                                   counters_to_move);
+              }
+              if ((counters_to_move <= counter_count_or_card_limit) && (0 < counters_to_move))
+              {
+                move_counters(player, card, player, card, player, c, COUNTER_P1_P1,
+                              counters_to_move);
+              }
             }
           }
-        LAB_023a1088:
           c = c + 1;
         } while (c < active_cards_count[player]);
       }
@@ -4552,29 +4552,33 @@ Put the rest onto the battlefield under your control.
 
 int card_durable_handicraft(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int remaining_triggers_or_available;
+  int payment_choice_or_available;
   test_definition_t test;
   if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
-      (iVar1 = has_mana(player, 7, 1), iVar1 != 0))
+      (remaining_triggers_or_available = has_mana(player, 7, 1),
+       remaining_triggers_or_available != 0))
   {
     default_test_definition(&test, 2);
-    iVar1 = duh_mode(player);
-    iVar1 = new_specific_cip(player, card, event, player, (iVar1 != 0) + 1, &test);
-    while ((iVar1 != 0 && (iVar2 = has_mana(player, 7, 1), iVar2 != 0)))
+    remaining_triggers_or_available = duh_mode(player);
+    remaining_triggers_or_available = new_specific_cip(
+        player, card, event, player, (remaining_triggers_or_available != 0) + 1, &test);
+    while (
+        (remaining_triggers_or_available != 0 &&
+         (payment_choice_or_available = has_mana(player, 7, 1), payment_choice_or_available != 0)))
     {
-      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\003",
-                          "\001\007", trigger_cause_controller, trigger_cause,
-                          "Add +1/+1 counter on this", 1, 5, "Decline", 1, 1, 0, 0, 0, 0);
-      if ((iVar2 == 1) &&
+      payment_choice_or_available =
+          dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\003", "\001\007",
+                      trigger_cause_controller, trigger_cause, "Add +1/+1 counter on this", 1, 5,
+                      "Decline", 1, 1, 0, 0, 0, 0);
+      if ((payment_choice_or_available == 1) &&
           (charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 1),
            spell_fizzled != 1))
       {
-        add_counters(player, card, trigger_cause_controller, trigger_cause,
-                                 COUNTER_P1_P1, 1);
+        add_counters(player, card, trigger_cause_controller, trigger_cause, COUNTER_P1_P1, 1);
       }
-      iVar1 = iVar1 + -1;
+      remaining_triggers_or_available = remaining_triggers_or_available + -1;
     }
   }
   if (event != EVENT_ACTIVATE)
@@ -5193,9 +5197,9 @@ int card_verdurous_gearhulk(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
   unsigned int t_card;
-  unsigned int *puVar3;
+  unsigned int *selection_cursor;
   unsigned int t_player;
-  unsigned int *puVar4;
+  unsigned int *counter_cursor;
   int marked[4];
   target_definition_t td;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -5208,12 +5212,12 @@ int card_verdurous_gearhulk(int player, int card, event_t event)
     result = can_target(&td);
     if (result != 0)
     {
-      puVar4 = (unsigned int *)marked;
+      counter_cursor = (unsigned int *)marked;
       marked[0] = 0;
       marked[1] = 0;
       marked[2] = 0;
       marked[3] = 0;
-      puVar3 = puVar4;
+      selection_cursor = counter_cursor;
       do
       {
         result = pick_target(&td, "TARGET_CREATURE");
@@ -5221,22 +5225,23 @@ int card_verdurous_gearhulk(int player, int card, event_t event)
         {
           result = instance->targets[0].player;
           card_00 = instance->targets[0].card;
-          *(unsigned char *)puVar3 = (unsigned char)*puVar3 | (unsigned char)result;
-          *(unsigned char *)((int)puVar3 + 1) =
-              *(unsigned char *)((int)puVar3 + 1) | (unsigned char)card_00;
+          *(unsigned char *)selection_cursor =
+              (unsigned char)*selection_cursor | (unsigned char)result;
+          *(unsigned char *)((int)selection_cursor + 1) =
+              *(unsigned char *)((int)selection_cursor + 1) | (unsigned char)card_00;
           add_state(result, card_00, 0x200000);
         }
-        puVar3 = puVar3 + 1;
+        selection_cursor = selection_cursor + 1;
         instance->number_of_targets = '\0';
-      } while (puVar3 != (unsigned int *)(marked + 4));
+      } while (selection_cursor != (unsigned int *)(marked + 4));
       do
       {
-        t_card = *puVar4 >> 8 & 0xff;
-        t_player = *puVar4 & 0xff;
+        t_card = *counter_cursor >> 8 & 0xff;
+        t_player = *counter_cursor & 0xff;
         add_counters(player, card, t_player, t_card, COUNTER_P1_P1, 1);
-        puVar4 = puVar4 + 1;
+        counter_cursor = counter_cursor + 1;
         remove_state(t_player, t_card, 0x200000);
-      } while (puVar4 != (unsigned int *)(marked + 4));
+      } while (counter_cursor != (unsigned int *)(marked + 4));
     }
     instance->number_of_targets = '\0';
     return 0;
@@ -5412,9 +5417,9 @@ int card_depala_pilot_exemplar(int player, int card, event_t event)
     remove_card_from_deck(player, 0);
   }
   show_deck(current_turn, deck_copy, amount, "Cards revealed by Depala, Pilot Exemplar.", 0,
-            ENGINE_DONE_LABEL);
+            EXE_STR(ENGINE_DONE_LABEL));
   show_deck(current_turn ^ 1, deck_copy, amount, "Cards revealed by Depala, Pilot Exemplar.", 0,
-            ENGINE_DONE_LABEL);
+            EXE_STR(ENGINE_DONE_LABEL));
   for (int i = amount - 1; i >= 0; --i)
   {
     int iid = deck_copy[i];
@@ -6029,7 +6034,7 @@ Whenever a permanent you control is put into a graveyard, you get |E (an energy 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		int amount = MIN(6, count_deck(player));
 		if( amount ){
-			APNAP(p, {show_deck(p, deck_ptr[player], amount, "Cards revealed by Aetherworks Marvels", 0, 0x7375B0 );};);
+			APNAP(p, {show_deck(p, deck_ptr[player], amount, "Cards revealed by Aetherworks Marvels", 0, EXE_STR(ENGINE_DONE_LABEL) );};);
 			int playable[2][amount];
 			int pc = 0;
 			int i;
@@ -7037,6 +7042,12 @@ If an artifact or creature entering the battlefield causes a triggered ability o
 */
 
 int card_perpetual_timepiece(int player, int card, event_t event){
+  enum
+  {
+    CHOICE_MILL = 1,
+    CHOICE_SHUFFLE = 2
+  };
+
 /*
 Perpetual Timepiece |2	0x200f4a8
 Artifact
@@ -7057,12 +7068,12 @@ Artifact
 	                        "Mill 2", can_mill, 15,
 	                        "Shuffle grave into deck", can_shuffle, count_graveyard(player)*2);
 	    if (!choice){ spell_fizzled = 1; return 0; }
-	    if (choice == 1){
+	    if (choice == CHOICE_MILL){
 	        add_state(player, card, STATE_TAPPED);
 	        tapped_for_mana_color = -1;
 	        ai_modifier += 15;
 	    }
-	    if (choice == 2 && charge_mana_for_activated_ability(player, card, MANACOST_X(2))){
+	    if (choice == CHOICE_SHUFFLE && charge_mana_for_activated_ability(player, card, MANACOST_X(2))){
 	        test_definition_t test;
 	        new_default_test_definition(&test, TYPE_ANY, "Select target card to shuffle into deck.");
 	        int max_targ = player == HUMAN ? count_graveyard(player) : internal_rand(count_graveyard(player))+1;
@@ -7072,8 +7083,8 @@ Artifact
 	    }
 	}
 	if (event == EVENT_RESOLVE_ACTIVATION){
-	    if (instance->info_slot == 1){ mill(player, 2); }
-	    if (instance->info_slot == 2){ shuffle(player); }
+	    if (instance->info_slot == CHOICE_MILL){ mill(player, 2); }
+	    if (instance->info_slot == CHOICE_SHUFFLE){ shuffle(player); }
 	}
 	return 0;
 }
@@ -7702,7 +7713,7 @@ Planeswalker - Nissa
 		if( choice == CHOICE_REVEAL ){
 			int max = MIN(2, count_deck(player));
 			if( max ){
-				APNAP(p, {show_deck(p, deck_ptr[player], max, "Cards revealed by Nissa, Nature's Artisan.", 0, 0x7375B0 );};);
+				APNAP(p, {show_deck(p, deck_ptr[player], max, "Cards revealed by Nissa, Nature's Artisan.", 0, EXE_STR(ENGINE_DONE_LABEL) );};);
 			}
 			int i;
 			for(i=0; i<max; i++){
@@ -7829,14 +7840,20 @@ static int is_vehicle_or_dwarf(int player, int iid)
 /* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
 static void fabricate(int player, int card, int amount, int priority_counters, int priority_servo)
 {
+  enum
+  {
+    CHOICE_COUNTERS = 1,
+    CHOICE_SERVO = 2
+  };
+
   char counters[100], servo[100];
   scnprintf(counters, 100, "Add %d +1/+1 counters", amount);
   scnprintf(servo, 100, "Create %d Servo", amount);
   int choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\003",
                            counters, 1, priority_counters, servo, 1, priority_servo, 0, 0, 0, 0);
-  if (choice == 1)
+  if (choice == CHOICE_COUNTERS)
     add_counters(player, card, player, card, COUNTER_P1_P1, amount);
-  else if (choice == 2)
+  else if (choice == CHOICE_SERVO)
     generate_tokens_by_id(player, card, CARD_ID_SERVO, amount);
 }
 #endif

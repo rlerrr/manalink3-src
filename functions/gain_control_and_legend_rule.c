@@ -179,16 +179,16 @@ int gain_control(int player, int card, int tar_player, int tar_card ){
 
 static int generic_control_legacy(int player, int card, event_t event)
 {
-  int card_00;
-  int t_card;
-  unsigned int uVar1;
+  int controlled_card;
+  int source_card;
+  unsigned int spirit_link_flags;
   card_instance_t *instance;
-  int iVar3;
-  int iVar4;
-  int player_00;
-  subtype_t sVar5;
-  unsigned int uVar6;
-  bool bVar7;
+  int granted_ability_or_check;
+  int source_player_or_check;
+  int controlled_player;
+  subtype_t encoded_subtypes;
+  unsigned int control_mode;
+  bool abilities_event;
 
   if (player < 0)
   {
@@ -203,226 +203,182 @@ static int generic_control_legacy(int player, int card, event_t event)
   {
     return 0;
   }
-  player_00 = (int)instance->damage_target_player;
-  iVar4 = instance->targets[0].player;
-  card_00 = instance->damage_target_card;
-  t_card = instance->targets[0].card;
-  iVar3 = instance->targets[1].player;
-  uVar6 = instance->targets[1].card;
-  if (0 < iVar3)
+  controlled_player = (int)instance->damage_target_player;
+  source_player_or_check = instance->targets[0].player;
+  controlled_card = instance->damage_target_card;
+  source_card = instance->targets[0].card;
+  granted_ability_or_check = instance->targets[1].player;
+  control_mode = instance->targets[1].card;
+  if (0 < granted_ability_or_check)
   {
-    special_abilities(player_00, card_00, event, iVar3, player, card);
+    special_abilities(controlled_player, controlled_card, event, granted_ability_or_check, player,
+                      card);
   }
-  iVar3 = instance->targets[2].player;
-  if (iVar3 < 1 || event != EVENT_POWER)
+  granted_ability_or_check = instance->targets[2].player;
+  if (granted_ability_or_check < 1 || event != EVENT_POWER)
   {
-    iVar3 = instance->targets[2].card;
-    if ((event == EVENT_TOUGHNESS) && (0 < iVar3))
+    granted_ability_or_check = instance->targets[2].card;
+    if ((event == EVENT_TOUGHNESS) && (0 < granted_ability_or_check))
     {
-      bVar7 = false;
-      if ((card_00 == affected_card) && (player_00 == affected_card_controller))
+      abilities_event = false;
+      if ((controlled_card == affected_card) && (controlled_player == affected_card_controller))
       {
-        event_result = event_result + iVar3;
+        event_result = event_result + granted_ability_or_check;
       }
     }
     else
     {
-      iVar3 = instance->targets[3].player;
-      bVar7 = event == EVENT_ABILITIES;
-      if ((0 < iVar3 && bVar7) &&
-          ((bVar7 = true, card_00 == affected_card && (player_00 == affected_card_controller))))
+      granted_ability_or_check = instance->targets[3].player;
+      abilities_event = event == EVENT_ABILITIES;
+      if ((0 < granted_ability_or_check && abilities_event) &&
+          ((abilities_event = true,
+            controlled_card == affected_card && (controlled_player == affected_card_controller))))
       {
-        event_result = event_result + iVar3;
+        event_result = event_result + granted_ability_or_check;
       }
     }
   }
   else
   {
-    if ((card_00 == affected_card) && (player_00 == affected_card_controller))
+    if ((controlled_card == affected_card) && (controlled_player == affected_card_controller))
     {
-      event_result = event_result + iVar3;
+      event_result = event_result + granted_ability_or_check;
     }
-    bVar7 = event == EVENT_ABILITIES;
+    abilities_event = event == EVENT_ABILITIES;
   }
-  sVar5 = instance->targets[4].player;
-  if (-1 < (int)sVar5)
+  encoded_subtypes = instance->targets[4].player;
+  if (-1 < (int)encoded_subtypes)
   {
-    if ((char)sVar5 != '\0')
+    if ((char)encoded_subtypes != '\0')
     {
-      attached_is_additional_subtype(player, card, event, sVar5 & 0xff);
-      sVar5 = instance->targets[4].player;
+      attached_is_additional_subtype(player, card, event, encoded_subtypes & 0xff);
+      encoded_subtypes = instance->targets[4].player;
     }
-    if ((char)(sVar5 >> 0x10) != '\0')
+    if ((char)(encoded_subtypes >> 0x10) != '\0')
     {
-      attached_is_forced_subtype(player, card, event, (int)sVar5 >> 0x10 & 0xff);
+      attached_is_forced_subtype(player, card, event, (int)encoded_subtypes >> 0x10 & 0xff);
     }
   }
-  uVar1 = instance->targets[4].card;
-  if (((0 < (int)uVar1) && ((uVar1 & 1) != 0)) && (instance->targets[3].card == 0x1ea5))
+  spirit_link_flags = instance->targets[4].card;
+  if (((0 < (int)spirit_link_flags) && ((spirit_link_flags & 1) != 0)) &&
+      (instance->targets[3].card == 0x1ea5))
   {
-    spirit_link_effect(player_00, card_00, event, instance->targets[0].player);
+    spirit_link_effect(controlled_player, controlled_card, event, instance->targets[0].player);
   }
-  if (((event == EVENT_DECLARE_BLOCKERS) || (bVar7)) && (instance->targets[3].card == 0x3a6a))
+  if (((event == EVENT_DECLARE_BLOCKERS) || (abilities_event)) &&
+      (instance->targets[3].card == 0x3a6a))
   {
     fx_menace(player, card, event);
   }
-  if (uVar6 == 0)
+  if (control_mode == 0)
   {
     return 0;
   }
-  if ((((uVar6 & 0x81) != 0) && (iVar3 = eot_trigger(player, card, event), iVar3 != 0)) &&
-      (((uVar6 & 0x80) == 0 || (player == current_turn))))
+  if ((((control_mode & 0x81) != 0) && (granted_ability_or_check = eot_trigger(player, card, event),
+                                        granted_ability_or_check != 0)) &&
+      (((control_mode & 0x80) == 0 || (player == current_turn))))
   {
-    iVar3 = instance->targets[3].card;
-    if (iVar3 == 0x286b)
+    granted_ability_or_check = instance->targets[3].card;
+    if (granted_ability_or_check == 0x286b)
     {
       kill_card(instance->targets[0].player, instance->targets[0].card, KILL_SACRIFICE);
       return 0;
     }
-    if ((iVar3 == 0x7e9) || (iVar3 == 0x81b))
+    if ((granted_ability_or_check == 0x7e9) || (granted_ability_or_check == 0x81b))
     {
-      tap_card(player_00, card_00);
+      tap_card(controlled_player, controlled_card);
     }
-    effect_on_all_control_effects_attached_to_me(player_00, card_00, player, card, 1);
-    iVar3 = check_state(player, card, 0x400000);
-    if ((iVar3 != 0) && (iVar3 = check_status(player, card, 0x1000000), iVar3 != 0))
+    effect_on_all_control_effects_attached_to_me(controlled_player, controlled_card, player, card,
+                                                 1);
+    granted_ability_or_check = check_state(player, card, 0x400000);
+    if ((granted_ability_or_check != 0) &&
+        (granted_ability_or_check = check_status(player, card, 0x1000000),
+         granted_ability_or_check != 0))
     {
-      gain_control_impl(player_00, card_00);
+      gain_control_impl(controlled_player, controlled_card);
     }
     kill_card(player, card, KILL_EXILE);
   }
-  if ((uVar6 & 0x7e) == 0)
+  if ((control_mode & 0x7e) == 0)
   {
     return 0;
   }
-  if ((event != EVENT_CARDCONTROLLED && event != EVENT_STATIC_EFFECTS) &&
-      (event != EVENT_LEAVES_PLAY_ABILITY))
+  if (event != EVENT_CARDCONTROLLED && event != EVENT_STATIC_EFFECTS &&
+      event != EVENT_LEAVES_PLAY_ABILITY)
   {
-    if (trigger_condition != 0xd4)
-    {
+    if (trigger_condition != 0xd4 || card != affected_card || player != affected_card_controller)
       return 0;
-    }
-    if (card != affected_card)
-    {
-      return 0;
-    }
-    if (player != affected_card_controller)
-    {
-      return 0;
-    }
     if (instance->targets[5].player != -1)
-    {
-      other_leaves_play(player, card, iVar4, t_card, event, 0, 0);
-      return 0;
-    }
-  LAB_02664118:
-    instance->targets[5].player = 1;
+      other_leaves_play(player, card, source_player_or_check, source_card, event, 0, 0);
+    else
+      instance->targets[5].player = 1;
     return 0;
   }
   if (instance->targets[5].player == -1)
-    goto LAB_02664118;
-  other_leaves_play(player, card, iVar4, t_card, event, 0, 0);
+  {
+    instance->targets[5].player = 1;
+    return 0;
+  }
+  other_leaves_play(player, card, source_player_or_check, source_card, event, 0, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
-    if ((uVar6 & 8) != 0)
-    {
-      kill_card(player_00, card_00, KILL_BURY);
-      goto LAB_02663fa8;
-    }
-    uVar6 = uVar6 & 0x40;
+    if ((control_mode & 8) != 0)
+      kill_card(controlled_player, controlled_card, KILL_BURY);
+    else if ((control_mode & 0x40) == 0)
+      return 0;
+  }
+  else if (event == EVENT_CARDCONTROLLED)
+  {
+    if (source_card != affected_card || source_player_or_check != affected_card_controller ||
+        (control_mode & 2) == 0)
+      return 0;
   }
   else
   {
-    if (event != EVENT_CARDCONTROLLED)
+    if (source_player_or_check < 0 || instance->targets[5].player != 1)
+      return 0;
+    bool release_control = false;
+    if (is_tapped(source_player_or_check, source_card) == 0)
     {
-      if (iVar4 < 0)
+      if ((control_mode & 8) != 0)
+        kill_card(controlled_player, controlled_card, KILL_BURY);
+      if ((control_mode & 4) != 0)
       {
-        return 0;
-      }
-      if (event != EVENT_STATIC_EFFECTS)
-      {
-        return 0;
-      }
-      if (instance->targets[5].player != 1)
-      {
-        return 0;
-      }
-      if (is_tapped(iVar4, t_card) == 0)
-      {
-        if ((uVar6 & 8) != 0)
-        {
-          kill_card(player_00, card_00, KILL_BURY);
-        }
-        if ((uVar6 & 4) == 0)
-          goto LAB_02664210;
         instance->targets[5].player = -1;
-        bVar7 = true;
-        if ((uVar6 & 0x10) != 0)
-          goto LAB_02664281;
-      joined_r0x026642c0:
-        if (((uVar6 & 0x20) == 0) || (iVar4 = is_enchanted(player_00, card_00), iVar4 != 0))
-          goto LAB_02663fa8;
+        release_control = true;
       }
-      else
+    }
+    if ((control_mode & 0x10) != 0)
+    {
+      granted_ability_or_check = get_power(controlled_player, controlled_card);
+      source_player_or_check = get_power(source_player_or_check, source_card);
+      if (granted_ability_or_check > source_player_or_check)
       {
-      LAB_02664210:
-        if ((uVar6 & 0x10) != 0)
-        {
-          bVar7 = false;
-        LAB_02664281:
-          iVar3 = get_power(player_00, card_00);
-          iVar4 = get_power(iVar4, t_card);
-          if (iVar3 <= iVar4)
-          {
-            if ((uVar6 & 0x20) != 0)
-              goto LAB_02664220;
-            goto LAB_02664250;
-          }
-          instance->targets[5].player = -1;
-          goto joined_r0x026642c0;
-        }
-        bVar7 = false;
-        if ((uVar6 & 0x20) == 0)
-        {
-          return 0;
-        }
-      LAB_02664220:
-        if (is_enchanted(player_00, card_00) != 0)
-        {
-        LAB_02664250:
-          if (!bVar7)
-          {
-            return 0;
-          }
-          goto LAB_02663fa8;
-        }
+        instance->targets[5].player = -1;
+        release_control = true;
       }
+    }
+    if ((control_mode & 0x20) != 0 &&
+        (source_player_or_check = is_enchanted(controlled_player, controlled_card),
+         source_player_or_check == 0))
+    {
       instance->targets[5].player = -1;
-      goto LAB_02663fa8;
+      release_control = true;
     }
-    if (t_card != affected_card)
-    {
+    if (!release_control)
       return 0;
-    }
-    if (iVar4 != affected_card_controller)
-    {
-      return 0;
-    }
-    uVar6 = uVar6 & 2;
   }
-  if (uVar6 == 0)
-  {
-    return 0;
-  }
-LAB_02663fa8:
-  instance = in_play(player_00, card_00);
+  instance = in_play(controlled_player, controlled_card);
   if (instance != NULL)
   {
-    effect_on_all_control_effects_attached_to_me(player_00, card_00, player, card, 1);
-    iVar4 = check_state(player, card, 0x400000);
-    if ((iVar4 != 0) && (iVar4 = check_status(player, card, 0x1000000), iVar4 != 0))
+    effect_on_all_control_effects_attached_to_me(controlled_player, controlled_card, player, card,
+                                                 1);
+    source_player_or_check = check_state(player, card, 0x400000);
+    if ((source_player_or_check != 0) &&
+        (source_player_or_check = check_status(player, card, 0x1000000),
+         source_player_or_check != 0))
     {
-      gain_control_impl(player_00, card_00);
+      gain_control_impl(controlled_player, controlled_card);
     }
   }
   kill_card(player, card, KILL_EXILE);

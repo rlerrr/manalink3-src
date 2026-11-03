@@ -1,0 +1,63 @@
+{
+  "status": "86 Commander Legends definitions cleaned up; one target build passed. Reccmp refresh deliberately deferred to a larger checkpoint.",
+  "batch": "docs/recovery-evidence/cmr-control-cleanup.json",
+  "batch_sha256": "3e82b31cbd1b2969ff74a357a6e187d98eed781d993211a7d0f3be25b3620e0a",
+  "counts": {
+    "definitions": 86,
+    "card_handlers": 69,
+    "local_helpers": 17,
+    "alpha_only_definitions": 60,
+    "structured_definitions": 26,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 51,
+    "removed_lab_gotos": 49,
+    "source_lines_removed": 263,
+    "removed_placeholder_occurrences": 1895
+  },
+  "verification_policy": "Batched readability workflow: exact token substitution for alpha-only edits; review event routing, callback order and live/cached reads for structured edits. One target build. Native comparisons reserved for uncertain behavior; reccmp refresh deferred to a larger checkpoint.",
+  "review_notes": [
+    "Sixty alpha-only definitions preserve exact tokens after declared local renames; 26 structured definitions receive source review and one target build.",
+    "Repeated searches preserve live active-card bounds, attachment/source matching, duplicate suppression and all work after finding an existing legacy.",
+    "Death helpers retain different eligibility/count queries, source-death early returns, detach byte flags, count masking, pending-record clearing, token quantities and cleanup kills. Colfenor retains main/effect record slot differences, int16 snapshots, unmeld/grave query order, persistent selection filters, repeated ID queries, retry budgets and per-row duplicate decrements.",
+    "Keep equipment/granted-ability routes, protection snapshots and repeated queries, mode rereads following validation, target filters, fizzle results and cost differences.",
+    "Keep Kamahl cached land count/damage mode through animation callbacks, live final damage-target count, native index clamping and reverse creature damage; preserve War Room extra-life-loss and AI branches.",
+    "Alpha-only changes preserve native quirks in Rootweaver marked/selected indices, Blim transfer behavior, creature-counter scans, Hans queries and return values, commander/player slots, Jeska and monarch queries. Opaque dialogs remain unchanged; no new native semantic cases or historical replay."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/cmr-control-build-c471.log",
+    "log_sha256": "d615b3ca7479e2705403245a1b33d86dc87e20aa4851e3d29bc5c4e1c3f59a0c",
+    "verified_built_slots": 15169,
+    "dll_sha256": "f836d3b291e4ee6b0ce6824f47ce24ef9f20908ded88b9af4f5db0478d1791eb",
+    "dbg_sha256": "695620a2dc30e3c12ac828137c096056446688f6d4c24470bad97fda36328d9f"
+  },
+  "reccmp": {
+    "refreshed": false,
+    "reason": "Readability batch with unchanged public function identities. Existing setup describes the previous build; regenerate at the next comparison/commit checkpoint.",
+    "unchanged_checkpoint_inputs": {
+      "config/reccmp/functions.csv": "a0b5791a8d98ec9acba6141138040223317f44dbbf094cf0f977e6a5a9a5a274",
+      ".recovery/reccmp/setup.json": "445df382fefd673e63073a46afddf81c1727dc097b184f8e971c82f2748786d9"
+    }
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c472.json",
+    "sha256": "e719e51d41fd52013c4e39ba326ead209f2e082a5493b9fd0aa11d658797a3ee",
+    "counts": {
+      "tracked_source_definitions": 2607,
+      "functions_with_lab_gotos": 732,
+      "lab_gotos": 1771,
+      "functions_with_placeholders": 1552,
+      "distinct_function_local_placeholder_spellings": 4488,
+      "placeholder_identifier_occurrences": 33593,
+      "union_keywords": 0
+    }
+  },
+  "whole_unit_readability": {
+    "source": "cards/commander_legends.c",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of existing Commander Legends card handlers and helpers. No new native-function coverage or gameplay-equivalence claim. Preserve native quirks, repeated queries, context reads and opaque dialogs."
+}

@@ -40,7 +40,7 @@ int altar_extended(int player, int card, event_t event, int act_mode, int type, 
                         int flag5);
 int sacrifice_and_report_value(int player, int card, int t_player, int flags,
                                     test_definition_t *test);
-static void get_sacrifice_prompt_text(char *prompt, int type, int invert);
+static void get_sacrifice_prompt_text(char *prompt, int maxlen, int type, int invert);
 static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t options,
                                    test_definition_t *test, char *marked_for_sacrifice);
 int new_sacrifice(int player, int card, int t_player, sacrifice_t options,
@@ -154,9 +154,9 @@ static type_t types_cannot_sac(void)
   card_instance_t *instance;
   int card;
   int player;
-  type_t tVar3;
+  type_t prohibited_types;
 
-  tVar3 = TYPE_NONE;
+  prohibited_types = TYPE_NONE;
   player = 0;
   do
   {
@@ -165,31 +165,22 @@ static type_t types_cannot_sac(void)
     {
       do
       {
-        while (true)
-        {
-          instance = in_play(player, card);
-          if (((instance != NULL) && (cards_data[instance->internal_card_id].id == 0x3010)) &&
-              (is_humiliated(player, card, AL_STATIC) == 0))
-          {
-            tVar3 = tVar3 | TYPE_CREATURE;
-          }
-          instance = in_play(player, card);
-          if (((instance != NULL) && (cards_data[instance->internal_card_id].id == 0x5626)) &&
-              (is_humiliated(player, card, AL_STATIC) == 0))
-            break;
-          card = card + 1;
-          if (active_cards_count[player] <= card)
-            goto LAB_026e3798;
-        }
+        instance = in_play(player, card);
+        if (instance != NULL && cards_data[instance->internal_card_id].id == 0x3010 &&
+            is_humiliated(player, card, AL_STATIC) == 0)
+          prohibited_types = prohibited_types | TYPE_CREATURE;
+        instance = in_play(player, card);
+        if (instance != NULL && cards_data[instance->internal_card_id].id == 0x5626 &&
+            is_humiliated(player, card, AL_STATIC) == 0)
+          prohibited_types =
+              TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_ENCHANTMENT | TYPE_CREATURE;
         card = card + 1;
-        tVar3 = TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_ENCHANTMENT | TYPE_CREATURE;
       } while (card < active_cards_count[player]);
     }
-  LAB_026e3798:
     player = player + 1;
     if (player == 2)
     {
-      return tVar3;
+      return prohibited_types;
     }
   } while (true);
 }
@@ -201,17 +192,16 @@ static type_t types_cannot_sac(void)
 static test_definition_t *sacrifice_test;
 
 /* ManalinkEh 2022: 0x26e37b0; original functions/sacrifices.c:31. */
-static int new_can_sacrifice_as_cost_impl(int player, int card, int amount,
-                                               test_definition_t *test)
+static int new_can_sacrifice_as_cost_impl(int player, int card, int amount, test_definition_t *test)
 {
   type_t test_type;
   card_instance_t *instance;
   int result;
   int card_00;
-  unsigned int uStack_18;
+  unsigned int sacrificable_count;
 
   test_type = types_cannot_sac();
-  uStack_18 = 0;
+  sacrificable_count = 0;
   if (0 < active_cards_count[player])
   {
     card_00 = 0;
@@ -225,16 +215,16 @@ static int new_can_sacrifice_as_cost_impl(int player, int card, int amount,
                 ((((test_type == TYPE_NONE ||
                     (result = is_what(player, card_00, test_type), result == 0)) &&
                    (result = check_special_flags2(player, card_00, 0x400000), result == 0)) &&
-                  ((uStack_18 = uStack_18 + 1,
+                  ((sacrificable_count = sacrificable_count + 1,
                     (char)((unsigned char)((unsigned int)amount >> 0x18) ^ 0xff) < '\0' &&
-                        (amount <= (int)uStack_18))))))))
+                        (amount <= (int)sacrificable_count))))))))
       {
         return 1;
       }
       card_00 = card_00 + 1;
     } while (card_00 < active_cards_count[player]);
   }
-  return uStack_18 & amount >> 0x1f;
+  return sacrificable_count & amount >> 0x1f;
 }
 
 
@@ -271,7 +261,7 @@ static const char *can_sacrifice_this(int who_chooses, int player, int card)
 
 
 /* ManalinkEh 2022: 0x26e3990; original functions/sacrifices.c:87. */
-static int can_cause_sacrifice_part(int t_player)
+static int can_cause_sacrifice_part(int player, int t_player)
 {
   card_instance_t *instance;
   int result;
@@ -304,9 +294,9 @@ static int can_cause_sacrifice_part(int t_player)
 
 
 /* ManalinkEh 2022: 0x26e3a30; original functions/sacrifices.c:219. */
-static void get_sacrifice_prompt_text(char *prompt, int type, int invert)
+static void get_sacrifice_prompt_text(char *prompt, int maxlen, int type, int invert)
 {
-  const char *pcVar1;
+  const char *type_description;
   char typetext[100];
   if (ai_is_speculating == 1)
   {
@@ -315,13 +305,14 @@ static void get_sacrifice_prompt_text(char *prompt, int type, int invert)
   }
   if (invert != 0)
   {
-    pcVar1 = type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT),
-                       TYPETEXT_INVERT);
-    scnprintf(prompt, 200, "Select %s permanent to sacrifice.", pcVar1);
+    type_description = type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT),
+                                 TYPETEXT_INVERT);
+    scnprintf(prompt, maxlen, "Select %s permanent to sacrifice.", type_description);
     return;
   }
-  pcVar1 = type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT), TYPETEXT_0);
-  scnprintf(prompt, 200, "Select %s to sacrifice.", pcVar1);
+  type_description =
+      type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT), TYPETEXT_0);
+  scnprintf(prompt, maxlen, "Select %s to sacrifice.", type_description);
   return;
 }
 
@@ -401,7 +392,7 @@ int can_cause_sacrifice(int player, int t_player)
 
   if (player != t_player)
   {
-    result = can_cause_sacrifice_part(t_player);
+    result = can_cause_sacrifice_part(player, t_player);
     return result;
   }
   return 1;
@@ -412,45 +403,47 @@ int can_cause_sacrifice(int player, int t_player)
 int new_can_sacrifice(int player, int card, int t_player, test_definition_t *test)
 {
   int c;
-  int iVar1;
+  int can_cause_sacrifice;
   card_instance_t *instance;
-  int iVar3;
-  unsigned int uStack_18;
-  int iStack_14;
+  int candidate_matches;
+  unsigned int required_count;
+  int matching_count;
+  bool exclude_source = false;
 
   if (test == NULL)
   {
-    if ((player != t_player) && (iVar1 = can_cause_sacrifice_part(t_player), iVar1 == 0))
+    if ((player != t_player) &&
+        (can_cause_sacrifice = can_cause_sacrifice_part(player, t_player), can_cause_sacrifice == 0))
     {
       return 0;
     }
-    uStack_18 = 1;
+    required_count = 1;
   }
   else
   {
-    uStack_18 = (unsigned int)test->qty;
-    if (uStack_18 == 0)
+    required_count = (unsigned int)test->qty;
+    if (required_count == 0)
     {
       return 1;
     }
     if (player == t_player)
     {
       if (test->not_me == 1)
-        goto LAB_026e3cda;
+        exclude_source = true;
     }
     else
     {
-      if (can_cause_sacrifice_part(t_player) == 0)
+      if (can_cause_sacrifice_part(player, t_player) == 0)
       {
         return 0;
       }
     }
   }
-  card = -1;
-LAB_026e3cda:
+  if (!exclude_source)
+    card = -1;
   if (0 < active_cards_count[t_player])
   {
-    iStack_14 = 0;
+    matching_count = 0;
     c = 0;
     do
     {
@@ -459,15 +452,16 @@ LAB_026e3cda:
       {
         if (test == NULL)
         {
-          iVar3 = is_what(t_player, c, 0x47);
+          candidate_matches = is_what(t_player, c, 0x47);
         }
         else
         {
-          iVar3 = new_make_test_in_play(t_player, c, -1, test);
+          candidate_matches = new_make_test_in_play(t_player, c, -1, test);
         }
-        if (((iVar3 != 0) &&
-             (iVar3 = check_special_flags2(t_player, c, 0x400000), iVar3 == 0)) &&
-            (iStack_14 = iStack_14 + 1, (int)uStack_18 <= iStack_14))
+        if (((candidate_matches != 0) &&
+             (candidate_matches = check_special_flags2(t_player, c, 0x400000),
+              candidate_matches == 0)) &&
+            (matching_count = matching_count + 1, (int)required_count <= matching_count))
         {
           return 1;
         }
@@ -495,23 +489,23 @@ int can_sacrifice(int player, int t_player, int amount, type_t type, subtype_t s
 /* ManalinkEh 2022: 0x26e3e40; original functions/sacrifices.c:138. */
 int is_nice_creature_to_sacrifice(int player, int card)
 {
-  uint8_t uVar1;
-  card_data_t *pcVar2;
+  uint8_t ai_category;
+  card_data_t *creature_data;
   card_instance_t *instance;
   int result;
 
-  pcVar2 = get_card_data(player, card);
-  uVar1 = pcVar2->cc[2];
-  if (uVar1 == '\t')
+  creature_data = get_card_data(player, card);
+  ai_category = creature_data->cc[2];
+  if (ai_category == '\t')
   {
     result = is_what(player, card, 4);
     if (result == 0)
     {
       return 1;
     }
-    uVar1 = pcVar2->cc[2];
+    ai_category = creature_data->cc[2];
   }
-  if ((uVar1 != '\x02') && (uVar1 != '\x05'))
+  if ((ai_category != '\x02') && (ai_category != '\x05'))
   {
     instance = get_card_instance(player, card);
     return instance->ext->sp_keywords2 >> 3 & 1;
@@ -559,52 +553,58 @@ int get_best_permanent_for_sacrifice(int player, int type)
 int new_get_special_permanent_for_sacrifice(int player, int card, test_definition_t *test)
 {
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  int iStack_14;
+  int scan_or_result;
+  int candidate_value_or_result;
+  int selected_card;
+  int lowest_value;
 
-  iVar4 = 0;
+  selected_card = 0;
   if (0 < active_cards_count[player])
   {
     do
     {
-      instance = in_play(player, iVar4);
+      instance = in_play(player, selected_card);
       if (((((instance != NULL) &&
-             (iVar2 = new_make_test_in_play(player, iVar4, -1, test), iVar2 != 0)) &&
-            (iVar2 = is_nice_creature_to_sacrifice(player, iVar4), iVar2 != 0)) &&
-           (((iVar2 = check_special_flags2(player, iVar4, 0x400000),
-              iVar2 == 0 && (instance = get_card_instance(player, iVar4),
-                             (instance->state & 0x100000) == 0)) &&
-             ((test->not_me != 1 || (card != iVar4)))))) &&
+             (scan_or_result = new_make_test_in_play(player, selected_card, -1, test),
+              scan_or_result != 0)) &&
+            (scan_or_result = is_nice_creature_to_sacrifice(player, selected_card),
+             scan_or_result != 0)) &&
+           (((scan_or_result = check_special_flags2(player, selected_card, 0x400000),
+              scan_or_result == 0 && (instance = get_card_instance(player, selected_card),
+                                      (instance->state & 0x100000) == 0)) &&
+             ((test->not_me != 1 || (card != selected_card)))))) &&
           (instance->kill_code < 2))
       {
-        return iVar4;
+        return selected_card;
       }
-      iVar4 = iVar4 + 1;
-    } while (iVar4 < active_cards_count[player]);
+      selected_card = selected_card + 1;
+    } while (selected_card < active_cards_count[player]);
     if (0 < active_cards_count[player])
     {
-      iStack_14 = 1000;
-      iVar4 = -1;
-      iVar2 = 0;
+      lowest_value = 1000;
+      selected_card = -1;
+      scan_or_result = 0;
       do
       {
-        instance = in_play(player, iVar2);
+        instance = in_play(player, scan_or_result);
         if ((((instance != NULL) &&
-              (iVar3 = new_make_test_in_play(player, iVar2, -1, test), iVar3 != 0)) &&
-             (((iVar3 = check_special_flags2(player, iVar2, 0x400000),
-                iVar3 == 0 && (instance = get_card_instance(player, iVar2),
-                               (instance->state & 0x100000) == 0)) &&
-               (((test->not_me != 1 || (card != iVar2)) && (instance->kill_code < 2)))))) &&
-            (iVar3 = get_base_value(player, iVar2), iVar3 < iStack_14))
+              (candidate_value_or_result = new_make_test_in_play(player, scan_or_result, -1, test),
+               candidate_value_or_result != 0)) &&
+             (((candidate_value_or_result = check_special_flags2(player, scan_or_result, 0x400000),
+                candidate_value_or_result == 0 &&
+                    (instance = get_card_instance(player, scan_or_result),
+                     (instance->state & 0x100000) == 0)) &&
+               (((test->not_me != 1 || (card != scan_or_result)) &&
+                 (instance->kill_code < 2)))))) &&
+            (candidate_value_or_result = get_base_value(player, scan_or_result),
+             candidate_value_or_result < lowest_value))
         {
-          iStack_14 = get_base_value(player, iVar2);
-          iVar4 = iVar2;
+          lowest_value = get_base_value(player, scan_or_result);
+          selected_card = scan_or_result;
         }
-        iVar2 = iVar2 + 1;
-      } while (iVar2 < active_cards_count[player]);
-      return iVar4;
+        scan_or_result = scan_or_result + 1;
+      } while (scan_or_result < active_cards_count[player]);
+      return selected_card;
     }
   }
   return -1;
@@ -613,27 +613,27 @@ int new_get_special_permanent_for_sacrifice(int player, int card, test_definitio
 
 /* ManalinkEh 2022: 0x26e4110; original functions/sacrifices.c:355. */
 static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t options,
-                                   test_definition_t *test, char *marked_for_sacrifice)
+                              test_definition_t *test, char *marked_for_sacrifice)
 {
   int c;
   int csvid;
-  uint8_t uVar1;
-  uint16_t uVar2;
-  int32_t iVar3;
-  int32_t iVar4;
-  int iVar5;
+  uint8_t saved_target_count;
+  uint16_t requested_type_mode;
+  int32_t saved_target_player;
+  int32_t saved_target_card;
+  int saved_fizzle_or_scan;
   card_instance_t *instance;
-  int iVar7;
-  card_instance_t *pcVar8;
-  type_t tVar9;
-  unsigned int uVar10;
-  int iVar11;
-  unsigned int uVar13;
-  int iStack_23c;
+  int available_card_or_result;
+  card_instance_t *selected_instance;
+  type_t prohibited_types;
+  unsigned int required_types_or_marking_state;
+  int scan_limit_card_or_result;
+  unsigned int requested_types;
+  int last_selected_player;
   const char *prompt;
-  int iStack_22c;
-  unsigned int uStack_220;
-  int iStack_218;
+  int last_selected_card;
+  unsigned int selection_limit;
+  int selected_count_or_packed_choice;
   target_definition_t td;
   char marked[151];
   char default_prompt[200];
@@ -646,29 +646,32 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t op
   {
     td.special = 0xc000;
   }
-  uVar13 = test->type & 0x147;
-  uVar10 = td.required_type;
-  if (((uVar13 != 0) && (uVar2 = test->type_flag, uVar10 = uVar13, uVar2 != 0)) &&
-      (uVar10 = td.required_type, uVar2 == 1))
+  requested_types = test->type & 0x147;
+  required_types_or_marking_state = td.required_type;
+  if (((requested_types != 0) &&
+       (requested_type_mode = test->type_flag, required_types_or_marking_state = requested_types,
+        requested_type_mode != 0)) &&
+      (required_types_or_marking_state = td.required_type, requested_type_mode == 1))
   {
-    td.illegal_type = uVar13;
+    td.illegal_type = requested_types;
   }
-  td.required_type = uVar10;
+  td.required_type = required_types_or_marking_state;
   td.who_chooses = t_player;
   td.allowed_controller = t_player;
   td.preferred_controller = t_player;
-  if (((options & SAC_AS_COST) != 0) && (tVar9 = types_cannot_sac(), tVar9 != TYPE_NONE))
+  if (((options & SAC_AS_COST) != 0) &&
+      (prohibited_types = types_cannot_sac(), prohibited_types != TYPE_NONE))
   {
-    td.illegal_type = td.illegal_type | tVar9;
+    td.illegal_type = td.illegal_type | prohibited_types;
   }
   if ((((options & SAC_CAUSED) != 0) && (player != t_player)) &&
-      (iVar5 = can_cause_sacrifice_part(t_player), iVar5 == 0))
+      (saved_fizzle_or_scan = can_cause_sacrifice_part(player, t_player), saved_fizzle_or_scan == 0))
   {
     spell_fizzled = 1;
     return 0;
   }
   instance = get_card_instance(player, card);
-  iVar5 = spell_fizzled;
+  saved_fizzle_or_scan = spell_fizzled;
   sacrifice_test = test;
   if ((options & SAC_ALL_OR_NONE) == 0)
   {
@@ -680,243 +683,228 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t op
   }
   else
   {
-    iVar7 = target_available(player, card, &td);
-    if (iVar7 < (int)(unsigned int)test->qty)
+    available_card_or_result = target_available(player, card, &td);
+    if (available_card_or_result < (int)(unsigned int)test->qty)
     {
       spell_fizzled = 1;
       return 0;
     }
   }
-  uStack_220 = (unsigned int)test->qty;
-  iVar7 = target_available(player, card, &td);
-  if (iVar7 < (int)uStack_220)
+  selection_limit = (unsigned int)test->qty;
+  available_card_or_result = target_available(player, card, &td);
+  if (available_card_or_result < (int)selection_limit)
   {
-    uStack_220 = target_available(player, card, &td);
+    selection_limit = target_available(player, card, &td);
   }
   if (test->message[0] == '\0')
   {
-    get_sacrifice_prompt_text(default_prompt, uVar13,
-                                        (unsigned int)(test->type_flag == 1));
+    get_sacrifice_prompt_text(default_prompt, 200, requested_types,
+                              (unsigned int)(test->type_flag == 1));
     prompt = default_prompt;
   }
   else
   {
     prompt = test->message;
   }
-  uVar1 = instance->number_of_targets;
-  iVar3 = instance->targets[0].player;
-  iVar4 = instance->targets[0].card;
+  saved_target_count = instance->number_of_targets;
+  saved_target_player = instance->targets[0].player;
+  saved_target_card = instance->targets[0].card;
   memset(marked, 0, sizeof(marked));
-  if ((int)uStack_220 < 1)
-  {
-    if ((spell_fizzled != 1) && ((options & SAC_OPTIONAL) != 0))
-    {
-      iStack_23c = -1;
-      iStack_22c = -1;
-      iStack_218 = 0;
-    LAB_026e445c:
-      spell_fizzled = iVar5;
-      if ((options & SAC_SET_TARGETS) != 0)
-      {
-        instance->number_of_targets = '\x01';
-        instance->targets[0].player = iStack_23c;
-        instance->targets[0].card = iStack_22c;
-        iVar7 = get_color(iStack_23c, iStack_22c);
-        instance->targets[1].player = iVar7;
-        csvid = get_id(iStack_23c, iStack_22c);
-        instance->targets[1].card = csvid;
-        iVar7 = get_power(iStack_23c, iStack_22c);
-        instance->targets[2].player = iVar7;
-        iVar7 = get_toughness(iStack_23c, iStack_22c);
-        instance->targets[2].card = iVar7;
-        pcVar8 = get_card_instance(iStack_23c, iStack_22c);
-        instance->targets[3].card = pcVar8->internal_card_id;
-        iVar7 = get_id(player, card);
-        if (iVar7 == 0x2f91)
-        {
-          iVar7 = has_subtype(iStack_23c, iStack_22c, SUBTYPE_HUMAN);
-          instance->targets[3].player = iVar7;
-        }
-        else if ((iVar7 == 0x24f3) &&
-                 (iVar7 = has_subtype(iStack_23c, iStack_22c, SUBTYPE_GOBLIN), iVar7 != 0))
-        {
-          token_generation_t token;
-          default_token_definition(player, card, 0x493b, &token);
-          token.t_player = iStack_23c;
-          token.qty = '\x02';
-          token.action = TOKEN_ACTION_HASTE;
-          generate_token(&token);
-        }
-      }
-      c = 0;
-      if (0 < active_cards_count[t_player])
-      {
-        do
-        {
-          while (marked[c] != '\0')
-          {
-            instance = get_card_instance(t_player, c);
-            c = c + 1;
-            instance->state = instance->state & 0xffdfffff | 0x100000;
-            iVar11 = active_cards_count[t_player];
-            if (iVar11 <= c)
-              goto LAB_026e44d4;
-          }
-          c = c + 1;
-          iVar11 = active_cards_count[t_player];
-        } while (c < iVar11);
-      LAB_026e44d4:
-        if (((options & SAC_JUST_MARK) == 0) && (0 < iVar11))
-        {
-          c = 0;
-        LAB_026e44f2:
-          do
-          {
-            if (marked[c] != '\0')
-            {
-              instance = get_card_instance(t_player, c);
-              instance->state = instance->state & 0xffefffff;
-              instance = in_play(t_player, c);
-              if (instance != NULL)
-              {
-                iVar11 = c + 1;
-                kill_card(t_player, c, KILL_SACRIFICE);
-                c = iVar11;
-                if (active_cards_count[t_player] <= iVar11)
-                  break;
-                goto LAB_026e44f2;
-              }
-            }
-            c = c + 1;
-          } while (c < active_cards_count[t_player]);
-        }
-      }
-      if ((options & SAC_RETURN_CHOICE) != 0)
-      {
-        iStack_218 = (int32_t)((uint16_t)iStack_218 | ((uint32_t)(uint8_t)iStack_23c << 16) |
-                                   ((uint32_t)(uint8_t)iStack_22c << 24));
-      }
-      if (marked_for_sacrifice == NULL)
-      {
-        spell_fizzled = iVar5;
-        return iStack_218;
-      }
-      memcpy(marked_for_sacrifice, marked, sizeof(marked));
-      spell_fizzled = iVar5;
-      return iStack_218;
-    }
-  }
+  last_selected_player = -1;
+  last_selected_card = -1;
+  selected_count_or_packed_choice = 0;
+  bool accepted;
+  if ((int)selection_limit < 1)
+    accepted = spell_fizzled != 1 && (options & SAC_OPTIONAL) != 0;
   else
   {
-    iVar7 = -1;
+    available_card_or_result = -1;
     if (player == t_player)
-    {
-      iVar7 = card;
-    }
-    iStack_23c = -1;
-    iStack_22c = -1;
-    iStack_218 = 0;
+      available_card_or_result = card;
+    bool ended_early = false;
+    bool cancelled = false;
     do
     {
       target_t tgt;
       spell_fizzled = 0;
       tgt.player = -1;
       tgt.card = -1;
-      if ((ai_is_speculating == 1) || ((t_player == 1 && ((trace_mode & 2U) == 0))))
+      bool use_dialog = true;
+      if (ai_is_speculating == 1 || (t_player == 1 && (trace_mode & 2U) == 0))
       {
-        iVar11 = new_get_special_permanent_for_sacrifice(t_player, iVar7, test);
-        if (iVar11 == -1)
+        scan_limit_card_or_result =
+            new_get_special_permanent_for_sacrifice(t_player, available_card_or_result, test);
+        if (scan_limit_card_or_result != -1)
         {
-          if (tgt.card == -1)
-            goto LAB_026e4361;
-          goto LAB_026e43ad;
+          tgt.player = t_player;
+          tgt.card = scan_limit_card_or_result;
+          use_dialog = false;
         }
-        tgt.player = t_player;
-        tgt.card = iVar11;
-        if (iVar11 < 0)
-          goto LAB_026e468a;
-      LAB_026e43b5:
+      }
+      if (use_dialog)
+      {
+        sacrifice_test = test;
+        instance->number_of_targets = 0;
+        select_target(player, card, &td, prompt, &tgt);
+      }
+      if (tgt.card >= 0)
+      {
         if (marked[tgt.card] == '\0')
         {
-          pcVar8 = get_card_instance(tgt.player, tgt.card);
+          selected_instance = get_card_instance(tgt.player, tgt.card);
           if (ai_is_speculating == 1)
           {
-            uVar10 = 0x300000;
+            required_types_or_marking_state = 0x300000;
           }
           else
           {
-            uVar10 = 0x200000;
+            required_types_or_marking_state = 0x200000;
             if (t_player == 1)
             {
-              uVar10 = (-(unsigned int)((trace_mode & 2U) == 0) & 0x100000) + 0x200000;
+              required_types_or_marking_state =
+                  (-(unsigned int)((trace_mode & 2U) == 0) & 0x100000) + 0x200000;
             }
           }
-          pcVar8->state = pcVar8->state | uVar10;
-          iStack_218 = iStack_218 + 1;
-          iStack_22c = tgt.card;
+          selected_instance->state = selected_instance->state | required_types_or_marking_state;
+          selected_count_or_packed_choice = selected_count_or_packed_choice + 1;
+          last_selected_card = tgt.card;
           marked[tgt.card] = '\x01';
-          iStack_23c = tgt.player;
+          last_selected_player = tgt.player;
         }
         else
         {
-          pcVar8 = get_card_instance(tgt.player, tgt.card);
-          iStack_218 = iStack_218 + -1;
-          pcVar8->state = pcVar8->state & 0xffdfffff;
+          selected_instance = get_card_instance(tgt.player, tgt.card);
+          selected_count_or_packed_choice = selected_count_or_packed_choice + -1;
+          selected_instance->state = selected_instance->state & 0xffdfffff;
           marked[tgt.card] = '\0';
         }
       }
-      else
+      else if ((options & (SAC_DONE | SAC_NO_CANCEL)) != SAC_NO_CANCEL)
       {
-      LAB_026e4361:
-        sacrifice_test = test;
-        instance->number_of_targets = '\0';
-        select_target(player, card, &td, prompt, &tgt);
-      LAB_026e43ad:
-        if (-1 < tgt.card)
-          goto LAB_026e43b5;
-      LAB_026e468a:
-        if ((options & (SAC_DONE | SAC_NO_CANCEL)) != SAC_NO_CANCEL)
-        {
-          instance->number_of_targets = uVar1;
-          instance->targets[0].player = iVar3;
-          instance->targets[0].card = iVar4;
-          if ((tgt.card == -1) ||
-              ((iStack_218 == 0 && ((options & SAC_OPTIONAL) == 0))))
-            goto LAB_026e46d3;
-          goto LAB_026e4440;
-        }
+        ended_early = true;
+        cancelled = tgt.card == -1 ||
+                    (selected_count_or_packed_choice == 0 && (options & SAC_OPTIONAL) == 0);
+        break;
       }
-    } while (iStack_218 < (int)uStack_220);
-    instance->number_of_targets = uVar1;
-    instance->targets[0].player = iVar3;
-    instance->targets[0].card = iVar4;
-    if (spell_fizzled != 1)
-    {
-    LAB_026e4440:
-      if (((int)uStack_220 <= iStack_218) || ((options & SAC_ALL_OR_NONE) == 0))
-        goto LAB_026e445c;
-    }
+    } while (selected_count_or_packed_choice < (int)selection_limit);
+    instance->number_of_targets = saved_target_count;
+    instance->targets[0].player = saved_target_player;
+    instance->targets[0].card = saved_target_card;
+    accepted = !cancelled && (ended_early || spell_fizzled != 1) &&
+               ((int)selection_limit <= selected_count_or_packed_choice ||
+                (options & SAC_ALL_OR_NONE) == 0);
   }
-LAB_026e46d3:
-  iVar5 = 0;
+  if (accepted)
+  {
+    spell_fizzled = saved_fizzle_or_scan;
+    if ((options & SAC_SET_TARGETS) != 0)
+    {
+      instance->number_of_targets = '\x01';
+      instance->targets[0].player = last_selected_player;
+      instance->targets[0].card = last_selected_card;
+      available_card_or_result = get_color(last_selected_player, last_selected_card);
+      instance->targets[1].player = available_card_or_result;
+      csvid = get_id(last_selected_player, last_selected_card);
+      instance->targets[1].card = csvid;
+      available_card_or_result = get_power(last_selected_player, last_selected_card);
+      instance->targets[2].player = available_card_or_result;
+      available_card_or_result = get_toughness(last_selected_player, last_selected_card);
+      instance->targets[2].card = available_card_or_result;
+      selected_instance = get_card_instance(last_selected_player, last_selected_card);
+      instance->targets[3].card = selected_instance->internal_card_id;
+      available_card_or_result = get_id(player, card);
+      if (available_card_or_result == 0x2f91)
+      {
+        available_card_or_result =
+            has_subtype(last_selected_player, last_selected_card, SUBTYPE_HUMAN);
+        instance->targets[3].player = available_card_or_result;
+      }
+      else if ((available_card_or_result == 0x24f3) &&
+               (available_card_or_result =
+                    has_subtype(last_selected_player, last_selected_card, SUBTYPE_GOBLIN),
+                available_card_or_result != 0))
+      {
+        token_generation_t token;
+        default_token_definition(player, card, 0x493b, &token);
+        token.t_player = last_selected_player;
+        token.qty = '\x02';
+        token.action = TOKEN_ACTION_HASTE;
+        generate_token(&token);
+      }
+    }
+    c = 0;
+    if (0 < active_cards_count[t_player])
+    {
+      do
+      {
+        if (marked[c] != '\0')
+        {
+          instance = get_card_instance(t_player, c);
+          c = c + 1;
+          instance->state = instance->state & 0xffdfffff | 0x100000;
+        }
+        else
+          c = c + 1;
+        scan_limit_card_or_result = active_cards_count[t_player];
+      } while (c < scan_limit_card_or_result);
+      if ((options & SAC_JUST_MARK) == 0 && scan_limit_card_or_result > 0)
+      {
+        c = 0;
+        do
+        {
+          if (marked[c] != '\0')
+          {
+            instance = get_card_instance(t_player, c);
+            instance->state = instance->state & 0xffefffff;
+            instance = in_play(t_player, c);
+            if (instance != NULL)
+            {
+              scan_limit_card_or_result = c + 1;
+              kill_card(t_player, c, KILL_SACRIFICE);
+              c = scan_limit_card_or_result;
+              if (active_cards_count[t_player] <= scan_limit_card_or_result)
+                break;
+              continue;
+            }
+          }
+          c = c + 1;
+        } while (c < active_cards_count[t_player]);
+      }
+    }
+    if ((options & SAC_RETURN_CHOICE) != 0)
+    {
+      selected_count_or_packed_choice = (int32_t)((uint16_t)selected_count_or_packed_choice |
+                                                  ((uint32_t)(uint8_t)last_selected_player << 16) |
+                                                  ((uint32_t)(uint8_t)last_selected_card << 24));
+    }
+    if (marked_for_sacrifice == NULL)
+    {
+      spell_fizzled = saved_fizzle_or_scan;
+      return selected_count_or_packed_choice;
+    }
+    memcpy(marked_for_sacrifice, marked, sizeof(marked));
+    spell_fizzled = saved_fizzle_or_scan;
+    return selected_count_or_packed_choice;
+  }
+  saved_fizzle_or_scan = 0;
   spell_fizzled = 1;
   if (0 < active_cards_count[t_player])
   {
     do
     {
-      while (marked[iVar5] == '\0')
+      while (marked[saved_fizzle_or_scan] == '\0')
       {
-        iVar5 = iVar5 + 1;
-        if (active_cards_count[t_player] <= iVar5)
+        saved_fizzle_or_scan = saved_fizzle_or_scan + 1;
+        if (active_cards_count[t_player] <= saved_fizzle_or_scan)
         {
           return 0;
         }
       }
-      instance = get_card_instance(t_player, iVar5);
-      iVar5 = iVar5 + 1;
-      iVar7 = active_cards_count[t_player];
+      instance = get_card_instance(t_player, saved_fizzle_or_scan);
+      saved_fizzle_or_scan = saved_fizzle_or_scan + 1;
+      available_card_or_result = active_cards_count[t_player];
       instance->state = instance->state & 0xffcfffff;
-    } while (iVar5 < iVar7);
+    } while (saved_fizzle_or_scan < available_card_or_result);
   }
   return 0;
 }
@@ -984,7 +972,7 @@ int pick_permanent_for_sacrifice(int player, int card, int type, int cannot_canc
         return result;
       }
     }
-    get_sacrifice_prompt_text(prompt, type, 0);
+    get_sacrifice_prompt_text(prompt, 200, type, 0);
     select_target(player, card, &td, prompt, instance->targets);
     if (spell_fizzled != 1)
     {
@@ -1034,7 +1022,7 @@ int pick_special_permanent_for_sacrifice(int player, int card, int cannot_cancel
       return result;
     }
     char prompt[200];
-    get_sacrifice_prompt_text(prompt, type, (unsigned int)(flag1 == 1));
+    get_sacrifice_prompt_text(prompt, 200, type, (unsigned int)(flag1 == 1));
     select_target(player, card, &td, prompt, instance->targets);
     if (spell_fizzled != 1)
     {
@@ -1140,7 +1128,7 @@ int player_sacrifices_a_hacked_land(int src_player, int src_card, int t_player,
   const char *msg;
   test_definition_t test;
 
-  if ((src_player != t_player) && (result = can_cause_sacrifice_part(t_player), result == 0))
+  if ((src_player != t_player) && (result = can_cause_sacrifice_part(src_player, t_player), result == 0))
   {
     return 0;
   }
@@ -1154,25 +1142,26 @@ int player_sacrifices_a_hacked_land(int src_player, int src_card, int t_player,
 
 /* ManalinkEh 2022: 0x26e5080; original functions/sacrifices.c:593. */
 int impose_sacrifice(int player, int card, int t_player, int amount, int type, int flag1,
-                          int subtype, int flag2, int color, int flag3, int id, int flag4, int cc,
-                          int flag5)
+                     int subtype, int flag2, int color, int flag3, int id, int flag4, int cc,
+                     int flag5)
 {
   int i;
-  int iVar1;
+  int can_cause_sacrifice;
 
   if (amount < 1)
   {
     return 0;
   }
-  if ((player != t_player) && (iVar1 = can_cause_sacrifice_part(t_player), iVar1 == 0))
+  if ((player != t_player) &&
+      (can_cause_sacrifice = can_cause_sacrifice_part(player, t_player), can_cause_sacrifice == 0))
   {
     return 0;
   }
   i = 0;
   do
   {
-    if (sacrifice(player, card, t_player, 1, type, flag1, subtype, flag2, color, flag3, id,
-                           flag4, cc, flag5) == 0)
+    if (sacrifice(player, card, t_player, 1, type, flag1, subtype, flag2, color, flag3, id, flag4,
+                  cc, flag5) == 0)
     {
       return i;
     }
@@ -1245,15 +1234,14 @@ int prevent_damage_sacrificing_a_creature(int player, int card, event_t event, i
     }
     return global_enchantment(player, card, event);
   }
+  bool pay_sacrifice = mode == 2;
   if (mode == 1)
   {
     charge_mana(player, COLOR_COLORLESS, 1);
-    if (spell_fizzled != 1)
-      goto LAB_026e53cd;
+    pay_sacrifice = spell_fizzled != 1;
   }
-  else if (mode == 2)
+  if (pay_sacrifice)
   {
-  LAB_026e53cd:
     result = controller_sacrifices_a_permanent(player, card, 2, 0);
     if (result != 0)
     {
@@ -1268,11 +1256,11 @@ int prevent_damage_sacrificing_a_creature(int player, int card, event_t event, i
 
 /* ManalinkEh 2022: 0x26e5460; original functions/sacrifices.c:684. */
 int check_battlefield_for_sacrifice(int player, int type, int flag1, int subtype, int flag2,
-                                         int color, int flag3, int id, int flag4, int cc, int flag5)
+                                    int color, int flag3, int id, int flag4, int cc, int flag5)
 {
   card_instance_t *instance;
   int i;
-  int iVar4;
+  int scan_or_matches;
   if (player < 2)
   {
     if (0 < active_cards_count[player])
@@ -1282,9 +1270,9 @@ int check_battlefield_for_sacrifice(int player, int type, int flag1, int subtype
       {
         instance = in_play(player, i);
         if ((instance != NULL) &&
-            (iVar4 = make_test_in_play(player, i, -1, type, flag1, subtype, flag2, color,
-                                            flag3, id, flag4, cc, flag5),
-             iVar4 != 0))
+            (scan_or_matches = make_test_in_play(player, i, -1, type, flag1, subtype, flag2, color,
+                                                 flag3, id, flag4, cc, flag5),
+             scan_or_matches != 0))
         {
           return 1;
         }
@@ -1297,20 +1285,20 @@ int check_battlefield_for_sacrifice(int player, int type, int flag1, int subtype
     i = 0;
     do
     {
-      iVar4 = 0;
+      scan_or_matches = 0;
       if (0 < active_cards_count[i])
       {
         do
         {
-          instance = in_play(i, iVar4);
+          instance = in_play(i, scan_or_matches);
           if ((instance != NULL) &&
-              (make_test_in_play(i, iVar4, -1, type, flag1, subtype, flag2, color,
-                                              flag3, id, flag4, cc, flag5) != 0))
+              (make_test_in_play(i, scan_or_matches, -1, type, flag1, subtype, flag2, color, flag3,
+                                 id, flag4, cc, flag5) != 0))
           {
             return 1;
           }
-          iVar4 = iVar4 + 1;
-        } while (iVar4 < active_cards_count[i]);
+          scan_or_matches = scan_or_matches + 1;
+        } while (scan_or_matches < active_cards_count[i]);
       }
       i = i + 1;
     } while (i != 2);
@@ -1323,33 +1311,33 @@ int check_battlefield_for_sacrifice(int player, int type, int flag1, int subtype
 int can_activate_altar_basic(int player, int card, int act_mode, int type)
 {
   int result;
-  unsigned int uVar2;
+  unsigned int available_modes;
 
-  uVar2 = 0;
+  available_modes = 0;
   result = is_sick(player, card);
   if (result == 0)
   {
-    uVar2 = act_mode & 1;
+    available_modes = act_mode & 1;
   }
   result = is_animated_and_sick(player, card);
   if ((result == 0) && ((act_mode & 2U) != 0))
   {
-    uVar2 = uVar2 + 2;
+    available_modes = available_modes + 2;
   }
   result = is_tapped(player, card);
   if ((result == 0) && ((act_mode & 4U) != 0))
   {
-    uVar2 = uVar2 + 4;
+    available_modes = available_modes + 4;
   }
   if ((current_phase == 4) && ((act_mode & 8U) != 0))
   {
-    uVar2 = uVar2 + 8;
+    available_modes = available_modes + 8;
   }
   if ((current_turn == player) && ((act_mode & 0x10U) != 0))
   {
-    uVar2 = uVar2 + 0x10;
+    available_modes = available_modes + 0x10;
   }
-  if (uVar2 != act_mode)
+  if (available_modes != act_mode)
   {
     return 0;
   }
@@ -1361,24 +1349,25 @@ int can_activate_altar_basic(int player, int card, int act_mode, int type)
 int altar_basic_activation(int player, int card, int act_mode, int type)
 {
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
+  int sacrificed_card_or_paid;
+  int sacrifice_stat;
 
   instance = get_card_instance(player, card);
-  iVar2 = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
-  if ((iVar2 != 0) &&
-      (iVar2 = pick_permanent_for_sacrifice(player, card, type, 0), iVar2 != -1))
+  sacrificed_card_or_paid = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
+  if ((sacrificed_card_or_paid != 0) &&
+      (sacrificed_card_or_paid = pick_permanent_for_sacrifice(player, card, type, 0),
+       sacrificed_card_or_paid != -1))
   {
     instance->number_of_targets = '\x01';
-    iVar3 = get_power(player, iVar2);
-    instance->targets[1].player = iVar3;
-    iVar3 = get_toughness(player, iVar2);
-    instance->targets[1].card = iVar3;
-    iVar3 = get_color(player, iVar2);
-    instance->targets[2].player = iVar3;
-    iVar3 = get_cmc(player, iVar2);
-    instance->targets[2].card = iVar3;
-    kill_card(player, iVar2, KILL_SACRIFICE);
+    sacrifice_stat = get_power(player, sacrificed_card_or_paid);
+    instance->targets[1].player = sacrifice_stat;
+    sacrifice_stat = get_toughness(player, sacrificed_card_or_paid);
+    instance->targets[1].card = sacrifice_stat;
+    sacrifice_stat = get_color(player, sacrificed_card_or_paid);
+    instance->targets[2].player = sacrifice_stat;
+    sacrifice_stat = get_cmc(player, sacrificed_card_or_paid);
+    instance->targets[2].card = sacrifice_stat;
+    kill_card(player, sacrificed_card_or_paid, KILL_SACRIFICE);
     if ((act_mode & 4U) == 0)
     {
       return 1;
@@ -1418,69 +1407,69 @@ int altar_basic(int player, int card, event_t event, int act_mode, int type)
 
 /* ManalinkEh 2022: 0x26e5900; original functions/sacrifices.c:782. */
 int altar_extended(int player, int card, event_t event, int act_mode, int type, int flag1,
-                        int subtype, int flag2, int color, int flag3, int id, int flag4, int cmc,
-                        int flag5)
+                   int subtype, int flag2, int color, int flag3, int id, int flag4, int cmc,
+                   int flag5)
 {
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
-  unsigned int uVar4;
+  int sacrificed_card_or_result;
+  int sacrifice_stat;
+  unsigned int available_modes;
 
   instance = get_card_instance(player, card);
   if (event == EVENT_CAN_ACTIVATE)
   {
     if (can_use_activated_abilities(player, card) != 0)
     {
-      iVar2 = is_sick(player, card);
-      uVar4 = 0;
-      if (iVar2 == 0)
+      sacrificed_card_or_result = is_sick(player, card);
+      available_modes = 0;
+      if (sacrificed_card_or_result == 0)
       {
-        uVar4 = act_mode & 1;
+        available_modes = act_mode & 1;
       }
-      iVar2 = is_animated_and_sick(player, card);
-      if ((iVar2 == 0) && ((act_mode & 2U) != 0))
+      sacrificed_card_or_result = is_animated_and_sick(player, card);
+      if ((sacrificed_card_or_result == 0) && ((act_mode & 2U) != 0))
       {
-        uVar4 = uVar4 + 2;
+        available_modes = available_modes + 2;
       }
-      iVar2 = is_tapped(player, card);
-      if ((iVar2 == 0) && ((act_mode & 4U) != 0))
+      sacrificed_card_or_result = is_tapped(player, card);
+      if ((sacrificed_card_or_result == 0) && ((act_mode & 4U) != 0))
       {
-        uVar4 = uVar4 + 4;
+        available_modes = available_modes + 4;
       }
       if ((current_phase == 4) && ((act_mode & 8U) != 0))
       {
-        uVar4 = uVar4 + 8;
+        available_modes = available_modes + 8;
       }
       if ((current_turn == player) && ((act_mode & 0x10U) != 0))
       {
-        uVar4 = uVar4 + 0x10;
+        available_modes = available_modes + 0x10;
       }
-      if (uVar4 == act_mode)
+      if (available_modes == act_mode)
       {
         return can_sacrifice_as_cost(player, 1, type, flag1, subtype, flag2, color, flag3, id,
-                                           flag4, cmc, flag5);
+                                     flag4, cmc, flag5);
       }
     }
   }
   else if (event == EVENT_ACTIVATE)
   {
-    iVar2 = pick_special_permanent_for_sacrifice(player, card, 0, type, flag1, subtype, flag2,
-                                                      color, flag3, id, flag4, cmc, flag5);
-    if (iVar2 == -1)
+    sacrificed_card_or_result = pick_special_permanent_for_sacrifice(
+        player, card, 0, type, flag1, subtype, flag2, color, flag3, id, flag4, cmc, flag5);
+    if (sacrificed_card_or_result == -1)
     {
       spell_fizzled = 1;
     }
     else
     {
-      iVar3 = get_power(player, iVar2);
-      instance->targets[1].player = iVar3;
-      iVar3 = get_toughness(player, iVar2);
-      instance->targets[1].card = iVar3;
-      iVar3 = get_color(player, iVar2);
-      instance->targets[2].player = iVar3;
-      iVar3 = get_cmc(player, iVar2);
-      instance->targets[2].card = iVar3;
-      kill_card(player, iVar2, KILL_SACRIFICE);
+      sacrifice_stat = get_power(player, sacrificed_card_or_result);
+      instance->targets[1].player = sacrifice_stat;
+      sacrifice_stat = get_toughness(player, sacrificed_card_or_result);
+      instance->targets[1].card = sacrifice_stat;
+      sacrifice_stat = get_color(player, sacrificed_card_or_result);
+      instance->targets[2].player = sacrifice_stat;
+      sacrifice_stat = get_cmc(player, sacrificed_card_or_result);
+      instance->targets[2].card = sacrifice_stat;
+      kill_card(player, sacrificed_card_or_result, KILL_SACRIFICE);
       if ((act_mode & 4U) != 0)
       {
         tap_card(player, card);
@@ -1493,46 +1482,46 @@ int altar_extended(int player, int card, event_t event, int act_mode, int type, 
 
 /* ManalinkEh 2022: 0x26e5b80; original functions/sacrifices.c:830. */
 int sacrifice_and_report_value(int player, int card, int t_player, int flags,
-                                    test_definition_t *test)
+                               test_definition_t *test)
 {
-  unsigned int uVar1;
+  unsigned int packed_choice_or_player;
   card_instance_t *instance;
   int32_t result;
   unsigned int card_00;
 
-  uVar1 = new_sacrifice_impl(
-      player, card, t_player, (flags >> 0x1f & 0x21U) + (SAC_RETURN_CHOICE | SAC_JUST_MARK),
-      test, NULL);
-  if ((int)uVar1 < 0)
+  packed_choice_or_player =
+      new_sacrifice_impl(player, card, t_player,
+                         (flags >> 0x1f & 0x21U) + (SAC_RETURN_CHOICE | SAC_JUST_MARK), test, NULL);
+  if ((int)packed_choice_or_player < 0)
   {
     result = -1;
   }
   else
   {
-    card_00 = uVar1 >> 0x18;
-    uVar1 = (int)uVar1 >> 0x10 & 0xff;
-    instance = get_card_instance(uVar1, card_00);
+    card_00 = packed_choice_or_player >> 0x18;
+    packed_choice_or_player = (int)packed_choice_or_player >> 0x10 & 0xff;
+    instance = get_card_instance(packed_choice_or_player, card_00);
     if ((flags & 1U) == 0)
     {
       result = instance->internal_card_id;
     }
     else
     {
-      result = get_power(uVar1, card_00);
+      result = get_power(packed_choice_or_player, card_00);
     }
     if ((flags & 2U) != 0)
     {
-      result = get_toughness(uVar1, card_00);
+      result = get_toughness(packed_choice_or_player, card_00);
     }
     if ((flags & 4U) != 0)
     {
-      result = get_color(uVar1, card_00);
+      result = get_color(packed_choice_or_player, card_00);
     }
     if ((flags & 0x10U) != 0)
     {
-      result = get_cmc(uVar1, card_00);
+      result = get_cmc(packed_choice_or_player, card_00);
     }
-    kill_card(uVar1, card_00, KILL_SACRIFICE);
+    kill_card(packed_choice_or_player, card_00, KILL_SACRIFICE);
   }
   return result;
 }

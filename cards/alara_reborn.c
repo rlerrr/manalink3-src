@@ -312,7 +312,7 @@ As ~ enters the battlefield, you may reveal any number of other artifact cards f
 		}
 
 		if( rc ){
-			show_deck(1-player, revealed, rc, "Arsenal Thresher revealed these cards", 0, 0x7375B0 );
+			show_deck(1-player, revealed, rc, "Arsenal Thresher revealed these cards", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, rc);
 		}
 	}
@@ -385,7 +385,7 @@ Cascade (When you cast this spell, exile cards from the top of your library unti
 					target_t target = instance->targets[count];
 					display[count] = target.card == -1 ? get_internal_card_id_from_csv_id(target.player == player ? 0x615a : 0x6161) : get_card_instance(target.player, target.card)->internal_card_id;
 				}
-				return show_deck(player, display, count, " Select the target to change (Rules Engine = you, Deadbox = opponent)", 0, ENGINE_DONE_LABEL);
+				return show_deck(player, display, count, " Select the target to change (Rules Engine = you, Deadbox = opponent)", 0, EXE_STR(ENGINE_DONE_LABEL));
 			}
 			if (check_special_flags2(player, card, SF2_QUICKSILVER_DRAGON)){
 				td.zone = TARGET_ZONE_IN_PLAY;
@@ -934,7 +934,7 @@ int card_etherwrought_page(int player, int card, event_t event){
 		}
 		if( choice == 1 ){
 			if( deck_ptr[player][0] != -1 ){
-				if( show_deck(player, deck_ptr[player], 1, "Top card of library", 0, (int)"Into grave?") == -1 )
+				if( show_deck(player, deck_ptr[player], 1, "Top card of library", 0, "Into grave?") == -1 )
 					mill(player, 1);
 			}
 		}
@@ -1691,7 +1691,7 @@ int mind_funeral_effect(int player, int card, int t_player ){
 	card_ptr_t* c = cards_ptr[ get_id(player, card)  ];
 	char buffer[100];
 	scnprintf(buffer, 100, " Cards revealed by %s.", c->name);
-	show_deck( HUMAN, deck, x, buffer, 0, 0x7375B0 );
+	show_deck( HUMAN, deck, x, buffer, 0, EXE_STR(ENGINE_DONE_LABEL) );
 	mill(t_player, cards_to_mill);
 	return cards_to_mill;
 }
@@ -2142,7 +2142,7 @@ int card_sages_of_the_anima(int player, int card, event_t event){
 				}
 				if( amount > 0 ){
 					int *deck = deck_ptr[player];
-					show_deck( player, deck, amount, "Sages of the Anima effect", 0, 0x7375B0 );
+					show_deck( player, deck, amount, "Sages of the Anima effect", 0, EXE_STR(ENGINE_DONE_LABEL) );
 					int i;
 					for(i=(amount-1); i>-1; i--){
 						if( is_what(-1, deck[i], TYPE_CREATURE) ){
@@ -2275,7 +2275,7 @@ Sacrifice it at the beginning of the next end step.
                     target_t target = instance->targets[count];
                     display[count] = target.card == -1 ? get_internal_card_id_from_csv_id(target.player == player ? 0x615a : 0x6161) : get_card_instance(target.player, target.card)->internal_card_id;
                 }
-                return show_deck(player, display, count, " Select the target to change (Rules Engine = you, Deadbox = opponent)", 0, ENGINE_DONE_LABEL);
+                return show_deck(player, display, count, " Select the target to change (Rules Engine = you, Deadbox = opponent)", 0, EXE_STR(ENGINE_DONE_LABEL));
             }
             if (check_special_flags2(player, card, SF2_QUICKSILVER_DRAGON)){
                 td.zone = TARGET_ZONE_IN_PLAY;
@@ -3095,18 +3095,17 @@ static int sen_triplets_effect(int player, int card, event_t event);
 /* ManalinkEh 2022: 0x22fa060; original cards/alara_reborn.c:2383. */
 static int sen_triplets_effect(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int opponent_card;
+  int play_check_or_csv_id;
   card_instance_t *instance;
-  int iVar4;
-  int iVar5;
-  int iStack_ec;
+  int mana_available;
+  int opponent;
+  int best_play_available;
   test_definition_t this_test;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
-    player_bits[(1 - player)] =
-        player_bits[(1 - player)] | 0x200;
+    player_bits[(1 - player)] = player_bits[(1 - player)] | 0x200;
   }
   else if (event == EVENT_CLEANUP)
   {
@@ -3115,57 +3114,66 @@ static int sen_triplets_effect(int player, int card, event_t event)
   else if (event == EVENT_CAN_ACTIVATE)
   {
 
-    iVar5 = 1 - player;
-    if (0 < active_cards_count[iVar5])
+    opponent = 1 - player;
+    if (0 < active_cards_count[opponent])
     {
-      iStack_ec = 0;
-      iVar1 = 0;
+      best_play_available = 0;
+      opponent_card = 0;
       do
       {
-        instance = in_hand(iVar5, iVar1);
+        instance = in_hand(opponent, opponent_card);
         if (instance != NULL)
         {
 
-          iVar2 = can_legally_play_csvid_now(player, get_id(iVar5, iVar1), EVENT_CAN_ACTIVATE);
-          if (iVar2 != 0)
+          play_check_or_csv_id = can_legally_play_csvid_now(player, get_id(opponent, opponent_card),
+                                                            EVENT_CAN_ACTIVATE);
+          if (play_check_or_csv_id != 0)
           {
-            iVar4 = has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, get_original_internal_card_id(iVar5, iVar1));
-            if (((iVar4 != 0) && (iStack_ec = iVar2, iVar2 == 99)) &&
-                ((iVar2 = is_what(iVar5, iVar1, 0x20),
-                  iVar2 != 0 || (iVar2 = is_what(iVar5, iVar1, 0x22), iVar2 != 0))))
+            mana_available = has_mana_to_cast_iid(
+                player, EVENT_CAN_ACTIVATE, get_original_internal_card_id(opponent, opponent_card));
+            if (((mana_available != 0) &&
+                 (best_play_available = play_check_or_csv_id, play_check_or_csv_id == 99)) &&
+                ((play_check_or_csv_id = is_what(opponent, opponent_card, 0x20),
+                  play_check_or_csv_id != 0 ||
+                      (play_check_or_csv_id = is_what(opponent, opponent_card, 0x22),
+                       play_check_or_csv_id != 0))))
             {
               return 99;
             }
           }
         }
-        iVar1 = iVar1 + 1;
-        if (active_cards_count[iVar5] <= iVar1)
+        opponent_card = opponent_card + 1;
+        if (active_cards_count[opponent] <= opponent_card)
         {
-          return iStack_ec;
+          return best_play_available;
         }
       } while (true);
     }
   }
-  else if ((event == EVENT_ACTIVATE) && (iVar5 = 1 - player, hand_count[iVar5] != 0))
+  else if ((event == EVENT_ACTIVATE) && (opponent = 1 - player, hand_count[opponent] != 0))
   {
 
     new_default_test_definition(&this_test, 0xff, "Select a card to play.");
-    iVar1 = new_select_a_card(player, iVar5, 4, 0, 1, -1, &this_test);
-    if (((-1 < iVar1) && ((iVar2 = is_what(iVar5, iVar1, 1),
-                           iVar2 == 0 || (((unsigned char)land_can_be_played & 1) == 0)))) &&
-        ((iVar2 = is_what(iVar5, iVar1, 0x30),
-          iVar2 != 0 || (iVar2 = can_sorcery_be_played(player, EVENT_ACTIVATE), iVar2 != 0))))
+    opponent_card = new_select_a_card(player, opponent, 4, 0, 1, -1, &this_test);
+    if (((-1 < opponent_card) &&
+         ((play_check_or_csv_id = is_what(opponent, opponent_card, 1),
+           play_check_or_csv_id == 0 || (((unsigned char)land_can_be_played & 1) == 0)))) &&
+        ((play_check_or_csv_id = is_what(opponent, opponent_card, 0x30),
+          play_check_or_csv_id != 0 ||
+              (play_check_or_csv_id = can_sorcery_be_played(player, EVENT_ACTIVATE),
+               play_check_or_csv_id != 0))))
     {
-      iVar2 = get_id(iVar5, iVar1);
-      if (has_mana_to_cast_id(player, EVENT_ACTIVATE, iVar2) != 0)
+      play_check_or_csv_id = get_id(opponent, opponent_card);
+      if (has_mana_to_cast_id(player, EVENT_ACTIVATE, play_check_or_csv_id) != 0)
       {
-        iVar2 = get_id(iVar5, iVar1);
-        charge_mana_from_id(player, -1, EVENT_ACTIVATE, iVar2);
-        if ((spell_fizzled == 1) && (iVar2 = is_what(iVar5, iVar1, 1), iVar2 == 0))
+        play_check_or_csv_id = get_id(opponent, opponent_card);
+        charge_mana_from_id(player, -1, EVENT_ACTIVATE, play_check_or_csv_id);
+        if ((spell_fizzled == 1) &&
+            (play_check_or_csv_id = is_what(opponent, opponent_card, 1), play_check_or_csv_id == 0))
         {
           return 0;
         }
-        opponent_plays_card_in_your_hand_for_free(iVar5, iVar1);
+        opponent_plays_card_in_your_hand_for_free(opponent, opponent_card);
         cant_be_responded_to = 1;
         return 0;
       }
@@ -3230,185 +3238,190 @@ void multicascade(int player, int card, event_t event, int amount);
 void do_multicascade(int player, int card, int override, int amount)
 {
   int count;
-  unsigned short uVar1;
-  int *piVar2;
+  unsigned short cascade_csv_id;
+  int *library_or_graveyard;
   card_instance_t *instance;
-  int iVar4;
-  int iVar5;
-  int *piVar6;
-  int iVar7;
-  int *piVar8;
-  int iVar9;
-  int *piVar10;
+  int cascade_iid_or_library_count;
+  int play_check_or_selected_index;
+  int *next_shift_entry;
+  int selected_card_or_index;
+  int *shift_entry;
+  int exiled_count_or_scan_index;
+  int *exiled_end;
   int i;
-  int iStack_bd4;
-  int iStack_bd0;
-  int iStack_bcc;
+  int land_permission_or_remaining_offset;
+  int cascade_cmc_limit;
+  int lands_exiled_or_remaining_offset;
   int exiled[500];
 
-  iStack_bd0 = get_cmc(player, card);
+  cascade_cmc_limit = get_cmc(player, card);
   if (-1 < override)
   {
-    iStack_bd0 = override;
+    cascade_cmc_limit = override;
   }
-  piVar2 = deck_ptr[player];
+  library_or_graveyard = deck_ptr[player];
   i = 0;
   if (0 < amount)
   {
     do
     {
 
-      iVar9 = 0;
-      iStack_bd4 = 0;
+      exiled_count_or_scan_index = 0;
+      land_permission_or_remaining_offset = 0;
       if (0 < active_cards_count[player])
       {
         do
         {
-          instance = in_play(player, iVar9);
-          if ((instance != NULL) && (iVar4 = get_id(player, iVar9), iVar4 == 0x563f))
+          instance = in_play(player, exiled_count_or_scan_index);
+          if ((instance != NULL) &&
+              (cascade_iid_or_library_count = get_id(player, exiled_count_or_scan_index),
+               cascade_iid_or_library_count == 0x563f))
           {
-            iVar4 = is_humiliated(player, iVar9, AL_STATIC);
-            iStack_bd4 = iStack_bd4 + (unsigned int)(iVar4 == 0);
+            cascade_iid_or_library_count =
+                is_humiliated(player, exiled_count_or_scan_index, AL_STATIC);
+            land_permission_or_remaining_offset = land_permission_or_remaining_offset +
+                                                  (unsigned int)(cascade_iid_or_library_count == 0);
           }
-          iVar9 = iVar9 + 1;
-        } while (iVar9 < active_cards_count[player]);
+          exiled_count_or_scan_index = exiled_count_or_scan_index + 1;
+        } while (exiled_count_or_scan_index < active_cards_count[player]);
       }
-      iStack_bcc = 0;
-      iVar9 = 0;
+      lands_exiled_or_remaining_offset = 0;
+      exiled_count_or_scan_index = 0;
+      bool stopped_before_limit = false;
       do
       {
-        iVar4 = piVar2[iVar9];
-        if (iVar4 == -1)
+        cascade_iid_or_library_count = library_or_graveyard[exiled_count_or_scan_index];
+        if (cascade_iid_or_library_count == -1)
         {
-        LAB_022fa7b7:
-          if (iVar9 == 0)
-            goto LAB_022fa7c4;
-          if ((iStack_bd4 != 0) && (iStack_bcc != 0))
-            goto LAB_022fa887;
-          if ((iVar4 < 0) || (iVar5 = can_legally_play_iid(player, iVar4), iVar5 == 0))
-            goto LAB_022fab2b;
-          goto LAB_022faa64;
+          stopped_before_limit = true;
+          break;
         }
-
-        iVar4 = *piVar2;
-        exiled[iVar9] = iVar4;
+        cascade_iid_or_library_count = *library_or_graveyard;
+        exiled[exiled_count_or_scan_index] = cascade_iid_or_library_count;
         rfg_top_card_of_deck(player);
-        iVar5 = is_what(-1, iVar4, 1);
-        iVar9 = iVar9 + 1;
-        iStack_bcc = (iStack_bcc + 1) - (unsigned int)(iVar5 == 0);
-        iVar5 = is_what(-1, iVar4, 1);
-        if ((iVar5 == 0) && (iVar5 = get_cmc_by_internal_id(iVar4), iVar5 < iStack_bd0))
-          goto LAB_022fa7b7;
-      } while (iVar9 != 500);
-
-      if ((iStack_bd4 == 0) || (iVar4 = -1, iStack_bcc == 0))
-      {
-      LAB_022fab2b:
-        iVar4 = count_deck(player);
-      LAB_022fa9bf:
-        iVar4 = iVar4 + iVar9;
-        piVar10 = exiled + iVar9;
-        do
+        play_check_or_selected_index = is_what(-1, cascade_iid_or_library_count, 1);
+        ++exiled_count_or_scan_index;
+        lands_exiled_or_remaining_offset = (lands_exiled_or_remaining_offset + 1) -
+                                           (unsigned int)(play_check_or_selected_index == 0);
+        play_check_or_selected_index = is_what(-1, cascade_iid_or_library_count, 1);
+        if (play_check_or_selected_index == 0 &&
+            (play_check_or_selected_index = get_cmc_by_internal_id(cascade_iid_or_library_count),
+             play_check_or_selected_index < cascade_cmc_limit))
         {
-          iVar5 = (iVar4 * 4 + -0x7e0) - (int)piVar10;
-          if (iVar9 < 2)
+          stopped_before_limit = true;
+          break;
+        }
+      } while (exiled_count_or_scan_index != 500);
+      if (exiled_count_or_scan_index != 0)
+      {
+        bool can_play = stopped_before_limit;
+        if (!stopped_before_limit && land_permission_or_remaining_offset != 0)
+          cascade_iid_or_library_count = -1;
+        if (land_permission_or_remaining_offset != 0 && lands_exiled_or_remaining_offset != 0)
+        {
+          exiled_end = exiled + exiled_count_or_scan_index;
+          land_permission_or_remaining_offset =
+              land_permission_or_remaining_offset - exiled_count_or_scan_index;
+          lands_exiled_or_remaining_offset =
+              lands_exiled_or_remaining_offset - exiled_count_or_scan_index;
+          while (true)
           {
-            *(int *)((int)exiled + (int)deck_ptr[player] + iVar5 + 0x7e0) = exiled[0];
-            if (iVar9 == 1)
-              goto LAB_022fa7c4;
-          }
-          else
-          {
+            test_definition_t test;
 
-            iVar7 = internal_rand(iVar9);
-            *(int *)((int)exiled + (int)deck_ptr[player] + iVar5 + 0x7e0) = exiled[iVar7];
-            if (iVar7 < iVar9)
+            new_default_test_definition(&test, 1, "Select a Land card to put into play tapped.");
+            play_check_or_selected_index = select_card_from_zone(
+                player, player, exiled, exiled_count_or_scan_index, 0, 1, -1, &test);
+            if (play_check_or_selected_index < 0)
+              break;
+
+            selected_card_or_index = add_card_to_hand(player, exiled[play_check_or_selected_index]);
+            add_state(player, selected_card_or_index, 0x10);
+            put_into_play(player, selected_card_or_index);
+            shift_entry = exiled + play_check_or_selected_index;
+            if (play_check_or_selected_index < exiled_count_or_scan_index)
             {
-              piVar8 = exiled + iVar7;
               do
               {
-                piVar6 = piVar8 + 1;
-                *piVar8 = piVar8[1];
-                piVar8 = piVar6;
-              } while (piVar10 != piVar6);
+                next_shift_entry = shift_entry + 1;
+                *shift_entry = shift_entry[1];
+                shift_entry = next_shift_entry;
+              } while (next_shift_entry != exiled_end);
+            }
+            exiled_count_or_scan_index = exiled_count_or_scan_index + -1;
+            exiled_end = exiled_end + -1;
+            if ((land_permission_or_remaining_offset + exiled_count_or_scan_index == 0) ||
+                (lands_exiled_or_remaining_offset + exiled_count_or_scan_index == 0))
+              break;
+          }
+        }
+        if (can_play && cascade_iid_or_library_count >= 0 &&
+            (play_check_or_selected_index =
+                 can_legally_play_iid(player, cascade_iid_or_library_count),
+             play_check_or_selected_index != 0))
+        {
+          char buffer[1000];
+          cascade_csv_id = cards_data[cascade_iid_or_library_count].id;
+          scnprintf(buffer, 1000, " Play %s\n Do not play", cards_ptr[cascade_csv_id]->name);
+          if (do_dialog(player, player, card, -1, -1, buffer, 0) == 0)
+          {
+            exiled_count_or_scan_index = exiled_count_or_scan_index + -1;
+            play_card_in_exile_for_free(player, player, (unsigned int)cascade_csv_id);
+            exiled[exiled_count_or_scan_index] = -1;
+          }
+        }
+        cascade_iid_or_library_count = count_deck(player);
+        cascade_iid_or_library_count += exiled_count_or_scan_index;
+        exiled_end = exiled + exiled_count_or_scan_index;
+        while (exiled_count_or_scan_index > 0)
+        {
+          play_check_or_selected_index =
+              (cascade_iid_or_library_count * 4 - 0x7e0) - (int)exiled_end;
+          if (exiled_count_or_scan_index < 2)
+            *(int *)((int)exiled + (int)deck_ptr[player] + play_check_or_selected_index + 0x7e0) =
+                exiled[0];
+          else
+          {
+            selected_card_or_index = internal_rand(exiled_count_or_scan_index);
+            *(int *)((int)exiled + (int)deck_ptr[player] + play_check_or_selected_index + 0x7e0) =
+                exiled[selected_card_or_index];
+            if (selected_card_or_index < exiled_count_or_scan_index)
+            {
+              shift_entry = exiled + selected_card_or_index;
+              do
+              {
+                next_shift_entry = shift_entry + 1;
+                *shift_entry = shift_entry[1];
+                shift_entry = next_shift_entry;
+              } while (exiled_end != next_shift_entry);
             }
           }
-          iVar9 = iVar9 + -1;
-          piVar10 = piVar10 + -1;
-        } while (true);
-      }
-    LAB_022fa887:
-      piVar10 = exiled + iVar9;
-      iStack_bd4 = iStack_bd4 - iVar9;
-      iStack_bcc = iStack_bcc - iVar9;
-      while (true)
-      {
-        test_definition_t test;
-
-        new_default_test_definition(&test, 1, "Select a Land card to put into play tapped.");
-        iVar5 = select_card_from_zone(player, player, exiled, iVar9, 0, 1, -1, &test);
-        if (iVar5 < 0)
-          break;
-
-        iVar7 = add_card_to_hand(player, exiled[iVar5]);
-        add_state(player, iVar7, 0x10);
-        put_into_play(player, iVar7);
-        piVar8 = exiled + iVar5;
-        if (iVar5 < iVar9)
-        {
-          do
-          {
-            piVar6 = piVar8 + 1;
-            *piVar8 = piVar8[1];
-            piVar8 = piVar6;
-          } while (piVar6 != piVar10);
-        }
-        iVar9 = iVar9 + -1;
-        piVar10 = piVar10 + -1;
-        if ((iStack_bd4 + iVar9 == 0) || (iStack_bcc + iVar9 == 0))
-          break;
-      }
-      if ((-1 < iVar4) && (iVar5 = can_legally_play_iid(player, iVar4), iVar5 != 0))
-      {
-        char buffer[1000];
-      LAB_022faa64:
-
-        uVar1 = cards_data[iVar4].id;
-        scnprintf(buffer, 1000, " Play %s\n Do not play", cards_ptr[uVar1]->name);
-        if (do_dialog(player, player, card, -1, -1, buffer, 0) == 0)
-        {
-          iVar9 = iVar9 + -1;
-          play_card_in_exile_for_free(player, player, (unsigned int)uVar1);
-          exiled[iVar9] = -1;
+          --exiled_count_or_scan_index;
+          --exiled_end;
         }
       }
-      iVar4 = count_deck(player);
-      if (iVar9 != 0)
-        goto LAB_022fa9bf;
-    LAB_022fa7c4:
       i = i + 1;
     } while (amount != i);
   }
-  piVar2 = graveyard_ptr_mutable[player];
+  library_or_graveyard = graveyard_ptr_mutable[player];
   count = count_graveyard(player);
-  iVar9 = count + -1;
+  exiled_count_or_scan_index = count + -1;
   if (-1 < count + -1)
   {
     do
     {
-      while (cards_data[piVar2[iVar9]].id != 0x563e)
+      while (cards_data[library_or_graveyard[exiled_count_or_scan_index]].id != 0x563e)
       {
-        iVar9 = iVar9 + -1;
-        if (iVar9 == -1)
+        exiled_count_or_scan_index = exiled_count_or_scan_index + -1;
+        if (exiled_count_or_scan_index == -1)
         {
           return;
         }
       }
-      add_card_to_hand(player, piVar2[iVar9]);
-      iVar4 = iVar9 + -1;
-      remove_card_from_grave(player, iVar9);
-      iVar9 = iVar4;
-    } while (iVar4 != -1);
+      add_card_to_hand(player, library_or_graveyard[exiled_count_or_scan_index]);
+      cascade_iid_or_library_count = exiled_count_or_scan_index + -1;
+      remove_card_from_grave(player, exiled_count_or_scan_index);
+      exiled_count_or_scan_index = cascade_iid_or_library_count;
+    } while (cascade_iid_or_library_count != -1);
   }
   return;
 }

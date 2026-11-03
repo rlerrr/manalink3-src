@@ -642,7 +642,10 @@ def verify_symbols(image,root=ROOT):
         found=[s for s in symbols if s[0]==old]
         if not found and e.get('allow_compiler_clone'):
             assert e['static']
-            found=[s for s in symbols if re.fullmatch(re.escape(old)+r'\.(?:constprop|isra|part)\.\d+',s[0])]
+            # GCC can specialize and then outline the same private function,
+            # e.g. .isra.0.part.0. Keep the exact source base name and permit
+            # only recognized stages; uniqueness/linkage checks still apply.
+            found=[s for s in symbols if re.fullmatch(re.escape(old)+r'(?:\.(?:constprop|isra|part)\.\d+)+',s[0])]
         if not found and e.get('optional_physical_symbol'):continue
         if not found:
             assert e['static'],('Missing public canonical symbol',old)

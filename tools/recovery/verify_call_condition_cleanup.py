@@ -35,7 +35,84 @@ def projected(row):
         assert sha(row['before_definition'].encode())==row['before_sha256']
         from special_call_condition_source import analysis_view
         view=analysis_view(row['before_definition'],row['name'])[0] if row.get('syntax_adapter') else None
-        if row.get('payment_helpers_cleanup'):
+        if row.get('card_control_cleanup'):
+            if row.get('batch_readability_cleanup'):
+                assert re.fullmatch(r'(?:cards|functions)/[a-z_0-9-]+\.c',row['source'])
+            else:
+                assert row['source'] in ['cards/aether_revolt.c','cards/mirage.c','cards/throne_of_eldraine.c','cards/war_of_the_spark.c','cards/strixhaven.c','cards/commander_legends.c','cards/modern_horizons_2.c','cards/ice_age.c','cards/new_phyrexia.c','cards/mercadian_masques.c','cards/prophecy.c','cards/modern_horizons.c','cards/m19.c','cards/invasion.c','cards/hour_of_devastation.c']
+            after=row['after_definition'];facts=None
+            if row.get('alpha_only'):
+                from verify_source_spelling_edits import substitute
+                from verify_assertion_call_conditions import normalized_expansion
+                renamed=substitute(row['before_definition'],row['renames'])
+                assert normalized_expansion(renamed,row['source'],renamed)==normalized_expansion(after,row['source'],after)
+        elif row.get('rules_control_cleanup'):
+            assert row['source']=='functions/rules_engine.c'
+            assert row['name'] in ['check_card_for_rules_engine','static_graveyard_abilities','get_storm_count']
+            after=row['after_definition'];facts=None
+        elif row.get('pack_control_cleanup'):
+            assert row['source']=='functions/packs.c'
+            after=row['after_definition'];facts=None
+        elif row.get('spell_control_cleanup'):
+            assert row['source']=='functions/functions.c'
+            assert row['name'] in ['generic_spell','granted_generic_activated_ability','legacy_effect_pump_ability_until_eot']
+            after=row['after_definition'];facts=None
+        elif row.get('reanimation_control_cleanup'):
+            assert row['source']=='functions/functions.c'
+            after=row['after_definition'];facts=None
+        elif row.get('shared_control_cleanup'):
+            assert row['source']=='functions/functions.c'
+            after=row['after_definition'];facts=None
+        elif row.get('damage_helpers_cleanup'):
+            assert row['source']=='functions/damage_effects.c'
+            assert row['name'] in ['damage_effects','damage_creature','effect_damage','after_damage']
+            after=row['after_definition'];facts=None
+        elif row.get('helper_local_names_cleanup'):
+            assert row['source']=='functions/functions.c'
+            from verify_source_spelling_edits import substitute
+            after=substitute(row['before_definition'],row['local_identifier_projection']);facts=None
+        elif row.get('event_core_cleanup'):
+            assert row['source']=='functions/events.c'
+            assert row['name'] in ['resolve_trigger','get_abilities','dispatch_event_arbitrary_to_one_card_with_initial_event_result','dispatch_event_with_attacker_and_initial_event_result']
+            after=row['after_definition'];facts=None
+            if row.get('local_identifier_projection'):
+                from verify_source_spelling_edits import substitute
+                assert substitute(row['before_definition'],row['local_identifier_projection'])==after
+        elif row.get('token_inline_cleanup'):
+            assert row['source']=='functions/token_generation.c' and row['name']=='generate_tokens_impl'
+            import textwrap
+            from verify_source_spelling_edits import substitute
+            from verify_assertion_call_conditions import normalized_expansion
+            origin=row['parent_block_projection'];parent=origin['parent_definition']
+            assert sha(parent.encode())==origin['parent_sha256']
+            block=substitute(textwrap.dedent(parent[origin['block_start']:origin['block_end']]),origin['renames'])
+            after=row['after_definition'];body=after[after.index('{')+1:after.rindex('}')]
+            assert normalized_expansion(body,row['source'],after)==normalized_expansion(block+'\n'+origin['return_statement'],row['source'],after)
+            facts=None
+        elif row.get('token_generation_cleanup'):
+            assert row['source']=='functions/token_generation.c'
+            assert row['name'] in ['copy_all_tokens_both_players','generate_token','set_token','default_token_definition','resolve_token_iid','get_copyable_special_infos','copy_token_definition','generate_token_by_id_impl','copy_token_characteristics_for_clone']
+            after=row['after_definition'];facts=None
+            if row.get('local_identifier_projection'):
+                from verify_source_spelling_edits import substitute
+                assert substitute(row['before_definition'],row['local_identifier_projection'])==after
+        elif row.get('aura_attachment_cleanup'):
+            assert row['source']=='functions/auras.c'
+            assert row['name'] in ['disable_attached','attached_is_additional_color','attached_is_forced_color','attached_set_pt_part','disabling_aura_ai_part','aura_impl','aura_pref_controller','targeted_aura_impl','aura_with_variable_pt_boost_depending_on_condition','gain_control_and_attach_as_aura','end_of_stealing_aura_effect','when_enchanted_permanent_dies_return_aura_to_hand','cannot_be_enchanted_granted','enchant_player','generic_animating_aura_impl','pump_attached','this_effect_doesnt_remove_this']
+            after=row['after_definition'];facts=None
+            if row.get('local_identifier_projection'):
+                from verify_source_spelling_edits import substitute
+                assert substitute(row['before_definition'],row['local_identifier_projection'])==after
+        elif row.get('tutor_selection_cleanup'):
+            assert row['name'] in ['get_average_value_from_zone','select_card_from_zone','new_select_a_card','select_multiple_cards_from_graveyard_to_array_part','select_multiple_cards_from_either_graveyard']
+            after=row['after_definition'];facts=None
+        elif row.get('target_selection_cleanup'):
+            assert row['name'] in ['can_legally_target','real_validate_target','real_target_available','validate_arbitrary_target','validate_target','valid_target','select_target_impl','real_select_target','choose_default_target','mark_up_to_n_targets_noload','opponent_is_valid_target']
+            after=row['after_definition'];facts=None
+        elif row.get('target_validation_cleanup'):
+            assert row['name'] in ['validate_target_impl','target_match_type','target_available_impl','get_protections_from_part','has_protection_from_impl']
+            after=row['after_definition'];facts=None
+        elif row.get('payment_helpers_cleanup'):
             assert row['name'] in ['charge_mana_from_id_with_cost_mod','charge_mana_for_activated_ability','has_mana_for_activated_ability','attachment_granting_activated_ability','equipment_granting_activated_ability']
             after=row['after_definition'];facts=None
         elif row.get('casting_cost_cleanup'):
@@ -208,6 +285,117 @@ def all_rows(proof,root=ROOT,*,include_returns=True):
         path=proof['native_payment_helpers_cleanup'];data=(root/path).read_bytes()
         assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
         land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_target_validation_cleanup'):
+        path=proof['native_target_validation_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_target_selection_cleanup'):
+        path=proof['native_target_selection_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_tutor_selection_cleanup'):
+        path=proof['native_tutor_selection_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_aura_attachment_cleanup'):
+        path=proof['native_aura_attachment_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_token_generation_cleanup'):
+        path=proof['native_token_generation_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_token_inline_cleanup'):
+        path=proof['native_token_inline_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_event_core_cleanup'):
+        path=proof['native_event_core_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_helper_local_names_cleanup'):
+        path=proof['native_helper_local_names_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_damage_helpers_cleanup'):
+        path=proof['native_damage_helpers_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_shared_control_cleanup'):
+        path=proof['native_shared_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_reanimation_control_cleanup'):
+        path=proof['native_reanimation_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_spell_control_cleanup'):
+        path=proof['native_spell_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_pack_control_cleanup'):
+        path=proof['native_pack_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_rules_control_cleanup'):
+        path=proof['native_rules_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_aether_control_cleanup'):
+        path=proof['native_aether_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_mirage_control_cleanup'):
+        path=proof['native_mirage_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_eldraine_control_cleanup'):
+        path=proof['native_eldraine_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_war_control_cleanup'):
+        path=proof['native_war_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_strixhaven_control_cleanup'):
+        path=proof['native_strixhaven_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_cmr_control_cleanup'):
+        path=proof['native_cmr_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_mh2_control_cleanup'):
+        path=proof['native_mh2_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_ice_nph_control_cleanup'):
+        path=proof['native_ice_nph_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_karn_masques_control_cleanup'):
+        path=proof['native_karn_masques_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_prophecy_control_cleanup'):
+        path=proof['native_prophecy_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_mh1_m19_control_cleanup'):
+        path=proof['native_mh1_m19_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns and proof.get('native_invasion_hou_control_cleanup'):
+        path=proof['native_invasion_hou_control_cleanup'];data=(root/path).read_bytes()
+        assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+        land_rows+=json.loads(data)['rows']
+    if include_returns:
+        for path in proof.get('native_card_readability_batches',[]):
+            data=(root/path).read_bytes()
+            assert sha(data)==next(v['sha256'] for v in proof['interface_supporting_inputs'] if v['path']==path)
+            batch=json.loads(data)['rows']
+            assert all(v.get('card_control_cleanup') and v.get('batch_readability_cleanup') for v in batch)
+            land_rows+=batch
     return (r['rows'] if r else [])+(followup['rows'] if followup else [])+(special['rows'] if special else [])+(returns['rows'] if returns else [])+(roles['rows'] if roles else [])+(shared['rows'] if shared else [])+(extension['rows'] if extension else [])+(commas['rows'] if commas else [])+(comparisons['rows'] if comparisons else [])+(loops['rows'] if loops else [])+(directions['rows'] if directions else [])+(residual['rows'] if residual else [])+(tails['rows'] if tails else [])+(guards['rows'] if guards else [])+(lifetimes['rows'] if lifetimes else [])+(getters['rows'] if getters else [])+(counters['rows'] if counters else [])+(players['rows'] if players else [])+(arguments['rows'] if arguments else [])+(instances['rows'] if instances else [])+(keywords['rows'] if keywords else [])+(queries['rows'] if queries else [])+(dispatches['rows'] if dispatches else [])+land_rows
 
 

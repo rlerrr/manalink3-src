@@ -41,7 +41,7 @@ int card_urzas_bauble(int player, int card, event_t event){
                 }
             }
         }
-        show_deck( player, cards_array, 1, "Card Revealed at Random", 0, 0x7375B0 );
+        show_deck( player, cards_array, 1, "Card Revealed at Random", 0, EXE_STR(ENGINE_DONE_LABEL) );
     }
     return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }

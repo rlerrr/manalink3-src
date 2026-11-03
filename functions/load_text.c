@@ -24,269 +24,267 @@ static int num_loadtexts_from_file;
 /* ManalinkEh 2022: 0x2675d70; original functions/load_text.c:52. */
 static void load_text_stash(const char *filename, LoadText **out_loadtexts, int *out_num_loadtexts)
 {
-  FILE *argument1;
-  char *pcVar3;
-  char *pcVar4;
-  char *pcVar5;
-  LoadText *pLVar7;
-  const char **ppcVar8;
-  char *pcVar9;
-  const char **ppcVar10;
-  int *piVar11;
-  int iVar12;
-  char cVar13;
-  unsigned int uVar14;
-  int iVar17;
+  FILE *resource_file;
+  char *current_line_or_error;
+  char *line_end_or_scan;
+  char *text_line;
+  LoadText *entry_or_reduced_stash;
+  const char **entry_lines;
+  char *next_line_or_escape;
+  const char **missing_line_cursor;
+  int *error_number;
+  int line_count_or_entry_offset;
+  char escaped_character;
+  unsigned int file_length;
+  int stored_lines_or_entry_index;
   LoadText *lt;
-  int iStack_214;
-  int iStack_210;
-  int iStack_20c;
+  int entry_capacity;
+  int next_entry_count;
+  int entry_index;
   char path[500];
 
   EXE_FN(void, 0x466020, char *)(path);
   sprintf(path + strlen(path), "\\%s", filename);
-  argument1 = fopen(path, "rt");
-  if (argument1 == NULL)
+  resource_file = fopen(path, "rt");
+  if (resource_file == NULL)
   {
-    piVar11 = (int *)_errno();
-    pcVar3 = strerror(*piVar11);
-    fatal("Couldn\'t open \"%s\": %s", path, pcVar3);
+    error_number = (int *)_errno();
+    current_line_or_error = strerror(*error_number);
+    fatal("Couldn\'t open \"%s\": %s", path, current_line_or_error);
   }
-  fseek(argument1, 0, 2);
-  uVar14 = ftell(argument1);
-  pcVar3 = malloc(uVar14 + 2);
-  if (pcVar3 == NULL)
+  fseek(resource_file, 0, 2);
+  file_length = ftell(resource_file);
+  current_line_or_error = malloc(file_length + 2);
+  if (current_line_or_error == NULL)
   {
-    fatal("Couldn\'t malloc %d bytes for raw_file", uVar14 + 2);
+    fatal("Couldn\'t malloc %d bytes for raw_file", file_length + 2);
   }
-  fseek(argument1, 0, 0);
-  uVar14 = fread(pcVar3, 1, uVar14, argument1);
-  pcVar3[uVar14] = '\n';
-  pcVar3[uVar14 + 1] = '\0';
+  fseek(resource_file, 0, 0);
+  file_length = fread(current_line_or_error, 1, file_length, resource_file);
+  current_line_or_error[file_length] = '\n';
+  current_line_or_error[file_length + 1] = '\0';
   lt = malloc(0x1c20);
   if (lt == NULL)
   {
     fatal("Couldn\'t malloc %d*%d entries for LoadText", 600, 0xc);
   }
-  pcVar4 = strchr(pcVar3, 10);
-  iStack_20c = 0;
-  iStack_214 = 600;
-  iStack_210 = 1;
-LAB_02675eb0:
-  do
+  line_end_or_scan = strchr(current_line_or_error, 10);
+  entry_index = 0;
+  entry_capacity = 600;
+  next_entry_count = 1;
+  while (line_end_or_scan != NULL)
   {
-    iVar12 = iStack_20c * 0xc;
-    if (pcVar4 == NULL)
+    line_count_or_entry_offset = entry_index * 0xc;
+    *line_end_or_scan = '\0';
+    next_line_or_escape = line_end_or_scan + 1;
+    if ((*current_line_or_error == '@') && (current_line_or_error[1] != '\0'))
     {
-    LAB_02675f5f:
-      if (iStack_214 == iStack_20c)
+      if (entry_capacity == entry_index)
       {
-        lt = realloc(lt, (int)((double)iStack_214 * 1.5) * 0xc);
+        entry_capacity = (int)((double)entry_capacity * 1.5);
+        lt = realloc(lt, entry_capacity * 0xc);
         if (lt == NULL)
         {
-          fatal("Couldn\'t realloc %d*%d entries for LoadText", (int)((double)iStack_214 * 1.5),
-                0xc);
+          fatal("Couldn\'t realloc %d*%d entries for LoadText", entry_capacity, 0xc);
         }
       }
-      LoadText *sentinel = (LoadText *)((char *)lt + iVar12);
-      sentinel->key = "";
-      sentinel->num = 250;
-      const char **empty_lines = malloc(250 * sizeof(*empty_lines));
-      sentinel->lines = empty_lines;
-      if (empty_lines != NULL)
+      text_line = strchr(next_line_or_escape, 10);
+      if (text_line == NULL)
       {
-        const char **end_lines = empty_lines + 250;
-        do
-        {
-          *empty_lines = "";
-          empty_lines = empty_lines + 1;
-        } while (empty_lines != end_lines);
-        pLVar7 = malloc(iStack_210 * 0xc);
-        *out_loadtexts = pLVar7;
-        if (pLVar7 != NULL)
-        {
-          memcpy(pLVar7, lt, iStack_210 * 0xc);
-          free(lt);
-          *out_num_loadtexts = iStack_210;
-          return;
-        }
-        fatal("Couldn\'t malloc %d*%d entries for LoadText reduction", iStack_210, 0xc);
+        line_count_or_entry_offset = entry_index * 0xc;
+        break;
       }
-      fatal("Couldn\'t malloc %d lines for LoadText(ai speculation)", 0xfa);
-    }
-    *pcVar4 = '\0';
-    pcVar9 = pcVar4 + 1;
-    if ((*pcVar3 == '@') && (pcVar3[1] != '\0'))
-    {
-      if (iStack_214 == iStack_20c)
+      *text_line = '\0';
+      text_line = text_line + 1;
+      if ((unsigned char)(line_end_or_scan[1] - 0x31U) < 9)
       {
-        iStack_214 = (int)((double)iStack_214 * 1.5);
-        lt = realloc(lt, iStack_214 * 0xc);
-        if (lt == NULL)
+        entry_or_reduced_stash = lt + entry_index;
+        entry_or_reduced_stash->key = current_line_or_error + 1;
+        line_count_or_entry_offset = atoi(next_line_or_escape);
+        entry_or_reduced_stash->num = line_count_or_entry_offset;
+        entry_lines = malloc(line_count_or_entry_offset * 4);
+        entry_or_reduced_stash->lines = entry_lines;
+        if (entry_lines == NULL)
         {
-          fatal("Couldn\'t realloc %d*%d entries for LoadText", iStack_214, 0xc);
+          fatal("Couldn\'t malloc %d lines for LoadText(\"@%s\")", line_count_or_entry_offset,
+                current_line_or_error + 1);
         }
-      }
-      pcVar5 = strchr(pcVar9, 10);
-      if (pcVar5 == NULL)
-      {
-        iVar12 = iStack_20c * 0xc;
-        goto LAB_02675f5f;
-      }
-      *pcVar5 = '\0';
-      pcVar5 = pcVar5 + 1;
-      if ((unsigned char)(pcVar4[1] - 0x31U) < 9)
-      {
-        pLVar7 = lt + iStack_20c;
-        pLVar7->key = pcVar3 + 1;
-        iVar12 = atoi(pcVar9);
-        pLVar7->num = iVar12;
-        ppcVar8 = malloc(iVar12 * 4);
-        pLVar7->lines = ppcVar8;
-        if (ppcVar8 == NULL)
+        line_end_or_scan = strchr(text_line, 10);
+        if (0 < line_count_or_entry_offset)
         {
-          fatal("Couldn\'t malloc %d lines for LoadText(\"@%s\")", iVar12, pcVar3 + 1);
-        }
-        pcVar4 = strchr(pcVar5, 10);
-        if (0 < iVar12)
-        {
-          iVar17 = 0;
-          while (pcVar4 != NULL)
+          bool entry_complete = false;
+          stored_lines_or_entry_index = 0;
+          while (line_end_or_scan != NULL)
           {
-            *pcVar4 = '\0';
-            pcVar3 = pcVar4 + 1;
-            pcVar4 = pcVar5;
-            while (pcVar9 = strchr(pcVar4, 0x5c), pcVar9 != NULL)
+            *line_end_or_scan = '\0';
+            current_line_or_error = line_end_or_scan + 1;
+            line_end_or_scan = text_line;
+            while (next_line_or_escape = strchr(line_end_or_scan, 0x5c),
+                   next_line_or_escape != NULL)
             {
-              cVar13 = pcVar9[1];
-              pcVar4 = pcVar9 + 1;
-              if (cVar13 == 'n')
+              escaped_character = next_line_or_escape[1];
+              line_end_or_scan = next_line_or_escape + 1;
+              bool unescape = true;
+              if (escaped_character == 'n')
+                escaped_character = '\n';
+              else if (escaped_character == 't')
+                escaped_character = '\t';
+              else if (escaped_character != '\\')
+                unescape = false;
+              if (unescape)
               {
-                cVar13 = '\n';
-                goto LAB_02676119;
-              }
-              if (cVar13 == 't')
-              {
-                cVar13 = '\t';
-                goto LAB_02676119;
-              }
-              if (cVar13 == '\\')
-              {
-              LAB_02676119:
-                *pcVar9 = cVar13;
-                cVar13 = pcVar9[2];
-                pcVar9[1] = cVar13;
-                pcVar9 = pcVar4;
-                while (cVar13 != '\0')
+                *next_line_or_escape = escaped_character;
+                escaped_character = next_line_or_escape[2];
+                next_line_or_escape[1] = escaped_character;
+                next_line_or_escape = line_end_or_scan;
+                while (escaped_character != '\0')
                 {
-                  cVar13 = pcVar9[2];
-                  pcVar9 = pcVar9 + 1;
-                  *pcVar9 = cVar13;
+                  escaped_character = next_line_or_escape[2];
+                  next_line_or_escape = next_line_or_escape + 1;
+                  *next_line_or_escape = escaped_character;
                 }
               }
             }
-            ppcVar8[iVar17] = pcVar5;
-            iVar17 = iVar17 + 1;
-            if (iVar12 == iVar17)
+            entry_lines[stored_lines_or_entry_index] = text_line;
+            stored_lines_or_entry_index = stored_lines_or_entry_index + 1;
+            if (line_count_or_entry_offset == stored_lines_or_entry_index)
             {
-              pcVar4 = strchr(pcVar3, 10);
-              iStack_20c = iStack_210;
-              iStack_210 = iStack_210 + 1;
-              goto LAB_02675eb0;
+              line_end_or_scan = strchr(current_line_or_error, 10);
+              entry_index = next_entry_count;
+              next_entry_count = next_entry_count + 1;
+              entry_complete = true;
+              break;
             }
-            pcVar4 = strchr(pcVar3, 10);
-            pcVar5 = pcVar3;
+            line_end_or_scan = strchr(current_line_or_error, 10);
+            text_line = current_line_or_error;
           }
-          if (iVar12 <= iVar17)
+          if (entry_complete)
+            continue;
+          if (line_count_or_entry_offset <= stored_lines_or_entry_index)
           {
-            iVar17 = iStack_210;
-            iVar12 = iStack_210 * 0xc;
-            iStack_210 = iStack_20c + 2;
-            iStack_20c = iVar17;
-            goto LAB_02675f5f;
+            stored_lines_or_entry_index = next_entry_count;
+            line_count_or_entry_offset = next_entry_count * 0xc;
+            next_entry_count = entry_index + 2;
+            entry_index = stored_lines_or_entry_index;
+            break;
           }
-          ppcVar10 = ppcVar8 + iVar17;
+          missing_line_cursor = entry_lines + stored_lines_or_entry_index;
           do
           {
-            *ppcVar10 = "";
-            ppcVar10 = ppcVar10 + 1;
-          } while (ppcVar8 + iVar12 != ppcVar10);
-          pcVar4 = strchr(pcVar5, 10);
+            *missing_line_cursor = "";
+            missing_line_cursor = missing_line_cursor + 1;
+          } while (entry_lines + line_count_or_entry_offset != missing_line_cursor);
+          line_end_or_scan = strchr(text_line, 10);
         }
-        iStack_20c = iStack_210;
-        iStack_210 = iStack_210 + 1;
-        pcVar3 = pcVar5;
+        entry_index = next_entry_count;
+        next_entry_count = next_entry_count + 1;
+        current_line_or_error = text_line;
       }
       else
       {
-        pcVar4 = strchr(pcVar5, 10);
-        pcVar3 = pcVar5;
+        line_end_or_scan = strchr(text_line, 10);
+        current_line_or_error = text_line;
       }
-      goto LAB_02675eb0;
+      continue;
     }
-    pcVar4 = strchr(pcVar9, 10);
-    pcVar3 = pcVar9;
-  } while (true);
+    line_end_or_scan = strchr(next_line_or_escape, 10);
+    current_line_or_error = next_line_or_escape;
+  }
+  line_count_or_entry_offset = entry_index * 0xc;
+  if (entry_capacity == entry_index)
+  {
+    lt = realloc(lt, (int)((double)entry_capacity * 1.5) * 0xc);
+    if (lt == NULL)
+    {
+      fatal("Couldn\'t realloc %d*%d entries for LoadText", (int)((double)entry_capacity * 1.5),
+            0xc);
+    }
+  }
+  LoadText *sentinel = (LoadText *)((char *)lt + line_count_or_entry_offset);
+  sentinel->key = "";
+  sentinel->num = 250;
+  const char **empty_lines = malloc(250 * sizeof(*empty_lines));
+  sentinel->lines = empty_lines;
+  if (empty_lines != NULL)
+  {
+    const char **end_lines = empty_lines + 250;
+    do
+    {
+      *empty_lines = "";
+      empty_lines = empty_lines + 1;
+    } while (empty_lines != end_lines);
+    entry_or_reduced_stash = malloc(next_entry_count * 0xc);
+    *out_loadtexts = entry_or_reduced_stash;
+    if (entry_or_reduced_stash != NULL)
+    {
+      memcpy(entry_or_reduced_stash, lt, next_entry_count * 0xc);
+      free(lt);
+      *out_num_loadtexts = next_entry_count;
+      return;
+    }
+    fatal("Couldn\'t malloc %d*%d entries for LoadText reduction", next_entry_count, 0xc);
+  }
+  fatal("Couldn\'t malloc %d lines for LoadText(ai speculation)", 0xfa);
 }
 
 /* ManalinkEh 2022: 0x2676360; original functions/load_text.c:180. */
 const char **load_text_nocopy(const char *header, int *num_lines)
 {
-  int iVar1;
-  LoadText *pLVar2;
-  int iVar4;
-  LoadText *pLVar5;
-  int iStack_14;
+  int cached_entry_count;
+  LoadText *cached_stash;
+  int entry_index;
+  LoadText *entry;
+  int fallback_entry_count;
 
   if (loadtexts == NULL)
   {
     load_text_stash("Text.res", &loadtexts, &num_loadtexts);
   }
-  pLVar2 = loadtexts;
-  iVar1 = num_loadtexts;
+  cached_stash = loadtexts;
+  cached_entry_count = num_loadtexts;
   if (ai_is_speculating == 1)
   {
     if (num_lines != NULL)
     {
       *num_lines = 0;
     }
-    return pLVar2[num_loadtexts + -1].lines;
+    return cached_stash[num_loadtexts + -1].lines;
   }
-  iVar4 = 0;
-  iStack_14 = num_loadtexts;
-  pLVar5 = loadtexts;
+  entry_index = 0;
+  fallback_entry_count = num_loadtexts;
+  entry = loadtexts;
   if (0 < num_loadtexts)
   {
     do
     {
-      if (strcmp(pLVar5->key, header) == 0)
+      if (strcmp(entry->key, header) == 0)
       {
         if (num_lines != NULL)
         {
-          *num_lines = pLVar5->num;
+          *num_lines = entry->num;
         }
-        return pLVar5->lines;
+        return entry->lines;
       }
-      iVar4 = iVar4 + 1;
-      pLVar5 = pLVar5 + 1;
-    } while (iVar4 != iVar1);
+      entry_index = entry_index + 1;
+      entry = entry + 1;
+    } while (entry_index != cached_entry_count);
   }
   if (num_lines != NULL)
   {
     *num_lines = 0;
-    iStack_14 = num_loadtexts;
+    fallback_entry_count = num_loadtexts;
   }
-  return pLVar2[iStack_14 + -1].lines;
+  return cached_stash[fallback_entry_count + -1].lines;
 }
 
 /* ManalinkEh 2022: 0x2676450; original functions/load_text.c:216. */
 /* The released fallback indexes this cache using num_loadtexts from the main cache. */
 const char **load_text_nocopy_from_file(const char *filename, const char *header, int *num_lines)
 {
-  LoadText *pLVar1;
-  int iVar2;
+  LoadText *cached_stash;
+  int filename_match_or_entry_count;
   int i;
-  LoadText *pLVar5;
+  LoadText *entry;
 
   if (ai_is_speculating == 1)
   {
@@ -300,83 +298,78 @@ const char **load_text_nocopy_from_file(const char *filename, const char *header
     }
     return loadtexts[num_loadtexts + -1].lines;
   }
-  iVar2 = strncmp(last_loadtext_from_file, filename, 0x106);
-  pLVar1 = loadtexts_from_file;
-  if (iVar2 != 0)
+  filename_match_or_entry_count = strncmp(last_loadtext_from_file, filename, 0x106);
+  cached_stash = loadtexts_from_file;
+  if (filename_match_or_entry_count != 0)
   {
     strncpy(last_loadtext_from_file, filename, 0x106);
     last_loadtext_from_file[0x105] = '\0';
-    if (pLVar1 != NULL)
+    if (cached_stash != NULL)
     {
-      free(pLVar1);
+      free(cached_stash);
     }
     load_text_stash(filename, &loadtexts_from_file, &num_loadtexts_from_file);
   }
-  pLVar1 = loadtexts_from_file;
-  iVar2 = num_loadtexts_from_file;
+  cached_stash = loadtexts_from_file;
+  filename_match_or_entry_count = num_loadtexts_from_file;
   if (0 < num_loadtexts_from_file)
   {
     i = 0;
-    pLVar5 = loadtexts_from_file;
+    entry = loadtexts_from_file;
     do
     {
-      if (strcmp(pLVar5->key, header) == 0)
+      if (strcmp(entry->key, header) == 0)
       {
         if (num_lines != NULL)
         {
-          *num_lines = pLVar5->num;
+          *num_lines = entry->num;
         }
-        return pLVar5->lines;
+        return entry->lines;
       }
       i = i + 1;
-      pLVar5 = pLVar5 + 1;
-    } while (i != iVar2);
+      entry = entry + 1;
+    } while (i != filename_match_or_entry_count);
   }
   if (num_lines != NULL)
   {
     *num_lines = 0;
   }
-  return pLVar1[num_loadtexts + -1].lines;
+  return cached_stash[num_loadtexts + -1].lines;
 }
 
 /* ManalinkEh 2022: 0x26765b0; original functions/load_text.c:257. */
 /* Preserve the released 250-row cap; the native declaration has only 249 rows. */
 int load_text(const char *ignored, const char *header)
 {
-  const char **ppcVar1;
-  const char **ppcVar2;
+  const char **source_line;
+  const char **source_lines;
   int i;
-  char (*pacVar4)[300];
+  char (*destination_line)[300];
   int num_lines;
 
-  ppcVar2 = load_text_nocopy(header, &num_lines);
-  if (num_lines < 0xfb)
-  {
-    if (num_lines < 1)
-      goto LAB_02676615;
-  }
-  else
-  {
+  source_lines = load_text_nocopy(header, &num_lines);
+  if (num_lines >= 0xfb)
     num_lines = 0xfa;
-  }
-  pacVar4 = text_lines;
-  i = 0;
-  do
+  if (num_lines > 0)
   {
-    ppcVar1 = ppcVar2 + i;
-    i = i + 1;
-    _snprintf(*pacVar4, 300, "%s", *ppcVar1);
-    pacVar4 = pacVar4 + 1;
-  } while (i < num_lines);
-LAB_02676615:
-  if (num_lines < 0xf9)
-  {
-    pacVar4 = text_lines + num_lines;
+    destination_line = text_lines;
+    i = 0;
     do
     {
-      (*pacVar4)[0] = '\0';
-      pacVar4 = pacVar4 + 1;
-    } while (pacVar4 != (text_lines + 249));
+      source_line = source_lines + i;
+      i = i + 1;
+      _snprintf(*destination_line, 300, "%s", *source_line);
+      destination_line = destination_line + 1;
+    } while (i < num_lines);
+  }
+  if (num_lines < 0xf9)
+  {
+    destination_line = text_lines + num_lines;
+    do
+    {
+      (*destination_line)[0] = '\0';
+      destination_line = destination_line + 1;
+    } while (destination_line != (text_lines + 249));
   }
   return num_lines;
 }

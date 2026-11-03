@@ -495,30 +495,14 @@ int dispatch_xtrigger2(int player, xtrigger_t xtrig, const char *prompt, int TEN
 
 void resolve_trigger(int player, int card, int TENTATIVE_reason_for_trigger_controller)
 {
-  uint16_t uVar1;
-  uint32_t uVar2;
-  unsigned int uVar3;
-  xtrigger_t xVar4;
-  card_instance_t *pcVar5;
-  int iVar6;
-  int iVar7;
-  uint32_t uVar8;
-  card_instance_t *pcVar9;
-  unsigned int uVar10;
-  int iVar11;
-  bool bVar12;
-  card_instance_t *pcStack_218;
-  int iStack_214;
-  int iStack_208;
-
-  if (((uint8_t)trace_mode & 2) != 0)
+  if ((uint8_t)trace_mode & 2)
   {
     char buf[500];
-    pcVar5 = get_card_instance(player, card);
-    iVar11 = EXE_DWORD(0x60ec40);
-    EXE_DWORD(0x60ec40) = EXE_DWORD(0x60ec40) + 1;
-    sprintf(buf, "%d: Player #%d is processing %s(%d).\n", iVar11, player,
-            cards_data[pcVar5->internal_card_id].name, card);
+    card_instance_t *traced = get_card_instance(player, card);
+    int sequence = EXE_DWORD(0x60ec40);
+    EXE_DWORD(0x60ec40) = sequence + 1;
+    sprintf(buf, "%d: Player #%d is processing %s(%d).\n", sequence, player,
+            cards_data[traced->internal_card_id].name, card);
     EXE_FN(void, 0x4a7d80, const char *)(buf);
   }
   EXE_DWORD(0x60e9f8) = 0;
@@ -530,786 +514,525 @@ void resolve_trigger(int player, int card, int TENTATIVE_reason_for_trigger_cont
     EXE_DWORD(0x60e9f8) = 0;
     return;
   }
-
   if (ai_is_speculating != 1)
   {
     EXE_FN(void, 0x436700, void)();
     if (reason_for_trigger_controller != 0)
     {
       char buf[300];
-      load_text((char *)0x0, "PROMPT_PROC1");
+      load_text(NULL, "PROMPT_PROC1");
       sprintf(buf, text_lines[0], opponent_name);
       EXE_FN(int, 0x471b60, int, int, int, int, const char *, int)(player, card, -1, -1, buf, 0);
     }
-    iVar11 = 0;
-    if (0 < active_cards_count[0])
-    {
-      do
+    for (int p = 0; p < 2; ++p)
+      for (int c = 0; c < active_cards_count[p]; ++c)
       {
-        pcVar5 = get_card_instance(0, iVar11);
-        iVar6 = active_cards_count[0];
-        iVar11 = iVar11 + 1;
-        pcVar5->state = pcVar5->state & 0xefffffff;
-      } while (iVar11 < iVar6);
-    }
-    iVar11 = 0;
-    if (0 < active_cards_count[1])
-    {
-      do
-      {
-        pcVar5 = get_card_instance(1, iVar11);
-        iVar6 = active_cards_count[1];
-        iVar11 = iVar11 + 1;
-        pcVar5->state = pcVar5->state & 0xefffffff;
-      } while (iVar11 < iVar6);
-    }
-  }
-  pcVar5 = get_card_instance(player, card);
-  uVar3 = trigger_condition;
-  pcVar5->state = pcVar5->state | 0x10000100;
-  xVar4 = xtrigger_impl_value_dont_use_directly;
-  iVar6 = trigger_cause;
-  iVar11 = trigger_cause_controller;
-  iStack_208 = trigger_cause;
-  if ((((pcVar5->token_status & 0x80) == 0) && (pcVar5->kill_code == '\0')) &&
-      (-1 < (int)pcVar5->token_status))
-  {
-    pcVar9 = in_play(player, card);
-    uVar10 = trigger_condition;
-    if (pcVar9 == (card_instance_t *)0x0)
-    {
-      bVar12 = true;
-      iStack_214 = -1;
-      pcStack_218 = (card_instance_t *)0x0;
-    }
-    else
-    {
-      iVar7 = pcVar5->internal_card_id;
-      if (((((cards_data[iVar7].cc[2] == '\x03') ||
-             (uVar1 = cards_data[iVar7].id, (uint16_t)(uVar1 - 0x385) < 8)) ||
-            (((uint16_t)(uVar1 - 0x38f) < 0x13 ||
-              (((trigger_condition & 0xfffffffb) == 0xd8 ||
-                ((unsigned int)trigger_condition - 0xd4 < 2)))))) ||
-           (cards_data[iVar7].type == 0x80)) ||
-          (((ai_is_speculating == 1 || (player == -1)) || (card == -1))))
-      {
-        bVar12 = true;
-        pcStack_218 = (card_instance_t *)0x0;
-        iStack_214 = -1;
+        card_instance_t *instance = get_card_instance(p, c);
+        instance->state &= ~STATE_IS_TRIGGERING;
       }
-      else
+  }
+  card_instance_t *source = get_card_instance(player, card);
+  unsigned int saved_condition = trigger_condition;
+  source->state |= STATE_IS_TRIGGERING | STATE_PROCESSING;
+  xtrigger_t saved_xtrigger = xtrigger_impl_value_dont_use_directly;
+  int saved_cause = trigger_cause;
+  int saved_cause_controller = trigger_cause_controller;
+
+  int proxy_card = -1;
+  card_instance_t *proxy = NULL;
+  unsigned int response_condition = saved_condition;
+  if (!(source->token_status & 0x80) && !source->kill_code && (int)source->token_status >= 0)
+  {
+    if (in_play(player, card))
+    {
+      int iid = source->internal_card_id;
+      uint16_t id = cards_data[iid].id;
+      if (cards_data[iid].cc[2] != 3 && (uint16_t)(id - 901) >= 8 && (uint16_t)(id - 911) >= 19 &&
+          (trigger_condition & ~4U) != 0xd8 && (unsigned int)trigger_condition - 0xd4 >= 2 &&
+          cards_data[iid].type != TYPE_EFFECT && ai_is_speculating != 1 && player != -1 &&
+          card != -1)
       {
-        iStack_214 = create_legacy_effect(player, card, empty);
-        if (iStack_214 == -1)
-        {
+        proxy_card = create_legacy_effect(player, card, empty);
+        if (proxy_card == -1)
           backtrace_and_abort("functions/events.c:633\nstack_card != -1");
-        }
-        pcStack_218 = get_card_instance(player, iStack_214);
-        pcStack_218->state = 0x800022;
-        pcStack_218->token_status = 0x80010000;
-        pcStack_218->damage_source_player = (int8_t)player;
-        pcStack_218->damage_source_card = card;
-        uVar8 = pcStack_218->timestamp;
-        memcpy(pcStack_218, pcVar5, 300);
-        pcStack_218->kill_code = '\0';
-        pcStack_218->state = 0x800022;
-        uVar2 = pcVar5->internal_card_id;
-        pcStack_218->token_status = 0x80010000;
-        pcStack_218->original_internal_card_id = uVar2;
-        pcStack_218->unknown0x14 = 0;
-        if (uVar2 == 0xffffffff)
-        {
-          pcStack_218->original_internal_card_id = (unsigned int)pcVar5->backup_internal_card_id;
-        }
-        iVar7 = get_card_image_number((unsigned int)pcStack_218->display_pic_csv_id, player, card);
-        pcStack_218->parent_controller = player;
-        bVar12 = false;
-        pcStack_218->display_pic_num = (uint16_t)iVar7;
-        pcStack_218->parent_card = card;
-        pcStack_218->timestamp = uVar8;
-        uVar10 = trigger_condition;
+        proxy = get_card_instance(player, proxy_card);
+        proxy->state = 0x800022;
+        proxy->token_status = 0x80010000;
+        proxy->damage_source_player = (int8_t)player;
+        proxy->damage_source_card = card;
+        unsigned int timestamp = proxy->timestamp;
+        memcpy(proxy, source, sizeof(*proxy));
+        proxy->kill_code = 0;
+        proxy->state = 0x800022;
+        unsigned int source_iid = source->internal_card_id;
+        proxy->token_status = 0x80010000;
+        proxy->original_internal_card_id = source_iid;
+        proxy->unknown0x14 = 0;
+        if (source_iid == UINT32_MAX)
+          proxy->original_internal_card_id = source->backup_internal_card_id;
+        int image = get_card_image_number(proxy->display_pic_csv_id, player, card);
+        proxy->parent_controller = player;
+        proxy->display_pic_num = (uint16_t)image;
+        proxy->parent_card = card;
+        proxy->timestamp = timestamp;
       }
     }
+    response_condition = trigger_condition;
   }
-  else
-  {
-    bVar12 = true;
-    pcStack_218 = (card_instance_t *)0x0;
-    iStack_214 = -1;
-    uVar10 = uVar3;
-  }
-  cant_be_responded_to = (unsigned int)(uVar10 == 0xcd) | cant_be_responded_to;
-  if (cant_be_responded_to == 0)
-  {
+  cant_be_responded_to |= response_condition == 0xcd;
+  if (!cant_be_responded_to)
     allow_response_to_trigger(player, card);
-  }
-  trigger_cause_controller = iVar11;
-  trigger_cause = iVar6;
-  trigger_condition = uVar3;
-  xtrigger_impl_value_dont_use_directly = xVar4;
-  if ((pcVar5->kill_code == '\0') &&
-      (pcVar9 = in_play(player, card), pcVar9 != (card_instance_t *)0x0))
+  trigger_cause_controller = saved_cause_controller;
+  trigger_cause = saved_cause;
+  trigger_condition = saved_condition;
+  xtrigger_impl_value_dont_use_directly = saved_xtrigger;
+
+  int completed = 0;
+  if (!source->kill_code && in_play(player, card))
   {
-    uVar8 = pcVar5->state;
-    if ((uVar8 & 0x40000000) == 0)
-    {
-    LAB_026cc4fb:
-      if (bVar12)
-      {
-        EXE_FN(void, 0x436740, void)();
-        goto LAB_026cc50a;
-      }
-      bVar12 = iStack_214 != -1;
-      if ((pcStack_218->state & 0x40000000) == 0)
-      {
-        EXE_FN(void, 0x436740, void)();
-        if (iStack_214 == -1)
-          goto LAB_026cc50a;
-        goto LAB_026cc727;
-      }
-    }
-    else
-    {
-      bVar12 = !bVar12 && iStack_214 != -1;
-    }
-    if (!bVar12)
-      goto LAB_026cc2f2;
-  }
-  else
-  {
-    uVar8 = pcVar5->state;
-    if ((bVar12) || (iStack_214 == -1))
-    {
-      if ((uVar8 & 0x40000000) != 0)
-        goto LAB_026cc2f2;
-      goto LAB_026cc4fb;
-    }
-    pcVar5->state = uVar8 & 0xeffffeff;
-    pcStack_218->state = pcStack_218->state & 0xff7fffdd;
-    pcStack_218->token_status = pcStack_218->token_status & 0xfffeffff;
-    dispatch_event_to_single_card(player, iStack_214, EVENT_TRIGGER, player, iStack_214);
-    iVar6 = stack_size;
-    stack_data[stack_size].internal_card_id = (short)pcStack_218->internal_card_id;
-    stack_data[iVar6].generating_event = 0x7e;
-    stack_data[iVar6].unknown_sdt = (uint8_t)TENTATIVE_reason_for_trigger_controller;
-    stack_cards[iVar6].player = player;
-    stack_cards[iVar6].card = iStack_214;
-    stack_damage_targets[iVar6].player = (int)pcVar5->damage_target_player;
-    stack_damage_targets[iVar6].card = pcVar5->damage_target_card;
-    uVar10 = trigger_condition;
-    if (trigger_condition == 0xffffffff)
-    {
-      uVar10 = current_phase;
-    }
-    bVar12 = ai_is_speculating != 1;
-    stack_phase[iVar6] = uVar10;
-    if (bVar12)
-    {
-      EXE_DWORD_PTR(0x628674)[iVar6] = 0;
-      iVar6 = stack_size;
-    }
-    stack_size = iVar6 + 1;
-    stack_cards[stack_size].player = -1;
-    if (affected_card == card)
-    {
-      affected_card = iStack_214;
-    }
-    if (trigger_cause == card)
-    {
-      trigger_cause = iStack_214;
-      iStack_208 = trigger_cause;
-    }
-    bVar12 = cant_be_responded_to == 0;
-    pcStack_218->state = pcStack_218->state | 0x10000100;
-    if (bVar12)
-    {
-      allow_response_to_trigger(player, iStack_214);
-    }
-    trigger_cause = iStack_208;
-    trigger_cause_controller = iVar11;
-    trigger_condition = uVar3;
-    xtrigger_impl_value_dont_use_directly = xVar4;
-    if (((pcVar5->state & 0x40000000) == 0) && ((pcStack_218->state & 0x40000000) == 0))
+    if (!(source->state & 0x40000000U) && (!proxy || !(proxy->state & 0x40000000U)))
     {
       EXE_FN(void, 0x436740, void)();
-    LAB_026cc727:
-      obliterate_card_and_recycle(player, iStack_214);
-    LAB_026cc50a:
-      xtrigger_impl_value_dont_use_directly = xVar4;
-      pcVar5->state = pcVar5->state & 0xefffffff;
-      trigger_cause = iStack_208;
-      EXE_DWORD(0x60e9f8) = 0;
-      trigger_cause_controller = iVar11;
-      trigger_condition = uVar3;
-      dispatch_event(player, card, EVENT_TRIGGER_RESOLVED);
-      trigger_condition = uVar3;
-      xtrigger_impl_value_dont_use_directly = xVar4;
-      trigger_cause = iStack_208;
-      trigger_cause_controller = iVar11;
-      return;
+      if (proxy)
+        obliterate_card_and_recycle(player, proxy_card);
+      completed = 1;
+    }
+    else if (proxy)
+      obliterate_card_and_recycle(player, proxy_card);
+  }
+  else if (!proxy)
+  {
+    if (!(source->state & 0x40000000U))
+    {
+      EXE_FN(void, 0x436740, void)();
+      completed = 1;
     }
   }
-  obliterate_card_and_recycle(player, iStack_214);
-  uVar8 = pcVar5->state;
-LAB_026cc2f2:
-  trigger_cause = iStack_208;
-  xtrigger_impl_value_dont_use_directly = xVar4;
-  pcVar5->state = uVar8 & 0xafffffff;
-  trigger_condition = uVar3;
-  trigger_cause_controller = iVar11;
-  return;
+  else
+  {
+    source->state &= ~(STATE_IS_TRIGGERING | STATE_PROCESSING);
+    proxy->state &= ~0x800022U;
+    proxy->token_status &= ~0x10000U;
+    dispatch_event_to_single_card(player, proxy_card, EVENT_TRIGGER, player, proxy_card);
+    int stack_index = stack_size;
+    stack_data[stack_index].internal_card_id = (int16_t)proxy->internal_card_id;
+    stack_data[stack_index].generating_event = EVENT_RESOLVE_TRIGGER;
+    stack_data[stack_index].unknown_sdt = (uint8_t)TENTATIVE_reason_for_trigger_controller;
+    stack_cards[stack_index].player = player;
+    stack_cards[stack_index].card = proxy_card;
+    stack_damage_targets[stack_index].player = source->damage_target_player;
+    stack_damage_targets[stack_index].card = source->damage_target_card;
+    unsigned int phase = trigger_condition;
+    if (phase == UINT32_MAX)
+      phase = current_phase;
+    stack_phase[stack_index] = phase;
+    if (ai_is_speculating != 1)
+    {
+      EXE_DWORD_PTR(0x628674)[stack_index] = 0;
+      stack_index = stack_size;
+    }
+    stack_size = stack_index + 1;
+    stack_cards[stack_size].player = -1;
+    if (affected_card == card)
+      affected_card = proxy_card;
+    if (trigger_cause == card)
+      trigger_cause = saved_cause = proxy_card;
+    proxy->state |= STATE_IS_TRIGGERING | STATE_PROCESSING;
+    if (!cant_be_responded_to)
+      allow_response_to_trigger(player, proxy_card);
+    trigger_cause = saved_cause;
+    trigger_cause_controller = saved_cause_controller;
+    trigger_condition = saved_condition;
+    xtrigger_impl_value_dont_use_directly = saved_xtrigger;
+    if (!(source->state & 0x40000000U) && !(proxy->state & 0x40000000U))
+    {
+      EXE_FN(void, 0x436740, void)();
+      completed = 1;
+    }
+    obliterate_card_and_recycle(player, proxy_card);
+  }
+  if (completed)
+  {
+    xtrigger_impl_value_dont_use_directly = saved_xtrigger;
+    source->state &= ~STATE_IS_TRIGGERING;
+    trigger_cause = saved_cause;
+    EXE_DWORD(0x60e9f8) = 0;
+    trigger_cause_controller = saved_cause_controller;
+    trigger_condition = saved_condition;
+    dispatch_event(player, card, EVENT_TRIGGER_RESOLVED);
+    trigger_condition = saved_condition;
+    xtrigger_impl_value_dont_use_directly = saved_xtrigger;
+    trigger_cause = saved_cause;
+    trigger_cause_controller = saved_cause_controller;
+  }
+  else
+  {
+    trigger_cause = saved_cause;
+    xtrigger_impl_value_dont_use_directly = saved_xtrigger;
+    source->state &= ~(STATE_IS_TRIGGERING | 0x40000000U);
+    trigger_condition = saved_condition;
+    trigger_cause_controller = saved_cause_controller;
+  }
 }
 
 int get_abilities(int player, int card, event_t event, int new_attacking_card)
 {
-  uint8_t uVar1;
-  uint16_t uVar2;
-  card_ext_t *pcVar3;
   card_instance_t *inst;
-  int iVar4;
-  unsigned int uVar5;
-  unsigned int uVar6;
-  int iVar7;
-  card_instance_t *pcVar8;
-  unsigned int uVar9;
-  uint8_t bVar10;
-  uint32_t uVar11;
-  uint32_t uVar12;
-  unsigned int uVar13;
-  bool bVar14;
-  kill_t kill_mode;
-
-  while (true)
+  unsigned int iid;
+  for (;;)
   {
     inst = get_card_instance(player, card);
-    uVar5 = inst->internal_card_id;
-    if (activation_card != uVar5)
+    iid = inst->internal_card_id;
+    if (iid != activation_card)
       break;
     if (event == EVENT_CHANGE_TYPE)
-    {
-      return uVar5;
-    }
+      return iid;
     card = inst->parent_card;
     player = inst->parent_controller;
   }
-  if (EXE_DWORD(0x60a548) != 0)
-  {
+  if (EXE_DWORD(0x60a548))
     push_affected_card_stack();
-  }
   affected_card_controller = player;
   affected_card = card;
-  if (uVar5 == 0xffffffff)
+  if (iid == UINT32_MAX)
   {
-    uVar5 = (unsigned int)inst->backup_internal_card_id;
-    inst->regen_status = inst->regen_status & 0xe0ffffff;
+    iid = inst->backup_internal_card_id;
+    inst->regen_status &= ~KEYWORD_RECALC_ALL;
   }
-  iVar4 = raw_base_pt;
+  int saved_raw_base = raw_base_pt;
   attacking_card = new_attacking_card;
+  int recalculate = 0;
   switch (event)
   {
   case EVENT_POWER:
-    if ((inst->regen_status & 0x4000000) != 0)
+    if (inst->regen_status & KEYWORD_RECALC_POWER)
     {
-      inst->regen_status = inst->regen_status & 0xfbffffff;
-      uVar6 = get_special_flags3_by_instance(inst);
-      if ((uVar6 & 0x100000) != 0)
-      {
-        uVar11 = inst->state;
-        raw_characteristic_pt = (int)cards_data[uVar5].toughness;
-        raw_base_pt = raw_characteristic_pt;
-        if (((uVar11 & 0x800002) == 2) && (0 < raw_characteristic_pt))
-        {
-          raw_base_pt = (int)(short)(cards_data[uVar5].toughness & 0xbfff);
-        }
-        event_result = raw_base_pt + inst->counter_toughness;
-        if (EXE_DWORD(0x60a548) == 0)
-          goto code_r0x026cc906;
-        event = EVENT_TOUGHNESS;
-      LAB_026ccfcf:
-        dispatch_event_raw(event);
-        if (((land_can_be_played & 0x10000U) != 0) && (event == EVENT_CHANGE_TYPE))
-        {
-        LAB_026ccbf2:
-          iVar7 = event_result;
-          inst->internal_card_id = event_result;
-          if (iVar7 != -1)
-          {
-            inst->backup_internal_card_id = (uint16_t)iVar7;
-          }
-          land_can_be_played = land_can_be_played & 0xfffeffffU | 0x20000;
-          dispatch_event_raw(EVENT_CHANGE_TYPE);
-          land_can_be_played = land_can_be_played & 0xfffdffff;
-          goto LAB_026cc8ef;
-        }
-        goto LAB_026cc8df;
-      }
-      raw_characteristic_pt = (int)cards_data[uVar5].power;
+      inst->regen_status &= ~KEYWORD_RECALC_POWER;
+      int swap = get_special_flags3_by_instance(inst) & SF3_SWITCH_POW_TGH;
+      raw_characteristic_pt = swap ? cards_data[iid].toughness : cards_data[iid].power;
       raw_base_pt = raw_characteristic_pt;
-      if (((inst->state & 0x800002) == 2) && (0 < raw_characteristic_pt))
-      {
-        raw_base_pt = (int)(short)(cards_data[uVar5].power & 0xbfff);
-      }
-      event_result = inst->counter_power + raw_base_pt;
-      if (EXE_DWORD(0x60a548) != 0)
-        goto LAB_026ccfcf;
-      goto LAB_026cd0d9;
+      if ((inst->state & (STATE_OUBLIETTED | STATE_IN_PLAY)) == STATE_IN_PLAY &&
+          raw_characteristic_pt > 0)
+        raw_base_pt =
+            (int16_t)((swap ? cards_data[iid].toughness : cards_data[iid].power) & 0xbfff);
+      event_result = raw_base_pt + (swap ? inst->counter_toughness : inst->counter_power);
+      if (swap)
+        event = EVENT_TOUGHNESS;
+      recalculate = 1;
     }
-    uVar6 = (int)inst->power;
+    else
+      event_result = inst->power;
     break;
   case EVENT_TOUGHNESS:
-    if ((inst->regen_status & 0x2000000) != 0)
+    if (inst->regen_status & KEYWORD_RECALC_TOUGHNESS)
     {
-      inst->regen_status = inst->regen_status & 0xfdffffff;
-      uVar6 = get_special_flags3_by_instance(inst);
-      if ((uVar6 & 0x100000) == 0)
-      {
-        raw_characteristic_pt = (int)cards_data[uVar5].toughness;
-        raw_base_pt = raw_characteristic_pt;
-        if (((inst->state & 0x800002) == 2) && (0 < raw_characteristic_pt))
-        {
-          raw_base_pt = (int)(short)(cards_data[uVar5].toughness & 0xbfff);
-        }
-        event_result = inst->counter_toughness + raw_base_pt;
-        if (EXE_DWORD(0x60a548) == 0)
-          goto code_r0x026cc8f9;
-      }
-      else
-      {
-        raw_characteristic_pt = (int)cards_data[uVar5].power;
-        raw_base_pt = raw_characteristic_pt;
-        if (((inst->state & 0x800002) == 2) && (0 < raw_characteristic_pt))
-        {
-          raw_base_pt = (int)(short)(cards_data[uVar5].power & 0xbfff);
-        }
-        event_result = inst->counter_power + raw_base_pt;
-        if (EXE_DWORD(0x60a548) == 0)
-          goto LAB_026cd0d9;
+      inst->regen_status &= ~KEYWORD_RECALC_TOUGHNESS;
+      int swap = get_special_flags3_by_instance(inst) & SF3_SWITCH_POW_TGH;
+      raw_characteristic_pt = swap ? cards_data[iid].power : cards_data[iid].toughness;
+      raw_base_pt = raw_characteristic_pt;
+      if ((inst->state & (STATE_OUBLIETTED | STATE_IN_PLAY)) == STATE_IN_PLAY &&
+          raw_characteristic_pt > 0)
+        raw_base_pt =
+            (int16_t)((swap ? cards_data[iid].power : cards_data[iid].toughness) & 0xbfff);
+      event_result = raw_base_pt + (swap ? inst->counter_power : inst->counter_toughness);
+      if (swap)
         event = EVENT_POWER;
-      }
-      goto LAB_026ccfcf;
+      recalculate = 1;
     }
-    event_result = (int)inst->toughness;
-    uVar11 = inst->state;
-  code_r0x026cc906:
-    uVar12 = event_result;
-    if (((((uVar11 & 0x800022) == 2) && ((cards_data[uVar5].type & 2) != 0)) &&
-         ((event_result < 1 || (event_result <= (int)(unsigned int)inst->damage_on_card)))) &&
-        (((inst->token_status & 0x4000000) == 0 &&
-          ((land_can_be_played & 0x204U) == 0 && EXE_DWORD(0x785e60) == 0))))
+    else
+      event_result = inst->toughness;
+    break;
+  case EVENT_ABILITIES:
+  {
+    unsigned int keywords = inst->regen_status;
+    if (keywords & KEYWORD_RECALC_ABILITIES)
     {
-      if (event_result < 1)
-      {
-        kill_mode = KILL_STATE_BASED_ACTION;
-      }
+      inst->regen_status = keywords & ~KEYWORD_RECALC_ABILITIES;
+      if (damage_card == iid)
+        keywords &= ~KEYWORD_RECALC_ABILITIES;
       else
       {
-        kill_mode = KILL_DESTROY;
-      }
-      kill_card(player, card, kill_mode);
-      EXE_FN(void, 0x477a90, void)();
-    }
-    if (EXE_DWORD(0x60a548) != 0)
-    {
-      pop_affected_card_stack();
-    }
-    goto LAB_026cc92c;
-  case EVENT_ABILITIES:
-    uVar13 = inst->regen_status;
-    uVar6 = uVar13;
-    if ((uVar13 & 0x8000000) != 0)
-    {
-      bVar14 = damage_card != uVar5;
-      inst->regen_status = uVar13 & 0xf7ffffff;
-      uVar6 = uVar13 & 0xf7ffffff;
-      if (bVar14)
-      {
-        uVar6 = cards_data[uVar5].static_ability;
-        uVar13 = uVar13 & 0x17000000 | uVar6;
-        if ((uVar6 & 0xf81f) != 0)
+        unsigned int base_keywords = cards_data[iid].static_ability;
+        keywords = (keywords & 0x17000000U) | base_keywords;
+        if (base_keywords & 0xf81f)
         {
-          if ((uVar6 & 0xf800) != 0)
+          if (base_keywords & KEYWORD_PROT_COLORED)
           {
-            uVar9 = get_sleighted_protection(player, card, uVar6 & 0xf800);
-            uVar13 = ((uVar13 & 0xffff0000U) | (uVar6 & 0xffffU)) & 0xffff07ff | uVar9;
+            unsigned int protections =
+                get_sleighted_protection(player, card, base_keywords & KEYWORD_PROT_COLORED);
+            keywords =
+                (((keywords & 0xffff0000U) | (base_keywords & 0xffffU)) & ~KEYWORD_PROT_COLORED) |
+                protections;
           }
-          if ((uVar13 & 0x1f) != 0)
+          if (keywords & KEYWORD_BASIC_LANDWALK)
           {
-            uVar6 = get_hacked_walk(player, card, uVar13 & 0x1f);
-            uVar13 = uVar13 & 0xffffffe0 | uVar6;
+            unsigned int landwalk =
+                get_hacked_walk(player, card, keywords & KEYWORD_BASIC_LANDWALK);
+            keywords = (keywords & ~KEYWORD_BASIC_LANDWALK) | landwalk;
           }
         }
-
-        if (((EXE_DWORD(0x60a548) != 0) && ((cards_data[uVar5].type & 0x47) != 0)) &&
-            (-1 < (char)cards_data[uVar5].type))
+        if (EXE_DWORD(0x60a548) && (cards_data[iid].type & TYPE_PERMANENT) &&
+            !(cards_data[iid].type & TYPE_EFFECT))
         {
-          pcVar3 = inst->ext;
-          pcVar3->sp_keywords = 0;
-          pcVar3->sp_keywords2 = 0;
-          inst->targets[0x11].card = inst->targets[0x11].card & 0xffffff81;
-          inst->state = inst->state & 0xfffddfff;
-          inst->token_status = inst->token_status & 0xffff77ff;
+          inst->ext->sp_keywords = 0;
+          inst->ext->sp_keywords2 = 0;
+          inst->targets[17].card &= 0xffffff81;
+          inst->state &= 0xfffddfff;
+          inst->token_status &= 0xffff77ff;
           remove_special_flags(player, card, 0x28000);
           remove_special_flags2(player, card, 0x1000);
           remove_special_flags2(player, card, 0x10);
         }
-        event_result = uVar13;
-        if (EXE_DWORD(0x60a548) != 0)
-          goto LAB_026ccfcf;
-        goto LAB_026ccce2;
+        recalculate = 1;
       }
     }
+    event_result = keywords;
     break;
+  }
   case EVENT_RECALC_DAMAGE:
-    event_result = (unsigned int)inst->damage_on_card;
-    uVar6 = (unsigned int)inst->damage_on_card;
-    if (EXE_DWORD(0x60a548) != 0)
-      goto LAB_026ccfcf;
+    event_result = inst->damage_on_card;
+    recalculate = 1;
     break;
   case EVENT_SET_COLOR:
-    if (((inst->regen_status & 0x10000000) == 0) ||
-        (bVar14 = damage_card == uVar5, inst->regen_status = inst->regen_status & 0xefffffff,
-         bVar14))
-    {
-      uVar6 = (int)inst->color;
-    }
+    if (!(inst->regen_status & KEYWORD_RECALC_SET_COLOR))
+      event_result = inst->color;
     else
     {
-      bVar10 = inst->initial_color;
-      if (bVar10 == 0)
-      {
-        if ((cards_data[uVar5].type & 1) == 0)
-        {
-          if (((((cards_data[uVar5].type & 0x40) == 0) ||
-                ((cards_data[uVar5].extra_ability & 0x1000) == 0)) ||
-               (iVar7 = get_internal_card_id_from_csv_id((unsigned int)cards_data[uVar5].id),
-                (cards_data[iVar7].type & 0x40) == 0)) ||
-              ((cards_data[iVar7].extra_ability & 0x1000) == 0))
-          {
-            bVar10 = cards_data[uVar5].color;
-            goto code_r0x026cd446;
-          }
-        }
-        else if (cards_data[uVar5].id == 0x22d4)
-        {
-          event_result = 8;
-          goto code_r0x026cc995;
-        }
-        event_result = 0;
-      }
+      int is_damage = damage_card == iid;
+      inst->regen_status &= ~KEYWORD_RECALC_SET_COLOR;
+      if (is_damage)
+        event_result = inst->color;
       else
       {
-      code_r0x026cd446:
-        event_result = bVar10 & 0x3e;
-      }
-    code_r0x026cc995:
-      if (EXE_DWORD(0x60a548) != 0)
-        goto LAB_026ccfcf;
-    code_r0x026cc8f9:
-      uVar6 = event_result;
-      if (event == EVENT_TOUGHNESS)
-      {
-        uVar11 = inst->state;
-        goto code_r0x026cc906;
-      }
-    }
-    break;
-  default:
-    event_result = 0;
-    if (EXE_DWORD(0x60a548) != 0)
-      goto LAB_026ccfcf;
-  LAB_026cc8df:
-    if (event == EVENT_ABILITIES)
-    {
-    LAB_026ccce2:
-
-      pcVar8 = get_card_instance(player, card);
-      if (((((((uint8_t)(pcVar8->special_counter_type + 0x70) < 0xb) &&
-              (pcVar8->special_counters != '\0')) ||
-             (((uint8_t)((char)pcVar8->targets[0x12].player + 0x70U) < 0xb &&
-               (pcVar8->counters2 != '\0')))) ||
-            ((((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].player + 1) + 0x70U) < 0xb &&
-               (pcVar8->counters3 != '\0')) ||
-              (((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].player + 2) + 0x70U) < 0xb &&
-                (pcVar8->counters4 != '\0')))))) ||
-           ((((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].player + 3) + 0x70U) < 0xb &&
-              (pcVar8->counters5 != '\0')) ||
-             (((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].card + 2) + 0x70U) < 0xb &&
-               ((char)pcVar8->targets[0x12].card != '\0')))))) ||
-          (((uint8_t)(*(char *)((int)&pcVar8->targets[0x12].card + 3) + 0x70U) < 0xb &&
-            (*(char *)((int)&pcVar8->targets[0x12].card + 1) != '\0'))))
-      {
-        if (((cards_data[uVar5].type & 0x47) != 0) && (-1 < (char)cards_data[uVar5].type))
+        unsigned char color = inst->initial_color;
+        if (color)
+          event_result = color & COLOR_TEST_ANY_COLORED;
+        else if (cards_data[iid].type & TYPE_LAND)
+          event_result = cards_data[iid].id == CARD_ID_DRYAD_ARBOR ? COLOR_TEST_GREEN : 0;
+        else
         {
-          if (count_counters(player, card, COUNTER_DEATHTOUCH) != 0)
+          int mana_artifact = 0;
+          if ((cards_data[iid].type & TYPE_ARTIFACT) &&
+              (cards_data[iid].extra_ability & EA_MANA_SOURCE))
           {
-            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x200;
+            int original_iid = get_internal_card_id_from_csv_id(cards_data[iid].id);
+            mana_artifact = (cards_data[original_iid].type & TYPE_ARTIFACT) &&
+                            (cards_data[original_iid].extra_ability & EA_MANA_SOURCE);
           }
-          if (count_counters(player, card, COUNTER_HEXPROOF) != 0)
-          {
-            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800000;
-          }
-          if (count_counters(player, card, COUNTER_INDESTRUCTIBLE) != 0)
-          {
-            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800;
-          }
-          if (count_counters(player, card, COUNTER_LIFELINK) != 0)
-          {
-            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 2;
-          }
-          if (count_counters(player, card, COUNTER_MENACE) != 0)
-          {
-            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x10000;
-          }
-          if (count_counters(player, card, COUNTER_VIGILANCE) != 0)
-          {
-            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 8;
-          }
-          if (count_counters(player, card, COUNTER_DOUBLE_STRIKE) != 0)
-          {
-            event_result = event_result | 0x40000000;
-          }
-          if (count_counters(player, card, COUNTER_FIRST_STRIKE) != 0)
-          {
-            event_result = event_result | 0x100;
-          }
-          if (count_counters(player, card, COUNTER_FLYING) != 0)
-          {
-            event_result = event_result | 0x20;
-          }
-          if (count_counters(player, card, COUNTER_REACH) != 0)
-          {
-            event_result = event_result | 0x400;
-          }
-          if (count_counters(player, card, COUNTER_TRAMPLE) != 0)
-          {
-            event_result = event_result | 0x80;
-          }
-          goto LAB_026ccd94;
+          event_result = mana_artifact ? 0 : cards_data[iid].color & COLOR_TEST_ANY_COLORED;
         }
-      }
-      else
-      {
-      LAB_026ccd94:
-        uVar6 = (unsigned int)player_bits[player];
-
-        if ((((uVar6 & 0x1001f0) != 0) && ((cards_data[uVar5].type & 0x47) != 0)) &&
-            (-1 < (char)cards_data[uVar5].type))
-        {
-          if ((uVar6 & 0x10) != 0)
-          {
-            event_result = event_result & 0xfffffeff;
-          }
-          if ((uVar6 & 0x20) != 0)
-          {
-            event_result = event_result & 0xffffffdf;
-          }
-          if ((uVar6 & 0x40) != 0)
-          {
-            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords & 0xfffffdff;
-          }
-          if ((uVar6 & 0x80) != 0)
-          {
-            event_result = event_result & 0xffffff7f;
-          }
-          if ((uVar6 & 0x100000) != 0)
-          {
-            event_result = event_result & 0xfffdffff;
-          }
-          if ((uVar6 & 0x100) != 0)
-          {
-            (inst->ext)->sp_keywords = (inst->ext)->sp_keywords & 0xff7fffff;
-          }
-        }
-      }
-      if (is_humiliated(player, card, AL_KEY) != 0)
-      {
-        if (is_humiliated(player, card, AL_DEFENDER) != 0)
-        {
-          event_result = event_result | 0x800000;
-        }
-        if (is_humiliated(player, card, AL_INDESTRUCTIBLE) != 0)
-        {
-          (inst->ext)->sp_keywords = (inst->ext)->sp_keywords | 0x800;
-        }
-      }
-      if (((inst->state & 0x10000) != 0) && (((inst->ext)->sp_keywords & 4) == 0))
-      {
-        inst->state = inst->state | 0x20000;
-      }
-      event = EVENT_ABILITIES;
-      uVar6 = event_result;
-    }
-    else
-    {
-    LAB_026cc8ef:
-      if (event != EVENT_POWER)
-        goto code_r0x026cc8f9;
-    LAB_026cd0d9:
-      if (event_result < 0)
-      {
-        event_result = 0;
-      }
-      event = EVENT_POWER;
-      uVar6 = event_result;
-      if ((inst->token_status & 0x4000) != 0)
-      {
-        uVar6 = event_result * 2;
+        recalculate = 1;
       }
     }
     break;
   case EVENT_CHANGE_TYPE:
     if (inst->internal_card_id == -1)
-    {
       event_result = -1;
-      uVar6 = event_result;
+    else if ((inst->regen_status & KEYWORD_RECALC_CHANGE_TYPE) &&
+             ((int)iid < EXE_DWORD(0x628c64) || (int)iid > EXE_DWORD(0x786d5c)))
+    {
+      unsigned int original_iid = inst->original_internal_card_id;
+      inst->regen_status &= ~KEYWORD_RECALC_CHANGE_TYPE;
+      inst->internal_card_id = original_iid;
+      inst->backup_internal_card_id = (uint16_t)original_iid;
+      inst->mana_color = cards_data[original_iid].color;
+      inst->destroys_if_blocked = 0;
+      inst->token_status &= ~STATUS_LEGACY_TYPECHANGE;
+      remove_special_flags2(player, card, 0x484);
+      if (!is_what(player, card, TYPE_EFFECT))
+        reset_subtypes_from_instance(inst, iid);
+      event_result = original_iid;
+      recalculate = 1;
     }
     else
+      event_result = iid;
+    break;
+  default:
+    event_result = 0;
+    recalculate = 1;
+    break;
+  }
+
+  if (recalculate)
+  {
+    if (EXE_DWORD(0x60a548))
     {
-      uVar6 = uVar5;
-      if (((inst->regen_status & 0x1000000) != 0) &&
-          (((int)uVar5 < EXE_DWORD(0x628c64) || (EXE_DWORD(0x786d5c) < (int)uVar5))))
+      dispatch_event_raw(event);
+      if ((land_can_be_played & 0x10000) && event == EVENT_CHANGE_TYPE)
       {
-        uVar12 = inst->original_internal_card_id;
-        inst->regen_status = inst->regen_status & 0xfeffffff;
-        inst->internal_card_id = uVar12;
-        inst->backup_internal_card_id = (uint16_t)uVar12;
-        uVar1 = cards_data[uVar12].color;
-        inst->destroys_if_blocked = '\0';
-        inst->mana_color = uVar1;
-        inst->token_status = inst->token_status & 0xffffefff;
-        remove_special_flags2(player, card, 0x484);
-        if (is_what(player, card, 0x80) == 0)
-        {
-          reset_subtypes_from_instance(inst, uVar5);
-        }
-        event_result = uVar12;
-        if (EXE_DWORD(0x60a548) == 0)
-          goto code_r0x026cc9f0;
+        int second_pass_iid = event_result;
+        inst->internal_card_id = second_pass_iid;
+        if (second_pass_iid != -1)
+          inst->backup_internal_card_id = (uint16_t)second_pass_iid;
+        land_can_be_played = (land_can_be_played & ~0x10000U) | 0x20000;
         dispatch_event_raw(EVENT_CHANGE_TYPE);
-        if ((land_can_be_played & 0x10000U) != 0)
-          goto LAB_026ccbf2;
-        goto LAB_026cc8ef;
+        land_can_be_played &= ~0x20000U;
       }
     }
+    if (event == EVENT_ABILITIES)
+    {
+      card_instance_t *counter_instance = get_card_instance(player, card);
+      uint32_t packed_types = counter_instance->targets[18].player;
+      uint32_t packed_counts = counter_instance->targets[18].card;
+      uint8_t counter_types[7] = {counter_instance->special_counter_type,
+                                  packed_types,
+                                  packed_types >> 8,
+                                  packed_types >> 16,
+                                  packed_types >> 24,
+                                  packed_counts >> 16,
+                                  packed_counts >> 24};
+      uint8_t counter_counts[7] = {counter_instance->special_counters,
+                                   counter_instance->counters2,
+                                   counter_instance->counters3,
+                                   counter_instance->counters4,
+                                   counter_instance->counters5,
+                                   packed_counts,
+                                   packed_counts >> 8};
+      int has_ability_counter = 0;
+      for (int i = 0; i < 7; ++i)
+        if ((uint8_t)(counter_types[i] + 0x70U) < 11 && counter_counts[i])
+        {
+          has_ability_counter = 1;
+          break;
+        }
+      if (has_ability_counter && (cards_data[iid].type & TYPE_PERMANENT) &&
+          !(cards_data[iid].type & TYPE_EFFECT))
+      {
+        if (count_counters(player, card, COUNTER_DEATHTOUCH))
+          inst->ext->sp_keywords |= SP_KEYWORD_DEATHTOUCH;
+        if (count_counters(player, card, COUNTER_HEXPROOF))
+          inst->ext->sp_keywords |= SP_KEYWORD_HEXPROOF;
+        if (count_counters(player, card, COUNTER_INDESTRUCTIBLE))
+          inst->ext->sp_keywords |= SP_KEYWORD_INDESTRUCTIBLE;
+        if (count_counters(player, card, COUNTER_LIFELINK))
+          inst->ext->sp_keywords |= SP_KEYWORD_LIFELINK;
+        if (count_counters(player, card, COUNTER_MENACE))
+          inst->ext->sp_keywords |= SP_KEYWORD_MENACE;
+        if (count_counters(player, card, COUNTER_VIGILANCE))
+          inst->ext->sp_keywords |= SP_KEYWORD_VIGILANCE;
+        if (count_counters(player, card, COUNTER_DOUBLE_STRIKE))
+          event_result |= KEYWORD_DOUBLE_STRIKE;
+        if (count_counters(player, card, COUNTER_FIRST_STRIKE))
+          event_result |= KEYWORD_FIRST_STRIKE;
+        if (count_counters(player, card, COUNTER_FLYING))
+          event_result |= KEYWORD_FLYING;
+        if (count_counters(player, card, COUNTER_REACH))
+          event_result |= KEYWORD_REACH;
+        if (count_counters(player, card, COUNTER_TRAMPLE))
+          event_result |= KEYWORD_TRAMPLE;
+      }
+      unsigned int restrictions = player_bits[player];
+      if ((restrictions & 0x1001f0) && (cards_data[iid].type & TYPE_PERMANENT) &&
+          !(cards_data[iid].type & TYPE_EFFECT))
+      {
+        if (restrictions & 0x10)
+          event_result &= ~KEYWORD_FIRST_STRIKE;
+        if (restrictions & 0x20)
+          event_result &= ~KEYWORD_FLYING;
+        if (restrictions & 0x40)
+          inst->ext->sp_keywords &= ~SP_KEYWORD_DEATHTOUCH;
+        if (restrictions & 0x80)
+          event_result &= ~KEYWORD_TRAMPLE;
+        if (restrictions & 0x100000)
+          event_result &= ~KEYWORD_SHROUD;
+        if (restrictions & 0x100)
+          inst->ext->sp_keywords &= ~SP_KEYWORD_HEXPROOF;
+      }
+      if (is_humiliated(player, card, AL_KEY))
+      {
+        if (is_humiliated(player, card, AL_DEFENDER))
+          event_result |= KEYWORD_DEFENDER;
+        if (is_humiliated(player, card, AL_INDESTRUCTIBLE))
+          inst->ext->sp_keywords |= SP_KEYWORD_INDESTRUCTIBLE;
+      }
+      if ((inst->state & 0x10000) && !(inst->ext->sp_keywords & SP_KEYWORD_HASTE))
+        inst->state |= STATE_SUMMON_SICK;
+    }
+    else if (event == EVENT_POWER)
+    {
+      if (event_result < 0)
+        event_result = 0;
+      if (inst->token_status & STATUS_BERSERK)
+        event_result = (unsigned int)event_result * 2U;
+    }
   }
-  event_result = uVar6;
-  uVar12 = event_result;
-  if (EXE_DWORD(0x60a548) != 0)
+  unsigned int result = event_result;
+  if (event == EVENT_TOUGHNESS &&
+      (inst->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)) == STATE_IN_PLAY &&
+      (cards_data[iid].type & TYPE_CREATURE) &&
+      (event_result <= 0 || event_result <= inst->damage_on_card) &&
+      !(inst->token_status & STATUS_CANNOT_BE_DESTROYED) && !(land_can_be_played & 0x204) &&
+      !EXE_DWORD(0x785e60))
   {
-    pop_affected_card_stack();
+    kill_card(player, card, event_result < 1 ? KILL_STATE_BASED_ACTION : KILL_DESTROY);
+    EXE_FN(void, 0x477a90, void)();
   }
+  if (EXE_DWORD(0x60a548))
+    pop_affected_card_stack();
   if (event == EVENT_CHANGE_TYPE)
   {
-  code_r0x026cc9f0:
-    inst->internal_card_id = uVar12;
-    if (uVar12 != 0xffffffff)
+    inst->internal_card_id = result;
+    if (result != UINT32_MAX)
+      inst->backup_internal_card_id = (uint16_t)result;
+    if ((cards_data[result].extra_ability & EA_MANA_SOURCE) ||
+        (is_what(player, card, TYPE_LAND) && mana_colors_added[player]))
     {
-      inst->backup_internal_card_id = (uint16_t)uVar12;
-    }
-    if (((cards_data[uVar12].extra_ability & 0x1000) != 0) ||
-        ((iVar4 = is_what(player, card, 1), iVar4 != 0 && (mana_colors_added[player] != 0))))
-    {
-      uVar2 = cards_data[uVar12].id;
-      uVar5 = get_color_of_mana_produced_by_id((unsigned int)uVar2, inst->info_slot, player);
-      if (uVar5 == 0xffffffff)
-      {
-        uVar5 = (unsigned int)(uint8_t)cards_ptr[uVar2]->mana_source_colors;
-      }
-      inst->mana_color = (uint8_t)uVar5;
-      if (is_what(player, card, 1) != 0)
-      {
-        inst->mana_color = inst->mana_color | (uint8_t)mana_colors_added[player];
-      }
-      iVar4 = check_special_flags2(player, card, 0x40);
-      bVar10 = inst->mana_color;
-      uVar5 = (unsigned int)bVar10;
-      if (iVar4 != 0)
-      {
-        iVar4 = 0;
-        do
+      uint16_t id = cards_data[result].id;
+      unsigned int mana = get_color_of_mana_produced_by_id(id, inst->info_slot, player);
+      if (mana == UINT32_MAX)
+        mana = (uint8_t)cards_ptr[id]->mana_source_colors;
+      inst->mana_color = (uint8_t)mana;
+      if (is_what(player, card, TYPE_LAND))
+        inst->mana_color |= (uint8_t)mana_colors_added[player];
+      int override = check_special_flags2(player, card, 0x40);
+      uint8_t current_mana = inst->mana_color;
+      if (override)
+        for (int color = 0; color < 7; ++color)
         {
-          uVar6 = color_to_color_test(iVar4);
-          if ((uVar5 & 0xff & uVar6) == 0)
+          unsigned int bit = color_to_color_test(color);
+          if (current_mana & bit)
           {
-            uVar5 = (unsigned int)inst->mana_color;
+            int bit_to_remove = color_to_color_test(color);
+            inst->mana_color &= (uint8_t)bit_to_remove ^ 0xff;
+            unsigned int replacement = color_to_color_test(mana_color_override[player][color]);
+            current_mana = (uint8_t)(replacement | inst->mana_color);
+            inst->mana_color = current_mana;
           }
           else
-          {
-            iVar7 = color_to_color_test(iVar4);
-            inst->mana_color = inst->mana_color & ((uint8_t)iVar7 ^ 0xff);
-            uVar5 = color_to_color_test(mana_color_override[player][iVar4]);
-            uVar6 = (unsigned int)inst->mana_color | ((unsigned int)inst->card_color << 8) |
-                    ((unsigned int)inst->unk5a << 16) | ((unsigned int)inst->unk5b << 24);
-            uVar5 = uVar5 | uVar6;
-            inst->mana_color = (uint8_t)uVar5;
-          }
-          iVar4 = iVar4 + 1;
-        } while (iVar4 != 7);
-        bVar10 = (uint8_t)uVar5;
-      }
-      inst->card_color = bVar10;
-    }
-    if (((inst->token_status & 0x40) != 0) && ((cards_data[uVar12].type & 2) == 0))
-    {
-      iVar4 = 0;
-      do
-      {
-        iVar7 = 0;
-        if (-1 < active_cards_count[iVar4])
-        {
-          do
-          {
-            pcVar8 = in_play(iVar4, iVar7);
-
-            if ((((pcVar8 != (card_instance_t *)0x0) && (pcVar8 = get_card_instance(iVar4, iVar7),
-                                                         pcVar8->damage_target_player == player)) &&
-                 (pcVar8->damage_target_card == card)) &&
-                (((cards_data[pcVar8->internal_card_id].type & 4) != 0 &&
-                  (cards_ptr[cards_data[pcVar8->internal_card_id].id]->subtype1 == 0x2c))))
-            {
-              kill_card(iVar4, iVar7, KILL_STATE_BASED_ACTION);
-            }
-            iVar7 = iVar7 + 1;
-          } while (iVar7 <= active_cards_count[iVar4]);
+            current_mana = inst->mana_color;
         }
-        iVar4 = iVar4 + 1;
-      } while (iVar4 != 2);
+      inst->card_color = current_mana;
     }
-    if ((inst->state & 2) == 0)
-    {
-      return uVar12;
-    }
-    event_flags = event_flags | cards_data[inst->internal_card_id].extra_ability & 0x1ffc0000;
-    return uVar12;
+    if ((inst->token_status & STATUS_ANIMATED) && !(cards_data[result].type & TYPE_CREATURE))
+      for (int p = 0; p < 2; ++p)
+        for (int c = 0; c <= active_cards_count[p]; ++c)
+          if (in_play(p, c))
+          {
+            card_instance_t *aura = get_card_instance(p, c);
+            if (aura->damage_target_player == player && aura->damage_target_card == card &&
+                (cards_data[aura->internal_card_id].type & TYPE_ENCHANTMENT) &&
+                cards_ptr[cards_data[aura->internal_card_id].id]->subtype1 == 44)
+              kill_card(p, c, KILL_STATE_BASED_ACTION);
+          }
+    if (inst->state & STATE_IN_PLAY)
+      event_flags |= cards_data[inst->internal_card_id].extra_ability & 0x1ffc0000;
+    return result;
   }
   if (event == EVENT_ABILITIES)
   {
-    inst->regen_status = uVar12;
-
-    if (((((inst->ext)->sp_keywords & 0x200) != 0) && ((cards_data[uVar5].type & 0x47) != 0)) &&
-        (-1 < (char)cards_data[uVar5].type))
-    {
-      inst->destroys_if_blocked = inst->destroys_if_blocked | 0x10;
-    }
+    inst->regen_status = result;
+    if ((inst->ext->sp_keywords & SP_KEYWORD_DEATHTOUCH) &&
+        (cards_data[iid].type & TYPE_PERMANENT) && !(cards_data[iid].type & TYPE_EFFECT))
+      inst->destroys_if_blocked |= 0x10;
   }
-  else if (event < EVENT_RECALC_DAMAGE)
-  {
-    if (event == EVENT_POWER)
-    {
-      inst->power = (int16_t)uVar12;
-    }
-    else if (event == EVENT_TOUGHNESS)
-    {
-    LAB_026cc92c:
-      inst->toughness = (int16_t)uVar12;
-    }
-  }
+  else if (event == EVENT_POWER)
+    inst->power = (int16_t)result;
+  else if (event == EVENT_TOUGHNESS)
+    inst->toughness = (int16_t)result;
   else if (event == EVENT_SET_COLOR)
-  {
-    inst->color = (uint8_t)uVar12 & 0x3e;
-  }
-  raw_base_pt = iVar4;
-  return uVar12;
+    inst->color = (uint8_t)result & COLOR_TEST_ANY_COLORED;
+  raw_base_pt = saved_raw_base;
+  return result;
 }
 
 // Fixes a bug in the exe.  Do not call directly.
@@ -1536,10 +1259,10 @@ int dispatch_event_arbitrary_to_one_card_with_initial_event_result(
     int new_attacking_card_controller, int new_attacking_card, int initial_event_result)
 {
   int result;
-  uint32_t uVar2;
+  uint32_t saved_trigger_condition;
 
   push_affected_card_stack();
-  uVar2 = trigger_condition;
+  saved_trigger_condition = trigger_condition;
   event_result = initial_event_result;
   affected_card_controller = new_affected_card_controller;
   affected_card = new_affected_card;
@@ -1551,7 +1274,7 @@ int dispatch_event_arbitrary_to_one_card_with_initial_event_result(
   }
   event_rval = call_card_function(player, card, event);
   result = event_result;
-  trigger_condition = uVar2;
+  trigger_condition = saved_trigger_condition;
   pop_affected_card_stack();
   return result;
 }
@@ -1565,10 +1288,10 @@ int dispatch_event_with_attacker_and_initial_event_result(int new_affected_card_
                                                           int initial_event_result)
 {
   int result;
-  uint32_t uVar2;
+  uint32_t saved_trigger_condition;
 
   push_affected_card_stack();
-  uVar2 = trigger_condition;
+  saved_trigger_condition = trigger_condition;
   event_result = initial_event_result;
   affected_card_controller = new_affected_card_controller;
   affected_card = new_affected_card;
@@ -1580,7 +1303,7 @@ int dispatch_event_with_attacker_and_initial_event_result(int new_affected_card_
   }
   dispatch_event_raw(event);
   result = event_result;
-  trigger_condition = uVar2;
+  trigger_condition = saved_trigger_condition;
   pop_affected_card_stack();
   return result;
 }

@@ -272,8 +272,8 @@ def main():
         assert sha(new_pe.get_data(target-new_pe.OPTIONAL_HEADER.ImageBase,folded['target_bytes']))==folded['target_sha256']
         assert any(r['address']==target and r['size']==folded['target_bytes'] for r in by_source_name[(source_key(folded['source']),folded['retained_name'])])
         current[at].add(ident);current[target].add(ident)
-    original_code=LocalCode(orig_pe,originals,accepted=accepted,unsafe=unsafe)
-    rebuilt_code=LocalCode(new_pe,current,legacy,accepted,unsafe)
+    original_code=LocalCode(orig_pe,originals,accepted=accepted,unsafe=unsafe,normalize_branch_width=True)
+    rebuilt_code=LocalCode(new_pe,current,legacy,accepted,unsafe,normalize_branch_width=True)
     # COFF finds genuine compiler thunks that have no separate DWARF body.
     debug=Image((ROOT/'ManalinkEh.dbg').read_bytes());coff=collections.defaultdict(set)
     for n,v,sec,kind,storage in debug.functions():
@@ -399,8 +399,10 @@ def main():
             group['callers'].add(row['address']);group['sites']+=1
     binding_groups=[{**g,'callers':sorted(g['callers']),'caller_count':len(g['callers'])} for g in binding_groups.values()]
     binding_groups.sort(key=lambda g:(-g['caller_count'],g['native_target']))
-    from unify_scalar_helpers import verify_source
-    unification=verify_source(ROOT)
+    from canonicalize_helpers import verify_current
+    unification=verify_current(ROOT)
+    if unification:
+        unification['aliases_removed']=canonical_data['current_aliases_removed']
     pending_count=len(rows)-counts['reconstructed_source']-counts['verified_retained_source']-counts['reviewed_cpp_source']-counts['reviewed_compiler_source']
     from verify_split_cards_recovery import split_coverage
     split_helpers=split_coverage(canonical_data or {},ROOT)
@@ -422,7 +424,7 @@ def main():
                         **{str(ROOT/p):sha((ROOT/p).read_bytes()) for p in ['manalink.h','defs.h','Expansions.h','tools/reccmp_project.py']},
                         str(Path(__file__)):sha(Path(__file__).read_bytes()),str(ROOT/'tools/recovery/helper_fingerprints.py'):sha((ROOT/'tools/recovery/helper_fingerprints.py').read_bytes())},
                 source_sha256=source_hashes,
-                scope='Current mixed recovery/legacy build versus October 2022; not a pristine historical 2020 comparison. Same-local-code requires exact instruction encoding apart from alignment NOPs, internal branch positions and verified function/source-string address translation. Unknown DLL data/code addresses, indirect control flow, incomplete disassembly and stub dependencies prevent that classification. EXE-owned fixed addresses and numeric/layout constants stay exact. A local match does not prove callees, global contents, gameplay or whole-program equivalence. High-score buckets are review priorities, not proofs of minor semantic changes. Deduplication candidates require ABI/caller, native-binding and provenance migrations before removal.')
+                scope='Current mixed recovery/legacy build versus October 2022; not a pristine historical 2020 comparison. Same-local-code requires exact instruction encoding apart from alignment NOPs, internal branch positions, equivalent unprefixed rel8/rel32 JMP/Jcc widths and verified function/source-string address translation. Unknown DLL data/code addresses, indirect control flow, incomplete disassembly and stub dependencies prevent that classification. EXE-owned fixed addresses and numeric/layout constants stay exact. A local match does not prove callees, global contents, gameplay or whole-program equivalence. High-score buckets are review priorities, not proofs of minor semantic changes. Deduplication candidates require ABI/caller, native-binding and provenance migrations before removal.')
     if unification:
         for p in ['docs/recovery-evidence/helper-unification.json','tools/recovery/unify_scalar_helpers.py']:
             result['inputs'][str(ROOT/p)]=sha((ROOT/p).read_bytes())

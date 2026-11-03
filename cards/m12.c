@@ -472,6 +472,12 @@ Enchanted creature gets +1/+3. */
 
 int card_doubling_chant(int player, int card, event_t event)
 {
+  enum
+  {
+    AUTO_MODE = 1,
+    MANUAL_MODE = 2
+  };
+
   /* CARD_ID_DOUBLING_CHANT	11799
 Doubling Chant	|5|G
 Sorcery
@@ -491,7 +497,7 @@ if (event == EVENT_RESOLVE_SPELL)
       if (in_play(player, c) && is_what(player, c, TYPE_CREATURE))
       {
         int id = get_card_name(player, c);
-        if ((choice == 1 && has_subtype(player, c, SUBTYPE_LEGEND) && player == AI) || id == -1)
+        if ((choice == AUTO_MODE && has_subtype(player, c, SUBTYPE_LEGEND) && player == AI) || id == -1)
           continue;
         char msg[100];
         scnprintf(msg, 100, "Select a card named %s", cards_ptr[id]->name);
@@ -520,7 +526,7 @@ int card_druidic_satchel(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		int *deck = deck_ptr[player];
-		show_deck( HUMAN, deck, 1, "Here's the first card of the deck", 0, 0x7375B0 );
+		show_deck( HUMAN, deck, 1, "Here's the first card of the deck", 0, EXE_STR(ENGINE_DONE_LABEL) );
 		int mode = 0;
 		if( cards_data[deck[0]].type & TYPE_CREATURE ){
 			mode |= 1;
@@ -634,19 +640,19 @@ int card_gideons_avenger(int player, int card, event_t event)
 int card_grand_abolisher(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar3;
+  int turn_player;
   test_definition_t test;
-  iVar3 = current_turn;
+  turn_player = current_turn;
   if (event == EVENT_MODIFY_COST_GLOBAL)
   {
     if (current_turn == player)
     {
       instance = in_play(current_turn, card);
-      if ((instance != NULL) && (1 - iVar3 == affected_card_controller))
+      if ((instance != NULL) && (1 - turn_player == affected_card_controller))
       {
-        if (is_what(1 - iVar3, affected_card, 1) == 0)
+        if (is_what(1 - turn_player, affected_card, 1) == 0)
         {
-          if (is_humiliated(iVar3, card, AL_STATIC) == 0)
+          if (is_humiliated(turn_player, card, AL_STATIC) == 0)
           {
             infinite_casting_cost();
           }
@@ -657,7 +663,7 @@ int card_grand_abolisher(int player, int card, event_t event)
   else if (current_turn == player)
   {
     default_test_definition(&test, 0x46);
-    remove_abilities_by_test(1 - iVar3, event, &test, AL_ALL_ACT);
+    remove_abilities_by_test(1 - turn_player, event, &test, AL_ALL_ACT);
     return 0;
   }
   return 0;
@@ -1019,19 +1025,26 @@ int card_rune_scarred_demon(int player, int card, event_t event){
 
 int card_skinshifter(int player, int card, event_t event)
 {
+  enum
+  {
+    CHOICE_RHINO = 1,
+    CHOICE_BIRD = 2,
+    CHOICE_PLANT = 3
+  };
+
   int choice;
   card_instance_t *instance;
-  int iVar2;
-  unsigned int uVar3;
-  int32_t iVar4;
-  unsigned int uVar5;
-  uint32_t uVar6;
-  bool bVar7;
+  int attacking;
+  unsigned int rhino_priority;
+  int32_t resolved_mode;
+  unsigned int bird_priority;
+  uint32_t plant_priority;
+  bool your_turn;
 
   if (event - EVENT_POW_BOOST < 2)
   {
     if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x2000, 0, 0, 0, 1, 0, 0, 0,
-                                      NULL, NULL) == 0)
+                                  NULL, NULL) == 0)
     {
       return 0;
     }
@@ -1042,34 +1055,36 @@ int card_skinshifter(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_ACTIVATE)
     {
-      bVar7 = current_turn == player;
+      your_turn = current_turn == player;
       instance->info_slot = 0;
-      if (bVar7)
+      if (your_turn)
       {
-        uVar5 = (0x16 < current_phase) - 1 & 10;
-        iVar2 = is_attacking(player, card);
-        uVar6 = 0;
-        uVar3 = 0;
-        if (iVar2 != 0)
+        bird_priority = (0x16 < current_phase) - 1 & 10;
+        attacking = is_attacking(player, card);
+        plant_priority = 0;
+        rhino_priority = 0;
+        if (attacking != 0)
         {
-          uVar3 = (current_phase != 0x18) - 1 & 10;
+          rhino_priority = (current_phase != 0x18) - 1 & 10;
         }
       }
       else
       {
-        uVar5 = 0;
-        uVar6 = 10;
-        uVar3 = 0;
+        bird_priority = 0;
+        plant_priority = 10;
+        rhino_priority = 0;
       }
       choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "4/4 Rhino", 1,
-                          uVar3, "2/2 Bird", 1, uVar5, "0/8 Plant", 1, uVar6, 0, 0, 0, 0);
+                           rhino_priority, "2/2 Bird", 1, bird_priority, "0/8 Plant", 1,
+                           plant_priority, 0, 0, 0, 0);
       if (choice == 0)
       {
         spell_fizzled = 1;
         return 0;
       }
       instance->info_slot = choice;
-      return generic_activated_ability(player, card, event, 0x2000, 0, 0, 0, 1, 0, 0, 0, NULL, NULL);
+      return generic_activated_ability(player, card, event, 0x2000, 0, 0, 0, 1, 0, 0, 0, NULL,
+                                       NULL);
     }
   }
   else
@@ -1082,26 +1097,26 @@ int card_skinshifter(int player, int card, event_t event)
   }
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    iVar4 = instance->info_slot;
-    if (iVar4 == 1)
+    resolved_mode = instance->info_slot;
+    if (resolved_mode == CHOICE_RHINO)
     {
       set_pt_and_abilities_until_eot(instance->parent_controller, instance->parent_card,
                                      instance->parent_controller, instance->parent_card, 4, 4, 0x80,
                                      0, 1);
       force_a_subtype_until_eot(player, card, instance->parent_controller, instance->parent_card,
                                 SUBTYPE_RHINO);
-      iVar4 = instance->info_slot;
+      resolved_mode = instance->info_slot;
     }
-    if (iVar4 == 2)
+    if (resolved_mode == CHOICE_BIRD)
     {
       set_pt_and_abilities_until_eot(instance->parent_controller, instance->parent_card,
                                      instance->parent_controller, instance->parent_card, 2, 2, 0x20,
                                      0, 1);
       force_a_subtype_until_eot(player, card, instance->parent_controller, instance->parent_card,
                                 SUBTYPE_BIRD);
-      iVar4 = instance->info_slot;
+      resolved_mode = instance->info_slot;
     }
-    if (iVar4 == 3)
+    if (resolved_mode == CHOICE_PLANT)
     {
       set_pt_and_abilities_until_eot(instance->parent_controller, instance->parent_card,
                                      instance->parent_controller, instance->parent_card, 0, 8, 0, 0,
@@ -2186,7 +2201,7 @@ When Stingerfling Spider enters the battlefield, you may destroy target creature
 int card_trollhide(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar2;
+  int enchanted_card;
   int player_00;
   instance = in_play(player, card);
   if (instance != NULL)
@@ -2198,24 +2213,24 @@ int card_trollhide(int player, int card, event_t event)
       if (event == EVENT_ACTIVATE)
       {
         player_00 = (int)instance->damage_target_player;
-        iVar2 = instance->damage_target_card;
+        enchanted_card = instance->damage_target_card;
       }
       else
       {
         if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
           return generic_aura(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
         player_00 = (int)instance->damage_target_player;
-        iVar2 = instance->damage_target_card;
+        enchanted_card = instance->damage_target_card;
         if (event == EVENT_RESOLVE_ACTIVATION)
         {
-          if (can_regenerate(player_00, iVar2) != 0)
+          if (can_regenerate(player_00, enchanted_card) != 0)
           {
-            regenerate_target(player_00, iVar2);
+            regenerate_target(player_00, enchanted_card);
           }
         }
       }
-      return granted_generic_activated_ability(player, card, player_00, iVar2, event, 0x800000, 1,
-                                                0, 0, 1, 0, 0, 0, NULL, NULL);
+      return granted_generic_activated_ability(player, card, player_00, enchanted_card, event,
+                                               0x800000, 1, 0, 0, 1, 0, 0, 0, NULL, NULL);
     }
   }
   return generic_aura(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
@@ -2436,8 +2451,8 @@ static int autumns_veil_effect(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  unsigned int uVar3;
-  unsigned int uVar4;
+  unsigned int spell_color;
+  unsigned int protected_colors;
 
   if (event == EVENT_ABILITIES)
   {
@@ -2459,9 +2474,9 @@ static int autumns_veil_effect(int player, int card, event_t event)
         result = is_being_cast(attacking_card_controller, attacking_card);
         if (result != 0)
         {
-          uVar3 = get_color(attacking_card_controller, attacking_card);
-          uVar4 = get_sleighted_color_test(player, card, 6);
-          if ((uVar3 & uVar4) != 0)
+          spell_color = get_color(attacking_card_controller, attacking_card);
+          protected_colors = get_sleighted_color_test(player, card, 6);
+          if ((spell_color & protected_colors) != 0)
           {
             event_result = event_result | 1;
           }

@@ -6,7 +6,7 @@
 static void pick_card(int *picks, int *pack, int selected)
 {
   int result;
-  int *piVar2;
+  int *pack_cursor;
   result = *picks;
   while (-1 < result)
   {
@@ -16,12 +16,12 @@ static void pick_card(int *picks, int *pack, int selected)
   *picks = pack[selected];
   result = pack[selected + 1];
   pack[selected] = result;
-  piVar2 = pack + selected + 1;
+  pack_cursor = pack + selected + 1;
   while (-1 < result)
   {
-    result = piVar2[1];
-    *piVar2 = result;
-    piVar2 = piVar2 + 1;
+    result = pack_cursor[1];
+    *pack_cursor = result;
+    pack_cursor = pack_cursor + 1;
   }
   return;
 }
@@ -156,7 +156,7 @@ int card_draft(int player, int card, event_t event)
               if (selected >= 0)
                 break;
               show_deck(HUMAN, picks[0], 500, "Drafted so far", 0,
-                             (int)(uintptr_t)EXE_STR(0x78f0a8));
+                             EXE_STR(ENGINE_OK_LABEL));
             }
             else
             {
@@ -232,7 +232,7 @@ int card_draft(int player, int card, event_t event)
       }
       if (packnum < num_packs - 1)
         show_deck(HUMAN, picks[0], 500, "Drafted so far", 0,
-                       (int)(uintptr_t)EXE_STR(0x78f0a8));
+                       EXE_STR(ENGINE_OK_LABEL));
       for (int plr = 0; plr <= num_opponents; ++plr)
         free(packs[plr]);
     }
@@ -357,7 +357,7 @@ static void pick_human_card(int *picks, int *pack, EXPANSION_t expansion)
       if (selected >= 0)
         break;
       show_deck(HUMAN, picks, 500, "Drafted so far", 0,
-                     (int)(uintptr_t)EXE_STR(0x78f0a8));
+                     EXE_STR(ENGINE_OK_LABEL));
     }
     else
     {

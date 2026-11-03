@@ -288,29 +288,29 @@ void roll_2d6t(int player, int src_player, int src_card, int tgt_player, int tgt
 /* ManalinkEh 2022: 0x2650a00; original functions/dice.c:211. */
 int roll_2d6t_difference(int player, int src_player, int src_card, int tgt_player, int tgt_card)
 {
-  unsigned int uVar1;
+  unsigned int difference_sign_bit;
   int first2[2];
 
   roll_xdy(player, src_player, src_card, tgt_player, tgt_card, 2, 6, NULL, 0, first2,
            RXDY_SHOW_DIFFERENCE);
-  uVar1 = first2[0] - first2[1] >> 0x1f;
-  return (first2[0] - first2[1] ^ uVar1) - uVar1;
+  difference_sign_bit = first2[0] - first2[1] >> 0x1f;
+  return (first2[0] - first2[1] ^ difference_sign_bit) - difference_sign_bit;
 }
 
 /* ManalinkEh 2022: 0x2650a70; original functions/dice.c:219. */
 int roll_xd6t(int player, int x, int src_player, int src_card, int tgt_player, int tgt_card)
 {
-  bool bVar2;
+  bool single_die;
 
   if (x < 1)
   {
     return 0;
   }
-  bVar2 = x == 1;
-  if (bVar2)
+  single_die = x == 1;
+  if (single_die)
   {
     x = 1;
   }
   return roll_xdy(player, src_player, src_card, tgt_player, tgt_card, x, 6, NULL, 0, NULL,
-                    (unsigned int)!bVar2);
+                  (unsigned int)!single_die);
 }

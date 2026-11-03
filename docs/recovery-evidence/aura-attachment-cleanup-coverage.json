@@ -1,0 +1,998 @@
+{
+  "status": "Seven aura/attachment control-flow helpers reconstructed and ten more local-name projections verified.",
+  "batch": "docs/recovery-evidence/aura-attachment-cleanup.json",
+  "batch_sha256": "82b3ac55279431c7b0f0284b6c14c798b8320221a5e6e49947ac29decea72e5f",
+  "counts": {
+    "helpers": 17,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 14,
+    "removed_lab_gotos": 14,
+    "source_lines_removed": 215,
+    "removed_placeholder_occurrences": 285,
+    "removed_placeholder_names": 38
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "three_way_comparisons": 265664,
+    "entry_invocations": 796992,
+    "functions": {
+      "disable_attached": 19200,
+      "attached_set_pt_part": 19200,
+      "aura_impl": 84736,
+      "aura_pref_controller": 84736,
+      "end_of_stealing_aura_effect": 19200,
+      "generic_animating_aura_impl": 19392,
+      "when_enchanted_permanent_dies_return_aura_to_hand": 19200
+    },
+    "callback_kind_hits": {
+      "disable_attached": [
+        0,
+        0,
+        2653,
+        1258,
+        1228,
+        471,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "attached_set_pt_part": [
+        0,
+        0,
+        19200,
+        9312,
+        0,
+        0,
+        50,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "aura_impl": [
+        0,
+        15156,
+        11394,
+        277,
+        0,
+        0,
+        0,
+        7581,
+        17569,
+        2866,
+        555,
+        72,
+        3220,
+        885,
+        247,
+        913,
+        586,
+        93,
+        901,
+        396,
+        774,
+        206,
+        181,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "aura_pref_controller": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        15156,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        15156,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "end_of_stealing_aura_effect": [
+        0,
+        20952,
+        17157,
+        0,
+        2684,
+        0,
+        0,
+        0,
+        3654,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5399,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        19200,
+        1874,
+        5381,
+        0,
+        0,
+        0,
+        0
+      ],
+      "generic_animating_aura_impl": [
+        0,
+        24524,
+        13518,
+        9097,
+        0,
+        0,
+        42,
+        0,
+        89,
+        86,
+        0,
+        0,
+        0,
+        1111,
+        0,
+        557,
+        642,
+        0,
+        22,
+        0,
+        0,
+        0,
+        0,
+        0,
+        44,
+        262,
+        192,
+        48,
+        192,
+        34,
+        98,
+        18281,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "when_enchanted_permanent_dies_return_aura_to_hand": [
+        0,
+        19329,
+        19339,
+        0,
+        0,
+        0,
+        0,
+        0,
+        37,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        34,
+        24,
+        24,
+        24
+      ]
+    }
+  },
+  "original_code_regions": [
+    {
+      "name": "disable_attached",
+      "address": "0x26e7ad0",
+      "size": 275,
+      "sha256": "588dd757aa238514918e3b26309ed907db93aff2c94dd598a27e89af4a34fbd4",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26e7b1a",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x26e7b32",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26e7b59",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x26e7b98",
+          "target": "0x26ddb20",
+          "callee": "remove_abilities"
+        },
+        {
+          "instruction": "0x26e7bd2",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        }
+      ]
+    },
+    {
+      "name": "attached_set_pt_part",
+      "address": "0x26e6650",
+      "size": 183,
+      "sha256": "f42b5668e2dc8f58c5bc5b47d73a6faad586c1c94747e5ef3fe3899c730b019d",
+      "entry_abi": "regparm(3)",
+      "external_branches": [
+        {
+          "instruction": "0x26e6670",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26e6695",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x26e66e6",
+          "target": "0x26cd650",
+          "callee": "set_base_pt"
+        }
+      ]
+    },
+    {
+      "name": "aura_impl",
+      "address": "0x26e68d0",
+      "size": 2177,
+      "sha256": "c5a24f26f68e80f239f7a7a486629ed1e7f7a964bf07951a78cc41c774502388",
+      "entry_abi": "regparm(3)",
+      "external_branches": [
+        {
+          "instruction": "0x26e6907",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26e6938",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e69b2",
+          "target": "0x26e6850",
+          "callee": "attach_aura_to_target"
+        },
+        {
+          "instruction": "0x26e69ce",
+          "target": "0x267a510",
+          "callee": "remove_special_flags3"
+        },
+        {
+          "instruction": "0x26e6a13",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26e6a7c",
+          "target": "0x2679dd0",
+          "callee": "check_special_flags"
+        },
+        {
+          "instruction": "0x26e6a9e",
+          "target": "0x2679dd0",
+          "callee": "check_special_flags"
+        },
+        {
+          "instruction": "0x26e6ac6",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e6ade",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e6af8",
+          "target": "0x2681c50",
+          "callee": "get_type"
+        },
+        {
+          "instruction": "0x26e6b12",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e6b2c",
+          "target": "0x2661750",
+          "callee": "valid_target"
+        },
+        {
+          "instruction": "0x26e6b59",
+          "target": "0x26e6850",
+          "callee": "attach_aura_to_target"
+        },
+        {
+          "instruction": "0x26e6b77",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26e6bee",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x26e6c0d",
+          "target": "0x2660810",
+          "callee": "validate_arbitrary_target"
+        },
+        {
+          "instruction": "0x26e6c2f",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x26e6c57",
+          "target": "0x26b5a00",
+          "callee": "kill_card"
+        },
+        {
+          "instruction": "0x26e6ca1",
+          "target": "0x26a0250",
+          "callee": "generic_spell"
+        },
+        {
+          "instruction": "0x26e6d2e",
+          "target": "0x2661750",
+          "callee": "valid_target"
+        },
+        {
+          "instruction": "0x26e6d4a",
+          "target": "0x26b5a00",
+          "callee": "kill_card"
+        },
+        {
+          "instruction": "0x26e6d67",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26e6dbb",
+          "target": "0x2679dd0",
+          "callee": "check_special_flags"
+        },
+        {
+          "instruction": "0x26e6dfe",
+          "target": "0x267a050",
+          "callee": "remove_special_flags"
+        },
+        {
+          "instruction": "0x26e6e5e",
+          "target": "0x2660240",
+          "callee": "default_target_definition"
+        },
+        {
+          "instruction": "0x26e6e88",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x26e6ea5",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x26e6ed7",
+          "target": "0x2687da0",
+          "callee": "state_untargettable"
+        },
+        {
+          "instruction": "0x26e6ef5",
+          "target": "0x2679dd0",
+          "callee": "check_special_flags"
+        },
+        {
+          "instruction": "0x26e6f17",
+          "target": "0x2679dd0",
+          "callee": "check_special_flags"
+        },
+        {
+          "instruction": "0x26e6f3f",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e6f57",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e6f71",
+          "target": "0x2681c50",
+          "callee": "get_type"
+        },
+        {
+          "instruction": "0x26e6f8b",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e6fae",
+          "target": "0x2679dd0",
+          "callee": "check_special_flags"
+        },
+        {
+          "instruction": "0x26e6fe5",
+          "target": "0x2660db0",
+          "callee": "new_pick_target"
+        },
+        {
+          "instruction": "0x26e7006",
+          "target": "0x2687da0",
+          "callee": "state_untargettable"
+        },
+        {
+          "instruction": "0x26e7031",
+          "target": "0x2679dd0",
+          "callee": "check_special_flags"
+        },
+        {
+          "instruction": "0x26e7053",
+          "target": "0x2679dd0",
+          "callee": "check_special_flags"
+        },
+        {
+          "instruction": "0x26e707b",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e7093",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e70ad",
+          "target": "0x2681c50",
+          "callee": "get_type"
+        },
+        {
+          "instruction": "0x26e70c6",
+          "target": "0x2660570",
+          "callee": "target_available"
+        },
+        {
+          "instruction": "0x26e711f",
+          "target": "0x26a0250",
+          "callee": "generic_spell"
+        },
+        {
+          "instruction": "0x26e7147",
+          "target": "0x2661710",
+          "callee": "validate_target"
+        }
+      ]
+    },
+    {
+      "name": "aura_pref_controller",
+      "address": "0x26e8620",
+      "size": 237,
+      "sha256": "246b8e26b57d666341f64cce819d33900a348ce28eff6cefad6663dfdd6d2334",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26e866c",
+          "target": "0x2660240",
+          "callee": "default_target_definition"
+        },
+        {
+          "instruction": "0x26e8691",
+          "target": "0x26e68d0",
+          "callee": "native_aura"
+        }
+      ]
+    },
+    {
+      "name": "end_of_stealing_aura_effect",
+      "address": "0x26e8f40",
+      "size": 454,
+      "sha256": "5d01bea3c4b2a3d3a991a05b924d15314b6014ce5254f5fc8a5c0b092aeed6a3",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26e8f56",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26e8f72",
+          "target": "0x268bf20",
+          "callee": "check_state"
+        },
+        {
+          "instruction": "0x26e8f96",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26e8fb5",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e8ff9",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26e9013",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x26e902b",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x26e905d",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e908b",
+          "target": "0x2664490",
+          "callee": "re_enable_the_most_recent_control_effect_attached_to_me"
+        },
+        {
+          "instruction": "0x26e90a9",
+          "target": "0x26646c0",
+          "callee": "gain_control_permanently_no_sound"
+        },
+        {
+          "instruction": "0x26e90c8",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26e90e3",
+          "target": "0x26646c0",
+          "callee": "gain_control_permanently_no_sound"
+        },
+        {
+          "instruction": "0x26e90fc",
+          "target": "0x26646c0",
+          "callee": "gain_control_permanently_no_sound"
+        }
+      ]
+    },
+    {
+      "name": "generic_animating_aura_impl",
+      "address": "0x26e7250",
+      "size": 1239,
+      "sha256": "33ca42342660c04190b8b26d35066561529a66ac81fa63dcd28c852c5a4f3283",
+      "entry_abi": "regparm(3)",
+      "external_branches": [
+        {
+          "instruction": "0x26e7294",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26e72d9",
+          "target": "0x26e7160",
+          "callee": "native_targeted"
+        },
+        {
+          "instruction": "0x26e72e7",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26e7305",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x26e731b",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26e7386",
+          "target": "0x26cd650",
+          "callee": "set_base_pt"
+        },
+        {
+          "instruction": "0x26e73b6",
+          "target": "0x2661750",
+          "callee": "valid_target"
+        },
+        {
+          "instruction": "0x26e73c9",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26e73ee",
+          "target": "0x26e6850",
+          "callee": "attach_aura_to_target"
+        },
+        {
+          "instruction": "0x26e7417",
+          "target": "0x26b5a00",
+          "callee": "kill_card"
+        },
+        {
+          "instruction": "0x26e7445",
+          "target": "0x2679dd0",
+          "callee": "check_special_flags"
+        },
+        {
+          "instruction": "0x26e746a",
+          "target": "0x2679dd0",
+          "callee": "check_special_flags"
+        },
+        {
+          "instruction": "0x26e7495",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e74b3",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e74d3",
+          "target": "0x2681c50",
+          "callee": "get_type"
+        },
+        {
+          "instruction": "0x26e74ed",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e7507",
+          "target": "0x2661750",
+          "callee": "valid_target"
+        },
+        {
+          "instruction": "0x26e7537",
+          "target": "0x26e6850",
+          "callee": "attach_aura_to_target"
+        },
+        {
+          "instruction": "0x26e758b",
+          "target": "0x26dfaf0",
+          "callee": "special_abilities"
+        },
+        {
+          "instruction": "0x26e75b9",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x26e7604",
+          "target": "0x2672f70",
+          "callee": "add_a_subtype"
+        },
+        {
+          "instruction": "0x26e763e",
+          "target": "0x2687d70",
+          "callee": "remove_status"
+        },
+        {
+          "instruction": "0x26e7659",
+          "target": "0x4a6500",
+          "callee": "create_a_card_type"
+        },
+        {
+          "instruction": "0x26e76d9",
+          "target": "0x2687d40",
+          "callee": "add_status"
+        },
+        {
+          "instruction": "0x26e76f6",
+          "target": "0x2694100",
+          "callee": "get_cmc"
+        },
+        {
+          "instruction": "0x26e7718",
+          "target": "0x2694100",
+          "callee": "get_cmc"
+        }
+      ]
+    },
+    {
+      "name": "when_enchanted_permanent_dies_return_aura_to_hand",
+      "address": "0x26e94c0",
+      "size": 360,
+      "sha256": "7a48871abdc61aaeb9f0189fc9a5f3decddd391004d05a620da693fd1edafaa3",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26e94d6",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26e94e4",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26e952a",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26e954a",
+          "target": "0x267a2f0",
+          "callee": "check_special_flags3"
+        },
+        {
+          "instruction": "0x26e9562",
+          "target": "0x267aa10",
+          "callee": "create_legacy_effect"
+        },
+        {
+          "instruction": "0x26e9570",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26e957f",
+          "target": "0x2692600",
+          "callee": "get_owner"
+        },
+        {
+          "instruction": "0x26e9591",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26e95a0",
+          "target": "0x26b3660",
+          "callee": "get_original_internal_card_id"
+        },
+        {
+          "instruction": "0x26e95b2",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26e95e4",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26e95fa",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26e9621",
+          "target": "0x267a320",
+          "callee": "set_special_flags3"
+        }
+      ]
+    }
+  ],
+  "external_data_bindings": 38,
+  "external_callee_bindings": 107,
+  "native_entry_abis": {
+    "disable_attached": "cdecl",
+    "attached_set_pt_part": "regparm(3)",
+    "aura_impl": "regparm(3)",
+    "aura_pref_controller": "cdecl",
+    "end_of_stealing_aura_effect": "cdecl",
+    "generic_animating_aura_impl": "regparm(3)",
+    "when_enchanted_permanent_dies_return_aura_to_hand": "cdecl"
+  },
+  "native_tested_helpers": 17,
+  "register_adapters": {
+    "native_aura": "regparm(3)",
+    "native_targeted": "regparm(3)"
+  },
+  "whole_unit_net_lines_removed": 215,
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 15,
+  "focused": {
+    "path": ".recovery/aura-attachment-focused-c382.json",
+    "sha256": "b6ed085dc71e379b58d14bfda1382cc5d04114772696f803806ca2649e1ce1ea",
+    "source_succession_links": 37,
+    "earlier_alpha_rename_bridges": 4
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/aura-attachment-build-c383.log",
+    "log_sha256": "97f266ebfcbfdadba318feccbf2b0ce77e82fbcb5c10b06566774360454c2966",
+    "verified_built_slots": 15169,
+    "dll_sha256": "542db5d5bb14b9360cdcb20856b207b3938b56449638479e4ef0c29a72a7559f",
+    "dbg_sha256": "4a0d4648a1d0ffcbc017f11b2105bbf52dda0e09c220fd9edc4212821dfb3e38"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/aura-attachment-setup-c383.log",
+    "log_sha256": "e71311be1ac6584631185a8b4db3e8687a6091907b5ce3edaa67ac483ac803dc",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4818,
+    "stubs": 0,
+    "metadata_sha256": "a65deb200f7e70f2bc07fc02487fe86da719ab85b899d59b77cf8b4b00b4672b",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": []
+  },
+  "index_unchanged": true,
+  "limits": "Seven independently compared native bodies, including all 65536 uint16 event values for the two entry filters and 192 explicit dynamic-type creation/boundary cases, with query, target, attachment, control, ability and legacy-creation callbacks substituted; no composed gameplay or UI claim. Three native private entries and two callback adapters use regparm(3). Allocated bounded records/type indices and ordinary storage are modeled. Child callbacks may mutate globals, counts, records, target definitions, type data and type-table pointers. Callback-boundary state and compound arguments are summarized with 32-bit hashes; final fixture snapshots are byte compared. Ten additional functions change only masked local identifiers and are verified by exact source and expanded-token projections, without claiming new native cases for them.",
+  "identifier_only_helpers": [
+    "attached_is_additional_color",
+    "attached_is_forced_color",
+    "disabling_aura_ai_part",
+    "targeted_aura_impl",
+    "aura_with_variable_pt_boost_depending_on_condition",
+    "gain_control_and_attach_as_aura",
+    "cannot_be_enchanted_granted",
+    "enchant_player",
+    "pump_attached",
+    "this_effect_doesnt_remove_this"
+  ],
+  "whole_unit_readability": {
+    "source": "functions/auras.c",
+    "source_sha256": "bec8dbd1232bf93f61c53877c05f6b3b63ace48fc3647db4056e54058998453b",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c384.json",
+    "sha256": "1af9149b6d1f6dcebc3237446bb88647ef71d51df959a0a413170c4a058e2a77",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 986,
+      "lab_gotos": 2606,
+      "functions_with_placeholders": 2045,
+      "distinct_function_local_placeholder_spellings": 6204,
+      "placeholder_identifier_occurrences": 48517,
+      "union_keywords": 0
+    }
+  }
+}

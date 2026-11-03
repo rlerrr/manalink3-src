@@ -1,0 +1,14 @@
+{
+  "status": "Inline-only token creator restored from its natively verified parent block.",
+  "application": "docs/recovery-evidence/token-inline-cleanup.json",
+  "application_sha256": "6e86a0e416cb46604694ff1b20728af0e80120a508024f92a1c11bd7474d4f63",
+  "source_sha256": "59dce29e44b4dc07d92d9a132ab1008955d04c128b2507cbc9e02395ea7fd873",
+  "source_and_expanded_block_projection": true,
+  "additional_native_entry_coverage": 0,
+  "combined_coverage": "docs/recovery-evidence/token-generation-cleanup-coverage.json",
+  "combined_coverage_sha256": "89170102354c7f56e09bf68568a729822d58a09dd71fc95a461821ffb90b87d5",
+  "build_exit_code": 0,
+  "verified_built_slots": 15169,
+  "reccmp_functions": 18725,
+  "index_unchanged": true
+}

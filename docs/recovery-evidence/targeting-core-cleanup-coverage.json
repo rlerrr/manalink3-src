@@ -1,0 +1,682 @@
+{
+  "status": "Five core targeting/protection helpers reconstructed and verified.",
+  "batch": "docs/recovery-evidence/targeting-core-cleanup.json",
+  "batch_sha256": "90fd6e41f367077678d690c03549480718783bcd09a4f834885b4127e234a209",
+  "counts": {
+    "helpers": 5,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 82,
+    "removed_lab_gotos": 80,
+    "source_lines_removed": 409,
+    "removed_placeholder_occurrences": 383,
+    "removed_placeholder_names": 27
+  },
+  "native_comparison": {
+    "primary": {
+      "all_equal": true,
+      "three_way_comparisons": 185649,
+      "entry_invocations": 556947,
+      "helpers": 1,
+      "all_uint16_power_and_toughness_requirements": 65536,
+      "player_controller_pairs": 256,
+      "stateful_random_inputs": 15000,
+      "mutation_modes": 2,
+      "controlled_resource_strings": 33,
+      "assertion_diagnostics_and_full_state": true
+    },
+    "auxiliary": {
+      "all_equal": true,
+      "three_way_comparisons": 200832,
+      "entry_invocations": 602496,
+      "helpers": 4,
+      "all_uint16_legacy_ids": 65536,
+      "all_byte_card_types": 256,
+      "availability_damage_modes": 4,
+      "stateful_random_inputs": 8000,
+      "mutation_modes": 2,
+      "get_protections_requires_acyclic_activation_parent_paths": true,
+      "exact_calls_and_full_state": true
+    },
+    "three_way_comparisons": 386481,
+    "entry_invocations": 1159443
+  },
+  "original_code_regions": [
+    {
+      "name": "validate_target_impl",
+      "address": "0x265d720",
+      "size": 6206,
+      "sha256": "aa8d33c0f93efb599c6ebc0cbe7c1efe50c7a5c792369583a7f59a95c6f1b4d0",
+      "entry_abi": "regparm(3): player/card/tgt_player in EAX/EDX/ECX; remaining twenty args on stack",
+      "external_branches": [
+        {
+          "instruction": "0x265d7ff",
+          "target": "0x265d6c0",
+          "callee": "is_protected_from"
+        },
+        {
+          "instruction": "0x265d836",
+          "target": "0x2701dd0",
+          "callee": "strcpy"
+        },
+        {
+          "instruction": "0x265d84a",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265d863",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265d884",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265d8b0",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265d96a",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x265dad8",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265db61",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265dbc0",
+          "target": "0x2701dd0",
+          "callee": "strcpy"
+        },
+        {
+          "instruction": "0x265dc0d",
+          "target": "0x265d6c0",
+          "callee": "is_protected_from"
+        },
+        {
+          "instruction": "0x265dc3b",
+          "target": "0x26df890",
+          "callee": "check_for_special_ability"
+        },
+        {
+          "instruction": "0x265dc5a",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x265dc75",
+          "target": "0x2679dd0",
+          "callee": "check_special_flags"
+        },
+        {
+          "instruction": "0x265dc99",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265dcdd",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265dd18",
+          "target": "0x2681910",
+          "callee": "check_battlefield_for_id"
+        },
+        {
+          "instruction": "0x265dd41",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265dd7a",
+          "target": "0x26b33a0",
+          "callee": "in_hand"
+        },
+        {
+          "instruction": "0x265dde2",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x265de30",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x265e00c",
+          "target": "0x265d1a0",
+          "callee": "native_match_type"
+        },
+        {
+          "instruction": "0x265e02a",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265e074",
+          "target": "0x265d1a0",
+          "callee": "native_match_type"
+        },
+        {
+          "instruction": "0x265e0c4",
+          "target": "0x2694100",
+          "callee": "get_cmc"
+        },
+        {
+          "instruction": "0x265e10a",
+          "target": "0x267ea70",
+          "callee": "get_color"
+        },
+        {
+          "instruction": "0x265e129",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265e142",
+          "target": "0x267ea70",
+          "callee": "get_color"
+        },
+        {
+          "instruction": "0x265e179",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265e30d",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265e329",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x265e47d",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265e499",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x265e4c7",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265e4fa",
+          "target": "0x2694100",
+          "callee": "get_cmc"
+        },
+        {
+          "instruction": "0x265e521",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265e58a",
+          "target": "0x265d6c0",
+          "callee": "is_protected_from"
+        },
+        {
+          "instruction": "0x265e5a7",
+          "target": "0x26c11b0",
+          "callee": "backtrace_and_abort"
+        },
+        {
+          "instruction": "0x265e5cf",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265e5e3",
+          "target": "0x2663540",
+          "callee": "is_legendary"
+        },
+        {
+          "instruction": "0x265e60f",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265e652",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x265e695",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265e6d7",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265e6eb",
+          "target": "0x267c110",
+          "callee": "is_basic_land"
+        },
+        {
+          "instruction": "0x265e77c",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x265e7ad",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x265e7cb",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265e7e7",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x265e901",
+          "target": "0x26d1730",
+          "callee": "count_counters"
+        },
+        {
+          "instruction": "0x265e95a",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x265e976",
+          "target": "0x2681910",
+          "callee": "check_battlefield_for_id"
+        },
+        {
+          "instruction": "0x265ea3a",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ea56",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x265ea81",
+          "target": "0x47ef10",
+          "callee": "sub_47EF10"
+        },
+        {
+          "instruction": "0x265ea9f",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265eaba",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ead5",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265eae6",
+          "target": "0x26c11b0",
+          "callee": "backtrace_and_abort"
+        },
+        {
+          "instruction": "0x265eb44",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265eb5b",
+          "target": "0x47ef50",
+          "callee": "sub_47EF50"
+        },
+        {
+          "instruction": "0x265eb7e",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265eba8",
+          "target": "0x265d6c0",
+          "callee": "is_protected_from"
+        },
+        {
+          "instruction": "0x265ebd3",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ebee",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ec09",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ec24",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ec3f",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ec5a",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ec9f",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x265ecc5",
+          "target": "0x47e980",
+          "callee": "sub_47E980"
+        },
+        {
+          "instruction": "0x265ece3",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ecff",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x265ed1e",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x265ed3c",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ed58",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x265ed76",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ed8e",
+          "target": "0x2694100",
+          "callee": "get_cmc"
+        },
+        {
+          "instruction": "0x265edbc",
+          "target": "0x26cea80",
+          "callee": "scnprintf"
+        },
+        {
+          "instruction": "0x265edeb",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265edfc",
+          "target": "0x26c11b0",
+          "callee": "backtrace_and_abort"
+        },
+        {
+          "instruction": "0x265ee47",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ee62",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265ee7d",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        },
+        {
+          "instruction": "0x265eee6",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x265ef1d",
+          "target": "0x47e980",
+          "callee": "sub_47E980"
+        },
+        {
+          "instruction": "0x265ef40",
+          "target": "0x2701de8",
+          "callee": "strcat"
+        }
+      ]
+    },
+    {
+      "name": "target_match_type",
+      "address": "0x265d1a0",
+      "size": 313,
+      "sha256": "88cd5a5e82f61134e7682afee42f2d99e0f2f40832a4655debab0086ef2cfde3",
+      "entry_abi": "regparm(3)",
+      "external_branches": [
+        {
+          "instruction": "0x265d1da",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x265d28a",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x265d2c2",
+          "target": "0x2680e20",
+          "callee": "is_token"
+        }
+      ]
+    },
+    {
+      "name": "target_available_impl",
+      "address": "0x265ef60",
+      "size": 653,
+      "sha256": "f8bd0d1c1ed31f774cb7cda7f86323189ccffbb3583ce851fcb9e93d2418dabf",
+      "entry_abi": "regparm(3)",
+      "external_branches": [
+        {
+          "instruction": "0x265f01f",
+          "target": "0x265d720",
+          "callee": "native_validate"
+        },
+        {
+          "instruction": "0x265f133",
+          "target": "0x265d720",
+          "callee": "native_validate"
+        },
+        {
+          "instruction": "0x265f15b",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        }
+      ]
+    },
+    {
+      "name": "get_protections_from_part",
+      "address": "0x265d2e0",
+      "size": 208,
+      "sha256": "4e5c9097ab5e6350d739e0475d2710505ba7f28ce6ac58be64c6242b1ac467ec",
+      "entry_abi": "regparm(2)",
+      "external_branches": [
+        {
+          "instruction": "0x265d2f4",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265d31b",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265d383",
+          "target": "0x267ea70",
+          "callee": "get_color"
+        }
+      ]
+    },
+    {
+      "name": "has_protection_from_impl",
+      "address": "0x265d580",
+      "size": 313,
+      "sha256": "10369059565f06e5d31bd2bd8b8bfb6dec45d63bb32a1cb41685b10a5eee583d",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x265d5ac",
+          "target": "0x265d2e0",
+          "callee": "native_get_protections"
+        },
+        {
+          "instruction": "0x265d5e7",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265d631",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x265d663",
+          "target": "0x26cb5b0",
+          "callee": "dispatch_event_arbitrary_to_one_card_with_initial_event_result"
+        },
+        {
+          "instruction": "0x265d6a7",
+          "target": "0x26cbdb0",
+          "callee": "dispatch_event_with_attacker_and_initial_event_result"
+        }
+      ]
+    }
+  ],
+  "external_data_bindings": 81,
+  "external_callee_bindings": 101,
+  "native_entry_abis": {
+    "validate_target_impl": "regparm(3): player/card/tgt_player in EAX/EDX/ECX; remaining twenty args on stack",
+    "target_match_type": "regparm(3)",
+    "target_available_impl": "regparm(3)",
+    "get_protections_from_part": "regparm(2)",
+    "has_protection_from_impl": "cdecl"
+  },
+  "native_tested_helpers": 5,
+  "register_adapters": {
+    "native_core": "regparm(3)",
+    "native_remove": "regparm(3)",
+    "native_clear": "regparm(2)",
+    "native_name": "regparm(3)"
+  },
+  "whole_unit_net_lines_removed": 409,
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 40,
+  "focused": {
+    "path": ".recovery/targeting-core-focused-c364.json",
+    "sha256": "5cba0d9e0acd097e6a18c6e1bd0c3e8ab2b07b905ce3d33734860216545e5ae9",
+    "source_succession_links": 7
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/targeting-core-build-c365.log",
+    "log_sha256": "dee9d03585710e4b3158b724a6a4cfa40961163ed8a06e4f139b3a3282d44667",
+    "verified_built_slots": 15169,
+    "dll_sha256": "9809e13dfc35d0db42040d38c907b2723f491d4e4b6ea7770fc808a295796852",
+    "dbg_sha256": "46fed1d8c347c3ab3f49f4f1590a992d05208cb556cf83e5059b612ae8462d8f"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/targeting-core-setup-c365.log",
+    "log_sha256": "ba1d43052ed713e46b60795bdcccf150e0fe5d2eb815cb80a44fd4bb7f66905b",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4817,
+    "stubs": 0,
+    "metadata_sha256": "33e78cba839cc1e830a54ca22f6ad60dc85b0e1fcbc985e2a93567ad8ca00ecb",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e5280",
+        "after": "public COFF entry 0x26e52a0"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ed6f0",
+        "after": "public COFF entry 0x26ed710"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e3e00",
+        "after": "public COFF entry 0x26e3e20"
+      }
+    ]
+  },
+  "index_unchanged": true,
+  "limits": "Native validator branch body, predecessor and reconstruction compared with exact callbacks, error output, assertions, full record/card-data/stack/player state and two mutation modes. Tests stratify player/controller selection, bit requirements and all uint16 power/toughness masks. Query helpers and 33 engine resource strings are controlled substitutes; actual localized text, complete native32 state and gameplay are not recovered here. Extra predicate callbacks are allocated host functions, relevant stack flags require an allocated nonempty stack, and metadata/record indices remain valid. Original named epilog/error macros and enchanted-loop escape remain source control flow; all LAB labels are removed.",
+  "whole_unit_readability": {
+    "source": "functions/targets.c",
+    "source_sha256": "4bb2d61ed188a7a34072739378a336eb64de1b93b4228f94301ab7e0dccca2f8",
+    "lab_gotos": 11,
+    "known_placeholder_occurrences": 231
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c366.json",
+    "sha256": "ff4577b97b01215faa9a281b3e3e317d16010d90060e37a955ba211103008343",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 999,
+      "lab_gotos": 2659,
+      "functions_with_placeholders": 2076,
+      "distinct_function_local_placeholder_spellings": 6331,
+      "placeholder_identifier_occurrences": 49429,
+      "union_keywords": 0
+    }
+  }
+}

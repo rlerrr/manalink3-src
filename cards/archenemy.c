@@ -171,7 +171,7 @@ static int scheme_dance_pathetic_marionette(int player, int card, event_t event)
 		--c;
 
 	  if (c >= 0)
-		show_deck(HUMAN, deck_ptr[1-player], c + 1, "Revealed these cards", 0, 0x7375B0);
+		show_deck(HUMAN, deck_ptr[1-player], c + 1, "Revealed these cards", 0, EXE_STR(ENGINE_DONE_LABEL));
 
 	  if (iid != -1)
 		remove_card_from_deck(1-player, c);
@@ -1135,7 +1135,7 @@ static int scheme_your_fate_is_thrice_sealed(int player, int card, event_t event
   if (event == EVENT_SET_IN_MOTION)
 	{
 	  if (player == HUMAN)
-		show_deck(1-player, deck_ptr[player], 3, "Opponent reveals these cards", 0, 0x7375B0);
+		show_deck(1-player, deck_ptr[player], 3, "Opponent reveals these cards", 0, EXE_STR(ENGINE_DONE_LABEL));
 
 	  int* deck = deck_ptr[player];
 	  int k, iids[3];

@@ -1,0 +1,89 @@
+{
+  "status": "All 65 Eldraine definitions cleaned up; entire unit has zero LAB jumps and known placeholder identifiers. Final target build passed; reccmp refresh deferred.",
+  "batch": "docs/recovery-evidence/eldraine-control-cleanup.json",
+  "batch_sha256": "45f9f83378020e5370ca3b92dc73532eccdd3ec08d1cb6b1855b7458bbb4d0c2",
+  "counts": {
+    "definitions": 65,
+    "card_handlers": 55,
+    "local_helpers": 10,
+    "alpha_only_definitions": 19,
+    "structured_definitions": 46,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 99,
+    "removed_lab_gotos": 95,
+    "source_lines_removed": 1153,
+    "removed_placeholder_occurrences": 805,
+    "net_source_lines_removed": 1151
+  },
+  "verification_policy": "Batched readability workflow: exact token substitution for alpha-only edits; review event routing, callback order and live/cached reads for structured edits. One target build per batch. Native comparisons reserved for uncertain behavior; reccmp refresh deferred to a larger checkpoint.",
+  "review_notes": [
+    "Nineteen alpha-only definitions preserve exact tokens after declared local renames. Thirty-seven structured definitions use source review and one target build; no new native semantic comparisons.",
+    "Adventure effect preserves timing/stack eligibility, different slot validity checks, all sixteen scans, reversed name lookup order, choice arguments, payment and live exile checks.",
+    "Adventure storage preserves existing-effect search, the slot-one start for existing effects, slot-zero initialization for new effects, owner/IID query ordering and obliterate/exile actions.",
+    "Generic adventurer preserves legality/mana query order, free/token/copied modes, chooser ordering, transformations, X snapshots, callback dispatch and rollback on fizzle.",
+    "Adventure spell handlers preserve cast-context rechecks, targeting/retarget differences, distinct resolution actions and opaque wish/dialog calls.",
+    "Keep death/ETB helpers, packed counters and count limits, mode reloads after callbacks, spell validation flags, color scans, cost reduction, mana declarations and fresh turn reads.",
+    "Keep Rankle selection masks/action order, Korvold legacy detection and repeated status reads, Sanctuary threshold queries, and live parent/target reads in activated abilities.",
+    "Restore resolve_an_adventure as the single shared resolution body. Expanding its call reproduces the reviewed caller tokens exactly. This private definition was omitted from the previous census (three LAB jumps and 28 placeholder references).",
+    "Final eight card handlers use reviewed structured control flow and one target build. Native callbacks and UI internals remain opaque; no new native semantic comparisons.",
+    "Steelclaw preserves cast/payment/default paths and the mode reload after failed validation. Kenrith preserves all five eligibility queries, dialog-selected mode, explicit costs and cached/live target reads.",
+    "Lochmere preserves graveyard exile selection and fallback flash handling. Goose and Egg preserve mana-versus-sacrifice selection, payment order, repeat/cancel behavior and tap-state rollback.",
+    "Trail preserves duplicate-legacy detection and optional per-death payment. Fabled Passage preserves mana-mode markers, chooser branches, duplicate generic activation calls, color conversion and land-count/AI untap behavior.",
+    "Dance preserves the selection-test reset, cached X, live graveyard slots, CMC/payment maxima, AI payment retry and reanimation/animation order."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/eldraine-tail-build-c451.log",
+    "log_sha256": "75c60ad3c6c3dac94b788bf7e63b90439e68342cda6b3066f3b2842fe54e0968",
+    "verified_built_slots": 15169,
+    "dll_sha256": "927aa10cb82aaace1986cf73f0bd8d3ad714f89149aae99e48faf5b78b2607f1",
+    "dbg_sha256": "96e668aaab73d89887970ef5be6e1b036a7967226ad2ea8d53bae8468e70a481"
+  },
+  "earlier_batch_build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/eldraine-control-build-c447.log",
+    "log_sha256": "19fe186181d87cf2bdb65280463d85edd2bf080eea2f9a08157d214352ae73a7",
+    "verified_built_slots": 15169,
+    "dll_sha256": "c43c5d666bfb0d173375ea4cabfafb6dc556a6c029c1aca4ad0e25a17b29cc66",
+    "dbg_sha256": "b03341f1780aac5d91174132e9ca428c6590f12c3363adecf4bfbc95acc00a01"
+  },
+  "final_batch": {
+    "definitions": 8,
+    "counts": {
+      "removed_gotos": 19,
+      "removed_lab_gotos": 18,
+      "source_lines_removed": 159,
+      "removed_placeholder_occurrences": 230
+    }
+  },
+  "reccmp": {
+    "refreshed": false,
+    "reason": "Readability batch with unchanged public function identities. Existing setup describes the previous build; regenerate at the next comparison/commit checkpoint.",
+    "unchanged_checkpoint_inputs": {
+      "config/reccmp/functions.csv": "c7061450a1b7a3efe3281c403593f25f25fed9b2e3e29e6bc70c4fa61c483cf3",
+      ".recovery/reccmp/setup.json": "9afa2466f299de82d50caca64252ce593275322f708319cbe0e693b30d38e53a"
+    }
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c452.json",
+    "sha256": "6f52259677695bed4814f3ffc5e65216eb2aa52be432b7c62f97cb6296e7b347",
+    "counts": {
+      "tracked_source_definitions": 2607,
+      "functions_with_lab_gotos": 827,
+      "lab_gotos": 2012,
+      "functions_with_placeholders": 1784,
+      "distinct_function_local_placeholder_spellings": 5220,
+      "placeholder_identifier_occurrences": 39011,
+      "union_keywords": 0
+    }
+  },
+  "whole_unit_readability": {
+    "source": "cards/throne_of_eldraine.c",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of existing Throne of Eldraine card handlers and local helpers. No new native-function coverage or gameplay-equivalence claim. Preserve unusual native behavior, repeated queries, context checks and opaque dialogs."
+}

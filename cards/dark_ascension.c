@@ -4,7 +4,7 @@ static char *you_own(int who_chooses, int player, int card, int targeting_player
 
 /* Canonical recovered helper declarations. */
 static int can_use_stolen_ability_with_havengul_lich(int player, int card);
-static int can_cast_creature_in_grave_with_havengul_lich(int player, int card);
+static int can_cast_creature_in_grave_with_havengul_lich(int player, int card, int t_player);
 
 // Functions
 static int fateful_hour(int player){
@@ -1593,7 +1593,7 @@ int card_falkenrath_torturer(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  unsigned int uVar3;
+  unsigned int sacrifice_choice;
   unsigned int player_00;
   test_definition_t test;
   if (event != EVENT_CAN_ACTIVATE)
@@ -1606,22 +1606,22 @@ int card_falkenrath_torturer(int player, int card, event_t event)
       if (result != 0)
       {
         new_default_test_definition(&test, 2, "Select a creature to sacrifice.");
-        uVar3 = new_sacrifice(player, card, player, SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK,
-                              &test);
-        if (uVar3 == 0)
+        sacrifice_choice = new_sacrifice(player, card, player,
+                                         SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK, &test);
+        if (sacrifice_choice == 0)
         {
           spell_fizzled = 1;
         }
         else
         {
-          player_00 = (int)uVar3 >> 0x10 & 0xff;
-          result = has_subtype(player_00, uVar3 >> 0x18, SUBTYPE_HUMAN);
+          player_00 = (int)sacrifice_choice >> 0x10 & 0xff;
+          result = has_subtype(player_00, sacrifice_choice >> 0x18, SUBTYPE_HUMAN);
           instance->info_slot = result;
           if (result == 1)
           {
             ai_modifier = ai_modifier + 0xf;
           }
-          kill_card(player_00, uVar3 >> 0x18, KILL_SACRIFICE);
+          kill_card(player_00, sacrifice_choice >> 0x18, KILL_SACRIFICE);
         }
       }
     }
@@ -1633,13 +1633,13 @@ int card_falkenrath_torturer(int player, int card, event_t event)
       if (instance->info_slot == 1)
       {
         add_counters(player, card, instance->parent_controller, instance->parent_card,
-                                 COUNTER_P1_P1, 1);
+                     COUNTER_P1_P1, 1);
       }
     }
     return 0;
   }
   return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x200, 0, 0, 0, 0, 0, 0, 0,
-                                     NULL, NULL);
+                                   NULL, NULL);
 }
 
 int card_farbog_boneflinger(int player, int card, event_t event){
@@ -1984,64 +1984,81 @@ int card_mikaeus_the_unhallowed(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int card_00;
-  card_instance_t *pcVar1;
-  int iVar2;
-  int iVar3;
-  card_instance_t *pcVar4;
+  card_instance_t *damage_or_candidate;
+  int legacy_or_target_index;
+  int target_player_or_result;
+  card_instance_t *source_or_legacy;
   check_legend_rule(player, card, event);
   intimidate(player, card, event);
   if (((event == EVENT_STATIC_EFFECTS) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
+    bool legacy_found = false;
     if (0 < active_cards_count[player])
     {
-      iVar2 = 0;
+      legacy_or_target_index = 0;
       do
       {
-        pcVar1 = in_play(player, iVar2);
-        if ((((pcVar1 != NULL) && (iVar3 = is_what(player, iVar2, 0x80), iVar3 != 0)) &&
-             (pcVar1 = get_card_instance(player, iVar2),
-              pcVar1->info_slot_fn == mikaeus_the_unhallowed_effect)) &&
-            (((pcVar1->damage_target_player == player && (pcVar1->damage_target_card == card)) ||
-              ((pcVar1->targets[0].player == player && (pcVar1->targets[0].card == card))))))
-          goto LAB_02110892;
-        iVar2 = iVar2 + 1;
-      } while (iVar2 < active_cards_count[player]);
+        damage_or_candidate = in_play(player, legacy_or_target_index);
+        if ((((damage_or_candidate != NULL) &&
+              (target_player_or_result = is_what(player, legacy_or_target_index, 0x80),
+               target_player_or_result != 0)) &&
+             (damage_or_candidate = get_card_instance(player, legacy_or_target_index),
+              damage_or_candidate->info_slot_fn == mikaeus_the_unhallowed_effect)) &&
+            (((damage_or_candidate->damage_target_player == player &&
+               (damage_or_candidate->damage_target_card == card)) ||
+              ((damage_or_candidate->targets[0].player == player &&
+                (damage_or_candidate->targets[0].card == card))))))
+        {
+          legacy_found = true;
+          break;
+        }
+        legacy_or_target_index = legacy_or_target_index + 1;
+      } while (legacy_or_target_index < active_cards_count[player]);
     }
-    iVar2 =
-        create_targetted_legacy_effect(player, card, mikaeus_the_unhallowed_effect, player, card);
-    instance = get_card_instance(player, iVar2);
-    instance->targets[0].player = player;
-    instance->targets[0].card = card;
-    instance->number_of_targets = '\x01';
-    add_status(player, iVar2, 0x10000);
+    if (!legacy_found)
+    {
+      legacy_or_target_index =
+          create_targetted_legacy_effect(player, card, mikaeus_the_unhallowed_effect, player, card);
+      instance = get_card_instance(player, legacy_or_target_index);
+      instance->targets[0].player = player;
+      instance->targets[0].card = card;
+      instance->number_of_targets = '\x01';
+      add_status(player, legacy_or_target_index, 0x10000);
+    }
   }
-LAB_02110892:
-  pcVar1 = in_play(player, card);
-  if ((pcVar1 != NULL) && (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))
+  damage_or_candidate = in_play(player, card);
+  if ((damage_or_candidate != NULL) &&
+      (legacy_or_target_index = is_humiliated(player, card, AL_TRIG), legacy_or_target_index == 0))
   {
 
     if (((event == EVENT_DEAL_DAMAGE) &&
-         ((((pcVar1 = get_card_instance(affected_card_controller, affected_card),
-             pcVar1->internal_card_id == damage_card && (pcVar1->damage_target_card == -1)) &&
-            (pcVar1->damage_target_player == player)) &&
-           ((iVar2 = damage_is_to_planeswalker(pcVar1),
-             iVar2 == 0 && (iVar2 = has_subtype((int)pcVar1->damage_source_player,
-                                                pcVar1->damage_source_card, SUBTYPE_HUMAN),
-                            iVar2 != 0)))))) &&
-        ((0 < pcVar1->info_slot || (pcVar4 = get_card_instance((int)pcVar1->damage_source_player,
-                                                               pcVar1->damage_source_card),
-                                    pcVar4->targets[0x10].player == 1))))
+         ((((damage_or_candidate = get_card_instance(affected_card_controller, affected_card),
+             damage_or_candidate->internal_card_id == damage_card &&
+                 (damage_or_candidate->damage_target_card == -1)) &&
+            (damage_or_candidate->damage_target_player == player)) &&
+           ((legacy_or_target_index = damage_is_to_planeswalker(damage_or_candidate),
+             legacy_or_target_index == 0 &&
+                 (legacy_or_target_index =
+                      has_subtype((int)damage_or_candidate->damage_source_player,
+                                  damage_or_candidate->damage_source_card, SUBTYPE_HUMAN),
+                  legacy_or_target_index != 0)))))) &&
+        ((0 < damage_or_candidate->info_slot ||
+          (source_or_legacy = get_card_instance((int)damage_or_candidate->damage_source_player,
+                                                damage_or_candidate->damage_source_card),
+           source_or_legacy->targets[0x10].player == 1))))
     {
-      pcVar4 = get_card_instance(player, card);
-      if (pcVar4->info_slot < 0)
+      source_or_legacy = get_card_instance(player, card);
+      if (source_or_legacy->info_slot < 0)
       {
-        pcVar4->info_slot = 0;
+        source_or_legacy->info_slot = 0;
       }
-      iVar2 = pcVar4->info_slot;
-      pcVar4->targets[iVar2].player = (int)pcVar1->damage_source_player;
-      pcVar4->targets[iVar2].card = pcVar1->damage_source_card;
-      pcVar4->info_slot = iVar2 + 1;
+      legacy_or_target_index = source_or_legacy->info_slot;
+      source_or_legacy->targets[legacy_or_target_index].player =
+          (int)damage_or_candidate->damage_source_player;
+      source_or_legacy->targets[legacy_or_target_index].card =
+          damage_or_candidate->damage_source_card;
+      source_or_legacy->info_slot = legacy_or_target_index + 1;
     }
     instance = get_card_instance(player, card);
     if (((0 < instance->info_slot) && (trigger_condition == 0xd7)) &&
@@ -2057,29 +2074,35 @@ LAB_02110892:
         instance = get_card_instance(player, card);
         if (0 < instance->info_slot)
         {
-          iVar2 = 0;
+          legacy_or_target_index = 0;
           do
           {
-            iVar3 = instance->targets[iVar2].player;
-            if (((iVar3 != -1) && (card_00 = instance->targets[iVar2].card, card_00 != -1)) &&
-                (pcVar4 = in_play(iVar3, card_00), pcVar4 != NULL))
+            target_player_or_result = instance->targets[legacy_or_target_index].player;
+            if (((target_player_or_result != -1) &&
+                 (card_00 = instance->targets[legacy_or_target_index].card, card_00 != -1)) &&
+                (source_or_legacy = in_play(target_player_or_result, card_00),
+                 source_or_legacy != NULL))
             {
-              kill_card(instance->targets[iVar2].player, instance->targets[iVar2].card, KILL_DESTROY);
+              kill_card(instance->targets[legacy_or_target_index].player,
+                        instance->targets[legacy_or_target_index].card, KILL_DESTROY);
             }
-            iVar2 = iVar2 + 1;
-          } while (iVar2 < instance->info_slot);
+            legacy_or_target_index = legacy_or_target_index + 1;
+          } while (legacy_or_target_index < instance->info_slot);
         }
         instance->info_slot = 0;
       }
     }
   }
   instance = in_play(player, card);
-  if (((instance != NULL) &&
-       (iVar2 = is_humiliated(player, card, AL_STATIC), iVar2 == 0)) &&
+  if (((instance != NULL) && (legacy_or_target_index = is_humiliated(player, card, AL_STATIC),
+                              legacy_or_target_index == 0)) &&
       ((((event - EVENT_POWER < 2 &&
           ((affected_card_controller == player && (card != affected_card)))) &&
-         (iVar2 = is_what(player, affected_card, 2), iVar2 != 0)) &&
-        (iVar2 = has_subtype(affected_card_controller, affected_card, SUBTYPE_HUMAN), iVar2 == 0))))
+         (legacy_or_target_index = is_what(player, affected_card, 2),
+          legacy_or_target_index != 0)) &&
+        (legacy_or_target_index =
+             has_subtype(affected_card_controller, affected_card, SUBTYPE_HUMAN),
+         legacy_or_target_index == 0))))
   {
     event_result = event_result + 1;
   }
@@ -3261,7 +3284,7 @@ int card_lost_in_the_woods(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  card_instance_t *pcVar3;
+  card_instance_t *attacker;
   int attacker_index;
   uint8_t *attackers;
   store_attackers(player, card, event, DAT_TRACK, 1 - player, -1, NULL);
@@ -3277,12 +3300,12 @@ int card_lost_in_the_woods(int player, int card, event_t event)
       {
         if (*deck_ptr[player] == -1)
           break;
-        pcVar3 = in_play(current_turn, (unsigned int)attackers[attacker_index]);
-        if (pcVar3 != NULL)
+        attacker = in_play(current_turn, (unsigned int)attackers[attacker_index]);
+        if (attacker != NULL)
         {
           reveal_card_iid(player, card, *deck_ptr[player]);
           result = has_subtype_by_id(player, (unsigned int)cards_data[*deck_ptr[player]].id,
-                                          SUBTYPE_FOREST);
+                                     SUBTYPE_FOREST);
           if (result != 0)
           {
             remove_from_combat(current_turn, (unsigned int)attackers[attacker_index]);
@@ -4282,23 +4305,12 @@ int card_jar_of_eyeballs(int player, int card, event_t event)
   card_instance_t *instance;
 
   if (event == EVENT_GRAVEYARD_FROM_PLAY)
-  {
     count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
-    result =
-        resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
-    if (result == 0)
-    {
-      return 0;
-    }
-  }
-  else
-  {
-    result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if (result == 0)
-      goto joined_r0x02116e15;
-  }
-  add_counters(player, card, player, card, COUNTER_EYEBALL, result * 2);
-joined_r0x02116e15:
+  result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+    return 0;
+  if (result != 0)
+    add_counters(player, card, player, card, COUNTER_EYEBALL, result * 2);
   if (event == EVENT_CAN_ACTIVATE)
   {
     result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 3, 0, 0, 0, 0, 0, 0,
@@ -4658,14 +4670,14 @@ static char *you_own(int who_chooses, int player, int card, int targeting_player
                      int targeting_card)
 {
   int result;
-  char *pcVar2;
+  char *rejection;
   result = get_owner(player, card);
-  pcVar2 = NULL;
+  rejection = NULL;
   if (result != targeting_player)
   {
-    pcVar2 = "owner";
+    rejection = "owner";
   }
-  return pcVar2;
+  return rejection;
 }
 
 /* ManalinkEh 2022: 0x2112500; original cards/dark_ascension.c:2641. */
@@ -4737,7 +4749,8 @@ static int havengul_lich_legacy(int player, int card, event_t event)
       {
         return 0;
       }
-      goto LAB_0210a673;
+      kill_card(player, card, KILL_EXILE);
+      return 0;
     }
   }
   result = effect_follows_control_of_attachment(player, card, event);
@@ -4745,7 +4758,6 @@ static int havengul_lich_legacy(int player, int card, event_t event)
   {
     return 0;
   }
-LAB_0210a673:
   kill_card(player, card, KILL_EXILE);
   return 0;
 }
@@ -4763,7 +4775,8 @@ static int can_cast_this_havengul(int iid, int unused, int player, int card)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x210b160; original cards/dark_ascension.c:3829. */
-static int can_cast_creature_in_grave_with_havengul_lich(int player, int card)
+/* The release specializes t_player to 2; only that domain is recovered here. */
+static int can_cast_creature_in_grave_with_havengul_lich(int player, int card, int t_player)
 {
   if (generic_activated_ability_with_target_in_grave(player, card, EVENT_CAN_ACTIVATE,
                                                           GAA_NONE, 1, 0, 0, 0, 0, 0, 0, NULL, NULL,
@@ -4795,13 +4808,15 @@ static int can_cast_creature_in_grave_with_havengul_lich(int player, int card)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x210b2a0; original cards/dark_ascension.c:3693. */
-static int find_attached_havengul_legacy(int player, int card, int target_player, int target_card)
+static int find_attached_havengul_legacy(int player, int card,
+                                         int (*func_ptr)(int, int, event_t),
+                                         int target_player, int target_card)
 {
   for (int eff = 0; eff < active_cards_count[player]; ++eff)
   {
     card_instance_t *inst = in_play(player, eff);
     if (inst && inst->internal_card_id == LEGACY_EFFECT_CUSTOM &&
-        inst->info_slot_fn == havengul_lich_legacy && inst->damage_source_player == player &&
+        inst->info_slot_fn == func_ptr && inst->damage_source_player == player &&
         inst->damage_source_card == card && inst->damage_target_player == target_player &&
         inst->damage_target_card == target_card)
       return eff;
@@ -4868,7 +4883,7 @@ static int spell_has_flashback_legacy_for_hl(int player, int card, event_t event
       int played = play_card_in_grave_for_free(player, gyp, pos);
       if (player != gyp)
         get_card_instance(player, played)->state |= 0x1000;
-      int legacy = find_attached_havengul_legacy(hlp, hlc, hlp, hlc);
+      int legacy = find_attached_havengul_legacy(hlp, hlc, havengul_lich_legacy, hlp, hlc);
       card_instance_t *leg =
           legacy < 0 ? get_card_instance(hlp, hlc) : get_card_instance(player, legacy);
       if ((cards_data[iid].extra_ability & 0x1001) != 0)
@@ -4902,7 +4917,7 @@ static int spell_has_flashback_legacy_for_hl(int player, int card, event_t event
 /* ManalinkEh 2022: 0x210b650; original cards/dark_ascension.c:3854. */
 static int can_use_stolen_ability_with_havengul_lich(int player, int card)
 {
-  int legacy = find_attached_havengul_legacy(player, card, player, card);
+  int legacy = find_attached_havengul_legacy(player, card, havengul_lich_legacy, player, card);
   card_instance_t *leg = get_card_instance(player, legacy < 0 ? card : legacy);
   if (player != 1)
   {
@@ -4977,7 +4992,7 @@ int card_havengul_lich(int player, int card, event_t event)
     if (!has_mana_for_activated_ability(1, card, 1, 0, 0, 0, 0, 0))
       return 0;
     if (!graveyard_has_shroud(2))
-      return can_cast_creature_in_grave_with_havengul_lich(1, card);
+      return can_cast_creature_in_grave_with_havengul_lich(1, card, 2);
     return 0;
   }
   if (event == EVENT_RESOLVE_ACTIVATION)
@@ -5038,7 +5053,7 @@ int card_havengul_lich(int player, int card, event_t event)
       }
     }
   }
-  else if (player == 1 && can_cast_creature_in_grave_with_havengul_lich(1, card))
+  else if (player == 1 && can_cast_creature_in_grave_with_havengul_lich(1, card, 2))
   {
     if (!can_use_stolen_ability_with_havengul_lich(1, card))
       use_grave = 1;
@@ -5066,7 +5081,7 @@ int card_havengul_lich(int player, int card, event_t event)
       instance->eot_toughness = 0x42;
     return 0;
   }
-  int legacy = find_attached_havengul_legacy(player, card, player, card);
+  int legacy = find_attached_havengul_legacy(player, card, havengul_lich_legacy, player, card);
   card_instance_t *leg = legacy < 0 ? instance : get_card_instance(player, legacy);
   int act_array[8];
   int aa_count = 0;

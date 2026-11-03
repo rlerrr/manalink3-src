@@ -1,0 +1,97 @@
+{
+  "status": "Nine reanimation/selection helpers reconstructed with reviewed control flow and a successful target build.",
+  "batch": "docs/recovery-evidence/reanimation-control-cleanup.json",
+  "batch_sha256": "2b825c001146df0496ce18ca298f0f946bd890b310c8117e830aaf7f147c6897",
+  "counts": {
+    "helpers": 9,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 37,
+    "removed_lab_gotos": 34,
+    "source_lines_removed": 272,
+    "removed_placeholder_occurrences": 1019
+  },
+  "verification_policy": "Lighter readability workflow: review callback order, cache/live reads and native edge cases; target syntax preflight, one build and current mapping refresh. No new native semantic harness or historical replay.",
+  "compiler_preflight": {
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-fsyntax-only",
+      "-x",
+      "c",
+      "-"
+    ],
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "exit_code": 0,
+    "log": ".recovery/reanimation-control-preflight-c413.log"
+  },
+  "review_notes": [
+    "Retain callback order, cached/live fields, target selection, sacrifice report flags and aura attachment ordering.",
+    "Mass reanimation retains existing array indices, graveyard/exile owners, aura revalidation shifts and turn-dependent iteration, including suspicious pre-existing choices.",
+    "Preserve packed death bookkeeping, low/high halfword counters, meld-ID query order, delayed destruction polling, merging and control ownership.",
+    "Preserve coercion selection retries, live reveal/quantity fields, test modes, array removal and returned IDs; dialog children stay opaque."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/reanimation-control-build-c414.log",
+    "log_sha256": "2f87608c60f716eb90658444989a45ed04f7a3980e489bfa605e0477fb305fe8",
+    "verified_built_slots": 15169,
+    "dll_sha256": "b164c6cf0c62833a0d76de01a6814fd9393dad2fc113139ccae563995b095f06",
+    "dbg_sha256": "6a7ce65d547e828e9772ada26d1ebe021ab2ac0142a6075dfeaa5be10b6d669d"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/reanimation-control-setup-c414.log",
+    "log_sha256": "d8a6476b7e6b531c868aa0e7f5386e6699d8d585d78611dd5a043decdd6aa6a2",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4819,
+    "metadata_sha256": "d3cd6d61cac68ab2fc77d038c28d9812d15b7e16d24cd98d803d456c2733c7bd",
+    "mapping_identities_unchanged": true
+  },
+  "whole_unit_readability": {
+    "source": "functions/functions.c",
+    "lab_gotos": 33,
+    "known_placeholder_occurrences": 427
+  },
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of nine existing shared helpers. No new native-function coverage or gameplay equivalence claim. Preserve suspicious native/decompiled graveyard, aura-array and ownership behavior pending separate native evidence; opaque dialog calls remain out of scope.",
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c415.json",
+    "sha256": "c069a8eb41df38741eb596dabfa55e1447a356e9fd872bdf7558c92d1a87aab3",
+    "counts": {
+      "tracked_source_definitions": 2605,
+      "functions_with_lab_gotos": 942,
+      "lab_gotos": 2469,
+      "functions_with_placeholders": 1944,
+      "distinct_function_local_placeholder_spellings": 5781,
+      "placeholder_identifier_occurrences": 44002,
+      "union_keywords": 0
+    }
+  }
+}

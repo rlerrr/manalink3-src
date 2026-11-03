@@ -185,7 +185,7 @@ int exiledby_choose(int player, int card, int csvid, exiledby_choose_mode_t mode
   sprintf(buf, "%s%scards exiled by %s", cardtype_txt ? cardtype_txt : "", cardtype_txt ? " " : "",
           cards_ptr[csvid]->name);
   buf[0] = toupper(buf[0]);
-  int selected = show_deck(player, iids, num_found, buf, 0, ENGINE_DONE_LABEL);
+  int selected = show_deck(player, iids, num_found, buf, 0, EXE_STR(ENGINE_DONE_LABEL));
 
   if (selected == -1)
   {
@@ -432,45 +432,46 @@ static int store_counters_legacy(int player, int card, event_t event)
 static void return_auras_and_counters_to_play(int player, int card)
 {
   int player_00;
-  unsigned int uVar1;
+  unsigned int return_mode;
   card_instance_t *instance;
   int result;
-  card_instance_t *pcVar4;
-  target_t *ptVar5;
-  target_t *ptVar6;
-  int32_t iStack_18;
-  int8_t iStack_14;
+  card_instance_t *aura_or_counter_legacy;
+  target_t *aura_record;
+  target_t *next_aura_record;
+  int32_t returned_card;
+  int8_t attachment_player;
 
   instance = get_card_instance(player, card);
   player_00 = instance->targets[0].player;
-  uVar1 = instance->targets[0x12].player;
+  return_mode = instance->targets[0x12].player;
   result = check_rfg(player_00, (unsigned int)cards_data[instance->targets[0].card].id);
-  iStack_18 = -1;
+  returned_card = -1;
   if (result != 0)
   {
-    iStack_18 = add_card_to_hand(player_00, instance->targets[0].card);
+    returned_card = add_card_to_hand(player_00, instance->targets[0].card);
     remove_card_from_rfg(player_00, (unsigned int)cards_data[instance->targets[0].card].id);
-    if ((int)uVar1 < 1)
+    if ((int)return_mode < 1)
     {
-      put_into_play(player_00, iStack_18);
+      put_into_play(player_00, returned_card);
       return;
     }
-    if ((uVar1 & 0x10) != 0)
+    if ((return_mode & 0x10) != 0)
     {
-      add_state(player_00, iStack_18, 0x10);
+      add_state(player_00, returned_card, 0x10);
     }
-    put_into_play(player_00, iStack_18);
-    if (((-1 < iStack_18) && ((uVar1 & 0x2a) != 0)) && (0 < active_cards_count[player]))
+    put_into_play(player_00, returned_card);
+    if (((-1 < returned_card) && ((return_mode & 0x2a) != 0)) && (0 < active_cards_count[player]))
     {
       result = 0;
       do
       {
-        pcVar4 = in_play(player, result);
-        if (((pcVar4 != NULL) && (pcVar4->internal_card_id == LEGACY_EFFECT_CUSTOM)) &&
-            (((CardFunction)pcVar4->info_slot == store_counters_legacy &&
-              (pcVar4->targets[0x11].card == instance->targets[0x12].card))))
+        aura_or_counter_legacy = in_play(player, result);
+        if (((aura_or_counter_legacy != NULL) &&
+             (aura_or_counter_legacy->internal_card_id == LEGACY_EFFECT_CUSTOM)) &&
+            (((CardFunction)aura_or_counter_legacy->info_slot == store_counters_legacy &&
+              (aura_or_counter_legacy->targets[0x11].card == instance->targets[0x12].card))))
         {
-          copy_counters(player, card, player_00, iStack_18, player, result, 1);
+          copy_counters(player, card, player_00, returned_card, player, result, 1);
           kill_card(player, result, KILL_EXILE);
           break;
         }
@@ -478,32 +479,33 @@ static void return_auras_and_counters_to_play(int player, int card)
       } while (result < active_cards_count[player]);
     }
   }
-  if ((uVar1 & 0x25) != 0)
+  if ((return_mode & 0x25) != 0)
   {
-    ptVar5 = instance->targets + 1;
+    aura_record = instance->targets + 1;
     do
     {
-      while ((ptVar5->player != -1 &&
-              (result = check_rfg(ptVar5->player, (unsigned int)cards_data[ptVar5->card].id),
-               result != 0)))
+      while (
+          (aura_record->player != -1 &&
+           (result = check_rfg(aura_record->player, (unsigned int)cards_data[aura_record->card].id),
+            result != 0)))
       {
-        ptVar6 = ptVar5 + 1;
-        result = add_card_to_hand(ptVar5->player, ptVar5->card);
-        remove_card_from_rfg(ptVar5->player, (unsigned int)cards_data[ptVar5->card].id);
-        pcVar4 = get_card_instance(ptVar5->player, result);
-        iStack_14 = (int8_t)player_00;
-        pcVar4->damage_target_player = iStack_14;
-        pcVar4->damage_target_card = iStack_18;
-        set_special_flags(ptVar5->player, result, 0x20000000);
-        put_into_play(ptVar5->player, result);
-        ptVar5 = ptVar6;
-        if (ptVar6 == instance->targets + 0x12)
+        next_aura_record = aura_record + 1;
+        result = add_card_to_hand(aura_record->player, aura_record->card);
+        remove_card_from_rfg(aura_record->player, (unsigned int)cards_data[aura_record->card].id);
+        aura_or_counter_legacy = get_card_instance(aura_record->player, result);
+        attachment_player = (int8_t)player_00;
+        aura_or_counter_legacy->damage_target_player = attachment_player;
+        aura_or_counter_legacy->damage_target_card = returned_card;
+        set_special_flags(aura_record->player, result, 0x20000000);
+        put_into_play(aura_record->player, result);
+        aura_record = next_aura_record;
+        if (next_aura_record == instance->targets + 0x12)
         {
           return;
         }
       }
-      ptVar5 = ptVar5 + 1;
-    } while (ptVar5 != instance->targets + 0x12);
+      aura_record = aura_record + 1;
+    } while (aura_record != instance->targets + 0x12);
   }
   return;
 }
@@ -575,126 +577,122 @@ static void store_permanent_on_legacy(card_instance_t* leg, int to_copy_player, 
 int exile_permanent_and_auras_attached(int player, int card, int t_player, int t_card,
                                        unsigned int mode)
 {
-  unsigned int uVar1;
-  int iVar2;
-  int iVar3;
-  card_instance_t *pcVar4;
-  int iVar5;
-  int iVar6;
+  unsigned int legacy_status;
+  int scan_player_or_check;
+  int aura_check_or_next_card;
+  card_instance_t *aura_or_legacy;
+  int aura_owner_or_iid;
+  int aura_card_or_legacy;
   CardFunction func_ptr;
-  card_instance_t *pcStack_18;
-  int iStack_14;
+  card_instance_t *return_legacy;
+  int return_legacy_card;
 
-  iVar2 = is_token(t_player, t_card);
-  if (iVar2 == 0)
+  scan_player_or_check = is_token(t_player, t_card);
+  if (scan_player_or_check == 0)
   {
-    iVar2 = get_original_internal_card_id(t_player, t_card);
-    iVar2 = is_what(-1, iVar2, 0x47);
-    if (iVar2 != 0)
+    scan_player_or_check = get_original_internal_card_id(t_player, t_card);
+    scan_player_or_check = is_what(-1, scan_player_or_check, 0x47);
+    if (scan_player_or_check != 0)
     {
-      iVar2 = 0;
-      if ((mode & 1) == 0)
+      scan_player_or_check = 0;
+      if ((mode & 1) != 0)
       {
-        if ((mode & 4) != 0)
-        {
-          func_ptr = return_auras_counters_if_source_leaves_play;
-        LAB_026d728e:
-          iStack_14 = create_targetted_legacy_effect(player, card, func_ptr, player, card);
-          pcVar4 = get_card_instance(player, iStack_14);
-          pcVar4->eot_toughness = 0x100;
-          goto LAB_026d72b9;
-        }
-        if ((mode & 0x20) != 0)
-        {
-          func_ptr = tawnoss_coffin_legacy;
-          goto LAB_026d728e;
-        }
-        iStack_14 = -1;
-        pcStack_18 = NULL;
+        aura_card_or_legacy = create_legacy_effect(player, card, return_auras_counters_on_eot);
+        aura_check_or_next_card = get_id(t_player, t_card);
+        return_legacy_card = set_legacy_image(player, aura_check_or_next_card, aura_card_or_legacy);
+      }
+      else if ((mode & (4 | 0x20)) != 0)
+      {
+        func_ptr =
+            (mode & 4) != 0 ? return_auras_counters_if_source_leaves_play : tawnoss_coffin_legacy;
+        return_legacy_card = create_targetted_legacy_effect(player, card, func_ptr, player, card);
+        aura_or_legacy = get_card_instance(player, return_legacy_card);
+        aura_or_legacy->eot_toughness = 0x100;
       }
       else
+        return_legacy_card = -1;
+      return_legacy = NULL;
+      if (return_legacy_card != -1)
       {
-        iVar6 = create_legacy_effect(player, card, return_auras_counters_on_eot);
-        iVar3 = get_id(t_player, t_card);
-        iStack_14 = set_legacy_image(player, iVar3, iVar6);
-      LAB_026d72b9:
-        pcStack_18 = NULL;
-        if (iStack_14 != -1)
-        {
-          pcStack_18 = get_card_instance(player, iStack_14);
-          pcStack_18->targets[0x12].player = mode;
-          pcStack_18->targets[0x12].card = iStack_14;
-        }
+        return_legacy = get_card_instance(player, return_legacy_card);
+        return_legacy->targets[0x12].player = mode;
+        return_legacy->targets[0x12].card = return_legacy_card;
       }
       do
       {
-        iVar6 = active_cards_count[iVar2] + -1;
-        if (-1 < active_cards_count[iVar2] + -1)
+        aura_card_or_legacy = active_cards_count[scan_player_or_check] + -1;
+        if (-1 < active_cards_count[scan_player_or_check] + -1)
         {
           do
           {
-            while ((((pcVar4 = in_play(iVar2, iVar6),
-                      pcVar4 == NULL || (iVar3 = is_what(iVar2, iVar6, 4), iVar3 == 0)) ||
-                     (iVar3 = has_subtype(iVar2, iVar6, SUBTYPE_AURA), iVar3 == 0)) ||
-                    ((pcVar4->damage_target_player != t_player ||
-                      (pcVar4->damage_target_card != t_card)))))
+            aura_or_legacy = in_play(scan_player_or_check, aura_card_or_legacy);
+            if (aura_or_legacy != NULL &&
+                (aura_check_or_next_card = is_what(scan_player_or_check, aura_card_or_legacy, 4),
+                 aura_check_or_next_card != 0) &&
+                (aura_check_or_next_card =
+                     has_subtype(scan_player_or_check, aura_card_or_legacy, SUBTYPE_AURA),
+                 aura_check_or_next_card != 0) &&
+                aura_or_legacy->damage_target_player == t_player &&
+                aura_or_legacy->damage_target_card == t_card)
             {
-              iVar6 = iVar6 + -1;
-              if (iVar6 == -1)
-                goto LAB_026d7200;
-            }
-            if ((iStack_14 != -1) && (iVar3 = is_token(iVar2, iVar6), iVar3 == 0))
-            {
-              iVar3 = 1;
-              do
+              if ((return_legacy_card != -1) &&
+                  (aura_check_or_next_card = is_token(scan_player_or_check, aura_card_or_legacy),
+                   aura_check_or_next_card == 0))
               {
-                if (pcStack_18->targets[iVar3].player == -1)
+                aura_check_or_next_card = 1;
+                do
                 {
-                  iVar5 = get_owner(iVar2, iVar6);
-                  pcStack_18->targets[iVar3].player = iVar5;
-                  iVar5 = get_original_internal_card_id(iVar2, iVar6);
-                  pcStack_18->targets[iVar3].card = iVar5;
-                  break;
-                }
-                iVar3 = iVar3 + 1;
-              } while (iVar3 != 0x12);
+                  if (return_legacy->targets[aura_check_or_next_card].player == -1)
+                  {
+                    aura_owner_or_iid = get_owner(scan_player_or_check, aura_card_or_legacy);
+                    return_legacy->targets[aura_check_or_next_card].player = aura_owner_or_iid;
+                    aura_owner_or_iid =
+                        get_original_internal_card_id(scan_player_or_check, aura_card_or_legacy);
+                    return_legacy->targets[aura_check_or_next_card].card = aura_owner_or_iid;
+                    break;
+                  }
+                  aura_check_or_next_card = aura_check_or_next_card + 1;
+                } while (aura_check_or_next_card != 0x12);
+              }
+              aura_check_or_next_card = aura_card_or_legacy + -1;
+              kill_card(scan_player_or_check, aura_card_or_legacy, KILL_EXILE);
+              aura_card_or_legacy = aura_check_or_next_card;
             }
-            iVar3 = iVar6 + -1;
-            kill_card(iVar2, iVar6, KILL_EXILE);
-            iVar6 = iVar3;
-          } while (iVar3 != -1);
+            else
+              aura_card_or_legacy = aura_card_or_legacy - 1;
+          } while (aura_card_or_legacy != -1);
         }
-      LAB_026d7200:
-        iVar2 = iVar2 + 1;
-      } while (iVar2 != 2);
+        scan_player_or_check = scan_player_or_check + 1;
+      } while (scan_player_or_check != 2);
       if ((mode & 0x2a) != 0)
       {
-        iVar2 = create_legacy_effect(player, card, (CardFunction)&store_counters_legacy);
-        pcVar4 = get_card_instance(player, iVar2);
-        uVar1 = pcVar4->token_status;
-        pcVar4->targets[0x11].card = iStack_14;
-        pcVar4->token_status = uVar1 | 0x10000;
-        copy_counters(player, card, player, iVar2, t_player, t_card, 1);
+        scan_player_or_check =
+            create_legacy_effect(player, card, (CardFunction)&store_counters_legacy);
+        aura_or_legacy = get_card_instance(player, scan_player_or_check);
+        legacy_status = aura_or_legacy->token_status;
+        aura_or_legacy->targets[0x11].card = return_legacy_card;
+        aura_or_legacy->token_status = legacy_status | 0x10000;
+        copy_counters(player, card, player, scan_player_or_check, t_player, t_card, 1);
       }
-      if (pcStack_18 == NULL)
+      if (return_legacy == NULL)
       {
-        iStack_14 = -1;
+        return_legacy_card = -1;
       }
       else
       {
-        iVar2 = get_owner(t_player, t_card);
-        pcStack_18->targets[0].player = iVar2;
-        pcVar4 = get_card_instance(t_player, t_card);
-        pcStack_18->targets[0].card = pcVar4->original_internal_card_id;
+        scan_player_or_check = get_owner(t_player, t_card);
+        return_legacy->targets[0].player = scan_player_or_check;
+        aura_or_legacy = get_card_instance(t_player, t_card);
+        return_legacy->targets[0].card = aura_or_legacy->original_internal_card_id;
       }
-      goto LAB_026d724c;
+      kill_card(t_player, t_card, KILL_EXILE);
+      return return_legacy_card;
     }
   }
   manipulate_auras_enchanting_target(player, card, t_player, t_card, NULL, ACT_KILL_REMOVE);
-  iStack_14 = -1;
-LAB_026d724c:
+  return_legacy_card = -1;
   kill_card(t_player, t_card, KILL_EXILE);
-  return iStack_14;
+  return return_legacy_card;
 }
 
 void get_back_cards_stored_in_exiledby(int player, int exby_player, int exby_card, get_back_cards_stored_in_exiledby_mode flags){
@@ -726,78 +724,72 @@ void get_back_cards_stored_in_exiledby(int player, int exby_player, int exby_car
 /* ManalinkEh 2022: 0x26d6d50; original functions/exiledby.c:309. */
 int exiledby_count_cmcs(int player, int card, int owned_by)
 {
-  target_t *ptVar1;
-  int *piVar2;
+  target_t *current_exile_record;
+  int *cmc_cursor_or_exile_entry;
   card_instance_t *instance;
-  unsigned char bVar4;
+  unsigned char owner_bits_or_match;
   int result;
-  int iStack_70;
+  int legacy_player;
   int leg;
   int idx;
   int cmcs[21];
 
   leg = 0;
-  piVar2 = cmcs;
-
-  for (result = 0x15; result != 0; result = result + -1)
-  {
-    *piVar2 = 0;
-    piVar2 = piVar2 + 1;
-  }
+  memset(cmcs, 0, sizeof(cmcs));
+  result = 0;
   idx = 0;
-  iStack_70 = player;
+  legacy_player = player;
   if (player < 0)
   {
-    iStack_70 = player + 2;
+    legacy_player = player + 2;
   }
   do
   {
-    piVar2 = exiledby_find_any(player, card, &leg, &idx);
-    if (piVar2 == NULL)
+    cmc_cursor_or_exile_entry = exiledby_find_any(player, card, &leg, &idx);
+    if (cmc_cursor_or_exile_entry == NULL)
     {
-      piVar2 = cmcs;
+      cmc_cursor_or_exile_entry = cmcs;
       result = 0;
       do
       {
-        if (*piVar2 == 1)
+        if (*cmc_cursor_or_exile_entry == 1)
         {
           result = result + 1;
         }
-        piVar2 = piVar2 + 1;
-      } while (cmcs + 0x14 != piVar2);
+        cmc_cursor_or_exile_entry = cmc_cursor_or_exile_entry + 1;
+      } while (cmcs + 0x14 != cmc_cursor_or_exile_entry);
       return result;
     }
-    instance = get_card_instance(iStack_70, leg);
-    bVar4 = (unsigned char)((unsigned int)*piVar2 >> 0x18);
+    instance = get_card_instance(legacy_player, leg);
+    owner_bits_or_match = (unsigned char)((unsigned int)*cmc_cursor_or_exile_entry >> 0x18);
+    bool count_first_entry = true;
     if (owned_by == 0)
     {
-      bVar4 = bVar4 ^ 0xff;
-    LAB_026d6d90:
-      if ((char)bVar4 < '\0')
-        goto LAB_026d6def;
-      ptVar1 = instance->targets + idx;
+      owner_bits_or_match = owner_bits_or_match ^ 0xff;
+      if ((char)owner_bits_or_match >= '\0')
+        count_first_entry = false;
     }
-    else
+    else if (owned_by == 1 && (char)owner_bits_or_match >= '\0')
+      count_first_entry = false;
+    if (count_first_entry)
     {
-      if (owned_by == 1)
-        goto LAB_026d6d90;
-    LAB_026d6def:
-      result = get_cmc_by_id((unsigned int)cards_data[*piVar2].id);
+      result = get_cmc_by_id((unsigned int)cards_data[*cmc_cursor_or_exile_entry].id);
       cmcs[result] = 1;
-      ptVar1 = instance->targets + idx;
     }
-    if (((target_t *)piVar2 == ptVar1) && (result = instance->targets[idx].card, result != -1))
+    current_exile_record = instance->targets + idx;
+    if (((target_t *)cmc_cursor_or_exile_entry == current_exile_record) &&
+        (result = instance->targets[idx].card, result != -1))
     {
-      bVar4 = (unsigned char)((unsigned int)result >> 0x18);
+      owner_bits_or_match = (unsigned char)((unsigned int)result >> 0x18);
       if (owned_by == 0)
       {
-        bVar4 = (bVar4 ^ 0xff) >> 7;
+        owner_bits_or_match = (owner_bits_or_match ^ 0xff) >> 7;
       }
       else
       {
-        bVar4 = owned_by != 1 | bVar4 >> 7;
+        owner_bits_or_match = owned_by != 1 | owner_bits_or_match >> 7;
       }
-      if (bVar4 != 0)
+      if (owner_bits_or_match != 0)
       {
         result = get_cmc_by_id((unsigned int)cards_data[result].id);
         cmcs[result] = 1;

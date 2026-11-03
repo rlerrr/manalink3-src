@@ -1,0 +1,899 @@
+{
+  "rows": [
+    {
+      "source": "functions/global_checking.c",
+      "name": "get_test_score",
+      "card_control_cleanup": true,
+      "before_definition": "int get_test_score(int type, int flag1, int subtype, int flag2, int color, int flag3, int id,\n                        int flag4, int cc, int flag5)\n{\n  unsigned int uVar1;\n  unsigned int uVar2;\n  bool bVar3;\n  bool bVar4;\n\n  bVar3 = type != 0;\n  uVar1 = (unsigned int)(flag1 == 0 && bVar3);\n  if ((flag2 == 0) && (subtype != 0))\n  {\n    uVar1 = uVar1 + 2;\n  }\n  if ((flag3 == 0) && (color != 0))\n  {\n    uVar1 = uVar1 + 4;\n  }\n  bVar4 = id == 0;\n  if ((flag4 == 0) && (!bVar4))\n  {\n    uVar1 = uVar1 + 8;\n  }\n  uVar2 = cc ^ 0xffffffff;\n  if ((flag5 == 0) && ((int)uVar2 < 0))\n  {\n    uVar1 = uVar1 + 0x10;\n  }\n  if ((flag1 == 1) && (bVar3))\n  {\n    uVar1 = uVar1 + 0x20;\n  }\n  if ((0 < flag2) && (subtype != 0))\n  {\n    uVar1 = uVar1 + 0x40;\n  }\n  if ((flag3 == 1) && (color != 0))\n  {\n    uVar1 = uVar1 + 0x80;\n  }\n  if ((flag4 == 1) && (!bVar4))\n  {\n    uVar1 = uVar1 + 0x100;\n  }\n  if ((flag5 == 1) && ((int)uVar2 < 0))\n  {\n    uVar1 = uVar1 + 0x200;\n  }\n  else if ((flag5 == 2) && ((int)uVar2 < 0))\n  {\n    uVar1 = uVar1 + 0x400;\n  }\n  else if ((flag5 == 3) && ((int)uVar2 < 0))\n  {\n    uVar1 = uVar1 + 0x800;\n  }\n  if ((flag1 == 2) && (bVar3))\n  {\n    uVar1 = uVar1 + 0x1000;\n  }\n  else if ((flag1 == 3) && (bVar3))\n  {\n    uVar1 = uVar1 + 0x2000;\n  }\n  if ((flag4 != 2) || (bVar4))\n  {\n    if ((flag4 == 3) && (!bVar4))\n    {\n      uVar1 = uVar1 + 0x8000;\n    }\n  }\n  else\n  {\n    uVar1 = uVar1 + 0x4000;\n  }\n  if ((flag1 == 4) && (bVar3))\n  {\n    uVar1 = uVar1 + 0x10000;\n    if (color != 0 || flag3 != 2)\n    {\n      return uVar1;\n    }\n  }\n  else if (color != 0 || flag3 != 2)\n    goto LAB_026be62e;\n  uVar1 = uVar1 + 0x20000;\nLAB_026be62e:\n  if ((flag1 == 5) && (bVar3))\n  {\n    uVar1 = uVar1 + 0x40000;\n  }\n  else if ((flag1 == 6) && (bVar3))\n  {\n    return uVar1 + 0x80000;\n  }\n  return uVar1;\n}",
+      "after_definition": "int get_test_score(int type, int flag1, int subtype, int flag2, int color, int flag3, int id,\n                   int flag4, int cc, int flag5)\n{\n  unsigned int TEST_TYPE;\n  unsigned int inverted_cmc;\n  bool type_specified;\n  bool id_unspecified;\n\n  type_specified = type != 0;\n  TEST_TYPE = (unsigned int)(flag1 == 0 && type_specified);\n  if ((flag2 == 0) && (subtype != 0))\n  {\n    TEST_TYPE = TEST_TYPE + 2;\n  }\n  if ((flag3 == 0) && (color != 0))\n  {\n    TEST_TYPE = TEST_TYPE + 4;\n  }\n  id_unspecified = id == 0;\n  if ((flag4 == 0) && (!id_unspecified))\n  {\n    TEST_TYPE = TEST_TYPE + 8;\n  }\n  inverted_cmc = cc ^ 0xffffffff;\n  if ((flag5 == 0) && ((int)inverted_cmc < 0))\n  {\n    TEST_TYPE = TEST_TYPE + 0x10;\n  }\n  if ((flag1 == 1) && (type_specified))\n  {\n    TEST_TYPE = TEST_TYPE + 0x20;\n  }\n  if ((0 < flag2) && (subtype != 0))\n  {\n    TEST_TYPE = TEST_TYPE + 0x40;\n  }\n  if ((flag3 == 1) && (color != 0))\n  {\n    TEST_TYPE = TEST_TYPE + 0x80;\n  }\n  if ((flag4 == 1) && (!id_unspecified))\n  {\n    TEST_TYPE = TEST_TYPE + 0x100;\n  }\n  if ((flag5 == 1) && ((int)inverted_cmc < 0))\n  {\n    TEST_TYPE = TEST_TYPE + 0x200;\n  }\n  else if ((flag5 == 2) && ((int)inverted_cmc < 0))\n  {\n    TEST_TYPE = TEST_TYPE + 0x400;\n  }\n  else if ((flag5 == 3) && ((int)inverted_cmc < 0))\n  {\n    TEST_TYPE = TEST_TYPE + 0x800;\n  }\n  if ((flag1 == 2) && (type_specified))\n  {\n    TEST_TYPE = TEST_TYPE + 0x1000;\n  }\n  else if ((flag1 == 3) && (type_specified))\n  {\n    TEST_TYPE = TEST_TYPE + 0x2000;\n  }\n  if ((flag4 != 2) || (id_unspecified))\n  {\n    if ((flag4 == 3) && (!id_unspecified))\n    {\n      TEST_TYPE = TEST_TYPE + 0x8000;\n    }\n  }\n  else\n  {\n    TEST_TYPE = TEST_TYPE + 0x4000;\n  }\n  if ((flag1 == 4) && (type_specified))\n  {\n    TEST_TYPE = TEST_TYPE + 0x10000;\n    if (color != 0 || flag3 != 2)\n    {\n      return TEST_TYPE;\n    }\n  }\n  else if (color != 0 || flag3 != 2)\n    goto LAB_026be62e;\n  TEST_TYPE = TEST_TYPE + 0x20000;\nLAB_026be62e:\n  if ((flag1 == 5) && (type_specified))\n  {\n    TEST_TYPE = TEST_TYPE + 0x40000;\n  }\n  else if ((flag1 == 6) && (type_specified))\n  {\n    return TEST_TYPE + 0x80000;\n  }\n  return TEST_TYPE;\n}",
+      "before_sha256": "7c800ef0beec2cdf8bf27b77e9114907d43f36483c1a2a83a5f6906637afa065",
+      "after_sha256": "e293a8c79d569be376ea9feb0c7656a74e63845b1e8056cfcd27ee8db52c2164",
+      "alpha_only": true,
+      "renames": {
+        "uVar1": "TEST_TYPE",
+        "uVar2": "inverted_cmc",
+        "bVar3": "type_specified",
+        "bVar4": "id_unspecified"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 62
+      },
+      "retained_control_flow": true,
+      "native_local_vocabulary": {
+        "debug_path": "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg",
+        "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "owner_die": "0x67fd8ed",
+        "low_pc": "0x26be510",
+        "locals": [
+          {
+            "die": "0x67fd912",
+            "name": "type",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fd921",
+            "name": "flag1",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fd932",
+            "name": "subtype",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fd941",
+            "name": "flag2",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fd952",
+            "name": "color",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fd961",
+            "name": "flag3",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fd972",
+            "name": "id",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fd980",
+            "name": "flag4",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fd991",
+            "name": "cc",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fd99f",
+            "name": "flag5",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fd9b0",
+            "name": "TEST_TYPE",
+            "location_form": "DW_FORM_sec_offset"
+          }
+        ],
+        "scope": "Native local vocabulary, including optimized or overlapping locations. This does not prove a location-based correspondence for every decompiler temporary."
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/global_checking.c",
+      "name": "new_get_test_score",
+      "card_control_cleanup": true,
+      "before_definition": "int new_get_test_score(test_definition_t *this_test)\n{\n  unsigned short uVar1;\n  uint16_t uVar2;\n  uint16_t uVar3;\n  uint16_t uVar4;\n  uint16_t uVar5;\n  uint16_t uVar6;\n  uint16_t uVar7;\n  unsigned int uVar8;\n  unsigned int uVar9;\n  int result;\n  unsigned int uVar11;\n\n  uVar11 = 0;\n  uVar8 = this_test->type;\n  if (uVar8 != 0)\n  {\n    uVar11 = (unsigned int)(this_test->type_flag == 0);\n  }\n  if ((this_test->subtype != 0) && (this_test->subtype_flag == 0))\n  {\n    uVar11 = uVar11 + 2;\n  }\n  uVar9 = this_test->color;\n  if ((uVar9 != 0) && (this_test->color_flag == 0))\n  {\n    uVar11 = uVar11 + 4;\n  }\n  result = this_test->id;\n  if ((0 < result) && (this_test->id_flag == 0))\n  {\n    uVar11 = uVar11 + 8;\n  }\n  if ((-1 < this_test->cmc) && (this_test->cmc_flag == 0))\n  {\n    uVar11 = uVar11 + 0x10;\n  }\n  if ((uVar8 != 0) && (this_test->type_flag == 1))\n  {\n    uVar11 = uVar11 + 0x20;\n  }\n  if ((this_test->subtype != 0) && (this_test->subtype_flag == 1))\n  {\n    uVar11 = uVar11 + 0x40;\n  }\n  if ((uVar9 != 0) && (this_test->color_flag == 1))\n  {\n    uVar11 = uVar11 + 0x80;\n  }\n  if ((0 < result) && (this_test->id_flag == 1))\n  {\n    uVar11 = uVar11 + 0x100;\n  }\n  if (-1 < this_test->cmc)\n  {\n    uVar2 = this_test->cmc_flag;\n    if (uVar2 == 1)\n    {\n      uVar11 = uVar11 + 0x200;\n    }\n    else if (uVar2 == 2)\n    {\n      uVar11 = uVar11 + 0x400;\n    }\n    else if (uVar2 == 3)\n    {\n      uVar11 = uVar11 + 0x800;\n    }\n  }\n  if (uVar8 == 0)\n  {\n    if (0 < result)\n      goto LAB_026be7d5;\n  LAB_026be900:\n    if (uVar9 == 0)\n      goto LAB_026be908;\n  }\n  else\n  {\n    uVar3 = this_test->type_flag;\n    if (uVar3 == 2)\n    {\n      uVar11 = uVar11 + 0x1000;\n    }\n    else if (uVar3 == 3)\n    {\n      uVar11 = uVar11 + 0x2000;\n    }\n    if (0 < result)\n    {\n    LAB_026be7d5:\n      if (this_test->id_flag == 2)\n      {\n        uVar11 = uVar11 + 0x4000;\n      }\n      else if (this_test->id_flag == 3)\n      {\n        uVar11 = uVar11 + 0x8000;\n      }\n      if (uVar8 == 0)\n        goto LAB_026be900;\n    }\n    if (this_test->type_flag == 4)\n    {\n      uVar11 = uVar11 + 0x10000;\n    }\n    if (uVar9 == 0)\n    {\n    LAB_026be908:\n      uVar7 = this_test->color_flag;\n      if (uVar7 == 2)\n      {\n        uVar11 = uVar11 + 0x20000;\n      }\n      else if (uVar7 == 3)\n      {\n        uVar11 = uVar11 + 0x40000;\n      }\n      if (uVar8 == 0)\n        goto LAB_026be818;\n      uVar1 = this_test->type_flag;\n    }\n    else\n    {\n      uVar1 = this_test->type_flag;\n    }\n    if (uVar1 == 6)\n    {\n      uVar8 = this_test->keyword;\n      uVar11 = uVar11 + 0x80000;\n      goto joined_r0x026be942;\n    }\n  }\nLAB_026be818:\n  uVar8 = this_test->keyword;\njoined_r0x026be942:\n  if ((uVar8 != 0) || (this_test->keyword_flag != 0))\n  {\n    uVar11 = uVar11 + 0x100000;\n  }\n  if (-1 < this_test->power)\n  {\n    uVar4 = this_test->power_flag;\n    if (uVar4 == 0)\n    {\n      uVar11 = uVar11 + 0x400000;\n    }\n    else if (uVar4 == 1)\n    {\n      uVar11 = uVar11 + 0x800000;\n    }\n  }\n  if (-1 < this_test->toughness)\n  {\n    if (this_test->toughness_flag == 0)\n    {\n      uVar11 = uVar11 + 0x1000000;\n    }\n    else if (this_test->toughness_flag == 1)\n    {\n      uVar11 = uVar11 + 0x2000000;\n    }\n  }\n  if (this_test->state != 0)\n  {\n    uVar5 = this_test->state_flag;\n    if (uVar5 == 0)\n    {\n      uVar11 = uVar11 + 0x4000000;\n    }\n    else if (uVar5 == 1)\n    {\n      uVar11 = uVar11 + 0x8000000;\n    }\n  }\n  if (-1 < this_test->power)\n  {\n    uVar6 = this_test->power_flag;\n    if (uVar6 == 2)\n    {\n      uVar11 = uVar11 + 0x10000000;\n    }\n    else if (uVar6 == 3)\n    {\n      uVar11 = uVar11 + 0x20000000;\n    }\n  }\n  if (-1 < this_test->toughness)\n  {\n    if (this_test->toughness_flag == 2)\n    {\n      uVar11 = uVar11 + 0x40000000;\n    }\n    else if (this_test->toughness_flag == 3)\n    {\n      uVar11 = uVar11 + 0x80000000;\n    }\n  }\n  if (this_test->owner != '\\x02')\n  {\n    uVar11 = uVar11 | 0x80000000;\n  }\n  return uVar11;\n}",
+      "after_definition": "int new_get_test_score(test_definition_t *this_test)\n{\n  unsigned short token_type_mode;\n  uint16_t cmc_mode;\n  uint16_t noncreature_type_mode;\n  uint16_t power_equality_mode;\n  uint16_t state_mode;\n  uint16_t power_range_mode;\n  uint16_t color_count_mode;\n  unsigned int requested_type_or_keywords;\n  unsigned int requested_colors;\n  int result;\n  unsigned int test_type;\n\n  test_type = 0;\n  requested_type_or_keywords = this_test->type;\n  if (requested_type_or_keywords != 0)\n  {\n    test_type = (unsigned int)(this_test->type_flag == 0);\n  }\n  if ((this_test->subtype != 0) && (this_test->subtype_flag == 0))\n  {\n    test_type = test_type + 2;\n  }\n  requested_colors = this_test->color;\n  if ((requested_colors != 0) && (this_test->color_flag == 0))\n  {\n    test_type = test_type + 4;\n  }\n  result = this_test->id;\n  if ((0 < result) && (this_test->id_flag == 0))\n  {\n    test_type = test_type + 8;\n  }\n  if ((-1 < this_test->cmc) && (this_test->cmc_flag == 0))\n  {\n    test_type = test_type + 0x10;\n  }\n  if ((requested_type_or_keywords != 0) && (this_test->type_flag == 1))\n  {\n    test_type = test_type + 0x20;\n  }\n  if ((this_test->subtype != 0) && (this_test->subtype_flag == 1))\n  {\n    test_type = test_type + 0x40;\n  }\n  if ((requested_colors != 0) && (this_test->color_flag == 1))\n  {\n    test_type = test_type + 0x80;\n  }\n  if ((0 < result) && (this_test->id_flag == 1))\n  {\n    test_type = test_type + 0x100;\n  }\n  if (-1 < this_test->cmc)\n  {\n    cmc_mode = this_test->cmc_flag;\n    if (cmc_mode == 1)\n    {\n      test_type = test_type + 0x200;\n    }\n    else if (cmc_mode == 2)\n    {\n      test_type = test_type + 0x400;\n    }\n    else if (cmc_mode == 3)\n    {\n      test_type = test_type + 0x800;\n    }\n  }\n  if (requested_type_or_keywords == 0)\n  {\n    if (0 < result)\n      goto LAB_026be7d5;\n  LAB_026be900:\n    if (requested_colors == 0)\n      goto LAB_026be908;\n  }\n  else\n  {\n    noncreature_type_mode = this_test->type_flag;\n    if (noncreature_type_mode == 2)\n    {\n      test_type = test_type + 0x1000;\n    }\n    else if (noncreature_type_mode == 3)\n    {\n      test_type = test_type + 0x2000;\n    }\n    if (0 < result)\n    {\n    LAB_026be7d5:\n      if (this_test->id_flag == 2)\n      {\n        test_type = test_type + 0x4000;\n      }\n      else if (this_test->id_flag == 3)\n      {\n        test_type = test_type + 0x8000;\n      }\n      if (requested_type_or_keywords == 0)\n        goto LAB_026be900;\n    }\n    if (this_test->type_flag == 4)\n    {\n      test_type = test_type + 0x10000;\n    }\n    if (requested_colors == 0)\n    {\n    LAB_026be908:\n      color_count_mode = this_test->color_flag;\n      if (color_count_mode == 2)\n      {\n        test_type = test_type + 0x20000;\n      }\n      else if (color_count_mode == 3)\n      {\n        test_type = test_type + 0x40000;\n      }\n      if (requested_type_or_keywords == 0)\n        goto LAB_026be818;\n      token_type_mode = this_test->type_flag;\n    }\n    else\n    {\n      token_type_mode = this_test->type_flag;\n    }\n    if (token_type_mode == 6)\n    {\n      requested_type_or_keywords = this_test->keyword;\n      test_type = test_type + 0x80000;\n      goto joined_r0x026be942;\n    }\n  }\nLAB_026be818:\n  requested_type_or_keywords = this_test->keyword;\njoined_r0x026be942:\n  if ((requested_type_or_keywords != 0) || (this_test->keyword_flag != 0))\n  {\n    test_type = test_type + 0x100000;\n  }\n  if (-1 < this_test->power)\n  {\n    power_equality_mode = this_test->power_flag;\n    if (power_equality_mode == 0)\n    {\n      test_type = test_type + 0x400000;\n    }\n    else if (power_equality_mode == 1)\n    {\n      test_type = test_type + 0x800000;\n    }\n  }\n  if (-1 < this_test->toughness)\n  {\n    if (this_test->toughness_flag == 0)\n    {\n      test_type = test_type + 0x1000000;\n    }\n    else if (this_test->toughness_flag == 1)\n    {\n      test_type = test_type + 0x2000000;\n    }\n  }\n  if (this_test->state != 0)\n  {\n    state_mode = this_test->state_flag;\n    if (state_mode == 0)\n    {\n      test_type = test_type + 0x4000000;\n    }\n    else if (state_mode == 1)\n    {\n      test_type = test_type + 0x8000000;\n    }\n  }\n  if (-1 < this_test->power)\n  {\n    power_range_mode = this_test->power_flag;\n    if (power_range_mode == 2)\n    {\n      test_type = test_type + 0x10000000;\n    }\n    else if (power_range_mode == 3)\n    {\n      test_type = test_type + 0x20000000;\n    }\n  }\n  if (-1 < this_test->toughness)\n  {\n    if (this_test->toughness_flag == 2)\n    {\n      test_type = test_type + 0x40000000;\n    }\n    else if (this_test->toughness_flag == 3)\n    {\n      test_type = test_type + 0x80000000;\n    }\n  }\n  if (this_test->owner != '\\x02')\n  {\n    test_type = test_type | 0x80000000;\n  }\n  return test_type;\n}",
+      "before_sha256": "d4f2ea86678b1357d86d6e7d77f4d619d57e018532e79fff40ce07268888aee2",
+      "after_sha256": "a5690b0c259820b3df0f502428ef29779a59eab13d828d1bf1632765ef405213",
+      "alpha_only": true,
+      "renames": {
+        "uVar1": "token_type_mode",
+        "uVar2": "cmc_mode",
+        "uVar3": "noncreature_type_mode",
+        "uVar4": "power_equality_mode",
+        "uVar5": "state_mode",
+        "uVar6": "power_range_mode",
+        "uVar7": "color_count_mode",
+        "uVar8": "requested_type_or_keywords",
+        "uVar9": "requested_colors",
+        "uVar11": "test_type"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 111
+      },
+      "retained_control_flow": true,
+      "native_local_vocabulary": {
+        "debug_path": "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg",
+        "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "owner_die": "0x67fd8a0",
+        "low_pc": "0x26be6e0",
+        "locals": [
+          {
+            "die": "0x67fd8c9",
+            "name": "this_test",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fd8d8",
+            "name": "test_type",
+            "location_form": "DW_FORM_sec_offset"
+          }
+        ],
+        "scope": "Native local vocabulary, including optimized or overlapping locations. This does not prove a location-based correspondence for every decompiler temporary."
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/global_checking.c",
+      "name": "new_make_test_in_play",
+      "card_control_cleanup": true,
+      "before_definition": "int new_make_test_in_play(int player, int to_examine, int test_type,\n                               test_definition_t *this_test)\n{\n  int cmc;\n  uint16_t uVar1;\n  uint16_t uVar2;\n  short sVar3;\n  uint16_t uVar4;\n  uint16_t uVar5;\n  uint16_t uVar6;\n  uint16_t uVar7;\n  uint16_t uVar8;\n  uint16_t uVar9;\n  uint16_t uVar10;\n  uint16_t uVar11;\n  uint16_t uVar12;\n  short sVar13;\n  uint16_t uVar14;\n  short sVar15;\n  subtype_t sVar16;\n  test_selection_predicate_t p_Var17;\n  subtype_t subtype;\n  subtype_t sVar18;\n  subtype_t sVar19;\n  subtype_t sVar20;\n  int iVar21;\n  card_instance_t *instance;\n  unsigned int uVar23;\n  unsigned int uVar24;\n  type_t tVar25;\n  int iVar26;\n  unsigned short uVar27;\n\n  iVar21 = get_id(player, to_examine);\n  if (this_test->can_legally_play != '\\0')\n  {\n    instance = get_card_instance(player, to_examine);\n    iVar26 = can_legally_play_iid(player, instance->internal_card_id);\n    if (iVar26 == 0)\n    {\n      return 0;\n    }\n  }\n  if (this_test->type != 0)\n  {\n    uVar1 = this_test->type_flag;\n    sVar13 = uVar1;\n    if (uVar1 == 0)\n    {\n      iVar26 = is_what(player, to_examine, this_test->type);\n      if (iVar26 == 0)\n      {\n        return 0;\n      }\n      uVar6 = this_test->type_flag;\n      sVar13 = uVar6;\n    }\n    if (sVar13 == 1)\n    {\n      iVar26 = is_what(player, to_examine, this_test->type);\n      if (iVar26 != 0)\n      {\n        return 0;\n      }\n      uVar7 = this_test->type_flag;\n      sVar13 = uVar7;\n    }\n    if (sVar13 == 2)\n    {\n      if (is_what(player, to_examine, this_test->type) == 0)\n      {\n        return 0;\n      }\n      iVar26 = is_what(player, to_examine, 2);\n      if (iVar26 != 0)\n      {\n        return 0;\n      }\n      uVar8 = this_test->type_flag;\n      sVar13 = uVar8;\n    }\n    if (sVar13 == 3)\n    {\n      if (is_what(player, to_examine, this_test->type) == 0)\n      {\n        return 0;\n      }\n      iVar26 = is_token(player, to_examine);\n      if (iVar26 != 0)\n      {\n        return 0;\n      }\n      uVar10 = this_test->type_flag;\n      sVar13 = uVar10;\n    }\n    if (sVar13 == 4)\n    {\n      if (is_what(player, to_examine, this_test->type) == 0)\n      {\n        return 0;\n      }\n      iVar26 = is_planeswalker(player, to_examine);\n      if (iVar26 != 0)\n      {\n        return 0;\n      }\n      uVar11 = this_test->type_flag;\n      sVar13 = uVar11;\n    }\n    if (sVar13 == 6)\n    {\n      if (is_what(player, to_examine, this_test->type) == 0)\n      {\n        return 0;\n      }\n      iVar26 = is_token(player, to_examine);\n      if (iVar26 == 0)\n      {\n        return 0;\n      }\n      uVar12 = this_test->type_flag;\n      sVar13 = uVar12;\n    }\n    if (sVar13 == 9)\n    {\n      if (is_what(player, to_examine, 2) == 0)\n      {\n        return 0;\n      }\n      iVar26 = is_what(player, to_examine, 0x40);\n      if (iVar26 != 0)\n      {\n        return 0;\n      }\n      sVar13 = this_test->type_flag;\n    }\n    if ((sVar13 == 0xb) &&\n        (tVar25 = get_type(player, to_examine), this_test->type != (tVar25 & this_test->type)))\n    {\n      return 0;\n    }\n  }\n  sVar16 = this_test->subtype;\n  if (sVar16 != SUBTYPE_INVALID)\n  {\n    uVar27 = this_test->subtype_flag;\n    if (uVar27 == 3)\n    {\n      sVar18 = this_test->sub5;\n      sVar19 = this_test->sub2;\n      sVar20 = this_test->sub4;\n      subtype = this_test->sub3;\n      if ((((((int)sVar16 < 1) ||\n             (iVar26 = has_subtype(player, to_examine, sVar16), iVar26 == 0)) &&\n            (((int)sVar19 < 1 ||\n              (iVar26 = has_subtype(player, to_examine, sVar19), iVar26 == 0)))) &&\n           (((int)subtype < 1 ||\n             (iVar26 = has_subtype(player, to_examine, subtype), iVar26 == 0)))) &&\n          (((int)sVar20 < 1 || (iVar26 = has_subtype(player, to_examine, sVar20), iVar26 == 0))))\n      {\n        if ((int)sVar18 < 1)\n        {\n          return 0;\n        }\n        iVar26 = has_subtype(player, to_examine, sVar18);\n        if (iVar26 == 0)\n        {\n          return 0;\n        }\n      }\n      uVar27 = this_test->subtype_flag;\n    }\n    if (uVar27 == 4)\n    {\n      sVar16 = this_test->sub5;\n      sVar18 = this_test->sub3;\n      sVar19 = this_test->sub4;\n      sVar20 = this_test->sub2;\n      if ((0 < (int)this_test->subtype) &&\n          (iVar26 = has_subtype(player, to_examine, this_test->subtype), iVar26 == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)sVar20) && (iVar26 = has_subtype(player, to_examine, sVar20), iVar26 == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)sVar18) && (iVar26 = has_subtype(player, to_examine, sVar18), iVar26 == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)sVar19) && (iVar26 = has_subtype(player, to_examine, sVar19), iVar26 == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)sVar16) && (iVar26 = has_subtype(player, to_examine, sVar16), iVar26 == 0))\n      {\n        return 0;\n      }\n      uVar27 = this_test->subtype_flag;\n    }\n    if (uVar27 == 0)\n    {\n      iVar26 = has_subtype(player, to_examine, this_test->subtype);\n      if (iVar26 == 0)\n      {\n        return 0;\n      }\n      uVar27 = this_test->subtype_flag;\n    }\n    if ((uVar27 == 1) &&\n        (iVar26 = has_subtype(player, to_examine, this_test->subtype), iVar26 != 0))\n    {\n      return 0;\n    }\n  }\n  if (this_test->color == 0)\n  {\n    uVar2 = this_test->color_flag;\n    sVar15 = uVar2;\n  LAB_026beca5:\n    if (sVar15 == 2)\n    {\n      iVar26 = count_colors(player, to_examine);\n      if (iVar26 < 2)\n      {\n        return 0;\n      }\n      sVar15 = this_test->color_flag;\n    }\n    if ((sVar15 == 3) && (iVar26 = count_colors(player, to_examine), iVar26 != 1))\n    {\n      return 0;\n    }\n  }\n  else\n  {\n    uVar24 = get_color(player, to_examine);\n    uVar23 = this_test->color;\n    uVar4 = this_test->color_flag;\n    if (uVar23 == 1)\n    {\n      if (uVar4 == 0)\n      {\n        if (uVar24 != 0)\n        {\n          return 0;\n        }\n      }\n      else if (uVar24 != 0)\n        goto LAB_026becb9;\n      if (uVar4 == 1)\n      {\n        return 0;\n      }\n    }\n    else if (uVar4 == 0)\n    {\n      if ((uVar24 & uVar23) == 0)\n      {\n        return 0;\n      }\n    }\n    else if (uVar4 == 1)\n    {\n      if ((uVar24 & uVar23) != 0)\n      {\n        return 0;\n      }\n    }\n    else\n    {\n      sVar15 = uVar4;\n      if (uVar23 == 0)\n        goto LAB_026beca5;\n    }\n  }\nLAB_026becb9:\n  if (this_test->id == -1)\n  {\n    return 0;\n  }\n  if (this_test->id != 0)\n  {\n    uVar27 = this_test->id_flag;\n    if (uVar27 == 3)\n    {\n      if (is_token(player, to_examine) == 0)\n      {\n        return 0;\n      }\n      iVar26 = get_special_infos(player, to_examine);\n      if (iVar26 != this_test->id)\n      {\n        return 0;\n      }\n      uVar27 = this_test->id_flag;\n    }\n    if (uVar27 == 4)\n    {\n      if (this_test->id != iVar21)\n      {\n        iVar26 = this_test->id2;\n      joined_r0x026bece8:\n        if (iVar26 != iVar21)\n        {\n          return 0;\n        }\n      }\n    }\n    else\n    {\n      if (uVar27 == 0)\n      {\n        iVar26 = this_test->id;\n        goto joined_r0x026bece8;\n      }\n      if ((uVar27 == 1) && (this_test->id == iVar21))\n      {\n        return 0;\n      }\n    }\n  }\n  if (-1 < this_test->cmc)\n  {\n    iVar21 = get_cmc(player, to_examine);\n    uVar5 = this_test->cmc_flag;\n    if (uVar5 == 0)\n    {\n      if (this_test->cmc != iVar21)\n      {\n        return 0;\n      }\n    }\n    else if (uVar5 == 1)\n    {\n      if (this_test->cmc == iVar21)\n      {\n        return 0;\n      }\n    }\n    else if (uVar5 == 2)\n    {\n      if (iVar21 <= this_test->cmc)\n      {\n        return 0;\n      }\n    }\n    else if ((uVar5 == 3) && (this_test->cmc <= iVar21))\n    {\n      return 0;\n    }\n  }\n  if (this_test->keyword != 0)\n  {\n    uVar27 = this_test->keyword_flag;\n    if (uVar27 == 0)\n    {\n      iVar21 = check_for_ability(player, to_examine, this_test->keyword);\n      if (iVar21 == 0)\n      {\n        return 0;\n      }\n      uVar27 = this_test->keyword_flag;\n    }\n    if (uVar27 == 1)\n    {\n      iVar21 = check_for_ability(player, to_examine, this_test->keyword);\n      if (iVar21 != 0)\n      {\n        return 0;\n      }\n      uVar27 = this_test->keyword_flag;\n    }\n    if (uVar27 == 2)\n    {\n      iVar21 = check_for_special_ability(player, to_examine, this_test->keyword);\n      if (iVar21 == 0)\n      {\n        return 0;\n      }\n      uVar27 = this_test->keyword_flag;\n    }\n    if ((uVar27 == 3) &&\n        (iVar21 = check_for_special_ability(player, to_examine, this_test->keyword),\n         iVar21 != 0))\n    {\n      return 0;\n    }\n  }\n  if (this_test->sp_keyword != 0)\n  {\n    sVar13 = (int16_t)this_test->sp_keyword_flag;\n    if (sVar13 == 0)\n    {\n      iVar21 = check_for_special_ability(player, to_examine, this_test->sp_keyword);\n      if (iVar21 == 0)\n      {\n        return 0;\n      }\n      sVar13 = (int16_t)this_test->sp_keyword_flag;\n    }\n    if ((sVar13 == 1) &&\n        (iVar21 = check_for_special_ability(player, to_examine, this_test->sp_keyword),\n         iVar21 != 0))\n    {\n      return 0;\n    }\n  }\n  if (-1 < this_test->power)\n  {\n    iVar21 = get_power(player, to_examine);\n    uVar9 = this_test->power_flag;\n    if (uVar9 == 0)\n    {\n      if (this_test->power != iVar21)\n      {\n        return 0;\n      }\n    }\n    else if (uVar9 == 1)\n    {\n      if (this_test->power == iVar21)\n      {\n        return 0;\n      }\n    }\n    else\n    {\n      if (uVar9 != 2)\n      {\n        if (uVar9 == 3)\n        {\n          if (this_test->power <= iVar21)\n          {\n            return 0;\n          }\n          goto LAB_026bed5b;\n        }\n        if (uVar9 != 4)\n          goto LAB_026bed5b;\n        iVar21 = count_counters(player, to_examine, COUNTER_P1_P1);\n      }\n      if (iVar21 <= this_test->power)\n      {\n        return 0;\n      }\n    }\n  }\nLAB_026bed5b:\n  if (-1 < this_test->toughness)\n  {\n    iVar21 = get_toughness(player, to_examine);\n    uVar27 = this_test->toughness_flag;\n    if (uVar27 == 0)\n    {\n      if (this_test->toughness != iVar21)\n      {\n        return 0;\n      }\n    }\n    else if (uVar27 == 1)\n    {\n      if (this_test->toughness == iVar21)\n      {\n        return 0;\n      }\n    }\n    else if (uVar27 == 2)\n    {\n      if (iVar21 <= this_test->toughness)\n      {\n        return 0;\n      }\n    }\n    else if ((uVar27 == 3) && (this_test->toughness <= iVar21))\n    {\n      return 0;\n    }\n  }\n  if (this_test->state != 0)\n  {\n    sVar3 = this_test->state_flag;\n    if (sVar3 == 0)\n    {\n      iVar21 = check_state(player, to_examine, this_test->state);\n      if (iVar21 == 0)\n      {\n        return 0;\n      }\n      uVar14 = this_test->state_flag;\n      sVar3 = uVar14;\n    }\n    if ((sVar3 == 1) && (iVar21 = check_state(player, to_examine, this_test->state), iVar21 != 0))\n    {\n      return 0;\n    }\n  }\n  p_Var17 = this_test->special_selection_function;\n  if (p_Var17 != (test_selection_predicate_t)0x0)\n  {\n    iVar21 = this_test->value_for_special_selection_function;\n    instance = get_card_instance(player, to_examine);\n    iVar21 = (*p_Var17)(instance->internal_card_id, iVar21, player, to_examine);\n    if (iVar21 == 0)\n    {\n      return 0;\n    }\n  }\n  if (this_test->has_mana_to_pay_cmc == '\\x01')\n  {\n    cmc = get_cmc(player, to_examine);\n    if (has_mana(player, 0, cmc) == 0)\n    {\n      return 0;\n    }\n  }\n  if (this_test->owner == '\\x02')\n  {\n    return 1;\n  }\n  uVar23 = get_owner(player, to_examine);\n  return (unsigned int)(this_test->owner == uVar23);\n}",
+      "after_definition": "int new_make_test_in_play(int player, int to_examine, int test_type, test_definition_t *this_test)\n{\n  int cmc;\n  uint16_t initial_type_mode;\n  uint16_t initial_color_mode;\n  short state_match_mode;\n  uint16_t color_mode_after_query;\n  uint16_t cmc_match_mode;\n  uint16_t type_mode_after_match;\n  uint16_t type_mode_after_exclusion;\n  uint16_t type_mode_after_noncreature;\n  uint16_t power_match_mode;\n  uint16_t type_mode_after_nontoken;\n  uint16_t type_mode_after_nonplaneswalker;\n  uint16_t type_mode_after_token;\n  short type_or_special_keyword_mode;\n  uint16_t state_mode_after_query;\n  short color_match_mode;\n  subtype_t first_or_fifth_subtype;\n  test_selection_predicate_t special_selection;\n  subtype_t subtype;\n  subtype_t fifth_or_third_subtype;\n  subtype_t second_or_fourth_subtype;\n  subtype_t fourth_or_second_subtype;\n  int id_stat_or_predicate_result;\n  card_instance_t *instance;\n  unsigned int requested_colors_or_owner;\n  unsigned int card_colors;\n  type_t card_types;\n  int probe_id_or_result;\n  unsigned short subtype_id_keyword_or_toughness_mode;\n\n  id_stat_or_predicate_result = get_id(player, to_examine);\n  if (this_test->can_legally_play != '\\0')\n  {\n    instance = get_card_instance(player, to_examine);\n    probe_id_or_result = can_legally_play_iid(player, instance->internal_card_id);\n    if (probe_id_or_result == 0)\n    {\n      return 0;\n    }\n  }\n  if (this_test->type != 0)\n  {\n    initial_type_mode = this_test->type_flag;\n    type_or_special_keyword_mode = initial_type_mode;\n    if (initial_type_mode == 0)\n    {\n      probe_id_or_result = is_what(player, to_examine, this_test->type);\n      if (probe_id_or_result == 0)\n      {\n        return 0;\n      }\n      type_mode_after_match = this_test->type_flag;\n      type_or_special_keyword_mode = type_mode_after_match;\n    }\n    if (type_or_special_keyword_mode == 1)\n    {\n      probe_id_or_result = is_what(player, to_examine, this_test->type);\n      if (probe_id_or_result != 0)\n      {\n        return 0;\n      }\n      type_mode_after_exclusion = this_test->type_flag;\n      type_or_special_keyword_mode = type_mode_after_exclusion;\n    }\n    if (type_or_special_keyword_mode == 2)\n    {\n      if (is_what(player, to_examine, this_test->type) == 0)\n      {\n        return 0;\n      }\n      probe_id_or_result = is_what(player, to_examine, 2);\n      if (probe_id_or_result != 0)\n      {\n        return 0;\n      }\n      type_mode_after_noncreature = this_test->type_flag;\n      type_or_special_keyword_mode = type_mode_after_noncreature;\n    }\n    if (type_or_special_keyword_mode == 3)\n    {\n      if (is_what(player, to_examine, this_test->type) == 0)\n      {\n        return 0;\n      }\n      probe_id_or_result = is_token(player, to_examine);\n      if (probe_id_or_result != 0)\n      {\n        return 0;\n      }\n      type_mode_after_nontoken = this_test->type_flag;\n      type_or_special_keyword_mode = type_mode_after_nontoken;\n    }\n    if (type_or_special_keyword_mode == 4)\n    {\n      if (is_what(player, to_examine, this_test->type) == 0)\n      {\n        return 0;\n      }\n      probe_id_or_result = is_planeswalker(player, to_examine);\n      if (probe_id_or_result != 0)\n      {\n        return 0;\n      }\n      type_mode_after_nonplaneswalker = this_test->type_flag;\n      type_or_special_keyword_mode = type_mode_after_nonplaneswalker;\n    }\n    if (type_or_special_keyword_mode == 6)\n    {\n      if (is_what(player, to_examine, this_test->type) == 0)\n      {\n        return 0;\n      }\n      probe_id_or_result = is_token(player, to_examine);\n      if (probe_id_or_result == 0)\n      {\n        return 0;\n      }\n      type_mode_after_token = this_test->type_flag;\n      type_or_special_keyword_mode = type_mode_after_token;\n    }\n    if (type_or_special_keyword_mode == 9)\n    {\n      if (is_what(player, to_examine, 2) == 0)\n      {\n        return 0;\n      }\n      probe_id_or_result = is_what(player, to_examine, 0x40);\n      if (probe_id_or_result != 0)\n      {\n        return 0;\n      }\n      type_or_special_keyword_mode = this_test->type_flag;\n    }\n    if ((type_or_special_keyword_mode == 0xb) &&\n        (card_types = get_type(player, to_examine),\n         this_test->type != (card_types & this_test->type)))\n    {\n      return 0;\n    }\n  }\n  first_or_fifth_subtype = this_test->subtype;\n  if (first_or_fifth_subtype != SUBTYPE_INVALID)\n  {\n    subtype_id_keyword_or_toughness_mode = this_test->subtype_flag;\n    if (subtype_id_keyword_or_toughness_mode == 3)\n    {\n      fifth_or_third_subtype = this_test->sub5;\n      second_or_fourth_subtype = this_test->sub2;\n      fourth_or_second_subtype = this_test->sub4;\n      subtype = this_test->sub3;\n      if ((((((int)first_or_fifth_subtype < 1) ||\n             (probe_id_or_result = has_subtype(player, to_examine, first_or_fifth_subtype),\n              probe_id_or_result == 0)) &&\n            (((int)second_or_fourth_subtype < 1 ||\n              (probe_id_or_result = has_subtype(player, to_examine, second_or_fourth_subtype),\n               probe_id_or_result == 0)))) &&\n           (((int)subtype < 1 || (probe_id_or_result = has_subtype(player, to_examine, subtype),\n                                  probe_id_or_result == 0)))) &&\n          (((int)fourth_or_second_subtype < 1 ||\n            (probe_id_or_result = has_subtype(player, to_examine, fourth_or_second_subtype),\n             probe_id_or_result == 0))))\n      {\n        if ((int)fifth_or_third_subtype < 1)\n        {\n          return 0;\n        }\n        probe_id_or_result = has_subtype(player, to_examine, fifth_or_third_subtype);\n        if (probe_id_or_result == 0)\n        {\n          return 0;\n        }\n      }\n      subtype_id_keyword_or_toughness_mode = this_test->subtype_flag;\n    }\n    if (subtype_id_keyword_or_toughness_mode == 4)\n    {\n      first_or_fifth_subtype = this_test->sub5;\n      fifth_or_third_subtype = this_test->sub3;\n      second_or_fourth_subtype = this_test->sub4;\n      fourth_or_second_subtype = this_test->sub2;\n      if ((0 < (int)this_test->subtype) &&\n          (probe_id_or_result = has_subtype(player, to_examine, this_test->subtype),\n           probe_id_or_result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)fourth_or_second_subtype) &&\n          (probe_id_or_result = has_subtype(player, to_examine, fourth_or_second_subtype),\n           probe_id_or_result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)fifth_or_third_subtype) &&\n          (probe_id_or_result = has_subtype(player, to_examine, fifth_or_third_subtype),\n           probe_id_or_result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)second_or_fourth_subtype) &&\n          (probe_id_or_result = has_subtype(player, to_examine, second_or_fourth_subtype),\n           probe_id_or_result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)first_or_fifth_subtype) &&\n          (probe_id_or_result = has_subtype(player, to_examine, first_or_fifth_subtype),\n           probe_id_or_result == 0))\n      {\n        return 0;\n      }\n      subtype_id_keyword_or_toughness_mode = this_test->subtype_flag;\n    }\n    if (subtype_id_keyword_or_toughness_mode == 0)\n    {\n      probe_id_or_result = has_subtype(player, to_examine, this_test->subtype);\n      if (probe_id_or_result == 0)\n      {\n        return 0;\n      }\n      subtype_id_keyword_or_toughness_mode = this_test->subtype_flag;\n    }\n    if ((subtype_id_keyword_or_toughness_mode == 1) &&\n        (probe_id_or_result = has_subtype(player, to_examine, this_test->subtype),\n         probe_id_or_result != 0))\n    {\n      return 0;\n    }\n  }\n  if (this_test->color == 0)\n  {\n    initial_color_mode = this_test->color_flag;\n    color_match_mode = initial_color_mode;\n  LAB_026beca5:\n    if (color_match_mode == 2)\n    {\n      probe_id_or_result = count_colors(player, to_examine);\n      if (probe_id_or_result < 2)\n      {\n        return 0;\n      }\n      color_match_mode = this_test->color_flag;\n    }\n    if ((color_match_mode == 3) &&\n        (probe_id_or_result = count_colors(player, to_examine), probe_id_or_result != 1))\n    {\n      return 0;\n    }\n  }\n  else\n  {\n    card_colors = get_color(player, to_examine);\n    requested_colors_or_owner = this_test->color;\n    color_mode_after_query = this_test->color_flag;\n    if (requested_colors_or_owner == 1)\n    {\n      if (color_mode_after_query == 0)\n      {\n        if (card_colors != 0)\n        {\n          return 0;\n        }\n      }\n      else if (card_colors != 0)\n        goto LAB_026becb9;\n      if (color_mode_after_query == 1)\n      {\n        return 0;\n      }\n    }\n    else if (color_mode_after_query == 0)\n    {\n      if ((card_colors & requested_colors_or_owner) == 0)\n      {\n        return 0;\n      }\n    }\n    else if (color_mode_after_query == 1)\n    {\n      if ((card_colors & requested_colors_or_owner) != 0)\n      {\n        return 0;\n      }\n    }\n    else\n    {\n      color_match_mode = color_mode_after_query;\n      if (requested_colors_or_owner == 0)\n        goto LAB_026beca5;\n    }\n  }\nLAB_026becb9:\n  if (this_test->id == -1)\n  {\n    return 0;\n  }\n  if (this_test->id != 0)\n  {\n    subtype_id_keyword_or_toughness_mode = this_test->id_flag;\n    if (subtype_id_keyword_or_toughness_mode == 3)\n    {\n      if (is_token(player, to_examine) == 0)\n      {\n        return 0;\n      }\n      probe_id_or_result = get_special_infos(player, to_examine);\n      if (probe_id_or_result != this_test->id)\n      {\n        return 0;\n      }\n      subtype_id_keyword_or_toughness_mode = this_test->id_flag;\n    }\n    if (subtype_id_keyword_or_toughness_mode == 4)\n    {\n      if (this_test->id != id_stat_or_predicate_result)\n      {\n        probe_id_or_result = this_test->id2;\n      joined_r0x026bece8:\n        if (probe_id_or_result != id_stat_or_predicate_result)\n        {\n          return 0;\n        }\n      }\n    }\n    else\n    {\n      if (subtype_id_keyword_or_toughness_mode == 0)\n      {\n        probe_id_or_result = this_test->id;\n        goto joined_r0x026bece8;\n      }\n      if ((subtype_id_keyword_or_toughness_mode == 1) &&\n          (this_test->id == id_stat_or_predicate_result))\n      {\n        return 0;\n      }\n    }\n  }\n  if (-1 < this_test->cmc)\n  {\n    id_stat_or_predicate_result = get_cmc(player, to_examine);\n    cmc_match_mode = this_test->cmc_flag;\n    if (cmc_match_mode == 0)\n    {\n      if (this_test->cmc != id_stat_or_predicate_result)\n      {\n        return 0;\n      }\n    }\n    else if (cmc_match_mode == 1)\n    {\n      if (this_test->cmc == id_stat_or_predicate_result)\n      {\n        return 0;\n      }\n    }\n    else if (cmc_match_mode == 2)\n    {\n      if (id_stat_or_predicate_result <= this_test->cmc)\n      {\n        return 0;\n      }\n    }\n    else if ((cmc_match_mode == 3) && (this_test->cmc <= id_stat_or_predicate_result))\n    {\n      return 0;\n    }\n  }\n  if (this_test->keyword != 0)\n  {\n    subtype_id_keyword_or_toughness_mode = this_test->keyword_flag;\n    if (subtype_id_keyword_or_toughness_mode == 0)\n    {\n      id_stat_or_predicate_result = check_for_ability(player, to_examine, this_test->keyword);\n      if (id_stat_or_predicate_result == 0)\n      {\n        return 0;\n      }\n      subtype_id_keyword_or_toughness_mode = this_test->keyword_flag;\n    }\n    if (subtype_id_keyword_or_toughness_mode == 1)\n    {\n      id_stat_or_predicate_result = check_for_ability(player, to_examine, this_test->keyword);\n      if (id_stat_or_predicate_result != 0)\n      {\n        return 0;\n      }\n      subtype_id_keyword_or_toughness_mode = this_test->keyword_flag;\n    }\n    if (subtype_id_keyword_or_toughness_mode == 2)\n    {\n      id_stat_or_predicate_result =\n          check_for_special_ability(player, to_examine, this_test->keyword);\n      if (id_stat_or_predicate_result == 0)\n      {\n        return 0;\n      }\n      subtype_id_keyword_or_toughness_mode = this_test->keyword_flag;\n    }\n    if ((subtype_id_keyword_or_toughness_mode == 3) &&\n        (id_stat_or_predicate_result =\n             check_for_special_ability(player, to_examine, this_test->keyword),\n         id_stat_or_predicate_result != 0))\n    {\n      return 0;\n    }\n  }\n  if (this_test->sp_keyword != 0)\n  {\n    type_or_special_keyword_mode = (int16_t)this_test->sp_keyword_flag;\n    if (type_or_special_keyword_mode == 0)\n    {\n      id_stat_or_predicate_result =\n          check_for_special_ability(player, to_examine, this_test->sp_keyword);\n      if (id_stat_or_predicate_result == 0)\n      {\n        return 0;\n      }\n      type_or_special_keyword_mode = (int16_t)this_test->sp_keyword_flag;\n    }\n    if ((type_or_special_keyword_mode == 1) &&\n        (id_stat_or_predicate_result =\n             check_for_special_ability(player, to_examine, this_test->sp_keyword),\n         id_stat_or_predicate_result != 0))\n    {\n      return 0;\n    }\n  }\n  if (-1 < this_test->power)\n  {\n    id_stat_or_predicate_result = get_power(player, to_examine);\n    power_match_mode = this_test->power_flag;\n    if (power_match_mode == 0)\n    {\n      if (this_test->power != id_stat_or_predicate_result)\n      {\n        return 0;\n      }\n    }\n    else if (power_match_mode == 1)\n    {\n      if (this_test->power == id_stat_or_predicate_result)\n      {\n        return 0;\n      }\n    }\n    else\n    {\n      if (power_match_mode != 2)\n      {\n        if (power_match_mode == 3)\n        {\n          if (this_test->power <= id_stat_or_predicate_result)\n          {\n            return 0;\n          }\n          goto LAB_026bed5b;\n        }\n        if (power_match_mode != 4)\n          goto LAB_026bed5b;\n        id_stat_or_predicate_result = count_counters(player, to_examine, COUNTER_P1_P1);\n      }\n      if (id_stat_or_predicate_result <= this_test->power)\n      {\n        return 0;\n      }\n    }\n  }\nLAB_026bed5b:\n  if (-1 < this_test->toughness)\n  {\n    id_stat_or_predicate_result = get_toughness(player, to_examine);\n    subtype_id_keyword_or_toughness_mode = this_test->toughness_flag;\n    if (subtype_id_keyword_or_toughness_mode == 0)\n    {\n      if (this_test->toughness != id_stat_or_predicate_result)\n      {\n        return 0;\n      }\n    }\n    else if (subtype_id_keyword_or_toughness_mode == 1)\n    {\n      if (this_test->toughness == id_stat_or_predicate_result)\n      {\n        return 0;\n      }\n    }\n    else if (subtype_id_keyword_or_toughness_mode == 2)\n    {\n      if (id_stat_or_predicate_result <= this_test->toughness)\n      {\n        return 0;\n      }\n    }\n    else if ((subtype_id_keyword_or_toughness_mode == 3) &&\n             (this_test->toughness <= id_stat_or_predicate_result))\n    {\n      return 0;\n    }\n  }\n  if (this_test->state != 0)\n  {\n    state_match_mode = this_test->state_flag;\n    if (state_match_mode == 0)\n    {\n      id_stat_or_predicate_result = check_state(player, to_examine, this_test->state);\n      if (id_stat_or_predicate_result == 0)\n      {\n        return 0;\n      }\n      state_mode_after_query = this_test->state_flag;\n      state_match_mode = state_mode_after_query;\n    }\n    if ((state_match_mode == 1) &&\n        (id_stat_or_predicate_result = check_state(player, to_examine, this_test->state),\n         id_stat_or_predicate_result != 0))\n    {\n      return 0;\n    }\n  }\n  special_selection = this_test->special_selection_function;\n  if (special_selection != (test_selection_predicate_t)0x0)\n  {\n    id_stat_or_predicate_result = this_test->value_for_special_selection_function;\n    instance = get_card_instance(player, to_examine);\n    id_stat_or_predicate_result = (*special_selection)(\n        instance->internal_card_id, id_stat_or_predicate_result, player, to_examine);\n    if (id_stat_or_predicate_result == 0)\n    {\n      return 0;\n    }\n  }\n  if (this_test->has_mana_to_pay_cmc == '\\x01')\n  {\n    cmc = get_cmc(player, to_examine);\n    if (has_mana(player, 0, cmc) == 0)\n    {\n      return 0;\n    }\n  }\n  if (this_test->owner == '\\x02')\n  {\n    return 1;\n  }\n  requested_colors_or_owner = get_owner(player, to_examine);\n  return (unsigned int)(this_test->owner == requested_colors_or_owner);\n}",
+      "before_sha256": "638420b1d0b37f76b4ce7be9ba8102801f08a331ec8b1055bdc25a307e857a09",
+      "after_sha256": "443cd6d904fd55529afd656c060306f7bee96eb42d201477dfdc86367e6930c3",
+      "alpha_only": true,
+      "renames": {
+        "uVar1": "initial_type_mode",
+        "uVar2": "initial_color_mode",
+        "sVar3": "state_match_mode",
+        "uVar4": "color_mode_after_query",
+        "uVar5": "cmc_match_mode",
+        "uVar6": "type_mode_after_match",
+        "uVar7": "type_mode_after_exclusion",
+        "uVar8": "type_mode_after_noncreature",
+        "uVar9": "power_match_mode",
+        "uVar10": "type_mode_after_nontoken",
+        "uVar11": "type_mode_after_nonplaneswalker",
+        "uVar12": "type_mode_after_token",
+        "sVar13": "type_or_special_keyword_mode",
+        "uVar14": "state_mode_after_query",
+        "sVar15": "color_match_mode",
+        "sVar16": "first_or_fifth_subtype",
+        "p_Var17": "special_selection",
+        "sVar18": "fifth_or_third_subtype",
+        "sVar19": "second_or_fourth_subtype",
+        "sVar20": "fourth_or_second_subtype",
+        "iVar21": "id_stat_or_predicate_result",
+        "uVar23": "requested_colors_or_owner",
+        "uVar24": "card_colors",
+        "tVar25": "card_types",
+        "iVar26": "probe_id_or_result",
+        "uVar27": "subtype_id_keyword_or_toughness_mode"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": -24,
+        "removed_placeholder_occurrences": 248
+      },
+      "retained_control_flow": true,
+      "native_local_vocabulary": {
+        "debug_path": "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg",
+        "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "owner_die": "0x67fce37",
+        "low_pc": "0x26bebe0",
+        "locals": [
+          {
+            "die": "0x67fce64",
+            "name": "player",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fce74",
+            "name": "to_examine",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fce84",
+            "name": "test_type",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fce94",
+            "name": "this_test",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fcea4",
+            "name": "id",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fcec1",
+            "name": "clr",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fcef8",
+            "name": "cmc",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fcf2f",
+            "name": "pow",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fcfba",
+            "name": "tou",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fcfff",
+            "name": "sub5",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd00c",
+            "name": "sub4",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd019",
+            "name": "sub3",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd026",
+            "name": "sub2",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd033",
+            "name": "sub1",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd040",
+            "name": "card",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd04d",
+            "name": "player",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd10a",
+            "name": "sub5",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd117",
+            "name": "sub4",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd124",
+            "name": "sub3",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd131",
+            "name": "sub2",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd13e",
+            "name": "sub1",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd14b",
+            "name": "card",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fd158",
+            "name": "player",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fcf5f",
+            "name": "card",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fcf6c",
+            "name": "player",
+            "location_form": "DW_FORM_sec_offset"
+          }
+        ],
+        "scope": "Native local vocabulary, including optimized or overlapping locations. This does not prove a location-based correspondence for every decompiler temporary."
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/global_checking.c",
+      "name": "new_make_test",
+      "card_control_cleanup": true,
+      "before_definition": "int new_make_test(int player, int to_examine, int test_type, test_definition_t *this_test)\n{\n  uint16_t uVar1;\n  uint16_t uVar2;\n  uint16_t uVar3;\n  uint16_t uVar4;\n  uint16_t uVar5;\n  uint16_t uVar6;\n  uint16_t uVar7;\n  uint16_t uVar8;\n  uint16_t uVar9;\n  uint16_t uVar10;\n  short sVar11;\n  short sVar12;\n  subtype_t sVar13;\n  unsigned int uVar14;\n  subtype_t subtype;\n  subtype_t sVar15;\n  subtype_t sVar16;\n  subtype_t sVar17;\n  unsigned int uVar18;\n  unsigned int clr;\n  int result;\n  type_t tVar20;\n  unsigned short uVar21;\n\n  uVar18 = (uint32_t)cards_data[to_examine].id | ((uint32_t)cards_data[to_examine].reserved2 << 16);\n  if ((this_test->can_legally_play != '\\0') &&\n      (result = can_legally_play_iid(player, to_examine), result == 0))\n  {\n    return 0;\n  }\n  if (this_test->type != 0)\n  {\n    uVar1 = this_test->type_flag;\n    sVar11 = uVar1;\n    if (uVar1 == 0)\n    {\n      result = is_what(-1, to_examine, this_test->type);\n      if (result == 0)\n      {\n        return 0;\n      }\n      uVar6 = this_test->type_flag;\n      sVar11 = uVar6;\n    }\n    if (sVar11 == 1)\n    {\n      result = is_what(-1, to_examine, this_test->type);\n      if (result != 0)\n      {\n        return 0;\n      }\n      uVar7 = this_test->type_flag;\n      sVar11 = uVar7;\n    }\n    if (sVar11 == 2)\n    {\n      result = is_what(-1, to_examine, this_test->type);\n      if (result == 0)\n      {\n        return 0;\n      }\n      result = is_what(-1, to_examine, 2);\n      if (result != 0)\n      {\n        return 0;\n      }\n      uVar8 = this_test->type_flag;\n      sVar11 = uVar8;\n    }\n    if (sVar11 == 4)\n    {\n      result = is_what(-1, to_examine, this_test->type);\n      if (result == 0)\n      {\n        return 0;\n      }\n      result = is_planeswalker(-1, to_examine);\n      if (result != 0)\n      {\n        return 0;\n      }\n      uVar10 = this_test->type_flag;\n      sVar11 = uVar10;\n    }\n    if (sVar11 == 9)\n    {\n      result = is_what(-1, to_examine, 2);\n      if (result == 0)\n      {\n        return 0;\n      }\n      result = is_what(-1, to_examine, 0x40);\n      if (result != 0)\n      {\n        return 0;\n      }\n      sVar11 = this_test->type_flag;\n    }\n    if ((sVar11 == 0xb) &&\n        (tVar20 = get_type(-1, to_examine), this_test->type != (tVar20 & this_test->type)))\n    {\n      return 0;\n    }\n  }\n  uVar18 = uVar18 & 0xffff;\n  sVar13 = this_test->subtype;\n  if (sVar13 != SUBTYPE_INVALID)\n  {\n    uVar21 = this_test->subtype_flag;\n    if (uVar21 == 3)\n    {\n      sVar15 = this_test->sub5;\n      sVar16 = this_test->sub3;\n      sVar17 = this_test->sub4;\n      subtype = this_test->sub2;\n      if ((((((int)sVar13 < 1) ||\n             (result = has_subtype_by_id(-1, uVar18, sVar13), result == 0)) &&\n            (((int)subtype < 1 ||\n              (result = has_subtype_by_id(-1, uVar18, subtype), result == 0)))) &&\n           (((int)sVar16 < 1 ||\n             (result = has_subtype_by_id(-1, uVar18, sVar16), result == 0)))) &&\n          (((int)sVar17 < 1 || (result = has_subtype_by_id(-1, uVar18, sVar17), result == 0))))\n      {\n        if ((int)sVar15 < 1)\n        {\n          return 0;\n        }\n        result = has_subtype_by_id(-1, uVar18, sVar15);\n        if (result == 0)\n        {\n          return 0;\n        }\n      }\n      uVar21 = this_test->subtype_flag;\n    }\n    if (uVar21 == 4)\n    {\n      sVar13 = this_test->sub5;\n      sVar15 = this_test->sub3;\n      sVar16 = this_test->sub4;\n      sVar17 = this_test->sub2;\n      if ((0 < (int)this_test->subtype) &&\n          (result = has_subtype_by_id(-1, uVar18, this_test->subtype), result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)sVar17) && (result = has_subtype_by_id(-1, uVar18, sVar17), result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)sVar15) && (result = has_subtype_by_id(-1, uVar18, sVar15), result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)sVar16) && (result = has_subtype_by_id(-1, uVar18, sVar16), result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)sVar13) && (result = has_subtype_by_id(-1, uVar18, sVar13), result == 0))\n      {\n        return 0;\n      }\n      uVar21 = this_test->subtype_flag;\n    }\n    if (uVar21 == 0)\n    {\n      result = has_subtype_by_id(player, uVar18, this_test->subtype);\n      if (result == 0)\n      {\n        return 0;\n      }\n      uVar21 = this_test->subtype_flag;\n    }\n    if ((uVar21 == 1) &&\n        (result = has_subtype_by_id(player, uVar18, this_test->subtype), result != 0))\n    {\n      return 0;\n    }\n  }\n  if ((this_test->color == 0) && (uVar3 = this_test->color_flag, 1 < (unsigned short)(uVar3 - 2)))\n  {\n    clr = 0;\n    sVar12 = uVar3;\n  LAB_026bf834:\n    if (sVar12 == 2)\n    {\n      result = real_count_colors(clr);\n      if (result < 2)\n      {\n        return 0;\n      }\n      sVar12 = this_test->color_flag;\n    }\n    if ((sVar12 == 3) && (result = real_count_colors(clr), result != 1))\n    {\n      return 0;\n    }\n  }\n  else\n  {\n    if (this_test->painters_servant_hack[player] == -1)\n    {\n      result = get_global_color_hack(player);\n      this_test->painters_servant_hack[player] = (int16_t)result;\n    }\n    clr = get_color_by_internal_id(player, to_examine);\n    uVar14 = this_test->color;\n    if (uVar14 == 0)\n    {\n      uVar2 = this_test->color_flag;\n      sVar12 = uVar2;\n      goto LAB_026bf834;\n    }\n    uVar4 = this_test->color_flag;\n    if (uVar4 == 0)\n    {\n      if ((clr & uVar14) == 0)\n      {\n        return 0;\n      }\n    }\n    else if ((uVar4 == 1) && ((clr & uVar14) != 0))\n    {\n      return 0;\n    }\n  }\n  uVar14 = this_test->id;\n  if (uVar14 == 0xffffffff)\n  {\n    return 0;\n  }\n  if (uVar14 != 0)\n  {\n    uVar21 = this_test->id_flag;\n    if ((uVar21 != 4) || (uVar14 == uVar18))\n    {\n      if ((uVar21 == 0) && (uVar14 != uVar18))\n      {\n        return 0;\n      }\n      if ((uVar14 == uVar18) && (uVar21 == 1))\n      {\n        return 0;\n      }\n    }\n    else if (this_test->id2 != uVar18)\n    {\n      return 0;\n    }\n  }\n  if (-1 < this_test->cmc)\n  {\n    result = get_cmc_by_id((unsigned int)cards_data[to_examine].id);\n    uVar5 = this_test->cmc_flag;\n    if (uVar5 == 0)\n    {\n      if (this_test->cmc != result)\n      {\n        return 0;\n      }\n    }\n    else if (uVar5 == 1)\n    {\n      if (this_test->cmc == result)\n      {\n        return 0;\n      }\n    }\n    else if (uVar5 == 2)\n    {\n      if (result <= this_test->cmc)\n      {\n        return 0;\n      }\n    }\n    else if ((uVar5 == 3) && (this_test->cmc <= result))\n    {\n      return 0;\n    }\n  }\n  uVar18 = this_test->keyword;\n  if (uVar18 != 0)\n  {\n    uVar21 = this_test->keyword_flag;\n    if (uVar21 == 0)\n    {\n      if ((cards_data[to_examine].static_ability & uVar18) == 0)\n      {\n        return 0;\n      }\n    }\n    else\n    {\n      if (uVar21 == 1)\n      {\n        uVar18 = cards_data[to_examine].static_ability & uVar18;\n      }\n      else\n      {\n        if (uVar21 == 2)\n        {\n          result = check_for_special_ability(player, to_examine, uVar18);\n          if (result == 0)\n          {\n            return 0;\n          }\n          uVar21 = this_test->keyword_flag;\n        }\n        if (uVar21 != 3)\n          goto LAB_026bf8ac;\n        uVar18 = check_for_special_ability(player, to_examine, this_test->keyword);\n      }\n      if (uVar18 != 0)\n      {\n        return 0;\n      }\n    }\n  }\nLAB_026bf8ac:\n  if (this_test->sp_keyword != 0)\n  {\n    sVar11 = (int16_t)this_test->sp_keyword_flag;\n    if (sVar11 == 0)\n    {\n      result = check_for_special_ability(-1, to_examine, this_test->sp_keyword);\n      if (result == 0)\n      {\n        return 0;\n      }\n      sVar11 = (int16_t)this_test->sp_keyword_flag;\n    }\n    if ((sVar11 == 1) &&\n        (result = check_for_special_ability(-1, to_examine, this_test->sp_keyword),\n         result != 0))\n    {\n      return 0;\n    }\n  }\n  if (-1 < this_test->power)\n  {\n    result = get_base_power_iid(player, to_examine);\n    uVar9 = this_test->power_flag;\n    if (uVar9 == 0)\n    {\n      if (this_test->power != result)\n      {\n        return 0;\n      }\n    }\n    else if (uVar9 == 1)\n    {\n      if (this_test->power == result)\n      {\n        return 0;\n      }\n    }\n    else if (uVar9 == 2)\n    {\n      if (result <= this_test->power)\n      {\n        return 0;\n      }\n    }\n    else if (uVar9 == 3)\n    {\n      if (this_test->power <= result)\n      {\n        return 0;\n      }\n    }\n    else\n    {\n      if (uVar9 == 4)\n      {\n        return 0;\n      }\n    }\n  }\n  if (-1 < this_test->toughness)\n  {\n    result = get_base_toughness_iid(player, to_examine);\n    uVar21 = this_test->toughness_flag;\n    if (uVar21 == 0)\n    {\n      if (this_test->toughness != result)\n      {\n        return 0;\n      }\n    }\n    else if (uVar21 == 1)\n    {\n      if (this_test->toughness == result)\n      {\n        return 0;\n      }\n    }\n    else if (uVar21 == 2)\n    {\n      if (result <= this_test->toughness)\n      {\n        return 0;\n      }\n    }\n    else if ((uVar21 == 3) && (this_test->toughness <= result))\n    {\n      return 0;\n    }\n  }\n  if ((this_test->special_selection_function != (test_selection_predicate_t)0x0) &&\n      (result = (*this_test->special_selection_function)(\n           to_examine, this_test->value_for_special_selection_function, player, -1),\n       result == 0))\n  {\n    return 0;\n  }\n  if (this_test->has_mana_to_pay_cmc == '\\x01')\n  {\n    result = get_cmc_by_id((unsigned int)cards_data[to_examine].id);\n    result = has_mana(player, 0, result);\n    if (result == 0)\n    {\n      return 0;\n    }\n  }\n  if (this_test->owner == 2)\n  {\n    return 1;\n  }\n  return (unsigned int)((unsigned int)this_test->owner == player);\n}",
+      "after_definition": "int new_make_test(int player, int to_examine, int test_type, test_definition_t *this_test)\n{\n  uint16_t initial_type_mode;\n  uint16_t initial_color_mode;\n  uint16_t color_count_mode;\n  uint16_t color_mode_after_query;\n  uint16_t cmc_match_mode;\n  uint16_t type_mode_after_match;\n  uint16_t type_mode_after_exclusion;\n  uint16_t type_mode_after_noncreature;\n  uint16_t power_match_mode;\n  uint16_t type_mode_after_nonplaneswalker;\n  short type_or_special_keyword_mode;\n  short color_match_mode;\n  subtype_t first_or_fifth_subtype;\n  unsigned int requested_colors_or_id;\n  subtype_t subtype;\n  subtype_t fifth_or_third_subtype;\n  subtype_t third_or_fourth_subtype;\n  subtype_t fourth_or_second_subtype;\n  unsigned int csvid_or_keyword_result;\n  unsigned int clr;\n  int result;\n  type_t card_types;\n  unsigned short subtype_id_keyword_or_toughness_mode;\n\n  csvid_or_keyword_result =\n      (uint32_t)cards_data[to_examine].id | ((uint32_t)cards_data[to_examine].reserved2 << 16);\n  if ((this_test->can_legally_play != '\\0') &&\n      (result = can_legally_play_iid(player, to_examine), result == 0))\n  {\n    return 0;\n  }\n  if (this_test->type != 0)\n  {\n    initial_type_mode = this_test->type_flag;\n    type_or_special_keyword_mode = initial_type_mode;\n    if (initial_type_mode == 0)\n    {\n      result = is_what(-1, to_examine, this_test->type);\n      if (result == 0)\n      {\n        return 0;\n      }\n      type_mode_after_match = this_test->type_flag;\n      type_or_special_keyword_mode = type_mode_after_match;\n    }\n    if (type_or_special_keyword_mode == 1)\n    {\n      result = is_what(-1, to_examine, this_test->type);\n      if (result != 0)\n      {\n        return 0;\n      }\n      type_mode_after_exclusion = this_test->type_flag;\n      type_or_special_keyword_mode = type_mode_after_exclusion;\n    }\n    if (type_or_special_keyword_mode == 2)\n    {\n      result = is_what(-1, to_examine, this_test->type);\n      if (result == 0)\n      {\n        return 0;\n      }\n      result = is_what(-1, to_examine, 2);\n      if (result != 0)\n      {\n        return 0;\n      }\n      type_mode_after_noncreature = this_test->type_flag;\n      type_or_special_keyword_mode = type_mode_after_noncreature;\n    }\n    if (type_or_special_keyword_mode == 4)\n    {\n      result = is_what(-1, to_examine, this_test->type);\n      if (result == 0)\n      {\n        return 0;\n      }\n      result = is_planeswalker(-1, to_examine);\n      if (result != 0)\n      {\n        return 0;\n      }\n      type_mode_after_nonplaneswalker = this_test->type_flag;\n      type_or_special_keyword_mode = type_mode_after_nonplaneswalker;\n    }\n    if (type_or_special_keyword_mode == 9)\n    {\n      result = is_what(-1, to_examine, 2);\n      if (result == 0)\n      {\n        return 0;\n      }\n      result = is_what(-1, to_examine, 0x40);\n      if (result != 0)\n      {\n        return 0;\n      }\n      type_or_special_keyword_mode = this_test->type_flag;\n    }\n    if ((type_or_special_keyword_mode == 0xb) &&\n        (card_types = get_type(-1, to_examine), this_test->type != (card_types & this_test->type)))\n    {\n      return 0;\n    }\n  }\n  csvid_or_keyword_result = csvid_or_keyword_result & 0xffff;\n  first_or_fifth_subtype = this_test->subtype;\n  if (first_or_fifth_subtype != SUBTYPE_INVALID)\n  {\n    subtype_id_keyword_or_toughness_mode = this_test->subtype_flag;\n    if (subtype_id_keyword_or_toughness_mode == 3)\n    {\n      fifth_or_third_subtype = this_test->sub5;\n      third_or_fourth_subtype = this_test->sub3;\n      fourth_or_second_subtype = this_test->sub4;\n      subtype = this_test->sub2;\n      if ((((((int)first_or_fifth_subtype < 1) ||\n             (result = has_subtype_by_id(-1, csvid_or_keyword_result, first_or_fifth_subtype),\n              result == 0)) &&\n            (((int)subtype < 1 ||\n              (result = has_subtype_by_id(-1, csvid_or_keyword_result, subtype), result == 0)))) &&\n           (((int)third_or_fourth_subtype < 1 ||\n             (result = has_subtype_by_id(-1, csvid_or_keyword_result, third_or_fourth_subtype),\n              result == 0)))) &&\n          (((int)fourth_or_second_subtype < 1 ||\n            (result = has_subtype_by_id(-1, csvid_or_keyword_result, fourth_or_second_subtype),\n             result == 0))))\n      {\n        if ((int)fifth_or_third_subtype < 1)\n        {\n          return 0;\n        }\n        result = has_subtype_by_id(-1, csvid_or_keyword_result, fifth_or_third_subtype);\n        if (result == 0)\n        {\n          return 0;\n        }\n      }\n      subtype_id_keyword_or_toughness_mode = this_test->subtype_flag;\n    }\n    if (subtype_id_keyword_or_toughness_mode == 4)\n    {\n      first_or_fifth_subtype = this_test->sub5;\n      fifth_or_third_subtype = this_test->sub3;\n      third_or_fourth_subtype = this_test->sub4;\n      fourth_or_second_subtype = this_test->sub2;\n      if ((0 < (int)this_test->subtype) &&\n          (result = has_subtype_by_id(-1, csvid_or_keyword_result, this_test->subtype),\n           result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)fourth_or_second_subtype) &&\n          (result = has_subtype_by_id(-1, csvid_or_keyword_result, fourth_or_second_subtype),\n           result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)fifth_or_third_subtype) &&\n          (result = has_subtype_by_id(-1, csvid_or_keyword_result, fifth_or_third_subtype),\n           result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)third_or_fourth_subtype) &&\n          (result = has_subtype_by_id(-1, csvid_or_keyword_result, third_or_fourth_subtype),\n           result == 0))\n      {\n        return 0;\n      }\n      if ((0 < (int)first_or_fifth_subtype) &&\n          (result = has_subtype_by_id(-1, csvid_or_keyword_result, first_or_fifth_subtype),\n           result == 0))\n      {\n        return 0;\n      }\n      subtype_id_keyword_or_toughness_mode = this_test->subtype_flag;\n    }\n    if (subtype_id_keyword_or_toughness_mode == 0)\n    {\n      result = has_subtype_by_id(player, csvid_or_keyword_result, this_test->subtype);\n      if (result == 0)\n      {\n        return 0;\n      }\n      subtype_id_keyword_or_toughness_mode = this_test->subtype_flag;\n    }\n    if ((subtype_id_keyword_or_toughness_mode == 1) &&\n        (result = has_subtype_by_id(player, csvid_or_keyword_result, this_test->subtype),\n         result != 0))\n    {\n      return 0;\n    }\n  }\n  if ((this_test->color == 0) &&\n      (color_count_mode = this_test->color_flag, 1 < (unsigned short)(color_count_mode - 2)))\n  {\n    clr = 0;\n    color_match_mode = color_count_mode;\n  LAB_026bf834:\n    if (color_match_mode == 2)\n    {\n      result = real_count_colors(clr);\n      if (result < 2)\n      {\n        return 0;\n      }\n      color_match_mode = this_test->color_flag;\n    }\n    if ((color_match_mode == 3) && (result = real_count_colors(clr), result != 1))\n    {\n      return 0;\n    }\n  }\n  else\n  {\n    if (this_test->painters_servant_hack[player] == -1)\n    {\n      result = get_global_color_hack(player);\n      this_test->painters_servant_hack[player] = (int16_t)result;\n    }\n    clr = get_color_by_internal_id(player, to_examine);\n    requested_colors_or_id = this_test->color;\n    if (requested_colors_or_id == 0)\n    {\n      initial_color_mode = this_test->color_flag;\n      color_match_mode = initial_color_mode;\n      goto LAB_026bf834;\n    }\n    color_mode_after_query = this_test->color_flag;\n    if (color_mode_after_query == 0)\n    {\n      if ((clr & requested_colors_or_id) == 0)\n      {\n        return 0;\n      }\n    }\n    else if ((color_mode_after_query == 1) && ((clr & requested_colors_or_id) != 0))\n    {\n      return 0;\n    }\n  }\n  requested_colors_or_id = this_test->id;\n  if (requested_colors_or_id == 0xffffffff)\n  {\n    return 0;\n  }\n  if (requested_colors_or_id != 0)\n  {\n    subtype_id_keyword_or_toughness_mode = this_test->id_flag;\n    if ((subtype_id_keyword_or_toughness_mode != 4) ||\n        (requested_colors_or_id == csvid_or_keyword_result))\n    {\n      if ((subtype_id_keyword_or_toughness_mode == 0) &&\n          (requested_colors_or_id != csvid_or_keyword_result))\n      {\n        return 0;\n      }\n      if ((requested_colors_or_id == csvid_or_keyword_result) &&\n          (subtype_id_keyword_or_toughness_mode == 1))\n      {\n        return 0;\n      }\n    }\n    else if (this_test->id2 != csvid_or_keyword_result)\n    {\n      return 0;\n    }\n  }\n  if (-1 < this_test->cmc)\n  {\n    result = get_cmc_by_id((unsigned int)cards_data[to_examine].id);\n    cmc_match_mode = this_test->cmc_flag;\n    if (cmc_match_mode == 0)\n    {\n      if (this_test->cmc != result)\n      {\n        return 0;\n      }\n    }\n    else if (cmc_match_mode == 1)\n    {\n      if (this_test->cmc == result)\n      {\n        return 0;\n      }\n    }\n    else if (cmc_match_mode == 2)\n    {\n      if (result <= this_test->cmc)\n      {\n        return 0;\n      }\n    }\n    else if ((cmc_match_mode == 3) && (this_test->cmc <= result))\n    {\n      return 0;\n    }\n  }\n  csvid_or_keyword_result = this_test->keyword;\n  if (csvid_or_keyword_result != 0)\n  {\n    subtype_id_keyword_or_toughness_mode = this_test->keyword_flag;\n    if (subtype_id_keyword_or_toughness_mode == 0)\n    {\n      if ((cards_data[to_examine].static_ability & csvid_or_keyword_result) == 0)\n      {\n        return 0;\n      }\n    }\n    else\n    {\n      if (subtype_id_keyword_or_toughness_mode == 1)\n      {\n        csvid_or_keyword_result = cards_data[to_examine].static_ability & csvid_or_keyword_result;\n      }\n      else\n      {\n        if (subtype_id_keyword_or_toughness_mode == 2)\n        {\n          result = check_for_special_ability(player, to_examine, csvid_or_keyword_result);\n          if (result == 0)\n          {\n            return 0;\n          }\n          subtype_id_keyword_or_toughness_mode = this_test->keyword_flag;\n        }\n        if (subtype_id_keyword_or_toughness_mode != 3)\n          goto LAB_026bf8ac;\n        csvid_or_keyword_result = check_for_special_ability(player, to_examine, this_test->keyword);\n      }\n      if (csvid_or_keyword_result != 0)\n      {\n        return 0;\n      }\n    }\n  }\nLAB_026bf8ac:\n  if (this_test->sp_keyword != 0)\n  {\n    type_or_special_keyword_mode = (int16_t)this_test->sp_keyword_flag;\n    if (type_or_special_keyword_mode == 0)\n    {\n      result = check_for_special_ability(-1, to_examine, this_test->sp_keyword);\n      if (result == 0)\n      {\n        return 0;\n      }\n      type_or_special_keyword_mode = (int16_t)this_test->sp_keyword_flag;\n    }\n    if ((type_or_special_keyword_mode == 1) &&\n        (result = check_for_special_ability(-1, to_examine, this_test->sp_keyword), result != 0))\n    {\n      return 0;\n    }\n  }\n  if (-1 < this_test->power)\n  {\n    result = get_base_power_iid(player, to_examine);\n    power_match_mode = this_test->power_flag;\n    if (power_match_mode == 0)\n    {\n      if (this_test->power != result)\n      {\n        return 0;\n      }\n    }\n    else if (power_match_mode == 1)\n    {\n      if (this_test->power == result)\n      {\n        return 0;\n      }\n    }\n    else if (power_match_mode == 2)\n    {\n      if (result <= this_test->power)\n      {\n        return 0;\n      }\n    }\n    else if (power_match_mode == 3)\n    {\n      if (this_test->power <= result)\n      {\n        return 0;\n      }\n    }\n    else\n    {\n      if (power_match_mode == 4)\n      {\n        return 0;\n      }\n    }\n  }\n  if (-1 < this_test->toughness)\n  {\n    result = get_base_toughness_iid(player, to_examine);\n    subtype_id_keyword_or_toughness_mode = this_test->toughness_flag;\n    if (subtype_id_keyword_or_toughness_mode == 0)\n    {\n      if (this_test->toughness != result)\n      {\n        return 0;\n      }\n    }\n    else if (subtype_id_keyword_or_toughness_mode == 1)\n    {\n      if (this_test->toughness == result)\n      {\n        return 0;\n      }\n    }\n    else if (subtype_id_keyword_or_toughness_mode == 2)\n    {\n      if (result <= this_test->toughness)\n      {\n        return 0;\n      }\n    }\n    else if ((subtype_id_keyword_or_toughness_mode == 3) && (this_test->toughness <= result))\n    {\n      return 0;\n    }\n  }\n  if ((this_test->special_selection_function != (test_selection_predicate_t)0x0) &&\n      (result = (*this_test->special_selection_function)(\n           to_examine, this_test->value_for_special_selection_function, player, -1),\n       result == 0))\n  {\n    return 0;\n  }\n  if (this_test->has_mana_to_pay_cmc == '\\x01')\n  {\n    result = get_cmc_by_id((unsigned int)cards_data[to_examine].id);\n    result = has_mana(player, 0, result);\n    if (result == 0)\n    {\n      return 0;\n    }\n  }\n  if (this_test->owner == 2)\n  {\n    return 1;\n  }\n  return (unsigned int)((unsigned int)this_test->owner == player);\n}",
+      "before_sha256": "cdacd51030ba69c976a481f703f138e077ce8610c36a3060953e27803cbb04c6",
+      "after_sha256": "86df26e5c5119431a8179d48b4752d8570ae98b8cb4f5f1b4a5de7e7c8a4326c",
+      "alpha_only": true,
+      "renames": {
+        "uVar1": "initial_type_mode",
+        "uVar2": "initial_color_mode",
+        "uVar3": "color_count_mode",
+        "uVar4": "color_mode_after_query",
+        "uVar5": "cmc_match_mode",
+        "uVar6": "type_mode_after_match",
+        "uVar7": "type_mode_after_exclusion",
+        "uVar8": "type_mode_after_noncreature",
+        "uVar9": "power_match_mode",
+        "uVar10": "type_mode_after_nonplaneswalker",
+        "sVar11": "type_or_special_keyword_mode",
+        "sVar12": "color_match_mode",
+        "sVar13": "first_or_fifth_subtype",
+        "uVar14": "requested_colors_or_id",
+        "sVar15": "fifth_or_third_subtype",
+        "sVar16": "third_or_fourth_subtype",
+        "sVar17": "fourth_or_second_subtype",
+        "uVar18": "csvid_or_keyword_result",
+        "tVar20": "card_types",
+        "uVar21": "subtype_id_keyword_or_toughness_mode"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": -18,
+        "removed_placeholder_occurrences": 157
+      },
+      "retained_control_flow": true,
+      "native_local_vocabulary": {
+        "debug_path": "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg",
+        "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "owner_die": "0x67fc70b",
+        "low_pc": "0x26bf750",
+        "locals": [
+          {
+            "die": "0x67fc730",
+            "name": "player",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fc740",
+            "name": "to_examine",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fc750",
+            "name": "test_type",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fc760",
+            "name": "this_test",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fc770",
+            "name": "id",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc784",
+            "name": "clr",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc7a2",
+            "name": "cmc",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc7ca",
+            "name": "pow",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc802",
+            "name": "tou",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc848",
+            "name": "sub5",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc855",
+            "name": "sub4",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc862",
+            "name": "sub3",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc86f",
+            "name": "sub2",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc87c",
+            "name": "sub1",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc889",
+            "name": "csvid",
+            "location_form": null
+          },
+          {
+            "die": "0x67fc94a",
+            "name": "sub5",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc957",
+            "name": "sub4",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc964",
+            "name": "sub3",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc971",
+            "name": "sub2",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc97e",
+            "name": "sub1",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fc98b",
+            "name": "csvid",
+            "location_form": null
+          }
+        ],
+        "scope": "Native local vocabulary, including optimized or overlapping locations. This does not prove a location-based correspondence for every decompiler temporary."
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/global_checking.c",
+      "name": "check_battlefield_for_special_card",
+      "card_control_cleanup": true,
+      "before_definition": "int check_battlefield_for_special_card(int player, int card, int t_player, int mode,\n                                            test_definition_t *this_test)\n{\n  card_instance_t *pcVar1;\n  int result;\n  unsigned char uVar3;\n  unsigned int card_00;\n  int player_00;\n  bool bVar4;\n  card_instance_t *pcStack_7c;\n  unsigned int uStack_70;\n  unsigned int uStack_6c;\n  target_definition_t td;\n\n  pcStack_7c = NULL;\n  if ((mode & 8U) != 0)\n  {\n    default_target_definition(player, card, &td, this_test->type);\n    td.allowed_controller = t_player;\n    td.preferred_controller = t_player;\n    if (this_test->type_flag == 1)\n    {\n      td.required_type = ((this_test->zone != 0x200) - 1 & 0xffffffc8) + 0x7f;\n      td.illegal_type = this_test->type | 0x80;\n    }\n    pcStack_7c = get_card_instance(player, card);\n  }\n  uStack_70 = mode & 0x402;\n  if (uStack_70 != 0)\n  {\n    uStack_70 = 1000;\n  }\n  uStack_6c = -(unsigned int)((mode & 3U) != 0);\n  player_00 = 0;\n  do\n  {\n    if (((t_player == player_00) || (t_player == 2)) &&\n        (card_00 = active_cards_count[player_00] - 1, -1 < (int)card_00))\n    {\n      do\n      {\n        pcVar1 = in_play(player_00, card_00);\n        if ((((((pcVar1 != NULL) && (this_test->zone == 0x200)) &&\n               (result = check_state(player_00, card_00, 0x100000), result == 0)) ||\n              ((pcVar1 = in_hand(player_00, card_00),\n                pcVar1 != NULL && (this_test->zone == 0x100)))) &&\n             (result = new_make_test_in_play(player_00, card_00, -1, this_test),\n              result != 0)) &&\n            ((this_test->not_me == 0 ||\n              ((this_test->not_me == 1 && ((player != player_00 || (card != card_00))))))))\n        {\n          bVar4 = true;\n          if ((mode & 8U) == 0)\n          {\n            uVar3 = this_test->has_mana_to_pay_cmc;\n          }\n          else\n          {\n            pcStack_7c->targets[0].player = player_00;\n            pcStack_7c->targets[0].card = card_00;\n            pcStack_7c->number_of_targets = '\\x01';\n            result = valid_target(&td);\n            uVar3 = this_test->has_mana_to_pay_cmc;\n            bVar4 = result != 0;\n          }\n          if (uVar3 == '\\x01')\n          {\n            result = get_cmc(player_00, card_00);\n            result = has_mana(player, 0, result);\n            uVar3 = this_test->has_mana_to_pay_cmc;\n            if (result == 0)\n            {\n              bVar4 = false;\n            }\n          }\n          if (uVar3 == '\\x02')\n          {\n            result = get_original_internal_card_id(player_00, card_00);\n            result = has_mana_to_cast_iid(player, hack_illusionary_mask_event, result);\n            if (result == 0)\n              goto LAB_026c08e8;\n          }\n          if (((player != player_00 || card != card_00) || ((mode & 0x20U) == 0)) && (bVar4))\n          {\n            if (mode == 0)\n            {\n              return 1;\n            }\n            uStack_6c = (uStack_6c + 1) - (unsigned int)((mode & 4U) == 0);\n            if (((mode & 0x10U) != 0) && (result = is_what(player_00, card_00, 2), result != 0))\n            {\n              result = get_toughness(player_00, card_00);\n              uStack_6c = uStack_6c + result;\n            }\n            if (((mode & 0x40U) != 0) && (result = is_what(player_00, card_00, 2), result != 0))\n            {\n              result = get_power(player_00, card_00);\n              uStack_6c = uStack_6c + result;\n            }\n            if ((mode & 0x800U) != 0)\n            {\n              result = get_cmc(player_00, card_00);\n              uStack_6c = uStack_6c + result;\n            }\n            if ((((mode & 0x100U) != 0) &&\n                 (result = is_what(player_00, card_00, 2), result != 0)) &&\n                (result = get_toughness(player_00, card_00), (int)uStack_70 < result))\n            {\n              uStack_70 = get_toughness(player_00, card_00);\n              uStack_6c = uStack_70;\n            }\n            if ((((mode & 0x80U) != 0) && (result = is_what(player_00, card_00, 2), result != 0)) &&\n                (result = get_power(player_00, card_00), (int)uStack_70 < result))\n            {\n              uStack_70 = get_power(player_00, card_00);\n              uStack_6c = uStack_70;\n            }\n            if (((mode & 0x200U) != 0) &&\n                (result = get_cmc(player_00, card_00), (int)uStack_70 < result))\n            {\n              uStack_70 = get_cmc(player_00, card_00);\n              uStack_6c = uStack_70;\n            }\n            if (((mode & 0x400U) != 0) &&\n                (result = get_cmc(player_00, card_00), result < (int)uStack_70))\n            {\n              uStack_70 = get_cmc(player_00, card_00);\n              uStack_6c = uStack_70;\n            }\n            if ((mode & 1U) != 0)\n            {\n              result = is_token(player_00, card_00);\n              if (result == 0)\n              {\n                result = my_base_value(player_00, card_00);\n                if ((int)uStack_70 < result)\n                {\n                  uStack_70 = my_base_value(player_00, card_00);\n                  uStack_6c = card_00;\n                }\n              }\n              else\n              {\n                result = get_power(player_00, card_00);\n                if ((int)uStack_70 < result)\n                {\n                  uStack_70 = get_power(player_00, card_00);\n                  uStack_6c = card_00;\n                }\n              }\n            }\n            if ((mode & 2U) != 0)\n            {\n              result = is_token(player_00, card_00);\n              if (result == 0)\n              {\n                result = my_base_value(player_00, card_00);\n                if (result < (int)uStack_70)\n                {\n                  uStack_70 = my_base_value(player_00, card_00);\n                  uStack_6c = card_00;\n                }\n              }\n              else\n              {\n                result = get_power(player_00, card_00);\n                if (result < (int)uStack_70)\n                {\n                  uStack_70 = get_power(player_00, card_00);\n                  uStack_6c = card_00;\n                }\n              }\n            }\n          }\n        }\n      LAB_026c08e8:\n        card_00 = card_00 - 1;\n      } while (card_00 != 0xffffffff);\n    }\n    player_00 = player_00 + 1;\n    if (player_00 == 2)\n    {\n      return uStack_6c;\n    }\n  } while (true);\n}",
+      "after_definition": "int check_battlefield_for_special_card(int player, int card, int t_player, int mode,\n                                       test_definition_t *this_test)\n{\n  card_instance_t *candidate;\n  int result;\n  unsigned char mana_requirement_mode;\n  unsigned int card_00;\n  int player_00;\n  bool candidate_valid;\n  card_instance_t *targeting_instance;\n  unsigned int best_value;\n  unsigned int count_value_or_card;\n  target_definition_t td;\n\n  targeting_instance = NULL;\n  if ((mode & 8U) != 0)\n  {\n    default_target_definition(player, card, &td, this_test->type);\n    td.allowed_controller = t_player;\n    td.preferred_controller = t_player;\n    if (this_test->type_flag == 1)\n    {\n      td.required_type = ((this_test->zone != 0x200) - 1 & 0xffffffc8) + 0x7f;\n      td.illegal_type = this_test->type | 0x80;\n    }\n    targeting_instance = get_card_instance(player, card);\n  }\n  best_value = mode & 0x402;\n  if (best_value != 0)\n  {\n    best_value = 1000;\n  }\n  count_value_or_card = -(unsigned int)((mode & 3U) != 0);\n  player_00 = 0;\n  do\n  {\n    if (((t_player == player_00) || (t_player == 2)) &&\n        (card_00 = active_cards_count[player_00] - 1, -1 < (int)card_00))\n    {\n      do\n      {\n        candidate = in_play(player_00, card_00);\n        if ((((((candidate != NULL) && (this_test->zone == 0x200)) &&\n               (result = check_state(player_00, card_00, 0x100000), result == 0)) ||\n              ((candidate = in_hand(player_00, card_00),\n                candidate != NULL && (this_test->zone == 0x100)))) &&\n             (result = new_make_test_in_play(player_00, card_00, -1, this_test), result != 0)) &&\n            ((this_test->not_me == 0 ||\n              ((this_test->not_me == 1 && ((player != player_00 || (card != card_00))))))))\n        {\n          candidate_valid = true;\n          if ((mode & 8U) == 0)\n          {\n            mana_requirement_mode = this_test->has_mana_to_pay_cmc;\n          }\n          else\n          {\n            targeting_instance->targets[0].player = player_00;\n            targeting_instance->targets[0].card = card_00;\n            targeting_instance->number_of_targets = '\\x01';\n            result = valid_target(&td);\n            mana_requirement_mode = this_test->has_mana_to_pay_cmc;\n            candidate_valid = result != 0;\n          }\n          if (mana_requirement_mode == '\\x01')\n          {\n            result = get_cmc(player_00, card_00);\n            result = has_mana(player, 0, result);\n            mana_requirement_mode = this_test->has_mana_to_pay_cmc;\n            if (result == 0)\n            {\n              candidate_valid = false;\n            }\n          }\n          if (mana_requirement_mode == '\\x02')\n          {\n            result = get_original_internal_card_id(player_00, card_00);\n            result = has_mana_to_cast_iid(player, hack_illusionary_mask_event, result);\n            if (result == 0)\n              goto LAB_026c08e8;\n          }\n          if (((player != player_00 || card != card_00) || ((mode & 0x20U) == 0)) &&\n              (candidate_valid))\n          {\n            if (mode == 0)\n            {\n              return 1;\n            }\n            count_value_or_card = (count_value_or_card + 1) - (unsigned int)((mode & 4U) == 0);\n            if (((mode & 0x10U) != 0) && (result = is_what(player_00, card_00, 2), result != 0))\n            {\n              result = get_toughness(player_00, card_00);\n              count_value_or_card = count_value_or_card + result;\n            }\n            if (((mode & 0x40U) != 0) && (result = is_what(player_00, card_00, 2), result != 0))\n            {\n              result = get_power(player_00, card_00);\n              count_value_or_card = count_value_or_card + result;\n            }\n            if ((mode & 0x800U) != 0)\n            {\n              result = get_cmc(player_00, card_00);\n              count_value_or_card = count_value_or_card + result;\n            }\n            if ((((mode & 0x100U) != 0) &&\n                 (result = is_what(player_00, card_00, 2), result != 0)) &&\n                (result = get_toughness(player_00, card_00), (int)best_value < result))\n            {\n              best_value = get_toughness(player_00, card_00);\n              count_value_or_card = best_value;\n            }\n            if ((((mode & 0x80U) != 0) && (result = is_what(player_00, card_00, 2), result != 0)) &&\n                (result = get_power(player_00, card_00), (int)best_value < result))\n            {\n              best_value = get_power(player_00, card_00);\n              count_value_or_card = best_value;\n            }\n            if (((mode & 0x200U) != 0) &&\n                (result = get_cmc(player_00, card_00), (int)best_value < result))\n            {\n              best_value = get_cmc(player_00, card_00);\n              count_value_or_card = best_value;\n            }\n            if (((mode & 0x400U) != 0) &&\n                (result = get_cmc(player_00, card_00), result < (int)best_value))\n            {\n              best_value = get_cmc(player_00, card_00);\n              count_value_or_card = best_value;\n            }\n            if ((mode & 1U) != 0)\n            {\n              result = is_token(player_00, card_00);\n              if (result == 0)\n              {\n                result = my_base_value(player_00, card_00);\n                if ((int)best_value < result)\n                {\n                  best_value = my_base_value(player_00, card_00);\n                  count_value_or_card = card_00;\n                }\n              }\n              else\n              {\n                result = get_power(player_00, card_00);\n                if ((int)best_value < result)\n                {\n                  best_value = get_power(player_00, card_00);\n                  count_value_or_card = card_00;\n                }\n              }\n            }\n            if ((mode & 2U) != 0)\n            {\n              result = is_token(player_00, card_00);\n              if (result == 0)\n              {\n                result = my_base_value(player_00, card_00);\n                if (result < (int)best_value)\n                {\n                  best_value = my_base_value(player_00, card_00);\n                  count_value_or_card = card_00;\n                }\n              }\n              else\n              {\n                result = get_power(player_00, card_00);\n                if (result < (int)best_value)\n                {\n                  best_value = get_power(player_00, card_00);\n                  count_value_or_card = card_00;\n                }\n              }\n            }\n          }\n        }\n      LAB_026c08e8:\n        card_00 = card_00 - 1;\n      } while (card_00 != 0xffffffff);\n    }\n    player_00 = player_00 + 1;\n    if (player_00 == 2)\n    {\n      return count_value_or_card;\n    }\n  } while (true);\n}",
+      "before_sha256": "ffebe3caed2327e511e771d41cde9b0517dad22f1d53a66c0a61c1c52f1d6370",
+      "after_sha256": "6573173273222e9fc60a1ed87e5862e4ad47e458941aca83985118b7be4f6621",
+      "alpha_only": true,
+      "renames": {
+        "pcVar1": "candidate",
+        "uVar3": "mana_requirement_mode",
+        "bVar4": "candidate_valid",
+        "pcStack_7c": "targeting_instance",
+        "uStack_70": "best_value",
+        "uStack_6c": "count_value_or_card"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 65
+      },
+      "retained_control_flow": true,
+      "native_local_vocabulary": {
+        "debug_path": "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg",
+        "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "owner_die": "0x67fbcb4",
+        "low_pc": "0x26c0860",
+        "locals": [
+          {
+            "die": "0x67fbcee",
+            "name": "player",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fbcfe",
+            "name": "card",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fbd0e",
+            "name": "t_player",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fbd23",
+            "name": "mode",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fbd34",
+            "name": "this_test",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fbd44",
+            "name": "td",
+            "location_form": "DW_FORM_exprloc"
+          },
+          {
+            "die": "0x67fbd54",
+            "name": "instance",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fbd69",
+            "name": "result",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fbd7e",
+            "name": "par",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fbd93",
+            "name": "i",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fbdaf",
+            "name": "count",
+            "location_form": "DW_FORM_sec_offset"
+          },
+          {
+            "die": "0x67fbdcf",
+            "name": "good",
+            "location_form": "DW_FORM_sec_offset"
+          }
+        ],
+        "scope": "Native local vocabulary, including optimized or overlapping locations. This does not prove a location-based correspondence for every decompiler temporary."
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "types_cannot_sac",
+      "card_control_cleanup": true,
+      "before_definition": "static type_t types_cannot_sac(void)\n{\n  card_instance_t *instance;\n  int card;\n  int player;\n  type_t tVar3;\n\n  tVar3 = TYPE_NONE;\n  player = 0;\n  do\n  {\n    card = 0;\n    if (0 < active_cards_count[player])\n    {\n      do\n      {\n        while (true)\n        {\n          instance = in_play(player, card);\n          if (((instance != NULL) && (cards_data[instance->internal_card_id].id == 0x3010)) &&\n              (is_humiliated(player, card, AL_STATIC) == 0))\n          {\n            tVar3 = tVar3 | TYPE_CREATURE;\n          }\n          instance = in_play(player, card);\n          if (((instance != NULL) && (cards_data[instance->internal_card_id].id == 0x5626)) &&\n              (is_humiliated(player, card, AL_STATIC) == 0))\n            break;\n          card = card + 1;\n          if (active_cards_count[player] <= card)\n            goto LAB_026e3798;\n        }\n        card = card + 1;\n        tVar3 = TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_ENCHANTMENT | TYPE_CREATURE;\n      } while (card < active_cards_count[player]);\n    }\n  LAB_026e3798:\n    player = player + 1;\n    if (player == 2)\n    {\n      return tVar3;\n    }\n  } while (true);\n}",
+      "after_definition": "static type_t types_cannot_sac(void)\n{\n  card_instance_t *instance;\n  int card;\n  int player;\n  type_t prohibited_types;\n\n  prohibited_types = TYPE_NONE;\n  player = 0;\n  do\n  {\n    card = 0;\n    if (0 < active_cards_count[player])\n    {\n      do\n      {\n        while (true)\n        {\n          instance = in_play(player, card);\n          if (((instance != NULL) && (cards_data[instance->internal_card_id].id == 0x3010)) &&\n              (is_humiliated(player, card, AL_STATIC) == 0))\n          {\n            prohibited_types = prohibited_types | TYPE_CREATURE;\n          }\n          instance = in_play(player, card);\n          if (((instance != NULL) && (cards_data[instance->internal_card_id].id == 0x5626)) &&\n              (is_humiliated(player, card, AL_STATIC) == 0))\n            break;\n          card = card + 1;\n          if (active_cards_count[player] <= card)\n            goto LAB_026e3798;\n        }\n        card = card + 1;\n        prohibited_types =\n            TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_ENCHANTMENT | TYPE_CREATURE;\n      } while (card < active_cards_count[player]);\n    }\n  LAB_026e3798:\n    player = player + 1;\n    if (player == 2)\n    {\n      return prohibited_types;\n    }\n  } while (true);\n}",
+      "before_sha256": "54ecd88c612ecea04d1c2c52b9b0d998f3ed0c5937e209d7eba70e25a61703fe",
+      "after_sha256": "076c8dbbfa879d1f4a67bce79f8ed314510869c31018adb527a33f1b2e376317",
+      "alpha_only": true,
+      "renames": {
+        "tVar3": "prohibited_types"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": -1,
+        "removed_placeholder_occurrences": 6
+      },
+      "retained_control_flow": true,
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "new_can_sacrifice_as_cost_impl",
+      "card_control_cleanup": true,
+      "before_definition": "static int new_can_sacrifice_as_cost_impl(int player, int card, int amount,\n                                               test_definition_t *test)\n{\n  type_t test_type;\n  card_instance_t *instance;\n  int result;\n  int card_00;\n  unsigned int uStack_18;\n\n  test_type = types_cannot_sac();\n  uStack_18 = 0;\n  if (0 < active_cards_count[player])\n  {\n    card_00 = 0;\n    do\n    {\n      instance = in_play(player, card_00);\n      if ((((instance != NULL) && (result = is_what(player, card_00, 0x47), result != 0)) &&\n           ((card != card_00 || (test->not_me != 1)))) &&\n          ((result = new_make_test_in_play(player, card_00, -1, test),\n            result != 0 &&\n                ((((test_type == TYPE_NONE ||\n                    (result = is_what(player, card_00, test_type), result == 0)) &&\n                   (result = check_special_flags2(player, card_00, 0x400000), result == 0)) &&\n                  ((uStack_18 = uStack_18 + 1,\n                    (char)((unsigned char)((unsigned int)amount >> 0x18) ^ 0xff) < '\\0' &&\n                        (amount <= (int)uStack_18))))))))\n      {\n        return 1;\n      }\n      card_00 = card_00 + 1;\n    } while (card_00 < active_cards_count[player]);\n  }\n  return uStack_18 & amount >> 0x1f;\n}",
+      "after_definition": "static int new_can_sacrifice_as_cost_impl(int player, int card, int amount, test_definition_t *test)\n{\n  type_t test_type;\n  card_instance_t *instance;\n  int result;\n  int card_00;\n  unsigned int sacrificable_count;\n\n  test_type = types_cannot_sac();\n  sacrificable_count = 0;\n  if (0 < active_cards_count[player])\n  {\n    card_00 = 0;\n    do\n    {\n      instance = in_play(player, card_00);\n      if ((((instance != NULL) && (result = is_what(player, card_00, 0x47), result != 0)) &&\n           ((card != card_00 || (test->not_me != 1)))) &&\n          ((result = new_make_test_in_play(player, card_00, -1, test),\n            result != 0 &&\n                ((((test_type == TYPE_NONE ||\n                    (result = is_what(player, card_00, test_type), result == 0)) &&\n                   (result = check_special_flags2(player, card_00, 0x400000), result == 0)) &&\n                  ((sacrificable_count = sacrificable_count + 1,\n                    (char)((unsigned char)((unsigned int)amount >> 0x18) ^ 0xff) < '\\0' &&\n                        (amount <= (int)sacrificable_count))))))))\n      {\n        return 1;\n      }\n      card_00 = card_00 + 1;\n    } while (card_00 < active_cards_count[player]);\n  }\n  return sacrificable_count & amount >> 0x1f;\n}",
+      "before_sha256": "1700057062680dd368e34a28f8b1307b8b6b31dec355acfbb04cd1597a4bd1f1",
+      "after_sha256": "39a7ba080c6c4c11f98dfcee34598af2f3e565bea32be98ba49c8f49ca2b68fb",
+      "alpha_only": true,
+      "renames": {
+        "uStack_18": "sacrificable_count"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 1,
+        "removed_placeholder_occurrences": 6
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "get_sacrifice_prompt_text",
+      "card_control_cleanup": true,
+      "before_definition": "static void get_sacrifice_prompt_text(char *prompt, int type, int invert)\n{\n  const char *pcVar1;\n  char typetext[100];\n  if (ai_is_speculating == 1)\n  {\n    *prompt = '\\0';\n    return;\n  }\n  if (invert != 0)\n  {\n    pcVar1 = type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT),\n                       TYPETEXT_INVERT);\n    scnprintf(prompt, 200, \"Select %s permanent to sacrifice.\", pcVar1);\n    return;\n  }\n  pcVar1 = type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT), TYPETEXT_0);\n  scnprintf(prompt, 200, \"Select %s to sacrifice.\", pcVar1);\n  return;\n}",
+      "after_definition": "static void get_sacrifice_prompt_text(char *prompt, int type, int invert)\n{\n  const char *type_description;\n  char typetext[100];\n  if (ai_is_speculating == 1)\n  {\n    *prompt = '\\0';\n    return;\n  }\n  if (invert != 0)\n  {\n    type_description = type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT),\n                                 TYPETEXT_INVERT);\n    scnprintf(prompt, 200, \"Select %s permanent to sacrifice.\", type_description);\n    return;\n  }\n  type_description =\n      type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT), TYPETEXT_0);\n  scnprintf(prompt, 200, \"Select %s to sacrifice.\", type_description);\n  return;\n}",
+      "before_sha256": "0773423821f866d5744f7649db2eb5ca309ddd8c1f071ef7f3bf81a546a96dfd",
+      "after_sha256": "2547ebb3c57d9618f07407c41b9b1be61c59e0391e7dc60b35a2f0ccdd3b2c17",
+      "alpha_only": true,
+      "renames": {
+        "pcVar1": "type_description"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": -1,
+        "removed_placeholder_occurrences": 5
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "new_can_sacrifice",
+      "card_control_cleanup": true,
+      "before_definition": "int new_can_sacrifice(int player, int card, int t_player, test_definition_t *test)\n{\n  int c;\n  int iVar1;\n  card_instance_t *instance;\n  int iVar3;\n  unsigned int uStack_18;\n  int iStack_14;\n\n  if (test == NULL)\n  {\n    if ((player != t_player) && (iVar1 = can_cause_sacrifice_part(t_player), iVar1 == 0))\n    {\n      return 0;\n    }\n    uStack_18 = 1;\n  }\n  else\n  {\n    uStack_18 = (unsigned int)test->qty;\n    if (uStack_18 == 0)\n    {\n      return 1;\n    }\n    if (player == t_player)\n    {\n      if (test->not_me == 1)\n        goto LAB_026e3cda;\n    }\n    else\n    {\n      if (can_cause_sacrifice_part(t_player) == 0)\n      {\n        return 0;\n      }\n    }\n  }\n  card = -1;\nLAB_026e3cda:\n  if (0 < active_cards_count[t_player])\n  {\n    iStack_14 = 0;\n    c = 0;\n    do\n    {\n      instance = in_play(t_player, c);\n      if ((card != c) && (instance != NULL))\n      {\n        if (test == NULL)\n        {\n          iVar3 = is_what(t_player, c, 0x47);\n        }\n        else\n        {\n          iVar3 = new_make_test_in_play(t_player, c, -1, test);\n        }\n        if (((iVar3 != 0) &&\n             (iVar3 = check_special_flags2(t_player, c, 0x400000), iVar3 == 0)) &&\n            (iStack_14 = iStack_14 + 1, (int)uStack_18 <= iStack_14))\n        {\n          return 1;\n        }\n      }\n      c = c + 1;\n    } while (c < active_cards_count[t_player]);\n  }\n  return 0;\n}",
+      "after_definition": "int new_can_sacrifice(int player, int card, int t_player, test_definition_t *test)\n{\n  int c;\n  int can_cause_sacrifice;\n  card_instance_t *instance;\n  int candidate_matches;\n  unsigned int required_count;\n  int matching_count;\n\n  if (test == NULL)\n  {\n    if ((player != t_player) &&\n        (can_cause_sacrifice = can_cause_sacrifice_part(t_player), can_cause_sacrifice == 0))\n    {\n      return 0;\n    }\n    required_count = 1;\n  }\n  else\n  {\n    required_count = (unsigned int)test->qty;\n    if (required_count == 0)\n    {\n      return 1;\n    }\n    if (player == t_player)\n    {\n      if (test->not_me == 1)\n        goto LAB_026e3cda;\n    }\n    else\n    {\n      if (can_cause_sacrifice_part(t_player) == 0)\n      {\n        return 0;\n      }\n    }\n  }\n  card = -1;\nLAB_026e3cda:\n  if (0 < active_cards_count[t_player])\n  {\n    matching_count = 0;\n    c = 0;\n    do\n    {\n      instance = in_play(t_player, c);\n      if ((card != c) && (instance != NULL))\n      {\n        if (test == NULL)\n        {\n          candidate_matches = is_what(t_player, c, 0x47);\n        }\n        else\n        {\n          candidate_matches = new_make_test_in_play(t_player, c, -1, test);\n        }\n        if (((candidate_matches != 0) &&\n             (candidate_matches = check_special_flags2(t_player, c, 0x400000),\n              candidate_matches == 0)) &&\n            (matching_count = matching_count + 1, (int)required_count <= matching_count))\n        {\n          return 1;\n        }\n      }\n      c = c + 1;\n    } while (c < active_cards_count[t_player]);\n  }\n  return 0;\n}",
+      "before_sha256": "29890129e03bac43213949cf0eeecca28df045ede9cea6634e0461e4187189f9",
+      "after_sha256": "f68faa17475235148ed78837e049b4a6eb3d40480494a1cba4f3ade0933148bd",
+      "alpha_only": true,
+      "renames": {
+        "iVar1": "can_cause_sacrifice",
+        "iVar3": "candidate_matches",
+        "uStack_18": "required_count",
+        "iStack_14": "matching_count"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": -2,
+        "removed_placeholder_occurrences": 19
+      },
+      "retained_control_flow": true,
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "is_nice_creature_to_sacrifice",
+      "card_control_cleanup": true,
+      "before_definition": "int is_nice_creature_to_sacrifice(int player, int card)\n{\n  uint8_t uVar1;\n  card_data_t *pcVar2;\n  card_instance_t *instance;\n  int result;\n\n  pcVar2 = get_card_data(player, card);\n  uVar1 = pcVar2->cc[2];\n  if (uVar1 == '\\t')\n  {\n    result = is_what(player, card, 4);\n    if (result == 0)\n    {\n      return 1;\n    }\n    uVar1 = pcVar2->cc[2];\n  }\n  if ((uVar1 != '\\x02') && (uVar1 != '\\x05'))\n  {\n    instance = get_card_instance(player, card);\n    return instance->ext->sp_keywords2 >> 3 & 1;\n  }\n  return 1;\n}",
+      "after_definition": "int is_nice_creature_to_sacrifice(int player, int card)\n{\n  uint8_t ai_category;\n  card_data_t *creature_data;\n  card_instance_t *instance;\n  int result;\n\n  creature_data = get_card_data(player, card);\n  ai_category = creature_data->cc[2];\n  if (ai_category == '\\t')\n  {\n    result = is_what(player, card, 4);\n    if (result == 0)\n    {\n      return 1;\n    }\n    ai_category = creature_data->cc[2];\n  }\n  if ((ai_category != '\\x02') && (ai_category != '\\x05'))\n  {\n    instance = get_card_instance(player, card);\n    return instance->ext->sp_keywords2 >> 3 & 1;\n  }\n  return 1;\n}",
+      "before_sha256": "e233eeebc1996268a44fb9e1037b77dbab3249b6d748eeb737f30088b3503655",
+      "after_sha256": "5ff2c2a6eb8eca6dade7f8ea821f474ad5b360df415c731ef19d7f0f18dc9b50",
+      "alpha_only": true,
+      "renames": {
+        "uVar1": "ai_category",
+        "pcVar2": "creature_data"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 10
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "new_get_special_permanent_for_sacrifice",
+      "card_control_cleanup": true,
+      "before_definition": "int new_get_special_permanent_for_sacrifice(int player, int card, test_definition_t *test)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  int iVar4;\n  int iStack_14;\n\n  iVar4 = 0;\n  if (0 < active_cards_count[player])\n  {\n    do\n    {\n      instance = in_play(player, iVar4);\n      if (((((instance != NULL) &&\n             (iVar2 = new_make_test_in_play(player, iVar4, -1, test), iVar2 != 0)) &&\n            (iVar2 = is_nice_creature_to_sacrifice(player, iVar4), iVar2 != 0)) &&\n           (((iVar2 = check_special_flags2(player, iVar4, 0x400000),\n              iVar2 == 0 && (instance = get_card_instance(player, iVar4),\n                             (instance->state & 0x100000) == 0)) &&\n             ((test->not_me != 1 || (card != iVar4)))))) &&\n          (instance->kill_code < 2))\n      {\n        return iVar4;\n      }\n      iVar4 = iVar4 + 1;\n    } while (iVar4 < active_cards_count[player]);\n    if (0 < active_cards_count[player])\n    {\n      iStack_14 = 1000;\n      iVar4 = -1;\n      iVar2 = 0;\n      do\n      {\n        instance = in_play(player, iVar2);\n        if ((((instance != NULL) &&\n              (iVar3 = new_make_test_in_play(player, iVar2, -1, test), iVar3 != 0)) &&\n             (((iVar3 = check_special_flags2(player, iVar2, 0x400000),\n                iVar3 == 0 && (instance = get_card_instance(player, iVar2),\n                               (instance->state & 0x100000) == 0)) &&\n               (((test->not_me != 1 || (card != iVar2)) && (instance->kill_code < 2)))))) &&\n            (iVar3 = get_base_value(player, iVar2), iVar3 < iStack_14))\n        {\n          iStack_14 = get_base_value(player, iVar2);\n          iVar4 = iVar2;\n        }\n        iVar2 = iVar2 + 1;\n      } while (iVar2 < active_cards_count[player]);\n      return iVar4;\n    }\n  }\n  return -1;\n}",
+      "after_definition": "int new_get_special_permanent_for_sacrifice(int player, int card, test_definition_t *test)\n{\n  card_instance_t *instance;\n  int scan_or_result;\n  int candidate_value_or_result;\n  int selected_card;\n  int lowest_value;\n\n  selected_card = 0;\n  if (0 < active_cards_count[player])\n  {\n    do\n    {\n      instance = in_play(player, selected_card);\n      if (((((instance != NULL) &&\n             (scan_or_result = new_make_test_in_play(player, selected_card, -1, test),\n              scan_or_result != 0)) &&\n            (scan_or_result = is_nice_creature_to_sacrifice(player, selected_card),\n             scan_or_result != 0)) &&\n           (((scan_or_result = check_special_flags2(player, selected_card, 0x400000),\n              scan_or_result == 0 && (instance = get_card_instance(player, selected_card),\n                                      (instance->state & 0x100000) == 0)) &&\n             ((test->not_me != 1 || (card != selected_card)))))) &&\n          (instance->kill_code < 2))\n      {\n        return selected_card;\n      }\n      selected_card = selected_card + 1;\n    } while (selected_card < active_cards_count[player]);\n    if (0 < active_cards_count[player])\n    {\n      lowest_value = 1000;\n      selected_card = -1;\n      scan_or_result = 0;\n      do\n      {\n        instance = in_play(player, scan_or_result);\n        if ((((instance != NULL) &&\n              (candidate_value_or_result = new_make_test_in_play(player, scan_or_result, -1, test),\n               candidate_value_or_result != 0)) &&\n             (((candidate_value_or_result = check_special_flags2(player, scan_or_result, 0x400000),\n                candidate_value_or_result == 0 &&\n                    (instance = get_card_instance(player, scan_or_result),\n                     (instance->state & 0x100000) == 0)) &&\n               (((test->not_me != 1 || (card != scan_or_result)) &&\n                 (instance->kill_code < 2)))))) &&\n            (candidate_value_or_result = get_base_value(player, scan_or_result),\n             candidate_value_or_result < lowest_value))\n        {\n          lowest_value = get_base_value(player, scan_or_result);\n          selected_card = scan_or_result;\n        }\n        scan_or_result = scan_or_result + 1;\n      } while (scan_or_result < active_cards_count[player]);\n      return selected_card;\n    }\n  }\n  return -1;\n}",
+      "before_sha256": "150c36e3a551d8ca5f441254651b199df641ca53541974dac6e5a97043512bb5",
+      "after_sha256": "43361f7718aefe9107ccd8dea21532b82c502d73248586a6a137a96ee7d9b5c8",
+      "alpha_only": true,
+      "renames": {
+        "iVar2": "scan_or_result",
+        "iVar3": "candidate_value_or_result",
+        "iVar4": "selected_card",
+        "iStack_14": "lowest_value"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": -6,
+        "removed_placeholder_occurrences": 45
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "new_sacrifice_impl",
+      "card_control_cleanup": true,
+      "before_definition": "static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t options,\n                                   test_definition_t *test, char *marked_for_sacrifice)\n{\n  int c;\n  int csvid;\n  uint8_t uVar1;\n  uint16_t uVar2;\n  int32_t iVar3;\n  int32_t iVar4;\n  int iVar5;\n  card_instance_t *instance;\n  int iVar7;\n  card_instance_t *pcVar8;\n  type_t tVar9;\n  unsigned int uVar10;\n  int iVar11;\n  unsigned int uVar13;\n  int iStack_23c;\n  const char *prompt;\n  int iStack_22c;\n  unsigned int uStack_220;\n  int iStack_218;\n  target_definition_t td;\n  char marked[151];\n  char default_prompt[200];\n\n  base_target_definition(player, card, &td, 0x47);\n  td.allow_cancel = options & (SAC_DONE | SAC_NO_CANCEL) ^ SAC_NO_CANCEL;\n  td.special = 0x8000;\n  td.extra = (int32_t)passes_test_definition_and_not_dying;\n  if (test->not_me == 1)\n  {\n    td.special = 0xc000;\n  }\n  uVar13 = test->type & 0x147;\n  uVar10 = td.required_type;\n  if (((uVar13 != 0) && (uVar2 = test->type_flag, uVar10 = uVar13, uVar2 != 0)) &&\n      (uVar10 = td.required_type, uVar2 == 1))\n  {\n    td.illegal_type = uVar13;\n  }\n  td.required_type = uVar10;\n  td.who_chooses = t_player;\n  td.allowed_controller = t_player;\n  td.preferred_controller = t_player;\n  if (((options & SAC_AS_COST) != 0) && (tVar9 = types_cannot_sac(), tVar9 != TYPE_NONE))\n  {\n    td.illegal_type = td.illegal_type | tVar9;\n  }\n  if ((((options & SAC_CAUSED) != 0) && (player != t_player)) &&\n      (iVar5 = can_cause_sacrifice_part(t_player), iVar5 == 0))\n  {\n    spell_fizzled = 1;\n    return 0;\n  }\n  instance = get_card_instance(player, card);\n  iVar5 = spell_fizzled;\n  sacrifice_test = test;\n  if ((options & SAC_ALL_OR_NONE) == 0)\n  {\n    if (can_target(&td) == 0)\n    {\n      spell_fizzled = 1;\n      return 0;\n    }\n  }\n  else\n  {\n    iVar7 = target_available(player, card, &td);\n    if (iVar7 < (int)(unsigned int)test->qty)\n    {\n      spell_fizzled = 1;\n      return 0;\n    }\n  }\n  uStack_220 = (unsigned int)test->qty;\n  iVar7 = target_available(player, card, &td);\n  if (iVar7 < (int)uStack_220)\n  {\n    uStack_220 = target_available(player, card, &td);\n  }\n  if (test->message[0] == '\\0')\n  {\n    get_sacrifice_prompt_text(default_prompt, uVar13,\n                                        (unsigned int)(test->type_flag == 1));\n    prompt = default_prompt;\n  }\n  else\n  {\n    prompt = test->message;\n  }\n  uVar1 = instance->number_of_targets;\n  iVar3 = instance->targets[0].player;\n  iVar4 = instance->targets[0].card;\n  memset(marked, 0, sizeof(marked));\n  if ((int)uStack_220 < 1)\n  {\n    if ((spell_fizzled != 1) && ((options & SAC_OPTIONAL) != 0))\n    {\n      iStack_23c = -1;\n      iStack_22c = -1;\n      iStack_218 = 0;\n    LAB_026e445c:\n      spell_fizzled = iVar5;\n      if ((options & SAC_SET_TARGETS) != 0)\n      {\n        instance->number_of_targets = '\\x01';\n        instance->targets[0].player = iStack_23c;\n        instance->targets[0].card = iStack_22c;\n        iVar7 = get_color(iStack_23c, iStack_22c);\n        instance->targets[1].player = iVar7;\n        csvid = get_id(iStack_23c, iStack_22c);\n        instance->targets[1].card = csvid;\n        iVar7 = get_power(iStack_23c, iStack_22c);\n        instance->targets[2].player = iVar7;\n        iVar7 = get_toughness(iStack_23c, iStack_22c);\n        instance->targets[2].card = iVar7;\n        pcVar8 = get_card_instance(iStack_23c, iStack_22c);\n        instance->targets[3].card = pcVar8->internal_card_id;\n        iVar7 = get_id(player, card);\n        if (iVar7 == 0x2f91)\n        {\n          iVar7 = has_subtype(iStack_23c, iStack_22c, SUBTYPE_HUMAN);\n          instance->targets[3].player = iVar7;\n        }\n        else if ((iVar7 == 0x24f3) &&\n                 (iVar7 = has_subtype(iStack_23c, iStack_22c, SUBTYPE_GOBLIN), iVar7 != 0))\n        {\n          token_generation_t token;\n          default_token_definition(player, card, 0x493b, &token);\n          token.t_player = iStack_23c;\n          token.qty = '\\x02';\n          token.action = TOKEN_ACTION_HASTE;\n          generate_token(&token);\n        }\n      }\n      c = 0;\n      if (0 < active_cards_count[t_player])\n      {\n        do\n        {\n          while (marked[c] != '\\0')\n          {\n            instance = get_card_instance(t_player, c);\n            c = c + 1;\n            instance->state = instance->state & 0xffdfffff | 0x100000;\n            iVar11 = active_cards_count[t_player];\n            if (iVar11 <= c)\n              goto LAB_026e44d4;\n          }\n          c = c + 1;\n          iVar11 = active_cards_count[t_player];\n        } while (c < iVar11);\n      LAB_026e44d4:\n        if (((options & SAC_JUST_MARK) == 0) && (0 < iVar11))\n        {\n          c = 0;\n        LAB_026e44f2:\n          do\n          {\n            if (marked[c] != '\\0')\n            {\n              instance = get_card_instance(t_player, c);\n              instance->state = instance->state & 0xffefffff;\n              instance = in_play(t_player, c);\n              if (instance != NULL)\n              {\n                iVar11 = c + 1;\n                kill_card(t_player, c, KILL_SACRIFICE);\n                c = iVar11;\n                if (active_cards_count[t_player] <= iVar11)\n                  break;\n                goto LAB_026e44f2;\n              }\n            }\n            c = c + 1;\n          } while (c < active_cards_count[t_player]);\n        }\n      }\n      if ((options & SAC_RETURN_CHOICE) != 0)\n      {\n        iStack_218 = (int32_t)((uint16_t)iStack_218 | ((uint32_t)(uint8_t)iStack_23c << 16) |\n                                   ((uint32_t)(uint8_t)iStack_22c << 24));\n      }\n      if (marked_for_sacrifice == NULL)\n      {\n        spell_fizzled = iVar5;\n        return iStack_218;\n      }\n      memcpy(marked_for_sacrifice, marked, sizeof(marked));\n      spell_fizzled = iVar5;\n      return iStack_218;\n    }\n  }\n  else\n  {\n    iVar7 = -1;\n    if (player == t_player)\n    {\n      iVar7 = card;\n    }\n    iStack_23c = -1;\n    iStack_22c = -1;\n    iStack_218 = 0;\n    do\n    {\n      target_t tgt;\n      spell_fizzled = 0;\n      tgt.player = -1;\n      tgt.card = -1;\n      if ((ai_is_speculating == 1) || ((t_player == 1 && ((trace_mode & 2U) == 0))))\n      {\n        iVar11 = new_get_special_permanent_for_sacrifice(t_player, iVar7, test);\n        if (iVar11 == -1)\n        {\n          if (tgt.card == -1)\n            goto LAB_026e4361;\n          goto LAB_026e43ad;\n        }\n        tgt.player = t_player;\n        tgt.card = iVar11;\n        if (iVar11 < 0)\n          goto LAB_026e468a;\n      LAB_026e43b5:\n        if (marked[tgt.card] == '\\0')\n        {\n          pcVar8 = get_card_instance(tgt.player, tgt.card);\n          if (ai_is_speculating == 1)\n          {\n            uVar10 = 0x300000;\n          }\n          else\n          {\n            uVar10 = 0x200000;\n            if (t_player == 1)\n            {\n              uVar10 = (-(unsigned int)((trace_mode & 2U) == 0) & 0x100000) + 0x200000;\n            }\n          }\n          pcVar8->state = pcVar8->state | uVar10;\n          iStack_218 = iStack_218 + 1;\n          iStack_22c = tgt.card;\n          marked[tgt.card] = '\\x01';\n          iStack_23c = tgt.player;\n        }\n        else\n        {\n          pcVar8 = get_card_instance(tgt.player, tgt.card);\n          iStack_218 = iStack_218 + -1;\n          pcVar8->state = pcVar8->state & 0xffdfffff;\n          marked[tgt.card] = '\\0';\n        }\n      }\n      else\n      {\n      LAB_026e4361:\n        sacrifice_test = test;\n        instance->number_of_targets = '\\0';\n        select_target(player, card, &td, prompt, &tgt);\n      LAB_026e43ad:\n        if (-1 < tgt.card)\n          goto LAB_026e43b5;\n      LAB_026e468a:\n        if ((options & (SAC_DONE | SAC_NO_CANCEL)) != SAC_NO_CANCEL)\n        {\n          instance->number_of_targets = uVar1;\n          instance->targets[0].player = iVar3;\n          instance->targets[0].card = iVar4;\n          if ((tgt.card == -1) ||\n              ((iStack_218 == 0 && ((options & SAC_OPTIONAL) == 0))))\n            goto LAB_026e46d3;\n          goto LAB_026e4440;\n        }\n      }\n    } while (iStack_218 < (int)uStack_220);\n    instance->number_of_targets = uVar1;\n    instance->targets[0].player = iVar3;\n    instance->targets[0].card = iVar4;\n    if (spell_fizzled != 1)\n    {\n    LAB_026e4440:\n      if (((int)uStack_220 <= iStack_218) || ((options & SAC_ALL_OR_NONE) == 0))\n        goto LAB_026e445c;\n    }\n  }\nLAB_026e46d3:\n  iVar5 = 0;\n  spell_fizzled = 1;\n  if (0 < active_cards_count[t_player])\n  {\n    do\n    {\n      while (marked[iVar5] == '\\0')\n      {\n        iVar5 = iVar5 + 1;\n        if (active_cards_count[t_player] <= iVar5)\n        {\n          return 0;\n        }\n      }\n      instance = get_card_instance(t_player, iVar5);\n      iVar5 = iVar5 + 1;\n      iVar7 = active_cards_count[t_player];\n      instance->state = instance->state & 0xffcfffff;\n    } while (iVar5 < iVar7);\n  }\n  return 0;\n}",
+      "after_definition": "static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t options,\n                              test_definition_t *test, char *marked_for_sacrifice)\n{\n  int c;\n  int csvid;\n  uint8_t saved_target_count;\n  uint16_t requested_type_mode;\n  int32_t saved_target_player;\n  int32_t saved_target_card;\n  int saved_fizzle_or_scan;\n  card_instance_t *instance;\n  int available_card_or_result;\n  card_instance_t *selected_instance;\n  type_t prohibited_types;\n  unsigned int required_types_or_marking_state;\n  int scan_limit_card_or_result;\n  unsigned int requested_types;\n  int last_selected_player;\n  const char *prompt;\n  int last_selected_card;\n  unsigned int selection_limit;\n  int selected_count_or_packed_choice;\n  target_definition_t td;\n  char marked[151];\n  char default_prompt[200];\n\n  base_target_definition(player, card, &td, 0x47);\n  td.allow_cancel = options & (SAC_DONE | SAC_NO_CANCEL) ^ SAC_NO_CANCEL;\n  td.special = 0x8000;\n  td.extra = (int32_t)passes_test_definition_and_not_dying;\n  if (test->not_me == 1)\n  {\n    td.special = 0xc000;\n  }\n  requested_types = test->type & 0x147;\n  required_types_or_marking_state = td.required_type;\n  if (((requested_types != 0) &&\n       (requested_type_mode = test->type_flag, required_types_or_marking_state = requested_types,\n        requested_type_mode != 0)) &&\n      (required_types_or_marking_state = td.required_type, requested_type_mode == 1))\n  {\n    td.illegal_type = requested_types;\n  }\n  td.required_type = required_types_or_marking_state;\n  td.who_chooses = t_player;\n  td.allowed_controller = t_player;\n  td.preferred_controller = t_player;\n  if (((options & SAC_AS_COST) != 0) &&\n      (prohibited_types = types_cannot_sac(), prohibited_types != TYPE_NONE))\n  {\n    td.illegal_type = td.illegal_type | prohibited_types;\n  }\n  if ((((options & SAC_CAUSED) != 0) && (player != t_player)) &&\n      (saved_fizzle_or_scan = can_cause_sacrifice_part(t_player), saved_fizzle_or_scan == 0))\n  {\n    spell_fizzled = 1;\n    return 0;\n  }\n  instance = get_card_instance(player, card);\n  saved_fizzle_or_scan = spell_fizzled;\n  sacrifice_test = test;\n  if ((options & SAC_ALL_OR_NONE) == 0)\n  {\n    if (can_target(&td) == 0)\n    {\n      spell_fizzled = 1;\n      return 0;\n    }\n  }\n  else\n  {\n    available_card_or_result = target_available(player, card, &td);\n    if (available_card_or_result < (int)(unsigned int)test->qty)\n    {\n      spell_fizzled = 1;\n      return 0;\n    }\n  }\n  selection_limit = (unsigned int)test->qty;\n  available_card_or_result = target_available(player, card, &td);\n  if (available_card_or_result < (int)selection_limit)\n  {\n    selection_limit = target_available(player, card, &td);\n  }\n  if (test->message[0] == '\\0')\n  {\n    get_sacrifice_prompt_text(default_prompt, requested_types,\n                              (unsigned int)(test->type_flag == 1));\n    prompt = default_prompt;\n  }\n  else\n  {\n    prompt = test->message;\n  }\n  saved_target_count = instance->number_of_targets;\n  saved_target_player = instance->targets[0].player;\n  saved_target_card = instance->targets[0].card;\n  memset(marked, 0, sizeof(marked));\n  if ((int)selection_limit < 1)\n  {\n    if ((spell_fizzled != 1) && ((options & SAC_OPTIONAL) != 0))\n    {\n      last_selected_player = -1;\n      last_selected_card = -1;\n      selected_count_or_packed_choice = 0;\n    LAB_026e445c:\n      spell_fizzled = saved_fizzle_or_scan;\n      if ((options & SAC_SET_TARGETS) != 0)\n      {\n        instance->number_of_targets = '\\x01';\n        instance->targets[0].player = last_selected_player;\n        instance->targets[0].card = last_selected_card;\n        available_card_or_result = get_color(last_selected_player, last_selected_card);\n        instance->targets[1].player = available_card_or_result;\n        csvid = get_id(last_selected_player, last_selected_card);\n        instance->targets[1].card = csvid;\n        available_card_or_result = get_power(last_selected_player, last_selected_card);\n        instance->targets[2].player = available_card_or_result;\n        available_card_or_result = get_toughness(last_selected_player, last_selected_card);\n        instance->targets[2].card = available_card_or_result;\n        selected_instance = get_card_instance(last_selected_player, last_selected_card);\n        instance->targets[3].card = selected_instance->internal_card_id;\n        available_card_or_result = get_id(player, card);\n        if (available_card_or_result == 0x2f91)\n        {\n          available_card_or_result =\n              has_subtype(last_selected_player, last_selected_card, SUBTYPE_HUMAN);\n          instance->targets[3].player = available_card_or_result;\n        }\n        else if ((available_card_or_result == 0x24f3) &&\n                 (available_card_or_result =\n                      has_subtype(last_selected_player, last_selected_card, SUBTYPE_GOBLIN),\n                  available_card_or_result != 0))\n        {\n          token_generation_t token;\n          default_token_definition(player, card, 0x493b, &token);\n          token.t_player = last_selected_player;\n          token.qty = '\\x02';\n          token.action = TOKEN_ACTION_HASTE;\n          generate_token(&token);\n        }\n      }\n      c = 0;\n      if (0 < active_cards_count[t_player])\n      {\n        do\n        {\n          while (marked[c] != '\\0')\n          {\n            instance = get_card_instance(t_player, c);\n            c = c + 1;\n            instance->state = instance->state & 0xffdfffff | 0x100000;\n            scan_limit_card_or_result = active_cards_count[t_player];\n            if (scan_limit_card_or_result <= c)\n              goto LAB_026e44d4;\n          }\n          c = c + 1;\n          scan_limit_card_or_result = active_cards_count[t_player];\n        } while (c < scan_limit_card_or_result);\n      LAB_026e44d4:\n        if (((options & SAC_JUST_MARK) == 0) && (0 < scan_limit_card_or_result))\n        {\n          c = 0;\n        LAB_026e44f2:\n          do\n          {\n            if (marked[c] != '\\0')\n            {\n              instance = get_card_instance(t_player, c);\n              instance->state = instance->state & 0xffefffff;\n              instance = in_play(t_player, c);\n              if (instance != NULL)\n              {\n                scan_limit_card_or_result = c + 1;\n                kill_card(t_player, c, KILL_SACRIFICE);\n                c = scan_limit_card_or_result;\n                if (active_cards_count[t_player] <= scan_limit_card_or_result)\n                  break;\n                goto LAB_026e44f2;\n              }\n            }\n            c = c + 1;\n          } while (c < active_cards_count[t_player]);\n        }\n      }\n      if ((options & SAC_RETURN_CHOICE) != 0)\n      {\n        selected_count_or_packed_choice =\n            (int32_t)((uint16_t)selected_count_or_packed_choice |\n                      ((uint32_t)(uint8_t)last_selected_player << 16) |\n                      ((uint32_t)(uint8_t)last_selected_card << 24));\n      }\n      if (marked_for_sacrifice == NULL)\n      {\n        spell_fizzled = saved_fizzle_or_scan;\n        return selected_count_or_packed_choice;\n      }\n      memcpy(marked_for_sacrifice, marked, sizeof(marked));\n      spell_fizzled = saved_fizzle_or_scan;\n      return selected_count_or_packed_choice;\n    }\n  }\n  else\n  {\n    available_card_or_result = -1;\n    if (player == t_player)\n    {\n      available_card_or_result = card;\n    }\n    last_selected_player = -1;\n    last_selected_card = -1;\n    selected_count_or_packed_choice = 0;\n    do\n    {\n      target_t tgt;\n      spell_fizzled = 0;\n      tgt.player = -1;\n      tgt.card = -1;\n      if ((ai_is_speculating == 1) || ((t_player == 1 && ((trace_mode & 2U) == 0))))\n      {\n        scan_limit_card_or_result =\n            new_get_special_permanent_for_sacrifice(t_player, available_card_or_result, test);\n        if (scan_limit_card_or_result == -1)\n        {\n          if (tgt.card == -1)\n            goto LAB_026e4361;\n          goto LAB_026e43ad;\n        }\n        tgt.player = t_player;\n        tgt.card = scan_limit_card_or_result;\n        if (scan_limit_card_or_result < 0)\n          goto LAB_026e468a;\n      LAB_026e43b5:\n        if (marked[tgt.card] == '\\0')\n        {\n          selected_instance = get_card_instance(tgt.player, tgt.card);\n          if (ai_is_speculating == 1)\n          {\n            required_types_or_marking_state = 0x300000;\n          }\n          else\n          {\n            required_types_or_marking_state = 0x200000;\n            if (t_player == 1)\n            {\n              required_types_or_marking_state =\n                  (-(unsigned int)((trace_mode & 2U) == 0) & 0x100000) + 0x200000;\n            }\n          }\n          selected_instance->state = selected_instance->state | required_types_or_marking_state;\n          selected_count_or_packed_choice = selected_count_or_packed_choice + 1;\n          last_selected_card = tgt.card;\n          marked[tgt.card] = '\\x01';\n          last_selected_player = tgt.player;\n        }\n        else\n        {\n          selected_instance = get_card_instance(tgt.player, tgt.card);\n          selected_count_or_packed_choice = selected_count_or_packed_choice + -1;\n          selected_instance->state = selected_instance->state & 0xffdfffff;\n          marked[tgt.card] = '\\0';\n        }\n      }\n      else\n      {\n      LAB_026e4361:\n        sacrifice_test = test;\n        instance->number_of_targets = '\\0';\n        select_target(player, card, &td, prompt, &tgt);\n      LAB_026e43ad:\n        if (-1 < tgt.card)\n          goto LAB_026e43b5;\n      LAB_026e468a:\n        if ((options & (SAC_DONE | SAC_NO_CANCEL)) != SAC_NO_CANCEL)\n        {\n          instance->number_of_targets = saved_target_count;\n          instance->targets[0].player = saved_target_player;\n          instance->targets[0].card = saved_target_card;\n          if ((tgt.card == -1) ||\n              ((selected_count_or_packed_choice == 0 && ((options & SAC_OPTIONAL) == 0))))\n            goto LAB_026e46d3;\n          goto LAB_026e4440;\n        }\n      }\n    } while (selected_count_or_packed_choice < (int)selection_limit);\n    instance->number_of_targets = saved_target_count;\n    instance->targets[0].player = saved_target_player;\n    instance->targets[0].card = saved_target_card;\n    if (spell_fizzled != 1)\n    {\n    LAB_026e4440:\n      if (((int)selection_limit <= selected_count_or_packed_choice) ||\n          ((options & SAC_ALL_OR_NONE) == 0))\n        goto LAB_026e445c;\n    }\n  }\nLAB_026e46d3:\n  saved_fizzle_or_scan = 0;\n  spell_fizzled = 1;\n  if (0 < active_cards_count[t_player])\n  {\n    do\n    {\n      while (marked[saved_fizzle_or_scan] == '\\0')\n      {\n        saved_fizzle_or_scan = saved_fizzle_or_scan + 1;\n        if (active_cards_count[t_player] <= saved_fizzle_or_scan)\n        {\n          return 0;\n        }\n      }\n      instance = get_card_instance(t_player, saved_fizzle_or_scan);\n      saved_fizzle_or_scan = saved_fizzle_or_scan + 1;\n      available_card_or_result = active_cards_count[t_player];\n      instance->state = instance->state & 0xffcfffff;\n    } while (saved_fizzle_or_scan < available_card_or_result);\n  }\n  return 0;\n}",
+      "before_sha256": "98e2dd0c662c193fa5f90145a75eb73c5158d73530bcc25a781177cc2cd0ded5",
+      "after_sha256": "eddc5ea26962cbe5b977eb1d2895b18dd7eea6fc0ef30d7fad057a2873d9c08a",
+      "alpha_only": true,
+      "renames": {
+        "uVar1": "saved_target_count",
+        "uVar2": "requested_type_mode",
+        "iVar3": "saved_target_player",
+        "iVar4": "saved_target_card",
+        "iVar5": "saved_fizzle_or_scan",
+        "iVar7": "available_card_or_result",
+        "pcVar8": "selected_instance",
+        "tVar9": "prohibited_types",
+        "uVar10": "required_types_or_marking_state",
+        "iVar11": "scan_limit_card_or_result",
+        "uVar13": "requested_types",
+        "iStack_23c": "last_selected_player",
+        "iStack_22c": "last_selected_card",
+        "uStack_220": "selection_limit",
+        "iStack_218": "selected_count_or_packed_choice"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": -11,
+        "removed_placeholder_occurrences": 144
+      },
+      "retained_control_flow": true,
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "impose_sacrifice",
+      "card_control_cleanup": true,
+      "before_definition": "int impose_sacrifice(int player, int card, int t_player, int amount, int type, int flag1,\n                          int subtype, int flag2, int color, int flag3, int id, int flag4, int cc,\n                          int flag5)\n{\n  int i;\n  int iVar1;\n\n  if (amount < 1)\n  {\n    return 0;\n  }\n  if ((player != t_player) && (iVar1 = can_cause_sacrifice_part(t_player), iVar1 == 0))\n  {\n    return 0;\n  }\n  i = 0;\n  do\n  {\n    if (sacrifice(player, card, t_player, 1, type, flag1, subtype, flag2, color, flag3, id,\n                           flag4, cc, flag5) == 0)\n    {\n      return i;\n    }\n    i = i + 1;\n  } while (amount != i);\n  return i;\n}",
+      "after_definition": "int impose_sacrifice(int player, int card, int t_player, int amount, int type, int flag1,\n                     int subtype, int flag2, int color, int flag3, int id, int flag4, int cc,\n                     int flag5)\n{\n  int i;\n  int can_cause_sacrifice;\n\n  if (amount < 1)\n  {\n    return 0;\n  }\n  if ((player != t_player) &&\n      (can_cause_sacrifice = can_cause_sacrifice_part(t_player), can_cause_sacrifice == 0))\n  {\n    return 0;\n  }\n  i = 0;\n  do\n  {\n    if (sacrifice(player, card, t_player, 1, type, flag1, subtype, flag2, color, flag3, id, flag4,\n                  cc, flag5) == 0)\n    {\n      return i;\n    }\n    i = i + 1;\n  } while (amount != i);\n  return i;\n}",
+      "before_sha256": "768f7328764ced22ab6d1cd00880437a956756659853caebdb910f665558cbfc",
+      "after_sha256": "654eb2cd49fed9267c03e76426226672c35cea56720aa1464ce7052598a86fc1",
+      "alpha_only": true,
+      "renames": {
+        "iVar1": "can_cause_sacrifice"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": -1,
+        "removed_placeholder_occurrences": 3
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "check_battlefield_for_sacrifice",
+      "card_control_cleanup": true,
+      "before_definition": "int check_battlefield_for_sacrifice(int player, int type, int flag1, int subtype, int flag2,\n                                         int color, int flag3, int id, int flag4, int cc, int flag5)\n{\n  card_instance_t *instance;\n  int i;\n  int iVar4;\n  if (player < 2)\n  {\n    if (0 < active_cards_count[player])\n    {\n      i = 0;\n      do\n      {\n        instance = in_play(player, i);\n        if ((instance != NULL) &&\n            (iVar4 = make_test_in_play(player, i, -1, type, flag1, subtype, flag2, color,\n                                            flag3, id, flag4, cc, flag5),\n             iVar4 != 0))\n        {\n          return 1;\n        }\n        i = i + 1;\n      } while (i < active_cards_count[player]);\n    }\n  }\n  else if (player == 2)\n  {\n    i = 0;\n    do\n    {\n      iVar4 = 0;\n      if (0 < active_cards_count[i])\n      {\n        do\n        {\n          instance = in_play(i, iVar4);\n          if ((instance != NULL) &&\n              (make_test_in_play(i, iVar4, -1, type, flag1, subtype, flag2, color,\n                                              flag3, id, flag4, cc, flag5) != 0))\n          {\n            return 1;\n          }\n          iVar4 = iVar4 + 1;\n        } while (iVar4 < active_cards_count[i]);\n      }\n      i = i + 1;\n    } while (i != 2);\n  }\n  return 0;\n}",
+      "after_definition": "int check_battlefield_for_sacrifice(int player, int type, int flag1, int subtype, int flag2,\n                                    int color, int flag3, int id, int flag4, int cc, int flag5)\n{\n  card_instance_t *instance;\n  int i;\n  int scan_or_matches;\n  if (player < 2)\n  {\n    if (0 < active_cards_count[player])\n    {\n      i = 0;\n      do\n      {\n        instance = in_play(player, i);\n        if ((instance != NULL) &&\n            (scan_or_matches = make_test_in_play(player, i, -1, type, flag1, subtype, flag2, color,\n                                                 flag3, id, flag4, cc, flag5),\n             scan_or_matches != 0))\n        {\n          return 1;\n        }\n        i = i + 1;\n      } while (i < active_cards_count[player]);\n    }\n  }\n  else if (player == 2)\n  {\n    i = 0;\n    do\n    {\n      scan_or_matches = 0;\n      if (0 < active_cards_count[i])\n      {\n        do\n        {\n          instance = in_play(i, scan_or_matches);\n          if ((instance != NULL) &&\n              (make_test_in_play(i, scan_or_matches, -1, type, flag1, subtype, flag2, color, flag3,\n                                 id, flag4, cc, flag5) != 0))\n          {\n            return 1;\n          }\n          scan_or_matches = scan_or_matches + 1;\n        } while (scan_or_matches < active_cards_count[i]);\n      }\n      i = i + 1;\n    } while (i != 2);\n  }\n  return 0;\n}",
+      "before_sha256": "09e8a2522a24ef519f23ca1a2e6670c005ece47bedb2fc8e9904aa17b155dba8",
+      "after_sha256": "8278db1defc384e4a19106faafe24d76cd734623a1a6e9b9c8457af451c00e4d",
+      "alpha_only": true,
+      "renames": {
+        "iVar4": "scan_or_matches"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 9
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "can_activate_altar_basic",
+      "card_control_cleanup": true,
+      "before_definition": "int can_activate_altar_basic(int player, int card, int act_mode, int type)\n{\n  int result;\n  unsigned int uVar2;\n\n  uVar2 = 0;\n  result = is_sick(player, card);\n  if (result == 0)\n  {\n    uVar2 = act_mode & 1;\n  }\n  result = is_animated_and_sick(player, card);\n  if ((result == 0) && ((act_mode & 2U) != 0))\n  {\n    uVar2 = uVar2 + 2;\n  }\n  result = is_tapped(player, card);\n  if ((result == 0) && ((act_mode & 4U) != 0))\n  {\n    uVar2 = uVar2 + 4;\n  }\n  if ((current_phase == 4) && ((act_mode & 8U) != 0))\n  {\n    uVar2 = uVar2 + 8;\n  }\n  if ((current_turn == player) && ((act_mode & 0x10U) != 0))\n  {\n    uVar2 = uVar2 + 0x10;\n  }\n  if (uVar2 != act_mode)\n  {\n    return 0;\n  }\n  return can_sacrifice_as_cost(player, 1, type, 0, 0, 0, 0, 0, 0, 0, -1, 0);\n}",
+      "after_definition": "int can_activate_altar_basic(int player, int card, int act_mode, int type)\n{\n  int result;\n  unsigned int available_modes;\n\n  available_modes = 0;\n  result = is_sick(player, card);\n  if (result == 0)\n  {\n    available_modes = act_mode & 1;\n  }\n  result = is_animated_and_sick(player, card);\n  if ((result == 0) && ((act_mode & 2U) != 0))\n  {\n    available_modes = available_modes + 2;\n  }\n  result = is_tapped(player, card);\n  if ((result == 0) && ((act_mode & 4U) != 0))\n  {\n    available_modes = available_modes + 4;\n  }\n  if ((current_phase == 4) && ((act_mode & 8U) != 0))\n  {\n    available_modes = available_modes + 8;\n  }\n  if ((current_turn == player) && ((act_mode & 0x10U) != 0))\n  {\n    available_modes = available_modes + 0x10;\n  }\n  if (available_modes != act_mode)\n  {\n    return 0;\n  }\n  return can_sacrifice_as_cost(player, 1, type, 0, 0, 0, 0, 0, 0, 0, -1, 0);\n}",
+      "before_sha256": "93a3b9fccc1477c9356c6cc02d222970c1c5cc9125e89d8d7fbf156661d3f2f5",
+      "after_sha256": "08dfb0edfbe9e6b3d24cd28aedc563f54408b3e32f03ce90be839d9ed88d02d0",
+      "alpha_only": true,
+      "renames": {
+        "uVar2": "available_modes"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 12
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "altar_basic_activation",
+      "card_control_cleanup": true,
+      "before_definition": "int altar_basic_activation(int player, int card, int act_mode, int type)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n\n  instance = get_card_instance(player, card);\n  iVar2 = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);\n  if ((iVar2 != 0) &&\n      (iVar2 = pick_permanent_for_sacrifice(player, card, type, 0), iVar2 != -1))\n  {\n    instance->number_of_targets = '\\x01';\n    iVar3 = get_power(player, iVar2);\n    instance->targets[1].player = iVar3;\n    iVar3 = get_toughness(player, iVar2);\n    instance->targets[1].card = iVar3;\n    iVar3 = get_color(player, iVar2);\n    instance->targets[2].player = iVar3;\n    iVar3 = get_cmc(player, iVar2);\n    instance->targets[2].card = iVar3;\n    kill_card(player, iVar2, KILL_SACRIFICE);\n    if ((act_mode & 4U) == 0)\n    {\n      return 1;\n    }\n    tap_card(player, card);\n    return 1;\n  }\n  return 0;\n}",
+      "after_definition": "int altar_basic_activation(int player, int card, int act_mode, int type)\n{\n  card_instance_t *instance;\n  int sacrificed_card_or_paid;\n  int sacrifice_stat;\n\n  instance = get_card_instance(player, card);\n  sacrificed_card_or_paid = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);\n  if ((sacrificed_card_or_paid != 0) &&\n      (sacrificed_card_or_paid = pick_permanent_for_sacrifice(player, card, type, 0),\n       sacrificed_card_or_paid != -1))\n  {\n    instance->number_of_targets = '\\x01';\n    sacrifice_stat = get_power(player, sacrificed_card_or_paid);\n    instance->targets[1].player = sacrifice_stat;\n    sacrifice_stat = get_toughness(player, sacrificed_card_or_paid);\n    instance->targets[1].card = sacrifice_stat;\n    sacrifice_stat = get_color(player, sacrificed_card_or_paid);\n    instance->targets[2].player = sacrifice_stat;\n    sacrifice_stat = get_cmc(player, sacrificed_card_or_paid);\n    instance->targets[2].card = sacrifice_stat;\n    kill_card(player, sacrificed_card_or_paid, KILL_SACRIFICE);\n    if ((act_mode & 4U) == 0)\n    {\n      return 1;\n    }\n    tap_card(player, card);\n    return 1;\n  }\n  return 0;\n}",
+      "before_sha256": "c56e5a46735bbb85357a88a8bb05ba0bf6ad9f7530214c158e847329ed4279db",
+      "after_sha256": "501925ac8936f0dfe435ba2ffb8c21805eec4ac74087e1d24b42e9cecda1a1f3",
+      "alpha_only": true,
+      "renames": {
+        "iVar2": "sacrificed_card_or_paid",
+        "iVar3": "sacrifice_stat"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": -1,
+        "removed_placeholder_occurrences": 19
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "altar_extended",
+      "card_control_cleanup": true,
+      "before_definition": "int altar_extended(int player, int card, event_t event, int act_mode, int type, int flag1,\n                        int subtype, int flag2, int color, int flag3, int id, int flag4, int cmc,\n                        int flag5)\n{\n  card_instance_t *instance;\n  int iVar2;\n  int iVar3;\n  unsigned int uVar4;\n\n  instance = get_card_instance(player, card);\n  if (event == EVENT_CAN_ACTIVATE)\n  {\n    if (can_use_activated_abilities(player, card) != 0)\n    {\n      iVar2 = is_sick(player, card);\n      uVar4 = 0;\n      if (iVar2 == 0)\n      {\n        uVar4 = act_mode & 1;\n      }\n      iVar2 = is_animated_and_sick(player, card);\n      if ((iVar2 == 0) && ((act_mode & 2U) != 0))\n      {\n        uVar4 = uVar4 + 2;\n      }\n      iVar2 = is_tapped(player, card);\n      if ((iVar2 == 0) && ((act_mode & 4U) != 0))\n      {\n        uVar4 = uVar4 + 4;\n      }\n      if ((current_phase == 4) && ((act_mode & 8U) != 0))\n      {\n        uVar4 = uVar4 + 8;\n      }\n      if ((current_turn == player) && ((act_mode & 0x10U) != 0))\n      {\n        uVar4 = uVar4 + 0x10;\n      }\n      if (uVar4 == act_mode)\n      {\n        return can_sacrifice_as_cost(player, 1, type, flag1, subtype, flag2, color, flag3, id,\n                                           flag4, cmc, flag5);\n      }\n    }\n  }\n  else if (event == EVENT_ACTIVATE)\n  {\n    iVar2 = pick_special_permanent_for_sacrifice(player, card, 0, type, flag1, subtype, flag2,\n                                                      color, flag3, id, flag4, cmc, flag5);\n    if (iVar2 == -1)\n    {\n      spell_fizzled = 1;\n    }\n    else\n    {\n      iVar3 = get_power(player, iVar2);\n      instance->targets[1].player = iVar3;\n      iVar3 = get_toughness(player, iVar2);\n      instance->targets[1].card = iVar3;\n      iVar3 = get_color(player, iVar2);\n      instance->targets[2].player = iVar3;\n      iVar3 = get_cmc(player, iVar2);\n      instance->targets[2].card = iVar3;\n      kill_card(player, iVar2, KILL_SACRIFICE);\n      if ((act_mode & 4U) != 0)\n      {\n        tap_card(player, card);\n      }\n    }\n  }\n  return 0;\n}",
+      "after_definition": "int altar_extended(int player, int card, event_t event, int act_mode, int type, int flag1,\n                   int subtype, int flag2, int color, int flag3, int id, int flag4, int cmc,\n                   int flag5)\n{\n  card_instance_t *instance;\n  int sacrificed_card_or_result;\n  int sacrifice_stat;\n  unsigned int available_modes;\n\n  instance = get_card_instance(player, card);\n  if (event == EVENT_CAN_ACTIVATE)\n  {\n    if (can_use_activated_abilities(player, card) != 0)\n    {\n      sacrificed_card_or_result = is_sick(player, card);\n      available_modes = 0;\n      if (sacrificed_card_or_result == 0)\n      {\n        available_modes = act_mode & 1;\n      }\n      sacrificed_card_or_result = is_animated_and_sick(player, card);\n      if ((sacrificed_card_or_result == 0) && ((act_mode & 2U) != 0))\n      {\n        available_modes = available_modes + 2;\n      }\n      sacrificed_card_or_result = is_tapped(player, card);\n      if ((sacrificed_card_or_result == 0) && ((act_mode & 4U) != 0))\n      {\n        available_modes = available_modes + 4;\n      }\n      if ((current_phase == 4) && ((act_mode & 8U) != 0))\n      {\n        available_modes = available_modes + 8;\n      }\n      if ((current_turn == player) && ((act_mode & 0x10U) != 0))\n      {\n        available_modes = available_modes + 0x10;\n      }\n      if (available_modes == act_mode)\n      {\n        return can_sacrifice_as_cost(player, 1, type, flag1, subtype, flag2, color, flag3, id,\n                                     flag4, cmc, flag5);\n      }\n    }\n  }\n  else if (event == EVENT_ACTIVATE)\n  {\n    sacrificed_card_or_result = pick_special_permanent_for_sacrifice(\n        player, card, 0, type, flag1, subtype, flag2, color, flag3, id, flag4, cmc, flag5);\n    if (sacrificed_card_or_result == -1)\n    {\n      spell_fizzled = 1;\n    }\n    else\n    {\n      sacrifice_stat = get_power(player, sacrificed_card_or_result);\n      instance->targets[1].player = sacrifice_stat;\n      sacrifice_stat = get_toughness(player, sacrificed_card_or_result);\n      instance->targets[1].card = sacrifice_stat;\n      sacrifice_stat = get_color(player, sacrificed_card_or_result);\n      instance->targets[2].player = sacrifice_stat;\n      sacrifice_stat = get_cmc(player, sacrificed_card_or_result);\n      instance->targets[2].card = sacrifice_stat;\n      kill_card(player, sacrificed_card_or_result, KILL_SACRIFICE);\n      if ((act_mode & 4U) != 0)\n      {\n        tap_card(player, card);\n      }\n    }\n  }\n  return 0;\n}",
+      "before_sha256": "c5ab7114047bbc0075ef5584f163334a232906843652f680f7b508948bafccc9",
+      "after_sha256": "01906b0c16dfaaa4f83780ca49cd45e22aa9c8157eb6804a97be65fa175e0564",
+      "alpha_only": true,
+      "renames": {
+        "iVar2": "sacrificed_card_or_result",
+        "iVar3": "sacrifice_stat",
+        "uVar4": "available_modes"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 35
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "sacrifice_and_report_value",
+      "card_control_cleanup": true,
+      "before_definition": "int sacrifice_and_report_value(int player, int card, int t_player, int flags,\n                                    test_definition_t *test)\n{\n  unsigned int uVar1;\n  card_instance_t *instance;\n  int32_t result;\n  unsigned int card_00;\n\n  uVar1 = new_sacrifice_impl(\n      player, card, t_player, (flags >> 0x1f & 0x21U) + (SAC_RETURN_CHOICE | SAC_JUST_MARK),\n      test, NULL);\n  if ((int)uVar1 < 0)\n  {\n    result = -1;\n  }\n  else\n  {\n    card_00 = uVar1 >> 0x18;\n    uVar1 = (int)uVar1 >> 0x10 & 0xff;\n    instance = get_card_instance(uVar1, card_00);\n    if ((flags & 1U) == 0)\n    {\n      result = instance->internal_card_id;\n    }\n    else\n    {\n      result = get_power(uVar1, card_00);\n    }\n    if ((flags & 2U) != 0)\n    {\n      result = get_toughness(uVar1, card_00);\n    }\n    if ((flags & 4U) != 0)\n    {\n      result = get_color(uVar1, card_00);\n    }\n    if ((flags & 0x10U) != 0)\n    {\n      result = get_cmc(uVar1, card_00);\n    }\n    kill_card(uVar1, card_00, KILL_SACRIFICE);\n  }\n  return result;\n}",
+      "after_definition": "int sacrifice_and_report_value(int player, int card, int t_player, int flags,\n                               test_definition_t *test)\n{\n  unsigned int packed_choice_or_player;\n  card_instance_t *instance;\n  int32_t result;\n  unsigned int card_00;\n\n  packed_choice_or_player =\n      new_sacrifice_impl(player, card, t_player,\n                         (flags >> 0x1f & 0x21U) + (SAC_RETURN_CHOICE | SAC_JUST_MARK), test, NULL);\n  if ((int)packed_choice_or_player < 0)\n  {\n    result = -1;\n  }\n  else\n  {\n    card_00 = packed_choice_or_player >> 0x18;\n    packed_choice_or_player = (int)packed_choice_or_player >> 0x10 & 0xff;\n    instance = get_card_instance(packed_choice_or_player, card_00);\n    if ((flags & 1U) == 0)\n    {\n      result = instance->internal_card_id;\n    }\n    else\n    {\n      result = get_power(packed_choice_or_player, card_00);\n    }\n    if ((flags & 2U) != 0)\n    {\n      result = get_toughness(packed_choice_or_player, card_00);\n    }\n    if ((flags & 4U) != 0)\n    {\n      result = get_color(packed_choice_or_player, card_00);\n    }\n    if ((flags & 0x10U) != 0)\n    {\n      result = get_cmc(packed_choice_or_player, card_00);\n    }\n    kill_card(packed_choice_or_player, card_00, KILL_SACRIFICE);\n  }\n  return result;\n}",
+      "before_sha256": "7cb48171f1317c49c7150ffb6fcbf4b0fc3dc5fef9af298f0d320aede08ee7e3",
+      "after_sha256": "2b2f4fbdeac47844b094b563c76b083e673b3bf809a09572f965d83d4da1db70",
+      "alpha_only": true,
+      "renames": {
+        "uVar1": "packed_choice_or_player"
+      },
+      "facts": {
+        "removed_gotos": 0,
+        "removed_lab_gotos": 0,
+        "source_lines_removed": 0,
+        "removed_placeholder_occurrences": 12
+      },
+      "batch_readability_cleanup": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "name": "prevent_damage_sacrificing_a_creature",
+      "card_control_cleanup": true,
+      "before_definition": "int prevent_damage_sacrificing_a_creature(int player, int card, event_t event, int mode)\n{\n  card_instance_t *instance;\n  int result;\n  target_definition_t td;\n  target_definition_t td1;\n\n  default_target_definition(player, card, &td, 0);\n  td.extra = damage_card;\n  td.allow_cancel = 0;\n  default_target_definition(player, card, &td1, 2);\n  td1.allowed_controller = player;\n  td1.preferred_controller = player;\n  td1.illegal_abilities = 0;\n  instance = get_card_instance(player, card);\n  if (event == EVENT_CAN_ACTIVATE)\n  {\n    result = can_sacrifice_as_cost(player, 1, 2, 0, 0, 0, 0, 0, 0, 0, -1, 0);\n    if ((result != 0) && (result = can_target(&td), result != 0))\n    {\n      if (mode == 1)\n      {\n        result = has_mana(player, 0, 1);\n        if (result != 0)\n        {\n          return 99;\n        }\n      }\n      else if (mode == 2)\n      {\n        return 99;\n      }\n      return 0;\n    }\n    return global_enchantment(player, card, event);\n  }\n  if (event != EVENT_ACTIVATE)\n  {\n    if ((event == EVENT_RESOLVE_ACTIVATION) &&\n        (instance = get_card_instance(instance->targets[0].player, instance->targets[0].card),\n         0 < instance->info_slot))\n    {\n      instance->info_slot = 0;\n    }\n    return global_enchantment(player, card, event);\n  }\n  if (mode == 1)\n  {\n    charge_mana(player, COLOR_COLORLESS, 1);\n    if (spell_fizzled != 1)\n      goto LAB_026e53cd;\n  }\n  else if (mode == 2)\n  {\n  LAB_026e53cd:\n    result = controller_sacrifices_a_permanent(player, card, 2, 0);\n    if (result != 0)\n    {\n      pick_target(&td, \"TARGET_DAMAGE\");\n      return global_enchantment(player, card, event);\n    }\n  }\n  spell_fizzled = 1;\n  return global_enchantment(player, card, event);\n}",
+      "after_definition": "int prevent_damage_sacrificing_a_creature(int player, int card, event_t event, int mode)\n{\n  card_instance_t *instance;\n  int result;\n  target_definition_t td;\n  target_definition_t td1;\n\n  default_target_definition(player, card, &td, 0);\n  td.extra = damage_card;\n  td.allow_cancel = 0;\n  default_target_definition(player, card, &td1, 2);\n  td1.allowed_controller = player;\n  td1.preferred_controller = player;\n  td1.illegal_abilities = 0;\n  instance = get_card_instance(player, card);\n  if (event == EVENT_CAN_ACTIVATE)\n  {\n    result = can_sacrifice_as_cost(player, 1, 2, 0, 0, 0, 0, 0, 0, 0, -1, 0);\n    if ((result != 0) && (result = can_target(&td), result != 0))\n    {\n      if (mode == 1)\n      {\n        result = has_mana(player, 0, 1);\n        if (result != 0)\n        {\n          return 99;\n        }\n      }\n      else if (mode == 2)\n      {\n        return 99;\n      }\n      return 0;\n    }\n    return global_enchantment(player, card, event);\n  }\n  if (event != EVENT_ACTIVATE)\n  {\n    if ((event == EVENT_RESOLVE_ACTIVATION) &&\n        (instance = get_card_instance(instance->targets[0].player, instance->targets[0].card),\n         0 < instance->info_slot))\n    {\n      instance->info_slot = 0;\n    }\n    return global_enchantment(player, card, event);\n  }\n  bool pay_sacrifice = mode == 2;\n  if (mode == 1)\n  {\n    charge_mana(player, COLOR_COLORLESS, 1);\n    pay_sacrifice = spell_fizzled != 1;\n  }\n  if (pay_sacrifice)\n  {\n    result = controller_sacrifices_a_permanent(player, card, 2, 0);\n    if (result != 0)\n    {\n      pick_target(&td, \"TARGET_DAMAGE\");\n      return global_enchantment(player, card, event);\n    }\n  }\n  spell_fizzled = 1;\n  return global_enchantment(player, card, event);\n}",
+      "before_sha256": "9e5dccd4f6aae578d852cd63e9adeec5ed37e2263690b23ebeccb54f92121c69",
+      "after_sha256": "a5a7ab2a851c0349e9e053e8b8bd4c72795bee1b3a4f35b623b26b05d1631b56",
+      "alpha_only": false,
+      "renames": {},
+      "facts": {
+        "removed_gotos": 1,
+        "removed_lab_gotos": 1,
+        "source_lines_removed": 1,
+        "removed_placeholder_occurrences": 0
+      },
+      "batch_readability_cleanup": true
+    }
+  ],
+  "files": [
+    {
+      "source": "functions/global_checking.c",
+      "before_path": ".recovery/core-test-sacrifice-local-cleanup-before/global_checking.c",
+      "before_bytes_sha256": "b117302b32f3c4a46dd9ba0f5cc87f27744c492cf106fbd9859ef06afd344eb8",
+      "after_source_sha256": "8d4d392608422746f08cd531778851c489561210318dd25e787d82f3e6d04550"
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "before_path": ".recovery/core-test-sacrifice-local-cleanup-before/sacrifices.c",
+      "before_bytes_sha256": "b63da4b7bf127bcf31464440f2a56fae81c22758aead73c33fb63178aeee3fc8",
+      "after_source_sha256": "918c627e00318bda5ce0433eb22598a0d36bde145db985fa988c5f6b4a1c3e90"
+    }
+  ],
+  "index_sha256": "0547c2e2bb47bbf8cef9c80b39737cbc5c15e39bb5021a2e811b3c965efa1662",
+  "source_state_sha256": "c063c315e9352d7a745d453a60754494c348aac031e1ce9a0606f5cf45c2f079",
+  "review_notes": [
+    "Readability cleanup of 19 existing recovered core helpers; no new native coverage. 18 exact local-token substitutions and one reviewed payment/sacrifice branch. Preserve existing optimized filter and sacrifice control flow. One combined build; full audits, historical replay, inventories and reccmp deferred.",
+    "Direct native DBG inspection confirms original local vocabulary and optimized DWARF location lists. Per-function vocabulary DIEs, names and debug hash are included for the five test helpers. TEST_TYPE and test_type are the native score-accumulator spellings; other names describe observed semantic roles and are not claimed as universal location-based mappings to original variables.",
+    "Extend the existing batch application and source-reader registry to functions/ as well as cards/. Include underscored decompiler names such as p_Var17 in placeholder detection. Retain legacy evidence container keys for existing readers; actual sources and card-handler count identify this as helper work.",
+    "Preserve cached flag reads after callbacks, signed/unsigned tests, subtype alternatives, spell-fizzle restoration, target snapshots, packed sacrifice return values, marking and unmarking order, and existing quirks. The only structured edit combines the mode-1 payment and mode-2 sacrifice path without altering when callbacks run."
+  ],
+  "verification_policy": "Affected-file hashes and exact token checks for alpha-only edits; focused review for structured edits. Build separately after the combined batch. Inventories and reccmp deferred to a larger checkpoint.",
+  "scope": "Readability cleanup of existing recovered definitions; no new native coverage or gameplay-equivalence claim."
+}

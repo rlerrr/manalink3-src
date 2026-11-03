@@ -220,50 +220,20 @@ void attached_is_additional_color(int player, int card, event_t event, color_tes
 /* ManalinkEh 2022: 0x26e7ad0; original functions/auras.c:129. */
 void disable_attached(int player, int card, event_t event, int disabling_mode)
 {
-  char cVar1;
-  card_instance_t *instance;
-  int iVar3;
-
-  if (event != EVENT_ABILITIES)
+  if (event != EVENT_ABILITIES && event != EVENT_EQUIPMENT_ATTACHED &&
+      (event != EVENT_RESOLVE_SPELL || !has_subtype(player, card, SUBTYPE_AURA)))
+    return;
+  card_instance_t *instance = in_play(player, card);
+  if (instance && instance->damage_target_card >= 0 && !is_humiliated(player, card, AL_STATIC))
   {
-    if (event == EVENT_RESOLVE_SPELL)
-    {
-      iVar3 = has_subtype(player, card, SUBTYPE_AURA);
-      if (iVar3 == 0)
-      {
-        return;
-      }
-    }
-    else if (event != EVENT_EQUIPMENT_ATTACHED)
-    {
-      return;
-    }
+    char enchanted_player = instance->damage_target_player;
+    int enchanted_card = instance->damage_target_card;
+    if ((event == EVENT_ABILITIES && enchanted_card == affected_card &&
+         enchanted_player == affected_card_controller) ||
+        (event == EVENT_RESOLVE_SPELL && has_subtype(player, card, SUBTYPE_AURA)) ||
+        event == EVENT_EQUIPMENT_ATTACHED)
+      remove_abilities(enchanted_player, enchanted_card, event, disabling_mode);
   }
-
-  instance = in_play(player, card);
-  if (((instance != NULL) && (-1 < instance->damage_target_card)) &&
-      (iVar3 = is_humiliated(player, card, AL_STATIC), iVar3 == 0))
-  {
-    cVar1 = instance->damage_target_player;
-    iVar3 = instance->damage_target_card;
-    if (event == EVENT_ABILITIES)
-    {
-      if ((iVar3 == affected_card) && (cVar1 == affected_card_controller))
-        goto LAB_026e7b82;
-    }
-    else if (event == EVENT_RESOLVE_SPELL)
-    {
-      if (has_subtype(player, card, SUBTYPE_AURA) != 0)
-        goto LAB_026e7b82;
-    }
-    else if (event == EVENT_EQUIPMENT_ATTACHED)
-    {
-    LAB_026e7b82:
-      remove_abilities((int)cVar1, iVar3, event, disabling_mode);
-      return;
-    }
-  }
-  return;
 }
 
 /* ManalinkEh 2022: 0x26e7bf0; original functions/auras.c:144. */
@@ -353,10 +323,10 @@ void attached_is_forced_subtype(int player, int card, event_t event, subtype_t s
 /* ManalinkEh 2022: 0x26e7d90; original functions/auras.c:178. */
 void attached_is_additional_color(int player, int card, event_t event, color_test_t color)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *aura_instance;
   int result;
-  card_instance_t *pcVar3;
-  unsigned int uVar4;
+  card_instance_t *active_aura;
+  unsigned int sleighted_color;
 
   if (event != EVENT_SET_COLOR)
   {
@@ -374,19 +344,19 @@ void attached_is_additional_color(int player, int card, event_t event, color_tes
     }
   }
 
-  pcVar1 = in_play(player, card);
-  if ((((pcVar1 != NULL) && (-1 < pcVar1->damage_target_card)) &&
+  aura_instance = in_play(player, card);
+  if ((((aura_instance != NULL) && (-1 < aura_instance->damage_target_card)) &&
        (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
-      ((pcVar3 = in_play(player, card), pcVar3 != NULL && (-1 < pcVar1->damage_target_card))))
+      ((active_aura = in_play(player, card), active_aura != NULL && (-1 < aura_instance->damage_target_card))))
   {
 
     if (event == EVENT_SET_COLOR)
     {
-      if (pcVar1->damage_target_card != affected_card)
+      if (aura_instance->damage_target_card != affected_card)
       {
         return;
       }
-      if (pcVar1->damage_target_player != affected_card_controller)
+      if (aura_instance->damage_target_player != affected_card_controller)
       {
         return;
       }
@@ -403,8 +373,8 @@ void attached_is_additional_color(int player, int card, event_t event, color_tes
     {
       return;
     }
-    uVar4 = get_sleighted_color_test(player, card, color);
-    event_result = event_result | uVar4;
+    sleighted_color = get_sleighted_color_test(player, card, color);
+    event_result = event_result | sleighted_color;
   }
   return;
 }
@@ -412,9 +382,9 @@ void attached_is_additional_color(int player, int card, event_t event, color_tes
 /* ManalinkEh 2022: 0x26e7eb0; original functions/auras.c:194. */
 void attached_is_forced_color(int player, int card, event_t event, color_test_t color)
 {
-  card_instance_t *pcVar1;
+  card_instance_t *aura_instance;
   int result;
-  card_instance_t *pcVar3;
+  card_instance_t *active_aura;
 
   if (event != EVENT_SET_COLOR)
   {
@@ -432,19 +402,19 @@ void attached_is_forced_color(int player, int card, event_t event, color_test_t 
     }
   }
 
-  pcVar1 = in_play(player, card);
-  if ((((pcVar1 != NULL) && (-1 < pcVar1->damage_target_card)) &&
+  aura_instance = in_play(player, card);
+  if ((((aura_instance != NULL) && (-1 < aura_instance->damage_target_card)) &&
        (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
-      ((pcVar3 = in_play(player, card), pcVar3 != NULL && (-1 < pcVar1->damage_target_card))))
+      ((active_aura = in_play(player, card), active_aura != NULL && (-1 < aura_instance->damage_target_card))))
   {
 
     if (event == EVENT_SET_COLOR)
     {
-      if (pcVar1->damage_target_card != affected_card)
+      if (aura_instance->damage_target_card != affected_card)
       {
         return;
       }
-      if (pcVar1->damage_target_player != affected_card_controller)
+      if (aura_instance->damage_target_player != affected_card_controller)
       {
         return;
       }
@@ -583,54 +553,41 @@ static void attached_gets_pt_part(int player, int card, event_t event, int power
 /* ManalinkEh 2022: 0x26e6650; original functions/auras.c:62. */
 static void attached_set_pt_part(int player, int card, event_t event, int power, int toughness)
 {
-  card_instance_t *instance;
-
-  instance = in_play(player, card);
-  if (((instance != NULL) && (-1 < instance->damage_target_card)) &&
-      (is_humiliated(player, card, AL_STATIC) == 0))
+  card_instance_t *instance = in_play(player, card);
+  if (instance && instance->damage_target_card >= 0 && !is_humiliated(player, card, AL_STATIC) &&
+      instance->damage_target_card == affected_card &&
+      instance->damage_target_player == affected_card_controller)
   {
-    if (event == EVENT_POWER)
-    {
-      if (((instance->damage_target_card == affected_card) &&
-           (affected_card_controller == instance->damage_target_player)) &&
-          (-1 < power))
-        goto LAB_026e66df;
-    }
-    else if (((event == EVENT_TOUGHNESS) && (instance->damage_target_card == affected_card)) &&
-             ((affected_card_controller == instance->damage_target_player && (-1 < toughness))))
-    {
-      power = toughness;
-    LAB_026e66df:
+    if (event == EVENT_POWER && power >= 0)
       set_base_pt(power);
-      return;
-    }
+    else if (event == EVENT_TOUGHNESS && toughness >= 0)
+      set_base_pt(toughness);
   }
-  return;
 }
 
 
 /* ManalinkEh 2022: 0x26e6710; original functions/auras.c:528. */
 static void disabling_aura_ai_part(int player, int card, event_t event)
 {
-  card_instance_t *pcVar1;
-  card_instance_t *pcVar2;
+  card_instance_t *instance;
+  card_instance_t *target_instance;
   int result;
   if (event == EVENT_CAST_SPELL)
   {
     if (((affected_card == card) && (affected_card_controller == player)) && (spell_fizzled != 1))
     {
-      pcVar1 = get_card_instance(player, card);
-      pcVar2 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
+      instance = get_card_instance(player, card);
+      target_instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
       ai_modifier =
-          ((pcVar1->targets[0].player == 1 - player) - 1 & 0xffffffd0) + 0x18 + ai_modifier;
-      if (((pcVar2->regen_status & 0x800000) != 0) && ((pcVar2->token_status & 0x800) == 0))
+          ((instance->targets[0].player == 1 - player) - 1 & 0xffffffd0) + 0x18 + ai_modifier;
+      if (((target_instance->regen_status & 0x800000) != 0) && ((target_instance->token_status & 0x800) == 0))
       {
         ai_modifier = ai_modifier + -0x30;
       }
-      if ((pcVar1->damage_target_player < '\0') && (pcVar1->damage_target_card < 0))
+      if ((instance->damage_target_player < '\0') && (instance->damage_target_card < 0))
       {
-        pcVar1 = get_card_instance(player, card);
-        result = another_copy_attached(player, card, pcVar1->internal_card_id);
+        instance = get_card_instance(player, card);
+        result = another_copy_attached(player, card, instance->internal_card_id);
         if (result != 0)
         {
           ai_modifier = ai_modifier + -0x60;
@@ -640,11 +597,11 @@ static void disabling_aura_ai_part(int player, int card, event_t event)
   }
   else if (event == EVENT_SHOULD_AI_PLAY)
   {
-    pcVar1 = get_card_instance(player, card);
-    if (pcVar1->damage_target_player == '\0')
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player == '\0')
     {
-      pcVar1 = get_card_instance(0, pcVar1->damage_target_card);
-      ai_modifier = ai_modifier + pcVar1->attack_rating / 2;
+      instance = get_card_instance(0, instance->damage_target_card);
+      ai_modifier = ai_modifier + instance->attack_rating / 2;
     }
   }
   return;
@@ -661,265 +618,165 @@ int aura_pref_controller(int player, int card, event_t event, int pref_controlle
 static int aura_impl(int player, int card, event_t event, target_definition_t *td,
                      const char *prompt, int literal_prompt)
 {
-  char cVar1;
-  card_instance_t *instance;
-  int iVar3;
-  type_t tVar4;
-  card_instance_t *pcVar6;
-  target_definition_t td_default;
+  if (event != EVENT_CAN_CAST && event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET &&
+      event != EVENT_CHANGE_TARGET &&
+      !(event == EVENT_CAST_SPELL && card == affected_card && player == affected_card_controller) &&
+      (event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA &&
+      (uint32_t)event - EVENT_POWER > 2 && event != EVENT_RESOLVE_MOVING_AURA &&
+      event != EVENT_CHANGE_TYPE && event != EVENT_SET_COLOR && event != EVENT_GET_SELECTED_CARD &&
+      event != EVENT_STATIC_EFFECTS)
+    return 0;
 
-  if (event != EVENT_CAN_CAST)
+  card_instance_t *instance = get_card_instance(player, card);
+  target_definition_t td_default;
+  if (!td)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card != affected_card) || (player != affected_card_controller))
-        goto LAB_026e6cbc;
-    }
-    else if ((event != EVENT_RESOLVE_SPELL) &&
-             ((event != EVENT_CAN_CHANGE_TARGET && (event != EVENT_CHANGE_TARGET))))
-    {
-    LAB_026e6cbc:
-      if (((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
-          (((((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
-              (event != EVENT_CHANGE_TYPE)) &&
-             ((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)))) &&
-            (event != EVENT_STATIC_EFFECTS))))
-      {
-        return 0;
-      }
-    }
-  }
-  instance = get_card_instance(player, card);
-  if (td == NULL)
-  {
-    default_target_definition(player, card, &td_default, 2);
+    default_target_definition(player, card, &td_default, TYPE_CREATURE);
     td = &td_default;
   }
-  if (prompt == NULL && literal_prompt == 0)
-  {
+  if (!prompt && !literal_prompt)
     prompt = "TARGET_CREATURE";
-  }
-  iVar3 = check_special_flags3(player, card, 0x40);
-  if (iVar3 != 0)
-  {
-    td->illegal_abilities = td->illegal_abilities & 0xfffdffff;
-  }
-  if ((event == EVENT_CAN_CAST || event == EVENT_CHANGE_TARGET) ||
-      (event == EVENT_CAN_CHANGE_TARGET))
-  {
+  if (check_special_flags3(player, card, 0x40))
+    td->illegal_abilities &= ~KEYWORD_SHROUD;
+  if (event == EVENT_CAN_CAST || event == EVENT_CHANGE_TARGET || event == EVENT_CAN_CHANGE_TARGET)
     return generic_spell(player, card, event, 0x201, td, prompt, 1, NULL);
-  }
+
   if (event == EVENT_CAST_SPELL)
   {
-    if ((card == affected_card) && (player == affected_card_controller))
+    if (card == affected_card && player == affected_card_controller)
     {
-      iVar3 = check_special_flags(player, card, 0x20000000);
-      if (iVar3 == 0)
+      if (check_special_flags(player, card, 0x20000000) ||
+          (instance->damage_target_player >= 0 && instance->damage_target_card >= 0))
       {
-        if ((-1 < instance->damage_target_player) && (iVar3 = instance->damage_target_card, -1 < iVar3))
-          goto LAB_026e6de2;
-        generic_spell(player, card, EVENT_CAST_SPELL,
-                           (-(unsigned int)(literal_prompt == 0) & 0xffffff80) + 0x281, td, prompt,
-                           1, NULL);
-      }
-      else
-      {
-        iVar3 = instance->damage_target_card;
-      LAB_026e6de2:
-        instance->targets[0].player = (int)instance->damage_target_player;
-        instance->targets[0].card = iVar3;
-        instance->number_of_targets = '\x01';
+        instance->targets[0].player = instance->damage_target_player;
+        instance->targets[0].card = instance->damage_target_card;
+        instance->number_of_targets = 1;
         remove_special_flags(player, card, 0x20000000);
       }
-      if ((player == 1) && (((unsigned char)trace_mode & 2) == 0))
+      else
+        generic_spell(player, card, event, literal_prompt ? 0x281 : 0x201, td, prompt, 1, NULL);
+      if (player == AI && !(trace_mode & 2))
+        ai_modifier = (unsigned int)ai_modifier +
+                      (instance->targets[0].player == td->preferred_controller ? 24U : -24U);
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    int can_attach = instance->damage_target_player >= 0 && instance->damage_target_card >= 0;
+    if (!can_attach && valid_target(td))
+    {
+      can_attach = is_humiliated(instance->targets[0].player, instance->targets[0].card, AL_STATIC);
+      if (!can_attach)
       {
-        ai_modifier = ai_modifier +
-                      ((instance->targets[0].player == td->preferred_controller) - 1 & 0xffffffd0) +
-                      0x18;
+        int target_id = get_id(instance->targets[0].player, instance->targets[0].card);
+        can_attach = target_id != 0x32b && target_id != 0x242;
       }
     }
-    pcVar6 = in_play(player, card);
-    if (pcVar6 == NULL)
-    {
-      return 0;
-    }
-  LAB_026e6a20:
-    cVar1 = instance->damage_target_player;
-    if (cVar1 < '\0')
-      goto LAB_026e6b88;
-  }
-  else
-  {
-    if (event != EVENT_RESOLVE_SPELL)
-    {
-      pcVar6 = in_play(player, card);
-      if (pcVar6 == NULL)
-        goto LAB_026e6b88;
-      goto LAB_026e6a20;
-    }
-
-    if ((((-1 < instance->damage_target_player) && (-1 < instance->damage_target_card)) ||
-         ((iVar3 = valid_target(td),
-           iVar3 != 0 &&
-               ((iVar3 = is_humiliated(instance->targets[0].player,
-                                                   instance->targets[0].card, AL_STATIC),
-                 iVar3 != 0 || ((iVar3 = get_id(instance->targets[0].player, instance->targets[0].card),
-                                 iVar3 != 0x32b && (iVar3 != 0x242)))))))) &&
-        (iVar3 = attach_aura_to_target(player, card, EVENT_RESOLVE_SPELL, instance->targets[0].player,
-                                       instance->targets[0].card),
-         iVar3 != 0))
+    if (can_attach && attach_aura_to_target(player, card, event, instance->targets[0].player,
+                                            instance->targets[0].card))
     {
       remove_special_flags3(player, card, 0x40);
-      instance->number_of_targets = '\0';
+      instance->number_of_targets = 0;
       return 1;
     }
     kill_card(player, card, KILL_STATE_BASED_ACTION);
-    instance->number_of_targets = '\0';
+    instance->number_of_targets = 0;
     spell_fizzled = 1;
-    pcVar6 = in_play(player, card);
-    if (pcVar6 == NULL)
-    {
-      return 0;
-    }
-    cVar1 = instance->damage_target_player;
-    if (cVar1 < '\0')
-    {
-      return 0;
-    }
   }
-  iVar3 = instance->damage_target_card;
-  if (-1 < iVar3)
+
+  if (in_play(player, card) && instance->damage_target_player >= 0)
   {
-    if (event == EVENT_STATIC_EFFECTS)
-    {
-      if (card != affected_card)
+    char enchanted_player = instance->damage_target_player;
+    int enchanted_card = instance->damage_target_card;
+    if (enchanted_card >= 0)
+      switch (event)
       {
-        return 0;
-      }
-      if (player != affected_card_controller)
+      case EVENT_STATIC_EFFECTS:
       {
-        return 0;
-      }
-
-      td->preferred_controller = td->allowed_controller;
-      td->flags = td->flags | 3;
-      iVar3 = get_id((int)cVar1, iVar3);
-      if (validate_arbitrary_target(td, (int)instance->damage_target_player,
-                                             instance->damage_target_card) != 0)
-      {
-        if (is_humiliated((int)instance->damage_target_player,
-                                          instance->damage_target_card, AL_STATIC) != 0)
-        {
+        if (card != affected_card || player != affected_card_controller)
           return 0;
-        }
-        if ((iVar3 != 0x32b) && (iVar3 != 0x242))
+        td->preferred_controller = td->allowed_controller;
+        td->flags |= 3;
+        int target_id = get_id(enchanted_player, enchanted_card);
+        if (validate_arbitrary_target(td, instance->damage_target_player,
+                                      instance->damage_target_card))
         {
-          return 0;
+          if (is_humiliated(instance->damage_target_player, instance->damage_target_card,
+                            AL_STATIC) ||
+              (target_id != 0x32b && target_id != 0x242))
+            return 0;
         }
-      }
-      kill_card(player, card, KILL_STATE_BASED_ACTION);
-      return 0;
-    }
-    if (event == EVENT_CAN_MOVE_AURA)
-    {
-
-      td->preferred_controller = 2;
-      if (check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET) == 0)
-      {
-        td->illegal_abilities = 0;
-      }
-      if (check_special_flags(player, card, 0x1000000) != 0)
-      {
-        cVar1 = instance->damage_target_player;
-        td->allowed_controller = (int)cVar1;
-        td->preferred_controller = (int)cVar1;
-      }
-      iVar3 = check_special_flags3(player, card, 0x8000);
-      if ((iVar3 != 0) || (iVar3 = check_special_flags3(player, card, 0x10000), iVar3 != 0))
-      {
-        tVar4 = get_type((int)instance->damage_target_player, instance->damage_target_card);
-        td->required_type = tVar4;
-      }
-      iVar3 = target_available(player, card, td);
-      return (unsigned int)(1 < iVar3);
-    }
-    if (event == EVENT_MOVE_AURA)
-    {
-
-      state_untargettable((int)cVar1, iVar3, 1);
-      td->preferred_controller = 2;
-      if (check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET) == 0)
-      {
-        td->illegal_abilities = 0;
-      }
-      if (check_special_flags(player, card, 0x1000000) != 0)
-      {
-        cVar1 = instance->damage_target_player;
-        td->allowed_controller = (int)cVar1;
-        td->preferred_controller = (int)cVar1;
-      }
-      iVar3 = check_special_flags3(player, card, 0x8000);
-      if ((iVar3 != 0) || (iVar3 = check_special_flags3(player, card, 0x10000), iVar3 != 0))
-      {
-        tVar4 = get_type((int)instance->damage_target_player, instance->damage_target_card);
-        td->required_type = tVar4;
-        iVar3 = check_special_flags3(player, card, 0x8000);
-        td->who_chooses = (unsigned int)(iVar3 == 0);
-      }
-      if (check_special_flags(player, card, 0x20000000) == 0)
-      {
-        if (literal_prompt != 0)
-        {
-          literal_prompt = 0x80;
-        }
-        iVar3 = new_pick_target(td, prompt, 0, literal_prompt);
-      }
-      else
-      {
-        iVar3 = validate_target(player, card, td, 0);
-      }
-      state_untargettable((int)instance->damage_target_player, instance->damage_target_card, 0);
-      return iVar3;
-    }
-    if (event == EVENT_RESOLVE_MOVING_AURA)
-    {
-
-      if (check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET) == 0)
-      {
-        td->illegal_abilities = 0;
-      }
-      if (check_special_flags(player, card, 0x1000000) != 0)
-      {
-        cVar1 = instance->damage_target_player;
-        td->allowed_controller = (int)cVar1;
-        td->preferred_controller = (int)cVar1;
-      }
-      iVar3 = check_special_flags3(player, card, 0x8000);
-      if ((iVar3 != 0) || (iVar3 = check_special_flags3(player, card, 0x10000), iVar3 != 0))
-      {
-        tVar4 = get_type((int)instance->damage_target_player, instance->damage_target_card);
-        td->required_type = tVar4;
-        iVar3 = check_special_flags3(player, card, 0x8000);
-        td->who_chooses = (unsigned int)(iVar3 == 0);
-      }
-      if (valid_target(td) == 0)
-      {
+        kill_card(player, card, KILL_STATE_BASED_ACTION);
         return 0;
       }
-      if (attach_aura_to_target(player, card, EVENT_RESOLVE_MOVING_AURA,
-                                    instance->targets[0].player, instance->targets[0].card) == 0)
+      case EVENT_CAN_MOVE_AURA:
+        td->preferred_controller = ANYBODY;
+        if (!check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET))
+          td->illegal_abilities = 0;
+        if (check_special_flags(player, card, SF_MOVE_AURA_SAME_CONTROLLER))
+        {
+          char controller = instance->damage_target_player;
+          td->allowed_controller = controller;
+          td->preferred_controller = controller;
+        }
+        if (check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) ||
+            check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P1))
+          td->required_type =
+              get_type(instance->damage_target_player, instance->damage_target_card);
+        return target_available(player, card, td) > 1;
+      case EVENT_MOVE_AURA:
       {
-        return 0;
+        state_untargettable(enchanted_player, enchanted_card, 1);
+        td->preferred_controller = ANYBODY;
+        if (!check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET))
+          td->illegal_abilities = 0;
+        if (check_special_flags(player, card, SF_MOVE_AURA_SAME_CONTROLLER))
+        {
+          char controller = instance->damage_target_player;
+          td->allowed_controller = controller;
+          td->preferred_controller = controller;
+        }
+        if (check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) ||
+            check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P1))
+        {
+          td->required_type =
+              get_type(instance->damage_target_player, instance->damage_target_card);
+          td->who_chooses = check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) == 0;
+        }
+        int result;
+        if (check_special_flags(player, card, 0x20000000))
+          result = validate_target(player, card, td, 0);
+        else
+          result = new_pick_target(td, prompt, 0, literal_prompt ? 0x80 : 0);
+        state_untargettable(instance->damage_target_player, instance->damage_target_card, 0);
+        return result;
       }
-      return 1;
-    }
+      case EVENT_RESOLVE_MOVING_AURA:
+        if (!check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET))
+          td->illegal_abilities = 0;
+        if (check_special_flags(player, card, SF_MOVE_AURA_SAME_CONTROLLER))
+        {
+          char controller = instance->damage_target_player;
+          td->allowed_controller = controller;
+          td->preferred_controller = controller;
+        }
+        if (check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) ||
+            check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P1))
+        {
+          td->required_type =
+              get_type(instance->damage_target_player, instance->damage_target_card);
+          td->who_chooses = check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) == 0;
+        }
+        return valid_target(td) &&
+               attach_aura_to_target(player, card, event, instance->targets[0].player,
+                                     instance->targets[0].card) != 0;
+      default:
+        break;
+      }
   }
-LAB_026e6b88:
-  if (event != EVENT_GET_SELECTED_CARD)
-  {
-    return 0;
-  }
-  engine_selected_card = (int)instance->damage_target_player << 8 | instance->damage_target_card;
+  if (event == EVENT_GET_SELECTED_CARD)
+    engine_selected_card =
+        ((uint32_t)(int32_t)instance->damage_target_player << 8) | instance->damage_target_card;
   return 0;
 }
 
@@ -979,29 +836,16 @@ int aura_literal_prompt(int player, int card, event_t event, target_definition_t
 /* ManalinkEh 2022: 0x26e8620; original functions/auras.c:517. */
 int aura_pref_controller(int player, int card, event_t event, int pref_controller, char *prompt)
 {
+  if (event != EVENT_CAN_CAST && event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET &&
+      event != EVENT_CHANGE_TARGET &&
+      !(event == EVENT_CAST_SPELL && card == affected_card && player == affected_card_controller) &&
+      (event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA &&
+      (uint32_t)event - EVENT_POWER > 2 && event != EVENT_RESOLVE_MOVING_AURA &&
+      event != EVENT_CHANGE_TYPE && event != EVENT_SET_COLOR && event != EVENT_GET_SELECTED_CARD &&
+      event != EVENT_STATIC_EFFECTS)
+    return 0;
   target_definition_t td;
-
-  if (event != EVENT_CAN_CAST)
-  {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-        goto LAB_026e8650;
-    }
-    else if ((event == EVENT_RESOLVE_SPELL) ||
-             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      goto LAB_026e8650;
-    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
-         (((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
-           (event != EVENT_CHANGE_TYPE)))) &&
-        (((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)) &&
-          (event != EVENT_STATIC_EFFECTS))))
-    {
-      return 0;
-    }
-  }
-LAB_026e8650:
-  default_target_definition(player, card, &td, 2);
+  default_target_definition(player, card, &td, TYPE_CREATURE);
   td.preferred_controller = pref_controller;
   return aura_impl(player, card, event, &td, prompt, 0);
 }
@@ -1043,30 +887,30 @@ static int targeted_aura_impl(int player, int card, event_t event,
                                    target_definition_t *td, const char *prompt, int custom_prompt,
                                    int flags)
 {
-  char cVar1;
+  char enchanted_player;
   card_instance_t *instance;
-  card_instance_t *pcVar3;
-  ability_loss_t aStack_20;
+  card_instance_t *active_aura;
+  ability_loss_t removed_abilities;
 
   instance = get_card_instance(player, card);
-  pcVar3 = in_play(player, card);
-  if (pcVar3 != NULL)
+  active_aura = in_play(player, card);
+  if (active_aura != NULL)
   {
-    cVar1 = instance->damage_target_player;
-    if ((((event == EVENT_ABILITIES) && (-1 < cVar1)) &&
+    enchanted_player = instance->damage_target_player;
+    if ((((event == EVENT_ABILITIES) && (-1 < enchanted_player)) &&
          (instance->damage_target_card == affected_card)) &&
-        (cVar1 == affected_card_controller))
+        (enchanted_player == affected_card_controller))
     {
-      aStack_20 = -(flags & 1U) & AL_NM_ACT;
+      removed_abilities = -(flags & 1U) & AL_NM_ACT;
       if ((flags & 2U) != 0)
       {
-        aStack_20 = AL_ALL;
+        removed_abilities = AL_ALL;
       }
       if ((flags & 4U) != 0)
       {
-        aStack_20 = aStack_20 | AL_ALL_ACT;
+        removed_abilities = removed_abilities | AL_ALL_ACT;
       }
-      remove_abilities((int)cVar1, instance->damage_target_card, EVENT_ABILITIES, aStack_20);
+      remove_abilities((int)enchanted_player, instance->damage_target_card, EVENT_ABILITIES, removed_abilities);
     }
   }
   return aura_impl(player, card, event, td, prompt, custom_prompt);
@@ -1187,41 +1031,41 @@ int aura_with_variable_pt_boost_depending_on_condition(int player, int card, eve
                                                             int pow, int tou, int pow2, int tou2)
 {
   card_instance_t *instance;
-  card_instance_t *pcVar2;
+  card_instance_t *active_aura;
   int result;
-  int player_00;
-  int iStack_24;
-  int iStack_20;
+  int enchanted_player;
+  int toughness_boost;
+  int power_boost;
 
-  iStack_20 = pow;
-  iStack_24 = tou;
+  power_boost = pow;
+  toughness_boost = tou;
   instance = get_card_instance(player, card);
-  pcVar2 = in_play(player, card);
-  if ((pcVar2 != NULL) && (-1 < instance->damage_target_player))
+  active_aura = in_play(player, card);
+  if ((active_aura != NULL) && (-1 < instance->damage_target_player))
   {
-    player_00 = (int)instance->damage_target_player;
+    enchanted_player = (int)instance->damage_target_player;
     result = instance->damage_target_card;
     if (event == EVENT_POWER)
     {
-      if ((result == affected_card) && (player_00 == affected_card_controller))
+      if ((result == affected_card) && (enchanted_player == affected_card_controller))
       {
-        result = new_make_test_in_play(player_00, result, -1, this_test);
+        result = new_make_test_in_play(enchanted_player, result, -1, this_test);
         if (result == 0)
         {
-          iStack_20 = pow2;
+          power_boost = pow2;
         }
-        event_result = event_result + iStack_20;
+        event_result = event_result + power_boost;
       }
     }
     else if (((event == EVENT_TOUGHNESS) && (result == affected_card)) &&
-             (player_00 == affected_card_controller))
+             (enchanted_player == affected_card_controller))
     {
-      result = new_make_test_in_play(player_00, result, -1, this_test);
+      result = new_make_test_in_play(enchanted_player, result, -1, this_test);
       if (result == 0)
       {
-        iStack_24 = tou2;
+        toughness_boost = tou2;
       }
-      event_result = event_result + iStack_24;
+      event_result = event_result + toughness_boost;
     }
   }
   return targeted_aura_impl(player, card, event, td, "TARGET_CREATURE", 0, 0);
@@ -1250,7 +1094,7 @@ void put_into_play_aura_attached_to_target(int aura_player, int aura_card, int t
 int gain_control_and_attach_as_aura(int player, int card, event_t event, int t_player,
                                          int t_card)
 {
-  char cVar1;
+  char enchanted_player;
   int result;
   card_instance_t *instance;
 
@@ -1282,15 +1126,15 @@ int gain_control_and_attach_as_aura(int player, int card, event_t event, int t_p
   else
   {
     instance = get_card_instance(t_player, t_card);
-    cVar1 = instance->damage_target_player;
-    result = gain_control_permanently(player, (int)cVar1, instance->damage_target_card);
+    enchanted_player = instance->damage_target_player;
+    result = gain_control_permanently(player, (int)enchanted_player, instance->damage_target_card);
     if (-1 < result)
     {
       if (event == EVENT_RESOLVE_SPELL)
       {
         set_special_flags3(player, card, 0x100);
       }
-      if (cVar1 == player)
+      if (enchanted_player == player)
       {
         result = check_state(player, card, 0x400000);
         if (result != 0)
@@ -1313,65 +1157,43 @@ int gain_control_and_attach_as_aura(int player, int card, event_t event, int t_p
 /* ManalinkEh 2022: 0x26e8f40; original functions/auras.c:792. */
 void end_of_stealing_aura_effect(int player, int card)
 {
-  char cVar1;
-  card_instance_t *instance;
-  int iVar3;
-  card_instance_t *pcVar4;
-  int iVar5;
-  int card_00;
+  card_instance_t *instance = get_card_instance(player, card);
+  if (!check_state(player, card, STATE_POWER_STRUGGLE) ||
+      !in_play(instance->damage_target_player, instance->damage_target_card))
+    return;
 
-  instance = get_card_instance(player, card);
-  iVar3 = check_state(player, card, 0x400000);
-  if ((iVar3 != 0) &&
-      (pcVar4 = in_play((int)instance->damage_target_player, instance->damage_target_card),
-       pcVar4 != NULL))
+  int is_stealing_aura = check_special_flags3(instance->damage_target_player,
+                                              instance->damage_target_card, SF3_IS_STEALING_AURA);
+  int enchanted_card = instance->damage_target_card;
+  if (!is_stealing_aura)
   {
-    iVar5 = check_special_flags3((int)instance->damage_target_player, instance->damage_target_card,
-                                      0x100);
-    iVar3 = instance->damage_target_card;
-    if (iVar5 == 0)
-    {
-      cVar1 = instance->damage_target_player;
-      iVar5 = 0;
-      do
+    char enchanted_player = instance->damage_target_player;
+    int another_stealer = 0;
+    for (int p = 0; p < 2 && !another_stealer; ++p)
+      for (int c = 0; c < active_cards_count[p]; ++c)
       {
-        card_00 = 0;
-        if (0 < active_cards_count[iVar5])
+        card_instance_t *other = in_play(p, c);
+        if (other && is_what(p, c, TYPE_ENCHANTMENT) && has_subtype(p, c, SUBTYPE_AURA) &&
+            (p != player || c != card) && other->damage_target_player == enchanted_player &&
+            other->damage_target_card == enchanted_card &&
+            check_special_flags3(p, c, SF3_IS_STEALING_AURA))
         {
-          do
-          {
-            pcVar4 = in_play(iVar5, card_00);
-            if (((((pcVar4 != NULL) && (is_what(iVar5, card_00, 4) != 0)) &&
-                  (has_subtype(iVar5, card_00, SUBTYPE_AURA) != 0)) &&
-                 ((player != iVar5 || (card != card_00)))) &&
-                ((cVar1 == pcVar4->damage_target_player &&
-                  ((iVar3 == pcVar4->damage_target_card &&
-                    (check_special_flags3(iVar5, card_00, 0x100) != 0))))))
-              goto LAB_026e9090;
-            card_00 = card_00 + 1;
-          } while (card_00 < active_cards_count[iVar5]);
+          another_stealer = 1;
+          break;
         }
-        iVar5 = iVar5 + 1;
-      } while (iVar5 != 2);
-      re_enable_the_most_recent_control_effect_attached_to_me((int)instance->damage_target_player,
+      }
+    if (!another_stealer)
+      re_enable_the_most_recent_control_effect_attached_to_me(instance->damage_target_player,
                                                               instance->damage_target_card);
-    LAB_026e9090:
-      gain_control_permanently_no_sound(1 - instance->damage_target_player,
-                                        (int)instance->damage_target_player,
-                                        instance->damage_target_card);
-    }
-    else
-    {
-      pcVar4 = get_card_instance((int)instance->damage_target_player, iVar3);
-      gain_control_permanently_no_sound(1 - pcVar4->damage_target_player,
-                                        (int)pcVar4->damage_target_player,
-                                        pcVar4->damage_target_card);
-      gain_control_permanently_no_sound(1 - instance->damage_target_player,
-                                        (int)instance->damage_target_player,
-                                        instance->damage_target_card);
-    }
   }
-  return;
+  else
+  {
+    card_instance_t *aura = get_card_instance(instance->damage_target_player, enchanted_card);
+    gain_control_permanently_no_sound(1 - aura->damage_target_player, aura->damage_target_player,
+                                      aura->damage_target_card);
+  }
+  gain_control_permanently_no_sound(1 - instance->damage_target_player,
+                                    instance->damage_target_player, instance->damage_target_card);
 }
 
 
@@ -1463,43 +1285,35 @@ static int when_enchanted_permanent_dies_return_aura_to_hand_legacy(int player, 
 /* ManalinkEh 2022: 0x26e94c0; original functions/auras.c:974. */
 void when_enchanted_permanent_dies_return_aura_to_hand(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  card_instance_t *pcVar2;
-  int iVar3;
-  int iVar4;
-
-  instance = get_card_instance(player, card);
-  pcVar2 = in_play(player, card);
-  iVar3 = affected_card;
-  if (((pcVar2 != NULL) && (instance->damage_target_player != -1)) &&
-      (event == EVENT_GRAVEYARD_FROM_PLAY))
+  card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *active_aura = in_play(player, card);
+  int dying_card = affected_card;
+  if (active_aura && instance->damage_target_player != -1 && event == EVENT_GRAVEYARD_FROM_PLAY)
   {
-    if (((instance->damage_target_card == affected_card) &&
-         (iVar4 = (int)instance->damage_target_player, iVar4 == affected_card_controller)) &&
-        ((pcVar2 = in_play(iVar4, affected_card),
-          pcVar2 != NULL && (pcVar2 = get_card_instance(iVar4, iVar3),
-                             (unsigned char)(pcVar2->kill_code - 1) < 3))))
+    int enchanted_player;
+    if (instance->damage_target_card == affected_card &&
+        (enchanted_player = instance->damage_target_player) == affected_card_controller &&
+        in_play(enchanted_player, affected_card))
     {
-      set_special_flags3(player, card, 4);
+      card_instance_t *dying = get_card_instance(enchanted_player, dying_card);
+      if ((unsigned char)(dying->kill_code - 1) < 3)
+        set_special_flags3(player, card, SF3_ENCHANTED_PERMANENT_DYING);
     }
-    if (((card == affected_card) && (player == affected_card_controller)) &&
-        ((pcVar2 = in_play(player, card),
-          pcVar2 != NULL && (((unsigned char)(instance->kill_code - 1) < 3 &&
-                              (iVar3 = check_special_flags3(player, card, 4), iVar3 != 0))))))
+    if (card == affected_card && player == affected_card_controller && in_play(player, card) &&
+        (unsigned char)(instance->kill_code - 1) < 3 &&
+        check_special_flags3(player, card, SF3_ENCHANTED_PERMANENT_DYING))
     {
-      iVar3 = create_legacy_effect(player, card,
-                                   when_enchanted_permanent_dies_return_aura_to_hand_legacy);
-      instance = get_card_instance(player, iVar3);
-      iVar4 = get_owner(player, card);
-      instance->targets[0].player = iVar4;
-      instance = get_card_instance(player, iVar3);
-      iVar4 = get_original_internal_card_id(player, card);
-      instance->targets[0].card = iVar4;
-      instance = get_card_instance(player, iVar3);
-      instance->targets[0xb].player = 0x42;
+      int legacy = create_legacy_effect(player, card,
+                                        when_enchanted_permanent_dies_return_aura_to_hand_legacy);
+      card_instance_t *legacy_instance = get_card_instance(player, legacy);
+      int owner = get_owner(player, card);
+      legacy_instance->targets[0].player = owner;
+      legacy_instance = get_card_instance(player, legacy);
+      int original_iid = get_original_internal_card_id(player, card);
+      legacy_instance->targets[0].card = original_iid;
+      get_card_instance(player, legacy)->targets[11].player = 66;
     }
   }
-  return;
 }
 
 
@@ -1507,7 +1321,7 @@ void when_enchanted_permanent_dies_return_aura_to_hand(int player, int card, eve
 void cannot_be_enchanted_granted(int granting_player, int granting_card, event_t event,
                                       int t_player, int t_card)
 {
-  char cVar1;
+  char query_mode;
   if (granting_player == -1)
   {
     misc_protection(t_player, t_card, event);
@@ -1518,9 +1332,9 @@ void cannot_be_enchanted_granted(int granting_player, int granting_card, event_t
   }
   if (((((event == EVENT_PROT_MISC) && (t_card == affected_card)) &&
         (t_player == affected_card_controller)) &&
-       ((cVar1 = (char)((unsigned int)event_result >> 0x18),
-         cVar1 == '\x02' ||
-             ((cVar1 == '\x05' &&
+       ((query_mode = (char)((unsigned int)event_result >> 0x18),
+         query_mode == '\x02' ||
+             ((query_mode == '\x05' &&
                (has_subtype(attacking_card_controller, attacking_card, SUBTYPE_AURA) != 0)))))) &&
       ((granting_player == -1 ||
         ((granting_player != attacking_card_controller || (granting_card != attacking_card))))))
@@ -1542,7 +1356,7 @@ void cannot_be_enchanted(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x26e9750; original functions/auras.c:1018. */
 int enchant_player(int player, int card, event_t event, target_definition_t *td)
 {
-  int32_t iVar1;
+  int32_t selected_card;
   card_instance_t *instance;
 
   instance = get_card_instance(player, card);
@@ -1571,10 +1385,10 @@ int enchant_player(int player, int card, event_t event, target_definition_t *td)
     {
       if (valid_target(td) != 0)
       {
-        iVar1 = instance->targets[0].card;
+        selected_card = instance->targets[0].card;
         instance->targets[4].player = instance->targets[0].player;
         instance->damage_target_player = (int8_t)instance->targets[0].player;
-        instance->targets[4].card = iVar1;
+        instance->targets[4].card = selected_card;
         return 0;
       }
       kill_card(player, card, KILL_SACRIFICE);
@@ -1595,133 +1409,104 @@ static int generic_animating_aura_impl(int player, int card, event_t event,
                                             subtype_t added_subtype);
 
 /* ManalinkEh 2022: 0x26e7250; original functions/auras.c:847. */
-static int generic_animating_aura_impl(int player, int card, event_t event,
-                                            target_definition_t *td, const char *prompt, int pow,
-                                            int tou, int key, int s_key, int custom_prompt,
-                                            subtype_t added_subtype)
+static int generic_animating_aura_impl(int player, int card, event_t event, target_definition_t *td,
+                                       const char *prompt, int pow, int tou, int key, int s_key,
+                                       int custom_prompt, subtype_t added_subtype)
 {
-  char cVar1;
-  uint8_t uVar2;
-  card_instance_t *instance;
-  int iVar4;
-  int player_00;
-  type_t tVar5;
-  int iVar6;
-  instance = get_card_instance(player, card);
-  if (((-1 < instance->damage_target_player) &&
-       (instance = in_play(player, card), instance != NULL)) &&
-      (iVar4 = is_humiliated(player, card, AL_STATIC), iVar4 == 0))
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->damage_target_player >= 0 && (instance = in_play(player, card)) &&
+      !is_humiliated(player, card, AL_STATIC))
   {
     instance = get_card_instance(player, card);
-    iVar4 = instance->damage_target_card;
-    if ((iVar4 == affected_card) &&
-        (player_00 = (int)instance->damage_target_player, player_00 == affected_card_controller))
+    int enchanted_card = instance->damage_target_card;
+    int enchanted_player;
+    if (enchanted_card == affected_card &&
+        (enchanted_player = instance->damage_target_player) == affected_card_controller)
     {
-      if (event == EVENT_ABILITIES)
+      switch (event)
       {
-        event_result = event_result | key;
-        special_abilities(player_00, iVar4, EVENT_ABILITIES, s_key, player, card);
-        goto LAB_026e72ae;
-      }
-      if (event < EVENT_RECALC_DAMAGE)
-      {
-        if (((event == EVENT_POWER) || (pow = tou, event == EVENT_TOUGHNESS)) && (0 < pow))
-        {
+      case EVENT_ABILITIES:
+        event_result |= key;
+        special_abilities(enchanted_player, enchanted_card, event, s_key, player, card);
+        break;
+      case EVENT_POWER:
+        if (pow > 0)
           set_base_pt(pow);
-        }
-        goto LAB_026e72ae;
-      }
-      if (event == EVENT_CHANGE_TYPE)
-      {
-        if (is_what(-1, event_result, 2) == 0)
+        break;
+      case EVENT_TOUGHNESS:
+        if (tou > 0)
+          set_base_pt(tou);
+        break;
+      case EVENT_CHANGE_TYPE:
+        if (!is_what(-1, event_result, TYPE_CREATURE))
         {
           if (instance->dummy3 < 1)
           {
-            iVar6 = create_a_card_type(event_result);
-            uVar2 = cards_at_7c7000[iVar6]->type;
-            cards_at_7c7000[iVar6]->type = cards_data[event_result].type | uVar2 | 2;
-            if (pow != 0)
+            int animated_type = create_a_card_type(event_result);
+            uint8_t existing_type = cards_at_7c7000[animated_type]->type;
+            cards_at_7c7000[animated_type]->type =
+                cards_data[event_result].type | existing_type | TYPE_CREATURE;
+            if (pow)
             {
               if (pow == -1)
-              {
-                pow = get_cmc(player_00, iVar4);
-              }
-              cards_at_7c7000[iVar6]->power = (int16_t)pow;
+                pow = get_cmc(enchanted_player, enchanted_card);
+              cards_at_7c7000[animated_type]->power = (int16_t)pow;
             }
-            if (tou != 0)
+            if (tou)
             {
               if (tou == -1)
-              {
-                tou = get_cmc(player_00, iVar4);
-              }
-              cards_at_7c7000[iVar6]->toughness = (int16_t)tou;
+                tou = get_cmc(enchanted_player, enchanted_card);
+              cards_at_7c7000[animated_type]->toughness = (int16_t)tou;
             }
-            instance->dummy3 = iVar6;
-            add_status(player_00, iVar4, 0x40);
+            instance->dummy3 = animated_type;
+            add_status(enchanted_player, enchanted_card, STATUS_ANIMATED);
           }
           event_result = instance->dummy3;
         }
         else
-        {
-          remove_status(player_00, iVar4, 0x40);
-        }
+          remove_status(enchanted_player, enchanted_card, STATUS_ANIMATED);
         if (added_subtype != SUBTYPE_INVALID)
-        {
           add_a_subtype(instance->targets[0].player, instance->targets[0].card, added_subtype);
-        }
-        goto LAB_026e72ae;
-      }
-      if (event == EVENT_RESOLVE_MOVING_AURA)
-      {
-        if (check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET) == 0)
-        {
+        break;
+      case EVENT_RESOLVE_MOVING_AURA:
+        if (!check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET))
           td->illegal_abilities = 0;
-        }
-        if (check_special_flags(player, card, 0x1000000) != 0)
+        if (check_special_flags(player, card, SF_MOVE_AURA_SAME_CONTROLLER))
         {
-          cVar1 = instance->damage_target_player;
-          td->allowed_controller = (int)cVar1;
-          td->preferred_controller = (int)cVar1;
+          char controller = instance->damage_target_player;
+          td->allowed_controller = controller;
+          td->preferred_controller = controller;
         }
-        iVar4 = check_special_flags3(player, card, 0x8000);
-        if ((iVar4 != 0) || (iVar4 = check_special_flags3(player, card, 0x10000), iVar4 != 0))
+        if (check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) ||
+            check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P1))
         {
-          tVar5 = get_type((int)instance->damage_target_player, instance->damage_target_card);
-          td->required_type = tVar5;
-          iVar4 = check_special_flags3(player, card, 0x8000);
-          td->who_chooses = (unsigned int)(iVar4 == 0);
+          td->required_type =
+              get_type(instance->damage_target_player, instance->damage_target_card);
+          td->who_chooses = check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) == 0;
         }
-        if (valid_target(td) == 0)
-        {
-          return 0;
-        }
-        if (attach_aura_to_target(player, card, EVENT_RESOLVE_MOVING_AURA,
-                                           instance->targets[0].player, instance->targets[0].card) == 0)
-        {
-          return 0;
-        }
-        instance->dummy3 = 0;
+        if (valid_target(td) &&
+            attach_aura_to_target(player, card, event, instance->targets[0].player,
+                                  instance->targets[0].card))
+          instance->dummy3 = 0;
         return 0;
+      default:
+        break;
       }
     }
   }
   if (event == EVENT_RESOLVE_SPELL)
   {
-    if (valid_target(td) != 0)
+    if (valid_target(td))
     {
       instance = get_card_instance(player, card);
-      if (attach_aura_to_target(player, card, EVENT_RESOLVE_SPELL,
-                                         instance->targets[0].player, instance->targets[0].card) != 0)
-      {
+      if (attach_aura_to_target(player, card, event, instance->targets[0].player,
+                                instance->targets[0].card))
         return 0;
-      }
     }
     kill_card(player, card, KILL_STATE_BASED_ACTION);
     return 0;
   }
-LAB_026e72ae:
-  pow = (int)(custom_prompt != 0);
-  return targeted_aura_impl(player, card, event, td, prompt, pow, 0);
+  return targeted_aura_impl(player, card, event, td, prompt, custom_prompt != 0, 0);
 }
 
 
@@ -1731,13 +1516,13 @@ void pump_attached(int player, int card, event_t event, pump_ability_t *ability_
   int power;
   color_test_t color;
   subtype_t subtype;
-  card_instance_t *pcVar1;
+  card_instance_t *aura_instance;
   int result;
   card_instance_t *instance;
-  unsigned int uVar3;
+  unsigned int granted_keywords;
   pump_ability_t default_ability_mod;
 
-  pcVar1 = in_play(player, card);
+  aura_instance = in_play(player, card);
   if ((((event == EVENT_RESOLVE_SPELL) &&
         (result = has_subtype(player, card, SUBTYPE_AURA), player == 1)) &&
        (result != 0)) &&
@@ -1746,21 +1531,21 @@ void pump_attached(int player, int card, event_t event, pump_ability_t *ability_
            (ability_mod->key_mod != KEYWORD_0)) ||
           ((ability_mod->skey_mod & ~SP_KEYWORD_CANNOT_BLOCK) != SP_KEYWORD_0))))))
   {
-    instance = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
-    uVar3 = get_special_abilities_by_instance(instance);
-    if ((((uVar3 & 0x20) != 0) && ((instance->regen_status & 0x800000) != 0)) &&
+    instance = get_card_instance(aura_instance->targets[0].player, aura_instance->targets[0].card);
+    granted_keywords = get_special_abilities_by_instance(instance);
+    if ((((granted_keywords & 0x20) != 0) && ((instance->regen_status & 0x800000) != 0)) &&
         ((instance->token_status & 0x800) == 0))
     {
       ai_modifier = ai_modifier + -0x18;
     }
   }
-  else if (pcVar1 == NULL)
+  else if (aura_instance == NULL)
   {
     return;
   }
-  if (((-1 < pcVar1->damage_target_card) &&
+  if (((-1 < aura_instance->damage_target_card) &&
        (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
-      (result = is_what((int)pcVar1->damage_target_player, pcVar1->damage_target_card, 2),
+      (result = is_what((int)aura_instance->damage_target_player, aura_instance->damage_target_card, 2),
        result != 0))
   {
     if (ability_mod == NULL)
@@ -1917,45 +1702,45 @@ static target_t ward_recalculation = {-1, -1};
 /* ManalinkEh 2022: 0x26e7fd0; original functions/auras.c:213. */
 int this_effect_doesnt_remove_this(int player, int card, event_t event)
 {
-  int card_00;
-  card_instance_t *pcVar1;
-  card_instance_t *pcVar2;
+  int enchanted_card;
+  card_instance_t *aura_instance;
+  card_instance_t *enchanted_instance;
   int result;
-  int player_00;
+  int enchanted_player;
   target_definition_t td;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
-    pcVar1 = in_play(player, card);
-    if ((pcVar1 != NULL) && (pcVar1->damage_target_player != -1))
+    aura_instance = in_play(player, card);
+    if ((aura_instance != NULL) && (aura_instance->damage_target_player != -1))
     {
       if (ward_recalculation.card != card)
       {
-        pcVar2 = in_play((int)pcVar1->damage_target_player, pcVar1->damage_target_card);
-        if (pcVar2 == NULL)
+        enchanted_instance = in_play((int)aura_instance->damage_target_player, aura_instance->damage_target_card);
+        if (enchanted_instance == NULL)
         {
           kill_card(player, card, KILL_STATE_BASED_ACTION);
           return 1;
         }
         ward_recalculation.player = player;
-        player_00 = (int)pcVar1->damage_target_player;
+        enchanted_player = (int)aura_instance->damage_target_player;
         ward_recalculation.card = card;
-        card_00 = pcVar1->damage_target_card;
-        pcVar2->regen_status = pcVar2->regen_status | 0x8000000;
-        get_abilities(player_00, card_00, EVENT_ABILITIES, -1);
+        enchanted_card = aura_instance->damage_target_card;
+        enchanted_instance->regen_status = enchanted_instance->regen_status | 0x8000000;
+        get_abilities(enchanted_player, enchanted_card, EVENT_ABILITIES, -1);
         default_target_definition(player, card, &td, 2);
         td.flags = td.flags | 3;
-        result = validate_arbitrary_target(&td, player_00, card_00);
+        result = validate_arbitrary_target(&td, enchanted_player, enchanted_card);
         ward_recalculation.player = -1;
         ward_recalculation.card = -1;
-        pcVar2->regen_status = pcVar2->regen_status | 0x8000000;
+        enchanted_instance->regen_status = enchanted_instance->regen_status | 0x8000000;
         if (result == 0)
         {
           kill_card(player, card, KILL_STATE_BASED_ACTION);
         }
         else
         {
-          get_abilities(player_00, card_00, EVENT_ABILITIES, -1);
+          get_abilities(enchanted_player, enchanted_card, EVENT_ABILITIES, -1);
         }
       }
       return 1;

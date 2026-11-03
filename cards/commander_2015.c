@@ -44,7 +44,7 @@ int card_dawnbreak_reclaimer(int player, int card, event_t event){
 					if( count_graveyard_by_type(1-p, TYPE_CREATURE) ){
 						selected[p] = new_select_a_card(p, 1-p, TUTOR_FROM_GRAVE, 1, AI_MIN_CMC, -1, &this_test);
 						int revealed[1] = {get_grave(1-p)[selected[p]]};
-						show_deck(1-p, revealed, 1, "Opponent selected this card.", 0, 0x7375B0 );
+						show_deck(1-p, revealed, 1, "Opponent selected this card.", 0, EXE_STR(ENGINE_DONE_LABEL) );
 					}
 				};
 		);
@@ -739,41 +739,39 @@ int card_thief_of_blood(int player, int card, event_t event)
   int result;
   int card_00;
   unsigned int player_00;
-  unsigned int uVar3;
-  int iStack_14;
+  unsigned int turn_order_index;
+  int stolen_counters;
   if (event != EVENT_RESOLVE_SPELL)
   {
     return 0;
   }
-  uVar3 = 0;
-  iStack_14 = 0;
+  turn_order_index = 0;
+  stolen_counters = 0;
   do
   {
-    player_00 = current_turn ^ uVar3;
+    player_00 = current_turn ^ turn_order_index;
     card_00 = active_cards_count[player_00] + -1;
     if (-1 < active_cards_count[player_00] + -1)
     {
       do
       {
-        while ((instance = in_play(player_00, card_00),
-                instance == NULL || (result = is_what(player_00, card_00, 0x47), result == 0)))
+        instance = in_play(player_00, card_00);
+        if (instance != NULL && (result = is_what(player_00, card_00, 0x47), result != 0))
         {
-          card_00 = card_00 + -1;
-          if (card_00 == -1)
-            goto LAB_02354448;
+          result = count_counters(player_00, card_00, ~COUNTER_P1_P1);
+          stolen_counters = stolen_counters + result;
+          result = card_00 - 1;
+          remove_all_counters(player, card, player_00, card_00, ~COUNTER_P1_P1);
+          card_00 = result;
         }
-        result = count_counters(player_00, card_00, ~COUNTER_P1_P1);
-        iStack_14 = iStack_14 + result;
-        result = card_00 + -1;
-        remove_all_counters(player, card, player_00, card_00, ~COUNTER_P1_P1);
-        card_00 = result;
-      } while (result != -1);
+        else
+          card_00 = card_00 - 1;
+      } while (card_00 != -1);
     }
-  LAB_02354448:
-    uVar3 = uVar3 + 1;
-    if (uVar3 == 2)
+    turn_order_index = turn_order_index + 1;
+    if (turn_order_index == 2)
     {
-      add_counters(player, card, player, card, COUNTER_P1_P1, iStack_14);
+      add_counters(player, card, player, card, COUNTER_P1_P1, stolen_counters);
       return 0;
     }
   } while (true);
@@ -1533,13 +1531,20 @@ int card_skullwinder(int player, int card, event_t event){
 
 int card_verdant_confluence(int player, int card, event_t event)
 {
+  enum
+  {
+    CHOICE_P1_P1_COUNTER = 1,
+    CHOICE_REGROWTH = 2,
+    CHOICE_TUTOR_BASIC_LAND = 3
+  };
+
   int choice;
   card_instance_t *instance;
-  unsigned int uVar2;
-  int iVar3;
-  int *piVar4;
-  int iVar5;
-  int *piStack_154;
+  unsigned int mode_or_grave_priority;
+  int grave_index;
+  int *next_choice;
+  int choice_or_selection_result;
+  int *target_choice_cursor;
   int *choice_cursor;
   int ret_location;
   int choices[3];
@@ -1566,61 +1571,20 @@ int card_verdant_confluence(int player, int card, event_t event)
         choices[0] = 0;
         choices[1] = 0;
         choices[2] = 0;
-        if (check_special_flags2(player, card, -0x80000000) != 0)
+        if (check_special_flags2(player, card, -0x80000000) == 0)
         {
-          iVar5 = 0;
-        LAB_02356768:
-          piStack_154 = choices;
-          ret_location = 0;
-          if (iVar5 == 1)
-            goto LAB_023567a7;
+          instance->info_slot = 0;
+          choice_or_selection_result =
+              generic_spell(player, card, EVENT_CAN_CAST, 8, NULL, NULL, 1, &test);
+          choice_cursor = choices;
           do
           {
-            if (iVar5 == 2)
-            {
-              iVar5 = select_target_from_grave_source(player, card, player, SFG_0, 1, &test,
-                                                      ret_location);
-              if (iVar5 == -1)
-              {
-                spell_fizzled = 1;
-                return 0;
-              }
-              ret_location = ret_location + 1;
-              instance->number_of_targets = instance->number_of_targets + '\x01';
-            }
-            while (true)
-            {
-              piStack_154 = piStack_154 + 1;
-              if (piStack_154 == choices + 3)
-              {
-                return 0;
-              }
-              iVar5 = *piStack_154;
-              if (iVar5 != 1)
-                break;
-            LAB_023567a7:
-              iVar5 = new_pick_target(&td, "TARGET_CREATURE", ret_location, 0);
-              if (iVar5 == 0)
-              {
-                spell_fizzled = 1;
-                return 0;
-              }
-              ret_location = ret_location + 1;
-            }
-          } while (true);
-        }
-        instance->info_slot = 0;
-        iVar5 = generic_spell(player, card, EVENT_CAN_CAST, 8, NULL, NULL, 1, &test);
-        choice_cursor = choices;
-        do
-        {
-          uVar2 = (choices[1] == 2) - 1 & 0xf;
-          while (true)
-          {
-            choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002",
-                                "2 +1/+1 counters on target creature", can_target(&td), 10,
-                                "Return a permanent from grave to hand", iVar5, uVar2,
-                                "Tutor basic land tapped", 1, 5, 0, 0, 0, 0);
+            mode_or_grave_priority = choices[0] == CHOICE_REGROWTH ? 0 : ((choices[1] == CHOICE_REGROWTH) - 1 & 0xf);
+            choice =
+                dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002",
+                            "2 +1/+1 counters on target creature", can_target(&td), 10,
+                            "Return a permanent from grave to hand", choice_or_selection_result,
+                            mode_or_grave_priority, "Tutor basic land tapped", 1, 5, 0, 0, 0, 0);
             if (choice == 0)
             {
               spell_fizzled = 1;
@@ -1632,22 +1596,44 @@ int card_verdant_confluence(int player, int card, event_t event)
               instance->targets[2].player = -1;
               return 0;
             }
-            piVar4 = choice_cursor + 1;
+            next_choice = choice_cursor + 1;
             *choice_cursor = choice;
-            if (piVar4 == choices + 3)
+            choice_cursor = next_choice;
+          } while (choice_cursor != choices + 3);
+          *(char *)((int)&instance->info_slot + 1) = (char)choices[1];
+          *(char *)&instance->info_slot = (char)choices[0];
+          *(char *)((int)&instance->info_slot + 2) = (char)choices[2];
+        }
+        target_choice_cursor = choices;
+        ret_location = 0;
+        do
+        {
+          choice_or_selection_result = *target_choice_cursor;
+          if (choice_or_selection_result == CHOICE_P1_P1_COUNTER)
+          {
+            choice_or_selection_result = new_pick_target(&td, "TARGET_CREATURE", ret_location, 0);
+            if (choice_or_selection_result == 0)
             {
-              *(char *)((int)&instance->info_slot + 1) = (char)choices[1];
-              *(char *)&instance->info_slot = (char)choices[0];
-              *(char *)((int)&instance->info_slot + 2) = (char)choices[2];
-              iVar5 = choices[0];
-              goto LAB_02356768;
+              spell_fizzled = 1;
+              return 0;
             }
-            choice_cursor = piVar4;
-            if (choices[0] != 2)
-              break;
-            uVar2 = 0;
+            ret_location = ret_location + 1;
           }
-        } while (true);
+          else if (choice_or_selection_result == CHOICE_REGROWTH)
+          {
+            choice_or_selection_result = select_target_from_grave_source(
+                player, card, player, SFG_0, 1, &test, ret_location);
+            if (choice_or_selection_result == -1)
+            {
+              spell_fizzled = 1;
+              return 0;
+            }
+            ret_location = ret_location + 1;
+            instance->number_of_targets = instance->number_of_targets + '\x01';
+          }
+          target_choice_cursor = target_choice_cursor + 1;
+        } while (target_choice_cursor != choices + 3);
+        return 0;
       }
     }
   }
@@ -1658,51 +1644,37 @@ int card_verdant_confluence(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
     {
-      iVar5 = 0;
+      choice_or_selection_result = 0;
       ret_location = 0;
       do
       {
-        uVar2 = instance->info_slot;
-        if (iVar5 == 1)
-        {
-          uVar2 = uVar2 >> 8 & 0xff;
-          if (uVar2 == 1)
-            goto LAB_023567fc;
-        LAB_023565e7:
-          if (uVar2 == 2)
-          {
-            iVar3 = validate_target_from_grave_source(player, card, player, ret_location);
-            if (iVar3 != -1)
-            {
-              from_grave_to_hand(player, iVar3, 1);
-            }
-            goto LAB_02356896;
-          }
-          if (uVar2 == 3)
-          {
-            tutor_basic_lands(player, TUTOR_PLAY_TAPPED, 1);
-          }
-        }
+        mode_or_grave_priority = instance->info_slot;
+        if (choice_or_selection_result == 1)
+          mode_or_grave_priority = mode_or_grave_priority >> 8 & 0xff;
         else
         {
-          if (iVar5 == 2)
-          {
-            uVar2 = (int)uVar2 >> 0x10;
-          }
-          uVar2 = uVar2 & 0xff;
-          if (uVar2 != 1)
-            goto LAB_023565e7;
-        LAB_023567fc:
+          if (choice_or_selection_result == 2)
+            mode_or_grave_priority = (int)mode_or_grave_priority >> 0x10;
+          mode_or_grave_priority = mode_or_grave_priority & 0xff;
+        }
+        if (mode_or_grave_priority == CHOICE_P1_P1_COUNTER)
+        {
           if (validate_target(player, card, &td, ret_location) != 0)
-          {
             add_counters(player, card, instance->targets[ret_location].player,
-                                     instance->targets[ret_location].card, COUNTER_P1_P1, 2);
-          }
-        LAB_02356896:
+                         instance->targets[ret_location].card, COUNTER_P1_P1, 2);
           ret_location = ret_location + 1;
         }
-        iVar5 = iVar5 + 1;
-        if (iVar5 == 3)
+        else if (mode_or_grave_priority == CHOICE_REGROWTH)
+        {
+          grave_index = validate_target_from_grave_source(player, card, player, ret_location);
+          if (grave_index != -1)
+            from_grave_to_hand(player, grave_index, 1);
+          ret_location = ret_location + 1;
+        }
+        else if (mode_or_grave_priority == CHOICE_TUTOR_BASIC_LAND)
+          tutor_basic_lands(player, TUTOR_PLAY_TAPPED, 1);
+        choice_or_selection_result = choice_or_selection_result + 1;
+        if (choice_or_selection_result == 3)
         {
           kill_card(player, card, KILL_DESTROY);
           return 0;

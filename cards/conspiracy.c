@@ -123,8 +123,8 @@ int parley(int player, int card){
 	int i;
 	for(i=0; i<2; i++){
 		if( deck_ptr[i][0] != -1 ){
-			show_deck( i, deck_ptr[i], 1, "Here's the first card of your deck", 0, 0x7375B0 );
-			show_deck( 1-i, deck_ptr[i], 1, "Here's the first card of opponent's deck", 0, 0x7375B0 );
+			show_deck( i, deck_ptr[i], 1, "Here's the first card of your deck", 0, EXE_STR(ENGINE_DONE_LABEL) );
+			show_deck( 1-i, deck_ptr[i], 1, "Here's the first card of opponent's deck", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			result += ! is_what(-1, deck_ptr[i][0], TYPE_LAND);
 		}
 	}
@@ -411,16 +411,15 @@ int card_iterative_analysis(int player, int card, event_t event){
 
 int card_muzzios_preparations(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int cast_csv_id;
+  int hidden_csv_id;
   if ((event == EVENT_CAST_SPELL) && (affected_card_controller == player))
   {
-    iVar1 = get_id(player, affected_card);
-    iVar2 = get_conspiracys_hidden_name(player, card);
-    if (iVar1 == iVar2)
+    cast_csv_id = get_id(player, affected_card);
+    hidden_csv_id = get_conspiracys_hidden_name(player, card);
+    if (cast_csv_id == hidden_csv_id)
     {
-      add_counters(player, card, affected_card_controller, affected_card, COUNTER_P1_P1,
-                               1);
+      add_counters(player, card, affected_card_controller, affected_card, COUNTER_P1_P1, 1);
     }
   }
   return 0;
@@ -1488,8 +1487,8 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
 {
   int choice;
   card_instance_t *instance;
-  int iVar2;
-  target_definition_t *ptStack_bc;
+  int mode_or_available;
+  target_definition_t *warrior_target_definition;
   target_definition_t td;
   target_definition_t td1;
 
@@ -1527,16 +1526,16 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
     default_target_definition(player, card, &td1, 2);
     td1.preferred_controller = player;
   }
-  ptStack_bc = &td1;
+  warrior_target_definition = &td1;
   instance = get_card_instance(player, card);
   if (event == EVENT_CAN_ACTIVATE)
   {
-    iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 0, 0, 0, 0, 1, 0, 0, &td,
-                                      "TARGET_CREATURE");
-    if ((iVar2 == 0) &&
-        (iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 2, 0, 0, 0, 1, 0, 0,
-                                           ptStack_bc, "TARGET_CREATURE"),
-         iVar2 == 0))
+    mode_or_available = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 0, 0, 0, 0,
+                                                  1, 0, 0, &td, "TARGET_CREATURE");
+    if ((mode_or_available == 0) && (mode_or_available = generic_activated_ability(
+                                         player, card, EVENT_CAN_ACTIVATE, 4, 2, 0, 0, 0, 1, 0, 0,
+                                         warrior_target_definition, "TARGET_CREATURE"),
+                                     mode_or_available == 0))
     {
       return 0;
     }
@@ -1546,14 +1545,13 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
   {
     instance->number_of_targets = '\0';
     if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 0, 0, 0, 0, 1, 0, 0, &td,
-                                      "TARGET_CREATURE") == 0)
+                                  "TARGET_CREATURE") == 0)
     {
       if (charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 1, 0) == 0)
       {
         return 0;
       }
-    LAB_0211c680:
-      if (pick_target(ptStack_bc, "TARGET_CREATURE") == 0)
+      if (pick_target(warrior_target_definition, "TARGET_CREATURE") == 0)
       {
         return 0;
       }
@@ -1561,7 +1559,7 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
       return 0;
     }
     if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 2, 0, 0, 0, 1, 0, 0,
-                                      ptStack_bc, "TARGET_CREATURE") == 0)
+                                  warrior_target_definition, "TARGET_CREATURE") == 0)
     {
       if (charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 1, 0) == 0)
       {
@@ -1571,7 +1569,7 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
     else
     {
       choice = do_dialog(player, player, card, -1, -1,
-                        " Turn target in Coward\n Turn target in Warrior\n Cancel", 1);
+                         " Turn target in Coward\n Turn target in Warrior\n Cancel", 1);
       if (choice == 2)
       {
         spell_fizzled = 1;
@@ -1587,7 +1585,12 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
         {
           return 0;
         }
-        goto LAB_0211c680;
+        if (pick_target(warrior_target_definition, "TARGET_CREATURE") == 0)
+        {
+          return 0;
+        }
+        instance->info_slot = 0x43;
+        return 0;
       }
     }
     if (pick_target(&td, "TARGET_CREATURE") == 0)
@@ -1601,22 +1604,21 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
   {
     return 0;
   }
-  iVar2 = instance->info_slot;
-  if (iVar2 == 0x42)
+  mode_or_available = instance->info_slot;
+  bool target_valid = false;
+  if (mode_or_available == 0x42)
   {
-    if (valid_target(&td) != 0)
-      goto LAB_0211c217;
-    iVar2 = instance->info_slot;
+    target_valid = valid_target(&td) != 0;
+    if (!target_valid)
+      mode_or_available = instance->info_slot;
   }
-  if (iVar2 != 0x43)
+  if (!target_valid)
   {
-    return 0;
+    if (mode_or_available != 0x43)
+      return 0;
+    if (valid_target(warrior_target_definition) == 0)
+      return 0;
   }
-  if (valid_target(ptStack_bc) == 0)
-  {
-    return 0;
-  }
-LAB_0211c217:
   force_a_subtype_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
                             ((instance->info_slot != 0x42) - 1 & 0xffffff55) + SUBTYPE_WARRIOR);
   return 0;
@@ -2599,8 +2601,8 @@ int card_marchesa_the_black_rose(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int c;
-  card_instance_t *pcVar1;
-  card_instance_t *pcVar2;
+  card_instance_t *existing_legacy;
+  card_instance_t *attacker;
   int attacker_index;
   check_legend_rule(player, card, event);
   if (event != EVENT_STATIC_EFFECTS)
@@ -2615,16 +2617,15 @@ int card_marchesa_the_black_rose(int player, int card, event_t event)
       {
         do
         {
-          pcVar2 = in_play(current_turn,
-                           (unsigned int)(unsigned char)((unsigned char *)&instance->targets[2]
-                                                             .player)[attacker_index]);
-          if ((pcVar2 != NULL) && (life[player] <= life[1 - player]))
+          attacker = in_play(current_turn,
+                             (unsigned int)(unsigned char)((unsigned char *)&instance->targets[2]
+                                                               .player)[attacker_index]);
+          if ((attacker != NULL) && (life[player] <= life[1 - player]))
           {
-            add_counters(
-                player, card, current_turn,
-                (unsigned int)(unsigned char)((unsigned char *)&instance->targets[2]
-                                                  .player)[attacker_index],
-                COUNTER_P1_P1, 1);
+            add_counters(player, card, current_turn,
+                         (unsigned int)(unsigned char)((unsigned char *)&instance->targets[2]
+                                                           .player)[attacker_index],
+                         COUNTER_P1_P1, 1);
           }
           attacker_index = attacker_index + -1;
         } while (attacker_index != -1);
@@ -2634,24 +2635,32 @@ int card_marchesa_the_black_rose(int player, int card, event_t event)
   }
   if ((card == affected_card) && (player == affected_card_controller))
   {
+    bool legacy_found = false;
     if (0 < active_cards_count[player])
     {
       c = 0;
       do
       {
-        pcVar1 = in_play(player, c);
-        if (((pcVar1 != NULL) && (is_what(player, c, 0x80) != 0)) &&
-            (pcVar1 = get_card_instance(player, c), pcVar1->info_slot_fn == marchesa_effect))
-          goto LAB_0211f000;
+        existing_legacy = in_play(player, c);
+        if (((existing_legacy != NULL) && (is_what(player, c, 0x80) != 0)) &&
+            (existing_legacy = get_card_instance(player, c),
+             existing_legacy->info_slot_fn == marchesa_effect))
+        {
+          legacy_found = true;
+          break;
+        }
         c = c + 1;
       } while (c < active_cards_count[player]);
     }
-    instance = get_card_instance(player, create_targetted_legacy_effect(player, card, marchesa_effect, player, card));
-    instance->number_of_targets = '\0';
-    instance->targets[0].card = -1;
-    instance->targets[0].player = -1;
+    if (!legacy_found)
+    {
+      instance = get_card_instance(
+          player, create_targetted_legacy_effect(player, card, marchesa_effect, player, card));
+      instance->number_of_targets = '\0';
+      instance->targets[0].card = -1;
+      instance->targets[0].player = -1;
+    }
   }
-LAB_0211f000:
   store_attackers(player, card, EVENT_STATIC_EFFECTS, DAT_TRACK | DAT_ATTACKS_PLAYER, player, -1,
                   NULL);
   dat_ability(player, card, EVENT_STATIC_EFFECTS, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
@@ -2753,7 +2762,7 @@ int card_wood_sage(int player, int card, event_t event){
 		if( csvid != -1 ){
 			int max = cd < 4 ? cd : 4;
 			if( max  ){
-				show_deck( player, deck, max, "Cards revealed by Sage of the Woods", 0, 0x7375B0 );
+				show_deck( player, deck, max, "Cards revealed by Sage of the Woods", 0, EXE_STR(ENGINE_DONE_LABEL) );
 				int i;
 				for(i=0; i<max; i++){
 					if( cards_data[deck[0]].id == csvid ){

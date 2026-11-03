@@ -442,10 +442,10 @@ static csvid_t choose_a_card_impl(int who_chooses, test_definition_t *constraint
   return result;
 }
 
-extern "C" int choose_a_card(const char *prompt, int colors, int types)
+extern "C" int choose_a_card(const char *prompt, color_test_t colors, type_t types)
 {
-  return choose_a_card_impl(HUMAN, NULL, prompt, static_cast<color_test_t>(colors),
-                           static_cast<type_t>(types), false, COLOR_TEST_ANY, TYPE_ANY).raw;
+  return choose_a_card_impl(HUMAN, NULL, prompt, colors,
+                           types, false, COLOR_TEST_ANY, TYPE_ANY).raw;
 }
 
 extern "C" int choose_a_card_allow_cancel_with_defaults(char *prompt, color_test_t allowable_colors,

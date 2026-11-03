@@ -770,12 +770,11 @@ int card_goblin_razerunners(int player, int card, event_t event)
 {
   int c;
   card_instance_t *instance;
-  int iVar2;
+  int trigger_or_mana_result;
   resolve_trigger_t trig_mode;
-  int iVar3;
+  int land_check_or_affordable;
   int cless;
-  int iStack_ec;
-
+  int sacrificable_lands;
 
   if ((trigger_condition == 0xcd) && (current_turn == player))
   {
@@ -783,60 +782,63 @@ int card_goblin_razerunners(int player, int card, event_t event)
     default_target_definition(player, card, &td, 0x100);
     td.zone = 4608;
     instance = get_card_instance(player, card);
-    iVar2 = count_counters(player, card, COUNTER_P1_P1);
-    if ((iVar2 < 1) || (iVar2 = can_target(&td), iVar2 == 0))
+    trigger_or_mana_result = count_counters(player, card, COUNTER_P1_P1);
+    if ((trigger_or_mana_result < 1) ||
+        (trigger_or_mana_result = can_target(&td), trigger_or_mana_result == 0))
     {
       trig_mode = RESOLVE_TRIGGER_0;
     }
     else
     {
-      iVar2 = duh_mode(player);
-      trig_mode = (iVar2 != 0) + RESOLVE_TRIGGER_OPTIONAL;
+      trigger_or_mana_result = duh_mode(player);
+      trig_mode = (trigger_or_mana_result != 0) + RESOLVE_TRIGGER_OPTIONAL;
     }
-    iVar2 = eot_trigger_mode(player, card, event, player, trig_mode);
-    if ((iVar2 != 0) &&
-        (iVar2 = pick_target(&td, "TARGET_PLAYER_OR_PLANESWALKER"),
-         iVar2 != 0))
+    trigger_or_mana_result = eot_trigger_mode(player, card, event, player, trig_mode);
+    if ((trigger_or_mana_result != 0) &&
+        (trigger_or_mana_result = pick_target(&td, "TARGET_PLAYER_OR_PLANESWALKER"),
+         trigger_or_mana_result != 0))
     {
-      iVar2 = count_counters(player, card, COUNTER_P1_P1);
-      damage_creature(instance->targets[0].player, instance->targets[0].card, iVar2, player, card);
+      trigger_or_mana_result = count_counters(player, card, COUNTER_P1_P1);
+      damage_creature(instance->targets[0].player, instance->targets[0].card,
+                      trigger_or_mana_result, player, card);
     }
     instance->number_of_targets = '\0';
   }
   if (event - EVENT_POW_BOOST < 2)
   {
-    if (generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_CAN_ACTIVATE,
-                                                             GAA_NONE, 1, 0, 0, 0, 1, 0, 0, NULL,
-                                                             NULL, TYPE_LAND, NULL, SARV_0) != 0)
+    if (generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_CAN_ACTIVATE, GAA_NONE,
+                                                         1, 0, 0, 0, 1, 0, 0, NULL, NULL, TYPE_LAND,
+                                                         NULL, SARV_0) != 0)
     {
       c = 0;
-      iStack_ec = 0;
+      sacrificable_lands = 0;
       if (0 < active_cards_count[player])
       {
         do
         {
           instance = in_play(player, c);
-          if ((instance != NULL) && (iVar3 = is_what(player, c, 1), iVar3 != 0))
+          if ((instance != NULL) &&
+              (land_check_or_affordable = is_what(player, c, 1), land_check_or_affordable != 0))
           {
-            iVar3 = check_special_flags2(player, c, 0x400000);
-            iStack_ec = iStack_ec + (unsigned int)(iVar3 == 0);
+            land_check_or_affordable = check_special_flags2(player, c, 0x400000);
+            sacrificable_lands = sacrificable_lands + (unsigned int)(land_check_or_affordable == 0);
           }
           c = c + 1;
         } while (c < active_cards_count[player]);
-        if (0 < iStack_ec)
+        if (0 < sacrificable_lands)
         {
-          iVar2 = 0;
-          iVar3 = 0;
+          trigger_or_mana_result = 0;
+          land_check_or_affordable = 0;
           do
           {
-            cless = iVar2;
+            cless = trigger_or_mana_result;
             if (has_mana_for_activated_ability(player, card, cless, 0, 0, 0, cless, 0) == 0)
             {
-              return iVar3;
+              return land_check_or_affordable;
             }
-            iVar2 = cless + 1;
-            iVar3 = cless;
-          } while (iStack_ec != cless + 1);
+            trigger_or_mana_result = cless + 1;
+            land_check_or_affordable = cless;
+          } while (sacrificable_lands != cless + 1);
           return cless;
         }
       }
@@ -847,17 +849,16 @@ int card_goblin_razerunners(int player, int card, event_t event)
            (event == EVENT_CLEANUP))
   {
     test_definition_t this_test;
-    new_default_test_definition(&this_test, 1,
-                                "Select a land card to sacrifice.");
+    new_default_test_definition(&this_test, 1, "Select a land card to sacrifice.");
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
-      add_counters(player, card, instance->parent_controller, instance->parent_card,
-                               COUNTER_P1_P1, 1);
+      add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_P1_P1,
+                   1);
     }
-    return generic_activated_ability_with_sacrifice_as_cost(
-        player, card, event, GAA_NONE, 1, 0, 0, 0, 1, 0, 0, NULL, NULL, TYPE_NONE,
-        &this_test, SARV_0);
+    return generic_activated_ability_with_sacrifice_as_cost(player, card, event, GAA_NONE, 1, 0, 0,
+                                                            0, 1, 0, 0, NULL, NULL, TYPE_NONE,
+                                                            &this_test, SARV_0);
   }
   return 0;
 }
@@ -2322,7 +2323,7 @@ Put one of those cards into your hand and the rest on the bottom of your library
 /* ManalinkEh 2022: 0x21e3e60; original cards/conflux.c:442. */
 int card_elder_mastery(int player, int card, event_t event)
 {
-  unsigned int uVar1;
+  unsigned int damage_counts_or_turn_player;
   int player_00;
   card_instance_t *instance;
   int result;
@@ -2335,22 +2336,23 @@ int card_elder_mastery(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     player_00 = current_turn;
-    uVar1 = instance->targets[1].player;
+    damage_counts_or_turn_player = instance->targets[1].player;
     instance->targets[1].player = 0;
-    times_damaged[0] = uVar1 & 0xff;
-    times_damaged[1] = uVar1 >> 8 & 0xff;
+    times_damaged[0] = damage_counts_or_turn_player & 0xff;
+    times_damaged[1] = damage_counts_or_turn_player >> 8 & 0xff;
     result = times_damaged[player_00];
-    uVar1 = player_00;
+    damage_counts_or_turn_player = player_00;
     while (result != 0)
     {
       new_multidiscard(player_00, 2, 0, player);
       result = result + -1;
       times_damaged[player_00] = result;
-      uVar1 = current_turn;
+      damage_counts_or_turn_player = current_turn;
     }
-    for (result = times_damaged[uVar1 ^ 1]; result != 0; result = result + -1)
+    for (result = times_damaged[damage_counts_or_turn_player ^ 1]; result != 0;
+         result = result + -1)
     {
-      new_multidiscard(uVar1 ^ 1, 2, 0, player);
+      new_multidiscard(damage_counts_or_turn_player ^ 1, 2, 0, player);
     }
   }
   return generic_aura(player, card, event, player, 3, 3, 0x20, 0, 0, 0, 0);
@@ -2361,10 +2363,16 @@ int card_elder_mastery(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x21e90c0; original cards/conflux.c:2214. */
 int card_unstable_frontier(int player, int card, event_t event)
 {
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_CHANGE_LAND = 2
+  };
+
   int result;
   card_instance_t *instance;
   int card_00;
-  bool bVar3;
+  bool not_speculating;
   target_definition_t td;
 
   if (event != EVENT_CAN_ACTIVATE)
@@ -2381,9 +2389,9 @@ int card_unstable_frontier(int player, int card, event_t event)
                                                                0, 0, 0, 0, 0, 0, 0, &td, NULL),
                             result != 0))
       {
-        bVar3 = ai_is_speculating != 1;
+        not_speculating = ai_is_speculating != 1;
         instance->info_slot = 2;
-        if ((bVar3) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+        if ((not_speculating) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
         {
           result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
                                "Change land type", 1, 5, 0, 0, 0, 0);
@@ -2392,9 +2400,9 @@ int card_unstable_frontier(int player, int card, event_t event)
             spell_fizzled = 1;
             return 0;
           }
-          if (result == 1)
+          if (result == CHOICE_MANA)
             return mana_producer(player, card, EVENT_ACTIVATE);
-          if (result != 2)
+          if (result != CHOICE_CHANGE_LAND)
           {
             return 0;
           }

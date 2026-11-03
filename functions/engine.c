@@ -254,7 +254,7 @@ void undeclare_attacker(int player, int card)
   card_instance_t *instance;
   int result;
   int card_00;
-  int iStack_14;
+  int first_linked_attacker;
 
   instance = get_card_instance(player, card);
   instance->state = instance->state & 0xfffffffb;
@@ -262,36 +262,24 @@ void undeclare_attacker(int player, int card)
   if ((instance->blocking != 0xff) && (instance->blocking = 0xff, 0 < active_cards_count[player]))
   {
     result = 0;
-    iStack_14 = -1;
+    first_linked_attacker = -1;
     card_00 = 0;
     do
     {
-      while (true)
+      instance = in_play(player, card_00);
+      if (instance != NULL && (instance->state & 4) != 0 &&
+          card == (unsigned int)instance->blocking)
       {
-        instance = in_play(player, card_00);
-        if (((instance == NULL) || ((instance->state & 4) == 0)) ||
-            (card != (unsigned int)instance->blocking))
-          break;
-        if (iStack_14 == -1)
-        {
-          instance->blocking = (uint8_t)card_00;
-          iStack_14 = card_00;
-        }
-        else
-        {
-          instance->blocking = (uint8_t)card_00;
-        }
+        instance->blocking = (uint8_t)card_00;
+        if (first_linked_attacker == -1)
+          first_linked_attacker = card_00;
         result = result + 1;
-        card_00 = card_00 + 1;
-        if (active_cards_count[player] <= card_00)
-          goto LAB_026ac058;
       }
       card_00 = card_00 + 1;
     } while (card_00 < active_cards_count[player]);
-  LAB_026ac058:
     if (result == 1)
     {
-      instance = get_card_instance(player, iStack_14);
+      instance = get_card_instance(player, first_linked_attacker);
       instance->blocking = 0xff;
       return;
     }
@@ -305,41 +293,41 @@ int is_being_cast(int player, int card);
 /* ManalinkEh 2022: 0x26adb20; original functions/engine.c:3232. */
 int is_being_cast(int player, int card)
 {
-  card_instance_t *pcVar1;
-  card_instance_t *pcVar2;
+  card_instance_t *queried_instance;
+  card_instance_t *stack_instance;
   int result;
-  bool bVar4;
+  bool casting_spell;
 
-  pcVar1 = get_card_instance(player, card);
-  if (pcVar1 == NULL)
+  queried_instance = get_card_instance(player, card);
+  if (queried_instance == NULL)
   {
     return 0;
   }
-  if (pcVar1->internal_card_id == damage_card)
+  if (queried_instance->internal_card_id == damage_card)
   {
-    return pcVar1->targets[7].player & 2;
+    return queried_instance->targets[7].player & 2;
   }
-  pcVar2 = on_stack(player, card);
-  if (pcVar2 == NULL)
+  stack_instance = on_stack(player, card);
+  if (stack_instance == NULL)
   {
-    pcVar1 = in_hand(player, card);
-    if (pcVar1 != NULL)
+    queried_instance = in_hand(player, card);
+    if (queried_instance != NULL)
     {
       return (unsigned int)((((unsigned int)land_can_be_played >> 16 & 0xff) & 0x40) == 0);
     }
-    pcVar1 = in_play(player, card);
-    if (pcVar1 == NULL)
+    queried_instance = in_play(player, card);
+    if (queried_instance == NULL)
     {
       return 0;
     }
     result = is_what(player, card, 199);
-    bVar4 = result == 0;
+    casting_spell = result == 0;
   }
   else
   {
-    bVar4 = pcVar1->internal_card_id != activation_card;
+    casting_spell = queried_instance->internal_card_id != activation_card;
   }
-  return (unsigned int)bVar4;
+  return (unsigned int)casting_spell;
 }
 
 
@@ -426,79 +414,82 @@ STATIC_ASSERT(offsetof(card_data_t, type) == 0x28, spell_cost_type_byte);
  * The summary byte address advances by player, independently of the 32-byte mana row. */
 int charge_spell_cost(card_data_t *cd, int player, int card)
 {
-  uint8_t uVar1;
-  int8_t sVar2;
-  uint32_t uVar3;
-  bool bVar4;
-  char *pcVar5;
-  int iVar6;
-  unsigned char bVar7;
-  int8_t *psVar8;
-  unsigned int uVar9;
-  int *piVar10;
-  int *piVar11;
-  int (*paiVar12)[8];
-  int iVar14;
-  int iVar15;
-  int v7[8];
+  uint8_t printed_generic_cost;
+  int8_t signed_mana_adjustment;
+  uint32_t saved_mana_amount;
+  bool mana_kind_changed;
+  char *cost_or_mana_byte;
+  int available_mana_or_pool;
+  unsigned char color_index;
+  int8_t *engine_mana_cursor;
+  unsigned int available_color_bits;
+  int *mana_value_cursor;
+  int *engine_paid_cursor;
+  int (*pool_clear_cursor)[8];
+  int chosen_x_or_mana_adjustment;
+  int payment_result_or_mana_value;
+  int saved_mana_adjustments[8];
 
-  pcVar5 = EXE_BYTE_PTR(0x55cf18);
-  uVar1 = cd->cc[1];
+  cost_or_mana_byte = EXE_BYTE_PTR(0x55cf18);
+  printed_generic_cost = cd->cc[1];
   do
   {
-    pay_mana_xbugrwaU[(uintptr_t)pcVar5 - 0x55cf18] = (int)*pcVar5;
-    iVar15 = pay_mana_xbugrwaU[0];
-    pcVar5 = pcVar5 + 1;
-  } while (pcVar5 != (char *)0x55cf1e);
+    pay_mana_xbugrwaU[(uintptr_t)cost_or_mana_byte - 0x55cf18] = (int)*cost_or_mana_byte;
+    payment_result_or_mana_value = pay_mana_xbugrwaU[0];
+    cost_or_mana_byte = cost_or_mana_byte + 1;
+  } while (cost_or_mana_byte != (char *)0x55cf1e);
   if ((cd->type & 0x40) != 0)
   {
     pay_mana_xbugrwaU[0] = 0;
-    pay_mana_xbugrwaU[6] = iVar15;
+    pay_mana_xbugrwaU[6] = payment_result_or_mana_value;
   }
-  iVar15 = pay_mana_xbugrwaU[6];
+  payment_result_or_mana_value = pay_mana_xbugrwaU[6];
   if (((player == 0) || (((unsigned char)trace_mode & 2) != 0)) && (ai_is_speculating != 1))
   {
-    iVar15 = 0;
-    iVar14 = 0;
-    if (uVar1 != 0xff)
+    payment_result_or_mana_value = 0;
+    chosen_x_or_mana_adjustment = 0;
+    if (printed_generic_cost != 0xff)
     {
-    LAB_026afa15:
-      iVar15 = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, iVar14, iVar15);
-      return iVar15;
+      payment_result_or_mana_value = EXE_FN(int, 0x4302c0, int, int, int, int)(
+          player, card, chosen_x_or_mana_adjustment, payment_result_or_mana_value);
+      return payment_result_or_mana_value;
     }
     if (EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, 0, 0) == 0)
     {
       return 0;
     }
-    piVar10 = mana_paid;
-    piVar11 = (int *)((int8_t *)0x55cef0);
-    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)
+    mana_value_cursor = mana_paid;
+    engine_paid_cursor = (int *)((int8_t *)0x55cef0);
+    for (payment_result_or_mana_value = 7; payment_result_or_mana_value != 0;
+         payment_result_or_mana_value = payment_result_or_mana_value + -1)
     {
-      *piVar11 = *piVar10;
-      piVar10 = piVar10 + 1u;
-      piVar11 = piVar11 + 1u;
+      *engine_paid_cursor = *mana_value_cursor;
+      mana_value_cursor = mana_value_cursor + 1u;
+      engine_paid_cursor = engine_paid_cursor + 1u;
     }
-    psVar8 = ((int8_t *)0x55cf20);
+    engine_mana_cursor = ((int8_t *)0x55cf20);
     do
     {
-      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;
-      psVar8 = psVar8 + 1;
-    } while (psVar8 != (int8_t *)0x55cf28);
+      saved_mana_adjustments[(uintptr_t)engine_mana_cursor - 0x55cf20] = (int)*engine_mana_cursor;
+      engine_mana_cursor = engine_mana_cursor + 1;
+    } while (engine_mana_cursor != (int8_t *)0x55cf28);
     if (((int8_t *)0x55cf20)[0] < 0)
     {
-      pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);
-      psVar8 = ((int8_t *)0x55cf20);
-      sVar2 = ((int8_t *)0x55cf20)[0];
+      cost_or_mana_byte = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);
+      engine_mana_cursor = ((int8_t *)0x55cf20);
+      signed_mana_adjustment = ((int8_t *)0x55cf20)[0];
       while (true)
       {
-        psVar8 = psVar8 + 1;
-        uVar3 = (uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];
-        mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] =
-            mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] - (int)sVar2;
-        *pcVar5 = *pcVar5 - (char)uVar3;
-        if (psVar8 == (int8_t *)0x55cf28)
+        engine_mana_cursor = engine_mana_cursor + 1;
+        saved_mana_amount =
+            (uint32_t)saved_mana_adjustments[(uintptr_t)engine_mana_cursor - 0x55cf21];
+        mana_pool[player][(uintptr_t)engine_mana_cursor - 0x55cf21] =
+            mana_pool[player][(uintptr_t)engine_mana_cursor - 0x55cf21] -
+            (int)signed_mana_adjustment;
+        *cost_or_mana_byte = *cost_or_mana_byte - (char)saved_mana_amount;
+        if (engine_mana_cursor == (int8_t *)0x55cf28)
           break;
-        sVar2 = *psVar8;
+        signed_mana_adjustment = *engine_mana_cursor;
       }
     }
     charge_mana(player, COLOR_COLORLESS, -1);
@@ -507,55 +498,60 @@ int charge_spell_cost(card_data_t *cd, int player, int card)
   {
     if ((cd->type & 0x40) != 0)
     {
-      iVar14 = 6;
+      chosen_x_or_mana_adjustment = 6;
       pay_mana_xbugrwaU[6] = 0;
-      goto LAB_026afa15;
+      payment_result_or_mana_value = EXE_FN(int, 0x4302c0, int, int, int, int)(
+          player, card, chosen_x_or_mana_adjustment, payment_result_or_mana_value);
+      return payment_result_or_mana_value;
     }
-    iVar15 = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, 0, 0);
-    if (uVar1 != 0xff)
+    payment_result_or_mana_value = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, 0, 0);
+    if (printed_generic_cost != 0xff)
     {
-      return iVar15;
+      return payment_result_or_mana_value;
     }
-    if (iVar15 == 0)
+    if (payment_result_or_mana_value == 0)
     {
       return 0;
     }
-    piVar10 = mana_paid;
-    piVar11 = (int *)((int8_t *)0x55cef0);
-    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)
+    mana_value_cursor = mana_paid;
+    engine_paid_cursor = (int *)((int8_t *)0x55cef0);
+    for (payment_result_or_mana_value = 7; payment_result_or_mana_value != 0;
+         payment_result_or_mana_value = payment_result_or_mana_value + -1)
     {
-      *piVar11 = *piVar10;
-      piVar10 = piVar10 + 1u;
-      piVar11 = piVar11 + 1u;
+      *engine_paid_cursor = *mana_value_cursor;
+      mana_value_cursor = mana_value_cursor + 1u;
+      engine_paid_cursor = engine_paid_cursor + 1u;
     }
-    psVar8 = ((int8_t *)0x55cf20);
+    engine_mana_cursor = ((int8_t *)0x55cf20);
     do
     {
-      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;
-      psVar8 = psVar8 + 1;
-    } while (psVar8 != (int8_t *)0x55cf28);
+      saved_mana_adjustments[(uintptr_t)engine_mana_cursor - 0x55cf20] = (int)*engine_mana_cursor;
+      engine_mana_cursor = engine_mana_cursor + 1;
+    } while (engine_mana_cursor != (int8_t *)0x55cf28);
     if (((int8_t *)0x55cf20)[0] < 0)
     {
-      pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);
-      psVar8 = ((int8_t *)0x55cf20);
-      sVar2 = ((int8_t *)0x55cf20)[0];
+      cost_or_mana_byte = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);
+      engine_mana_cursor = ((int8_t *)0x55cf20);
+      signed_mana_adjustment = ((int8_t *)0x55cf20)[0];
       while (true)
       {
-        psVar8 = psVar8 + 1;
-        piVar10 = &mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];
-        *piVar10 = *piVar10 - (int)sVar2;
-        *pcVar5 = *pcVar5 - (char)(uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];
-        if (psVar8 == (int8_t *)0x55cf28)
+        engine_mana_cursor = engine_mana_cursor + 1;
+        mana_value_cursor = &mana_pool[player][(uintptr_t)engine_mana_cursor - 0x55cf21];
+        *mana_value_cursor = *mana_value_cursor - (int)signed_mana_adjustment;
+        *cost_or_mana_byte =
+            *cost_or_mana_byte -
+            (char)(uint32_t)saved_mana_adjustments[(uintptr_t)engine_mana_cursor - 0x55cf21];
+        if (engine_mana_cursor == (int8_t *)0x55cf28)
           break;
-        sVar2 = *psVar8;
+        signed_mana_adjustment = *engine_mana_cursor;
       }
     }
-    iVar15 = max_x_value;
+    payment_result_or_mana_value = max_x_value;
     if (player == 0)
     {
       max_x_value = has_mana(0, 7, 1);
       charge_mana(0, COLOR_COLORLESS, -1);
-      max_x_value = iVar15;
+      max_x_value = payment_result_or_mana_value;
     }
     else
     {
@@ -563,91 +559,95 @@ int charge_spell_cost(card_data_t *cd, int player, int card)
       {
         if (internal_rand(2) == 0)
         {
-          iVar6 = has_mana(player, 7, 1);
-          iVar15 = 0;
-          iVar14 = iVar15;
-          if (iVar6 != 0)
+          available_mana_or_pool = has_mana(player, 7, 1);
+          payment_result_or_mana_value = 0;
+          chosen_x_or_mana_adjustment = payment_result_or_mana_value;
+          if (available_mana_or_pool != 0)
           {
-            iVar15 = internal_rand(iVar6);
-            iVar15 = iVar15 + 1;
-            iVar14 = iVar15;
+            payment_result_or_mana_value = internal_rand(available_mana_or_pool);
+            payment_result_or_mana_value = payment_result_or_mana_value + 1;
+            chosen_x_or_mana_adjustment = payment_result_or_mana_value;
           }
         }
         else
         {
-          iVar15 = has_mana(player, 7, 1);
-          EXE_DWORD(0x7a2fe4) = iVar15;
-          if ((life[0] < iVar15) && (iVar14 = internal_rand(3), iVar14 == 0))
+          payment_result_or_mana_value = has_mana(player, 7, 1);
+          EXE_DWORD(0x7a2fe4) = payment_result_or_mana_value;
+          if ((life[0] < payment_result_or_mana_value) &&
+              (chosen_x_or_mana_adjustment = internal_rand(3), chosen_x_or_mana_adjustment == 0))
           {
             EXE_DWORD(0x7a2fe4) = life[0];
-            iVar15 = life[0];
+            payment_result_or_mana_value = life[0];
           }
-          iVar14 = EXE_DWORD(0x7a2fe4);
+          chosen_x_or_mana_adjustment = EXE_DWORD(0x7a2fe4);
           if ((max_x_value != -1) && (max_x_value < EXE_DWORD(0x7a2fe4)))
           {
             EXE_DWORD(0x7a2fe4) = max_x_value;
-            iVar15 = max_x_value;
-            iVar14 = EXE_DWORD(0x7a2fe4);
+            payment_result_or_mana_value = max_x_value;
+            chosen_x_or_mana_adjustment = EXE_DWORD(0x7a2fe4);
           }
         }
-        EXE_DWORD(0x7a2fe4) = iVar14;
+        EXE_DWORD(0x7a2fe4) = chosen_x_or_mana_adjustment;
         EXE_FN(void, 0x498f20, void)();
       }
       else
       {
         EXE_FN(int, 0x499050, void)();
-        iVar15 = EXE_DWORD(0x7a2fe4);
+        payment_result_or_mana_value = EXE_DWORD(0x7a2fe4);
       }
-      iVar14 = max_x_value;
-      max_x_value = iVar15;
+      chosen_x_or_mana_adjustment = max_x_value;
+      max_x_value = payment_result_or_mana_value;
       charge_mana(player, COLOR_COLORLESS, -1);
-      max_x_value = iVar14;
+      max_x_value = chosen_x_or_mana_adjustment;
     }
   }
-  sVar2 = ((int8_t *)0x55cf20)[0];
-  iVar15 = (int)((int8_t *)0x55cf20)[0];
+  signed_mana_adjustment = ((int8_t *)0x55cf20)[0];
+  payment_result_or_mana_value = (int)((int8_t *)0x55cf20)[0];
   if (((int8_t *)0x55cf20)[7] != 0)
   {
-    psVar8 = ((int8_t *)0x55cf20);
-    bVar4 = false;
-    iVar14 = iVar15;
+    engine_mana_cursor = ((int8_t *)0x55cf20);
+    mana_kind_changed = false;
+    chosen_x_or_mana_adjustment = payment_result_or_mana_value;
     while (true)
     {
-      psVar8 = psVar8 + 1;
-      iVar6 = mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];
-      if (iVar14 != iVar6 >> 0x1f)
+      engine_mana_cursor = engine_mana_cursor + 1;
+      available_mana_or_pool = mana_pool[player][(uintptr_t)engine_mana_cursor - 0x55cf21];
+      if (chosen_x_or_mana_adjustment != available_mana_or_pool >> 0x1f)
       {
-        bVar4 = true;
+        mana_kind_changed = true;
       }
-      mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] = iVar14 + iVar6;
-      if (psVar8 == (int8_t *)0x55cf28)
+      mana_pool[player][(uintptr_t)engine_mana_cursor - 0x55cf21] =
+          chosen_x_or_mana_adjustment + available_mana_or_pool;
+      if (engine_mana_cursor == (int8_t *)0x55cf28)
         break;
-      iVar14 = (int)*psVar8;
+      chosen_x_or_mana_adjustment = (int)*engine_mana_cursor;
     }
-    if (bVar4)
+    if (mana_kind_changed)
     {
-      uVar9 = 0;
-      iVar15 = 0;
+      available_color_bits = 0;
+      payment_result_or_mana_value = 0;
       do
       {
-        piVar10 = mana_pool[player] + iVar15;
-        bVar7 = (unsigned char)iVar15;
-        iVar15 = iVar15 + 1;
-        uVar9 = uVar9 | (unsigned int)(0 < *piVar10) << (bVar7 & 0x1f);
-      } while (iVar15 != 8);
-      iVar15 = (int)(char)uVar9;
-      EXE_FN(int, 0x4301a0, int, int)(0, iVar15);
-      paiVar12 = mana_pool + player;
-      for (iVar14 = 8; iVar14 != 0; iVar14 = iVar14 + -1)
+        mana_value_cursor = mana_pool[player] + payment_result_or_mana_value;
+        color_index = (unsigned char)payment_result_or_mana_value;
+        payment_result_or_mana_value = payment_result_or_mana_value + 1;
+        available_color_bits = available_color_bits | (unsigned int)(0 < *mana_value_cursor)
+                                                          << (color_index & 0x1f);
+      } while (payment_result_or_mana_value != 8);
+      payment_result_or_mana_value = (int)(char)available_color_bits;
+      EXE_FN(int, 0x4301a0, int, int)(0, payment_result_or_mana_value);
+      pool_clear_cursor = mana_pool + player;
+      for (chosen_x_or_mana_adjustment = 8; chosen_x_or_mana_adjustment != 0;
+           chosen_x_or_mana_adjustment = chosen_x_or_mana_adjustment + -1)
       {
-        (*paiVar12)[0] = 0;
-        paiVar12 = (int (*)[8])((int)paiVar12 + 4u);
+        (*pool_clear_cursor)[0] = 0;
+        pool_clear_cursor = (int (*)[8])((int)pool_clear_cursor + 4u);
       }
     }
     else
     {
       *(int8_t *)(EXE_BYTE_PTR(0x4ef4fc) + player) =
-          *(char *)(EXE_BYTE_PTR(0x4ef4fc) + player) + sVar2;
+          *(char *)(EXE_BYTE_PTR(0x4ef4fc) + player) + signed_mana_adjustment;
     }
   }
   if (x_value == 0)
@@ -657,19 +657,20 @@ int charge_spell_cost(card_data_t *cd, int player, int card)
   if (spell_fizzled == 1)
   {
     EXE_FN(int, 0x430260, int *)((int *)(int)((int8_t *)0x55cef0)[0]);
-    psVar8 = ((int8_t *)0x55cef0);
-    pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);
+    engine_mana_cursor = ((int8_t *)0x55cef0);
+    cost_or_mana_byte = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);
     do
     {
-      sVar2 = *psVar8;
-      iVar15 = (int)sVar2;
-      mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] =
-          mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] + iVar15;
-      psVar8 = psVar8 + 1;
-      *pcVar5 = *pcVar5 + sVar2;
-    } while (psVar8 != (int8_t *)0x55cef8);
+      signed_mana_adjustment = *engine_mana_cursor;
+      payment_result_or_mana_value = (int)signed_mana_adjustment;
+      mana_pool[player][(uintptr_t)engine_mana_cursor - 0x55cef0] =
+          mana_pool[player][(uintptr_t)engine_mana_cursor - 0x55cef0] +
+          payment_result_or_mana_value;
+      engine_mana_cursor = engine_mana_cursor + 1;
+      *cost_or_mana_byte = *cost_or_mana_byte + signed_mana_adjustment;
+    } while (engine_mana_cursor != (int8_t *)0x55cef8);
   }
-  return iVar15;
+  return payment_result_or_mana_value;
 }
 
 #endif

@@ -1,0 +1,105 @@
+{
+  "status": "All 65 War of the Spark definitions cleaned up; entire unit has zero LAB jumps and known placeholders. Final build and combined current reccmp refresh pass.",
+  "batch": "docs/recovery-evidence/war-control-cleanup.json",
+  "batch_sha256": "936fabbe1ed734fa0133abd44eab90e3d8dd901f6fe959a14d95c2fc43d2998a",
+  "counts": {
+    "definitions": 65,
+    "card_handlers": 48,
+    "local_helpers": 17,
+    "alpha_only_definitions": 43,
+    "structured_definitions": 22,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 90,
+    "removed_lab_gotos": 87,
+    "source_lines_removed": 732,
+    "removed_placeholder_occurrences": 1212
+  },
+  "verification_policy": "Batched readability workflow: exact token substitution for alpha-only edits; review event routing, callback order and live/cached reads for structured edits. One target build per batch. Native comparisons reserved for uncertain behavior; reccmp refresh deferred to a larger checkpoint.",
+  "review_notes": [
+    "Forty-three alpha-only definitions preserve exact tokens after declared local renames. Seventeen structured definitions use source review and one target build; no new native semantic comparisons.",
+    "Keep untargetability/ETB and EOT ordering, aura attachment/death reads, owner/IID capture and delayed reanimation setup.",
+    "Keep Cruel Celebrant, Liliana and Mayhem death eligibility differences, detach flag byte offsets, source-death early return, low-byte counts, status checks, and per-trigger life/damage/target cleanup order.",
+    "Keep static legacy detection, fresh active-card bounds, validation-driven mode reloads and possible later exile resolution after destruction callbacks.",
+    "Keep Nahiri loyalty/toughness checks, Sarkhan attacker and dragon scans, Tolsimir ETB/fight behavior, Sorin dynamic AI loyalty queries and grave selection even after failed payment.",
+    "Keep two-target damage/mill/amass behavior, Lazotep live permanent scan, and Vivien AI/human predicate setup, timing, payment and hand-card dispatch. Opaque dialogs remain out of scope.",
+    "The final five larger routines receive structured source review, one build and the combined current reccmp refresh; no new native semantic cases are claimed.",
+    "Mana discount preserves unsigned wrapping/clamping, Reaper King handling, fixed/X and artifact cost routing, hybrid/phyrexian queries, temporary-card invisibility/hand-count ordering and cleanup.",
+    "Casualties retains cast-time target marking, per-target mode metadata and fresh type-mask reads after every validation, with destruction after all eligible type checks.",
+    "Liliana retains duplicate-legacy detection, death collection, kill-state eligibility, draw queries, activation record refresh, sacrifice order and opponent selection/unmarking.",
+    "Citadel retains human/AI availability differences, cached versus live library top reads, life costs, incomplete selection rollback, full unmarking and final sacrifice order (including native fizzle writes).",
+    "Planewide retains packed-byte choice updates and grouped resolution: initial grave validation, Citizens, grave returns, proliferation, then life. Keep callback-sensitive mode snapshots and the early validation-failure exit without basic_spell."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/war-tail-build-c459.log",
+    "log_sha256": "7161eb5ea2cd286daf8e788f6d13473c75bfe9a3df8051b25e2d8c66caf0e311",
+    "verified_built_slots": 15169,
+    "dll_sha256": "1ea8ec62f26e44b362f126ecede0ece057c4a4dc5c05a9d450a929ba1d2b895c",
+    "dbg_sha256": "5ba36befdcd71fc6032f961a6f8c06554bef302c22c5180fe02f8db494130620"
+  },
+  "earlier_batch_build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/war-control-build-c455.log",
+    "log_sha256": "d7557eb31241561a4445ef8327cf126c8fafd532a883264f9dfdf5a533f83978",
+    "verified_built_slots": 15169,
+    "dll_sha256": "fdd7db4f871ff75176ddc21a9e9178226a0da336e281cd9eb7743947a2b4ff68",
+    "dbg_sha256": "cead31c1de9aefca7edfc3f48bbd2ea4cfd504a501836fef850a8bff6d424677"
+  },
+  "final_batch": {
+    "definitions": 5,
+    "counts": {
+      "removed_gotos": 51,
+      "removed_lab_gotos": 49,
+      "source_lines_removed": 404,
+      "removed_placeholder_occurrences": 414
+    }
+  },
+  "reccmp": {
+    "refreshed": true,
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/war-tail-setup-c459.log",
+    "log_sha256": "c7bacd8e77e18d017877fd4f014d57a81dd9c646ad1758dd3a6c391f135bcafc",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4819,
+    "canonicalization_sha256": "d476ca12f68eb58281e055b3db7f3000ffe6c66b9abd17132c0050485434e91c",
+    "metadata_sha256": "a0b5791a8d98ec9acba6141138040223317f44dbbf094cf0f977e6a5a9a5a274",
+    "mapping_identities_unchanged": true,
+    "mapping_annotations_changed": 12,
+    "combined_source_units": [
+      "cards/aether_revolt.c",
+      "cards/mirage.c",
+      "cards/throne_of_eldraine.c",
+      "cards/war_of_the_spark.c"
+    ],
+    "combined_source_sha256": {
+      "cards/aether_revolt.c": "055978b4112df3e0a2285023d779a24b5b784072909a81fed07ed4b63ce4a69d",
+      "cards/mirage.c": "af68e452cc44b8febff6c2a67f2fbe145f1458cf11336e6c75a1aa822b7dad0b",
+      "cards/throne_of_eldraine.c": "a99dbce6f9505866a6aea532b62370170d87e6653b278d0d412009fffba76f3f",
+      "cards/war_of_the_spark.c": "b844809d4cfe50037fdbbf15d2f510505d852acb4c8bbbb0b0f9c705652d9c03"
+    }
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c460.json",
+    "sha256": "10eafc229ef47723dec3d3b119b5276db9152111ec593dbf4ae47282bd2443f8",
+    "counts": {
+      "tracked_source_definitions": 2607,
+      "functions_with_lab_gotos": 805,
+      "lab_gotos": 1925,
+      "functions_with_placeholders": 1725,
+      "distinct_function_local_placeholder_spellings": 5058,
+      "placeholder_identifier_occurrences": 37799,
+      "union_keywords": 0
+    }
+  },
+  "whole_unit_readability": {
+    "source": "cards/war_of_the_spark.c",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of existing War of the Spark card handlers and helpers. No new native-function coverage or gameplay-equivalence claim. Preserve native quirks, repeated queries, context reads and opaque dialogs."
+}

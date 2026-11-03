@@ -1956,10 +1956,10 @@ int card_fortunes_favor(int player, int card, event_t event)
 				}
 			}
 			if( will_choose_the_face_up_pile ){
-				show_deck(1-player, face_up_pile, fup_count, "Opponent chosen the face-up pile.", 0, 0x7375B0 );
+				show_deck(1-player, face_up_pile, fup_count, "Opponent chosen the face-up pile.", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			}
 			else{
-				show_deck(1-player, face_down_pile, fdp_count, "Opponent chosen the face-down pile.", 0, 0x7375B0 );
+				show_deck(1-player, face_down_pile, fdp_count, "Opponent chosen the face-down pile.", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			}
 
 			int i;
@@ -2050,7 +2050,7 @@ int card_identity_thief(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  card_instance_t *pcVar3;
+  card_instance_t *exiled_creature;
   target_definition_t td;
   if (event == EVENT_CHANGE_TYPE)
   {
@@ -2096,8 +2096,8 @@ int card_identity_thief(int player, int card, event_t event)
         (result = new_pick_target(&td, "Select another target nontoken creature.", 0, 0x80),
          result != 0))
     {
-      pcVar3 = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-      instance->dummy3 = pcVar3->internal_card_id;
+      exiled_creature = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      instance->dummy3 = exiled_creature->internal_card_id;
       remove_until_eot(player, card, instance->targets[0].player, instance->targets[0].card);
     }
     instance->number_of_targets = '\0';
@@ -2570,8 +2570,8 @@ int card_borrowed_malevolence(int player, int card, event_t event){
 
 int card_cemetery_recruitment(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int grave_index;
+  int zombie_match;
   test_definition_t test;
   if (!IS_GS_EVENT(player, card, event))
   {
@@ -2580,14 +2580,14 @@ int card_cemetery_recruitment(int player, int card, event_t event)
   new_default_test_definition(&test, 2, "Select target creature card.");
   if (event == EVENT_RESOLVE_SPELL)
   {
-    iVar1 = validate_target_from_grave_source(player, card, player, 0);
-    if (iVar1 != -1)
+    grave_index = validate_target_from_grave_source(player, card, player, 0);
+    if (grave_index != -1)
     {
-      iVar2 = has_subtype_by_id(
-          player, (unsigned int)cards_data[graveyard_ptr_mutable[player][iVar1]].id,
+      zombie_match = has_subtype_by_id(
+          player, (unsigned int)cards_data[graveyard_ptr_mutable[player][grave_index]].id,
           SUBTYPE_ZOMBIE);
-      from_grave_to_hand(player, iVar1, 1);
-      if (iVar2 != 0)
+      from_grave_to_hand(player, grave_index, 1);
+      if (zombie_match != 0)
       {
         draw_a_card(player);
       }
@@ -5923,8 +5923,8 @@ int card_mournwillow(int player, int card, event_t event)
 
 int card_spell_queller(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int exiled_card_or_result;
+  int cast_result;
   card_instance_t *instance;
   target_definition_t td;
   if (event != EVENT_CAN_CAST)
@@ -5940,8 +5940,9 @@ int card_spell_queller(int player, int card, event_t event)
         if (instance->info_slot == 1)
         {
           counterspell(player, card, EVENT_CAST_SPELL, &td, 0);
-          iVar1 = my_base_value(instance->targets[0].player, instance->targets[0].card);
-          ai_modifier = ai_modifier + iVar1 + -0x18;
+          exiled_card_or_result =
+              my_base_value(instance->targets[0].player, instance->targets[0].card);
+          ai_modifier = ai_modifier + exiled_card_or_result + -0x18;
         }
         else
         {
@@ -5959,11 +5960,11 @@ int card_spell_queller(int player, int card, event_t event)
         instance = get_card_instance(player, card);
         if (instance->info_slot == 1)
         {
-          iVar1 = get_owner(instance->targets[0].player, instance->targets[0].card);
-          instance->targets[1].player = iVar1;
-          iVar1 =
+          exiled_card_or_result = get_owner(instance->targets[0].player, instance->targets[0].card);
+          instance->targets[1].player = exiled_card_or_result;
+          exiled_card_or_result =
               get_original_internal_card_id(instance->targets[0].player, instance->targets[0].card);
-          instance->targets[1].card = iVar1;
+          instance->targets[1].card = exiled_card_or_result;
           kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
         }
         leaves_play(player, card, EVENT_ETB, 1, 0);
@@ -5974,23 +5975,25 @@ int card_spell_queller(int player, int card, event_t event)
         if (event == EVENT_LEAVES_PLAY_ABILITY)
         {
           instance = get_card_instance(player, card);
-          iVar1 = instance->targets[1].card;
-          if (-1 < iVar1)
+          exiled_card_or_result = instance->targets[1].card;
+          if (-1 < exiled_card_or_result)
           {
-            if (check_rfg(instance->targets[1].player, (unsigned int)cards_data[iVar1].id) != 0)
+            if (check_rfg(instance->targets[1].player,
+                          (unsigned int)cards_data[exiled_card_or_result].id) != 0)
             {
               char prompt[100];
               scnprintf(prompt, 100, " Cast %s",
                         cards_ptr[cards_data[instance->targets[1].card].id]->name);
-              iVar1 = can_legally_play_iid(instance->targets[1].player, instance->targets[1].card);
-              iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\010",
-                                  instance->targets[1].player, "\001\014", "\001\003", "\001\016",
-                                  "\001\021", instance->targets[1].card, prompt, iVar1, 10, "Pass", 1,
-                                  0xffffffe7, 0, 0, 0, 0);
-              if (iVar1 == 1)
+              exiled_card_or_result =
+                  can_legally_play_iid(instance->targets[1].player, instance->targets[1].card);
+              exiled_card_or_result = dialog_impl(
+                  player, card, EVENT_ACTIVATE, "\001\010", instance->targets[1].player, "\001\014",
+                  "\001\003", "\001\016", "\001\021", instance->targets[1].card, prompt,
+                  exiled_card_or_result, 10, "Pass", 1, 0xffffffe7, 0, 0, 0, 0);
+              if (exiled_card_or_result == 1)
               {
-                iVar1 = instance->targets[1].player;
-                play_card_in_exile_for_free(iVar1, iVar1,
+                exiled_card_or_result = instance->targets[1].player;
+                play_card_in_exile_for_free(exiled_card_or_result, exiled_card_or_result,
                                             (unsigned int)cards_data[instance->targets[1].card].id);
               }
             }
@@ -6004,18 +6007,18 @@ int card_spell_queller(int player, int card, event_t event)
   td.extra = 4;
   td.special = 0x800;
   instance = get_card_instance(player, card);
-  iVar1 = counterspell(player, card, EVENT_CAN_CAST, &td, 0);
-  iVar2 = 1;
-  if (iVar1 == 0)
+  exiled_card_or_result = counterspell(player, card, EVENT_CAN_CAST, &td, 0);
+  cast_result = 1;
+  if (exiled_card_or_result == 0)
   {
     instance->info_slot = 0;
   }
   else
   {
-    iVar2 = 99;
+    cast_result = 99;
     instance->info_slot = 1;
   }
-  return iVar2;
+  return cast_result;
 }
 
 static int tamiyo_field_researcher_effect(int player, int card, event_t event)
@@ -6655,30 +6658,31 @@ int card_hanweir_the_writhing_township(int player, int card, event_t event){
 /* ManalinkEh 2022: 0x2478630; original cards/eldritch_moon.c:2226. */
 int card_minds_dilation(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
+  int opponent;
+  int exiled_iid_or_trigger;
+  int playable_or_choice;
 
-  iVar1 = 1 - player;
-  if (get_specific_storm_count(iVar1) == 0)
+  opponent = 1 - player;
+  if (get_specific_storm_count(opponent) == 0)
   {
-    iVar2 = new_specific_spell_played(player, card, event, iVar1, 2, NULL);
-    if ((iVar2 != 0) && (*deck_ptr[iVar1] != -1))
+    exiled_iid_or_trigger = new_specific_spell_played(player, card, event, opponent, 2, NULL);
+    if ((exiled_iid_or_trigger != 0) && (*deck_ptr[opponent] != -1))
     {
 
-      show_deck(player, deck_ptr[iVar1], 1, "This card will be exiled by Mind\'s Dilation.", 0,
-                ENGINE_DONE_LABEL);
-      iVar2 = *deck_ptr[iVar1];
-      rfg_top_card_of_deck(iVar1);
-      iVar3 = can_legally_play_iid(player, iVar2);
-      if ((iVar3 != 0) && ((cards_data[iVar2].type & 1) == 0))
+      show_deck(player, deck_ptr[opponent], 1, "This card will be exiled by Mind\'s Dilation.", 0,
+                EXE_STR(ENGINE_DONE_LABEL));
+      exiled_iid_or_trigger = *deck_ptr[opponent];
+      rfg_top_card_of_deck(opponent);
+      playable_or_choice = can_legally_play_iid(player, exiled_iid_or_trigger);
+      if ((playable_or_choice != 0) && ((cards_data[exiled_iid_or_trigger].type & 1) == 0))
       {
-        iVar3 =
-            dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002", "\001\003",
-                        "\001\012", iVar2, "Play this card", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
-        if (iVar3 == 1)
+        playable_or_choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002",
+                                         "\001\003", "\001\012", exiled_iid_or_trigger,
+                                         "Play this card", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
+        if (playable_or_choice == 1)
         {
-          play_card_in_exile_for_free(player, iVar1, (unsigned int)cards_data[iVar2].id);
+          play_card_in_exile_for_free(player, opponent,
+                                      (unsigned int)cards_data[exiled_iid_or_trigger].id);
         }
       }
     }
@@ -6692,13 +6696,13 @@ int card_minds_dilation(int player, int card, event_t event)
 int card_mirrorwing_dragon(int player, int card, event_t event)
 {
   int p;
-  int32_t iVar1;
-  card_instance_t *pcVar2;
-  int iVar3;
-  card_instance_t *pcVar4;
-  int iVar5;
-  int iVar6;
-  int iVar7;
+  int32_t copied_target_player;
+  card_instance_t *triggering_spell;
+  int trigger_eligible;
+  card_instance_t *candidate_or_copy;
+  int copy_card_or_type;
+  int copy_playable;
+  int target_index_or_controller;
   unsigned int iid;
   int i;
   if (trigger_condition == TRIGGER_SPELL_CAST)
@@ -6706,14 +6710,16 @@ int card_mirrorwing_dragon(int player, int card, event_t event)
     if ((((card == affected_card) && (player == affected_card_controller)) &&
          (reason_for_trigger_controller == player)) &&
         ((((unsigned int)event - (unsigned int)EVENT_TRIGGER < 2U &&
-           (pcVar2 = in_play(player, card), pcVar2 != NULL)) &&
-          (iVar3 = is_humiliated(player, card, AL_TRIG), iVar3 == 0))))
+           (triggering_spell = in_play(player, card), triggering_spell != NULL)) &&
+          (trigger_eligible = is_humiliated(player, card, AL_TRIG), trigger_eligible == 0))))
     {
-      pcVar2 = get_card_instance(trigger_cause_controller, trigger_cause);
-      iVar3 = target_me(player, card, trigger_cause_controller, trigger_cause);
-      if (((iVar3 != 0) && (pcVar4 = get_card_instance(trigger_cause_controller, trigger_cause),
-                            pcVar4->number_of_targets == '\x01')) &&
-          (iVar3 = is_what(trigger_cause_controller, trigger_cause, 0x38), iVar3 != 0))
+      triggering_spell = get_card_instance(trigger_cause_controller, trigger_cause);
+      trigger_eligible = target_me(player, card, trigger_cause_controller, trigger_cause);
+      if (((trigger_eligible != 0) &&
+           (candidate_or_copy = get_card_instance(trigger_cause_controller, trigger_cause),
+            candidate_or_copy->number_of_targets == '\x01')) &&
+          (trigger_eligible = is_what(trigger_cause_controller, trigger_cause, 0x38),
+           trigger_eligible != 0))
       {
         p = 0;
         if (event == EVENT_TRIGGER)
@@ -6727,52 +6733,55 @@ int card_mirrorwing_dragon(int player, int card, event_t event)
             for (i = 0; i < active_cards_count[p]; i = i + 1)
             {
               if ((((trigger_cause_controller == p) &&
-                    (pcVar4 = in_play(p, i), pcVar4 != NULL)) &&
-                   (iVar5 = is_what(p, i, 2), i != card)) &&
-                  (iVar5 != 0))
+                    (candidate_or_copy = in_play(p, i), candidate_or_copy != NULL)) &&
+                   (copy_card_or_type = is_what(p, i, 2), i != card)) &&
+                  (copy_card_or_type != 0))
               {
-                iid = pcVar2->internal_card_id;
+                iid = triggering_spell->internal_card_id;
                 if (iid == 0xffffffff)
                 {
-                  iid = (unsigned int)pcVar2->backup_internal_card_id;
+                  iid = (unsigned int)triggering_spell->backup_internal_card_id;
                 }
-                iVar5 = add_card_to_hand(trigger_cause_controller, iid);
-                pcVar4 = get_card_instance(trigger_cause_controller, iVar5);
-                pcVar4->info_slot = pcVar2->info_slot;
-                pcVar4->eot_toughness = pcVar2->eot_toughness;
-                iVar7 = 1;
+                copy_card_or_type = add_card_to_hand(trigger_cause_controller, iid);
+                candidate_or_copy = get_card_instance(trigger_cause_controller, copy_card_or_type);
+                candidate_or_copy->info_slot = triggering_spell->info_slot;
+                candidate_or_copy->eot_toughness = triggering_spell->eot_toughness;
+                target_index_or_controller = 1;
                 do
                 {
-                  iVar1 = pcVar2->targets[iVar7].player;
-                  pcVar4->targets[iVar7].card = pcVar2->targets[iVar7].card;
-                  pcVar4->targets[iVar7].player = iVar1;
-                  iVar7 = iVar7 + 1;
-                } while (iVar7 != 0x13);
-                pcVar4->targets[0].card = i;
-                pcVar4->targets[0].player = p;
-                pcVar4->number_of_targets = '\x01';
-                set_special_flags2(trigger_cause_controller, iVar5, -0x80000000);
-                convert_to_token(trigger_cause_controller, iVar5);
-                set_special_flags(trigger_cause_controller, iVar5, 0x200c0000);
-                if (put_card_on_stack(trigger_cause_controller, iVar5, 0) == 0)
+                  copied_target_player =
+                      triggering_spell->targets[target_index_or_controller].player;
+                  candidate_or_copy->targets[target_index_or_controller].card =
+                      triggering_spell->targets[target_index_or_controller].card;
+                  candidate_or_copy->targets[target_index_or_controller].player =
+                      copied_target_player;
+                  target_index_or_controller = target_index_or_controller + 1;
+                } while (target_index_or_controller != 0x13);
+                candidate_or_copy->targets[0].card = i;
+                candidate_or_copy->targets[0].player = p;
+                candidate_or_copy->number_of_targets = '\x01';
+                set_special_flags2(trigger_cause_controller, copy_card_or_type, -0x80000000);
+                convert_to_token(trigger_cause_controller, copy_card_or_type);
+                set_special_flags(trigger_cause_controller, copy_card_or_type, 0x200c0000);
+                if (put_card_on_stack(trigger_cause_controller, copy_card_or_type, 0) == 0)
                 {
-                  iVar6 = can_legally_play_iid(trigger_cause_controller, iid);
-                  iVar7 = trigger_cause_controller;
-                  if (iVar6 == 0)
+                  copy_playable = can_legally_play_iid(trigger_cause_controller, iid);
+                  target_index_or_controller = trigger_cause_controller;
+                  if (copy_playable == 0)
                   {
-                    obliterate_card(trigger_cause_controller, iVar5);
+                    obliterate_card(trigger_cause_controller, copy_card_or_type);
                   }
                   else
                   {
                     hand_count[trigger_cause_controller] =
                         hand_count[trigger_cause_controller] + -1;
-                    real_put_into_play(iVar7, iVar5);
+                    real_put_into_play(target_index_or_controller, copy_card_or_type);
                   }
                 }
                 else
                 {
-                  put_card_on_stack(trigger_cause_controller, iVar5, 1);
-                  put_card_on_stack3(trigger_cause_controller, iVar5);
+                  put_card_on_stack(trigger_cause_controller, copy_card_or_type, 1);
+                  put_card_on_stack3(trigger_cause_controller, copy_card_or_type);
                 }
               }
             }

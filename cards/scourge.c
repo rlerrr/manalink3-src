@@ -430,18 +430,18 @@ int card_chartooth_cougar(int player, int card, event_t event)
 int card_consumptive_goo(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
+  int ability_result;
+  int target_available;
   target_definition_t td;
 
   if (event - EVENT_POW_BOOST < 2)
   {
     default_target_definition(player, card, &td, 2);
-    iVar3 = can_target(&td);
-    iVar2 = 0;
-    if (iVar3 != 0)
+    target_available = can_target(&td);
+    ability_result = 0;
+    if (target_available != 0)
     {
-      iVar2 = generic_shade(player, card, event, 0, 2, 2, 0, 0, 0, 0, 1, 1, 0, 0);
+      ability_result = generic_shade(player, card, event, 0, 2, 2, 0, 0, 0, 0, 1, 1, 0, 0);
     }
   }
   else if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
@@ -457,17 +457,17 @@ int card_consumptive_goo(int player, int card, event_t event)
         pump_until_eot(instance->parent_controller, instance->parent_card,
                        instance->targets[0].player, instance->targets[0].card, -1, -1);
         add_counters(player, card, instance->parent_controller, instance->parent_card,
-                                 COUNTER_P1_P1, 1);
+                     COUNTER_P1_P1, 1);
       }
     }
-    iVar2 = generic_activated_ability(player, card, event, 4, 2, 2, 0, 0, 0, 0, 0, &td,
-                                      "TARGET_CREATURE");
+    ability_result = generic_activated_ability(player, card, event, 4, 2, 2, 0, 0, 0, 0, 0, &td,
+                                               "TARGET_CREATURE");
   }
   else
   {
-    iVar2 = 0;
+    ability_result = 0;
   }
-  return iVar2;
+  return ability_result;
 }
 
 int card_daru_spiritualist(int player, int card, event_t event)
@@ -516,57 +516,53 @@ int card_dawn_elemental(int player, int card, event_t event){
 
 int card_day_of_the_dragons(int player, int card, event_t event)
 {
-  unsigned int uVar1;
-  unsigned char uVar2;
-  int iVar3;
-  unsigned int *puVar4;
+  unsigned int encoded_exile_entry;
+  unsigned char creatures_exiled;
+  int creature_card;
+  unsigned int *exile_entry;
   card_instance_t *instance;
-  int iVar6;
+  int creature_or_token;
   int leg;
   int idx;
-
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     token_generation_t token;
-    iVar3 = active_cards_count[player] + -1;
-    if (iVar3 < 0)
+    creature_card = active_cards_count[player] + -1;
+    if (creature_card < 0)
     {
-      uVar2 = '\0';
+      creatures_exiled = '\0';
     }
     else
     {
-      uVar2 = '\0';
+      creatures_exiled = '\0';
       do
       {
-        while ((instance = in_play(player, iVar3),
-                instance == NULL || (iVar6 = is_what(player, iVar3, 2), iVar6 == 0)))
+        instance = in_play(player, creature_card);
+        if (instance != NULL &&
+            (creature_or_token = is_what(player, creature_card, 2), creature_or_token != 0))
         {
-          iVar3 = iVar3 + -1;
-          if (iVar3 == -1)
-            goto LAB_024f8b86;
+          creature_or_token = is_token(player, creature_card);
+          if (creature_or_token == 0)
+          {
+            exile_card_and_remember_it_on_exiledby(player, card, player, creature_card);
+          }
+          else
+          {
+            kill_card(player, creature_card, KILL_EXILE);
+          }
+          creatures_exiled = creatures_exiled + '\x01';
         }
-        iVar6 = is_token(player, iVar3);
-        if (iVar6 == 0)
-        {
-          exile_card_and_remember_it_on_exiledby(player, card, player, iVar3);
-        }
-        else
-        {
-          kill_card(player, iVar3, KILL_EXILE);
-        }
-        iVar3 = iVar3 + -1;
-        uVar2 = uVar2 + '\x01';
-      } while (iVar3 != -1);
+        creature_card = creature_card - 1;
+      } while (creature_card != -1);
     }
-  LAB_024f8b86:
     default_token_definition(player, card, 0x4920, &token);
     token.tou = 5;
     token.pow = 5;
     token.key_plus = 0x20;
     token.color_forced = '\x10';
-    token.qty = uVar2;
+    token.qty = creatures_exiled;
     generate_token(&token);
     leaves_play(player, card, EVENT_ETB, 1, 0);
   }
@@ -581,28 +577,29 @@ int card_day_of_the_dragons(int player, int card, event_t event)
       new_manipulate_all(player, card, player, &this_test, ACT_KILL_BURY);
       leg = 0;
       idx = 0;
-      while (puVar4 = (unsigned int *)exiledby_find_any(player, card, &leg, &idx), puVar4 != NULL)
+      while (exile_entry = (unsigned int *)exiledby_find_any(player, card, &leg, &idx),
+             exile_entry != NULL)
       {
-        uVar1 = *puVar4;
-        *puVar4 = 0xffffffff;
-        iVar3 = add_card_to_hand(player, uVar1 & 0x7fffffff);
-        if (player == uVar1 >> 0x1f)
+        encoded_exile_entry = *exile_entry;
+        *exile_entry = 0xffffffff;
+        creature_card = add_card_to_hand(player, encoded_exile_entry & 0x7fffffff);
+        if (player == encoded_exile_entry >> 0x1f)
         {
-          put_into_play(player, iVar3);
+          put_into_play(player, creature_card);
         }
         else
         {
           if (player == 1)
           {
-            remove_state(1, iVar3, 0x1000);
-            put_into_play(1, iVar3);
+            remove_state(1, creature_card, 0x1000);
+            put_into_play(1, creature_card);
           }
           else
           {
-            add_state(player, iVar3, 0x1000);
-            put_into_play(player, iVar3);
+            add_state(player, creature_card, 0x1000);
+            put_into_play(player, creature_card);
           }
-          create_targetted_legacy_effect(player, card, empty, player, iVar3);
+          create_targetted_legacy_effect(player, card, empty, player, creature_card);
         }
       }
     }
@@ -613,13 +610,13 @@ int card_day_of_the_dragons(int player, int card, event_t event)
 int card_decree_of_annihilation(int player, int card, event_t event)
 {
   int c;
-  int iVar2;
+  int permanent_check;
   card_instance_t *instance;
-  int iVar4;
+  int permanent_card;
   unsigned int player_00;
-  unsigned int uVar5;
-  bool bVar6;
-  int iStack_ec;
+  unsigned int turn_order_index;
+  bool your_turn;
+  int cast_priority;
   test_definition_t this_test;
   c = current_turn;
   if (1 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
@@ -637,62 +634,67 @@ int card_decree_of_annihilation(int player, int card, event_t event)
     {
       if ((card == affected_card) && (player == affected_card_controller))
       {
-        iVar4 = active_cards_count[current_turn] + -1;
-        if (iVar4 < 0)
+        permanent_card = active_cards_count[current_turn] + -1;
+        if (permanent_card < 0)
         {
-          iStack_ec = 0;
+          cast_priority = 0;
         }
         else
         {
-          bVar6 = player == current_turn;
-          iStack_ec = 0;
+          your_turn = player == current_turn;
+          cast_priority = 0;
           do
           {
-            instance = in_play(c, iVar4);
+            instance = in_play(c, permanent_card);
             if ((instance != NULL) &&
-                (((iVar2 = is_what(c, iVar4, 4),
-                   iVar2 != 0 && (iVar2 = has_subtype(c, iVar4, SUBTYPE_AURA), iVar2 == 0)) ||
-                  (iVar2 = is_planeswalker(c, iVar4), iVar2 != 0))))
+                (((permanent_check = is_what(c, permanent_card, 4),
+                   permanent_check != 0 &&
+                       (permanent_check = has_subtype(c, permanent_card, SUBTYPE_AURA),
+                        permanent_check == 0)) ||
+                  (permanent_check = is_planeswalker(c, permanent_card), permanent_check != 0))))
             {
-              iStack_ec = iStack_ec + (bVar6 - 1 & 0xffffffe8) + 0xc;
+              cast_priority = cast_priority + (your_turn - 1 & 0xffffffe8) + 0xc;
             }
-            iVar4 = iVar4 + -1;
-          } while (iVar4 != -1);
+            permanent_card = permanent_card + -1;
+          } while (permanent_card != -1);
         }
         c = 1 - current_turn;
-        iVar4 = active_cards_count[c] + -1;
-        if (-1 < iVar4)
+        permanent_card = active_cards_count[c] + -1;
+        if (-1 < permanent_card)
         {
           do
           {
-            instance = in_play(c, iVar4);
+            instance = in_play(c, permanent_card);
             if ((instance != NULL) &&
-                (((iVar2 = is_what(c, iVar4, 4),
-                   iVar2 != 0 && (iVar2 = has_subtype(c, iVar4, SUBTYPE_AURA), iVar2 == 0)) ||
-                  (iVar2 = is_planeswalker(c, iVar4), iVar2 != 0))))
+                (((permanent_check = is_what(c, permanent_card, 4),
+                   permanent_check != 0 &&
+                       (permanent_check = has_subtype(c, permanent_card, SUBTYPE_AURA),
+                        permanent_check == 0)) ||
+                  (permanent_check = is_planeswalker(c, permanent_card), permanent_check != 0))))
             {
-              iStack_ec = iStack_ec + ((player == c) - 1 & 0xffffffe8) + 0xc;
+              cast_priority = cast_priority + ((player == c) - 1 & 0xffffffe8) + 0xc;
             }
-            iVar4 = iVar4 + -1;
-          } while (iVar4 != -1);
+            permanent_card = permanent_card + -1;
+          } while (permanent_card != -1);
         }
-        ai_modifier = ai_modifier + iStack_ec;
+        ai_modifier = ai_modifier + cast_priority;
       }
     }
     else if (event == EVENT_RESOLVE_SPELL)
     {
       default_test_definition(&this_test, 0x43);
-      uVar5 = 0;
+      turn_order_index = 0;
       do
       {
-        player_00 = current_turn ^ uVar5;
+        player_00 = current_turn ^ turn_order_index;
         c = active_cards_count[player_00] + -1;
         if (-1 < c)
         {
           do
           {
             instance = in_play(player_00, c);
-            if ((instance != NULL) && (iVar4 = is_what(player_00, c, 0x43), iVar4 != 0))
+            if ((instance != NULL) &&
+                (permanent_card = is_what(player_00, c, 0x43), permanent_card != 0))
             {
               kill_card(player_00, c, KILL_EXILE);
             }
@@ -704,9 +706,9 @@ int card_decree_of_annihilation(int player, int card, event_t event)
             c = c + -1;
           } while (c != -1);
         }
-        uVar5 = uVar5 + 1;
+        turn_order_index = turn_order_index + 1;
         rfg_whole_graveyard(player_00);
-      } while (uVar5 != 2);
+      } while (turn_order_index != 2);
       kill_card(player, card, KILL_DESTROY);
     }
     return basic_spell(player, card, event);
@@ -1653,9 +1655,9 @@ static int effect_lethal_vapors(int player, int card, event_t event)
   int p;
   int card_00;
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
-  int iVar4;
+  int opponent_creatures;
+  int own_creatures;
+  int source_id_or_cost;
   if (event == EVENT_STATIC_EFFECTS)
   {
     if ((card == affected_card) && (player == affected_card_controller))
@@ -1664,8 +1666,8 @@ static int effect_lethal_vapors(int player, int card, event_t event)
       p = instance->targets[0].player;
       if (-1 < p)
       {
-        iVar4 = get_id(p, instance->targets[0].card);
-        if (iVar4 != 0x1993)
+        source_id_or_cost = get_id(p, instance->targets[0].card);
+        if (source_id_or_cost != 0x1993)
         {
           kill_card(player, card, KILL_EXILE);
         }
@@ -1694,8 +1696,8 @@ static int effect_lethal_vapors(int player, int card, event_t event)
       {
         if (can_use_activated_abilities(p, card_00) != 0)
         {
-          iVar4 = get_cost_mod_for_activated_abilities(p, card_00, 0, 0, 0, 0, 0, 0);
-          if (has_mana(player, 0, iVar4) != 0)
+          source_id_or_cost = get_cost_mod_for_activated_abilities(p, card_00, 0, 0, 0, 0, 0, 0);
+          if (has_mana(player, 0, source_id_or_cost) != 0)
           {
             return 1;
           }
@@ -1705,10 +1707,11 @@ static int effect_lethal_vapors(int player, int card, event_t event)
       {
         if (event == EVENT_ACTIVATE)
         {
-          iVar2 = count_subtype(1 - player, 2, -1);
-          iVar3 = count_subtype(player, 2, -1);
-          ai_modifier = ai_modifier + (iVar2 - iVar3) * 0xc;
-          charge_mana(player, COLOR_COLORLESS, get_cost_mod_for_activated_abilities(p, card_00, 0, 0, 0, 0, 0, 0));
+          opponent_creatures = count_subtype(1 - player, 2, -1);
+          own_creatures = count_subtype(player, 2, -1);
+          ai_modifier = ai_modifier + (opponent_creatures - own_creatures) * 0xc;
+          charge_mana(player, COLOR_COLORLESS,
+                      get_cost_mod_for_activated_abilities(p, card_00, 0, 0, 0, 0, 0, 0));
           return 0;
         }
         if (event == EVENT_RESOLVE_ACTIVATION)

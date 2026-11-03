@@ -1,0 +1,80 @@
+{
+  "status": "66 definitions cleaned up; one combined target build passed. Reccmp refresh deliberately deferred.",
+  "batch": "docs/recovery-evidence/karn-masques-control-cleanup.json",
+  "batch_sha256": "a1cd3596afecba195e37d21585150c9e0b69092e3679a8c4bb238923f998c383",
+  "counts": {
+    "definitions": 66,
+    "card_handlers": 52,
+    "local_helpers": 14,
+    "alpha_only_definitions": 54,
+    "structured_definitions": 12,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 32,
+    "removed_lab_gotos": 32,
+    "source_lines_removed": -34,
+    "removed_placeholder_occurrences": 1533
+  },
+  "verification_policy": "Exact token checks for alpha-only edits; focused source review for structured changes. One combined target build. Native inspection only for uncertain behavior; reccmp deferred to a larger checkpoint.",
+  "review_notes": [
+    "54 alpha-only definitions preserve exact tokens after declared substitutions; 12 structured definitions receive focused source review and one combined target build.",
+    "Karn retains ordinary exile versus commander tracking, ordered first/second commander matches, hand-selection fallback, detach paths, planeswalker returns and cast-flag clearing.",
+    "Restart retains separate Aura/commander and hand/battlefield reverse scans, live current-turn snapshots, commander byte flags, two stack sweeps, companion/plane exclusions, player-indexed energy resets and draw callback restoration of both globals.",
+    "Remembered permanents preserve the pre-sentinel packed card-data load, owner correction, commander callback order, cursor advancement before fallback entry and after commander entry, and inclusive count_rfg cleanup. Native disassembly confirms the pre-sentinel load and inclusive cleanup.",
+    "Masques alternative costs keep cancellation, payment and target-selection differences: Crash selects after a fizzle, Thunderclap gates it, Rouse still delegates to generic_spell, and Tidal Bore checks fizzle before and after generic_spell before AI scoring.",
+    "Aura event gates, War Tax cleanup/resolution, Ceremonial Guard and Outrigger blocker triggers, Ghoul Feast checks and Jeweled Torque cast-trigger/life payment preserve original callback order and return behavior.",
+    "No historical replay, new tests, broad native semantic harness or reccmp refresh for this readability batch."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/karn-masques-control-build-c483.log",
+    "log_sha256": "eb787674816fe1b54ab8ca5a27f8b77148a2c1fb7ff57949e31c7bbae3bdf76b",
+    "verified_built_slots": 15169,
+    "dll_sha256": "7f0c8b6174a0cd05054efbf1fa6955d3759bc8cf7dd838ea34572b4b8b5b446a",
+    "dbg_sha256": "1c6069bfc232a280ca8391126994d5e9734978ed41ea7ba773441c36b3a2c30b"
+  },
+  "reccmp": {
+    "refreshed": false,
+    "reason": "Readability batch with unchanged public function identities; refresh at a major comparison/commit checkpoint.",
+    "unchanged_checkpoint_inputs": {
+      "config/reccmp/functions.csv": "a0b5791a8d98ec9acba6141138040223317f44dbbf094cf0f977e6a5a9a5a274",
+      ".recovery/reccmp/setup.json": "445df382fefd673e63073a46afddf81c1727dc097b184f8e971c82f2748786d9"
+    }
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c484.json",
+    "sha256": "d24dedecc87873bcaeca36ee76c9a3b6dece05776bf54f521999fa72bb256731",
+    "counts": {
+      "tracked_source_definitions": 2607,
+      "functions_with_lab_gotos": 646,
+      "lab_gotos": 1560,
+      "functions_with_placeholders": 1354,
+      "distinct_function_local_placeholder_spellings": 3901,
+      "placeholder_identifier_occurrences": 28963,
+      "union_keywords": 0
+    }
+  },
+  "native_review": {
+    "path": ".recovery/karn-exile-native-c481.txt",
+    "sha256": "1448754b3136952c2d25e491dc2ba6e978de821ea02aad0c2160199f84bc6bd2",
+    "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "notes": [
+      "0x0227082f-0x02270843 loads card data before testing the negative sentinel.",
+      "0x0227095a-0x02270978 and 0x02270983-0x022709a8 start removal at count_rfg(), inclusive."
+    ]
+  },
+  "whole_unit_readability": [
+    {
+      "source": "cards/new_phyrexia.c",
+      "lab_gotos": 0,
+      "known_placeholder_occurrences": 0
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "lab_gotos": 0,
+      "known_placeholder_occurrences": 0
+    }
+  ],
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of Karn and Mercadian Masques definitions. No new native-function coverage or gameplay-equivalence claim."
+}

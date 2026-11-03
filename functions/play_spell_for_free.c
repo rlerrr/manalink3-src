@@ -725,23 +725,23 @@ int check_for_special_effect_card(int player, int csvid){
 /* ManalinkEh 2022: 0x2669160; original functions/play_spell_for_free.c:277. */
 int escape_spell(int player, int g_pos)
 {
-  int iVar2;
+  int escaped_iid_or_card;
 
-  iVar2 = graveyard_ptr_mutable[player][g_pos];
-  if ((iVar2 != -1) && (can_legally_play_iid(player, iVar2) != 0))
+  escaped_iid_or_card = graveyard_ptr_mutable[player][g_pos];
+  if ((escaped_iid_or_card != -1) && (can_legally_play_iid(player, escaped_iid_or_card) != 0))
   {
     remove_card_from_grave(player, g_pos);
-    iVar2 = add_card_to_hand(player, iVar2);
-    set_special_flags3(player, iVar2, 0x80000);
-    if (is_what(player, iVar2, 1) != 0)
+    escaped_iid_or_card = add_card_to_hand(player, escaped_iid_or_card);
+    set_special_flags3(player, escaped_iid_or_card, 0x80000);
+    if (is_what(player, escaped_iid_or_card, 1) != 0)
     {
-      set_special_flags3(player, iVar2, 0x20000);
+      set_special_flags3(player, escaped_iid_or_card, 0x20000);
     }
-    if (real_play_spell_for_free(player, iVar2, 0x10000000) != 0)
+    if (real_play_spell_for_free(player, escaped_iid_or_card, 0x10000000) != 0)
     {
-      return iVar2;
+      return escaped_iid_or_card;
     }
-    obliterate_card(player, iVar2);
+    obliterate_card(player, escaped_iid_or_card);
   }
   return -1;
 }
@@ -750,14 +750,14 @@ int escape_spell(int player, int g_pos)
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2668490; original functions/play_spell_for_free.c:47. */
 static int real_copy_spell(int player, int internal_id, int special_flags, int special_flags3,
-                                card_instance_t *copied, target_t *forced_target)
+                           card_instance_t *copied, target_t *forced_target)
 {
-  unsigned char bVar1;
-  int32_t iVar2;
+  unsigned char copied_type;
+  int32_t target_player_value;
   int card;
   card_instance_t *instance;
   int i;
-  unsigned int uVar5;
+  unsigned int copied_flags;
 
   card = add_card_to_hand(player, internal_id);
   instance = get_card_instance(player, card);
@@ -772,23 +772,23 @@ static int real_copy_spell(int player, int internal_id, int special_flags, int s
     i = 0;
     do
     {
-      iVar2 = copied->targets[i].player;
+      target_player_value = copied->targets[i].player;
       instance->targets[i].card = copied->targets[i].card;
-      instance->targets[i].player = iVar2;
+      instance->targets[i].player = target_player_value;
       i = i + 1;
     } while (i != 0x13);
-    uVar5 = get_special_flags_by_instance(copied);
-    set_special_flags(player, card, uVar5 | special_flags);
-    uVar5 = get_special_flags2_by_instance(copied);
-    set_special_flags2(player, card, uVar5 | SF2_COPIED_FROM_STACK);
-    uVar5 = get_special_flags3_by_instance(copied);
-    set_special_flags3(player, card, uVar5 | special_flags3);
+    copied_flags = get_special_flags_by_instance(copied);
+    set_special_flags(player, card, copied_flags | special_flags);
+    copied_flags = get_special_flags2_by_instance(copied);
+    set_special_flags2(player, card, copied_flags | SF2_COPIED_FROM_STACK);
+    copied_flags = get_special_flags3_by_instance(copied);
+    set_special_flags3(player, card, copied_flags | special_flags3);
   }
   if (forced_target != NULL)
   {
-    iVar2 = forced_target->player;
+    target_player_value = forced_target->player;
     instance->targets[0].card = forced_target->card;
-    instance->targets[0].player = iVar2;
+    instance->targets[0].player = target_player_value;
     instance->number_of_targets = '\x01';
   }
   free_spell_player = player;
@@ -804,7 +804,7 @@ static int real_copy_spell(int player, int internal_id, int special_flags, int s
     }
     hand_count[player] = hand_count[player] + -1;
     real_put_into_play(player, card);
-    bVar1 = cards_data[internal_id].type;
+    copied_type = cards_data[internal_id].type;
     card_on_stack_controller = player;
     card_on_stack = card;
   }
@@ -812,9 +812,9 @@ static int real_copy_spell(int player, int internal_id, int special_flags, int s
   {
     put_card_on_stack(player, card, 1);
     put_card_on_stack3(player, card);
-    bVar1 = cards_data[internal_id].type;
+    copied_type = cards_data[internal_id].type;
   }
-  if ((bVar1 & 1) != 0)
+  if ((copied_type & 1) != 0)
   {
     land_can_be_played = land_can_be_played | 1;
   }
@@ -884,28 +884,28 @@ int effect_may_play_card_from_exile(int player, int card, event_t event)
 {
   int cmc;
   card_instance_t *instance;
-  int iVar2;
-  int iVar4;
-  int iVar5;
-  unsigned int uVar6;
-  unsigned int uVar7;
-  int iStack_100;
-  int iStack_fc;
-  unsigned int uStack_f8;
+  int play_check_or_choice;
+  int exiled_csv_id_or_card;
+  int exile_owner;
+  unsigned int look_available;
+  unsigned int play_mode;
+  int generic_cost;
+  int play_available;
+  unsigned int face_down;
   int iid;
   test_definition_t test;
 
   instance = get_card_instance(player, card);
-  iVar5 = instance->targets[0].player;
-  iVar4 = instance->targets[0].card;
-  uVar7 = instance->targets[1].player;
+  exile_owner = instance->targets[0].player;
+  exiled_csv_id_or_card = instance->targets[0].card;
+  play_mode = instance->targets[1].player;
   if (event == EVENT_STATIC_EFFECTS)
   {
-    if ((uVar7 & 4) != 0)
+    if ((play_mode & 4) != 0)
     {
       return 0;
     }
-    if (check_rfg(iVar5, iVar4) != 0)
+    if (check_rfg(exile_owner, exiled_csv_id_or_card) != 0)
     {
       return 0;
     }
@@ -914,61 +914,39 @@ int effect_may_play_card_from_exile(int player, int card, event_t event)
   }
   if (event == EVENT_CLEANUP)
   {
-    uVar7 = uVar7 & 8;
-  joined_r0x02669883:
-    if (uVar7 == 0)
-    {
-      return 0;
-    }
-  LAB_02669889:
-    kill_card(player, card, KILL_EXILE);
+    if ((play_mode & 8) != 0)
+      kill_card(player, card, KILL_EXILE);
     return 0;
   }
   if (event == EVENT_BEGIN_TURN)
   {
-    if (((uVar7 & 0x20) == 0) || (current_turn != player))
+    if ((play_mode & 0x20) != 0 && current_turn == player)
+      instance->targets[1].player = play_mode | 8;
+    if ((play_mode & 0x400) != 0)
     {
-      if ((uVar7 & 0x400) != 0)
-      {
-        if (current_turn != player)
-        {
-          return 0;
-        }
-        goto LAB_02669bf1;
-      }
-    }
-    else
-    {
-      instance->targets[1].player = uVar7 | 8;
-      if ((uVar7 & 0x400) != 0)
-      {
-      LAB_02669bf1:
-        instance->targets[1].card = 0;
-        uVar7 = uVar7 & 0x40;
-        goto joined_r0x02669883;
-      }
-    }
-    if ((uVar7 & 0x40) == 0)
-    {
+      if (current_turn != player)
+        return 0;
+      instance->targets[1].card = 0;
+      if ((play_mode & 0x40) != 0)
+        kill_card(player, card, KILL_EXILE);
       return 0;
     }
-    if (current_turn != player)
-    {
-      return 0;
-    }
-    goto LAB_02669889;
+    if ((play_mode & 0x40) != 0 && current_turn == player)
+      kill_card(player, card, KILL_EXILE);
+    return 0;
   }
   if ((1U < (unsigned int)event - (unsigned int)EVENT_RESOLVE_ACTIVATION) &&
       (event != EVENT_ACTIVATE))
   {
     return 0;
   }
-  uVar6 = 0;
-  if ((((uVar7 & 4) != 0) && (uVar6 = 0, ai_is_speculating != 1)) && (uVar6 = 1, player == 1))
+  look_available = 0;
+  if ((((play_mode & 4) != 0) && (look_available = 0, ai_is_speculating != 1)) &&
+      (look_available = 1, player == 1))
   {
-    uVar6 = (unsigned int)trace_mode >> 1 & 1;
+    look_available = (unsigned int)trace_mode >> 1 & 1;
   }
-  uStack_f8 = uVar7 & 4;
+  face_down = play_mode & 4;
   if (event == EVENT_CAN_ACTIVATE)
   {
     if (instance->targets[1].card == 0x2a)
@@ -980,104 +958,89 @@ int effect_may_play_card_from_exile(int player, int card, event_t event)
   {
     return 0;
   }
-  iid = get_internal_card_id_from_csv_id(iVar4);
-  iStack_fc = can_legally_play_iid_now(player, iid, event);
-  if (((uVar7 & 0x100) != 0) && (iVar2 = get_trap_condition(player, 0x60d), iVar2 == 0))
+  iid = get_internal_card_id_from_csv_id(exiled_csv_id_or_card);
+  play_available = can_legally_play_iid_now(player, iid, event);
+  if (((play_mode & 0x100) != 0) &&
+      (play_check_or_choice = get_trap_condition(player, 0x60d), play_check_or_choice == 0))
   {
-    iStack_fc = 0;
+    play_available = 0;
   }
-  if (((uVar7 & 0x400) != 0) && ((current_turn != player || (instance->targets[1].card == 1))))
+  if (((play_mode & 0x400) != 0) && ((current_turn != player || (instance->targets[1].card == 1))))
   {
-    iStack_fc = 0;
+    play_available = 0;
   }
-  if ((uVar7 & 0x200) != 0)
+  if ((play_mode & 0x200) != 0)
   {
     default_test_definition(&test, 0x100);
     test.subtype = 0x7041;
-    iVar2 = check_battlefield_for_special_card(player, card, player, 0, &test);
-    if (iVar2 == 0)
+    play_check_or_choice = check_battlefield_for_special_card(player, card, player, 0, &test);
+    if (play_check_or_choice == 0)
     {
-      iStack_fc = 0;
+      play_available = 0;
     }
   }
-  if ((uStack_f8 == 0) && (iVar2 = check_rfg(iVar5, iVar4), iVar2 == 0))
+  generic_cost = 0;
+  bool can_pay = true;
+  if (face_down == 0 && (play_check_or_choice = check_rfg(exile_owner, exiled_csv_id_or_card),
+                         play_check_or_choice == 0))
+    can_pay = false;
+  else if ((play_mode & 1) == 0)
   {
-  LAB_02669a30:
-    if (event == EVENT_CAN_ACTIVATE)
+    if ((play_mode & 2) == 0)
     {
-      return uVar6;
+      play_check_or_choice = has_mana_to_cast_iid(player, event, iid);
+      if (play_check_or_choice == 0 ||
+          (play_check_or_choice = has_no_mana_cost(-1, iid), play_check_or_choice != 0))
+        can_pay = false;
     }
-    iStack_100 = 0;
-  LAB_02669a43:
-    iStack_fc = 0;
-    goto LAB_02669717;
-  }
-  if ((uVar7 & 1) == 0)
-  {
-    if ((uVar7 & 2) == 0)
+    else
     {
-      iVar2 = has_mana_to_cast_iid(player, event, iid);
-      if ((iVar2 == 0) || (iVar2 = has_no_mana_cost(-1, iid), iVar2 != 0))
-        goto LAB_02669a30;
-      goto LAB_02669704;
-    }
-    cmc = get_cmc_by_id(iVar4);
-    iStack_100 = get_updated_casting_cost(player, -1, iid, event, cmc);
-    iVar2 = is_what(-1, iid, 0x40);
-    iVar2 = has_mana(player, (-(unsigned int)(iVar2 == 0) ^ 0xffffffff) & 6, iStack_100);
-    if ((iVar2 == 0) || (iVar2 = has_no_mana_cost(-1, iid), iVar2 != 0))
-    {
-      if (event == EVENT_CAN_ACTIVATE)
-      {
-        return uVar6;
-      }
-      goto LAB_02669a43;
+      cmc = get_cmc_by_id(exiled_csv_id_or_card);
+      generic_cost = get_updated_casting_cost(player, -1, iid, event, cmc);
+      play_check_or_choice = is_what(-1, iid, 0x40);
+      play_check_or_choice = has_mana(
+          player, (-(unsigned int)(play_check_or_choice == 0) ^ 0xffffffff) & 6, generic_cost);
+      if (play_check_or_choice == 0 ||
+          (play_check_or_choice = has_no_mana_cost(-1, iid), play_check_or_choice != 0))
+        can_pay = false;
     }
   }
-  else
-  {
-  LAB_02669704:
-    iStack_100 = 0;
-  }
+  if (!can_pay)
+    play_available = 0;
   if (event == EVENT_CAN_ACTIVATE)
-  {
-    if (iStack_fc != 0)
-    {
-      return iStack_fc;
-    }
-    return uVar6;
-  }
-LAB_02669717:
+    return play_available != 0 ? play_available : look_available;
   if (event != EVENT_ACTIVATE)
   {
     return 0;
   }
-  if ((uVar6 != 0) &&
-      (iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\014", "\001\003", "\001\013",
-                           (unsigned int)instance->display_pic_csv_id, "Play card", iStack_fc, 1,
-                           "Look at card", 1, 0xffffffff, 0, 0, 0, 0),
-       iVar2 == 2))
+  if ((look_available != 0) &&
+      (play_check_or_choice =
+           dialog_impl(player, card, EVENT_ACTIVATE, "\001\014", "\001\003", "\001\013",
+                       (unsigned int)instance->display_pic_csv_id, "Play card", play_available, 1,
+                       "Look at card", 1, 0xffffffff, 0, 0, 0, 0),
+       play_check_or_choice == 2))
   {
-    show_deck(player, &iid, 1, "Face-down card in exile", 0, ENGINE_OK_LABEL);
+    show_deck(player, &iid, 1, "Face-down card in exile", 0, EXE_STR(ENGINE_OK_LABEL));
     spell_fizzled = 1;
     return 0;
   }
   instance->targets[1].card = 0x2a;
-  if ((uVar7 & 1) == 0)
+  if ((play_mode & 1) == 0)
   {
-    if ((uVar7 & 2) == 0)
+    if ((play_mode & 2) == 0)
     {
-      charge_mana_from_id(player, -1, EVENT_ACTIVATE, iVar4);
+      charge_mana_from_id(player, -1, EVENT_ACTIVATE, exiled_csv_id_or_card);
     }
     else
     {
-      iVar2 = is_what(-1, iid, 0x40);
-      charge_mana(player, (-(unsigned int)(iVar2 == 0) ^ ~COLOR_COLORLESS) & COLOR_ARTIFACT,
-                  iStack_100);
+      play_check_or_choice = is_what(-1, iid, 0x40);
+      charge_mana(player,
+                  (-(unsigned int)(play_check_or_choice == 0) ^ ~COLOR_COLORLESS) & COLOR_ARTIFACT,
+                  generic_cost);
     }
-    iVar2 = spell_fizzled;
+    play_check_or_choice = spell_fizzled;
     instance->targets[1].card = -1;
-    if (iVar2 == 1)
+    if (play_check_or_choice == 1)
     {
       return 0;
     }
@@ -1088,36 +1051,36 @@ LAB_02669717:
     instance->targets[1].card = -1;
   }
   kill_card(player, card, KILL_EXILE);
-  if (uStack_f8 != 0)
+  if (face_down != 0)
   {
-    add_csvid_to_rfg(iVar5, iVar4);
+    add_csvid_to_rfg(exile_owner, exiled_csv_id_or_card);
   }
-  if ((uVar7 & 0x80) == 0)
+  if ((play_mode & 0x80) == 0)
   {
-    play_card_in_exile_for_free_impl(player, iVar5, iVar4, 0, -1);
+    play_card_in_exile_for_free_impl(player, exile_owner, exiled_csv_id_or_card, 0, -1);
   }
   else
   {
-    iVar2 = get_internal_card_id_from_csv_id(iVar4);
-    if (can_legally_play_iid(player, iVar2) != 0)
+    play_check_or_choice = get_internal_card_id_from_csv_id(exiled_csv_id_or_card);
+    if (can_legally_play_iid(player, play_check_or_choice) != 0)
     {
-      remove_card_from_rfg(iVar5, iVar4);
-      iVar4 = add_card_to_hand(player, iVar2);
-      set_special_flags(player, iVar4, 0x100000);
-      if (player != iVar5)
+      remove_card_from_rfg(exile_owner, exiled_csv_id_or_card);
+      exiled_csv_id_or_card = add_card_to_hand(player, play_check_or_choice);
+      set_special_flags(player, exiled_csv_id_or_card, 0x100000);
+      if (player != exile_owner)
       {
-        if ((player == 0) && (iVar5 == 1))
+        if ((player == 0) && (exile_owner == 1))
         {
-          add_state(0, iVar4, 0x1000);
+          add_state(0, exiled_csv_id_or_card, 0x1000);
         }
         else
         {
-          remove_state(player, iVar4, 0x1000);
+          remove_state(player, exiled_csv_id_or_card, 0x1000);
         }
       }
-      if (real_play_spell_for_free(player, iVar4, -0x80000000) == 0)
+      if (real_play_spell_for_free(player, exiled_csv_id_or_card, -0x80000000) == 0)
       {
-        obliterate_card(player, iVar4);
+        obliterate_card(player, exiled_csv_id_or_card);
       }
     }
   }

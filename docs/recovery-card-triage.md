@@ -1,5 +1,7 @@
 # Card recovery triage
 
+This inventory records the post-enum comparison checkpoint before the later native record/parameter restoration; its binary and source hashes identify that snapshot. The subsequent focused build is recorded separately in [recovery scope](recovery-scope.md).
+
 Remaining manual review: **0 native card ranges**. Separately tracked: **5,100 explicitly reviewed/reconstructed ranges** and **6,634 verified retained ranges**. The classifier does not edit C source or recovery records. It additionally checks public/private COFF linkage and requires a current, input-hash-verified helper review inventory. Narrow argument/interface edits do not close whole-body review.
 
 | Review queue | Ranges |

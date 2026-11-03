@@ -2136,71 +2136,74 @@ Evoke |B (You may cast this spell for its evoke cost. If you do, it's sacrificed
 
 int card_oonas_blackguard(int player, int card, event_t event)
 {
-  char *pcVar1;
+  char *second_player_count_byte;
   int result;
-  unsigned int uVar3;
-  card_instance_t *pcVar4;
-  card_instance_t *pcVar5;
+  unsigned int damage_counts;
+  card_instance_t *damage_or_blackguard;
+  card_instance_t *source_or_trigger_instance;
   test_definition_t test;
   result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
-    pcVar4 = in_play(player, card);
-    if (pcVar4 != NULL)
+    damage_or_blackguard = in_play(player, card);
+    if (damage_or_blackguard != NULL)
     {
-      pcVar4 = damage_being_dealt(event);
-      if (((pcVar4 != NULL) && (pcVar4->damage_source_player == player)) &&
-          (pcVar4->damage_target_card == -1))
+      damage_or_blackguard = damage_being_dealt(event);
+      if (((damage_or_blackguard != NULL) &&
+           (damage_or_blackguard->damage_source_player == player)) &&
+          (damage_or_blackguard->damage_target_card == -1))
       {
-        pcVar5 = in_play(player, pcVar4->damage_source_card);
-        if ((pcVar5 != NULL) && (0 < pcVar4->info_slot))
+        source_or_trigger_instance = in_play(player, damage_or_blackguard->damage_source_card);
+        if ((source_or_trigger_instance != NULL) && (0 < damage_or_blackguard->info_slot))
         {
-          result = count_counters((int)pcVar4->damage_source_player, pcVar4->damage_source_card,
-                                  COUNTER_P1_P1);
-          if ((0 < result) && ((pcVar4->token_status & 0x140000) != 0))
+          result = count_counters((int)damage_or_blackguard->damage_source_player,
+                                  damage_or_blackguard->damage_source_card, COUNTER_P1_P1);
+          if ((0 < result) && ((damage_or_blackguard->token_status & 0x140000) != 0))
           {
-            result = damage_is_to_planeswalker(pcVar4);
+            result = damage_is_to_planeswalker(damage_or_blackguard);
             if (result == 0)
             {
-              pcVar5 = get_card_instance(player, card);
-              if (pcVar5->targets[8].player < 0)
+              source_or_trigger_instance = get_card_instance(player, card);
+              if (source_or_trigger_instance->targets[8].player < 0)
               {
-                pcVar5->targets[8].player = 0;
+                source_or_trigger_instance->targets[8].player = 0;
               }
-              if (pcVar4->damage_target_player == '\0')
+              if (damage_or_blackguard->damage_target_player == '\0')
               {
-                *(char *)&pcVar5->targets[8].player = (char)pcVar5->targets[8].player + '\x01';
+                *(char *)&source_or_trigger_instance->targets[8].player =
+                    (char)source_or_trigger_instance->targets[8].player + '\x01';
               }
-              if (pcVar4->damage_target_player == '\x01')
+              if (damage_or_blackguard->damage_target_player == '\x01')
               {
-                pcVar1 = (char *)((int)&pcVar5->targets[8].player + 1);
-                *pcVar1 = *pcVar1 + '\x01';
+                second_player_count_byte =
+                    (char *)((int)&source_or_trigger_instance->targets[8].player + 1);
+                *second_player_count_byte = *second_player_count_byte + '\x01';
               }
             }
           }
         }
       }
-      uVar3 = resolve_damage_trigger(player, card, event, DDBM_0, player, card);
-      if (uVar3 != 0)
+      damage_counts = resolve_damage_trigger(player, card, event, DDBM_0, player, card);
+      if (damage_counts != 0)
       {
-        if ((char)uVar3 != '\0')
+        if ((char)damage_counts != '\0')
         {
-          new_multidiscard(0, uVar3 & 0xff, 0, player);
+          new_multidiscard(0, damage_counts & 0xff, 0, player);
         }
-        if ((char)(uVar3 >> 8) != '\0')
+        if ((char)(damage_counts >> 8) != '\0')
         {
-          new_multidiscard(1, (int)uVar3 >> 8 & 0xff, 0, player);
+          new_multidiscard(1, (int)damage_counts >> 8 & 0xff, 0, player);
         }
-        pcVar4 = get_card_instance(player, card);
-        pcVar4->targets[8].player = 0;
+        damage_or_blackguard = get_card_instance(player, card);
+        damage_or_blackguard->targets[8].player = 0;
       }
     }
   }
   result = is_humiliated(player, card, AL_STATIC);
   if (result == 0)
   {
-    pcVar4 = in_play(player, card);
-    if ((pcVar4 != NULL) &&
+    damage_or_blackguard = in_play(player, card);
+    if ((damage_or_blackguard != NULL) &&
         ((event == EVENT_CAST_SPELL || (event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE))))
     {
       default_test_definition(&test, 2);
@@ -3037,43 +3040,51 @@ int card_shard_volley(int player, int card, event_t event){
 
 int card_shared_animosity(int player, int card, event_t event)
 {
-  int iVar1;
+  int attacker_card;
   card_instance_t *instance;
-  int iVar3;
-  int iVar4;
-  int iStack_1c;
+  int other_card_or_eligible;
+  int shared_subtype_or_eligible;
+  int shared_attackers;
   store_attackers(player, card, event, 0, player, -1, NULL);
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
-  if ((event == EVENT_DAT_ABILITY) && (iVar1 = active_cards_count[player] + -1, -1 < iVar1))
+  if ((event == EVENT_DAT_ABILITY) &&
+      (attacker_card = active_cards_count[player] + -1, -1 < attacker_card))
   {
     do
     {
-      instance = in_play(player, iVar1);
+      instance = in_play(player, attacker_card);
       if ((instance != NULL) &&
-          (((iVar3 = is_what(player, iVar1, 2),
-             iVar3 != 0 && (iVar3 = is_attacking(player, iVar1), iVar3 != 0)) &&
+          (((other_card_or_eligible = is_what(player, attacker_card, 2),
+             other_card_or_eligible != 0 &&
+                 (other_card_or_eligible = is_attacking(player, attacker_card),
+                  other_card_or_eligible != 0)) &&
             (0 < active_cards_count[player]))))
       {
-        iStack_1c = 0;
-        iVar3 = 0;
+        shared_attackers = 0;
+        other_card_or_eligible = 0;
         do
         {
-          if (((iVar1 != iVar3) && (instance = in_play(player, iVar3), instance != NULL)) &&
-              ((iVar4 = is_what(player, iVar3, 2),
-                iVar4 != 0 && (iVar4 = is_attacking(player, iVar3), iVar4 != 0))))
+          if (((attacker_card != other_card_or_eligible) &&
+               (instance = in_play(player, other_card_or_eligible), instance != NULL)) &&
+              ((shared_subtype_or_eligible = is_what(player, other_card_or_eligible, 2),
+                shared_subtype_or_eligible != 0 &&
+                    (shared_subtype_or_eligible = is_attacking(player, other_card_or_eligible),
+                     shared_subtype_or_eligible != 0))))
           {
-            iVar4 = shares_creature_subtype(player, iVar1, player, iVar3);
-            iStack_1c = (iStack_1c + 1) - (unsigned int)(iVar4 == 0);
+            shared_subtype_or_eligible =
+                shares_creature_subtype(player, attacker_card, player, other_card_or_eligible);
+            shared_attackers =
+                (shared_attackers + 1) - (unsigned int)(shared_subtype_or_eligible == 0);
           }
-          iVar3 = iVar3 + 1;
-        } while (iVar3 < active_cards_count[player]);
-        if (0 < iStack_1c)
+          other_card_or_eligible = other_card_or_eligible + 1;
+        } while (other_card_or_eligible < active_cards_count[player]);
+        if (0 < shared_attackers)
         {
-          pump_until_eot(player, card, player, iVar1, iStack_1c, 0);
+          pump_until_eot(player, card, player, attacker_card, shared_attackers, 0);
         }
       }
-      iVar1 = iVar1 + -1;
-    } while (iVar1 != -1);
+      attacker_card = attacker_card + -1;
+    } while (attacker_card != -1);
   }
   return global_enchantment(player, card, event);
 }
@@ -3634,36 +3645,24 @@ int card_veterans_armaments(int player, int card, event_t event)
   {
     instance = is_equipping(player, card);
     if (instance == NULL)
-    {
       ai_modifier = ai_modifier + 0x1e;
-    }
-    instance = is_equipping(player, card);
-    if (instance == NULL)
-      return basic_equipment(player, card, event, 2);
-    instance = get_card_instance(player, card);
-    store_attackers(player, card, EVENT_ACTIVATE, 0, (int)instance->damage_target_player,
-                    instance->damage_target_card, NULL);
-    dat_ability(player, card, EVENT_ACTIVATE, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
-  LAB_02287bdc:
+  }
+  instance = is_equipping(player, card);
+  if (instance == NULL)
+    return basic_equipment(player, card, event, 2);
+  instance = get_card_instance(player, card);
+  store_attackers(player, card, event, 0, (int)instance->damage_target_player,
+                  instance->damage_target_card, NULL);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  if (event != EVENT_DAT_ABILITY)
+  {
     result = blocking((int)instance->damage_target_player, instance->damage_target_card, event);
     if (result == 0)
       return basic_equipment(player, card, event, 2);
-    result = is_humiliated((int)instance->damage_target_player,
-                                       instance->damage_target_card, AL_TRIG);
+    result =
+        is_humiliated((int)instance->damage_target_player, instance->damage_target_card, AL_TRIG);
     if (result != 0)
       return basic_equipment(player, card, event, 2);
-  }
-  else
-  {
-    instance = is_equipping(player, card);
-    if (instance == NULL)
-      return basic_equipment(player, card, event, 2);
-    instance = get_card_instance(player, card);
-    store_attackers(player, card, event, 0, (int)instance->damage_target_player,
-                    instance->damage_target_card, NULL);
-    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
-    if (event != EVENT_DAT_ABILITY)
-      goto LAB_02287bdc;
   }
   result = count_attackers(player);
   pump_until_eot((int)instance->damage_target_player, instance->damage_target_card,
@@ -3779,7 +3778,7 @@ static int thornbite_staff_effect(int player, int card, event_t event)
   int card_00;
   card_instance_t *instance;
   int result;
-  card_instance_t *pcVar3;
+  card_instance_t *dying_permanent;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -3794,31 +3793,18 @@ static int thornbite_staff_effect(int player, int card, event_t event)
         kill_card(player, card, KILL_EXILE);
       }
     }
-    instance = get_card_instance(player, card);
-    if ((-1 < instance->damage_target_player) &&
-        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
-    {
-      return 0;
-    }
-  LAB_0227dd25:
-    result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if (result == 0)
-      goto LAB_0227dd45;
   }
-  else
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+  {
+    return 0;
+  }
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
     instance = get_card_instance(player, card);
-    if ((-1 < instance->damage_target_player) &&
-        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
-    {
-      return 0;
-    }
-    if (event != EVENT_GRAVEYARD_FROM_PLAY)
-      goto LAB_0227dd25;
-
-    instance = get_card_instance(player, card);
-    pcVar3 = in_play(affected_card_controller, affected_card);
-    if ((pcVar3 != NULL) &&
+    dying_permanent = in_play(affected_card_controller, affected_card);
+    if ((dying_permanent != NULL) &&
         (result = is_this_dying(affected_card_controller, affected_card), result != 0))
     {
 
@@ -3836,28 +3822,27 @@ static int thornbite_staff_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }
-    result =
-        resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+  }
+  result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+    return 0;
+  if (result != 0)
+  {
+    result = check_status(player, card, 0x10000);
     if (result == 0)
     {
-      return 0;
-    }
-  }
-  result = check_status(player, card, 0x10000);
-  if (result == 0)
-  {
 
-    instance = get_card_instance(player, card);
-    instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-    result = instance->targets[0].player;
-    card_00 = instance->targets[0].card;
-    if ((-1 < result) && (-1 < card_00))
-    {
-      untap_card(result, card_00);
+      instance = get_card_instance(player, card);
+      instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      result = instance->targets[0].player;
+      card_00 = instance->targets[0].card;
+      if ((-1 < result) && (-1 < card_00))
+      {
+        untap_card(result, card_00);
+      }
+      kill_card(player, card, KILL_EXILE);
     }
-    kill_card(player, card, KILL_EXILE);
   }
-LAB_0227dd45:
   if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
   {
     kill_card(player, card, KILL_EXILE);

@@ -9,32 +9,33 @@ static int card_swallowing_plague_impl(int player, int card, event_t event);
 int bushido(int player, int card, event_t event, int pump)
 {
   card_instance_t *instance;
-  unsigned int uVar2;
+  unsigned int special_keywords;
   int result;
-  card_ext_t *pcVar4;
+  card_ext_t *extension;
 
   instance = get_card_instance(player, card);
   if ((event == EVENT_RESOLVE_SPELL) && (0 < pump))
   {
-    pcVar4 = instance->ext;
+    extension = instance->ext;
     instance->targets[8].player = pump;
-    uVar2 = pcVar4->sp_keywords;
-    if ((uVar2 & 0x8000) != 0)
-      goto LAB_0260b910;
-  LAB_0260b895:
-    pcVar4->sp_keywords = uVar2 | 0x8000;
+    special_keywords = extension->sp_keywords;
+    if ((special_keywords & 0x8000) != 0)
+    {
+      result = is_humiliated(player, card, AL_TRIG);
+      return 0;
+    }
+    extension->sp_keywords = special_keywords | 0x8000;
   }
   else
   {
-    pcVar4 = instance->ext;
-    uVar2 = pcVar4->sp_keywords;
-    if ((uVar2 & 0x8000) == 0)
-      goto LAB_0260b895;
+    extension = instance->ext;
+    special_keywords = extension->sp_keywords;
+    if ((special_keywords & 0x8000) == 0)
+      extension->sp_keywords = special_keywords | 0x8000;
   }
   if ((((event == EVENT_QUERY_AFF) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
-      ((attacking_card == 0x8000 &&
-        (result = is_humiliated(player, card, AL_KEY), result == 0))))
+      ((attacking_card == 0x8000 && (result = is_humiliated(player, card, AL_KEY), result == 0))))
   {
     event_result = event_result + pump;
   }
@@ -42,7 +43,6 @@ int bushido(int player, int card, event_t event, int pump)
   {
     return 0;
   }
-LAB_0260b910:
   result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
@@ -2277,8 +2277,8 @@ int card_jugan_rising_star(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   int ret_location;
-  target_t *ptVar3;
-  target_t *ptVar4;
+  target_t *target_cursor;
+  target_t *next_target;
   target_definition_t td;
   check_legend_rule(player, card, event);
   result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -2300,13 +2300,13 @@ int card_jugan_rising_star(int player, int card, event_t event)
     result = can_target(&td);
   } while (ret_location < 5);
   instance->number_of_targets = '\0';
-  ptVar3 = instance->targets;
+  target_cursor = instance->targets;
   do
   {
-    ptVar4 = ptVar3 + 1;
-    add_counters(player, card, ptVar3->player, ptVar3->card, COUNTER_P1_P1, 1);
-    ptVar3 = ptVar4;
-  } while (ptVar4 != instance->targets + 5);
+    next_target = target_cursor + 1;
+    add_counters(player, card, target_cursor->player, target_cursor->card, COUNTER_P1_P1, 1);
+    target_cursor = next_target;
+  } while (next_target != instance->targets + 5);
   return 0;
 }
 
@@ -3526,17 +3526,18 @@ At the beginning of each opponent's upkeep, that player loses 1 life for each ca
 
 int card_night_dealings(int player, int card, event_t event)
 {
-  int32_t iVar1;
-  int iVar2;
+  int32_t tutor_cmc;
+  int counter_count_or_result;
   int argument3;
   card_instance_t *instance;
   test_definition_t test;
 
   check_damage_test(player, -1, event, DDBM_MUST_DAMAGE_OPPONENT, player, card, 0xff, NULL);
-  iVar2 = resolve_damage_trigger(player, card, event, DDBM_MUST_DAMAGE_OPPONENT, player, card);
-  if (iVar2 != 0)
+  counter_count_or_result =
+      resolve_damage_trigger(player, card, event, DDBM_MUST_DAMAGE_OPPONENT, player, card);
+  if (counter_count_or_result != 0)
   {
-    add_counters(player, card, player, card, COUNTER_THEFT, iVar2);
+    add_counters(player, card, player, card, COUNTER_THEFT, counter_count_or_result);
   }
   if (event != EVENT_CAN_ACTIVATE)
   {
@@ -3545,35 +3546,38 @@ int card_night_dealings(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       instance->info_slot = 0;
       generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 2, 2, 0, 0, 0, 0, 0, NULL, NULL);
-      if ((spell_fizzled != 1) && (iVar2 = count_counters(player, card, COUNTER_THEFT), iVar2 != 0))
+      if ((spell_fizzled != 1) &&
+          (counter_count_or_result = count_counters(player, card, COUNTER_THEFT),
+           counter_count_or_result != 0))
       {
         argument3 = internal_rand(count_counters(player, card, COUNTER_THEFT));
-        iVar2 = argument3;
-        if ((player == 0) && ((iVar2 = choose_a_number(0, "Remove how many counters?", argument3),
-                               iVar2 < 1 || (argument3 < iVar2))))
+        counter_count_or_result = argument3;
+        if ((player == 0) &&
+            ((counter_count_or_result = choose_a_number(0, "Remove how many counters?", argument3),
+              counter_count_or_result < 1 || (argument3 < counter_count_or_result))))
         {
           spell_fizzled = 1;
           return 0;
         }
         instance = get_card_instance(player, card);
-        instance->info_slot = iVar2;
-        remove_counters(player, card, player, card, COUNTER_THEFT, iVar2);
+        instance->info_slot = counter_count_or_result;
+        remove_counters(player, card, player, card, COUNTER_THEFT, counter_count_or_result);
       }
     }
     else if (event == EVENT_RESOLVE_ACTIVATION)
     {
       instance = get_card_instance(player, card);
-      iVar1 = instance->info_slot;
+      tutor_cmc = instance->info_slot;
       default_test_definition(&test, 1);
       test.type_flag = 1;
-      test.cmc = iVar1;
-      scnprintf(test.message, 100, "Select target nonland card with CMC %d", iVar1);
+      test.cmc = tutor_cmc;
+      scnprintf(test.message, 100, "Select target nonland card with CMC %d", tutor_cmc);
       new_global_tutor(player, player, 1, 1, 0, 1, &test);
     }
     return global_enchantment(player, card, event);
   }
   return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 2, 2, 0, 0, 0, 0, 0, NULL,
-                                    NULL);
+                                   NULL);
 }
 
 int card_night_of_souls_betrayal(int player, int card, event_t event)
@@ -5431,7 +5435,7 @@ static int card_swallowing_plague_impl(int player, int card, event_t event)
           damage_target0(player, card, x_value);
           gain_life(player, x_value);
         }
-        goto LAB_02609e91;
+        return generic_spell(player, card, event, 5, &td, "TARGET_CREATURE", 1, NULL);
       }
       if (event != EVENT_CHANGE_TARGET)
       {
@@ -5440,7 +5444,6 @@ static int card_swallowing_plague_impl(int player, int card, event_t event)
     }
   }
   default_target_definition(player, card, &td, 2);
-LAB_02609e91:
   return generic_spell(player, card, event, 5, &td, "TARGET_CREATURE", 1, NULL);
 }
 
@@ -5469,9 +5472,9 @@ static int boseiju_legacy(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  unsigned int uVar3;
-  unsigned int uVar4;
-  bool bVar5;
+  unsigned int spell_color;
+  unsigned int paid_color;
+  bool qualifying_payment;
 
   if (event == EVENT_CAST_SPELL)
   {
@@ -5490,16 +5493,16 @@ static int boseiju_legacy(int player, int card, event_t event)
       {
         result = get_updated_casting_cost(affected_card_controller, affected_card, -1,
                                           EVENT_CAST_SPELL, -1);
-        bVar5 = 0 < result;
+        qualifying_payment = 0 < result;
       }
       else
       {
-        uVar3 = get_color(affected_card_controller, affected_card);
+        spell_color = get_color(affected_card_controller, affected_card);
         instance = get_card_instance(player, card);
-        uVar4 = color_to_color_test(instance->targets[1].card);
-        bVar5 = (uVar3 & uVar4) != 0;
+        paid_color = color_to_color_test(instance->targets[1].card);
+        qualifying_payment = (spell_color & paid_color) != 0;
       }
-      if (bVar5)
+      if (qualifying_payment)
       {
         state_untargettable(affected_card_controller, affected_card, 1);
         kill_card(player, card, KILL_EXILE);
@@ -5566,38 +5569,38 @@ int card_boseiju_who_shelters_all(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x260a840; original cards/champions_of_kamigawa.c:3860. */
 static int card_petals_of_insight_impl(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int library_count;
+  int deck_choice;
   int num_cards;
 
   if (event != EVENT_RESOLVE_SPELL)
     return basic_spell(player, card, event);
 
-  iVar1 = count_deck(player);
-  if (iVar1 < 1)
+  library_count = count_deck(player);
+  if (library_count < 1)
   {
-  LAB_0260a910:
     kill_card(player, card, KILL_DESTROY);
   }
   else
   {
-    num_cards = iVar1;
-    if (3 < iVar1)
+    num_cards = library_count;
+    if (3 < library_count)
     {
       num_cards = 3;
     }
-    if ((player != 1) || (2 < iVar1))
+    if ((player != 1) || (2 < library_count))
     {
 
-      iVar2 = show_deck(player, deck_ptr[player], num_cards,
-                        "Click on a \'cancel\' to draw 3 cards", 0, ENGINE_DONE_LABEL);
-      if (iVar2 == -1)
+      deck_choice = show_deck(player, deck_ptr[player], num_cards,
+                              "Click on a \'cancel\' to draw 3 cards", 0, EXE_STR(ENGINE_DONE_LABEL));
+      if (deck_choice == -1)
       {
         draw_cards(player, 3);
-        goto LAB_0260a910;
+        kill_card(player, card, KILL_DESTROY);
+        return basic_spell(player, card, event);
       }
     }
-    if (1 < iVar1)
+    if (1 < library_count)
     {
       put_top_x_on_bottom(player, player, num_cards);
     }
@@ -5795,7 +5798,7 @@ static int card_cranial_extraction_impl(int player, int card, event_t event)
       {
         ai_modifier = ai_modifier + 0x30;
       }
-      goto LAB_02609a3c;
+      return generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
     }
     if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
     {
@@ -5818,7 +5821,7 @@ static int card_cranial_extraction_impl(int player, int card, event_t event)
         }
         lobotomy_effect(player, instance->targets[0].player, result, -1, 0);
       }
-      goto LAB_02609a3c;
+      return generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
     }
     if (event != EVENT_CHANGE_TARGET)
     {
@@ -5827,7 +5830,6 @@ static int card_cranial_extraction_impl(int player, int card, event_t event)
   }
   default_target_definition(player, card, &td, 2);
   td.zone = 0x1000;
-LAB_02609a3c:
   return generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
 }
 

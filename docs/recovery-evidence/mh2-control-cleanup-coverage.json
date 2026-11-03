@@ -1,0 +1,73 @@
+{
+  "status": "91 Modern Horizons 2 definitions cleaned up; one target build passed. Reccmp refresh deliberately deferred to a larger checkpoint.",
+  "batch": "docs/recovery-evidence/mh2-control-cleanup.json",
+  "batch_sha256": "20d85ad0896eae655e0a66432bede948c70e98e20f2cf716641dae2e3232aa62",
+  "counts": {
+    "definitions": 91,
+    "card_handlers": 77,
+    "local_helpers": 14,
+    "alpha_only_definitions": 59,
+    "structured_definitions": 32,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 77,
+    "removed_lab_gotos": 71,
+    "source_lines_removed": 532,
+    "removed_placeholder_occurrences": 1532
+  },
+  "verification_policy": "Batched readability workflow: exact token substitution for alpha-only edits; review event routing, callback order and live/cached reads for structured edits. One target build. Native comparisons reserved for uncertain behavior; reccmp refresh deferred to a larger checkpoint.",
+  "review_notes": [
+    "Fifty-nine alpha-only definitions preserve exact tokens after declared local substitutions. Thirty-two structured definitions receive source review and one batch build.",
+    "Retain channel versus ordinary activation routing, alternate costs and fizzle distinctions, repeated grave queries, target validation/mode rechecks, zero-count and source-death behavior.",
+    "Keep GFP helper eligibility and detach differences, Magus status gating before resolution and byte flags, Carth low-byte counts and cleanup kills, and duplicate legacy searches.",
+    "Keep Said/Done ability-query and delegated resolution order, Blessed Respite context refresh and AI queries, Garth cached used-mask/record and six ordered availability checks, and Saga chapter/mana/token distinctions.",
+    "Keep Dihada and Out of Time first-player snapshots, live second-player reads, reverse selection/action order and cached counts/targets across callbacks; Rise and Shine retains live collection bounds followed by reverse animation.",
+    "Verdant Command preserves two choices in order and native per-mode target index changes, including no advancement for life gain; keep the human-path uninitialized dialog priorities, confirmed in native disassembly. Rift Sower has one pre-existing descriptive-label jump outside this batch.",
+    "Opaque dialog implementations remain out of scope. No new native semantic comparison cases, full historical replay or reccmp refresh."
+  ],
+  "native_priority_review": {
+    "function": "card_verdant_command",
+    "address": "0x02242d30",
+    "native_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "disassembly_log": ".recovery/mh2-verdant-native-c473.txt",
+    "disassembly_sha256": "9d151359c5e08e01ef8e3734a8bfc9a50eecc10031ec3b3bff4957d6827653c2",
+    "conclusion": "Human path branches from 0x022430d6 through 0x022430df and reads the priority locals at 0x022430df-0x0224311f without prior initialization. Existing native quirk retained and documented; no gameplay-equivalence claim."
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/mh2-control-build-c475.log",
+    "log_sha256": "85280a516b8258cf8e98125f345b04421214ff9abd6383ecfba2108140db97c6",
+    "verified_built_slots": 15169,
+    "dll_sha256": "92518d6d62788a908f5d59d6e03be036767585eb51c628dbd82ee6a237cc50e2",
+    "dbg_sha256": "dbb2629a400c681928ad59267ea99260b980cb0ab947c5ddda8b29dcabcd2f38"
+  },
+  "reccmp": {
+    "refreshed": false,
+    "reason": "Readability batch with unchanged public function identities. Existing setup describes the previous build; regenerate at the next comparison/commit checkpoint.",
+    "unchanged_checkpoint_inputs": {
+      "config/reccmp/functions.csv": "a0b5791a8d98ec9acba6141138040223317f44dbbf094cf0f977e6a5a9a5a274",
+      ".recovery/reccmp/setup.json": "445df382fefd673e63073a46afddf81c1727dc097b184f8e971c82f2748786d9"
+    }
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c476.json",
+    "sha256": "54864b01b1078cfb96783d3b717d4d69c057203f593fc72a15fc0f2d3f09c54f",
+    "counts": {
+      "tracked_source_definitions": 2607,
+      "functions_with_lab_gotos": 700,
+      "lab_gotos": 1700,
+      "functions_with_placeholders": 1473,
+      "distinct_function_local_placeholder_spellings": 4263,
+      "placeholder_identifier_occurrences": 32061,
+      "union_keywords": 0
+    }
+  },
+  "whole_unit_readability": {
+    "source": "cards/modern_horizons_2.c",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0,
+    "existing_descriptive_label_gotos": 1
+  },
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of existing Modern Horizons 2 card handlers and helpers. No new native-function coverage or gameplay-equivalence claim. Preserve native quirks, repeated queries, context reads and opaque dialogs."
+}

@@ -1766,3 +1766,1363 @@ are identical, and indent=2 reproduces the original bytes exactly. The ledger
 shrinks from 124,145,846 to 88,677,636 bytes. Subsequent batch writers should use
 indent=0 to keep the ledger below the remote's large-file limit. See the
 [format-only compaction receipt](recovery-evidence/ledger-format-compaction.json).
+
+The targeting-core batch reconstructs validate_target_impl, target_match_type,
+target_available_impl, get_protections_from_part and has_protection_from_impl.
+The validator's layered checks return to readable source order with the
+original named failure epilog and enchanted-loop escape, while all LAB labels
+are removed. It retains three instance lookups during initial validation,
+aura/equipment protection modes, Kaya's player-hexproof exception, the zero
+counter-byte meaning all counters, and the 2022 required/illegal state rules.
+Two local recovery names describe unconfirmed native flag spellings; their
+actual bit tests and callback order are preserved. The stack-restriction bit
+still reads the top stack entry before checking stack_size, matching native.
+
+Availability still tests players first, chooses its first controller from the
+native preference rule, caches each controller pass's maximum slot limit and
+refreshes that limit for the next pass. Damage target/source modes and the
+engine's chooser override retain their argument conventions. The type matcher
+keeps its cached IID, full legacy-ID word and later fresh reads. Protection
+queries retain activation-parent traversal, backup-IID fallback, cached keyword
+bits, humiliation checks, local/global dispatch routing and low-24-bit results.
+
+The native validator, predecessor and reconstruction agree on 185,649 cases;
+the four supporting native bodies agree on 200,832 more, totaling 386,481
+three-way comparisons and 1,159,443 outer entries. Checks cover every uint16
+power/toughness requirement and legacy ID, every byte card type, controller
+selection, all four damage scan modes, exact diagnostic output, callback order,
+full record/extension/stack/global state and mutation cases. Native private
+register entries are explicitly bridged. Query/dispatch callees and 33 engine
+resource strings are controlled substitutes; actual localized error resources,
+complete native32 state, UI and gameplay are not claimed. Activation chains
+must be acyclic and stack-restriction inputs must have an allocated nonempty
+stack. Protection-parent tests mutate globals without mutating parent topology.
+
+This removes 82 gotos (80 LAB jumps), 409 lines and 383 placeholder references.
+Full-unit compiler expansion, ordinary-storage/layout/enum probes, seven source
+succession links, build and all 15,169 fixed entries pass. Reccmp retains all
+18,725 mappings; only rebuilt public COFF annotations change. The tracked tree
+now has 2,659 LAB jumps and 49,429 placeholder references. The ledger retains
+compact indent=0 formatting. The staged index is unchanged. See
+[targeting-core coverage](recovery-evidence/targeting-core-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c366.json).
+
+The target-selection batch reconstructs eleven remaining selection helpers and
+callers: select_target_impl, real_select_target, real_validate_target,
+real_target_available, validate_arbitrary_target, validate_target, valid_target,
+choose_default_target, mark_up_to_n_targets_noload, can_legally_target and
+opponent_is_valid_target. The original source helps recover readable loops,
+controller preference handling, cancellation paths and meaningful local names.
+All changes remain in functions/targets.c.
+
+Selection keeps raw dialog return values, separate -1/-3 cancellation outcomes,
+multiblocker rejection and diagnostic retry behavior. The AI stops card collection
+at 58, then appends eligible player entries, preserving native index recording
+and callback reads. Default targeting retains both target-file scans, its full
+500-entry lookup, player candidates beginning at card -1 and native preference
+restoration timing. Marking retains live scan bounds, cleanup of premarked
+entries, and cancellation behavior. Spellskite probing and opponent validation
+retain their original borrowed-target/state restoration order.
+
+All eleven native bodies, predecessor and reconstruction agree on 67,712 cases
+(203,136 outer calls), including 128 explicit 58-card plus two-player candidate
+fixtures with an asserted random bound of 60. Callback arguments/order, return
+values, fixture output/global/record state, changing scan counts and controller
+preferences are checked. Callback-boundary state is summarized with hashes;
+final fixture snapshots are compared byte for byte. Native and reconstruction
+also agree on borrowed GUI-local observations during cleanup. The predecessor
+comparison excludes these local observations because its decompiled cancellation
+assignment is synthetic: native writes result registers directly to the caller.
+Queries, GUI callbacks and bounded stdio streams are controlled substitutes;
+native dialog implementation, invalid file inputs and gameplay remain out of scope.
+
+This removes 16 gotos (11 LAB jumps), 174 lines and 231 placeholder references.
+The complete targets.c unit now has zero LAB jumps and zero known placeholder
+identifiers. Full-unit compiler projection, storage/layout/enum checks, 21 source
+succession links (including an exact earlier array-scope bridge), build and all
+15,169 fixed entries pass. Reccmp retains all 18,725 mapping identities; only
+rebuilt public COFF annotations change. The tracked census now has 2,648 LAB
+jumps and 49,198 placeholder references. The staged index is unchanged. See
+[target-selection coverage](recovery-evidence/target-selection-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c372.json).
+
+The tutor-selection batch reconstructs get_average_value_from_zone,
+select_card_from_zone, new_select_a_card,
+select_multiple_cards_from_graveyard_to_array_part and
+select_multiple_cards_from_either_graveyard in functions/tutors.c.
+Readable loops replace the decompiled label graph and local names describe
+zone counts, AI candidates, controller choices and temporary hidden-card state.
+
+The average-value and card selectors retain their distinct CMC/value modes,
+mana affordability checks, random early choice and average-threshold candidate
+selection. Human selection retains the direct engine chooser call, cached Done
+label and expansion reset. Zone enumeration keeps the 2022 tutoring-denial and
+Aven Mindcensor checks, cached zone pointer, live hand scans, minideck count
+behavior, hardcoded child test type and original-ID hand lookup. Library-search
+permanent side effects still run after an own-library attempt.
+
+Multi-graveyard selection retains the strict greater-than eligibility threshold,
+targeted versus untargeted graveyard modes, bounded rechoose behavior, original
+source-ID encoding and temporary face-down/restoration sequence. Caller-provided
+filters are initialized or rejected exactly as native, including diagnostic text.
+The private one-graveyard worker retains descending result sorting and the native
+cancellation/count return conventions. No _2022 aliases or local unions are added.
+
+The five native bodies, predecessor and reconstruction agree on 123,136 cases
+(369,408 outer calls), including 256 complete 19-target selections. Checks include
+callback order and arguments, live record/zone/global/filter mutations, output
+arrays, diagnostic exits, sorting calls, AI modes and selection cancellation.
+Callback traces use hashes for compound state/arguments; final declared fixture
+snapshots are compared byte for byte. Child queries, selection, constructors,
+diagnostics and sorting are controlled substitutes. The native stack probe is
+retained unmodified; the private selector uses regparm(3), and the permanent
+side-effect compiler part uses regparm(1). Bounded zone storage, positive AI VLA
+sizes and nonoverflowing arithmetic are required. Negative private-worker target
+counts are checked only through a controlled qsort stub, which records the native
+unsigned count without attempting an invalid-size sort. Native UI and composed
+gameplay remain outside these checks.
+
+This removes 28 LAB jumps, 429 lines and 396 placeholder references. The entire
+tutors.c unit now has zero LAB jumps and zero known placeholder identifiers.
+Actual compiler-unit projection, layout/storage/enum probes, 11 source succession
+links, build and all 15,169 fixed entries pass. Reccmp retains all 18,725 mappings;
+the average-value helper now has one rebuilt range and uses an ordinary ledger
+mapping. Its 234-byte body matches native exactly except the three verified
+external call displacements. Other changed annotations are rebuilt public COFF
+addresses. The tracked census now has 2,620 LAB
+jumps and 48,802 placeholder references. The staged index is unchanged. See
+[tutor-selection coverage](recovery-evidence/tutor-selection-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c378.json).
+
+The aura/attachment batch reconstructs disable_attached, attached_set_pt_part,
+aura_impl, aura_pref_controller, end_of_stealing_aura_effect,
+generic_animating_aura_impl and
+when_enchanted_permanent_dies_return_aura_to_hand in functions/auras.c.
+Ten further helpers change only masked function-local identifier spellings:
+attached_is_additional_color, attached_is_forced_color, disabling_aura_ai_part,
+targeted_aura_impl, aura_with_variable_pt_boost_depending_on_condition,
+gain_control_and_attach_as_aura, cannot_be_enchanted_granted, enchant_player,
+pump_attached and this_effect_doesnt_remove_this. Their source and actual expanded
+token projections agree exactly; compiler macro-column padding is ignored,
+while literals and token order are preserved. They claim no additional native
+comparison cases. No local unions or _2022 aliases are added.
+
+The aura worker retains event filtering, cast targeting and AI preference bias,
+attachment validation, shroud handling, illegal-attachment cleanup and aura-move
+controller/type restrictions. Native callback order, cached coordinates and
+later fresh record reads remain visible in the source. AI bias keeps native
+unsigned wrapping, and selected-card encoding uses an unsigned shift rather
+than a signed negative shift. Animation keeps the native strictly positive
+base-PT rule, zero meaning no dynamic PT override, CMC-derived -1 values,
+16-bit PT writes, cached dynamic type, added subtype behavior and move reset.
+Control restoration still scans for another stealing aura before enabling an
+older effect and rereads attachment coordinates around control callbacks.
+Death handling keeps separate instance lookups around owner/original-IID
+queries and creates the same deferred legacy callback.
+
+Seven native bodies, predecessor and reconstruction agree on 265,664 cases
+(796,992 outer calls). Both event-entry filters cover all 65,536 uint16 values;
+explicit event/configuration crosses and 192 dynamic-type creation cases cover
+animation boundaries, zero/-1 PT, type-data/table mutations and CMC callbacks.
+Required callback families are asserted to have executed, including type
+creation, both status paths, subtype addition, control restoration and legacy
+creation. Queries and child target/attachment/control/ability/legacy callbacks
+are controlled substitutes; native gameplay and UI composition are not claimed.
+Callback-boundary state and compound arguments use hashes; final declared
+fixture snapshots are compared byte for byte. Three private native entries and
+two child adapters use regparm(3). Storage/layout/enum probes constrain the
+ordinary globals, records and dynamic type fields.
+
+This removes 14 LAB jumps, 215 lines and 285 placeholder references. The entire
+auras.c unit now has zero LAB jumps and zero known placeholder identifiers.
+Full compiler-unit projection, ten expanded local-name projections, 37 source
+succession links (four exact earlier rename bridges), build and all 15,169 fixed
+entries pass. Reccmp retains all 18,725 mappings; rebuilt public COFF annotations
+are refreshed. The tracked census now has 2,606 LAB jumps and 48,517 placeholder
+references. The staged index is unchanged. See
+[aura/attachment coverage](recovery-evidence/aura-attachment-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c384.json).
+
+The token-generation batch reconstructs copy_all_tokens_both_players,
+generate_token, default_token_definition, resolve_token_iid and
+get_copyable_special_infos in functions/token_generation.c. Four more helpers
+change only masked local names: set_token, copy_token_definition,
+generate_token_by_id_impl and copy_token_characteristics_for_clone. Those four
+source and actual expanded-token projections are verified independently;
+literals/token order are preserved and CPP column-padding whitespace is ignored.
+
+The initializer also repairs a recovery error. Native 0x266553a subtracts 901,
+compares with 7, and uses unsigned JA to reject values outside IDs 901..908.
+The predecessor's signed promoted-uint16 subtraction mistakenly included IDs
+0..900 and redirected their source coordinates as if they were legacy effects.
+All 65,536 uint16 IDs are checked. Exactly 901 predecessor cases differ; the
+test verifies their old coordinates, correct native coordinates and byte-for-byte
+agreement in every other fixture field. Only the source-player/source-card output
+fields are normalized for that explicitly documented predecessor comparison.
+Native and reconstruction agree directly in every case. Initial negative source
+coordinates and activation-parent handling are also exercised.
+
+Generation keeps both-player doublers, Academy Manufactor's native quantity
+behavior, Chatterfang's extra group, Divine Visitation's lookups/overrides and
+descriptor resets for each secondary-group token. It preserves cached counts,
+fresh recipient reads, actions/equipment, generation callbacks, pre/post-entry
+tracking, silent counters, blocker triggers and special-info-99 duplicate cleanup.
+Token copying retains its fresh current_turn read between player passes and
+reverse copy order. Dynamic IID resolution retains its 16-entry reuse search,
+300-instance bitmap scan, backup/dummy IID rules, current engine-range checks,
+72-byte type copy, narrowing PT writes, color changes and artifact/legend flags.
+The special-info whitelist includes the native Sculpture case and preserves its
+ID-specific 66/67 rules. No local unions or _2022 aliases are introduced.
+
+Five native bodies and reconstruction agree on 212,096 cases (636,288 outer
+calls); 211,195 also agree unchanged with the predecessor, alongside the 901
+verified range repairs. The copy-info whitelist covers every uint16 backup ID
+with both 66 and 67; explicit cases cover replacement effects, missing effect
+sources, generation diagnostics, duplicate tokens and required action callbacks.
+Four naming-only helpers claim no added native cases. Child queries, generation,
+allocation and game effects are controlled substitutes. No native UI or composed
+gameplay claim is made. Callback traces hash descriptor/type data, first 16
+record/extension slots and current generated/legacy records; every allocated
+record/extension and all declared output fixtures are byte compared at return.
+Storage is bounded to allocated 150-slot banks with valid IIDs, finite quantities
+and safe action arguments. Two private entries use regparm(2); copy/set adapters
+use regparm(3). The read-only native switch table retains 56 verified targets.
+
+The whole-file check also found generate_tokens_impl, an inline-only helper
+omitted from the prior native-function census. Its old duplicated creation block
+is replaced by an exact source/expanded-token projection from the verified
+parent block, binding iid/n as its original parameters and adding its return of
+the created slot. It remains in its original location and claims no new native
+entry or comparison cases. The inline helper is now included in the census.
+
+Together these ten helpers remove 15 gotos (14 LAB jumps), 455 lines and 744
+placeholder references.
+The entire token_generation.c unit now has zero LAB jumps and zero known
+placeholder identifiers. Actual compiler-unit projection, four expanded naming
+projections, layout/storage/enum probes, 21 source succession links (one exact
+earlier rename bridge), build and all 15,169 fixed entries pass. Reccmp retains
+all 18,725 mapping identities. copy_token now has a single rebuilt range,
+so its annotation uses the ordinary recovery ledger instead of public-entry
+disambiguation; its source definition is unchanged. The tracked census now has 2,593 LAB jumps and 47,925
+placeholder references. The staged index is unchanged. See
+[token-generation coverage](recovery-evidence/token-generation-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c393.json).
+
+The event-core batch reconstructs resolve_trigger and get_abilities in
+functions/events.c. The two dispatch wrappers
+dispatch_event_arbitrary_to_one_card_with_initial_event_result and
+dispatch_event_with_attacker_and_initial_event_result change only the saved
+trigger-condition local's name; exact source and expanded-token projections
+are checked, with only CPP column-padding whitespace ignored.
+
+Trigger resolution now expresses its live-source, missing-source and proxy-card
+paths directly. It retains trace/dialog ordering, triggering-state cleanup,
+reserved-card/trigger eligibility, the 300-byte proxy copy, timestamp handling,
+response windows, proxy stack metadata, cause remapping and repeated context
+restoration around EVENT_TRIGGER_RESOLVED. Native high state-bit guards and
+quiet-versus-resolved cleanup remain intact. The actual dialog and engine stack
+operations remain controlled opaque callbacks in these checks.
+
+Ability calculation retains the activation-parent walk, cached versus recalculated
+characteristics, effective-event changes for P/T swapping, base/characteristic PT,
+protection/landwalk changes, extension resets, two-pass type dispatch, damage/death
+processing and cached return values around affected-stack restoration. Counter
+types/counts are unpacked from their seven native storage slots with ordinary
+byte/word operations; all eleven grants, player restrictions and humiliation
+queries retain their order. Mana overrides use a low-byte cache: the decompiled
+adjacent-word reconstruction contributes no additional low bits. Callback changes
+to mana bytes, override tables, records, type data and extension pointers are
+included. The native inclusive aura scan bound and change-type early return
+without raw-base restoration are preserved. No local unions or _2022 aliases
+are added.
+
+Both native bodies, predecessor and reconstruction agree on 162,368 cases
+(487,104 outer calls). Checks cover all 65,536 uint16 event values for ability
+calculation, every uint16 trigger-source card ID, all 256 counter-type bytes in
+each of seven slots with zero/nonzero counts, event/configuration crosses and
+forced proxy replacement paths. Required callback families and every ability
+counter query are asserted to execute. Native entries use cdecl. Engine function
+pointer literals/direct calls are explicitly rebound, and the eleven-entry native
+switch table remains read-only with internal targets verified. Memcpy is observed
+without injecting mutations and copies exactly 300 bytes. Callback-boundary state
+uses hashes; declared fixture outputs are compared byte for byte. Comparisons
+require initialized allocated records, acyclic activation parents, bounded stack
+and type storage, bounded strings and distinct source/proxy records. Raw -1 type
+results use an allocated table prefix under the target 32-bit compiler behavior;
+portable abstract-C behavior and complete native engine memory are not claimed.
+Child callbacks and UI/gameplay composition remain outside these focused checks.
+
+This removes 28 gotos (21 LAB jumps), 277 lines and 415 placeholder references.
+The entire events.c unit now has zero LAB jumps and zero known placeholder
+identifiers. Actual compiler-unit projection, layout/storage/enum probes, two
+expanded naming projections, five source succession links, build and all 15,169
+fixed entries pass. Reccmp retains all 18,725 mapping identities. The tracked
+census now has 2,572 LAB jumps and 47,510 placeholder references. The staged index
+is unchanged. See [event-core coverage](recovery-evidence/event-core-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c399.json).
+
+The shared-helper local-name batch replaces 126 decompiler local spellings in
+54 already structured helpers in functions/functions.c, removing 953 placeholder
+references. The affected functions include shade/husk activation, countering and
+deflection, death/leaves-play/ETB triggers, attack tracking, temporary effects,
+transformation, graveyard replacement and mana text. Names describe observed use;
+they are not claimed to be recovered original DWARF spellings. Locals reused for
+several purposes retain appropriately general names. Existing unused declarations
+remain explicitly named as unused where applicable.
+
+Every rename is a reversible masked-identifier substitution, with one checked
+local declaration, no collisions with existing function tokens, and exact
+compiler-expanded token projection. All 54 expanded functions have zero ASSERT
+literal exceptions. The entire expanded compiler unit changes only these bodies;
+types, literals, expressions, statements and control flow are retained. GCC syntax
+preflight, 93 source succession links and six exact older local-name bridges pass.
+The rebuilt DLL has identical runtime section layouts and bytes, excluding debug
+sections/debuglink and masking only the export-directory timestamp. This proves
+this naming batch preserves the predecessor's compiled runtime; it does not add
+native semantic coverage or claim existing engine behavior is fully recovered.
+
+Build and all 15,169 fixed veneers pass. Reccmp's 18,725-row mapping CSV remains
+byte-identical. The tracked inventory has 2,572 LAB jumps and 46,557 placeholder
+references. The staged index is unchanged. See
+[shared-helper local-name coverage](recovery-evidence/helper-local-names-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c403.json).
+
+The damage-helper batch reconstructs damage_effects, damage_creature, effect_damage
+and after_damage in functions/damage_effects.c, removing 23 LAB jumps, 233 lines
+and 862 placeholder references. The whole unit now has no LAB jumps or known
+placeholder identifiers. Review covers callback order, cached versus live reads,
+activation/legacy source handling, redirected targets, card-specific damage
+tracking, prevention, poison/wither, planeswalker overflow, death precedence,
+deferred Archangel counters and the separate after-damage dispatch pass. The
+unusual native scan through the record prefix before targets[0] is retained.
+
+This batch adopts a lighter readability workflow: review, target syntax preflight,
+one build and one reccmp refresh. It adds no native comparison cases or gameplay
+equivalence claim. Build and all 15,169 fixed veneers pass; reccmp retains 18,725
+mapping identities. The tracked census has 2,549 LAB jumps and 45,695 placeholder
+references. The staged index is unchanged. See
+[damage-helper coverage](recovery-evidence/damage-helpers-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c407.json).
+
+The shared-control batch reconstructs 25 temporary-effect, pump, trigger and
+selection helpers in functions/functions.c, removing 46 LAB jumps, 460 lines
+and 674 placeholder references. Review retains callback ordering, cached/live
+record reads, reverse iteration, current-turn-dependent pass order, distinct
+pump-test exclusion orders, regeneration targeting, aura-return failure cleanup,
+spell/ETB trigger repetition, sleight/hack mappings and clone-effect expiry.
+Existing unusual zero-count dispatch and selection behavior is retained. Dialog
+calls remain opaque; their caller-side arguments and ordering are preserved.
+
+The lighter workflow uses review, target syntax preflight, one build and current
+reccmp setup. No new native comparison cases or gameplay-equivalence claim are
+added. Build and all 15,169 fixed veneers pass; reccmp retains all 18,725 mapping
+identities. This unit is down to 12 functions with LAB jumps (67 jumps and 1,446
+placeholder references). The tracked tree has 2,503 LAB jumps and 45,021
+placeholder references. The staged index is unchanged. See
+[shared-control coverage](recovery-evidence/shared-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c411.json).
+
+The reanimation-control batch reconstructs nine helpers in functions/functions.c:
+lobotomy_effect, both sacrifice/grave-target activation wrappers,
+reanimate_permanent_impl, new_reanimate_all_impl,
+count_for_gfp_ability_and_store_values_impl, shapeshift_all,
+fx_permanents_destroyed_this_way_accumulate and new_effect_coercion. It removes
+37 decompiler jumps (34 LAB jumps), 272 lines and 1,019 placeholder references.
+Review retains callback ordering, cache/live field distinctions, aura attachment,
+sacrifice reporting, graveyard choices, coercion retries and array removal,
+mass-copy marking/application passes, packed death counters and delayed polling.
+Mass reanimation retains its existing unusual array indexes and exile/ownership
+choices; behavioral changes there require separate native evidence.
+
+The lighter workflow uses review, target syntax preflight, one build and one
+mapping refresh, without adding native comparison cases or gameplay-equivalence
+claims. Build and all 15,169 fixed veneers pass; reccmp retains all 18,725 mapping
+identities. This source unit now has three functions with LAB jumps: generic_spell,
+granted_generic_activated_ability and legacy_effect_pump_ability_until_eot
+(33 jumps and 427 placeholder references). The tracked census has 2,469 LAB jumps
+and 44,002 placeholder references. The staged index is unchanged. See
+[reanimation-control coverage](recovery-evidence/reanimation-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c415.json).
+
+The spell-control batch reconstructs generic_spell,
+granted_generic_activated_ability and legacy_effect_pump_ability_until_eot in
+functions/functions.c, removing 36 decompiler jumps (33 LAB jumps), 95 lines
+and 427 placeholder references. The entire unit now has zero LAB jumps and zero
+known placeholder identifiers. Review preserves availability/equip queries,
+redirection UI arguments, X setup, both sacrifice selectors, retarget storage and
+bounds, duplicate marks, aura rejection, counter/graveyard order, packed costs,
+payment/rollback order and zero-choice cancellation cleanup. The pump legacy
+retains reciprocal source/target leaves-play behavior, live flag reloads,
+expiration countdowns, end-of-combat/source/untap removal and final result clamp.
+
+The lighter workflow uses review, target syntax preflight, one build and current
+mapping refresh. No new native comparison cases or gameplay-equivalence claim
+are added. Build and all 15,169 fixed veneers pass; reccmp retains all 18,725
+mapping identities. The tracked census has 2,436 LAB jumps and 43,575 placeholder
+references. The staged index is unchanged. See
+[spell-control coverage](recovery-evidence/spell-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c419.json).
+
+The pack-control batch reconstructs nine helpers in functions/packs.c, including
+the inline get_csvid_choices omitted by the prior inventory. It removes 88
+decompiler jumps (82 LAB jumps), 957 placeholder references and 790 net lines.
+The whole unit now has zero LAB jumps and zero known placeholder identifiers.
+get_csvid_choices is restored as the shared pool builder called by
+make_pack_normal, eliminating the duplicated pool code. Both the predecessor
+inline/parent blocks and the reconstructed inline/parent blocks are token-identical;
+the pre-outlining parent is retained in the batch evidence.
+
+Review preserves all pack recipes/copy tables, weighted rarity and special-sheet
+pools, Legends/DFC/contraption multiplicities, random draw order, basic/snow-land
+duplicate exceptions, shortage fallback, conditional recipe choices, retry limits,
+the DFC-count requirement and sticky testing-mode duplicate status. The existing
+test_packs utility is reconstructed but not executed as a gameplay test. The
+lighter workflow uses review, compiler preflight, a final build and mapping refresh.
+No native comparison cases or gameplay-equivalence claim are added. Build and all
+15,169 fixed veneers pass; reccmp retains all 18,725 mapping identities.
+
+The current census now includes 2,606 definitions, with 2,387 LAB jumps and 42,900
+placeholder references. Its delta counts only the eight previously tracked
+functions; the old inventory omitted the inline helper's 33 LAB jumps and 282
+placeholder references. The staged index is unchanged. See
+[pack-control coverage](recovery-evidence/pack-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c426.json).
+
+The rules-control batch reconstructs check_card_for_rules_engine,
+get_storm_count and static_graveyard_abilities in functions/rules_engine.c,
+removing 82 decompiler jumps (79 LAB jumps), 479 lines and 787 placeholder
+references. The whole unit now has zero LAB jumps and known placeholders.
+Review preserves classification masks and post-query ID/class refreshes,
+event-stage routing, callback order, cached/live trigger context, grave-slot
+rereads, per-card payment/return/exile differences, and direct/wrapped xtrigger
+snapshots. Opaque dialog calls remain out of scope.
+
+The lighter workflow uses review, target syntax preflight, one build and current
+mapping refresh. No new native comparison cases or gameplay-equivalence claim
+are added. Build and all 15,169 fixed veneers pass; reccmp retains all 18,725
+mapping identities. The tracked census has 2,308 LAB jumps and 42,113 placeholder
+references. The staged index is unchanged. See
+[rules-control coverage](recovery-evidence/rules-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c430.json).
+
+The Aether Revolt readability batch updates 49 definitions (43 card handlers and
+six local helpers): 19 exact alpha-only token substitutions and 30 reviewed
+control-flow reconstructions. It removes 60 decompiler jumps (58 LAB jumps),
+770 lines and 580 placeholder references. Event qualification/rechecks, callback
+order, live/cached reads, native deck/target quirks, cancellation cleanup,
+death aggregation and opaque dialog behavior are retained. The prompt and
+alignment-specific buffer initialization are reconstructed as ordinary arrays.
+
+One target build and all 15,169 fixed veneers pass. No new native comparison
+cases are claimed. Reccmp refresh is deliberately deferred to a larger
+checkpoint; its existing setup still describes the preceding build. The source
+census is now 2,250 LAB jumps and 41,533 placeholder references. Aether Revolt
+has 48 LAB jumps and 591 placeholder references remaining. The index is
+unchanged. See [Aether Revolt coverage](recovery-evidence/aether-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c434.json).
+
+The final nine Aether Revolt definitions are now structured: Pia's Revolution
+and its effect, Unbridled Growth, Scrap Trawler and its legacy, Exquisite
+Archangel, Indomitable Creativity, the improvise casting helper and Release the
+Gremlins. This adds 49 removed jumps (48 LAB jumps), 628 removed lines and 591
+removed placeholder references. Review preserves packed death records and
+reverse resolution, native slot/player lookup quirks, cached/live context,
+fixed/X payment routes, retarget previews and cancellation cleanup.
+
+The cumulative Aether Revolt batch covers 58 definitions (49 card handlers and
+nine helpers), removing 106 LAB jumps, 1,171 placeholder references and 1,398
+lines. The whole file now has zero LAB jumps and known placeholders. The final
+build and all 15,169 fixed veneers pass. Reccmp refresh remains deferred; no new
+native semantic cases are claimed. The census is 2,202 LAB jumps and 40,942
+placeholder references. See the updated
+[Aether Revolt coverage](recovery-evidence/aether-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c438.json).
+
+The Mirage readability batch updates 61 definitions (52 card handlers and nine
+helpers): 34 exact alpha-only substitutions and 27 reviewed control-flow
+reconstructions. It removes 99 decompiler jumps (98 LAB jumps), 775 lines and
+1,154 placeholder references. The entire file now has zero LAB jumps and known
+placeholder identifiers. Review preserves phasing recursion and detachment,
+repeated queries, native stored-target and color-refresh quirks, aura trigger
+and flash-expiry behavior, sacrifice scoring, mana filtering and Builder's
+Bane's distinct payment, retargeting and destruction/life-loss paths.
+
+One target build and all 15,169 fixed veneers pass. No new native comparison
+cases are claimed. Reccmp refresh remains deferred to a larger checkpoint;
+its existing setup still describes the preceding checkpoint build. The source
+census is now 2,104 LAB jumps and 39,788 placeholder references. The staged index
+is unchanged. See [Mirage coverage](recovery-evidence/mirage-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c442.json).
+
+The Eldraine readability batch updates 57 definitions (47 card handlers and ten
+helpers), with 19 exact alpha-only substitutions and 38 structured or extracted
+definitions. It removes 80 decompiler jumps (77 LAB jumps), 575 placeholder
+references and 992 net source lines. Review preserves adventure legality,
+free/token/copied modes, targeting/retarget behavior, transformation rollback,
+query/callback ordering, packed death counters, fresh context and native quirks.
+The existing private resolve_an_adventure helper now supplies the caller's
+resolution body; expanding the call reproduces the reviewed caller tokens.
+
+One initial batch build and the final shared-helper build pass, including all
+15,169 fixed veneers. No new native semantic cases are claimed. Reccmp refresh
+remains deferred. The prior census omitted the inline helper's three LAB jumps
+and 28 placeholder references; its clean definition is now tracked. The census
+has 2,607 definitions, 2,030 LAB jumps and 39,241 placeholder references. Eldraine
+has eight definitions left with 18 LAB jumps and 230 placeholder references.
+The staged index is unchanged. See
+[Eldraine coverage](recovery-evidence/eldraine-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c448.json).
+
+The final eight Eldraine definitions are now structured: Steelclaw Lance,
+Lochmere Serpent, Kenrith, Gilded Goose, Golden Egg, Trail of Crumbs, Fabled
+Passage and Dance of the Manse. This removes 19 jumps (18 LAB jumps), 159 lines
+and 230 placeholder references. Review preserves validation-driven mode reloads,
+distinct costs and tap-state rollback, duplicate legacy detection, Fabled
+Passage's repeated activation calls and mode markers, and Dance's selection-test
+reset, cached X, CMC/payment maxima and AI payment retry.
+
+The cumulative Eldraine batch covers 65 definitions (55 card handlers and ten
+helpers), removing 95 LAB jumps, 805 placeholder references and 1,151 net lines.
+The entire file has zero goto statements and known placeholder identifiers.
+The final build and all 15,169 fixed veneers pass. Reccmp refresh remains
+deferred; no new native semantic cases are claimed. The census is 2,012 LAB
+jumps and 39,011 placeholder references. The index is unchanged. See
+[Eldraine coverage](recovery-evidence/eldraine-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c452.json).
+
+The first War of the Spark readability batch updates 60 definitions (44 card
+handlers and 16 helpers): 43 exact alpha-only substitutions and 17 reviewed
+control-flow reconstructions. It removes 39 jumps (38 LAB jumps), 328 lines and
+798 placeholder references. Review preserves trigger and aura context, native
+death/detach differences and byte offsets, duplicate legacy detection, live
+bounds, validation-driven mode reloads, loyalty/payment behavior and fresh
+callback reads. Sorin retains grave selection after failed payment; two-target
+damage, milling and amass paths preserve their native eligibility rules.
+
+One target build and all 15,169 fixed veneers pass. No new native semantic
+cases are claimed. Reccmp refresh remains deferred until the file's final
+batch. Five larger definitions remain with 49 LAB jumps and 414 placeholder
+references. The tracked census is 1,974 LAB jumps and 38,213 placeholder
+references. The staged index is unchanged. See
+[War coverage](recovery-evidence/war-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c456.json).
+
+The final five War of the Spark routines are structured: the discounted mana
+helper, Casualties of War, Liliana Dreadhorde General, Bolas's Citadel and
+Planewide Celebration. This removes 51 jumps (49 LAB jumps), 404 lines and 414
+placeholder references. Review preserves unsigned cost clamping, temporary
+hybrid/phyrexian card setup and cleanup, fresh validation masks, death/activation
+query order, sacrifice rollback and packed-mode resolution passes.
+
+The cumulative War batch covers 65 definitions (48 card handlers and 17
+helpers), removing 87 LAB jumps, 1,212 placeholder references and 732 lines.
+The entire file now has zero LAB jumps and known placeholders. The final build
+and all 15,169 fixed veneers pass. Reccmp is refreshed for the combined Aether
+Revolt, Mirage, Eldraine and War cleanup: all 18,725 mapping identities remain,
+with 12 mapping annotations updated. These four units have zero LAB jumps and
+known placeholders. No new native semantic comparison cases are claimed.
+The census is 1,925 LAB jumps and 37,799 placeholder references. The index is
+unchanged. See [War coverage](recovery-evidence/war-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c460.json).
+
+The first Strixhaven readability batch updates 75 definitions (62 card handlers
+and 13 helpers): 52 exact alpha-only substitutions and 23 reviewed control-flow
+reconstructions. It removes 31 LAB jumps, 526 lines and 1,177 placeholder
+references. Review preserves selection order, trap and mana queries, native
+power indexing, reverse hand/grave traversal, alternate/full/X cost outcomes,
+validation/life order, death-helper differences, cleanup and context refreshes.
+Journey to the Oracle boundary behavior remains separate native review work.
+
+One target build and all 15,169 fixed veneers pass. No new native semantic
+cases are claimed. Reccmp refresh is deferred until a larger checkpoint. The
+file has 24 definitions remaining, with 74 LAB jumps and 1,134 placeholder
+references. The tracked census is 1,894 LAB jumps and 36,622 placeholder
+references. The staged index is unchanged. See
+[Strixhaven coverage](recovery-evidence/strixhaven-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c464.json).
+
+The final 24 Strixhaven definitions are now structured (21 card handlers and
+three helpers), removing 78 gotos, including 74 LAB jumps, 642 lines and 1,134
+placeholder references. Review preserves command choice/target ordering,
+retarget context, payment/fizzle outcomes, library selection and array shifts,
+mode rechecks, GFP detachment and cleanup distinctions. Quandrix's availability
+calculation now uses separate counters with the same ordered queries and
+0/1/99 outcomes. Native disassembly confirms Journey to the Oracle's inclusive
+reverse scan, including its uninitialized count-index entry; that behavior is
+preserved and documented in source.
+
+The cumulative Strixhaven cleanup covers 99 definitions (83 card handlers and
+16 helpers), removing 109 gotos (105 LAB jumps), 2,311 placeholder references
+and 1,168 lines. The whole file has zero gotos and known Ghidra placeholders.
+One final target build and all 15,169 fixed veneers pass. Reccmp refresh remains
+deferred; no new native gameplay comparison cases are claimed. The census is
+1,820 LAB jumps and 35,488 placeholder references. The staged index is unchanged.
+See [Strixhaven coverage](recovery-evidence/strixhaven-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c468.json).
+
+Commander Legends readability cleanup updates 86 definitions (69 public card
+handlers and 17 helpers): 60 exact alpha-only local substitutions and 26
+reviewed control-flow reconstructions. It removes 51 gotos (49 LAB jumps),
+263 lines and 1,895 placeholder references. The whole file has zero gotos and
+known Ghidra placeholders. Review preserves death eligibility and detach flags,
+source-death early exits, pending-record cleanup, Colfenor's main/effect record
+slot differences, meld-part exclusions, repeated queries, persistent filters
+and retry budgets. Equipment mode rechecks, protection snapshots, Kamahl's
+animation/damage order and War Room's native life/AI paths remain intact.
+
+One target build and all 15,169 fixed veneers pass. No new native semantic
+cases or historical replay are claimed. Reccmp refresh remains deferred. The
+tracked census is 1,771 LAB jumps and 33,593 placeholder references. The staged
+index is unchanged. See
+[Commander Legends coverage](recovery-evidence/cmr-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c472.json).
+
+Modern Horizons 2 readability cleanup updates 91 definitions (77 public card
+handlers and 14 helpers): 59 exact alpha-only local substitutions and 32
+reviewed control-flow reconstructions. It removes 77 gotos (71 LAB jumps),
+532 lines and 1,532 placeholder references. The unit has zero LAB jumps and
+known Ghidra placeholder locals; Rift Sower's descriptive-label jump remains
+outside this batch. Review preserves ordinary/channel activation routing,
+alternate costs, fizzle results, repeated grave queries, mode/validation
+rechecks, legacy detach and cleanup differences, cached/live player/count
+reads, reverse phasing/control/animation order, Garth's ordered availability
+checks, split-card delegation and Saga routes.
+
+Native disassembly confirms Verdant Command's human-path uninitialized dialog
+priorities (0x022430df-0x0224311f); this existing behavior is retained and
+commented. Its two-choice target indexing, including life mode's lack of
+advancement, is preserved. One batch build and all 15,169 fixed veneers pass;
+known uninitialized-priority warnings remain. No new native gameplay cases or
+historical replay are claimed. Reccmp refresh remains deferred. The census is
+1,700 LAB jumps and 32,061 placeholder references. The index is unchanged. See
+[Modern Horizons 2 coverage](recovery-evidence/mh2-control-cleanup-coverage.json)
+and [current inventory](recovery-evidence/readability-source-snapshot-c476.json).
+
+Ice Age/New Phyrexia readability cleanup updates 71 definitions together:
+28 exact alpha-only local substitutions and 43 reviewed control-flow changes.
+It removes 112 gotos (108 LAB jumps), 560 lines and 1,565 placeholder references.
+Payment rechecks, direct mana paths, cached/live attachment reads, aura event
+routing, reverse creature scans and post-callback counter reads are preserved.
+Karn's restart is unchanged for a focused follow-up. Ice Age's remaining legacy
+break2 jump and historical/disabled code are outside this recovered-definition
+batch. One combined build and all 15,169 fixed veneers pass.
+
+Verification policy: exact token checks for local renames; focused source review
+for structured edits; one incremental target build per substantial batch. Native
+inspection is reserved for uncertain behavior. Reccmp and broader checks wait for
+major comparison/commit checkpoints. No new tests or historical replay are added
+for routine readability cleanup. The census is 1,592 LAB jumps and 30,496
+placeholder references. The staged index is unchanged. See
+[batch coverage](recovery-evidence/ice-nph-control-cleanup-coverage.json) and
+[current inventory](recovery-evidence/readability-source-snapshot-c480.json).
+
+Karn/Mercadian Masques readability cleanup updates 66 definitions: 54 exact
+alpha-only local substitutions and 12 reviewed control-flow changes. It removes
+32 LAB jumps and 1,533 placeholder references. Both files now have no LAB jumps
+or known placeholder locals. Karn retains commander tracking and reentry order,
+separate reverse scans, both stack sweeps, context snapshots, energy resets,
+companion/plane handling and hand-size callback restoration. Native inspection
+confirms its pre-sentinel card-data load and inclusive exile cleanup; both quirks
+remain. Mercadian Masques retains alternative-cost cancellation, payment and
+post-fizzle target-selection differences, aura/trigger routing and cleanup.
+
+One combined build and all 15,169 fixed veneers pass. No new gameplay tests or
+historical replay were run; reccmp refresh remains deferred under the lighter
+batch verification policy. The census is 1,560 LAB jumps and 28,963 placeholder
+references. The index is unchanged. See
+[batch coverage](recovery-evidence/karn-masques-control-cleanup-coverage.json) and
+[current inventory](recovery-evidence/readability-source-snapshot-c484.json).
+
+Prophecy readability cleanup updates 57 definitions: 30 exact alpha-only local
+substitutions and 27 reviewed control-flow changes. It removes 71 gotos (69 LAB
+jumps), 453 lines and 761 placeholder references. The file now has no gotos or
+known placeholder locals. Related any-player abilities preserve source checks,
+repeated record queries, inclusive live legacy scans, opponent search exits,
+source/activation slot differences and distinct card versus legacy cleanup.
+Dual Nature retains departure query order, cached affected player and separate
+reverse token scans. Copper-Leaf Angel retains marked selections, activation
+before reverse sacrifices, live fizzle checks and post-kill slot increments.
+Rhystic, aura, combat and regeneration routes retain their callback order.
+
+One target build and all 15,169 fixed veneers pass. Reccmp refresh remains
+deferred; no new gameplay tests or historical replay were run. The census is
+1,491 LAB jumps and 28,202 placeholder references. The staged index is unchanged.
+See [batch coverage](recovery-evidence/prophecy-control-cleanup-coverage.json) and
+[current inventory](recovery-evidence/readability-source-snapshot-c488.json).
+
+Modern Horizons/M19 readability cleanup updates 76 definitions: 47 exact
+alpha-only local substitutions and 29 reviewed control-flow changes. It removes
+55 gotos (48 LAB jumps), 251 lines and 1,316 placeholder references. Both files
+now have no LAB jumps or known placeholder locals; existing descriptive-label
+jumps in Hogaak/convoke implementations outside the census remain unchanged.
+Kaya Guile retains ordered per-mode rechecks, Wrenn/Sisay keep player snapshots
+and separate scans, and Endling retains cached keywords and priority/payment
+routing. Pitch spells, shared Sliver abilities, Undying, Hogaak's grave masking
+and convoke/delve sequence retain callbacks and native quirks. M19 death helpers
+keep source-death differences, detach flags, low-byte counts and cleanup. Liliana
+keeps grave-pointer refreshes and the selected list-index argument; Chaos Wand's
+reveal/bottom counts and Contract's two-player scans are preserved.
+
+One combined target build and all 15,169 fixed veneers pass. No new gameplay
+tests or historical replay were run; reccmp refresh remains deferred. The census
+is 1,443 LAB jumps and 26,886 placeholder references. The index is unchanged.
+See [batch coverage](recovery-evidence/mh1-m19-control-cleanup-coverage.json) and
+[current inventory](recovery-evidence/readability-source-snapshot-c492.json).
+
+Invasion/Hour of Devastation readability cleanup updates 77 definitions:
+49 exact alpha-only local substitutions and 28 control-flow changes. It removes
+55 gotos (54 LAB jumps), 115 lines and 1,083 placeholder references. Both files
+have no LAB jumps or known placeholder locals. Split-card selection/payment
+keeps callback order, free/override paths, fused costs, X storage and fizzle
+cleanup. Desert activations keep availability/payment differences, state rollback,
+mode writes and mana life loss. Scorpion death tracking, Samut target cancellation,
+Unesh triggers, Leave/Chance and Nimble stack/cycling behavior are preserved.
+
+Native inspection confirms Torment's sacrifice choice also loses 3 life and Hour
+Devastation's two reverse scans with a fresh player lookup between them; both are
+retained. One combined build and all 15,169 fixed veneers pass. The batch includes
+76 tracked definitions plus one unused private cycling worker outside the prior
+census. The tracked census is 1,391 LAB jumps and 25,865 placeholder references;
+the worker removed another 2 LAB jumps and 62 references outside those totals.
+No new gameplay tests or historical replay were run. Reccmp refresh remains
+deferred and the index is unchanged. See
+[batch coverage](recovery-evidence/invasion-hou-control-cleanup-coverage.json) and
+[current inventory](recovery-evidence/readability-source-snapshot-c496.json).
+
+Amonkhet/Rivals of Ixalan readability cleanup updates 78 definitions (68 card
+handlers and 10 helpers): 46 exact local-token substitutions and 32 reviewed
+control-flow changes. It removes 70 gotos, including 65 LAB jumps, and 1,018
+placeholder references. Both files now have no LAB jumps or known placeholder
+locals. The combined build passes with all 15,169 fixed jump-table slots verified.
+See [batch record](recovery-evidence/akh-rix-control-cleanup.json).
+
+Further readability batches use `tools/recovery/apply_readability_batch.py` to
+apply reviewed drafts and record exact source edits without adding a dedicated
+verifier branch. Check affected files and local-token substitutions, review
+structured flow, and build once per substantial combined batch. Reserve native
+inspection for unresolved behavior; consolidate inventories and reccmp updates
+at larger comparison/commit checkpoints. The c496 inventory predates this batch.
+
+Dominaria/Zendikar Rising readability cleanup updates 94 definitions (77 card
+handlers and 17 helpers): 37 exact local-token substitutions and 57 reviewed
+structured edits. It removes 117 gotos, including 115 LAB jumps, 1,597 placeholder
+references and 721 lines. Both files now have no LAB jumps or known placeholder
+locals. The combined build passes with all 15,169 fixed jump-table slots verified.
+Saga chapters, MDFC payment/dispatch, inscriptions, party counting, death effects
+and activation cleanup retain their existing behavior and query/callback order.
+See [batch record](recovery-evidence/dom-znr-control-cleanup.json). Current-file
+checks pass; historical replay, reccmp and inventory regeneration remain deferred.
+
+Guilds of Ravnica/Ravnica Allegiance/Unstable readability cleanup updates 104
+existing definitions (83 card handlers and 21 helpers): 57 exact local-token
+substitutions and 47 reviewed structured edits. It removes 110 gotos, including
+104 LAB jumps, 1,801 placeholder references and 344 lines. All three files have
+no LAB jumps. Guilds and Unstable also have no known placeholder locals; the
+unused private `pay_spectacle` definition in Allegiance still has 18 placeholder
+references outside the tracked census and remains a follow-up cleanup target.
+The combined build and all 15,169 fixed jump-table slots pass. See
+[batch record](recovery-evidence/grn-rna-unstable-control-cleanup.json). Historical
+replay, reccmp and inventory regeneration remain deferred.
+
+Theros Beyond Death/M20/private spectacle readability cleanup updates 78 existing
+definitions (62 card handlers and 16 helpers): 40 exact local-token substitutions
+and 38 reviewed structured edits. It removes 69 gotos, including 64 LAB jumps,
+1,566 placeholder references and 140 lines. Theros, M20 and Allegiance now have
+no LAB jumps or known placeholder locals; Allegiance's private `pay_spectacle`
+follow-up above is complete. This batch has 77 tracked definitions plus that
+private helper outside the old census. The combined build and all 15,169 fixed
+jump-table slots pass. See
+[batch record](recovery-evidence/thb-m20-spectacle-control-cleanup.json).
+Historical replay, reccmp and full inventory regeneration remain deferred.
+
+Tempest/Visions/Alliances readability cleanup updates 91 existing definitions
+(79 card handlers and 12 helpers): 52 exact local-token substitutions and 39
+structured edits. It removes 84 LAB jumps, 1,619 placeholder references and
+269 lines. All three files now have no LAB jumps or known placeholder locals.
+The combined incremental build passes with all 15,169 fixed jump-table slots.
+Licid mode transitions, shared Sliver lifecycle checks, phased creature passes,
+duplicate-target merging and legacy/exile bookkeeping retain recovered behavior.
+Casting of Bones now clears its complete 200-int array with `memset` rather
+than pointer stepping. See
+[batch record](recovery-evidence/tempest-visions-alliances-control-cleanup.json).
+Verification checks affected source pins, exact token substitution for local
+renames, and changed control flow, followed by one combined build. Full audits,
+inventory refreshes and reccmp remain deferred to a larger checkpoint; native
+inspection is reserved for unresolved behavior.
+
+Commander 2018/Dissension/Urza's Saga readability cleanup updates 73 existing
+definitions (60 card handlers and 13 helpers): 39 exact local-token substitutions
+and 34 structured edits. This includes the private `totem_armor_any` helper
+outside the old inventory. It removes 86 gotos (84 LAB jumps), 1,861 placeholder
+references and 436 lines. All three files now have no LAB jumps or known
+placeholder locals. The combined incremental build and all 15,169 fixed
+jump-table slots pass. Split-card routing, planeswalker battlefield scans,
+Augury type choices, Arixmethes type caching and death-trigger callback order
+retain recovered behavior. Saheeli/Windgrace buffer clearing uses bounded
+`memset`, and Contamination uses indexed writes to the same override entries.
+See [batch record](recovery-evidence/c18-dissension-usg-control-cleanup.json).
+Only affected-file checks, exact local-token checks, focused structured review
+and the combined build were run; full audits, inventory and reccmp refreshes
+remain deferred.
+
+Vanguard/Unglued-Unhinged/Ikoria readability cleanup updates 53 existing
+definitions (32 card handlers and 21 helpers): 30 exact local-token substitutions
+and 23 structured edits. It removes 32 gotos (30 LAB jumps), 1,798 placeholder
+references and 192 lines. All three files now have no known placeholder locals;
+Ikoria has no LAB jumps. The 48 LAB jumps in `card_edh` and 11 in `get_rules_text`
+remain unchanged: those large definitions receive local renames only, verified
+by exact token substitution. The batch application tool now permits unchanged
+labels in alpha-only edits, allowing local cleanup independently of later
+control-flow reconstruction. Other changes preserve commander movement and
+special casting, word-count exceptions, die rolls after permanent removal,
+companion legality quirks and Broodmoth target indexing. The combined incremental
+build and all 15,169 fixed jump-table slots pass. See
+[batch record](recovery-evidence/vanguard-un-ikoria-readability-cleanup.json).
+Full audits, inventory regeneration and reccmp remain deferred.
+
+Ixalan/Weatherlight/Exodus readability cleanup updates 69 existing definitions
+(60 card handlers and 9 helpers): 42 exact local-token substitutions and 27
+structured edits. It removes 51 gotos (48 LAB jumps), 956 placeholder references
+and 231 lines. All three files now have no known placeholder locals. Star of
+Extinction, Betrothed of Fire, Coils of the Medusa and both Exodus licids retain
+their control flow while receiving local names. Other edits simplify activation
+and aura routing, Huatli duplicate-target merging, death-trigger bookkeeping,
+and Aether Tide resolution without changing recovered query/callback order.
+Spike Cannibal uses indexed counter snapshots and a sizeof-based clear of the
+same 302-int array. The combined incremental build and all 15,169 fixed
+jump-table slots pass. See
+[batch record](recovery-evidence/xln-wth-exo-readability-cleanup.json).
+Full audits, inventory regeneration and reccmp remain deferred.
+
+Time Spiral/Nemesis/Portal readability cleanup updates 62 existing definitions
+(46 card handlers and 16 helpers): 42 exact local-token substitutions and 20
+structured edits. It removes 33 gotos (32 LAB jumps), 734 placeholder references
+and 284 lines. All three files now have no known placeholder locals. Nemesis
+and Portal have no LAB jumps; the two in `generic_suspend_legacy` remain
+unchanged under exact local-token substitution. Shared Sliver lifecycle checks,
+Ib Halfheart sacrifice cleanup, Clockspinning AI predicates, Mana Cache source
+handling and callback-sensitive target counts retain recovered behavior.
+Pale Moon uses indexed writes to the same seven override entries per player.
+The combined incremental build and all 15,169 fixed jump-table slots pass.
+See [batch record](recovery-evidence/tsp-nemesis-portal-readability-cleanup.json).
+Full audits, inventory regeneration and reccmp remain deferred.
+
+Lorwyn/Fifth Dawn/Homelands/Commander 2017/Battlebond readability cleanup updates
+58 existing definitions (45 card handlers and 13 helpers): 40 exact local-token
+substitutions and 18 structured edits. This includes the private `assist` helper
+outside the old inventory. It removes 31 LAB jumps, 1,273 placeholder references
+and 81 lines. All five files now have no known placeholder locals; Lorwyn and
+Commander 2017 also have no LAB jumps. Clockwork, Gemstone Array, Brightling and
+random-permanent network handling retain their control flow under exact token
+substitution. Other edits simplify Colfenor's Urn death/selection handling,
+Station triggers, Homelands aura cleanup, Kindred event routing and Arcane
+Artisan token removal while retaining recovered callback order and quirks.
+Kindred Charge uses a sizeof-based clear of the same 151-byte marking buffer.
+The combined incremental build and all 15,169 fixed jump-table slots pass.
+See [batch record](recovery-evidence/lrw-5dn-hml-c17-bbd-readability-cleanup.json).
+Full audits, inventory regeneration and reccmp remain deferred.
+
+Core test/sacrifice readability cleanup updates 19 existing helpers in
+`functions/global_checking.c` and `functions/sacrifices.c`: 18 exact local-token
+substitutions and one structured payment/sacrifice branch. It removes 968
+placeholder references, including the underscored `p_Var17` callback name,
+and one LAB jump. Both files now have no known placeholder locals. Existing
+optimized control flow, callback-sensitive cached flags, fizzle restoration,
+target snapshots and packed sacrifice results remain unchanged apart from the
+reviewed branch. The batch tooling and source-reader registry now accept
+`functions/` inputs and detect underscored temporary spellings.
+
+Direct inspection of the native DBG confirms useful original local names and
+optimized location lists. The test helper records include owning DIEs, local
+vocabulary and the DBG hash. Score accumulators use native `TEST_TYPE` and
+`test_type` spellings; remaining names describe observed roles. A compiler
+temporary can represent several original locals, and some DWARF locals have
+no location, so a universal automatic name correspondence is not claimed.
+The combined incremental build and all 15,169 fixed jump-table slots pass.
+See [batch record](recovery-evidence/core-test-sacrifice-local-cleanup.json).
+Full audits, inventory regeneration and reccmp remain deferred.
+
+Ravnica/Innistrad/core-set readability cleanup updates 64 existing definitions
+in Unlimited, Ravnica, Onslaught, Shadows over Innistrad, Return to Ravnica and
+Dragon's Maze (38 card handlers and 26 helpers): 45 exact local-token
+substitutions and 19 structured edits. It removes 47 gotos (46 LAB jumps),
+1,741 placeholder references and 129 lines. All six files now have no known
+placeholder locals, including the private `notion_thief_effect` missed by
+the old census. Complex graveyard selection, Warp World, damage packing and
+other retained flow receive exact token substitution only. Pointer-typed
+counter representations remain candidates for a separate representation review.
+Structured changes share aura/fuse event routing and clue/GFP lifecycle paths,
+preserving target initialization order, callback-sensitive flag reloads and
+GFP-specific early returns. Behind the Scenes retains generic cleanup handling
+without pumping creatures; Entrails Feaster uses an initialized 100-byte,
+zero-padded message array. The combined incremental build, affected-file and
+definition pins, whitespace checks and all 15,169 fixed jump-table slots pass.
+The user's staged index is preserved. See
+[batch record](recovery-evidence/ravnica-innistrad-core-readability-cleanup.json).
+Full audits, inventory regeneration and reccmp remain deferred.
+
+Stronghold/Urza's Legacy/Commander 2019/Gargaroz/Jumpstart/Khans readability
+cleanup updates 72 existing definitions (46 card handlers and 26 helpers):
+49 exact local-token substitutions and 23 structured edits. It removes 39
+gotos (33 LAB jumps), 894 placeholder references and 117 lines. All six files
+now have no known placeholder locals; Stronghold and Urza's Legacy also have
+no LAB jumps. Structured changes share Sliver source-lifecycle checks and GFP
+effect routing, replace existing-legacy search jumps with found flags, and
+simplify Elsha, Ricochet Trap, Retribution and Chainer event paths. Chainer
+retains graveyard-pointer reloads after legality, mana and timing callbacks;
+Elven Rite retains live target counts after counter callbacks. Aura destruction
+clears the same 302-int snapshot using sizeof and caches the next card before
+destruction callbacks. Larger Atla, Kels, Volrath, Consulate and sacrifice
+selection paths retain their flow under exact token substitution. No new
+native coverage or gameplay-equivalence claim is made. The combined incremental
+build, affected-file and definition pins, evidence pins, whitespace checks and
+all 15,169 fixed jump-table slots pass. The user's staged index is preserved.
+See [batch record](recovery-evidence/stronghold-commander-khans-readability-cleanup.json).
+Full audits, inventory regeneration and reccmp remain deferred.
+
+Abilities/deck/older-set readability cleanup updates 68 existing definitions
+in abilities, deck, Scars of Mirrodin, Shadowmoor, Zendikar, Antiquities and
+Legends (35 card handlers and 33 helpers): 44 exact local-token substitutions
+and 24 structured edits. It removes 45 gotos (44 LAB jumps), 1,056 placeholder
+references and 82 lines. All seven files now have no known placeholder locals;
+deck and Shadowmoor also have no LAB jumps. Structured changes cover Humility
+cleanup, protection-source traversal, proliferate selection, GFP effect routing,
+reverse permanent scans, Power Artifact and Time Elemental event paths, and
+ordinary buffer initialization. The graveyard source-ID clear still affects
+both players' 1,000 entries, and granted flanking clears the same 302-byte buffer.
+Proliferate retains target-query and counter-choice order; Blowfly still queries
+targets before checking its remaining count and retries canceled picks. Power
+Artifact retains casting rechecks, its target-change return, temporary aura
+states and cost-modifier calls. Larger duration, battery, aura and AI paths
+retain their flow under exact token substitution. No new native coverage or
+gameplay-equivalence claim is made. The combined incremental build, affected-file
+and definition pins, evidence pins, whitespace checks and all 15,169 fixed
+jump-table slots pass. The user's staged index is preserved. See
+[batch record](recovery-evidence/ability-deck-older-set-readability-cleanup.json).
+Full audits, inventory regeneration and reccmp remain deferred.
+
+Subtype/plane/counter readability cleanup updates 62 existing definitions in
+subtype helpers, Innistrad, Coldsnap, Champions of Kamigawa, Planar Chaos,
+Planechase, The Dark and Darksteel (44 card handlers and 18 helpers): 36 exact
+local-token substitutions and 26 structured edits. It removes 53 gotos
+(52 LAB jumps), 1,114 placeholder references and 154 lines. All eight files
+now have no known placeholder locals. Subtype helpers, Innistrad, Champions
+and Darksteel also have no LAB jumps. Structured changes include Haakon casting
+and graveyard dispatch, shared Sliver lifecycle, Reality Acid aura routing,
+Grand Ossuary counter distribution, Aether Snap marking/removal, Frankenstein
+counter choices, Spitting Slug combat eligibility and Worms of the Earth flags.
+Subtype and shared-subtype buffers use sizeof-based clears; Deep Water writes
+the same seven mana-override entries per player with indices. Recovered quirks
+remain, including subtype-adjacent reads, Moonmist marked-value transforms,
+Grand Ossuary target-record reuse, Bushido's enabled-resolution shortcut and
+callback-sensitive snapshots. Larger land-conversion, plane-damage and modal
+paths retain flow under exact token substitution. No new native coverage or
+gameplay-equivalence claim is made. The combined incremental build, affected-file
+and definition pins, evidence pins, whitespace checks and all 15,169 fixed
+jump-table slots pass. The user's staged index is preserved. See
+[batch record](recovery-evidence/subtype-plane-counters-readability-cleanup.json).
+Full audits, inventory regeneration and reccmp remain deferred.
+
+Tarkir/Strive/artifact readability cleanup updates 60 existing definitions across
+Dragons of Tarkir, Future Sight, Gatecrash, Journey into Nyx, Mirrodin, Urza's
+Destiny, Battle for Zendikar, Betrayers of Kamigawa and Fallen Empires (49 card
+handlers and 11 helpers): 44 exact local-token substitutions and 16 structured
+edits. It removes 31 gotos (30 LAB jumps), 1,299 placeholder references and 60
+lines. All nine files now have no known placeholder locals; Dragons of Tarkir
+and Gatecrash also have no LAB jumps. Structured edits cover Evolve, Thrull
+Parasite, Strive selection/payment and target-state cleanup, counter marking
+in Scale Blessing and Drana, Oblivion Stone scans, Catacomb Sifter lifecycle,
+and straightforward spell/aura dispatch. Strive preserves cached cleanup-entry
+counts, live target counts within cleanup and fizzle checks after callbacks.
+Oblivion Stone retains the executable callback between its scans. Larger
+Glissa, Kira, storage-land, aura and modal AI paths retain their flow under
+token substitution; Merseine's pointer-typed cost representation and Zada's
+documented native non-advancing copy loop remain unchanged. No new native
+coverage or gameplay-equivalence claim is made. The combined incremental build,
+affected-file and definition pins, evidence pins, whitespace checks and all
+15,169 fixed jump-table slots pass. The user's staged index is preserved. See
+[batch record](recovery-evidence/tarkir-strive-artifact-readability-cleanup.json).
+Full audits, inventory regeneration and reccmp remain deferred.
+
+The next combined readability batch covers 63 definitions in M15, Rise of the
+Eldrazi, the graveyard-count helpers, Apocalypse, Avacyn Restored, Commander,
+Commander 2016, Dark Ascension, Eldritch Moon, Eventide, Fate Reforged and
+Origins: 45 card handlers and 18 helpers. Exact rename token checks cover 45
+definitions; focused control-flow review covers the other 18. The batch removes
+1,612 placeholder occurrences and 32 gotos, including 31 LAB jumps. Eternal
+Thirst retains the instance refresh after GFP resolution; Aggressive Mining
+retains cleanup and leaves-play callback ordering. Bolster preserves its initial
+minimum and tie-count quirks, while Warden of the First Tree refreshes its
+selected mode only on the original paths. Recruiting and Dark Impostor preserve
+cursor advances around callbacks. Larger modal handlers retain their existing
+control flow under exact local substitution. All twelve affected files now
+have no placeholder locals matching the cleanup census. The single combined
+incremental build passes, including all 15,169 fixed jump-table slots; affected
+source/evidence pins, whitespace and staged-index preservation checks pass.
+See [batch record](recovery-evidence/core-commander-level-readability-cleanup.json).
+No new native coverage or gameplay-equivalence claim is made. Full audits,
+inventory regeneration and reccmp refreshes remain deferred; the lightweight
+batch verification policy continues at the user's request.
+
+The next readability batch covers 71 definitions across twenty source files:
+56 card handlers and 15 helpers. Exact rename token checks cover 55 definitions;
+focused review covers 16 structured definitions. It removes 1,317 placeholder
+references and 22 gotos, including 21 LAB jumps. Counter-distribution loops in
+Shambling Swarm, Strength of the Tajuru and Reap What Is Sown preserve target
+reads and cursor advances around callbacks. Shambling Swarm clears its full
+302-int marking array with memset. Eye of Doom preserves its separate marking
+and destruction passes and cached player values. Thornbite Staff and
+Soulcatcher's Aerie retain their GFP/attachment/cleanup ordering. Veterans'
+Armaments still queries its equipment twice during activation. Necropolis of
+Azar retains its trigger loop, and Ruins of Oran-Rief retains its repeated
+target updates. Larger Revoker, Marath, Sigil, planeswalker and modal AI paths
+retain their control flow under local substitution. All twenty affected files
+have no remaining placeholder locals matching the cleanup pattern. The batch
+applicator and source-reader registry now accept the existing hyphenated
+Conspiracy source filename. The single incremental build and all 15,169 fixed
+jump-table slots pass, along with affected source/evidence pins, whitespace
+and staged-index preservation checks. See
+[batch record](recovery-evidence/counters-tribal-commander-readability-cleanup.json).
+No new native coverage or gameplay-equivalence claim is made. Full audits,
+inventory regeneration and reccmp refreshes remain deferred.
+
+The engine/exile/text readability batch covers the final 45 previously
+untouched entries from the C496 cleanup census: 13 card handlers and 32 helpers
+across twenty-two files. Exact rename token checks cover 34 definitions;
+focused control-flow review covers eleven. The batch removes 1,771 placeholder
+references and 24 LAB jumps. It reconstructs the text-copy wrapper's empty-loop
+gate, deadbox reanimation scan, attacker unlinking scan, exile CMC ownership
+tests, Monstrosity activation gate, Song of the Dryads aura/type dispatch,
+Titania GFP lifecycle, two shared Sliver ability lifecycles, Thief of Blood
+scan and Savage Summonings event routing. Deadbox reanimation retains fresh
+slot reads after classification calls and advances the slot before invoking
+the reanimation callback. Exile CMC counting retains the paired-record pointer
+comparison and its original twenty-bin counting bound within a twenty-one-bin
+buffer. Text loading retains the existing clamp, trailing-row behavior and
+file-cache fallback indexing. Larger parser, spell payment, cascade, mass-action,
+control and modal paths retain their existing control flow under local
+substitution. All twenty-two affected files have no remaining placeholder
+locals matching the cleanup pattern. This closes the untouched-entry pass over
+the older census; previously retained jumps still need reconstruction. The
+single combined incremental build, all 15,169 fixed jump-table slots, affected
+source/evidence pins, whitespace and staged-index preservation checks pass.
+See [batch record](recovery-evidence/engine-exile-text-readability-cleanup.json).
+No new native coverage or gameplay-equivalence claim is made. Full audits,
+inventory regeneration and reccmp refreshes remain deferred.
+
+The aura/selection/event-flow batch reconstructs control flow in 33 existing
+definitions across twenty-six files: 21 card handlers and twelve helpers.
+All 33 definitions now have no jumps or decompiler labels. The batch removes
+53 gotos, including 51 LAB jumps, and 111 source lines. It covers aura upkeep
+and casting dispatch, sacrifice scans, Clockwork and storage mana paths,
+Coalition Relic, Scrying Glass, random permanent selection, Compost and
+Grindclock AI paths, bestow, Tetravus, Sarkhan, Soulcatcher's Aerie, Descent
+into Madness, Life/Death, Volrath and related event routes. Separate engine
+queries, cached values and fresh reads after callbacks remain intact. Random
+selection preserves host/client packets and its initial hand-count gate.
+Life/Death retains the native empty-graveyard early return during resolution;
+bestow retains the original distinction between characteristic-event routes
+and routes gated by trigger context. Native quirks are preserved. The single
+combined incremental build, all 15,169 fixed jump-table slots, affected
+source/evidence pins, whitespace and staged-index preservation checks pass.
+See [batch record](recovery-evidence/aura-selection-event-flow-cleanup.json).
+This is readability reconstruction of already recovered functions, with no new
+native-function coverage or gameplay-equivalence claim. Full historical audits,
+inventory regeneration, reccmp refreshes and gameplay tests remain deferred.
+
+The split/aura/counter-flow batch reconstructs 26 existing definitions across
+twenty-one files: 23 card handlers and three helpers. All changed definitions
+now have no jumps or decompiler labels. It removes 123 gotos, including 121
+LAB jumps, and 580 source lines. Split/fuse dispatch retains half-selection
+callbacks, target-slot offsets, priority snapshots, fresh half flags after
+callbacks and distinct empty-graveyard behavior. Toil/Trouble retains its
+fallback priority after failed arbitrary-target validation. Aura paths retain
+attachment queries, regeneration checks, casting callbacks and upkeep behavior.
+Kels and Atla retain source-presence gates, GFP/activation separation and
+per-trigger work; Atla's legacy removal remains inside its per-Egg loop.
+Gemstone Array retains repeated payment queries and direct mana production.
+Sigil retains repeated equipment/instance queries. Set-PT legacy retains its
+captured duration flags and source-leaves/upkeep removal ordering. Mimeoplasm
+retains face-down selection handling and state cleanup. Star of Extinction
+retains current-turn refreshes across damage callbacks, separate creature and
+planeswalker damage tests, and mass damage after failed land-target validation.
+Sacrifice and Bomb Squad scans retain cached next indices and live card-count
+bounds. The single combined incremental build, all 15,169 fixed jump-table
+slots, affected source/evidence pins, whitespace and staged-index preservation
+checks pass. See
+[batch record](recovery-evidence/split-aura-counter-flow-cleanup.json).
+No new native-function coverage or gameplay-equivalence claim is made. Full
+historical audits, inventory regeneration, reccmp refreshes and gameplay tests
+remain deferred.
+
+The modal/scan/suspend-flow batch reconstructs 22 existing definitions in
+twenty-two files: fifteen card handlers and seven helpers. All changed
+definitions now have no jumps or decompiler labels. It removes 98 gotos,
+including 95 LAB jumps, and 329 source lines. Counter snapshots, contiguous
+stored-power reads and clears, target-selection callbacks, mode packing and
+AI priorities remain intact. The payment and test-score helpers retain their
+original branches and bit masks. Exile bookkeeping and mass damage retain
+cached next indices, live count bounds, fallback type queries and evolving
+turn-order passes. Warp World retains its separate reveal and return passes
+and pointer advances before put-into-play callbacks. Kira retains its distinct
+trigger-target and top-stack scans, live/cached target counts and cleanup.
+The aura, queued-source, draw-replacement, four-step animation and suspend
+paths retain their original callback ordering and native quirks. A targeted
+native inspection confirmed Relentless Dead reads its graveyard-position slot
+before initialization on its no-black-mana/no-graveyard-shroud path (load at
+0x022a91d7 within the function at 0x022a9130). That native quirk is preserved;
+no initialization or stack-slot alias was invented. The batch record identifies
+the native DLL and inspection output by hash. The single combined incremental
+build, all 15,169 fixed jump-table slots, affected source/evidence pins,
+whitespace and staged-index preservation checks pass. See
+[batch record](recovery-evidence/modal-scan-suspend-flow-cleanup.json).
+No new native-function coverage or gameplay-equivalence claim is made. Full
+historical audits, inventory regeneration, reccmp refreshes and gameplay tests
+remain deferred.
+
+The next combined readability batch reconstructs 17 definitions (nine card
+handlers and eight helpers) across 15 source files, removing 126 jumps and
+487 source lines. It covers both card-test helpers, the Licids, Infinite
+Reflection, Death's Presence's legacy, Brain in a Jar, Shared Discovery,
+Tourach's Gate, Glissa, Phyrexian Revoker, Betrothed of Fire, text-stash and
+rules-text parsing, exile permissions, multicascade and mass manipulation.
+Native quirks in counter priorities, slash-token output, cascade indexing
+and aura-bounce shifting are retained. Focused event/callback review and one
+combined incremental build pass, including all 15,169 fixed entry slots;
+affected source/evidence pins, whitespace and staged-index preservation
+also pass. See [batch record](recovery-evidence/licid-parser-mass-action-flow-cleanup.json).
+No new native-function coverage or gameplay-equivalence claim is made.
+Full historical audits, inventory regeneration, reccmp refreshes and gameplay
+tests remain deferred to milestones.
+
+The final three definitions in the current recorded control-flow queue are now
+structured: `card_edh`, `new_sacrifice_impl` and `generic_control_legacy`.
+This batch removes 67 jumps and 317 source lines. EDH retains its partner and
+Piper validation paths, temporary-card casting cleanup, all five commander
+ability paths, two tax queries per eligibility probe, first-query zero-tax
+fallback and live trigger context. Sacrifice selection retains optional/early
+completion, AI-to-dialog fallback, target restoration and mark/kill ordering.
+Control release retains cached mode flags, callback order and repeated state
+writes. One combined incremental build and all 15,169 fixed entry slots pass;
+focused source/evidence pins, whitespace and staged-index preservation checks
+also pass. See [batch record](recovery-evidence/commander-sacrifice-control-flow-cleanup.json).
+This completes that recorded cleanup queue, not whole-DLL recovery or gameplay
+verification. No new native-function coverage or gameplay-equivalence claim is
+made. Full historical audits, inventory regeneration, reccmp refresh and
+gameplay tests remain deferred.
+
+The numeric-storage follow-up changes 30 definitions (25 card handlers and five
+helpers) across 19 original source files. Twenty-four definitions now use the
+integer info_slot member for numeric values instead of function-pointer
+arithmetic or integer-to-CardFunction casts; genuine legacy callbacks retain
+the info_slot_fn view. Original DWARF identifies the three loop counters as
+integer amount/amount/x, and four targeted native disassemblies support the
+scalar operations. Their input hashes and DIE/local witnesses are recorded
+in the [batch record](recovery-evidence/numeric-storage-odyssey-readability-cleanup.json).
+The batch also removes 245 placeholder identifier occurrences, six jumps and
+61 lines, including the missed Odyssey paths and the complete 151-byte inline
+Breath of Dreams clear. Two alpha-only definitions receive exact token checks;
+structured edits receive focused review. The combined incremental build,
+all 15,169 fixed entry slots, affected source/evidence pins, whitespace and
+staged-index preservation checks pass. A quick C/C++ source-pattern scan of
+cards and functions finds no remaining matching placeholder names or union
+keywords, but identifies 20 additional decompiler jumps outside the old
+recorded queue; those are follow-up targets. This lexical scan does not count
+union-typed locals declared through typedefs or prove whole-DLL completeness.
+No new native-function coverage or gameplay-equivalence claim is made. Broad
+historical audits, inventory regeneration, reccmp refresh and gameplay tests
+remain deferred.
+
+The expanded decompiler-label cleanup changes 20 definitions (14 card handlers
+and six helpers) across ten original units, removing 45 jumps and 395 source
+lines. It covers five kicker handlers, six MDFC fronts, Lifecraft Awakening,
+Seize the Day, Jar of Eyeballs, the Vizkopa legacy, haste-effect creation,
+per-card actions, the split-card lookup, Partner eligibility and counter
+priority scoring. Named-card level/quest switches preserve the prior score
+and threshold mappings; quest scoring still queries COUNTER_LEVEL. Existing
+callback order, context refreshes, first-half/MDFC routing, flashback and
+legacy -1 index/return quirks are retained. See the
+[batch record](recovery-evidence/remaining-joined-counter-flow-cleanup.json).
+One combined incremental build, all 15,169 fixed entry slots, focused
+source/evidence pins, whitespace and staged-index preservation checks pass.
+A fresh lexical scan of C/C++ files under cards and functions finds no matching
+placeholder locals or LAB_/joined_r0x/code_r0x identifiers. This closes the
+identified naming/label patterns, not all possible readability work or native
+recovery. No new native-function coverage or gameplay-equivalence claim is
+made. Broad historical audits, inventory regeneration, reccmp refresh and
+gameplay tests remain deferred.
+
+The native local-enum restoration closes the 290-declaration/730-name source
+queue across 285 function owners in 82 units. A separate helper corrects
+CHOICE_TOKEN_ONLY to native CHOICE_UNPRINTED, value 4, for a combined 286
+edited definitions in 83 units. All restored enums are anonymous four-byte
+native declarations, with exact names, ordering, values, source and function
+ownership rechecked directly against the pinned original DBG. Removing the
+inserted declarations and reversing that one alias rename reproduces the
+previous implementation tokens. Existing source formatting and algorithms
+are preserved. See [batch record](recovery-evidence/native-local-enum-restoration.json).
+The combined build and all 15,169 fixed entry slots pass. The full 777-enum
+census now has exact native names/values in current source (1,967 enumerators).
+GCC emits 487 enums/1,237 names, independently checked in current DWARF; the
+290 restored declarations are omitted while their implementations still use
+numeric literals. Symbolic replacement of those numeric uses is separate work;
+no artificial locals are introduced to force debug emission. The historical
+alias receipt remains intact and its verifier recognizes the explicit later
+name correction and directly validated source-only declarations. Focused
+source/evidence pins, exact token projection, whitespace and staged-index
+preservation checks pass. Broad historical replay, reccmp refresh and gameplay
+tests remain deferred. No new native-function coverage or gameplay-equivalence
+claim is made.
+
+The first native choice-use pass replaces 731 numeric comparisons/case labels
+with their exact native CHOICE_* constants across 223 definitions (216 card
+handlers and seven helpers) in 61 original units. One primary dialog domain,
+conservative reaching dialog-result locals and exclusively owned mode storage
+select the uses. Secondary dialogs, mixed-purpose storage, escaped locals,
+arithmetic, multiple domains and function/macro arguments are excluded.
+Every replacement independently checks the exact local enum declaration and
+an equal plain C-int literal; other implementation tokens and existing source
+formatting remain unchanged. See
+[batch record](recovery-evidence/native-dialog-choice-enum-uses.json).
+The combined build, all 15,169 fixed entry slots, focused source/evidence pins,
+whitespace and staged-index preservation checks pass. Current DWARF independently
+checks 709 native enums/1,788 enumerators, 222 more enums than the preceding
+build. The converted static fabricate helper has no other source reference in
+its unit and remains unrepresented in debug. Exact native source declarations
+remain checked for all 777 enums; 68 are omitted from current debug. The
+remaining symbolic-use queue contains 62 owners with 67 as-yet-unused enums;
+the already-symbolic fabricate declaration is tracked separately. No new
+native-function coverage, runtime-byte identity or gameplay-equivalence claim
+is made. Broad historical replay, reccmp refresh and gameplay tests remain
+deferred.
+
+The stored-mode enum pass now adds 300 equal C-int substitutions across 61
+existing definitions (53 card handlers and eight helpers) in 42 original source
+files. It covers repeated menus, byte-valued stored modes, packed choices,
+zero-based legacy modes and separate graveyard trigger flag groups. Secondary
+menus, numeric costs, target indices, AI priorities, cancellation values and
+Thawing Glaciers' delayed-bounce sentinel 66 remain unchanged. Each replacement
+is independently projected from its native name/value; all other implementation
+tokens and source formatting are preserved. See
+[batch record](recovery-evidence/native-stored-mode-enum-uses.json).
+One combined incremental build passes, including all 15,169 fixed entry slots;
+affected source/evidence pins, whitespace and unchanged staging checks pass.
+All 777 native enum declarations/1,967 enumerators are present in source, and
+current DWARF verifies 773 declarations/1,959 enumerators. The four debug
+omissions are an unreferenced static fabricate helper, the graveyard life-gain
+group already expressed as booleans, and two damage-effect enums whose decisions
+are expressed as a boolean or have no numeric execution site. Their exact native
+declarations remain in source without artificial uses. No outstanding owner
+requires a symbolic-use pass from this queue. This is source readability and
+native-name recovery, with no new body coverage or gameplay-equivalence claim.
+Broad historical replay, reccmp refresh and gameplay tests remain deferred.
+
+The post-enum comparison checkpoint refreshes all 18,725 configured function
+entries with zero stubs. It retains 951 helper and 6,634 card ranges by local
+instruction/storage evidence; 1,242 helper and 5,100 card ranges retain their
+explicit reconstruction reviews, alongside 17 C++ and 34 compiler/header ranges.
+Both recorded queues have zero pending ranges. Routine triage now uses the
+current-source/name check instead of replaying deliberately retired snapshots.
+Five false card differences were solely unprefixed short/near JE/JNE encodings
+to the same destination ordinal. Triage now normalizes those internal branch
+widths; conditions, exact destination ordinals, prefixes and other instructions
+remain exact. Historical fingerprint behavior remains the default. Focused
+checks reject changed conditions/targets, loops and prefixed encodings.
+
+The following source batch restores three original helper interfaces across
+eight definitions in functions/packs.c and functions/sacrifices.c, with 27 caller
+updates. The pack workers now take the native eight-byte csvid_choices_t record,
+including its card_id_t pointer member, instead of separate member addresses.
+The pack insertion worker restores its rarity/expansion enum parameters. The
+sacrifice prompt worker restores maxlen, supplied as the native witnessed 200
+by all three callers. Independent implementation projections preserve other
+tokens, native diagnostic strings, allocator reloads, random calls and duplicate
+handling. One combined build and all 15,169 fixed entry slots pass; current
+DWARF checks all three original signatures and the record member layout. Source
+pins and staging preservation pass. See
+[batch record](recovery-evidence/native-record-parameter-restoration.json).
+The full comparison checkpoint predates these interface edits; it is not a
+post-edit comparison. The original-signature screen has 43 further candidates
+to classify, including wrapper/worker separation and compiler specializations;
+these are not automatically runtime ABI bugs. No new body coverage, runtime-byte
+identity or gameplay-equivalence claim is made.
+
+The next original-interface batch restores 13 native contracts in 93 source/header
+files. Twelve helper definitions and 55 helper call sites restore the embalm,
+escape, replicate and spectacle color arguments, three Strixhaven token amounts,
+the Havengul legacy callback and the target-source test parameter. Thirteen
+concrete DWARF constant witnesses pin omitted color values to zero, token amounts
+to one and the target-source mode to zero. Substituting those values reproduces
+the prior implementation tokens. The unused replicate event formal comes from
+the existing card event context; Havengul callers pass the original callback.
+
+The public show_deck done-label parameter now has its native string-pointer type.
+All 238 caller sites preserve their exact fixed addresses or existing string
+pointers through EXE_STR, removing integer casts from literal and custom labels.
+The raw EXE call still uses an explicit 32-bit pointer-to-word conversion. Public
+expansion, card-chooser color/type and pack-flag parameters regain their native
+enum types; the four pack-flag names and values remain exact. Both duplicate
+show_deck header declarations and all affected forward declarations are updated.
+Two legacy source files outside the current build receive matching argument
+types and explicit current-source pins, with no compiled native coverage credit.
+
+One combined build and all 15,169 fixed entry slots pass. Current owning-CU DWARF
+checks all 13 restored function contracts and the anonymous four-byte pack enum.
+Exact source replay, all 93 affected file/evidence pins, whitespace and unchanged
+staging checks pass. See
+[batch record](recovery-evidence/native-cost-token-public-interfaces.json).
+The full comparison is deferred after this batch. The original-signature screen
+has 30 further candidates, including deliberate public-wrapper/private-worker
+separation and compiler specializations, rather than 30 newly discovered bodies
+or established runtime ABI bugs. No new body coverage or gameplay-equivalence
+claim is made; unobserved specialization domains remain outside these witnesses.
+
+The GNU original-argument pass decodes call-site parameters linked through
+DW_OP_GNU_parameter_ref, preserving values even after GCC removes their physical
+argument slots. A reusable read-only extractor records 112 native call sites
+and 89 original-parameter records for the 30 signature candidates. These are
+source/debugger recipes, not a physical calling convention. See
+[batch record](recovery-evidence/original-optimized-call-arguments.json).
+
+The batch restores 26 source signatures and 78 calls across 18 original units.
+This includes six level-up cards' literal base power/toughness pairs, forwarding
+the existing level_up formals, omitted event/context parameters and mass
+reanimation's zero counter/null-hook arguments. Surviving worker statement
+tokens remain unchanged; av_free_spell reuses its original card formal after
+unconditional assignment instead of declaring a local. Existing argument
+expressions keep their order. Specialized domains and erased generic branches
+are explicitly distinguished; no unseen callback behavior is invented. Three
+return-type differences are explained by the already-correct buddy_creature,
+alternate_legacy_text and type_text public wrappers, whose returns remain intact.
+
+The corrected incremental build and all 15,169 fixed entry slots pass. Current
+DWARF checks the 26 restored signatures and three public return contracts.
+Canonical entry checking verifies 731 physical entries and five caller-owned
+inline helpers. It now recognizes compound GCC suffixes such as .isra.0.part.0
+while retaining exact canonical base names, recognized stages, uniqueness and
+static code-linkage requirements. One existing target helper gains an explicit
+compiler-clone allowance backed by its actual constprop entry. Source/evidence
+pins, whitespace and staging preservation checks pass. Four differently
+formatted forward declarations were repaired after the first build attempt.
+
+One original-signature candidate remains: four Memorial call sites expose ai=1,
+but Memorial to Folly omits that record. Its current behavior is preserved;
+no arbitrary original argument is supplied. The full comparison remains deferred.
+No new body coverage or gameplay-equivalence claim is made.
+
+The shared-data batch restores seven native arithmetic objects to their original
+source names and scopes. Four copied name-folding tables now use the original
+external lc_unaccent_map; eight sentinel uses refer to txtfx_not_found. Two
+private event states remain independent, the deck expansion override returns
+to windows.c with its native expansion enum type, and the date buffer and pack
+dialog template regain their original function-local identities. See
+[batch record](recovery-evidence/native-shared-data-identities.json).
+
+The combined GCC 9.3 build and all 15,169 fixed entry slots pass. A focused check
+matches all seven objects' source identities, arithmetic shapes, complete
+load-time bytes, qualifiers, linkage and section writability against the native
+release. This caught and corrected the override's prior signed-int declaration.
+The older arithmetic initializer report remains a historical snapshot; no full
+comparison or historical audit replay was run. The master recovery ledger is
+serialized compactly to remain below GitHub's per-file limit; its JSON content
+and all evidence entries are preserved.

@@ -1,0 +1,75 @@
+{
+  "status": "76 definitions cleaned up; one combined target build passed. Reccmp refresh deliberately deferred.",
+  "batch": "docs/recovery-evidence/mh1-m19-control-cleanup.json",
+  "batch_sha256": "87a3c5ae2e8dade452ae184f31220ed7354675c93fff58ac942b1aa8198f042f",
+  "counts": {
+    "definitions": 76,
+    "card_handlers": 60,
+    "local_helpers": 16,
+    "alpha_only_definitions": 47,
+    "structured_definitions": 29,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 55,
+    "removed_lab_gotos": 48,
+    "source_lines_removed": 251,
+    "removed_placeholder_occurrences": 1316
+  },
+  "verification_policy": "Batched readability workflow: exact token substitution for alpha-only edits; review event routing, callback order and live/cached reads for structured edits. One target build. Native comparisons reserved for uncertain behavior; reccmp refresh deferred to a larger checkpoint.",
+  "review_notes": [
+    "47 alpha-only definitions preserve exact tokens after declared local substitutions; 29 structured definitions receive focused source review and one combined target build.",
+    "Preserve ordinary activation cleanup/resolution, ETB exits, pitch-spell/change-target routes, repeated target unmarking, spell fizzle behavior and flashback cleanup.",
+    "Wrenn retains two reverse scans, first-player snapshots, fresh current_turn between scans, saved-turn assignment and cached damage priority. Sisay keeps its cached first player and fresh second player. Endling keeps keyword snapshots, priority branches and per-mode payment.",
+    "Kaya Guile rereads its info slot for each of four ordered modes after previous callbacks; casting keeps the original dialog priorities and entwine selection. Mirrodin Besieged rereads mode following triggers and token generation.",
+    "Sliver shared abilities retain leave-status updates, post-kill humiliation queries, cleanup calls and the Hollowhead source-record overwrite. Undying retains detach writes, grave/reanimation queries and cleanup behavior.",
+    "Hogaak retains the grave index, per-entry ID rechecks, temporary face-down/face-up work, shifted target slots, convoke-before-delve exile and callback-sensitive values. Force of Vigor retains special-flag queries and duplicated target-unmarking paths.",
+    "M19 death helpers retain source validation/control following, distinct dying/kill-code checks, source-death early return, detach flags, pending counts, low-byte masking, cleanup and repeated status queries. Finding a duplicate legacy still performs the later death/trigger work.",
+    "Liliana keeps graveyard-pointer refreshes after eligibility callbacks, separate legality/mana/timing checks, can-activate result 99, and the existing selected list-index argument. Contract keeps cached first player, fresh second player and uncapped distinct-name filtering. Chaos Wand keeps reveal counts and different bottom counts for unavailable/declined/cast spells. Shield Mare keeps its ETB source-loss exit.",
+    "No new tests, historical replay, broad native semantic harness or reccmp refresh for this readability batch."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/mh1-m19-control-build-c491.log",
+    "log_sha256": "1fd548665de680ef108fda6e1eff0ebbbf44c24dcef923c52cc111959b6fb1a0",
+    "verified_built_slots": 15169,
+    "dll_sha256": "0eca9d920a526083eb5723d23a71358cc1d41b6ab40da8ec9bb6d8eba2841024",
+    "dbg_sha256": "d319abcfd37d1b0d42e18f1336419df439f82dcf59933b5ba2f2705474ee0cde"
+  },
+  "reccmp": {
+    "refreshed": false,
+    "reason": "Readability batch with unchanged public function identities; refresh at a major comparison/commit checkpoint.",
+    "unchanged_checkpoint_inputs": {
+      "config/reccmp/functions.csv": "a0b5791a8d98ec9acba6141138040223317f44dbbf094cf0f977e6a5a9a5a274",
+      ".recovery/reccmp/setup.json": "445df382fefd673e63073a46afddf81c1727dc097b184f8e971c82f2748786d9"
+    }
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c492.json",
+    "sha256": "f66f787a9aae4ecead75c28b298d6ad02961d9d18e10524ab370b9e473151619",
+    "counts": {
+      "tracked_source_definitions": 2607,
+      "functions_with_lab_gotos": 592,
+      "lab_gotos": 1443,
+      "functions_with_placeholders": 1235,
+      "distinct_function_local_placeholder_spellings": 3575,
+      "placeholder_identifier_occurrences": 26886,
+      "union_keywords": 0
+    }
+  },
+  "whole_unit_readability": [
+    {
+      "source": "cards/modern_horizons.c",
+      "lab_gotos": 0,
+      "known_placeholder_occurrences": 0,
+      "existing_descriptive_label_gotos": 5
+    },
+    {
+      "source": "cards/m19.c",
+      "lab_gotos": 0,
+      "known_placeholder_occurrences": 0,
+      "existing_descriptive_label_gotos": 0
+    }
+  ],
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of existing Modern Horizons and M19 definitions. No new native-function coverage or gameplay-equivalence claim."
+}

@@ -173,25 +173,27 @@ Modular 2 (This enters the battlefield with two +1/+1 counters on it. When it di
 
 int card_arcbound_overseer(int player, int card, event_t event)
 {
-  int iVar1;
+  int candidate_card;
   card_instance_t *instance;
-  int iVar3;
+  int modular_match;
   upkeep_trigger_ability(player, card, event, player);
   if ((event == EVENT_UPKEEP_TRIGGER_ABILITY) &&
-      (iVar1 = active_cards_count[player] + -1, -1 < iVar1))
+      (candidate_card = active_cards_count[player] + -1, -1 < candidate_card))
   {
     do
     {
-      instance = in_play(player, iVar1);
+      instance = in_play(player, candidate_card);
       if ((instance != NULL) &&
-          (((iVar3 = is_what(player, iVar1, 2),
-             iVar3 != 0 && (iVar3 = is_what(player, iVar1, 0x40), iVar3 != 0)) &&
-            (iVar3 = check_special_flags(player, iVar1, 0x8000), iVar3 != 0))))
+          (((modular_match = is_what(player, candidate_card, 2),
+             modular_match != 0 &&
+                 (modular_match = is_what(player, candidate_card, 0x40), modular_match != 0)) &&
+            (modular_match = check_special_flags(player, candidate_card, 0x8000),
+             modular_match != 0))))
       {
-        add_counters(player, card, player, iVar1, COUNTER_P1_P1, 1);
+        add_counters(player, card, player, candidate_card, COUNTER_P1_P1, 1);
       }
-      iVar1 = iVar1 + -1;
-    } while (iVar1 != -1);
+      candidate_card = candidate_card + -1;
+    } while (candidate_card != -1);
   }
   return modular(player, card, event, 6);
 }
@@ -249,109 +251,74 @@ Modular 1 (This enters the battlefield with a +1/+1 counter on it. When it dies,
 int card_aether_snap(int player, int card, event_t event)
 {
   int p;
-  unsigned int uVar1;
-  int iVar2;
+  unsigned int marked_flags;
+  int other_player_or_card;
   card_instance_t *instance;
-  int iVar4;
+  int permanent_or_token;
   int c;
-  int *piVar6;
   unsigned int t_player;
-  unsigned int uStack_4d8;
+  unsigned int turn_offset;
   int marked[2][151];
   p = current_turn;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    c = 0x12e;
-    piVar6 = marked[0];
-    for (; c != 0; c = c + -1)
-    {
-      *piVar6 = 0;
-      piVar6 = piVar6 + 1;
-    }
+    memset(marked, 0, sizeof(marked));
     c = active_cards_count[current_turn] + -1;
     if (-1 < c)
     {
-      piVar6 = marked[current_turn + -1] + active_cards_count[current_turn] + 0x96;
       do
       {
-        while ((instance = in_play(p, c),
-                instance == NULL || (iVar4 = is_what(p, c, 0x47), iVar4 == 0)))
+        if ((instance = in_play(p, c), instance != NULL) &&
+            (permanent_or_token = is_what(p, c, 0x47), permanent_or_token != 0))
         {
-        LAB_0224e6f0:
-          c = c + -1;
-          piVar6 = piVar6 + -1;
-          if (c == -1)
-            goto LAB_0224e766;
+          if (count_counters(p, c, COUNTER_invalid) != 0)
+            marked[p][c] = 1;
+          permanent_or_token = is_token(p, c);
+          if (permanent_or_token != 0)
+            marked[p][c] = marked[p][c] | 2;
         }
-        if (count_counters(p, c, COUNTER_invalid) != 0)
-        {
-          *piVar6 = 1;
-        }
-        iVar4 = is_token(p, c);
-        if (iVar4 == 0)
-          goto LAB_0224e6f0;
-        c = c + -1;
-        *piVar6 = *piVar6 | 2;
-        piVar6 = piVar6 + -1;
+        c = c - 1;
       } while (c != -1);
     }
-  LAB_0224e766:
-    iVar2 = -current_turn + 1;
-    c = active_cards_count[iVar2] + -1;
+    other_player_or_card = -current_turn + 1;
+    c = active_cards_count[other_player_or_card] + -1;
     if (-1 < c)
     {
-      piVar6 = marked[-current_turn] + active_cards_count[iVar2] + 0x96;
       do
       {
-        while ((instance = in_play(iVar2, c),
-                instance == NULL || (iVar4 = is_what(iVar2, c, 0x47), iVar4 == 0)))
+        if ((instance = in_play(other_player_or_card, c), instance != NULL) &&
+            (permanent_or_token = is_what(other_player_or_card, c, 0x47), permanent_or_token != 0))
         {
-        LAB_0224e798:
-          c = c + -1;
-          piVar6 = piVar6 + -1;
-          if (c == -1)
-            goto LAB_0224e80e;
+          if (count_counters(other_player_or_card, c, COUNTER_invalid) != 0)
+            marked[other_player_or_card][c] = 1;
+          permanent_or_token = is_token(other_player_or_card, c);
+          if (permanent_or_token != 0)
+            marked[other_player_or_card][c] = marked[other_player_or_card][c] | 2;
         }
-        if (count_counters(iVar2, c, COUNTER_invalid) != 0)
-        {
-          *piVar6 = 1;
-        }
-        iVar4 = is_token(iVar2, c);
-        if (iVar4 == 0)
-          goto LAB_0224e798;
-        c = c + -1;
-        *piVar6 = *piVar6 | 2;
-        piVar6 = piVar6 + -1;
+        c = c - 1;
       } while (c != -1);
     }
-  LAB_0224e80e:
-    uStack_4d8 = 0;
+    turn_offset = 0;
     do
     {
-      t_player = current_turn ^ uStack_4d8;
-      iVar2 = 0x96;
+      t_player = current_turn ^ turn_offset;
+      other_player_or_card = 0x96;
       do
       {
-        while (true)
+        marked_flags = marked[t_player][other_player_or_card];
+        if ((marked_flags & 1) != 0)
+          remove_all_counters(player, card, t_player, other_player_or_card, ~COUNTER_P1_P1);
+        if ((marked_flags & 2) != 0)
         {
-          uVar1 = marked[t_player][iVar2];
-          if ((uVar1 & 1) != 0)
-          {
-            remove_all_counters(player, card, t_player, iVar2, ~COUNTER_P1_P1);
-          }
-          if ((uVar1 & 2) == 0)
-            break;
-          c = iVar2 + -1;
-          kill_card(t_player, iVar2, KILL_EXILE);
-          iVar2 = c;
-          if (c == -1)
-            goto LAB_0224e86d;
+          c = other_player_or_card - 1;
+          kill_card(t_player, other_player_or_card, KILL_EXILE);
+          other_player_or_card = c;
         }
-        iVar2 = iVar2 + -1;
-      } while (iVar2 != -1);
-    LAB_0224e86d:
-      uStack_4d8 = uStack_4d8 + 1;
-    } while (uStack_4d8 != 2);
+        else
+          other_player_or_card = other_player_or_card - 1;
+      } while (other_player_or_card != -1);
+      turn_offset = turn_offset + 1;
+    } while (turn_offset != 2);
     kill_card(player, card, KILL_DESTROY);
   }
   return basic_spell(player, card, event);
@@ -673,7 +640,7 @@ Put all artifact cards revealed this way into your hand and the rest into your g
 			amount = count_deck(player);
 		}
 		if( amount > 0 ){
-			show_deck( HUMAN, deck, amount, "Here's the first 3 card of deck", 0, 0x7375B0 );
+			show_deck( HUMAN, deck, amount, "Here's the first 3 card of deck", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			int i;
 			for(i=0; i<amount; i++){
 				if( is_what(-1, deck[0], TYPE_ARTIFACT) ){
@@ -696,6 +663,12 @@ static const char* target_must_natively_use_charge_counters(int who_chooses, int
 
 int card_coretapper(int player, int card, event_t event)
 {
+  enum
+  {
+    CHOICE_TAP = 1,
+    CHOICE_SAC = 2
+  };
+
   card_instance_t *instance;
   int result;
   int num;
@@ -726,7 +699,7 @@ int card_coretapper(int player, int card, event_t event)
       {
         instance = get_card_instance(player, card);
         num = 1;
-        if (result != 1)
+        if (result != CHOICE_TAP)
         {
           num = 2;
         }
@@ -736,7 +709,7 @@ int card_coretapper(int player, int card, event_t event)
       }
       else
       {
-        if (result == 1)
+        if (result == CHOICE_TAP)
         {
           if ((1 - player == current_turn) && (current_phase == 0x1f))
           {
@@ -744,7 +717,7 @@ int card_coretapper(int player, int card, event_t event)
             return 0;
           }
         }
-        else if (result == 2)
+        else if (result == CHOICE_SAC)
         {
           ai_modifier = ai_modifier + -0x80;
           kill_card(player, card, KILL_SACRIFICE);
@@ -890,9 +863,9 @@ int card_dismantle(int player, int card, event_t event)
 {
   int choice;
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
-  int iVar4;
+  int target_player_or_counters;
+  int target_card_or_priority;
+  int target_id_or_available;
   counter_t type;
   target_definition_t td;
   target_definition_t td2;
@@ -920,39 +893,41 @@ int card_dismantle(int player, int card, event_t event)
     if (((card != affected_card) || (player != affected_card_controller)) ||
         (generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ARTIFACT", 1, NULL),
          spell_fizzled == 1))
-      goto LAB_02250389;
-    iVar2 = instance->targets[0].player;
-    iVar3 = instance->targets[0].card;
-    if (player == iVar2)
+      return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
+    target_player_or_counters = instance->targets[0].player;
+    target_card_or_priority = instance->targets[0].card;
+    if (player == target_player_or_counters)
     {
-      iVar2 = get_id(player, iVar3);
-      if (iVar2 == 0x1adb)
+      target_player_or_counters = get_id(player, target_card_or_priority);
+      if (target_player_or_counters == 0x1adb)
       {
-        iVar2 = count_counters(player, iVar3, COUNTER_invalid);
-        ai_modifier = ai_modifier + iVar2 * 5;
-        goto LAB_02250389;
+        target_player_or_counters =
+            count_counters(player, target_card_or_priority, COUNTER_invalid);
+        ai_modifier = ai_modifier + target_player_or_counters * 5;
+        return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
       }
     }
     else
     {
-      iVar4 = get_id(iVar2, iVar3);
-      if (iVar4 != 0x1adb)
+      target_id_or_available = get_id(target_player_or_counters, target_card_or_priority);
+      if (target_id_or_available != 0x1adb)
       {
         ai_modifier = ai_modifier + 10;
-        goto LAB_02250389;
+        return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
       }
       default_target_definition(player, card, &td2, 0x40);
       td2.preferred_controller = player;
       td2.allowed_controller = player;
       if (can_target(&td2) != 0)
       {
-        iVar2 = count_counters(iVar2, iVar3, COUNTER_invalid);
-        ai_modifier = ai_modifier + iVar2 * 5;
-        goto LAB_02250389;
+        target_player_or_counters =
+            count_counters(target_player_or_counters, target_card_or_priority, COUNTER_invalid);
+        ai_modifier = ai_modifier + target_player_or_counters * 5;
+        return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
       }
     }
     ai_modifier = ai_modifier + -0x19;
-    goto LAB_02250389;
+    return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
   }
   if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
   {
@@ -963,7 +938,7 @@ int card_dismantle(int player, int card, event_t event)
     default_target_definition(player, card, &td, 0x40);
     td.preferred_controller = 2;
     get_card_instance(player, card);
-    goto LAB_02250389;
+    return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
   }
   default_target_definition(player, card, &td, 0x40);
   td.preferred_controller = 2;
@@ -972,35 +947,34 @@ int card_dismantle(int player, int card, event_t event)
   {
     if (valid_target(&td) != 0)
     {
-      iVar2 = count_counters(instance->targets[0].player, instance->targets[0].card, ~COUNTER_P1_P1);
+      target_player_or_counters =
+          count_counters(instance->targets[0].player, instance->targets[0].card, ~COUNTER_P1_P1);
       kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
       td.allowed_controller = player;
       td.preferred_controller = player;
       td.allow_cancel = 0;
-      if ((0 < iVar2) && (iVar3 = can_target(&td), iVar3 != 0))
+      if ((0 < target_player_or_counters) &&
+          (target_card_or_priority = can_target(&td), target_card_or_priority != 0))
       {
-        if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+        target_card_or_priority = 0;
+        if (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0))
         {
           td.special = 8;
-          if (can_target(&td) != 0)
-            goto LAB_0225065b;
-          td.extra = (int32_t)target_must_natively_use_charge_counters;
-          td.special = 0x8000;
-          iVar4 = can_target(&td);
-          iVar3 = 1;
-          if (iVar4 == 0)
+          if (can_target(&td) == 0)
           {
-            td.extra = 0;
-            td.special = 0;
+            td.extra = (int32_t)target_must_natively_use_charge_counters;
+            td.special = 0x8000;
+            target_id_or_available = can_target(&td);
+            target_card_or_priority = 1;
+            if (target_id_or_available == 0)
+            {
+              td.extra = 0;
+              td.special = 0;
+            }
           }
         }
-        else
-        {
-        LAB_0225065b:
-          iVar3 = 0;
-        }
-        choice = do_dialog(player, player, card, -1, -1, " Add +1/+1 counters\n Add charge counters",
-                          iVar3);
+        choice = do_dialog(player, player, card, -1, -1,
+                           " Add +1/+1 counters\n Add charge counters", target_card_or_priority);
         pick_target(&td, "TARGET_ARTIFACT");
         if (choice == 0)
         {
@@ -1010,13 +984,12 @@ int card_dismantle(int player, int card, event_t event)
         {
           type = COUNTER_CHARGE;
         }
-        add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
-                                 type, iVar2);
+        add_counters(player, card, instance->targets[0].player, instance->targets[0].card, type,
+                     target_player_or_counters);
       }
     }
     kill_card(player, card, KILL_DESTROY);
   }
-LAB_02250389:
   return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
 }
 
@@ -3159,8 +3132,8 @@ int card_sword_of_fire_and_ice(int player, int card, event_t event)
 int card_talon_of_pain(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
+  int mana_or_counter_count;
+  int counters_to_remove_or_result;
   target_definition_t td;
 
   instance = damage_being_dealt(event);
@@ -3168,7 +3141,8 @@ int card_talon_of_pain(int player, int card, event_t event)
         (instance->damage_source_card != card)) &&
        (((int)instance->damage_target_player == 1 - player &&
          (instance->damage_target_card == -1)))) &&
-      (iVar3 = damage_is_to_planeswalker(instance), iVar3 == 0))
+      (counters_to_remove_or_result = damage_is_to_planeswalker(instance),
+       counters_to_remove_or_result == 0))
   {
     add_counters(player, card, player, card, COUNTER_CHARGE, 1);
   }
@@ -3179,39 +3153,42 @@ int card_talon_of_pain(int player, int card, event_t event)
     if (event == EVENT_CAN_ACTIVATE)
     {
       return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 0, 0, 0,
-                                        &td, NULL);
+                                       &td, NULL);
     }
     if (event == EVENT_ACTIVATE)
     {
-      iVar3 = count_counters(player, card, COUNTER_CHARGE);
-      if (iVar3 == 0)
+      counters_to_remove_or_result = count_counters(player, card, COUNTER_CHARGE);
+      if (counters_to_remove_or_result == 0)
       {
         ai_modifier = ai_modifier + -0x19;
       }
-      iVar2 = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
-      if (iVar2 == 0)
+      mana_or_counter_count = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
+      if (mana_or_counter_count == 0)
       {
         return 0;
       }
-      while (iVar2 = has_mana(player, 7, iVar3), iVar2 == 0)
+      while (mana_or_counter_count = has_mana(player, 7, counters_to_remove_or_result),
+             mana_or_counter_count == 0)
       {
-        iVar3 = iVar3 + -1;
+        counters_to_remove_or_result = counters_to_remove_or_result + -1;
       }
-      if (iVar3 == 0)
+      if (counters_to_remove_or_result == 0)
       {
         ai_modifier = ai_modifier + -0x19;
       }
       if (player == 0)
       {
-        iVar3 = choose_a_number(0, "How many charge counters will you remove?", iVar3);
-        iVar2 = count_counters(0, card, COUNTER_CHARGE);
-        if ((iVar3 < 0) || (iVar2 < iVar3))
+        counters_to_remove_or_result = choose_a_number(
+            0, "How many charge counters will you remove?", counters_to_remove_or_result);
+        mana_or_counter_count = count_counters(0, card, COUNTER_CHARGE);
+        if ((counters_to_remove_or_result < 0) ||
+            (mana_or_counter_count < counters_to_remove_or_result))
         {
           spell_fizzled = 1;
           return 0;
         }
       }
-      charge_mana(player, COLOR_ANY, iVar3);
+      charge_mana(player, COLOR_ANY, counters_to_remove_or_result);
       if (spell_fizzled == 1)
       {
         return 0;
@@ -3225,8 +3202,8 @@ int card_talon_of_pain(int player, int card, event_t event)
         return 0;
       }
       instance = get_card_instance(player, card);
-      instance->info_slot = iVar3;
-      remove_counters(player, card, player, card, COUNTER_CHARGE, iVar3);
+      instance->info_slot = counters_to_remove_or_result;
+      remove_counters(player, card, player, card, COUNTER_CHARGE, counters_to_remove_or_result);
       return 0;
     }
   }
@@ -3239,7 +3216,8 @@ int card_talon_of_pain(int player, int card, event_t event)
     default_target_definition(player, card, &td, 0x102);
   }
   td.zone = 0x1200;
-  if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar3 = valid_target(&td), iVar3 != 0))
+  if ((event == EVENT_RESOLVE_ACTIVATION) &&
+      (counters_to_remove_or_result = valid_target(&td), counters_to_remove_or_result != 0))
   {
     instance = get_card_instance(player, card);
     damage_target0(player, card, instance->info_slot);
@@ -3688,15 +3666,15 @@ int card_slobad_goblin_tinkerer(int player, int card, event_t event)
 static char *not_already_dying(int who_chooses, int player, int card)
 {
   card_instance_t *instance;
-  char *pcVar2;
+  char *rejection;
 
   instance = get_card_instance(player, card);
-  pcVar2 = NULL;
+  rejection = NULL;
   if (instance->kill_code != '\0')
   {
-    pcVar2 = "already dying";
+    rejection = "already dying";
   }
-  return pcVar2;
+  return rejection;
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -3723,9 +3701,15 @@ int card_ageless_entity(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2255e40; original cards/darksteel.c:2802. */
 int card_spawning_pit(int player, int card, event_t event)
 {
+  enum
+  {
+    CHOICE_CHARGE_COUNTER = 1,
+    CHOICE_TOKEN = 2
+  };
+
   int choice;
   card_instance_t *instance;
-  int iVar2;
+  int sacrifice_available_or_choice;
   test_definition_t test;
 
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -3735,31 +3719,33 @@ int card_spawning_pit(int player, int card, event_t event)
     if (event == EVENT_CAN_ACTIVATE)
     {
       if (generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_CAN_ACTIVATE,
-                                                               GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL,
-                                                               NULL, TYPE_NONE, &test, SARV_0) == 0)
+                                                           GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL,
+                                                           NULL, TYPE_NONE, &test, SARV_0) == 0)
       {
         return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0, 0,
-                                          0x17b0200, NULL, NULL);
+                                         0x17b0200, NULL, NULL);
       }
       return 1;
     }
     if (event == EVENT_ACTIVATE)
     {
 
-      iVar2 = generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_CAN_ACTIVATE,
-                                                               GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL,
-                                                               NULL, TYPE_NONE, &test, SARV_0);
+      sacrifice_available_or_choice = generic_activated_ability_with_sacrifice_as_cost(
+          player, card, EVENT_CAN_ACTIVATE, GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, TYPE_NONE,
+          &test, SARV_0);
       choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016",
-                          "Put a charge counter", iVar2, 5, "Create Token", generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0, 0,
-                                        0x17b0200, NULL, NULL), 10, 0, 0, 0, 0);
+                           "Put a charge counter", sacrifice_available_or_choice, 5, "Create Token",
+                           generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0,
+                                                     0, 0, 0, 0x17b0200, NULL, NULL),
+                           10, 0, 0, 0, 0);
       if (choice == 0)
       {
         spell_fizzled = 1;
         return 0;
       }
-      if (choice != 1)
+      if (choice != CHOICE_CHARGE_COUNTER)
       {
-        if (choice != 2)
+        if (choice != CHOICE_TOKEN)
         {
           return 0;
         }
@@ -3784,13 +3770,13 @@ int card_spawning_pit(int player, int card, event_t event)
   }
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    iVar2 = instance->info_slot;
-    if (iVar2 == 1)
+    sacrifice_available_or_choice = instance->info_slot;
+    if (sacrifice_available_or_choice == CHOICE_CHARGE_COUNTER)
     {
       add_counters(player, card, player, card, COUNTER_CHARGE, 1);
-      iVar2 = instance->info_slot;
+      sacrifice_available_or_choice = instance->info_slot;
     }
-    if (iVar2 == 2)
+    if (sacrifice_available_or_choice == CHOICE_TOKEN)
     {
       generate_token_by_id(instance->parent_controller, instance->parent_card, 0x4988);
       return 0;
@@ -3804,30 +3790,32 @@ int card_spawning_pit(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2258f00; original cards/darksteel.c:3682. */
 int card_well_of_lost_dreams(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
+  int saved_max_x;
+  int saved_x;
+  int life_gained_or_paid;
   card_instance_t *instance;
-  int iVar5;
+  int activate_or_mana;
 
-  iVar3 = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
-  iVar1 = max_x_value;
-  iVar2 = x_value;
+  life_gained_or_paid = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  saved_max_x = max_x_value;
+  saved_x = x_value;
 
-  if ((((iVar3 != 0) && (instance = in_play(player, card), iVar1 = max_x_value, iVar2 = x_value,
-                         instance != NULL)) &&
-       (iVar5 = has_mana(player, 0, 1), iVar1 = max_x_value, iVar2 = x_value, iVar5 != 0)) &&
-      ((iVar5 = do_dialog(player, player, card, -1, -1, " Activate the Well\n Pass", 0),
-        iVar2 = x_value, iVar1 = max_x_value,
-        iVar5 == 0 && (max_x_value = iVar3,
-                       iVar3 = charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER,
-                                                           player, COLOR_COLORLESS, -1),
-                       iVar3 != 0))))
+  if ((((life_gained_or_paid != 0) && (instance = in_play(player, card), saved_max_x = max_x_value,
+                                       saved_x = x_value, instance != NULL)) &&
+       (activate_or_mana = has_mana(player, 0, 1), saved_max_x = max_x_value, saved_x = x_value,
+        activate_or_mana != 0)) &&
+      ((activate_or_mana = do_dialog(player, player, card, -1, -1, " Activate the Well\n Pass", 0),
+        saved_x = x_value, saved_max_x = max_x_value,
+        activate_or_mana == 0 &&
+            (max_x_value = life_gained_or_paid,
+             life_gained_or_paid = charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER,
+                                                               player, COLOR_COLORLESS, -1),
+             life_gained_or_paid != 0))))
   {
     draw_cards(player, x_value);
   }
-  x_value = iVar2;
-  max_x_value = iVar1;
+  x_value = saved_x;
+  max_x_value = saved_max_x;
   return 0;
 }
 

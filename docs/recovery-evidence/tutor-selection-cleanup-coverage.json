@@ -1,0 +1,524 @@
+{
+  "status": "Five tutor-selection helpers reconstructed and verified.",
+  "batch": "docs/recovery-evidence/tutor-selection-cleanup.json",
+  "batch_sha256": "d8c4e0c06af1972cd7a8acaa7fe6a36b8f488d5cdd08a3e6487a8e5ad819dde8",
+  "counts": {
+    "helpers": 5,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 28,
+    "removed_lab_gotos": 28,
+    "source_lines_removed": 429,
+    "removed_placeholder_occurrences": 396,
+    "removed_placeholder_names": 50
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "three_way_comparisons": 123136,
+    "entry_invocations": 369408,
+    "functions": {
+      "get_average_value_from_zone": 24576,
+      "select_card_from_zone": 24576,
+      "new_select_a_card": 24576,
+      "select_multiple_cards_from_graveyard_to_array_part": 24704,
+      "select_multiple_cards_from_either_graveyard": 24704
+    }
+  },
+  "original_code_regions": [
+    {
+      "name": "get_average_value_from_zone",
+      "address": "0x2650cf0",
+      "size": 234,
+      "sha256": "9f6ecc033e5251174c323315b54720840e3d3a9bae793868b7966e88c793c1fe",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x2650d54",
+          "target": "0x26bf750",
+          "callee": "new_make_test"
+        },
+        {
+          "instruction": "0x2650d86",
+          "target": "0x2688da0",
+          "callee": "get_base_value"
+        },
+        {
+          "instruction": "0x2650dbd",
+          "target": "0x267ecb0",
+          "callee": "get_cmc_by_internal_id"
+        }
+      ]
+    },
+    {
+      "name": "select_card_from_zone",
+      "address": "0x2650de0",
+      "size": 864,
+      "sha256": "cbc1b1c98682353753df4eec0a67a0f5b8099357a7154ba467bd2bed50b02af1",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x2650e00",
+          "target": "0x471d60",
+          "callee": "call_sub_437E20_unless_ai_is_speculating"
+        },
+        {
+          "instruction": "0x2650e30",
+          "target": "0x479360",
+          "callee": "show_deck_exe"
+        },
+        {
+          "instruction": "0x2650e80",
+          "target": "0x26bf750",
+          "callee": "new_make_test"
+        },
+        {
+          "instruction": "0x2650ea8",
+          "target": "0x26bf750",
+          "callee": "new_make_test"
+        },
+        {
+          "instruction": "0x2650ede",
+          "target": "0x2650cf0",
+          "callee": "get_average_value_from_zone"
+        },
+        {
+          "instruction": "0x2650eec",
+          "target": "0x26fc1d0",
+          "callee": "retained native __chkstk_ms"
+        },
+        {
+          "instruction": "0x2650f42",
+          "target": "0x26bf750",
+          "callee": "new_make_test"
+        },
+        {
+          "instruction": "0x2651008",
+          "target": "0x44e050",
+          "callee": "internal_rand"
+        },
+        {
+          "instruction": "0x2651027",
+          "target": "0x44e050",
+          "callee": "internal_rand"
+        },
+        {
+          "instruction": "0x2651056",
+          "target": "0x26b9710",
+          "callee": "good_to_put_in_grave"
+        },
+        {
+          "instruction": "0x2651085",
+          "target": "0x267ecb0",
+          "callee": "get_cmc_by_internal_id"
+        },
+        {
+          "instruction": "0x265109d",
+          "target": "0x49d510",
+          "callee": "has_mana"
+        },
+        {
+          "instruction": "0x26510b6",
+          "target": "0x267ecb0",
+          "callee": "get_cmc_by_internal_id"
+        },
+        {
+          "instruction": "0x26510d9",
+          "target": "0x2688da0",
+          "callee": "get_base_value"
+        },
+        {
+          "instruction": "0x2651104",
+          "target": "0x267ecb0",
+          "callee": "get_cmc_by_internal_id"
+        },
+        {
+          "instruction": "0x265111c",
+          "target": "0x49d510",
+          "callee": "has_mana"
+        }
+      ]
+    },
+    {
+      "name": "new_select_a_card",
+      "address": "0x2651300",
+      "size": 701,
+      "sha256": "5bf552aaaaa62c28a7432ec49a493802522d0979f7263aed0763221c4f05229e",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26513a9",
+          "target": "0x26b33a0",
+          "callee": "in_hand"
+        },
+        {
+          "instruction": "0x26513c1",
+          "target": "0x268bf20",
+          "callee": "check_state"
+        },
+        {
+          "instruction": "0x26513d1",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x2651444",
+          "target": "0x2650de0",
+          "callee": "select_card_from_zone"
+        },
+        {
+          "instruction": "0x265149f",
+          "target": "0x26b33a0",
+          "callee": "in_hand"
+        },
+        {
+          "instruction": "0x26514af",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x26514e7",
+          "target": "0x26b9670",
+          "callee": "graveyard_has_shroud"
+        },
+        {
+          "instruction": "0x265153c",
+          "target": "0x2681910",
+          "callee": "check_battlefield_for_id"
+        },
+        {
+          "instruction": "0x265155f",
+          "target": "0x26e5d70",
+          "callee": "count_deck"
+        },
+        {
+          "instruction": "0x265157b",
+          "target": "0x26e5d70",
+          "callee": "count_deck"
+        },
+        {
+          "instruction": "0x2651590",
+          "target": "0x2650b80",
+          "callee": "native_side_effects"
+        },
+        {
+          "instruction": "0x265159d",
+          "target": "0x2651140",
+          "callee": "get_tutoring_denial"
+        }
+      ]
+    },
+    {
+      "name": "select_multiple_cards_from_graveyard_to_array_part",
+      "address": "0x2651660",
+      "size": 801,
+      "sha256": "c132ae8f6a522777e1944c9f4ae9eb189f7944033f7496ce243d9b1d369d859a",
+      "entry_abi": "regparm(3)",
+      "external_branches": [
+        {
+          "instruction": "0x26516dd",
+          "target": "0x26b9670",
+          "callee": "graveyard_has_shroud"
+        },
+        {
+          "instruction": "0x26516f5",
+          "target": "0x26e5da0",
+          "callee": "count_graveyard"
+        },
+        {
+          "instruction": "0x265174a",
+          "target": "0x26b4fd0",
+          "callee": "turn_card_in_grave_face_down"
+        },
+        {
+          "instruction": "0x2651792",
+          "target": "0x2651300",
+          "callee": "new_select_a_card"
+        },
+        {
+          "instruction": "0x26517e3",
+          "target": "0x26b5050",
+          "callee": "turn_card_in_grave_face_up"
+        },
+        {
+          "instruction": "0x265180f",
+          "target": "0x2701e00",
+          "callee": "fake_qsort"
+        },
+        {
+          "instruction": "0x2651854",
+          "target": "0x26c11b0",
+          "callee": "backtrace_and_abort"
+        },
+        {
+          "instruction": "0x26518b9",
+          "target": "0x26bea60",
+          "callee": "new_default_test_definition"
+        },
+        {
+          "instruction": "0x26518e9",
+          "target": "0x2701df0",
+          "callee": "sprintf"
+        },
+        {
+          "instruction": "0x2651933",
+          "target": "0x2701df0",
+          "callee": "sprintf"
+        },
+        {
+          "instruction": "0x2651974",
+          "target": "0x2701e00",
+          "callee": "fake_qsort"
+        }
+      ]
+    },
+    {
+      "name": "select_multiple_cards_from_either_graveyard",
+      "address": "0x2652be0",
+      "size": 1541,
+      "sha256": "6514a54c0c99fbdb07f539c0d36bff9b94c5fad4557742d98477750f3b9cad86",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x2652c43",
+          "target": "0x26e62e0",
+          "callee": "new_special_count_grave"
+        },
+        {
+          "instruction": "0x2652c55",
+          "target": "0x26e62e0",
+          "callee": "new_special_count_grave"
+        },
+        {
+          "instruction": "0x2652cad",
+          "target": "0x26c11b0",
+          "callee": "backtrace_and_abort"
+        },
+        {
+          "instruction": "0x2652cbf",
+          "target": "0x26c11b0",
+          "callee": "backtrace_and_abort"
+        },
+        {
+          "instruction": "0x2652cf1",
+          "target": "0x26bea60",
+          "callee": "new_default_test_definition"
+        },
+        {
+          "instruction": "0x2652d29",
+          "target": "0x2701df0",
+          "callee": "sprintf"
+        },
+        {
+          "instruction": "0x2652d63",
+          "target": "0x26b9670",
+          "callee": "graveyard_has_shroud"
+        },
+        {
+          "instruction": "0x2652ddb",
+          "target": "0x26fc1d0",
+          "callee": "retained native __chkstk_ms"
+        },
+        {
+          "instruction": "0x2652ed1",
+          "target": "0x2651300",
+          "callee": "new_select_a_card"
+        },
+        {
+          "instruction": "0x2652f19",
+          "target": "0x26b4fd0",
+          "callee": "turn_card_in_grave_face_down"
+        },
+        {
+          "instruction": "0x2652f85",
+          "target": "0x26b9670",
+          "callee": "graveyard_has_shroud"
+        },
+        {
+          "instruction": "0x2653002",
+          "target": "0x26b5050",
+          "callee": "turn_card_in_grave_face_up"
+        },
+        {
+          "instruction": "0x26530a2",
+          "target": "0x26601a0",
+          "callee": "base_target_definition"
+        },
+        {
+          "instruction": "0x26530e0",
+          "target": "0x26765b0",
+          "callee": "load_text"
+        },
+        {
+          "instruction": "0x2653110",
+          "target": "0x2660bb0",
+          "callee": "select_target"
+        },
+        {
+          "instruction": "0x265314d",
+          "target": "0x26b5050",
+          "callee": "turn_card_in_grave_face_up"
+        },
+        {
+          "instruction": "0x26531b8",
+          "target": "0x2701df0",
+          "callee": "sprintf"
+        }
+      ]
+    }
+  ],
+  "external_data_bindings": 29,
+  "external_callee_bindings": 57,
+  "native_entry_abis": {
+    "get_average_value_from_zone": "cdecl",
+    "select_card_from_zone": "cdecl",
+    "new_select_a_card": "cdecl",
+    "select_multiple_cards_from_graveyard_to_array_part": "regparm(3)",
+    "select_multiple_cards_from_either_graveyard": "cdecl"
+  },
+  "native_tested_helpers": 5,
+  "register_adapters": {
+    "native_side_effects": "regparm(1)"
+  },
+  "whole_unit_net_lines_removed": 429,
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 13,
+  "focused": {
+    "path": ".recovery/tutor-selection-focused-c376.json",
+    "sha256": "e3f6fe06e2d60d35870d0d9c45a933db35b40283d319110674a27cfda7a9772d",
+    "source_succession_links": 11
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/tutor-selection-build-c377.log",
+    "log_sha256": "07ee75385a41cc503ce516406f6e9f43c8cae42ebb54c2b7a4e71c3e87908f9d",
+    "verified_built_slots": 15169,
+    "dll_sha256": "84ed42eff891f1b6450b1def108d2ca41b322fa1502cc67c284c29382ee9c0ee",
+    "dbg_sha256": "b0b45e7d4e153c93b6e446f93ca2c3c20de784232fcc89da1f648bacf66f9ba9"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/tutor-selection-setup-c377.log",
+    "log_sha256": "39b39630b2f020ac310fdc56bb46b5f1430937e0a97d4a9d1f1d70f19c9e07b5",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4818,
+    "stubs": 0,
+    "metadata_sha256": "a65deb200f7e70f2bc07fc02487fe86da719ab85b899d59b77cf8b4b00b4672b",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e52d0",
+        "after": "recovery ledger"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ed740",
+        "after": "public COFF entry 0x26ed690"
+      }
+    ],
+    "public_resolution_simplifications": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": {
+          "name": "get_average_value_from_zone",
+          "source": "functions/tutors.c",
+          "address": "0x2650cf0",
+          "size": 234,
+          "resolution": "unique rebuilt public COFF entry",
+          "rebuilt_address": "0x26e52d0",
+          "rebuilt_candidates": [
+            "0x26e4260",
+            "0x26e52d0"
+          ]
+        },
+        "after": {
+          "address": 40784384,
+          "size": 234,
+          "name": "get_average_value_from_zone",
+          "source": "functions/tutors.c"
+        },
+        "coff_addresses": [
+          "0x26e5200"
+        ],
+        "bounds_sha256": "1f743bd7fd30c302ee7bc27191eeddca0b08cd92bd7f3f171ed92809960e76fe",
+        "debug_sha256": "b0b45e7d4e153c93b6e446f93ca2c3c20de784232fcc89da1f648bacf66f9ba9",
+        "reason": "Structured source compiles as one rebuilt range; ordinary recovery-ledger name mapping is unambiguous."
+      }
+    ]
+  },
+  "index_unchanged": true,
+  "limits": "Five independent native bodies, including 256 full 19-target selections, with controlled query, selection, constructor, diagnostic and sorting callbacks. Positive bounded AI VLA zone counts, allocated sentinel zones/hand lists, bounded values without signed arithmetic overflow; no composed gameplay/UI claim. Callback traces summarize fixture state and compound arguments using 32-bit hashes; final declared fixture snapshots are byte compared. Native __chkstk_ms is retained unmodified; private array entry regparm(3) and side-effect part regparm(1) are explicit. Negative private-array maximum values reach a controlled qsort stub with the native unsigned count, without attempting the invalid-size sort.",
+  "average_value_codegen": {
+    "equal_except_external_call_displacements": true,
+    "native_calls": [
+      {
+        "offset": 100,
+        "target": "0x26bf750",
+        "name": "new_make_test"
+      },
+      {
+        "offset": 150,
+        "target": "0x2688da0",
+        "name": "get_base_value"
+      },
+      {
+        "offset": 205,
+        "target": "0x267ecb0",
+        "name": "get_cmc_by_internal_id"
+      }
+    ],
+    "rebuilt_calls": [
+      {
+        "offset": 100,
+        "target": "0x26bcdc0",
+        "name": "new_make_test"
+      },
+      {
+        "offset": 150,
+        "target": "0x268da70",
+        "name": "get_base_value"
+      },
+      {
+        "offset": 205,
+        "target": "0x26a49c0",
+        "name": "get_cmc_by_internal_id"
+      }
+    ],
+    "rebuilt": {
+      "address": 40784384,
+      "size": 234,
+      "name": "get_average_value_from_zone",
+      "source": "functions/tutors.c"
+    },
+    "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "rebuilt_dll_sha256": "84ed42eff891f1b6450b1def108d2ca41b322fa1502cc67c284c29382ee9c0ee",
+    "rebuilt_debug_sha256": "b0b45e7d4e153c93b6e446f93ca2c3c20de784232fcc89da1f648bacf66f9ba9",
+    "normalized_region_sha256": "984f5f87a4c838664f61f1a788814d0e053869f2af423b0284b2de5f8fdbbb29",
+    "normalization": "Only three verified external E8 rel32 call displacements are zeroed; every other byte of both 234-byte bodies is identical."
+  },
+  "whole_unit_readability": {
+    "source": "functions/tutors.c",
+    "source_sha256": "67e84727b9cd41f62cd7b98bde920bd32f8768a40d90ff4fd803f5e13427f596",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c378.json",
+    "sha256": "9ac27079e8a994bf4ccbf835015d6e927d9df91de62173c2ca647d4e7f7bdcf0",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 992,
+      "lab_gotos": 2620,
+      "functions_with_placeholders": 2060,
+      "distinct_function_local_placeholder_spellings": 6242,
+      "placeholder_identifier_occurrences": 48802,
+      "union_keywords": 0
+    }
+  }
+}

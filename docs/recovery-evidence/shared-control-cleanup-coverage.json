@@ -1,0 +1,96 @@
+{
+  "status": "25 shared helpers reconstructed with reviewed control flow and a successful target build.",
+  "batch": "docs/recovery-evidence/shared-control-cleanup.json",
+  "batch_sha256": "e6fbc26ad3e9e24531ea10e69e7fbe8349a33d39a76e99096dc6665707a3df4a",
+  "counts": {
+    "helpers": 25,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 46,
+    "removed_lab_gotos": 46,
+    "source_lines_removed": 460,
+    "removed_placeholder_occurrences": 674
+  },
+  "verification_policy": "Lighter readability workflow: review call order, cached/live fields and native edge cases; target syntax preflight, one build and current mapping refresh. No new native semantic harness or historical replay.",
+  "compiler_preflight": {
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-fsyntax-only",
+      "-x",
+      "c",
+      "-"
+    ],
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "exit_code": 0,
+    "log": ".recovery/shared-control-preflight-c409.log"
+  },
+  "review_notes": [
+    "Retain callback order and cached/live record reads in temporary returns, pumping and triggers.",
+    "Preserve reverse iteration, live current-turn selection, distinct test/exclusion orders and no-repeat handling.",
+    "Preserve caller-side dialog parameters, counter timing, zero-count dispatch edge cases and selection behavior."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/shared-control-build-c410.log",
+    "log_sha256": "2f87608c60f716eb90658444989a45ed04f7a3980e489bfa605e0477fb305fe8",
+    "verified_built_slots": 15169,
+    "dll_sha256": "37193812ff10964f7809358f6713a453ad600d9fd7d101ff4cb2f02b6d5f60ec",
+    "dbg_sha256": "20db9f7cdfb678e4d6ed78a0c2a9cf7d78035ce1869a00a996871dfb4b27cc3e"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/shared-control-setup-c410.log",
+    "log_sha256": "ff27903d9ea75ebb0a27c269628154af29c687bb0bee2385fe7307caae126474",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4819,
+    "metadata_sha256": "fe66609b4c0065651d5f745c36be16a8cc3ab2b4d0010df46958a0cb34103587",
+    "mapping_identities_unchanged": true
+  },
+  "whole_unit_readability": {
+    "source": "functions/functions.c",
+    "lab_gotos": 67,
+    "known_placeholder_occurrences": 1446
+  },
+  "index_unchanged": true,
+  "limits": "Readability recovery of 25 existing helpers. This batch adds no native-function coverage or gameplay equivalence claim. UI callbacks remain opaque. Existing unusual selection/counter/zero-count behavior is preserved.",
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c411.json",
+    "sha256": "69a59bb747399c7256ceb5e5c3fe2c8cc603bd4a5b3a442bd5390f382a0b1ad1",
+    "counts": {
+      "tracked_source_definitions": 2605,
+      "functions_with_lab_gotos": 951,
+      "lab_gotos": 2503,
+      "functions_with_placeholders": 1953,
+      "distinct_function_local_placeholder_spellings": 5856,
+      "placeholder_identifier_occurrences": 45021,
+      "union_keywords": 0
+    }
+  }
+}

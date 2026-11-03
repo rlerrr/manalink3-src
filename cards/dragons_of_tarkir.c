@@ -727,85 +727,40 @@ int card_scale_blessing(int player, int card, event_t event)
 {
   int c;
   card_instance_t *instance;
-  int iVar3;
-  unsigned int uVar4;
-  char *pcVar5;
-  bool bVar6;
+  int live_count_or_result;
   char has_counter[151];
   if (event == EVENT_RESOLVE_SPELL)
   {
-    pcVar5 = has_counter + 5;
     bolster(player, card, 1);
-    has_counter[0] = '\0';
-    has_counter[1] = '\0';
-    has_counter[2] = '\0';
-    has_counter[3] = '\0';
-    has_counter[4] = '\0';
-    uVar4 = 0x92;
-    bVar6 = ((unsigned int)pcVar5 & 2) != 0;
-    if (bVar6)
+    memset(has_counter, 0, sizeof(has_counter));
+    if (active_cards_count[player] > 0)
     {
-      has_counter[5] = '\0';
-      has_counter[6] = '\0';
-      uVar4 = 0x90;
-      pcVar5 = has_counter + 7;
-    }
-    for (uVar4 = uVar4 >> 2; uVar4 != 0; uVar4 = uVar4 - 1)
-    {
-      pcVar5[0] = '\0';
-      pcVar5[1] = '\0';
-      pcVar5[2] = '\0';
-      pcVar5[3] = '\0';
-      pcVar5 = pcVar5 + 4u;
-    }
-    if (!bVar6)
-    {
-      pcVar5[0] = '\0';
-      pcVar5[1] = '\0';
-    }
-    if (0 < active_cards_count[player])
-    {
-      has_counter[4] = '\0';
-      has_counter[0] = '\0';
-      has_counter[1] = '\0';
-      has_counter[2] = '\0';
-      has_counter[3] = '\0';
       c = 0;
       instance = in_play(player, 0);
       do
       {
-        if (((instance == NULL) || (iVar3 = is_what(player, c, 2), iVar3 == 0)) ||
-            (iVar3 = count_counters(player, c, COUNTER_P1_P1), iVar3 < 1))
-        {
-          iVar3 = active_cards_count[player];
-          if (iVar3 <= c + 1)
-            goto LAB_0231be18;
-        }
-        else
-        {
-          has_counter[c] = '\x01';
-          iVar3 = active_cards_count[player];
-          if (iVar3 <= c + 1)
-            goto LAB_0231be18;
-        }
+        if (instance != NULL &&
+            (live_count_or_result = is_what(player, c, 2), live_count_or_result != 0) &&
+            (live_count_or_result = count_counters(player, c, COUNTER_P1_P1),
+             live_count_or_result >= 1))
+          has_counter[c] = 1;
+        live_count_or_result = active_cards_count[player];
+        if (live_count_or_result <= c + 1)
+          break;
         c = c + 1;
         instance = in_play(player, c);
       } while (true);
-    }
-  }
-  return basic_spell(player, card, event);
-LAB_0231be18:
-  if (0 < iVar3)
-  {
-    c = 0;
-    do
-    {
-      if ((has_counter[c] != '\0') && (instance = in_play(player, c), instance != NULL))
+      if (live_count_or_result > 0)
       {
-        add_counters(player, card, player, c, COUNTER_P1_P1, 1);
+        c = 0;
+        do
+        {
+          if (has_counter[c] != 0 && (instance = in_play(player, c), instance != NULL))
+            add_counters(player, card, player, c, COUNTER_P1_P1, 1);
+          c = c + 1;
+        } while (c < active_cards_count[player]);
       }
-      c = c + 1;
-    } while (c < active_cards_count[player]);
+    }
   }
   return basic_spell(player, card, event);
 }
@@ -3543,7 +3498,6 @@ int card_avatar_of_the_resolute(int player, int card, event_t event)
   {
     num = 0;
     card_00 = 0;
-  LAB_02324352:
     do
     {
       instance = in_play(player, card_00);
@@ -3556,10 +3510,6 @@ int card_avatar_of_the_resolute(int player, int card, event_t event)
           if (card != card_00)
           {
             num = (num + 1) - (unsigned int)(result < 1);
-            card_00 = card_00 + 1;
-            if (active_cards_count[player] <= card_00)
-              break;
-            goto LAB_02324352;
           }
         }
       }
@@ -3638,7 +3588,7 @@ int card_collected_company(int player, int card, event_t event)
 				  put_iid_under_the_first_x_cards_of_library(player, chosen_iid[1], 0);
 				}
 			  put_iid_under_the_first_x_cards_of_library(player, chosen_iid[0], 0);
-			  show_deck(HUMAN, deck_ptr[player], chosen_iid[1] >= 0 ? 2 : 1, "Revealed", 0, 0x7375b0);
+			  show_deck(HUMAN, deck_ptr[player], chosen_iid[1] >= 0 ? 2 : 1, "Revealed", 0, EXE_STR(ENGINE_DONE_LABEL));
 			}
 		  else
 			{
@@ -3681,16 +3631,16 @@ int card_deathmist_raptor(int player, int card, event_t event)
 
 int card_den_protector(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int blocker_power;
+  int own_power;
   test_definition_t test;
   if (event == EVENT_BLOCK_LEGALITY)
   {
     if ((attacking_card == card) && (attacking_card_controller == player))
     {
-      iVar1 = get_power(affected_card_controller, affected_card);
-      iVar2 = get_power(player, card);
-      if (iVar1 < iVar2)
+      blocker_power = get_power(affected_card_controller, affected_card);
+      own_power = get_power(player, card);
+      if (blocker_power < own_power)
       {
         if (is_humiliated(player, card, AL_STATIC) == 0)
         {
@@ -4657,15 +4607,15 @@ int card_dromokas_command(int player, int card, event_t event)
 
 int card_enduring_scalelord(int player, int card, event_t event)
 {
-  xtrigger_t xVar1;
+  xtrigger_t current_trigger;
   int result;
   enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_1_1_COUNTERS;
-  xVar1 = trigger_condition;
+  current_trigger = trigger_condition;
   if (trigger_condition == 0xe5)
   {
-    xVar1 = xtrigger_impl_value_dont_use_directly;
+    current_trigger = xtrigger_impl_value_dont_use_directly;
   }
-  if (xVar1 == XTRIGGER_1_1_COUNTERS)
+  if (current_trigger == XTRIGGER_1_1_COUNTERS)
   {
     if (((((card == affected_card) && (player == affected_card_controller)) &&
           (reason_for_trigger_controller == player)) &&
@@ -5530,11 +5480,11 @@ int card_vial_of_dragonfire(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23232b0; original cards/dragons_of_tarkir.c:3221. */
 int card_thunderbreak_regent(int player, int card, event_t event)
 {
-  const target_t *ptVar1;
+  const target_t *targeting_spell;
 
-  ptVar1 = any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, 0x30, TYPE_ANY,
-                              1 - player, RESOLVE_TRIGGER_MANDATORY);
-  if (ptVar1 != NULL)
+  targeting_spell = any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, 0x30,
+                                       TYPE_ANY, 1 - player, RESOLVE_TRIGGER_MANDATORY);
+  if (targeting_spell != NULL)
   {
     damage_player(1 - player, 3, player, card);
   }
@@ -5549,8 +5499,8 @@ static int display_of_dominance_effect(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  unsigned int uVar3;
-  unsigned int uVar4;
+  unsigned int attacking_spell_color;
+  unsigned int protected_colors;
 
   if (event == EVENT_ABILITIES)
   {
@@ -5572,9 +5522,9 @@ static int display_of_dominance_effect(int player, int card, event_t event)
         result = is_being_cast(attacking_card_controller, attacking_card);
         if ((result != 0) && (1 - player == attacking_card_controller))
         {
-          uVar3 = get_color(1 - player, attacking_card);
-          uVar4 = get_sleighted_color_test(player, card, 6);
-          if ((uVar3 & uVar4) != 0)
+          attacking_spell_color = get_color(1 - player, attacking_card);
+          protected_colors = get_sleighted_color_test(player, card, 6);
+          if ((attacking_spell_color & protected_colors) != 0)
           {
             event_result = event_result | 1;
           }
@@ -5594,10 +5544,16 @@ static int display_of_dominance_effect(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2324920; original cards/dragons_of_tarkir.c:3670. */
 int card_display_of_dominance(int player, int card, event_t event)
 {
+  enum
+  {
+    CHOICE_DESTROY = 1,
+    CHOICE_PERMANENTS = 2
+  };
+
   int choice;
   card_instance_t *instance;
   const char *prompt;
-  int iVar3;
+  int destroy_available;
   target_definition_t td;
 
   if (event == EVENT_CAN_CAST)
@@ -5640,8 +5596,6 @@ int card_display_of_dominance(int player, int card, event_t event)
     td.required_color = get_sleighted_color_test(player, card, 6);
     td.preferred_controller = player;
     instance = get_card_instance(player, card);
-    if (event != EVENT_CHANGE_TARGET)
-      goto LAB_023249b0;
   }
   else
   {
@@ -5656,37 +5610,39 @@ int card_display_of_dominance(int player, int card, event_t event)
     instance = get_card_instance(player, card);
   }
 
-  instance->number_of_targets = '\0';
-  iVar3 = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
-  if (check_special_flags2(player, card, -0x80000000) != 0)
+  if (event == EVENT_CAST_SPELL || event == EVENT_CHANGE_TARGET)
   {
-    return 0;
-  }
+    instance->number_of_targets = '\0';
+    destroy_available = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    if (check_special_flags2(player, card, -0x80000000) != 0)
+    {
+      return 0;
+    }
 
-  choice = dialog_impl(player, card, event, "\001\002", "Destroy non-creature", iVar3, 5,
-                      "Permanents untargettable", 1, 10, 0, 0, 0, 0);
-  if (choice == 0)
-  {
-    spell_fizzled = 1;
-    return 0;
+    choice = dialog_impl(player, card, event, "\001\002", "Destroy non-creature", destroy_available,
+                         5, "Permanents untargettable", 1, 10, 0, 0, 0, 0);
+    if (choice == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == CHOICE_DESTROY)
+    {
+      prompt = get_sleighted_color_text2(player, card, "Select target %s or %s creature.", 2, 1);
+      return generic_spell(player, card, event, 0x81, &td, prompt, 1, NULL);
+    }
   }
-  if (choice == 1)
-  {
-    prompt = get_sleighted_color_text2(player, card, "Select target %s or %s creature.", 2, 1);
-    return generic_spell(player, card, event, 0x81, &td, prompt, 1, NULL);
-  }
-LAB_023249b0:
   if (event == EVENT_RESOLVE_SPELL)
   {
 
-    if (instance->info_slot == 1)
+    if (instance->info_slot == CHOICE_DESTROY)
     {
       if (valid_target(&td) != 0)
       {
         kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
       }
     }
-    else if (instance->info_slot == 2)
+    else if (instance->info_slot == CHOICE_PERMANENTS)
     {
       create_legacy_effect(player, card, display_of_dominance_effect);
     }

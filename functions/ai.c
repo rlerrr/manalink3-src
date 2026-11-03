@@ -229,22 +229,22 @@ int can_autotap(int player, int card, autotap_t autotap_flags)
   };
 
   card_instance_t *instance;
-  int iVar3;
-  unsigned int uVar4;
+  int producer_iid_or_check;
+  unsigned int producer_colors_or_flags;
 
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    iVar3 = instance->internal_card_id;
-    uVar4 = instance->card_color & 0x7f;
+    producer_iid_or_check = instance->internal_card_id;
+    producer_colors_or_flags = instance->card_color & 0x7f;
     if (is_what(player, card, 1) != 0)
     {
-      uVar4 = uVar4 | mana_colors_added[player];
+      producer_colors_or_flags = producer_colors_or_flags | mana_colors_added[player];
     }
-    if ((uVar4 & 0x3f) != 0)
+    if ((producer_colors_or_flags & 0x3f) != 0)
     {
-      uVar4 = cards_data[iVar3].extra_ability;
-      if ((uVar4 & 0x1000) == 0)
+      producer_colors_or_flags = cards_data[producer_iid_or_check].extra_ability;
+      if ((producer_colors_or_flags & 0x1000) == 0)
       {
         if (is_what(player, card, 1) == 0)
         {
@@ -254,28 +254,34 @@ int can_autotap(int player, int card, autotap_t autotap_flags)
         {
           return 0;
         }
-        uVar4 = cards_data[iVar3].extra_ability;
+        producer_colors_or_flags = cards_data[producer_iid_or_check].extra_ability;
       }
-      if (((((uVar4 & 0x10000) == 0) && (iVar3 = can_produce_mana(player, card), iVar3 != 0)) &&
+      if (((((producer_colors_or_flags & 0x10000) == 0) &&
+            (producer_iid_or_check = can_produce_mana(player, card), producer_iid_or_check != 0)) &&
            (((autotap_flags & AUTOTAP_NO_BASIC_LANDS) == AUTOTAP_0 ||
-             ((iVar3 = is_basic_land(player, card),
-               iVar3 == 0 && (iVar3 = query(player, card, -1, QUERY_IS_PLAIN_MANA_PRODUCER),
-                              iVar3 == 0)))))) &&
+             ((producer_iid_or_check = is_basic_land(player, card),
+               producer_iid_or_check == 0 &&
+                   (producer_iid_or_check = query(player, card, -1, QUERY_IS_PLAIN_MANA_PRODUCER),
+                    producer_iid_or_check == 0)))))) &&
           ((((autotap_flags & AUTOTAP_NO_NONBASIC_LANDS) == AUTOTAP_0 ||
-             (((iVar3 = is_what(player, card, 1),
-                iVar3 == 0 || (iVar3 = is_basic_land(player, card), iVar3 != 0)) ||
-               (iVar3 = query(player, card, -1, QUERY_IS_PLAIN_MANA_PRODUCER), iVar3 != 0)))) &&
+             (((producer_iid_or_check = is_what(player, card, 1),
+                producer_iid_or_check == 0 || (producer_iid_or_check = is_basic_land(player, card),
+                                               producer_iid_or_check != 0)) ||
+               (producer_iid_or_check = query(player, card, -1, QUERY_IS_PLAIN_MANA_PRODUCER),
+                producer_iid_or_check != 0)))) &&
             ((((autotap_flags & AUTOTAP_NO_DONT_AUTO_TAP) == AUTOTAP_0 ||
                ((instance->state & 0x40000) == 0)) &&
               (((autotap_flags & AUTOTAP_NO_ARTIFACTS) == AUTOTAP_0 ||
-                ((iVar3 = is_what(player, card, 0x40),
-                  iVar3 == 0 || (iVar3 = query(player, card, -1, QUERY_IS_PLAIN_MANA_PRODUCER),
-                                 iVar3 != 0))))))))))
+                ((producer_iid_or_check = is_what(player, card, 0x40),
+                  producer_iid_or_check == 0 ||
+                      (producer_iid_or_check =
+                           query(player, card, -1, QUERY_IS_PLAIN_MANA_PRODUCER),
+                       producer_iid_or_check != 0))))))))))
       {
         if ((autotap_flags & AUTOTAP_NO_CREATURES) != AUTOTAP_0)
         {
-          iVar3 = is_what(player, card, 2);
-          return (unsigned int)(iVar3 == 0);
+          producer_iid_or_check = is_what(player, card, 2);
+          return (unsigned int)(producer_iid_or_check == 0);
         }
         return 1;
       }

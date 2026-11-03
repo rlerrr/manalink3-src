@@ -4,6 +4,29 @@
 
 #include "manalink.h"
 
+/* Native shared card-name data and text-effect sentinel. */
+const unsigned char lc_unaccent_map[256] = {
+  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+  0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+  0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+  0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
+  0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f,
+  0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f,
+  0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f,
+  0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f,
+  0x80, 0x81, 0x2c, 0x66, 0x84, 0x85, 0x86, 0x87, 0x5e, 0x25, 0x73, 0x3c, 0x8c, 0x8d, 0x7a, 0x8f,
+  0x90, 0x27, 0x27, 0x22, 0x22, 0x95, 0x2d, 0x2d, 0x7e, 0x99, 0x73, 0x3e, 0x9c, 0x9d, 0x7a, 0x79,
+  0x5f, 0x21, 0x24, 0x24, 0x24, 0x24, 0x7c, 0x25, 0x22, 0x40, 0x5e, 0x3c, 0x7e, 0x2d, 0x40, 0x7e,
+  0x5e, 0x2b, 0x32, 0x33, 0x27, 0x75, 0x26, 0x2e, 0x2c, 0x31, 0x5e, 0x3e, 0x31, 0x32, 0x33, 0x3f,
+  0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0xc6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,
+  0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2a, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xde, 0xdf,
+  0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0xe6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,
+  0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2f, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xfe, 0x79,
+};
+
+const int txtfx_not_found = 0x7fffffff;
+
+
 /***********
  * Unglued *
  ***********/
@@ -1127,23 +1150,23 @@ int card_duh(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2303230; original cards/unglued_unhinged.c:227. */
 int txtfx(int player, int card, event_t event, card_id_t marker)
 {
-  unsigned int uVar1;
+  unsigned int packed_text_effect;
   card_instance_t *instance;
-  unsigned int uVar3;
+  unsigned int stored_value;
   if (event != EVENT_SET_LEGACY_EFFECT_NAME)
   {
-    return 0x7fffffff;
+    return txtfx_not_found;
   }
   instance = get_displayed_card_instance(player, card);
   instance = get_displayed_card_instance((int)instance->damage_target_player,
                                          instance->damage_target_card);
-  uVar1 = instance->targets[5].player;
-  uVar3 = uVar1 & 0xffff;
-  if (uVar1 >> 0x10 != marker)
+  packed_text_effect = instance->targets[5].player;
+  stored_value = packed_text_effect & 0xffff;
+  if (packed_text_effect >> 0x10 != marker)
   {
-    uVar3 = 0x7fffffff;
+    stored_value = txtfx_not_found;
   }
-  return uVar3;
+  return stored_value;
 }
 
 /* ManalinkEh 2022: 0x2303df0; original cards/unglued_unhinged.c:755. */
@@ -1305,139 +1328,55 @@ int card_uktabi_kong(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2302980; original cards/unglued_unhinged.c:240. */
 static int words_in_name_by_csvid(int csvid)
 {
-  const char *pcVar1;
-  const char *pcVar2;
-  char cVar3;
-  int result;
-
-  if ((csvid < 0) || (csvid == 0x45ec))
-  {
+  if (csvid < 0 || csvid == 0x45ec)
     return 0;
-  }
-  if (csvid < 0x45ed)
-  {
-    result = 0x19;
-    if (csvid != 0x45a5)
-    {
-      if (csvid != 0x45d5)
-        goto LAB_023029b4;
-      result = 10;
-    }
-  }
-  else
-  {
-    result = 4;
-    if (csvid != 0x45ee)
-    {
-    LAB_023029b4:
-      pcVar2 = get_card_name_by_id(csvid);
-      if (pcVar2 == NULL)
-      {
-        result = 1;
-      }
-      else
-      {
-        result = 1;
-        cVar3 = *pcVar2;
-        while (cVar3 != '\0')
-        {
-          pcVar1 = pcVar2 + 1;
-          if (cVar3 == ' ')
-          {
-            result = result + (unsigned int)(*pcVar1 != '/');
-          }
-          pcVar2 = pcVar2 + 1;
-          cVar3 = *pcVar1;
-        }
-      }
-      return result;
-    }
-  }
+  if (csvid == 0x45a5)
+    return 25;
+  if (csvid == 0x45d5)
+    return 10;
+  if (csvid == 0x45ee)
+    return 4;
+  const char *name = get_card_name_by_id(csvid);
+  int result = 1;
+  if (name)
+    for (; *name; ++name)
+      if (*name == ' ')
+        result += name[1] != '/';
   return result;
 }
 
 /* ManalinkEh 2022: 0x2303260; original cards/unglued_unhinged.c:272. */
 int words_in_name(int player, int card)
 {
-  const char *pcVar1;
-  const char *pcVar2;
-  int iVar3;
-  char cVar4;
-  int iVar5;
-
-  iVar3 = get_card_name(player, card);
-  if ((iVar3 < 0) || (iVar3 == 0x45ec))
-  {
-    return 0;
-  }
-  if (iVar3 < 0x45ed)
-  {
-    iVar5 = 0x19;
-    if (iVar3 != 0x45a5)
-    {
-      if (iVar3 != 0x45d5)
-        goto LAB_023029b4;
-      iVar5 = 10;
-    }
-  }
-  else
-  {
-    iVar5 = 4;
-    if (iVar3 != 0x45ee)
-    {
-    LAB_023029b4:
-      pcVar2 = get_card_name_by_id(iVar3);
-      if (pcVar2 == NULL)
-      {
-        iVar3 = 1;
-      }
-      else
-      {
-        iVar3 = 1;
-        cVar4 = *pcVar2;
-        while (cVar4 != '\0')
-        {
-          pcVar1 = pcVar2 + 1;
-          if (cVar4 == ' ')
-          {
-            iVar3 = iVar3 + (unsigned int)(*pcVar1 != '/');
-          }
-          pcVar2 = pcVar2 + 1;
-          cVar4 = *pcVar1;
-        }
-      }
-      return iVar3;
-    }
-  }
-  return iVar5;
+  return words_in_name_by_csvid(get_card_name(player, card));
 }
 
 /* ManalinkEh 2022: 0x2303f20; original cards/unglued_unhinged.c:849. */
 int card_flock_of_rabid_sheep(int player, int card, event_t event)
 {
-  int iVar1;
+  int remaining_flips;
   card_instance_t *instance;
-  int iVar3;
-  int iStack_60;
+  int flip_result;
+  int sheep_count;
   token_generation_t token;
 
   if (event == EVENT_RESOLVE_SPELL)
   {
     instance = get_card_instance(player, card);
-    iVar1 = instance->info_slot;
-    if (0 < iVar1)
+    remaining_flips = instance->info_slot;
+    if (0 < remaining_flips)
     {
-      iStack_60 = 0;
+      sheep_count = 0;
       do
       {
-        iVar3 = flip_a_coin(player, card);
-        iStack_60 = (iStack_60 + 1) - (unsigned int)(iVar3 == 0);
-        iVar1 = iVar1 + -1;
-      } while (iVar1 != 0);
-      if (iStack_60 != 0)
+        flip_result = flip_a_coin(player, card);
+        sheep_count = (sheep_count + 1) - (unsigned int)(flip_result == 0);
+        remaining_flips = remaining_flips + -1;
+      } while (remaining_flips != 0);
+      if (sheep_count != 0)
       {
         default_token_definition(player, card, 0x4982, &token);
-        token.qty = (unsigned char)iStack_60;
+        token.qty = (unsigned char)sheep_count;
         token.tou = 2;
         token.pow = 2;
         generate_token(&token);
@@ -1457,16 +1396,16 @@ char *target_has_2_word_name(int who_chooses, int player, int card, int targetin
                              int targeting_card)
 {
   int result;
-  char *pcVar2;
+  char *requirement_error;
 
   result = get_card_name(player, card);
   result = words_in_name_by_csvid(result);
-  pcVar2 = NULL;
+  requirement_error = NULL;
   if (result != 2)
   {
-    pcVar2 = "two-word name";
+    requirement_error = "two-word name";
   }
-  return pcVar2;
+  return requirement_error;
 }
 
 /* ManalinkEh 2022: 0x2304c70; original cards/unglued_unhinged.c:1425. */
@@ -1507,7 +1446,7 @@ static int rock_paper_scissors(int player, int card, event_t event, int beaten);
 int card_the_cheese_stands_alone(int player, int card, event_t event)
 {
   int c;
-  int iVar1;
+  int humiliated;
   card_instance_t *instance;
 
   if (event == EVENT_STATIC_EFFECTS)
@@ -1515,8 +1454,8 @@ int card_the_cheese_stands_alone(int player, int card, event_t event)
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      iVar1 = is_humiliated(player, card, AL_TRIG);
-      if ((iVar1 == 0) && (hand_count[player] < 1))
+      humiliated = is_humiliated(player, card, AL_TRIG);
+      if ((humiliated == 0) && (hand_count[player] < 1))
       {
 
         if (0 < active_cards_count[player])
@@ -1612,8 +1551,7 @@ int card_wordmail(int player, int card, event_t event)
   if (event - EVENT_POWER < 2)
   {
     instance = in_play(player, card);
-    if ((((instance != NULL) &&
-          (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
+    if ((((instance != NULL) && (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
          (instance->damage_target_card == affected_card)) &&
         (instance->damage_target_player == affected_card_controller))
     {
@@ -1621,31 +1559,15 @@ int card_wordmail(int player, int card, event_t event)
       result = words_in_name_by_csvid(result);
       event_result = event_result + result;
     }
-  LAB_02304bf8:
-    if (event == EVENT_CHANGE_TARGET)
-      return vanilla_aura(player, card, event, player);
   }
-  else
-  {
-    if (event == EVENT_CAN_CAST)
-      return vanilla_aura(player, card, event, player);
-    if (event != EVENT_CAST_SPELL)
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-        return vanilla_aura(player, card, event, player);
-      goto LAB_02304bf8;
-    }
-    if ((card == affected_card) && (player == affected_card_controller))
-      return vanilla_aura(player, card, event, player);
-  }
-  if (((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
-        (event != EVENT_RESOLVE_MOVING_AURA)) &&
-       ((2 < event - EVENT_POWER && (((event != EVENT_CHANGE_TYPE && (event != EVENT_SET_COLOR)) &&
-                                      (event != EVENT_GET_SELECTED_CARD)))))) &&
-      (event != EVENT_STATIC_EFFECTS))
-  {
+  if (event != EVENT_CAN_CAST &&
+      !(event == EVENT_CAST_SPELL && card == affected_card && player == affected_card_controller) &&
+      event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET &&
+      event != EVENT_CHANGE_TARGET &&
+      (event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA && event - EVENT_POWER > 2 &&
+      event != EVENT_RESOLVE_MOVING_AURA && event != EVENT_CHANGE_TYPE &&
+      event != EVENT_SET_COLOR && event != EVENT_GET_SELECTED_CARD && event != EVENT_STATIC_EFFECTS)
     return 0;
-  }
   return vanilla_aura(player, card, event, player);
 }
 
@@ -1653,76 +1575,61 @@ int card_wordmail(int player, int card, event_t event)
 int card_bloodletter(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar2;
-  int iVar3;
-  unsigned char *pbVar4;
+  int scan_player_or_result;
+  int id_count_or_result;
+  unsigned char *name_start;
   int card_00;
-  int *piVar5;
-  static const unsigned char native_name_fold[256] = {
-      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
-      0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,
-      0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c,
-      0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,
-      0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a,
-      0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
-      0x7a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
-      0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,
-      0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x2c, 0x66, 0x84, 0x85, 0x86,
-      0x87, 0x5e, 0x25, 0x73, 0x3c, 0x8c, 0x8d, 0x7a, 0x8f, 0x90, 0x27, 0x27, 0x22, 0x22, 0x95,
-      0x2d, 0x2d, 0x7e, 0x99, 0x73, 0x3e, 0x9c, 0x9d, 0x7a, 0x79, 0x5f, 0x21, 0x24, 0x24, 0x24,
-      0x24, 0x7c, 0x25, 0x22, 0x40, 0x5e, 0x3c, 0x7e, 0x2d, 0x40, 0x7e, 0x5e, 0x2b, 0x32, 0x33,
-      0x27, 0x75, 0x26, 0x2e, 0x2c, 0x31, 0x5e, 0x3e, 0x31, 0x32, 0x33, 0x3f, 0x61, 0x61, 0x61,
-      0x61, 0x61, 0x61, 0xc6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69, 0x64, 0x6e,
-      0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2a, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xde, 0xdf, 0x61,
-      0x61, 0x61, 0x61, 0x61, 0x61, 0xe6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,
-      0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2f, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xfe,
-      0x79,
-  };
   unsigned char ltr;
   int letter[26];
   if (((event == EVENT_STATIC_EFFECTS) && (instance = in_play(player, card), instance != NULL)) &&
-      (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))
+      (scan_player_or_result = is_humiliated(player, card, AL_TRIG), scan_player_or_result == 0))
   {
-    piVar5 = letter;
-    for (iVar2 = 0x1a; iVar2 != 0; iVar2 = iVar2 + -1)
-    {
-      *piVar5 = 0;
-      piVar5 = piVar5 + 1u;
-    }
-    iVar2 = 0;
+    memset(letter, 0, sizeof(letter));
+    scan_player_or_result = 0;
     do
     {
       card_00 = 0;
-      if (0 < active_cards_count[iVar2])
+      if (0 < active_cards_count[scan_player_or_result])
       {
         do
         {
-          instance = in_play(iVar2, card_00);
-          if (((instance != NULL) && (iVar3 = is_what(iVar2, card_00, 1), iVar3 == 0)) &&
-              (iVar3 = is_what(iVar2, card_00, 0x47), iVar3 != 0))
+          instance = in_play(scan_player_or_result, card_00);
+          if (((instance != NULL) &&
+               (id_count_or_result = is_what(scan_player_or_result, card_00, 1),
+                id_count_or_result == 0)) &&
+              (id_count_or_result = is_what(scan_player_or_result, card_00, 0x47),
+               id_count_or_result != 0))
           {
-            iVar3 = get_card_name(iVar2, card_00);
-            pbVar4 = (unsigned char *)get_card_name_by_id(iVar3);
-            ltr = native_name_fold[*pbVar4];
+            id_count_or_result = get_card_name(scan_player_or_result, card_00);
+            name_start = (unsigned char *)get_card_name_by_id(id_count_or_result);
+            ltr = lc_unaccent_map[*name_start];
             if ((ltr & 0xdf) == 0xc6)
             {
               letter[0] = letter[0] + 1;
               if (2 < letter[0])
-                goto LAB_023051a0;
+              {
+                if (can_sacrifice_this_as_cost(player, card) == 0)
+                  return 0;
+                kill_card(player, card, KILL_SACRIFICE);
+                new_damage_all(player, card, 2, 2, 3, NULL);
+                return 0;
+              }
               letter[4] = letter[4] + 1;
-              iVar3 = letter[4];
+              id_count_or_result = letter[4];
             }
             else
             {
               if (0x19 < (unsigned char)(ltr + 0x9f))
-                goto LAB_02305108;
-              iVar3 = letter[ltr - 0x61];
-              letter[ltr - 0x61] = iVar3 + 1;
-              iVar3 = iVar3 + 1;
+              {
+                ++card_00;
+                continue;
+              }
+              id_count_or_result = letter[ltr - 0x61];
+              letter[ltr - 0x61] = id_count_or_result + 1;
+              id_count_or_result = id_count_or_result + 1;
             }
-            if (2 < iVar3)
+            if (2 < id_count_or_result)
             {
-            LAB_023051a0:
               if (can_sacrifice_this_as_cost(player, card) == 0)
               {
                 return 0;
@@ -1732,12 +1639,11 @@ int card_bloodletter(int player, int card, event_t event)
               return 0;
             }
           }
-        LAB_02305108:
           card_00 = card_00 + 1;
-        } while (card_00 < active_cards_count[iVar2]);
+        } while (card_00 < active_cards_count[scan_player_or_result]);
       }
-      iVar2 = iVar2 + 1;
-    } while (iVar2 != 2);
+      scan_player_or_result = scan_player_or_result + 1;
+    } while (scan_player_or_result != 2);
   }
   return 0;
 }
@@ -1768,13 +1674,13 @@ int has_reminder_text(int player, int card);
 int has_reminder_text(int player, int card)
 {
   int result;
-  const char *pcVar2;
+  const char *reminder_start;
 
   result = get_id(player, card);
   if (cards_ptr[result]->rules_text != NULL)
   {
-    pcVar2 = strchr(cards_ptr[result]->rules_text, 0x28);
-    return (unsigned int)(pcVar2 != NULL);
+    reminder_start = strchr(cards_ptr[result]->rules_text, 0x28);
+    return (unsigned int)(reminder_start != NULL);
   }
   return 0;
 }
@@ -1875,12 +1781,12 @@ void make_txtfx(int player, int card, CardFunction fxfn, card_id_t marker, int v
 {
   card_instance_t *instance;
   int card_00;
-  target_t tVar2;
+  target_t existing_legacy;
 
   instance = get_card_instance(player, card);
   instance->targets[5].player = marker << 0x10 | val & 0xffffU;
-  tVar2 = find_repeat_legacy_effect_alt(player, card, fxfn, player, card, -1, 2);
-  if (tVar2.player < 0)
+  existing_legacy = find_repeat_legacy_effect_alt(player, card, fxfn, player, card, -1, 2);
+  if (existing_legacy.player < 0)
   {
 
     card_00 = create_targetted_legacy_effect(player, card, fxfn, player, card);
@@ -1893,7 +1799,7 @@ void make_txtfx(int player, int card, CardFunction fxfn, card_id_t marker, int v
   }
   else
   {
-    instance = get_card_instance(tVar2.player, tVar2.card);
+    instance = get_card_instance(existing_legacy.player, existing_legacy.card);
     instance->targets[0x12].card = instance->targets[0x12].card + 1;
   }
   return;
@@ -1902,10 +1808,10 @@ void make_txtfx(int player, int card, CardFunction fxfn, card_id_t marker, int v
 /* ManalinkEh 2022: 0x2302ba0; original cards/unglued_unhinged.c:2316. */
 static int test_rare_or_mythic(int iid, int val, int player, int card)
 {
-  const Rarities *pRVar1;
+  const Rarities *rarity;
 
-  pRVar1 = get_rarity((unsigned int)cards_data[iid].id);
-  return (unsigned int)((uint32_t)pRVar1->default_rarity - 3u < 2u);
+  rarity = get_rarity((unsigned int)cards_data[iid].id);
+  return (unsigned int)((uint32_t)rarity->default_rarity - 3u < 2u);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -1916,10 +1822,10 @@ char *target_has_silver_border(int who_chooses, int player, int card, int target
 /* ManalinkEh 2022: 0x2302910; original cards/unglued_unhinged.c:199. */
 int test_has_border_val(int iid, int val, int player, int card)
 {
-  border_t bVar1;
+  border_t border;
 
-  bVar1 = get_border_color((unsigned int)cards_data[iid].id);
-  return (unsigned int)(val == bVar1);
+  border = get_border_color((unsigned int)cards_data[iid].id);
+  return (unsigned int)(val == border);
 }
 
 /* ManalinkEh 2022: 0x23045f0; original cards/unglued_unhinged.c:1137. */
@@ -1944,17 +1850,17 @@ char *target_has_silver_border(int who_chooses, int player, int card, int target
                                int targeting_card)
 {
   uint32_t csvid;
-  border_t bVar1;
-  char *pcVar2;
+  border_t border;
+  char *requirement_error;
 
   csvid = get_id(player, card);
-  bVar1 = get_border_color(csvid);
-  pcVar2 = NULL;
-  if (bVar1 != BORDER_SILVER)
+  border = get_border_color(csvid);
+  requirement_error = NULL;
+  if (border != BORDER_SILVER)
   {
-    pcVar2 = "silver-bordered";
+    requirement_error = "silver-bordered";
   }
-  return pcVar2;
+  return requirement_error;
 }
 
 /* ManalinkEh 2022: 0x23060d0; original cards/unglued_unhinged.c:2283. */
@@ -2047,42 +1953,32 @@ int card_jumbo_imp(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2303760; original cards/unglued_unhinged.c:531. */
 int card_poultrygeist(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int pending_deaths_or_mode;
+  int die_roll;
   card_instance_t *instance;
 
   if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
     count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
   }
-  iVar1 = duh_mode(player);
-  iVar1 = resolve_gfp_ability(player, card, event, (iVar1 != 0) + RESOLVE_TRIGGER_OPTIONAL);
-  if (0 < iVar1)
+  pending_deaths_or_mode = duh_mode(player);
+  pending_deaths_or_mode = resolve_gfp_ability(
+      player, card, event, (pending_deaths_or_mode != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (0 < pending_deaths_or_mode)
   {
     do
     {
-      while (true)
+      die_roll = roll_d6t(player, player, card, -1, -1);
+      instance = in_play(player, card);
+      if (instance)
       {
-        iVar2 = roll_d6t(player, player, card, -1, -1);
-        instance = in_play(player, card);
-        if (instance != NULL)
-          break;
-      LAB_023037d4:
-        iVar1 = iVar1 + -1;
-        if (iVar1 == 0)
-        {
-          return 0;
-        }
+        if (die_roll == 1)
+          kill_card(player, card, KILL_SACRIFICE);
+        else
+          add_counters(player, card, player, card, COUNTER_P1_P1, 1);
       }
-      if (iVar2 != 1)
-      {
-
-        add_counters(player, card, player, card, COUNTER_P1_P1, 1);
-        goto LAB_023037d4;
-      }
-      kill_card(player, card, KILL_SACRIFICE);
-      iVar1 = iVar1 + -1;
-    } while (iVar1 != 0);
+      --pending_deaths_or_mode;
+    } while (pending_deaths_or_mode != 0);
   }
   return 0;
 }
@@ -2147,11 +2043,11 @@ int card_krazy_kow(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2303e00; original cards/unglued_unhinged.c:818. */
 int card_elvish_impersonators(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int rolled_power;
+  int rolled_toughness;
   card_instance_t *instance;
   unsigned int newval;
-  unsigned int uVar4;
+  unsigned int packed_stat;
 
   if (event != EVENT_RESOLVE_SPELL)
   {
@@ -2163,27 +2059,27 @@ int card_elvish_impersonators(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       if (event == EVENT_POWER)
       {
-        uVar4 = instance->targets[5].player;
+        packed_stat = instance->targets[5].player;
       }
       else
       {
-        uVar4 = instance->targets[5].card;
+        packed_stat = instance->targets[5].card;
       }
       newval = 0;
-      if ((short)(uVar4 >> 0x10) == 0x454e)
+      if ((short)(packed_stat >> 0x10) == 0x454e)
       {
-        newval = uVar4 & 0xffff;
+        newval = packed_stat & 0xffff;
       }
       set_characteristic_pt(newval);
     }
     return 0;
   }
 
-  iVar1 = roll_d6t(player, player, card, -1, -1);
-  iVar2 = roll_d6t(player, player, card, -1, -1);
+  rolled_power = roll_d6t(player, player, card, -1, -1);
+  rolled_toughness = roll_d6t(player, player, card, -1, -1);
   instance = get_card_instance(player, card);
-  instance->targets[5].player = (int)(short)iVar1 | 0x454e0000;
-  instance->targets[5].card = (int)(short)iVar2 | 0x454e0000;
+  instance->targets[5].player = (int)(short)rolled_power | 0x454e0000;
+  instance->targets[5].card = (int)(short)rolled_toughness | 0x454e0000;
   return 0;
 }
 
@@ -2217,59 +2113,61 @@ int card_growth_spurt(int player, int card, event_t event)
 int card_urzas_science_fair_project(int player, int card, event_t event)
 {
   int card_00;
-  int iVar1;
-  int iVar2;
+  int parent_player;
+  int roll_power_or_keywords;
   card_instance_t *instance;
-  int iVar4;
+  int toughness_bonus;
   int alternate_legacy_text_number;
 
   if (event != EVENT_RESOLVE_ACTIVATION)
     return generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
 
-  iVar2 = roll_d6t(player, player, card, -1, -1);
+  roll_power_or_keywords = roll_d6t(player, player, card, -1, -1);
   instance = get_card_instance(player, card);
-  iVar1 = instance->parent_controller;
+  parent_player = instance->parent_controller;
   card_00 = instance->parent_card;
-  instance = in_play(iVar1, card_00);
+  instance = in_play(parent_player, card_00);
   if (instance == NULL)
   {
     return 0;
   }
-  switch (iVar2)
+  switch (roll_power_or_keywords)
   {
   default:
     return generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
   case 1:
-    iVar4 = -2;
-    iVar2 = -2;
-    goto code_r0x023047e4;
+    toughness_bonus = -2;
+    roll_power_or_keywords = -2;
+    pump_until_eot_merge_previous_alt(player, card, parent_player, card_00, roll_power_or_keywords,
+                                      toughness_bonus, 1);
+    return generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
   case 2:
-    negate_combat_damage_this_turn(player, card, iVar1, card_00, 2);
+    negate_combat_damage_this_turn(player, card, parent_player, card_00, 2);
     return generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
   case 3:
     alternate_legacy_text_number = 3;
-    iVar4 = 8;
-    iVar2 = 0;
+    toughness_bonus = 8;
+    roll_power_or_keywords = 0;
     break;
   case 4:
     alternate_legacy_text_number = 4;
-    iVar4 = 0;
-    iVar2 = 0x100;
+    toughness_bonus = 0;
+    roll_power_or_keywords = 0x100;
     break;
   case 5:
     alternate_legacy_text_number = 5;
-    iVar4 = 0;
-    iVar2 = 0x20;
+    toughness_bonus = 0;
+    roll_power_or_keywords = 0x20;
     break;
   case 6:
-    iVar4 = 2;
-    iVar2 = 2;
-  code_r0x023047e4:
-    pump_until_eot_merge_previous_alt(player, card, iVar1, card_00, iVar2, iVar4, 1);
+    toughness_bonus = 2;
+    roll_power_or_keywords = 2;
+    pump_until_eot_merge_previous_alt(player, card, parent_player, card_00, roll_power_or_keywords,
+                                      toughness_bonus, 1);
     return generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
   }
-  pump_ability_until_eot_no_repeat_alt(player, card, iVar1, card_00, iVar2, iVar4,
-                                       alternate_legacy_text_number);
+  pump_ability_until_eot_no_repeat_alt(player, card, parent_player, card_00, roll_power_or_keywords,
+                                       toughness_bonus, alternate_legacy_text_number);
   return generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
@@ -2334,15 +2232,15 @@ static char *target_must_have_counters(int who_chooses, int player, int card, in
                                        int targeting_card)
 {
   int result;
-  char *pcVar2;
+  char *requirement_error;
 
   result = count_counters(player, card, ~COUNTER_P1_P1);
-  pcVar2 = NULL;
+  requirement_error = NULL;
   if (result == 0)
   {
-    pcVar2 = "must have counters";
+    requirement_error = "must have counters";
   }
-  return pcVar2;
+  return requirement_error;
 }
 
 /* ManalinkEh 2022: 0x2304110; original cards/unglued_unhinged.c:924. */
@@ -2392,18 +2290,19 @@ int card_hungry_hungry_heifer(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2305650; original cards/unglued_unhinged.c:1769. */
 int card_the_fallen_apart(int player, int card, event_t event)
 {
-  int32_t iVar1;
-  bool bVar2;
-  bool bVar3;
-  int iVar4;
+  int32_t packed_limbs;
+  bool has_arms;
+  bool has_legs;
+  int choice_or_result;
   card_instance_t *instance;
-  const char *puVar6;
-  unsigned int uVar7;
-  const char *puVar8;
-  const char *pcStack_278;
-  int iStack_274;
+  const char *arm_plural;
+  unsigned int leg_count;
+  const char *leg_plural;
+  const char *limb_description;
+  int arm_count;
   char limbs[600];
 
+  bool process_damage = true;
   if (event == EVENT_RESOLVE_SPELL)
   {
     instance = get_card_instance(player, card);
@@ -2415,84 +2314,86 @@ int card_the_fallen_apart(int player, int card, event_t event)
   }
   else
   {
-    iVar4 = is_humiliated(player, card, AL_TRIG);
-    if (iVar4 != 0)
-      goto LAB_02305688;
+    choice_or_result = is_humiliated(player, card, AL_TRIG);
+    if (choice_or_result != 0)
+      process_damage = false;
   }
-  iVar4 = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
-  if (iVar4 != 0)
+  if (process_damage)
   {
-    instance = get_card_instance(player, card);
-    iVar1 = instance->targets[5].card;
-    if ((short)((unsigned int)iVar1 >> 0x10) != 0x45d4)
+    choice_or_result = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
+    if (choice_or_result != 0)
     {
-      return 0;
-    }
-    iStack_274 = (int)(char)((unsigned int)iVar1 >> 8);
-    bVar2 = 0 < iStack_274;
-    uVar7 = (unsigned int)(char)iVar1;
-    bVar3 = 0 < (int)uVar7;
-    if ((bVar2) || (bVar3))
-    {
-      if (ai_is_speculating == 1)
+      instance = get_card_instance(player, card);
+      packed_limbs = instance->targets[5].card;
+      if ((short)((unsigned int)packed_limbs >> 0x10) != 0x45d4)
       {
-        limbs[0] = '\0';
+        return 0;
       }
-      else
+      arm_count = (int)(char)((unsigned int)packed_limbs >> 8);
+      has_arms = 0 < arm_count;
+      leg_count = (unsigned int)(char)packed_limbs;
+      has_legs = 0 < (int)leg_count;
+      if ((has_arms) || (has_legs))
       {
-        if (uVar7 == 1)
+        if (ai_is_speculating == 1)
         {
-          puVar8 = "";
+          limbs[0] = '\0';
         }
         else
         {
-          puVar8 = "s";
+          if (leg_count == 1)
+          {
+            leg_plural = "";
+          }
+          else
+          {
+            leg_plural = "s";
+          }
+          if (arm_count == 1)
+          {
+            arm_plural = "";
+          }
+          else
+          {
+            arm_plural = "s";
+          }
+          sprintf(limbs, "%d arm%s, %d leg%s", arm_count, arm_plural, leg_count, leg_plural);
         }
-        if (iStack_274 == 1)
+        limb_description = limbs;
+        choice_or_result = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014",
+                                       "\001\003", "\001\011", limb_description, "Remove arm",
+                                       has_arms, ((1 < arm_count) - 1 & 0xfffffc19) + 1000,
+                                       "Remove leg", (unsigned int)has_legs,
+                                       ((1 < (int)leg_count) - 1 & 0xfffffc19) + 1000, 0, 0, 0, 0);
+        if (choice_or_result == 0)
         {
-          puVar6 = "";
+          if (has_arms)
+          {
+            arm_count = arm_count + -1;
+          }
         }
         else
         {
-          puVar6 = "s";
+          leg_count = (leg_count - 1) + (unsigned int)!has_legs;
         }
-        sprintf(limbs, "%d arm%s, %d leg%s", iStack_274, puVar6, uVar7, puVar8);
+        instance->targets[5].card = arm_count << 8 | leg_count | 0x45d40000;
       }
-      pcStack_278 = limbs;
-      iVar4 =
-          dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014", "\001\003",
-                      "\001\011", pcStack_278, "Remove arm", bVar2,
-                      ((1 < iStack_274) - 1 & 0xfffffc19) + 1000, "Remove leg", (unsigned int)bVar3,
-                      ((1 < (int)uVar7) - 1 & 0xfffffc19) + 1000, 0, 0, 0, 0);
-      if (iVar4 == 0)
-      {
-        if (bVar2)
-        {
-          iStack_274 = iStack_274 + -1;
-        }
-      }
-      else
-      {
-        uVar7 = (uVar7 - 1) + (unsigned int)!bVar3;
-      }
-      instance->targets[5].card = iStack_274 << 8 | uVar7 | 0x45d40000;
     }
   }
-LAB_02305688:
   if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((instance = in_play(player, card),
         instance != NULL &&
-            (iVar4 = is_humiliated(player, card, AL_STATIC), iVar4 == 0))))
+            (choice_or_result = is_humiliated(player, card, AL_STATIC), choice_or_result == 0))))
   {
-    iVar1 = instance->targets[5].card;
-    if ((short)((unsigned int)iVar1 >> 0x10) == 0x45d4)
+    packed_limbs = instance->targets[5].card;
+    if ((short)((unsigned int)packed_limbs >> 0x10) == 0x45d4)
     {
-      if ((char)iVar1 < '\x01')
+      if ((char)packed_limbs < '\x01')
       {
         cannot_attack(player, card, EVENT_ABILITIES);
       }
-      if ('\0' < (char)((unsigned int)iVar1 >> 8))
+      if ('\0' < (char)((unsigned int)packed_limbs >> 8))
       {
         return 0;
       }
@@ -2513,59 +2414,46 @@ LAB_02305688:
 /* ManalinkEh 2022: 0x2305d40; original cards/unglued_unhinged.c:2189. */
 int card_symbol_status(int player, int card, event_t event)
 {
-  int iVar1;
+  int player_count_or_result;
   card_instance_t *instance;
-  int iVar3;
-  const Rarities *pRVar4;
-  char *pcVar5;
+  int id_or_result;
+  const Rarities *rarity;
+  char *expansion_cursor;
   int card_00;
   int any_expansion_symbols;
   int no_early_core_sets;
   char expansions[198];
   if (event == EVENT_RESOLVE_SPELL)
   {
-    expansions[0] = '\0';
-    expansions[1] = '\0';
-    expansions[2] = '\0';
-    expansions[3] = '\0';
-    expansions[4] = '\0';
-    expansions[5] = '\0';
-    pcVar5 = expansions + 6;
-    for (iVar1 = 0x30; iVar1 != 0; iVar1 = iVar1 + -1)
-    {
-      pcVar5[0] = '\0';
-      pcVar5[1] = '\0';
-      pcVar5[2] = '\0';
-      pcVar5[3] = '\0';
-      pcVar5 = pcVar5 + 4;
-    }
+    memset(expansions, 0, sizeof(expansions));
     get_config_data(0xffffffff, 1, &any_expansion_symbols);
     if (any_expansion_symbols != 0)
     {
       get_config_data(3, 2, &no_early_core_sets);
-      iVar1 = 0;
+      player_count_or_result = 0;
       do
       {
         card_00 = 0;
-        if (0 < active_cards_count[iVar1])
+        if (0 < active_cards_count[player_count_or_result])
         {
           do
           {
-            instance = in_play(iVar1, card_00);
-            if ((instance != NULL) && (iVar3 = is_what(iVar1, card_00, 0x47), iVar3 != 0))
+            instance = in_play(player_count_or_result, card_00);
+            if ((instance != NULL) &&
+                (id_or_result = is_what(player_count_or_result, card_00, 0x47), id_or_result != 0))
             {
-              iVar3 = get_id(iVar1, card_00);
-              pRVar4 = get_rarity(iVar3);
-              if (pRVar4->default_expansion < 0xc6)
+              id_or_result = get_id(player_count_or_result, card_00);
+              rarity = get_rarity(id_or_result);
+              if (rarity->default_expansion < 0xc6)
               {
-                expansions[pRVar4->default_expansion] = '\x01';
+                expansions[rarity->default_expansion] = '\x01';
               }
             }
             card_00 = card_00 + 1;
-          } while (card_00 < active_cards_count[iVar1]);
+          } while (card_00 < active_cards_count[player_count_or_result]);
         }
-        iVar1 = iVar1 + 1;
-      } while (iVar1 != 2);
+        player_count_or_result = player_count_or_result + 1;
+      } while (player_count_or_result != 2);
       if (no_early_core_sets != 0)
       {
         expansions[0x12] = '\0';
@@ -2575,22 +2463,23 @@ int card_symbol_status(int player, int card, event_t event)
         expansions[3] = 0;
         expansions[4] = 0;
       }
-      pcVar5 = expansions + 1;
-      iVar1 = 0;
+      expansion_cursor = expansions + 1;
+      player_count_or_result = 0;
       do
       {
-        iVar1 = (iVar1 + 1) - (unsigned int)(*pcVar5 == '\0');
-        pcVar5 = pcVar5 + 1;
-      } while (pcVar5 != expansions + 198);
-      if (0 < iVar1)
+        player_count_or_result =
+            (player_count_or_result + 1) - (unsigned int)(*expansion_cursor == '\0');
+        expansion_cursor = expansion_cursor + 1;
+      } while (expansion_cursor != expansions + 198);
+      if (0 < player_count_or_result)
       {
-        generate_tokens_by_id(player, card, 0x4d58, iVar1);
+        generate_tokens_by_id(player, card, 0x4d58, player_count_or_result);
       }
     }
     kill_card(player, card, KILL_DESTROY);
   }
-  iVar1 = basic_spell(player, card, event);
-  return iVar1;
+  player_count_or_result = basic_spell(player, card, event);
+  return player_count_or_result;
 }
 
 #endif
@@ -2598,22 +2487,22 @@ int card_symbol_status(int player, int card, event_t event)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2302cb0; original cards/unglued_unhinged.c:227. */
-static int txtfx_name(int player, int card, int marker)
+static int txtfx_name(int player, int card, event_t event, card_id_t marker)
 {
-  unsigned int uVar1;
+  unsigned int packed_text_effect;
   card_instance_t *instance;
-  unsigned int uVar3;
+  unsigned int stored_value;
 
   instance = get_displayed_card_instance(player, card);
   instance = get_displayed_card_instance((int)instance->damage_target_player,
                                          instance->damage_target_card);
-  uVar1 = instance->targets[5].player;
-  uVar3 = uVar1 & 0xffff;
-  if (uVar1 >> 0x10 != marker)
+  packed_text_effect = instance->targets[5].player;
+  stored_value = packed_text_effect & 0xffff;
+  if (packed_text_effect >> 0x10 != marker)
   {
-    uVar3 = 0x7fffffff;
+    stored_value = txtfx_not_found;
   }
-  return uVar3;
+  return stored_value;
 }
 
 #endif
@@ -2625,48 +2514,13 @@ static int num_letters_permanents_names_include(int player)
 {
   int i;
   int csvid;
-  static const unsigned char native_name_fold[256] = {
-      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
-      0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,
-      0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c,
-      0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,
-      0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a,
-      0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
-      0x7a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
-      0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,
-      0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x2c, 0x66, 0x84, 0x85, 0x86,
-      0x87, 0x5e, 0x25, 0x73, 0x3c, 0x8c, 0x8d, 0x7a, 0x8f, 0x90, 0x27, 0x27, 0x22, 0x22, 0x95,
-      0x2d, 0x2d, 0x7e, 0x99, 0x73, 0x3e, 0x9c, 0x9d, 0x7a, 0x79, 0x5f, 0x21, 0x24, 0x24, 0x24,
-      0x24, 0x7c, 0x25, 0x22, 0x40, 0x5e, 0x3c, 0x7e, 0x2d, 0x40, 0x7e, 0x5e, 0x2b, 0x32, 0x33,
-      0x27, 0x75, 0x26, 0x2e, 0x2c, 0x31, 0x5e, 0x3e, 0x31, 0x32, 0x33, 0x3f, 0x61, 0x61, 0x61,
-      0x61, 0x61, 0x61, 0xc6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69, 0x64, 0x6e,
-      0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2a, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xde, 0xdf, 0x61,
-      0x61, 0x61, 0x61, 0x61, 0x61, 0xe6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,
-      0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2f, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xfe,
-      0x79,
-  };
-  unsigned char bVar1;
+  unsigned char name_char;
   card_instance_t *instance;
-  int iVar3;
-  unsigned char *pbVar4;
-  int iVar5;
-  char *pcVar6;
+  int letter_index;
+  unsigned char *name_cursor;
+  int distinct_letters;
   char letter[26];
-  letter[0] = '\0';
-  letter[1] = '\0';
-  letter[2] = '\0';
-  letter[3] = '\0';
-  letter[4] = '\0';
-  letter[5] = '\0';
-  pcVar6 = letter + 6;
-  for (i = 5; i != 0; i = i + -1)
-  {
-    pcVar6[0] = '\0';
-    pcVar6[1] = '\0';
-    pcVar6[2] = '\0';
-    pcVar6[3] = '\0';
-    pcVar6 = pcVar6 + 4;
-  }
+  memset(letter, 0, sizeof(letter));
   if (active_cards_count[player] < 1)
   {
     letter[0] = '\0';
@@ -2682,34 +2536,34 @@ static int num_letters_permanents_names_include(int player)
         if (is_what(player, i, 0x47) != 0)
         {
           csvid = get_card_name(player, i);
-          pbVar4 = (unsigned char *)get_card_name_by_id(csvid);
-          bVar1 = *pbVar4;
-          while (bVar1 != 0)
+          name_cursor = (unsigned char *)get_card_name_by_id(csvid);
+          name_char = *name_cursor;
+          while (name_char != 0)
           {
-            pbVar4 = pbVar4 + 1;
-            bVar1 = native_name_fold[bVar1];
-            if ((bVar1 & 0xdf) == 0xc6)
+            name_cursor = name_cursor + 1;
+            name_char = lc_unaccent_map[name_char];
+            if ((name_char & 0xdf) == 0xc6)
             {
               letter[0] = '\x01';
               letter[4] = '\x01';
             }
-            else if ((unsigned char)(bVar1 + 0x9f) < 0x1a)
+            else if ((unsigned char)(name_char + 0x9f) < 0x1a)
             {
-              letter[bVar1 - 0x61] = 1;
+              letter[name_char - 0x61] = 1;
             }
-            bVar1 = *pbVar4;
+            name_char = *name_cursor;
           }
         }
       }
       i = i + 1;
     } while (i < active_cards_count[player]);
   }
-  iVar5 = 0;
-  for (iVar3 = 0; iVar3 < 26; ++iVar3)
+  distinct_letters = 0;
+  for (letter_index = 0; letter_index < 26; ++letter_index)
   {
-    iVar5 += letter[iVar3] != 0;
+    distinct_letters += letter[letter_index] != 0;
   }
-  return iVar5;
+  return distinct_letters;
 }
 
 #endif
@@ -2723,8 +2577,8 @@ static int fx_spark_fiend(int player, int card, event_t event)
 
   if (event == EVENT_SET_LEGACY_EFFECT_NAME)
   {
-    result = txtfx_name(player, card, 0x45c4);
-    if (result != 0x7fffffff)
+    result = txtfx_name(player, card, event, 0x45c4);
+    if (result != txtfx_not_found)
     {
       if (result != 0x2f02)
       {
@@ -2749,8 +2603,8 @@ static int fx_togglodyte(int player, int card, event_t event)
 
   if (event == EVENT_SET_LEGACY_EFFECT_NAME)
   {
-    result = txtfx_name(player, card, 0x45d8);
-    if (result != 0x7fffffff)
+    result = txtfx_name(player, card, event, 0x45d8);
+    if (result != txtfx_not_found)
     {
       argument2 = "On";
       if (result == 0)
@@ -2771,10 +2625,10 @@ static int fx_togglodyte(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2303c00; original cards/unglued_unhinged.c:702. */
 int card_spark_fiend(int player, int card, event_t event)
 {
-  unsigned int uVar1;
+  unsigned int packed_point;
   int val;
   card_instance_t *instance;
-  unsigned int uVar3;
+  unsigned int rolled_total;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
@@ -2782,17 +2636,17 @@ int card_spark_fiend(int player, int card, event_t event)
     if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
     {
       instance = get_card_instance(player, card);
-      uVar1 = instance->targets[5].player;
-      if ((short)(uVar1 >> 0x10) == 0x45c4)
+      packed_point = instance->targets[5].player;
+      if ((short)(packed_point >> 0x10) == 0x45c4)
       {
-        if ((short)uVar1 != 0x2f02)
+        if ((short)packed_point != 0x2f02)
         {
-          uVar3 = roll_xd6t(player, 2, player, card, -1, -1);
-          if (uVar3 == 7)
+          rolled_total = roll_xd6t(player, 2, player, card, -1, -1);
+          if (rolled_total == 7)
           {
             kill_card(player, card, KILL_SACRIFICE);
           }
-          else if (uVar3 == (uVar1 & 0xffff))
+          else if (rolled_total == (packed_point & 0xffff))
           {
             make_txtfx(player, card, fx_spark_fiend, CARD_ID_SPARK_FIEND, 0x2f02);
           }
@@ -2829,21 +2683,19 @@ int card_spark_fiend(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2306480; original cards/unglued_unhinged.c:2423. */
 int card_togglodyte(int player, int card, event_t event)
 {
-  int32_t iVar1;
+  int32_t packed_toggle;
   card_instance_t *instance;
   unsigned int val;
 
   if (event == EVENT_RESOLVE_SPELL)
-  {
     make_txtfx(player, card, fx_togglodyte, CARD_ID_TOGGLODYTE, 1);
-    if (new_specific_spell_played(player, card, EVENT_RESOLVE_SPELL, 2, 2, NULL) == 0)
-      goto LAB_023064d4;
-  LAB_02306640:
+  if (new_specific_spell_played(player, card, event, 2, 2, NULL))
+  {
     instance = get_card_instance(player, card);
-    iVar1 = instance->targets[5].player;
-    if ((short)((unsigned int)iVar1 >> 0x10) == 0x45d8)
+    packed_toggle = instance->targets[5].player;
+    if ((short)((unsigned int)packed_toggle >> 0x10) == 0x45d8)
     {
-      val = (unsigned int)((short)iVar1 == 0);
+      val = (unsigned int)((short)packed_toggle == 0);
     }
     else
     {
@@ -2851,26 +2703,20 @@ int card_togglodyte(int player, int card, event_t event)
     }
     make_txtfx(player, card, fx_togglodyte, CARD_ID_TOGGLODYTE, val);
   }
-  else
-  {
-    if (new_specific_spell_played(player, card, event, 2, 2, NULL) != 0)
-      goto LAB_02306640;
-  }
   if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     if (is_humiliated(player, card, AL_STATIC) == 0)
     {
       instance = get_card_instance(player, card);
-      iVar1 = instance->targets[5].player;
-      if (((short)((unsigned int)iVar1 >> 0x10) == 0x45d8) && ((short)iVar1 == 0))
+      packed_toggle = instance->targets[5].player;
+      if (((short)((unsigned int)packed_toggle >> 0x10) == 0x45d8) && ((short)packed_toggle == 0))
       {
         cannot_attack(player, card, EVENT_ABILITIES);
         cannot_block(player, card, EVENT_ABILITIES);
       }
     }
   }
-LAB_023064d4:
   instance = combat_damage_being_prevented(event);
   if (((instance != NULL) && (instance->damage_source_player == player)) &&
       (instance->damage_source_card == card))
@@ -2878,8 +2724,8 @@ LAB_023064d4:
     if (is_humiliated(player, card, AL_STATIC) == 0)
     {
       instance = get_card_instance(player, card);
-      iVar1 = instance->targets[5].player;
-      if (((short)((unsigned int)iVar1 >> 0x10) == 0x45d8) && ((short)iVar1 == 0))
+      packed_toggle = instance->targets[5].player;
+      if (((short)((unsigned int)packed_toggle >> 0x10) == 0x45d8) && ((short)packed_toggle == 0))
       {
         prevent_damage(affected_card_controller, affected_card, -1);
       }
@@ -2895,30 +2741,31 @@ LAB_023064d4:
 /* ManalinkEh 2022: 0x2304fc0; original cards/unglued_unhinged.c:1579. */
 int card_now_i_know_my_abcs(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
+  int letter_count_or_result;
+  int distinct_letters;
+  int ai_weight;
   if ((trigger_condition == 0xc9) && (event - EVENT_TRIGGER < 2))
   {
     if (((current_turn == player) &&
-         (iVar1 = num_letters_permanents_names_include(player), 0x19 < iVar1)) &&
-        (iVar1 = upkeep_trigger(player, card, event), iVar1 != 0))
+         (letter_count_or_result = num_letters_permanents_names_include(player),
+          0x19 < letter_count_or_result)) &&
+        (letter_count_or_result = upkeep_trigger(player, card, event), letter_count_or_result != 0))
     {
       lose_the_game(1 - player);
     }
   }
   else if ((event == EVENT_SHOULD_AI_PLAY) && (current_phase == 0x1f))
   {
-    iVar2 = num_letters_permanents_names_include(player);
-    iVar1 = iVar2 + -10;
-    if (0 < iVar1)
+    distinct_letters = num_letters_permanents_names_include(player);
+    letter_count_or_result = distinct_letters + -10;
+    if (0 < letter_count_or_result)
     {
-      iVar3 = iVar1;
+      ai_weight = letter_count_or_result;
       if (player != 1)
       {
-        iVar3 = 10 - iVar2;
+        ai_weight = 10 - distinct_letters;
       }
-      ai_modifier = ai_modifier + iVar1 * iVar3;
+      ai_modifier = ai_modifier + letter_count_or_result * ai_weight;
     }
   }
   return global_enchantment(player, card, event);
@@ -2931,16 +2778,11 @@ int card_now_i_know_my_abcs(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2302de0; original cards/unglued_unhinged.c:39. */
 void get_rules_text(char *out_buf, int player, int card, int remove_reminder_text)
 {
-  char cVar1;
-  char saved_code;
+  char next_symbol;
   int result;
-  char *pcVar5;
-  const char *pcVar7;
-  char cVar8;
-  const char *pcVar11;
-  const char *pcVar12;
-  char *pcVar13 = out_buf;
-  char *pcVar14;
+  char *marker;
+  char character;
+  const char *source;
   char dfcbackpat1[300];
   char dfcbackpat2[300];
 
@@ -2954,11 +2796,11 @@ void get_rules_text(char *out_buf, int player, int card, int remove_reminder_tex
   unsigned int rules_size = strlen(orig_rules) + 1;
   char rules[rules_size];
   memcpy(rules, orig_rules, rules_size);
-  pcVar12 = rules;
-  pcVar5 = strstr(rules, "\n--FLIP--\n");
-  if (pcVar5 != NULL)
+  source = rules;
+  marker = strstr(rules, "\n--FLIP--\n");
+  if (marker != NULL)
   {
-    *pcVar5 = '\0';
+    *marker = '\0';
   }
   dfcbackpat1[0] = '\n';
   dfcbackpat1[1] = '(';
@@ -2967,169 +2809,118 @@ void get_rules_text(char *out_buf, int player, int card, int remove_reminder_tex
   strcpy(dfcbackpat2, dfcbackpat1);
   strcat(dfcbackpat1, " - ");
   strcat(dfcbackpat2, ")");
-  pcVar5 = strstr(rules, dfcbackpat1);
-  if (pcVar5 != NULL)
+  marker = strstr(rules, dfcbackpat1);
+  if (marker != NULL)
   {
-    *pcVar5 = '\0';
+    *marker = '\0';
   }
-  pcVar5 = strstr(rules, dfcbackpat2);
-  if (pcVar5 != NULL)
+  marker = strstr(rules, dfcbackpat2);
+  if (marker != NULL)
   {
-    *pcVar5 = '\0';
+    *marker = '\0';
   }
-  cVar8 = *pcVar12;
-  pcVar5 = out_buf + 1;
-LAB_02302f4a:
-  pcVar7 = pcVar12 + 1;
-  *out_buf = cVar8;
-  pcVar11 = pcVar12;
-  pcVar13 = pcVar5;
-  pcVar14 = out_buf;
-  if (cVar8 == '(')
-    goto LAB_02302f6f;
-  while (cVar8 != '|')
+  while (true)
   {
-    pcVar12 = pcVar7;
-    out_buf = pcVar13;
-    if (cVar8 == '\0')
-    {
+    character = *source;
+    *out_buf = character;
+    if (character == '\0')
       return;
-    }
-    while (true)
-    {
-      cVar8 = pcVar11[1];
-      pcVar13 = out_buf + 1;
-      *out_buf = cVar8;
-      pcVar7 = pcVar12 + 1;
-      pcVar11 = pcVar12;
-      pcVar14 = out_buf;
-      if (cVar8 != '(')
-        break;
-    LAB_02302f6f:
-      pcVar12 = pcVar7;
-      out_buf = pcVar13;
-      if (remove_reminder_text != 0)
-      {
-        *pcVar14 = '\0';
-        pcVar5 = strchr(pcVar7, ')');
-        if (pcVar5 == NULL)
-        {
-          return;
-        }
-        pcVar12 = pcVar5 + 1;
-        cVar8 = pcVar5[1];
-        pcVar5 = pcVar13;
-        out_buf = pcVar14;
-        goto LAB_02302f4a;
-      }
-    }
-  }
-  cVar8 = pcVar11[1];
-  pcVar12 = pcVar7;
-  pcVar5 = pcVar13;
-  switch (cVar8)
-  {
-  case '/':
-    out_buf[0] = 'o';
-    out_buf[1] = 'r';
-    cVar8 = pcVar11[2];
-    pcVar12 = pcVar11 + 2;
-    pcVar5 = pcVar13 + 1;
-    out_buf = pcVar13;
-    goto LAB_02302f4a;
-  case '0':
-  case '3':
-  case '4':
-  case '5':
-  case '6':
-  case '7':
-  case '8':
-  case '9':
-  case 'A':
-  case 'C':
-  case 'E':
-  case 'I':
-  case 'L':
-  case 'Q':
-  case 'S':
-  case 'T':
-  case 'X':
-    cVar8 = pcVar11[2];
-    *out_buf = '\0';
-    pcVar12 = pcVar11 + 2;
-    goto LAB_02302f4a;
-  case '1':
-    cVar8 = pcVar11[2];
-    *out_buf = '\0';
-    if ((unsigned char)(cVar8 - 0x30U) < 10)
-    {
-    code_r0x0230309b:
-      cVar8 = pcVar11[3];
-      pcVar12 = pcVar11 + 3;
-      goto LAB_02302f4a;
-    }
-    break;
-  case '2':
-    cVar8 = pcVar11[2];
-    *out_buf = '\0';
-    saved_code = cVar8;
-    pcVar12 = strchr("0BUGRW", (int)cVar8);
-    cVar8 = saved_code;
-    if (pcVar12 != NULL)
-      goto code_r0x0230309b;
-    break;
-  default:
-    goto LAB_02303000;
-  case 'B':
-  case 'G':
-  case 'R':
-  case 'U':
-  case 'W':
-    cVar1 = pcVar11[2];
-    *out_buf = '\0';
-    if (cVar8 == cVar1)
-    {
-      result = 1;
-    }
-    else
-    {
-      pcVar12 = strchr("BUGRW", (int)cVar1);
-      result = (pcVar12 != (char *)0) + 1;
-    }
-    pcVar12 = pcVar7 + result;
-    cVar8 = *pcVar12;
-    goto LAB_02302f4a;
-  case 'H':
-    cVar8 = pcVar11[2];
-    *out_buf = '\0';
-    if ((unsigned char)(cVar8 - 0x31U) < 2)
-      goto code_r0x0230309b;
-    break;
-  case 'P':
-    cVar1 = pcVar11[2];
-    pcVar12 = pcVar7;
-    pcVar7 = strchr("BUGRW", (int)cVar1);
-    if (pcVar7 != NULL)
+    if (character == '(' && remove_reminder_text != 0)
     {
       *out_buf = '\0';
-      goto code_r0x0230309b;
+      marker = strchr(source + 1, ')');
+      if (marker == NULL)
+        return;
+      source = marker + 1;
+      continue;
     }
-    goto LAB_02303000;
-  case '|':
-    goto code_r0x0230305c;
+    if (character != '|')
+    {
+      ++source;
+      ++out_buf;
+      continue;
+    }
+    character = source[1];
+    switch (character)
+    {
+    case '/':
+      out_buf[0] = 'o';
+      /* Preserve the native one-character advance: the next character replaces this 'r'. */
+      out_buf[1] = 'r';
+      source += 2;
+      ++out_buf;
+      break;
+    case '0':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+    case 'A':
+    case 'C':
+    case 'E':
+    case 'I':
+    case 'L':
+    case 'Q':
+    case 'S':
+    case 'T':
+    case 'X':
+      *out_buf = '\0';
+      source += 2;
+      break;
+    case '1':
+      character = source[2];
+      *out_buf = '\0';
+      source += (unsigned char)(character - 0x30U) < 10 ? 3 : 2;
+      break;
+    case '2':
+      character = source[2];
+      *out_buf = '\0';
+      source += strchr("0BUGRW", (int)character) != NULL ? 3 : 2;
+      break;
+    case 'B':
+    case 'G':
+    case 'R':
+    case 'U':
+    case 'W':
+      next_symbol = source[2];
+      *out_buf = '\0';
+      if (character == next_symbol)
+        result = 1;
+      else
+        result = (strchr("BUGRW", (int)next_symbol) != NULL) + 1;
+      source += 1 + result;
+      break;
+    case 'H':
+      character = source[2];
+      *out_buf = '\0';
+      source += (unsigned char)(character - 0x31U) < 2 ? 3 : 2;
+      break;
+    case 'P':
+      next_symbol = source[2];
+      if (strchr("BUGRW", (int)next_symbol) != NULL)
+      {
+        *out_buf = '\0';
+        source += 3;
+      }
+      else
+      {
+        ++source;
+        ++out_buf;
+      }
+      break;
+    case '|':
+      source += 2;
+      ++out_buf;
+      break;
+    default:
+      ++source;
+      ++out_buf;
+      break;
+    }
   }
-  pcVar12 = pcVar11 + 2;
-  goto LAB_02302f4a;
-code_r0x0230305c:
-  cVar8 = pcVar11[2];
-  pcVar12 = pcVar11 + 2;
-  pcVar5 = pcVar13 + 1;
-  out_buf = pcVar13;
-  goto LAB_02302f4a;
-LAB_02303000:
-  pcVar5 = pcVar13 + 1;
-  out_buf = pcVar13;
-  goto LAB_02302f4a;
 }
 
 #endif
@@ -3141,7 +2932,7 @@ int card_punctuate(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  const char *pcVar3;
+  const char *rules_cursor;
   const char *punct;
   target_definition_t td;
   char rules[3000];
@@ -3157,15 +2948,15 @@ int card_punctuate(int player, int card, event_t event)
     {
       instance = get_card_instance(player, card);
       get_rules_text(rules, instance->targets[0].player, instance->targets[0].card, 0);
-      pcVar3 = rules;
+      rules_cursor = rules;
       result = 0;
-      while ((punct = strpbrk(pcVar3, "!?,;:\226\227()/\"\224\223'\221\222&.")) != NULL)
+      while ((punct = strpbrk(rules_cursor, "!?,;:\226\227()/\"\224\223'\221\222&.")) != NULL)
       {
-        pcVar3 = punct + 1;
+        rules_cursor = punct + 1;
         result = result + 1;
       }
-      damage_creature(instance->targets[0].player, instance->targets[0].card, result / 2,
-                      player, card);
+      damage_creature(instance->targets[0].player, instance->targets[0].card, result / 2, player,
+                      card);
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -3238,7 +3029,7 @@ int card_booster_tutor(int player, int card, event_t event)
       for (int i = 0; i < num_csvids; ++i)
         iids[i] = get_internal_card_id_from_csv_id(csvids[i]);
       if (ai_is_speculating != 1 && player == 1)
-        show_deck(0, iids, capacity, "Booster contents", 0, ENGINE_DONE_LABEL);
+        show_deck(0, iids, capacity, "Booster contents", 0, EXE_STR(ENGINE_DONE_LABEL));
       test_definition_t test;
       _Static_assert(sizeof(test) == 216, "native Booster Tutor filter");
       default_test_definition(&test, 0xff);
@@ -3301,33 +3092,13 @@ int card_mise(int player, int card, event_t event)
 /* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
 static int three_nonland_permanents_start_with_same_letter(void)
 {
-  static const unsigned char native_name_fold[256] = {
-      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
-      0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,
-      0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c,
-      0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,
-      0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a,
-      0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
-      0x7a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
-      0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,
-      0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x2c, 0x66, 0x84, 0x85, 0x86,
-      0x87, 0x5e, 0x25, 0x73, 0x3c, 0x8c, 0x8d, 0x7a, 0x8f, 0x90, 0x27, 0x27, 0x22, 0x22, 0x95,
-      0x2d, 0x2d, 0x7e, 0x99, 0x73, 0x3e, 0x9c, 0x9d, 0x7a, 0x79, 0x5f, 0x21, 0x24, 0x24, 0x24,
-      0x24, 0x7c, 0x25, 0x22, 0x40, 0x5e, 0x3c, 0x7e, 0x2d, 0x40, 0x7e, 0x5e, 0x2b, 0x32, 0x33,
-      0x27, 0x75, 0x26, 0x2e, 0x2c, 0x31, 0x5e, 0x3e, 0x31, 0x32, 0x33, 0x3f, 0x61, 0x61, 0x61,
-      0x61, 0x61, 0x61, 0xc6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69, 0x64, 0x6e,
-      0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2a, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xde, 0xdf, 0x61,
-      0x61, 0x61, 0x61, 0x61, 0x61, 0xe6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,
-      0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2f, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xfe,
-      0x79,
-  };
   int letter[26] = {0};
   for (int player = 0; player < 2; ++player)
     for (int card = 0; card < active_cards_count[player]; ++card)
       if (in_play(player, card) && !is_what(player, card, TYPE_LAND) && is_what(player, card, 0x47))
       {
         const unsigned char *name = (const unsigned char *)get_card_name_by_id(get_card_name(player, card));
-        unsigned char c = native_name_fold[*name];
+        unsigned char c = lc_unaccent_map[*name];
         if ((c & 0xdf) == 0xc6)
         {
           if (++letter[0] > 2 || ++letter[4] > 2)

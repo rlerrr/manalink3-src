@@ -2523,41 +2523,45 @@ int card_confound(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int i;
-  int iVar1;
-  int iVar2;
-  card_instance_t *pcVar3;
-  card_instance_t *pcVar4;
-  card_instance_t *pcVar5;
-  int iVar6;
+  int counter_available_or_target_index;
+  int target_card_or_creature;
+  card_instance_t *stack_spell;
+  card_instance_t *target_creature_or_spell;
+  card_instance_t *targeted_creature;
+  int resolved_target_or_creature;
 
   if (event == EVENT_CAN_CAST)
   {
 
-    iVar1 = card_counterspell(player, card, EVENT_CAN_CAST);
+    counter_available_or_target_index = card_counterspell(player, card, EVENT_CAN_CAST);
 
-    if ((0 < iVar1) && (pcVar3 = get_card_instance(card_on_stack_controller, card_on_stack),
-                        pcVar3->number_of_targets != '\0'))
+    if ((0 < counter_available_or_target_index) &&
+        (stack_spell = get_card_instance(card_on_stack_controller, card_on_stack),
+         stack_spell->number_of_targets != '\0'))
     {
       i = 0;
       do
       {
-        while (((pcVar3->targets[i].player == player &&
-                 (iVar2 = pcVar3->targets[i].card, iVar2 != -1)) &&
-                (pcVar4 = in_play(player, iVar2), pcVar4 != NULL)))
+        while (((stack_spell->targets[i].player == player &&
+                 (target_card_or_creature = stack_spell->targets[i].card,
+                  target_card_or_creature != -1)) &&
+                (target_creature_or_spell = in_play(player, target_card_or_creature),
+                 target_creature_or_spell != NULL)))
         {
-          iVar2 = is_what(pcVar3->targets[i].player, pcVar3->targets[i].card, 2);
-          if (iVar2 != 0)
+          target_card_or_creature =
+              is_what(stack_spell->targets[i].player, stack_spell->targets[i].card, 2);
+          if (target_card_or_creature != 0)
           {
-            return iVar1;
+            return counter_available_or_target_index;
           }
           i = i + 1;
-          if ((int)(unsigned int)pcVar3->number_of_targets <= i)
+          if ((int)(unsigned int)stack_spell->number_of_targets <= i)
           {
             return 0;
           }
         }
         i = i + 1;
-      } while (i < (int)(unsigned int)pcVar3->number_of_targets);
+      } while (i < (int)(unsigned int)stack_spell->number_of_targets);
     }
   }
   else
@@ -2570,25 +2574,35 @@ int card_confound(int player, int card, event_t event)
     {
 
       instance = get_card_instance(player, card);
-      pcVar4 = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-      if (pcVar4->number_of_targets != '\0')
+      target_creature_or_spell =
+          get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      if (target_creature_or_spell->number_of_targets != '\0')
       {
-        iVar1 = 0;
+        counter_available_or_target_index = 0;
         do
         {
-          if (((pcVar4->targets[iVar1].player == player) &&
-               (iVar6 = pcVar4->targets[iVar1].card, iVar6 != -1)) &&
-              ((pcVar5 = in_play(player, iVar6),
-                pcVar5 != NULL &&
-                    (iVar6 = is_what(pcVar4->targets[iVar1].player, pcVar4->targets[iVar1].card, 2),
-                     iVar6 != 0))))
+          if (((target_creature_or_spell->targets[counter_available_or_target_index].player ==
+                player) &&
+               (resolved_target_or_creature =
+                    target_creature_or_spell->targets[counter_available_or_target_index].card,
+                resolved_target_or_creature != -1)) &&
+              ((targeted_creature = in_play(player, resolved_target_or_creature),
+                targeted_creature != NULL &&
+                    (resolved_target_or_creature = is_what(
+                         target_creature_or_spell->targets[counter_available_or_target_index]
+                             .player,
+                         target_creature_or_spell->targets[counter_available_or_target_index].card,
+                         2),
+                     resolved_target_or_creature != 0))))
           {
-            real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+            real_counter_a_spell(player, card, instance->targets[0].player,
+                                 instance->targets[0].card);
             draw_a_card(player);
             break;
           }
-          iVar1 = iVar1 + 1;
-        } while (iVar1 < (int)(unsigned int)pcVar4->number_of_targets);
+          counter_available_or_target_index = counter_available_or_target_index + 1;
+        } while (counter_available_or_target_index <
+                 (int)(unsigned int)target_creature_or_spell->number_of_targets);
       }
     }
     kill_card(player, card, KILL_DESTROY);

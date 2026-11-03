@@ -1,0 +1,745 @@
+{
+  "status": "Five token helpers reconstructed, the native initializer range repaired, and four additional local-name projections verified.",
+  "batch": "docs/recovery-evidence/token-generation-cleanup.json",
+  "batch_sha256": "7569d72914fab4a8d22df24f0636b88f09bcf552a6b99f84e1437605ae2a6d85",
+  "counts": {
+    "helpers": 10,
+    "inline_only_helpers": 1,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 15,
+    "removed_lab_gotos": 14,
+    "source_lines_removed": 455,
+    "removed_placeholder_occurrences": 744,
+    "removed_placeholder_names": 71
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "native_reconstruction_comparisons": 212096,
+    "three_way_comparisons": 211195,
+    "verified_predecessor_range_repairs": 901,
+    "entry_invocations": 636288,
+    "functions": {
+      "copy_all_tokens_both_players": 3072,
+      "generate_token": 3200,
+      "default_token_definition": 68608,
+      "resolve_token_iid": 3072,
+      "get_copyable_special_infos": 134144
+    },
+    "callback_kind_hits": {
+      "copy_all_tokens_both_players": [
+        0,
+        0,
+        0,
+        9593,
+        6401,
+        2410,
+        454,
+        1257,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "generate_token": [
+        0,
+        1513,
+        15545,
+        14834,
+        0,
+        3200,
+        0,
+        0,
+        6091,
+        2308,
+        9562,
+        487,
+        3720,
+        64,
+        3656,
+        3656,
+        1489,
+        228,
+        179,
+        126,
+        126,
+        56,
+        204,
+        408,
+        198,
+        3656,
+        222,
+        142,
+        69,
+        2339,
+        2341,
+        0,
+        0,
+        0
+      ],
+      "default_token_definition": [
+        0,
+        0,
+        66304,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "resolve_token_iid": [
+        0,
+        0,
+        460200,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3072,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        760,
+        1534,
+        0
+      ],
+      "get_copyable_special_infos": [
+        0,
+        0,
+        134144,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        133376
+      ]
+    }
+  },
+  "original_code_regions": [
+    {
+      "name": "copy_all_tokens_both_players",
+      "address": "0x26668f0",
+      "size": 512,
+      "sha256": "09bae9ae438711d397ad5e57fdbb8c26db9be4d5a654d9acaf7bbe0dffbd8b9c",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x2666937",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x2666947",
+          "target": "0x2680e20",
+          "callee": "is_token"
+        },
+        {
+          "instruction": "0x2666978",
+          "target": "0x26bebe0",
+          "callee": "new_make_test_in_play"
+        },
+        {
+          "instruction": "0x26669c1",
+          "target": "0x2666640",
+          "callee": "native_copy_token"
+        },
+        {
+          "instruction": "0x2666a0f",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x2666a1f",
+          "target": "0x2680e20",
+          "callee": "is_token"
+        },
+        {
+          "instruction": "0x2666a50",
+          "target": "0x26bebe0",
+          "callee": "new_make_test_in_play"
+        },
+        {
+          "instruction": "0x2666a99",
+          "target": "0x2666640",
+          "callee": "native_copy_token"
+        },
+        {
+          "instruction": "0x2666abe",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x2666ade",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        }
+      ]
+    },
+    {
+      "name": "generate_token",
+      "address": "0x26659d0",
+      "size": 2983,
+      "sha256": "70ee30902289560acfb8a4c08de1c47dba16157901afafab787bd37f3d8dc24d",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x26659ea",
+          "target": "0x26b3410",
+          "callee": "get_internal_card_id_from_csv_id"
+        },
+        {
+          "instruction": "0x2665a0d",
+          "target": "0x2681ca0",
+          "callee": "is_what"
+        },
+        {
+          "instruction": "0x2665ab0",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x2665acb",
+          "target": "0x26dd430",
+          "callee": "is_humiliated"
+        },
+        {
+          "instruction": "0x2665ade",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x2665afc",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x2665b26",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x2665c67",
+          "target": "0x26b3410",
+          "callee": "get_internal_card_id_from_csv_id"
+        },
+        {
+          "instruction": "0x2665cc5",
+          "target": "0x26b2e30",
+          "callee": "add_card_to_hand"
+        },
+        {
+          "instruction": "0x2665cd2",
+          "target": "0x2664eb0",
+          "callee": "native_set_token"
+        },
+        {
+          "instruction": "0x2665cde",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x2665d05",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x2665ddb",
+          "target": "0x267af00",
+          "callee": "pump_ability_until_eot"
+        },
+        {
+          "instruction": "0x2665e34",
+          "target": "0x2669e00",
+          "callee": "put_into_play"
+        },
+        {
+          "instruction": "0x2665eaf",
+          "target": "0x2665470",
+          "callee": "default_token_definition"
+        },
+        {
+          "instruction": "0x2665ee4",
+          "target": "0x2664f30",
+          "callee": "native_resolve"
+        },
+        {
+          "instruction": "0x2665f1a",
+          "target": "0x26c11b0",
+          "callee": "backtrace_and_abort"
+        },
+        {
+          "instruction": "0x2665f37",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x2665fcf",
+          "target": "0x26730b0",
+          "callee": "add_a_subtype_permanently"
+        },
+        {
+          "instruction": "0x2665fec",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x2666012",
+          "target": "0x2679e00",
+          "callee": "set_special_flags"
+        },
+        {
+          "instruction": "0x2666034",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x2666069",
+          "target": "0x26b3410",
+          "callee": "get_internal_card_id_from_csv_id"
+        },
+        {
+          "instruction": "0x26660cd",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26660fa",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x266610e",
+          "target": "0x2658860",
+          "callee": "play_sound_effect"
+        },
+        {
+          "instruction": "0x266614b",
+          "target": "0x26cb970",
+          "callee": "dispatch_trigger2"
+        },
+        {
+          "instruction": "0x266616c",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x26661a7",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        },
+        {
+          "instruction": "0x26661c4",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x266620f",
+          "target": "0x26b5a00",
+          "callee": "kill_card"
+        },
+        {
+          "instruction": "0x2666258",
+          "target": "0x26d4840",
+          "callee": "add_counters"
+        },
+        {
+          "instruction": "0x266627f",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26662a0",
+          "target": "0x26b5a00",
+          "callee": "kill_card"
+        },
+        {
+          "instruction": "0x26662d7",
+          "target": "0x267ab00",
+          "callee": "create_targetted_legacy_effect"
+        },
+        {
+          "instruction": "0x26662e6",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x266632c",
+          "target": "0x2660240",
+          "callee": "default_target_definition"
+        },
+        {
+          "instruction": "0x266634c",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x2666371",
+          "target": "0x26604c0",
+          "callee": "can_target"
+        },
+        {
+          "instruction": "0x26663aa",
+          "target": "0x215ec90",
+          "callee": "choose_who_attack"
+        },
+        {
+          "instruction": "0x26663d6",
+          "target": "0x26edca0",
+          "callee": "equip_target_creature"
+        },
+        {
+          "instruction": "0x2666408",
+          "target": "0x26c90f0",
+          "callee": "increase_trap_condition"
+        },
+        {
+          "instruction": "0x2666436",
+          "target": "0x2660db0",
+          "callee": "new_pick_target"
+        },
+        {
+          "instruction": "0x2666467",
+          "target": "0x26edca0",
+          "callee": "equip_target_creature"
+        },
+        {
+          "instruction": "0x2666481",
+          "target": "0x26b3410",
+          "callee": "get_internal_card_id_from_csv_id"
+        },
+        {
+          "instruction": "0x26664f7",
+          "target": "0x26b32d0",
+          "callee": "in_play"
+        }
+      ]
+    },
+    {
+      "name": "default_token_definition",
+      "address": "0x2665470",
+      "size": 270,
+      "sha256": "4521877108ac49cc6c74cc892bb8be814706466d03f646436efcc42a2a1a62f6",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x2665517",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        }
+      ]
+    },
+    {
+      "name": "resolve_token_iid",
+      "address": "0x2664f30",
+      "size": 1093,
+      "sha256": "c4105c97e02013b192f676b347f66684eff049d76f499b622ede5efe99c46672",
+      "entry_abi": "regparm(2)",
+      "external_branches": [
+        {
+          "instruction": "0x2664f58",
+          "target": "0x26b3410",
+          "callee": "get_internal_card_id_from_csv_id"
+        },
+        {
+          "instruction": "0x2665069",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        },
+        {
+          "instruction": "0x266514b",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26651ed",
+          "target": "0x4a6500",
+          "callee": "create_a_card_type"
+        },
+        {
+          "instruction": "0x266535d",
+          "target": "0x26803c0",
+          "callee": "get_sleighted_color_test"
+        }
+      ]
+    },
+    {
+      "name": "get_copyable_special_infos",
+      "address": "0x2665380",
+      "size": 238,
+      "sha256": "0189dacded105e812001fbacd3f16b479dd1149ae1edefe838aced070f4cd8f0",
+      "entry_abi": "regparm(2)",
+      "external_branches": [
+        {
+          "instruction": "0x2665395",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26653c7",
+          "target": "0x26b35f0",
+          "callee": "get_backup_id"
+        }
+      ]
+    }
+  ],
+  "external_data_bindings": 62,
+  "external_callee_bindings": 64,
+  "native_entry_abis": {
+    "copy_all_tokens_both_players": "cdecl",
+    "generate_token": "cdecl",
+    "default_token_definition": "cdecl",
+    "resolve_token_iid": "regparm(2)",
+    "get_copyable_special_infos": "regparm(2)"
+  },
+  "native_tested_helpers": 9,
+  "register_adapters": {
+    "native_copy_token": "regparm(3)",
+    "native_set_token": "regparm(3)",
+    "native_resolve": "regparm(2)"
+  },
+  "whole_unit_net_lines_removed": 455,
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 10,
+  "focused": {
+    "path": ".recovery/token-generation-focused-c388.json",
+    "sha256": "5bb1db82630bf3a946efccf21cfbf614750fd9107996cc383def31596975ec7f",
+    "source_succession_links": 20,
+    "earlier_alpha_rename_bridges": 1
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/token-generation-build-c392.log",
+    "log_sha256": "1db9b243bf732623ccf8a28b1ec423dec1504ed955f209f837239c0f4bab1e13",
+    "verified_built_slots": 15169,
+    "dll_sha256": "43f397c80ea3e6e9868750c2474113d4048876d1ac800045ab8f889683322056",
+    "dbg_sha256": "7d0e2afce7d6a8aa4ae2a5db3d7a6041ed16e3ab10cd7eb542db4c0ff803730b"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/token-generation-setup-c392.log",
+    "log_sha256": "1c8ea663f4624e450345489be11061057fd724954da80a95a174e387315750b3",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4819,
+    "stubs": 0,
+    "metadata_sha256": "c914b9ebafec715250c21dc13cefeaf0576128eb7ba0b2021cf4713caeab7cad",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ed690",
+        "after": "public COFF entry 0x26ed510"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e3e50",
+        "after": "recovery ledger"
+      }
+    ],
+    "public_resolution_simplifications": [
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": {
+          "name": "copy_token",
+          "source": "functions/token_generation.c",
+          "address": "0x2666680",
+          "size": 43,
+          "resolution": "unique rebuilt public COFF entry",
+          "rebuilt_address": "0x26e3e50",
+          "rebuilt_candidates": [
+            "0x26e39d0",
+            "0x26e3e50"
+          ]
+        },
+        "after": {
+          "address": 40778912,
+          "size": 82,
+          "name": "copy_token",
+          "source": "functions/token_generation.c"
+        },
+        "coff_addresses": [
+          "0x26e3ca0"
+        ],
+        "bounds_sha256": "95286abecabab577b7130fc4d58889d1e374b91ea51107de4dc6eedd82e3efc4",
+        "debug_sha256": "7d0e2afce7d6a8aa4ae2a5db3d7a6041ed16e3ab10cd7eb542db4c0ff803730b",
+        "source_definition_unchanged_sha256": "87f65a02e273131c414344ab5cb3333347ac0a994b691ca75ded3d95e811c0ff",
+        "reason": "Rebuild emits one unambiguous range, so ordinary recovery-ledger mapping replaces public-entry disambiguation."
+      }
+    ]
+  },
+  "index_unchanged": true,
+  "limits": "Five independent native bodies plus four exact local-identifier projections. Child helpers are controlled substitutes; no composed UI/gameplay claim. Private resolver/info entries use regparm(2); copy/set adapters use regparm(3). Native info jump table is retained read-only with all 56 targets checked inside its function. Callbacks summarize descriptor, type data and the first 16 record/extension slots plus current generated and legacy records per player using hashes; every allocated record/extension and all other declared output fixtures are compared byte for byte at return. Bounded allocated 150-slot storage, valid IIDs, finite generated quantities and safe action arguments are required. The initializer deliberately repairs the signed-range predecessor bug: 901 low-ID cases differ only in the two source-coordinate output fields, verified explicitly; all other cases agree three ways, and native/reconstruction agree in every case.",
+  "inline_cleanup": {
+    "path": "docs/recovery-evidence/token-inline-cleanup.json",
+    "sha256": "6e86a0e416cb46604694ff1b20728af0e80120a508024f92a1c11bd7474d4f63",
+    "expanded_projection": {
+      "application": "docs/recovery-evidence/token-inline-cleanup.json",
+      "application_sha256": "6e86a0e416cb46604694ff1b20728af0e80120a508024f92a1c11bd7474d4f63",
+      "compiler_archive": ".recovery/token-inline-projected-c391.i.gz",
+      "compiler_archive_sha256": "5abe0cee2f23ec3e4dd7a52ec09176e9ed76796477ff7f33c98488513ada89d0",
+      "parent_expanded_sha256": "71c06e3d8bf96d0953e06e8aa2a2c401b94bb26d3aba2fff016d67b033293eaf",
+      "helper_expanded_sha256": "0669088cb2bf4eb0fc9f1a4bdcdf20c125ea7f93b3fb9c6d18385a785916dd3d",
+      "exact_expanded_parent_block_projection": true,
+      "extra_native_entry_invocations": 0
+    },
+    "expanded_projection_sha256": "42a97e1b0e94ceed2437b9c81fd81dffd5e347620569c456930b046f09e1c494",
+    "focused_path": ".recovery/token-inline-focused-c391.json",
+    "focused_sha256": "346e8e9064a5b14a9ecfdb7bab27e1d6198098e19cdcc9ff0bce79d8fc8a3b43",
+    "extra_native_entry_coverage": 0
+  },
+  "verified_behavior_repairs": [
+    {
+      "name": "default_token_definition",
+      "native_guard_address": "0x266553a",
+      "native_guard_end": "0x2665545",
+      "native_guard_bytes": "81ea8503000083fa077717",
+      "native_guard_sha256": "8200d1a44666cb35e418fa98c06cdd567129f9f183b29d9e0afa39c6235c0d5d",
+      "native_guard_disassembly": [
+        "sub edx, 0x385",
+        "cmp edx, 7",
+        "ja 0x266555c"
+      ],
+      "before": "signed promoted uint16 id minus 901 < 8 incorrectly includes IDs 0..900",
+      "after": "unsigned subtraction/range check accepts only IDs 901..908",
+      "checked_card_ids": 65536,
+      "verified_changed_cases": 901,
+      "only_changed_output_fields": [
+        "s_player",
+        "s_card"
+      ]
+    }
+  ],
+  "retained_switch_tables": [
+    {
+      "owner": "get_copyable_special_infos",
+      "address": "0x275e240",
+      "entries": 56,
+      "sha256": "a56aa164821339c5de8ee3e0e198ee096ac2cfb776b1b164858ba901ec6caba2",
+      "all_targets_within_function": true
+    }
+  ],
+  "identifier_only_helpers": [
+    "set_token",
+    "copy_token_definition",
+    "generate_token_by_id_impl",
+    "copy_token_characteristics_for_clone"
+  ],
+  "whole_unit_readability": {
+    "source": "functions/token_generation.c",
+    "source_sha256": "59dce29e44b4dc07d92d9a132ab1008955d04c128b2507cbc9e02395ea7fd873",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c393.json",
+    "sha256": "4b73767d6dab7a30f208dffb1d7df6766f1f3e3cbb03db1abbc917d429d2b9d7",
+    "counts": {
+      "tracked_source_definitions": 2605,
+      "functions_with_lab_gotos": 982,
+      "lab_gotos": 2593,
+      "functions_with_placeholders": 2037,
+      "distinct_function_local_placeholder_spellings": 6147,
+      "placeholder_identifier_occurrences": 47925,
+      "union_keywords": 0
+    }
+  }
+}

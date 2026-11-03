@@ -591,7 +591,7 @@ static void review_picks(int pack){
 	for(i=0;i<15*(pack+1);i++){
 		deck[i] = get_internal_card_id_from_csv_id( picks[0][i] );
 	}
-	show_deck( HUMAN, deck_ptr[HUMAN], 500, "Review your picks", 0, 0x7375B0 );
+	show_deck( HUMAN, deck_ptr[HUMAN], 500, "Review your picks", 0, EXE_STR(ENGINE_DONE_LABEL) );
 }
 
 static void build_deck(const char *deck_name, int player){

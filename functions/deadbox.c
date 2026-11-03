@@ -10,7 +10,7 @@ void increase_dead_count(int player, int iid, int is_tok)
 {
   int card;
   card_instance_t *instance;
-  target_t *ptVar2;
+  target_t *dead_iid_slot;
 
   card = get_deadbox_card(player);
   if (-1 < card)
@@ -20,16 +20,16 @@ void increase_dead_count(int player, int iid, int is_tok)
     {
       iid = iid | 0x80000000;
     }
-    ptVar2 = instance->targets;
+    dead_iid_slot = instance->targets;
     do
     {
-      if (ptVar2->player == -1)
+      if (dead_iid_slot->player == -1)
       {
-        ptVar2->player = iid;
+        dead_iid_slot->player = iid;
         break;
       }
-      ptVar2 = (target_t *)&ptVar2->card;
-    } while (ptVar2 <= &instance->targets[0x11].card);
+      dead_iid_slot = (target_t *)&dead_iid_slot->card;
+    } while (dead_iid_slot <= &instance->targets[0x11].card);
     hack_silent_counters = hack_silent_counters + 1;
     add_counters(player, card, player, card, COUNTER_DEATH, 1);
     if (is_tok == 0)
@@ -90,7 +90,7 @@ void reset_dead_count(void)
 {
   int card;
   card_instance_t *instance;
-  target_t *ptVar2;
+  target_t *dead_record;
   int player;
 
   player = 0;
@@ -103,13 +103,13 @@ void reset_dead_count(void)
     }
     instance = get_card_instance(player, card);
     remove_all_counters(player, card, player, card, ~COUNTER_P1_P1);
-    ptVar2 = instance->targets;
+    dead_record = instance->targets;
     do
     {
-      ptVar2->player = -1;
-      ptVar2->card = -1;
-      ptVar2 = ptVar2 + 1;
-    } while (ptVar2 != instance->targets + 0x12);
+      dead_record->player = -1;
+      dead_record->card = -1;
+      dead_record = dead_record + 1;
+    } while (dead_record != instance->targets + 0x12);
     player = player + 1;
   } while (player != 2);
   return;
@@ -290,7 +290,7 @@ int has_type_dead_this_turn_in_grave(int player, test_definition_t *this_test){
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2671e30; original functions/deadbox.c:179. */
 void seek_grave_to_reanimate_this_turn(int player, int t_player, int selected_type,
-                                            reanimate_mode_t mode)
+                                       reanimate_mode_t mode)
 {
   int result;
   card_instance_t *instance;
@@ -307,35 +307,37 @@ void seek_grave_to_reanimate_this_turn(int player, int t_player, int selected_ty
       dead_slot = 0;
       do
       {
-        while (((dead_slot & 1 ? instance->targets[dead_slot / 2].card
-                               : instance->targets[dead_slot / 2].player) < 0 ||
-                (result = is_what(-1,
-                                  (dead_slot & 1 ? instance->targets[dead_slot / 2].card
-                                                 : instance->targets[dead_slot / 2].player),
-                                  selected_type & 0x3fffffff),
-                 result == 0)))
+        if ((dead_slot & 1 ? instance->targets[dead_slot / 2].card
+                           : instance->targets[dead_slot / 2].player) >= 0 &&
+            (result = is_what(-1,
+                              (dead_slot & 1 ? instance->targets[dead_slot / 2].card
+                                             : instance->targets[dead_slot / 2].player),
+                              selected_type & 0x3fffffff),
+             result != 0))
         {
-        LAB_02671ea0:
-          dead_slot = dead_slot + 1;
-          if (dead_slot == 36)
-            goto LAB_02671e61;
-        }
-        result = (dead_slot & 1 ? instance->targets[dead_slot / 2].card
-                                : instance->targets[dead_slot / 2].player);
-        if ((selected_type & 0x40000000U) != 0)
-        {
-          result = is_planeswalker(-1, result);
-          if (result != 0)
-            goto LAB_02671ea0;
           result = (dead_slot & 1 ? instance->targets[dead_slot / 2].card
                                   : instance->targets[dead_slot / 2].player);
+          bool reanimate = true;
+          if ((selected_type & 0x40000000U) != 0)
+          {
+            result = is_planeswalker(-1, result);
+            if (result != 0)
+              reanimate = false;
+            else
+              result = (dead_slot & 1 ? instance->targets[dead_slot / 2].card
+                                      : instance->targets[dead_slot / 2].player);
+          }
+          if (reanimate)
+          {
+            dead_slot = dead_slot + 1;
+            seek_grave_for_id_to_reanimate(player, -1, player_00,
+                                           (unsigned int)cards_data[result].id, mode);
+            continue;
+          }
         }
         dead_slot = dead_slot + 1;
-        seek_grave_for_id_to_reanimate(player, -1, player_00,
-                                            (unsigned int)cards_data[result].id, mode);
       } while (dead_slot != 36);
     }
-  LAB_02671e61:
     player_00 = player_00 + 1;
     if (player_00 == 2)
     {

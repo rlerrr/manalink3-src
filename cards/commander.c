@@ -1190,10 +1190,10 @@ Each player who discarded a card with the highest converted mana cost among card
 
 int card_sewer_nemesis(int player, int card, event_t event)
 {
-  int32_t iVar1;
-  card_instance_t *pcVar2;
-  int iVar3;
-  card_instance_t *pcVar4;
+  int32_t chosen_target_player;
+  card_instance_t *nemesis;
+  int chosen_player;
+  card_instance_t *saved_target_instance;
   target_definition_t td;
   if (card != -1)
   {
@@ -1204,37 +1204,37 @@ int card_sewer_nemesis(int player, int card, event_t event)
       td.allow_cancel = 0;
       td.illegal_abilities = 0;
       pick_target(&td, "TARGET_PLAYER");
-      pcVar2 = get_card_instance(player, card);
-      pcVar4 = get_card_instance(player, card);
-      iVar1 = pcVar2->targets[0].player;
-      pcVar4->targets[1].card = pcVar2->targets[0].card;
-      pcVar4->targets[1].player = iVar1;
-      pcVar2 = get_card_instance(player, card);
-      pcVar2->number_of_targets = '\0';
-      pcVar2 = get_card_instance(player, card);
-      if (-1 < pcVar2->targets[1].player)
+      nemesis = get_card_instance(player, card);
+      saved_target_instance = get_card_instance(player, card);
+      chosen_target_player = nemesis->targets[0].player;
+      saved_target_instance->targets[1].card = nemesis->targets[0].card;
+      saved_target_instance->targets[1].player = chosen_target_player;
+      nemesis = get_card_instance(player, card);
+      nemesis->number_of_targets = '\0';
+      nemesis = get_card_instance(player, card);
+      if (-1 < nemesis->targets[1].player)
       {
-        pcVar2 = get_card_instance(player, card);
-        sp_ability_trigger(pcVar2->targets[1].player, EVENT_RESOLVE_SPELL, 2, TYPE_ANY, NULL,
+        nemesis = get_card_instance(player, card);
+        sp_ability_trigger(nemesis->targets[1].player, EVENT_RESOLVE_SPELL, 2, TYPE_ANY, NULL,
                            player, card);
       }
     }
     else
     {
-      pcVar2 = get_card_instance(player, card);
-      if (-1 < pcVar2->targets[1].player)
+      nemesis = get_card_instance(player, card);
+      if (-1 < nemesis->targets[1].player)
       {
-        pcVar2 = get_card_instance(player, card);
-        iVar3 = pcVar2->targets[1].player;
-        sp_ability_trigger(iVar3, event, 2, TYPE_ANY, NULL, player, card);
+        nemesis = get_card_instance(player, card);
+        chosen_player = nemesis->targets[1].player;
+        sp_ability_trigger(chosen_player, event, 2, TYPE_ANY, NULL, player, card);
         if (event == EVENT_SPA)
         {
-          mill(iVar3, 1);
+          mill(chosen_player, 1);
         }
         else if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
                  (player == affected_card_controller))
         {
-          set_characteristic_pt(count_graveyard(iVar3));
+          set_characteristic_pt(count_graveyard(chosen_player));
         }
       }
     }
@@ -1267,9 +1267,9 @@ int card_skullbriar_the_walking_grave(int player, int card, event_t event)
 {
   int p;
   int c;
-  int iVar1;
+  int owner;
   card_instance_t *instance;
-  int iVar3;
+  int counter_legacy;
 
   check_legend_rule(player, card, event);
   haste(player, card, event);
@@ -1301,19 +1301,19 @@ int card_skullbriar_the_walking_grave(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       if ((instance != NULL) && ((unsigned char)(instance->kill_code - 1) < 4))
       {
-        iVar1 = get_owner(player, card);
-        if (player == iVar1)
+        owner = get_owner(player, card);
+        if (player == owner)
         {
-          iVar3 = create_legacy_effect(player, card, effect_skullbriar_the_walking_grave);
+          counter_legacy = create_legacy_effect(player, card, effect_skullbriar_the_walking_grave);
         }
         else
         {
-          iVar3 = create_legacy_effect_for_opponent(player, card,
-                                                    effect_skullbriar_the_walking_grave, -1, -1);
+          counter_legacy = create_legacy_effect_for_opponent(
+              player, card, effect_skullbriar_the_walking_grave, -1, -1);
         }
-        if (iVar3 != -1)
+        if (counter_legacy != -1)
         {
-          copy_counters(player, card, iVar1, iVar3, player, card, 1);
+          copy_counters(player, card, owner, counter_legacy, player, card, 1);
         }
       }
     }
@@ -1421,39 +1421,23 @@ Flying, vigilance
 
 int card_the_mimeoplasm(int player, int card, event_t event)
 {
-  int iVar1;
+  int second_grave_index;
   card_instance_t *instance;
-  int iVar3;
+  int second_selection_or_owner;
   int32_t grave_id;
-  int iVar4;
+  int copy_iid_or_result;
   int grave_id_00;
   test_definition_t test;
 
-  if (event == EVENT_CAST_SPELL)
+  if (event == EVENT_CAST_SPELL && card == affected_card && player == affected_card_controller)
   {
-    if ((card == affected_card) && (player == affected_card_controller))
+    if (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0))
     {
-      if (ai_is_speculating == 1)
+      copy_iid_or_result = count_graveyard_by_type(2, 2);
+      if (copy_iid_or_result < 2)
       {
-        iVar4 = count_graveyard_by_type(2, 2);
-        if (iVar4 < 2)
-        {
-          if (player == 1)
-            goto LAB_023e501b;
-          iVar4 = 1000;
-        LAB_023e5020:
-          ai_modifier = ai_modifier + iVar4;
-        }
-      }
-      else if ((player == 1) && (((unsigned char)trace_mode & 2) == 0))
-      {
-        iVar4 = count_graveyard_by_type(2, 2);
-        if (iVar4 < 2)
-        {
-        LAB_023e501b:
-          iVar4 = -1000;
-          goto LAB_023e5020;
-        }
+        copy_iid_or_result = player == 1 ? -1000 : 1000;
+        ai_modifier = ai_modifier + copy_iid_or_result;
       }
     }
   }
@@ -1464,88 +1448,93 @@ int card_the_mimeoplasm(int player, int card, event_t event)
     new_default_test_definition(&test, 2, "Select a creature card to copy.");
     test.id = 0x388;
     test.id_flag = 1;
-    iVar4 = select_target_from_either_grave(player, card, SFG_NOTARGET, 1, 1, &test, 0, 1);
-    if (iVar4 == -1)
+    copy_iid_or_result =
+        select_target_from_either_grave(player, card, SFG_NOTARGET, 1, 1, &test, 0, 1);
+    if (copy_iid_or_result == -1)
     {
-    LAB_023e4fa8:
-      iVar4 = -1;
+      copy_iid_or_result = -1;
     }
     else
     {
-      iVar4 =
+      copy_iid_or_result =
           turn_card_in_grave_face_down(instance->targets[0].player, instance->targets[1].player);
       strcpy(test.message, "Select a creature card for counters.");
-      iVar3 = select_target_from_either_grave(player, card, SFG_NOTARGET, 1, 1, &test, 2, 3);
-      turn_card_in_grave_face_up(instance->targets[0].player, instance->targets[1].player, iVar4);
-      if (iVar3 == -1)
-        goto LAB_023e4fa8;
-      hack_silent_counters = hack_silent_counters + 1;
-      add_counters(player, card, player, card, COUNTER_P1_P1, get_base_power_iid(instance->targets[2].player, iVar3));
-      iVar3 = instance->targets[0].player;
-      hack_silent_counters = hack_silent_counters + -1;
-      if (iVar3 == instance->targets[2].player)
-      {
-        grave_id_00 = instance->targets[1].player;
-        iVar1 = instance->targets[3].player;
-        grave_id = grave_id_00;
-        if (grave_id_00 < iVar1)
-        {
-          grave_id = iVar1;
-        }
-        if (iVar1 < grave_id_00)
-        {
-          grave_id_00 = iVar1;
-        }
-      }
+      second_selection_or_owner =
+          select_target_from_either_grave(player, card, SFG_NOTARGET, 1, 1, &test, 2, 3);
+      turn_card_in_grave_face_up(instance->targets[0].player, instance->targets[1].player,
+                                 copy_iid_or_result);
+      if (second_selection_or_owner == -1)
+        copy_iid_or_result = -1;
       else
       {
-        grave_id = instance->targets[1].player;
-        grave_id_00 = instance->targets[3].player;
+        hack_silent_counters = hack_silent_counters + 1;
+        add_counters(player, card, player, card, COUNTER_P1_P1,
+                     get_base_power_iid(instance->targets[2].player, second_selection_or_owner));
+        second_selection_or_owner = instance->targets[0].player;
+        hack_silent_counters = hack_silent_counters + -1;
+        if (second_selection_or_owner == instance->targets[2].player)
+        {
+          grave_id_00 = instance->targets[1].player;
+          second_grave_index = instance->targets[3].player;
+          grave_id = grave_id_00;
+          if (grave_id_00 < second_grave_index)
+          {
+            grave_id = second_grave_index;
+          }
+          if (second_grave_index < grave_id_00)
+          {
+            grave_id_00 = second_grave_index;
+          }
+        }
+        else
+        {
+          grave_id = instance->targets[1].player;
+          grave_id_00 = instance->targets[3].player;
+        }
+        rfg_card_from_grave(second_selection_or_owner, grave_id);
+        rfg_card_from_grave(instance->targets[2].player, grave_id_00);
+        instance->targets[0].player = -1;
+        instance->targets[0].card = -1;
+        instance->targets[1].player = -1;
+        instance->targets[1].card = -1;
+        instance->targets[2].player = -1;
+        instance->targets[2].card = -1;
+        instance->targets[3].player = -1;
+        instance->targets[3].card = -1;
       }
-      rfg_card_from_grave(iVar3, grave_id);
-      rfg_card_from_grave(instance->targets[2].player, grave_id_00);
-      instance->targets[0].player = -1;
-      instance->targets[0].card = -1;
-      instance->targets[1].player = -1;
-      instance->targets[1].card = -1;
-      instance->targets[2].player = -1;
-      instance->targets[2].card = -1;
-      instance->targets[3].player = -1;
-      instance->targets[3].card = -1;
     }
     instance->state = instance->state & 0xff7fffff;
-    goto LAB_023e4ecf;
+    enters_the_battlefield_as_copy_of(player, card, event, -1, copy_iid_or_result);
+    return 0;
   }
-  iVar4 = -1;
-LAB_023e4ecf:
-  enters_the_battlefield_as_copy_of(player, card, event, -1, iVar4);
+  copy_iid_or_result = -1;
+  enters_the_battlefield_as_copy_of(player, card, event, -1, copy_iid_or_result);
   return 0;
 }
 
 int card_trench_gorger(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int lands_exiled;
+  int tutor_result;
   test_definition_t this_test;
-  iVar1 = duh_mode(player);
-  etb_ability(player, card, event, (iVar1 != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  lands_exiled = duh_mode(player);
+  etb_ability(player, card, event, (lands_exiled != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
   {
     return 0;
   }
   new_default_test_definition(&this_test, 1, "Select a land card to exile.");
-  iVar1 = 0;
+  lands_exiled = 0;
   this_test.no_shuffle = 1;
   do
   {
-    iVar2 = new_global_tutor(player, player, 1, 6, 0, 3, &this_test);
-    if (iVar2 < 0)
-      goto LAB_023e52e4;
-    iVar1 = iVar1 + 1;
-  } while ((iVar1 != 4) || (player != 1));
-  iVar1 = 4;
-LAB_023e52e4:
-  add_status(player, real_set_pt(player, card, player, card, iVar1, iVar1, 8), 0x10000);
+    tutor_result = new_global_tutor(player, player, 1, 6, 0, 3, &this_test);
+    if (tutor_result < 0)
+      break;
+    lands_exiled = lands_exiled + 1;
+  } while ((lands_exiled != 4) || (player != 1));
+  add_status(player, real_set_pt(player, card, player, card, lands_exiled, lands_exiled, 8),
+             0x10000);
   shuffle(player);
   return 0;
 }
@@ -1812,12 +1801,12 @@ int count_permanents_you_control_but_you_dont_own(int player, int type);
 int count_permanents_you_control_but_you_dont_own(int player, int type)
 {
   card_instance_t *instance;
-  int iVar2;
+  int stolen_or_type_match;
   int card;
   int player_00;
-  int iVar3;
+  int stolen_count;
 
-  iVar3 = 0;
+  stolen_count = 0;
   player_00 = 0;
   do
   {
@@ -1828,10 +1817,11 @@ int count_permanents_you_control_but_you_dont_own(int player, int type)
       instance = in_play(player_00, card);
       while (true)
       {
-        if ((instance != NULL) && (iVar2 = is_what(player_00, card, type), iVar2 != 0))
+        if ((instance != NULL) &&
+            (stolen_or_type_match = is_what(player_00, card, type), stolen_or_type_match != 0))
         {
-          iVar2 = is_stolen(player_00, card);
-          iVar3 = (iVar3 + 1) - (unsigned int)(iVar2 == 0);
+          stolen_or_type_match = is_stolen(player_00, card);
+          stolen_count = (stolen_count + 1) - (unsigned int)(stolen_or_type_match == 0);
         }
         card = card + -1;
         if (card == -1)
@@ -1841,7 +1831,7 @@ int count_permanents_you_control_but_you_dont_own(int player, int type)
     }
     player_00 = player_00 + 1;
   } while (player_00 != 2);
-  return iVar3;
+  return stolen_count;
 }
 
 

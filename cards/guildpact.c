@@ -4,7 +4,8 @@ static char *not_already_dying(int who_chooses, int player, int card);
 int card_treetop_rangers(int,int,event_t);
 
 /* Canonical recovered helper declarations. */
-static void replicate(int player, int card, int cless, int blue, int red);
+static void replicate(int player, int card, event_t event, int cless, int black, int blue,
+                      int green, int red, int white);
 
 // global functions
 static int haunt_legacy(int player, int card, event_t event)
@@ -975,7 +976,7 @@ int card_gigadrowse(int player, int card, event_t event)
         generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_PERMANENT", 1, NULL);
         if (spell_fizzled != 1)
         {
-          replicate(player, card, 0, 1, 0);
+          replicate(player, card, event, 0, 0, 1, 0, 0, 0);
         }
       }
     }
@@ -1398,7 +1399,7 @@ That creature gains haste until end of turn. Sacrifice it at the beginning of th
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
 		int *deck = deck_ptr[player];
 		if( deck[0] != -1 ){
-			show_deck( HUMAN, deck, 1, "Killer Instict revealed this card", 0, 0x7375B0 );
+			show_deck( HUMAN, deck, 1, "Killer Instict revealed this card", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			if( is_what(-1, deck[0], TYPE_CREATURE) ){
 				int result = put_into_play_a_card_from_deck(player, player, 0);
 				if( result != -1 ){
@@ -1437,7 +1438,7 @@ int card_leap_of_flame(int player, int card, event_t event)
         generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
         if (spell_fizzled != 1)
         {
-          replicate(player, card, 0, 1, 1);
+          replicate(player, card, event, 0, 0, 1, 0, 1, 0);
         }
       }
     }
@@ -1594,7 +1595,7 @@ int card_mimeofacture(int player, int card, event_t event)
                       "Select target permanent an opponent controls.", 1, NULL);
         if (spell_fizzled != 1)
         {
-          replicate(player, card, 3, 1, 0);
+          replicate(player, card, event, 3, 0, 1, 0, 0, 0);
         }
       }
     }
@@ -2384,7 +2385,7 @@ int card_pyromatics(int player, int card, event_t event)
         generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ANY", 1, NULL);
         if (spell_fizzled != 1)
         {
-          replicate(player, card, 1, 0, 1);
+          replicate(player, card, event, 1, 0, 0, 0, 1, 0);
         }
       }
     }
@@ -2754,7 +2755,7 @@ int card_shattering_spree(int player, int card, event_t event)
         generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ARTIFACT", 1, NULL);
         if (spell_fizzled != 1)
         {
-          replicate(player, card, 0, 0, 1);
+          replicate(player, card, event, 0, 0, 0, 0, 1, 0);
         }
       }
     }
@@ -3449,7 +3450,7 @@ int card_train_of_thoughts(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      replicate(player, card, 1, 1, 0);
+      replicate(player, card, event, 1, 0, 1, 0, 0, 0);
     }
   }
   else if (event == EVENT_RESOLVE_SPELL)
@@ -3725,19 +3726,20 @@ int card_azorius_chancery(int player, int card, event_t event){
 static char *not_already_dying(int who_chooses, int player, int card)
 {
   card_instance_t *instance;
-  char *pcVar2;
+  char *rejection_reason;
   instance = get_card_instance(player, card);
-  pcVar2 = NULL;
+  rejection_reason = NULL;
   if (instance->kill_code != '\0')
   {
-    pcVar2 = "already dying";
+    rejection_reason = "already dying";
   }
-  return pcVar2;
+  return rejection_reason;
 }
 
 
 /* ManalinkEh 2022: 0x252b8d0; original cards/guildpact.c:70. */
-static void replicate(int player, int card, int cless, int blue, int red)
+static void replicate(int player, int card, event_t event, int cless, int black, int blue,
+                      int green, int red, int white)
 {
   int result;
   card_instance_t *instance;
@@ -3747,7 +3749,7 @@ static void replicate(int player, int card, int cless, int blue, int red)
     instance = get_card_instance(player, card);
     while (true)
     {
-      result = has_mana_multi(player, cless, 0, blue, 0, red, 0);
+      result = has_mana_multi(player, cless, black, blue, green, red, white);
       if (result == 0)
       {
         return;
@@ -3755,7 +3757,7 @@ static void replicate(int player, int card, int cless, int blue, int red)
       result = do_dialog(player, player, card, -1, -1, " Replicate\n Stop", 0);
       if (result != 0)
         break;
-      charge_mana_multi(player, cless, 0, blue, 0, red, 0);
+      charge_mana_multi(player, cless, black, blue, green, red, white);
       if (spell_fizzled == 1)
       {
         return;
@@ -3772,42 +3774,43 @@ static void replicate(int player, int card, int cless, int blue, int red)
 int card_ink_treader_nephilim(int player, int card, event_t event)
 {
   int c;
-  int *piVar1;
-  card_instance_t *pcVar2;
-  card_instance_t *pcVar3;
-  int iVar4;
-  int iVar5;
+  int *marked_target;
+  card_instance_t *original_spell;
+  card_instance_t *candidate_creature;
+  int target_check_or_count;
+  int target_index_or_trigger_check;
   unsigned int player_00;
-  unsigned int uVar6;
-  unsigned int uStack_4e4;
-  unsigned int uStack_4dc;
+  unsigned int turn_order_or_target_player;
+  unsigned int copy_turn_order;
+  unsigned int original_spell_iid;
   int mc[2];
   target_t targ;
   int marked[2][151];
   if (((((trigger_condition == 0xd3) && (card == affected_card)) &&
         (player == affected_card_controller)) &&
        ((reason_for_trigger_controller == player &&
-         (iVar5 = target_me(player, card, trigger_cause_controller, trigger_cause),
-          iVar5 != 0)))) &&
-      (pcVar2 = get_card_instance(trigger_cause_controller, trigger_cause),
-       pcVar2->number_of_targets == '\x01'))
+         (target_index_or_trigger_check =
+              target_me(player, card, trigger_cause_controller, trigger_cause),
+          target_index_or_trigger_check != 0)))) &&
+      (original_spell = get_card_instance(trigger_cause_controller, trigger_cause),
+       original_spell->number_of_targets == '\x01'))
   {
     sp_ability_trigger(2, event, 2, TYPE_SPELL, NULL, player, card);
   }
   if (event == EVENT_SPA)
   {
-    pcVar2 = get_card_instance(trigger_cause_controller, trigger_cause);
-    uStack_4dc = pcVar2->internal_card_id;
-    if (uStack_4dc == 0xffffffff)
+    original_spell = get_card_instance(trigger_cause_controller, trigger_cause);
+    original_spell_iid = original_spell->internal_card_id;
+    if (original_spell_iid == 0xffffffff)
     {
-      uStack_4dc = (unsigned int)pcVar2->backup_internal_card_id;
+      original_spell_iid = (unsigned int)original_spell->backup_internal_card_id;
     }
     mc[0] = 0;
     mc[1] = 0;
-    uVar6 = 0;
+    turn_order_or_target_player = 0;
     do
     {
-      player_00 = current_turn ^ uVar6;
+      player_00 = current_turn ^ turn_order_or_target_player;
       if (0 < active_cards_count[player_00])
       {
         c = 0;
@@ -3815,40 +3818,43 @@ int card_ink_treader_nephilim(int player, int card, event_t event)
         {
           targ.player = player_00;
           targ.card = c;
-          pcVar3 = in_play(player_00, c);
-          if ((((pcVar3 != NULL) && (iVar4 = is_what(player_00, c, 2), iVar4 != 0)) &&
+          candidate_creature = in_play(player_00, c);
+          if ((((candidate_creature != NULL) &&
+                (target_check_or_count = is_what(player_00, c, 2), target_check_or_count != 0)) &&
                ((player != player_00 || (card != c)))) &&
-              (iVar4 = can_legally_target(trigger_cause_controller, trigger_cause, &targ),
-               iVar4 != 0))
+              (target_check_or_count =
+                   can_legally_target(trigger_cause_controller, trigger_cause, &targ),
+               target_check_or_count != 0))
           {
-            iVar4 = mc[player_00];
-            mc[player_00] = iVar4 + 1;
-            marked[player_00][iVar4] = c;
+            target_check_or_count = mc[player_00];
+            mc[player_00] = target_check_or_count + 1;
+            marked[player_00][target_check_or_count] = c;
           }
           c = c + 1;
         } while (c < active_cards_count[player_00]);
       }
-      uVar6 = uVar6 + 1;
-    } while (uVar6 != 2);
+      turn_order_or_target_player = turn_order_or_target_player + 1;
+    } while (turn_order_or_target_player != 2);
     mc[0] = mc[0] + -1;
     mc[1] = mc[1] + -1;
-    uStack_4e4 = 0;
+    copy_turn_order = 0;
     do
     {
-      uVar6 = uStack_4e4 ^ current_turn;
-      iVar5 = mc[uVar6];
-      if (-1 < iVar5)
+      turn_order_or_target_player = copy_turn_order ^ current_turn;
+      target_index_or_trigger_check = mc[turn_order_or_target_player];
+      if (-1 < target_index_or_trigger_check)
       {
         do
         {
-          piVar1 = marked[uVar6] + iVar5;
-          iVar5 = iVar5 + -1;
-          copy_spell_from_stack_set_target0(player, uStack_4dc, pcVar2, uVar6, *piVar1);
-          mc[uVar6] = iVar5;
-        } while (iVar5 != -1);
+          marked_target = marked[turn_order_or_target_player] + target_index_or_trigger_check;
+          target_index_or_trigger_check = target_index_or_trigger_check + -1;
+          copy_spell_from_stack_set_target0(player, original_spell_iid, original_spell,
+                                            turn_order_or_target_player, *marked_target);
+          mc[turn_order_or_target_player] = target_index_or_trigger_check;
+        } while (target_index_or_trigger_check != -1);
       }
-      uStack_4e4 = uStack_4e4 + 1;
-    } while (uStack_4e4 != 2);
+      copy_turn_order = copy_turn_order + 1;
+    } while (copy_turn_order != 2);
     return 0;
   }
   return 0;

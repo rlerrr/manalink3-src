@@ -22,9 +22,11 @@ class Fingerprint:
 
 
 class LocalCode:
-    def __init__(self,pe,functions,legacy=None,accepted=(),unsafe=()):
+    def __init__(self,pe,functions,legacy=None,accepted=(),unsafe=(),normalize_branch_width=False):
         self.pe=pe;self.functions=functions;self.legacy=legacy or {};self.accepted=set(accepted)
         self.unsafe=set(unsafe)
+        # Historical hash receipts keep their original encoding-sensitive form.
+        self.normalize_branch_width=normalize_branch_width
         self.base=pe.OPTIONAL_HEADER.ImageBase;self.end=self.base+pe.OPTIONAL_HEADER.SizeOfImage
         self.relocations={self.base+e.rva for b in getattr(pe,'DIRECTORY_ENTRY_BASERELOC',[]) for e in b.entries if e.type==3}
         self.decoder=Cs(CS_ARCH_X86,CS_MODE_32);self.decoder.detail=True
@@ -67,6 +69,21 @@ class LocalCode:
         a,b=i.operands
         return a.type==X86_OP_REG and b.type==X86_OP_MEM and a.reg==b.mem.base and not b.mem.index and not b.mem.disp
 
+    @staticmethod
+    def local_branch_bytes(i,data):
+        """Canonicalize only unprefixed x86 rel8 JMP/Jcc to their rel32 form.
+
+        The caller has independently checked an internal instruction boundary
+        and records the exact destination ordinal. Opcode condition, prefixes,
+        calls, loops, and every other instruction encoding stay unchanged.
+        """
+        if i.imm_offset==1 and i.imm_size==1 and len(data)==2:
+            if data[0]==0xeb:
+                return bytearray(b'\xe9\0\0\0\0')
+            if 0x70<=data[0]<=0x7f:
+                return bytearray([0x0f,data[0]+0x10,0,0,0,0])
+        return data
+
     def fingerprint(self,at,size,literals=(),same_image=False):
         raw=self.read(at,size);decoded=list(self.decoder.disasm(raw,at));issues=set();bindings=[];dependencies=set()
         if sum(i.size for i in decoded)!=size:issues.add('disassembly does not cover the complete DWARF range')
@@ -89,6 +106,8 @@ class LocalCode:
                     else:token=('local-instruction',ordinal[target])
                 else:token=self.address_token(target,literals,same_image,issues,bindings,dependencies)
                 data[i.imm_offset:i.imm_offset+i.imm_size]=bytes(i.imm_size)
+                if self.normalize_branch_width and token[0]=='local-instruction':
+                    data=self.local_branch_bytes(i,data)
                 references.append(('control',token))
             elif control and not same_image:
                 issues.add('indirect control flow requires dependency review')

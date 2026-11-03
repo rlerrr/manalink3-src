@@ -1,0 +1,96 @@
+{
+  "status": "Three rules-engine helpers reconstructed with reviewed control flow and a successful target build.",
+  "batch": "docs/recovery-evidence/rules-control-cleanup.json",
+  "batch_sha256": "5d3b1015ef8d51c8033f4e8d39ee71a4cc8efc96bdc2690aac47cfb1ecc2cd0c",
+  "counts": {
+    "helpers": 3,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 82,
+    "removed_lab_gotos": 79,
+    "source_lines_removed": 479,
+    "removed_placeholder_occurrences": 787
+  },
+  "verification_policy": "Lighter readability workflow: review event-stage routing, callbacks, cached/live reads, flags and per-card actions; target syntax preflight, one build and current mapping refresh. No new native semantic harness or historical replay.",
+  "compiler_preflight": {
+    "argv": [
+      "C:\\bin\\gcc-9.3.0-no-debug\\bin\\gcc.exe",
+      "-m32",
+      "-O2",
+      "-ggdb2",
+      "-march=i586",
+      "-mpreferred-stack-boundary=2",
+      "-fno-omit-frame-pointer",
+      "-fno-tree-vrp",
+      "-Wall",
+      "-Wextra",
+      "-Wpointer-arith",
+      "-Wcast-qual",
+      "-Wcast-align",
+      "-Wwrite-strings",
+      "-Wshadow",
+      "-W",
+      "-Winline",
+      "-Wno-unused-parameter",
+      "-I..",
+      "-I.",
+      "-Wbad-function-cast",
+      "-Wstrict-prototypes",
+      "-Wnested-externs",
+      "-iquote",
+      "functions",
+      "-fsyntax-only",
+      "-x",
+      "c",
+      "-"
+    ],
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "exit_code": 0,
+    "log": ".recovery/rules-control-preflight-c428.log"
+  },
+  "review_notes": [
+    "Keep classification masks, initial-ID flags, post-query ID/class refreshes and unsigned range arithmetic.",
+    "Keep event-stage routing, callback order, cached/live trigger context, per-card payment/return/exile differences, grave-slot rereads and direct/wrapped xtrigger snapshots.",
+    "Keep storm counter query order and fresh slot reads. Opaque UI calls remain out of scope. No new native semantic coverage."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/rules-control-build-c429.log",
+    "log_sha256": "adf8fb8b41424e72a91b739ec4da222f0ea6674c4b5a852e6b71f4c247d987c5",
+    "verified_built_slots": 15169,
+    "dll_sha256": "9bfe353a23f9e6e709517ddc728faee49560ae9a8593691e47c436e82369402d",
+    "dbg_sha256": "f1e19615e831788b5742d6c2bf1915e2af5aba49b70fc84091761168d85e2369"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/rules-control-setup-c429.log",
+    "log_sha256": "bec2d222dc0b1403c6b0df8a28faf57ebbd1d8b65c8a847407830441ea30eaa5",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4819,
+    "metadata_sha256": "c7061450a1b7a3efe3281c403593f25f25fed9b2e3e29e6bc70c4fa61c483cf3",
+    "mapping_identities_unchanged": true
+  },
+  "whole_unit_readability": {
+    "source": "functions/rules_engine.c",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of three existing rules-engine helpers. No new native-function coverage or gameplay-equivalence claim. Keep direct/wrapped xtrigger snapshots, trigger-context rereads, graveyard slot rereads after actions, original return/payment/exile differences and opaque dialog calls.",
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c430.json",
+    "sha256": "d446eb3662d21a1b8f6f712386c4aa12fc6a56ab2e4d9ff785dc4ef13ccb063c",
+    "counts": {
+      "tracked_source_definitions": 2606,
+      "functions_with_lab_gotos": 935,
+      "lab_gotos": 2308,
+      "functions_with_placeholders": 1930,
+      "distinct_function_local_placeholder_spellings": 5662,
+      "placeholder_identifier_occurrences": 42113,
+      "union_keywords": 0
+    }
+  }
+}

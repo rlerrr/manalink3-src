@@ -859,7 +859,7 @@ You may play any number of cards from one of those piles without paying their ma
 				if (player == AI){
 					selected = 0;
 				} else {
-					selected = show_deck(player, playable, num_playable, "Play a card", 0, 0x7375B0);
+					selected = show_deck(player, playable, num_playable, "Play a card", 0, EXE_STR(ENGINE_DONE_LABEL));
 				}
 				if (selected == -1){
 					break;
@@ -3714,16 +3714,16 @@ and put them into your hand. If you do, shuffle your library. */
 static int realm_razer_legacy(int player, int card, event_t event)
 {
   int p;
-  int *piVar1;
-  int iVar2;
-  int iVar3;
+  int *lands_end;
+  int exiled_land_iid;
+  int stored_land_count;
   card_instance_t *instance;
-  int iVar5;
-  card_instance_t *pcVar6;
+  int exiled_owner_or_effect_check;
+  card_instance_t *matching_legacy;
   int c;
-  target_t *ptVar8;
-  int iVar9;
-  int *piVar10;
+  target_t *exiled_land_record;
+  int scan_player_or_land_iid;
+  int *land_cursor;
   event_t event_00;
   int lc[2];
   int lands[2][500];
@@ -3739,24 +3739,26 @@ static int realm_razer_legacy(int player, int card, event_t event)
       {
         do
         {
-          iVar5 = is_what(p, c, 0x80);
-          if ((iVar5 != 0) && ((((player != p || (card != c)) &&
-                                 (pcVar6 = get_card_instance(p, c),
-                                  pcVar6->targets[1].card == instance->targets[1].card)) &&
-                                ((pcVar6->targets[0].player == instance->targets[0].player &&
-                                  (pcVar6->targets[0].card == instance->targets[0].card))))))
+          exiled_owner_or_effect_check = is_what(p, c, 0x80);
+          if ((exiled_owner_or_effect_check != 0) &&
+              ((((player != p || (card != c)) &&
+                 (matching_legacy = get_card_instance(p, c),
+                  matching_legacy->targets[1].card == instance->targets[1].card)) &&
+                ((matching_legacy->targets[0].player == instance->targets[0].player &&
+                  (matching_legacy->targets[0].card == instance->targets[0].card))))))
           {
-            ptVar8 = pcVar6->targets + 2;
+            exiled_land_record = matching_legacy->targets + 2;
             do
             {
-              if (ptVar8->player == -1)
+              if (exiled_land_record->player == -1)
                 break;
-              if (check_rfg(ptVar8->player, (unsigned int)cards_data[ptVar8->card].id) != 0)
+              if (check_rfg(exiled_land_record->player,
+                            (unsigned int)cards_data[exiled_land_record->card].id) != 0)
               {
                 return 1;
               }
-              ptVar8 = ptVar8 + 1;
-            } while (ptVar8 != (target_t *)&pcVar6->parent_controller);
+              exiled_land_record = exiled_land_record + 1;
+            } while (exiled_land_record != (target_t *)&matching_legacy->parent_controller);
           }
           c = c + -1;
         } while (c != -1);
@@ -3776,66 +3778,69 @@ static int realm_razer_legacy(int player, int card, event_t event)
       }
       lc[0] = 0;
       lc[1] = 0;
-      iVar9 = 0;
+      scan_player_or_land_iid = 0;
       do
       {
-        c = active_cards_count[iVar9] + -1;
+        c = active_cards_count[scan_player_or_land_iid] + -1;
         if (-1 < c)
         {
           do
           {
-            iVar5 = is_what(iVar9, c, 0x80);
-            if (((iVar5 != 0) && (((player != iVar9 || (card != c)) &&
-                                   (pcVar6 = get_card_instance(iVar9, c),
-                                    pcVar6->targets[1].card == instance->targets[1].card)))) &&
-                ((pcVar6->targets[0].player == instance->targets[0].player &&
-                  (pcVar6->targets[0].card == instance->targets[0].card))))
+            exiled_owner_or_effect_check = is_what(scan_player_or_land_iid, c, 0x80);
+            if (((exiled_owner_or_effect_check != 0) &&
+                 (((player != scan_player_or_land_iid || (card != c)) &&
+                   (matching_legacy = get_card_instance(scan_player_or_land_iid, c),
+                    matching_legacy->targets[1].card == instance->targets[1].card)))) &&
+                ((matching_legacy->targets[0].player == instance->targets[0].player &&
+                  (matching_legacy->targets[0].card == instance->targets[0].card))))
             {
-              ptVar8 = pcVar6->targets + 2;
+              exiled_land_record = matching_legacy->targets + 2;
               do
               {
-                if (ptVar8->player == -1)
+                if (exiled_land_record->player == -1)
                   break;
-                if (check_rfg(ptVar8->player, (unsigned int)cards_data[ptVar8->card].id) != 0)
+                if (check_rfg(exiled_land_record->player,
+                              (unsigned int)cards_data[exiled_land_record->card].id) != 0)
                 {
-                  iVar5 = ptVar8->player;
-                  iVar2 = ptVar8->card;
-                  iVar3 = lc[iVar5];
-                  lands[iVar5][iVar3] = iVar2;
-                  lc[iVar5] = iVar3 + 1;
-                  remove_card_from_rfg(iVar5, (unsigned int)cards_data[iVar2].id);
+                  exiled_owner_or_effect_check = exiled_land_record->player;
+                  exiled_land_iid = exiled_land_record->card;
+                  stored_land_count = lc[exiled_owner_or_effect_check];
+                  lands[exiled_owner_or_effect_check][stored_land_count] = exiled_land_iid;
+                  lc[exiled_owner_or_effect_check] = stored_land_count + 1;
+                  remove_card_from_rfg(exiled_owner_or_effect_check,
+                                       (unsigned int)cards_data[exiled_land_iid].id);
                 }
-                ptVar8 = ptVar8 + 1;
-              } while (ptVar8 != (target_t *)&pcVar6->parent_controller);
+                exiled_land_record = exiled_land_record + 1;
+              } while (exiled_land_record != (target_t *)&matching_legacy->parent_controller);
               kill_card(player, card, KILL_EXILE);
             }
             c = c + -1;
           } while (c != -1);
         }
-        iVar9 = iVar9 + 1;
-        if (iVar9 == 2)
+        scan_player_or_land_iid = scan_player_or_land_iid + 1;
+        if (scan_player_or_land_iid == 2)
         {
           if (0 < lc[0])
           {
-            piVar10 = lands[0];
-            piVar1 = lands[0] + lc[0];
+            land_cursor = lands[0];
+            lands_end = lands[0] + lc[0];
             do
             {
-              iVar9 = *piVar10;
-              piVar10 = piVar10 + 1;
-              put_into_play(0, add_card_to_hand(0, iVar9));
-            } while (piVar10 != piVar1);
+              scan_player_or_land_iid = *land_cursor;
+              land_cursor = land_cursor + 1;
+              put_into_play(0, add_card_to_hand(0, scan_player_or_land_iid));
+            } while (land_cursor != lands_end);
           }
           if (0 < lc[1])
           {
-            piVar10 = lands[1];
-            piVar1 = lands[1] + lc[1];
+            land_cursor = lands[1];
+            lands_end = lands[1] + lc[1];
             do
             {
-              iVar9 = *piVar10;
-              piVar10 = piVar10 + 1;
-              put_into_play(1, add_card_to_hand(1, iVar9));
-            } while (piVar1 != piVar10);
+              scan_player_or_land_iid = *land_cursor;
+              land_cursor = land_cursor + 1;
+              put_into_play(1, add_card_to_hand(1, scan_player_or_land_iid));
+            } while (lands_end != land_cursor);
           }
           kill_card(player, card, KILL_EXILE);
           return 0;
@@ -3852,25 +3857,27 @@ static int realm_razer_legacy(int player, int card, event_t event)
       {
         do
         {
-          iVar5 = is_what(p, c, 0x80);
-          if (((iVar5 != 0) && ((player != p || (card != c)))) &&
-              ((pcVar6 = get_card_instance(p, c),
-                pcVar6->targets[1].card == instance->targets[1].card &&
-                    ((pcVar6->targets[0].player == instance->targets[0].player &&
-                      (pcVar6->targets[0].card == instance->targets[0].card))))))
+          exiled_owner_or_effect_check = is_what(p, c, 0x80);
+          if (((exiled_owner_or_effect_check != 0) && ((player != p || (card != c)))) &&
+              ((matching_legacy = get_card_instance(p, c),
+                matching_legacy->targets[1].card == instance->targets[1].card &&
+                    ((matching_legacy->targets[0].player == instance->targets[0].player &&
+                      (matching_legacy->targets[0].card == instance->targets[0].card))))))
           {
-            ptVar8 = pcVar6->targets + 2;
+            exiled_land_record = matching_legacy->targets + 2;
             do
             {
-              if (ptVar8->player == -1)
+              if (exiled_land_record->player == -1)
                 break;
-              if (check_rfg(ptVar8->player, (unsigned int)cards_data[ptVar8->card].id) != 0)
+              if (check_rfg(exiled_land_record->player,
+                            (unsigned int)cards_data[exiled_land_record->card].id) != 0)
               {
-                lands[ptVar8->player][lc[ptVar8->player]] = ptVar8->card;
-                lc[ptVar8->player] = lc[ptVar8->player] + 1;
+                lands[exiled_land_record->player][lc[exiled_land_record->player]] =
+                    exiled_land_record->card;
+                lc[exiled_land_record->player] = lc[exiled_land_record->player] + 1;
               }
-              ptVar8 = ptVar8 + 1;
-            } while (ptVar8 != (target_t *)&pcVar6->parent_controller);
+              exiled_land_record = exiled_land_record + 1;
+            } while (exiled_land_record != (target_t *)&matching_legacy->parent_controller);
           }
           c = c + -1;
         } while (c != -1);
@@ -3878,9 +3885,9 @@ static int realm_razer_legacy(int player, int card, event_t event)
       p = p + 1;
     } while (p != 2);
     show_deck(player, lands[player], lc[player], "Realm Razer exiled these lands you own.", 0,
-              ENGINE_DONE_LABEL);
+              EXE_STR(ENGINE_DONE_LABEL));
     show_deck(player, lands[1 - player], lc[1 - player],
-              "Realm Razer exiled these lands onwed by your opponent.", 0, ENGINE_DONE_LABEL);
+              "Realm Razer exiled these lands onwed by your opponent.", 0, EXE_STR(ENGINE_DONE_LABEL));
     spell_fizzled = 1;
     event_00 = EVENT_ACTIVATE;
   }
@@ -4652,75 +4659,54 @@ int card_sigil_blessing(int player, int card, event_t event){
 
 int card_sigil_of_distinction(int player, int card, event_t event)
 {
-  char cVar1;
+  char equipped_player;
   card_instance_t *instance;
-  int iVar3;
-  int iVar4;
+  int counter_count_or_equipped_card;
+  int equipped_ability_check;
   target_definition_t td;
   if (event == EVENT_MODIFY_COST)
   {
     if (check_battlefield_for_id(2, 0x23ba) != 0)
     {
+
       infinite_casting_cost();
     }
-    instance = get_card_instance(player, card);
-    enters_the_battlefield_with_counters(player, card, EVENT_MODIFY_COST, COUNTER_CHARGE,
-                                         instance->info_slot);
-    instance = is_equipping(player, card);
-    if (instance == NULL)
-      goto LAB_02144d33;
-  LAB_02144d05:
-    if (is_humiliated(player, card, AL_STATIC) == 0)
-    {
-    LAB_02144e23:
-      instance = get_card_instance(player, card);
-      if ((-1 < instance->damage_target_player) &&
-          (instance = get_card_instance(player, card), event - EVENT_POWER < 2))
-      {
-        if ((instance->damage_target_card == affected_card) &&
-            (instance->damage_target_player == affected_card_controller))
-        {
-          iVar3 = count_counters(player, card, COUNTER_CHARGE);
-          event_result = event_result + iVar3;
-        }
-        goto LAB_02144d33;
-      }
-    }
   }
-  else
+  else if (event == EVENT_CAST_SPELL && card == affected_card && player == affected_card_controller)
   {
-    if (event == EVENT_CAST_SPELL)
+
+    if (((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+        (counter_count_or_equipped_card = has_mana(player, 6, 2),
+         counter_count_or_equipped_card == 0))
     {
-      if ((card == affected_card) && (player == affected_card_controller))
-      {
-        if (((ai_is_speculating == 1) ||
-             ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
-            (iVar3 = has_mana(player, 6, 2), iVar3 == 0))
-        {
-          ai_modifier = ai_modifier + -1000;
-        }
-        iVar3 = played_for_free(player, card);
-        if (((iVar3 == 0) && (iVar3 = is_token(player, card), iVar3 == 0)) &&
-            (charge_mana(player, COLOR_ARTIFACT, -1), spell_fizzled != 1))
-        {
-          set_x_for_x_spells(player, card, EVENT_CAST_SPELL, x_value);
-        }
-        set_special_flags2(player, card, 0x20000);
-      }
-      instance = get_card_instance(player, card);
-      enters_the_battlefield_with_counters(player, card, EVENT_CAST_SPELL, COUNTER_CHARGE,
-                                           instance->info_slot);
-      instance = is_equipping(player, card);
-      if ((instance == NULL) ||
-          (iVar3 = is_humiliated(player, card, AL_STATIC), iVar3 != 0))
-        goto LAB_02144d33;
-      goto LAB_02144e23;
+      ai_modifier = ai_modifier + -1000;
     }
+    counter_count_or_equipped_card = played_for_free(player, card);
+    if (((counter_count_or_equipped_card == 0) &&
+         (counter_count_or_equipped_card = is_token(player, card),
+          counter_count_or_equipped_card == 0)) &&
+        (charge_mana(player, COLOR_ARTIFACT, -1), spell_fizzled != 1))
+    {
+      set_x_for_x_spells(player, card, EVENT_CAST_SPELL, x_value);
+    }
+    set_special_flags2(player, card, 0x20000);
+  }
+  instance = get_card_instance(player, card);
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_CHARGE, instance->info_slot);
+  instance = is_equipping(player, card);
+  if (instance != NULL && is_humiliated(player, card, AL_STATIC) == 0)
+  {
     instance = get_card_instance(player, card);
-    enters_the_battlefield_with_counters(player, card, event, COUNTER_CHARGE, instance->info_slot);
-    instance = is_equipping(player, card);
-    if (instance != NULL)
-      goto LAB_02144d05;
+    if (instance->damage_target_player >= 0)
+    {
+      instance = get_card_instance(player, card);
+      if (event - EVENT_POWER < 2 && instance->damage_target_card == affected_card &&
+          instance->damage_target_player == affected_card_controller)
+      {
+        counter_count_or_equipped_card = count_counters(player, card, COUNTER_CHARGE);
+        event_result = event_result + counter_count_or_equipped_card;
+      }
+    }
   }
   if (event == EVENT_ACTIVATE)
   {
@@ -4728,10 +4714,14 @@ int card_sigil_of_distinction(int player, int card, event_t event)
     if (instance != NULL)
     {
       instance = get_card_instance(player, card);
-      cVar1 = instance->damage_target_player;
-      iVar3 = instance->damage_target_card;
-      iVar4 = check_for_ability((int)cVar1, iVar3, 0x800000);
-      if ((iVar4 == 0) || (iVar3 = check_for_special_ability((int)cVar1, iVar3, 0x20), iVar3 == 0))
+      equipped_player = instance->damage_target_player;
+      counter_count_or_equipped_card = instance->damage_target_card;
+      equipped_ability_check =
+          check_for_ability((int)equipped_player, counter_count_or_equipped_card, 0x800000);
+      if ((equipped_ability_check == 0) ||
+          (counter_count_or_equipped_card = check_for_special_ability(
+               (int)equipped_player, counter_count_or_equipped_card, 0x20),
+           counter_count_or_equipped_card == 0))
       {
         ai_modifier = ai_modifier + -500;
       }
@@ -4741,10 +4731,9 @@ int card_sigil_of_distinction(int player, int card, event_t event)
   {
     return basic_equipment(player, card, EVENT_RESOLVE_ACTIVATION, 0);
   }
-LAB_02144d33:
   default_target_definition(player, card, &td, 2);
   return generic_activated_ability(player, card, event, 0x102, 0, 0, 0, 0, 0, 0, 0x17b0100, &td,
-                                    "Select target creature you control.");
+                                   "Select target creature you control.");
 }
 
 int card_skill_borrower(int player, int card, event_t event){
@@ -4954,12 +4943,19 @@ static int tezzeret_the_seeker_legacy(int player, int card, event_t event){
 
 int card_tezzeret_the_seeker(int player, int card, event_t event)
 {
+  enum
+  {
+    CHOICE_UNTAP = 1,
+    CHOICE_TUTOR = 2,
+    CHOICE_ANIMATE = 3
+  };
+
   int i;
-  int iVar1;
+  int choice_or_artifact_value;
   card_instance_t *instance;
-  int iVar3;
-  int iVar4;
-  int iStack_338;
+  int loyalty_or_artifact_count;
+  int library_byte_offset;
+  int tutor_priority;
   target_definition_t td;
   if (is_unlocked(player, card, event, 0x17) == 0)
   {
@@ -4974,50 +4970,54 @@ int card_tezzeret_the_seeker(int player, int card, event_t event)
     if (event == EVENT_ACTIVATE)
     {
       test_definition_t this_test;
-      iVar3 = count_counters(player, card, COUNTER_LOYALTY);
-      iVar1 = *deck_ptr[player];
-      if (iVar1 == -1)
+      loyalty_or_artifact_count = count_counters(player, card, COUNTER_LOYALTY);
+      choice_or_artifact_value = *deck_ptr[player];
+      if (choice_or_artifact_value == -1)
       {
-        iStack_338 = 0;
+        tutor_priority = 0;
       }
       else
       {
-        iVar4 = 0;
-        iStack_338 = 0;
+        library_byte_offset = 0;
+        tutor_priority = 0;
         do
         {
-          iVar1 = is_what(-1, iVar1, 0x40);
-          if ((iVar1 != 0) &&
-              (iVar1 = get_cmc_by_internal_id(*(int *)((int)deck_ptr[player] + iVar4)),
-               iVar1 < iVar3))
+          choice_or_artifact_value = is_what(-1, choice_or_artifact_value, 0x40);
+          if ((choice_or_artifact_value != 0) &&
+              (choice_or_artifact_value =
+                   get_cmc_by_internal_id(*(int *)((int)deck_ptr[player] + library_byte_offset)),
+               choice_or_artifact_value < loyalty_or_artifact_count))
           {
-            iVar1 = get_cmc_by_internal_id(*(int *)((int)deck_ptr[player] + iVar4));
-            iVar1 = iVar1 * 4 + 4;
-            if (iStack_338 < iVar1)
+            choice_or_artifact_value =
+                get_cmc_by_internal_id(*(int *)((int)deck_ptr[player] + library_byte_offset));
+            choice_or_artifact_value = choice_or_artifact_value * 4 + 4;
+            if (tutor_priority < choice_or_artifact_value)
             {
-              iStack_338 = iVar1;
+              tutor_priority = choice_or_artifact_value;
             }
-            if (iVar3 * 4 == iStack_338)
+            if (loyalty_or_artifact_count * 4 == tutor_priority)
               break;
           }
-          iVar4 = iVar4 + 4;
-          iVar1 = *(int *)((int)deck_ptr[player] + iVar4);
-        } while (iVar1 != -1);
+          library_byte_offset = library_byte_offset + 4;
+          choice_or_artifact_value = *(int *)((int)deck_ptr[player] + library_byte_offset);
+        } while (choice_or_artifact_value != -1);
       }
       default_test_definition(&this_test, 0x40);
       this_test.type_flag = 2;
-      iVar3 = check_battlefield_for_special_card(player, card, player, 4, &this_test);
-      iVar1 = iVar3 * 4;
-      if (iVar3 != 0)
+      loyalty_or_artifact_count =
+          check_battlefield_for_special_card(player, card, player, 4, &this_test);
+      choice_or_artifact_value = loyalty_or_artifact_count * 4;
+      if (loyalty_or_artifact_count != 0)
       {
-        iVar3 = count_counters(player, card, COUNTER_LOYALTY);
-        iVar1 = iVar1 + iVar3 * 5 + -0x19;
+        loyalty_or_artifact_count = count_counters(player, card, COUNTER_LOYALTY);
+        choice_or_artifact_value = choice_or_artifact_value + loyalty_or_artifact_count * 5 + -0x19;
       }
-      iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017",
-                          "Untap up to 2 artifacts", 1, 10, 1, "Tutor an artifact", 1, iStack_338,
-                          0, "Global artifact animation", 1, iVar1, 0xfffffffb, 0, 0, 0, 0);
+      choice_or_artifact_value = dialog_impl(
+          player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Untap up to 2 artifacts", 1, 10, 1,
+          "Tutor an artifact", 1, tutor_priority, 0, "Global artifact animation", 1,
+          choice_or_artifact_value, 0xfffffffb, 0, 0, 0, 0);
       instance->number_of_targets = '\0';
-      if (iVar1 == 1)
+      if (choice_or_artifact_value == CHOICE_UNTAP)
       {
         if (new_pick_target(&td, "TARGET_ARTIFACT", 0, 0) != 0)
         {
@@ -5029,41 +5029,44 @@ int card_tezzeret_the_seeker(int player, int card, event_t event)
           state_untargettable(instance->targets[0].player, instance->targets[0].card, 0);
         }
       }
-      else if (iVar1 == 2)
+      else if (choice_or_artifact_value == CHOICE_TUTOR)
       {
         if (player == 1)
         {
-          remove_counters(1, card, 1, card, COUNTER_LOYALTY, iStack_338 >> 2);
-          instance->targets[1].player = iStack_338 >> 2;
+          remove_counters(1, card, 1, card, COUNTER_LOYALTY, tutor_priority >> 2);
+          instance->targets[1].player = tutor_priority >> 2;
         }
         else
         {
-          iVar1 = choose_a_number(player, "How many Loyalty you\'ll pay ?", count_counters(player, card, COUNTER_LOYALTY));
-          if ((iVar1 < 0) && (iVar3 = count_counters(player, card, COUNTER_LOYALTY), iVar3 < iVar1))
+          choice_or_artifact_value = choose_a_number(player, "How many Loyalty you\'ll pay ?",
+                                                     count_counters(player, card, COUNTER_LOYALTY));
+          if ((choice_or_artifact_value < 0) &&
+              (loyalty_or_artifact_count = count_counters(player, card, COUNTER_LOYALTY),
+               loyalty_or_artifact_count < choice_or_artifact_value))
           {
             spell_fizzled = 1;
           }
           else
           {
-            remove_counters(player, card, player, card, COUNTER_LOYALTY, iVar1);
-            instance->targets[1].player = iVar1;
+            remove_counters(player, card, player, card, COUNTER_LOYALTY, choice_or_artifact_value);
+            instance->targets[1].player = choice_or_artifact_value;
           }
         }
       }
     }
     else
     {
-      iVar1 = dialog_impl(player, card, event, "\001\002", "\001\017", "Untap up to 2 artifacts", 1,
-                          10, 1, "Tutor an artifact", 1, 0, 0, "Global artifact animation", 1, 0,
-                          0xfffffffb, 0, 0, 0, 0);
+      choice_or_artifact_value = dialog_impl(
+          player, card, event, "\001\002", "\001\017", "Untap up to 2 artifacts", 1, 10, 1,
+          "Tutor an artifact", 1, 0, 0, "Global artifact animation", 1, 0, 0xfffffffb, 0, 0, 0, 0);
       if (event == EVENT_CAN_ACTIVATE)
       {
-        if (iVar1 == 0)
+        if (choice_or_artifact_value == 0)
         {
           return 0;
         }
       }
-      else if (iVar1 == 2)
+      else if (choice_or_artifact_value == CHOICE_TUTOR)
       {
         char buffer[500];
         test_definition_t this_test;
@@ -5074,14 +5077,14 @@ int card_tezzeret_the_seeker(int player, int card, event_t event)
         this_test.cmc_flag = 3;
         new_global_tutor(player, player, 1, 4, 0, 1, &this_test);
       }
-      else if (iVar1 == 3)
+      else if (choice_or_artifact_value == CHOICE_ANIMATE)
       {
         create_legacy_effect(instance->parent_controller, instance->parent_card,
                              tezzeret_the_seeker_legacy);
       }
       else
       {
-        if ((iVar1 == 1) && (instance->number_of_targets != '\0'))
+        if ((choice_or_artifact_value == CHOICE_UNTAP) && (instance->number_of_targets != '\0'))
         {
           i = 0;
           do
@@ -5152,10 +5155,10 @@ This creature enters the battlefield with three times that many +1/+1 counters o
 
 int card_tidehollow_sculler(int player, int card, event_t event)
 {
-  unsigned int uVar1;
-  int iVar2;
-  unsigned int *puVar3;
-  int iVar4;
+  unsigned int encoded_exile_entry;
+  int opponent;
+  unsigned int *exile_entry;
+  int selection_or_data_index;
   int id;
   unsigned int player_00;
   target_definition_t td;
@@ -5163,20 +5166,20 @@ int card_tidehollow_sculler(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    iVar2 = 1 - player;
+    opponent = 1 - player;
     default_target_definition(player, card, &td, 0);
     td.zone = 0x1000;
-    iVar4 = would_validate_arbitrary_target(&td, iVar2, -1);
-    if ((iVar4 != 0) && (hand_count[iVar2] != 0))
+    selection_or_data_index = would_validate_arbitrary_target(&td, opponent, -1);
+    if ((selection_or_data_index != 0) && (hand_count[opponent] != 0))
     {
       new_default_test_definition(&test, 1, "Select a nonland card.");
       test.type_flag = 1;
-      iVar4 = new_select_a_card(player, iVar2, 4, 0, 1, -1, &test);
-      if (iVar4 != -1)
+      selection_or_data_index = new_select_a_card(player, opponent, 4, 0, 1, -1, &test);
+      if (selection_or_data_index != -1)
       {
-        id = get_id(iVar2, iVar4);
+        id = get_id(opponent, selection_or_data_index);
         create_card_name_legacy(player, card, id);
-        exile_card_and_remember_it_on_exiledby(player, card, iVar2, iVar4);
+        exile_card_and_remember_it_on_exiledby(player, card, opponent, selection_or_data_index);
       }
     }
     leaves_play(player, card, EVENT_ETB, 1, 0);
@@ -5190,19 +5193,22 @@ int card_tidehollow_sculler(int player, int card, event_t event)
     test.message[1] = '\0';
     test.message[2] = '\0';
     test.message[3] = '\0';
-    while (puVar3 = (unsigned int *)exiledby_find_any(player, card, &td.who_chooses, (int *)&test),
-           puVar3 != NULL)
+    while (exile_entry =
+               (unsigned int *)exiledby_find_any(player, card, &td.who_chooses, (int *)&test),
+           exile_entry != NULL)
     {
-      uVar1 = *puVar3;
-      *puVar3 = 0xffffffff;
-      player_00 = uVar1 >> 0x1f;
-      iVar4 = (uVar1 & 0x7fffffff) + uVar1 * 8;
+      encoded_exile_entry = *exile_entry;
+      *exile_entry = 0xffffffff;
+      player_00 = encoded_exile_entry >> 0x1f;
+      selection_or_data_index = (encoded_exile_entry & 0x7fffffff) + encoded_exile_entry * 8;
       if (check_rfg(player_00,
-                        (unsigned int)*(unsigned short *)(cards_data[0].cc + iVar4 * 8 + -7)) != 0)
+                    (unsigned int)*(unsigned short *)(cards_data[0].cc +
+                                                      selection_or_data_index * 8 + -7)) != 0)
       {
-        add_card_to_hand(player_00, uVar1 & 0x7fffffff);
-        remove_card_from_rfg(player_00,
-                             (unsigned int)*(unsigned short *)(cards_data[0].cc + iVar4 * 8 + -7));
+        add_card_to_hand(player_00, encoded_exile_entry & 0x7fffffff);
+        remove_card_from_rfg(
+            player_00,
+            (unsigned int)*(unsigned short *)(cards_data[0].cc + selection_or_data_index * 8 + -7));
       }
     }
   }

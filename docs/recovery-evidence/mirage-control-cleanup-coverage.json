@@ -1,0 +1,63 @@
+{
+  "status": "61 Mirage definitions cleaned up; whole unit has zero LAB jumps and known placeholders; one target build passed. Reccmp refresh deliberately deferred to a larger checkpoint.",
+  "batch": "docs/recovery-evidence/mirage-control-cleanup.json",
+  "batch_sha256": "fad35bef63e73ae4417f6ff5057841d9a5fd0dc201ac257c108ecae795443378",
+  "counts": {
+    "definitions": 61,
+    "card_handlers": 52,
+    "local_helpers": 9,
+    "alpha_only_definitions": 34,
+    "structured_definitions": 27,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 99,
+    "removed_lab_gotos": 98,
+    "source_lines_removed": 775,
+    "removed_placeholder_occurrences": 1154
+  },
+  "verification_policy": "Batched readability workflow: exact token substitution for alpha-only edits; review event routing, callback order and live/cached reads for structured edits. One target build. Native comparisons reserved for uncertain behavior; reccmp refresh deferred to a larger checkpoint.",
+  "review_notes": [
+    "Thirty-four alpha-only definitions preserve exact tokens after declared local renames. Twenty-seven structured definitions use source review and one target build; no new native semantic comparisons.",
+    "Keep phasing eligibility, recursive attachment order, repeated card-ID queries, cached host/own state and indirect phasing/detachment rules.",
+    "Keep Acidic Dagger's stored-target fields and native counter behavior, Celestial Dawn's repeated queries, cost conversion and off-battlefield color refresh behavior.",
+    "Keep aura eligibility, humiliation gates, trigger order, fresh/cached attachment context, flash expiry, protection selection, life changes and opaque dialogs.",
+    "Keep sacrifice scoring thresholds and the complete two card-ID bonus groups. Preserve sacrifice/payment outcomes, mana filtering and fresh fizzle/context reads.",
+    "Keep Builder's Bane's cast/retarget preview, free/token routes, native human/AI X behavior, signed target limits, destruction/life-loss order and cached damage amount across callbacks."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/mirage-control-build-c441.log",
+    "log_sha256": "3ee96166342c0dca0b491ec77cb25c2870dd3d488e6d693db740fe0754cec89e",
+    "verified_built_slots": 15169,
+    "dll_sha256": "3c578c3417a1d2520db10e8deb970a6895beb242dad48adefdd3a77252a38346",
+    "dbg_sha256": "2cc9ea868fe53b880cae415da01e5546a1bfc3164fc9da82fe1467b9fd240821"
+  },
+  "reccmp": {
+    "refreshed": false,
+    "reason": "Readability batch with unchanged public function identities. Existing setup describes the previous build; regenerate at the next comparison/commit checkpoint.",
+    "unchanged_checkpoint_inputs": {
+      "config/reccmp/functions.csv": "c7061450a1b7a3efe3281c403593f25f25fed9b2e3e29e6bc70c4fa61c483cf3",
+      ".recovery/reccmp/setup.json": "9afa2466f299de82d50caca64252ce593275322f708319cbe0e693b30d38e53a"
+    }
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c442.json",
+    "sha256": "e42eeeb7d1a95bf727c959bb29bf920e633e2b3fafa7897ab90246f8c86f9158",
+    "counts": {
+      "tracked_source_definitions": 2606,
+      "functions_with_lab_gotos": 871,
+      "lab_gotos": 2104,
+      "functions_with_placeholders": 1825,
+      "distinct_function_local_placeholder_spellings": 5346,
+      "placeholder_identifier_occurrences": 39788,
+      "union_keywords": 0
+    }
+  },
+  "whole_unit_readability": {
+    "source": "cards/mirage.c",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of existing Mirage card handlers and local helpers. No new native-function coverage or gameplay-equivalence claim. Preserve unusual native behavior, repeated queries, context checks and opaque dialogs."
+}

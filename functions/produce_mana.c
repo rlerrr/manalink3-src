@@ -730,8 +730,7 @@ void produce_mana_tapped_multi_impl(int player, int card, int colorless, int bla
 int produce_mana_tapped_any_combination_of_colors_impl(int player, int card, color_test_t available,
                                                        int num_mana, const char *prompt, int mca);
 static int produce_mana_tapped_all_different_colors_impl(int player, int card,
-                                                              color_test_t available, int num_mana,
-                                                              const char *prompt);
+    color_test_t available, int num_mana, const char *prompt, int mca);
 
 /* ManalinkEh 2022: 0x266c500; original functions/produce_mana.c:956. */
 int produce_mana_tapped_all_one_color_with_default(int player, int card,
@@ -793,7 +792,7 @@ int produce_mana_tapped_all_different_colors(int player, int card, color_test_t 
 {
   int result;
   result =
-      produce_mana_tapped_all_different_colors_impl(player, card, available, num_mana, prompt);
+      produce_mana_tapped_all_different_colors_impl(player, card, available, num_mana, prompt, 1);
   return result;
 }
 
@@ -1265,8 +1264,9 @@ int produce_mana_tapped_any_combination_of_colors_impl(int player, int card,
 }
 
 /* ManalinkEh 2022: 0x2670e00; original functions/produce_mana.c:698. */
+/* The release specializes mca to 1. */
 static int produce_mana_tapped_all_different_colors_impl(int player, int card,
-    color_test_t available, int num_mana, const char *prompt)
+    color_test_t available, int num_mana, const char *prompt, int mca)
 {
   bool transmute = false;
   bool check_added_colors = true;
@@ -1571,14 +1571,14 @@ int artifact_mana_all_different_colors(int player, int card, event_t event, int 
     {
       ai_modifier = ai_modifier + -0xc;
       instance = get_card_instance(player, card);
-      produce_mana_tapped_all_different_colors_impl(
-          player, card, (unsigned int)instance->mana_color, amount, NULL);
+      produce_mana_tapped_all_different_colors_impl(player, card, (unsigned int)instance->mana_color,
+          amount, NULL, 1);
       return 0;
     }
     ai_modifier = ai_modifier + -0x24;
     instance = get_card_instance(player, card);
-    produce_mana_tapped_all_different_colors_impl(
-        player, card, (unsigned int)instance->mana_color, amount, NULL);
+    produce_mana_tapped_all_different_colors_impl(player, card, (unsigned int)instance->mana_color,
+        amount, NULL, 1);
     if (spell_fizzled != 1)
     {
       kill_card(player, card, KILL_SACRIFICE);

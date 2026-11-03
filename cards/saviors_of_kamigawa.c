@@ -651,8 +651,8 @@ int card_elder_pine_of_jukai(int player, int card, event_t event)
   if (event == EVENT_SPA)
   {
     int *deck = deck_ptr[player];
-    show_deck(current_turn, deck, 3, "Here's the revealed cards", 0, ENGINE_DONE_LABEL);
-    show_deck(current_turn ^ 1, deck, 3, "Here's the revealed cards", 0, ENGINE_DONE_LABEL);
+    show_deck(current_turn, deck, 3, "Here's the revealed cards", 0, EXE_STR(ENGINE_DONE_LABEL));
+    show_deck(current_turn ^ 1, deck, 3, "Here's the revealed cards", 0, EXE_STR(ENGINE_DONE_LABEL));
     int amount = MIN(3, count_deck(player));
     for (int i = amount - 1; i >= 0; --i)
     {
@@ -2251,7 +2251,7 @@ Reveal the top three cards of your library. An opponent chooses one of them. Put
 	if( event == EVENT_RESOLVE_SPELL ){
 		int amount = MIN(3, count_deck(player));
 		if( amount ){
-			show_deck(player, deck_ptr[player], amount, "Murmurs from Beyond revealed...", 0, 0x7375B0 );
+			show_deck(player, deck_ptr[player], amount, "Murmurs from Beyond revealed...", 0, EXE_STR(ENGINE_DONE_LABEL) );
 
 			test_definition_t test;
 			new_default_test_definition(&test, TYPE_ANY, "Select a card.");
@@ -3427,7 +3427,7 @@ int card_undying_flame(int player, int card, event_t event){
 					count++;
 			}
 			if( found ){
-				show_deck(player, deck, count+1, "Cards revealed by Undying Flame", 0, 0x7375B0 );
+				show_deck(player, deck, count+1, "Cards revealed by Undying Flame", 0, EXE_STR(ENGINE_DONE_LABEL) );
 				dmg = get_cmc_by_id( cards_data[deck[count]].id);
 				while( count > -1 ){
 						rfg_card_in_deck(player, count);
@@ -3534,7 +3534,7 @@ int card_yuki_onna(int player, int card, event_t event)
 int card_moonbow_llusionist(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar2;
+  int returned_land_or_chosen_type;
   target_definition_t td;
   target_definition_t td2;
 
@@ -3551,24 +3551,26 @@ int card_moonbow_llusionist(int player, int card, event_t event)
       if (can_target(&td2) != 0)
       {
         return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 2, 0, 0, 0, 0, 0, 0,
-                                          &td, NULL);
+                                         &td, NULL);
       }
     }
     else
     {
       instance->number_of_targets = '\0';
-      iVar2 = charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0);
-      if ((iVar2 != 0) &&
-          (iVar2 = new_pick_target(
+      returned_land_or_chosen_type =
+          charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0);
+      if ((returned_land_or_chosen_type != 0) &&
+          (returned_land_or_chosen_type = new_pick_target(
                &td2, "Select a land you control return it to its owner\'s hand.", 0, 0x81),
-           iVar2 != 0))
+           returned_land_or_chosen_type != 0))
       {
-        iVar2 = instance->targets[0].card;
+        returned_land_or_chosen_type = instance->targets[0].card;
         instance->number_of_targets = '\0';
-        if (new_pick_target(
-            &td, "Select target land it becomes the basic land type of your choice.", 0, 0x80) != 0)
+        if (new_pick_target(&td,
+                            "Select target land it becomes the basic land type of your choice.", 0,
+                            0x80) != 0)
         {
-          bounce_permanent(player, iVar2);
+          bounce_permanent(player, returned_land_or_chosen_type);
         }
       }
     }
@@ -3581,13 +3583,16 @@ int card_moonbow_llusionist(int player, int card, event_t event)
     td2.preferred_controller = player;
     td2.illegal_abilities = 0;
     instance = get_card_instance(player, card);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar2 = valid_target(&td), iVar2 != 0))
+    if ((event == EVENT_RESOLVE_ACTIVATION) &&
+        (returned_land_or_chosen_type = valid_target(&td), returned_land_or_chosen_type != 0))
     {
-      iVar2 = recorded_rand(player, 5);
-      iVar2 = choose_a_land(player, iVar2 + 1);
-      instance = get_card_instance(player, create_targetted_legacy_effect(
-          player, card, fx_change_landtype, instance->targets[0].player, instance->targets[0].card));
-      instance->targets[1].player = iVar2;
+      returned_land_or_chosen_type = recorded_rand(player, 5);
+      returned_land_or_chosen_type = choose_a_land(player, returned_land_or_chosen_type + 1);
+      instance =
+          get_card_instance(player, create_targetted_legacy_effect(player, card, fx_change_landtype,
+                                                                   instance->targets[0].player,
+                                                                   instance->targets[0].card));
+      instance->targets[1].player = returned_land_or_chosen_type;
     }
   }
   return 0;
@@ -3599,9 +3604,9 @@ int card_moonbow_llusionist(int player, int card, event_t event)
 static int card_choice_of_damnation_impl(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int iVar2;
-  size_t __n_1;
-  unsigned int argument7;
+  int target_or_permanent_count;
+  size_t chosen_number;
+  unsigned int sacrifice_priority;
   target_definition_t td;
   char buffer[100];
   test_definition_t test;
@@ -3626,40 +3631,45 @@ static int card_choice_of_damnation_impl(int player, int card, event_t event)
         default_target_definition(player, card, &td, 2);
         td.zone = 0x1000;
         instance = get_card_instance(player, card);
-        if ((event == EVENT_RESOLVE_SPELL) && (iVar2 = valid_target(&td), iVar2 != 0))
+        if ((event == EVENT_RESOLVE_SPELL) &&
+            (target_or_permanent_count = valid_target(&td), target_or_permanent_count != 0))
         {
 
-          iVar2 = instance->targets[0].player;
-          if (iVar2 == 1)
+          target_or_permanent_count = instance->targets[0].player;
+          if (target_or_permanent_count == 1)
           {
-            __n_1 = count_subtype(1, 0x47, -1);
-            for (; (0 < (int)__n_1 && (life[instance->targets[0].player] <= (int)__n_1));
-                 __n_1 = __n_1 - 1)
+            chosen_number = count_subtype(1, 0x47, -1);
+            for (; (0 < (int)chosen_number &&
+                    (life[instance->targets[0].player] <= (int)chosen_number));
+                 chosen_number = chosen_number - 1)
             {
             }
           }
           else
           {
-            __n_1 = choose_a_number(iVar2, "Choose a number.", life[player]);
+            chosen_number =
+                choose_a_number(target_or_permanent_count, "Choose a number.", life[player]);
           }
-          snprintf(buffer, 100, "Opponent chooses %d.", __n_1);
+          snprintf(buffer, 100, "Opponent chooses %d.", chosen_number);
           do_dialog(player, player, card, -1, -1, buffer, 0);
-          iVar2 = count_subtype(instance->targets[0].player, 0x47, -1);
-          argument7 = 0;
-          if (5 < (int)(life[instance->targets[0].player] - __n_1))
+          target_or_permanent_count = count_subtype(instance->targets[0].player, 0x47, -1);
+          sacrifice_priority = 0;
+          if (5 < (int)(life[instance->targets[0].player] - chosen_number))
           {
-            argument7 = (unsigned int)((int)(iVar2 - __n_1) < 4);
+            sacrifice_priority =
+                (unsigned int)((int)(target_or_permanent_count - chosen_number) < 4);
           }
           snprintf(buffer, 100,
-                   " Opponent loses %d life\n Opponent sacrifices all but %d permanents", __n_1);
-          if (do_dialog(player, player, card, -1, -1, buffer, argument7) == 0)
+                   " Opponent loses %d life\n Opponent sacrifices all but %d permanents",
+                   chosen_number);
+          if (do_dialog(player, player, card, -1, -1, buffer, sacrifice_priority) == 0)
           {
-            lose_life(instance->targets[0].player, __n_1);
+            lose_life(instance->targets[0].player, chosen_number);
           }
           else
           {
             default_test_definition(&test, 0x47);
-            test.qty = (short)iVar2 - (short)__n_1;
+            test.qty = (short)target_or_permanent_count - (short)chosen_number;
             new_sacrifice(player, card, instance->targets[0].player, SAC_CAUSED | SAC_NO_CANCEL,
                           &test);
           }
@@ -3681,31 +3691,23 @@ static int card_choice_of_damnation_impl(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x20b3030; original cards/saviors_of_kamigawa.c:943. */
 int card_freed_from_the_real(int player, int card, event_t event)
 {
+  enum
+  {
+    CHOICE_UNTAP_ENCHANTED_CRIT = 1,
+    CHOICE_TAP_ENCHANTED_CRIT = 2
+  };
+
   card_instance_t *instance;
-  card_instance_t *pcVar2;
+  card_instance_t *aura_in_play;
   int result;
   int argument1;
-  uint32_t uVar4;
+  uint32_t untap_priority;
 
   instance = get_card_instance(player, card);
-  pcVar2 = in_play(player, card);
-  if (((pcVar2 == NULL) ||
-       (pcVar2 = get_card_instance(player, card), pcVar2->damage_target_player < '\0')) ||
-      (result = is_humiliated(player, card, AL_NM_NL_ACT), result != 0))
-  {
-  LAB_020b3073:
-    if (event == EVENT_CAN_CAST)
-      return vanilla_aura(player, card, event, 2);
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-        return vanilla_aura(player, card, event, 2);
-    }
-    else if ((event == EVENT_RESOLVE_SPELL) ||
-             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      return vanilla_aura(player, card, event, 2);
-  }
-  else
+  aura_in_play = in_play(player, card);
+  if (!(((aura_in_play == NULL) || (aura_in_play = get_card_instance(player, card),
+                                    aura_in_play->damage_target_player < '\0')) ||
+        (result = is_humiliated(player, card, AL_NM_NL_ACT), result != 0)))
   {
 
     argument1 = (int)instance->damage_target_player;
@@ -3713,40 +3715,53 @@ int card_freed_from_the_real(int player, int card, event_t event)
     if ((-1 < instance->damage_target_player) && (event == EVENT_CAN_ACTIVATE))
     {
       return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 1, 0, 0, 0, 0,
-                                         NULL, NULL);
+                                       NULL, NULL);
     }
     if (event == EVENT_ACTIVATE)
     {
 
       instance->info_slot = 0;
       result = is_tapped(argument1, result);
-      uVar4 = 0;
+      untap_priority = 0;
       if (result != 0)
       {
-        uVar4 = 10;
+        untap_priority = 10;
       }
       result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Untap enchanted creature", 1,
-                           uVar4, "Tap enchanted creature", 1, 10, 0, 0, 0, 0);
+                           untap_priority, "Tap enchanted creature", 1, 10, 0, 0, 0, 0);
       if (result == 0)
       {
         spell_fizzled = 1;
         return 0;
       }
       return generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 0, 0, 1, 0, 0, 0, 0, NULL,
-                                         NULL);
+                                       NULL);
     }
-    if (event != EVENT_RESOLVE_ACTIVATION)
-      goto LAB_020b3073;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
 
-    if (instance->info_slot == 1)
-    {
-      untap_card(argument1, result);
-    }
-    else if (instance->info_slot == 2)
-    {
-      tap_card(argument1, result);
+      if (instance->info_slot == CHOICE_UNTAP_ENCHANTED_CRIT)
+      {
+        untap_card(argument1, result);
+      }
+      else if (instance->info_slot == CHOICE_TAP_ENCHANTED_CRIT)
+      {
+        tap_card(argument1, result);
+      }
     }
   }
+
+  if (event == EVENT_CAN_CAST)
+    return vanilla_aura(player, card, event, 2);
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+      return vanilla_aura(player, card, event, 2);
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) ||
+           ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+    return vanilla_aura(player, card, event, 2);
+
   if (((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
       (((((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
           (event != EVENT_CHANGE_TYPE)) &&
@@ -3765,8 +3780,8 @@ static int reveal_top_library_type_cards_put_in_hand_rest_bottom_library_any_ord
                                                                                      int type, int cards_to_look)
 {
   int *deck = deck_ptr[player];
-  show_deck(current_turn, deck, cards_to_look, "Here's the revealed cards", 0, ENGINE_DONE_LABEL);
-  show_deck(current_turn ^ 1, deck, cards_to_look, "Here's the revealed cards", 0, ENGINE_DONE_LABEL);
+  show_deck(current_turn, deck, cards_to_look, "Here's the revealed cards", 0, EXE_STR(ENGINE_DONE_LABEL));
+  show_deck(current_turn ^ 1, deck, cards_to_look, "Here's the revealed cards", 0, EXE_STR(ENGINE_DONE_LABEL));
   int amount = MIN(cards_to_look, count_deck(player));
   for (int pos = amount - 1; pos >= 0; --pos)
     if (is_what(-1, deck[pos], type))

@@ -717,7 +717,7 @@ Otherwise, you may put that card on the bottom of your library. */
 	if (event == EVENT_SPA){
 		int *deck = deck_ptr[player];
 		if( deck[0] != -1 ){
-			show_deck( player, deck, 1, "Here's the first card of deck.", 0, ENGINE_DONE_LABEL );
+			show_deck( player, deck, 1, "Here's the first card of deck.", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			if( is_what(-1, deck[0], TYPE_CREATURE) ){
 				put_into_play_a_card_from_deck(player, player, 0);
 			}
@@ -1120,18 +1120,18 @@ int effect_must_attack_on_next_combat(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2500fb0; original cards/m10.c:937. */
 int card_sanguine_bond(int player, int card, event_t event)
 {
-  int iVar1;
+  int gained_life;
   card_instance_t *instance;
 
-  iVar1 = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
-  if (iVar1 != 0)
+  gained_life = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (gained_life != 0)
   {
     instance = in_play(player, card);
     if (instance != NULL)
     {
       if (check_battlefield_for_id(player, 0x304d) == 0)
       {
-        lose_life(1 - player, iVar1);
+        lose_life(1 - player, gained_life);
       }
       else
       {

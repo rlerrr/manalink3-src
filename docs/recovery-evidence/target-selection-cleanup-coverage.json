@@ -1,0 +1,531 @@
+{
+  "status": "Eleven target-selection helpers and callers reconstructed and verified.",
+  "batch": "docs/recovery-evidence/target-selection-cleanup.json",
+  "batch_sha256": "c32444a6018ca8124495c5fcdb1e2131506b6e46f7fb7029dad4510ebb5b84e1",
+  "counts": {
+    "helpers": 11,
+    "card_handlers": 0,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 16,
+    "removed_lab_gotos": 11,
+    "source_lines_removed": 174,
+    "removed_placeholder_occurrences": 231,
+    "removed_placeholder_names": 39
+  },
+  "native_comparison": {
+    "all_equal": true,
+    "three_way_comparisons": 67712,
+    "entry_invocations": 203136,
+    "functions": {
+      "can_legally_target": 6144,
+      "real_validate_target": 6144,
+      "real_target_available": 6144,
+      "validate_arbitrary_target": 6144,
+      "validate_target": 6144,
+      "valid_target": 6144,
+      "select_target_impl": 6272,
+      "real_select_target": 6144,
+      "choose_default_target": 6144,
+      "mark_up_to_n_targets_noload": 6144,
+      "opponent_is_valid_target": 6144
+    }
+  },
+  "original_code_regions": [
+    {
+      "name": "can_legally_target",
+      "address": "0x2661860",
+      "size": 151,
+      "sha256": "ec21a40291031ebbacd6f2f95c38c38def0d8e55db3a0701f4c8a25563a847de",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x2661876",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26618a8",
+          "target": "0x267a160",
+          "callee": "set_special_flags2"
+        },
+        {
+          "instruction": "0x26618bc",
+          "target": "0x26caff0",
+          "callee": "call_card_function"
+        },
+        {
+          "instruction": "0x26618e7",
+          "target": "0x267a210",
+          "callee": "remove_special_flags2"
+        }
+      ]
+    },
+    {
+      "name": "real_validate_target",
+      "address": "0x265fcf0",
+      "size": 390,
+      "sha256": "9e10a60280beec6dc471b634dad15c0375096fb67e0e31e9da0fc63c0e9b37c2",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x265fe13",
+          "target": "0x265d720",
+          "callee": "native_validate"
+        },
+        {
+          "instruction": "0x265fe2d",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x265fe5b",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        }
+      ]
+    },
+    {
+      "name": "real_target_available",
+      "address": "0x265fe80",
+      "size": 398,
+      "sha256": "5b9ed2c38140d87f17212fd9f4a856a2fc584e6f5dd3123b6f060929aea1df9d",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x265ffaa",
+          "target": "0x265ef60",
+          "callee": "native_available"
+        },
+        {
+          "instruction": "0x265ffc5",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x265fff3",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        }
+      ]
+    },
+    {
+      "name": "validate_arbitrary_target",
+      "address": "0x2660810",
+      "size": 52,
+      "sha256": "9470c3b1c5fec4c7b16a3728a068675eec95b7326df60bcf4e6967ef0f330cd3",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x2660835",
+          "target": "0x2660750",
+          "callee": "would_validate_arbitrary_target"
+        }
+      ]
+    },
+    {
+      "name": "validate_target",
+      "address": "0x2661710",
+      "size": 59,
+      "sha256": "0ff988997513b5fa651aea3e28c1e3b8439d9cbb7bf28bccf9494564f1904da9",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x266173c",
+          "target": "0x2660850",
+          "callee": "would_validate_target"
+        }
+      ]
+    },
+    {
+      "name": "valid_target",
+      "address": "0x2661750",
+      "size": 60,
+      "sha256": "c1fefc537b65c2790dce5094e51ae6364329e8e5ccebcbea2e69881728b3f99e",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x266177d",
+          "target": "0x2660850",
+          "callee": "would_validate_target"
+        }
+      ]
+    },
+    {
+      "name": "select_target_impl",
+      "address": "0x265f3d0",
+      "size": 1863,
+      "sha256": "26a87d0ab2f0ae3ee38ead0cf0145faf35b4bccd52fd3a9640a7b31c7b96e5dd",
+      "entry_abi": "regparm(3)",
+      "external_branches": [
+        {
+          "instruction": "0x265f4c2",
+          "target": "0x4378e0",
+          "callee": "sub_4378E0"
+        },
+        {
+          "instruction": "0x265f4e8",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265f5a7",
+          "target": "0x265d720",
+          "callee": "native_validate"
+        },
+        {
+          "instruction": "0x265f5e7",
+          "target": "0x4386f0",
+          "callee": "set_centerwindow_txt"
+        },
+        {
+          "instruction": "0x265f677",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x265f720",
+          "target": "0x265d720",
+          "callee": "native_validate"
+        },
+        {
+          "instruction": "0x265f7b6",
+          "target": "0x499050",
+          "callee": "sub_499050"
+        },
+        {
+          "instruction": "0x265f89e",
+          "target": "0x45cec0",
+          "callee": "sub_45CEC0"
+        },
+        {
+          "instruction": "0x265f8e8",
+          "target": "0x2701df0",
+          "callee": "sprintf"
+        },
+        {
+          "instruction": "0x265f946",
+          "target": "0x45cf00",
+          "callee": "sub_45CF00"
+        },
+        {
+          "instruction": "0x265f9ba",
+          "target": "0x2701df0",
+          "callee": "sprintf"
+        },
+        {
+          "instruction": "0x265f9c8",
+          "target": "0x26a0220",
+          "callee": "display_error_message"
+        },
+        {
+          "instruction": "0x265fa13",
+          "target": "0x44e050",
+          "callee": "internal_rand"
+        },
+        {
+          "instruction": "0x265fa47",
+          "target": "0x498f20",
+          "callee": "sub_498F20"
+        },
+        {
+          "instruction": "0x265fa95",
+          "target": "0x2701df0",
+          "callee": "sprintf"
+        },
+        {
+          "instruction": "0x265fa9d",
+          "target": "0x26a0220",
+          "callee": "display_error_message"
+        },
+        {
+          "instruction": "0x265faeb",
+          "target": "0x44e050",
+          "callee": "internal_rand"
+        },
+        {
+          "instruction": "0x265fb03",
+          "target": "0x26a0220",
+          "callee": "display_error_message"
+        },
+        {
+          "instruction": "0x265fb0d",
+          "target": "0x45cf00",
+          "callee": "sub_45CF00"
+        }
+      ]
+    },
+    {
+      "name": "real_select_target",
+      "address": "0x2660010",
+      "size": 390,
+      "sha256": "38b3af889380da29c166f8e1491fcee2c65c5b26129bb098f6c5365d58b288fe",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x2660133",
+          "target": "0x265fb20",
+          "callee": "native_maybe_force"
+        },
+        {
+          "instruction": "0x266014d",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        },
+        {
+          "instruction": "0x266017b",
+          "target": "0x26738b0",
+          "callee": "has_subtype"
+        }
+      ]
+    },
+    {
+      "name": "choose_default_target",
+      "address": "0x2660930",
+      "size": 639,
+      "sha256": "cfdea7bee954557355b2dd1cc87779bce2d02725559d158729f4e699df8ef46e",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x2660949",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x266095b",
+          "target": "0x26c7810",
+          "callee": "get_setting"
+        },
+        {
+          "instruction": "0x2660983",
+          "target": "0x26b35a0",
+          "callee": "get_id"
+        },
+        {
+          "instruction": "0x26609d4",
+          "target": "0x2660570",
+          "callee": "target_available"
+        },
+        {
+          "instruction": "0x2660a0f",
+          "target": "0x2701e88",
+          "callee": "fake_fopen"
+        },
+        {
+          "instruction": "0x2660a2f",
+          "target": "0x2701e58",
+          "callee": "fake_fscanf"
+        },
+        {
+          "instruction": "0x2660a37",
+          "target": "0x2701eb0",
+          "callee": "atoi"
+        },
+        {
+          "instruction": "0x2660a5d",
+          "target": "0x2701e58",
+          "callee": "fake_fscanf"
+        },
+        {
+          "instruction": "0x2660a71",
+          "target": "0x2701e58",
+          "callee": "fake_fscanf"
+        },
+        {
+          "instruction": "0x2660a86",
+          "target": "0x2701e58",
+          "callee": "fake_fscanf"
+        },
+        {
+          "instruction": "0x2660a91",
+          "target": "0x2701ea0",
+          "callee": "fake_fclose"
+        },
+        {
+          "instruction": "0x2660aa5",
+          "target": "0x2701e88",
+          "callee": "fake_fopen"
+        },
+        {
+          "instruction": "0x2660abf",
+          "target": "0x2701e58",
+          "callee": "fake_fscanf"
+        },
+        {
+          "instruction": "0x2660ac7",
+          "target": "0x2701eb0",
+          "callee": "atoi"
+        },
+        {
+          "instruction": "0x2660aed",
+          "target": "0x2701e58",
+          "callee": "fake_fscanf"
+        },
+        {
+          "instruction": "0x2660b01",
+          "target": "0x2701e58",
+          "callee": "fake_fscanf"
+        },
+        {
+          "instruction": "0x2660b16",
+          "target": "0x2701e58",
+          "callee": "fake_fscanf"
+        },
+        {
+          "instruction": "0x2660b21",
+          "target": "0x2701ea0",
+          "callee": "fake_fclose"
+        },
+        {
+          "instruction": "0x2660b90",
+          "target": "0x2660850",
+          "callee": "would_validate_target"
+        }
+      ]
+    },
+    {
+      "name": "mark_up_to_n_targets_noload",
+      "address": "0x2661200",
+      "size": 343,
+      "sha256": "8ac323b81de7409b61ccb7a67c5ce856237719f474a9f9cad0763050cb234a77",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x266124c",
+          "target": "0x2660bb0",
+          "callee": "select_target"
+        },
+        {
+          "instruction": "0x2661279",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x2661296",
+          "target": "0x26604c0",
+          "callee": "can_target"
+        },
+        {
+          "instruction": "0x26612d7",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        }
+      ]
+    },
+    {
+      "name": "opponent_is_valid_target",
+      "address": "0x2661670",
+      "size": 159,
+      "sha256": "e5c21c5a46fbc02814f477d17bb1f3f7e6e86a9db9ae868d17527e9fd8411bbb",
+      "entry_abi": "cdecl",
+      "external_branches": [
+        {
+          "instruction": "0x2661686",
+          "target": "0x26b2ab0",
+          "callee": "get_card_instance"
+        },
+        {
+          "instruction": "0x26616a3",
+          "target": "0x2660240",
+          "callee": "default_target_definition"
+        },
+        {
+          "instruction": "0x26616f6",
+          "target": "0x2660850",
+          "callee": "would_validate_target"
+        }
+      ]
+    }
+  ],
+  "external_data_bindings": 55,
+  "external_callee_bindings": 61,
+  "native_entry_abis": {
+    "can_legally_target": "cdecl",
+    "real_validate_target": "cdecl",
+    "real_target_available": "cdecl",
+    "validate_arbitrary_target": "cdecl",
+    "validate_target": "cdecl",
+    "valid_target": "cdecl",
+    "select_target_impl": "regparm(3)",
+    "real_select_target": "cdecl",
+    "choose_default_target": "cdecl",
+    "mark_up_to_n_targets_noload": "cdecl",
+    "opponent_is_valid_target": "cdecl"
+  },
+  "native_tested_helpers": 11,
+  "register_adapters": {
+    "native_validate": "regparm(3)",
+    "native_available": "regparm(3)",
+    "native_maybe_force": "regparm(3)"
+  },
+  "whole_unit_net_lines_removed": 174,
+  "actual_compiler_unit_matches_preflight": true,
+  "enum_assertions": 10,
+  "focused": {
+    "path": ".recovery/target-selection-focused-c370.json",
+    "sha256": "95234c3ae954aef3e03b5087a49889ed9dcca74939bdf2680932b6f268317441",
+    "source_succession_links": 21,
+    "array_scope_bridges": 1
+  },
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/target-selection-build-c371.log",
+    "log_sha256": "beff8a1adf5a0086e002c151b601c253592d64f73fc1a41f9db0d0f06a2488d3",
+    "verified_built_slots": 15169,
+    "dll_sha256": "1e8e8e70ff0180de09ddf25d64412c59b90549dea58d235ce0a173662b4d611f",
+    "dbg_sha256": "209b64215612540e138c40e993994ea96f19a70aa1d45a7347b5328c2b8e1aac"
+  },
+  "setup": {
+    "command": "python tools/reccmp_project.py setup",
+    "exit_code": 0,
+    "log": ".recovery/target-selection-setup-c371.log",
+    "log_sha256": "49d94c85202d2acaff8b0a6833a201d91b31c784fb09f3882bc384f1a147cc99",
+    "csv_functions": 18725,
+    "original_functions": 18849,
+    "ledger_mappings": 4817,
+    "stubs": 0,
+    "metadata_sha256": "e6f4dbb1bb03617ea5bb1a31dfb57d03f4d5027dd2a84fffc5959fafe29e052c",
+    "mapping_identities_unchanged": true,
+    "changed_annotations": [
+      {
+        "name": "get_average_value_from_zone",
+        "native_address": "0x2650cf0",
+        "before": "public COFF entry 0x26e52a0",
+        "after": "public COFF entry 0x26e52d0"
+      },
+      {
+        "name": "memcpy_displayed_inst_and_ext",
+        "native_address": "0x2657690",
+        "before": "public COFF entry 0x26ed710",
+        "after": "public COFF entry 0x26ed740"
+      },
+      {
+        "name": "copy_token",
+        "native_address": "0x2666680",
+        "before": "public COFF entry 0x26e3e20",
+        "after": "public COFF entry 0x26e3e50"
+      }
+    ]
+  },
+  "index_unchanged": true,
+  "limits": "Eleven native bodies compared independently with child queries, GUI and stdio callbacks substituted. Valid allocated records, bounded strings/file rows, finite human selection, and valid candidate indices; no native UI/file-runtime behavior or gameplay claim. Callback-boundary snapshots use 32-bit hashes and argument summaries; final fixture snapshots are compared byte for byte. Native and reconstruction additionally agree on borrowed GUI-local outputs during cleanup. The three-way predecessor comparison excludes those borrowed-local views: its synthetic cancellation assignment is absent from native register-only result writes. Includes live global/record/definition changes, 128 explicit 58-card plus two-player candidate fixtures with the observed random bound asserted as 60. No reads of callee-local pointers after the outer call returns.",
+  "whole_unit_readability": {
+    "source": "functions/targets.c",
+    "source_sha256": "97e926c59871c8bbe31294c2c02d52ad475f1c8d756abe37bcd6c7451433070a",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c372.json",
+    "sha256": "e215a0f08bf4e4ecadd5d13b3ead1701e97013dacc1fc2cee92d2dc90e300dda",
+    "counts": {
+      "tracked_source_definitions": 2604,
+      "functions_with_lab_gotos": 997,
+      "lab_gotos": 2648,
+      "functions_with_placeholders": 2065,
+      "distinct_function_local_placeholder_spellings": 6292,
+      "placeholder_identifier_occurrences": 49198,
+      "union_keywords": 0
+    }
+  }
+}

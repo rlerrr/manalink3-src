@@ -3,14 +3,14 @@
 // Functions
 static void goyf(int player, int card, event_t event, type_t type)
 {
-  int iVar1;
-  int iVar2;
+  int first_grave_count;
+  int second_grave_count;
   if ((((event - EVENT_POWER < 2) && (player != -1)) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    iVar1 = count_graveyard_by_type(0, type);
-    iVar2 = count_graveyard_by_type(1, type);
-    set_characteristic_pt(iVar1 + iVar2);
+    first_grave_count = count_graveyard_by_type(0, type);
+    second_grave_count = count_graveyard_by_type(1, type);
+    set_characteristic_pt(first_grave_count + second_grave_count);
     return;
   }
   return;
@@ -833,8 +833,8 @@ Protection from creatures */
 
 int card_bomb_squad(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int scan_player_or_valid;
+  int fuse_count_or_next_card;
   card_instance_t *instance;
   int c;
   target_definition_t td;
@@ -842,98 +842,86 @@ int card_bomb_squad(int player, int card, event_t event)
   upkeep_trigger_ability(player, card, event, player);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    iVar1 = 0;
+    scan_player_or_valid = 0;
     do
     {
       c = 0;
-      if (0 < active_cards_count[iVar1])
+      if (active_cards_count[scan_player_or_valid] > 0)
       {
         do
         {
-          while (((instance = in_play(iVar1, c),
-                   instance == NULL || (iVar2 = is_what(iVar1, c, 2), iVar2 == 0)) ||
-                  (iVar2 = count_counters(iVar1, c, COUNTER_FUSE), iVar2 == 0)))
+          instance = in_play(scan_player_or_valid, c);
+          if (instance != NULL &&
+              (fuse_count_or_next_card = is_what(scan_player_or_valid, c, 2),
+               fuse_count_or_next_card != 0) &&
+              (fuse_count_or_next_card = count_counters(scan_player_or_valid, c, COUNTER_FUSE),
+               fuse_count_or_next_card != 0))
           {
-            c = c + 1;
-            if (active_cards_count[iVar1] <= c)
-              goto LAB_02504d80;
+            fuse_count_or_next_card = c + 1;
+            add_counters(player, card, scan_player_or_valid, c, COUNTER_FUSE, 1);
+            c = fuse_count_or_next_card;
           }
-          iVar2 = c + 1;
-          add_counters(player, card, iVar1, c, COUNTER_FUSE, 1);
-          c = iVar2;
-        } while (iVar2 < active_cards_count[iVar1]);
-      }
-    LAB_02504d80:
-      iVar1 = iVar1 + 1;
-    } while (iVar1 != 2);
-  LAB_02504ac7:
-    if (event != EVENT_CLEANUP)
-    {
-      return 0;
-    }
-  LAB_02504ad2:
-    default_target_definition(player, card, &td, 2);
-  }
-  else
-  {
-    if ((event == EVENT_STATIC_EFFECTS) || (event == EVENT_SHOULD_AI_PLAY))
-    {
-      iVar1 = 0;
-      do
-      {
-        if (0 < active_cards_count[iVar1])
-        {
-          c = 0;
-          do
-          {
-            while (((instance = in_play(iVar1, c),
-                     instance == NULL || (iVar2 = is_what(iVar1, c, 2), iVar2 == 0)) ||
-                    (iVar2 = count_counters(iVar1, c, COUNTER_FUSE), iVar2 == 0)))
-            {
-            LAB_02504ba0:
-              c = c + 1;
-              if (active_cards_count[iVar1] <= c)
-                goto LAB_02504c18;
-            }
-            if (3 < iVar2)
-            {
-              remove_all_counters(player, card, iVar1, c, COUNTER_FUSE);
-              damage_player(iVar1, 4, iVar1, c);
-              kill_card(iVar1, c, KILL_DESTROY);
-              goto LAB_02504ba0;
-            }
-            if (event != EVENT_SHOULD_AI_PLAY)
-              goto LAB_02504ba0;
+          else
             c = c + 1;
-            ai_modifier = ai_modifier + iVar2 * (((iVar1 != 1) - 1 & 0xffffffe0) + 0x10);
-          } while (c < active_cards_count[iVar1]);
-        }
-      LAB_02504c18:
-        iVar1 = iVar1 + 1;
-      } while (iVar1 != 2);
-    }
-    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
-    {
-      if (event != EVENT_RESOLVE_ACTIVATION)
-        goto LAB_02504ac7;
-      goto LAB_02504ad2;
-    }
-    default_target_definition(player, card, &td, 2);
-    if (event == EVENT_ACTIVATE)
-    {
-      ai_modifier = ai_modifier + ((1 - player == current_turn) - 1 & 0xffffffe8) + 0x30;
-      goto LAB_02504afc;
-    }
+        } while (c < active_cards_count[scan_player_or_valid]);
+      }
+      scan_player_or_valid = scan_player_or_valid + 1;
+    } while (scan_player_or_valid != 2);
+    return 0;
   }
-  if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar1 = valid_target(&td), iVar1 != 0))
+  if (event == EVENT_STATIC_EFFECTS || event == EVENT_SHOULD_AI_PLAY)
+  {
+    scan_player_or_valid = 0;
+    do
+    {
+      if (active_cards_count[scan_player_or_valid] > 0)
+      {
+        c = 0;
+        do
+        {
+          instance = in_play(scan_player_or_valid, c);
+          if (instance != NULL &&
+              (fuse_count_or_next_card = is_what(scan_player_or_valid, c, 2),
+               fuse_count_or_next_card != 0) &&
+              (fuse_count_or_next_card = count_counters(scan_player_or_valid, c, COUNTER_FUSE),
+               fuse_count_or_next_card != 0))
+          {
+            if (fuse_count_or_next_card > 3)
+            {
+              remove_all_counters(player, card, scan_player_or_valid, c, COUNTER_FUSE);
+              damage_player(scan_player_or_valid, 4, scan_player_or_valid, c);
+              kill_card(scan_player_or_valid, c, KILL_DESTROY);
+            }
+            else if (event == EVENT_SHOULD_AI_PLAY)
+            {
+              c = c + 1;
+              ai_modifier =
+                  ai_modifier +
+                  fuse_count_or_next_card * (((scan_player_or_valid != 1) - 1 & 0xffffffe0) + 0x10);
+              continue;
+            }
+          }
+          c = c + 1;
+        } while (c < active_cards_count[scan_player_or_valid]);
+      }
+      scan_player_or_valid = scan_player_or_valid + 1;
+    } while (scan_player_or_valid != 2);
+  }
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
+      event != EVENT_CLEANUP)
+    return 0;
+  default_target_definition(player, card, &td, 2);
+  if (event == EVENT_ACTIVATE)
+    ai_modifier = ai_modifier + ((1 - player == current_turn) - 1 & 0xffffffe8) + 0x30;
+  if ((event == EVENT_RESOLVE_ACTIVATION) &&
+      (scan_player_or_valid = valid_target(&td), scan_player_or_valid != 0))
   {
     instance = get_card_instance(player, card);
-    add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
-                             COUNTER_FUSE, 1);
+    add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_FUSE,
+                 1);
   }
-LAB_02504afc:
   return generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
-                                    "TARGET_CREATURE");
+                                   "TARGET_CREATURE");
 }
 
 int card_braids_cabal_minion(int player, int card, event_t event){
@@ -2139,8 +2127,8 @@ int card_delaying_shield(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  int iStack_18;
-  int iStack_14;
+  int paid_counters;
+  int remaining_counters;
   if (event == EVENT_PREVENT_DAMAGE)
   {
     result = is_humiliated(player, card, AL_TRIG);
@@ -2159,9 +2147,9 @@ int card_delaying_shield(int player, int card, event_t event)
     upkeep_trigger_ability(player, card, event, player);
     if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
     {
-      iStack_14 = count_counters(player, card, COUNTER_DELAY);
-      iStack_18 = 0;
-      if (0 < iStack_14)
+      remaining_counters = count_counters(player, card, COUNTER_DELAY);
+      paid_counters = 0;
+      if (0 < remaining_counters)
       {
         do
         {
@@ -2171,13 +2159,13 @@ int card_delaying_shield(int player, int card, event_t event)
           charge_mana_multi(player, 1, 0, 0, 0, 0, 1);
           if (spell_fizzled != 1)
           {
-            iStack_18 = iStack_18 + 1;
+            paid_counters = paid_counters + 1;
           }
-          iStack_14 = iStack_14 + -1;
-        } while (iStack_14 != 0);
+          remaining_counters = remaining_counters + -1;
+        } while (remaining_counters != 0);
       }
       result = count_counters(player, card, COUNTER_DELAY);
-      lose_life(player, result - iStack_18);
+      lose_life(player, result - paid_counters);
       remove_all_counters(player, card, player, card, COUNTER_DELAY);
     }
   }
@@ -2992,7 +2980,7 @@ for all cards with the same name as that card and exile them. Then that player s
 						count--;
 				}
 				show_deck( player, deck_ptr[instance->targets[0].player], count_deck(instance->targets[0].player),
-						"Cards Remaining in Deck", 0, 0x7375B0 );
+						"Cards Remaining in Deck", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			}
 			else{
 				int i;
@@ -3898,20 +3886,19 @@ int card_need_for_speed(int player, int card, event_t event){
 
 int card_nefarious_lich(int player, int card, event_t event)
 {
-  xtrigger_t xVar1;
+  xtrigger_t current_xtrigger;
   card_instance_t *instance;
-  int p_Var4;
+  int unprevented_damage;
   test_definition_t test;
-  xVar1 = trigger_condition;
+  current_xtrigger = trigger_condition;
   if (trigger_condition == 0xe5)
   {
-    xVar1 = xtrigger_impl_value_dont_use_directly;
+    current_xtrigger = xtrigger_impl_value_dont_use_directly;
   }
-  if ((((xVar1 == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
+  if ((((current_xtrigger == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
-        ((-1 < life_gained &&
-          (is_humiliated(player, card, AL_TRIG) == 0))))))
+        ((-1 < life_gained && (is_humiliated(player, card, AL_TRIG) == 0))))))
   {
     if (event != EVENT_TRIGGER)
     {
@@ -3922,45 +3909,40 @@ int card_nefarious_lich(int player, int card, event_t event)
         leaves_play(player, card, EVENT_RESOLVE_TRIGGER, 1, 1);
         return global_enchantment(player, card, event);
       }
-      goto LAB_0250e71d;
     }
     event_result = event_result | 2;
   }
-  else
+  if (event == EVENT_PREVENT_DAMAGE)
   {
-  LAB_0250e71d:
-    if (event == EVENT_PREVENT_DAMAGE)
+    instance = in_play(player, card);
+    if (((instance != NULL) && (is_humiliated(player, card, AL_STATIC) == 0)) &&
+        ((instance = get_card_instance(affected_card_controller, affected_card),
+          instance->internal_card_id == damage_card &&
+              (((instance->damage_target_card == -1 &&
+                 (instance->damage_target_player == player)) &&
+                (damage_is_to_planeswalker(instance) == 0))))))
     {
-      instance = in_play(player, card);
-      if (((instance != NULL) &&
-           (is_humiliated(player, card, AL_STATIC) == 0)) &&
-          ((instance = get_card_instance(affected_card_controller, affected_card),
-            instance->internal_card_id == damage_card &&
-                (((instance->damage_target_card == -1 &&
-                   (instance->damage_target_player == player)) &&
-                  (damage_is_to_planeswalker(instance) == 0))))))
+      default_test_definition(&test, 0xff);
+      unprevented_damage = instance->info_slot;
+      while (unprevented_damage != 0)
       {
-        default_test_definition(&test, 0xff);
-        p_Var4 = instance->info_slot;
-        while (p_Var4 != 0)
+        if (*graveyard_ptr_mutable[player] == -1)
         {
-          if (*graveyard_ptr_mutable[player] == -1)
+          if (unprevented_damage != 0)
           {
-            if (p_Var4 != 0)
-            {
-              lose_the_game(player);
-            }
-            break;
+            lose_the_game(player);
           }
-          scnprintf(test.message, 100, "Select a card to exile (%d damage to prevent).", p_Var4);
-          new_global_tutor(player, player, 2, 6, 1, 3, &test);
-          p_Var4 = instance->info_slot + -1;
-          instance->info_slot = p_Var4;
+          break;
         }
+        scnprintf(test.message, 100, "Select a card to exile (%d damage to prevent).",
+                  unprevented_damage);
+        new_global_tutor(player, player, 2, 6, 1, 3, &test);
+        unprevented_damage = instance->info_slot + -1;
+        instance->info_slot = unprevented_damage;
       }
-      leaves_play(player, card, EVENT_PREVENT_DAMAGE, 1, 1);
-      return global_enchantment(player, card, event);
     }
+    leaves_play(player, card, EVENT_PREVENT_DAMAGE, 1, 1);
+    return global_enchantment(player, card, event);
   }
   leaves_play(player, card, event, 1, 1);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
@@ -5459,14 +5441,14 @@ int card_tainted_pact(int player, int card, event_t event)
           stop = 1;
           break;
         }
-        stop = show_deck(player, exiled, ec, "Click on a card to stop", 0, 0x7375B0);
+        stop = show_deck(player, exiled, ec, "Click on a card to stop", 0, EXE_STR(ENGINE_DONE_LABEL));
         if (stop > -1)
         {
           break;
         }
       }
     end:
-      show_deck(1 - player, exiled, ec, "Cards exile by Tainted Pact.", 0, 0x7375B0);
+      show_deck(1 - player, exiled, ec, "Cards exile by Tainted Pact.", 0, EXE_STR(ENGINE_DONE_LABEL));
       if (stop > -1)
       {
         add_card_to_hand(player, exiled[ec - 1]);
@@ -5507,7 +5489,7 @@ At the beginning of your upkeep, look at the top card of your library. You may p
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
 		int *deck = deck_ptr[player];
 		if( deck[0] != -1 ){
-			if( show_deck( player, deck, 1, "Put this card into your graveyard ?", 0, 0x7375B0 ) != -1 ){
+			if( show_deck( player, deck, 1, "Put this card into your graveyard ?", 0, EXE_STR(ENGINE_DONE_LABEL) ) != -1 ){
 				mill(player, 1);
 			}
 		}
@@ -5876,7 +5858,7 @@ Creature - Human Druid 1/2
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		int *deck = deck_ptr[player];
 		if( deck[0] != -1 ){
-			show_deck( player, deck, 1, "Here's the first card of deck", 0, 0x7375B0 );
+			show_deck( player, deck, 1, "Here's the first card of deck", 0, EXE_STR(ENGINE_DONE_LABEL) );
 			if( is_what(-1, deck[0], TYPE_CREATURE) ){
 				put_into_play_a_card_from_deck(player, player, 0);
 			}

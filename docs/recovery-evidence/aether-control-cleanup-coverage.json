@@ -1,0 +1,87 @@
+{
+  "status": "All 58 Aether Revolt definitions cleaned up; entire unit has zero LAB jumps and known placeholder identifiers. Final target build passed; reccmp refresh deferred.",
+  "batch": "docs/recovery-evidence/aether-control-cleanup.json",
+  "batch_sha256": "2b8d0c6ff529c8602c8468f29e3ba1fb4c50a8d2d909f2e027627d00b401a7fd",
+  "counts": {
+    "definitions": 58,
+    "card_handlers": 49,
+    "local_helpers": 9,
+    "alpha_only_definitions": 19,
+    "structured_definitions": 39,
+    "new_native_function_coverage": 0,
+    "removed_gotos": 109,
+    "removed_lab_gotos": 106,
+    "source_lines_removed": 1398,
+    "removed_placeholder_occurrences": 1171
+  },
+  "verification_policy": "Batched readability workflow: exact token substitution for alpha-only edits; review event routing, callback order and live/cached reads for structured edits. One target build per batch. Native comparisons reserved for uncertain behavior; reccmp refresh deferred to a larger checkpoint.",
+  "review_notes": [
+    "Aura and spell gates retain accepted event sets, affected-card qualification, humiliation checks, target defaults and rechecks after callbacks.",
+    "Keep Ajani deck iteration/removal quirks, target/payment ordering, target-slot swaps, live target counts, temporary target marks and cleanup on cancellation.",
+    "Keep upkeep current-turn snapshots, duplicate legacy detection, death aggregation, detach flags, low-byte result counts and repeated status/context queries.",
+    "Keep Walking Ballista payment-success count separate from failure reloads; Ice Over and native mana/vehicle/energy dialog behavior remain unchanged.",
+    "Replace Ironclad prompt copy with an identical 100-byte initialized array and Dockhand alignment-specific zeroing with an identical 302-byte zeroed array.",
+    "Nineteen alpha-only definitions retain exact tokens after declared renames. Thirty-nine structured definitions receive source review and batched builds, with no native semantic-equivalence claim.",
+    "Pia preserves packed death-card bytes, legacy/card storage ranges, reverse resolution, cached graveyard pointers, opponent payment/target checks and damage-versus-return behavior.",
+    "Scrap Trawler preserves cached records, detach flags, capacity/duplicate count queries, the release's unusual store/resolve slot offsets and tutor ordering.",
+    "Archangel preserves both damage passes and their player lookup, live turn refresh between passes, independent loss flags, draw suppression and EVENT_TRIGGER side effects.",
+    "Unbridled Growth preserves attached-land checks, mana/sacrifice eligibility, payment/dispatch order, and its aura/cast/retarget behavior.",
+    "Creativity and Gremlins preserve target defaults, cast-context rechecks, retarget preview dialogs and chooser changes, free/token paths, distinct human/AI X costs, cancellation exits and target unmarking.",
+    "Improvise preserves fixed-cost versus X-contribution payment routes, selection marks, fresh fizzle reads during cleanup, normal-cast handling and success return values. Opaque dialogs remain out of scope."
+  ],
+  "build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/aether-tail-build-c437.log",
+    "log_sha256": "47361a6080dedecb01eef706d7e064abc2d2c6745598e809c2a6026adcd45c81",
+    "verified_built_slots": 15169,
+    "dll_sha256": "99d5a68973efeed2b32cd8e091e7355357031aad56ba0677dcc26a4e4d05d89f",
+    "dbg_sha256": "1a417caf2fd45eae4786cf2b84534d067e08488a03aff20c92de627fe0290818"
+  },
+  "earlier_batch_build": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+    "exit_code": 0,
+    "log": ".recovery/aether-control-build-c433.log",
+    "log_sha256": "fcd6bc71e6a46c975d8a296be280da2725cfb68a0f00cf62bf1c68a77e6eaf90",
+    "verified_built_slots": 15169,
+    "dll_sha256": "e9ab2a9308dcc43a6eac0c8b14b52acfa9713f465ab0c81728363d42da8e998c",
+    "dbg_sha256": "609c1ee80fcfff0255966fe4650362b019e8bf34914cc35f6a934caa66a0397a"
+  },
+  "final_batch": {
+    "definitions": 9,
+    "counts": {
+      "removed_gotos": 49,
+      "removed_lab_gotos": 48,
+      "source_lines_removed": 628,
+      "removed_placeholder_occurrences": 591
+    }
+  },
+  "reccmp": {
+    "refreshed": false,
+    "reason": "Readability batch with unchanged public function identities. Existing setup describes the previous build; regenerate at the next comparison/commit checkpoint.",
+    "unchanged_checkpoint_inputs": {
+      "config/reccmp/functions.csv": "c7061450a1b7a3efe3281c403593f25f25fed9b2e3e29e6bc70c4fa61c483cf3",
+      ".recovery/reccmp/setup.json": "9afa2466f299de82d50caca64252ce593275322f708319cbe0e693b30d38e53a"
+    }
+  },
+  "current_inventory": {
+    "path": "docs/recovery-evidence/readability-source-snapshot-c438.json",
+    "sha256": "bb6cce2c96e752f338088c50a99e0196467f1743548d80f603833cb4fcc7ef6e",
+    "counts": {
+      "tracked_source_definitions": 2606,
+      "functions_with_lab_gotos": 898,
+      "lab_gotos": 2202,
+      "functions_with_placeholders": 1880,
+      "distinct_function_local_placeholder_spellings": 5504,
+      "placeholder_identifier_occurrences": 40942,
+      "union_keywords": 0
+    }
+  },
+  "whole_unit_readability": {
+    "source": "cards/aether_revolt.c",
+    "lab_gotos": 0,
+    "known_placeholder_occurrences": 0
+  },
+  "index_unchanged": true,
+  "limits": "Readability reconstruction of existing Aether Revolt card handlers and local helpers. No new native-function coverage or gameplay-equivalence claim. Preserve unusual native behavior, repeated context checks and opaque dialogs."
+}

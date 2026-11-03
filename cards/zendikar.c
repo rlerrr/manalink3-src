@@ -81,55 +81,64 @@ Equip |1 (|1: Attach to target creature you control. Equip only as a sorcery.) *
 int card_blade_of_the_bloodchief(int player, int card, event_t event)
 {
   int c;
-  char cVar1;
+  char equipped_player;
   card_instance_t *instance;
-  unsigned int uVar3;
-  int iVar4;
-  int iVar5;
+  unsigned int death_count;
+  int equipped_card_or_legacy;
+  int vampire_or_type_match;
 
   if (((event == EVENT_STATIC_EFFECTS) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
+    bool legacy_found = false;
     if (0 < active_cards_count[player])
     {
       c = 0;
       do
       {
         instance = in_play(player, c);
-        if ((((instance != NULL) && (iVar5 = is_what(player, c, 0x80), iVar5 != 0)) &&
+        if ((((instance != NULL) &&
+              (vampire_or_type_match = is_what(player, c, 0x80), vampire_or_type_match != 0)) &&
              (instance = get_card_instance(player, c),
               instance->info_slot_fn == blade_of_the_bloodchief_effect)) &&
             (((instance->damage_target_player == player &&
                (instance->damage_target_card == card)) ||
               ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
-          goto LAB_025d749c;
+        {
+          legacy_found = true;
+          break;
+        }
         c = c + 1;
       } while (c < active_cards_count[player]);
     }
-    iVar4 =
-        create_targetted_legacy_effect(player, card, blade_of_the_bloodchief_effect, player, card);
-    instance = get_card_instance(player, iVar4);
-    instance->targets[0].player = player;
-    instance->targets[0].card = card;
-    instance->number_of_targets = '\x01';
-    add_status(player, iVar4, 0x10000);
+    if (!legacy_found)
+    {
+      equipped_card_or_legacy = create_targetted_legacy_effect(
+          player, card, blade_of_the_bloodchief_effect, player, card);
+      instance = get_card_instance(player, equipped_card_or_legacy);
+      instance->targets[0].player = player;
+      instance->targets[0].card = card;
+      instance->number_of_targets = '\x01';
+      add_status(player, equipped_card_or_legacy, 0x10000);
+    }
   }
-LAB_025d749c:
   instance = is_equipping(player, card);
   if (instance != NULL)
   {
     count_for_gfp_ability(player, card, event, 2, 2, NULL);
   }
-  uVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if ((uVar3 != 0) && (instance = is_equipping(player, card), instance != NULL))
+  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if ((death_count != 0) && (instance = is_equipping(player, card), instance != NULL))
   {
     instance = get_card_instance(player, card);
-    cVar1 = instance->damage_target_player;
-    iVar4 = instance->damage_target_card;
-    for (uVar3 = uVar3 & 0xff; uVar3 != 0; uVar3 = uVar3 - 1)
+    equipped_player = instance->damage_target_player;
+    equipped_card_or_legacy = instance->damage_target_card;
+    for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
     {
-      iVar5 = has_subtype((int)cVar1, iVar4, SUBTYPE_VAMPIRE);
-      add_counters(player, card, (int)cVar1, iVar4, COUNTER_P1_P1, (iVar5 != 0) + 1);
+      vampire_or_type_match =
+          has_subtype((int)equipped_player, equipped_card_or_legacy, SUBTYPE_VAMPIRE);
+      add_counters(player, card, (int)equipped_player, equipped_card_or_legacy, COUNTER_P1_P1,
+                   (vampire_or_type_match != 0) + 1);
     }
   }
   return basic_equipment(player, card, event, 1);
@@ -682,8 +691,8 @@ void activate_oran_rief_pump(int player, int card, int color)
 {
   card_instance_t *instance;
   int result;
-  unsigned int uVar3;
-  unsigned int uVar4;
+  unsigned int required_color;
+  unsigned int creature_color;
   int card_00;
   int player_00;
 
@@ -695,25 +704,28 @@ void activate_oran_rief_pump(int player, int card, int color)
     {
       do
       {
-        while (((instance = in_play(player_00, card_00),
-                 instance == NULL || (result = is_what(player_00, card_00, 2), result == 0)) ||
-                (result = check_special_flags(player_00, card_00, 0x1000), result == 0)))
+        bool eligible = (instance = in_play(player_00, card_00), instance != NULL) &&
+                        (result = is_what(player_00, card_00, 2), result != 0) &&
+                        (result = check_special_flags(player_00, card_00, 0x1000), result != 0);
+        if (eligible)
         {
-        LAB_025d8fb0:
-          card_00 = card_00 + -1;
-          if (card_00 == -1)
-            goto LAB_025d9060;
+          required_color = get_sleighted_color_test(player, card, color);
+          creature_color = get_color(player_00, card_00);
+          eligible = (required_color & creature_color) != 0;
         }
-        uVar3 = get_sleighted_color_test(player, card, color);
-        uVar4 = get_color(player_00, card_00);
-        if ((uVar3 & uVar4) == 0)
-          goto LAB_025d8fb0;
-        result = card_00 + -1;
-        add_counters(player, card, player_00, card_00, COUNTER_P1_P1, 1);
-        card_00 = result;
+        if (eligible)
+        {
+          result = card_00 - 1;
+          add_counters(player, card, player_00, card_00, COUNTER_P1_P1, 1);
+          card_00 = result;
+        }
+        else
+        {
+          card_00 = card_00 - 1;
+          result = card_00;
+        }
       } while (result != -1);
     }
-  LAB_025d9060:
     player_00 = player_00 + 1;
     if (player_00 == 2)
     {
@@ -1210,12 +1222,19 @@ When ~ enters the battlefield, if it was kicked, destroy target noncreature perm
 
 int card_nissa_revane(int player, int card, event_t event)
 {
+  enum
+  {
+    CHOICE_NC = 1,
+    CHOICE_LIFE = 2,
+    CHOICE_ELF_FEST = 3
+  };
+
   card_instance_t *instance;
-  unsigned int uVar2;
-  int iVar3;
-  int iVar4;
-  int iStack_f0;
-  int iStack_ec;
+  unsigned int chosen_available;
+  int choice_or_result;
+  int library_byte_offset;
+  int life_priority;
+  int elf_tutor_priority;
   test_definition_t this_test;
   check_legend_rule(player, card, event);
   if (event == EVENT_RESOLVE_SPELL)
@@ -1231,78 +1250,78 @@ int card_nissa_revane(int player, int card, event_t event)
   this_test.subtype = 0x3c;
   if (event == EVENT_ACTIVATE)
   {
-    iVar3 = count_subtype(player, 0x47, 0x3c);
-    iStack_ec = 0;
-    iStack_f0 = (0xf - life[player]) + iVar3 * 2;
-    iVar3 = *deck_ptr[player];
-    if (iVar3 != -1)
+    choice_or_result = count_subtype(player, 0x47, 0x3c);
+    elf_tutor_priority = 0;
+    life_priority = (0xf - life[player]) + choice_or_result * 2;
+    choice_or_result = *deck_ptr[player];
+    if (choice_or_result != -1)
     {
-      iVar4 = 0;
+      library_byte_offset = 0;
       do
       {
-        iVar3 = is_what(-1, iVar3, 0x47);
-        if ((iVar3 != 0) &&
-            (iVar3 = has_subtype_by_id(
-                 player, (unsigned int)cards_data[*(int *)((int)deck_ptr[player] + iVar4)].id,
+        choice_or_result = is_what(-1, choice_or_result, 0x47);
+        if ((choice_or_result != 0) &&
+            (choice_or_result = has_subtype_by_id(
+                 player,
+                 (unsigned int)cards_data[*(int *)((int)deck_ptr[player] + library_byte_offset)].id,
                  SUBTYPE_ELF),
-             iVar3 != 0))
+             choice_or_result != 0))
         {
-          iStack_ec = iStack_ec + 3;
+          elf_tutor_priority = elf_tutor_priority + 3;
         }
-        iVar4 = iVar4 + 4;
-        iVar3 = *(int *)((int)deck_ptr[player] + iVar4);
-      } while (iVar3 != -1);
+        library_byte_offset = library_byte_offset + 4;
+        choice_or_result = *(int *)((int)deck_ptr[player] + library_byte_offset);
+      } while (choice_or_result != -1);
     }
     if (player != 1)
     {
       dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Search for Nissa's Chosen",
-                  1, 10, 1, "Gain 2 life for each Elf", 1, iStack_f0, 1, "Search for Elf creatures",
-                  1, iStack_ec, 0xfffffff9, 0, 0, 0, 0);
+                  1, 10, 1, "Gain 2 life for each Elf", 1, life_priority, 1,
+                  "Search for Elf creatures", 1, elf_tutor_priority, 0xfffffff9, 0, 0, 0, 0);
       return planeswalker(player, card, event, 2);
     }
-  LAB_025dab28:
-    uVar2 = (instance->targets[1].player ^ 0xffffffffU) >> 0x1f;
   }
   else
   {
-    iStack_ec = 0;
-    iStack_f0 = 0;
-    uVar2 = 1;
-    if (player == 1)
-      goto LAB_025dab28;
+    elf_tutor_priority = 0;
+    life_priority = 0;
+    chosen_available = 1;
   }
-  iVar3 = dialog_impl(player, card, event, "\001\002", "\001\017", "Search for Nissa's Chosen",
-                      uVar2, 10, 1, "Gain 2 life for each Elf", 1, iStack_f0, 1,
-                      "Search for Elf creatures", 1, iStack_ec, 0xfffffff9, 0, 0, 0, 0);
+  if (player == 1)
+    chosen_available = (instance->targets[1].player ^ 0xffffffffU) >> 0x1f;
+  choice_or_result =
+      dialog_impl(player, card, event, "\001\002", "\001\017", "Search for Nissa's Chosen",
+                  chosen_available, 10, 1, "Gain 2 life for each Elf", 1, life_priority, 1,
+                  "Search for Elf creatures", 1, elf_tutor_priority, 0xfffffff9, 0, 0, 0, 0);
   if (event == EVENT_CAN_ACTIVATE)
   {
-    if (iVar3 == 0)
+    if (choice_or_result == 0)
     {
       return 0;
     }
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    if (iVar3 == 2)
+    if (choice_or_result == CHOICE_LIFE)
     {
-      iVar3 = count_subtype(player, 0x47, 0x3c);
-      gain_life(player, iVar3 * 2);
+      choice_or_result = count_subtype(player, 0x47, 0x3c);
+      gain_life(player, choice_or_result * 2);
     }
-    else if (iVar3 == 3)
+    else if (choice_or_result == CHOICE_ELF_FEST)
     {
       this_test.no_shuffle = 1;
       do
       {
-        iVar3 = new_global_tutor(player, player, 1, 4, 0, 5, &this_test);
-      } while (-1 < iVar3);
+        choice_or_result = new_global_tutor(player, player, 1, 4, 0, 5, &this_test);
+      } while (-1 < choice_or_result);
       shuffle(player);
     }
-    else if (iVar3 == 1)
+    else if (choice_or_result == CHOICE_NC)
     {
       this_test.id = 0x297d;
-      iVar3 = new_global_tutor(player, player, 1, 4, 0, 5, &this_test);
+      choice_or_result = new_global_tutor(player, player, 1, 4, 0, 5, &this_test);
       instance = get_card_instance(instance->parent_controller, instance->parent_card);
-      instance->targets[1].player = iVar3;
+      instance->targets[1].player = choice_or_result;
       shuffle(player);
     }
   }
@@ -2420,7 +2439,7 @@ int card_ob_nixilis_the_fallen(int player, int card, event_t event){
 int card_quest_for_the_gravelord(int player, int card, event_t event)
 {
   int result;
-  unsigned int uVar2;
+  unsigned int death_count;
   card_instance_t *instance;
   token_generation_t token;
 
@@ -2436,11 +2455,11 @@ int card_quest_for_the_gravelord(int player, int card, event_t event)
     count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
   }
   result = duh_mode(player);
-  uVar2 = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  death_count = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   instance = in_play(player, card);
-  if ((uVar2 != 0) && (instance != NULL))
+  if ((death_count != 0) && (instance != NULL))
   {
-    for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
+    for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
     {
       add_counters(player, card, player, card, COUNTER_QUEST, 1);
     }
@@ -2698,50 +2717,28 @@ int card_vampire_hexmage(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   target_definition_t td;
-  if (event == EVENT_ACTIVATE)
+  if (event != EVENT_ACTIVATE && event - EVENT_RESOLVE_ACTIVATION > 1 && event != EVENT_CLEANUP)
+    return 0;
+  default_target_definition(player, card, &td, 0x47);
+  td.preferred_controller = 2;
+  if (event != EVENT_RESOLVE_ACTIVATION &&
+      (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0)))
   {
-    default_target_definition(player, card, &td, 0x47);
-    if (ai_is_speculating != 1)
-      goto LAB_025decf0;
-  LAB_025deda2:
-    td.preferred_controller = 2;
     td.special = 0x8000;
     td.extra = (int32_t)target_must_have_counters;
   }
-  else
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 0x47);
-    if (ai_is_speculating == 1)
-    {
-    LAB_025dedc5:
-      if (event != EVENT_RESOLVE_ACTIVATION)
-        goto LAB_025deda2;
-    }
-    else
-    {
-    LAB_025decf0:
-      td.preferred_controller = 2;
-      if ((player == 1) && (((unsigned char)trace_mode & 2) == 0))
-        goto LAB_025dedc5;
-      if (event != EVENT_RESOLVE_ACTIVATION)
-        goto LAB_025ded02;
-    }
-    td.preferred_controller = 2;
     result = valid_target(&td);
     if (result != 0)
     {
       instance = get_card_instance(player, card);
-      remove_all_counters(player, card, instance->targets[0].player,
-                                      instance->targets[0].card, ~COUNTER_P1_P1);
+      remove_all_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                          ~COUNTER_P1_P1);
     }
   }
-LAB_025ded02:
   return generic_activated_ability(player, card, event, 0xc, 0, 0, 0, 0, 0, 0, 0, &td,
-                                     "TARGET_PERMANENT");
+                                   "TARGET_PERMANENT");
 }
 
 int card_vampire_lacerator(int player, int card, event_t event){
@@ -3039,7 +3036,7 @@ int card_chandra_ablaze(int player, int card, event_t event){
 					int chosen_iids[500], num_chosen = 0;
 
 					while (num_valid > 0){
-						int selected = show_deck(player, iids, num_valid, "Select a card to play.", 0, 0x7375B0);
+						int selected = show_deck(player, iids, num_valid, "Select a card to play.", 0, EXE_STR(ENGINE_DONE_LABEL));
 						if (selected == -1){
 							break;
 						}
@@ -3580,7 +3577,6 @@ int card_obsidian_fireheart(int player, int card, event_t event)
       {
         ai_modifier = ai_modifier + 0x18;
       }
-      goto LAB_025e11ba;
     }
   }
   else
@@ -3597,11 +3593,10 @@ int card_obsidian_fireheart(int player, int card, event_t event)
   if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&td) != 0))
   {
     add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
-                             COUNTER_BLAZE, 1);
+                 COUNTER_BLAZE, 1);
     create_targetted_legacy_effect(player, card, effect_obsidian_fireheart,
                                    instance->targets[0].player, instance->targets[0].card);
   }
-LAB_025e11ba:
   return generic_activated_ability(player, card, event, 4, 1, 0, 0, 0, 2, 0, 0, &td, "TARGET_LAND");
 }
 
@@ -3616,32 +3611,32 @@ int card_punishing_fire(int player, int card, event_t event){
 int card_pyromancer_ascension(int player, int card, event_t event)
 {
   int i;
-  int *piVar1;
+  int *graveyard;
   int t_card;
-  int iVar2;
+  int spell_player_or_duh;
   card_instance_t *instance;
-  int iVar4;
-  int iVar5;
-  iVar2 = duh_mode(player);
-  sp_ability_trigger(player, event, (iVar2 != 0) + 1, TYPE_SPELL, NULL, player, card);
+  int grave_count;
+  int quest_counters;
+  spell_player_or_duh = duh_mode(player);
+  sp_ability_trigger(player, event, (spell_player_or_duh != 0) + 1, TYPE_SPELL, NULL, player, card);
   t_card = trigger_cause;
-  iVar2 = trigger_cause_controller;
+  spell_player_or_duh = trigger_cause_controller;
   if (event == EVENT_SPA)
   {
     instance = get_card_instance(trigger_cause_controller, trigger_cause);
-    piVar1 = graveyard_ptr_mutable[player];
-    for (i = 0; iVar4 = count_graveyard(player), i < iVar4; i = i + 1)
+    graveyard = graveyard_ptr_mutable[player];
+    for (i = 0; grave_count = count_graveyard(player), i < grave_count; i = i + 1)
     {
-      if (piVar1[i] == instance->internal_card_id)
+      if (graveyard[i] == instance->internal_card_id)
       {
         add_counters(player, card, player, card, COUNTER_QUEST, 1);
         break;
       }
     }
-    iVar5 = count_counters(player, card, COUNTER_QUEST);
-    if (2 < iVar5)
+    quest_counters = count_counters(player, card, COUNTER_QUEST);
+    if (2 < quest_counters)
     {
-      copy_spell_from_stack(player, iVar2, t_card);
+      copy_spell_from_stack(player, spell_player_or_duh, t_card);
     }
   }
   return global_enchantment(player, card, event);
@@ -4425,8 +4420,8 @@ int card_pitfall_trap(int player, int card, event_t event){
 
 int card_quest_for_the_holy_relic(int player, int card, event_t event)
 {
-  int iVar1;
-  int iVar2;
+  int equipment_card_or_duh;
+  int equipped_card;
   card_instance_t *instance;
   target_definition_t td;
   test_definition_t test;
@@ -4434,8 +4429,9 @@ int card_quest_for_the_holy_relic(int player, int card, event_t event)
       (player == affected_card_controller))
   {
     default_test_definition(&test, 2);
-    iVar1 = duh_mode(player);
-    etb_ability_global(player, event, (iVar1 != 0) + 1, TYPE_NONE, &test, player, card);
+    equipment_card_or_duh = duh_mode(player);
+    etb_ability_global(player, event, (equipment_card_or_duh != 0) + 1, TYPE_NONE, &test, player,
+                       card);
   }
   if (event == EVENT_ETB)
   {
@@ -4445,8 +4441,8 @@ int card_quest_for_the_holy_relic(int player, int card, event_t event)
   {
     new_default_test_definition(&test, 0, "Select an Equipment card.");
     test.subtype = 0x3001;
-    iVar1 = new_global_tutor(player, player, 1, 4, 0, 2, &test);
-    if (-1 < iVar1)
+    equipment_card_or_duh = new_global_tutor(player, player, 1, 4, 0, 2, &test);
+    if (-1 < equipment_card_or_duh)
     {
       default_target_definition(player, card, &td, 2);
       td.allowed_controller = player;
@@ -4455,9 +4451,10 @@ int card_quest_for_the_holy_relic(int player, int card, event_t event)
       if (pick_target(&td, "TARGET_CREATURE") != 0)
       {
         instance = get_card_instance(player, card);
-        iVar2 = instance->targets[0].card;
+        equipped_card = instance->targets[0].card;
         instance->number_of_targets = '\0';
-        equip_target_creature(player, iVar1, instance->targets[0].player, iVar2);
+        equip_target_creature(player, equipment_card_or_duh, instance->targets[0].player,
+                              equipped_card);
       }
     }
   }
@@ -5004,57 +5001,41 @@ Enchanted creature doesn't untap during its controller's untap step. */
 
 int card_quest_for_ancient_secrets(int player, int card, event_t event)
 {
-  xtrigger_t xVar1;
+  xtrigger_t current_trigger;
   int result;
+  event_t graveyard_event = event;
   card_instance_t *instance;
   target_definition_t td;
   enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_MILLED;
-  xVar1 = trigger_condition;
+  current_trigger = trigger_condition;
   if (trigger_condition == 0xe5)
   {
-    xVar1 = xtrigger_impl_value_dont_use_directly;
+    current_trigger = xtrigger_impl_value_dont_use_directly;
   }
-  if (((((xVar1 == XTRIGGER_MILLED) && (card == affected_card)) &&
+  if (((((current_trigger == XTRIGGER_MILLED) && (card == affected_card)) &&
         (player == affected_card_controller)) &&
        ((reason_for_trigger_controller == player && (trigger_cause_controller == player)))) &&
       (result = is_humiliated(player, card, AL_TRIG), result == 0))
   {
-    if (event != EVENT_TRIGGER)
+    if (event == EVENT_TRIGGER)
     {
-      if (event != EVENT_RESOLVE_TRIGGER)
-        goto LAB_025e52d8;
-      add_counters(player, card, player, card, COUNTER_QUEST, num_cards_milled);
-      result = when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(
-          player, card, 0x7e, player, RESOLVE_TRIGGER_DUH, NULL);
-      if (result == 0)
-        return global_enchantment(player, card, event);
-    LAB_025e5490:
-      add_counters(player, card, player, card, COUNTER_QUEST, 1);
-      goto LAB_025e5307;
+      result = duh_mode(player);
+      event_result = event_result | (result != 0) + 1;
+      graveyard_event = 0x7d;
     }
-    result = duh_mode(player);
-    event_result = event_result | (result != 0) + 1;
-    result = when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(
-        player, card, 0x7d, player, RESOLVE_TRIGGER_DUH, NULL);
-    if (result != 0)
-      goto LAB_025e5490;
+    else if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      add_counters(player, card, player, card, COUNTER_QUEST, num_cards_milled);
+      graveyard_event = 0x7e;
+    }
   }
-  else
-  {
-  LAB_025e52d8:
-    result = when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(
-        player, card, event, player, RESOLVE_TRIGGER_DUH, NULL);
-    if (result != 0)
-      goto LAB_025e5490;
-  LAB_025e5307:
-    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
-      goto LAB_025e5323;
-  }
-  if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-  {
+  result = when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(
+      player, card, graveyard_event, player, RESOLVE_TRIGGER_DUH, NULL);
+  if (result != 0)
+    add_counters(player, card, player, card, COUNTER_QUEST, 1);
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
+      event != EVENT_CLEANUP)
     return global_enchantment(player, card, event);
-  }
-LAB_025e5323:
   default_target_definition(player, card, &td, 0);
   td.zone = 0x1000;
   if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
@@ -5498,11 +5479,11 @@ Prevent all combat damage that would be dealt this turn by creatures without tra
 static int blade_of_the_bloodchief_effect(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  card_instance_t *pcVar1;
-  unsigned int uVar2;
-  card_instance_t *pcVar3;
-  int iVar4;
-  int iVar5;
+  card_instance_t *equipment_or_creature;
+  unsigned int death_count;
+  card_instance_t *dying_permanent;
+  int equipped_card_or_result;
+  int vampire_match;
   unsigned int num;
   int player_00;
 
@@ -5513,38 +5494,28 @@ static int blade_of_the_bloodchief_effect(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       if ((-1 < instance->damage_target_player) &&
-          (iVar4 = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           iVar4 != 0x2909))
+          (equipped_card_or_result =
+               get_id((int)instance->damage_target_player, instance->damage_target_card),
+           equipped_card_or_result != 0x2909))
       {
         kill_card(player, card, KILL_EXILE);
       }
     }
-    instance = get_card_instance(player, card);
-    if ((-1 < instance->damage_target_player) &&
-        (iVar4 = effect_follows_control_of_attachment(player, card, 0x4700), iVar4 != 0))
-    {
-      return 0;
-    }
-  LAB_025d6775:
-    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if (uVar2 == 0)
-      goto LAB_025d6797;
   }
-  else
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (equipped_card_or_result = effect_follows_control_of_attachment(player, card, event),
+       equipped_card_or_result != 0))
+  {
+    return 0;
+  }
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
     instance = get_card_instance(player, card);
-    if ((-1 < instance->damage_target_player) &&
-        (iVar4 = effect_follows_control_of_attachment(player, card, event), iVar4 != 0))
-    {
-      return 0;
-    }
-    if (event != EVENT_GRAVEYARD_FROM_PLAY)
-      goto LAB_025d6775;
-
-    instance = get_card_instance(player, card);
-    pcVar3 = in_play(affected_card_controller, affected_card);
-    if ((pcVar3 != NULL) &&
-        (iVar4 = is_this_dying(affected_card_controller, affected_card), iVar4 != 0))
+    dying_permanent = in_play(affected_card_controller, affected_card);
+    if ((dying_permanent != NULL) &&
+        (equipped_card_or_result = is_this_dying(affected_card_controller, affected_card),
+         equipped_card_or_result != 0))
     {
 
       if ((instance->damage_target_card == affected_card) &&
@@ -5561,38 +5532,42 @@ static int blade_of_the_bloodchief_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }
-    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
-    if (uVar2 == 0)
-    {
-      return 0;
-    }
   }
-  iVar4 = check_status(player, card, 0x10000);
-  if (iVar4 == 0)
+  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (death_count == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+    return 0;
+  if (death_count != 0)
   {
-
-    instance = get_card_instance(player, card);
-    pcVar1 = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-    player_00 = (int)pcVar1->damage_target_player;
-    iVar4 = pcVar1->damage_target_card;
-    if (((-1 < player_00) && (-1 < iVar4)) && (pcVar1 = in_play(player_00, iVar4), pcVar1 != NULL))
+    equipped_card_or_result = check_status(player, card, 0x10000);
+    if (equipped_card_or_result == 0)
     {
 
-      for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
+      instance = get_card_instance(player, card);
+      equipment_or_creature =
+          get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      player_00 = (int)equipment_or_creature->damage_target_player;
+      equipped_card_or_result = equipment_or_creature->damage_target_card;
+      if (((-1 < player_00) && (-1 < equipped_card_or_result)) &&
+          (equipment_or_creature = in_play(player_00, equipped_card_or_result),
+           equipment_or_creature != NULL))
       {
-        iVar5 = has_subtype(player_00, iVar4, SUBTYPE_VAMPIRE);
-        num = uVar2;
-        if (iVar5 != 0)
+
+        for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
         {
-          num = uVar2 * 2;
+          vampire_match = has_subtype(player_00, equipped_card_or_result, SUBTYPE_VAMPIRE);
+          num = death_count;
+          if (vampire_match != 0)
+          {
+            num = death_count * 2;
+          }
+          add_counters(player, card, player_00, equipped_card_or_result, COUNTER_P1_P1, num);
         }
-        add_counters(player, card, player_00, iVar4, COUNTER_P1_P1, num);
       }
+      kill_card(player, card, KILL_EXILE);
     }
-    kill_card(player, card, KILL_EXILE);
   }
-LAB_025d6797:
-  if ((event == EVENT_CLEANUP) && (iVar4 = check_status(player, card, 0x10000), iVar4 == 0))
+  if ((event == EVENT_CLEANUP) &&
+      (equipped_card_or_result = check_status(player, card, 0x10000), equipped_card_or_result == 0))
   {
     kill_card(player, card, KILL_EXILE);
   }

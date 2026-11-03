@@ -1678,7 +1678,9 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_FATE:
     value = 801;
-    goto joined_r0x026d233a;
+    if (adding != 0)
+      return 0;
+    break;
   case COUNTER_FEATHER:
     result = get_counter_type_by_instance(instance);
     if (result == 0x2b)
@@ -1858,100 +1860,73 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_LEVEL:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x40)
-    {
+    if (result != COUNTER_LEVEL)
       return 0;
-    }
-    if (0x2aaa < csvid)
+    switch (csvid)
     {
-      switch (csvid - 0x2ac1 & 0xffff)
-      {
-      case 0:
-      code_r0x026d22a5:
-        result = 500;
-        limit = 4;
-        break;
-      case 1:
-      case 0x3a:
-      case 0x60:
-      case 0x8b:
-      code_r0x026d2299:
-        result = 0x1d4c;
-        limit = 3;
-        break;
-      case 2:
-      case 0x11:
-      code_r0x026d228d:
-        result = 500;
-        limit = 5;
-        break;
-      case 7:
-      case 0x13:
-        result = 0x1d4c;
-        limit = 5;
-        break;
-      case 0xb:
-      case 0x19:
-      case 0x3e:
-      code_r0x026d223f:
-        result = 0x1d4c;
-        limit = 4;
-        break;
-      case 0x14:
-        result = 500;
-        limit = 8;
-        break;
-      case 0x15:
-      case 0x28:
-        result = 500;
-        limit = 6;
-        break;
-      case 0x23:
-      case 0x6f:
-        result = 500;
-        limit = 7;
-        break;
-      case 0x7a:
-        result = 500;
-        limit = 0xc;
-        break;
-      default:
-        return 0;
-      }
-    code_r0x026d2249:
-      if (adding == 0)
-      {
-        return result;
-      }
-      count = count_counters(t_player, t_card, COUNTER_LEVEL);
-      if (limit <= count)
-      {
-        return 0;
-      }
-      return result;
-    }
-    if (csvid < 0x2a7e)
-    {
-      return 0;
-    }
-    switch (csvid - 0x2a7e & 0xffff)
-    {
-    case 0:
-      goto code_r0x026d223f;
-    default:
-      return 0;
-    case 5:
-      goto code_r0x026d2299;
-    case 9:
-      goto code_r0x026d228d;
-    case 0x10:
-    case 0x23:
-      goto code_r0x026d22a5;
-    case 0x2c:
+    case CARD_ID_HADA_SPY_PATROL:
+    case CARD_ID_NIRKANA_CUTTHROAT:
+    case CARD_ID_SKYWATCHER_ADEPT:
+    case CARD_ID_ZULAPORT_ENFORCER:
+    case CARD_ID_BRIMSTONE_MAGE:
+      result = 7500;
+      limit = 3;
+      break;
+    case CARD_ID_IKIRAL_OUTRIDER:
+    case CARD_ID_KNIGHT_OF_CLIFFHAVEN:
+    case CARD_ID_NULL_CHAMPION:
+    case CARD_ID_BEASTBREAKER_OF_BALA_GED:
+      result = 7500;
+      limit = 4;
+      break;
+    case CARD_ID_HEDRON_FIELD_PURISTS:
+    case CARD_ID_KABIRA_VINDICATOR:
+      result = 7500;
+      limit = 5;
+      break;
+    case CARD_ID_ENCLAVE_CRYPTOLOGIST:
       result = 500;
       limit = 3;
-      goto code_r0x026d2249;
+      break;
+    case CARD_ID_GUUL_DRAZ_ASSASSIN:
+    case CARD_ID_CORALHELM_COMMANDER:
+    case CARD_ID_ECHO_MAGE:
+      result = 500;
+      limit = 4;
+      break;
+    case CARD_ID_HALIMAR_WAVEWATCH:
+    case CARD_ID_JORAGA_TREESPEAKER:
+    case CARD_ID_CARAVAN_ESCORT:
+      result = 500;
+      limit = 5;
+      break;
+    case CARD_ID_KAZANDU_TUSKCALLER:
+    case CARD_ID_LORD_OF_SHATTERSKULL_PASS:
+      result = 500;
+      limit = 6;
+      break;
+    case CARD_ID_LIGHTHOUSE_CHRONOLOGIST:
+    case CARD_ID_STUDENT_OF_WARFARE:
+      result = 500;
+      limit = 7;
+      break;
+    case CARD_ID_KARGAN_DRAGONLORD:
+      result = 500;
+      limit = 8;
+      break;
+    case CARD_ID_TRANSCENDENT_MASTER:
+      result = 500;
+      limit = 12;
+      break;
+    default:
+      return 0;
     }
+    if (adding == 0)
+      return result;
+    count = count_counters(t_player, t_card, COUNTER_LEVEL);
+    if (limit <= count)
+      return 0;
+    return result;
   case COUNTER_LORE:
     result = get_counter_type_by_instance(instance);
     if (result != 0x41)
@@ -2179,112 +2154,74 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_QUEST:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x5c)
+    if (result != COUNTER_QUEST)
+      return 0;
+    switch (csvid)
     {
+    case CARD_ID_IOR_RUIN_EXPEDITION:
+    case CARD_ID_KHALNI_HEART_EXPEDITION:
+    case CARD_ID_QUEST_FOR_THE_GRAVELORD:
+    case CARD_ID_SUNSPRING_EXPEDITION:
+    case CARD_ID_ZEKTAR_SHRINE_EXPEDITION:
+    case CARD_ID_SOUL_STAIR_EXPEDITION:
+      result = 350;
+      limit = 3;
+      break;
+    case CARD_ID_QUEST_FOR_PURE_FLAME:
+    case CARD_ID_QUEST_FOR_RENEWAL:
+      result = 350;
+      limit = 4;
+      break;
+    case CARD_ID_QUEST_FOR_THE_GEMBLADES:
+      result = 350;
+      limit = 0;
+      break;
+    case CARD_ID_QUEST_FOR_THE_HOLY_RELIC:
+      result = 350;
+      limit = 5;
+      break;
+    case CARD_ID_QUEST_FOR_THE_NIHIL_STONE:
+      result = 350;
+      limit = 2;
+      break;
+    case CARD_ID_BLOODCHIEF_ASCENSION:
+    case CARD_ID_QUEST_FOR_ULAS_TEMPLE:
+      result = 6000;
+      limit = 3;
+      break;
+    case CARD_ID_LUMINARCH_ASCENSION:
+      result = 6000;
+      limit = 4;
+      break;
+    case CARD_ID_PYROMANCER_ASCENSION:
+      result = 6000;
+      limit = 2;
+      break;
+    case CARD_ID_BEASTMASTER_ASCENSION:
+      result = 6000;
+      limit = 7;
+      break;
+    case CARD_ID_ARCHMAGE_ASCENSION:
+      result = 6000;
+      limit = 6;
+      break;
+    case CARD_ID_QUEST_FOR_THE_GOBLIN_LORD:
+      result = 6000;
+      limit = 5;
+      break;
+    case CARD_ID_QUEST_FOR_ANCIENT_SECRETS:
+      result = 10;
+      limit = 5;
+      break;
+    default:
       return 0;
     }
-    if (csvid < 0x2994)
-    {
-      if (0x294b < csvid)
-      {
-        switch (csvid - 0x294c & 0xffff)
-        {
-        case 0:
-        case 0xb:
-        case 0x46:
-        code_r0x026d32d2:
-          result = 0x15e;
-          limit = 3;
-          break;
-        default:
-          return 0;
-        case 0x1b:
-          result = 6000;
-          limit = 4;
-          break;
-        case 0x42:
-          result = 6000;
-          limit = 2;
-          break;
-        case 0x43:
-          result = 10;
-          limit = 5;
-          break;
-        case 0x44:
-          goto code_r0x026d32b4;
-        case 0x45:
-          result = 0x15e;
-          limit = 0;
-          break;
-        case 0x47:
-          result = 0x15e;
-          limit = 5;
-        }
-        goto code_r0x026d1b47;
-      }
-      if (csvid == 0x2908)
-      {
-        result = 6000;
-        limit = 7;
-        goto code_r0x026d1b47;
-      }
-      if (csvid != 0x290e)
-      {
-        if (csvid != 0x28ff)
-        {
-          return 0;
-        }
-        result = 6000;
-        limit = 6;
-        goto code_r0x026d1b47;
-      }
-    }
-    else
-    {
-      if (csvid == 0x2a3b)
-      {
-      code_r0x026d32b4:
-        result = 0x15e;
-        limit = 4;
-        goto code_r0x026d1b47;
-      }
-      if (csvid < 0x2a3c)
-      {
-        if (((csvid != 0x29b8) && (csvid != 0x29da)) && (csvid != 0x29ad))
-        {
-          return 0;
-        }
-        goto code_r0x026d32d2;
-      }
-      if (csvid == 0x2a3d)
-      {
-        result = 6000;
-        limit = 5;
-        goto code_r0x026d1b47;
-      }
-      if (csvid == 0x2a3e)
-      {
-        result = 0x15e;
-        limit = 2;
-        goto code_r0x026d1b47;
-      }
-      if (csvid != 0x2a3c)
-      {
-        return 0;
-      }
-    }
-    result = 6000;
-    limit = 3;
-  code_r0x026d1b47:
     if (adding == 0)
-    {
       return result;
-    }
+    /* The native quest-priority path queries level counters. */
     count = count_counters(t_player, t_card, COUNTER_LEVEL);
     if (limit <= count)
-    {
       return 0;
-    }
     return result;
   case COUNTER_RUST:
     result = is_what(t_player, t_card, 0x40);
@@ -2430,7 +2367,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     {
       return -0xf;
     }
-    goto code_r0x026d24f0;
+    return 0;
   case COUNTER_TIDE:
     result = get_counter_type_by_instance(instance);
     if (result == 0x6e)
@@ -2438,7 +2375,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
       result = count_counters(t_player, t_card, COUNTER_P1_P1);
       return (-(unsigned int)(result == 0) & 0x148) - 300;
     }
-    goto code_r0x026d24f0;
+    return 0;
   case COUNTER_TIME:
     if ((LEGACY_EFFECT_CUSTOM == iid) && (instance->info_slot == (int)generic_suspend_legacy))
     {
@@ -2461,7 +2398,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
       }
       return ((csvid != 0x2304) - 1 & 0xffffdbde) + 0x238c;
     }
-    goto code_r0x026d24f0;
+    return 0;
   case COUNTER_TOWER:
     result = get_counter_type_by_instance(instance);
     if (result != 0x70)
@@ -2476,7 +2413,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     {
       return (-(unsigned int)(adding == 0) & 100) + 1;
     }
-    goto code_r0x026d24f0;
+    return 0;
   case COUNTER_TREASURE:
     result = get_counter_type_by_instance(instance);
     if (result != 0x73)
@@ -2520,7 +2457,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
       }
       return ((csvid == 0xf1a) - 1 & 0xffffe6ba) + 7000;
     }
-    goto code_r0x026d24f0;
+    return 0;
   case COUNTER_VITALITY:
     result = get_counter_type_by_instance(instance);
     if (result != 0x76)
@@ -2804,7 +2741,9 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_DEATHTOUCH:
     value = 4107;
-    goto joined_r0x026d233a;
+    if (adding != 0)
+      return 0;
+    break;
   case COUNTER_DOUBLE_STRIKE:
     if (adding != 0)
     {
@@ -2843,10 +2782,11 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_HEXPROOF:
     value = 4110;
-    goto joined_r0x026d233a;
+    if (adding != 0)
+      return 0;
+    break;
   case COUNTER_INDESTRUCTIBLE:
     value = 6110;
-  joined_r0x026d233a:
     if (adding != 0)
     {
       return 0;
@@ -2854,10 +2794,11 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_LIFELINK:
     result = 0x83e;
-    goto joined_r0x026d230c;
+    if (adding != 0)
+      return 0;
+    return result;
   case COUNTER_MENACE:
     result = 0x758;
-  joined_r0x026d230c:
     if (adding != 0)
     {
       return 0;
@@ -2885,7 +2826,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
       }
       return 0;
     }
-    goto code_r0x026d24f0;
+    return 0;
   case COUNTER_VIGILANCE:
     if (adding == 0)
     {
@@ -2896,7 +2837,6 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
       }
       return 0;
     }
-  code_r0x026d24f0:
     value = 0;
     break;
   case COUNTER_FORESHADOW:
@@ -3684,7 +3624,7 @@ void add_counters(int player, int card, int t_player, int t_card, counter_t type
 /* Recovered October 2022 source-aware counter removal. */
 
 /* ManalinkEh 2022: 0x26ceef0; original functions/counters.c:1630. */
-static void clear_all_counters(int t_player, int t_card)
+static void clear_all_counters(int player, int card, int t_player, int t_card, counter_t type)
 {
   unsigned int previous_status;
   card_instance_t *instance;
@@ -3802,7 +3742,7 @@ void remove_all_counters(int player, int card, int t_player, int t_card, counter
     remove_counters_impl(player, card, t_player, t_card, type, 0xff);
     return;
   }
-  clear_all_counters(t_player, t_card);
+  clear_all_counters(player, card, t_player, t_card, type);
   return;
 }
 
@@ -3812,6 +3752,12 @@ void quarry_hauler_helper(int player, int card, int t_player, int t_card);
 /* ManalinkEh 2022: 0x26d51e0; original functions/counters.c:2412. */
 void quarry_hauler_helper(int player, int card, int t_player, int t_card)
 {
+  enum
+  {
+    CHOICE_ADD = 1,
+    CHOICE_REMOVE = 2
+  };
+
   card_instance_t *instance = get_card_instance(t_player, t_card);
   if (instance->internal_card_id == activation_card)
     instance = get_card_instance(instance->parent_controller, instance->parent_card);
@@ -3875,9 +3821,9 @@ void quarry_hauler_helper(int player, int card, int t_player, int t_card)
     --to_choose;
   }
   for (i = 0; i < num_types; ++i)
-    if (choices[i] == 1)
+    if (choices[i] == CHOICE_ADD)
       add_counters(player, card, t_player, t_card, counter_types[i], 1);
-    else if (choices[i] == 2)
+    else if (choices[i] == CHOICE_REMOVE)
       remove_counters_impl(player, card, t_player, t_card, counter_types[i], 1);
 }
 
@@ -3943,7 +3889,7 @@ void move_counters(int player, int card, int t_player, int t_card, int src_playe
       instance->counters_m1m1 = 0;
       ++hack_silent_counters;
       copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
-      clear_all_counters(src_player, src_card);
+      clear_all_counters(player, card, src_player, src_card, (counter_t)-1);
       --hack_silent_counters;
       instance->counters_m1m1 = minus_counters;
     }
@@ -3951,7 +3897,7 @@ void move_counters(int player, int card, int t_player, int t_card, int src_playe
     {
       ++hack_silent_counters;
       copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
-      clear_all_counters(src_player, src_card);
+      clear_all_counters(player, card, src_player, src_card, (counter_t)-1);
       --hack_silent_counters;
     }
     else
@@ -3960,7 +3906,7 @@ void move_counters(int player, int card, int t_player, int t_card, int src_playe
       remove_counters_impl(player, card, src_player, src_card, COUNTER_P1_P1, 255);
       ++hack_silent_counters;
       copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
-      clear_all_counters(src_player, src_card);
+      clear_all_counters(player, card, src_player, src_card, (counter_t)-1);
       add_counters(player, card, src_player, src_card, COUNTER_P1_P1, plus_counters);
       --hack_silent_counters;
     }

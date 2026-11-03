@@ -56,14 +56,15 @@ int equipment_legacy(int player, int card, event_t event)
  * Being stdcall saves three bytes at the call site; a normal (cdecl) function would be one byte too long to fit into the third injection. */
 int __stdcall is_displayed_as_attached(int player, int card)
 {
-  uint16_t uVar1;
+  uint16_t displayed_subtype;
   card_instance_t *instance;
   int result;
 
   instance = get_displayed_card_instance(player, card);
   if (((((cards_data[instance->internal_card_id].type & 4) != 0) &&
-        (uVar1 = cards_ptr[cards_data[instance->internal_card_id].id]->subtype1, uVar1 != 0xcd)) &&
-       (uVar1 != 0xd3)) ||
+        (displayed_subtype = cards_ptr[cards_data[instance->internal_card_id].id]->subtype1,
+         displayed_subtype != 0xcd)) &&
+       (displayed_subtype != 0xd3)) ||
       (result = has_subtype(player, card, SUBTYPE_AURA), result != 0))
   {
     return 1;

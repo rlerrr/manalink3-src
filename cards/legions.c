@@ -1,7 +1,7 @@
 #include "manalink.h"
 
 /* Canonical recovered helper declarations. */
-static void amplify(int player, int card, int amount);
+static void amplify(int player, int card, event_t event, int amount);
 
 // Functions
 
@@ -264,7 +264,7 @@ Amplify 1 (As this creature enters the battlefield, put a +1/+1 counter on it fo
 |T: Target creature gets +1/+1 until end of turn for each +1/+1 counter on ~. */
 
 	if (event == EVENT_RESOLVE_SPELL)
-		amplify(player, card, 1);
+		amplify(player, card, EVENT_RESOLVE_SPELL, 1);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -384,7 +384,7 @@ int crypt_sliver_shared_ability(int player, int card, event_t event)
 {
   int card_00;
   card_instance_t *instance;
-  card_instance_t *pcVar2;
+  card_instance_t *granting_sliver;
   int result;
   target_definition_t td2;
 
@@ -401,44 +401,22 @@ int crypt_sliver_shared_ability(int player, int card, event_t event)
     add_status(player, card, 0x10000);
     in_play(result, card_00);
     result = is_humiliated(result, card_00, AL_NM_NL_ACT);
-    if (result != 0)
-    {
-      return 0;
-    }
-  }
-  else
-  {
-    pcVar2 = in_play(result, card_00);
-    if (pcVar2 == NULL)
-    {
-      if (event == EVENT_CAN_ACTIVATE)
-      {
-        return 0;
-      }
-      if (event == EVENT_CLEANUP)
-      {
-        kill_card(player, card, KILL_EXILE);
-        result = is_humiliated(result, card_00, AL_NM_NL_ACT);
-        if (result != 0)
-        {
-          return 0;
-        }
-        goto LAB_024a5d70;
-      }
-    }
-    result = is_humiliated(result, card_00, AL_NM_NL_ACT);
-    if (result != 0)
-    {
-      return 0;
-    }
-    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
-      goto LAB_024a5d70;
-  }
-  if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-  {
     return 0;
   }
-LAB_024a5d70:
+  granting_sliver = in_play(result, card_00);
+  if (granting_sliver == NULL)
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+      return 0;
+    if (event == EVENT_CLEANUP)
+      kill_card(player, card, KILL_EXILE);
+  }
+  result = is_humiliated(result, card_00, AL_NM_NL_ACT);
+  if (result != 0)
+    return 0;
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
+      event != EVENT_CLEANUP)
+    return 0;
   default_target_definition(player, card, &td2, 2);
   td2.preferred_controller = player;
   td2.required_subtype = 0xb1;
@@ -457,7 +435,7 @@ LAB_024a5d70:
     regenerate_target(instance->targets[2].player, instance->targets[2].card);
   }
   return shared_sliver_activated_ability(player, card, event, 0x800007, 0, 0, 0, 0, 0, 0, 0, &td2,
-                                           "Select target Sliver to regenerate.");
+                                         "Select target Sliver to regenerate.");
 }
 
 int card_crypt_sliver(int player, int card, event_t event)
@@ -712,7 +690,7 @@ Amplify 1 (As this creature enters the battlefield, put a +1/+1 counter on it fo
 Whenever ~ attacks or blocks, you lose 1 life for each +1/+1 counter on it. */
 
 	if (event == EVENT_RESOLVE_SPELL)
-		amplify(player, card, 1);
+		amplify(player, card, EVENT_RESOLVE_SPELL, 1);
 
 	// Whenever ~ attacks or blocks, you lose 1 life for each +1/+1 counter on it.
 	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
@@ -773,7 +751,7 @@ Amplify 2 (As this creature enters the battlefield, put two +1/+1 counters on it
 Provoke (Whenever this creature attacks, you may have target creature defending player controls untap and block it if able.) */
 
 	if (event == EVENT_RESOLVE_SPELL)
-		amplify(player, card, 2);
+		amplify(player, card, EVENT_RESOLVE_SPELL, 2);
 
 	provoke(player, card, event);
 
@@ -893,7 +871,7 @@ Amplify 1 (As this creature enters the battlefield, put a +1/+1 counter on it fo
 At the beginning of your upkeep, if ~ is in your graveyard, you may pay |B|B|B. If you do, return ~ to your hand. */
 
 	if (event == EVENT_RESOLVE_SPELL)
-		amplify(player, card, 1);
+		amplify(player, card, EVENT_RESOLVE_SPELL, 1);
 
 	if( event == EVENT_GRAVEYARD_ABILITY_UPKEEP && has_mana(player, COLOR_BLACK, 3) ){
 		card_instance_t *instance = get_card_instance( player, card );
@@ -1205,7 +1183,7 @@ int card_kilnmouth_dragon(int player, int card, event_t event){
 	 * Flying
 	 * |T: ~ deals damage equal to the number of +1/+1 counters on it to any target. */
 	if (event == EVENT_RESOLVE_SPELL)
-		amplify(player, card, 3);
+		amplify(player, card, EVENT_RESOLVE_SPELL, 3);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -1261,7 +1239,7 @@ int magma_sliver_shared_ability(int player, int card, event_t event)
 {
   int card_00;
   card_instance_t *instance;
-  card_instance_t *pcVar2;
+  card_instance_t *granting_sliver;
   int result;
   target_definition_t td2;
 
@@ -1278,44 +1256,22 @@ int magma_sliver_shared_ability(int player, int card, event_t event)
     add_status(player, card, 0x10000);
     in_play(result, card_00);
     result = is_humiliated(result, card_00, AL_NM_NL_ACT);
-    if (result != 0)
-    {
-      return 0;
-    }
-  }
-  else
-  {
-    pcVar2 = in_play(result, card_00);
-    if (pcVar2 == NULL)
-    {
-      if (event == EVENT_CAN_ACTIVATE)
-      {
-        return 0;
-      }
-      if (event == EVENT_CLEANUP)
-      {
-        kill_card(player, card, KILL_EXILE);
-        result = is_humiliated(result, card_00, AL_NM_NL_ACT);
-        if (result != 0)
-        {
-          return 0;
-        }
-        goto LAB_024a5ff0;
-      }
-    }
-    result = is_humiliated(result, card_00, AL_NM_NL_ACT);
-    if (result != 0)
-    {
-      return 0;
-    }
-    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
-      goto LAB_024a5ff0;
-  }
-  if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-  {
     return 0;
   }
-LAB_024a5ff0:
+  granting_sliver = in_play(result, card_00);
+  if (granting_sliver == NULL)
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+      return 0;
+    if (event == EVENT_CLEANUP)
+      kill_card(player, card, KILL_EXILE);
+  }
+  result = is_humiliated(result, card_00, AL_NM_NL_ACT);
+  if (result != 0)
+    return 0;
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
+      event != EVENT_CLEANUP)
+    return 0;
   default_target_definition(player, card, &td2, 2);
   td2.preferred_controller = player;
   td2.required_subtype = 0xb1;
@@ -1325,11 +1281,11 @@ LAB_024a5ff0:
        result != 0))
   {
     result = count_subtype(2, 0x47, 0xb1);
-    pump_until_eot(instance->targets[0].player, instance->targets[0].card, instance->targets[2].player,
-                   instance->targets[2].card, result, 0);
+    pump_until_eot(instance->targets[0].player, instance->targets[0].card,
+                   instance->targets[2].player, instance->targets[2].card, result, 0);
   }
   return shared_sliver_activated_ability(player, card, event, 7, 0, 0, 0, 0, 0, 0, 0, &td2,
-                                           "Select target Sliver to pump.");
+                                         "Select target Sliver to pump.");
 }
 
 int card_magma_sliver(int player, int card, event_t event){
@@ -2276,7 +2232,7 @@ int card_krosan_vorine(int player, int card, event_t event)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24a6470; original cards/legions.c:60. */
-static void amplify(int player, int card, int amount)
+static void amplify(int player, int card, event_t event, int amount)
 {
   card_instance_t *instance;
   int result;
@@ -2313,7 +2269,7 @@ int card_aven_warhawk(int player, int card, event_t event)
   {
     return 0;
   }
-  amplify(player, card, 1);
+  amplify(player, card, EVENT_RESOLVE_SPELL, 1);
   return 0;
 }
 
